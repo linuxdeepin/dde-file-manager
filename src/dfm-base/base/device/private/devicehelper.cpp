@@ -47,7 +47,7 @@ static constexpr char kBurnUsedSize[] { "BurnUsedSize" };
 static constexpr char kBurnMediaType[] { "BurnMediaType" };
 static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeed" };
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 DFM_MOUNT_USE_NS
 
 DevPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType type)
@@ -320,7 +320,6 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
 
     Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
     Application::dataPersistence()->sync();
-    Application::dataPersistence()->reload();
 
     qDebug() << "optical usage persistented: " << datas;
 }

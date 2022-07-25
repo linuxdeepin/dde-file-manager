@@ -20,36 +20,35 @@
  */
 #include "bookmarkeventcaller.h"
 #include "dfm-base/dfm_event_defines.h"
-#include "services/common/propertydialog/property_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <QUrl>
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
-
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
 
 void BookMarkEventCaller::sendBookMarkOpenInNewWindow(const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
 }
 
 void BookMarkEventCaller::sendBookMarkOpenInNewTab(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, windowId, url);
 }
 
 void BookMarkEventCaller::sendShowBookMarkPropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dispatcher()->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 void BookMarkEventCaller::sendOpenBookMarkInWindow(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
+}
+
+bool BookMarkEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
 }

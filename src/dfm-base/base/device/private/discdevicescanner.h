@@ -29,7 +29,7 @@
 #include <QTimer>
 #include <QDBusVariant>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DiscDeviceScanner final : public QObject
 {
@@ -56,6 +56,6 @@ private:
     QStringList discDevIdGroup;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DISCDEVICESCANNER_H

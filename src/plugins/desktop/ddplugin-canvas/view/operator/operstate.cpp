@@ -22,7 +22,7 @@
 #include "view/canvasview.h"
 #include "model/canvasselectionmodel.h"
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 OperState::OperState(QObject *parent) : QObject(parent)
 {

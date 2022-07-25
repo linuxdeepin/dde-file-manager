@@ -21,7 +21,7 @@
  */
 #include "iconitemdelegate_p.h"
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 IconItemDelegatePrivate::IconItemDelegatePrivate(IconItemDelegate *qq)
     : BaseItemDelegatePrivate(qq)

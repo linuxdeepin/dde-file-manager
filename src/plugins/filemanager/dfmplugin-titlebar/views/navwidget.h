@@ -31,7 +31,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 class HistoryStack;
 class NavWidgetPrivate;
 class NavWidget : public QWidget
@@ -59,6 +59,6 @@ private:
     void initializeUi();
     void initConnect();
 };
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // NavWidget_H

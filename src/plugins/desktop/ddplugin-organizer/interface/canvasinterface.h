@@ -38,6 +38,8 @@ public:
     bool initialize();
     class FileInfoModelShell *fileInfoModel();
     class CanvasModelShell *canvasModel();
+    class CanvasViewShell *canvasView();
+    class CanvasGridShell *canvasGrid();
 signals:
 
 public slots:

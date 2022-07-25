@@ -24,16 +24,13 @@
 #define ENTRYFILEENTITY_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-framework/service/qtclassfactory.h"
-#include "file/entry/entryfileinfo.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
 
 #include <QUrl>
 #include <QIcon>
 #include <QDebug>
 
-class QMenu;
-
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractEntryFileEntity : public QObject
 {
@@ -49,10 +46,8 @@ public:
     virtual bool showProgress() const = 0;
     virtual bool showTotalSize() const = 0;
     virtual bool showUsageSize() const = 0;
-    virtual void onOpen() = 0;
     virtual EntryFileInfo::EntryOrder order() const = 0;
 
-    virtual QMenu *createMenu() { return nullptr; }
     virtual void refresh() {}
     virtual quint64 sizeTotal() const { return 0; }
     virtual quint64 sizeUsage() const { return 0; }
@@ -93,6 +88,6 @@ public:
     }
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // ENTRYFILEENTITY_H

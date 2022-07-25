@@ -27,7 +27,7 @@
 #include <QTimer>
 #include <QtDebug>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 ImagePageInfo_t::ImagePageInfo_t(int index)
     : pageIndex(index)
 {

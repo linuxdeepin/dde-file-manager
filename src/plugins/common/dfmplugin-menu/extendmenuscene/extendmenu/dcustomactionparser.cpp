@@ -27,7 +27,7 @@
 #include <QSettings>
 #include <QFileSystemWatcher>
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 
 class GlobalDCustomActionParser : public DCustomActionParser
 {

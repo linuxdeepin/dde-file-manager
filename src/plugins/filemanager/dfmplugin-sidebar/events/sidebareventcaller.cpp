@@ -22,47 +22,44 @@
 */
 #include "sidebareventcaller.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/dfm_event_defines.h"
-#include "services/common/propertydialog/property_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
+
 #include <QUrl>
 
-DSC_USE_NAMESPACE
 DPSIDEBAR_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
 
 void SideBarEventCaller::sendItemActived(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }
 
 void SideBarEventCaller::sendEject(const QUrl &url)
 {
     qInfo() << "Eject device: " << url;
-    dispatcher()->publish(SideBar::EventType::kEjectAction, url);
+    dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_Item_EjectClicked", url);
 }
 
 void SideBarEventCaller::sendOpenWindow(const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
 }
 
 void SideBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, windowId, url);
 }
 
 void SideBarEventCaller::sendShowFilePropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dispatcher()->publish(Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
+}
+
+bool SideBarEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
 }

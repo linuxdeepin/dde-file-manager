@@ -38,11 +38,21 @@ class SideBar : public dpf::Plugin
     DPF_EVENT_NAMESPACE(DPSIDEBAR_NAMESPACE)
 
     // slot events
-    DPF_EVENT_REG_SLOT(slot_SetContextMenuEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
-    DPF_EVENT_REG_SLOT(slot_GetGroupItems)
+    DPF_EVENT_REG_SLOT(slot_ContextMenu_SetEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
+    DPF_EVENT_REG_SLOT(slot_Group_UrlList)
+    DPF_EVENT_REG_SLOT(slot_Item_Add)
+    DPF_EVENT_REG_SLOT(slot_Item_Remove)
+    DPF_EVENT_REG_SLOT(slot_Item_Update)
+    DPF_EVENT_REG_SLOT(slot_Item_Insert)
+    DPF_EVENT_REG_SLOT(slot_Item_Hidden)
+    DPF_EVENT_REG_SLOT(slot_Item_TriggerEdit)
 
     // signal events
-    DPF_EVENT_REG_SIGNAL(signal_SidebarSorted);
+    DPF_EVENT_REG_SIGNAL(signal_Sidebar_Sorted)
+    DPF_EVENT_REG_SIGNAL(signal_Item_EjectClicked)
+
+    // hook events
+    DPF_EVENT_REG_HOOK(hook_Group_Sort)
 
 public:
     virtual void initialize() override;

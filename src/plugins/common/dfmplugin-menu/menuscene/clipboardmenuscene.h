@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class ClipBoardMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -41,7 +41,7 @@ public:
 class ClipBoardMenuScenePrivate;
 class ClipBoardMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
-
+    Q_OBJECT
 public:
     explicit ClipBoardMenuScene(QObject *parent = nullptr);
     QString name() const override;
@@ -55,6 +55,6 @@ private:
     ClipBoardMenuScenePrivate *const d = nullptr;
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // CLIPBOARDMENUSCENE_H

@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookMarkEventReceiver : public QObject
 {
@@ -36,7 +36,7 @@ public:
     static BookMarkEventReceiver *instance();
 
 public slots:
-    void handleRenameFile(quint64 windowId, const QList<QUrl> &urls, bool result, const QString &errorMsg);
+    void handleRenameFile(quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool result, const QString &errorMsg);
     void handleAddSchemeOfBookMarkDisabled(const QString &scheme);
     void handleSidebarOrderChanged(quint64 winId, const QString &group);
 
@@ -44,6 +44,6 @@ private:
     explicit BookMarkEventReceiver(QObject *parent = nullptr);
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
 #endif   // BOOKMARKEVENTRECEIVER_H

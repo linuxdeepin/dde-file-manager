@@ -41,16 +41,16 @@ public:
         CollectionFrameFloatable = 0x04,
         CollectionFrameHiddable = 0x08,
         CollectionFrameAdjustable = 0x10,
+        CollectionFrameStretchable = 0x20,
 
-        CollectionGroupFeatureMask = 0x20
+        CollectionGroupFeatureMask = 0x40
     };
     Q_DECLARE_FLAGS(CollectionFrameFeatures, CollectionFrameFeature)
     Q_FLAG(CollectionFrameFeatures)
 
-    enum CollectionFrameAdjust {
-        CollectionFrameAdjustStep = 0,
-        CollectionFrameAdjustUnLimited,
-        CollectionFrameAdjustDisable
+    enum CollectionFrameStretchStyle {
+        CollectionFrameStretchStep = 0,
+        CollectionFrameStretchUnLimited,
     };
 
     explicit CollectionFrame(QWidget *parent = nullptr);
@@ -62,12 +62,14 @@ public:
     void setCollectionFeatures(const CollectionFrameFeatures &features);
     CollectionFrameFeatures collectionFeatures() const;
 
-    void setAdjustStyle(const CollectionFrameAdjust &style);
-    CollectionFrameAdjust adjustStyle() const;
+    void setStretchStyle(const CollectionFrameStretchStyle &style);
+    CollectionFrameStretchStyle stretchStyle() const;
 
-    void setAdjustStep(const int step);
-    int adjustStep() const;
+    void setStretchStep(const int step);
+    int stretchStep() const;
 
+signals:
+    void geometryChanged();
 protected:
     bool event(QEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -82,7 +84,6 @@ protected:
 
 private:
     void initUi();
-
 private:
     QSharedPointer<CollectionFramePrivate> d = nullptr;
 };

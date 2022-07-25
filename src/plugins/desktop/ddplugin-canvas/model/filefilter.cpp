@@ -30,7 +30,7 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 FileFilter::FileFilter()
 {

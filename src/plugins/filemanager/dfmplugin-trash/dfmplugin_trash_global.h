@@ -21,10 +21,11 @@
 #ifndef DFMPLUGIN_TRASH_GLOBAL_H
 #define DFMPLUGIN_TRASH_GLOBAL_H
 
+#define DPTRASH_NAMESPACE dfmplugin_trash
+
 #define DPTRASH_BEGIN_NAMESPACE namespace dfmplugin_trash {
 #define DPTRASH_END_NAMESPACE }
 #define DPTRASH_USE_NAMESPACE using namespace dfmplugin_trash;
-#define DPTRASH_NAMESPACE dfmplugin_trash
 
 DPTRASH_BEGIN_NAMESPACE
 namespace TrashActionId {

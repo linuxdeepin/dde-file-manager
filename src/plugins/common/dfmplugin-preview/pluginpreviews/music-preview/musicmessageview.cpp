@@ -39,7 +39,7 @@
 #include <taglib/taglib.h>
 #include <taglib/tpropertymap.h>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent)
     : QFrame(parent),
       currentUrl(uri)

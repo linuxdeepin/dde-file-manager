@@ -23,11 +23,9 @@
 #include "corehelper.h"
 #include "views/filedialog.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -37,7 +35,7 @@
 #include <QObject>
 #include <QLabel>
 
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -66,8 +64,7 @@ static bool pwPluginVersionGreaterThen(const QString &v)
  */
 void CoreHelper::delayInvokeProxy(std::function<void()> func, quint64 winID, QObject *parent)
 {
-    DSB_FM_USE_NAMESPACE
-    auto window = qobject_cast<FileDialog *>(WindowsService::service()->findWindowById(winID));
+    auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(winID));
     Q_ASSERT(window);
 
     if (window->workSpace()) {
@@ -77,29 +74,6 @@ void CoreHelper::delayInvokeProxy(std::function<void()> func, quint64 winID, QOb
             func();
         });
     }
-}
-
-void CoreHelper::installDFMEventFilterForReject()
-{
-    // reject follow events
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewTab, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenAsAdmin, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenFilesByApp, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kCreateSymlink, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenInTerminal, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kHideFiles, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
 }
 
 /*!
@@ -213,17 +187,4 @@ QString CoreHelper::findExtensioName(const QString &fileName, const QStringList 
         }
     }
     return newNameFilterExtension;
-}
-
-void CoreHelper::urlTransform(QList<QUrl> *urls)
-{
-    Q_ASSERT(urls);
-
-    for (int i = 0; i != urls->size(); i++) {
-        auto url { urls->at(i) };
-        if (delegateServIns->isRegisterUrlTransform(url.scheme())) {
-            url = delegateServIns->urlTransform(url);
-            urls->replace(i, url);
-        }
-    }
 }

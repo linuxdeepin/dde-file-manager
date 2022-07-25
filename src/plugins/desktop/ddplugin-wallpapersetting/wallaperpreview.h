@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QMap>
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 
 using WMInter = com::deepin::wm;
 class PreviewWidget : public DDP_BACKGROUND_NAMESPACE::BackgroundDefault
@@ -77,6 +77,6 @@ private:
     QMap<QString, PreviewWidgetPtr> previewWidgets;
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 
 #endif // WALLAPERPREVIEW_H

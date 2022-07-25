@@ -29,7 +29,7 @@
 
 #include <QPointer>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class MasteredMediaFileWatcher;
 class MasteredMediaFileWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
@@ -48,6 +48,6 @@ public:
     AbstractFileWatcherPointer proxyOnDisk;
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // MASTEREDMEDIAFILEWATCHER_P_H

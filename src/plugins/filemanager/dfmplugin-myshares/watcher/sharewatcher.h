@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class ShareWatcherPrivate;
 class ShareWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
@@ -38,8 +38,11 @@ class ShareWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
 public:
     explicit ShareWatcher(const QUrl &url, QObject *parent = nullptr);
     virtual ~ShareWatcher() override;
+
+    void shareAdded(const QString &path);
+    void shareRemoved(const QString &path);
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREWATCHER_H

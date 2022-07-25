@@ -21,7 +21,7 @@
  */
 #include "shortcut.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 Shortcut::Shortcut(QObject *parent)
     : QObject(parent)
@@ -97,4 +97,4 @@ QString Shortcut::toStr()
     return doc.toJson().data();
 }
 
-DFMBASE_END_NAMESPACE
+}

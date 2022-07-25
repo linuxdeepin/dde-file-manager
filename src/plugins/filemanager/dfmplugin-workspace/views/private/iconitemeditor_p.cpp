@@ -27,7 +27,7 @@
 
 #include <QLabel>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 IconItemEditorPrivate::IconItemEditorPrivate(IconItemEditor *qq)
     : q_ptr(qq)

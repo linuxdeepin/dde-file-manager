@@ -32,7 +32,7 @@
 
 #define CEIL(x) (static_cast<int>(std::ceil(x)))
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 /*!
  * \brief getIconPixmap 获取icon的pixmap

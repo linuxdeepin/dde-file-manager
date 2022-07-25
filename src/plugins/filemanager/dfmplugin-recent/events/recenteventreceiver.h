@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentEventReceiver : public QObject
 {
@@ -44,6 +44,6 @@ private:
     explicit RecentEventReceiver(QObject *parent = nullptr);
 };
 
-DPRECENT_END_NAMESPACE
+}
 
 #endif   // RECENTEVENTRECEIVER_H

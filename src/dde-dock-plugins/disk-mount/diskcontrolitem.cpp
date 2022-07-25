@@ -123,7 +123,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
     DFMBASE_USE_NAMESPACE
     // 光盘文件系统剥离 RockRidge 后，udisks 的默认挂载权限为 500，为遵从 linux 权限限制，在这里添加访问目录的权限校验
     QFile f(mountPoint.path());
-    if (url.scheme() == Global::kBurn && f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
+    if (url.scheme() == Global::Scheme::kBurn && f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
         DDialog *d = new DDialog(QObject::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
         d->setAttribute(Qt::WA_DeleteOnClose);
         Qt::WindowFlags flags = d->windowFlags();
@@ -135,7 +135,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
         return;
     }
 
-    if (url.scheme() == Global::kBurn) {
+    if (url.scheme() == Global::Scheme::kBurn) {
         // 1. 当前熊默认文件管理器为 dde-file-manager 时，使用它打开光盘
         // 2. 默认文件管理器为其他时，依然采用打开挂载点的方式
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {

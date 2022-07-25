@@ -28,7 +28,7 @@
 
 #include <QPointer>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class DocSheet;
 class SideBarImageListView;
 class ThumbnailWidget : public QWidget
@@ -78,5 +78,5 @@ private:
     SideBarImageListView *pImageListView { nullptr };
     bool bIshandOpenSuccess { false };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // THUMBNAILWIDGET_H

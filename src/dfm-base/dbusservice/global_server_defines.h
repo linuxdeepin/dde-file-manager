@@ -113,6 +113,8 @@ enum DeviceQueryOption {
     kNotIgnored = 1 << 3,
     kNotMounted = 1 << 4,
     kOptical = 1 << 5,
+    kSystem = 1 << 6,
+    kLoop = 1 << 7,
 };
 Q_ENUMS(DeviceQueryOption)
 Q_DECLARE_FLAGS(DeviceQueryOptions, DeviceQueryOption)

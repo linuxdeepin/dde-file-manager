@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -41,6 +41,7 @@ public:
 class CanvasMenuScenePrivate;
 class CanvasMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit CanvasMenuScene(QObject *parent = nullptr);
     QString name() const override;
@@ -60,5 +61,5 @@ private:
     CanvasMenuScenePrivate *const d = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 #endif   // CANVASMENUSCENE_H

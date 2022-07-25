@@ -32,7 +32,7 @@
 #include <QPointer>
 #include <QSharedPointer>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class DodgeItemsOper : public GridCore
 {
@@ -102,6 +102,6 @@ private:
     QPoint dragTargetGridPos = QPoint(-1, -1);
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // DODGEOPER_H

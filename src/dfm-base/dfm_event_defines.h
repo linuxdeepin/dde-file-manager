@@ -29,7 +29,7 @@
 
 #include <dfm-framework/event/event.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 /*!
  * \brief The PublicEventType enum define Event type
@@ -88,7 +88,7 @@ enum GlobalEventType : DPF_NAMESPACE::EventType {
 
     kMaxEventType = DPF_NAMESPACE::EventTypeScope::kWellKnownEventTop
 };
-DFMBASE_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::GlobalEventType)
 

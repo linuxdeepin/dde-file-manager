@@ -25,7 +25,7 @@
 #include <QUrl>
 #include <QScopedPointer>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class HideFileHelperPrivate;
 class HideFileHelper
 {
@@ -44,6 +44,6 @@ public:
 private:
     QScopedPointer<HideFileHelperPrivate> d;
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // HIDEFILEHELPER_H

@@ -29,11 +29,11 @@
 #include <QDebug>
 
 #include <dfm-io/core/denumerator.h>
-#include <dfmio_global.h>
-#include <dfmio_register.h>
+#include <dfm-io/dfmio_global.h>
+#include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultFileIterator;
 class VaultFileIteratorPrivate : public QObject
 {
@@ -57,6 +57,6 @@ private:
     VaultFileIterator *const q;
 };
 
-DPVAULT_END_NAMESPACE
+}
 
 #endif   //VAULTFILEDIRITERATORPTIVATE_H

@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class InterfaceActiveVault : public QObject
 {
     Q_OBJECT
@@ -108,5 +108,5 @@ public slots:
 
 private:
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // INTERFACEACTIVEVAULT_H

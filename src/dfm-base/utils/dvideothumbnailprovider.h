@@ -31,7 +31,7 @@
 class QImage;
 class QString;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DVideoThumbnailProviderPrivate;
 class DVideoThumbnailProvider
@@ -47,6 +47,6 @@ private:
     QScopedPointer<DVideoThumbnailProviderPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DFM_DVIDEOTHUMBNAILPROVIDER_H

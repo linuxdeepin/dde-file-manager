@@ -26,7 +26,6 @@
 #include "dfmplugin_sidebar_global.h"
 
 #include "dfm-base/interfaces/abstractframe.h"
-#include "services/filemanager/sidebar/sidebar_defines.h"
 
 #include <QUrl>
 
@@ -53,9 +52,7 @@ public:
     bool removeItem(SideBarItem *item);
     bool removeItem(const QUrl &url);
 
-    void updateItem(const QUrl &url, const DSB_FM_NAMESPACE::SideBar::ItemInfo &newInfo);
-    void updateItem(const QUrl &url, const QString &newName, bool editable);
-    void updateItem(const QUrl &url, const QIcon &newIcon);
+    void updateItem(const QUrl &url, const ItemInfo &newInfo);
     int findItem(const QUrl &url) const;
     void editItem(const QUrl &url);
     void setItemVisible(const QUrl &url, bool visible);

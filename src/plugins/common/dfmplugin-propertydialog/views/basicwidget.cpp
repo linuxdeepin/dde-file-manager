@@ -19,26 +19,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "basicwidget.h"
-#include "utils/propertydialoghelper.h"
 #include "events/propertyeventcall.h"
+#include "utils/propertydialogmanager.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include "services/common/propertydialog/property_defines.h"
-#include "services/common/delegate/delegateservice.h"
+#include <dfm-framework/event/event.h>
 
 #include <QFileInfo>
 #include <QDateTime>
 #include <QApplication>
 #include <QSet>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
-CPY_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 BasicWidget::BasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
@@ -104,11 +103,11 @@ void BasicWidget::initUI()
 
 void BasicWidget::basicExpand(const QUrl &url)
 {
-    QMap<BasicExpandType, BasicExpand> fieldCondition = PropertyDialogHelper::propertyServiceInstance()->basicExpandField(url);
+    QMap<BasicExpandType, BasicExpandMap> fieldCondition = PropertyDialogManager::instance().createBasicViewExtensionField(url);
 
     QList<BasicExpandType> keys = fieldCondition.keys();
     for (BasicExpandType key : keys) {
-        BasicExpand expand = fieldCondition.value(key);
+        BasicExpandMap expand = fieldCondition.value(key);
         QList<BasicFieldExpandEnum> filterEnumList = expand.keys();
         switch (key) {
         case kFieldInsert: {
@@ -170,32 +169,32 @@ void BasicWidget::basicExpand(const QUrl &url)
 
 void BasicWidget::basicFieldFilter(const QUrl &url)
 {
-    FilePropertyControlFilter fieldFilter = propertyServIns->contorlFieldFilter(url);
-    if (fieldFilter & FilePropertyControlFilter::kFileSizeFiled) {
+    PropertyFilterType fieldFilter = PropertyDialogManager::instance().basicFiledFiltes(url);
+    if (fieldFilter & PropertyFilterType::kFileSizeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileSize);
         fileSize->deleteLater();
         fileSize = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileTypeFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileTypeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileType);
         fileType->deleteLater();
         fileType = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileCountFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileCountFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileCount);
         fileCount->deleteLater();
         fileCount = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFilePositionFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFilePositionFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFilePosition);
         filePosition->deleteLater();
         filePosition = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileCreateTimeFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileCreateTimeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileCreateTime);
         fileCreated->deleteLater();
         fileCreated = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileAccessedTimeFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileAccessedTimeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileAccessedTime);
         fileAccessed->deleteLater();
         fileAccessed = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileModifiedTimeFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileModifiedTimeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileModifiedTime);
         fileModified->deleteLater();
         fileModified = nullptr;
@@ -224,13 +223,21 @@ void BasicWidget::basicFill(const QUrl &url)
         fileAccessed->setRightValue(info->lastRead().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
     if (fileModified && fileModified->RightValue().isEmpty())
         fileModified->setRightValue(info->lastModified().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
-    if (fileSize && fileSize->RightValue().isEmpty())
-        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
+    if (fileSize && fileSize->RightValue().isEmpty()) {
+        fSize = info->size();
+        fCount = 1;
+        fileSize->setRightValue(FileUtils::formatSize(fSize), Qt::ElideNone, Qt::AlignVCenter, true);
+    }
     if (fileCount && fileCount->RightValue().isEmpty())
         fileCount->setVisible(false);
 
     if (fileType && fileType->RightValue().isEmpty()) {
-        QUrl localUrl = delegateServIns->urlTransform(url);
+        QUrl localUrl = url;
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+        if (ok && !urls.isEmpty())
+            localUrl = urls.first();
+
         QMimeType mimeType = MimeDatabase::mimeTypeForUrl(localUrl);
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
         switch (static_cast<int>(type)) {

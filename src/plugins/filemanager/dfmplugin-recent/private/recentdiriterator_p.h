@@ -28,7 +28,7 @@
 
 #include <QQueue>
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentDirIterator;
 
@@ -47,5 +47,5 @@ private:
     RecentDirIterator *q { nullptr };
 };
 
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTDIRITERATORPRIVATE_H

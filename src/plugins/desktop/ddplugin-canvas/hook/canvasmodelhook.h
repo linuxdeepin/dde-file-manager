@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasModelHook : public QObject, public ModelHookInterface
 {
@@ -45,6 +45,6 @@ public:
     bool sortData (int role, int order, QList<QUrl> *files, void *extData = nullptr) const override; // 待定，还需考虑ui交互问题
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASMODELHOOK_H

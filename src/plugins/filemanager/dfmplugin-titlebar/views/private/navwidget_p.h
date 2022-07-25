@@ -31,7 +31,7 @@
 
 #include <memory>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 class NavWidget;
 class NavWidgetPrivate : public QObject
 {
@@ -54,6 +54,6 @@ private:
     std::shared_ptr<HistoryStack> curNavStack { nullptr };
     QList<std::shared_ptr<HistoryStack>> allNavStacks;
 };
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // NAVWIDGET_P_H

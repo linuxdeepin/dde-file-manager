@@ -29,19 +29,27 @@
 #include <QIcon>
 #include <QUrl>
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
-class ShareUtils
+class ShareUtils : public QObject
 {
+    Q_DISABLE_COPY(ShareUtils)
 public:
+    static ShareUtils *instance();
+
     static QString scheme();
     static QIcon icon();
     static QString displayName();
     static QUrl rootUrl();
     static QUrl makeShareUrl(const QString &path);
     static QUrl convertToLocalUrl(const QUrl &shareUrl);
+
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+
+private:
+    explicit ShareUtils(QObject *parent = nullptr);
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREUTILS_H

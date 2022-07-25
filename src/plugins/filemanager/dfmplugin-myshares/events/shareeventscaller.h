@@ -29,7 +29,7 @@
 
 #include <QObject>
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class ShareEventsCaller
 {
@@ -47,6 +47,6 @@ public:
     static void sendSwitchDisplayMode(quint64 winId, DFMBASE_NAMESPACE::Global::ViewMode mode);
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREEVENTSCALLER_H

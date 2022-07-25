@@ -26,7 +26,7 @@
 
 #include <interfaces/private/abstractmenuscene_p.h>
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashMenuScene;
 class TrashMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
@@ -44,6 +44,6 @@ private:
     QMultiHash<QString, QString> selectSupportActions;
 };
 
-DPTRASH_END_NAMESPACE
+}
 
 #endif   // TRASHMENUSCENE_P_H

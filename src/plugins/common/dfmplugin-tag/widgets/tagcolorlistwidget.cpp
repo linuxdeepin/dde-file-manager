@@ -26,7 +26,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagColorListWidget::TagColorListWidget(QWidget *parent)
     : QFrame(parent)

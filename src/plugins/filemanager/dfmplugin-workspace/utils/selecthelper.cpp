@@ -27,7 +27,7 @@
 #include "models/fileviewmodel.h"
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 SelectHelper::SelectHelper(FileView *parent)
     : view(parent)

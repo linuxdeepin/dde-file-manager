@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 BasicStatusBarPrivate::BasicStatusBarPrivate(BasicStatusBar *qq)
     : QObject(qq),
@@ -91,11 +91,13 @@ void BasicStatusBarPrivate::initJobConnection()
     if (!fileStatisticsJog)
         return;
 
-    auto onFoundFile = [this]() {
+    auto onFoundFile = [this](qint64 size, int filesCount, int directoryCount) {
+        Q_UNUSED(size)
+
         if (!sender())
             return;
 
-        ++folderContains;
+        folderContains = filesCount + directoryCount;
         q->updateStatusMessage();
     };
 
@@ -103,6 +105,5 @@ void BasicStatusBarPrivate::initJobConnection()
         folderContains = fileStatisticsJog->filesCount() + fileStatisticsJog->directorysCount();
         q->updateStatusMessage();
     });
-    connect(fileStatisticsJog, &FileStatisticsJob::fileFound, this, onFoundFile);
-    connect(fileStatisticsJog, &FileStatisticsJob::directoryFound, this, onFoundFile);
+    connect(fileStatisticsJog, &FileStatisticsJob::dataNotify, this, onFoundFile);
 }

@@ -25,14 +25,14 @@
 
 #include <QDebug>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 TraversalDirThread::TraversalDirThread(const QUrl &url,
                                        const QStringList &nameFilters,
                                        QDir::Filters filters,
                                        QDirIterator::IteratorFlags flags,
                                        QObject *parent)
-    : QThread(parent), dirUrl(url)
+    : QThread(parent), dirUrl(url), nameFilters(nameFilters), filters(filters), flags(flags)
 {
     if (dirUrl.isValid() /*&& !UrlRoute::isVirtual(dirUrl)*/) {
         dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters, flags);

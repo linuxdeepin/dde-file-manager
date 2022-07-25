@@ -35,7 +35,7 @@
 #include <QFile>
 #include <QProcess>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 /*!
  * \brief send a messsage to Notification Center
@@ -408,4 +408,4 @@ void UniversalUtils::prepareForSleep(QObject *obj, const char *cslot)
             cslot);
 }
 
-DFMBASE_END_NAMESPACE
+}

@@ -27,24 +27,23 @@
 
 #include "dfm-base/utils/windowutils.h"
 
-#include <dfm-framework/framework.h>
-
 #include <QMimeDatabase>
+#include <QWidget>
 
-DIALOGCORE_BEGIN_NAMESPACE
+#include <functional>
+
+namespace filedialog_core {
 
 class CoreHelper
 {
 public:
     static void delayInvokeProxy(std::function<void()> func, quint64 winID, QObject *parent);
-    static void installDFMEventFilterForReject();
     static bool askHiddenFile(QWidget *parent);
     static bool askReplaceFile(QString fileName, QWidget *parent);
     static QStringList stripFilters(const QStringList &filters);
     static QString findExtensioName(const QString &fileName, const QStringList &newNameFilters, QMimeDatabase *db);
-    static void urlTransform(QList<QUrl> *urls);
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // COREHELPER_H

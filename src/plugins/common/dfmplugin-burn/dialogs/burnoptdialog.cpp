@@ -36,7 +36,7 @@
 #include <QFile>
 #include <QtConcurrent>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE

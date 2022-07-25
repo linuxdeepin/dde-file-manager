@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QRect>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasManager;
 class CanvasView;
 class CanvasViewBroker : public QObject
@@ -39,14 +39,19 @@ public:
     QSharedPointer<CanvasView> getView(int idx);
 public slots:
     QRect visualRect(int idx, const QUrl &url);
+    QRect gridVisualRect(int idx, const QPoint &gridPos);
+    QPoint gridPos(int idx, const QPoint &viewPoint);
+    QSize gridSize(int idx);
     void refresh(int idx);
     void update(int idx);
     void select(const QList<QUrl> &urls);
     QList<QUrl> selectedUrls(int idx);
+public:
+    QRect iconRect(int idx, QRect visualRect);
 private:
     CanvasManager *manager = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASVIEWBROKER_H

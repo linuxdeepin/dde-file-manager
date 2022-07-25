@@ -40,7 +40,7 @@
 #include <QPainterPath>
 
 DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static constexpr int kMsgLabelWidth { 350 };
 static constexpr int kSpeedLabelWidth = { 100 };
@@ -86,7 +86,7 @@ TaskWidget::~TaskWidget()
  * \brief TaskWidget::setTaskHandle 连接当前任务处理器的信号，处理当前拷贝信息的显示
  * \param handle 任务处理控制器
  */
-void TaskWidget::setTaskHandle(const JobHandlePointer &handle)
+void TaskWidget::setTaskHandle(const JobHandlePointer handle)
 {
     if (!handle)
         return;
@@ -113,13 +113,13 @@ void TaskWidget::setTaskHandle(const JobHandlePointer &handle)
         onShowErrors(info);
     }
 
-    connect(handle.data(), &AbstractJobHandler::proccessChangedNotify, this, &TaskWidget::onShowTaskProccess, Qt::QueuedConnection);
-    connect(handle.data(), &AbstractJobHandler::stateChangedNotify, this, &TaskWidget::onHandlerTaskStateChange, Qt::QueuedConnection);
-    connect(handle.data(), &AbstractJobHandler::errorNotify, this, &TaskWidget::onShowErrors, Qt::QueuedConnection);
-    connect(handle.data(), &AbstractJobHandler::currentTaskNotify, this, &TaskWidget::onShowTaskInfo, Qt::QueuedConnection);
-    connect(handle.data(), &AbstractJobHandler::speedUpdatedNotify, this, &TaskWidget::onShowSpeedUpdatedInfo, Qt::QueuedConnection);
+    connect(handle.get(), &AbstractJobHandler::proccessChangedNotify, this, &TaskWidget::onShowTaskProccess, Qt::QueuedConnection);
+    connect(handle.get(), &AbstractJobHandler::stateChangedNotify, this, &TaskWidget::onHandlerTaskStateChange, Qt::QueuedConnection);
+    connect(handle.get(), &AbstractJobHandler::errorNotify, this, &TaskWidget::onShowErrors, Qt::QueuedConnection);
+    connect(handle.get(), &AbstractJobHandler::currentTaskNotify, this, &TaskWidget::onShowTaskInfo, Qt::QueuedConnection);
+    connect(handle.get(), &AbstractJobHandler::speedUpdatedNotify, this, &TaskWidget::onShowSpeedUpdatedInfo, Qt::QueuedConnection);
 
-    connect(this, &TaskWidget::buttonClicked, handle.data(), &AbstractJobHandler::operateTaskJob, Qt::QueuedConnection);
+    connect(this, &TaskWidget::buttonClicked, handle.get(), &AbstractJobHandler::operateTaskJob, Qt::QueuedConnection);
 }
 
 void TaskWidget::resetPauseStute()
@@ -676,6 +676,9 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
         if (showConflict && !widConfict->isHidden()) {
             h += widConfict->sizeHint().height();
         }
+    } else {
+        widButton->hide();
+        widConfict->hide();
     }
 
     setFixedHeight(h);

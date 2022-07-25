@@ -35,7 +35,7 @@
 
 #include <QDir>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static const QString kUserTrashFullOpened = "user-trash-full-opened";
 
@@ -185,8 +185,8 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
         d.setTitle(tr("You do not have permission to operate file/folder!"));
         QString message = urls.at(0).toLocalFile();
 
-        if (fm.width(message) > Global::kMaxFileNameCharCount) {
-            message = fm.elidedText(message, Qt::ElideMiddle, Global::kMaxFileNameCharCount);
+        if (fm.width(message) > NAME_MAX) {
+            message = fm.elidedText(message, Qt::ElideMiddle, NAME_MAX);
         }
 
         d.setMessage(message);
@@ -210,8 +210,8 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
                 break;
             }
             QString s = QString("%1.%2").arg(QString::number(i + 1), urls.at(i).toLocalFile());
-            if (fm.width(s) > Global::kMaxFileNameCharCount) {
-                s = fm.elidedText(s, Qt::ElideMiddle, Global::kMaxFileNameCharCount);
+            if (fm.width(s) > NAME_MAX) {
+                s = fm.elidedText(s, Qt::ElideMiddle, NAME_MAX);
             }
             message += s + "\n";
         }
@@ -357,7 +357,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, c
     static QString DeleteFileName = tr("Permanently delete %1?");
     static QString DeleteFileItems = tr("Permanently delete %1 items?");
 
-    const int maxFileNameWidth = Global::kMaxFileNameCharCount;
+    const int maxFileNameWidth = NAME_MAX;
 
     QStringList buttonTexts;
     buttonTexts.append(tr("Cancel", "button"));
@@ -431,7 +431,7 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     if (urlFirst.isLocalFile()) {   // delete local file
         if (urls.size() == 1) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlFirst);
-            d.setTitle(deleteFileName.arg(fm.elidedText(info->fileDisplayName(), Qt::ElideMiddle, Global::kMaxFileNameCharCount)));
+            d.setTitle(deleteFileName.arg(fm.elidedText(info->fileDisplayName(), Qt::ElideMiddle, NAME_MAX)));
         } else {
             d.setTitle(deleteFileItems.arg(urls.size()));
         }

@@ -27,7 +27,7 @@
 #include <QUrl>
 #include <QFileInfo>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 PDFPreview::PDFPreview(QObject *parent)
     : AbstractBasePreview(parent)
 {

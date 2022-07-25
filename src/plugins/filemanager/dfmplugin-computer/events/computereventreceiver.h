@@ -29,7 +29,7 @@
 
 #define ComputerEventReceiverIns DPCOMPUTER_NAMESPACE::ComputerEventReceiver::instance()
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ComputerEventReceiver final : public QObject
 {
@@ -39,11 +39,14 @@ public:
 
 public Q_SLOTS:
     void handleItemEject(const QUrl &url);
+    bool handleSepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
+    bool handleSortItem(const QString &group, const QString &subGroup, const QUrl &a, const QUrl &b);
+    void setContextMenuEnable(bool enable);
 
 private:
     explicit ComputerEventReceiver(QObject *parent = nullptr);
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTEREVENTRECEIVER_H

@@ -31,7 +31,7 @@
 #include <QFrame>
 #include <QPushButton>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class UnlockView : public QFrame
 {
     Q_OBJECT
@@ -96,5 +96,5 @@ private:
     DTK_WIDGET_NAMESPACE::DLabel *forgetPassword { nullptr };   //! 忘记密码提示与找回入口
     bool extraLockVault { true };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // UNLOCKVIEW_H

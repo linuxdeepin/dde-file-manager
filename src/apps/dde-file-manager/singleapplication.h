@@ -35,7 +35,6 @@ class SingleApplication : public DTK_WIDGET_NAMESPACE::DApplication
 public:
     explicit SingleApplication(int &argc, char **argv, int = ApplicationFlags);
     ~SingleApplication() override;
-    bool loadTranslator(QList<QLocale> localeFallback = QList<QLocale>() << QLocale::system());
     void openAsAdmin();
     void handleNewClient(const QString &uniqueKey);
 

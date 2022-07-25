@@ -28,14 +28,20 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QUrl>
 
-DPSMBBROWSER_USE_NAMESPACE
+using namespace dfmplugin_smbbrowser;
 
 QMutex SmbBrowserUtils::mutex;
 QMap<QUrl, SmbShareNode> SmbBrowserUtils::shareNodes;
+
+SmbBrowserUtils *SmbBrowserUtils::instance()
+{
+    static SmbBrowserUtils instance;
+    return &instance;
+}
 
 QString SmbBrowserUtils::networkScheme()
 {
@@ -55,8 +61,15 @@ QIcon SmbBrowserUtils::icon()
     return QIcon::fromTheme("network-server-symbolic");
 }
 
-bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls, QString *)
+bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls)
 {
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSmb
+        || urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kFtp
+        || urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSFtp)
+        return false;
+
     if (urls.count() != 1)
         return false;
 
@@ -68,7 +81,7 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls, Q
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         } else {
             QUrl u = mpt.isEmpty() ? url : QUrl::fromLocalFile(mpt);
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, windowId, u);
+            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, u);
         }
     });
     return true;

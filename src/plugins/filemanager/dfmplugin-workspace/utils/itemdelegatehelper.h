@@ -28,7 +28,7 @@
 #include <QStyledItemDelegate>
 #include <QTextLayout>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 // begin file view item icon delegate global define
 inline constexpr int kIconModeTextPadding = { 4 };
@@ -88,6 +88,6 @@ private:
                                QRectF &lastLineRect, const QBrush &backgroundBrush, QPainter *painter);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // ITEMDELEGATEHELPER_H

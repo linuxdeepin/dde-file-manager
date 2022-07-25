@@ -37,7 +37,7 @@
 #include <dfm-burn/dopticaldiscinfo.h>
 #include <dfm-burn/dopticaldiscmanager.h>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
 

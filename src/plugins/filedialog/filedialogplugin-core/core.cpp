@@ -26,19 +26,19 @@
 #include "views/filedialog.h"
 #include "menus/filedialogmenuscene.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QDBusError>
 #include <QDBusConnection>
 
-DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
-DIALOGCORE_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+using namespace filedialog_core;
 
 bool Core::start()
 {
-    WindowsService::service()->setCustomWindowCreator([](const QUrl &url) {
+    FMWindowsIns.setCustomWindowCreator([](const QUrl &url) {
         return new FileDialog(url);
     });
 
@@ -91,19 +91,27 @@ void Core::onAllPluginsStarted()
     if (!registerDialogDBus())
         abort();
 
-    MenuService::service()->registerScene(FileDialogMenuCreator::name(), new FileDialogMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(FileDialogMenuCreator::name(), new FileDialogMenuCreator);
     bindScene("WorkspaceMenu");
 }
 
 void Core::bindScene(const QString &parentScene)
 {
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(FileDialogMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(FileDialogMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(FileDialogMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        waitToBind << parentScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Core::bindSceneOnAdded);
+    }
+}
+
+void Core::bindSceneOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Core::bindSceneOnAdded);
+        bindScene(newScene);
     }
 }

@@ -25,8 +25,6 @@
 
 #include "dfmplugin_core_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
-
 #include <QObject>
 
 DPCORE_BEGIN_NAMESPACE

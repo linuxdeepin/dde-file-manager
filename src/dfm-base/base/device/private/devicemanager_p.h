@@ -31,7 +31,7 @@
 #include <dfm-mount/base/dmount_global.h>
 #include <dfm-mount/dprotocoldevice.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DeviceWatcher;
 class DeviceManager;
@@ -58,6 +58,6 @@ private:
     DeviceManager *q { nullptr };
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DEVICEMANAGER_P_H

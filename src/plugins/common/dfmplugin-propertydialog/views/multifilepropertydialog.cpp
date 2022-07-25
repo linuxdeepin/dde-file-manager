@@ -31,7 +31,7 @@
 
 DFMBASE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 MultiFilePropertyDialog::MultiFilePropertyDialog(const QList<QUrl> &urls, QWidget *const parent)
     : DDialog(parent), urlList(urls)
@@ -39,7 +39,7 @@ MultiFilePropertyDialog::MultiFilePropertyDialog(const QList<QUrl> &urls, QWidge
     initHeadUi();
     setFixedSize(300, 360);
     fileCalculationUtils = new FileStatisticsJob;
-    connect(fileCalculationUtils, &FileStatisticsJob::sizeChanged, this, &MultiFilePropertyDialog::updateFolderSizeLabel);
+    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &MultiFilePropertyDialog::updateFolderSizeLabel);
     fileCalculationUtils->start(urlList);
     calculateFileCount();
     this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -108,8 +108,12 @@ void MultiFilePropertyDialog::calculateFileCount()
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info.isNull())
             return;
+
         if (info->isSymLink()) {
-            ++fileCount;
+            if (info->isDir())
+                ++dirCount;
+            else
+                ++fileCount;
             continue;
         }
 
@@ -127,7 +131,9 @@ void MultiFilePropertyDialog::calculateFileCount()
     fileCountLabel->setRightValue(tr("%1 file(s), %2 folder(s)").arg(fileCount).arg(dirCount), Qt::ElideMiddle, Qt::AlignVCenter, true);
 }
 
-void MultiFilePropertyDialog::updateFolderSizeLabel(qint64 size)
+void MultiFilePropertyDialog::updateFolderSizeLabel(qint64 size, int filesCount, int directoryCount)
 {
+    Q_UNUSED(filesCount)
+    Q_UNUSED(directoryCount)
     totalSizeLabel->setRightValue(FileUtils::formatSize(size), Qt::ElideMiddle, Qt::AlignVCenter, true);
 }

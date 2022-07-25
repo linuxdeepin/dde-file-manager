@@ -19,19 +19,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "bookmarkmanager.h"
-#include "services/filemanager/workspace/workspaceservice.h"
 #include "utils/bookmarkhelper.h"
 #include "events/bookmarkeventcaller.h"
 #include "utils/bookmarkhelper.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <DDialog>
 
@@ -43,9 +41,18 @@
 #include <QApplication>
 #include <QStorageInfo>
 
+using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
+
+Q_DECLARE_METATYPE(QList<QUrl> *);
+Q_DECLARE_METATYPE(ItemClickedActionCallback);
+Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(RenameCallback);
+
 USING_IO_NAMESPACE
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 static constexpr char kConfigGroupName[] { "BookMark" };
 static constexpr char kConfigKeyName[] { "Items" };
 
@@ -84,11 +91,10 @@ QVariantMap BookmarkData::serialize()
     return v;
 }
 
-DPBOOKMARK_END_NAMESPACE
+}
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 BookMarkManager *BookMarkManager::instance()
@@ -99,7 +105,7 @@ BookMarkManager *BookMarkManager::instance()
 
 bool BookMarkManager::removeBookMark(const QUrl &url)
 {
-    BookMarkHelper::sideBarServIns()->removeItem(url);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
 
     if (!bookmarkDataMap.contains(url))
         return true;
@@ -122,9 +128,17 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
     int count = urls.size();
     if (count < 0)
         return false;
-    for (QUrl url : urls) {
-        if (delegateServIns->isRegisterUrlTransform(url.scheme()))
-            url = delegateServIns->urlTransform(url);
+
+    QList<QUrl> urlsTemp = urls;
+    if (!urlsTemp.isEmpty()) {
+        QList<QUrl> urlsTrans {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urlsTemp, &urlsTrans);
+
+        if (ok && !urlsTrans.isEmpty())
+            urlsTemp = urlsTrans;
+    }
+
+    for (const QUrl &url : urlsTemp) {
         QFileInfo info(url.path());
         if (info.isDir()) {
             BookmarkData bookmarkData;
@@ -162,17 +176,20 @@ void BookMarkManager::addBookMarkItemsFromConfig()
 
 void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkName) const
 {
-    SideBar::ItemInfo item;
-    item.group = SideBar::DefaultGroup::kBookmark;
-    item.url = url;
-    item.iconName = BookMarkHelper::instance()->icon().name();
-    item.text = bookmarkName;
-    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled;
-    item.contextMenuCb = BookMarkManager::contextMenuHandle;
-    item.renameCb = BookMarkManager::renameCallBack;
-    item.cdCb = BookMarkManager::cdBookMarkUrlCallBack;
-
-    BookMarkHelper::sideBarServIns()->addItem(item);
+    ItemClickedActionCallback cdCb { BookMarkManager::cdBookMarkUrlCallBack };
+    ContextMenuCallback contextMenuCb { BookMarkManager::contextMenuHandle };
+    RenameCallback renameCb { BookMarkManager::renameCallBack };
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled };
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Bookmark" },
+        { "Property_Key_DisplayName", bookmarkName },
+        { "Property_Key_Icon", BookMarkHelper::instance()->icon() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, map);
 }
 
 BookMarkManager::BookMarkManager(QObject *parent)
@@ -203,7 +220,7 @@ void BookMarkManager::removeAllBookMarkSidebarItems()
 {
     QList<QUrl> bookmarkUrllist = bookmarkDataMap.keys();
     for (const QUrl &url : bookmarkUrllist) {
-        BookMarkHelper::sideBarServIns()->removeItem(url);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
     }
 }
 
@@ -233,7 +250,7 @@ QMap<QUrl, BookmarkData> BookMarkManager::getBookMarkDataMap() const
 
 int BookMarkManager::showRemoveBookMarkDialog(quint64 winId)
 {
-    auto window = BookMarkHelper::winServIns()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (!window) {
         qCritical("can not find window");
         abort();
@@ -259,7 +276,7 @@ void BookMarkManager::getMountInfo(const QUrl &url, QString &mountPoint, QString
     QString devStr(info.device());
     if (devStr.startsWith("/dev/")) {
         QUrl tmp;
-        tmp.setScheme(Global::kDevice);
+        tmp.setScheme(Global::Scheme::kTrash);
         tmp.setPath(devStr);
         devStr = tmp.toString();
     } else if (devStr == "gvfsd-fuse") {
@@ -320,7 +337,7 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
             newData.resetData(map);
 
             bookmarkDataMap.remove(oldUrl);
-            BookMarkHelper::sideBarServIns()->removeItem(oldUrl);
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", oldUrl);
 
             bookmarkDataMap.insert(newUrl, newData);
             Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
@@ -348,12 +365,12 @@ void BookMarkManager::contextMenuHandle(quint64 windowId, const QUrl &url, const
     auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
         BookMarkEventCaller::sendBookMarkOpenInNewTab(windowId, url);
     });
-    newTabAct->setEnabled(bEnabled && BookMarkHelper::workspaceServIns()->tabAddable(windowId));
+    newTabAct->setEnabled(bEnabled && BookMarkEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
 
     auto renameAct = menu->addAction(QObject::tr("Rename"), [url, windowId]() {
-        BookMarkHelper::sideBarServIns()->triggerItemEdit(windowId, url);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", windowId, url);
     });
     renameAct->setEnabled(bEnabled);
 
@@ -374,7 +391,12 @@ void BookMarkManager::renameCallBack(quint64 windowId, const QUrl &url, const QS
 {
     Q_UNUSED(windowId);
     BookMarkManager::instance()->bookMarkRename(url, name);
-    BookMarkHelper::sideBarServIns()->updateItemName(url, name, true);
+
+    QVariantMap map {
+        { "Property_Key_DisplayName", name },
+        { "Property_Key_Editable", true }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
 }
 
 void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
@@ -389,9 +411,9 @@ void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
         return;
     }
 
-    if (bookmarkMap[url].deviceUrl.startsWith(Global::kSmb)
-        || bookmarkMap[url].deviceUrl.startsWith(Global::kFtp)
-        || bookmarkMap[url].deviceUrl.startsWith(Global::kSFtp)) {
+    if (bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSmb)
+        || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kFtp)
+        || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSFtp)) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info && info->exists()) {
             if (info->isDir())

@@ -24,8 +24,7 @@
 #define FILEOPERATIONSEVENTRECEIVER_H
 
 #include "dfmplugin_fileoperations_global.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-#include "services/common/fileoperations/fileoperations_defines.h"
+#include "fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -38,7 +37,6 @@
 #include <QFileDevice>
 
 Q_DECLARE_METATYPE(QFileDevice::Permissions)
-Q_DECLARE_METATYPE(QList<QUrl>)
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 class FileCopyMoveJob;
@@ -49,7 +47,6 @@ class FileOperationsEventReceiver final : public QObject
 
 public:
     static FileOperationsEventReceiver *instance();
-    void connectService();
 
 public slots:
     void handleOperationCopy(const quint64 windowId,
@@ -224,10 +221,6 @@ public slots:
     void handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
                                   const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callback);
 
-private slots:
-    void invokeRegister(const QString scheme, const FileOperationsFunctions functions);
-    void invokeUnregister(const QString scheme);
-
 private:
     enum class RenameTypes {
         kBatchRepalce,
@@ -235,7 +228,6 @@ private:
         kBatchAppend
     };
     explicit FileOperationsEventReceiver(QObject *parent = nullptr);
-    bool initService();
     QString newDocmentName(const QString targetdir,
                            const QString suffix,
                            const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
@@ -276,9 +268,7 @@ private:
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };
     QSharedPointer<QMutex> getServiceMutex { nullptr };
-    QPointer<DSC_NAMESPACE::FileOperationsService> operationsService { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
-    QMap<QString, FileOperationsFunctions> functions;
     QSharedPointer<QMutex> functionsMutex { nullptr };
     QSharedPointer<OperationsStackManagerInterface> operationsStackDbus;
 };

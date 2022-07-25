@@ -29,7 +29,7 @@
 #include <QBoxLayout>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 EncryptionPage::EncryptionPage(QWidget *parent)
     : QWidget(parent)
 {

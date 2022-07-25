@@ -21,7 +21,7 @@
  */
 #include "bookmarkmenuscene_p.h"
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
 
 BookmarkMenuScenePrivate::BookmarkMenuScenePrivate(AbstractMenuScene *qq)

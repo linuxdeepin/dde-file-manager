@@ -36,9 +36,14 @@
 
 #include <unistd.h>
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+
+AvfsUtils *AvfsUtils::instance()
+{
+    static AvfsUtils instance;
+    return &instance;
+}
 
 bool AvfsUtils::isSupportedArchives(const QUrl &url)
 {
@@ -95,7 +100,7 @@ QUrl AvfsUtils::localUrlToAvfsUrl(const QUrl &url)
 
 QUrl AvfsUtils::localArchiveToAvfsUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::kFile) {
+    if (url.scheme() != Global::Scheme::kFile) {
         qWarning() << "non-local file doesn't support to convert to avfs url";
         return url;
     }
@@ -121,17 +126,18 @@ QUrl AvfsUtils::makeAvfsUrl(const QString &path)
     return u;
 }
 
-QList<TitleBar::CrumbData> AvfsUtils::seperateUrl(const QUrl &url)
+QList<QVariantMap> AvfsUtils::seperateUrl(const QUrl &url)
 {
     QString longestLocalParent;
-    QList<TitleBar::CrumbData> ret;
+    QList<QVariantMap> ret;
     QStringList frags { url.path().split("/", QString::SkipEmptyParts) };
     while (!frags.isEmpty()) {
         auto path = frags.join("/").prepend("/");
         auto icon = parseDirIcon(path);
         if (!icon.isEmpty()) {
             longestLocalParent = longestLocalParent.length() < path ? path : longestLocalParent;
-            ret.append({ QUrl::fromLocalFile(path), "", icon });
+            ret.append({ { "CrumbData_Key_Url", QUrl::fromLocalFile(path) },
+                         { "CrumbData_Key_IconName", icon } });
             break;
         } else {
             if (longestLocalParent.isEmpty()) {
@@ -150,12 +156,14 @@ QList<TitleBar::CrumbData> AvfsUtils::seperateUrl(const QUrl &url)
                 }
             }
             auto url = longestLocalParent.length() < path.length() ? makeAvfsUrl(path) : QUrl::fromLocalFile(path);
-            ret.append({ url, frags.last(), "" });
+            ret.append({ { "CrumbData_Key_Url", url },
+                         { "CrumbData_Key_DisplayText", frags.last() } });
         }
         frags.removeLast();
 
         if (frags.isEmpty())
-            ret.append({ QUrl::fromLocalFile("/"), "", "drive-harddisk-root-symbolic" });
+            ret.append({ { "CrumbData_Key_Url", QUrl::fromLocalFile("/") },
+                         { "CrumbData_Key_IconName", "drive-harddisk-root-symbolic" } });
     }
     std::reverse(ret.begin(), ret.end());
     return ret;
@@ -183,4 +191,21 @@ QString AvfsUtils::parseDirIcon(const QString &path)
     } else {
         return "";
     }
+}
+
+bool AvfsUtils::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
+{
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != AvfsUtils::scheme())
+            return false;
+        (*urls).push_back(avfsUrlToLocal(url));
+    }
+    return true;
+}
+
+AvfsUtils::AvfsUtils(QObject *parent)
+    : QObject(parent)
+{
 }

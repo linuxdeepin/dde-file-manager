@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sysinfoutils.h"
+#include "dfm_global_defines.h"
 
 #include <DSysInfo>
 
@@ -29,7 +30,7 @@
 #include <unistd.h>
 
 DCORE_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 QString SysInfoUtils::getUser()
 {
@@ -88,4 +89,12 @@ bool SysInfoUtils::isDeveloperModeEnabled()
 bool SysInfoUtils::isProfessional()
 {
     return DSysInfo::deepinType() == DSysInfo::DeepinProfessional;
+}
+
+bool SysInfoUtils::isSameUser(const QMimeData *data)
+{
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey))
+        return data->data(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey) == QString::number(SysInfoUtils::getUserId());
+
+    return false;
 }

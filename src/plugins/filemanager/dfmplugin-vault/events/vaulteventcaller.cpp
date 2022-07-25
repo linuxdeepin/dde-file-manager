@@ -21,46 +21,38 @@
 #include "vaulteventcaller.h"
 
 #include "dfm-base/dfm_event_defines.h"
-#include "services/common/propertydialog/property_defines.h"
 
-#include "services/filemanager/bookmark/bookmark_defines.h"
+#include <dfm-framework/event/event.h>
 
-#include <dfm-framework/framework.h>
-
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
+using namespace dfmplugin_vault;
 
 void VaultEventCaller::sendItemActived(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }
 
 void VaultEventCaller::sendOpenWindow(const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
 }
 
 void VaultEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, windowId, url);
 }
 
 void VaultEventCaller::sendVaultProperty(const QUrl &url)
 {
-    dispatcher()->publish(Property::EventType::kEvokePropertyDialog, QList<QUrl>() << url);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", QList<QUrl>() << url);
 }
 
 void VaultEventCaller::sendBookMarkDisabled(const QString scheme)
 {
-    dispatcher()->publish(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled, scheme);
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_Scheme_Disable", scheme);
 }
 
 void VaultEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
 {
-    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, windowID, urls);
 }

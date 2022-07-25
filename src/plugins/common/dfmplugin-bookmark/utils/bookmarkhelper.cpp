@@ -20,9 +20,12 @@
  */
 #include "bookmarkhelper.h"
 
+#include <QUrl>
+#include <QIcon>
+
 #include <mutex>
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 
 BookMarkHelper *BookMarkHelper::instance()
 {
@@ -46,54 +49,6 @@ QUrl BookMarkHelper::rootUrl()
 QIcon BookMarkHelper::icon()
 {
     return QIcon::fromTheme("folder-bookmark-symbolic");
-}
-
-dfm_service_filemanager::WindowsService *BookMarkHelper::winServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WindowsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
-}
-
-dfm_service_filemanager::SideBarService *BookMarkHelper::sideBarServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
-}
-
-dfm_service_filemanager::WorkspaceService *BookMarkHelper::workspaceServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
-}
-
-dfm_service_common::MenuService *BookMarkHelper::menuServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::MenuService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::MenuService>(DSC_NAMESPACE::MenuService::name());
 }
 
 BookMarkHelper::BookMarkHelper(QObject *parent)

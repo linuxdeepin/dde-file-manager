@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class MyShareMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -44,6 +44,7 @@ public:
 class MyShareMenuScenePrivate;
 class MyShareMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit MyShareMenuScene(QObject *parent = nullptr);
     virtual ~MyShareMenuScene() override;
@@ -59,5 +60,5 @@ private:
     QScopedPointer<MyShareMenuScenePrivate> d;
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 #endif   // MYSHAREMENUSCENE_H

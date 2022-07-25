@@ -27,7 +27,7 @@
 #include <QSharedPointer>
 #include <QDBusVariant>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagDBusInterface;
 class TagDBusHelper : public QObject
@@ -60,6 +60,6 @@ private:
     QSharedPointer<TagDBusInterface> dbusInterface;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGDBUSHELPER_H

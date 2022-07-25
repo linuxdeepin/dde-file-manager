@@ -27,7 +27,7 @@
 #include <QDir>
 #include <QRegularExpression>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 QHash<QString, SchemeNode> UrlRoute::kSchemeInfos {};
 QMultiMap<int, QString> UrlRoute::kSchemeRealTree {};
@@ -105,9 +105,9 @@ QString UrlRoute::toString(const QUrl &url, QUrl::FormattingOptions options)
         return url.toString(options);
 
     QUrl tmpUrl { url };
-    tmpUrl.setScheme(Global::kFile);
+    tmpUrl.setScheme(Global::Scheme::kFile);
 
-    return tmpUrl.toString(options).replace(0, strlen(Global::kFile), url.scheme());
+    return tmpUrl.toString(options).replace(0, strlen(Global::Scheme::kFile), url.scheme());
 }
 
 /*!
@@ -360,7 +360,7 @@ QString UrlRoute::urlToLocalPath(const QUrl &url)
     if (!url.isValid())
         return {};
     QUrl localUrl { url };
-    localUrl.setScheme(Global::kFile);
+    localUrl.setScheme(Global::Scheme::kFile);
     return localUrl.toString().replace(0, 4, url.scheme());
 }
 
@@ -411,4 +411,4 @@ QString SchemeNode::displayName() const
     return name;
 }
 
-DFMBASE_END_NAMESPACE
+}

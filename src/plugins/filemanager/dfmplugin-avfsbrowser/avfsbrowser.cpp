@@ -28,10 +28,8 @@
 #include "menu/avfsmenuscene.h"
 #include "events/avfseventhandler.h"
 
-#include "services/common/menu/menuservice.h"
-#include "services/common/delegate/delegateservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -39,7 +37,11 @@
 
 #include <QDebug>
 
-DPAVFSBROWSER_USE_NAMESPACE
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
+using namespace dfmplugin_avfsbrowser;
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
+
 DFMBASE_USE_NAMESPACE
 
 void AvfsBrowser::initialize()
@@ -61,17 +63,17 @@ bool AvfsBrowser::start()
     connect(Application::instance(), &Application::previewCompressFileChanged,
             this, [](bool enable) { enable ? AvfsUtils::mountAvfs() : AvfsUtils::unmountAvfs(); }, Qt::DirectConnection);
 
-    DSC_USE_NAMESPACE
-    DelegateService::service()->registerUrlTransform(AvfsUtils::scheme(), &AvfsUtils::avfsUrlToLocal);
-    MenuService::service()->registerScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator());
 
-    DSB_FM_USE_NAMESPACE
-    WorkspaceService::service()->addScheme(AvfsUtils::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(AvfsUtils::scheme(), AvfsMenuSceneCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", AvfsUtils::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", AvfsUtils::scheme(), AvfsMenuSceneCreator::name());
+
+    // follow event
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", AvfsUtils::instance(), &AvfsUtils::urlsToLocal);
 
     regCrumb();
-    claimSubScene("SortAndDisplayMenu");   //  yours last second but it's mine now
-    claimSubScene("OpenWithMenu");   //  yours last second but it's mine now
+    beMySubScene("SortAndDisplayMenu");   //  yours last second but it's mine now
+    beMySubScene("OpenWithMenu");   //  yours last second but it's mine now
 
     return true;
 }
@@ -85,30 +87,31 @@ void AvfsBrowser::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_OpenLocalFiles", AvfsEventHandler::instance(), &AvfsEventHandler::hookOpenFiles);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_EnterPressed", AvfsEventHandler::instance(), &AvfsEventHandler::hookEnterPressed);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", AvfsEventHandler::instance(), &AvfsEventHandler::sepateTitlebarCrumb);
 }
 
 void AvfsBrowser::regCrumb()
 {
-    DSB_FM_USE_NAMESPACE
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = AvfsUtils::scheme();
-    info.supportedCb = [](const QUrl &url) { return url.scheme() == AvfsUtils::scheme(); };
-    info.seperateCb = &AvfsUtils::seperateUrl;
-    TitleBarService::service()->addCustomCrumbar(info);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", AvfsUtils::scheme(), QVariantMap {});
 }
 
-void AvfsBrowser::claimSubScene(const QString &subScene)
+void AvfsBrowser::beMySubScene(const QString &subScene)
 {
-    DSC_USE_NAMESPACE
-    if (MenuService::service()->contains(subScene)) {
-        MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
+    if (dfmplugin_menu_util::menuSceneContains(subScene)) {
+        dfmplugin_menu_util::menuSceneBind(subScene, AvfsMenuSceneCreator::name());
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
-            if (subScene == addedScene) {
-                MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
-                MenuService::service()->disconnect(this);
-            }
-        },
-                Qt::DirectConnection);
+        waitToBind << subScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &AvfsBrowser::beMySubOnAdded);
+    }
+}
+
+void AvfsBrowser::beMySubOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &AvfsBrowser::beMySubOnAdded);
+        beMySubScene(newScene);
     }
 }

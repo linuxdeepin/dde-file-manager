@@ -21,16 +21,15 @@
 #include "private/oemmenuscene_p.h"
 #include "oemmenu.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 
 #include <QMenu>
 #include <QDebug>
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 AbstractMenuScene *OemMenuCreator::create()
 {

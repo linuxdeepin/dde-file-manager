@@ -112,3 +112,67 @@ void ConfigPresenter::setClassification(Classifier cf)
     conf->sync();
 }
 
+QList<CollectionBaseDataPtr> ConfigPresenter::customProfile() const
+{
+    return conf->collectionBase(true);
+}
+
+void ConfigPresenter::saveCustomProfile(const QList<CollectionBaseDataPtr> &baseDatas)
+{
+    conf->writeCollectionBase(true, baseDatas);
+    conf->sync();
+}
+
+QList<CollectionBaseDataPtr> ConfigPresenter::normalProfile() const
+{
+    return conf->collectionBase(false);
+}
+
+void ConfigPresenter::saveNormalProfile(const QList<CollectionBaseDataPtr> &baseDatas)
+{
+    conf->writeCollectionBase(false, baseDatas);
+    conf->sync();
+}
+
+CollectionStyle ConfigPresenter::customStyle(const QString &key) const
+{
+    if (key.isEmpty())
+        return CollectionStyle();
+
+    return conf->collectionStyle(true, key);
+}
+
+void ConfigPresenter::updateCustomStyle(const CollectionStyle &style) const
+{
+    if (style.key.isEmpty())
+        return ;
+
+    conf->updateCollectionStyle(true, style);
+}
+
+void ConfigPresenter::writeCustomStyle(const QList<CollectionStyle> &styles) const
+{
+    conf->writeCollectionStyle(true, styles);
+}
+
+CollectionStyle ConfigPresenter::normalStyle(const QString &key) const
+{
+    if (key.isEmpty())
+        return CollectionStyle();
+
+    return conf->collectionStyle(false, key);
+}
+
+void ConfigPresenter::updateNormalStyle(const CollectionStyle &style) const
+{
+    if (style.key.isEmpty())
+        return;
+
+    conf->updateCollectionStyle(false, style);
+}
+
+void ConfigPresenter::writeNormalStyle(const QList<CollectionStyle> &styles) const
+{
+    conf->writeCollectionStyle(false, styles);
+}
+

@@ -23,18 +23,21 @@
 
 #include "dfmplugin_filepreview_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class FilePreview : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "filepreview.json")
+
+    DPF_EVENT_NAMESPACE(DPFILEPREVIEW_NAMESPACE)
+    DPF_EVENT_REG_SLOT(slot_PreviewDialog_Show)
 
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
 };
-DPFILEPREVIEW_END_NAMESPACE
+}   // namespace dfmplugin_filepreview
 #endif   // FILEPREVIEW_H

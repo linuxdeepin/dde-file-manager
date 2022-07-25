@@ -34,7 +34,7 @@
 #include <QSvgWidget>
 #include <DPushButton>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalMediaWidget : public QWidget
 {
@@ -79,6 +79,6 @@ private:
     DFMBASE_NAMESPACE::FileStatisticsJob *statisticWorker { nullptr };
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALMEDIAWIDGET_H

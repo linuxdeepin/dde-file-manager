@@ -33,6 +33,7 @@ public:
     explicit NormalizedModePrivate(NormalizedMode *qq);
     ~NormalizedModePrivate();
 public:
+    void restore(const QList<CollectionBaseDataPtr> &cfgs);
     FileClassifier *classifier = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
 private:

@@ -23,7 +23,7 @@
 
 #include "view/viewhookinterface.h"
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasViewHook : public QObject, public ViewHookInterface
 {
@@ -31,7 +31,7 @@ class CanvasViewHook : public QObject, public ViewHookInterface
 public:
     explicit CanvasViewHook(QObject *parent = nullptr);
     bool contextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData = nullptr) const override;
-    bool dropData(int viewIndex, const QMimeData *, const QPoint &viewPos, void *extData = nullptr) const override;
+    bool dropData(int viewIndex, const QMimeData *, const QPoint &viewPoint, void *extData = nullptr) const override;
     bool keyPress(int viewIndex, int key, int modifiers, void *extData = nullptr) const override;
     bool mousePress(int viewIndex, int button, const QPoint &viewPos, void *extData = nullptr) const override;
     bool mouseRelease(int viewIndex, int button, const QPoint &viewPos, void *extData = nullptr) const override;
@@ -45,6 +45,6 @@ public:
     bool drawFile(int viewIndex, const QUrl &file, QPainter *painter, const QStyleOptionViewItem *option, void *extData = nullptr) const override;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASVIEWHOOK_H

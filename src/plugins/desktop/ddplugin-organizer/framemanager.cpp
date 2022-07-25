@@ -25,7 +25,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menus/extendcanvasscene.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include "dfm-base/dfm_desktop_defines.h"
 
 #include <QAbstractItemView>
@@ -128,7 +128,6 @@ void FrameManagerPrivate::layoutSurface(QWidget *root, SurfacePointer surface, b
 void FrameManagerPrivate::buildOrganizer()
 {
     q->switchMode(CfgPresenter->mode());
-    refeshCanvas();
 }
 
 void FrameManagerPrivate::refeshCanvas()
@@ -170,7 +169,6 @@ void FrameManagerPrivate::switchToNormalized(int cf)
     if (organizer->mode() == OrganizerMode::kNormalized) {
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
         organizer->reset();
-        refeshCanvas();
     } else {
         CfgPresenter->setMode(kNormalized);
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
@@ -206,9 +204,8 @@ FrameManager::~FrameManager()
     turnOff();
 
     // unregister menu
-    auto menuService = DSC_NAMESPACE::MenuService::service();
-    menuService->unBind(ExtendCanvasCreator::name());
-    auto creator = menuService->unregisterScene(ExtendCanvasCreator::name());
+    dfmplugin_menu_util::menuSceneUnbind(ExtendCanvasCreator::name());
+    auto creator = dfmplugin_menu_util::menuSceneUnregisterScene(ExtendCanvasCreator::name());
     if (creator)
         delete creator;
 }
@@ -219,9 +216,8 @@ bool FrameManager::initialize()
     CfgPresenter->initialize();
 
     // register menu for canvas
-    auto menuService = DSC_NAMESPACE::MenuService::service();
-    menuService->registerScene(ExtendCanvasCreator::name(), new ExtendCanvasCreator());
-    menuService->bind(ExtendCanvasCreator::name(), "CanvasMenu");
+    dfmplugin_menu_util::menuSceneRegisterScene(ExtendCanvasCreator::name(), new ExtendCanvasCreator());
+    dfmplugin_menu_util::menuSceneBind(ExtendCanvasCreator::name(), "CanvasMenu");
 
     bool enable = CfgPresenter->isEnable();
     qInfo() << "Organizer enable:" << enable;
@@ -236,7 +232,8 @@ bool FrameManager::initialize()
 
 void FrameManager::layout()
 {
-
+    if (d->organizer)
+        d->organizer->layout();
 }
 
 void FrameManager::switchMode(OrganizerMode mode)
@@ -249,14 +246,16 @@ void FrameManager::switchMode(OrganizerMode mode)
     d->organizer = OrganizerCreator::createOrganizer(mode);
     Q_ASSERT(d->organizer);
 
-    // 初始化创建集合窗口
+    connect(d->organizer, &CanvasOrganizer::collectionChanged, d, &FrameManagerPrivate::refeshCanvas);
+
+    // initialize to create collection widgets
     if (!d->surfaceWidgets.isEmpty())
-        d->organizer->setSurface(d->surfaceWidgets.first().data());
+        d->organizer->setSurfaces(d->surfaceWidgets.values());
 
-    d->organizer->setCanvasShell(d->canvas->canvasModel());
+    d->organizer->setCanvasModelShell(d->canvas->canvasModel());
+    d->organizer->setCanvasViewShell(d->canvas->canvasView());
+    d->organizer->setCanvasGridShell(d->canvas->canvasGrid());
     d->organizer->initialize(d->model);
-
-    // 布局
 }
 
 void FrameManager::turnOn(bool build)
@@ -314,7 +313,7 @@ void FrameManager::onBuild()
     d->buildSurface();
 
     if (d->organizer) {
-        // 仅重新布局
+        d->organizer->layout();
     } else {
         d->buildOrganizer();
     }
@@ -343,6 +342,8 @@ void FrameManager::onGeometryChanged()
             d->layoutSurface(win, surface);
     }
 
-    // 布局集合窗口
+    // layout collection widgets
+    if (d->organizer)
+        d->organizer->layout();
 }
 

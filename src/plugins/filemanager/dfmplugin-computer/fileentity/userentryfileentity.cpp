@@ -28,9 +28,8 @@
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QDebug>
-#include <QMenu>
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 
 /*!
  * \class UserEntryFileEntity
@@ -77,10 +76,6 @@ bool UserEntryFileEntity::showUsageSize() const
     return false;
 }
 
-void UserEntryFileEntity::onOpen()
-{
-}
-
 DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder UserEntryFileEntity::order() const
 {
     return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderUserDir;
@@ -92,19 +87,7 @@ QUrl UserEntryFileEntity::targetUrl() const
     if (path.isEmpty())
         return QUrl();
     QUrl targetUrl;
-    targetUrl.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+    targetUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     targetUrl.setPath(path);
     return targetUrl;
-}
-
-QMenu *UserEntryFileEntity::createMenu()
-{
-    QMenu *menu = new QMenu();
-
-    menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
-    menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
-    menu->addSeparator();
-
-    menu->addAction(ContextMenuActionTrs::trProperties());
-    return menu;
 }

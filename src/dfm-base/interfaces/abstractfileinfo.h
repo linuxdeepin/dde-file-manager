@@ -41,13 +41,13 @@
 class QDir;
 class QDateTime;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractFileInfo;
-DFMBASE_END_NAMESPACE
+}
 
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPointer;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractFileInfoPrivate;
 class AbstractFileInfo : public QSharedData
 {
@@ -213,7 +213,7 @@ protected:
     void setProxy(const AbstractFileInfoPointer &proxy);
     QScopedPointer<AbstractFileInfoPrivate> dptr;
 };
-DFMBASE_END_NAMESPACE
+}
 
 typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
 Q_DECLARE_METATYPE(AbstractFileInfoPointer)

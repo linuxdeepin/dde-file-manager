@@ -27,7 +27,7 @@
 
 extern uint qHash(const QPoint &key, uint seed);
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class GridCore;
 class CanvasGridPrivate;
@@ -77,6 +77,6 @@ private:
 };
 
 #define GridIns DDP_CANVAS_NAMESPACE::CanvasGrid::instance()
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASGRID_H

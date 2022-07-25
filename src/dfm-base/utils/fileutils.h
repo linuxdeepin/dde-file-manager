@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/desktopfile.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class FileUtils
 {
@@ -47,6 +47,7 @@ public:
     static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
     static int supportedMaxLength(const QString &fileSystem);
     static bool isGvfsFile(const QUrl &url);
+    static bool isMtpFile(const QUrl &url);
     static QString preprocessingFileName(QString name);
 
     //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
@@ -110,7 +111,7 @@ private:
     QList<QPair<QString, QString>> patternList;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 typedef QSharedPointer<DFMBASE_NAMESPACE::FileUtils::FilesSizeInfo> SizeInfoPointer;
 

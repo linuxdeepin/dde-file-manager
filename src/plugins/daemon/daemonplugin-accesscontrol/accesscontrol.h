@@ -27,7 +27,7 @@
 
 #include "accesscontroldbus.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <dfm-io/local/dlocalwatcher.h>
 

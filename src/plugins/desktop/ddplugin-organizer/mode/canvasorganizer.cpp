@@ -22,6 +22,10 @@
 #include "normalizedmode.h"
 #include "custommode.h"
 #include "interface/canvasmodelshell.h"
+#include "interface/canvasviewshell.h"
+#include "interface/canvasgridshell.h"
+
+#include <QMimeData>
 
 DDP_ORGANIZER_USE_NAMESPACE
 
@@ -51,27 +55,64 @@ CanvasOrganizer::~CanvasOrganizer()
 
 }
 
-void CanvasOrganizer::setCanvasShell(CanvasModelShell *sh)
+void CanvasOrganizer::layout()
 {
-    if (sh == shell)
-        return;
-
-    if (shell)
-        disconnect(shell, nullptr, this, nullptr);
-
-    shell = sh;
-    if (!shell)
-        return;
-
-    connect(shell, &CanvasModelShell::filterDataRested, this, &CanvasOrganizer::filterDataRested, Qt::DirectConnection);
-    connect(shell, &CanvasModelShell::filterDataInserted, this, &CanvasOrganizer::filterDataInserted, Qt::DirectConnection);
-    connect(shell, &CanvasModelShell::filterDataRenamed, this, &CanvasOrganizer::filterDataRenamed, Qt::DirectConnection);
 
 }
 
-void CanvasOrganizer::setSurface(QWidget *w)
+void CanvasOrganizer::setCanvasModelShell(CanvasModelShell *sh)
 {
-    surface = w;
+    if (sh == canvasModelShell)
+        return;
+
+    if (canvasModelShell)
+        disconnect(canvasModelShell, nullptr, this, nullptr);
+
+    canvasModelShell = sh;
+    if (!canvasModelShell)
+        return;
+
+    // hook canvas model, must be DirectConnection
+    connect(canvasModelShell, &CanvasModelShell::filterDataRested, this, &CanvasOrganizer::filterDataRested, Qt::DirectConnection);
+    connect(canvasModelShell, &CanvasModelShell::filterDataInserted, this, &CanvasOrganizer::filterDataInserted, Qt::DirectConnection);
+    connect(canvasModelShell, &CanvasModelShell::filterDataRenamed, this, &CanvasOrganizer::filterDataRenamed, Qt::DirectConnection);
+
+}
+
+void CanvasOrganizer::setCanvasViewShell(CanvasViewShell *sh)
+{
+    if (sh == canvasViewShell)
+        return;
+
+    if (canvasViewShell)
+        disconnect(canvasViewShell, nullptr, this, nullptr);
+
+    canvasViewShell = sh;
+    if (!canvasViewShell)
+        return;
+
+    // hook canvas view, must be DirectConnection
+    connect(canvasViewShell, &CanvasViewShell::filterDropData, this, &CanvasOrganizer::filterDropData, Qt::DirectConnection);
+}
+
+void CanvasOrganizer::setCanvasGridShell(CanvasGridShell *sh)
+{
+    if (sh == canvasGridShell)
+        return;
+
+    if (canvasGridShell)
+        disconnect(canvasGridShell, nullptr, this, nullptr);
+
+    canvasGridShell = sh;
+    if (!canvasGridShell)
+        return;
+
+    // hook canvas grid, must be DirectConnection
+}
+
+void CanvasOrganizer::setSurfaces(QList<SurfacePointer> surfaces)
+{
+    this->surfaces = surfaces;
 }
 
 void CanvasOrganizer::reset()
@@ -90,6 +131,11 @@ bool CanvasOrganizer::filterDataInserted(const QUrl &url)
 }
 
 bool CanvasOrganizer::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    return false;
+}
+
+bool CanvasOrganizer::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
 {
     return false;
 }

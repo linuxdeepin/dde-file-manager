@@ -28,7 +28,7 @@
 #include "base/application/application.h"
 #include "interfaces/abstractdesktopframe.h"
 
-#include "dfm-framework/dpf.h"
+#include <dfm-framework/dpf.h>
 
 DDPCORE_BEGIN_NAMESPACE
 class WindowFrame;

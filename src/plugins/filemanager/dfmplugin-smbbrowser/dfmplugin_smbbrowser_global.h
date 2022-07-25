@@ -41,8 +41,8 @@ struct SmbShareNode
 };
 
 namespace SmbBrowserActionId {
-static constexpr char kOpenSmb[] { "open-smb" };
-static constexpr char kOpenSmbInNewWin[] { "open-smb-in-new-win" };
+inline constexpr char kOpenSmb[] { "open-smb" };
+inline constexpr char kOpenSmbInNewWin[] { "open-smb-in-new-win" };
 }
 
 DPSMBBROWSER_END_NAMESPACE

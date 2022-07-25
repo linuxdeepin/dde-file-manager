@@ -19,19 +19,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filebaseinfoview.h"
-#include "services/filemanager/detailspace/detailspaceservice.h"
-#include "services/common/delegate/delegateservice.h"
+#include "utils/detailmanager.h"
 
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 USING_IO_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPDETAILSPACE_USE_NAMESPACE
+
+using namespace dfmplugin_detailspace;
 
 const int kImageExten = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kVideoExten = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
@@ -43,9 +44,9 @@ FileBaseInfoView::FileBaseInfoView(QWidget *parent)
 
 FileBaseInfoView::~FileBaseInfoView()
 {
-    dpfInstance.eventDispatcher().unsubscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
-    dpfInstance.eventDispatcher().unsubscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
-    dpfInstance.eventDispatcher().unsubscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
+    dpfSignalDispatcher->unsubscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
+    dpfSignalDispatcher->unsubscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
+    dpfSignalDispatcher->unsubscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
 }
 
 void FileBaseInfoView::initUI()
@@ -93,7 +94,7 @@ void FileBaseInfoView::initFileMap()
 
 void FileBaseInfoView::basicExpand(const QUrl &url)
 {
-    QMap<BasicExpandType, BasicExpandMap> fieldCondition = detailServIns->createBasicExpandField(url);
+    QMap<BasicExpandType, BasicExpandMap> fieldCondition = DetailManager::instance().createBasicViewExtensionField(url);
 
     QList<BasicExpandType> keys = fieldCondition.keys();
     for (BasicExpandType key : keys) {
@@ -145,47 +146,50 @@ void FileBaseInfoView::basicExpand(const QUrl &url)
 void FileBaseInfoView::basicFieldFilter(const QUrl &url)
 {
     QUrl filterUrl = url;
-    if (delegateServIns->isRegisterUrlTransform(filterUrl.scheme()))
-        filterUrl = delegateServIns->urlTransform(filterUrl);
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << filterUrl, &urls);
 
-    DetailFilterTypes fieldFilter = detailServIns->contorlFieldFilter(filterUrl);
-    if (fieldFilter & DetailFilterType::kFileNameField) {
+    if (ok && !urls.isEmpty())
+        filterUrl = urls.first();
+
+    auto fieldFilters { DetailManager::instance().basicFiledFiltes(filterUrl) };
+    if (fieldFilters & DetailFilterType::kFileNameField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileName);
         fileName->deleteLater();
         fileName = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileSizeField) {
+    if (fieldFilters & DetailFilterType::kFileSizeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileSize);
         fileSize->deleteLater();
         fileSize = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileTypeField) {
+    if (fieldFilters & DetailFilterType::kFileTypeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileType);
         fileType->deleteLater();
         fileType = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileDurationField) {
+    if (fieldFilters & DetailFilterType::kFileDurationField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileDuration);
         fileDuration->deleteLater();
         fileDuration = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileViewSizeField) {
+    if (fieldFilters & DetailFilterType::kFileViewSizeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileViewSize);
         fileViewSize->deleteLater();
         fileViewSize = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileChangeTImeField) {
+    if (fieldFilters & DetailFilterType::kFileChangeTimeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileChangeTIme);
         fileChangeTime->deleteLater();
         fileChangeTime = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileInterviewTimeField) {
+    if (fieldFilters & DetailFilterType::kFileInterviewTimeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileInterviewTime);
         fileInterviewTime->deleteLater();
         fileInterviewTime = nullptr;
@@ -218,11 +222,15 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     if (fileDuration && fileDuration->RightValue().isEmpty())
         fileDuration->setVisible(false);
 
-    QUrl localUrl = delegateServIns->urlTransform(url);
+    QUrl localUrl = url;
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+    if (ok && !urls.isEmpty())
+        localUrl = urls.first();
 
     AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
 
-    if (fileType && fileType->RightValue().isEmpty()) {
+    if (fileType && fileType->RightValue().isEmpty() && localinfo) {
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(localinfo->mimeTypeName());
         switch (type) {
         case MimeDatabase::FileType::kDirectory:
@@ -275,9 +283,9 @@ void FileBaseInfoView::clearField()
 
 void FileBaseInfoView::connectEvent()
 {
-    dpfInstance.eventDispatcher().subscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
-    dpfInstance.eventDispatcher().subscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
-    dpfInstance.eventDispatcher().subscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
+    dpfSignalDispatcher->subscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
+    dpfSignalDispatcher->subscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
+    dpfSignalDispatcher->subscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
 }
 
 void FileBaseInfoView::connectInit()
@@ -343,7 +351,7 @@ void FileBaseInfoView::imageExtenInfo(bool flg, QMap<DFileInfo::AttributeExtendI
             int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
             QString viewSize = QString::number(width) + "x" + QString::number(height);
             property << viewSize;
-            dpfInstance.eventDispatcher().publish(kImageExten, property);
+            dpfSignalDispatcher->publish(kImageExten, property);
         }
     }
 }
@@ -369,7 +377,7 @@ void FileBaseInfoView::videoExtenInfo(bool flg, QMap<dfmio::DFileInfo::Attribute
 
             property << durationStr;
 
-            dpfInstance.eventDispatcher().publish(kVideoExten, property);
+            dpfSignalDispatcher->publish(kVideoExten, property);
         }
     }
 }
@@ -390,7 +398,7 @@ void FileBaseInfoView::audioExtenInfo(bool flg, QMap<dfmio::DFileInfo::Attribute
 
             property << durationStr;
 
-            dpfInstance.eventDispatcher().publish(kAudioExten, property);
+            dpfSignalDispatcher->publish(kAudioExten, property);
         }
     }
 }

@@ -66,7 +66,7 @@ inline QByteArray dataToMd5Hex(const QByteArray &data)
     return QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
 }
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DThumbnailProviderPrivate
 {
@@ -107,9 +107,9 @@ class DFileThumbnailProviderPrivate : public DThumbnailProvider
 {
 };
 
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 QSet<QString> DThumbnailProviderPrivate::hasThumbnailMimeHash;
 Q_GLOBAL_STATIC(DFileThumbnailProviderPrivate, ftpGlobal)
@@ -122,21 +122,21 @@ DThumbnailProviderPrivate::DThumbnailProviderPrivate(DThumbnailProvider *qq)
 void DThumbnailProviderPrivate::init()
 {
     sizeLimitHash.reserve(28);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeTextPlain), 1024 * 1024);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeAppPdf), INT64_MAX);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeAppVRRMedia), INT64_MAX);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeAppVMAsf), INT64_MAX);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeAppMxf), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain), 1024 * 1024);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPdf), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppVRRMedia), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppVMAsf), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf), INT64_MAX);
 
     //images
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeImageIef), 1024 * 1024 * 80);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeImageTiff), 1024 * 1024 * 80);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeImageXTMultipage), 1024 * 1024 * 80);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeImageVDMultipage), 1024 * 1024 * 80);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeImageXADng), 1024 * 1024 * 80);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeImageJpeg), 1024 * 1024 * 30);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeImagePng), 1024 * 1024 * 30);
-    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::kMimeTypeImagePipeg), 1024 * 1024 * 30);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageIef), 1024 * 1024 * 80);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageTiff), 1024 * 1024 * 80);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageXTMultipage), 1024 * 1024 * 80);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageVDMultipage), 1024 * 1024 * 80);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageXADng), 1024 * 1024 * 80);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageJpeg), 1024 * 1024 * 30);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImagePng), 1024 * 1024 * 30);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImagePipeg), 1024 * 1024 * 30);
 }
 
 QString DThumbnailProviderPrivate::sizeToFilePath(DThumbnailProvider::Size size) const
@@ -197,12 +197,12 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
         && !Application::instance()->genericAttribute(Application::kPreviewVideo).toBool())
         return false;
 
-    if (mime == DFMGLOBAL_NAMESPACE::kMimeTypeTextPlain && !Application::instance()->genericAttribute(Application::kPreviewTextFile).toBool())
+    if (mime == DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain && !Application::instance()->genericAttribute(Application::kPreviewTextFile).toBool())
         return false;
 
-    if (Q_LIKELY(mimeTypeList.contains(DFMGLOBAL_NAMESPACE::kMimeTypeAppPdf)
-                 || mime == DFMGLOBAL_NAMESPACE::kMimeTypeAppCRRMedia
-                 || mime == DFMGLOBAL_NAMESPACE::kMimeTypeAppMxf)
+    if (Q_LIKELY(mimeTypeList.contains(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPdf)
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppCRRMedia
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf)
         && !Application::instance()->genericAttribute(Application::kPreviewDocumentFile).toBool()) {
         return false;
     }
@@ -216,11 +216,11 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
         return true;
     }
 
-    if (Q_LIKELY(mime == DFMGLOBAL_NAMESPACE::kMimeTypeTextPlain
-                 || mimeTypeList.contains(DFMGLOBAL_NAMESPACE::kMimeTypeAppPdf)
-                 || mime == DFMGLOBAL_NAMESPACE::kMimeTypeAppVRRMedia
-                 || mime == DFMGLOBAL_NAMESPACE::kMimeTypeAppVMAsf
-                 || mime == DFMGLOBAL_NAMESPACE::kMimeTypeAppMxf)) {
+    if (Q_LIKELY(mime == DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain
+                 || mimeTypeList.contains(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPdf)
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppVRRMedia
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppVMAsf
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf)) {
         DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return true;
@@ -325,7 +325,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     mimeTypeList.append(mime.parentMimeTypes());
 
     //! 新增djvu格式文件缩略图预览
-    if (mime.name().contains(DFMGLOBAL_NAMESPACE::kMimeTypeImageVDjvu)) {
+    if (mime.name().contains(DFMGLOBAL_NAMESPACE::Mime::kTypeImageVDjvu)) {
         thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
         d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
@@ -398,7 +398,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             goto _return;
         }
 
-        if (imageSize.width() > size || imageSize.height() > size || mime.name() == DFMGLOBAL_NAMESPACE::kMimeTypeImageSvgXml) {
+        if (imageSize.width() > size || imageSize.height() > size || mime.name() == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
             reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
         }
 
@@ -412,7 +412,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         if (image->width() > size || image->height() > size) {
             image->operator=(image->scaled(size, size, Qt::KeepAspectRatio));
         }
-    } else if (mime.name() == DFMGLOBAL_NAMESPACE::kMimeTypeTextPlain) {
+    } else if (mime.name() == DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain) {
         //FIXME(zccrs): This should be done using the image plugin?
         auto dfile = DFMBASE_NAMESPACE::DecoratorFile(filePath).filePtr();
         if (!dfile || !dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
@@ -442,7 +442,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
         option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
         painter.drawText(image->rect(), text, option);
-    } else if (mimeTypeList.contains(DFMGLOBAL_NAMESPACE::kMimeTypeAppPdf)) {
+    } else if (mimeTypeList.contains(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPdf)) {
         //FIXME(zccrs): This should be done using the image plugin?
         QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));
 

@@ -37,7 +37,7 @@
 class QUrl;
 class QString;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DesktopFile;
 
@@ -102,6 +102,6 @@ private:
     DFMBASE_NAMESPACE::GlobalEventType lastEvent = DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // LOCALFILEHANDLER_H

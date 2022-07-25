@@ -28,12 +28,17 @@
 #include "models/filesortfilterproxymodel.h"
 #include "utils/fileoperatorhelper.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-DPWORKSPACE_USE_NAMESPACE
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/utils/fileutils.h"
+
+#include <QMenu>
+
+using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
@@ -54,7 +59,6 @@ WorkspaceMenuScenePrivate::WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq)
     : AbstractMenuScenePrivate(qq),
       q(qq)
 {
-    menuServer = MenuService::service();
 }
 
 void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &sortRule)
@@ -133,7 +137,7 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     if (d->currentDir.isEmpty())
@@ -142,38 +146,40 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     QList<AbstractMenuScene *> currentScene;
 
     // file operation
-    if (auto operationScene = d->menuServer->createScene(kClipBoardMenuSceneName))
+    if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName))
         currentScene.append(operationScene);
 
     // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
-    if (auto dirScene = d->menuServer->createScene(kOpenDirMenuSceneName))
+    if (auto dirScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName))
         currentScene.append(dirScene);
 
     if (d->isEmptyArea) {
         // new (new doc, new dir)
-        if (auto newCreateScene = d->menuServer->createScene(kNewCreateMenuSceneName))
+        if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene(kNewCreateMenuSceneName))
             currentScene.append(newCreateScene);
     } else {
         // open with
-        if (auto openWithScene = d->menuServer->createScene(kOpenWithMenuSceneName))
+        if (auto openWithScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenWithMenuSceneName))
             currentScene.append(openWithScene);
 
         // file (open, rename, delete)
-        if (auto fileScene = d->menuServer->createScene(kFileOperatorMenuSceneName))
+        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
             currentScene.append(fileScene);
 
-        if (auto sendToScene = d->menuServer->createScene(kSendToMenuSceneName))
+        if (auto sendToScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName))
             currentScene.append(sendToScene);
     }
 
     if (!d->isDDEDesktopFileIncluded) {
         // oem menu
-        if (auto oemScene = d->menuServer->createScene(kOemMenuSceneName))
+        if (auto oemScene = dfmplugin_menu_util::menuSceneCreateScene(kOemMenuSceneName))
             currentScene.append(oemScene);
 
         // extend menu.must last
-        if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
-            currentScene.append(extendScene);
+        if (!DeviceUtils::isFtp(d->currentDir) && !DeviceUtils::isSamba(d->currentDir) && !FileUtils::isGvfsFile(d->currentDir)) {
+            if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName))
+                currentScene.append(extendScene);
+        }
     }
 
     // the scene added by binding must be initializeed after 'defalut scene'.
@@ -317,7 +323,7 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
                     return false;
                 d->view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
             } else {
-                WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::kFile, true);
+                WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::Scheme::kFile, true);
             }
             return true;
         }

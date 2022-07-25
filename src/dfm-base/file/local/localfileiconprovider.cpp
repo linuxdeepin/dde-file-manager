@@ -25,7 +25,7 @@
 
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileIconProviderPrivate
 {
 public:
@@ -34,9 +34,9 @@ public:
     QIcon fileSystemIcon(const QString &path) const;
     QIcon fromTheme(QString iconName) const;
 };
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 LocalFileIconProviderPrivate::LocalFileIconProviderPrivate()
 {
 }

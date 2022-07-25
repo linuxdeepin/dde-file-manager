@@ -21,6 +21,7 @@
 #include "normalized/normalizedmode_p.h"
 #include "models/fileproxymodel.h"
 #include "config/configpresenter.h"
+#include "interface/canvasviewshell.h"
 
 #include <QDebug>
 #include <QTime>
@@ -40,6 +41,26 @@ NormalizedModePrivate::~NormalizedModePrivate()
     holders.clear();
 }
 
+void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
+{
+    // order by config
+    for (const CollectionBaseDataPtr &cfg : cfgs) {
+        if (auto base = classifier->baseData(cfg->key)) {
+            QList<QUrl> org = base->items;
+            QList<QUrl> ordered;
+            for (const QUrl &old : cfg->items) {
+                if (org.contains(old)) {
+                    ordered << old;
+                    org.removeOne(old);
+                }
+            }
+
+            ordered.append(org);
+            base->items = ordered;
+        }
+    }
+}
+
 NormalizedMode::NormalizedMode(QObject *parent)
     : CanvasOrganizer(parent)
     , d(new NormalizedModePrivate(this))
@@ -49,10 +70,13 @@ NormalizedMode::NormalizedMode(QObject *parent)
 
 NormalizedMode::~NormalizedMode()
 {
+    if (model && (model->handler() == d->classifier->dataHandler()))
+        model->setHandler(nullptr);
 
+    delete d;
 }
 
-int NormalizedMode::mode() const
+OrganizerMode NormalizedMode::mode() const
 {
     return OrganizerMode::kNormalized;
 }
@@ -69,12 +93,13 @@ bool NormalizedMode::initialize(FileProxyModel *m)
     setClassifier(type);
     Q_ASSERT(d->classifier);
 
+    // must be DirectConnection to keep sequential
     connect(model, &FileProxyModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);
     connect(model, &FileProxyModel::rowsAboutToBeRemoved, this, &NormalizedMode::onFileAboutToBeRemoved, Qt::DirectConnection);
     connect(model, &FileProxyModel::dataReplaced, this, &NormalizedMode::onFileRenamed, Qt::DirectConnection);
+
     connect(model, &FileProxyModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
     connect(model, &FileProxyModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
-
 
     // creating if there already are files.
     if (!model->files().isEmpty())
@@ -91,6 +116,53 @@ void NormalizedMode::reset()
     Q_ASSERT(d->classifier);
 }
 
+void NormalizedMode::layout()
+{
+    // todo screen index
+    const int screenIdx = 1; // todo
+    const QSize gridSize = canvasViewShell->gridSize(screenIdx);
+    const int widthTime = 4; // todo time is follow icon level;
+    const int heightTime = 2;
+    auto holders = d->holders.values();
+    {
+        const QStringList &ordered =  d->classifier->classes();
+        const int max = ordered.size();
+        std::sort(holders.begin(), holders.end(), [&ordered, max](const CollectionHolderPointer &t1,
+                  const CollectionHolderPointer &t2) {
+            int i1 = ordered.indexOf(t1->id());
+            if (i1 < 0)
+                i1 = max;
+            int i2 = ordered.indexOf(t2->id());
+            if (i2 < 0)
+                i2 = max;
+            return i1 < i2;
+        });
+    }
+
+    QList<CollectionStyle> toSave;
+    QPoint nextPos(0, 0);
+    for (const CollectionHolderPointer &holder : holders) {
+        auto style = holder->style();
+        // todo 网格超出的处理
+
+        auto rect = canvasViewShell->gridVisualRect(screenIdx, nextPos);
+        style.rect = QRect(rect.topLeft(), QSize(rect.width() * widthTime, rect.height() * heightTime))
+                .marginsRemoved(QMargins(4, 4, 4, 4));
+        holder->setStyle(style);
+
+        toSave << style;
+
+        // next
+        nextPos.setY(nextPos.y() + heightTime);
+        if (nextPos.y() + heightTime  > gridSize.height()) {
+            nextPos.setY(0);
+            nextPos.setX(nextPos.x() + widthTime);
+        }
+    }
+
+    CfgPresenter->writeNormalStyle(toSave);
+}
+
 void NormalizedMode::rebuild()
 {
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
@@ -99,11 +171,17 @@ void NormalizedMode::rebuild()
         time.start();
         auto files = model->files();
         d->classifier->reset(files);
+
+        // order item as config
+        d->restore(CfgPresenter->normalProfile());
+
         qInfo() << QString("Classifying %0 files takes %1ms").arg(files.size()).arg(time.elapsed());
+        if (!files.isEmpty())
+            CfgPresenter->saveNormalProfile(d->classifier->baseData());
     }
 
     // 从分类器中获取组,根据组创建分区
-    for (const QString &key : d->classifier->regionKeys()) {
+    for (const QString &key : d->classifier->keys()) {
         const QString &name = d->classifier->name(key);
         auto files = d->classifier->items(key);
         qDebug() << "type" << name << "files" << files.size();
@@ -113,26 +191,35 @@ void NormalizedMode::rebuild()
         // 创建没有的组
 
         if (collectionHolder.isNull()) {
-            collectionHolder.reset(new CollectionHolder(name));
-            collectionHolder->createFrame(surface, model);
+            collectionHolder.reset(new CollectionHolder(key, d->classifier));
+            collectionHolder->createFrame(surfaces.first().data(), model);
             collectionHolder->setName(name);
             d->holders.insert(name, collectionHolder);
-        }
-        collectionHolder->setUrls(files);
 
-        // disable rename,move and adjust
-        collectionHolder->setRenamable(false);
-        collectionHolder->setMovable(false);
-        collectionHolder->setAdjustable(false);
+            // disable rename,move,drag,close,stretch
+            collectionHolder->setRenamable(false);
+            collectionHolder->setMovable(false);
+            collectionHolder->setDragEnabled(false);
+            collectionHolder->setClosable(false);
+            collectionHolder->setStretchable(false);
+
+            // enable adjust
+            collectionHolder->setAdjustable(true);
+        }
 
         collectionHolder->show();
     }
     // 删除无需的组
+
+
+    layout();
+
+    emit collectionChanged();
 }
 
 void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    d->classifier->repalce(oldUrl, newUrl);
+    d->classifier->replace(oldUrl, newUrl);
 }
 
 void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int last)
@@ -153,7 +240,7 @@ void NormalizedMode::onFileAboutToBeRemoved(const QModelIndex &parent, int first
         if (Q_UNLIKELY(!index.isValid()))
             continue;
         QUrl url = model->fileUrl(index);
-        d->classifier->take(url);
+        d->classifier->remove(url);
     }
 }
 

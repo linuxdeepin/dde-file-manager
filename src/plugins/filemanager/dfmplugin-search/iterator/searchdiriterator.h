@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
 DFMBASE_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchDirIteratorPrivate;
 class SearchDirIterator : public AbstractDirIterator
@@ -56,6 +56,6 @@ private:
     SearchDirIteratorPrivate *const d { nullptr };
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHDIRITERATOR_H

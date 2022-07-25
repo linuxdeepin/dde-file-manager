@@ -27,7 +27,7 @@
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
 {
@@ -37,6 +37,6 @@ public:
     virtual ~TagFileInfoPrivate();
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGFILEINFO_P_H

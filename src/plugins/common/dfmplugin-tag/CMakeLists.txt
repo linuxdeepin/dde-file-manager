@@ -45,8 +45,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    DFMSERVICE::common
-    DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
 )
 
@@ -55,5 +53,5 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_DIR}
+    ${DFM_PLUGIN_COMMON_EDGE_DIR}
 )

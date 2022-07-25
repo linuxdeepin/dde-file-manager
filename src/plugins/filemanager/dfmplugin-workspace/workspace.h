@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class Workspace : public dpf::Plugin
 {
@@ -36,32 +36,76 @@ class Workspace : public dpf::Plugin
 
     DPF_EVENT_NAMESPACE(DPWORKSPACE_NAMESPACE)
 
-    DPF_EVENT_REG_SIGNAL(signal_RenameStartEdit)
-    DPF_EVENT_REG_SIGNAL(signal_RenameEndEdit)
-    DPF_EVENT_REG_SIGNAL(signal_EnterFileView)
+    // signal events
+    DPF_EVENT_REG_SIGNAL(signal_Tab_Added)
+    DPF_EVENT_REG_SIGNAL(signal_Tab_Changed)
+    DPF_EVENT_REG_SIGNAL(signal_Tab_Moved)
+    DPF_EVENT_REG_SIGNAL(signal_Tab_Removed)
+
+    DPF_EVENT_REG_SIGNAL(signal_View_SelectionChanged)
+    DPF_EVENT_REG_SIGNAL(signal_View_RenameStartEdit)
+    DPF_EVENT_REG_SIGNAL(signal_View_RenameEndEdit)
 
     // slot events
-    DPF_EVENT_REG_SLOT(slot_CloseTab)
-    DPF_EVENT_REG_SLOT(slot_FileUpdate)
-    DPF_EVENT_REG_SLOT(slot_SetViewFilter)
-    DPF_EVENT_REG_SLOT(slot_SetNameFilter)
-    DPF_EVENT_REG_SLOT(slot_CurrentSortRole)
-    DPF_EVENT_REG_SLOT(slot_SetSort)
-    DPF_EVENT_REG_SLOT(slot_SelectAll)
+    DPF_EVENT_REG_SLOT(slot_RegisterFileView)
+    DPF_EVENT_REG_SLOT(slot_RegisterMenuScene)
+    DPF_EVENT_REG_SLOT(slot_FindMenuScene)
+    DPF_EVENT_REG_SLOT(slot_RegisterCustomTopWidget)
+    DPF_EVENT_REG_SLOT(slot_ShowCustomTopWidget)
+    DPF_EVENT_REG_SLOT(slot_GetCustomTopWidgetVisible)
+    DPF_EVENT_REG_SLOT(slot_CheckSchemeViewIsFileView)
+
+    DPF_EVENT_REG_SLOT(slot_Tab_Addable)
+    DPF_EVENT_REG_SLOT(slot_Tab_Close)
+
+    DPF_EVENT_REG_SLOT(slot_View_GetVisualGeometry)
+    DPF_EVENT_REG_SLOT(slot_View_GetViewItemRect)
+    DPF_EVENT_REG_SLOT(slot_View_GetCurrentViewMode)
+    DPF_EVENT_REG_SLOT(slot_View_GetDefaultViewMode)
+    DPF_EVENT_REG_SLOT(slot_View_SetDefaultViewMode)
+    DPF_EVENT_REG_SLOT(slot_View_GetSelectedUrls)
+    DPF_EVENT_REG_SLOT(slot_View_SelectFiles)
+    DPF_EVENT_REG_SLOT(slot_View_SelectAll)
+    DPF_EVENT_REG_SLOT(slot_View_SetSelectionMode)
+    DPF_EVENT_REG_SLOT(slot_View_SetEnabledSelectionModes)
+    DPF_EVENT_REG_SLOT(slot_View_SetDragEnabled)
+    DPF_EVENT_REG_SLOT(slot_View_SetDragDropMode)
+    DPF_EVENT_REG_SLOT(slot_View_ClosePersistentEditor)
+    DPF_EVENT_REG_SLOT(slot_View_SetReadOnly)
+    DPF_EVENT_REG_SLOT(slot_View_SetFilter)
+    DPF_EVENT_REG_SLOT(slot_View_GetFilter)
+
+    DPF_EVENT_REG_SLOT(slot_Model_SetCustomFilterData)
+    DPF_EVENT_REG_SLOT(slot_Model_SetCustomFilterCallback)
+    DPF_EVENT_REG_SLOT(slot_Model_RegisterRoutePrehandle)
+    DPF_EVENT_REG_SLOT(slot_Model_SetNameFilter)
+    DPF_EVENT_REG_SLOT(slot_Model_GetNameFilter)
+    DPF_EVENT_REG_SLOT(slot_Model_FileUpdate)
+    DPF_EVENT_REG_SLOT(slot_Model_CurrentSortRole)
+    DPF_EVENT_REG_SLOT(slot_Model_SetSort)
 
     // hook events
-    DPF_EVENT_REG_HOOK(hook_FetchCustomColumnRoles)
-    DPF_EVENT_REG_HOOK(hook_FetchCustomRoleDisplayName)
-    DPF_EVENT_REG_HOOK(hook_FetchCustomRoleData)
-    DPF_EVENT_REG_HOOK(hook_CheckDragDropAction)
-    DPF_EVENT_REG_HOOK(hook_FileDragMove)
     DPF_EVENT_REG_HOOK(hook_SendOpenWindow)
     DPF_EVENT_REG_HOOK(hook_SendChangeCurrentUrl)
-    DPF_EVENT_REG_HOOK(hook_FileDrop)
+
+    DPF_EVENT_REG_HOOK(hook_DragDrop_CheckDragDropAction)
+    DPF_EVENT_REG_HOOK(hook_DragDrop_FileDragMove)
+    DPF_EVENT_REG_HOOK(hook_DragDrop_FileDrop)
+
     DPF_EVENT_REG_HOOK(hook_ShortCut_PasteFiles)
     DPF_EVENT_REG_HOOK(hook_ShortCut_DeleteFiles)
     DPF_EVENT_REG_HOOK(hook_ShortCut_MoveToTrash)
-    DPF_EVENT_REG_HOOK(hook_ShortCut_EnterPressed);
+    DPF_EVENT_REG_HOOK(hook_ShortCut_EnterPressed)
+
+    DPF_EVENT_REG_HOOK(hook_Delegate_PaintListItem)
+    DPF_EVENT_REG_HOOK(hook_Delegate_PaintIconItem)
+    DPF_EVENT_REG_HOOK(hook_Delegate_CheckTransparent)
+
+    DPF_EVENT_REG_HOOK(hook_View_FetchSupportSelectionModes)
+
+    DPF_EVENT_REG_HOOK(hook_Model_FetchCustomColumnRoles)
+    DPF_EVENT_REG_HOOK(hook_Model_FetchCustomRoleDisplayName)
+    DPF_EVENT_REG_HOOK(hook_Model_FetchCustomRoleData)
 
 public:
     virtual void initialize() override;
@@ -73,6 +117,6 @@ private slots:
     void onWindowClosed(quint64 winId);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACE_H

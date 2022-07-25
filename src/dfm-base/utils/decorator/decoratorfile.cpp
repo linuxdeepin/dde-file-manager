@@ -25,7 +25,7 @@
 #include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DecoratorFilePrivate
 {
@@ -41,9 +41,9 @@ public:
     QSharedPointer<DFMIO::DFile> dfile = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 DecoratorFile::DecoratorFile(const QString &filePath)
     : d(new DecoratorFilePrivate(this))

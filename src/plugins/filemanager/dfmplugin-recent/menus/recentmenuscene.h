@@ -27,7 +27,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -43,6 +43,7 @@ public:
 class RecentMenuScenePrivate;
 class RecentMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit RecentMenuScene(QObject *parent = nullptr);
     virtual ~RecentMenuScene() override;
@@ -58,5 +59,5 @@ private:
     QScopedPointer<RecentMenuScenePrivate> d;
 };
 
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTMENUSCENE_H

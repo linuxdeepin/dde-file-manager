@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalMenuScenePrivate;
 class OpticalMenuSceneCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
@@ -55,6 +55,6 @@ private:
     QScopedPointer<OpticalMenuScenePrivate> d;
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALMENUSCENE_H

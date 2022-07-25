@@ -26,7 +26,7 @@
 
 #include <QFrame>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class RenameBarPrivate;
 class RenameBar : public QFrame
@@ -70,5 +70,5 @@ private:
     Q_DECLARE_PRIVATE_D(d, RenameBar)
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 #endif   // RENAMEBAR_H

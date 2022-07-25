@@ -22,8 +22,7 @@
 #include "action_defines.h"
 #include "menuutils.h"
 
-#include "services/common/menu/menu_defines.h"
-
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -33,16 +32,15 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QVariant>
 #include <QSettings>
 #include <QFileDialog>
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 AbstractMenuScene *FileOperatorMenuCreator::create()
 {
@@ -259,12 +257,12 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     if (actionId == ActionID::kOpen) {
         if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isDir()) {
             if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
-                dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, d->focusFile);
+                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
             } else {
-                dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, d->windowId, d->focusFile);
+                dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, d->windowId, d->focusFile);
             }
         } else {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
         }
 
         return true;
@@ -285,12 +283,12 @@ bool FileOperatorMenuScene::triggered(QAction *action)
         QString linkName = FileUtils::nonExistSymlinkFileName(d->focusFile);
         QString linkPath { QFileDialog::getSaveFileName(nullptr, QObject::tr("Create symlink"), linkName) };
         if (!linkPath.isEmpty()) {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
-                                                  d->windowId,
-                                                  d->focusFile,
-                                                  QUrl::fromLocalFile(linkPath),
-                                                  true,
-                                                  false);
+            dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
+                                         d->windowId,
+                                         d->focusFile,
+                                         QUrl::fromLocalFile(linkPath),
+                                         true,
+                                         false);
         }
         return true;
     }
@@ -298,10 +296,10 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // clear trash
     if (actionId == ActionID::kEmptyTrash) {
         QList<QUrl> trashUrls { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath)) };
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
-                                              d->windowId,
-                                              trashUrls,
-                                              AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
+                                     d->windowId,
+                                     trashUrls,
+                                     AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
         return true;
     }
 

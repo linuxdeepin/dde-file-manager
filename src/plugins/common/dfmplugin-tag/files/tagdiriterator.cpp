@@ -22,7 +22,7 @@
 #include "tagdiriterator.h"
 #include "private/tagdiriterator_p.h"
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagDirIterator::TagDirIterator(const QUrl &url,
                                const QStringList &nameFilters,

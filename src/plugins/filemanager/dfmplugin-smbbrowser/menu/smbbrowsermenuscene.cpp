@@ -23,16 +23,16 @@
 #include "smbbrowsermenuscene.h"
 #include "private/smbbrowsermenuscene_p.h"
 
-#include "services/common/menu/menu_defines.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 
-DPSMBBROWSER_USE_NAMESPACE
+using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *SmbBrowserMenuCreator::create()
@@ -56,7 +56,6 @@ QString SmbBrowserMenuScene::name() const
 
 bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
@@ -67,7 +66,6 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
 
 bool SmbBrowserMenuScene::create(QMenu *parent)
 {
-    DSC_USE_NAMESPACE
     auto act = parent->addAction(d->predicateName[SmbBrowserActionId::kOpenSmb]);
     act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kOpenSmb);
     d->predicateAction[SmbBrowserActionId::kOpenSmb] = act;
@@ -87,7 +85,6 @@ void SmbBrowserMenuScene::updateState(QMenu *parent)
 
 bool SmbBrowserMenuScene::triggered(QAction *action)
 {
-    DSC_USE_NAMESPACE
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (!d->predicateAction.contains(actId))
         return false;
@@ -103,9 +100,9 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
         } else {
             QUrl u = QUrl::fromLocalFile(mntPath);
             if (actId == SmbBrowserActionId::kOpenSmb)
-                dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, u);
+                dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, u);
             else
-                dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, u);
+                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, u);
         }
     });
     return AbstractMenuScene::triggered(action);

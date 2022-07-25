@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
 class SmbBrowserMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -59,5 +59,5 @@ private:
     QScopedPointer<SmbBrowserMenuScenePrivate> d;
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 #endif   // SMBBROWSERMENUSCENE_H

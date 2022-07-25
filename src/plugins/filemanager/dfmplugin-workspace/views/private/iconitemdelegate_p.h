@@ -29,7 +29,7 @@
 
 #include <QPointer>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class IconItemDelegate;
 class IconItemDelegatePrivate : public BaseItemDelegatePrivate
@@ -52,6 +52,6 @@ public:
     Q_DECLARE_PUBLIC(IconItemDelegate)
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // ICONITEMDELEGATE_P_H

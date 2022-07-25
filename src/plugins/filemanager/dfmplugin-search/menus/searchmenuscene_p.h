@@ -25,7 +25,7 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchMenuScene;
 class SearchMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
@@ -38,10 +38,11 @@ public:
 private:
     void updateMenu(QMenu *menu);
     bool openFileLocation(const QString &path);
+    void disableSubScene(DFMBASE_NAMESPACE::AbstractMenuScene *scene, const QString &sceneName);
 
 private:
     SearchMenuScene *q;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 #endif   // SEARCHMENUSCENE_P_H

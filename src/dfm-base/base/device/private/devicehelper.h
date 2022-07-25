@@ -36,7 +36,7 @@ class DBlockDevice;
 class DProtocolDevice;
 DFM_MOUNT_END_NS
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 using DevPtr = QSharedPointer<DFMMOUNT::DDevice>;
 using BlockDevPtr = QSharedPointer<DFMMOUNT::DBlockDevice>;
@@ -76,6 +76,6 @@ public:
     static void readOpticalInfo(QVariantMap &datas);
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DEVICEHELPER_H

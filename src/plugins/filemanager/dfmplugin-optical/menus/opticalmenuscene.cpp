@@ -25,12 +25,14 @@
 #include "utils/opticalhelper.h"
 #include "mastered/masteredmediafileinfo.h"
 
-#include "services/common/menu/menuservice.h"
-#include "services/common/menu/menu_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-DPOPTICAL_USE_NAMESPACE
+#include "dfm-base/dfm_menu_defines.h"
+
+#include <QMenu>
+
+using namespace dfmplugin_optical;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 static constexpr char kWorkspaceMenuSceneName[] = "WorkspaceMenu";
 
@@ -72,7 +74,7 @@ bool OpticalMenuScene::initialize(const QVariantHash &params)
 
     QList<AbstractMenuScene *> currentScene;
 
-    if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
+    if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
         currentScene.append(workspaceScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.

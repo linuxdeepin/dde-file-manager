@@ -28,7 +28,7 @@
 #include <QAbstractProxyModel>
 #include <QDir>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class ModelHookInterface;
 class CanvasProxyModelPrivate;
@@ -80,6 +80,6 @@ private:
     CanvasProxyModelPrivate *d;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASPROXYMODEL_H

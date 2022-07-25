@@ -24,7 +24,9 @@
 
 #include "dfmplugin_tag_global.h"
 
-DPTAG_BEGIN_NAMESPACE
+#include "dfm-base/dfm_global_defines.h"
+
+namespace dfmplugin_tag {
 
 class TagEventCaller
 {
@@ -35,8 +37,17 @@ public:
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
     static void sendFileUpdate(const QString &path);
+    static bool sendCheckTabAddable(quint64 windowId);
+
+    static QRectF getVisibleGeometry(const quint64 windowID);
+    static QRectF getItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
+
+    static QList<QWidget *> getDesktopRootViewList();
+    static int getDesktopViewIndex(const QString &url, QPoint *pos);
+    static QRect getVisualRect(int viewIndex, const QUrl &url);
+    static QRect getIconRect(int viewIndex, QRect visualRect);
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGEVENTCALLER_H

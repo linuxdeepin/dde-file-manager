@@ -29,7 +29,7 @@
 #include <QMutex>
 #include <QSharedData>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 /*!
  * \class DThreadList 线程安全的List
  *
@@ -371,5 +371,5 @@ private:
     QMap<DKey, DValue> myMap;   // 当前的QMap
     QMutex mutex;   // 当前的锁
 };
-DFMBASE_END_NAMESPACE
+}
 #endif   // THREADCONTAINER_H

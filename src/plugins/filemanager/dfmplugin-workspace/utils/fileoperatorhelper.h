@@ -29,7 +29,7 @@
 #include <QObject>
 #include <QUrl>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 class FileView;
 class FileOperatorHelper : public QObject
 {
@@ -71,7 +71,7 @@ private:
     DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
 };
 
-#define FileOperatorHelperIns DPWORKSPACE_USE_NAMESPACE::FileOperatorHelper::instance()
-DPWORKSPACE_END_NAMESPACE
+#define FileOperatorHelperIns using namespace dfmplugin_workspace;::FileOperatorHelper::instance()
+}
 
 #endif   // FILEOPERATORHELPER_H

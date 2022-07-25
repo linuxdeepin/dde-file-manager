@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class DCustomActionData
 {
@@ -100,6 +100,6 @@ protected:
     DCustomActionData actionData;   //一级菜单项的数据
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // DCUSTOMACTIONDATA_H

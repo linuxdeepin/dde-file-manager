@@ -22,7 +22,7 @@
 */
 #include "abstractentryfileentity.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 using EntityCreator = std::function<AbstractEntryFileEntity *(const QUrl &url)>;
 QHash<QString, EntityCreator> EntryEntityFactor::creators {};
@@ -40,4 +40,4 @@ AbstractEntryFileEntity::~AbstractEntryFileEntity()
 {
 }
 
-DFMBASE_END_NAMESPACE
+}

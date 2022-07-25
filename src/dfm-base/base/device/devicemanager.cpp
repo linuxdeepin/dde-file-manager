@@ -42,7 +42,7 @@
 #include <dfm-mount/dmount.h>
 #include <mutex>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
 
@@ -68,6 +68,10 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
         if (opts.testFlag(DeviceQueryOption::kNotMounted) && !data.value(DeviceProperty::kMountPoint).toString().isEmpty())
             continue;
         if (opts.testFlag(DeviceQueryOption::kOptical) && !data.value(DeviceProperty::kOptical).toBool())
+            continue;
+        if (opts.testFlag(DeviceQueryOption::kSystem) && !data.value(DeviceProperty::kHintSystem).toBool())
+            continue;
+        if (opts.testFlag(DeviceQueryOption::kLoop) && !data.value(DeviceProperty::kIsLoopDevice).toBool())
             continue;
         filteredRet << id;
     }
@@ -757,7 +761,7 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     dlg.setDomain(domainDefault);
     dlg.setUser(userDefault);
 
-    if (uri.startsWith(Global::kFtp) || uri.startsWith(Global::kSFtp))
+    if (uri.startsWith(Global::Scheme::kFtp) || uri.startsWith(Global::Scheme::kSFtp))
         dlg.setDomainLineVisible(false);
 
     DFMMOUNT::MountPassInfo info;

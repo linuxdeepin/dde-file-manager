@@ -22,7 +22,7 @@
 */
 #include "abstractframe.h"
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 AbstractFrame::AbstractFrame(QWidget *parent, Qt::WindowFlags f)
     : QFrame(parent, f)

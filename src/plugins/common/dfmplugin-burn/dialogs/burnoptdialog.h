@@ -35,7 +35,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 class BurnOptDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
@@ -81,6 +81,6 @@ private:
     QCheckBox *ejectCheckbox { nullptr };
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // BURNOPTDIALOG_H

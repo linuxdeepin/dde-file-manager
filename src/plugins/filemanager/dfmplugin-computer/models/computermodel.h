@@ -28,7 +28,7 @@
 
 #include <QAbstractItemModel>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ComputerView;
 class ComputerModel : public QAbstractItemModel
@@ -95,6 +95,6 @@ private:
     //    QScopedPointer<ComputerItemWatcher> watcher { nullptr };
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTERMODEL_H

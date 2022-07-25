@@ -26,7 +26,7 @@
 #include <QUrl>
 #include <QDebug>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 class CanvasGridGlobal : public CanvasGrid{};
 Q_GLOBAL_STATIC(CanvasGridGlobal, canvasGridGlobal)

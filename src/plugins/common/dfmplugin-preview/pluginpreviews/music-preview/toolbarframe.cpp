@@ -29,7 +29,7 @@
 #include <QTimer>
 #include <QtMath>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 ToolBarFrame::ToolBarFrame(const QString &uri, QWidget *parent)
     : QFrame(parent)
 {

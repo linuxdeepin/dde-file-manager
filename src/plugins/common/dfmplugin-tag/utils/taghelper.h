@@ -24,18 +24,11 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-
 #include <QColor>
 
 class QPainter;
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 inline constexpr int kTagDiameter { 10 };
 
@@ -59,6 +52,10 @@ class TagHelper : public QObject
     Q_DISABLE_COPY(TagHelper)
 public:
     static TagHelper *instance();
+    inline static QString scheme()
+    {
+        return "tag";
+    }
 
     QList<QColor> defualtColors() const;
 
@@ -78,19 +75,12 @@ public:
 
     void paintTags(QPainter *painter, QRectF &rect, const QList<QColor> &colors) const;
 
-    DSB_FM_NAMESPACE::SideBar::ItemInfo createSidebarItemInfo(const QString &tag);
+    QVariantMap createSidebarItemInfo(const QString &tag);
 
     void showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList);
 
     static QUrl redirectTagUrl(const QUrl &url);
-
-    // services instance
-    static DSB_FM_NAMESPACE::WindowsService *winServIns();
-    static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
-    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
-    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
 private:
     explicit TagHelper(QObject *parent = nullptr);
@@ -100,6 +90,6 @@ private:
     QList<TagColorDefine> colorDefines;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGHELPER_H

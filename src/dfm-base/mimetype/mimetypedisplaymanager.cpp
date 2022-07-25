@@ -27,7 +27,7 @@
 #include <QTextStream>
 #include <QDebug>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 QStringList MimeTypeDisplayManager::ArchiveMimeTypes;
 QStringList MimeTypeDisplayManager::TextMimeTypes;

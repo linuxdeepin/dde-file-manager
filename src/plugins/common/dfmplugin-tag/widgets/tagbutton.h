@@ -26,7 +26,7 @@
 
 #include <QFrame>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagButton final : public QFrame
 {
@@ -93,6 +93,6 @@ private:
     QColor outlineColor { "#d8d8d8" };
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGBUTTON_H

@@ -25,10 +25,7 @@
 #include "action_defines.h"
 #include "menuutils.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/bluetooth/bluetoothservice.h"
-#include "services/common/delegate/delegateservice.h"
-
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -38,14 +35,16 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QFileInfo>
 #include <QApplication>
 #include <QStandardPaths>
 
-DPMENU_USE_NAMESPACE
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
+using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
 
 SendToMenuScene::SendToMenuScene(QObject *parent)
@@ -65,7 +64,6 @@ QString SendToMenuScene::name() const
 
 bool SendToMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
@@ -103,7 +101,7 @@ bool SendToMenuScene::create(QMenu *parent)
 
         if (!d->onDesktop) {
             auto *act = parent->addAction(d->predicateName[ActionID::kSendToDesktop]);
-            act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendToDesktop);
+            act->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToDesktop);
             d->predicateAction[ActionID::kSendToDesktop] = act;
         }
 
@@ -116,7 +114,7 @@ bool SendToMenuScene::create(QMenu *parent)
             } else {
                 auto sendToAct = parent->addAction(d->predicateName[ActionID::kSendTo]);
                 sendToAct->setMenu(sendToMenu);
-                sendToAct->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendTo);
+                sendToAct->setProperty(ActionPropertyKey::kActionID, ActionID::kSendTo);
                 d->predicateAction[ActionID::kSendTo] = sendToAct;
             }
         }
@@ -172,9 +170,10 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
     if (!subMenu)
         return;
 
-    if (DSC_NAMESPACE::BluetoothService::service()->bluetoothEnable()) {
+    bool bluetoothAvailable = dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_IsAvailable").toBool();
+    if (bluetoothAvailable) {
         auto *act = subMenu->addAction(predicateName[ActionID::kSendToBluetooth]);
-        act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
+        act->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
         if (folderSelected)
             act->setEnabled(false);
         predicateAction[ActionID::kSendToBluetooth] = act;
@@ -214,7 +213,7 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
         if (act) {
             QString actId = ActionID::kSendToRemovablePrefix + QString::number(idx++);
             predicateAction.insert(actId, act);
-            act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, actId);
+            act->setProperty(ActionPropertyKey::kActionID, actId);
         }
     }
 }
@@ -229,25 +228,29 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
         filePaths << f->absoluteFilePath();
     }
-    DSC_USE_NAMESPACE
     QString actId = act->property(ActionPropertyKey::kActionID).toString();
     if (actId == ActionID::kSendToBluetooth) {
-        BluetoothService::service()->sendFiles(filePaths);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", filePaths, "");
     } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else if (actId == ActionID::kSendToDesktop) {
         QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
-        const QList<QUrl> &urlsTrans = delegateServIns->urlsTransform(selectFiles);
-        for (const auto &url : urlsTrans) {
+        QList<QUrl> urlsTrans = selectFiles;
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urlsTrans, &urls);
+        if (ok && !urls.isEmpty())
+            urlsTrans = urls;
+
+        for (const QUrl &url : urlsTrans) {
             QString linkName = FileUtils::nonExistSymlinkFileName(url);
             QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
-                                                  windowId,
-                                                  url,
-                                                  linkUrl,
-                                                  false,
-                                                  true);
+            dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
+                                         windowId,
+                                         url,
+                                         linkUrl,
+                                         false,
+                                         true);
         }
     }
 }

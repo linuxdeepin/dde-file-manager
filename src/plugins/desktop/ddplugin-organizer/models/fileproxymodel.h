@@ -29,6 +29,7 @@
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 class ModelDataHandler;
+class CanvasViewShell;
 class FileInfoModelShell;
 class FileProxyModelPrivate;
 class FileProxyModel : public QAbstractProxyModel
@@ -37,16 +38,20 @@ class FileProxyModel : public QAbstractProxyModel
     friend class FileProxyModelPrivate;
 public:
     explicit FileProxyModel(QObject *parent = nullptr);
-    ~FileProxyModel();
+    ~FileProxyModel() override;
     void setModelShell(FileInfoModelShell *shell);
+    FileInfoModelShell *modelShell() const;
     void setHandler(ModelDataHandler *);
     ModelDataHandler *handler() const;
     QModelIndex rootIndex() const;
     QModelIndex index(const QUrl &url, int column = 0) const;
+    DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
     QList<QUrl> files() const;
     QUrl fileUrl(const QModelIndex &index) const;
     void refresh(const QModelIndex &parent, bool global = false, int ms = 50);
     void update();
+    bool fetch(const QList<QUrl> &urls);
+    bool take(const QList<QUrl> &urls);
 public:
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;
     QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override;
@@ -56,6 +61,8 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 signals:
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
 private:

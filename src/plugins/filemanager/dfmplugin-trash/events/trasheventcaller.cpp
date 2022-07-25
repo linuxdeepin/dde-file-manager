@@ -21,51 +21,46 @@
 #include "trasheventcaller.h"
 #include "utils/trashhelper.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/common/propertydialog/property_defines.h"
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QUrl>
 
-DPTRASH_USE_NAMESPACE
+using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
 
 void TrashEventCaller::sendOpenWindow(const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
 }
 
 void TrashEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, windowId, url);
 }
 
 void TrashEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
 {
-    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, windowID, urls);
 }
 
 void TrashEventCaller::sendEmptyTrash(const quint64 windowID, const QList<QUrl> &urls)
 {
-    dispatcher()->publish(GlobalEventType::kCleanTrash, windowID, urls, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash, windowID, urls, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
 }
 
 void TrashEventCaller::sendTrashPropertyDialog(const QUrl &url)
 {
-    dispatcher()->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, QList<QUrl>() << url);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", QList<QUrl>() << url);
 }
 
 void TrashEventCaller::sendShowEmptyTrash(quint64 winId, bool visible)
 {
-    dispatcher()->publish(Workspace::EventType::kShowCustomTopWidget, winId, TrashHelper::scheme(), visible);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_ShowCustomTopWidget", winId, TrashHelper::scheme(), visible);
+}
+
+bool TrashEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
 }

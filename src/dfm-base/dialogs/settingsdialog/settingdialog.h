@@ -37,7 +37,7 @@ DCORE_END_NAMESPACE
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class SettingDialog : public DSettingsDialog
 {
 public:
@@ -54,5 +54,5 @@ private:
     static QPointer<QCheckBox> kAutoMountOpenCheckBox;
     QPointer<DSettings> dtkSettings;
 };
-DFMBASE_END_NAMESPACE
+}
 #endif   // DFMSETTINGDIALOG_H

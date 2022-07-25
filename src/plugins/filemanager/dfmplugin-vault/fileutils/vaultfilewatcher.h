@@ -24,7 +24,7 @@
 #include "dfmplugin_vault_global.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultFileWatcherPrivate;
 class VaultFileWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
 {
@@ -43,5 +43,5 @@ private slots:
 private:
     VaultFileWatcherPrivate *dptr { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTFILEWATCHER_H

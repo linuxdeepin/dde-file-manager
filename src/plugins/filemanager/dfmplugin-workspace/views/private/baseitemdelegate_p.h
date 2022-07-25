@@ -32,7 +32,7 @@ QT_BEGIN_NAMESPACE
 class QLineEdit;
 QT_END_NAMESPACE
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileViewHelper;
 class BaseItemDelegate;
@@ -53,6 +53,6 @@ public:
     Q_DECLARE_PUBLIC(BaseItemDelegate)
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // BASEITEMDELEGATE_P_H

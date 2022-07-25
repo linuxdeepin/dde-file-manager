@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class ListItemDelegate;
 class ListItemDelegatePrivate : public BaseItemDelegatePrivate
@@ -40,6 +40,6 @@ public:
     Q_DECLARE_PUBLIC(ListItemDelegate)
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // LISTITEMDELEGATE_P_H

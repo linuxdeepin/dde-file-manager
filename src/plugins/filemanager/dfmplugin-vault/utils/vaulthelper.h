@@ -27,16 +27,18 @@
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
 #include <QIcon>
 #include <QMenu>
 #include <QTimer>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultHelper final : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(VaultHelper)
 public:
     inline QString scheme()
     {
@@ -84,6 +86,8 @@ public:
 
     static void recordTime(const QString &group, const QString &key);
 
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+
 public slots:
     void slotlockVault(int state);
 
@@ -128,6 +132,6 @@ private:
     quint64 currentWinID { 0 };
 };
 
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // VAULTHELPER_H

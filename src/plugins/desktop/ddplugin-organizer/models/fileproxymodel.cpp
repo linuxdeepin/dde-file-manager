@@ -19,10 +19,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileproxymodel_p.h"
+#include "interface/canvasmodelshell.h"
+#include "interface/canvasviewshell.h"
 #include "interface/fileinfomodelshell.h"
 #include "modeldatahandler.h"
+#include "utils/fileoperator.h"
+
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QDebug>
+#include <QMimeData>
 
 DFMBASE_USE_NAMESPACE
 DDP_ORGANIZER_USE_NAMESPACE
@@ -282,6 +291,11 @@ void FileProxyModel::setModelShell(FileInfoModelShell *shell)
     endResetModel();
 }
 
+FileInfoModelShell *FileProxyModel::modelShell() const
+{
+    return d->shell;
+}
+
 void FileProxyModel::setHandler(ModelDataHandler *handler)
 {
     d->handler = handler;
@@ -308,6 +322,17 @@ QModelIndex FileProxyModel::index(const QUrl &url, int column) const
     }
 
     return QModelIndex();
+}
+
+DFMLocalFileInfoPointer FileProxyModel::fileInfo(const QModelIndex &index) const
+{
+    if (index == rootIndex())
+        return d->shell->fileInfo(index);
+
+    if (!index.isValid() || index.row() >= d->fileList.count())
+        return nullptr;
+
+    return d->fileMap.value(fileUrl(index));
 }
 
 QList<QUrl> FileProxyModel::files() const
@@ -353,6 +378,37 @@ void FileProxyModel::update()
         itor.value()->refresh();
 
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()), 0));
+}
+
+bool FileProxyModel::fetch(const QList<QUrl> &urls)
+{
+    int row = d->fileList.count();
+    beginInsertRows(rootIndex(), row, row + urls.count() - 1);
+
+    d->fileList.append(urls);
+    for (const QUrl &url : urls)
+        d->fileMap.insert(url, d->shell->fileInfo(d->shell->index(url)));
+
+    endInsertRows();
+
+    return true;
+}
+
+bool FileProxyModel::take(const QList<QUrl> &urls)
+{
+    // remove one by one
+    for (const QUrl &url : urls) {
+        int row = d->fileList.indexOf(url);
+        if (row < 0)
+            continue;
+
+        beginRemoveRows(rootIndex(), row, row);
+        d->fileList.removeAt(row);
+        d->fileMap.remove(url);
+        endRemoveRows();
+    }
+
+    return true;
 }
 
 QModelIndex FileProxyModel::mapToSource(const QModelIndex &proxyIndex) const
@@ -417,6 +473,76 @@ QVariant FileProxyModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     return sourceModel()->data(sourceIndex, role);
+}
+
+QMimeData *FileProxyModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *data = new QMimeData();
+    QList<QUrl> urls;
+
+    for (const QModelIndex &idx : indexes)
+        urls << fileUrl(idx);
+
+    data->setUrls(urls);
+
+    // set user id
+    data->setData(QString(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
+
+    return data;
+}
+
+bool FileProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    Q_UNUSED(row);
+    Q_UNUSED(column);
+
+    QList<QUrl> urlList = data->urls();
+    if (urlList.isEmpty())
+        return false;
+
+    QUrl targetFileUrl;
+    if (!parent.isValid() || parent == rootIndex()) {
+        // drop file to desktop
+        targetFileUrl = fileUrl(rootIndex());
+        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
+    } else {
+        targetFileUrl = fileUrl(parent);
+        qInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
+    }
+
+    QString errString;
+    auto itemInfo =  InfoFactory::create<LocalFileInfo>(targetFileUrl, true, &errString);
+    if (Q_UNLIKELY(!itemInfo)) {
+        qInfo() << "create LocalFileInfo error: " << errString << targetFileUrl;
+        return false;
+    }
+
+    if (itemInfo->isSymLink()) {
+        targetFileUrl = itemInfo->symLinkTarget();
+    }
+
+    if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
+        FileOperatorIns->dropToTrash(urlList);
+        return true;
+    } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
+        return true;
+    } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
+        FileOperatorIns->dropToApp(urlList, targetFileUrl.toLocalFile());
+        return true;
+    }
+
+    switch (action) {
+    case Qt::CopyAction:
+    case Qt::MoveAction:
+        FileOperatorIns->dropFilesToCanvas(action, targetFileUrl, urlList);
+        break;
+    case Qt::LinkAction:
+        break;
+    default:
+        return false;
+    }
+
+    return true;
 }
 
 void FileProxyModel::setSourceModel(QAbstractItemModel *sourceModel)

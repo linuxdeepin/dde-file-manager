@@ -22,7 +22,7 @@
 */
 #include "opticalsignalmanager.h"
 
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 
 OpticalSignalManager *OpticalSignalManager::instance()
 {

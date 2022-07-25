@@ -28,7 +28,7 @@
 
 #include <DDialog>
 
-DPTRASHCORE_BEGIN_NAMESPACE
+namespace dfmplugin_trashcore {
 class TrashPropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
@@ -41,7 +41,7 @@ private:
     void initUI();
 
 public slots:
-    void slotTrashDirSizeChange(qint64 size);
+    void slotTrashDirSizeChange(qint64 size, int filesCount, int directoryCount);
 
 protected:
     virtual void showEvent(QShowEvent *event) override;
@@ -52,5 +52,5 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileCountAndFileSize { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
-DPTRASHCORE_END_NAMESPACE
+}
 #endif   // TRASHPROPERTYDIALOG_H

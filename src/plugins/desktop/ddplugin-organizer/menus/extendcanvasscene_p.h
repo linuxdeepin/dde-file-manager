@@ -26,12 +26,9 @@
 #include "extendcanvasscene.h"
 #include "organizer_defines.h"
 
-#include "services/common/menu/menuservice.h"
-
 #include "interfaces/private/abstractmenuscene_p.h"
 
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class ExtendCanvasScenePrivate : public AbstractMenuScenePrivate
@@ -41,11 +38,14 @@ public:
     explicit ExtendCanvasScenePrivate(ExtendCanvasScene *qq);
     void emptyMenu(QMenu *parent);
     void normalMenu(QMenu *parent);
+
+    void updateEmptyMenu(QMenu *parent);
+    void updateNormalMenu(QMenu *parent);
+
     QMenu *organizeBySubActions(QMenu *menu);
 
     static QString classifierToActionID(Classifier cf);
 public:
-    MenuService *menuServer = nullptr;
     bool turnOn = false;
 private:
     ExtendCanvasScene *q;

@@ -22,31 +22,43 @@
 #define COLLECTIONHOLDER_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
+
+#include <DFrame>
 
 #include <QObject>
+#include <QSharedPointer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class FileProxyModel;
 class CollectionFrame;
 class CollectionWidget;
+class CollectionDataProvider;
+class CanvasModelShell;
+class CanvasViewShell;
+class CanvasGridShell;
+class Surface;
 class CollectionHolderPrivate;
 class CollectionHolder : public QObject
 {
     Q_OBJECT
     friend class CollectionHolderPrivate;
 public:
-    explicit CollectionHolder(const QString &uuid, QObject *parent = nullptr);
+    explicit CollectionHolder(const QString &uuid, CollectionDataProvider *dataProvider, QObject *parent = nullptr);
     ~CollectionHolder() override;
+    void setCanvasModelShell(CanvasModelShell *sh);
+    void setCanvasViewShell(CanvasViewShell *sh);
+    void setCanvasGridShell(CanvasGridShell *sh);
     QString id() const;
     QString name();
     void setName(const QString &);
-    QList<QUrl> urls() const;
-    void setUrls(const QList<QUrl> &urls);
-    void createFrame(QWidget *surface, FileProxyModel *model);
+    Dtk::Widget::DFrame *frame() const;
+    void createFrame(Surface *surface, FileProxyModel *model);
+    Surface *surface() const;
     void show();
 
-    void setMovable(const bool movable = true);
+    void setMovable(const bool movable = false);
     bool movable() const;
     void setClosable(const bool closable = false);
     bool closable() const;
@@ -54,17 +66,26 @@ public:
     bool floatable() const;
     void setHiddableCollection(const bool hiddable = false);
     bool hiddableCollection() const;
-    void setAdjustable(const bool adjustable = true);
+    void setStretchable(const bool stretchable = false);
+    bool stretchable() const;
+    void setAdjustable(const bool adjustable = false);
     bool adjustable() const;
-    void setHiddableTitleBar(const bool hiddable = true);
+    void setHiddableTitleBar(const bool hiddable = false);
     bool hiddableTitleBar() const;
     void setHiddableView(const bool hiddable = false);
     bool hiddableView() const;
-    void setRenamable(const bool renamable = true);
+    void setRenamable(const bool renamable = false);
     bool renamable() const;
+    void setDragEnabled(bool enable);
+    bool dragEnabled() const;
 
+    void setStyle(const CollectionStyle &style);
+    CollectionStyle style() const;
+signals:
+    void styleChanged(const QString &id);
+    void sigRequestClose(const QString &id);
 private:
-    CollectionHolderPrivate *d = nullptr;
+    QSharedPointer<CollectionHolderPrivate> d = nullptr;
 };
 
 typedef QSharedPointer<CollectionHolder> CollectionHolderPointer;

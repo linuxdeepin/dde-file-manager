@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
 DFMBASE_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchFileWatcher;
 class SearchFileWatcherPrivate : public AbstractFileWatcherPrivate
@@ -43,6 +43,6 @@ private:
     QHash<QUrl, AbstractFileWatcherPointer> urlToWatcherHash;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHFILEWATCHER_P_H

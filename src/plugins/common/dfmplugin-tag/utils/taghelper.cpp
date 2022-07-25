@@ -23,17 +23,23 @@
 #include "tagmanager.h"
 #include "widgets/tageditor.h"
 
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
 #include <QMap>
 #include <QVector>
 #include <QPainter>
 #include <QUrl>
+#include <QIcon>
 
 #include <random>
 #include <mutex>
 
-DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
+Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(RenameCallback);
+
+using namespace dfmplugin_tag;
 
 TagHelper *TagHelper::instance()
 {
@@ -203,30 +209,31 @@ void TagHelper::paintTags(QPainter *painter, QRectF &rect, const QList<QColor> &
     painter->setRenderHint(QPainter::Antialiasing, antialiasing);
 }
 
-SideBar::ItemInfo TagHelper::createSidebarItemInfo(const QString &tag)
+QVariantMap TagHelper::createSidebarItemInfo(const QString &tag)
 {
-    SideBar::ItemInfo item;
-    item.group = SideBar::DefaultGroup::kTag;
+    ContextMenuCallback contextMenuCb { TagManager::contenxtMenuHandle };
+    RenameCallback renameCb { TagManager::renameHandle };
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable };
+    QVariantMap infoMap {
+        { "Property_Key_Url", makeTagUrlByTagName(tag) },
+        { "Property_Key_Group", "Group_Tag" },
+        { "Property_Key_DisplayName", tag },
+        { "Property_Key_Icon", QIcon::fromTheme(TagManager::instance()->getTagIconName(tag)) },
+        { "Property_Key_Editable", true },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) }
 
-    QUrl tagUrl;
-    tagUrl.setScheme(TagManager::scheme());
-    tagUrl.setPath("/" + tag);
+    };
 
-    item.url = tagUrl;
-    item.iconName = TagManager::instance()->getTagIconName(tag);
-    item.text = tag;
-    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
-    item.renameCb = TagManager::renameHandle;
-    item.contextMenuCb = TagManager::contenxtMenuHandle;
-
-    return item;
+    return infoMap;
 }
 
 void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList)
 {
     TagEditor *editor = new TagEditor();
 
-    editor->setBaseSize(160, 98);
+    editor->setBaseSize(160, 160);
     editor->setFilesForTagging(fileList);
     editor->setAttribute(Qt::WA_DeleteOnClose);
     editor->setFocusOutSelfClosing(true);
@@ -238,7 +245,7 @@ void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, co
     int showPosY = static_cast<int>(iconRect.bottom());
 
     auto subValue = parentRect.bottom() - showPosY;
-    if (subValue < 98) {
+    if (subValue < editor->height()) {
         editor->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
         showPosY = qMin(static_cast<int>(parentRect.bottom()), showPosY);
     }
@@ -254,69 +261,16 @@ QUrl TagHelper::redirectTagUrl(const QUrl &url)
     return QUrl::fromLocalFile(url.fragment(QUrl::FullyDecoded));
 }
 
-WindowsService *TagHelper::winServIns()
+bool TagHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WindowsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
-}
-
-TitleBarService *TagHelper::titleServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
-}
-
-SideBarService *TagHelper::sideBarServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
-}
-
-WorkspaceService *TagHelper::workspaceServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
-}
-
-FileOperationsService *TagHelper::fileOperationsServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-}
-
-dpf::EventSequenceManager *TagHelper::eventSequence()
-{
-    return &dpfInstance.eventSequence();
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != TagManager::scheme())
+            return false;
+        (*urls).push_back(redirectTagUrl(url));
+    }
+    return true;
 }
 
 void TagHelper::initTagColorDefines()

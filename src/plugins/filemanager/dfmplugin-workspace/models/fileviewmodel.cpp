@@ -25,16 +25,14 @@
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "utils/fileoperatorhelper.h"
-#include "workspace/workspace_defines.h"
 #include "events/workspaceeventsequence.h"
 #include "filesortfilterproxymodel.h"
 
-#include "services/common/delegate/delegateservice.h"
-
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -43,10 +41,11 @@
 #include <QList>
 #include <QMimeData>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 DFMGLOBAL_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
     : QObject(qq), q(qq)
@@ -152,7 +151,7 @@ void FileViewModelPrivate::doWatcherEvent()
                 continue;
             else if (event.second == kRmFile) {
                 nodeManager->clearChildren();
-                dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
+                dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", fileUrl);
                 break;
             }
             //todo:先不做
@@ -167,7 +166,7 @@ void FileViewModelPrivate::doWatcherEvent()
             q->selectAndRenameFile(fileUrl);
         } else {
             nodeManager->removeChildren(fileUrl);
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", fileUrl);
         }
     }
     q->childrenUpdated();
@@ -185,6 +184,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel(parent), d(new FileViewModelPrivate(this))
 {
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestFileUpdate, this, &FileViewModel::onFileUpdated);
+    d->view = dynamic_cast<FileView *>(parent);
 }
 
 FileViewModel::~FileViewModel()
@@ -218,7 +218,7 @@ const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
-    if (url.scheme() == Global::kFile && !d->root.isNull() && d->root->url() == url) {
+    if (url.scheme() == Global::Scheme::kFile && !d->root.isNull() && d->root->url() == url) {
         QApplication::restoreOverrideCursor();
         QModelIndex root = createIndex(0, 0, d->root.data());
 
@@ -404,9 +404,8 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
     auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
     if (prehandler) {
         QPointer<FileViewModel> guard(this);
-        prehandler(url, [=]() {
-            if (guard)
-                this->traversCurrDir(); });
+        quint64 winId = DFMBASE_NAMESPACE::FileManagerWindowsManager::instance().findWindowId(d->view);
+        prehandler(winId, url, [=]() { if (guard) this->traversCurrDir(); });
     } else {
         traversCurrDir();
     }
@@ -471,7 +470,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     QByteArray userID;
     userID.append(QString::number(SysInfoUtils::getUserId()));
-    data->setData(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey, userID);
+    data->setData(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey, userID);
 
     return data;
 }
@@ -486,10 +485,11 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     QUrl targetUrl = itemFromIndex(parent)->url();
     AbstractFileInfoPointer targetFileInfo = itemFromIndex(parent)->fileInfo();
-    QList<QUrl> dropUrls;
-    for (QUrl &url : data->urls()) {
-        dropUrls << delegateServIns->urlTransform(url);
-    }
+    QList<QUrl> dropUrls = data->urls();
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", dropUrls, &urls);
+    if (ok && !urls.isEmpty())
+        dropUrls = urls;
 
     if (targetFileInfo->isSymLink()) {
         // TODO: trans 'targetUrl' to source url

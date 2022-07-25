@@ -24,7 +24,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 DFMBASE_USE_NAMESPACE
-DDP_WALLPAERSETTING_USE_NAMESPACE
+using namespace ddplugin_wallpapersetting;
 
 WallaperPreview::WallaperPreview(QObject *parent)
     : QObject(parent)

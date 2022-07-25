@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalEventReceiver : public QObject
 {
@@ -40,11 +40,12 @@ public:
 public slots:
     bool handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls);
     bool handleCheckDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
+    bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
 
 public:
     explicit OpticalEventReceiver(QObject *parent = nullptr);
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALEVENTRECEIVER_H

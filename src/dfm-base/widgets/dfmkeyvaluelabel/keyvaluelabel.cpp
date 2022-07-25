@@ -24,7 +24,7 @@
 #include <QFontMetrics>
 
 DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 KeyValueLabel::KeyValueLabel(QWidget *parent)
     : QFrame(parent)

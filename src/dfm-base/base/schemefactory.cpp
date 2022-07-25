@@ -22,7 +22,7 @@
 #include "schemefactory.h"
 #include "dfm-base/base/singleton.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 namespace GlobalPrivate {
 static bool dfmioIsInit = DFMIO::dfmio_init();
@@ -69,4 +69,4 @@ ViewFactory &ViewFactory::instance()
     return *ins;
 }
 
-DFMBASE_END_NAMESPACE
+}

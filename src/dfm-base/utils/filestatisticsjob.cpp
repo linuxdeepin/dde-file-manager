@@ -38,7 +38,7 @@
 #include <fts.h>
 #include <sys/stat.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 static constexpr uint16_t kSizeChangeinterval { 200 };
 
@@ -53,7 +53,7 @@ public:
     bool jobWait();
     bool stateCheck();
 
-    void processFile(const QUrl &url, QQueue<QUrl> &directoryQueue);
+    void processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue);
     void emitSizeChanged();
 
     FileStatisticsJob *q;
@@ -111,6 +111,8 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
             Q_EMIT q->dataNotify(totalSize, filesCount, directoryCount);
             Q_EMIT q->sizeChanged(totalSize);
         }
+
+        qDebug() << "statistic finished(may stop), result: " << totalSize << filesCount << directoryCount;
     }
 
     Q_EMIT q->stateChanged(s);
@@ -144,7 +146,7 @@ bool FileStatisticsJobPrivate::stateCheck()
     return true;
 }
 
-void FileStatisticsJobPrivate::processFile(const QUrl &url, QQueue<QUrl> &directoryQueue)
+void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue)
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 
@@ -199,15 +201,12 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, QQueue<QUrl> &direct
         } while (false);
 
         ++filesCount;
-
-        Q_EMIT q->fileFound(url);
     } else {
         // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
         totalProgressSize += FileUtils::getMemoryPageSize();
         if (info->isSymLink()) {
-            if (!fileHints.testFlag(FileStatisticsJob::kFollowSymlink)) {
+            if (!followLink) {
                 ++filesCount;
-                Q_EMIT q->fileFound(url);
                 return;
             }
 
@@ -215,12 +214,10 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, QQueue<QUrl> &direct
 
             if (info->isSymLink()) {
                 ++filesCount;
-                Q_EMIT q->fileFound(url);
                 return;
             }
         }
 
-        //        size = info->size();
         ++directoryCount;
 
         if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && info->url().isLocalFile()) {
@@ -245,8 +242,6 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, QQueue<QUrl> &direct
         } else if (!fileHints.testFlag(FileStatisticsJob::kSingleDepth)) {
             directoryQueue << url;
         }
-
-        Q_EMIT q->directoryFound(url);
     }
 }
 
@@ -391,6 +386,8 @@ void FileStatisticsJob::statistcsOtherFileSystem()
 {
     Q_EMIT dataNotify(0, 0, 0);
 
+    const bool followLink = !d->fileHints.testFlag(kNoFollowSymlink);
+
     QQueue<QUrl> directory_queue;
     int fileCount = 0;
     if (d->fileHints.testFlag(kExcludeSourceFile)) {
@@ -415,7 +412,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             }
 
             if (info->isSymLink()) {
-                if (!d->fileHints.testFlag(FileStatisticsJob::kFollowSymlink)) {
+                if (!followLink) {
                     continue;
                 }
 
@@ -442,7 +439,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             FileHints save_file_hints = d->fileHints;
             d->fileHints = d->fileHints | kDontSkipAVFSDStorage | kDontSkipPROCStorage;
             d->sizeInfo->allFiles << url;
-            d->processFile(url, directory_queue);
+            d->processFile(url, followLink, directory_queue);
             d->fileHints = save_file_hints;
 
             if (!d->stateCheck()) {
@@ -472,7 +469,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
         while (iterator->hasNext()) {
             QUrl url = iterator->next();
             d->sizeInfo->allFiles << url;
-            d->processFile(url, directory_queue);
+            d->processFile(url, followLink, directory_queue);
 
             if (!d->stateCheck()) {
                 d->setState(kStoppedState);
@@ -487,6 +484,10 @@ void FileStatisticsJob::statistcsOtherFileSystem()
 
 void FileStatisticsJob::statistcsExtFileSystem()
 {
+    const bool excludeSources = d->fileHints.testFlag(kExcludeSourceFile);
+    const bool singleDepth = d->fileHints.testFlag(kSingleDepth);
+    const bool followLink = !d->fileHints.testFlag(kNoFollowSymlink);
+
     for (auto url : d->sourceUrlList) {
         if (!d->stateCheck()) {
             d->setState(kStoppedState);
@@ -494,7 +495,7 @@ void FileStatisticsJob::statistcsExtFileSystem()
         }
         char *paths[2] = { nullptr, nullptr };
         paths[0] = strdup(url.path().toUtf8().toStdString().data());
-        FTS *fts = fts_open(paths, d->fileHints.testFlag(kSingleDepth) ? FTS_NOCHDIR : 0, nullptr);
+        FTS *fts = fts_open(paths, followLink ? FTS_LOGICAL : FTS_PHYSICAL, nullptr);
         if (paths[0])
             free(paths[0]);
 
@@ -510,18 +511,38 @@ void FileStatisticsJob::statistcsExtFileSystem()
             if (ent == nullptr) {
                 break;
             }
-            unsigned short flag = ent->fts_info;
 
-            // file counted
-            if (flag == FTS_F || flag == FTS_SL || flag == FTS_SLNONE) {
-                d->filesCount++;
-                Q_EMIT fileFound(QUrl::fromLocalFile(ent->fts_path));
+            if (excludeSources) {
+                const QUrl &currentUrl = QUrl::fromLocalFile(QString::fromLocal8Bit(ent->fts_path));
+                if (url == currentUrl)
+                    continue;
             }
 
-            // dir counted
-            if (flag == FTS_D) {
+            const short level = ent->fts_level;
+
+            if (singleDepth && level == 1) {
+                int ret = fts_set(fts, ent, FTS_SKIP);
+                if (-1 == ret)
+                    qWarning() << "skip sub dir failed, current url: " << ent->fts_path;
+            }
+
+            unsigned short flag = ent->fts_info;
+
+            if (level > 1 && (flag == FTS_SL || flag == FTS_SLNONE))
+                continue;
+
+            if (flag == FTS_F || flag == FTS_SL || flag == FTS_SLNONE || flag == FTS_DEFAULT) {
+                // file counted
+                d->filesCount++;
+            } else if (flag == FTS_D || flag == FTS_DNR) {
+                // dir counted
                 d->directoryCount++;
-                Q_EMIT directoryFound(QUrl::fromLocalFile(ent->fts_path));
+            } else if (flag == FTS_DC) {
+                // cycle folder
+                continue;
+            } else if (flag != FTS_DP) {
+                // other error
+                continue;
             }
 
             // total size
@@ -541,4 +562,4 @@ void FileStatisticsJob::statistcsExtFileSystem()
     d->setState(kStoppedState);
 }
 
-DFMBASE_END_NAMESPACE
+}

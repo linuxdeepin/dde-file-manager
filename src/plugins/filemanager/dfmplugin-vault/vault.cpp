@@ -20,8 +20,15 @@
 */
 #include "vault.h"
 #include "utils/vaultvisiblemanager.h"
+#include "utils/vaulthelper.h"
+#include "utils/vaultfilehelper.h"
 
-DPVAULT_USE_NAMESPACE
+#include <QUrl>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(QString *)
+
+using namespace dfmplugin_vault;
 
 void Vault::initialize()
 {
@@ -31,6 +38,20 @@ void Vault::initialize()
 bool Vault::start()
 {
     VaultVisibleManager::instance()->pluginServiceRegister();
+
+    // follow event
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", VaultHelper::instance(), &VaultHelper::urlsToLocal);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", VaultFileHelper::instance(), &VaultFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", VaultFileHelper::instance(), &VaultFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", VaultFileHelper::instance(), &VaultFileHelper::deleteFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", VaultFileHelper::instance(), &VaultFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFile", VaultFileHelper::instance(), &VaultFileHelper::renameFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MakeDir", VaultFileHelper::instance(), &VaultFileHelper::makeDir);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchFile", VaultFileHelper::instance(), &VaultFileHelper::touchFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", VaultFileHelper::instance(), &VaultFileHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFiles", VaultFileHelper::instance(), &VaultFileHelper::renameFiles);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultFileHelper::instance(), &VaultFileHelper::renameFilesAddText);
+
     return true;
 }
 

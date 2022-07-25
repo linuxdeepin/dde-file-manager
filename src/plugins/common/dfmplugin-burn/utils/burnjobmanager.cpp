@@ -28,7 +28,7 @@
 #include <QVBoxLayout>
 #include <QTextEdit>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
 
 BurnJobManager *BurnJobManager::instance()

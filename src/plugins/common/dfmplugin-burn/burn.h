@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 class Burn : public DPF_NAMESPACE::Plugin
 {
@@ -41,14 +41,21 @@ class Burn : public DPF_NAMESPACE::Plugin
     DPF_EVENT_REG_SLOT(slot_MountImage)
 
 public:
+    virtual void initialize() override;
     virtual bool start() override;
 
 private slots:
     void bindScene(const QString &parentScene);
+    void bindSceneOnAdded(const QString &newScene);
     void bindEvents();
+    bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
     void onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value);
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // BURN_H

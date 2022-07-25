@@ -22,6 +22,7 @@
 #define COLLECTIONWIDGET_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include "DBlurEffectWidget"
 
@@ -31,6 +32,10 @@ DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class CollectionTitleBar;
 class CollectionView;
+class CollectionDataProvider;
+class CanvasModelShell;
+class CanvasViewShell;
+class CanvasGridShell;
 class CollectionWidgetPrivate;
 
 class CollectionWidget : public Dtk::Widget::DBlurEffectWidget
@@ -38,16 +43,29 @@ class CollectionWidget : public Dtk::Widget::DBlurEffectWidget
     Q_OBJECT
     friend class CollectionWidgetPrivate;
 public:
-    explicit CollectionWidget(QWidget *parent = nullptr);
+    explicit CollectionWidget(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent = nullptr);
     ~CollectionWidget() override;
 
+    void setCanvasModelShell(CanvasModelShell *sh);
+    void setCanvasViewShell(CanvasViewShell *sh);
+    void setCanvasGridShell(CanvasGridShell *sh);
+
     void setModel(QAbstractItemModel *model);
-    QList<QUrl> urls() const;
-    void setUrls(const QList<QUrl> &urls);
+    void setDragEnabled(bool enable);
+    bool dragEnabled() const;
+
     void setTitleName(const QString &name);
     QString titleName() const;
-    void setRenamable(const bool renamable = true);
+    void setRenamable(const bool renamable = false);
     bool renamable() const;
+    void setClosable(const bool closable = false);
+    bool closable() const;
+    void setAdjustable(const bool adjustable = false);
+    bool adjustable() const;
+
+signals:
+    void sigRequestClose(const QString &id);
+    void sigRequestAdjustSize(const CollectionFrameSize &size);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

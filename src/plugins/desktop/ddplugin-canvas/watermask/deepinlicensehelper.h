@@ -31,7 +31,7 @@
 
 class ComDeepinLicenseInterface;
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class DeepinLicenseHelper : public QObject
 {
@@ -71,6 +71,6 @@ private:
     ComDeepinLicenseInterface *licenseInterface = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // DEEPINLICENSEHELPER_H

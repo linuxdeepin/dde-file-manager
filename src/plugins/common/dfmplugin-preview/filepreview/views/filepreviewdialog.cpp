@@ -40,7 +40,7 @@
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 
 FilePreviewDialog::FilePreviewDialog(const QList<QUrl> &previewUrllist, QWidget *parent)
     : DAbstractDialog(parent),

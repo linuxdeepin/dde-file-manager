@@ -29,7 +29,7 @@
 #include <QIcon>
 #include <QPointF>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class LocalFileInfoPrivate;
 class LocalFileInfo : public AbstractFileInfo, public QObject
@@ -137,7 +137,7 @@ private:
     void init(const QUrl &url);
     QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString inod = QString(), const bool isGvfs = false);
 };
-DFMBASE_END_NAMESPACE
+}
 typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;
 
 #endif   // FILEINFO_H

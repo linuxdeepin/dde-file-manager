@@ -26,7 +26,7 @@
 
 #include <dfm-io/core/dfileinfo.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DecoratorFileInfoPrivate;
 class DecoratorFileInfo
@@ -73,6 +73,6 @@ private:
     QSharedPointer<DecoratorFileInfoPrivate> d = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DECORATORFILEINFO_H

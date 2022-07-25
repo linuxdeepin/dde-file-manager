@@ -31,7 +31,7 @@
 #define DevProxyMng DFMBASE_NAMESPACE::DeviceProxyManager::instance()
 
 class DeviceManagerInterface;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DeviceProxyManagerPrivate;
 /*!
@@ -56,6 +56,7 @@ public:
 
     // device info getter
     QStringList getAllBlockIds(GlobalServerDefines::DeviceQueryOptions opts = GlobalServerDefines::DeviceQueryOption::kNoCondition);
+    QStringList getAllBlockIdsByUUID(const QStringList &uuids, GlobalServerDefines::DeviceQueryOptions opts = GlobalServerDefines::DeviceQueryOption::kNoCondition);
     QStringList getAllProtocolIds();
     QVariantMap queryBlockInfo(const QString &id, bool reload = false);
     QVariantMap queryProtocolInfo(const QString &id, bool reload = false);
@@ -107,6 +108,6 @@ private:
     QScopedPointer<DeviceProxyManagerPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DEVICEPROXYMANAGER_H

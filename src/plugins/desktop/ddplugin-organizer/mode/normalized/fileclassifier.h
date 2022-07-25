@@ -23,6 +23,7 @@
 
 #include "ddplugin_organizer_global.h"
 #include "organizer_defines.h"
+#include "mode/collectiondataprovider.h"
 
 #include <QObject>
 #include <QHash>
@@ -37,29 +38,27 @@ public:
     static class FileClassifier *createClassifier(Classifier mode);
 };
 
-class FileClassifier : public QObject
+class FileClassifier : public CollectionDataProvider
 {
     Q_OBJECT
 public:
     explicit FileClassifier(QObject *parent = nullptr);
     virtual Classifier mode() const = 0;
-    virtual QString name(const QString &id) const = 0;
     virtual ModelDataHandler *dataHandler() const = 0;
     virtual QStringList classes() const = 0;
     virtual QString classify(const QUrl &) const = 0;
-public:
+    virtual QString className(const QString &) const = 0;
     virtual void reset(const QList<QUrl> &);
-    virtual QString repalce(const QUrl &oldUrl, const QUrl &newUrl);
-    virtual QString append(const QUrl &);
-    virtual QString take(const QUrl &);
-    virtual bool change(const QUrl &);
-    virtual QString region(const QUrl &) const;
-    virtual QList<QString> regionKeys() const;
-    virtual QList<QUrl> items(const QString &key) const;
+public:
+    CollectionBaseDataPtr baseData(const QString &key) const;
+    QList<CollectionBaseDataPtr> baseData() const;
+public:
+    QString replace(const QUrl &oldUrl, const QUrl &newUrl) override;
+    QString append(const QUrl &) override;
+    void insert(const QUrl &, const QString &, const int) override;
+    QString remove(const QUrl &) override;
+    QString change(const QUrl &) override;
 signals:
-
-protected:
-    QHash<QString, QList<QUrl>> regionDatas; // id -- files
 };
 
 DDP_ORGANIZER_END_NAMESPACE

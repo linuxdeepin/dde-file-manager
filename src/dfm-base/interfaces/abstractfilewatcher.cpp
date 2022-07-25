@@ -28,7 +28,7 @@
 #include <QDebug>
 #include <QApplication>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 DThreadList<QString> AbstractFileWatcherPrivate::watcherPath;
 /*!
  * \class AbstractFileWatcherPrivate 文件监视器私有类
@@ -199,4 +199,4 @@ void AbstractFileWatcher::notifyFileDeleted(const QUrl &url)
     Q_UNUSED(url);
 }
 
-DFMBASE_END_NAMESPACE
+}

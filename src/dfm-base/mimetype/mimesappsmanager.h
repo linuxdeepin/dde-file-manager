@@ -40,7 +40,7 @@
 #include <QUrl>
 #include <QStandardPaths>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class MimeAppsWorker : public QObject
 {
@@ -122,6 +122,6 @@ private:
     QThread mimeAppsThread;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // MIMESAPPSMANAGER_H

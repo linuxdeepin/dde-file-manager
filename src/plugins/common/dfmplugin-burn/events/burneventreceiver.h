@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 class BurnEventReceiver : public QObject
 {
@@ -51,6 +51,6 @@ private:
     explicit BurnEventReceiver(QObject *parent = nullptr);
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // BURNEVENTRECEIVER_H

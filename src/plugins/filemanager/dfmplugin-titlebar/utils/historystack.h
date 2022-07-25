@@ -28,7 +28,7 @@
 #include <QList>
 #include <QUrl>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class HistoryStack
 {
@@ -52,6 +52,6 @@ private:
     int index;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // HISTORYSTACK_H

@@ -27,7 +27,7 @@
 
 #include <QUrl>
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 class BurnEventCaller
 {
@@ -38,6 +38,6 @@ public:
     static void sendCloseTab(const QUrl &url);
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // BURNEVENTCALLER_H

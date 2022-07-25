@@ -20,14 +20,12 @@
 */
 #include "editstackedwidget.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QKeyEvent>
 #include <QHBoxLayout>
@@ -37,12 +35,13 @@
 #include <QLabel>
 #include <QPainterPath>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 const int kTextLineHeight = 18;
-const int kMaxFileNameCharCount = 255;
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent)
     : QTextEdit(text, parent)
@@ -94,7 +93,7 @@ void NameTextEdit::slotTextChanged()
     QVector<uint> list = text.toUcs4();
     int cursor_pos = this->textCursor().position() - text_length + text.length();
 
-    while (text.toLocal8Bit().count() > kMaxFileNameCharCount) {
+    while (text.toLocal8Bit().count() > NAME_MAX) {
         text.chop(1);
     }
 
@@ -278,7 +277,12 @@ void EditStackedWidget::showTextShowFrame()
     if (fileNameEdit->isCanceled())
         initTextShowFrame(newName);
     else {
-        QUrl oldUrl = delegateServIns->urlTransform(filerUrl);
+        QUrl oldUrl = filerUrl;
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << oldUrl, &urls);
+        if (ok && !urls.isEmpty())
+            oldUrl = urls.first();
+
         QUrl newUrl = QUrl::fromLocalFile(QFileInfo(oldUrl.path()).absolutePath() + "/" + newName);
 
         if (oldUrl == newUrl) {
@@ -287,7 +291,7 @@ void EditStackedWidget::showTextShowFrame()
         }
 
         initTextShowFrame(newName);
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, this->topLevelWidget()->winId(), oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+        dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, this->topLevelWidget()->winId(), oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     }
 }
 

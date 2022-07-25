@@ -25,9 +25,9 @@
 
 #include "dfmplugin_myshares_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 class MyShares : public dpf::Plugin
 {
     Q_OBJECT
@@ -43,12 +43,20 @@ protected Q_SLOTS:
     void onWindowOpened(quint64 windd);
     void onWindowClosed(quint64 winId);
 
+    void onShareAdded(const QString &path);
+    void onShareRemoved(const QString &path);
+
 private:
     void addToSidebar();
     void regMyShareToSearch();
-    void claimSubScene(const QString &scene);
+    void beMySubScene(const QString &scene);
+    void beMySubOnAdded(const QString &newScene);
     void hookEvent();
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 #endif   // MYSHARESPLUGIN_H

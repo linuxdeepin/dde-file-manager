@@ -28,7 +28,7 @@
 
 #include <QThread>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class FileStatisticsJobPrivate;
 class FileStatisticsJob : public QThread
@@ -51,15 +51,17 @@ public:
     Q_ENUM(State)
 
     enum FileHint {
-        kFollowSymlink = 0x01,
-        kDontSkipAVFSDStorage = 0x02,
-        kDontSkipPROCStorage = 0x04,
-        kDontSkipCharDeviceFile = 0x08,
-        kDontSkipBlockDeviceFile = 0x10,
-        kDontSkipFIFOFile = 0x20,
-        kDontSkipSocketFile = 0x40,
-        kExcludeSourceFile = 0x80,   // 不计算传入的文件列表
-        kSingleDepth = 0x100   // 深度为1
+        kNoHint = 0x0000,
+        kNoFollowSymlink = 0x0001,
+        kExcludeSourceFile = 0x0002,
+        kSingleDepth = 0x0004,
+
+        kDontSkipAVFSDStorage = 0x0010,
+        kDontSkipPROCStorage = 0x0020,
+        kDontSkipCharDeviceFile = 0x0040,
+        kDontSkipBlockDeviceFile = 0x0080,
+        kDontSkipFIFOFile = 0x0100,
+        kDontSkipSocketFile = 0x0200,
     };
 
     Q_ENUM(FileHint)
@@ -85,9 +87,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void stateChanged(State state);
-    void fileFound(const QUrl &url);
-    void directoryFound(const QUrl &url);
-    void sizeChanged(qint64 size);
+    void sizeChanged(qint64 size);   // emit frequently, suggest use 'dataNotify' if data fuzzy
     void dataNotify(qint64 size, int filesCount, int directoryCount);
 
 private:
@@ -104,7 +104,7 @@ private:
     void statistcsOtherFileSystem();
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(DFMBASE_NAMESPACE::FileStatisticsJob::FileHints)
 

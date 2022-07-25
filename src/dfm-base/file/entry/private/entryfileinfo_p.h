@@ -27,7 +27,7 @@
 #include "file/entry/entities/abstractentryfileentity.h"
 #include "file/entry/entryfileinfo.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class EntryFileInfoPrivate : public AbstractFileInfoPrivate
 {
     friend class EntryFileInfo;
@@ -39,5 +39,5 @@ public:
     virtual ~EntryFileInfoPrivate() override;
 };
 
-DFMBASE_END_NAMESPACE
+}
 #endif   // ENTRYFILEINFO_P_H

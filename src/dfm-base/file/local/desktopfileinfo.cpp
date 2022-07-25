@@ -30,9 +30,9 @@
 #include <QSettings>
 #include <QLocale>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class DesktopFileInfoPrivate : public QSharedData
 {
 public:
@@ -84,7 +84,7 @@ public:
     QString deepinID;
     QString deepinVendor;
 };
-DFMBASE_END_NAMESPACE
+}
 
 DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl)
     : LocalFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))
@@ -192,7 +192,7 @@ QIcon DesktopFileInfo::fileIcon()
 
 QString DesktopFileInfo::fileName() const
 {
-    return fileDisplayName();
+    return LocalFileInfo::fileName();
 }
 
 QString DesktopFileInfo::fileDisplayName() const
@@ -276,12 +276,6 @@ bool DesktopFileInfo::canMoveOrCopy() const
         return false;
 
     return true;
-}
-
-bool DesktopFileInfo::canRename() const
-{
-    // todo(lxs) wait for rename func for desktop file.
-    return false;
 }
 
 QMap<QString, QVariant> DesktopFileInfo::desktopFileInfo(const QUrl &fileUrl)

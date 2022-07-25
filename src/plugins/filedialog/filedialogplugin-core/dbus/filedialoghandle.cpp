@@ -25,21 +25,20 @@
 #include "events/coreeventscaller.h"
 #include "utils/corehelper.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QPointer>
 #include <QWindow>
 #include <QTimer>
 #include <QEventLoop>
+#include <QCoreApplication>
 
 #include <mutex>
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 DWIDGET_USE_NAMESPACE
 
 class FileDialogHandlePrivate
@@ -59,11 +58,13 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
     : QObject(parent),
       d_ptr(new FileDialogHandlePrivate(this))
 {
-    d_func()->dialog = qobject_cast<FileDialog *>(WindowsService::service()->createWindow({}, true));
+    d_func()->dialog = qobject_cast<FileDialog *>(FMWindowsIns.createWindow({}, true));
     if (!d_func()->dialog) {
         qCritical() << "Create window failed";
         abort();
     }
+    auto &&defaultPath { DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath) };
+    d_func()->dialog->cd(QUrl::fromLocalFile(defaultPath));
     d_func()->dialog->hide();
 
     connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
@@ -251,7 +252,11 @@ qulonglong FileDialogHandle::winId() const
 {
     D_DC(FileDialogHandle);
 
-    waitForWindowShow();
+    // browser use gtk start filedialog
+    // gtk call the `winId` must be showed in the window after
+    if (qApp->property("GTK").toBool())
+        waitForWindowShow();
+
     return d->dialog->winId();
 }
 
@@ -472,7 +477,7 @@ void FileDialogHandle::show()
         // So this modification makes `WindowsService::showWindow` execute asynchronously,
         // without blocking the main desktop thread
         QTimer::singleShot(10, this, [d]() {
-            WindowsService::service()->showWindow(d->dialog);
+            FMWindowsIns.showWindow(d->dialog);
             d->dialog->updateAsDefaultSize();
         });
     }

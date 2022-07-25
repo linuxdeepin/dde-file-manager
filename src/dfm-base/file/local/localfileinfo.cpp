@@ -56,7 +56,7 @@ static constexpr uint16_t kRequestThumbnailDealy { 500 };
  * \class LocalFileInfo 本地文件信息类
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
  */
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new LocalFileInfoPrivate(this))
@@ -1846,4 +1846,4 @@ void LocalFileInfoPrivate::onRequestThumbFinished(const QString &path)
     loadingThumbnail = false;
 }
 
-DFMBASE_END_NAMESPACE
+}

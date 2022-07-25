@@ -26,7 +26,7 @@
 
 class QGSettings;
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasModelFilter
 {
@@ -69,6 +69,6 @@ protected:
     QMap<QString, QUrl> keys;
     QMap<QString, bool> hidden;
 };
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASMODELFILTER_H

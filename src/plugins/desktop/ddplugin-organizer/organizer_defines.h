@@ -23,6 +23,11 @@
 
 #include "ddplugin_organizer_global.h"
 
+#include <QString>
+#include <QUrl>
+#include <QSharedPointer>
+#include <QRect>
+
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 enum OrganizerMode {
@@ -37,6 +42,29 @@ enum Classifier {
     kLabel,
     kName,
     kSize
+};
+
+enum class CollectionFrameSize {
+    kSmall = 0,
+    kLarge
+};
+
+class CollectionBaseData
+{
+public:
+    QString name;
+    QString key;
+    QList<QUrl> items;
+};
+
+typedef QSharedPointer<CollectionBaseData> CollectionBaseDataPtr;
+
+class CollectionStyle
+{
+public:
+    int screenIndex = -1;
+    QString key;
+    QRect rect;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

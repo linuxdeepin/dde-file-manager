@@ -22,40 +22,21 @@
 #define SERVICEMANAGER_H
 #include "dfmplugin_vault_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
-#include "services/filemanager/fileencrypt/fileencryptservice.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/computer/computerservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QObject>
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class ServiceManager : public QObject
 {
     Q_OBJECT
+    using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
+    using ExpandFieldMap = QMap<QString, BasicExpand>;
+
 public:
     explicit ServiceManager(QObject *parent = nullptr);
 
 public:
-    static DSB_FM_NAMESPACE::FileEncryptService *fileEncryptServiceInstance();
-
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServiceInstance();
-
-    static DSB_FM_NAMESPACE::WindowsService *windowServiceInstance();
-
-    static DSB_FM_NAMESPACE::ComputerService *computerServiceInstance();
-
-    static DSB_FM_NAMESPACE::TitleBarService *titleBarServiceInstance();
-
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServiceInstance();
-
-    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
-
-    static QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand> basicViewFieldFunc(const QUrl &url);
+    static ExpandFieldMap basicViewFieldFunc(const QUrl &url);
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // SERVICEMANAGER_H

@@ -26,7 +26,7 @@
 
 #include <QWidget>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractBackground : public QWidget
 {
     Q_OBJECT
@@ -62,6 +62,6 @@ protected:
 
 typedef QSharedPointer<AbstractBackground> BackgroundWidgetPointer;
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif // ABSTRACTBACKGROUND_H

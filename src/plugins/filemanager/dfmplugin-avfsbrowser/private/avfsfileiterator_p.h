@@ -27,7 +27,7 @@
 
 #include <QUrl>
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsFileIterator;
 class AvfsFileIteratorPrivate
@@ -42,6 +42,6 @@ private:
     QUrl root;
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSFILEITERATOR_P_H

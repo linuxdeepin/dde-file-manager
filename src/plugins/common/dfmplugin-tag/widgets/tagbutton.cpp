@@ -24,7 +24,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagButton::TagButton(const QColor &color, QWidget *const parent)
     : QFrame(parent),

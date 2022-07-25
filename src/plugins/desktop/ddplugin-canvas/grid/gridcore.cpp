@@ -26,7 +26,7 @@ uint qHash(const QPoint &key, uint seed)
     return qHash<QString>(val, seed);
 }
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 GridCore::GridCore()
 {

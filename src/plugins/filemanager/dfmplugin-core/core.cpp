@@ -22,10 +22,6 @@
 #include "core.h"
 #include "events/coreeventreceiver.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/command/commandservice.h"
-#include "services/common/menu/menuservice.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
@@ -36,10 +32,9 @@
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/utils/clipboard.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/dpf.h>
 #include <dfm-mount/ddevicemanager.h>
 
 #include <QTimer>
@@ -47,29 +42,21 @@
 
 DFMBASE_USE_NAMESPACE
 DPCORE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
-static WindowsService *windowService { nullptr };
 static Application *kDFMApp { nullptr };
 }   // namespace GlobalPrivate
 
 void Core::initialize()
 {
     QString errStr;
-    auto &ctx = dpfInstance.serviceContext();
-    if (!ctx.load(WindowsService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
 
     // 注册路由
-    UrlRoute::regScheme(Global::kFile, "/");
+    UrlRoute::regScheme(Global::Scheme::kFile, "/");
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<LocalFileInfo>(Global::kFile);
-    DirIteratorFactory::regClass<LocalDirIterator>(Global::kFile);
-    WatcherFactory::regClass<LocalFileWatcher>(Global::kFile);
+    InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
+    DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
+    WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
     // 初始化剪切板
     ClipBoard::instance();
 }
@@ -78,13 +65,6 @@ bool Core::start()
 {
     qDebug() << __PRETTY_FUNCTION__;
     GlobalPrivate::kDFMApp = new Application;   // must create it
-    auto &ctx = dpfInstance.serviceContext();
-    qInfo() << "import service list" << ctx.services();
-    GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
-    if (!GlobalPrivate::windowService) {
-        qCritical() << "Failed, init window \"windowService\" is empty";
-        abort();
-    }
 
     // mount business
     if (!DevProxyMng->connectToService()) {
@@ -109,16 +89,18 @@ bool Core::start()
 
 dpf::Plugin::ShutdownFlag Core::stop()
 {
+    if (GlobalPrivate::kDFMApp)
+        delete GlobalPrivate::kDFMApp;
     return kSync;
 }
 
 void Core::onAllPluginsInitialized()
 {
     // subscribe events
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kChangeCurrentUrl,
-                                            CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewWindow,
-                                            CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenWindow);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
+                                   CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kOpenNewWindow,
+                                   CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenWindow);
 }
 
 void Core::onAllPluginsStarted()
@@ -126,7 +108,7 @@ void Core::onAllPluginsStarted()
     // dde-select-dialog also uses the core plugin, don't start filemanger window
     QString &&curAppName { qApp->applicationName() };
     if (curAppName == "dde-file-manager")
-        commandServIns->processCommand();
+        dpfSignalDispatcher->publish(DPF_MACRO_TO_STR(DPCORE_NAMESPACE), "signal_StartApp");
     else
         qInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
 }

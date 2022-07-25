@@ -24,6 +24,7 @@
 #include "utils/vaulthelper.h"
 #include "utils/servicemanager.h"
 #include "utils/policy/policymanager.h"
+#include "utils/fileencrypthandle.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
@@ -44,8 +45,7 @@
 using namespace PolkitQt1;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     : QWidget(parent), tipsLabel(nullptr), encryptFinishedImageLabel(nullptr), tipsThree(nullptr), finishedBtn(nullptr)
@@ -122,7 +122,7 @@ VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);
 
-    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalCreateVaultState,
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault,
             this, &VaultActiveFinishedView::slotEncryptComplete);
 
     // 初始化定时器

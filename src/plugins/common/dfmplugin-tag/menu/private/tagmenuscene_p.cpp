@@ -21,7 +21,7 @@
  */
 #include "tagmenuscene_p.h"
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE
 
 TagMenuScenePrivate::TagMenuScenePrivate(AbstractMenuScene *qq)

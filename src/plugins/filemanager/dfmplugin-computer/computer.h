@@ -25,17 +25,24 @@
 
 #include "dfmplugin_computer_global.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 class Computer : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "computer.json")
 
     DPF_EVENT_NAMESPACE(DPCOMPUTER_NAMESPACE)
-    DPF_EVENT_REG_SLOT(slot_SetContextMenuEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
+    // slots
+    DPF_EVENT_REG_SLOT(slot_ContextMenu_SetEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
+    DPF_EVENT_REG_SLOT(slot_AddDevice)
+    DPF_EVENT_REG_SLOT(slot_RemoveDevice)
+
+    // signals
+    DPF_EVENT_REG_SIGNAL(signal_Operation_OpenItem)
+    DPF_EVENT_REG_SIGNAL(signal_ShortCut_CtrlN)
+    DPF_EVENT_REG_SIGNAL(signal_ShortCut_CtrlT)
 
     // Plugin interface
 public:
@@ -53,7 +60,8 @@ private:
     void regComputerCrumbToTitleBar();
     void regComputerToSearch();
     void bindEvents();
+    void followEvents();
 };
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTER_H

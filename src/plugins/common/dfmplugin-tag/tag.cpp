@@ -24,32 +24,33 @@
 #include "files/tagfilewatcher.h"
 #include "files/tagdiriterator.h"
 #include "utils/taghelper.h"
+#include "utils/tagfilehelper.h"
 #include "utils/tagmanager.h"
-#include "utils/tagoperationhelper.h"
 #include "widgets/tagwidget.h"
 #include "menu/tagmenuscene.h"
 #include "menu/tagdirmenuscene.h"
 #include "events/tageventreceiver.h"
 
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
-#include "services/common/propertydialog/propertydialogservice.h"
-#include "services/filemanager/detailspace/detailspaceservice.h"
-#include "services/common/menu/menuservice.h"
-#include "services/common/delegate/delegateservice.h"
-
-#include <dfm-framework/dpf.h>
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QRectF>
 
-Q_DECLARE_METATYPE(QRectF *)
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 
-DSC_USE_NAMESPACE
+Q_DECLARE_METATYPE(QRectF *)
+Q_DECLARE_METATYPE(QList<QVariantMap> *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(CustomViewExtensionView)
+
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 void Tag::initialize()
 {
@@ -58,41 +59,33 @@ void Tag::initialize()
     InfoFactory::regClass<TagFileInfo>(TagManager::scheme());
     WatcherFactory::regClass<TagFileWatcher>(TagManager::scheme());
     DirIteratorFactory::regClass<TagDirIterator>(TagManager::scheme());
-    delegateServIns->registerUrlTransform(TagManager::scheme(), TagHelper::redirectTagUrl);
 
-    connect(TagHelper::winServIns(), &WindowsService::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
     connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Tag::onAllPluginsInitialized, Qt::DirectConnection);
 
     TagManager::instance();
 
     bindEvents();
+    followEvents();
+    TagEventReceiver::instance()->initConnect();
 }
 
 bool Tag::start()
 {
-    PropertyDialogService::service()->registerControlExpand(Tag::createTagWidget, 0);
-    DetailSpaceService::serviceInstance()->registerControlExpand(Tag::createTagWidget);
+    CustomViewExtensionView func { Tag::createTagWidget };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func, -1);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 0);
 
-    DetailFilterTypes filter = DetailFilterType::kFileSizeField;
-    filter |= DetailFilterType::kFileChangeTImeField;
-    filter |= DetailFilterType::kFileInterviewTimeField;
-    DetailSpaceService::serviceInstance()->registerFilterControlField(TagManager::scheme(), filter);
-
-    followEvent();
-    TagEventReceiver::instance()->initConnect();
-
-    MenuService::service()->registerScene(TagMenuCreator::name(), new TagMenuCreator);
-    bindScene("FileOperatorMenu");
-
-    WorkspaceService::service()->setWorkspaceMenuScene(TagManager::scheme(), TagDirMenuCreator::name());
-    MenuService::service()->registerScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
+    QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
+                         TagManager::scheme(), filtes);
 
     return true;
 }
 
 void Tag::onWindowOpened(quint64 windId)
 {
-    auto window = TagHelper::winServIns()->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "Tag", "Cannot find window by id");
 
     if (window->titleBar())
@@ -108,21 +101,18 @@ void Tag::onWindowOpened(quint64 windId)
 
 void Tag::regTagCrumbToTitleBar()
 {
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = TagManager::scheme();
-    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == TagManager::scheme(); };
-    info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-        QString tagName = TagHelper::instance()->getTagNameFromUrl(url);
-        return { TitleBar::CrumbData(url, tr(""), TagManager::instance()->getTagIconName(tagName)) };
-    };
-
-    TagHelper::titleServIns()->addCustomCrumbar(info);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", TagManager::scheme(), QVariantMap {});
 }
 
 void Tag::onAllPluginsInitialized()
 {
-    TagHelper::workspaceServIns()->addScheme(TagManager::scheme());
-    addFileOperations();
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", TagManager::scheme());
+
+    dfmplugin_menu_util::menuSceneRegisterScene(TagMenuCreator::name(), new TagMenuCreator);
+    bindScene("FileOperatorMenu");
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", TagManager::scheme(), TagDirMenuCreator::name());
+    dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
 }
 
 QWidget *Tag::createTagWidget(const QUrl &url)
@@ -143,52 +133,66 @@ void Tag::installToSideBar()
         QUrl u(item);
         auto query = u.query().split("=", QString::SkipEmptyParts);
         if (query.count() == 2 && tagNames.contains(query[1])) {
-            SideBar::ItemInfo item = TagHelper::instance()->createSidebarItemInfo(query[1]);
-            TagHelper::sideBarServIns()->addItem(item);
+            auto &&url { TagHelper::instance()->makeTagUrlByTagName(query[1]) };
+            auto &&map { TagHelper::instance()->createSidebarItemInfo(query[1]) };
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, map);
             tagNames.removeAll(query[1]);
         }
     }
     for (const auto &tag : tagNames) {   // if tag order is not complete.
-        SideBar::ItemInfo item = TagHelper::instance()->createSidebarItemInfo(tag);
-        TagHelper::sideBarServIns()->addItem(item);
+        auto &&url { TagHelper::instance()->makeTagUrlByTagName(tag) };
+        auto &&map { TagHelper::instance()->createSidebarItemInfo(tag) };
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, map);
     }
 }
 
-void Tag::addFileOperations()
+void Tag::followEvents()
 {
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &TagOperationHelper::openFilesHandle;
-
-    TagHelper::fileOperationsServIns()->registerOperations(TagManager::scheme(), fileOpeationsHandle);
-}
-
-void Tag::followEvent()
-{
-    TagHelper::eventSequence()->follow(Workspace::EventType::kPaintListItem, TagManager::instance(), &TagManager::paintListTagsHandle);
-    TagHelper::eventSequence()->follow(Workspace::EventType::kPaintIconItem, TagManager::instance(), &TagManager::paintIconTagsHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintListItem", TagManager::instance(), &TagManager::paintListTagsHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintIconItem", TagManager::instance(), &TagManager::paintIconTagsHandle);
 
     // todo(zy) need to delete
-    TagHelper::eventSequence()->follow(GlobalEventType::kTempDesktopPaintTag, TagManager::instance(), &TagManager::paintIconTagsHandle);
+    dpfHookSequence->follow(GlobalEventType::kTempDesktopPaintTag, TagManager::instance(), &TagManager::paintIconTagsHandle);
     // paste
-    TagHelper::eventSequence()->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);
-    TagHelper::eventSequence()->follow("dfmplugin_workspace", "hook_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
+
+    // titlebar crumb
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", TagManager::instance(), &TagManager::sepateTitlebarCrumb);
+
+    // url trans
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TagHelper::instance(), &TagHelper::urlsToLocal);
+
+    // file operation
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TagFileHelper::instance(), &TagFileHelper::openFileInPlugin);
 }
 
 void Tag::bindScene(const QString &parentScene)
 {
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(TagMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(TagMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(TagMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        menuScenes << parentScene;
+        if (!subscribedEvent)
+            subscribedEvent = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Tag::onMenuSceneAdded);
+    }
+}
+
+void Tag::onMenuSceneAdded(const QString &scene)
+{
+    if (menuScenes.contains(scene)) {
+        menuScenes.remove(scene);
+        dfmplugin_menu_util::menuSceneBind(TagMenuCreator::name(), scene);
+
+        if (menuScenes.isEmpty()) {
+            dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Tag::onMenuSceneAdded);
+            subscribedEvent = false;
+        }
     }
 }
 
 void Tag::bindEvents()
 {
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, TagEventReceiver::instance(), &TagEventReceiver::handleWindowUrlChanged);
-    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_SidebarSorted", TagEventReceiver::instance(), &TagEventReceiver::handleSidebarOrderChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted", TagEventReceiver::instance(), &TagEventReceiver::handleSidebarOrderChanged);
 }

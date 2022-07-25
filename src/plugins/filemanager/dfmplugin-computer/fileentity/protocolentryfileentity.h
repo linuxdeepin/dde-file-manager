@@ -27,7 +27,7 @@
 
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ProtocolEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
@@ -41,14 +41,12 @@ public:
     virtual bool showProgress() const override;
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
-    virtual void onOpen() override;
     virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
     virtual quint64 sizeTotal() const override;
     virtual quint64 sizeUsage() const override;
     virtual void refresh() override;
     virtual QUrl targetUrl() const override;
-    virtual QMenu *createMenu() override;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // PROTOCOLENTRYFILEENTITY_H

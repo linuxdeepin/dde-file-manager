@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 
 BookMarkEventReceiver *BookMarkEventReceiver::instance()
 {
@@ -33,12 +33,16 @@ BookMarkEventReceiver *BookMarkEventReceiver::instance()
     return &instance;
 }
 
-void BookMarkEventReceiver::handleRenameFile(quint64 windowId, const QList<QUrl> &urls, bool result, const QString &errorMsg)
+void BookMarkEventReceiver::handleRenameFile(quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool result, const QString &errorMsg)
 {
     Q_UNUSED(windowId)
     Q_UNUSED(errorMsg)
-    if (urls.size() == 2 && result)
-        BookMarkManager::instance()->fileRenamed(urls.at(0), urls.at(1));
+    if (!renamedUrls.isEmpty() && result) {
+        auto iter = renamedUrls.constBegin();
+        for (; iter != renamedUrls.constEnd(); ++iter) {
+            BookMarkManager::instance()->fileRenamed(iter.key(), iter.value());
+        }
+    }
 }
 
 void BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled(const QString &scheme)
@@ -50,7 +54,7 @@ void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QStri
 {
     if (group != "Bookmark")
         return;
-    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_GetGroupItems", winId, group);
+    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_Group_UrlList", winId, group);
     BookMarkManager::instance()->sortItemsByOrder(items.value<QList<QUrl>>());
 }
 

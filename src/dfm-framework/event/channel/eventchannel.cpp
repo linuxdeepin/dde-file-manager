@@ -96,17 +96,6 @@ EventChannelFuture EventChannel::asyncSend(const QVariantList &params)
     }));
 }
 
-/*!
- * \class EventChannelManager
- * \brief
- */
-
-EventChannelManager &EventChannelManager::instance()
-{
-    static EventChannelManager instance;
-    return instance;
-}
-
 bool EventChannelManager::disconnect(const QString &space, const QString &topic)
 {
     Q_ASSERT(topic.startsWith(kSlotStrategePrefix));

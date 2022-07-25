@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 class QComboBox;
 QT_END_NAMESPACE
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class ConnectToServerDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
@@ -67,6 +67,6 @@ private:
     DTK_WIDGET_NAMESPACE::DListView *collectionServerView { nullptr };
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // CONNECTTOSERVERDIALOG_H

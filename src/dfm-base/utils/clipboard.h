@@ -26,7 +26,7 @@
 #include <QObject>
 class QMimeData;
 class QUrl;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class ClipBoard : public QObject
 {
     Q_OBJECT
@@ -64,6 +64,6 @@ public slots:
 private:
     static ClipBoard *self;
 };
-DFMBASE_END_NAMESPACE
+}
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::ClipBoard::ClipboardAction)
 #endif   // CLIPBOARD_H

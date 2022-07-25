@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentIterateWorker : public QObject
 {
@@ -42,5 +42,5 @@ signals:
     void updateRecentFileInfo(const QUrl &url, qint64 readTime);
     void deleteExistRecentUrls(QList<QUrl> &urls);
 };
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTITERATEWORKER_H

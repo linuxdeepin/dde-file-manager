@@ -23,18 +23,19 @@
 #include "dirshare.h"
 #include "sharemenu/sharemenuscene.h"
 #include "widget/sharecontrolwidget.h"
-#include "private/shareutils.h"
+#include "utils/usersharehelper.h"
 
-#include "services/common/menu/menuservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QLabel>
 #include <QHBoxLayout>
 
-DPDIRSHARE_USE_NAMESPACE
-DSC_USE_NAMESPACE
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+Q_DECLARE_METATYPE(CustomViewExtensionView)
+
+using namespace dfmplugin_dirshare;
 
 void DirShare::initialize()
 {
@@ -42,13 +43,16 @@ void DirShare::initialize()
 
 bool DirShare::start()
 {
-    MenuService::service()->registerScene(ShareMenuCreator::name(), new ShareMenuCreator);
+    UserShareHelperInstance;
+    dfmplugin_menu_util::menuSceneRegisterScene(ShareMenuCreator::name(), new ShareMenuCreator);
 
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
 
-    PropertyDialogService::service()->registerControlExpand(DirShare::createShareControlWidget, 2);
+    CustomViewExtensionView func { DirShare::createShareControlWidget };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
 
+    bindEvents();
     return true;
 }
 
@@ -60,12 +64,12 @@ dpf::Plugin::ShutdownFlag DirShare::stop()
 QWidget *DirShare::createShareControlWidget(const QUrl &url)
 {
     DFMBASE_USE_NAMESPACE
-    static QStringList supported { Global::kFile, Global::kUserShare };
+    static QStringList supported { Global::Scheme::kFile, Global::Scheme::kUserShare };
     if (!supported.contains(url.scheme()))
         return nullptr;
 
     auto info = InfoFactory::create<AbstractFileInfo>(url);
-    if (!ShareUtils::canShare(info))
+    if (!UserShareHelper::canShare(info))
         return nullptr;
 
     return new ShareControlWidget(url);
@@ -73,13 +77,37 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
 
 void DirShare::bindScene(const QString &parentScene)
 {
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(ShareMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(ShareMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(ShareMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        waitToBind << parentScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &DirShare::bindSceneOnAdded);
     }
+}
+
+void DirShare::bindSceneOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &DirShare::bindSceneOnAdded);
+        bindScene(newScene);
+    }
+}
+
+void DirShare::bindEvents()
+{
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_StartSmbd", UserShareHelperInstance, &UserShareHelper::startSambaServiceAsync);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_IsSmbdRunning", UserShareHelperInstance, &UserShareHelper::isSambaServiceRunning);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_SetSmbPasswd", UserShareHelperInstance, &UserShareHelper::setSambaPasswd);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_AddShare", UserShareHelperInstance, &UserShareHelper::share);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_RemoveShare", UserShareHelperInstance, &UserShareHelper::removeShareByPath);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_IsPathShared", UserShareHelperInstance, &UserShareHelper::isShared);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_AllShareInfos", UserShareHelperInstance, &UserShareHelper::shareInfos);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_ShareInfoOfFilePath", UserShareHelperInstance, &UserShareHelper::shareInfoByPath);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_ShareInfoOfShareName", UserShareHelperInstance, &UserShareHelper::shareInfoByShareName);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_ShareNameOfFilePath", UserShareHelperInstance, &UserShareHelper::shareNameByPath);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_CurrentUserName", UserShareHelperInstance, &UserShareHelper::currentUserName);
+    dpfSlotChannel->connect(kEventSpace, "slot_Share_WhoSharedByShareName", UserShareHelperInstance, &UserShareHelper::whoShared);
 }

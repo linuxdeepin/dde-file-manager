@@ -29,7 +29,7 @@
 
 #include <dfm-mount/base/dmountutils.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 namespace BlockAdditionalProperty {
 inline constexpr char kClearBlockProperty[] { "ClearBlockDeviceInfo" };
@@ -56,6 +56,7 @@ public:
     static bool isAutoMountEnable();
     static bool isAutoMountAndOpenEnable();
     static bool isWorkingOpticalDiscDev(const QString &dev);
+    static bool isWorkingOpticalDiscId(const QString &id);
 
     static bool isSamba(const QUrl &url);
     static bool isFtp(const QUrl &url);
@@ -70,6 +71,6 @@ private:
     static bool hasMatch(const QString &txt, const QString &rex);
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DEVICEUTILS_H

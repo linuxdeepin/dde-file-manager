@@ -26,8 +26,8 @@
 #include "base/urlroute.h"
 
 #include <dfm-io/core/dwatcher.h>
-#include <dfmio_global.h>
-#include <dfmio_register.h>
+#include <dfm-io/dfmio_global.h>
+#include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
 #include <QEvent>
@@ -36,7 +36,7 @@
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 TrashFileWatcherPrivate::TrashFileWatcherPrivate(const QUrl &fileUrl, TrashFileWatcher *qq)
     : AbstractFileWatcherPrivate(fileUrl, qq)
@@ -102,4 +102,4 @@ void TrashFileWatcher::onSubfileCreated(const QUrl &url)
     emit subfileCreated(newUrl);
 }
 
-DPTRASH_END_NAMESPACE
+}

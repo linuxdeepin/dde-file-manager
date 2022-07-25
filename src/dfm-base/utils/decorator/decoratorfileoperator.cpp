@@ -26,7 +26,7 @@
 #include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DecoratorFileOperatorPrivate
 {
@@ -81,9 +81,9 @@ public:
     QUrl url;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 DecoratorFileOperator::DecoratorFileOperator(const QString &filePath)
     : d(new DecoratorFileOperatorPrivate(this))

@@ -35,7 +35,7 @@
 #include <QAction>
 #include <QMenu>
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class DCustomActionBuilder : public QObject
 {
@@ -83,6 +83,6 @@ private:
     dfmbase::DMimeDatabase mimeDatabase;
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // DCUSTOMACTIONBUILDER_H

@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 class MasteredMediaFileInfoPrivate;
 class MasteredMediaFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
@@ -62,6 +62,6 @@ private:
     QVariantMap devInfoMap;
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // MASTEREDMEDIAFILEINFO_H

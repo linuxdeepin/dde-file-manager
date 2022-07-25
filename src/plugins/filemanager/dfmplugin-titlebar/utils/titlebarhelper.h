@@ -24,16 +24,13 @@
 #define TITLEBARHELPER_H
 
 #include "dfmplugin_titlebar_global.h"
-#include "services/filemanager/titlebar/titlebar_defines.h"
 
 #include <QMap>
 #include <QMutex>
 #include <QWidget>
 #include <QMenu>
 
-DPTITLEBAR_BEGIN_NAMESPACE
-
-using DSB_FM_NAMESPACE::TitleBar::CrumbData;
+namespace dfmplugin_titlebar {
 
 class TitleBarWidget;
 class TitleBarHelper
@@ -45,12 +42,10 @@ public:
     static quint64 windowId(QWidget *sender);
 
     static QMenu *createSettingsMenu(quint64 id);
-    static bool crumbSupportedUrl(const QUrl &url);
     static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
+    static QList<CrumbData> tansToCrumbDataList(const QList<QVariantMap> &mapGroup);
     static bool displayIcon();
-    static bool tabAddable(quint64 windowId);
     static void handlePressed(QWidget *sender, const QString &text, bool *isSearch = nullptr);
-    static bool handleConnection(QWidget *sender, const QUrl &url);
 
     static void showSettingsDialog(quint64 windowId);
     static void showConnectToServerDialog(quint64 windowId);
@@ -63,6 +58,6 @@ private:
     static QMap<quint64, TitleBarWidget *> kTitleBarMap;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // TITLEBARHELPER_H

@@ -27,7 +27,7 @@
 #include <QtConcurrent>
 #include <QImageReader>
 
-DDP_WALLPAERSETTING_USE_NAMESPACE
+using namespace ddplugin_wallpapersetting;
 
 ThumbnailManager::ThumbnailManager(qreal _scale, QObject *parent)
     : QObject(parent)

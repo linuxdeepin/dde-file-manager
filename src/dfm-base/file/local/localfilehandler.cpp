@@ -69,7 +69,7 @@ extern "C" {
 }
 #define signals public
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 LocalFileHandler::LocalFileHandler()
 {
@@ -215,6 +215,31 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     if (url.scheme() != newUrl.scheme())
         return false;
 
+    // check device, use set displayname if device is mtp
+    if (Q_UNLIKELY(FileUtils::isMtpFile(newUrl))) {
+        const QUrl &fromParentUrl = UrlRoute::urlParent(url);
+        const QUrl &toParentUrl = UrlRoute::urlParent(newUrl);
+        if (fromParentUrl == toParentUrl) {
+            AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+            const QString &newName = toInfo->fileName();
+            QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+            if (!factory) {
+                qWarning() << "create factory failed, url: " << url;
+                return false;
+            }
+            QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+            if (!oper) {
+                qWarning() << "create operator failed, url: " << url;
+                return false;
+            }
+
+            bool success = oper->renameFile(newName);
+            if (success)
+                return true;
+        }
+    }
+
+    // use system api
     const QByteArray &sourceFile = url.toLocalFile().toLocal8Bit();
     const QByteArray &targetFile = newUrl.toLocalFile().toLocal8Bit();
 
@@ -227,6 +252,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
         return true;
     }
 
+    // use dfm-io api
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
     if (!factory) {
         qWarning() << "create factory failed, url: " << url;
@@ -671,7 +697,7 @@ QUrl LocalFileHandler::smbFileUrl(const QString &filePath)
     const QString &path = match.captured("path");
 
     QUrl newUrl;
-    newUrl.setScheme(Global::kSmb);
+    newUrl.setScheme(Global::Scheme::kSmb);
     newUrl.setHost(host);
     newUrl.setPath("/" + path.mid(0, path.lastIndexOf("/")));
     return newUrl;
@@ -814,11 +840,11 @@ bool LocalFileHandler::openExcutableFile(const QString &path, int flag)
     case 1: {
         QStringList args;
         args << "-e" << path;
-        result = UniversalUtils::runCommand(defaultTerminalPath(), args, QUrl::fromLocalFile(path).adjusted(QUrl::RemoveFilename).toString());
+        result = UniversalUtils::runCommand(defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     }
     case 2:
-        result = UniversalUtils::runCommand(path, QStringList(), QUrl::fromLocalFile(path).adjusted(QUrl::RemoveFilename).toString());
+        result = UniversalUtils::runCommand(path, QStringList(), QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     default:
         break;
@@ -924,7 +950,7 @@ bool LocalFileHandler::doOpenFiles(const QList<QUrl> &urls, const QString &deskt
     QList<QUrl> transUrls = urls;
     for (const QUrl &url : urls) {
         DecoratorFileInfo fileInfo(url);
-        if (fileInfo.suffix() == Global::kDesktop) {
+        if (fileInfo.suffix() == Global::Scheme::kDesktop) {
             ret = launchApp(url.path()) || ret;   //有一个成功就成功
             transUrls.removeOne(url);
             continue;

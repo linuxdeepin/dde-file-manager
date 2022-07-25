@@ -29,7 +29,7 @@
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusUnixFileDescriptor>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class UniversalUtils
 {
@@ -64,6 +64,6 @@ public:
     static void prepareForSleep(QObject *obj, const char *cslot = nullptr);
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // UNIVERSALUTILS_H

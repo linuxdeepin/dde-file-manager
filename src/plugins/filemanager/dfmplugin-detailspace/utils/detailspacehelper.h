@@ -25,12 +25,12 @@
 
 #include "dfmplugin_detailspace_global.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QMap>
 #include <QUrl>
 #include <QMutex>
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 
 class DetailSpaceWidget;
 class DetailSpaceHelper
@@ -47,6 +47,6 @@ private:
     static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}   // namespace dfmplugin_detailspace
 
 #endif   // DETAILSPACEHELPER_H

@@ -32,7 +32,7 @@ static constexpr int kCacheFileinfoCount = 100000;
 // 文件缓存移除的时间
 static constexpr int kCacheRemoveTime = (60 * 1000);
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 Q_GLOBAL_STATIC(InfoCache, _InfoCacheManager)
 
 /*!
@@ -421,4 +421,4 @@ void InfoCache::timeRemoveCache()
     d->needRemoveCacheList.unlock();
 }
 
-DFMBASE_END_NAMESPACE
+}

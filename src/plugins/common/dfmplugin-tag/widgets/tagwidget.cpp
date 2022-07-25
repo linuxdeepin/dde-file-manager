@@ -26,7 +26,11 @@
 #include "tagcrumbedit.h"
 #include "tagcolorlistwidget.h"
 
-DPTAG_USE_NAMESPACE
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
+#include <DArrowRectangle>
+
+using namespace dfmplugin_tag;
 
 TagWidget::TagWidget(QUrl url, QWidget *parent)
     : QFrame(parent),

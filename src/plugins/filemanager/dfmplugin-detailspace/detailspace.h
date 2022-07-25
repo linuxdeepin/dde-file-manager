@@ -25,10 +25,9 @@
 
 #include "dfmplugin_detailspace_global.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 
 class DetailSpace : public dpf::Plugin
 {
@@ -36,7 +35,19 @@ class DetailSpace : public dpf::Plugin
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "detailspace.json")
 
     DPF_EVENT_NAMESPACE(DPDETAILSPACE_NAMESPACE)
-    DPF_EVENT_REG_HOOK(hook_DetailViewIcon)
+
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_DetailView_Show)
+    DPF_EVENT_REG_SLOT(slot_DetailView_Select)
+    DPF_EVENT_REG_SLOT(slot_ViewExtension_Register)
+    DPF_EVENT_REG_SLOT(slot_ViewExtension_Unregister)
+    DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Register)
+    DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Unregister)
+    DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Add)
+    DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Remove)
+
+    // hook evetns
+    DPF_EVENT_REG_HOOK(hook_Icon_Fetch)
 
 public:
     virtual void initialize() override;
@@ -47,6 +58,6 @@ private slots:
     void onWindowClosed(quint64 windId);
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 
 #endif   // DETAILSPACE_H

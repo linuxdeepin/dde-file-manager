@@ -26,7 +26,7 @@
 
 #include <QTimer>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasGridPrivate : public QObject, public GridCore
 {
@@ -49,6 +49,6 @@ private:
     CanvasGrid *q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASGRID_P_H

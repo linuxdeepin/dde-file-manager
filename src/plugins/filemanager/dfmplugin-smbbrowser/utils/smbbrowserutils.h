@@ -29,22 +29,28 @@
 #include <QIcon>
 #include <QMutex>
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
-class SmbBrowserUtils
+class SmbBrowserUtils : public QObject
 {
+    Q_DISABLE_COPY(SmbBrowserUtils)
 public:
+    static SmbBrowserUtils *instance();
+
     static QString networkScheme();
     static QUrl netNeighborRootUrl();
     static QIcon icon();
 
-    static bool mountSmb(const quint64 windowId, const QList<QUrl> urls, QString *);
+    bool mountSmb(const quint64 windowId, const QList<QUrl> urls);
 
 public:
     static QMutex mutex;
     static QMap<QUrl, SmbShareNode> shareNodes;
+
+private:
+    SmbBrowserUtils() = default;
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 
 #endif   // SMBBROWSERUTILS_H

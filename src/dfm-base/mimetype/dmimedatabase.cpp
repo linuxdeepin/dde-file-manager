@@ -29,10 +29,10 @@
 #include <QFileInfo>
 #include <QRegularExpression>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static QStringList wrongMimeTypeNames {
-    Global::kMimeTypeAppXOleStorage, Global::kMimeTypeAppZip
+    Global::Mime::kTypeAppXOleStorage, Global::Mime::kTypeAppZip
 };
 static QStringList officeSuffixList {
     "docx", "xlsx", "pptx", "doc", "ppt", "xls", "wps"

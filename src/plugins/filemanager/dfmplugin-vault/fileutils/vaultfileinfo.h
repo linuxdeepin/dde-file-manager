@@ -24,7 +24,7 @@
 #include "dfmplugin_vault_global.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
@@ -65,5 +65,5 @@ public:
     virtual QString fileDisplayName() const override;
     virtual QString fileDisplayPath() const override;
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   //! VAULTFILEINFO_H

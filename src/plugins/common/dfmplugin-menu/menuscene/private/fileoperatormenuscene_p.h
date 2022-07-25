@@ -25,16 +25,17 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 DFMBASE_USE_NAMESPACE
 
 class FileOperatorMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    Q_OBJECT
 public:
     friend class FileOperatorMenuScene;
     explicit FileOperatorMenuScenePrivate(FileOperatorMenuScene *qq);
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // FILEOPERATORMENUSCENE_P_H

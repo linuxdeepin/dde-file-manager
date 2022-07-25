@@ -21,46 +21,45 @@
 */
 #include "recenteventcaller.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 #include <QUrl>
 
-DPRECENT_USE_NAMESPACE
+using namespace dfmplugin_recent;
 DFMBASE_USE_NAMESPACE
-
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
 
 void RecentEventCaller::sendOpenWindow(const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
 }
 
 void RecentEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, windowId, url);
 }
 
 void RecentEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
 {
-    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, windowID, urls);
 }
 
 void RecentEventCaller::sendWriteToClipboard(const quint64 windowID, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls)
 {
-    dispatcher()->publish(GlobalEventType::kWriteUrlsToClipboard, windowID, action, urls);
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, windowID, action, urls);
 }
 
 void RecentEventCaller::sendCopyFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
 {
-    dispatcher()->publish(GlobalEventType::kCopy, windowID, sourceUrls, target, flags, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kCopy, windowID, sourceUrls, target, flags, nullptr);
 }
 
 void RecentEventCaller::sendCutFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
 {
-    dispatcher()->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags, nullptr);
+}
+
+bool RecentEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
 }

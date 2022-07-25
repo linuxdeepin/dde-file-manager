@@ -37,8 +37,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    DFMSERVICE::common
-    DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
     ${Qt5Multimedia_LIBRARIES}
     ${taglib_LIBRARIES}
@@ -46,12 +44,12 @@ target_link_libraries(${PROJECT_NAME}
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/dde-music-preview-plugin.json DESTINATION ../../previews)
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dde-music-preview-plugin.json DESTINATION ${DFM_PLUGIN_DIR}/previews)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/dde-music-preview-plugin.json DESTINATION ${DFM_PLUGIN_PREVIEW_DIR})
 
 #install library file
 install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_DIR}/previews
+    ${DFM_PLUGIN_PREVIEW_DIR}
 )

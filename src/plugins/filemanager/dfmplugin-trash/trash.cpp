@@ -26,20 +26,26 @@
 #include "utils/trashfilehelper.h"
 #include "menus/trashmenuscene.h"
 
-#include "services/common/delegate/delegateservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/menu/menuservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
+using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using CreateTopWidgetCallback = std::function<QWidget *()>;
+using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
+Q_DECLARE_METATYPE(CreateTopWidgetCallback);
+Q_DECLARE_METATYPE(ShowTopWidgetCallback);
+Q_DECLARE_METATYPE(ContextMenuCallback)
 Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(BasicViewFieldFunc)
+Q_DECLARE_METATYPE(QString *);
+Q_DECLARE_METATYPE(QVariant *)
 
-DSC_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPTRASH_USE_NAMESPACE
+using namespace dfmplugin_trash;
 
 void Trash::initialize()
 {
@@ -47,22 +53,34 @@ void Trash::initialize()
     InfoFactory::regClass<TrashFileInfo>(TrashHelper::scheme());
     WatcherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
-    delegateServIns->registerUrlTransform(TrashHelper::scheme(), TrashHelper::toLocalFile);
-    DSC_NAMESPACE::MenuService::service()->registerScene(TrashMenuCreator::name(), new TrashMenuCreator());
 
-    connect(TrashHelper::winServIns(), &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
 }
 
 bool Trash::start()
 {
+    dfmplugin_menu_util::menuSceneRegisterScene(TrashMenuCreator::name(), new TrashMenuCreator());
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", TrashHelper::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", TrashHelper::scheme(), TrashMenuCreator::name());
+
     addCustomTopWidget();
     addFileOperations();
 
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
-    dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", TrashHelper::instance(), &TrashHelper::detailViewIcon);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", TrashHelper::instance(), &TrashHelper::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TrashHelper::instance(), &TrashHelper::urlsToLocal);
+
+    // hook events, file operation
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", TrashFileHelper::instance(), &TrashFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", TrashFileHelper::instance(), &TrashFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", TrashFileHelper::instance(), &TrashFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", TrashFileHelper::instance(), &TrashFileHelper::deleteFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TrashFileHelper::instance(), &TrashFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", TrashFileHelper::instance(), &TrashFileHelper::writeUrlsToClipboard);
 
     return true;
 }
@@ -74,7 +92,7 @@ dpf::Plugin::ShutdownFlag Trash::stop()
 
 void Trash::onWindowOpened(quint64 windId)
 {
-    auto window = TrashHelper::winServIns()->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "Trash", "Cannot find window by id");
     if (window->titleBar())
         regTrashCrumbToTitleBar();
@@ -91,49 +109,47 @@ void Trash::regTrashCrumbToTitleBar()
 {
     static std::once_flag flag;
     std::call_once(flag, []() {
-        TitleBar::CustomCrumbInfo info;
-        info.scheme = TrashHelper::scheme();
-        info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == TrashHelper::scheme(); };
-        TrashHelper::titleServIns()->addCustomCrumbar(info);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", TrashHelper::scheme(), QVariantMap {});
     });
 }
 
 void Trash::installToSideBar()
 {
-    SideBar::ItemInfo item;
-    item.group = SideBar::DefaultGroup::kCommon;
-    item.url = TrashHelper::rootUrl();
-    item.iconName = TrashHelper::icon().name();
-    item.text = tr("Trash");
-    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    item.contextMenuCb = TrashHelper::contenxtMenuHandle;
-    TrashHelper::sideBarServIns()->addItem(item);
+    ContextMenuCallback contextMenuCb { TrashHelper::contenxtMenuHandle };
+
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Common" },
+        { "Property_Key_DisplayName", tr("Trash") },
+        { "Property_Key_Icon", TrashHelper::icon() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", TrashHelper::rootUrl(), map);
 }
 
 void Trash::addFileOperations()
 {
-    TrashHelper::workspaceServIns()->addScheme(TrashHelper::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::kTrash, TrashMenuCreator::name());
+    BasicViewFieldFunc func { TrashHelper::propetyExtensionFunc };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
+                         func, TrashHelper::scheme());
 
-    propertyServIns->registerBasicViewFiledExpand(TrashHelper::propetyExtensionFunc, TrashHelper::scheme());
-    propertyServIns->registerFilterControlField(TrashHelper::scheme(), Property::FilePropertyControlFilter::kPermission);
-
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &TrashFileHelper::writeToClipBoardHandle;
-    fileOpeationsHandle->moveToTash = &TrashFileHelper::moveToTrashHandle;
-    fileOpeationsHandle->moveFromPlugin = &TrashFileHelper::moveFromTrashHandle;
-    fileOpeationsHandle->deletes = &TrashFileHelper::deletesHandle;
-    fileOpeationsHandle->copy = &TrashFileHelper::copyHandle;
-    fileOpeationsHandle->cut = &TrashFileHelper::cutHandle;
-    TrashHelper::fileOperationsServIns()->registerOperations(TrashHelper::scheme(), fileOpeationsHandle);
+    QStringList &&filtes { "kPermission" };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",
+                         TrashHelper::scheme(), filtes);
 }
 
 void Trash::addCustomTopWidget()
 {
-    Workspace::CustomTopWidgetInfo info;
-    info.scheme = TrashHelper::scheme();
-    info.createTopWidgetCb = TrashHelper::createEmptyTrashTopWidget;
-    info.showTopWidgetCb = TrashHelper::showTopWidget;
-    TrashHelper::workspaceServIns()->addCustomTopWidget(info);
+    CreateTopWidgetCallback createCallback { TrashHelper::createEmptyTrashTopWidget };
+    ShowTopWidgetCallback showCallback { TrashHelper::showTopWidget };
+
+    QVariantMap map {
+        { "Property_Key_Scheme", TrashHelper::scheme() },
+        { "Property_Key_KeepShow", false },
+        { "Property_Key_CreateTopWidgetCallback", QVariant::fromValue(createCallback) },
+        { "Property_Key_ShowTopWidgetCallback", QVariant::fromValue(showCallback) }
+    };
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
 }

@@ -26,17 +26,18 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagMenuScene;
 class TagMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class TagMenuScene;
 
 public:
     explicit TagMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGMENUSCENE_P_H

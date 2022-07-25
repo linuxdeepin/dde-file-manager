@@ -26,7 +26,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagFileInfoPrivate;
 class TagFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
@@ -58,6 +58,6 @@ private:
 
 using TagFileInfoPointer = QSharedPointer<TagFileInfo>;
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGFILEINFO_H

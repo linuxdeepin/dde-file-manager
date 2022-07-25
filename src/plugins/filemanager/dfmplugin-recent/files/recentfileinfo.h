@@ -26,7 +26,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentFileInfoPrivate;
 class RecentFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
@@ -52,6 +52,6 @@ private:
 };
 
 using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;
-DPRECENT_END_NAMESPACE
+}
 
 #endif   // RECENTFILEINFO_H

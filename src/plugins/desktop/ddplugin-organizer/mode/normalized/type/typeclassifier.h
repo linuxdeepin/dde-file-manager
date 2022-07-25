@@ -37,9 +37,9 @@ public:
     ~TypeClassifier();
     Classifier mode() const override;
     ModelDataHandler *dataHandler() const override;
-    QString name(const QString &id) const override;
     QStringList classes() const override;
     QString classify(const QUrl &) const override;
+    QString className(const QString &key) const override;
 private:
     TypeClassifierPrivate *d;
     ModelDataHandler *handler = nullptr;

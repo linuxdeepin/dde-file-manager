@@ -28,7 +28,7 @@
 #include <QSlider>
 #include <QLabel>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class VideoPreview;
 
 class VideoStatusBar : public QWidget
@@ -41,5 +41,5 @@ public:
     QLabel *timeLabel;
     bool sliderIsPressed;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // VIDEOSTATUSBAR_H

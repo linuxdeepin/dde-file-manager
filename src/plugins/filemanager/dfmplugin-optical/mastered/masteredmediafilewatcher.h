@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class MasteredMediaFileWatcherPrivate;
 class MasteredMediaFileWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
@@ -48,6 +48,6 @@ private:
     MasteredMediaFileWatcherPrivate *dptr;
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // MASTEREDMEDIAFILEWATCHER_H

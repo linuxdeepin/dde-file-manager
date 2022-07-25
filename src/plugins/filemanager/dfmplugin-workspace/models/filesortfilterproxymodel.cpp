@@ -29,7 +29,7 @@
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
@@ -129,22 +129,12 @@ AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex
 
 QModelIndex FileSortFilterProxyModel::getIndexByUrl(const QUrl &url) const
 {
-    FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
-    QModelIndex sourceIndex = fileModel->findIndex(url);
-
-    if (sourceIndex.isValid()) {
-        auto tempIndex = mapFromSource(sourceIndex);
-
-        // Importent: The mapping object will not update when the row count changed,
-        // therefore can not map source to proxy. So traverse the model to find the proxy index.
-        if (!tempIndex.isValid()) {
-            for (int i = 0; i < rowCount(); ++i) {
-                sourceIndex = mapToSource(index(i, 0));
-                if (sourceIndex.isValid() && UniversalUtils::urlEquals(sourceIndex.data(kItemUrlRole).toUrl(), url))
-                    return index(i, 0);
-            }
-        }
-        return index(tempIndex.row(), tempIndex.column());
+    // Importent: The mapping object will not update when the row count changed,
+    // therefore can not map source to proxy. So traverse the model to find the proxy index.
+    for (int i = 0; i < rowCount(); ++i) {
+        QModelIndex sourceIndex = mapToSource(index(i, 0));
+        if (sourceIndex.isValid() && UniversalUtils::urlEquals(sourceIndex.data(kItemUrlRole).toUrl(), url))
+            return index(i, 0);
     }
 
     return QModelIndex();
@@ -188,7 +178,7 @@ ItemRoles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
     if (columnRoleList.length() > column)
         return columnRoleList.at(column);
 
-    return kItemNameRole;
+    return kItemFileDisplayNameRole;
 }
 
 int FileSortFilterProxyModel::getColumnByRole(const ItemRoles role) const
@@ -200,6 +190,11 @@ int FileSortFilterProxyModel::getColumnByRole(const ItemRoles role) const
 QDir::Filters FileSortFilterProxyModel::getFilters() const
 {
     return filters;
+}
+
+QStringList FileSortFilterProxyModel::getNameFilters() const
+{
+    return nameFilters;
 }
 
 void FileSortFilterProxyModel::setFilters(const QDir::Filters &filters)
@@ -297,13 +292,13 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
 
     // When the selected sort attribute value is the same, sort by file name
     if (leftData == rightData) {
-        QString leftName = fileModel->data(left, kItemNameRole).toString();
-        QString rightName = fileModel->data(right, kItemNameRole).toString();
+        QString leftName = fileModel->data(left, kItemFileDisplayNameRole).toString();
+        QString rightName = fileModel->data(right, kItemFileDisplayNameRole).toString();
         return FileUtils::compareString(leftName, rightName, sortOrder());
     }
 
     switch (sortRole()) {
-    case kItemNameRole:
+    case kItemFileDisplayNameRole:
     case kItemFileLastModifiedRole:
     case kItemFileMimeTypeRole:
         return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder()) == (sortOrder() == Qt::AscendingOrder);
@@ -416,7 +411,7 @@ QString FileSortFilterProxyModel::roleDisplayString(int role) const
         return displayName;
 
     switch (role) {
-    case kItemNameRole:
+    case kItemFileDisplayNameRole:
         return tr("Name");
     case kItemFileLastModifiedRole:
         return tr("Time modified");
@@ -448,7 +443,7 @@ QList<ItemRoles> FileSortFilterProxyModel::getColumnRoles() const
             roles.append(static_cast<ItemRoles>(var.toInt()));
         }
     } else if (!customOnly) {
-        static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemNameRole
+        static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
                                                                            << kItemFileLastModifiedRole
                                                                            << kItemFileSizeRole
                                                                            << kItemFileMimeTypeRole;

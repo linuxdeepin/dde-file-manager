@@ -32,10 +32,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <QMenu>
-
-DPCOMPUTER_USE_NAMESPACE
-
+using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
 
 /*!
@@ -90,25 +87,21 @@ bool ProtocolEntryFileEntity::showUsageSize() const
     return true;
 }
 
-void ProtocolEntryFileEntity::onOpen()
-{
-}
-
 DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() const
 {
     const QString &id = datas.value(DeviceProperty::kId).toString();
 
-    if (id.startsWith(DFMBASE_NAMESPACE::Global::kFtp)
-        || id.startsWith(DFMBASE_NAMESPACE::Global::kSFtp))
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kFtp)
+        || id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSFtp))
         return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderFtp;
 
-    if (id.startsWith(DFMBASE_NAMESPACE::Global::kSmb))
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb))
         return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderSmb;
 
-    if (id.startsWith(DFMBASE_NAMESPACE::Global::kMtp))
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kMtp))
         return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderMTP;
 
-    if (id.startsWith(DFMBASE_NAMESPACE::Global::kGPhoto2))
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kGPhoto2))
         return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderGPhoto2;
 
     return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderFiles;
@@ -138,27 +131,7 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
     QUrl target;
     if (mpt.isEmpty())
         return target;
-    target.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+    target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     target.setPath(mpt);
     return target;
-}
-
-QMenu *ProtocolEntryFileEntity::createMenu()
-{
-    QMenu *menu = new QMenu();
-
-    menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
-    menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
-    menu->addSeparator();
-
-    if (targetUrl().isValid()) {
-        menu->addAction(ContextMenuActionTrs::trUnmount());
-
-        QString origId = datas[DeviceProperty::kId].toString();
-        if (origId.startsWith(DFMBASE_NAMESPACE::Global::kSmb) || origId.startsWith(DFMBASE_NAMESPACE::Global::kFtp) || origId.startsWith(DFMBASE_NAMESPACE::Global::kSFtp) || origId.startsWith(DFMBASE_NAMESPACE::Global::kDav))
-            menu->addAction(ContextMenuActionTrs::trLogoutAndClearSavedPasswd());
-    }
-
-    menu->addAction(ContextMenuActionTrs::trProperties());
-    return menu;
 }

@@ -24,7 +24,7 @@
 
 #include <QObject>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class PreviewFileOperation : public QObject
 {
     Q_OBJECT
@@ -34,5 +34,5 @@ public:
 public:
     static void openFileHandle(quint64 winID, const QUrl &url);
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif   // PREVIEWFILEOPERATION_H

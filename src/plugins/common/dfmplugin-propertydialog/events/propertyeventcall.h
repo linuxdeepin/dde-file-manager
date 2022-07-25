@@ -25,7 +25,7 @@
 
 #include <QFileDevice>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class PropertyEventCall
 {
 public:
@@ -36,7 +36,7 @@ public:
 
     static void sendFileHide(quint64 winID, const QList<QUrl> &urls);
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(QFileDevice::Permissions)
 #endif   // PROPERTYEVENTCALL_H

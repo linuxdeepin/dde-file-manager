@@ -30,11 +30,9 @@
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
 #include "utils/policy/policymanager.h"
+#include "utils/fileencrypthandle.h"
 #include "events/vaulteventcaller.h"
 #include "dbus/vaultdbusutils.h"
-
-#include "services/common/delegate/delegateservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
@@ -42,8 +40,10 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
+
 #include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
@@ -53,10 +53,10 @@
 #include <QStorageInfo>
 #include <QApplication>
 
-DSB_FM_USE_NAMESPACE
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 QUrl VaultHelper::rootUrl()
 {
@@ -310,30 +310,30 @@ void VaultHelper::createVault(QString &password)
 {
     static bool flg = true;
     if (flg) {
-        connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalCreateVaultState, VaultHelper::instance(), &VaultHelper::sigCreateVault);
+        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault, VaultHelper::instance(), &VaultHelper::sigCreateVault);
         flg = false;
     }
-    ServiceManager::fileEncryptServiceInstance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
+    FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
 void VaultHelper::unlockVault(QString &password)
 {
     static bool flg = true;
     if (flg) {
-        connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, VaultHelper::instance(), &VaultHelper::sigUnlocked);
+        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, VaultHelper::instance(), &VaultHelper::sigUnlocked);
         flg = false;
     }
-    ServiceManager::fileEncryptServiceInstance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
+    FileEncryptHandle::instance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
 void VaultHelper::lockVault()
 {
     static bool flg = true;
     if (flg) {
-        connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalLockVaultState, VaultHelper::instance(), &VaultHelper::slotlockVault);
+        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, VaultHelper::instance(), &VaultHelper::slotlockVault);
         flg = false;
     }
-    ServiceManager::fileEncryptServiceInstance()->lockVault(PathManager::vaultUnlockPath());
+    FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath());
 }
 
 void VaultHelper::creatVaultDialog()
@@ -380,7 +380,7 @@ void VaultHelper::slotlockVault(int state)
         VaultAutoLock::instance()->slotLockVault(state);
         emit VaultHelper::instance()->sigLocked(state);
         QUrl url;
-        url.setScheme(QString(Global::kComputer));
+        url.setScheme(QString(Global::Scheme::kComputer));
         url.setPath("/");
         for (quint64 wid : winIDs) {
             defaultCdAction(wid, url);
@@ -399,6 +399,18 @@ void VaultHelper::recordTime(const QString &group, const QString &key)
 {
     Settings setting(kVaultTimeConfigFile);
     setting.setValue(group, key, QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+}
+
+bool VaultHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
+{
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != VaultHelper::scheme())
+            return false;
+        (*urls).push_back(vaultToLocalUrl(url));
+    }
+    return true;
 }
 
 VaultHelper::VaultHelper()

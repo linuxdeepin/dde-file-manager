@@ -28,6 +28,12 @@
 #define DPWORKSPACE_NAMESPACE dfmplugin_workspace
 
 #include <QList>
+#include <QDir>
+#include <QVariantMap>
+
+namespace dfmbase {
+class AbstractFileInfo;
+}
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -58,6 +64,43 @@ inline constexpr int kColumnPadding { 10 };
 // tab defines
 inline constexpr int kMaxTabCount { 8 };
 
+namespace PropertyKey {
+inline constexpr char kScheme[] { "Property_Key_Scheme" };
+inline constexpr char kKeepShow[] { "Property_Key_KeepShow" };
+inline constexpr char kCreateTopWidgetCallback[] { "Property_Key_CreateTopWidgetCallback" };
+inline constexpr char kShowTopWidgetCallback[] { "Property_Key_ShowTopWidgetCallback" };
+}
+
+using CreateTopWidgetCallback = std::function<QWidget *()>;
+using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
+using FileViewFilterCallback = std::function<bool(dfmbase::AbstractFileInfo *, QVariant)>;
+using FileViewRoutePrehaldler = std::function<void(quint64 winId, const QUrl &, std::function<void()>)>;
+
+struct CustomTopWidgetInfo
+{
+    QString scheme;
+    bool keepShow { false };   // always show
+    CreateTopWidgetCallback createTopWidgetCb { nullptr };
+    ShowTopWidgetCallback showTopWidgetCb { nullptr };
+
+    CustomTopWidgetInfo() = default;
+    inline CustomTopWidgetInfo(const QVariantMap &map)
+        : scheme { map[PropertyKey::kScheme].toString() },
+          keepShow { map[PropertyKey::kKeepShow].toBool() },
+          createTopWidgetCb { qvariant_cast<CreateTopWidgetCallback>(map[PropertyKey::kCreateTopWidgetCallback]) },
+          showTopWidgetCb { qvariant_cast<ShowTopWidgetCallback>(map[PropertyKey::kShowTopWidgetCallback]) }
+    {
+    }
+};
+
 DPWORKSPACE_END_NAMESPACE
+
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::CreateTopWidgetCallback);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::ShowTopWidgetCallback);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewFilterCallback);
+Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewRoutePrehaldler);
+Q_DECLARE_METATYPE(QString *)
+Q_DECLARE_METATYPE(QVariant *)
+Q_DECLARE_METATYPE(QDir::Filters)
 
 #endif   // DFMPLUGIN_WORKSPACE_GLOBAL_H

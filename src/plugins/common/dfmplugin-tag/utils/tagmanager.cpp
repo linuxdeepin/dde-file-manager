@@ -27,9 +27,9 @@
 #include "files/tagfileinfo.h"
 
 #include "dfm-base/base/schemefactory.h"
-#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <QMap>
 #include <QColor>
@@ -38,8 +38,7 @@
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagManager::TagManager(QObject *parent)
     : QObject(parent)
@@ -456,6 +455,21 @@ bool TagManager::fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl)
     return false;
 }
 
+bool TagManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+    if (url.scheme() == TagManager::scheme()) {
+        QVariantMap map;
+        const QString &tagName = TagHelper::instance()->getTagNameFromUrl(url);
+        map["CrumbData_Key_Url"] = url;
+        map["CrumbData_Key_IconName"] = TagManager::instance()->getTagIconName(tagName);
+        mapGroup->push_back(map);
+        return true;
+    }
+
+    return false;
+}
+
 void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     QMenu *menu = new QMenu;
@@ -469,13 +483,13 @@ void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
         TagEventCaller::sendOpenTab(windowId, url);
     });
 
-    newTabAct->setDisabled(!TagHelper::workspaceServIns()->tabAddable(windowId));
+    newTabAct->setDisabled(!TagEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
 
     // tag action
     menu->addAction(QObject::tr("Rename"), [url, windowId]() {
-        TagHelper::sideBarServIns()->triggerItemEdit(windowId, url);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", windowId, url);
     });
 
     menu->addAction(QObject::tr("Remove"), [url]() {
@@ -514,7 +528,9 @@ void TagManager::renameHandle(quint64 windowId, const QUrl &url, const QString &
 void TagManager::onTagAdded(const QStringList &tags)
 {
     for (const QString &tag : tags) {
-        TagHelper::sideBarServIns()->addItem(TagHelper::instance()->createSidebarItemInfo(tag));
+        auto &&url { TagHelper::instance()->makeTagUrlByTagName(tag) };
+        auto &&map { TagHelper::instance()->createSidebarItemInfo(tag) };
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, map);
     }
 }
 
@@ -522,7 +538,7 @@ void TagManager::onTagDeleted(const QStringList &tags)
 {
     for (const QString &tag : tags) {
         QUrl url = TagHelper::instance()->makeTagUrlByTagName(tag);
-        TagHelper::sideBarServIns()->removeItem(url);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
 
         emit tagDeleted(tag);
     }
@@ -536,8 +552,10 @@ void TagManager::onTagColorChanged(const QMap<QString, QString> &tagAndColorName
         QUrl url = TagHelper::instance()->makeTagUrlByTagName(it.key());
         QString iconName = TagHelper::instance()->qureyIconNameByColorName(it.value());
         QIcon icon = QIcon::fromTheme(iconName);
-
-        TagHelper::sideBarServIns()->updateItemIcon(url, icon);
+        QVariantMap map {
+            { "Property_Key_Icon", icon }
+        };
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
         ++it;
     }
 }
@@ -547,10 +565,9 @@ void TagManager::onTagNameChanged(const QMap<QString, QString> &oldAndNew)
     QMap<QString, QString>::const_iterator it = oldAndNew.begin();
 
     while (it != oldAndNew.end()) {
-        QUrl url = TagHelper::instance()->makeTagUrlByTagName(it.key());
-        SideBar::ItemInfo info = TagHelper::instance()->createSidebarItemInfo(it.value());
-
-        TagHelper::sideBarServIns()->updateItem(url, info);
+        QUrl &&url { TagHelper::instance()->makeTagUrlByTagName(it.key()) };
+        auto &&map { TagHelper::instance()->createSidebarItemInfo(it.value()) };
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
         ++it;
     }
 }

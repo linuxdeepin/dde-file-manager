@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QPoint>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class FileOperatorProxyPrivate;
 class FileOperatorProxy : public QObject
@@ -75,6 +75,6 @@ private:
 
 #define FileOperatorProxyIns DDP_CANVAS_NAMESPACE::FileOperatorProxy::instance()
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // FILEOPERATORPROXY_H

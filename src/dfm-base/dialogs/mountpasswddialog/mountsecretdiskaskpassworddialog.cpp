@@ -30,7 +30,7 @@
 #include <QAbstractButton>
 #include <DPasswordEdit>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 DWIDGET_USE_NAMESPACE
 
 MountSecretDiskAskPasswordDialog::MountSecretDiskAskPasswordDialog(const QString &tipMessage, QWidget *parent)

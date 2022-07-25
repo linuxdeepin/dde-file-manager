@@ -27,6 +27,9 @@
 #include "fileentity/appentryfileentity.h"
 #include "fileentity/stashedprotocolentryfileentity.h"
 
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/configs/dconfig/configsynchronizer.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 #include "dfm-base/utils/universalutils.h"
@@ -37,15 +40,25 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/dfm_global_defines.h"
+
+#include <dfm-framework/event/event.h>
 
 #include <QDebug>
 #include <QApplication>
 #include <QWindow>
 
+using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
+using FindMeCallback = std::function<bool(const QUrl &itemUrl, const QUrl &targetUrl)>;
+Q_DECLARE_METATYPE(ItemClickedActionCallback);
+Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(RenameCallback);
+Q_DECLARE_METATYPE(FindMeCallback);
+
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DPCOMPUTER_BEGIN_NAMESPACE
+
+namespace dfmplugin_computer {
 using namespace GlobalServerDefines;
 
 /*!
@@ -63,6 +76,7 @@ ComputerItemWatcher::ComputerItemWatcher(QObject *parent)
 {
     initAppWatcher();
     initConn();
+    initConfSync();
 }
 
 ComputerItemWatcher::~ComputerItemWatcher()
@@ -119,7 +133,8 @@ void ComputerItemWatcher::initConn()
         removeDevice(appUrl);
     });
 
-    connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onAppAttributeChanged);
+    connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onGenAttributeChanged);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &ComputerItemWatcher::onDConfigChanged);
 
     initDeviceConn();
     connect(DevProxyMng, &DeviceProxyManager::devMngDBusRegistered, this, [this]() { startQueryItems(); });
@@ -144,10 +159,23 @@ void ComputerItemWatcher::initDeviceConn()
 void ComputerItemWatcher::initAppWatcher()
 {
     QUrl extensionUrl;
-    extensionUrl.setScheme(Global::kFile);
+    extensionUrl.setScheme(Global::Scheme::kFile);
     extensionUrl.setPath(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath));
     appEntryWatcher.reset(new LocalFileWatcher(extensionUrl, this));
     appEntryWatcher->startWatcher();
+}
+
+void ComputerItemWatcher::initConfSync()
+{
+    auto ins { ConfigSynchronizer::instance() };
+    SyncPair pair {
+        { SettingType::kGenAttr, Application::GenericAttribute::kHiddenSystemPartition },
+        { kDefaultCfgPath, kKeyHideDisk },
+        &ComputerUtils::diskHideToDConfig,
+        &ComputerUtils::diskHideToDSetting,
+        &ComputerUtils::isEqualDiskHideConfig
+    };
+    ins->watchChange(pair);
 }
 
 ComputerDataList ComputerItemWatcher::getUserDirItems()
@@ -159,7 +187,7 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
     static const QStringList udirs = { "desktop", "videos", "music", "pictures", "documents", "downloads" };
     for (auto dir : udirs) {
         QUrl url;
-        url.setScheme(DFMBASE_NAMESPACE::Global::kEntry);
+        url.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kEntry);
         url.setPath(QString("%1.%2").arg(dir).arg(SuffixInfo::kUserDir));
         //        auto info = InfoFactory::create<EntryFileInfo>(url);
         DFMEntryFileInfoPointer info(new EntryFileInfo(url));
@@ -378,28 +406,13 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     // additem to sidebar
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool() || info->suffix() == SuffixInfo::kProtocol;
-    if (ComputerUtils::shouldSystemPartitionHide() && info->suffix() == SuffixInfo::kBlock && !removable) return;
+    if (ComputerUtils::shouldSystemPartitionHide() && info->suffix() == SuffixInfo::kBlock && !removable)
+        return;
 
-    DSB_FM_USE_NAMESPACE;
-    SideBar::ItemInfo sbItem;
-    sbItem.group = SideBar::DefaultGroup::kDevice;
-    sbItem.url = info->url();
-    sbItem.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    if (info->renamable())
-        sbItem.flags |= Qt::ItemIsEditable;
-    if (info->fileIcon().name().startsWith("media"))
-        sbItem.iconName = "media-optical-symbolic";
-    else
-        sbItem.iconName = info->fileIcon().name() + "-symbolic";
-    sbItem.text = info->displayName();
-    sbItem.removable = removable;
-    sbItem.subGroup = Global::kComputer;
-    sbItem.targetUrl = info->targetUrl().isValid() ? info->targetUrl() : QUrl();
-
-    sbItem.cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
-    sbItem.contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
-    sbItem.renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
-    sbItem.findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
+    ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
+    ContextMenuCallback contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
+    RenameCallback renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
+    FindMeCallback findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
         if (this->routeMapper.contains(itemUrl))
             return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(this->routeMapper.value(itemUrl), targetUrl);
 
@@ -407,13 +420,36 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         auto mntUrl = info->targetUrl();
         return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
     };
-    SideBarService::service()->addItem(sbItem);
-    SideBarService::service()->updateItemName(info->url(), info->displayName(), info->renamable());
+
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    if (info->renamable())
+        flags |= Qt::ItemIsEditable;
+    QString iconName { info->fileIcon().name() };
+    if (info->fileIcon().name().startsWith("media"))
+        iconName = "media-optical-symbolic";
+    else
+        iconName += "-symbolic";
+
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Device" },
+        { "Property_Key_SubGroup", Global::Scheme::kComputer },
+        { "Property_Key_DisplayName", info->displayName() },
+        { "Property_Key_Icon", QIcon::fromTheme(iconName) },
+        { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_Ejectable", removable },
+        { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
+        { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) }
+    };
+
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->url(), map);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
 {
-    SideBarService::service()->removeItem(url);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
 }
 
 void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntUrl)
@@ -431,7 +467,11 @@ void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntU
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
-    SideBarService::service()->updateItemName(url, newName, editable);
+    QVariantMap map {
+        { "Property_Key_DisplayName", newName },
+        { "Property_Key_Editable", editable }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
 }
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)
@@ -496,7 +536,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, bool ne
 
     if (info->suffix() == SuffixInfo::kProtocol) {
         QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
-        if (id.startsWith(Global::kSmb)) {
+        if (id.startsWith(Global::Scheme::kSmb)) {
             StashMountsUtils::stashMount(info->url(), info->displayName());
             removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
@@ -543,7 +583,7 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
     }
 }
 
-void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga, const QVariant &value)
+void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga, const QVariant &value)
 {
     if (ga == Application::GenericAttribute::kShowFileSystemTagOnDiskIcon) {
         Q_EMIT hideFileSystemTag(!value.toBool());
@@ -585,6 +625,17 @@ void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga
     }
 }
 
+void ComputerItemWatcher::onDConfigChanged(const QString &cfg, const QString &cfgKey)
+{
+    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath) {
+        const auto &&currHiddenDisks = DConfigManager::instance()->value(cfg, cfgKey).toStringList().toSet();
+        const auto &&allSystemUUIDs = ComputerUtils::allSystemUUIDs().toSet();
+        const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allSystemUUIDs);   // setA ∩ setB
+        const auto &&devUrls = ComputerUtils::systemBlkDevUrlByUUIDs(needToBeHidden.toList());
+        Q_EMIT hideDisks(devUrls);
+    }
+}
+
 void ComputerItemWatcher::onBlockDeviceAdded(const QString &id)
 {
     QUrl url = ComputerUtils::makeBlockDevUrl(id);
@@ -622,7 +673,7 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
 {
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     removeDevice(devUrl);
-    if (id.startsWith(Global::kSmb) && StashMountsUtils::isStashMountsEnabled())
+    if (id.startsWith(Global::Scheme::kSmb) && StashMountsUtils::isStashMountsEnabled())
         onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
 
     routeMapper.remove(ComputerUtils::makeProtocolDevUrl(id));
@@ -660,4 +711,4 @@ void ComputerItemWatcher::onBlockDeviceLocked(const QString &id)
     onUpdateBlockItem(id);
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

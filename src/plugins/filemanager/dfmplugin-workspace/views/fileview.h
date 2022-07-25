@@ -26,13 +26,12 @@
 #include "dfmplugin_workspace_global.h"
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/dfm_global_defines.h"
-#include "workspace/workspace_defines.h"
 
 #include <DListView>
 #include <QDir>
 
 DWIDGET_USE_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class SelectHelper;
 class DragDropHelper;
@@ -151,7 +150,7 @@ public slots:
     void onModelReseted();
     void onChildrenChanged();
     void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
-    void setFilterCallback(const quint64 windowID, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
+    void setFilterCallback(const quint64 windowID, const QUrl &url, const FileViewFilterCallback callback);
     void trashStateChanged();
 
     void onSelectAndEdit(const QUrl &url);
@@ -238,6 +237,6 @@ private:
     bool cdUp();
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEW_H

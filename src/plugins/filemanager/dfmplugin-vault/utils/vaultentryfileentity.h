@@ -26,7 +26,7 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
     Q_OBJECT
@@ -41,16 +41,14 @@ public:
     virtual bool showProgress() const override;
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
-    virtual void onOpen() override;
     virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
 
-    virtual QMenu *createMenu() override;
     virtual void refresh() override;
     virtual quint64 sizeTotal() const override;
     virtual QUrl targetUrl() const override;
 
 public slots:
-    void slotFileDirSizeChange(qint64 size);
+    void slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount);
 
     void slotFinishedThread();
 
@@ -60,5 +58,5 @@ private:
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
     mutable bool showSizeState { false };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTENTRYFILEENTITY_H

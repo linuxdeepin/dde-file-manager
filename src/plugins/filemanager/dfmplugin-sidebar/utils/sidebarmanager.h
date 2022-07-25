@@ -25,8 +25,6 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-
 #include <QObject>
 #include <QString>
 #include <QMap>

@@ -24,24 +24,30 @@
 #include "files/recentdiriterator.h"
 #include "files/recentfilewatcher.h"
 #include "utils/recentmanager.h"
-#include "utils/recentfileshelper.h"
+#include "utils/recentfilehelper.h"
 #include "menus/recentmenuscene.h"
 #include "events/recenteventreceiver.h"
 
-#include "services/common/menu/menuservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/delegate/delegateservice.h"
-#include "services/filemanager/detailspace/detailspaceservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 
-DSC_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
+Q_DECLARE_METATYPE(QList<QUrl> *);
+Q_DECLARE_METATYPE(bool *)
+Q_DECLARE_METATYPE(QFlags<QFileDevice::Permission>)
+Q_DECLARE_METATYPE(BasicViewFieldFunc)
+Q_DECLARE_METATYPE(QString *);
+Q_DECLARE_METATYPE(QVariant *)
+
 DFMBASE_USE_NAMESPACE
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 void Recent::initialize()
 {
@@ -50,29 +56,30 @@ void Recent::initialize()
     InfoFactory::regClass<RecentFileInfo>(RecentManager::scheme());
     WatcherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
-    DSC_NAMESPACE::MenuService::service()->registerScene(RecentMenuCreator::name(), new RecentMenuCreator());
 
-    connect(RecentManager::winServIns(), &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
 
+    followEvent();
+    RecentEventReceiver::instance()->initConnect();
     RecentManager::instance();
 }
 
 bool Recent::start()
 {
-    delegateServIns->registerUrlTransform(RecentManager::scheme(), RecentManager::urlTransform);
+    dfmplugin_menu_util::menuSceneRegisterScene(RecentMenuCreator::name(), new RecentMenuCreator());
 
-    DetailFilterTypes filter = DetailFilterType::kFileSizeField;
-    filter |= DetailFilterType::kFileChangeTImeField;
-    filter |= DetailFilterType::kFileInterviewTimeField;
-    DetailSpaceService::serviceInstance()->registerFilterControlField(RecentManager::scheme(), filter);
+    QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
+                         RecentManager::scheme(), filtes);
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", RecentManager::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", RecentManager::scheme(), RecentMenuCreator::name());
 
     addFileOperations();
-    addDelegateSettings();
 
-    followEvent();
-
-    RecentEventReceiver::instance()->initConnect();
+    // events
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", RecentFileHelper::instance(), &RecentFileHelper::setPermissionHandle);
 
     return true;
 }
@@ -93,7 +100,7 @@ void Recent::onRecentDisplayChanged(bool enabled)
 
 void Recent::onWindowOpened(quint64 windId)
 {
-    auto window = RecentManager::winServIns()->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "Recent", "Cannot find window by id");
     if (window->titleBar())
         regRecentCrumbToTitleBar();
@@ -107,40 +114,47 @@ void Recent::onWindowOpened(quint64 windId)
 
 void Recent::addRecentItem()
 {
-    SideBar::ItemInfo item;
-    item.group = SideBar::DefaultGroup::kCommon;
-    item.url = RecentManager::rootUrl();
-    item.iconName = RecentManager::icon().name();
-    item.text = tr("Recent");
-    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    item.contextMenuCb = RecentManager::contenxtMenuHandle;
+    ContextMenuCallback contextMenuCb { RecentManager::contenxtMenuHandle };
 
-    RecentManager::sideBarServIns()->insertItem(0, item);
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Common" },
+        { "Property_Key_DisplayName", tr("Recent") },
+        { "Property_Key_Icon", RecentManager::icon() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
+    };
+
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, RecentManager::rootUrl(), map);
 }
 
 void Recent::removeRecentItem()
 {
-    RecentManager::sideBarServIns()->removeItem(RecentManager::rootUrl());
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", RecentManager::rootUrl());
 }
 
 void Recent::followEvent()
 {
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
-    dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", RecentManager::instance(), &RecentManager::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentManager::instance(), &RecentManager::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", RecentManager::instance(), &RecentManager::urlsToLocal);
+
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", RecentFileHelper::instance(), &RecentFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", RecentFileHelper::instance(), &RecentFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", RecentFileHelper::instance(), &RecentFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", RecentFileHelper::instance(), &RecentFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", RecentFileHelper::instance(), &RecentFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", RecentFileHelper::instance(), &RecentFileHelper::linkFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", RecentFileHelper::instance(), &RecentFileHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", RecentFileHelper::instance(), &RecentFileHelper::openFileInTerminal);
 }
 
 void Recent::regRecentCrumbToTitleBar()
 {
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = RecentManager::scheme();
-    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == RecentManager::scheme(); };
-    info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-        Q_UNUSED(url);
-        return { TitleBar::CrumbData(RecentManager::rootUrl(), tr("Recent"), RecentManager::icon().name()) };
-    };
-    RecentManager::titleServIns()->addCustomCrumbar(info);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentManager::scheme(), QVariantMap {});
 }
 
 void Recent::installToSideBar()
@@ -153,47 +167,8 @@ void Recent::installToSideBar()
 
 void Recent::addFileOperations()
 {
-    RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::kRecent, RecentMenuCreator::name());
-
-    propertyServIns->registerBasicViewFiledExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
-
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->copy = [](const quint64,
-                                   const QList<QUrl>,
-                                   const QUrl,
-                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags) -> JobHandlePointer {
-        return {};
-    };
-    fileOpeationsHandle->cut = [](const quint64,
-                                  const QList<QUrl>,
-                                  const QUrl,
-                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags) -> JobHandlePointer {
-        return {};
-    };
-
-    fileOpeationsHandle->openInTerminal = [](const quint64,
-                                             const QList<QUrl>,
-                                             QString *) -> bool {
-        return true;
-    };
-
-    fileOpeationsHandle->deletes = &RecentFilesHelper::deleteFilesHandle;
-    fileOpeationsHandle->moveToTash = &RecentFilesHelper::deleteFilesHandle;
-    fileOpeationsHandle->openFiles = &RecentFilesHelper::openFilesHandle;
-    fileOpeationsHandle->setPermission = &RecentFilesHelper::setPermissionHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &RecentFilesHelper::writeUrlToClipboardHandle;
-    fileOpeationsHandle->linkFile = &RecentFilesHelper::createLinkFileHandle;
-
-    RecentManager::fileOperationsServIns()->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
+    BasicViewFieldFunc func { RecentManager::propetyExtensionFunc };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
+                         func, RecentManager::scheme());
 }
-
-void Recent::addDelegateSettings()
-{
-    DelegateService::service()->registerUrlTransform(Global::kRecent, [](const QUrl &in) -> QUrl {
-        auto out { in };
-        out.setScheme(Global::kFile);
-        return out;
-    });
 }
-DPRECENT_END_NAMESPACE

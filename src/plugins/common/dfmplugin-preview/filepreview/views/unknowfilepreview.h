@@ -29,7 +29,7 @@
 #include <QUrl>
 #include <QPointer>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class UnknowFilePreview : public DFMBASE_NAMESPACE::AbstractBasePreview
 {
     Q_OBJECT
@@ -60,5 +60,5 @@ private:
     QLabel *typeLabel { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif   // UNKNOWFILEPREVIEW_H

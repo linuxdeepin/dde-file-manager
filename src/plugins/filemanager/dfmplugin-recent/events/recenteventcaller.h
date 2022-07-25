@@ -30,7 +30,7 @@
 #include <QObject>
 
 DFMBASE_USE_NAMESPACE
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentEventCaller
 {
@@ -48,8 +48,9 @@ public:
     static void sendCutFiles(const quint64 windowId, const QList<QUrl> &sourceUrls,
                              const QUrl &target,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    static bool sendCheckTabAddable(quint64 windowId);
 };
 
-DPRECENT_END_NAMESPACE
+}
 
 #endif   // RECENTEVENTCALLER_H

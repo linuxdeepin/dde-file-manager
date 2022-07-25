@@ -22,7 +22,6 @@
 */
 #include "titlebareventcaller.h"
 #include "utils/titlebarhelper.h"
-#include "services/filemanager/detailspace/detailspace_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -31,8 +30,8 @@
 
 Q_DECLARE_METATYPE(QString *)
 
-DPTITLEBAR_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
+DFMGLOBAL_USE_NAMESPACE
 
 void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode)
 {
@@ -46,7 +45,7 @@ void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::DetailEventType::kShowDetailView, id, checked);
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Show", id, checked);
 }
 
 void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
@@ -62,8 +61,6 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     if (info && info->exists() && info->isFile()) {
         TitleBarEventCaller::sendOpenFile(sender, url);
     } else {
-        if (Q_UNLIKELY(TitleBarHelper::handleConnection(sender, url)))
-            return;
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
     }
 }
@@ -89,24 +86,35 @@ void TitleBarEventCaller::sendSearch(QWidget *sender, const QString &keyword)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_StartSearch", id, keyword);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Search_Start", id, keyword);
 }
 
 void TitleBarEventCaller::sendStopSearch(QWidget *sender)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_StopSearch", id);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Search_Stop", id);
 }
 
 void TitleBarEventCaller::sendShowFilterView(QWidget *sender, bool visible)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_ShowFilterView", id, visible);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_FilterView_Show", id, visible);
 }
 
 void TitleBarEventCaller::sendCheckAddressInputStr(QString *str)
 {
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_CheckInputAdddressStr", str);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_InputAdddressStr_Check", str);
+}
+
+bool TitleBarEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
+}
+
+ViewMode TitleBarEventCaller::sendGetDefualtViewMode(const QString &scheme)
+{
+    int defaultViewMode = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetDefaultViewMode", scheme).toInt();
+    return static_cast<ViewMode>(defaultViewMode);
 }

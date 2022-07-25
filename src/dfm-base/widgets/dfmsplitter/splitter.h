@@ -27,7 +27,7 @@
 #include <QSplitter>
 #include <QSplitterHandle>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class SplitterHandle: public QSplitterHandle
 {
     Q_OBJECT
@@ -51,6 +51,6 @@ public:
 protected:
     QSplitterHandle* createHandle() override;
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif // Splitter_H

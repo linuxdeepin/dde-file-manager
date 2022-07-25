@@ -27,7 +27,7 @@
 #include "docsheet.h"
 #include "model.h"
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 /**
  * @brief The SheetRenderer class
  * 用于加载文档
@@ -111,5 +111,5 @@ private:
     Document *documentObj { nullptr };
     QList<Page *> pageList {};
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // SHEETRENDERER_H

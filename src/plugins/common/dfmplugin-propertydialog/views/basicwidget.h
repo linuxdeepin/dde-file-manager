@@ -22,7 +22,6 @@
 #define BASICWIDGET_H
 
 #include "dfmplugin_propertydialog_global.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/utils/filestatisticsjob.h"
@@ -31,7 +30,7 @@
 
 #include <QCheckBox>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
@@ -78,9 +77,9 @@ private:
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
     qint64 fSize { 0 };
     int fCount { 0 };
-    QMultiMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
+    QMultiMap<BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
     QFrame *frameMain { nullptr };
     QUrl currentUrl;
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // BASICWIDGET_H

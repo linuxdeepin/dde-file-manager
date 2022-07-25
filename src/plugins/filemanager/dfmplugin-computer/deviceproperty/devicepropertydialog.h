@@ -26,7 +26,6 @@
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "devicebasicwidget.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include <DDialog>
 #include <DColoredProgressBar>
@@ -39,7 +38,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DArrowLineDrawer;
 DWIDGET_END_NAMESPACE
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class DFMRoundBackground : public QObject
 {
@@ -68,7 +67,7 @@ private:
     void setProgressBar(qint64 totalSize, qint64 freeSize);
 
 public slots:
-    void setSelectDeviceInfo(const DSC_NAMESPACE::Property::DeviceInfo &info);
+    void setSelectDeviceInfo(const DeviceInfo &info);
 
     void insertExtendedControl(int index, QWidget *widget);
 
@@ -94,5 +93,5 @@ private:
     QList<QWidget *> extendedControl {};
     QUrl currentFileUrl {};
 };
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // DEVICEPROPERTYVIEW_H

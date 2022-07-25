@@ -25,7 +25,7 @@
 #include <QApplication>
 #include <QtConcurrent>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 class DeepinLicenseHelperGlobal : public DeepinLicenseHelper {};
 Q_GLOBAL_STATIC(DeepinLicenseHelperGlobal, deepinLicenseHelperGlobal)

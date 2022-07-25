@@ -53,7 +53,7 @@ public:
     explicit CollectionFramePrivate(CollectionFrame *qq = nullptr);
     ~CollectionFramePrivate();
 
-    void updateAdjustRect();
+    void updateStretchRect();
     void updateMoveRect();
     ResponseArea getCurrentResponseArea(const QPoint &pos) const;
     void updateCursorState(const ResponseArea &stretchPlace);
@@ -61,7 +61,7 @@ public:
     void updateFrameGeometry();
 
     inline bool canMove();
-    bool canAdjust();
+    bool canStretch();
 
 private:
     int calcLeftX();
@@ -80,7 +80,7 @@ public:
     int minHeight = 20;
     QList<QRect> stretchRects;
     QPoint stretchEndPoint;
-    QRect adjustBeforRect;
+    QRect stretchBeforRect;
     ResponseArea responseArea = UnKnowRect;
     QPoint moveStartPoint;
     QList<ResponseArea> stretchArea;
@@ -88,7 +88,7 @@ public:
     CollectionFrameState frameState = NormalShowState;
 
     CollectionFrame::CollectionFrameFeatures frameFeatures = CollectionFrame::NoCollectionFrameFeatures;
-    CollectionFrame::CollectionFrameAdjust adjustStyle = CollectionFrame::CollectionFrameAdjustUnLimited;
+    CollectionFrame::CollectionFrameStretchStyle stretchStyle = CollectionFrame::CollectionFrameStretchUnLimited;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

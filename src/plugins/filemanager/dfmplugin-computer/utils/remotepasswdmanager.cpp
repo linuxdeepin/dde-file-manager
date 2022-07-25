@@ -29,7 +29,7 @@
 #include <QDebug>
 #include <QJsonDocument>
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 
 RemotePasswdManager *RemotePasswdManager::instance()
 {
@@ -141,14 +141,14 @@ void RemotePasswdManager::clearPasswd(const QString &uri)
     QString server = parseServer(uri);
     QString protocol = uri.mid(0, uri.indexOf("://"));
 
-    if (protocol == DFMBASE_NAMESPACE::Global::kSmb) {
+    if (protocol == DFMBASE_NAMESPACE::Global::Scheme::kSmb) {
         secret_password_clear(smbSchema(), nullptr, onPasswdCleared, nullptr,
                               //                              "user", user.toStdString().c_str(),
                               //                              "domain", domain.toStdString().c_str(),
                               "server", server.toStdString().c_str(),
                               "protocol", protocol.toStdString().c_str(),
                               nullptr);
-    } else if (protocol.endsWith(DFMBASE_NAMESPACE::Global::kFtp)) {   // ftp && sftp
+    } else if (protocol.endsWith(DFMBASE_NAMESPACE::Global::Scheme::kFtp)) {   // ftp && sftp
         secret_password_clear(ftpSchema(), nullptr, onPasswdCleared, nullptr,
                               //                              "user", user.toStdString().c_str(),
                               "server", server.toStdString().c_str(),

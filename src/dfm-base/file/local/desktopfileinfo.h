@@ -29,7 +29,7 @@
 #include <QUrl>
 #include <QObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DesktopFileInfoPrivate;
 class DesktopFileInfo : public LocalFileInfo
@@ -63,13 +63,12 @@ public:
     bool canDrop() override;
     bool canTag() const override;
     bool canMoveOrCopy() const override;
-    bool canRename() const override;
 
     static QMap<QString, QVariant> desktopFileInfo(const QUrl &fileUrl);
 
 private:
     QSharedPointer<DesktopFileInfoPrivate> d = nullptr;
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DESKTOPFILEINFO_H

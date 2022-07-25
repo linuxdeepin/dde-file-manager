@@ -24,21 +24,19 @@
 #include "interfaces/private/abstractmenuscene_p.h"
 #include "canvasmenu_defines.h"
 
-#include <services/common/dfm_common_service_global.h>
-#include <services/common/menu/menuservice.h>
-#include "services/common/menu/menu_defines.h"
-#include <plugins/common/dfmplugin-menu/menuscene/action_defines.h>
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QMap>
 #include <QMultiHash>
 #include <QGSettings>
 
-DSC_USE_NAMESPACE
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasView;
 class CanvasMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
+    Q_OBJECT
 public:
     explicit CanvasMenuScenePrivate(CanvasMenuScene *qq);
 
@@ -90,7 +88,7 @@ public:
         // the gsetting control for refresh action
         if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
             const QGSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
-                                               "/com/deepin/dde/filemanager/contextmenu/");
+                                        "/com/deepin/dde/filemanager/contextmenu/");
             if (menuSwitch.keys().contains("refresh")) {
                 auto showRefreh = menuSwitch.get("refresh");
                 if (showRefreh.isValid())
@@ -99,12 +97,12 @@ public:
         }
         return false;
     }
+
 public:
     QMap<QAction *, int> iconSizeAction;
     QPoint gridPos;
 
     CanvasView *view { nullptr };
-    MenuService *menuServer = nullptr;
 
     QMultiHash<QString, QString> emptyDisableActions;
     QMultiHash<QString, QString> normalDisableActions;
@@ -113,5 +111,5 @@ private:
     CanvasMenuScene *q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 #endif   // CANVASMENUSCENE_P_H

@@ -26,7 +26,7 @@
 
 #include <QItemSelectionModel>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileSelectionModelPrivate;
 class FileSelectionModel : public QItemSelectionModel
@@ -54,6 +54,6 @@ private:
     Q_DECLARE_PRIVATE_D(d, FileSelectionModel)
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILESELECTIONMODEL_H

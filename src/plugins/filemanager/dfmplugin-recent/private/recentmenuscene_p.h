@@ -26,11 +26,12 @@
 
 #include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentMenuScene;
 class RecentMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class RecentMenuScene;
 
 public:
@@ -38,6 +39,7 @@ public:
 
     void updateMenu(QMenu *menu);
     void updateSubMenu(QMenu *menu);
+    void disableSubScene(DFMBASE_NAMESPACE::AbstractMenuScene *scene, const QString &sceneName);
 
 private:
     RecentMenuScene *q;
@@ -46,6 +48,6 @@ private:
     QMultiHash<QString, QString> emptyDisableActions;
 };
 
-DPRECENT_END_NAMESPACE
+}
 
 #endif   // RECENTMENUSCENE_P_H

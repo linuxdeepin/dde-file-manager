@@ -28,19 +28,19 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menu/canvasmenuscene.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_desktop_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QCoreApplication>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 #define CanvasCoreSubscribe(topic, func) \
     dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
@@ -105,7 +105,7 @@ void CanvasManager::init()
     dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &CanvasManager::onTrashStateChanged);
 
     // register menu
-    DSC_NAMESPACE::MenuService::service()->registerScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
 
     // self hook
     d->hookIfs = new CanvasManagerHook(this);
@@ -265,8 +265,8 @@ void CanvasManager::onCanvasBuild()
         }
     }
 
-    // todo(zy) 优化首次加载与屏幕改变的加载重复问题，现在在初始化时有冗余
-    if (d->canvasModel->rowCount(d->canvasModel->rootIndex()) > 0)
+    // source model is ready
+    if (d->sourceModel->modelState() & 0x1)
         reloadItem();
 }
 
@@ -497,6 +497,11 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
             // need open editor,only by menu create file
             q->openEditor(url);
         } else {
+            QPair<int, QPoint> pos;
+            if (GridIns->point(path, pos)) {
+                // already exists
+                continue;
+            }
             GridIns->append(path);
         }
     }

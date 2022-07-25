@@ -24,7 +24,7 @@
 
 #include "dfmplugin_emblem_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPEMBLEM_BEGIN_NAMESPACE
 
@@ -32,6 +32,12 @@ class Emblem : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "emblem.json")
+
+    DPF_EVENT_NAMESPACE(DPEMBLEM_NAMESPACE)
+    DPF_EVENT_REG_SLOT(slot_FileEmblems_Paint)
+
+    DPF_EVENT_REG_HOOK(hook_CustomEmblems_Fetch)
+    DPF_EVENT_REG_HOOK(hook_ExtendEmblems_Fetch)
 
 public:
     virtual void initialize() override;

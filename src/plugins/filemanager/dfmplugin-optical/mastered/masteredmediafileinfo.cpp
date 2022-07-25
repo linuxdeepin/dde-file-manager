@@ -32,7 +32,7 @@
 
 DFMBASE_USE_NAMESPACE
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 using namespace GlobalServerDefines;
 
@@ -202,4 +202,4 @@ void MasteredMediaFileInfo::backupInfo(const QUrl &url)
     setProxy(InfoFactory::create<AbstractFileInfo>(backerUrl));
 }
 
-DPOPTICAL_END_NAMESPACE
+}

@@ -22,12 +22,9 @@
 #include "canvasmanager.h"
 #include "utils/fileutil.h"
 
-#include <services/common/menu/menuservice.h>
-
 #include <dfm-base/utils/clipboard.h>
 
-DSC_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
 
 void CanvasPlugin::initialize()

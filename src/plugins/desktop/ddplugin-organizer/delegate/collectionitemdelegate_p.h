@@ -55,6 +55,7 @@ public:
     int currentIconLevel = -1;
     int textLineHeight = -1;
     QList<int> iconSizes;
+    QList<int> charOfLine;
     QStringList iconLevelDescriptions;
     QSize itemSizeHint;
 

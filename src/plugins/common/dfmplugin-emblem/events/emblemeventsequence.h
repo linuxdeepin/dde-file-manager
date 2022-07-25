@@ -25,7 +25,8 @@
 #include "dfmplugin_emblem_global.h"
 
 #include "dfm-base/dfm_global_defines.h"
-#include <dfm-framework/framework.h>
+
+#include <dfm-framework/dpf.h>
 
 DPEMBLEM_BEGIN_NAMESPACE
 
@@ -39,8 +40,6 @@ public:
 
     bool doFetchExtendEmblems(const QUrl &url, QList<QIcon> *emblems);
     bool doFetchCustomEmblems(const QUrl &url, QList<QIcon> *emblems);
-
-    static DPF_NAMESPACE::EventSequenceManager *sequence();
 
 private:
     explicit EmblemEventSequence(QObject *parent = nullptr);

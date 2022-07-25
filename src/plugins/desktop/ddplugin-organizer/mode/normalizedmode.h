@@ -33,10 +33,11 @@ class NormalizedMode : public CanvasOrganizer
     friend class NormalizedModePrivate;
 public:
    explicit NormalizedMode(QObject *parent = nullptr);
-    ~NormalizedMode() override;
-   int mode() const override;
+   OrganizerMode mode() const override;
+   ~NormalizedMode() override;
    bool initialize(FileProxyModel *) override;
    void reset() override;
+   void layout() override;
 public slots:
    void rebuild();
    void onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
@@ -50,7 +51,7 @@ protected slots:
 protected:
     bool setClassifier(Classifier id);
 private:
-    QSharedPointer<NormalizedModePrivate> d = nullptr;
+    NormalizedModePrivate *d = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

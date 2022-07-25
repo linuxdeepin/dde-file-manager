@@ -33,7 +33,7 @@
 class QLabel;
 class QHBoxLayout;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class BasicStatusBar;
 class BasicStatusBarPrivate : public QObject
@@ -64,6 +64,8 @@ public:
     QString selectOnlyOneFile;
     QString selectedNetworkOnlyOneFolder;
 
+    bool showContains { true };
+
     int fileCount = 0;
     qint64 fileSize = 0;
     int folderCount = 0;
@@ -76,6 +78,6 @@ public:
     bool isJobDisconnect = true;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // BASICSTATUSBARPRIVATE_H

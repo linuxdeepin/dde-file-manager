@@ -29,7 +29,7 @@
 
 #include <dfm-mount/base/dmount_global.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DeviceManager;
 class DeviceWatcherPrivate;
@@ -81,6 +81,6 @@ private:
     QScopedPointer<DeviceWatcherPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DEVICEWATCHER_H

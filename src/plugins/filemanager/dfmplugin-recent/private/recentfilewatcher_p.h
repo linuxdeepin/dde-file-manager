@@ -26,7 +26,7 @@
 #include "dfmplugin_recent_global.h"
 #include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentFileWatcher;
 class RecentFileWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
@@ -47,5 +47,5 @@ public:
     QMap<QUrl, AbstractFileWatcherPointer> urlToWatcherMap;
 };
 
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTDIRITERATORPRIVATE_H

@@ -4,9 +4,3 @@ usr/include/dfm-base/*/*.h
 usr/include/dfm-framework/*.h
 usr/include/dfm-framework/*/*.h
 
-usr/include/dfmservice-common/*.h
-usr/include/dfmservice-common/*/*.h
-usr/include/dfmservice-filemanager/*.h
-usr/include/dfmservice-filemanager/*/*.h
-usr/include/dfmservice-desktop/*.h
-usr/include/dfmservice-desktop/*/*.h

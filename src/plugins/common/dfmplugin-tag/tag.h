@@ -24,10 +24,9 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include <dfm-framework/framework.h>
-#include <dfm-framework/event/event.h>
+#include <dfm-framework/dpf.h>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class Tag : public dpf::Plugin
 {
@@ -50,12 +49,15 @@ private slots:
 
 private:
     static QWidget *createTagWidget(const QUrl &url);
-    void addFileOperations();
-    void followEvent();
+    void followEvents();
     void bindScene(const QString &parentScene);
+    void onMenuSceneAdded(const QString &scene);
     void bindEvents();
+
+    QSet<QString> menuScenes;
+    bool subscribedEvent { false };
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAG_H

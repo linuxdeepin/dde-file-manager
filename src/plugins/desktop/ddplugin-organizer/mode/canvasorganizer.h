@@ -22,13 +22,19 @@
 #define MUSTERMODE_H
 
 #include "ddplugin_organizer_global.h"
+#include "private/surface.h"
 #include "organizer_defines.h"
 
 #include <QObject>
+#include <QMap>
+
+class QMimeData;
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 class FileProxyModel;
 class CanvasModelShell;
+class CanvasViewShell;
+class CanvasGridShell;
 class OrganizerCreator
 {
 public:
@@ -40,23 +46,30 @@ class CanvasOrganizer : public QObject
     Q_OBJECT
 public:
     explicit CanvasOrganizer(QObject *parent = nullptr);
-    ~CanvasOrganizer();
-    virtual int mode() const = 0;
+    ~CanvasOrganizer() override;
+    virtual OrganizerMode mode() const = 0;
     virtual bool initialize(FileProxyModel *) = 0;
-    virtual void setCanvasShell(CanvasModelShell *sh);
-    virtual void setSurface(QWidget *w);
+    virtual void layout();
+    virtual void setCanvasModelShell(CanvasModelShell *sh);
+    virtual void setCanvasViewShell(CanvasViewShell *sh);
+    virtual void setCanvasGridShell(CanvasGridShell *sh);
+    virtual void setSurfaces(QList<SurfacePointer> surfaces);
     virtual void reset();
-signals:
 
-public slots:
+signals:
+    void collectionChanged();
+
 protected slots:
     virtual bool filterDataRested(QList<QUrl> *urls);
     virtual bool filterDataInserted(const QUrl &url);
     virtual bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
+    virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
 protected:
     FileProxyModel *model = nullptr;
-    CanvasModelShell *shell = nullptr;
-    QWidget *surface = nullptr;
+    CanvasModelShell *canvasModelShell = nullptr;
+    CanvasViewShell *canvasViewShell = nullptr;
+    CanvasGridShell *canvasGridShell = nullptr;
+    QList<SurfacePointer> surfaces;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

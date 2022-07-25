@@ -28,7 +28,7 @@
 #include <QMediaPlayer>
 class QLabel;
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 /**
  * @brief MediaMeta 音频文件信息结构体
  */
@@ -102,5 +102,5 @@ private:
     int viewMargins;
     QMap<QString, QByteArray> localeCodes;   //!  区域与编码
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // MUSICMESSAGEVIEW_H

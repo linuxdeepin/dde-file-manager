@@ -32,11 +32,11 @@
 
 #include <mutex>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileWatcher;
-DFMBASE_END_NAMESPACE
+}
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchDirIterator;
 class SearchDirIteratorPrivate : public QObject
@@ -71,6 +71,6 @@ private:
     QScopedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> searchRootWatcher;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHDIRITERATOR_P_H

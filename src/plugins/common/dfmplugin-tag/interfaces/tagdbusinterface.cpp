@@ -21,7 +21,7 @@
  */
 #include "tagdbusinterface.h"
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 namespace DaemonServiceIFace {
 static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };

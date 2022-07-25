@@ -24,10 +24,9 @@
 #include "private/sharewatcher_p.h"
 #include "utils/shareutils.h"
 
-#include "services/common/usershare/usershareservice.h"
+#include <dfm-framework/dpf.h>
 
-DPMYSHARES_USE_NAMESPACE
-DSC_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 
 ShareWatcher::ShareWatcher(const QUrl &url, QObject *parent)
     : DFMBASE_NAMESPACE::AbstractFileWatcher(new ShareWatcherPrivate(url, this), parent)
@@ -38,6 +37,16 @@ ShareWatcher::~ShareWatcher()
 {
 }
 
+void ShareWatcher::shareAdded(const QString &path)
+{
+    Q_EMIT subfileCreated(ShareUtils::makeShareUrl(path));
+}
+
+void ShareWatcher::shareRemoved(const QString &path)
+{
+    Q_EMIT fileDeleted(ShareUtils::makeShareUrl(path));
+}
+
 ShareWatcherPrivate::ShareWatcherPrivate(const QUrl &fileUrl, ShareWatcher *qq)
     : DFMBASE_NAMESPACE::AbstractFileWatcherPrivate(fileUrl, qq)
 {
@@ -45,11 +54,18 @@ ShareWatcherPrivate::ShareWatcherPrivate(const QUrl &fileUrl, ShareWatcher *qq)
 
 bool ShareWatcherPrivate::start()
 {
-    return q->connect(UserShareService::service(), &UserShareService::shareAdded, q, [this](const QString &path) { Q_EMIT q->subfileCreated(ShareUtils::makeShareUrl(path)); })
-            && q->connect(UserShareService::service(), &UserShareService::shareRemoved, q, [this](const QString &path) { Q_EMIT q->fileDeleted(ShareUtils::makeShareUrl(path)); });
+    auto qp = qobject_cast<ShareWatcher *>(q);
+    auto ret = true;
+    ret &= dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", qp, &ShareWatcher::shareAdded);
+    ret &= dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", qp, &ShareWatcher::shareRemoved);
+    return ret;
 }
 
 bool ShareWatcherPrivate::stop()
 {
-    return q->disconnect(UserShareService::service(), nullptr, q, nullptr);
+    auto qp = qobject_cast<ShareWatcher *>(q);
+    auto ret = true;
+    ret &= dpfSignalDispatcher->unsubscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", qp, &ShareWatcher::shareAdded);
+    ret &= dpfSignalDispatcher->unsubscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", qp, &ShareWatcher::shareRemoved);
+    return ret;
 }

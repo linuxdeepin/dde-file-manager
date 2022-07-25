@@ -30,7 +30,7 @@
 #include <QFileIconProvider>
 #include <QScopedPointer>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class LocalFileIconProviderPrivate;
 class LocalFileIconProvider : public QFileIconProvider
@@ -53,6 +53,6 @@ private:
     Q_DISABLE_COPY(LocalFileIconProvider)
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // LOCALFILEICONPROVIDER_H

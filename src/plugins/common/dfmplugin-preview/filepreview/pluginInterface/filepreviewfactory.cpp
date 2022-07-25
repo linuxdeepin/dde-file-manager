@@ -26,7 +26,7 @@
 #include <QStringList>
 
 DFMBASE_USE_NAMESPACE
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 
 #ifndef QT_NO_LIBRARY
 Q_GLOBAL_STATIC_WITH_ARGS(PreviewPluginLoader, loader,

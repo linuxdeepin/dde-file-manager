@@ -25,7 +25,7 @@
 #include <QMouseEvent>
 
 DWIDGET_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 ViewSettingUtil::ViewSettingUtil(QObject *parent) : QObject(parent)
 {

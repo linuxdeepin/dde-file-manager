@@ -22,7 +22,7 @@
 #include "fileselectionmodel.h"
 #include "private/fileselectionmodel_p.h"
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileSelectionModel::FileSelectionModel(QAbstractItemModel *model)
     : QItemSelectionModel(model),

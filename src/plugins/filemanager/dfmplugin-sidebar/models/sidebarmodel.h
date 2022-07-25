@@ -23,8 +23,6 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-
 #include <QStandardItemModel>
 #include <QMutex>
 
@@ -47,9 +45,7 @@ public:
     int appendRow(SideBarItem *item);
     bool removeRow(SideBarItem *item);
     bool removeRow(const QUrl &url);
-    void updateRow(const QUrl &url, const DSB_FM_NAMESPACE::SideBar::ItemInfo &newInfo);
-    void updateRow(const QUrl &url, const QString &newName, bool editable);
-    void updateRow(const QUrl &url, const QIcon &newIcon);
+    void updateRow(const QUrl &url, const ItemInfo &newInfo);
     QStringList groups() const;
     int findRowByUrl(const QUrl &url);
 

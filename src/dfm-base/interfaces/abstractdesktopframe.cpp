@@ -20,7 +20,7 @@
  */
 #include "abstractdesktopframe.h"
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 AbstractDesktopFrame::AbstractDesktopFrame(QObject *parent) : QObject(parent)
 {

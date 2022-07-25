@@ -25,7 +25,7 @@
 #include <QEventLoop>
 #include <QDebug>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 SheetRenderer::SheetRenderer(DocSheet *parent)
     : QObject(parent), docSheet(parent)
 {

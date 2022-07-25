@@ -26,7 +26,7 @@
 
 #include <dfm-io/local/dlocalenumerator.h>
 
-DPSMBBROWSER_USE_NAMESPACE
+using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 USING_IO_NAMESPACE
 

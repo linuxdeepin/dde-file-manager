@@ -29,7 +29,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 bool NetworkUtils::checkNetConnection(const QString &host, const QString &port)
 {

@@ -26,14 +26,13 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/standardpaths.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDir>
 #include <QDirIterator>
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPTRASHCORE_USE_NAMESPACE
+using namespace dfmplugin_trashcore;
 
 bool TrashCoreHelper::isEmpty()
 {
@@ -52,7 +51,7 @@ bool TrashCoreHelper::isEmpty()
 QUrl TrashCoreHelper::rootUrl()
 {
     QUrl url;
-    url.setScheme(Global::kTrash);
+    url.setScheme(Global::Scheme::kTrash);
     url.setPath("/");
     return url;
 }
@@ -74,7 +73,7 @@ QUrl TrashCoreHelper::fromTrashFile(const QString &filePath)
 
 QString TrashCoreHelper::scheme()
 {
-    return Global::kTrash;
+    return Global::Scheme::kTrash;
 }
 
 QWidget *TrashCoreHelper::createTrashPropertyDialog(const QUrl &url)

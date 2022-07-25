@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class FileInfoModel;
 class FileInfoModelBroker : public QObject
 {
@@ -46,12 +46,13 @@ public slots:
     QList<QUrl> files();
     DFMLocalFileInfoPointer fileInfo(const QModelIndex &index);
     void refresh(const QModelIndex &parent);
+    int modelState();
 private slots:
     void onDataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
 private:
     FileInfoModel *model = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // FILEINFOMODELBROKER_H

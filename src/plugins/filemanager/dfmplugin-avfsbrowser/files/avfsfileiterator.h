@@ -27,7 +27,7 @@
 
 #include "dfm-base/file/local/localdiriterator.h"
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsFileIteratorPrivate;
 class AvfsFileIterator : public DFMBASE_NAMESPACE::LocalDirIterator
@@ -51,6 +51,6 @@ private:
     QScopedPointer<AvfsFileIteratorPrivate> d;
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSFILEITERATOR_H

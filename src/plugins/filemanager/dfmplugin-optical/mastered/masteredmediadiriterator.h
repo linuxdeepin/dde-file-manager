@@ -29,7 +29,7 @@
 
 #include <QSet>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class MasteredMediaDirIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
 {
@@ -57,6 +57,6 @@ private:
     QUrl changeSchemeUpdate(const QUrl &in);
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // MASTEREDMEDIADIRITERATOR_H

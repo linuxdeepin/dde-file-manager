@@ -28,30 +28,35 @@
 #include "utils/vaultentryfileentity.h"
 #include "events/vaulteventreceiver.h"
 #include "events/vaulteventcaller.h"
-#include "utils/filemanipulation.h"
 #include "utils/policy/policymanager.h"
 #include "utils/servicemanager.h"
 #include "menus/vaultmenuscene.h"
+#include "menus/vaultcomputermenuscene.h"
 
-#include "services/common/delegate/delegateservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 #include <DSysInfo>
 
-DSC_USE_NAMESPACE
+using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+Q_DECLARE_METATYPE(ItemClickedActionCallback);
+Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(CustomViewExtensionView)
+Q_DECLARE_METATYPE(BasicViewFieldFunc)
+
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 VaultVisibleManager::VaultVisibleManager(QObject *parent)
     : QObject(parent)
 {
@@ -87,70 +92,61 @@ void VaultVisibleManager::infoRegister()
 void VaultVisibleManager::pluginServiceRegister()
 {
     if (!serviceRegisterState) {
-        connect(ServiceManager::windowServiceInstance(), &WindowsService::windowOpened, this, &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
+        connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
         VaultEventReceiver::instance()->connectEvent();
         serviceRegisterState = true;
     }
 
     if (isVaultEnabled()) {
-        ServiceManager::workspaceServiceInstance()->addScheme(VaultHelper::instance()->scheme());
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", VaultHelper::instance()->scheme());
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
 
-        propertyServIns->registerCustomizePropertyView(VaultHelper::createVaultPropertyDialog, VaultHelper::instance()->scheme());
-        propertyServIns->registerBasicViewFiledExpand(ServiceManager::basicViewFieldFunc, VaultHelper::instance()->scheme());
-        propertyServIns->registerFilterControlField(VaultHelper::instance()->scheme(), Property::FilePropertyControlFilter::kPermission);
+        CustomViewExtensionView customView { VaultHelper::createVaultPropertyDialog };
+        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
+                             customView, VaultHelper::instance()->scheme());
 
-        delegateServIns->registerUrlTransform(VaultHelper::instance()->scheme(), VaultHelper::vaultToLocalUrl);
+        BasicViewFieldFunc func { ServiceManager::basicViewFieldFunc };
+        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
+                             func, VaultHelper::instance()->scheme());
+        QStringList &&filters { "kPermission" };
+        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",
+                             VaultHelper::instance()->scheme(), filters);
 
-        MenuService::service()->registerScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
-        WorkspaceService::service()->setWorkspaceMenuScene(VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
+        dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
+        dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");
+        dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
     }
 }
 
 void VaultVisibleManager::addSideBarVaultItem()
 {
     if (isVaultEnabled()) {
-        SideBar::ItemInfo item;
-        item.group = SideBar::DefaultGroup::kDevice;
-        item.url = VaultHelper::instance()->rootUrl();
-        item.iconName = VaultHelper::instance()->icon().name();
-        item.text = tr("My Vault");
-        item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-        item.contextMenuCb = VaultHelper::contenxtMenuHandle;
-        item.cdCb = VaultHelper::siderItemClicked;
+        ItemClickedActionCallback cdCb { VaultHelper::siderItemClicked };
+        ContextMenuCallback contextMenuCb { VaultHelper::contenxtMenuHandle };
+        Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+        QVariantMap map {
+            { "Property_Key_Group", "Group_Device" },
+            { "Property_Key_DisplayName", tr("My Vault") },
+            { "Property_Key_Icon", VaultHelper::instance()->icon() },
+            { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+            { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
+            { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
+        };
 
-        ServiceManager::sideBarServiceInstance()->insertItem(1, item);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 1, VaultHelper::instance()->rootUrl(), map);
     }
 }
 
 void VaultVisibleManager::addComputer()
 {
     if (isVaultEnabled()) {
-        ServiceManager::computerServiceInstance()->addDevice(tr("Vault"), QUrl("entry:///vault.vault"));
-    }
-}
-
-void VaultVisibleManager::addFileOperations()
-{
-    if (isVaultEnabled()) {
-        FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-        fileOpeationsHandle->openFiles = &FileManipulation::openFilesHandle;
-        fileOpeationsHandle->writeUrlsToClipboard = &FileManipulation::writeToClipBoardHandle;
-        fileOpeationsHandle->moveToTash = &FileManipulation::moveToTrashHandle;
-        fileOpeationsHandle->deletes = &FileManipulation::deletesHandle;
-        fileOpeationsHandle->copy = &FileManipulation::copyHandle;
-        fileOpeationsHandle->cut = &FileManipulation::cutHandle;
-        fileOpeationsHandle->makeDir = &FileManipulation::mkdirHandle;
-        fileOpeationsHandle->touchFile = &FileManipulation::touchFileHandle;
-        fileOpeationsHandle->renameFile = &FileManipulation::renameHandle;
-        fileOpeationsHandle->renameFiles = &FileManipulation::renameFilesHandle;
-        fileOpeationsHandle->renameFilesAddText = &FileManipulation::renameFilesHandleAddText;
-        ServiceManager::fileOperationsServIns()->registerOperations(VaultHelper::instance()->scheme(), fileOpeationsHandle);
+        dpfSlotChannel->push("dfmplugin_computer", "slot_AddDevice", tr("Vault"), QUrl("entry:///vault.vault"));
     }
 }
 
 void VaultVisibleManager::onWindowOpened(quint64 winID)
 {
-    auto window = ServiceManager::windowServiceInstance()->findWindowById(winID);
+    auto window = FMWindowsIns.findWindowById(winID);
 
     if (window->sideBar())
         addSideBarVaultItem();
@@ -162,18 +158,17 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
     else
         connect(window, &FileManagerWindow::workspaceInstallFinished, this, &VaultVisibleManager::addComputer, Qt::DirectConnection);
 
-    addFileOperations();
     VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
 }
 
 void VaultVisibleManager::removeSideBarVaultItem()
 {
-    ServiceManager::sideBarServiceInstance()->removeItem(VaultHelper::instance()->rootUrl());
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", VaultHelper::instance()->rootUrl());
 }
 
 void VaultVisibleManager::removeComputerVaultItem()
 {
-    ServiceManager::computerServiceInstance()->removeDevice(QUrl("entry:///vault.vault"));
+    dpfSlotChannel->push("dfmplugin_computer", "slot_RemoveDevice", QUrl("entry:///vault.vault"));
 }
 
 VaultVisibleManager *VaultVisibleManager::instance()

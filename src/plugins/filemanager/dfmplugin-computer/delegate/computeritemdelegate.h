@@ -27,7 +27,7 @@
 
 #include <QStyledItemDelegate>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ComputerView;
 class ComputerItemDelegate : public QStyledItemDelegate
@@ -65,6 +65,6 @@ private:
     mutable QModelIndex editingIndex;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTERITEMDELEGATE_H

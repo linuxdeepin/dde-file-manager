@@ -25,11 +25,12 @@
 
 #include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagDirMenuScene;
 class TagDirMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class TagDirMenuScene;
 
 public:
@@ -41,6 +42,6 @@ private:
     TagDirMenuScene *q;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGDIRMENUSCENEPRIVATE_H

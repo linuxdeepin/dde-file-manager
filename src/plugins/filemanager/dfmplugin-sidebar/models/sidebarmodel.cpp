@@ -27,13 +27,14 @@
 
 #include "dfm-base/utils/universalutils.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QMimeData>
 #include <QDebug>
 #include <QtConcurrent>
 
 static constexpr char kModelitemMimetype[] { "application/x-dfmsidebaritemmodeldata" };
 
-DSB_FM_USE_NAMESPACE
 DPSIDEBAR_USE_NAMESPACE
 
 namespace GlobalPrivate {
@@ -202,7 +203,6 @@ int SideBarModel::appendRow(SideBarItem *item)
     } else {
         const QString &currentGroup = item->group();
         const QString &subGroup = item->subGourp();
-        auto sortFunc = SideBarHelper::sortFunc(subGroup);
 
         bool foundGroup = false;
         for (int r = 0; r < rowCount(); r++) {
@@ -211,7 +211,9 @@ int SideBarModel::appendRow(SideBarItem *item)
                 continue;
             if (tmpItem->group() == currentGroup) {
                 foundGroup = true;
-                if (sortFunc && sortFunc(item->url(), tmpItem->url())) {
+                bool sorted { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort",
+                                                   currentGroup, subGroup, item->url(), tmpItem->url()) };
+                if (sorted) {
                     QStandardItemModel::insertRow(r, item);
                     return r;
                 }
@@ -238,7 +240,6 @@ bool SideBarModel::removeRow(SideBarItem *item)
     for (int row = rowCount() - 1; row >= 0; row--) {
         auto foundItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
         if (item == foundItem) {
-            SideBarInfoCacheMananger::instance()->removeBindedItemInfo(item->url());
             QStandardItemModel::removeRow(row);
             return true;
         }
@@ -257,7 +258,6 @@ bool SideBarModel::removeRow(const QUrl &url)
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);
         if (item && DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, item->url())) {
-            SideBarInfoCacheMananger::instance()->removeBindedItemInfo(item->url());
             QStandardItemModel::removeRow(r);
             return true;
         }
@@ -265,7 +265,7 @@ bool SideBarModel::removeRow(const QUrl &url)
     return false;
 }
 
-void SideBarModel::updateRow(const QUrl &url, const SideBar::ItemInfo &newInfo)
+void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
 {
     QMutexLocker lk(&locker);
 
@@ -275,47 +275,18 @@ void SideBarModel::updateRow(const QUrl &url, const SideBar::ItemInfo &newInfo)
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);
         if (item && item->url() == url) {
-            item->setItemInfo(newInfo);
-            item->setIcon(QIcon::fromTheme(newInfo.iconName));
-            item->setText(newInfo.text);
+            item->setIcon(newInfo.icon);
+            item->setText(newInfo.displayName);
             item->setUrl(newInfo.url);
             item->setFlags(newInfo.flags);
-        }
-    }
-}
-
-void SideBarModel::updateRow(const QUrl &url, const QString &newName, bool editable)
-{
-    QMutexLocker lk(&locker);
-
-    if (!url.isValid())
-        return;
-
-    for (int r = 0; r < rowCount(); r++) {
-        auto item = itemFromIndex(r);
-        if (item && item->url() == url) {
-            item->setText(newName);
+            item->setGroup(newInfo.group);
             Qt::ItemFlags flags = item->flags();
-            if (editable)
+            if (newInfo.isEditable)
                 flags |= Qt::ItemIsEditable;
             else
                 flags &= (~Qt::ItemIsEditable);
             item->setFlags(flags);
         }
-    }
-}
-
-void SideBarModel::updateRow(const QUrl &url, const QIcon &newIcon)
-{
-    QMutexLocker lk(&locker);
-
-    if (!url.isValid())
-        return;
-
-    for (int r = 0; r < rowCount(); r++) {
-        auto item = itemFromIndex(r);
-        if (item && item->url() == url)
-            item->setIcon(newIcon);
     }
 }
 

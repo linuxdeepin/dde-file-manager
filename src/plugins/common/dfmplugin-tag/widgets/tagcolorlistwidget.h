@@ -30,7 +30,7 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QLabel;
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagButton;
 class TagColorListWidget final : public QFrame
@@ -70,6 +70,6 @@ private:
     QStringList currentCheckedColorList;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGCOLORLISTWIDGET_H

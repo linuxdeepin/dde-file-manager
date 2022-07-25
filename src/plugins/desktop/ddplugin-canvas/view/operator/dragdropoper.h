@@ -28,7 +28,7 @@
 #include <QModelIndex>
 #include <QUrl>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class DragDropOper : public QObject
 {
@@ -64,5 +64,5 @@ protected:
     QUrl m_target; //must be file:///
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 #endif // DRAGDROPOPER_H

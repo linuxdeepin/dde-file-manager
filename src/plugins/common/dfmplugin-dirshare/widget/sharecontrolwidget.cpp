@@ -21,13 +21,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sharecontrolwidget.h"
+#include "utils/usersharehelper.h"
 
-#include "services/common/usershare/usershareservice.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/local/localfilewatcher.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QCheckBox>
 #include <QVBoxLayout>
@@ -41,10 +43,9 @@
 
 #include <unistd.h>
 
-DPDIRSHARE_USE_NAMESPACE
+using namespace dfmplugin_dirshare;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 namespace ConstDef {
 static const int kWidgetFixedWidth { 160 };
@@ -77,6 +78,13 @@ ShareControlWidget::ShareControlWidget(const QUrl &url, QWidget *parent)
     setupUi();
     init();
     initConnection();
+}
+
+ShareControlWidget::~ShareControlWidget()
+{
+    dpfSignalDispatcher->unsubscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &ShareControlWidget::updateWidgetStatus);
+    dpfSignalDispatcher->unsubscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &ShareControlWidget::updateWidgetStatus);
+    dpfSignalDispatcher->unsubscribe("dfmplugin_dirshare", "signal_Share_RemoveShareFailed", this, &ShareControlWidget::updateWidgetStatus);
 }
 
 void ShareControlWidget::setupUi()
@@ -135,17 +143,17 @@ void ShareControlWidget::init()
     }
 
     QString filePath = url.path();
-    DSC_USE_NAMESPACE auto shareName = UserShareService::service()->getShareNameByPath(filePath);
+    auto shareName = UserShareHelperInstance->shareNameByPath(filePath);
     if (shareName.isEmpty())
         shareName = info->fileDisplayName();
     shareNameEditor->setText(shareName);
 
-    bool isShared = UserShareService::service()->isSharedPath(filePath);
+    bool isShared = UserShareHelperInstance->isShared(filePath);
     shareSwitcher->setChecked(isShared);
     if (isShared) {
-        auto shareInfo = UserShareService::service()->getInfoByPath(filePath);
-        sharePermissionSelector->setCurrentIndex(shareInfo.getWritable() ? 0 : 1);
-        shareAnonymousSelector->setCurrentIndex(shareInfo.getAnonymous() ? 1 : 0);
+        auto shareInfo = UserShareHelperInstance->shareInfoByPath(filePath);
+        sharePermissionSelector->setCurrentIndex(shareInfo.value(ShareInfoKeys::kWritable).toBool() ? 0 : 1);
+        shareAnonymousSelector->setCurrentIndex(shareInfo.value(ShareInfoKeys::kAnonymous).toBool() ? 1 : 0);
     }
 
     sharePermissionSelector->setEnabled(isShared);
@@ -167,9 +175,9 @@ void ShareControlWidget::initConnection()
     connect(sharePermissionSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ShareControlWidget::updateShare);
     connect(shareNameEditor, &QLineEdit::editingFinished, this, &ShareControlWidget::updateShare);
 
-    connect(UserShareService::service(), &UserShareService::shareAdded, this, &ShareControlWidget::updateWidgetStatus);
-    connect(UserShareService::service(), &UserShareService::shareRemoved, this, &ShareControlWidget::updateWidgetStatus);
-    connect(UserShareService::service(), &UserShareService::shareRemoveFailed, this, &ShareControlWidget::updateWidgetStatus);
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &ShareControlWidget::updateWidgetStatus);
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &ShareControlWidget::updateWidgetStatus);
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_RemoveShareFailed", this, &ShareControlWidget::updateWidgetStatus);
 
     connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &ShareControlWidget::updateFile);
 }
@@ -185,8 +193,9 @@ bool ShareControlWidget::validateShareName()
         return false;
     }
 
-    if (UserShareService::service()->isSharedPath(url.path())) {
-        auto sharedName = UserShareService::service()->getShareNameByPath(url.path());
+    bool isShared = UserShareHelperInstance->isShared(url.path());
+    if (isShared) {
+        const auto &&sharedName = UserShareHelperInstance->shareNameByPath(url.path());
         if (sharedName == name.toLower())
             return true;
     }
@@ -264,8 +273,15 @@ void ShareControlWidget::shareFolder()
             }
         }
     }
-    ShareInfo info(shareNameEditor->text().trimmed(), url.path(), "", writable, anonymous);
-    if (!UserShareService::service()->addShare(info)) {
+    ShareInfo info {
+        { ShareInfoKeys::kName, shareNameEditor->text().trimmed() },
+        { ShareInfoKeys::kPath, url.path() },
+        { ShareInfoKeys::kComment, "" },
+        { ShareInfoKeys::kWritable, writable },
+        { ShareInfoKeys::kAnonymous, anonymous }
+    };
+    bool success = UserShareHelperInstance->share(info);
+    if (!success) {
         shareSwitcher->setChecked(false);
         shareSwitcher->setEnabled(true);
         sharePermissionSelector->setEnabled(false);
@@ -275,7 +291,7 @@ void ShareControlWidget::shareFolder()
 
 void ShareControlWidget::unshareFolder()
 {
-    UserShareService::service()->removeShare(url.path());
+    UserShareHelperInstance->removeShareByPath(url.path());
 }
 
 void ShareControlWidget::updateWidgetStatus(const QString &filePath)
@@ -284,21 +300,24 @@ void ShareControlWidget::updateWidgetStatus(const QString &filePath)
     if (filePath != url.path())
         return;
 
-    auto shareInfo = UserShareService::service()->getInfoByPath(filePath);
-    if (shareInfo.isValid()) {
+    auto shareInfo = UserShareHelperInstance->shareInfoByPath(filePath);
+    bool valid = !shareInfo.value(ShareInfoKeys::kName).toString().isEmpty()
+            && QFile(shareInfo.value(ShareInfoKeys::kPath).toString()).exists();
+    if (valid) {
         shareSwitcher->setChecked(true);
-        shareNameEditor->setText(shareInfo.getShareName());
-        if (shareInfo.getWritable())
+        const auto &&name = shareInfo.value(ShareInfoKeys::kName).toString();
+        shareNameEditor->setText(name);
+        if (shareInfo.value(ShareInfoKeys::kWritable).toBool())
             sharePermissionSelector->setCurrentIndex(0);
         else
             sharePermissionSelector->setCurrentIndex(1);
 
-        if (shareInfo.getAnonymous())
+        if (shareInfo.value(ShareInfoKeys::kAnonymous).toBool())
             shareAnonymousSelector->setCurrentIndex(1);
         else
             shareAnonymousSelector->setCurrentIndex(0);
 
-        uint shareUid = UserShareService::service()->getUidByShareName(shareInfo.getShareName());
+        uint shareUid = UserShareHelperInstance->whoShared(name);
         if ((shareUid != info->ownerId() || shareUid != getuid()) && getuid() != 0)
             this->setEnabled(false);
 

@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class SearchHistroyManager : public QObject
 {
@@ -46,6 +46,6 @@ private:
     explicit SearchHistroyManager(QObject *parent = nullptr);
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // SEARCHHISTROYMANAGER_H

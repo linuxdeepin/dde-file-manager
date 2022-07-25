@@ -26,7 +26,7 @@
 #include <QUrl>
 #include <QList>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 AbstractJobHandler::AbstractJobHandler(QObject *parent)
     : QObject(parent)

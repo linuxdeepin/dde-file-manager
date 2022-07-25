@@ -29,7 +29,7 @@
 #include <QMenu>
 
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 HeaderView::HeaderView(Qt::Orientation orientation, FileView *parent)
     : QHeaderView(orientation, parent),
@@ -105,7 +105,7 @@ void HeaderView::updateColumnWidth()
 
 void HeaderView::doFileNameColumnResize(const int totalWidth)
 {
-    int fileNameColumn = proxyModel()->getColumnByRole(kItemNameRole);
+    int fileNameColumn = proxyModel()->getColumnByRole(kItemFileDisplayNameRole);
     int columnCount = count();
     int columnWidthSumOmitFileName = 0;
 

@@ -23,21 +23,19 @@
 #include "computereventcaller.h"
 #include "utils/computerutils.h"
 
-#include "services/filemanager/computer/computer_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/propertydialog/property_defines.h"
-
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 
 #include <QWidget>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
+namespace dfmplugin_computer {
 
 /*!
  * \brief ComputerEventCaller::cdTo
@@ -49,9 +47,7 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QUrl &url)
     if (!url.isValid())
         return;
 
-    DSB_FM_USE_NAMESPACE
-    auto windowServ = WindowsService::service();
-    quint64 winId = windowServ->findWindowId(sender);
+    quint64 winId = FMWindowsIns.findWindowId(sender);
 
     cdTo(winId, url);
 }
@@ -66,7 +62,7 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QString &path)
     if (path.isEmpty())
         return;
     QUrl u;
-    u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     u.setPath(path);
     cdTo(sender, u);
 }
@@ -86,7 +82,7 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
 void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
 {
     QUrl u;
-    u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     u.setPath(path);
     cdTo(winId, u);
 }
@@ -107,33 +103,27 @@ void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, winId, url);
 }
 
-void ComputerEventCaller::sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action)
-{
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kContextActionTriggered, winId, url, action);
-    qDebug() << "action triggered: " << url << action;
-}
-
 void ComputerEventCaller::sendOpenItem(quint64 winId, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnOpenItem, winId, url);
+    dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_Operation_OpenItem", winId, url);
     qDebug() << "send open item: " << url;
 }
 
 void ComputerEventCaller::sendCtrlNOnItem(quint64 winId, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnCtrlNTriggered, winId, url);
+    dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_ShortCut_CtrlN", winId, url);
     qDebug() << "send ctrl n at item: " << url;
 }
 
 void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnCtrlTTriggered, winId, url);
+    dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_ShortCut_CtrlT", winId, url);
     qDebug() << "send ctrl t at item: " << url;
 }
 
 void ComputerEventCaller::sendShowPropertyDialog(const QList<QUrl> &urls)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 void ComputerEventCaller::sendErase(const QString &dev)
@@ -141,4 +131,4 @@ void ComputerEventCaller::sendErase(const QString &dev)
     dpfSlotChannel->push("dfmplugin_burn", "slot_Erase", dev);
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

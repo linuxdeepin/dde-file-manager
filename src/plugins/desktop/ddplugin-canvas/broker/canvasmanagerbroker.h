@@ -27,7 +27,7 @@
 
 class QAbstractItemModel;
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasManager;
 class CanvasManagerBroker : public QObject
 {
@@ -44,6 +44,6 @@ private:
     CanvasManager *canvas = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASMANAGERBROKER_H

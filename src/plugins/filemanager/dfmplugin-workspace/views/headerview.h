@@ -29,7 +29,7 @@
 
 #include <QHeaderView>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileView;
 class FileSortFilterProxyModel;
@@ -70,6 +70,6 @@ private:
     bool isChangeCursorState = false;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // DFMHEADERVIEW_H

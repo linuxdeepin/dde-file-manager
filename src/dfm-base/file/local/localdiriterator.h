@@ -29,7 +29,7 @@
 #include <QSharedPointer>
 
 class QUrl;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileInfo;
 class LocalDirIteratorPrivate;
 
@@ -56,6 +56,6 @@ public:
         return false;
     }
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // LOCALDIRITERATOR_H

@@ -25,27 +25,29 @@
 #include "utils/computerdatastruct.h"
 #include "deviceproperty/devicepropertydialog.h"
 
-#include "services/common/delegate/delegateservice.h"
-#include "services/filemanager/windows/windowsservice.h"
-
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QtConcurrent>
 #include <QApplication>
 
 #include <unistd.h>
 
-DPCOMPUTER_USE_NAMESPACE
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
+using namespace dfmplugin_computer;
 DFMBASE_USE_NAMESPACE
 
 bool ComputerUtils::contextMenuEnabled = true;
@@ -53,7 +55,7 @@ bool ComputerUtils::contextMenuEnabled = true;
 QUrl ComputerUtils::makeBlockDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(Global::kEntry);
+    devUrl.setScheme(Global::Scheme::kEntry);
     auto shortenBlk = id;
     shortenBlk.remove(QString(DeviceId::kBlockDeviceIdPrefix));   // /org/freedesktop/UDisks2/block_devices/sda1 -> sda1
     auto path = QString("%1.%2").arg(shortenBlk).arg(SuffixInfo::kBlock);   // sda1.blockdev
@@ -63,7 +65,7 @@ QUrl ComputerUtils::makeBlockDevUrl(const QString &id)
 
 QString ComputerUtils::getBlockDevIdByUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::kEntry)
+    if (url.scheme() != Global::Scheme::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kBlock))
         return "";
@@ -76,7 +78,7 @@ QString ComputerUtils::getBlockDevIdByUrl(const QUrl &url)
 QUrl ComputerUtils::makeProtocolDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(Global::kEntry);
+    devUrl.setScheme(Global::Scheme::kEntry);
     auto path = id.toUtf8().toBase64();
     QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kProtocol);
     devUrl.setPath(encodecPath);
@@ -85,7 +87,7 @@ QUrl ComputerUtils::makeProtocolDevUrl(const QString &id)
 
 QString ComputerUtils::getProtocolDevIdByUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::kEntry)
+    if (url.scheme() != Global::Scheme::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kProtocol))
         return "";
@@ -108,7 +110,7 @@ QUrl ComputerUtils::makeAppEntryUrl(const QString &filePath)
     QString newPath = QString("%1.%2").arg(fileName).arg(SuffixInfo::kAppEntry);
 
     QUrl url;
-    url.setScheme(Global::kEntry);
+    url.setScheme(Global::Scheme::kEntry);
     url.setPath(newPath);
     return url;
 }
@@ -122,7 +124,7 @@ QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
 
     QString fileName = entryUrl.path().remove("." + QString(SuffixInfo::kAppEntry));
     QUrl origUrl;
-    origUrl.setScheme(Global::kFile);
+    origUrl.setScheme(Global::Scheme::kFile);
     origUrl.setPath(QString("%1/%2.%3").arg(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath)).arg(fileName).arg("desktop"));
     return origUrl;
 }
@@ -130,7 +132,7 @@ QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
 QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(Global::kEntry);
+    devUrl.setScheme(Global::Scheme::kEntry);
     auto path = id.toUtf8().toBase64();
     QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kStashedProtocol);
     devUrl.setPath(encodecPath);
@@ -139,7 +141,7 @@ QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
 
 QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::kEntry)
+    if (url.scheme() != Global::Scheme::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kStashedProtocol))
         return "";
@@ -152,7 +154,7 @@ QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
 
 QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
 {
-    if (stashedUrl.scheme() != Global::kEntry)
+    if (stashedUrl.scheme() != Global::Scheme::kEntry)
         return {};
     if (!stashedUrl.path().endsWith(SuffixInfo::kStashedProtocol))
         return {};
@@ -160,14 +162,14 @@ QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
     QString path = stashedUrl.path();
     path.replace(SuffixInfo::kStashedProtocol, SuffixInfo::kProtocol);
     QUrl ret;
-    ret.setScheme(Global::kEntry);
+    ret.setScheme(Global::Scheme::kEntry);
     ret.setPath(path);
     return ret;
 }
 
 QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
 {
-    if (protocolDevUrl.scheme() != Global::kEntry)
+    if (protocolDevUrl.scheme() != Global::Scheme::kEntry)
         return {};
     if (!protocolDevUrl.path().endsWith(SuffixInfo::kProtocol))
         return {};
@@ -175,7 +177,7 @@ QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
     QString path = protocolDevUrl.path();
     path.replace(SuffixInfo::kProtocol, SuffixInfo::kStashedProtocol);
     QUrl ret;
-    ret.setScheme(Global::kEntry);
+    ret.setScheme(Global::Scheme::kEntry);
     ret.setPath(path);
     return ret;
 }
@@ -183,7 +185,7 @@ QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
 QUrl ComputerUtils::makeLocalUrl(const QString &path)
 {
     QUrl u;
-    u.setScheme(Global::kFile);
+    u.setScheme(Global::Scheme::kFile);
     u.setPath(path);
     return u;
 }
@@ -192,7 +194,7 @@ QUrl ComputerUtils::makeBurnUrl(const QString &id)
 {
     QString dev = id.mid(id.lastIndexOf("/") + 1);
     QUrl u;
-    u.setScheme(Global::kBurn);
+    u.setScheme(Global::Scheme::kBurn);
     // burn:///dev/sr0/disc_files/
     u.setPath(QString("/dev/%1/disc_files/").arg(dev));
     return u;
@@ -200,9 +202,7 @@ QUrl ComputerUtils::makeBurnUrl(const QString &id)
 
 quint64 ComputerUtils::getWinId(QWidget *widget)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto winServ = ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
-    return winServ->findWindowId(widget);
+    return FMWindowsIns.findWindowId(widget);
 }
 
 bool ComputerUtils::isPresetSuffix(const QString &suffix)
@@ -223,7 +223,7 @@ bool ComputerUtils::shouldLoopPartitionsHide()
 
 bool ComputerUtils::sortItem(const QUrl &a, const QUrl &b)
 {
-    if (a.scheme() != Global::kEntry || b.scheme() != Global::kEntry)
+    if (a.scheme() != Global::Scheme::kEntry || b.scheme() != Global::Scheme::kEntry)
         return false;
     DFMEntryFileInfoPointer infoA(new EntryFileInfo(a));
     DFMEntryFileInfoPointer infoB(new EntryFileInfo(b));
@@ -289,6 +289,79 @@ void ComputerUtils::setCursorState(bool busy)
         QApplication::restoreOverrideCursor();
 }
 
+QStringList ComputerUtils::allSystemUUIDs()
+{
+    const auto &systemDisks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kSystem);
+    const auto &loopDisks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kLoop);
+    QStringList systemDiskNoLoop;
+    std::for_each(systemDisks.cbegin(), systemDisks.cend(), [&](const QString &disk) {
+        if (!loopDisks.contains(disk))
+            systemDiskNoLoop << disk;
+    });
+
+    QSet<QString> uuids;
+    std::for_each(systemDiskNoLoop.cbegin(), systemDiskNoLoop.cend(), [&](const QString &devId) {
+        const auto &&data = DevProxyMng->queryBlockInfo(devId);
+        const auto &&uuid = data.value(GlobalServerDefines::DeviceProperty::kUUID).toString();
+        if (!uuid.isEmpty())
+            uuids << uuid;
+    });
+    return uuids.toList();
+}
+
+QList<QUrl> ComputerUtils::systemBlkDevUrlByUUIDs(const QStringList &uuids)
+{
+    const auto &&devIds = DevProxyMng->getAllBlockIdsByUUID(uuids, GlobalServerDefines::DeviceQueryOption::kSystem);
+    QList<QUrl> ret;
+    for (const auto &id : devIds)
+        ret << makeBlockDevUrl(id);
+    return ret;
+}
+
+void ComputerUtils::diskHideToDConfig(int attr, const QVariant &var)
+{
+    auto systemUUIDs = allSystemUUIDs().toSet();
+
+    auto currentHiddenDisks = DConfigManager::instance()->value(kDefaultCfgPath, kKeyHideDisk).toStringList().toSet();
+    if (attr == Application::GenericAttribute::kHiddenSystemPartition) {
+        if (var.toBool())
+            currentHiddenDisks += systemUUIDs;
+        else
+            currentHiddenDisks -= systemUUIDs;
+
+        QVariant var = QVariant::fromValue<QStringList>(currentHiddenDisks.toList());
+        DConfigManager::instance()->setValue(kDefaultCfgPath, kKeyHideDisk, var);
+    } else if (attr == Application::GenericAttribute::kHideLoopPartitions) {
+        // TODO(xust)
+    }
+}
+
+void ComputerUtils::diskHideToDSetting(const QString &cfgPath, const QString &cfgKey, const QVariant &var)
+{
+    auto systemUUIDs = allSystemUUIDs().toSet();
+    const auto &&hiddenDisks = var.toStringList().toSet();
+
+    bool allSystemDisksHidden = (hiddenDisks + systemUUIDs == hiddenDisks);
+    Application::instance()->setGenericAttribute(Application::GenericAttribute::kHiddenSystemPartition, allSystemDisksHidden);
+
+    // TODO(xust) sync HideLoopPartitions
+}
+
+bool ComputerUtils::isEqualDiskHideConfig(const QVariant &varDConf, const QVariant &varDSet)
+{
+    const auto &&systemUUIDs = allSystemUUIDs();
+    const auto &&currHiddenDisks = varDConf.toStringList().toSet();
+    if (varDSet.toBool()) {
+        return std::all_of(systemUUIDs.cbegin(), systemUUIDs.cend(), [=](const QString &uuid) {
+            return currHiddenDisks.contains(uuid);
+        });
+    } else {
+        return std::all_of(systemUUIDs.cbegin(), systemUUIDs.cend(), [=](const QString &uuid) {
+            return !currHiddenDisks.contains(uuid);
+        });
+    }
+}
+
 QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
 {
     DFMBASE_USE_NAMESPACE
@@ -329,7 +402,7 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
 
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     DevicePropertyDialog *dialog = new DevicePropertyDialog;
-    DSC_NAMESPACE::Property::DeviceInfo devInfo;
+    DeviceInfo devInfo;
     devInfo.icon = info->fileIcon();
     devInfo.deviceUrl = info->url();
     devInfo.mountPoint = info->targetUrl();
@@ -344,20 +417,23 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
 
 QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
 {
-    if (url.scheme() == Global::kEntry)
+    if (url.scheme() == Global::Scheme::kEntry)
         return url;
 
     QUrl converted = url;
-    if (delegateServIns->isRegistedTransparentHandle(converted.scheme()))   // first convert it to local file
-        converted = delegateServIns->urlTransform(converted);
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << converted, &urls);
+
+    if (ok && !urls.isEmpty())
+        converted = urls.first();
 
     QString devId;
-    if (converted.scheme() == Global::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {
+    if (converted.scheme() == Global::Scheme::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {
         if (devId.startsWith(kBlockDeviceIdPrefix))
             converted = ComputerUtils::makeBlockDevUrl(devId);
         else
             converted = ComputerUtils::makeProtocolDevUrl(devId);
-    } else if (!converted.isValid() && url.scheme() == Global::kBurn) {
+    } else if (!converted.isValid() && url.scheme() == Global::Scheme::kBurn) {
         // empty disc do not have mapped mount path.
         auto path = url.path();
         QRegularExpression re("^/dev/(.*)/disc_files/");

@@ -24,6 +24,7 @@
 #include "organizerconfig.h"
 
 #include <QSettings>
+#include <QTimer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -35,6 +36,7 @@ public:
     QVariant value(const QString &group, const QString &key, const QVariant &defaultVar);
     void setValue(const QString &group, const QString &key, const QVariant &var);
     QSettings *settings = nullptr;
+    QTimer syncTimer;
 private:
     OrganizerConfig *q;
 };

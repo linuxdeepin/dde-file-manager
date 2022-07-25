@@ -27,7 +27,7 @@
 #include <QString>
 #include <QDir>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 
 inline constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
 inline constexpr char kVaultEncrypyDirName[] { "vault_encrypted" };
@@ -72,15 +72,6 @@ inline constexpr char kjsonKeyInterviewItme[] { "InterviewTime" };
 inline constexpr char kjsonKeyLockTime[] { "LockTime" };
 inline constexpr char kjsonKeyCreateTime[] { "CreateTime" };
 
-enum class VaultState : int {
-    kNotExisted = 0,
-    kEncrypted,
-    kUnlocked,
-    kUnderProcess,
-    kBroken,
-    kNotAvailable
-};
-
 //!! 保险箱当前页面标记
 enum VaultPageMark {
     kUnknown,
@@ -101,5 +92,5 @@ enum PageType : int {
     kRetrievePage = 2,
     kPasswordRecoverPage = 3
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   //! VAULTGLOBALDEFINE_H

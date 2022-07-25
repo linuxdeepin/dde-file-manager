@@ -27,7 +27,7 @@
 #include <QString>
 #include <QVariant>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class Application;
 class ApplicationPrivate
 {
@@ -39,5 +39,5 @@ public:
 
     static Application *self;
 };
-DFMBASE_END_NAMESPACE
+}
 #endif // APPLICATION_P_H

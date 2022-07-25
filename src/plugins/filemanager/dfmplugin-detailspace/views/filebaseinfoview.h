@@ -22,14 +22,14 @@
 #define FILEBASEINFOVIEW_H
 
 #include "dfmplugin_detailspace_global.h"
-#include "services/filemanager/detailspace/detailspace_defines.h"
 
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QUrl>
 #include <QFrame>
-DPDETAILSPACE_BEGIN_NAMESPACE
+
+namespace dfmplugin_detailspace {
 class FileBaseInfoView : public QFrame
 {
     Q_OBJECT
@@ -93,10 +93,10 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileInterviewTime { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileChangeTime { nullptr };
 
-    QMultiMap<DSB_FM_NAMESPACE::BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
+    QMultiMap<BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
 
     QUrl currentUrl;
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 #endif   // FILEBASEINFOVIEW_H

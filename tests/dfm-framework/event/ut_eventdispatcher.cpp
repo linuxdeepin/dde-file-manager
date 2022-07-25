@@ -21,12 +21,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "testqobject.h"
+#include "event/dispatcher/eventdispatcher.h"
 
 #include <dfm-framework/dpf.h>
 
 #include <gtest/gtest.h>
+
 #define protected public
-#include "event/dispatcher/eventdispatcher.h"
 
 DPF_USE_NAMESPACE
 
@@ -42,72 +43,25 @@ public:
     }
 };
 
-TEST_F(UT_EventDispatcher, test_install_filter)
+TEST_F(UT_EventDispatcher, test_install_global_filter)
 {
     TestQObject b;
-    EventType eType1 = 1;
-
-    EXPECT_FALSE(EventDispatcherManager::instance().removeEventFilter(eType1));
-    EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::test1);
-    EXPECT_TRUE(EventDispatcherManager::instance().removeEventFilter(eType1));
-    EXPECT_TRUE(EventDispatcherManager::instance().installEventFilter(eType1,
-                                                                      [](EventDispatcher::Listener,
-                                                                         const QVariantList &) {
-                                                                          return true;
-                                                                      }));
-    EXPECT_FALSE(EventDispatcherManager::instance().installEventFilter(eType1,
-                                                                       [](EventDispatcher::Listener,
-                                                                          const QVariantList &) {
-                                                                           return true;
-                                                                       }));
-    EXPECT_TRUE(EventDispatcherManager::instance().removeEventFilter(eType1));
-    EXPECT_TRUE(EventDispatcherManager::instance().installEventFilter(eType1,
-                                                                      [](EventDispatcher::Listener,
-                                                                         const QVariantList &) {
-                                                                          return true;
-                                                                      }));
-    EXPECT_TRUE(EventDispatcherManager::instance().removeEventFilter(eType1));
+    // TODO(zhangs)
 }
 
-TEST_F(UT_EventDispatcher, test_use_filter)
+TEST_F(UT_EventDispatcher, test_use_global_filter)
 {
     TestQObject b;
-    EventType eType1 = 1;
-
-    int called { 0 };
-    EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::bigger10);
-    EventDispatcherManager::instance().publish(eType1, 0, &called);
-    EXPECT_EQ(10, called);
-
-    EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::bigger15);
-    EventDispatcherManager::instance().publish(eType1, 0, &called);
-    EXPECT_EQ(15, called);
-
-    EXPECT_TRUE(EventDispatcherManager::instance().installEventFilter(eType1,
-                                                                      [](EventDispatcher::Listener listener,
-                                                                         const QVariantList &list) {
-                                                                          if (listener(list).toBool())
-                                                                              return true;
-                                                                          return false;
-                                                                      }));
-    EventDispatcherManager::instance().publish(eType1, 2, &called);
-    EXPECT_EQ(15, called);
-
-    called = 1;
-    EventDispatcherManager::instance().publish(eType1, 9, &called);
-    EXPECT_EQ(15, called);
-
-    EventDispatcherManager::instance().publish(eType1, 11, &called);
-    EXPECT_EQ(10, called);
+    // TODO(zhangs)
 }
 
 TEST_F(UT_EventDispatcher, test_empty_push)
 {
     TestQObject b;
     EventType eType1 = 2;
-    EXPECT_TRUE(EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::empty1));
-    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1));
-    EXPECT_TRUE(EventDispatcherManager::instance().unsubscribe(eType1));
+    EXPECT_TRUE(dpfSignalDispatcher->subscribe(eType1, &b, &TestQObject::empty1));
+    EXPECT_TRUE(dpfSignalDispatcher->publish(eType1));
+    EXPECT_TRUE(dpfSignalDispatcher->unsubscribe(eType1));
 }
 
 TEST_F(UT_EventDispatcher, test_unsub)
@@ -115,19 +69,19 @@ TEST_F(UT_EventDispatcher, test_unsub)
     TestQObject b;
     EventType eType1 = 2;
     int v = 0;
-    EXPECT_TRUE(EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::add1));
-    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1, &v));
+    EXPECT_TRUE(dpfSignalDispatcher->subscribe(eType1, &b, &TestQObject::add1));
+    EXPECT_TRUE(dpfSignalDispatcher->publish(eType1, &v));
     EXPECT_EQ(v, 1);
-    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1, &v));
+    EXPECT_TRUE(dpfSignalDispatcher->publish(eType1, &v));
     EXPECT_EQ(v, 2);
 
-    EXPECT_TRUE(EventDispatcherManager::instance().unsubscribe(eType1, &b, &TestQObject::add1));
-    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1, &v));
+    EXPECT_TRUE(dpfSignalDispatcher->unsubscribe(eType1, &b, &TestQObject::add1));
+    EXPECT_TRUE(dpfSignalDispatcher->publish(eType1, &v));
     EXPECT_EQ(v, 2);
 
-    EXPECT_TRUE(EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::add1));
-    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1, &v));
+    EXPECT_TRUE(dpfSignalDispatcher->subscribe(eType1, &b, &TestQObject::add1));
+    EXPECT_TRUE(dpfSignalDispatcher->publish(eType1, &v));
     EXPECT_EQ(v, 3);
 
-    EXPECT_TRUE(EventDispatcherManager::instance().unsubscribe(eType1));
+    EXPECT_TRUE(dpfSignalDispatcher->unsubscribe(eType1));
 }

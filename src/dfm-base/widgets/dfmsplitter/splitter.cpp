@@ -25,7 +25,7 @@
 #include <QGuiApplication>
 #include <QSizePolicy>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 SplitterHandle::SplitterHandle(Qt::Orientation orientation, QSplitter *parent):
     QSplitterHandle(orientation, parent)
@@ -61,4 +61,4 @@ QSplitterHandle *Splitter::createHandle()
     return new SplitterHandle(orientation(), this);
 }
 
-DFMBASE_END_NAMESPACE
+}

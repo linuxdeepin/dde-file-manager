@@ -28,7 +28,7 @@
 class QHBoxLayout;
 class QLabel;
 class QJsonObject;
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class WaterMaskFrame : public QFrame
 {
@@ -71,6 +71,6 @@ private:
     QLabel *textLabel = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // WATERMASKFRAME_H

@@ -27,7 +27,7 @@
 #include <QWidget>
 #include <QToolButton>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 class ActionButton : public QToolButton
 {
     Q_OBJECT
@@ -63,6 +63,6 @@ private:
     void initializeUi();
     void initConnect();
 };
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // OptionButtonBox_H

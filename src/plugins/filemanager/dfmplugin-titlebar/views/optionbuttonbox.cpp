@@ -24,14 +24,12 @@
 #include "events/titlebareventcaller.h"
 #include "utils/optionbuttonmanager.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
 #include <QDebug>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 
 OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
@@ -54,8 +52,7 @@ void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
 
 void OptionButtonBoxPrivate::loadViewMode(const QUrl &url)
 {
-    int defaultViewMode = static_cast<int>(WorkspaceService::service()->getDefaultViewMode(url.scheme()));
-    auto viewMode = static_cast<ViewMode>(Application::appObtuselySetting()->value("FileViewState", url).toMap().value("viewMode", defaultViewMode).toInt());
+    auto viewMode = TitleBarEventCaller::sendGetDefualtViewMode(url.scheme());
 
     switchMode(viewMode);
 }

@@ -55,6 +55,12 @@ bool CanvasInterface::initialize()
     d->canvaModel = new CanvasModelShell(this);
     d->canvaModel->initialize();
 
+    d->canvasView = new CanvasViewShell(this);
+    d->canvasView->initialize();
+
+    d->canvasGrid = new CanvasGridShell(this);
+    d->canvasGrid->initialize();
+
     return true;
 }
 
@@ -66,6 +72,16 @@ FileInfoModelShell *CanvasInterface::fileInfoModel()
 CanvasModelShell *CanvasInterface::canvasModel()
 {
     return d->canvaModel;
+}
+
+CanvasViewShell *CanvasInterface::canvasView()
+{
+    return d->canvasView;
+}
+
+CanvasGridShell *CanvasInterface::canvasGrid()
+{
+    return d->canvasGrid;
 }
 
 

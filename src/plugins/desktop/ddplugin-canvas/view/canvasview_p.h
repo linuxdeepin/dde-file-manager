@@ -40,7 +40,7 @@
 
 #include <QDebug>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasViewPrivate : public QObject
 {
@@ -94,9 +94,9 @@ public:
         return QPoint(canvasInfo.columnCount - 1, canvasInfo.rowCount - 1);
     }
 
-    inline QPoint gridAt(const QPoint &viewPos) const {
-        auto row = (viewPos.x() - viewMargins.left()) / canvasInfo.gridWidth;
-        auto col = (viewPos.y() - viewMargins.top()) / canvasInfo.gridHeight;
+    inline QPoint gridAt(const QPoint &point) const {
+        auto row = (point.x() - viewMargins.left()) / canvasInfo.gridWidth;
+        auto col = (point.y() - viewMargins.top()) / canvasInfo.gridHeight;
         return QPoint(row, col);
     }
 
@@ -121,7 +121,7 @@ public: // 绘制扩展的特殊处理
 public:
     static const QMargins gridMiniMargin;
     static const QSize dockReserveSize;
-    bool showGrid = true;
+    bool showGrid = false;
     int screenNum;
 
     CanvasInfo canvasInfo;
@@ -144,6 +144,6 @@ public:
     CanvasView *q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASVIEW_P_H

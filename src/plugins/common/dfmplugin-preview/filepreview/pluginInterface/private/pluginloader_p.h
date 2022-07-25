@@ -28,7 +28,7 @@
 #include <QMultiMap>
 #include <QPluginLoader>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 
 inline QString iidKeyLiteral()
 {
@@ -66,5 +66,5 @@ public:
 
     static QStringList pluginPaths;
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif   //! PLUGINLOADER_P_H

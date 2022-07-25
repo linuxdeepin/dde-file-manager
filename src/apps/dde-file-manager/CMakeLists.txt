@@ -15,6 +15,8 @@ set(SRCS
     main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/singleapplication.h
     ${CMAKE_CURRENT_SOURCE_DIR}/singleapplication.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/commandparser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/commandparser.cpp
     )
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
@@ -31,8 +33,8 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Widgets
+    DFM::base
     DFM::framework
-    DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
     )
 
@@ -52,4 +54,5 @@ install(FILES pkexec/dde-file-manager-pkexec DESTINATION bin)
 # manual
 install(DIRECTORY assets/dde-file-manager DESTINATION share/deepin-manual/manual-assets/application)
 
-# TODO(zhangs): translation
+# translation
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/translations DESTINATION share/${PROJECT_NAME} FILES_MATCHING PATTERN "*.qm")

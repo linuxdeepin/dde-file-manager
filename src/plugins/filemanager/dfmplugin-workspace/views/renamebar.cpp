@@ -32,7 +32,7 @@
 #include <QStackedWidget>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 RenameBar::RenameBar(QWidget *parent)
     : QFrame(parent), d(new RenameBarPrivate(this))

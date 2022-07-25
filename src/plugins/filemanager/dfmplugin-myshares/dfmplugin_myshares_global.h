@@ -28,7 +28,18 @@
 #define DPMYSHARES_END_NAMESPACE }
 #define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
 
+#include <QVariantMap>
+
 DPMYSHARES_BEGIN_NAMESPACE
+
+namespace ShareInfoKeys {
+inline constexpr char kName[] { "shareName" };
+inline constexpr char kPath[] { "path" };
+inline constexpr char kComment[] { "comment" };
+inline constexpr char kAcl[] { "acl" };
+inline constexpr char kGuestEnable[] { "guestEnable" };
+inline constexpr char kWritable[] { "writable" };
+}
 
 namespace MySharesActionId {
 inline constexpr char kOpenShareFolder[] { "open-share-folder" };
@@ -37,6 +48,9 @@ inline constexpr char kOpenShareInNewTab[] { "open-share-in-new-tab" };
 inline constexpr char kCancleSharing[] { "cancel-sharing" };
 inline constexpr char kShareProperty[] { "share-property" };
 }
+
+typedef QVariantMap ShareInfo;
+typedef QList<QVariantMap> ShareInfoList;
 
 DPMYSHARES_END_NAMESPACE
 

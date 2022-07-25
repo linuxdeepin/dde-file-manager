@@ -23,7 +23,6 @@
 #include "avfseventhandler.h"
 #include "utils/avfsutils.h"
 
-#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/mimetype/mimedatabase.h"
@@ -32,7 +31,7 @@
 
 #include <dfm-framework/event/event.h>
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
 bool AvfsEventHandler::hookOpenFiles(quint64 winId, const QList<QUrl> &urls)
@@ -43,7 +42,7 @@ bool AvfsEventHandler::hookOpenFiles(quint64 winId, const QList<QUrl> &urls)
     bool takeHandle = false;
     QList<QUrl> archives, others;
     for (auto url : urls) {
-        if (url.scheme() != Global::kFile && url.scheme() != AvfsUtils::scheme())
+        if (url.scheme() != Global::Scheme::kFile && url.scheme() != AvfsUtils::scheme())
             return false;
         if (url.scheme() == AvfsUtils::scheme()) {
             takeHandle = true;
@@ -81,6 +80,17 @@ bool AvfsEventHandler::hookEnterPressed(quint64 winId, const QList<QUrl> &urls)
     return hookOpenFiles(winId, urls);
 }
 
+bool AvfsEventHandler::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+    if (url.scheme() == AvfsUtils::scheme()) {
+        *mapGroup = AvfsUtils::seperateUrl(url);
+        return true;
+    }
+
+    return false;
+}
+
 void AvfsEventHandler::openArchivesAsDir(quint64 winId, const QList<QUrl> &urls)
 {
     if (urls.count() == 1) {
@@ -99,5 +109,5 @@ void AvfsEventHandler::writeToClipbord(quint64 winId, const QList<QUrl> &urls)
 
 void AvfsEventHandler::showProperty(const QList<QUrl> &urls)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }

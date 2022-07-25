@@ -21,17 +21,15 @@
 #include "searchdiriterator.h"
 #include "searchdiriterator_p.h"
 #include "utils/searchhelper.h"
+#include "utils/custommanager.h"
 #include "events/searcheventcaller.h"
+#include "searchmanager/searchmanager.h"
 
-#include "services/filemanager/search/searchservice.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 
-#include <dfm-framework/framework.h>
-
-DSB_FM_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, SearchDirIterator *qq)
     : QObject(qq),
@@ -51,44 +49,42 @@ void SearchDirIteratorPrivate::initConnect()
     connect(q, &SearchDirIterator::sigStopSearch, this, [this]() {
         SearchEventCaller::sendStopSpinner(taskId.toULongLong());
     });
-    connect(SearchService::service(), &SearchService::matched, this, &SearchDirIteratorPrivate::onMatched);
-    connect(SearchService::service(), &SearchService::searchCompleted, this, &SearchDirIteratorPrivate::onSearchCompleted);
-    connect(SearchService::service(), &SearchService::searchStoped, this, &SearchDirIteratorPrivate::onSearchStoped);
+
+    connect(SearchManager::instance(), &SearchManager::matched, this, &SearchDirIteratorPrivate::onMatched);
+    connect(SearchManager::instance(), &SearchManager::searchCompleted, this, &SearchDirIteratorPrivate::onSearchCompleted);
+    connect(SearchManager::instance(), &SearchManager::searchStoped, this, &SearchDirIteratorPrivate::onSearchStoped);
 }
 
 void SearchDirIteratorPrivate::doSearch()
 {
     auto targetUrl = SearchHelper::searchTargetUrl(fileUrl);
-    const auto &info = SearchService::service()->findCustomSearchInfo(targetUrl.scheme());
     DFMBASE_USE_NAMESPACE
     searchRootWatcher.reset(new LocalFileWatcher(targetUrl));
     searchRootWatcher->startWatcher();
     connect(searchRootWatcher.data(), &LocalFileWatcher::fileDeleted, this, [=](const QUrl &url) {
         if (UniversalUtils::urlEquals(targetUrl, url)) {
-            SearchService::service()->stop(taskId);
+            SearchManager::instance()->stop(taskId);
             SearchEventCaller::sendChangeCurrentUrl(taskId.toULongLong(), QUrl("computer:///"));
         }
     });
 
-    if (info.isDisableSearch) return;
+    bool isDisable = CustomManager::instance()->isDisableSearch(targetUrl);
+    if (isDisable) return;
 
-    if (!info.redirectedPath.isEmpty()) {
-        auto targetPath = targetUrl.path();
-        auto redirectedPath = info.redirectedPath;
-        if (redirectedPath.endsWith('/') && !targetPath.isEmpty())
-            redirectedPath = redirectedPath.left(redirectedPath.length() - 1);
-        targetUrl = QUrl::fromLocalFile(redirectedPath + targetPath);
+    QString redirectedPath = CustomManager::instance()->redirectedPath(targetUrl);
+    if (!redirectedPath.isEmpty()) {
+        targetUrl = QUrl::fromLocalFile(redirectedPath);
     }
 
     taskId = SearchHelper::searchTaskId(fileUrl);
     SearchEventCaller::sendStartSpinner(taskId.toULongLong());
-    SearchService::service()->search(taskId, targetUrl, SearchHelper::searchKeyword(fileUrl));
+    SearchManager::instance()->search(taskId, targetUrl, SearchHelper::searchKeyword(fileUrl));
 }
 
 void SearchDirIteratorPrivate::onMatched(const QString &id)
 {
     if (taskId == id) {
-        auto results = SearchService::service()->matchedResults(taskId);
+        const auto &results = SearchManager::instance()->matchedResults(taskId);
         QMutexLocker lk(&mutex);
         childrens.append(std::move(results));
         lk.unlock();
@@ -185,7 +181,7 @@ void SearchDirIterator::close()
     if (d->taskId.isEmpty())
         return;
 
-    SearchService::service()->stop(d->taskId);
+    SearchManager::instance()->stop(d->taskId);
 }
 
-DPSEARCH_END_NAMESPACE
+}

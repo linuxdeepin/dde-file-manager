@@ -27,7 +27,7 @@
 
 #include <unistd.h>
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &vaule)
 {

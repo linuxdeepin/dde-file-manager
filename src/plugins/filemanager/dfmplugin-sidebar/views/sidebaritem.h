@@ -24,8 +24,6 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-
 #include <DStandardItem>
 #include <QUrl>
 
@@ -57,8 +55,7 @@ public:
     void setGroup(const QString &group = "");
     QString subGourp() const;
 
-    void setItemInfo(DSB_FM_NAMESPACE::SideBar::ItemInfo info);
-    DSB_FM_NAMESPACE::SideBar::ItemInfo itemInfo() const;
+    ItemInfo itemInfo() const;
 };
 
 class SideBarItemSeparator : public DPSIDEBAR_NAMESPACE::SideBarItem

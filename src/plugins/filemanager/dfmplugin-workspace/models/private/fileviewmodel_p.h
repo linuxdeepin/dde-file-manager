@@ -24,6 +24,7 @@
 
 #include "models/fileviewmodel.h"
 #include "views/fileviewitem.h"
+#include "views/fileview.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/traversaldirthread.h"
 
@@ -33,7 +34,7 @@
 #include <QPointer>
 
 using FileNodePointer = QSharedPointer<DPWORKSPACE_NAMESPACE::FileViewItem>;
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 class FileNodeManagerThread : public QThread
 {
     Q_OBJECT
@@ -118,6 +119,7 @@ class FileViewModelPrivate : public QObject
     QTimer updateTimer;
 
     FileViewModel::State currentState = FileViewModel::Idle;
+    FileView *view { nullptr };
 
 public:
     explicit FileViewModelPrivate(FileViewModel *qq);
@@ -146,6 +148,6 @@ private:
     //    QString roleDisplayString(int role);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEWMODEL_P_H

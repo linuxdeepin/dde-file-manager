@@ -33,7 +33,7 @@
 #include <QJsonObject>
 #include <QImageReader>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 DCORE_USE_NAMESPACE
 
 WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent)

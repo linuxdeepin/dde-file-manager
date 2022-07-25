@@ -39,7 +39,7 @@ class QFrame;
 class QRegExpValidator;
 class QPushButton;
 QT_END_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 class RenameBar;
 
 class RenameBarPrivate
@@ -100,6 +100,6 @@ public slots:
     void onRenamePatternChanged(const int &index) noexcept;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // RENAMEBAR_P_H

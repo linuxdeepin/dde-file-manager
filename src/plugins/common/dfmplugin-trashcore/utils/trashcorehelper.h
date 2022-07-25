@@ -23,11 +23,10 @@
 #define TRASHCOREHELPER_H
 
 #include "dfmplugin_trashcore_global.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include <QObject>
 
-DPTRASHCORE_BEGIN_NAMESPACE
+namespace dfmplugin_trashcore {
 
 class TrashCoreHelper
 {
@@ -40,6 +39,6 @@ public:
     static QWidget *createTrashPropertyDialog(const QUrl &url);
 };
 
-DPTRASHCORE_END_NAMESPACE
+}
 
 #endif   // TRASHCOREHELPER_H

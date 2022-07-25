@@ -29,7 +29,7 @@
 #include <QObject>
 
 class QUrl;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractFileWatcherPrivate;
 class AbstractFileWatcher : public QObject
 {
@@ -90,7 +90,7 @@ Q_SIGNALS:
      */
     void fileRename(const QUrl &oldUrl, const QUrl &newUrl);
 };
-DFMBASE_END_NAMESPACE
+}
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> AbstractFileWatcherPointer;
 
 #endif   // ABSTRACTFILEWATCHER_H

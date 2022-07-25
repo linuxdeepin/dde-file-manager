@@ -29,7 +29,7 @@
 
 class QScrollArea;
 
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 
 class DetailView : public QFrame
 {
@@ -66,6 +66,6 @@ private:
     QLabel *iconLabel { nullptr };
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 
 #endif   // DETAILVIEW_H

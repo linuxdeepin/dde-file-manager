@@ -25,9 +25,10 @@
 
 #include "dfm-base/base/schemefactory.h"
 
+#include <dfm-framework/event/event.h>
+
 DFMBASE_USE_NAMESPACE
-DPMYSHARES_USE_NAMESPACE
-DSC_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new ShareFileInfoPrivate(url, this))
@@ -54,7 +55,7 @@ QString ShareFileInfo::fileDisplayName() const
 QString ShareFileInfo::fileName() const
 {
     auto d = dynamic_cast<ShareFileInfoPrivate *>(dptr.data());
-    return d->info.getShareName();
+    return d->info.value(ShareInfoKeys::kName).toString();
 }
 
 bool ShareFileInfo::isDir() const
@@ -72,7 +73,7 @@ ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq
 {
     this->url = url;
     if (url.path() != "/")
-        info = UserShareService::service()->getInfoByPath(url.path());
+        info = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", url.path()).value<QVariantMap>();
 }
 
 ShareFileInfoPrivate::~ShareFileInfoPrivate()

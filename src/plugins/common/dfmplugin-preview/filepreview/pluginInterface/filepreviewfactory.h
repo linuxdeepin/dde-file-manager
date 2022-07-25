@@ -26,7 +26,7 @@
 
 #include <QString>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class FilePreviewFactory
 {
 public:
@@ -36,5 +36,5 @@ public:
 
     static QMap<const DFMBASE_NAMESPACE::AbstractBasePreview *, int> previewToLoaderIndex;
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif   // FILEPREVIEWFACTORY_H

@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 
 class PropertyMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -41,6 +41,7 @@ public:
 class PropertyMenuScenePrivate;
 class PropertyMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit PropertyMenuScene(QObject *parent = nullptr);
     QString name() const override;
@@ -54,6 +55,6 @@ private:
     PropertyMenuScenePrivate *const d = nullptr;
 };
 
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 
 #endif   // PROPERTYMENUSCENE_H

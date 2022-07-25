@@ -20,26 +20,23 @@
 */
 #include "propertydialog.h"
 #include "events/propertyeventreceiver.h"
-#include "utils/propertydialoghelper.h"
 #include "menu/propertymenuscene.h"
+#include "utils/propertydialogmanager.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-DSC_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 void PropertyDialog::initialize()
 {
-    PropertyEventReceiver::instance()->connectService();
+    PropertyEventReceiver::instance()->bindEvents();
 }
 
 bool PropertyDialog::start()
 {
+    PropertyDialogManager::instance().addComputerPropertyDialog();
 
-    PropertyDialogHelper::propertyServiceInstance()->addComputerPropertyToPropertyService();
-
-    MenuService::service()->registerScene(PropertyMenuCreator::name(), new PropertyMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(PropertyMenuCreator::name(), new PropertyMenuCreator);
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
     return true;
@@ -52,13 +49,21 @@ dpf::Plugin::ShutdownFlag PropertyDialog::stop()
 
 void PropertyDialog::bindScene(const QString &parentScene)
 {
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(PropertyMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(PropertyMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(PropertyMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        waitToBind << parentScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &PropertyDialog::bindSceneOnAdded);
+    }
+}
+
+void PropertyDialog::bindSceneOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &PropertyDialog::bindSceneOnAdded);
+        bindScene(newScene);
     }
 }

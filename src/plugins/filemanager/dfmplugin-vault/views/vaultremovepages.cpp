@@ -25,10 +25,10 @@
 #include "utils/policy/policymanager.h"
 #include "utils/pathmanager.h"
 #include "utils/servicemanager.h"
+#include "utils/fileencrypthandle.h"
 #include "removevaultview/vaultremoveprogressview.h"
 #include "removevaultview/vaultremovebypasswordview.h"
 #include "removevaultview/vaultremovebyrecoverykeyview.h"
-#include "services/filemanager/fileencrypt/fileencryptservice.h"
 
 #include <DLabel>
 #include <QFrame>
@@ -40,9 +40,8 @@
 
 using namespace PolkitQt1;
 
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 constexpr int kKeyVerifyDeleteBtn = 1;
 constexpr int kPassWordDeleteBtn = 2;
 VaultRemovePages::VaultRemovePages(QWidget *parent)
@@ -95,7 +94,7 @@ VaultRemovePages::VaultRemovePages(QWidget *parent)
 void VaultRemovePages::initConnect()
 {
     connect(this, &VaultRemovePages::buttonClicked, this, &VaultRemovePages::onButtonClicked);
-    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalLockVaultState, this, &VaultRemovePages::onLockVault);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, this, &VaultRemovePages::onLockVault);
     connect(progressView, &VaultRemoveProgressView::removeFinished, this, &VaultRemovePages::onVualtRemoveFinish);
 }
 

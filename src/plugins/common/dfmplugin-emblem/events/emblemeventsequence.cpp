@@ -21,14 +21,13 @@
  */
 #include "emblemeventsequence.h"
 
-#include "services/common/emblem/emblem_defines.h"
+#include <dfm-framework/event/event.h>
 
 #include <QUrl>
 
 Q_DECLARE_METATYPE(QList<QIcon> *)
 
 DPF_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
 
 EmblemEventSequence *EmblemEventSequence::instance()
@@ -47,7 +46,7 @@ EmblemEventSequence *EmblemEventSequence::instance()
  */
 bool EmblemEventSequence::doFetchExtendEmblems(const QUrl &url, QList<QIcon> *emblems)
 {
-    return sequence()->run(Emblem::EventType::kFetchExtendEmblems, url, emblems);
+    return dpfHookSequence->run(DPF_MACRO_TO_STR(DPEMBLEM_NAMESPACE), "hook_ExtendEmblems_Fetch", url, emblems);
 }
 
 /*!
@@ -58,15 +57,10 @@ bool EmblemEventSequence::doFetchExtendEmblems(const QUrl &url, QList<QIcon> *em
  */
 bool EmblemEventSequence::doFetchCustomEmblems(const QUrl &url, QList<QIcon> *emblems)
 {
-    return sequence()->run(Emblem::EventType::kFetchCustomEmblems, url, emblems);
+    return dpfHookSequence->run(DPF_MACRO_TO_STR(DPEMBLEM_NAMESPACE), "hook_CustomEmblems_Fetch", url, emblems);
 }
 
 EmblemEventSequence::EmblemEventSequence(QObject *parent)
     : QObject(parent)
 {
-}
-
-EventSequenceManager *EmblemEventSequence::sequence()
-{
-    return &dpfInstance.eventSequence();
 }

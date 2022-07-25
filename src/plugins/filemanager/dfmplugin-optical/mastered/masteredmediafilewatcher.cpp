@@ -31,7 +31,7 @@
 #include "dfm-base/utils/universalutils.h"
 
 DFMBASE_USE_NAMESPACE
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 
 using namespace GlobalServerDefines;
 

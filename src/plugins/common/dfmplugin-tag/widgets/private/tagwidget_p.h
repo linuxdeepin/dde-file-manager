@@ -30,7 +30,7 @@
 class QLabel;
 class QVBoxLayout;
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagWidget;
 class TagCrumbEdit;
@@ -59,6 +59,6 @@ private:
     TagWidget *q { nullptr };
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGWIDGET_P_H

@@ -26,7 +26,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 DFMBASE_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagFileWatcherPrivate::TagFileWatcherPrivate(const QUrl &fileUrl, TagFileWatcher *qq)
     : AbstractFileWatcherPrivate(fileUrl, qq)

@@ -28,13 +28,13 @@ DDP_ORGANIZER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 namespace  {
-    inline const char kTypeKeyApp[] = "Apps";
-    inline const char kTypeKeyDoc[] = "Documents";
-    inline const char kTypeKeyPic[] = "Pictures";
-    inline const char kTypeKeyVid[] = "Videos";
-    inline const char kTypeKeyMuz[] = "Music";
-    inline const char kTypeKeyFld[] = "Folders";
-    inline const char kTypeKeyOth[] = "Other";
+    inline const char kTypeKeyApp[] = "Type_Apps";
+    inline const char kTypeKeyDoc[] = "Type_Documents";
+    inline const char kTypeKeyPic[] = "Type_Pictures";
+    inline const char kTypeKeyVid[] = "Type_Videos";
+    inline const char kTypeKeyMuz[] = "Type_Music";
+    inline const char kTypeKeyFld[] = "Type_Folders";
+    inline const char kTypeKeyOth[] = "Type_Other";
 
     inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,md,latex";
     inline const char kTypeSuffixPic[] = "jpg,jpeg,jpe,bmp,png,gif,svg,tif,tiff";
@@ -100,14 +100,24 @@ ModelDataHandler *TypeClassifier::dataHandler() const
     return handler;
 }
 
-QString TypeClassifier::name(const QString &id) const
-{
-    return d->keyNames.value(id);
-}
-
 QStringList TypeClassifier::classes() const
 {
-    return d->keyNames.keys();
+    QStringList usedKey = d->keyNames.keys();
+    // order it
+    const QMap<QString, int> fixOrder = {
+        {kTypeKeyApp, 0},
+        {kTypeKeyDoc, 1},
+        {kTypeKeyPic, 2},
+        {kTypeKeyVid, 3},
+        {kTypeKeyMuz, 4},
+        {kTypeKeyFld, 5},
+        {kTypeKeyOth, 6}
+    };
+    const int max = fixOrder.size();
+    std::sort(usedKey.begin(), usedKey.end(), [&fixOrder, max](const QString &t1, const QString &t2){
+        return fixOrder.value(t1, max) < fixOrder.value(t2, max);
+    });
+    return usedKey;
 }
 
 QString TypeClassifier::classify(const QUrl &url) const
@@ -134,4 +144,9 @@ QString TypeClassifier::classify(const QUrl &url) const
         return kTypeKeyMuz;
 
     return kTypeKeyOth;
+}
+
+QString TypeClassifier::className(const QString &key) const
+{
+    return d->keyNames.value(key);
 }

@@ -24,8 +24,9 @@
 #include "fileoperatorproxy.h"
 
 #include <QTimer>
+#include <QUrl>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class FileOperatorProxyPrivate : public QObject
 {
@@ -63,7 +64,7 @@ public:
     QHash<QUrl, QUrl> renameFileData;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(DDP_CANVAS_NAMESPACE::FileOperatorProxyPrivate::CallBackFunc)
 

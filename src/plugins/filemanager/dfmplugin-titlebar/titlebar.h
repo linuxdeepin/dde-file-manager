@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class TitleBar : public dpf::Plugin
 {
@@ -36,15 +36,19 @@ class TitleBar : public dpf::Plugin
 
     DPF_EVENT_NAMESPACE(DPTITLEBAR_NAMESPACE)
     // singnal events
-    DPF_EVENT_REG_SIGNAL(signal_StartSearch)
-    DPF_EVENT_REG_SIGNAL(signal_StopSearch)
-    DPF_EVENT_REG_SIGNAL(signal_ShowFilterView)
-    DPF_EVENT_REG_SIGNAL(signal_CheckInputAdddressStr)
+    DPF_EVENT_REG_SIGNAL(signal_Search_Start)
+    DPF_EVENT_REG_SIGNAL(signal_Search_Stop)
+    DPF_EVENT_REG_SIGNAL(signal_FilterView_Show)
+    DPF_EVENT_REG_SIGNAL(signal_InputAdddressStr_Check)
 
     // slot events
-    DPF_EVENT_REG_SLOT(slot_StartSpinner)
-    DPF_EVENT_REG_SLOT(slot_StopSpinner)
-    DPF_EVENT_REG_SLOT(slot_ShowFilterButton)
+    DPF_EVENT_REG_SLOT(slot_Custom_Register)
+    DPF_EVENT_REG_SLOT(slot_Spinner_Start)
+    DPF_EVENT_REG_SLOT(slot_Spinner_Stop)
+    DPF_EVENT_REG_SLOT(slot_FilterButton_Show)
+
+    // hook events
+    DPF_EVENT_REG_HOOK(hook_Crumb_Seprate)
 
 public:
     virtual void initialize() override;
@@ -58,6 +62,6 @@ private slots:
     void bindEvents();
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // TITLEBAR_H

@@ -25,7 +25,7 @@
 
 #include <QString>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasManagerHookInterface
 {
@@ -41,6 +41,6 @@ public:
     virtual bool requestWallpaperSetting(const QString &screen) const;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASMANAGERHOOKINTERFACE_H

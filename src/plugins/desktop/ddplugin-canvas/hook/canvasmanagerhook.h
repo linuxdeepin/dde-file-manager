@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasManagerHook : public QObject, public CanvasManagerHookInterface
 {
@@ -39,6 +39,6 @@ public:
     bool requestWallpaperSetting(const QString &screen) const override;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASMANAGERHOOK_H

@@ -24,6 +24,7 @@
 #include "utils/pathmanager.h"
 #include "utils/servicemanager.h"
 #include "utils/encryption/interfaceactivevault.h"
+#include "utils/fileencrypthandle.h"
 
 #include <DToolTip>
 #include <DFloatingWidget>
@@ -38,8 +39,7 @@
 #define MAX_KEY_LENGTH (32)
 
 DWIDGET_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 RecoveryKeyView::RecoveryKeyView(QWidget *parent)
     : QFrame(parent)
@@ -71,7 +71,7 @@ RecoveryKeyView::RecoveryKeyView(QWidget *parent)
 
     //    connect(this, &RecoveryKeyView::buttonClicked, this, &RecoveryKeyView::onButtonClicked);
     connect(recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &RecoveryKeyView::recoveryKeyChanged);
-    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &RecoveryKeyView::onUnlockVault);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, this, &RecoveryKeyView::onUnlockVault);
 }
 
 RecoveryKeyView::~RecoveryKeyView()
@@ -133,7 +133,7 @@ void RecoveryKeyView::buttonClicked(int index, const QString &text)
             unlockByKey = true;
             QString encryptBaseDir = PathManager::vaultLockPath();
             QString decryptFileDir = PathManager::vaultUnlockPath();
-            ServiceManager::fileEncryptServiceInstance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
+            FileEncryptHandle::instance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
         } else {
             showAlertMessage(tr("Wrong recovery key"));
         }

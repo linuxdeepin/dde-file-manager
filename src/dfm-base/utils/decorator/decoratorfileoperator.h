@@ -26,7 +26,7 @@
 
 #include <dfm-io/core/doperator.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DecoratorFileOperatorPrivate;
 class DecoratorFileOperator
@@ -47,6 +47,6 @@ private:
     QSharedPointer<DecoratorFileOperatorPrivate> d = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DECORATORFILEOPERATOR_H

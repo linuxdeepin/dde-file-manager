@@ -31,7 +31,7 @@
 #include <QTextLayout>
 #include <QTextDocument>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class NameTextEdit : public QTextEdit
 {
     Q_OBJECT
@@ -103,5 +103,5 @@ private:
     QFrame *textShowFrame { nullptr };
     QUrl filerUrl {};
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // EDITSTACKEDWIDGET_H

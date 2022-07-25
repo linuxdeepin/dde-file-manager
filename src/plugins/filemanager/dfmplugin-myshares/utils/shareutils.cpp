@@ -27,7 +27,13 @@
 
 #include <QDebug>
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
+
+ShareUtils *ShareUtils::instance()
+{
+    static ShareUtils instance;
+    return &instance;
+}
 
 QString ShareUtils::scheme()
 {
@@ -65,6 +71,23 @@ QUrl ShareUtils::convertToLocalUrl(const QUrl &shareUrl)
     if (shareUrl.scheme() != scheme())
         return {};
     QUrl u = shareUrl;
-    u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     return u;
+}
+
+bool ShareUtils::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
+{
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != ShareUtils::scheme())
+            return false;
+        (*urls).push_back(convertToLocalUrl(url));
+    }
+    return true;
+}
+
+ShareUtils::ShareUtils(QObject *parent)
+    : QObject(parent)
+{
 }

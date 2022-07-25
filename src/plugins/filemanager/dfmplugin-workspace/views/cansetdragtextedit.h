@@ -27,7 +27,7 @@
 #include <DTextEdit>
 
 DWIDGET_USE_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class CanSetDragTextEdit : public DTextEdit
 {
@@ -41,6 +41,6 @@ public:
     void setDragEnabled(const bool &bdrag);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // CANSETDRAGTEXTEDIT_H

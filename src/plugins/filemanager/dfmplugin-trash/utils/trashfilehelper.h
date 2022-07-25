@@ -1,10 +1,7 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             liuyangming<liuyangming@uniontech.com>
+ * Author:     lanxuesong<lanxuesong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,48 +21,40 @@
 
 #include "dfmplugin_trash_global.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
 
+#include <QObject>
+
 DPTRASH_BEGIN_NAMESPACE
 
-class TrashFileHelper
+class TrashFileHelper : public QObject
 {
-
+    Q_OBJECT
+    Q_DISABLE_COPY(TrashFileHelper)
 public:
-    static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
-    static bool writeToClipBoardHandle(const quint64 windowId,
-                                       const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                                       const QList<QUrl> urls);
+    static TrashFileHelper *instance();
+    inline static QString scheme()
+    {
+        return "trash";
+    }
 
-    static JobHandlePointer moveToTrashHandle(const quint64 windowId,
-                                              const QList<QUrl> sources,
-                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool cutFile(const quint64 windowId, const QList<QUrl> sources,
+                 const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool copyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
+                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool moveToTrash(const quint64 windowId, const QList<QUrl> sources,
+                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool deleteFile(const quint64 windowId, const QList<QUrl> sources,
+                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
+    bool writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                              const QList<QUrl> urls);
 
-    static JobHandlePointer moveFromTrashHandle(const quint64 windowId,
-                                                const QList<QUrl> sources,
-                                                const QUrl &targetUrl,
-                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-
-    static JobHandlePointer deletesHandle(const quint64 windowId,
-                                          const QList<QUrl> sources,
-                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-
-    static JobHandlePointer copyHandle(const quint64 windowId,
-                                       const QList<QUrl> sources,
-                                       const QUrl target,
-                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    static JobHandlePointer cutHandle(const quint64 windowId,
-                                      const QList<QUrl> sources,
-                                      const QUrl target,
-                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    static JobHandlePointer restoreFromTrashHandle(const quint64 windowId,
-                                                   const QList<QUrl> urls,
-                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-
-    // Todo(yanghao)
+private:
+    explicit TrashFileHelper(QObject *parent = nullptr);
 };
-
 DPTRASH_END_NAMESPACE
+
 #endif   // TRASHFILEHELPER_H

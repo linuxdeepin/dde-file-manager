@@ -26,10 +26,56 @@
 #define DPPROPERTYDIALOG_USE_NAMESPACE using namespace dfmplugin_propertydialog;
 #define DPPROPERTYDIALOG_NAMESPACE dfmplugin_propertydialog
 
+#include <QWidget>
+
+#include <functional>
+
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
 namespace PropertyActionId {
 inline constexpr char kProperty[] { "property" };
 }
+
+Q_NAMESPACE
+enum PropertyFilterType {
+    kNotFilter = 0,
+    kIconTitle = 1,
+    kBasisInfo = 1 << 1,
+    kPermission = 1 << 2,
+    kFileSizeFiled = 1 << 3,
+    kFileCountFiled = 1 << 4,
+    kFileTypeFiled = 1 << 5,
+    kFilePositionFiled = 1 << 6,
+    kFileCreateTimeFiled = 1 << 7,
+    kFileAccessedTimeFiled = 1 << 8,
+    kFileModifiedTimeFiled = 1 << 9
+};
+Q_ENUM_NS(PropertyFilterType)
+
+enum BasicFieldExpandEnum : int {
+    kNotAll,
+    kFileSize,
+    kFileCount,
+    kFileType,
+    kFilePosition,
+    kFileCreateTime,
+    kFileAccessedTime,
+    kFileModifiedTime,
+};
+Q_ENUM_NS(BasicFieldExpandEnum)
+
+enum BasicExpandType : int {
+    kFieldInsert,
+    kFieldReplace
+};
+Q_ENUM_NS(BasicExpandType)
+
+using BasicExpandMap = QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>>;
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
+
 DPPROPERTYDIALOG_END_NAMESPACE
+
+Q_DECLARE_METATYPE(DPPROPERTYDIALOG_NAMESPACE::CustomViewExtensionView);
+Q_DECLARE_METATYPE(DPPROPERTYDIALOG_NAMESPACE::BasicViewFieldFunc);
 
 #endif   // DFMPLUGIN_PROPERTYDIALOG_GLOBAL_H

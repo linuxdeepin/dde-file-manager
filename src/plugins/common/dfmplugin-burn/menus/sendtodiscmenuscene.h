@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 class SendToDiscMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -64,6 +64,6 @@ private:
     QScopedPointer<SendToDiscMenuScenePrivate> d;
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // SENDTODISCMENUSCENE_H

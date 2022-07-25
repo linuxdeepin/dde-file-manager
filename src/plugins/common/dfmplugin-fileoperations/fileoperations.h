@@ -25,7 +25,6 @@
 
 #include "dfmplugin_fileoperations_global.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
@@ -37,12 +36,32 @@ class FileOperations : public dpf::Plugin
     DPF_EVENT_NAMESPACE(DPFILEOPERATIONS_NAMESPACE)
 
     // hook events
-    DPF_EVENT_REG_HOOK(hook_OpenLocalFiles);
+    DPF_EVENT_REG_HOOK(hook_OpenLocalFiles)
+
+    // hook events -- file operation
+    DPF_EVENT_REG_HOOK(hook_Operation_CopyFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_CutFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_DeleteFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_MoveToTrash)
+    DPF_EVENT_REG_HOOK(hook_Operation_RestoreFromTrash)
+    DPF_EVENT_REG_HOOK(hook_Operation_CleanTrash)
+    DPF_EVENT_REG_HOOK(hook_Operation_OpenFileInPlugin)
+    DPF_EVENT_REG_HOOK(hook_Operation_OpenFileByApp)
+    DPF_EVENT_REG_HOOK(hook_Operation_OpenInTerminal)
+    DPF_EVENT_REG_HOOK(hook_Operation_RenameFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_MakeDir)
+    DPF_EVENT_REG_HOOK(hook_Operation_TouchFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_LinkFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_SetPermission)
+    DPF_EVENT_REG_HOOK(hook_Operation_WriteUrlsToClipboard)
+    DPF_EVENT_REG_HOOK(hook_Operation_RenameFiles)
+    DPF_EVENT_REG_HOOK(hook_Operation_RenameFilesAddText)
 
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+
 private slots:
     void initEventHandle();
 };

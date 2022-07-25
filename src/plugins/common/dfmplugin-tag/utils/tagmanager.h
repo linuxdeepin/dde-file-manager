@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagDBusHelper;
 class TagManager final : public QObject
@@ -76,6 +76,7 @@ public:
     bool paintIconTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool pasteHandle(quint64 winId, const QUrl &to);
     bool fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl);
+    bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
 
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static void renameHandle(quint64 windowId, const QUrl &url, const QString &name);
@@ -102,6 +103,6 @@ private:
     TagDBusHelper *dbusHelper;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGMANAGER_H

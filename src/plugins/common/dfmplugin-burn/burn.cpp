@@ -24,27 +24,35 @@
 #include "menus/sendtodiscmenuscene.h"
 #include "utils/discstatemanager.h"
 #include "utils/burnhelper.h"
+#include "utils/burnsignalmanager.h"
 #include "events/burneventreceiver.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
 #include <QWidget>
 #include <QTimer>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPBURN_NAMESPACE) };
 
-bool Burn::start()
+void Burn::initialize()
 {
     bindEvents();
-    DSC_USE_NAMESPACE
-    MenuService::service()->registerScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
+    dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &Burn::changeUrlEventFilter);
+}
+
+bool Burn::start()
+{
+    dfmplugin_menu_util::menuSceneRegisterScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
     bindScene("SendToMenu");
 
     DiscStateManager::instance()->initilaize();
@@ -58,15 +66,22 @@ bool Burn::start()
 
 void Burn::bindScene(const QString &parentScene)
 {
-    DSC_USE_NAMESPACE
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(SendToDiscMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(SendToDiscMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(SendToDiscMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        waitToBind << parentScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Burn::bindSceneOnAdded);
+    }
+}
+
+void Burn::bindSceneOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Burn::bindSceneOnAdded);
+        bindScene(newScene);
     }
 }
 
@@ -78,6 +93,19 @@ void Burn::bindEvents()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_MountImage", BurnEventReceiver::instance(), &BurnEventReceiver::handleMountImage);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleCopyFilesResult);
+}
+
+bool Burn::changeUrlEventFilter(quint64 windowId, const QUrl &url)
+{
+    Q_UNUSED(windowId);
+    if (url.scheme() == Global::Scheme::kBurn) {
+        auto &&dev { BurnHelper::burnDestDevice(url) };
+        if (DeviceUtils::isWorkingOpticalDiscDev(dev)) {
+            emit BurnSignalManager::instance()->activeTaskDialog();
+            return true;
+        }
+    }
+    return false;
 }
 
 void Burn::onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value)

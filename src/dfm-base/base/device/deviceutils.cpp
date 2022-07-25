@@ -33,7 +33,7 @@
 
 #include <libmount.h>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 using namespace GlobalServerDefines::DeviceProperty;
 
 QString DeviceUtils::getBlockDeviceId(const QString &deviceDesc)
@@ -129,6 +129,26 @@ bool DeviceUtils::isWorkingOpticalDiscDev(const QString &dev)
         const QMap<QString, QVariant> &info = Application::dataPersistence()->value(kBurnStateGroup, dev).toMap();
         return info.value(kWoringKey).toBool();
     }
+    return false;
+}
+
+bool DeviceUtils::isWorkingOpticalDiscId(const QString &id)
+{
+    static constexpr char kBurnStateGroup[] { "BurnState" };
+    static constexpr char kWoringKey[] { "Working" };
+    static constexpr char kID[] { "id" };
+
+    if (id.isEmpty())
+        return false;
+
+    auto &&keys { Application::dataPersistence()->keys(kBurnStateGroup) };
+    for (const QString &dev : keys) {
+        const QMap<QString, QVariant> &info = Application::dataPersistence()->value(kBurnStateGroup, dev).toMap();
+        QString &&devID { info.value(kID).toString() };
+        if (devID == id)
+            return info.value(kWoringKey).toBool();
+    }
+
     return false;
 }
 

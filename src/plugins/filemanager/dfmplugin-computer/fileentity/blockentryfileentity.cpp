@@ -34,13 +34,12 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/urlroute.h"
 
-#include <QMenu>
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QDir>
 
 DFMBASE_USE_NAMESPACE
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 
 namespace IconName {
 static constexpr char kRootBlock[] { "drive-harddisk-root" };
@@ -158,10 +157,6 @@ bool BlockEntryFileEntity::showUsageSize() const
     return showSizeAndProgress();
 }
 
-void BlockEntryFileEntity::onOpen()
-{
-}
-
 EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
 {
     if (datas.value(DeviceProperty::kHintSystem).toBool()) {
@@ -202,58 +197,6 @@ void BlockEntryFileEntity::refresh()
     }
 }
 
-QMenu *BlockEntryFileEntity::createMenu()
-{
-    QMenu *menu = new QMenu();
-
-    menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
-    menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
-    menu->addSeparator();
-
-    bool isOpticalDrive = datas.value(DeviceProperty::kOpticalDrive).toBool();
-    bool isOptical = datas.value(DeviceProperty::kOptical).toBool();
-    if (datas.value(DeviceProperty::kHintSystem).toBool()) {
-        menu->addAction(ContextMenuActionTrs::trRename());
-    } else {
-        if (targetUrl().isValid()) {
-            menu->addAction(ContextMenuActionTrs::trUnmount());
-        } else {
-            menu->addAction(ContextMenuActionTrs::trMount());
-            if (!isOpticalDrive) {   // optical drive cannot be renamed and formated
-                menu->addAction(ContextMenuActionTrs::trRename());
-                menu->addAction(ContextMenuActionTrs::trFormat());
-            }
-        }
-
-        if (isOpticalDrive) {
-            if (isOptical
-                && datas.value(DeviceProperty::kMedia).toString().contains(QRegularExpression("_r(w|e)")))
-                menu->addAction(ContextMenuActionTrs::trErase());
-            menu->addAction(ContextMenuActionTrs::trEject());
-        }
-
-        menu->addAction(ContextMenuActionTrs::trSafelyRemove());
-    }
-    menu->addSeparator();
-
-    menu->addAction(ContextMenuActionTrs::trProperties());
-
-    // disable actions
-    if (isOpticalDrive && !isOptical) {
-        for (auto act : menu->actions()) {
-            if (act->text() != ContextMenuActionTrs::trEject())
-                act->setDisabled(true);
-        }
-    }
-    // disbale all actiosn if dev working
-    QString &&dev { datas.value(DeviceProperty::kDevice).toString() };
-    if (DeviceUtils::isWorkingOpticalDiscDev(dev)) {
-        for (auto act : menu->actions())
-            act->setDisabled(true);
-    }
-    return menu;
-}
-
 QUrl BlockEntryFileEntity::targetUrl() const
 {
     auto mpt = getProperty(DeviceProperty::kMountPoint).toString();
@@ -268,7 +211,7 @@ QUrl BlockEntryFileEntity::targetUrl() const
             return QUrl::fromLocalFile("/data" + userHome);
     }
 
-    target.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+    target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     target.setPath(mpt);
     return target;
 }

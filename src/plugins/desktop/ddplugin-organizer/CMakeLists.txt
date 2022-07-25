@@ -39,7 +39,6 @@ target_link_libraries(${PROJECT_NAME}
     DFM::framework
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}
-    DFMSERVICE::common
     )
 
 #install library file

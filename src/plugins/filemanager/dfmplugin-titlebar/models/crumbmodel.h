@@ -29,7 +29,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class CrumbModel : public QStandardItemModel
 {
@@ -47,6 +47,6 @@ public:
     QModelIndex lastIndex();
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // CrumbModel_H

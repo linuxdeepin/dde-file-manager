@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class SendToMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -44,6 +44,7 @@ public:
 class SendToMenuScenePrivate;
 class SendToMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit SendToMenuScene(QObject *parent = nullptr);
     virtual ~SendToMenuScene() override;
@@ -59,6 +60,6 @@ private:
     QScopedPointer<SendToMenuScenePrivate> d;
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // SENDTOMENUSCENE_H

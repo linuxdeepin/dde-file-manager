@@ -23,40 +23,71 @@
 
 #include "dfmplugin_menu_global.h"
 
-#include "services/common/dfm_common_service_global.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
-namespace dfm_service_common {
-class MenuService;
-}
+namespace dfmplugin_menu {
 
-DPMENU_BEGIN_NAMESPACE
+class MenuHandle : public QObject
+{
+    Q_OBJECT
+public:
+    explicit MenuHandle(QObject *parent = nullptr);
+    ~MenuHandle();
+    bool init();
+public slots:
+    // scene
+    bool contains(const QString &name);
+    bool registerScene(const QString &name, DFMBASE_NAMESPACE::AbstractSceneCreator *creator);
+    DFMBASE_NAMESPACE::AbstractSceneCreator *unregisterScene(const QString &name);
+    bool bind(const QString &name, const QString &parent);
+    void unbind(const QString &name, const QString &parent = QString());
+    DFMBASE_NAMESPACE::AbstractMenuScene *createScene(const QString &name);
+
+    // utils
+    QVariantHash perfectMenuParams(const QVariantHash &params);
+private slots:
+    void publishSceneAdded(const QString &scene);
+    void publishSceneRemoved(const QString &scene);
+
+protected:
+    void createSubscene(DFMBASE_NAMESPACE::AbstractSceneCreator *creator, DFMBASE_NAMESPACE::AbstractMenuScene *parent);
+
+private:
+    QHash<QString, DFMBASE_NAMESPACE::AbstractSceneCreator *> creators;
+    QReadWriteLock locker;
+};
 
 class Menu : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "menu.json")
-    DPF_EVENT_NAMESPACE(DPMENU_NAMESPACE)
-
-    DPF_EVENT_REG_SLOT(slot_PerfectMenuParams)
-
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
 
 private:
-    void regDefaultScene();
-
-private slots:
-    QVariantHash perfectMenuParams(const QVariantHash &params);
+    MenuHandle *handle = nullptr;
 
 private:
-    dfm_service_common::MenuService *menuServer = nullptr;
+    DPF_EVENT_NAMESPACE(DPMENU_NAMESPACE)
+    // MenuScene
+    DPF_EVENT_REG_SIGNAL(signal_MenuScene_SceneAdded)
+    DPF_EVENT_REG_SIGNAL(signal_MenuScene_SceneRemoved)
+
+    DPF_EVENT_REG_SLOT(slot_MenuScene_Contains)
+    DPF_EVENT_REG_SLOT(slot_MenuScene_RegisterScene)
+    DPF_EVENT_REG_SLOT(slot_MenuScene_UnregisterScene)
+    DPF_EVENT_REG_SLOT(slot_MenuScene_Bind)
+    DPF_EVENT_REG_SLOT(slot_MenuScene_Unbind)
+    DPF_EVENT_REG_SLOT(slot_MenuScene_CreateScene)
+
+    // menu utils
+    DPF_EVENT_REG_SLOT(slot_Menu_PerfectParams)
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // MENU_H

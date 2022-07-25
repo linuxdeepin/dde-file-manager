@@ -33,7 +33,7 @@
 #include <QMenu>
 #include <QDebug>
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 

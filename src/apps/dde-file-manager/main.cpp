@@ -23,15 +23,13 @@
 
 #include "config.h"   //cmake
 #include "singleapplication.h"
-
-#include "services/filemanager/command/commandservice.h"
+#include "commandparser.h"
 
 #include "dfm-base/utils/sysinfoutils.h"
 
 #include <dfm-framework/dpf.h>
 
 #include <DApplicationSettings>
-
 #include <QIcon>
 #include <QDir>
 #include <QTextCodec>
@@ -41,7 +39,6 @@
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 #ifdef DFM_ORGANIZATION_NAME
@@ -102,12 +99,19 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
 
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
+    QStringList pluginsDirs;
     if (!QDir(pluginsDir).exists()) {
-        pluginsDir = DFM_PLUGIN_PATH;
+        qInfo() << QString("Path does not exist, use path : %1").arg(DFM_PLUGIN_COMMON_CORE_DIR);
+        pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
+                    << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
+                    << QString(DFM_PLUGIN_COMMON_EDGE_DIR)
+                    << QString(DFM_PLUGIN_FILEMANAGER_EDGE_DIR);
+    } else {
+        pluginsDirs.push_back(pluginsDir);
     }
-    qDebug() << "using plugins dir:" << pluginsDir;
 
-    DPF_NAMESPACE::LifeCycle::setPluginPaths({ pluginsDir });
+    qDebug() << "using plugins dir:" << pluginsDirs;
+    DPF_NAMESPACE::LifeCycle::setPluginPaths(pluginsDirs);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
@@ -125,6 +129,9 @@ static bool pluginsLoad()
     if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
         return false;
 
+    // start filemanager, must called it after core plugin loaded
+    CommandParser::instance().bindEvents();
+
     // load plugins without core
     if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
         return false;
@@ -134,7 +141,7 @@ static bool pluginsLoad()
     return true;
 }
 
-void handleSIGTERM(int sig)
+static void handleSIGTERM(int sig)
 {
     qCritical() << "break with !SIGTERM! " << sig;
 
@@ -143,7 +150,7 @@ void handleSIGTERM(int sig)
     }
 }
 
-void handleSIGPIPE(int sig)
+static void handleSIGPIPE(int sig)
 {
     qCritical() << "ignore !SIGPIPE! " << sig;
 }
@@ -196,20 +203,20 @@ int main(int argc, char *argv[])
     DPF_NAMESPACE::backtrace::initbacktrace();
     initLog();
 
-    commandServIns->process();
+    CommandParser::instance().process();
 
     // working dir
-    if (commandServIns->isSet("w")) {
-        QDir::setCurrent(commandServIns->value("w"));
+    if (CommandParser::instance().isSet("w")) {
+        QDir::setCurrent(CommandParser::instance().value("w"));
     }
 
     // open as root
-    if (commandServIns->isSet("r")) {
+    if (CommandParser::instance().isSet("r")) {
         a.openAsAdmin();
         return 0;
     }
 
-    if (commandServIns->isSet("h") || commandServIns->isSet("v")) {
+    if (CommandParser::instance().isSet("h") || CommandParser::instance().isSet("v")) {
         return a.exec();
     }
 
@@ -233,5 +240,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    return a.exec();
+    int ret { a.exec() };
+    DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    return ret;
 }

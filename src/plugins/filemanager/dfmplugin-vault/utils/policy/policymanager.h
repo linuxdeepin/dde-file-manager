@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class PolicyManager : public QObject
 {
     Q_OBJECT
@@ -91,5 +91,5 @@ private:
 
     static bool vaultVisiable;
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // POLICYMANAGER_H

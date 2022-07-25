@@ -23,17 +23,18 @@
 #include "filefilter.h"
 #include "utils/fileutil.h"
 
-#include <base/standardpaths.h>
+#include <dfm-base/base/standardpaths.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-framework/framework.h>
+
+#include <dfm-framework/dpf.h>
 
 #include <QMimeData>
 #include <QDateTime>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 FileInfoModelPrivate::FileInfoModelPrivate(FileInfoModel *qq)
     : QObject(qq), q(qq)
@@ -42,6 +43,7 @@ FileInfoModelPrivate::FileInfoModelPrivate(FileInfoModel *qq)
 
 void FileInfoModelPrivate::doRefresh()
 {
+    modelState = FileInfoModelPrivate::RefreshState;
     fileProvider->refresh(filters);
 }
 
@@ -62,6 +64,8 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
         fileList = fileUrls;
         fileMap = fileMaps;
     }
+
+    modelState = FileInfoModelPrivate::NormalState;
     q->endResetModel();
 }
 
@@ -157,7 +161,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
                 fileMap.insert(newUrl, newInfo);
                 lk.unlock();
                 emit q->dataReplaced(oldUrl, newUrl);
-            }          
+            }
 
             auto index = q->index(position);
             emit q->dataChanged(index, index);
@@ -302,7 +306,12 @@ void FileInfoModel::refresh(const QModelIndex &parent)
     if (parent != rootIndex())
         return;
 
-    d->fileProvider->refresh(d->filters);
+    d->doRefresh();
+}
+
+int FileInfoModel::modelState() const
+{
+    return d->modelState;
 }
 
 void FileInfoModel::update()
@@ -447,13 +456,13 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     // todo(wcl) Compress
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, 0, urlList, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, urlList, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         //todo(wcl)
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList { targetFileUrl.toLocalFile() });
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList { targetFileUrl.toLocalFile() });
         return true;
     }
 
@@ -461,10 +470,10 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     case Qt::CopyAction:
     case Qt::MoveAction: {
         if (action == Qt::MoveAction) {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+            dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
             // default is copy file
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+            dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
     } break;
     case Qt::LinkAction:

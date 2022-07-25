@@ -29,7 +29,7 @@
 #include <QRegularExpression>
 #include <QAction>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 EntryFileInfoPrivate::EntryFileInfoPrivate(EntryFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
@@ -55,7 +55,7 @@ EntryFileInfo::EntryFileInfo(const QUrl &url)
 {
     d = static_cast<EntryFileInfoPrivate *>(dptr.data());
     d->init();
-    Q_ASSERT_X(url.scheme() == Global::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
+    Q_ASSERT_X(url.scheme() == Global::Scheme::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
 }
 
 EntryFileInfo::~EntryFileInfo()
@@ -71,11 +71,6 @@ EntryFileInfo::EntryOrder EntryFileInfo::order() const
 QUrl EntryFileInfo::targetUrl() const
 {
     return d->entity ? d->entity->targetUrl() : QUrl();
-}
-
-QMenu *EntryFileInfo::createMenu() const
-{
-    return d->entity ? d->entity->createMenu() : nullptr;
 }
 
 bool EntryFileInfo::isAccessable() const
@@ -186,4 +181,4 @@ QVariantHash EntryFileInfo::extraProperties() const
     return d->entity ? d->entity->extraProperties() : QVariantHash();
 }
 
-DFMBASE_END_NAMESPACE
+}

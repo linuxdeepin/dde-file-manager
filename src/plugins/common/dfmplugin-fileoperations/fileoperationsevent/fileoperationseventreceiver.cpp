@@ -24,8 +24,6 @@
 #include "fileoperations/filecopymovejob.h"
 #include "fileoperationsevent/fileoperationseventhandler.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/utils/hidefilehelper.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/local/localfilehandler.h"
@@ -41,6 +39,11 @@
 
 #include <QDebug>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(bool *)
+Q_DECLARE_METATYPE(QString *)
+Q_DECLARE_METATYPE(QFileDevice::Permission)
+
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
@@ -52,26 +55,6 @@ FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
     functionsMutex.reset(new QMutex);
     copyMoveJob.reset(new FileCopyMoveJob);
     initDBus();
-    initService();
-}
-
-bool FileOperationsEventReceiver::initService()
-{
-    QMutexLocker lk(getServiceMutex.data());
-    if (operationsService.isNull()) {
-        auto &ctx = DPF_NAMESPACE::Framework::instance().serviceContext();
-        operationsService = ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-        if (!operationsService) {
-            QString errStr;
-            if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name(), &errStr)) {
-                qCritical() << errStr;
-                abort();
-            }
-            operationsService = ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-        }
-    }
-
-    return operationsService && dialogManager;
 }
 
 QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
@@ -265,16 +248,8 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
     const QUrl &sourceFirst = sources.first();
 
     if (!sourceFirst.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sourceFirst.scheme());
-        }
-        if (function && function->moveToTash) {
-            JobHandlePointer handle = function->moveToTash(windowId, sources, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return handle;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", windowId, sources, flags)) {
+            return nullptr;
         }
     }
 
@@ -313,19 +288,7 @@ JobHandlePointer FileOperationsEventReceiver::doRestoreFromTrash(const quint64 w
 {
     if (sources.isEmpty())
         return nullptr;
-    if (!sources.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
-        }
-        if (function && function->restoreFromTrash) {
-            JobHandlePointer handle = function->restoreFromTrash(windowId, sources, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return handle;
-        }
-    }
+
     JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
     if (handleCallback)
         handleCallback(handle);
@@ -338,31 +301,16 @@ JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId,
     if (sources.isEmpty())
         return nullptr;
 
-    const QList<QUrl> &sourcesTrans = delegateServIns->urlsTransform(sources);
+    QList<QUrl> sourcesTrans = sources;
+
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", sourcesTrans, &urls);
+    if (ok && !urls.isEmpty())
+        sourcesTrans = urls;
 
     if (!target.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(target.scheme());
-        }
-        if (function && function->copy) {
-            JobHandlePointer handle = function->copy(windowId, sourcesTrans, target, flags);
-            if (callbaskHandle)
-                callbaskHandle(handle);
-            return handle;
-        }
-    } else if (!sourcesTrans.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sourcesTrans.first().scheme());
-        }
-        if (function && function->copy) {
-            JobHandlePointer handle = function->copy(windowId, sourcesTrans, target, flags);
-            if (callbaskHandle)
-                callbaskHandle(handle);
-            return handle;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CopyFile", windowId, sourcesTrans, target, flags)) {
+            return nullptr;
         }
     }
 
@@ -377,31 +325,15 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
     if (sources.isEmpty())
         return nullptr;
 
-    const QList<QUrl> &sourcesTrans = delegateServIns->urlsTransform(sources);
+    QList<QUrl> sourcesTrans = sources;
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", sourcesTrans, &urls);
+    if (ok && !urls.isEmpty())
+        sourcesTrans = urls;
 
     if (!target.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(target.scheme());
-        }
-        if (function && function->cut) {
-            JobHandlePointer handle = function->cut(windowId, sourcesTrans, target, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return handle;
-        }
-    } else if (!sourcesTrans.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sourcesTrans.first().scheme());
-        }
-        if (function && function->moveFromPlugin) {
-            JobHandlePointer handle = function->moveFromPlugin(windowId, sourcesTrans, target, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return handle;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CutFile", windowId, sourcesTrans, target, flags)) {
+            return nullptr;
         }
     }
 
@@ -418,16 +350,9 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
         return nullptr;
 
     if (!sources.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
-        }
-        if (function && function->deletes) {
-            JobHandlePointer handle = function->deletes(windowId, sources, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return handle;
+        // hook events
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_DeleteFile", windowId, sources, flags)) {
+            return nullptr;
         }
     }
 
@@ -458,16 +383,8 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
         return nullptr;
 
     if (!sources.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
-        }
-        if (function && function->cleanTrash) {
-            JobHandlePointer handle = function->cleanTrash(windowId, sources);
-            if (handleCallback)
-                handleCallback(handle);
-            return handle;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CleanTrash", windowId, sources)) {
+            return nullptr;
         }
     }
     JobHandlePointer handle = copyMoveJob->cleanTrash(sources);
@@ -481,22 +398,11 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
     bool ok = false;
     QString error;
     if (!url.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MakeDir", windowId, url)) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+                                         windowId, QList<QUrl>() << url, true, error);
+            return true;
         }
-        if (function && function->makeDir) {
-            ok = function->makeDir(windowId, url, &error);
-            if (!ok) {
-                dialogManager->showErrorDialog("make dir error", error);
-            }
-            // TODO:: make dir finished need to send make dir finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
-            return ok;
-        }
-        return handleOperationMkdir(windowId, url);
     }
 
     QString newPath = newDocmentName(url.path(), QString(), CreateFileType::kCreateFileTypeFolder);
@@ -515,8 +421,8 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
     }
     targetUrl = urlNew;
 
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                          windowId, QList<QUrl>() << url, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+                                 windowId, QList<QUrl>() << url, ok, error);
     saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles);
     return ok;
 }
@@ -545,21 +451,12 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
         return doTouchFilePractically(windowId, urlNew) ? newPath : QString();
     } else {
         QString error;
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchFile", windowId, url, fileType, &error)) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                                         windowId, QList<QUrl>() << url, true, error);
+            return url.path();
         }
-        if (function && function->touchFile) {
-            bool ok = false;
-            ok = function->touchFile(windowId, url, &error, fileType);
-            if (!ok) {
-                dialogManager->showErrorDialog("touch file error", error);
-            }
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
-            return ok ? url.path() : QString();
-        }
+
         return doTouchFilePractically(windowId, url) ? url.path() : QString();
     }
 }
@@ -591,12 +488,6 @@ FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 {
     static FileOperationsEventReceiver receiver;
     return &receiver;
-}
-
-void FileOperationsEventReceiver::connectService()
-{
-    dpfInstance.eventUnicast().connect("dfm_service_common::FileOperationsService::registerOperations", this, &FileOperationsEventReceiver::invokeRegister);
-    dpfInstance.eventUnicast().connect("dfm_service_common::FileOperationsService::unregisterOperations", this, &FileOperationsEventReceiver::invokeUnregister);
 }
 
 void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
@@ -757,8 +648,7 @@ void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 window
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
 }
 
-bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId,
-                                                           const QList<QUrl> urls)
+bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId, const QList<QUrl> urls)
 {
     if (urls.isEmpty())
         return false;
@@ -766,19 +656,10 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
     bool ok = false;
     QString error;
     if (!urls.isEmpty() && !urls.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(urls.first().scheme());
-        }
-        if (function && function->openFiles) {
-            ok = function->openFiles(windowId, urls, &error);
-            if (!ok) {
-                dialogManager->showErrorDialog("open file error", error);
-            }
-            // TODO:: file Open finished need to send file Open finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
-            return ok;
+        // hook events
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", windowId, urls)) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, true, error);
+            return true;
         }
     }
 
@@ -791,15 +672,15 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
         DFMBASE_NAMESPACE::GlobalEventType lastEvent = fileHandler.lastEventType();
         if (lastEvent != DFMBASE_NAMESPACE::GlobalEventType::kUnknowType) {
             if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles)
-                dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
             else if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash)
-                dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
             error = fileHandler.errorString();
             dialogManager->showErrorDialog("open file error", error);
         }
     }
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
     return ok;
 }
 
@@ -844,19 +725,9 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
     bool ok = false;
     QString error;
     if (!urls.isEmpty() && !urls.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(urls.first().scheme());
-        }
-        if (function && function->openFilesByApp) {
-            ok = function->openFilesByApp(windowId, urls, apps, &error);
-            if (!ok) {
-                dialogManager->showErrorDialog("open file by app error", error);
-            }
-            // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
-            return ok;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenFileByApp", windowId, urls, apps)) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, true, error);
+            return true;
         }
     }
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
@@ -870,7 +741,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
         dialogManager->showErrorDialog("open file by app error", error);
     }
     // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
     return ok;
 }
 
@@ -883,23 +754,13 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     bool ok = false;
     QString error;
     if (!oldUrl.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(oldUrl.scheme());
-        }
-        if (function && function->renameFile) {
-
-            ok = function->renameFile(windowId, oldUrl, newUrl, flags, &error);
-            if (!ok) {
-                dialogManager->showErrorDialog("rename file error", error);
-            }
-            // TODO:: file renameFile finished need to send file renameFile finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                                  windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags)) {
+            QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                         windowId, renamedFiles, ok, error);
             if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
                 saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
-            return ok;
+            return true;
         }
     }
 
@@ -916,8 +777,9 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
         dialogManager->showRenameBusyErrDialog();
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
+    QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                 windowId, renamedFiles, ok, error);
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
         saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
     return ok;
@@ -948,23 +810,14 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     bool ok = false;
     QString error;
     if (!urls.isEmpty() && !urls.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(urls.first().scheme());
-        }
-        if (function && function->renameFiles) {
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles", windowId, urls, pair, replace)) {
 
-            ok = function->renameFiles(windowId, urls, pair, replace);
-            if (!ok) {
-                dialogManager->showErrorDialog("rename file error", error);
-            }
-            // TODO:: file renameFile finished need to send file renameFile finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                                  windowId, successUrls, ok, error);
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                         windowId, successUrls, true, error);
             if (!successUrls.isEmpty())
                 saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
-            return ok;
+
+            return true;
         }
     }
 
@@ -974,8 +827,8 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error);
 
     // publish result
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, successUrls, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                 windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
 
@@ -991,8 +844,8 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
         type = RenameTypes::kBatchCustom;
     bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error, custom, callback);
     // publish result
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, successUrls, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                 windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
 }
@@ -1003,31 +856,22 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     bool ok = false;
     QString error;
     if (!urls.isEmpty() && !urls.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(urls.first().scheme());
-        }
-        if (function && function->renameFilesAddText) {
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", windowId, urls, pair)) {
 
-            ok = function->renameFilesAddText(windowId, urls, pair);
-            if (!ok) {
-                dialogManager->showErrorDialog("rename file error", error);
-            }
-            // TODO:: file renameFile finished need to send file renameFile finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                                  windowId, successUrls, ok, error);
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                         windowId, successUrls, true, error);
             if (!successUrls.isEmpty())
                 saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
-            return ok;
+
+            return true;
         }
     }
 
     ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
 
     // publish result
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, successUrls, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                 windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
 
@@ -1040,8 +884,8 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     QString error;
     bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error, custom, callback);
     // publish result
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, successUrls, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                 windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
 }
@@ -1114,19 +958,10 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
     bool ok = false;
     QString error;
     if (!url.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
-        }
-        if (function && function->linkFile) {
-            ok = function->linkFile(windowId, url, link, force, silence, &error);
-            if (!ok) {
-                dialogManager->showErrorDialog("link file error", error);
-            }
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                                  windowId, QList<QUrl>() << url << link, ok, error);
-            return ok;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_LinkFile", windowId, url, link, force, silence)) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
+                                         windowId, QList<QUrl>() << url << link, true, error);
+            return true;
         }
     }
 
@@ -1148,8 +983,8 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("link file error", error);
     }
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                          windowId, QList<QUrl>() << url << urlValid, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
+                                 windowId, QList<QUrl>() << url << urlValid, ok, error);
     return ok;
 }
 
@@ -1181,19 +1016,12 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     QString error;
     bool ok = false;
     if (!url.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
-        }
-        if (function && function->setPermission) {
-            ok = function->setPermission(windowId, url, permissions, &error);
-            if (!ok) {
+        // hook events
+        bool ok = false;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &ok, &error)) {
+            if (!ok)
                 dialogManager->showErrorDialog("set file permissions error", error);
-            }
-            // TODO:: set file permissions finished need to send set file permissions finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult, windowId, QList<QUrl>() << url, ok, error);
             return ok;
         }
     }
@@ -1206,8 +1034,8 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     info->refresh();
     // TODO:: set file permissions finished need to send set file permissions finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
-                                          windowId, QList<QUrl>() << url, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
+                                 windowId, QList<QUrl>() << url, ok, error);
     return ok;
 }
 
@@ -1233,13 +1061,7 @@ bool FileOperationsEventReceiver::handleOperationWriteToClipboard(const quint64 
 {
     QString error;
     if (!urls.isEmpty() && !urls.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(urls.first().scheme());
-        }
-        if (function && function->writeUrlsToClipboard) {
-            function->writeUrlsToClipboard(windowId, action, urls);
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", windowId, action, urls)) {
             return true;
         }
     }
@@ -1266,22 +1088,10 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     bool result = false;
     QSharedPointer<LocalFileHandler> fileHandler = nullptr;
     if (urls.count() > 0 && !urls.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(urls.first().scheme());
-        }
-        if (function && function->openInTerminal) {
-            ok = function->openInTerminal(windowId, urls, &error);
-            if (!result)
-                result = ok;
-            if (!ok) {
-                dialogManager->showErrorDialog("open file in terminal error", error);
-            }
-            // TODO:: open file in terminal finished need to send open file in terminal finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
-                                                  windowId, urls, result, error);
-            return ok;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", windowId, urls)) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
+                                         windowId, urls, true, error);
+            return true;
         }
     }
 
@@ -1299,8 +1109,8 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     }
 
     // TODO:: open file in terminal finished need to send open file in terminal finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
-                                          windowId, urls, result, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
+                                 windowId, urls, result, error);
 
     return ok;
 }
@@ -1391,16 +1201,4 @@ void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
         args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
-}
-
-void FileOperationsEventReceiver::invokeRegister(const QString scheme, const FileOperationsFunctions functions)
-{
-    QMutexLocker lk(functionsMutex.data());
-    this->functions.insert(scheme, functions);
-}
-
-void FileOperationsEventReceiver::invokeUnregister(const QString scheme)
-{
-    QMutexLocker lk(functionsMutex.data());
-    functions.remove(scheme);
 }

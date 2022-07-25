@@ -28,7 +28,7 @@
 #include <QDir>
 #include <QDebug>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class DVideoThumbnailProviderPrivate
 {
 public:
@@ -45,9 +45,9 @@ public:
     DVideoThumbnailProvider *q;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 DFMBASE_NAMESPACE::DVideoThumbnailProvider::DVideoThumbnailProvider()
     : d(new DVideoThumbnailProviderPrivate(this))

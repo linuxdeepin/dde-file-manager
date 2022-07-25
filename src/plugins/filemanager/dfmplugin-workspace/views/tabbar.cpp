@@ -39,7 +39,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 TabBar::TabBar(QWidget *parent)
     : QGraphicsView(parent)
@@ -194,8 +194,8 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
         if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
             if (count() == 1) {
                 QUrl redirectToWhenDelete;
-                if (isMountedDevPath(url) || url.scheme() != Global::kFile) {
-                    redirectToWhenDelete.setScheme(Global::kComputer);
+                if (isMountedDevPath(url) || url.scheme() != Global::Scheme::kFile) {
+                    redirectToWhenDelete.setScheme(Global::Scheme::kComputer);
                     redirectToWhenDelete.setPath("/");
                 } else {   // redirect to upper directory
                     QString localPath = url.path();
@@ -204,7 +204,7 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
                         pathFragment.removeLast();
                         localPath = pathFragment.join("/");
                     } while (!QDir(localPath).exists());
-                    redirectToWhenDelete.setScheme(Global::kFile);
+                    redirectToWhenDelete.setScheme(Global::Scheme::kFile);
                     redirectToWhenDelete.setPath(localPath);
                 }
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);

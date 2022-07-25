@@ -47,6 +47,7 @@ public:
     QUrl fileUrl(const QModelIndex &index) const;
     QList<QUrl> files() const;
     void refresh(const QModelIndex &parent);
+    int modelState();
 signals:
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
 public slots:

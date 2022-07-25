@@ -24,20 +24,30 @@
 #include "collectionwidget.h"
 
 #include <QVBoxLayout>
+#include <QPointer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class CollectionWidgetPrivate
+class CollectionDataProvider;
+
+class CollectionWidgetPrivate : public QObject
 {
+    Q_OBJECT
 public:
-    explicit CollectionWidgetPrivate(CollectionWidget *qq = nullptr);
+    explicit CollectionWidgetPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionWidget *qq, QObject *parent = nullptr);
     ~CollectionWidgetPrivate();
+
+public slots:
+    void onNameChanged(const QString &key, const QString &name);
 
 public:
     CollectionWidget *q = nullptr;
+    QString id;
     CollectionTitleBar *titleBar = nullptr;
     CollectionView *view = nullptr;
     QVBoxLayout *mainLayout = nullptr;
+
+    QPointer<CollectionDataProvider> provider = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

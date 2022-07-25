@@ -48,7 +48,7 @@ class DLabel;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultActiveSetUnlockMethodView : public QWidget
 {
     Q_OBJECT
@@ -104,5 +104,5 @@ private:
 
     QGridLayout *gridLayout { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   //! VAULTSETUNLOCKMETHODVIEW_H

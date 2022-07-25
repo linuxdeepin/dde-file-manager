@@ -25,9 +25,9 @@
 #include "utils/burnhelper.h"
 #include "events/burneventreceiver.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/delegate/delegateservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -37,8 +37,9 @@
 #include <QMenu>
 #include <QProcess>
 
-DPBURN_USE_NAMESPACE
-DSC_USE_NAMESPACE
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
+using namespace dfmplugin_burn;
 using namespace GlobalServerDefines;
 
 namespace ActionId {
@@ -58,11 +59,11 @@ void SendToDiscMenuScenePrivate::actionStageFileForBurning(const QString &dev)
         return;
     QUrl dest { BurnHelper::fromBurnFile(dev) };
     QList<QUrl> srcUrls { selectFiles };
-    std::transform(srcUrls.begin(), srcUrls.end(), srcUrls.begin(), [](const QUrl &url) -> QUrl {
-        if (delegateServIns->isRegisterUrlTransform(url.scheme()))
-            return delegateServIns->urlTransform(url);
-        return url;
-    });
+
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", srcUrls, &urls);
+    if (ok && !urls.isEmpty())
+        srcUrls = urls;
 
     BurnEventReceiver::instance()->handlePasteTo(srcUrls, dest, true);
 }
@@ -150,7 +151,7 @@ bool SendToDiscMenuScene::initialize(const QVariantHash &params)
     d->predicateName.insert(ActionId::kStageKey, QObject::tr("Add to disc"));
     d->predicateName.insert(ActionId::kMountImageKey, QObject::tr("Mount"));
 
-    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     if (d->selectFiles.isEmpty())
@@ -158,11 +159,13 @@ bool SendToDiscMenuScene::initialize(const QVariantHash &params)
     d->initDestDevices();
 
     QUrl url(d->selectFiles.first());
-    QString scheme { url.scheme() };
-    if (delegateServIns->isRegisterUrlTransform(scheme))
-        url = delegateServIns->urlTransform(url);
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << url, &urls);
 
-    if (url.scheme() != Global::kFile)
+    if (ok && !urls.isEmpty())
+        url = urls.first();
+
+    if (url.scheme() != Global::Scheme::kFile)
         return false;
 
     return AbstractMenuScene::initialize(params);
@@ -253,7 +256,7 @@ void SendToDiscMenuScene::updateStageAction(QMenu *parent)
     QAction *stageAct { nullptr };
 
     for (auto act : actions) {
-        QString &&id { act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString() };
+        QString &&id { act->property(ActionPropertyKey::kActionID).toString() };
         if (id == ActionId::kStageKey)
             stageAct = act;
         if (id == "send-to")
@@ -303,7 +306,7 @@ void SendToDiscMenuScene::updateMountAction(QMenu *parent)
     QAction *openWithAct { nullptr };
     QAction *mountAct { nullptr };
     for (auto act : actions) {
-        QString &&id { act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString() };
+        QString &&id { act->property(ActionPropertyKey::kActionID).toString() };
         if (id == ActionId::kMountImageKey)
             mountAct = act;
         if (id == "open-with")

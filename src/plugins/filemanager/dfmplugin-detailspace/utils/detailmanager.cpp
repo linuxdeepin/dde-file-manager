@@ -20,11 +20,150 @@
  */
 #include "detailmanager.h"
 
-DetailManager::DetailManager(QObject *parent)
-    : QObject(parent)
+#include <QDebug>
+#include <QMap>
+#include <QUrl>
+
+using namespace dfmplugin_detailspace;
+
+DetailManager &DetailManager::instance()
 {
+    static DetailManager ins;
+    return ins;
 }
 
-void DetailManager::showDetailView(const QUrl &url)
+/*!
+ * /brief Widget extension registration
+ * /param view Function pointer to create widget
+ * /param index position to insert
+ * /return true registration success. false registration failed
+ */
+bool DetailManager::registerExtensionView(CustomViewExtensionView view, int index)
+{
+    if (constructList.keys().contains(index) && index != -1) {
+        qInfo() << "The current index has registered the associated construction class";
+        return false;
+    }
+
+    constructList.insert(index, view);
+    return true;
+}
+
+/*!
+ * /brief Cancel widget extension registration
+ * /param index position to insert
+ */
+void DetailManager::unregisterExtensionView(int index)
+{
+    constructList.remove(index);
+}
+
+/*!
+ * /brief Create widgets based on registered schemes and function pointers
+ * /param url file url
+ * /return Returns a mapping table of widgets and display positions
+ */
+QMap<int, QWidget *> DetailManager::createExtensionView(const QUrl &url)
+{
+    QMap<int, QWidget *> temp {};
+    auto keys { constructList.keys() };
+    for (int index : keys) {
+        auto &&values { constructList.values(index) };
+        for (CustomViewExtensionView func : values) {
+            QWidget *g = func(url);
+            if (g != nullptr)
+                temp.insert(index, g);
+        }
+    }
+
+    return temp;
+}
+
+/*!
+ * /brief Register the basic information control extension
+ * /param func Get function pointer of extension field
+ * /param scheme url format
+ * /return true registration success. false registration failed
+ */
+bool DetailManager::registerBasicViewExtension(const QString &scheme, BasicViewFieldFunc func)
+{
+    if (!basicViewFieldFuncHash.contains(scheme)) {
+        basicViewFieldFuncHash.insert(scheme, func);
+        return true;
+    }
+
+    qInfo() << "The current scheme has registered the associated construction class";
+    return false;
+}
+
+/*!
+ * /brief Cancel the basic information control extension registration
+ * /param scheme url format
+ */
+void DetailManager::unregisterBasicViewExtension(const QString &scheme)
+{
+    basicViewFieldFuncHash.remove(scheme);
+}
+
+/*!
+ * /brief Create an extension field based on the registered scheme and function pointer
+ * /param url file url
+ * /return Returns the mapping table of extension types and extension data
+ */
+QMap<BasicExpandType, BasicExpandMap> DetailManager::createBasicViewExtensionField(const QUrl &url)
+{
+    QMap<BasicExpandType, BasicExpandMap> expandField {};
+    BasicViewFieldFunc func { basicViewFieldFuncHash.value(url.scheme()) };
+    if (func != nullptr) {
+        QMap<BasicExpandType, BasicExpandMap> &&field { func(url) };
+        if (!field.isEmpty())
+            expandField.unite(field);
+    }
+    return expandField;
+}
+
+/*!
+ * /brief Register widgets or basic information field filtering
+ * /param scheme url format
+ * /param filter filter type
+ * /return true registration success. false registration failed
+ */
+bool DetailManager::addBasicFiledFiltes(const QString &scheme, DetailFilterType filters)
+{
+    if (!detailFilterHash.contains(scheme)) {
+        detailFilterHash.insert(scheme, filters);
+        return true;
+    }
+
+    qInfo() << "The current scheme has registered the associated construction class";
+    return false;
+}
+
+/*!
+ * /brief Unregister widget or basic information field filtering
+ * /param scheme url format
+ */
+void DetailManager::removeBasicFiledFilters(const QString &scheme)
+{
+    detailFilterHash.remove(scheme);
+}
+
+/*!
+ * /brief Get DetailFilterType according to the registered scheme
+ * /param url file url
+ * /return Return DetailFilterType
+ */
+DetailFilterType DetailManager::basicFiledFiltes(const QUrl &url)
+{
+    if (detailFilterHash.isEmpty())
+        return kNotFilter;
+    else if (!detailFilterHash.contains(url.scheme()))
+        return kNotFilter;
+    else
+        return detailFilterHash.value(url.scheme());
+}
+
+DetailManager::DetailManager(QObject *parent)
+    : QObject(parent)
 {
 }

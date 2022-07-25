@@ -25,7 +25,7 @@
 
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchFileWatcherPrivate;
 class SearchFileWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
@@ -48,6 +48,6 @@ private:
     SearchFileWatcherPrivate *dptr;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHFILEWATCHER_H

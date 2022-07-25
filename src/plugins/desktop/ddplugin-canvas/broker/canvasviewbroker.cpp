@@ -23,13 +23,14 @@
 #include "canvasmanager.h"
 #include "view/canvasview.h"
 #include "view/canvasview_p.h"
+#include "delegate/canvasitemdelegate_p.h"
 
 #include <dfm-framework/dpf.h>
 
 Q_DECLARE_METATYPE(QRect *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 #define CanvasViewSlot(topic, args...) \
             dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
@@ -47,19 +48,29 @@ CanvasViewBroker::CanvasViewBroker(CanvasManager *mrg, QObject *parent)
 CanvasViewBroker::~CanvasViewBroker()
 {
     CanvasViewDisconnect(slot_CanvasView_VisualRect);
+    CanvasViewDisconnect(slot_CanvasView_GridPos);
     CanvasViewDisconnect(slot_CanvasView_Refresh);
     CanvasViewDisconnect(slot_CanvasView_Update);
     CanvasViewDisconnect(slot_CanvasView_Select);
     CanvasViewDisconnect(slot_CanvasView_SelectedUrls);
+    CanvasViewDisconnect(slot_CanvasView_GridSize);
+    CanvasViewDisconnect(slot_CanvasView_GridVisualRect);
+
+    CanvasViewDisconnect(slot_CanvasItemDelegate_IconRect);
 }
 
 bool CanvasViewBroker::init()
 {
     CanvasViewSlot(slot_CanvasView_VisualRect, &CanvasViewBroker::visualRect);
+    CanvasViewSlot(slot_CanvasView_GridPos, &CanvasViewBroker::gridPos);
     CanvasViewSlot(slot_CanvasView_Refresh, &CanvasViewBroker::refresh);
     CanvasViewSlot(slot_CanvasView_Update, &CanvasViewBroker::update);
     CanvasViewSlot(slot_CanvasView_Select, &CanvasViewBroker::select);
     CanvasViewSlot(slot_CanvasView_SelectedUrls, &CanvasViewBroker::selectedUrls);
+    CanvasViewSlot(slot_CanvasView_GridSize, &CanvasViewBroker::gridSize);
+    CanvasViewSlot(slot_CanvasView_GridVisualRect, &CanvasViewBroker::gridVisualRect);
+
+    CanvasViewSlot(slot_CanvasItemDelegate_IconRect, &CanvasViewBroker::iconRect);
     return true;
 }
 
@@ -79,6 +90,31 @@ QRect CanvasViewBroker::visualRect(int idx, const QUrl &url)
     if (auto view = getView(idx))
         rect = view->d->visualRect(url.toString());
     return rect;
+}
+
+QRect CanvasViewBroker::gridVisualRect(int idx, const QPoint &gridPos)
+{
+    QRect rect;
+    if (auto view = getView(idx))
+        rect = view->d->visualRect(gridPos);
+    return rect;
+}
+
+QPoint CanvasViewBroker::gridPos(int idx, const QPoint &viewPoint)
+{
+    QPoint pos;
+    if (auto view = getView(idx))
+        pos = view->d->gridAt(viewPoint);
+    return pos;
+}
+
+QSize CanvasViewBroker::gridSize(int idx)
+{
+    QSize size;
+    if (auto view = getView(idx))
+        size = QSize(view->d->canvasInfo.columnCount, view->d->canvasInfo.rowCount);
+
+    return size;
 }
 
 void CanvasViewBroker::refresh(int idx)
@@ -132,5 +168,15 @@ QList<QUrl> CanvasViewBroker::selectedUrls(int idx)
         urls = viewOn;
     }
     return urls;
+}
+
+QRect CanvasViewBroker::iconRect(int idx, QRect visualRect)
+{
+    QRect ret;
+    if (auto view = getView(idx)) {
+        visualRect = visualRect.marginsRemoved(view->d->gridMargins);
+        ret = view->itemDelegate()->iconRect(visualRect);
+    }
+    return ret;
 }
 

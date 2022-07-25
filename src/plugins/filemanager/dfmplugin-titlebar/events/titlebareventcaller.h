@@ -25,12 +25,11 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class TitleBarEventCaller
 {
@@ -47,8 +46,10 @@ public:
     static void sendStopSearch(QWidget *sender);
     static void sendShowFilterView(QWidget *sender, bool visible);
     static void sendCheckAddressInputStr(QString *str);
+    static bool sendCheckTabAddable(quint64 windowId);
+    static DFMGLOBAL_NAMESPACE::ViewMode sendGetDefualtViewMode(const QString &scheme);
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // TITLEBAREVENTCALLER_H

@@ -36,7 +36,7 @@ class QPushButton;
 class QCheckBox;
 class QVBoxLayout;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class ElidedLable : public QLabel
 {
@@ -53,7 +53,7 @@ class TaskWidget : public QWidget
     Q_OBJECT
     explicit TaskWidget(QWidget *parent = nullptr);
     ~TaskWidget();
-    void setTaskHandle(const JobHandlePointer &handle);
+    void setTaskHandle(const JobHandlePointer handle);
     void resetPauseStute();
 
 signals:
@@ -118,6 +118,6 @@ private:
     QAtomicInteger<bool> isShowError { false };   // 处于错误提示状态
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // TASKWIDGET_H

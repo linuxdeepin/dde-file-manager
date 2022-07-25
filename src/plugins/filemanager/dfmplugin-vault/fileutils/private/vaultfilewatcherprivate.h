@@ -5,7 +5,7 @@
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultFileWatcher;
 class VaultFileWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
 {
@@ -20,5 +20,5 @@ public:
 
     AbstractFileWatcherPointer proxyStaging;
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTFILEWATCHERPRIVATE_H

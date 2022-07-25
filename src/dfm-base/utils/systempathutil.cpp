@@ -29,7 +29,7 @@
 #include <QDir>
 #include <QDebug>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 SystemPathUtil *SystemPathUtil::instance()
 {
     static SystemPathUtil util;

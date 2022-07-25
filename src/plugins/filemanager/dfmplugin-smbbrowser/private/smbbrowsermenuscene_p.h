@@ -27,7 +27,7 @@
 
 #include <interfaces/private/abstractmenuscene_p.h>
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
 class SmbBrowserMenuScene;
 class SmbBrowserMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
@@ -40,6 +40,6 @@ public:
 private:
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 
 #endif   // SMBBROWSERMENUSCENE_P_H

@@ -31,7 +31,7 @@
 #include <QUrl>
 
 USING_IO_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileWatcherPrivate : public AbstractFileWatcherPrivate
 {
     Q_OBJECT
@@ -48,6 +48,6 @@ public:
 private:
     QSharedPointer<DWatcher> watcher { nullptr };   // dfm-io的文件监视器
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // LOCALFILEWATCHER_P_H

@@ -32,7 +32,7 @@
 #include <QTime>
 #include <QUrl>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class InfoCachePrivate;
 // 异步刷新线程
 class ReFreshThread : public QThread
@@ -81,6 +81,6 @@ private Q_SLOTS:
     void timeNeedRemoveCache();
     void timeRemoveCache();
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // INFOCACHE_H

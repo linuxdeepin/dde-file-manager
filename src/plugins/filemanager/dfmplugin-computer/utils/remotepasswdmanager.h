@@ -37,7 +37,7 @@ extern "C" {
 
 #define RemotePasswdManagerInstance DPCOMPUTER_NAMESPACE::RemotePasswdManager::instance()
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class RemotePasswdManager : public QObject
 {
@@ -65,6 +65,6 @@ private:
     QMutex mutex;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // REMOTEPASSWDMANAGER_H

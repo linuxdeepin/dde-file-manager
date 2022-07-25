@@ -96,11 +96,7 @@ private:
 
 class EventChannelManager
 {
-    Q_DISABLE_COPY(EventChannelManager)
-
 public:
-    static EventChannelManager &instance();
-
     template<class T, class Func>
     inline bool connect(const QString &space, const QString &topic, T *obj, Func method)
     {
@@ -146,9 +142,9 @@ public:
     {
         QReadLocker guard(&rwLock);
         if (Q_LIKELY(channelMap.contains(type))) {
-            auto Channel = channelMap.value(type);
+            auto channel = channelMap.value(type);
             guard.unlock();
-            return Channel->send(param, std::forward<Args>(args)...);
+            return channel->send(param, std::forward<Args>(args)...);
         }
         return QVariant();
     }
@@ -163,10 +159,10 @@ public:
     {
         QReadLocker guard(&rwLock);
         if (Q_LIKELY(channelMap.contains(type))) {
-            auto Channel = channelMap.value(type);
+            auto channel = channelMap.value(type);
             guard.unlock();
-            if (Channel)
-                return Channel->send();
+            if (channel)
+                return channel->send();
         }
 
         return QVariant();
@@ -183,8 +179,11 @@ public:
     inline EventChannelFuture post(EventType type, T param, Args &&... args)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(channelMap.contains(type)))
-            return channelMap[type]->asyncSend(param, std::forward<Args>(args)...);
+        if (Q_LIKELY(channelMap.contains(type))) {
+            auto channel { channelMap[type] };
+            guard.unlock();
+            return channel->asyncSend(param, std::forward<Args>(args)...);
+        }
         return EventChannelFuture(QFuture<QVariant>());
     }
 
@@ -197,17 +196,17 @@ public:
     inline EventChannelFuture post(const EventType &type)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(channelMap.contains(type)))
-            return channelMap[type]->asyncSend();
+        if (Q_LIKELY(channelMap.contains(type))) {
+            auto channel { channelMap[type] };
+            guard.unlock();
+            return channel->asyncSend();
+        }
         return EventChannelFuture(QFuture<QVariant>());
     }
 
 private:
     using ChannelPtr = QSharedPointer<EventChannel>;
     using EventChannelMap = QMap<EventType, ChannelPtr>;
-
-    EventChannelManager() = default;
-    ~EventChannelManager() = default;
 
 private:
     EventChannelMap channelMap;

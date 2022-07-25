@@ -36,7 +36,7 @@
 #include <QStandardPaths>
 #include <QRegularExpression>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -120,7 +120,7 @@ QUrl BurnHelper::fromBurnFile(const QString &dev)
 {
     QString path { dev + "/" BURN_SEG_STAGING "/" };
     QUrl ret;
-    ret.setScheme(Global::kBurn);
+    ret.setScheme(Global::Scheme::kBurn);
     ret.setPath(path);
     return ret;
 }
@@ -147,7 +147,7 @@ QString BurnHelper::parseXorrisoErrorMessage(const QStringList &msg)
         }
         if (msgs.contains("-volid: Text too long")) {
             //something is wrong if the following return statement is reached.
-            return QString("invalid volume name");
+            return QObject::tr("invalid volume name");
         }
     }
     return QObject::tr("Unknown error");
@@ -159,7 +159,7 @@ QString BurnHelper::burnDestDevice(const QUrl &url)
     static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
 
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::kBurn || !url.path().contains(rxp, &m))
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(rxp, &m))
         return {};
     return m.captured(1);
 }
@@ -170,7 +170,7 @@ QString BurnHelper::burnFilePath(const QUrl &url)
     static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
 
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::kBurn || !url.path().contains(rxp, &m))
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(rxp, &m))
         return {};
     return m.captured(3);
 }

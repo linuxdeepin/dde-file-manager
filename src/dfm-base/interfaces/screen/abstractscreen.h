@@ -27,7 +27,7 @@
 #include <QObject>
 #include <QRect>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractScreen : public QObject
 {
     Q_OBJECT
@@ -45,6 +45,6 @@ signals:
 
 typedef QSharedPointer<AbstractScreen> ScreenPointer;
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif // ABSTRACTSCREEN_H

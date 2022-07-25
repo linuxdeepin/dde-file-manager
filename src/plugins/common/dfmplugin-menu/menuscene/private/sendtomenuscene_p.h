@@ -27,11 +27,12 @@
 
 #include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 DFMBASE_USE_NAMESPACE
 
 class SendToMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class SendToMenuScene;
 
 public:
@@ -45,6 +46,6 @@ private:
     bool folderSelected { false };
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // SENDTOMENUSCENE_P_H

@@ -25,7 +25,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasManager;
 class CanvasPlugin : public dpf::Plugin
 {
@@ -56,6 +56,9 @@ private:
     DPF_EVENT_REG_SLOT(slot_CanvasView_Update)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Select)
     DPF_EVENT_REG_SLOT(slot_CanvasView_SelectedUrls)
+    DPF_EVENT_REG_SLOT(slot_CanvasView_GridSize)
+    DPF_EVENT_REG_SLOT(slot_CanvasView_GridPos)
+    DPF_EVENT_REG_SLOT(slot_CanvasView_GridVisualRect)
 
     DPF_EVENT_REG_HOOK(hook_CanvasView_ContextMenu)
     DPF_EVENT_REG_HOOK(hook_CanvasView_DropData)
@@ -73,6 +76,9 @@ private:
 
     // CanvasGrid begin
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_Items)
+    DPF_EVENT_REG_SLOT(slot_CanvasGrid_Item)
+    DPF_EVENT_REG_SLOT(slot_CanvasGrid_Point)
+    DPF_EVENT_REG_SLOT(slot_CanvasGrid_TryAppendAfter)
 
     // CanvasModel begin
     DPF_EVENT_REG_SLOT(slot_CanvasModel_RootUrl)
@@ -114,8 +120,12 @@ private:
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_Files)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_FileInfo)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_Refresh)
+    DPF_EVENT_REG_SLOT(slot_FileInfoModel_ModelState)
+
+    // CanvasItemDelegate begin
+    DPF_EVENT_REG_SLOT(slot_CanvasItemDelegate_IconRect)
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASPLUGIN_H

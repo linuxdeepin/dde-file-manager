@@ -26,7 +26,7 @@
 #include "dfm-base/utils/universalutils.h"
 
 DFMBASE_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagFileWatcher::TagFileWatcher(const QUrl &url, QObject *parent)
     : AbstractFileWatcher(new TagFileWatcherPrivate(url, this), parent)

@@ -23,7 +23,7 @@
 #include "utils/tagmanager.h"
 
 DWIDGET_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagEditor::TagEditor(QWidget *const parent)
     : DArrowRectangle { DArrowRectangle::ArrowTop, parent }

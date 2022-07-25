@@ -28,7 +28,7 @@ class QMenu;
 class QAction;
 QT_END_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractMenuScenePrivate;
 class AbstractMenuScene : public QObject
@@ -57,6 +57,6 @@ protected:
     QList<AbstractMenuScene *> subScene;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // ABSTRACTMENUSCENE_H

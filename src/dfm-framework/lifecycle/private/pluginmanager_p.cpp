@@ -41,7 +41,6 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *qq)
 
 PluginManagerPrivate::~PluginManagerPrivate()
 {
-    stopPlugins();
 }
 
 QStringList PluginManagerPrivate::pluginIIDs() const

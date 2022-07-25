@@ -20,7 +20,7 @@
  */
 #include "modelhookinterface.h"
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 ModelHookInterface::ModelHookInterface()
 {

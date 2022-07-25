@@ -25,7 +25,7 @@
 #include "dfmplugin_tag_global.h"
 #include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagFileWatcher;
 class TagFileWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
@@ -46,6 +46,6 @@ public:
     QMap<QUrl, AbstractFileWatcherPointer> urlToWatcherMap;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGFILEWATCHER_P_H

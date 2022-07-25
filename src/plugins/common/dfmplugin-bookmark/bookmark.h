@@ -25,12 +25,16 @@
 
 #include <dfm-framework/dpf.h>
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookMark : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "bookmark.json")
+
+    DPF_EVENT_NAMESPACE(DPBOOKMARK_NAMESPACE)
+
+    DPF_EVENT_REG_SLOT(slot_Scheme_Disable)
 
 public:
     virtual void initialize() override;
@@ -42,8 +46,13 @@ private slots:
 
 private:
     void bindScene(const QString &parentScene);
+    void bindEvents();
+    void onMenuSceneAdded(const QString &scene);
+
+    QSet<QString> menuScenes;
+    bool subscribedEvent { false };
 };
 
-DPBOOKMARK_END_NAMESPACE
+}   // namespace dfmplugin_bookmark
 
 #endif   // BOOKMARK_H

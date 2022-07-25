@@ -30,7 +30,7 @@
 #include <QUrl>
 
 USING_IO_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractFileWatcherPrivate : public QObject
 {
     Q_DISABLE_COPY(AbstractFileWatcherPrivate)
@@ -51,6 +51,6 @@ protected:
     QString path;   // 监视文件的路径
     static DThreadList<QString> watcherPath;   // 全局监视文件的监视列表
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DABSTRACTFILEWATCHER_P_H

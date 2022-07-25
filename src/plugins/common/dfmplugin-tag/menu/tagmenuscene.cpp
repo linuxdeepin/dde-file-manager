@@ -24,21 +24,21 @@
 #include "utils/taghelper.h"
 #include "utils/tagmanager.h"
 #include "widgets/tagcolorlistwidget.h"
+#include "events/tageventcaller.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/propertydialog/property_defines.h"
-#include "services/filemanager/workspace/workspace_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_menu_defines.h"
+#include "dfm-base/dfm_desktop_defines.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QWidgetAction>
 
-DPTAG_USE_NAMESPACE
-DSC_USE_NAMESPACE
+using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE
 
 TagMenuScene::TagMenuScene(QObject *parent)
@@ -62,9 +62,10 @@ bool TagMenuScene::initialize(const QVariantHash &params)
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
@@ -115,8 +116,31 @@ bool TagMenuScene::triggered(QAction *action)
     if (d->predicateAction.value(TagActionId::kActTagAddKey) != action || !d->focusFile.isValid())
         return false;
 
-    QRectF viewRect = TagHelper::workspaceServIns()->getViewVisibleGeometry(d->windowId);
-    QRectF iconRect = TagHelper::workspaceServIns()->getItemRect(d->windowId, d->focusFile, DFMGLOBAL_NAMESPACE::kItemIconRole);
+    QRectF viewRect;
+    QRectF iconRect;
+
+    if (d->onDesktop) {
+        // get rect from desktop
+        QPoint pos(0, 0);
+        int viewIndex = TagEventCaller::getDesktopViewIndex(d->focusFile.toString(), &pos);
+        const QRect &visualRect = TagEventCaller::getVisualRect(viewIndex, d->focusFile);
+        iconRect = TagEventCaller::getIconRect(viewIndex, visualRect);
+
+        QList<QWidget *> rootViewList = TagEventCaller::getDesktopRootViewList();
+        if (rootViewList.length() >= viewIndex && rootViewList.at(viewIndex - 1)) {
+            QWidget *rootView = rootViewList.at(viewIndex - 1);
+            QWidget *view = findDesktopView(rootView);
+            if (view) {
+                viewRect = view->rect();
+
+                QPoint iconTopLeft = view->mapToGlobal(iconRect.topLeft().toPoint());
+                iconRect.setRect(iconTopLeft.x(), iconTopLeft.y(), iconRect.width(), iconRect.height());
+            }
+        }
+    } else {
+        viewRect = TagEventCaller::getVisibleGeometry(d->windowId);
+        iconRect = TagEventCaller::getItemRect(d->windowId, d->focusFile, DFMGLOBAL_NAMESPACE::kItemIconRole);
+    }
 
     TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles);
 
@@ -214,6 +238,22 @@ QAction *TagMenuScene::createColorListAction() const
     connect(colorListWidget, &TagColorListWidget::checkedColorChanged, this, &TagMenuScene::onColorClicked);
 
     return action;
+}
+
+QWidget *TagMenuScene::findDesktopView(QWidget *root) const
+{
+    if (Q_UNLIKELY(!root))
+        return nullptr;
+
+    for (QObject *obj : root->children()) {
+        if (QWidget *widget = dynamic_cast<QWidget *>(obj)) {
+            QString type = widget->property(DesktopFrameProperty::kPropWidgetName).toString();
+            if (type == "canvas") {
+                return widget;
+            }
+        }
+    }
+    return nullptr;
 }
 
 AbstractMenuScene *TagMenuCreator::create()

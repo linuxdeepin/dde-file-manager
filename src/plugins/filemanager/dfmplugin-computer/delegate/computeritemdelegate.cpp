@@ -35,7 +35,7 @@
 #include <QLineEdit>
 #include <QPainter>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 namespace {
 const int kLabelTotalSpacing { 6 };
@@ -446,4 +446,4 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     }
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

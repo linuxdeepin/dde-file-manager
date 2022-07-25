@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalMenuScene;
 class OpticalMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
@@ -44,6 +44,6 @@ private:
     bool isBlankDisc { false };
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALMENUSCENE_P_H

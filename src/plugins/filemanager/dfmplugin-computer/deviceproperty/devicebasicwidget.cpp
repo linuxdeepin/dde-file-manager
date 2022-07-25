@@ -23,9 +23,8 @@
 #include "dfm-base/utils/universalutils.h"
 
 DWIDGET_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 DeviceBasicWidget::DeviceBasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
 {
@@ -88,7 +87,7 @@ void DeviceBasicWidget::selectFileUrl(const QUrl &url)
     fileCount->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 }
 
-void DeviceBasicWidget::selectFileInfo(const Property::DeviceInfo &info)
+void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
 {
     deviceType->setRightValue(info.deviceType);
     deviceType->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);

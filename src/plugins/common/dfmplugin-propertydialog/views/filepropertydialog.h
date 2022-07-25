@@ -23,7 +23,6 @@
 #define FILEPROPERTYVIEW_H
 
 #include "dfmplugin_propertydialog_global.h"
-#include "dfm_common_service_global.h"
 #include "editstackedwidget.h"
 
 #include <DDialog>
@@ -37,7 +36,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DLabel;
 DWIDGET_END_NAMESPACE
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class BasicWidget;
 class PermissionManagerWidget;
 class NameTextEdit;
@@ -101,5 +100,5 @@ private:
     int extendedHeight { 0 };
     DTK_WIDGET_NAMESPACE::DPlatformWindowHandle *platformWindowHandle { nullptr };
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // FILEPROPERTYVIEW_H

@@ -33,7 +33,7 @@
 #include <QKeyEvent>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 SheetBrowser::SheetBrowser(DocSheet *parent)
     : DGraphicsView(parent), docSheet(parent)
 {

@@ -23,16 +23,12 @@
 #include "shareeventscaller.h"
 #include "utils/shareutils.h"
 
-#include "services/common/propertydialog/property_defines.h"
-#include "services/common/usershare/usershare_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 DFMBASE_USE_NAMESPACE
-
-#define dispatcher dpfInstance.eventDispatcher()
 
 void ShareEventsCaller::sendOpenDirs(quint64 winId, const QList<QUrl> &urls, ShareEventsCaller::OpenMode mode)
 {
@@ -47,17 +43,17 @@ void ShareEventsCaller::sendOpenDirs(quint64 winId, const QList<QUrl> &urls, Sha
 
     if (urls.count() > 1) {
         for (auto url : convertedUrls)
-            dispatcher.publish(GlobalEventType::kOpenNewWindow, url);
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
     } else {
         switch (mode) {
         case ShareEventsCaller::OpenMode::kOpenInCurrentWindow:
-            dispatcher.publish(GlobalEventType::kChangeCurrentUrl, winId, convertedUrls.first());
+            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, convertedUrls.first());
             break;
         case ShareEventsCaller::OpenMode::kOpenInNewWindow:
-            dispatcher.publish(GlobalEventType::kOpenNewWindow, convertedUrls.first());
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, convertedUrls.first());
             break;
         case ShareEventsCaller::OpenMode::kOpenInNewTab:
-            dispatcher.publish(GlobalEventType::kOpenNewTab, winId, convertedUrls.first());
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, winId, convertedUrls.first());
             break;
         }
     }
@@ -65,15 +61,15 @@ void ShareEventsCaller::sendOpenDirs(quint64 winId, const QList<QUrl> &urls, Sha
 
 void ShareEventsCaller::sendCancelSharing(const QUrl &url)
 {
-    dispatcher.publish(DSC_NAMESPACE::EventType::kRemoveShare, url.path());
+    dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_RemoveShare", url.path());
 }
 
 void ShareEventsCaller::sendShowProperty(const QList<QUrl> &urls)
 {
-    dispatcher.publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 void ShareEventsCaller::sendSwitchDisplayMode(quint64 winId, Global::ViewMode mode)
 {
-    dispatcher.publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, winId, int(mode));
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, winId, int(mode));
 }

@@ -24,7 +24,7 @@
 
 #include <QObject>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultVisibleManager : public QObject
 {
     Q_OBJECT
@@ -49,8 +49,6 @@ public slots:
 
     void addComputer();
 
-    void addFileOperations();
-
     void removeSideBarVaultItem();
 
     void removeComputerVaultItem();
@@ -63,5 +61,5 @@ private:
     bool infoRegisterState { false };
     bool serviceRegisterState { false };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTVISIBLEMANAGER_H

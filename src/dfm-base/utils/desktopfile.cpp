@@ -26,7 +26,7 @@
 #include <QSettings>
 #include <QDebug>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 DesktopFile::DesktopFile(const QString &fileName)
     : fileName(fileName)

@@ -48,17 +48,20 @@ Event *Event::instance()
 
 EventDispatcherManager *Event::dispatcher()
 {
-    return &EventDispatcherManager::instance();
+    static EventDispatcherManager ins;
+    return &ins;
 }
 
 EventSequenceManager *Event::sequence()
 {
-    return &EventSequenceManager::instance();
+    static EventSequenceManager ins;
+    return &ins;
 }
 
 EventChannelManager *Event::channel()
 {
-    return &EventChannelManager::instance();
+    static EventChannelManager ins;
+    return &ins;
 }
 
 void Event::registerEventType(EventStratege stratege, const QString &space, const QString &topic)

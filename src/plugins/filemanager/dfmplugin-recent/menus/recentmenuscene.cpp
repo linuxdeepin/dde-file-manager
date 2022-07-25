@@ -21,20 +21,19 @@
 
 #include "recentmenuscene.h"
 #include "private/recentmenuscene_p.h"
-#include "utils/recentfileshelper.h"
-#include "utils/recentfileshelper.h"
+#include "utils/recentfilehelper.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/menu/menuservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 
@@ -43,12 +42,12 @@ static constexpr char kClipBoardMenuSceneName[] = "ClipBoardMenu";
 static constexpr char kFileOperatorMenuSceneName[] = "FileOperatorMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
 static constexpr char kOpenDirMenuSceneName[] = "OpenDirMenu";
+static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
 
 static constexpr char kSortByActionId[] = "sort-by";
 static constexpr char kSrtTimeModifiedActionId[] = "sort-by-time-modified";
 
-DSB_FM_USE_NAMESPACE
-DPRECENT_USE_NAMESPACE
+using namespace dfmplugin_recent;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *RecentMenuCreator::create()
@@ -72,8 +71,6 @@ QString RecentMenuScene::name() const
 
 bool RecentMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
-
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
@@ -96,13 +93,13 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
             qDebug() << errString;
             return false;
         }
-        if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
             currentScene.append(workspaceScene);
     } else {
-        if (auto workspaceScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kSortAndDisplayMenuSceneName))
             currentScene.append(workspaceScene);
 
-        if (auto workspaceScene = MenuService::service()->createScene(kOpenDirMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName))
             currentScene.append(workspaceScene);
     }
 
@@ -110,13 +107,14 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
     currentScene.append(subScene);
     setSubscene(currentScene);
 
-    return AbstractMenuScene::initialize(params);
+    bool ret = AbstractMenuScene::initialize(params);
+    d->disableSubScene(this, kExtendMenuSceneName);
+
+    return ret;
 }
 
 bool RecentMenuScene::create(QMenu *parent)
 {
-    DSC_USE_NAMESPACE
-
     if (!d->isEmptyArea) {
         auto actRemove = parent->addAction(d->predicateName[RecentActionID::kRemove]);
         actRemove->setProperty(ActionPropertyKey::kActionID, RecentActionID::kRemove);
@@ -148,27 +146,26 @@ void RecentMenuScene::updateState(QMenu *parent)
 
 bool RecentMenuScene::triggered(QAction *action)
 {
-    DSC_USE_NAMESPACE
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
         if (actId == RecentActionID::kRemove) {
-            RecentFilesHelper::removeRecent(d->selectFiles);
+            RecentFileHelper::removeRecent(d->selectFiles);
             return true;
         } else if (actId == RecentActionID::kOpenFileLocation) {
-            RecentFilesHelper::openFileLocation(d->selectFiles);
+            RecentFileHelper::openFileLocation(d->selectFiles);
             return true;
         } else if (actId == RecentActionID::kSortByPath) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetSort", d->windowId, Global::ItemRoles::kItemFilePathRole);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFilePathRole);
             return true;
         } else if (actId == RecentActionID::kSortByLastRead) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
             return true;
         }
         qWarning() << "action not found, id: " << actId;
         return false;
-    } else {
-        return AbstractMenuScene::triggered(action);
     }
+
+    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *RecentMenuScene::scene(QAction *action) const
@@ -215,7 +212,7 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
                 continue;
 
             auto sceneName = actionScene->name();
-            auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (emptyDisableActions.contains(sceneName, actId)) {
                 menu->removeAction(act);
                 continue;
@@ -249,11 +246,11 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
                 continue;
 
             auto sceneName = actionScene->name();
-            auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (selectDisableActions.contains(sceneName, actId))
                 menu->removeAction(act);
 
-            const auto &p = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID);
+            const auto &p = act->property(ActionPropertyKey::kActionID);
             if (p == RecentActionID::kRemove) {
                 removeAct = act;
             } else if (p == dfmplugin_menu::ActionID::kCopy) {
@@ -284,7 +281,7 @@ void RecentMenuScenePrivate::updateSubMenu(QMenu *menu)
 {
     auto actions = menu->actions();
     auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
-        auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+        auto actId = act->property(ActionPropertyKey::kActionID).toString();
         return actId == kSrtTimeModifiedActionId;
     });
 
@@ -293,7 +290,7 @@ void RecentMenuScenePrivate::updateSubMenu(QMenu *menu)
         menu->insertAction(predicateAction[RecentActionID::kSortByLastRead], predicateAction[RecentActionID::kSortByPath]);
         menu->removeAction(*iter);
 
-        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_CurrentSortRole", windowId).value<Global::ItemRoles>();
+        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
         switch (role) {
         case Global::ItemRoles::kItemFilePathRole:
             predicateAction[RecentActionID::kSortByPath]->setChecked(true);
@@ -303,6 +300,19 @@ void RecentMenuScenePrivate::updateSubMenu(QMenu *menu)
             break;
         default:
             break;
+        }
+    }
+}
+
+void RecentMenuScenePrivate::disableSubScene(AbstractMenuScene *scene, const QString &sceneName)
+{
+    for (const auto s : scene->subscene()) {
+        if (sceneName == s->name()) {
+            scene->removeSubscene(s);
+            delete s;
+            return;
+        } else {
+            disableSubScene(s, sceneName);
         }
     }
 }

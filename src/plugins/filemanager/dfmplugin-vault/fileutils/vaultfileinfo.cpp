@@ -39,7 +39,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 VaultFileInfo::VaultFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new VaultFileInfoPrivate(this))
 {
@@ -261,4 +261,4 @@ QString VaultFileInfo::fileDisplayPath() const
     QString filePath = QUrl::fromPercentEncoding(array);
     return filePath;
 }
-DPVAULT_END_NAMESPACE
+}

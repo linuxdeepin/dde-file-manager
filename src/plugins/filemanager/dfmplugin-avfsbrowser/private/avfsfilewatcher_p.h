@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsFileWatcher;
 class AvfsFileWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
@@ -38,6 +38,6 @@ public:
     explicit AvfsFileWatcherPrivate(const QUrl &url, AvfsFileWatcher *qq);
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSFILEWATCHER_P_H

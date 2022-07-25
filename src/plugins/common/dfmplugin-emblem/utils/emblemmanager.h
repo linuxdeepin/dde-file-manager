@@ -23,7 +23,6 @@
 #define EMBLEMMANAGER_H
 
 #include "dfmplugin_emblem_global.h"
-#include "services/filemanager/workspace/workspaceservice.h"
 
 #include "dfm-base/dfm_global_defines.h"
 

@@ -26,7 +26,7 @@
 #include "dfmplugin_myshares_global.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class ShareFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
@@ -46,6 +46,6 @@ public:
     virtual bool canTag() const override;
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREFILEINFO_H

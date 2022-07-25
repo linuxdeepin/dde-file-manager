@@ -30,7 +30,7 @@
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 IconItemEditor::IconItemEditor(QWidget *parent)
     : QFrame(parent),

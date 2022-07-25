@@ -26,7 +26,7 @@
 #include <QLabel>
 
 DWIDGET_USE_NAMESPACE
-DDP_WALLPAERSETTING_USE_NAMESPACE
+using namespace ddplugin_wallpapersetting;
 
 #define WAITITEM_ICON_CONTANT_SPACE 10  //gap
 #define MARGIN_OF_WAITICON 6

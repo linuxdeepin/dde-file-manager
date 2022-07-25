@@ -27,7 +27,7 @@
 
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class BlockEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
@@ -41,13 +41,11 @@ public:
     virtual bool showProgress() const override;
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
-    virtual void onOpen() override;
     virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
 
     virtual quint64 sizeTotal() const override;
     virtual quint64 sizeUsage() const override;
     virtual void refresh() override;
-    virtual QMenu *createMenu() override;
     virtual QUrl targetUrl() const override;
     virtual bool isAccessable() const override;
     virtual bool renamable() const override;
@@ -57,6 +55,6 @@ private:
     bool showSizeAndProgress() const;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // BLOCKENTRYFILEENTITY_H

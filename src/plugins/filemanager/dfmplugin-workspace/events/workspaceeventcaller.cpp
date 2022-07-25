@@ -22,29 +22,17 @@
 */
 #include "workspaceeventcaller.h"
 
-#include "services/common/propertydialog/property_defines.h"
-#include "services/common/emblem/emblem_defines.h"
-#include "services/filemanager/workspace/workspace_defines.h"
-#include "services/filemanager/detailspace/detailspace_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DFMGLOBAL_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 DFMBASE_USE_NAMESPACE
 
 static constexpr char kEventNS[] { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };
-
-static DPF_NAMESPACE::EventDispatcherManager *
-dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
 
 void WorkspaceEventCaller::sendOpenWindow(const QList<QUrl> &urls)
 {
@@ -53,10 +41,10 @@ void WorkspaceEventCaller::sendOpenWindow(const QList<QUrl> &urls)
         return;
 
     if (urls.isEmpty()) {
-        dispatcher()->publish(GlobalEventType::kOpenNewWindow, QUrl());
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl());
     } else {
         for (const QUrl &url : urls)
-            dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
     }
 }
 
@@ -67,68 +55,62 @@ void WorkspaceEventCaller::sendChangeCurrentUrl(const quint64 windowId, const QU
         return;
 
     if (!url.isEmpty())
-        dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
+        dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }
 
 void WorkspaceEventCaller::sendOpenAsAdmin(const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenAsAdmin, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenAsAdmin, url);
 }
 
 void WorkspaceEventCaller::sendTabAdded(const quint64 windowID)
 {
-    dispatcher()->publish(Workspace::EventType::kTabAdded, windowID);
+    dpfSignalDispatcher->publish(kEventNS, "signal_Tab_Added", windowID);
 }
 
 void WorkspaceEventCaller::sendTabChanged(const quint64 windowID, const int index)
 {
-    dispatcher()->publish(Workspace::EventType::kTabChanged, windowID, index);
+    dpfSignalDispatcher->publish(kEventNS, "signal_Tab_Changed", windowID, index);
 }
 
 void WorkspaceEventCaller::sendTabMoved(const quint64 windowID, const int from, const int to)
 {
-    dispatcher()->publish(Workspace::EventType::kTabMoved, windowID, from, to);
+    dpfSignalDispatcher->publish(kEventNS, "signal_Tab_Moved", windowID, from, to);
 }
 
 void WorkspaceEventCaller::sendTabRemoved(const quint64 windowID, const int index)
 {
-    dispatcher()->publish(Workspace::EventType::kTabRemoved, windowID, index);
+    dpfSignalDispatcher->publish(kEventNS, "signal_Tab_Removed", windowID, index);
 }
 
 void WorkspaceEventCaller::sendShowCustomTopWidget(const quint64 windowID, const QString &scheme, bool visible)
 {
-    dispatcher()->publish(DSB_FM_NAMESPACE::Workspace::EventType::kShowCustomTopWidget, windowID, scheme, visible);
+    dpfSlotChannel->push(kEventNS, "slot_ShowCustomTopWidget", windowID, scheme, visible);
 }
 
 void WorkspaceEventCaller::sendSetSelectDetailFileUrl(const quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(DSB_FM_NAMESPACE::DetailEventType::kSetDetailViewSelectFileUrl, windowId, url);
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Select", windowId, url);
 }
 
 void WorkspaceEventCaller::sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
 {
-    dispatcher()->publish(Emblem::EventType::kPaintEmblems, painter, paintArea, url);
+    dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, paintArea, url);
 }
 
 void WorkspaceEventCaller::sendViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)
 {
-    dispatcher()->publish(Workspace::EventType::kViewSelectionChanged, windowID, selected, deselected);
+    dpfSignalDispatcher->publish(kEventNS, "signal_View_SelectionChanged", windowID, selected, deselected);
 }
 
 bool WorkspaceEventCaller::sendRenameStartEdit(const quint64 &winId, const QUrl &url)
 {
-    bool ret = dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_RenameStartEdit", winId, url);
+    bool ret = dpfSignalDispatcher->publish(kEventNS, "signal_View_RenameStartEdit", winId, url);
     return ret;
 }
 
 bool WorkspaceEventCaller::sendRenameEndEdit(const quint64 &winId, const QUrl &url)
 {
-    bool ret = dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_RenameEndEdit", winId, url);
-    return ret;
-}
-
-bool WorkspaceEventCaller::sendEnterFileView(const quint64 &winId, const QUrl &url)
-{
-    bool ret = dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_EnterFileView", winId, url);
+    bool ret = dpfSignalDispatcher->publish(kEventNS, "signal_View_RenameEndEdit", winId, url);
     return ret;
 }

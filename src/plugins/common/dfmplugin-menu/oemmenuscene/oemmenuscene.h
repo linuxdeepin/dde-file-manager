@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class OemMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -54,5 +54,5 @@ private:
     OemMenuScenePrivate *const d = nullptr;
 };
 
-DPMENU_END_NAMESPACE
+}
 #endif   // OEMMENUSCENE_H

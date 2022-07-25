@@ -24,11 +24,12 @@
 
 #include <QObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractMenuScene;
 class AbstractSceneCreator : public QObject
 {
+    Q_OBJECT
 public:
     AbstractSceneCreator();
     virtual ~AbstractSceneCreator();
@@ -44,6 +45,6 @@ protected:
     QStringList children;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // ABSTRACTSCENECREATOR_H

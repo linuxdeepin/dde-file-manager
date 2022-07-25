@@ -28,7 +28,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 
-DPRECENT_USE_NAMESPACE
+using namespace dfmplugin_recent;
 
 RecentDirIteratorPrivate::RecentDirIteratorPrivate(RecentDirIterator *qq)
     : q(qq)

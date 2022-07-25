@@ -33,7 +33,8 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
+
 #include <QDBusConnection>
 
 DFMBASE_USE_NAMESPACE
@@ -41,7 +42,7 @@ DFMBASE_USE_NAMESPACE
 void DBusRegister::initialize()
 {
     QString errStr;
-    UrlRoute::regScheme(Global::kEntry, "/", QIcon(), true);
+    UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
 }
 
 bool DBusRegister::start()

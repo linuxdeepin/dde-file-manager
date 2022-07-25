@@ -27,13 +27,6 @@
 #include "views/emptyTrashWidget.h"
 #include "dfm_event_defines.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/trash/trashservice.h"
-
-#include "dfm-framework/framework.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -45,6 +38,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <DHorizontalLine>
 #include <DApplicationHelper>
 
@@ -55,9 +50,7 @@
 #include <QLabel>
 #include <QPushButton>
 
-DPTRASH_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
+using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
@@ -65,11 +58,6 @@ TrashHelper *TrashHelper::instance()
 {
     static TrashHelper instance;
     return &instance;
-}
-
-dpf::EventSequenceManager *TrashHelper::eventSequence()
-{
-    return &dpfInstance.eventSequence();
 }
 
 QUrl TrashHelper::rootUrl()
@@ -82,9 +70,7 @@ QUrl TrashHelper::rootUrl()
 
 quint64 TrashHelper::windowId(QWidget *sender)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    return windowService->findWindowId(sender);
+    return FMWindowsIns.findWindowId(sender);
 }
 
 void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, const QPoint &globalPos)
@@ -98,14 +84,7 @@ void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, co
         TrashEventCaller::sendOpenTab(windowId, url);
     });
 
-    auto &ctx = dpfInstance.serviceContext();
-    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-    if (!workspaceService) {
-        qCritical() << "Failed, TrashHelper contenxtMenuHandle \"WorkspaceService\" is empty";
-        abort();
-    }
-
-    newTabAct->setDisabled(!workspaceService->tabAddable(windowId));
+    newTabAct->setDisabled(!TrashEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
 
@@ -160,7 +139,7 @@ QUrl TrashHelper::fromTrashFile(const QString &filePath)
 
 QUrl TrashHelper::fromLocalFile(const QUrl &url)
 {
-    if (url.scheme() == Global::kFile && url.path().startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath))) {
+    if (url.scheme() == Global::Scheme::kFile && url.path().startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath))) {
         return TrashHelper::fromTrashFile(url.path().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
     }
     return url;
@@ -187,15 +166,11 @@ bool TrashHelper::isEmpty()
 
 void TrashHelper::emptyTrash(const quint64 windowId)
 {
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Trash::EventType::kEmptyTrash, windowId);
+    dpfSlotChannel->push("dfmplugin_trashcore", "slot_TrashCore_EmptyTrash", windowId);
 }
 
 TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
 {
-    using BasicExpandType = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType;
-    using BasicExpand = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand;
-    using BasicFieldExpandEnum = DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum;
-
     const auto &info = InfoFactory::create<AbstractFileInfo>(url);
 
     ExpandFieldMap map;
@@ -203,17 +178,32 @@ TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
         // source path
         BasicExpand expand;
         const QString &sourcePath = info->redirectedFileUrl().path();
-        expand.insert(BasicFieldExpandEnum::kFileModifiedTime, qMakePair(QObject::tr("Source path"), sourcePath));
-        map[BasicExpandType::kFieldInsert] = expand;
+        expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
+        map["kFieldInsert"] = expand;
     }
     {
         // trans trash path
         BasicExpand expand;
-        expand.insert(BasicFieldExpandEnum::kFilePosition, qMakePair(QObject::tr("Location"), TrashHelper::toLocalFile(url).path()));
-        map[BasicExpandType::kFieldReplace] = expand;
+        expand.insert("kFilePosition", qMakePair(QObject::tr("Location"), TrashHelper::toLocalFile(url).path()));
+        map["kFieldReplace"] = expand;
     }
 
     return map;
+}
+
+JobHandlePointer TrashHelper::restoreFromTrashHandle(const quint64 windowId, const QList<QUrl> urls, const AbstractJobHandler::JobFlags flags)
+{
+    QList<QUrl> urlsLocal;
+    for (const auto &url : urls) {
+        if (url.scheme() == TrashHelper::scheme())
+            urlsLocal.append(TrashHelper::toLocalFile(url));
+    }
+
+    dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrash,
+                                 windowId,
+                                 urlsLocal,
+                                 flags, nullptr);
+    return {};
 }
 
 bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
@@ -231,13 +221,13 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     urlFrom = fromLocalFile(urlFrom);
     urlToTemp = fromLocalFile(urlTo);
 
-    if (urlFrom.scheme() == Global::kTrash && urlToTemp.scheme() == Global::kTrash) {
+    if (urlFrom.scheme() == Global::Scheme::kTrash && urlToTemp.scheme() == Global::Scheme::kTrash) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (urlToTemp.scheme() == Global::kTrash && urlToTemp != TrashHelper::rootUrl()) {
+    } else if (urlToTemp.scheme() == Global::Scheme::kTrash && urlToTemp != TrashHelper::rootUrl()) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (urlFrom.scheme() == Global::kTrash || urlToTemp.scheme() == Global::kTrash) {
+    } else if (urlFrom.scheme() == Global::Scheme::kTrash || urlToTemp.scheme() == Global::Scheme::kTrash) {
         *action = Qt::MoveAction;
         return true;
     }
@@ -257,7 +247,7 @@ bool TrashHelper::detailViewIcon(const QUrl &url, QString *iconName)
 bool TrashHelper::customColumnRole(const QUrl &rootUrl, QList<Global::ItemRoles> *roleList)
 {
     if (rootUrl.scheme() == scheme()) {
-        roleList->append(kItemNameRole);
+        roleList->append(kItemFileDisplayNameRole);
         roleList->append(kItemFileOriginalPath);
         roleList->append(kItemFileDeletionDate);
         roleList->append(kItemFileSizeRole);
@@ -313,64 +303,16 @@ bool TrashHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const Glo
     return false;
 }
 
-DSB_FM_NAMESPACE::WindowsService *TrashHelper::winServIns()
+bool TrashHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WindowsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
-}
-
-DSB_FM_NAMESPACE::TitleBarService *TrashHelper::titleServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
-}
-
-SideBarService *TrashHelper::sideBarServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
-}
-
-DSB_FM_NAMESPACE::WorkspaceService *TrashHelper::workspaceServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
-}
-
-dfm_service_common::FileOperationsService *TrashHelper::fileOperationsServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != TrashHelper::scheme())
+            return false;
+        (*urls).push_back(toLocalFile(url));
+    }
+    return true;
 }
 
 void TrashHelper::onTrashStateChanged()
@@ -380,9 +322,14 @@ void TrashHelper::onTrashStateChanged()
 
     isTrashEmpty = isEmpty();
 
-    const QList<quint64> &windowIds = winServIns()->windowIdList();
+    const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
     for (const quint64 winId : windowIds) {
-        TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+        auto window = FMWindowsIns.findWindowById(winId);
+        if (window) {
+            const QUrl &url = window->currentUrl();
+            if (url.scheme() == scheme())
+                TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+        }
     }
 }
 

@@ -25,6 +25,7 @@
 #include "utils/vaultdefine.h"
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
+#include "utils/fileencrypthandle.h"
 #include "dbus/vaultdbusutils.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -38,10 +39,9 @@
 #include <QDateTime>
 #include <QStandardPaths>
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 constexpr int kToolTipShowDuration = 3000;
 UnlockView::UnlockView(QWidget *parent)
     : QFrame(parent)
@@ -103,7 +103,7 @@ void UnlockView::initUI()
     this->setLayout(mainLayout);
 
     connect(passwordEdit, &DPasswordEdit::textChanged, this, &UnlockView::onPasswordChanged);
-    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &UnlockView::onVaultUlocked);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, this, &UnlockView::onVaultUlocked);
     connect(tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {

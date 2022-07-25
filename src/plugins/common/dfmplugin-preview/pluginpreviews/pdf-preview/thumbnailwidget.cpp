@@ -30,7 +30,7 @@
 #include <QVBoxLayout>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 const int LEFTMINHEIGHT = 110;
 
 ThumbnailWidget::ThumbnailWidget(DocSheet *sheet, DWidget *parent)

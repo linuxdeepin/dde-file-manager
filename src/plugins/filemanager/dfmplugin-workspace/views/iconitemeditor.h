@@ -35,7 +35,7 @@ class QTextEdit;
 class QGraphicsOpacityEffect;
 QT_END_NAMESPACE
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class IconItemEditorPrivate;
 
@@ -99,6 +99,6 @@ private:
     Q_DECLARE_PRIVATE_D(dd, IconItemEditor)
     Q_DISABLE_COPY(IconItemEditor)
 };
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // ICONITEMEDITOR_H

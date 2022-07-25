@@ -27,9 +27,8 @@
 #include "dfm-base/utils/desktopfile.h"
 
 #include <QFile>
-#include <QMenu>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 /*!
  * \class AppEntryFileEntity
@@ -72,10 +71,6 @@ bool AppEntryFileEntity::showUsageSize() const
     return false;
 }
 
-void AppEntryFileEntity::onOpen()
-{
-}
-
 QString AppEntryFileEntity::description() const
 {
     return tr("Double click to open it");
@@ -98,13 +93,6 @@ bool AppEntryFileEntity::isAccessable() const
     return exists();
 }
 
-QMenu *AppEntryFileEntity::createMenu()
-{
-    QMenu *menu = new QMenu();
-    menu->addAction(ContextMenuActionTrs::trOpen());
-    return menu;
-}
-
 QString AppEntryFileEntity::getFormattedExecCommand() const
 {
     // no parameters transfered
@@ -120,4 +108,4 @@ QString AppEntryFileEntity::getFormattedExecCommand() const
     return cmd.remove("\"").remove("'");
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

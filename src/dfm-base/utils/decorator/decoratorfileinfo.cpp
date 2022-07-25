@@ -33,7 +33,7 @@
 
 #include <unistd.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DecoratorFileInfoPrivate
 {
@@ -49,9 +49,9 @@ public:
     QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 DecoratorFileInfo::DecoratorFileInfo(const QString &filePath)
     : d(new DecoratorFileInfoPrivate(this))

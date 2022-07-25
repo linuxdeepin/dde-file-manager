@@ -25,7 +25,7 @@
 
 #include <QHBoxLayout>
 
-DPDETAILSPACE_USE_NAMESPACE
+using namespace dfmplugin_detailspace;
 
 DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
     : AbstractFrame(parent)

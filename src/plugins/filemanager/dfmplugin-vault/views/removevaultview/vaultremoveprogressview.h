@@ -30,7 +30,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DWaterProgress;
 DWIDGET_END_NAMESPACE
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultRemoveProgressView : public QWidget
 {
     Q_OBJECT
@@ -75,5 +75,5 @@ private:
     int removeFileCount { 0 };   //! 删除文件数量
     int removeDirCount { 0 };   //! 删除文件夹数量
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTREMOVEPROGRESSVIEW_H

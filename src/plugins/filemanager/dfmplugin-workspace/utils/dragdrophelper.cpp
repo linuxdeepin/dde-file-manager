@@ -25,21 +25,21 @@
 #include "models/filesortfilterproxymodel.h"
 #include "events/workspaceeventsequence.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include "dfm-framework/event/event.h"
+#include <dfm-framework/event/event.h>
 
 #include <DFileDragClient>
 #include <QMimeData>
 
-DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
 Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
+DFMBASE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 DragDropHelper::DragDropHelper(FileView *parent)
     : QObject(parent),
@@ -65,8 +65,11 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
     }
 
     if (!currentDragUrls.isEmpty()) {
-        currentDragUrls = delegateServIns->urlsTransform(currentDragUrls);
-        const_cast<QMimeData *>(event->mimeData())->setUrls(currentDragUrls);
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", currentDragUrls, &urls);
+
+        if (ok && !urls.isEmpty())
+            const_cast<QMimeData *>(event->mimeData())->setUrls(urls);
     }
 
     bool fall = true;
@@ -97,7 +100,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         QUrl toUrl = hoverFileInfo->url();
         QList<QUrl> fromUrls = event->mimeData()->urls();
         Qt::DropAction dropAction = event->dropAction();
-        if (dpfHookSequence->run("dfmplugin_workspace", "hook_FileDragMove", fromUrls, toUrl, &dropAction)) {
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDragMove", fromUrls, toUrl, &dropAction)) {
             event->setDropAction(dropAction);
             event->accept();
             return true;
@@ -183,7 +186,7 @@ bool DragDropHelper::drop(QDropEvent *event)
 
         QUrl toUrl = view->sourceModel()->itemFromIndex(isDropAtRootIndex ? hoverIndex : view->model()->mapToSource(hoverIndex))->url();
         QList<QUrl> fromUrls = event->mimeData()->urls();
-        if (dpfHookSequence->run("dfmplugin_workspace", "hook_FileDrop", fromUrls, toUrl)) {
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", fromUrls, toUrl)) {
             return true;
         }
 
@@ -300,8 +303,8 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
 
 bool DragDropHelper::isSameUser(const QMimeData *data)
 {
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey)) {
-        QString userID = data->data(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey);
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey)) {
+        QString userID = data->data(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey);
         return userID == QString::number(SysInfoUtils::getUserId());
     }
 

@@ -22,7 +22,7 @@
 
 #include "dcustomactiondata.h"
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 
 DCustomActionData::DCustomActionData()
     : actionPosition(0), actionNameArg(DCustomActionDefines::kNoneArg), actionCmdArg(DCustomActionDefines::kNoneArg), actionSeparator(DCustomActionDefines::kNone)

@@ -40,7 +40,7 @@
 #include <QScrollBar>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileViewPrivate::FileViewPrivate(FileView *qq)
     : q(qq)

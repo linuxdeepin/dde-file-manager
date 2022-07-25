@@ -21,7 +21,7 @@
 #include "canvasselectionmodel.h"
 #include "canvasproxymodel.h"
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 CanvasSelectionModel::CanvasSelectionModel(CanvasProxyModel *model, QObject *parent) : QItemSelectionModel(model, parent)
 {

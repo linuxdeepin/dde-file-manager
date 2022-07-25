@@ -20,7 +20,7 @@
  */
 #include "abstractbasepreview.h"
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 AbstractBasePreview::AbstractBasePreview(QObject *parent)
     : QObject(parent)
 {

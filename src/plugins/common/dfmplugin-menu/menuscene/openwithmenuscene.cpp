@@ -23,24 +23,22 @@
 #include "private/openwithmenuscene_p.h"
 #include "menuutils.h"
 
-#include "services/common/menu/menu_defines.h"
-
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/utils/properties.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QVariant>
 #include <QSettings>
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 static const char *const kAppName = "AppName";
 static const char *const kSelectedUrls = "SelectedUrls";
@@ -224,12 +222,12 @@ bool OpenWithMenuScene::triggered(QAction *action)
         auto appName = action->property(kAppName).toString();
         auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
 
-        return dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, selectUrls, QList<QString>() << appName);
+        return dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, selectUrls, QList<QString>() << appName);
     }
 
     if (actProperty == ActionID::kOpenWithCustom) {
         auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ShowOpenWithDialog", selectUrls);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", selectUrls);
         return true;
     }
 

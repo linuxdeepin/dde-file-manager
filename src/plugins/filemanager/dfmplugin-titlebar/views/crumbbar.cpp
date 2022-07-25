@@ -44,7 +44,7 @@
 #include <QMouseEvent>
 #include <QUrlQuery>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -120,7 +120,7 @@ void CrumbBarPrivate::checkArrowVisiable()
 
 void CrumbBarPrivate::updateController(const QUrl &url)
 {
-    if (!crumbController || !crumbController->supportedUrl(url)) {
+    if (!crumbController || !crumbController->isSupportedScheme(url.scheme())) {
         if (crumbController) {
             crumbController->deleteLater();
         }
@@ -160,7 +160,7 @@ void CrumbBarPrivate::writeUrlToClipboard(const QUrl &url)
         // why? The format of the custom scheme URL was incorrect when it was converted to a string
         // eg: QUrl("recent:///") -> "recent:/"
         QUrl tmpUrl(url);
-        tmpUrl.setScheme(Global::kFile);
+        tmpUrl.setScheme(Global::Scheme::kFile);
         copyPath = tmpUrl.toString().replace(0, 4, url.scheme());
     }
 
@@ -382,7 +382,7 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
         return;
 
     quint64 id { window()->internalWinId() };
-    bool tabAddable { TitleBarHelper::tabAddable(id) };
+    bool tabAddable { TitleBarEventCaller::sendCheckTabAddable(id) };
     bool displayIcon { TitleBarHelper::displayIcon() };
     QMenu *menu { new QMenu() };
     QUrl url { index.data(CrumbModel::FileUrlRole).toUrl() };

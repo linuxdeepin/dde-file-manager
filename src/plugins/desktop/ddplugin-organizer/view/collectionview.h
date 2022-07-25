@@ -30,16 +30,21 @@ DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class FileProxyModel;
 class CollectionItemDelegate;
+class CollectionDataProvider;
+class CanvasModelShell;
+class CanvasViewShell;
+class CanvasGridShell;
 class CollectionViewPrivate;
 class CollectionView : public QAbstractItemView
 {
     Q_OBJECT
     friend class CollectionViewPrivate;
 public:
-    explicit CollectionView(QWidget *parent = nullptr);
+    explicit CollectionView(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent = nullptr);
     ~CollectionView() override;
-    QList<QUrl> urls() const;
-    void setUrls(const QList<QUrl> &urls);
+    void setCanvasModelShell(CanvasModelShell *sh);
+    void setCanvasViewShell(CanvasViewShell *sh);
+    void setCanvasGridShell(CanvasGridShell *sh);
     QMargins cellMargins() const;
     FileProxyModel *model() const;
     CollectionItemDelegate *itemDelegate() const;
@@ -67,12 +72,13 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
-private:
-    void initUI();
-    void updateRegionView();
-    QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
-    QRect itemRect(const QModelIndex &index) const;
+    void startDrag(Qt::DropActions supportedActions) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
     QSharedPointer<CollectionViewPrivate> d = nullptr;

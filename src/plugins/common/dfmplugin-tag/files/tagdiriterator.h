@@ -26,7 +26,7 @@
 
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagDirIteratorPrivate;
 class TagDirIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
@@ -53,6 +53,6 @@ private:
     QScopedPointer<TagDirIteratorPrivate> d;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGDIRITERATOR_H

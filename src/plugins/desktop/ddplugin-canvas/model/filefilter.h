@@ -28,7 +28,7 @@
 
 class QGSettings;
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class FileFilter
 {
@@ -60,6 +60,6 @@ protected:
     int timerid = -1;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // FILEFILTER_H

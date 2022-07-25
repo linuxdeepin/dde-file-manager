@@ -23,7 +23,7 @@
 
 #include <private/qtextedit_p.h>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 CanSetDragTextEdit::CanSetDragTextEdit(QWidget *parent)
     : DTextEdit(parent)

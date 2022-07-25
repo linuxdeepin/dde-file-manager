@@ -24,7 +24,7 @@
 
 #include <QSharedPointer>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 Q_GLOBAL_STATIC(WatcherCache, _watcherCacheManager)
 
 /*!
@@ -132,4 +132,4 @@ void WatcherCache::setCacheDisbale(const QString &scheme, bool disbale)
         return;
     }
 }
-DFMBASE_END_NAMESPACE
+}

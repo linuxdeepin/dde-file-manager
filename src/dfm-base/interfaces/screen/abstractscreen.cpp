@@ -21,14 +21,14 @@
 
 #include "abstractscreen.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 AbstractScreen::AbstractScreen(QObject *parent) : QObject(parent)
 {
 
 }
 
-DFMBASE_END_NAMESPACE
+}
 
 
 

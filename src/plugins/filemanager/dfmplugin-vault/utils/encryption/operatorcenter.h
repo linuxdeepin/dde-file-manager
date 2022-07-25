@@ -30,7 +30,7 @@
 
 #include <QObject>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class OperatorCenter : public QObject
 {
     Q_OBJECT
@@ -157,5 +157,5 @@ private:
     QString standOutput;
     QString strPubKey;
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // OPERATORCENTER_H

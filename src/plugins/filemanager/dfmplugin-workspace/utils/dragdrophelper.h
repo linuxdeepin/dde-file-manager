@@ -31,11 +31,11 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractFileInfo;
-DFMBASE_END_NAMESPACE
+}
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileView;
 class DragDropHelper : public QObject
@@ -61,6 +61,6 @@ private:
     QList<QUrl> currentDragUrls;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // DRAGDROPHELPER_H

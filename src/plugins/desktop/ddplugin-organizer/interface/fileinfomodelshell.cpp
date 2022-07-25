@@ -68,6 +68,16 @@ QAbstractItemModel *FileInfoModelShell::sourceModel() const
     return model;
 }
 
+QUrl FileInfoModelShell::rootUrl() const
+{
+    return FileInfoModelPush(slot_FileInfoModel_RootUrl).toUrl();
+}
+
+QModelIndex FileInfoModelShell::rootIndex() const
+{
+    return FileInfoModelPush(slot_FileInfoModel_RootIndex).toModelIndex();
+}
+
 QModelIndex FileInfoModelShell::index(const QUrl &url, int column) const
 {
     Q_UNUSED(column)
@@ -92,4 +102,15 @@ QList<QUrl> FileInfoModelShell::files() const
 {
     QVariant ret = FileInfoModelPush(slot_FileInfoModel_Files);
     return ret.value<QList<QUrl>>();
+}
+
+void FileInfoModelShell::refresh(const QModelIndex &parent)
+{
+    FileInfoModelPush2(slot_FileInfoModel_Refresh, parent);
+}
+
+int FileInfoModelShell::modelState()
+{
+    QVariant ret = FileInfoModelPush2(slot_FileInfoModel_ModelState);
+    return ret.toInt();
 }

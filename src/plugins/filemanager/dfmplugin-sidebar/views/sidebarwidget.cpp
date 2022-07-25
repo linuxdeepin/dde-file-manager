@@ -30,8 +30,7 @@
 #include "utils/sidebarmanager.h"
 #include "utils/sidebarinfocachemananger.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/utils/systempathutil.h"
 
 #include <QApplication>
@@ -41,7 +40,6 @@
 
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 
 static constexpr char kNotExistedGroup[] { "__not_existed_group" };
 QSharedPointer<SideBarModel> SideBarWidget::kSidebarModelIns { nullptr };
@@ -49,9 +47,9 @@ QSharedPointer<SideBarModel> SideBarWidget::kSidebarModelIns { nullptr };
 SideBarWidget::SideBarWidget(QFrame *parent)
     : AbstractFrame(parent),
       sidebarView(new SideBarView(this)),
-      currentGroups { SideBar::DefaultGroup::kCommon, SideBar::DefaultGroup::kDevice,
-                      SideBar::DefaultGroup::kBookmark, SideBar::DefaultGroup::kNetwork,
-                      SideBar::DefaultGroup::kTag, SideBar::DefaultGroup::kOther, kNotExistedGroup }
+      currentGroups { DefaultGroup::kCommon, DefaultGroup::kDevice,
+                      DefaultGroup::kBookmark, DefaultGroup::kNetwork,
+                      DefaultGroup::kTag, DefaultGroup::kOther, kNotExistedGroup }
 {
     if (!kSidebarModelIns) {
         kSidebarModelIns.reset(new SideBarModel);
@@ -125,22 +123,10 @@ bool SideBarWidget::removeItem(const QUrl &url)
     return kSidebarModelIns->removeRow(url);
 }
 
-void SideBarWidget::updateItem(const QUrl &url, const SideBar::ItemInfo &newInfo)
+void SideBarWidget::updateItem(const QUrl &url, const ItemInfo &newInfo)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     kSidebarModelIns->updateRow(url, newInfo);
-}
-
-void SideBarWidget::updateItem(const QUrl &url, const QString &newName, bool editable)
-{
-    Q_ASSERT(qApp->thread() == QThread::currentThread());
-    kSidebarModelIns->updateRow(url, newName, editable);
-}
-
-void SideBarWidget::updateItem(const QUrl &url, const QIcon &newIcon)
-{
-    Q_ASSERT(qApp->thread() == QThread::currentThread());
-    kSidebarModelIns->updateRow(url, newIcon);
 }
 
 /*!
@@ -204,7 +190,7 @@ void SideBarWidget::updateSelection()
 {
     // after sort the hightlight may lose, re-select the highlight item.
     quint64 winId = SideBarHelper::windowId(this);
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (window)
         setCurrentUrl(window->currentUrl());
 }
@@ -285,7 +271,7 @@ void SideBarWidget::initDefaultModel()
         static const QStringList names { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
 
         for (const QString &name : names) {
-            SideBarItem *item = SideBarHelper::createDefaultItem(name, SideBar::DefaultGroup::kCommon);
+            SideBarItem *item = SideBarHelper::createDefaultItem(name, DefaultGroup::kCommon);
             addItem(item);
             SideBarInfoCacheMananger::instance()->addItemInfoCache(item->itemInfo());
         }

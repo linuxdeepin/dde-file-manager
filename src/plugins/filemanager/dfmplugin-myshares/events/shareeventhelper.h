@@ -29,7 +29,7 @@
 #include <QList>
 #include <QObject>
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class ShareEventHelper : public QObject
 {
@@ -46,6 +46,6 @@ protected:
     bool containsShareUrl(const QList<QUrl> &urls);
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREEVENTHELPER_H

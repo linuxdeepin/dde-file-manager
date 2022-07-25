@@ -24,12 +24,11 @@
 #include "dfmplugin_computer_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
-#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
 #include <DArrowLineDrawer>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 class DeviceBasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
@@ -43,7 +42,7 @@ private:
 public:
     void selectFileUrl(const QUrl &url);
 
-    void selectFileInfo(const DSC_NAMESPACE::Property::DeviceInfo &info);
+    void selectFileInfo(const DeviceInfo &info);
 
 public slots:
     void slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount);
@@ -60,5 +59,5 @@ private:
     QFrame *deviceInfoFrame { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // DEVICEBASICWIDGET_H

@@ -1,0 +1,49 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     lixiang<lixianga@uniontech.com>
+ *
+ * Maintainer: lixiang<lixianga@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "computerpropertyhelper.h"
+#include "views/computerpropertydialog.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
+
+DFMBASE_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
+QString ComputerPropertyHelper::scheme()
+{
+    return Global::Scheme::kComputer;
+}
+
+QWidget *ComputerPropertyHelper::createComputerProperty(const QUrl &url)
+{
+    static ComputerPropertyDialog *widget = nullptr;
+    QUrl tempUrl;
+    tempUrl.setPath("/");
+    tempUrl.setScheme(scheme());
+    bool flg = UniversalUtils::urlEquals(tempUrl, url);
+    if (flg || FileUtils::isComputerDesktopFile(url)) {
+        if (!widget) {
+            widget = new ComputerPropertyDialog;
+            return widget;
+        }
+        return widget;
+    }
+    return nullptr;
+}

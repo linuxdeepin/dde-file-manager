@@ -32,6 +32,7 @@ set(GLOBAL_H dfm_base_global.h
              dfm_event_defines.h
              dfm_global_defines.h
              dfm_desktop_defines.h
+             dfm_menu_defines.h
              )
 
 FILE (GLOB INTERFACES_FILES
@@ -65,8 +66,12 @@ FILE (GLOB BASE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/base/grouppolicy/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/base/grouppolicy/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/device/*.h"
@@ -242,10 +247,44 @@ install(DIRECTORY
     PATTERN "resources" EXCLUDE  
 )
 
-# schemas
-FILE(GLOB SCHEMA_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/gschema/*.xml"
-)
 
+
+set(AssetsPath ../../assets)
+set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager)
+
+FILE(GLOB SCHEMA_FILES ${AssetsPath}/gschema/*)
 install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
 install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
+
+set(Mimetypes "${ShareDir}/mimetypes")
+FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
+install(FILES ${MIMETYPE_FILES} DESTINATION ${Mimetypes})
+
+set(MimetypeAssociations "${ShareDir}/mimetypeassociations")
+FILE(GLOB MIMETYPEASSOCIATIONS_FILES ${AssetsPath}/mimetypeassociations/*)
+install(FILES ${MIMETYPEASSOCIATIONS_FILES} DESTINATION ${MimetypeAssociations})
+
+set(Templates "${ShareDir}/templates")
+FILE(GLOB TEMPLATES_FILES ${AssetsPath}/templates/*)
+install(FILES ${TEMPLATES_FILES} DESTINATION ${Templates})
+
+set(OemMenuDir "${CMAKE_INSTALL_PREFIX}/share/deepin/dde-file-manager/oem-menuextensions")
+install(FILES ${AssetsPath}/.readme DESTINATION ${OemMenuDir})
+
+set(ContexMenuDir "${CMAKE_INSTALL_PREFIX}/share/applications/context-menus")
+install(FILES ${AssetsPath}/.readme DESTINATION ${ContexMenuDir})
+
+set(DFMAppId "org.deepin.dde.file-manager")
+set(ConfigPath ${AssetsPath}/configs)
+set(DConfigTemplate org.deepin.dde.file-manager.json)
+
+if(DEFINED DSG_DATA_DIR)
+    MESSAGE("-- DConfig is supported.")
+    dconfig_meta_files(APPID ${DFMAppId}
+        BASE ${ConfigPath}
+        FILES ${ConfigPath}/${DConfigTemplate})
+else()
+    MESSAGE("-- DConfig is not supported!")
+    set(DSG_DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/dsg)
+    install(FILES ${ConfigPath}/${DConfigTemplate} DESTINATION ${DSG_DATA_DIR}/configs/${DFMAppId})
+endif()

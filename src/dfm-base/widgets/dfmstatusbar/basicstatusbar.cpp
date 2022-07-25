@@ -23,13 +23,15 @@
 #include "private/basicstatusbar_p.h"
 #include "utils/fileutils.h"
 
+#include "dfm-base/base/application/application.h"
+
 #include <DAnchors>
 
 #include <QHBoxLayout>
 #include <QLabel>
 
 DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 BasicStatusBar::BasicStatusBar(QWidget *parent)
     : QFrame(parent),
@@ -76,8 +78,22 @@ void BasicStatusBar::itemSelected(const QList<AbstractFileInfo *> &infoList)
         }
     }
 
-    if (!dirUrlList.isEmpty())
-        d->calcFolderContains(dirUrlList);
+    d->showContains = true;
+    const bool dirUrlsEmpty = dirUrlList.isEmpty();
+    if (!dirUrlsEmpty) {
+        // check mtp setting
+        const bool showInfo = Application::instance()->genericAttribute(Application::GenericAttribute::kMTPShowBottomInfo).toBool();
+        if (!showInfo) {
+            bool isMtp = FileUtils::isMtpFile(dirUrlList.first());
+            if (isMtp) {
+                d->showContains = false;
+            } else {
+                d->calcFolderContains(dirUrlList);
+            }
+        } else {
+            d->calcFolderContains(dirUrlList);
+        }
+    }
 
     updateStatusMessage();
 }
@@ -109,6 +125,8 @@ void BasicStatusBar::updateStatusMessage()
     } else {
         selectedFolders = "";
     }
+    if (!selectedFolders.isEmpty() && !d->showContains)
+        selectedFolders = d->selectedNetworkOnlyOneFolder.arg(QString::number(d->folderCount));
 
     QString selectedFiles;
 
@@ -119,6 +137,8 @@ void BasicStatusBar::updateStatusMessage()
     } else {
         selectedFiles = "";
     }
+    if (!selectedFiles.isEmpty() && !d->showContains)
+        selectedFiles = d->fileCount > 1 ? (d->selected.arg(d->fileCount)) : (d->onlyOneItemSelected.arg(d->fileCount));
 
     if (selectedFolders.isEmpty()) {
         d->tip->setText(QString("%1").arg(selectedFiles));

@@ -26,7 +26,7 @@
 
 #include <QPainter>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 ViewDrawHelper::ViewDrawHelper(FileView *parent)
     : view(parent)

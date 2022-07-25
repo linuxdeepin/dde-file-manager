@@ -26,7 +26,7 @@
 
 #include <QFrame>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractFileInfo;
 class BasicStatusBarPrivate;
@@ -55,6 +55,6 @@ private:
     QSharedPointer<BasicStatusBarPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // BASICSTATUSBAR_H

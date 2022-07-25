@@ -39,6 +39,7 @@ public:
     static void sendOpenWindow(const QUrl &url);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static void sendShowFilePropertyDialog(const QUrl &url);
+    static bool sendCheckTabAddable(quint64 windowId);
 };
 
 DPSIDEBAR_END_NAMESPACE

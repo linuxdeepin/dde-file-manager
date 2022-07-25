@@ -27,7 +27,7 @@
 #include <QObject>
 #include <QUrl>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class WatcherFactory;
 class InfoCache;
 class WatcherCachePrivate;
@@ -49,6 +49,6 @@ public:
     bool cacheDisable(const QString &scheme);
     void setCacheDisbale(const QString &scheme, bool disbale = true);
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // WATCHERCACHE_H

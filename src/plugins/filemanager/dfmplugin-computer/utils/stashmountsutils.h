@@ -28,7 +28,7 @@
 #include <QVariantMap>
 #include <QJsonDocument>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 namespace StashedMountsKeys {
 extern const char *const kJsonGroup;
@@ -57,6 +57,6 @@ private:
     static QJsonDocument cfgDocument();
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // STASHMOUNTSMANAGER_H

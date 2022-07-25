@@ -25,8 +25,8 @@
 #include "interfaces/abstractfileinfo.h"
 #include "utils/threadcontainer.hpp"
 
-#include <dfmio_global.h>
-#include <dfmio_register.h>
+#include <dfm-io/dfmio_global.h>
+#include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
 #include <QPointer>
@@ -34,7 +34,7 @@
 #include <dfm-io/core/dfileinfo.h>
 
 USING_IO_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractFileInfoPrivate
 {
@@ -49,6 +49,6 @@ public:
     AbstractFileInfoPointer proxy { nullptr };
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // ABSTRACTFILEINFO_P_H

@@ -28,7 +28,7 @@
 
 class QKeyEvent;
 class QMouseEvent;
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class ViewSettingUtil : public QObject
 {
@@ -44,6 +44,6 @@ private:
     QTimer touchDragTimer; // delay to start drag when touch moving
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // VIEWSETTINGUTIL_H

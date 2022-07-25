@@ -25,7 +25,7 @@
 
 #include <QPoint>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class GridCoordinate
 {
@@ -70,6 +70,6 @@ protected:
     int yp;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // GRIDCOORDINATE_H

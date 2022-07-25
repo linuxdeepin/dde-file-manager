@@ -25,17 +25,19 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 
 #include <QString>
 #include <QUrl>
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
-class AvfsUtils
+class AvfsUtils : public QObject
 {
+    Q_DISABLE_COPY(AvfsUtils)
 public:
+    static AvfsUtils *instance();
+
     static inline QString scheme()
     {
         return "avfs";
@@ -67,10 +69,15 @@ public:
     static QUrl localArchiveToAvfsUrl(const QUrl &url);
     static QUrl makeAvfsUrl(const QString &path);
 
-    static QList<DSB_FM_NAMESPACE::TitleBar::CrumbData> seperateUrl(const QUrl &url);
+    static QList<QVariantMap> seperateUrl(const QUrl &url);
     static QString parseDirIcon(const QString &path);
+
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+
+private:
+    explicit AvfsUtils(QObject *parent = nullptr);
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSUTILS_H

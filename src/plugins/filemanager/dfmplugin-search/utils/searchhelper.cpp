@@ -21,8 +21,6 @@
 #include "searchhelper.h"
 #include "topwidget/advancesearchbar.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -30,10 +28,12 @@
 
 #include <QUrlQuery>
 
-DSB_FM_USE_NAMESPACE
+Q_DECLARE_METATYPE(QString *);
+Q_DECLARE_METATYPE(QVariant *)
+
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 static inline QString parseDecodedComponent(const QString &data)
 {
@@ -153,8 +153,8 @@ bool SearchHelper::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleL
         return false;
 
     const QUrl &targetUrl = searchTargetUrl(rootUrl);
-    if (!dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomColumnRoles", targetUrl, roleList)) {
-        roleList->append(kItemNameRole);
+    if (!dpfHookSequence->run("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", targetUrl, roleList)) {
+        roleList->append(kItemFileDisplayNameRole);
         roleList->append(kItemFilePathRole);
         roleList->append(kItemFileLastModifiedRole);
         roleList->append(kItemFileSizeRole);
@@ -170,7 +170,7 @@ bool SearchHelper::customRoleDisplayName(const QUrl &rootUrl, const ItemRoles ro
         return false;
 
     const QUrl &targetUrl = searchTargetUrl(rootUrl);
-    if (dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", targetUrl, role, displayName))
+    if (dpfHookSequence->run("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", targetUrl, role, displayName))
         return true;
 
     if (role == kItemFilePathRole) {
@@ -187,7 +187,7 @@ bool SearchHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const It
         return false;
 
     const QUrl &targetUrl = searchTargetUrl(rootUrl);
-    if (dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomRoleData", targetUrl, url, role, data))
+    if (dpfHookSequence->run("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", targetUrl, url, role, data))
         return true;
 
     if (role == kItemFilePathRole) {
@@ -212,6 +212,129 @@ bool SearchHelper::blockPaste(quint64 winId, const QUrl &to)
     return false;
 }
 
+QString SearchHelper::checkWildcardAndToRegularExpression(const QString &pattern)
+{
+    if (!pattern.contains('*') && !pattern.contains('?'))
+        return wildcardToRegularExpression('*' + pattern + '*');
+
+    return wildcardToRegularExpression(pattern);
+}
+
+QString SearchHelper::wildcardToRegularExpression(const QString &pattern)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+    return QRegularExpression::wildcardToRegularExpression(pattern);
+#endif   // (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+
+    const int wclen = pattern.length();
+    QString rx;
+    rx.reserve(wclen + wclen / 16);
+    int i = 0;
+    const QChar *wc = pattern.unicode();
+#ifdef Q_OS_WIN
+    const QLatin1Char nativePathSeparator('\\');
+    const QLatin1String starEscape("[^/\\\\]*");
+    const QLatin1String questionMarkEscape("[^/\\\\]");
+#else
+    const QLatin1Char nativePathSeparator('/');
+    const QLatin1String starEscape("[^/]*");
+    const QLatin1String questionMarkEscape("[^/]");
+#endif
+    while (i < wclen) {
+        const QChar c = wc[i++];
+        switch (c.unicode()) {
+        case '*':
+            rx += starEscape;
+            break;
+        case '?':
+            rx += questionMarkEscape;
+            break;
+        case '\\':
+#ifdef Q_OS_WIN
+        case '/':
+            rx += QLatin1String("[/\\\\]");
+            break;
+#endif
+        case '$':
+        case '(':
+        case ')':
+        case '+':
+        case '.':
+        case '^':
+        case '{':
+        case '|':
+        case '}':
+            rx += QLatin1Char('\\');
+            rx += c;
+            break;
+        case '[':
+            rx += c;
+            // Support for the [!abc] or [!a-c] syntax
+            if (i < wclen) {
+                if (wc[i] == QLatin1Char('!')) {
+                    rx += QLatin1Char('^');
+                    ++i;
+                }
+                if (i < wclen && wc[i] == QLatin1Char(']'))
+                    rx += wc[i++];
+                while (i < wclen && wc[i] != QLatin1Char(']')) {
+                    // The '/' appearing in a character class invalidates the
+                    // regular expression parsing. It also concerns '\\' on
+                    // Windows OS types.
+                    if (wc[i] == QLatin1Char('/') || wc[i] == nativePathSeparator)
+                        return rx;
+                    if (wc[i] == QLatin1Char('\\'))
+                        rx += QLatin1Char('\\');
+                    rx += wc[i++];
+                }
+            }
+            break;
+        default:
+            rx += c;
+            break;
+        }
+    }
+    return anchoredPattern(rx);
+}
+
+bool SearchHelper::isHiddenFile(const QString &fileName, QHash<QString, QSet<QString>> &filters, const QString &searchPath)
+{
+    if (!fileName.startsWith(searchPath) || fileName == searchPath)
+        return false;
+
+    QFileInfo fileInfo(fileName);
+    if (fileInfo.isHidden())
+        return true;
+
+    const auto &fileParentPath = fileInfo.absolutePath();
+    const auto &hiddenFileConfig = fileParentPath + "/.hidden";
+
+    // 判断.hidden文件是否存在，不存在说明该路径下没有隐藏文件
+    if (!QFile::exists(hiddenFileConfig))
+        return isHiddenFile(fileParentPath, filters, searchPath);
+
+    if (filters[fileParentPath].isEmpty()) {
+        QFile file(hiddenFileConfig);
+        // 判断.hidden文件中的内容是否为空，空则表示该路径下没有隐藏文件
+        if (file.isReadable() && file.size() > 0) {
+            if (!file.open(QFile::ReadOnly))
+                return false;
+
+            QByteArray data = file.readAll();
+            file.close();
+
+            const auto &hiddenFiles = QSet<QString>::fromList(QString(data).split('\n', QString::SkipEmptyParts));
+            filters[fileParentPath] = hiddenFiles;
+        } else {
+            return isHiddenFile(fileParentPath, filters, searchPath);
+        }
+    }
+
+    return filters[fileParentPath].contains(fileInfo.fileName())
+            ? true
+            : isHiddenFile(fileParentPath, filters, searchPath);
+}
+
 SearchHelper::SearchHelper(QObject *parent)
     : QObject(parent)
 {
@@ -221,4 +344,4 @@ SearchHelper::~SearchHelper()
 {
 }
 
-DPSEARCH_END_NAMESPACE
+}

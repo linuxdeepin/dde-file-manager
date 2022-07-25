@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 
 class AutoActivateWindowPrivate;
 class AutoActivateWindow : public QObject
@@ -43,6 +43,6 @@ private:
     AutoActivateWindowPrivate *d;
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 
 #endif // AUTOACTIVATEWINDOW_H

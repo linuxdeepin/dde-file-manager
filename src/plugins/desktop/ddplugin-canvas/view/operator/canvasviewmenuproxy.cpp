@@ -30,28 +30,27 @@
 #include "menu/canvasmenuscene.h"
 #include "menu/canvasmenu_defines.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QGSettings>
 #include <QMenu>
 #include <QtDebug>
 
-DSC_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
     : QObject(parent), view(parent)
 {
-    // 获取菜单服务
-    extensionMenuServer = MenuService::service();
+
 }
 
 CanvasViewMenuProxy::~CanvasViewMenuProxy()
@@ -79,7 +78,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
 
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
-    auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
+    auto canvasScene = dfmplugin_menu_util::menuSceneCreateScene(CanvasMenuCreator::name());
     if (!canvasScene) {
         qWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
         return;
@@ -124,7 +123,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
 
-    auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
+    auto canvasScene = dfmplugin_menu_util::menuSceneCreateScene(CanvasMenuCreator::name());
     if (!canvasScene) {
         qWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
         return;
@@ -140,7 +139,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     params[MenuParamKey::kIsEmptyArea] = false;
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[CanvasMenuParams::kDesktopGridPos] = QVariant::fromValue(gridPos);
-    params = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    params = dfmplugin_menu_util::menuPerfectParams(params);
 
     if (!canvasScene->initialize(params)) {
         delete canvasScene;

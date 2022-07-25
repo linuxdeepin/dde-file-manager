@@ -28,7 +28,7 @@
 #include <QUrl>
 #include <QPoint>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasGridSpecialist
 {
@@ -46,6 +46,6 @@ public:
     static const char *const singleIndex;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASGRIDSPECIALIST_H

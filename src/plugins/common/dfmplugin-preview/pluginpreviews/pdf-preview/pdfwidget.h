@@ -30,7 +30,7 @@
 #include <QStackedLayout>
 #include <QMap>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class DocSheet;
 
 struct recordSheetPath
@@ -109,5 +109,5 @@ private:
 
     recordSheetPath sheetMap;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // WIDGET_H

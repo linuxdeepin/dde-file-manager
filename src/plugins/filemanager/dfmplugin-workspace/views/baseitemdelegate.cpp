@@ -30,7 +30,7 @@
 #include <QTextLayout>
 #include <QPainter>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 BaseItemDelegate::BaseItemDelegate(FileViewHelper *parent)
     : BaseItemDelegate(*new BaseItemDelegatePrivate(this), parent)

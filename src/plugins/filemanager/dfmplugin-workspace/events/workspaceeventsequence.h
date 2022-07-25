@@ -24,11 +24,11 @@
 #include "dfmplugin_workspace_global.h"
 
 #include "dfm-base/dfm_global_defines.h"
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QAbstractItemView>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class WorkspaceEventSequence : public QObject
 {
@@ -45,12 +45,12 @@ public:
     bool doFetchCustomColumnRoles(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
     bool doFetchCustomRoleDiaplayName(const QUrl &rootUrl, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     bool doFetchCustomRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
+    bool doCheckTransparent(const QUrl &url);
 
 private:
     explicit WorkspaceEventSequence(QObject *parent = nullptr);
-    DPF_NAMESPACE::EventSequenceManager *sequence();
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACEEVENTSEQUENCE_H

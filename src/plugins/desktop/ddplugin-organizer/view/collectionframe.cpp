@@ -20,6 +20,8 @@
  */
 #include "collectionframe_p.h"
 
+#include <DMenu>
+
 #include <QMouseEvent>
 #include <QAbstractItemView>
 #include <QPainter>
@@ -45,7 +47,7 @@ CollectionFramePrivate::~CollectionFramePrivate()
 
 }
 
-void CollectionFramePrivate::updateAdjustRect()
+void CollectionFramePrivate::updateStretchRect()
 {
     stretchRects.clear();
     stretchRects << QRect(0, 0, kStretchWidth, kStretchHeight);   // leftTopRect
@@ -81,7 +83,7 @@ CollectionFramePrivate::ResponseArea CollectionFramePrivate::getCurrentResponseA
 
 void CollectionFramePrivate::updateCursorState(const CollectionFramePrivate::ResponseArea &stretchPlace)
 {
-    if (canAdjust()) {
+    if (canStretch()) {
         switch (stretchPlace) {
         case LeftTopRect:
         case RightBottomRect:
@@ -114,7 +116,7 @@ void CollectionFramePrivate::updateCursorState(const CollectionFramePrivate::Res
 
 void CollectionFramePrivate::updateMouseTrackingState()
 {
-    bool tracking = canAdjust() || canMove();
+    bool tracking = canStretch() || canMove();
     q->setMouseTracking(tracking);
 
     QList<QWidget *> widgetList = q->findChildren<QWidget *>();
@@ -128,11 +130,16 @@ void CollectionFramePrivate::updateMouseTrackingState()
         if (Q_LIKELY(viewport))
             viewport->setMouseTracking(tracking);
     }
+
+    QList<DMenu *> menus = q->findChildren<DMenu *>();
+    for (auto menu : menus) {
+        menu->setMouseTracking(true);
+    }
 }
 
 void CollectionFramePrivate::updateFrameGeometry()
 {
-    QRect rect = adjustBeforRect;
+    QRect rect = stretchBeforRect;
 
     switch (responseArea) {
     case LeftTopRect: {
@@ -195,16 +202,15 @@ bool CollectionFramePrivate::canMove()
     return frameFeatures.testFlag(CollectionFrame::CollectionFrameMovable);
 }
 
-bool CollectionFramePrivate::canAdjust()
+bool CollectionFramePrivate::canStretch()
 {
-    return frameFeatures.testFlag(CollectionFrame::CollectionFrameAdjustable)
-            && CollectionFrame::CollectionFrameAdjustDisable != adjustStyle;
+    return frameFeatures.testFlag(CollectionFrame::CollectionFrameStretchable);
 }
 
 int CollectionFramePrivate::calcLeftX()
 {
     int minLimitX = 0;
-    int maxLimitX = adjustBeforRect.bottomRight().x() - minWidth;
+    int maxLimitX = stretchBeforRect.bottomRight().x() - minWidth;
     int afterX = stretchEndPoint.x() > maxLimitX ? maxLimitX : (stretchEndPoint.x() > minLimitX ? stretchEndPoint.x() : minLimitX);
 
     return afterX;
@@ -212,10 +218,10 @@ int CollectionFramePrivate::calcLeftX()
 
 int CollectionFramePrivate::calcRightX()
 {
-    int minLimitX = adjustBeforRect.bottomLeft().x() + minWidth;
+    int minLimitX = stretchBeforRect.bottomLeft().x() + minWidth;
     int afterX = stretchEndPoint.x() > minLimitX ? stretchEndPoint.x() : minLimitX;
 
-    QWidget *parentWidget = static_cast<QWidget *>(q->parent());
+    QWidget *parentWidget = qobject_cast<QWidget *>(q->parent());
     if (parentWidget) {
         int maxLimitX = parentWidget->geometry().width();
         afterX = afterX > maxLimitX ? maxLimitX : afterX;
@@ -227,7 +233,7 @@ int CollectionFramePrivate::calcRightX()
 int CollectionFramePrivate::calcTopY()
 {
     int minLimitY = 0;
-    int maxLimitY = adjustBeforRect.bottomLeft().y() - minHeight;
+    int maxLimitY = stretchBeforRect.bottomLeft().y() - minHeight;
     int afterY = stretchEndPoint.y() > maxLimitY ? maxLimitY : (stretchEndPoint.y() > minLimitY ? stretchEndPoint.y() : minLimitY);
 
     return afterY;
@@ -235,10 +241,10 @@ int CollectionFramePrivate::calcTopY()
 
 int CollectionFramePrivate::calcBottomY()
 {
-    int minLimitY = adjustBeforRect.topLeft().y() + minHeight;
+    int minLimitY = stretchBeforRect.topLeft().y() + minHeight;
     int afterY = stretchEndPoint.y() > minLimitY ? stretchEndPoint.y() : minLimitY;
 
-    QWidget *parentWidget = static_cast<QWidget *>(q->parent());
+    QWidget *parentWidget = qobject_cast<QWidget *>(q->parent());
     if (parentWidget) {
         int maxLimitY = parentWidget->geometry().height();
         afterY = afterY > maxLimitY ? maxLimitY : afterY;
@@ -291,24 +297,24 @@ CollectionFrame::CollectionFrameFeatures CollectionFrame::collectionFeatures() c
     return d->frameFeatures;
 }
 
-void CollectionFrame::setAdjustStyle(const CollectionFrame::CollectionFrameAdjust &style)
+void CollectionFrame::setStretchStyle(const CollectionFrame::CollectionFrameStretchStyle &style)
 {
-    d->adjustStyle = style;
+    d->stretchStyle = style;
     d->updateMouseTrackingState();
 }
 
-CollectionFrame::CollectionFrameAdjust CollectionFrame::adjustStyle() const
+CollectionFrame::CollectionFrameStretchStyle CollectionFrame::stretchStyle() const
 {
-    return d->adjustStyle;
+    return d->stretchStyle;
 }
 
-void CollectionFrame::setAdjustStep(const int step)
+void CollectionFrame::setStretchStep(const int step)
 {
     // todo
     Q_UNUSED(step)
 }
 
-int CollectionFrame::adjustStep() const
+int CollectionFrame::stretchStep() const
 {
     // todo
     return 0;
@@ -337,8 +343,8 @@ void CollectionFrame::showEvent(QShowEvent *event)
         d->updateMoveRect();
     }
 
-    if (d->canAdjust()) {
-        d->updateAdjustRect();
+    if (d->canStretch()) {
+        d->updateStretchRect();
     }
 
     return DFrame::showEvent(event);
@@ -348,9 +354,9 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
 {
     if (Qt::LeftButton == event->button()) {
 
-        if (d->canAdjust() && d->stretchArea.contains(d->responseArea)) {
+        if (d->canStretch() && d->stretchArea.contains(d->responseArea)) {
             // handle stretch
-            d->adjustBeforRect = this->geometry();
+            d->stretchBeforRect = this->geometry();
             d->frameState = CollectionFramePrivate::StretchState;
         } else if (d->canMove() && d->moveArea.contains(d->responseArea)) {
             // handle move
@@ -366,9 +372,9 @@ void CollectionFrame::mousePressEvent(QMouseEvent *event)
 
 void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (d->canAdjust() && CollectionFramePrivate::StretchState == d->frameState) {
+    if (d->canStretch() && CollectionFramePrivate::StretchState == d->frameState) {
         d->frameState = CollectionFramePrivate::NormalShowState;
-        d->updateAdjustRect();
+        d->updateStretchRect();
     }
 
     if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
@@ -383,13 +389,17 @@ void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
 void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons().testFlag(Qt::LeftButton)) {
-        if (d->canAdjust() && CollectionFramePrivate::StretchState == d->frameState) {
+        if (d->canStretch() && CollectionFramePrivate::StretchState == d->frameState) {
             d->stretchEndPoint = this->mapToParent(event->pos());
             d->updateFrameGeometry();
+
+            emit geometryChanged();
         } else if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
             QPoint movePoint = this->mapToParent(event->pos()) - d->moveStartPoint;
             d->moveStartPoint = this->mapToParent(event->pos());
             this->move(pos().x() + movePoint.x(), pos().y() + movePoint.y());
+
+            emit geometryChanged();
         }
     } else if (event->buttons().testFlag(Qt::NoButton)) {
         d->responseArea = d->getCurrentResponseArea(event->pos());
@@ -405,8 +415,8 @@ void CollectionFrame::resizeEvent(QResizeEvent *event)
     DFrame::resizeEvent(event);
     d->titleBarRect.setWidth(event->size().width());
 
-    if (d->canAdjust())
-        d->updateAdjustRect();
+    if (d->canStretch())
+        d->updateStretchRect();
 
     if (d->canMove())
         d->updateMoveRect();

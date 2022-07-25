@@ -25,27 +25,29 @@
 
 #include "dfmplugin_computer_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
-
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
+
+#include <dfm-framework/dfm_framework_global.h>
 
 #include <QString>
 #include <QIcon>
 #include <QUrl>
 #include <QWaitCondition>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
+
+namespace EventNameSpace {
+inline constexpr char kComputerEventSpace[] { DPF_MACRO_TO_STR(DPCOMPUTER_NAMESPACE) };
+}
 
 class ComputerUtils
 {
 public:
     inline static QString scheme()
     {
-        return DFMBASE_NAMESPACE::Global::kComputer;
+        return DFMBASE_NAMESPACE::Global::Scheme::kComputer;
     }
 
     inline static QIcon icon()
@@ -59,6 +61,11 @@ public:
         u.setScheme(scheme());
         u.setPath("/");
         return u;
+    }
+
+    inline static QString menuSceneName()
+    {
+        return "ComputerMenu";
     }
 
     static quint64 getWinId(QWidget *widget);
@@ -91,6 +98,12 @@ public:
     static bool checkGvfsMountExist(const QUrl &url, int timeout = 2000);
     static void setCursorState(bool busy = false);
 
+    static QStringList allSystemUUIDs();
+    static QList<QUrl> systemBlkDevUrlByUUIDs(const QStringList &uuids);
+    static void diskHideToDConfig(int attr, const QVariant &var);
+    static void diskHideToDSetting(const QString &cfgPath, const QString &cfgKey, const QVariant &var);
+    static bool isEqualDiskHideConfig(const QVariant &varDConf, const QVariant &varDSet);
+
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.
 
@@ -99,6 +112,6 @@ private:
     static QWaitCondition condForCheckGvfs;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTERUTILS_H

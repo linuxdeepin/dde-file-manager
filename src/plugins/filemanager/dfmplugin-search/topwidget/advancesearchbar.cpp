@@ -22,10 +22,10 @@
 #include "advancesearchbar_p.h"
 #include "utils/searchhelper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/windows/windowsservice.h"
-
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <DCommandLinkButton>
 #include <DHorizontalLine>
@@ -36,9 +36,8 @@
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 AdvanceSearchBarPrivate::AdvanceSearchBarPrivate(AdvanceSearchBar *qq)
     : DBoxWidget(QBoxLayout::LeftToRight, qq),
@@ -407,8 +406,8 @@ void AdvanceSearchBar::onOptionChanged()
     formData[AdvanceSearchBarPrivate::kAccessDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kAccessDateRange]->currentData();
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kCreateDateRange]->currentData();
 
-    auto winId = WindowsService::service()->findWindowId(this);
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto winId = FMWindowsIns.findWindowId(this);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (!window)
         return;
 
@@ -416,8 +415,10 @@ void AdvanceSearchBar::onOptionChanged()
     formData[AdvanceSearchBarPrivate::kCurrentUrl] = curUrl;
     d->filterInfoCache[curUrl] = formData;
 
-    WorkspaceService::service()->setFileViewFilterData(winId, curUrl, QVariant::fromValue(formData));
-    WorkspaceService::service()->setFileViewFilterCallback(winId, curUrl, AdvanceSearchBarPrivate::shouldVisiableByFilterRule);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterData", winId, curUrl, QVariant::fromValue(formData));
+
+    FilterCallback callback { AdvanceSearchBarPrivate::shouldVisiableByFilterRule };
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterCallback", winId, curUrl, QVariant::fromValue(callback));
 }
 
 void AdvanceSearchBar::onResetButtonPressed()
@@ -427,8 +428,8 @@ void AdvanceSearchBar::onResetButtonPressed()
 
 void AdvanceSearchBar::hideEvent(QHideEvent *event)
 {
-    auto winId = WindowsService::service()->findWindowId(this);
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto winId = FMWindowsIns.findWindowId(this);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (window && !window->isMinimized()) {
         resetForm();
         d->filterInfoCache.clear();
@@ -437,4 +438,4 @@ void AdvanceSearchBar::hideEvent(QHideEvent *event)
     QScrollArea::hideEvent(event);
 }
 
-DPSEARCH_END_NAMESPACE
+}

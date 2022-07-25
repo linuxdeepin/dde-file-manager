@@ -23,9 +23,9 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class Vault : public dpf::Plugin
 {
     Q_OBJECT
@@ -36,6 +36,6 @@ public:
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
 };
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // VAULT_H

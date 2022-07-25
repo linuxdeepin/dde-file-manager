@@ -31,7 +31,7 @@
 
 class DeviceManagerInterface;
 class QDBusServiceWatcher;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DeviceProxyManager;
 class DeviceProxyManagerPrivate : public QObject
@@ -71,6 +71,6 @@ private:
     };
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DEVICEPROXYMANAGER_P_H

@@ -29,7 +29,7 @@
 class QStackedWidget;
 class QMouseEvent;
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultActiveStartView;
 class VaultActiveSetUnlockMethodView;
 class VaultActiveFinishedView;
@@ -57,5 +57,5 @@ private:
     VaultActiveFinishedView *activeVaultFinishedWidget { nullptr };
     VaultActiveSaveKeyFileView *saveKeyFileWidget { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   //! VAULTACTIVEVIEW_H

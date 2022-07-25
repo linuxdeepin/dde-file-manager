@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 class DiscStateManager : public QObject
 {
@@ -47,6 +47,6 @@ private:
     explicit DiscStateManager(QObject *parent = nullptr);
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // DISCSTATEMANAGER_H

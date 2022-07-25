@@ -24,18 +24,13 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
 class QWidget;
 QT_END_NAMESPACE
 
-DPWORKSPACE_BEGIN_NAMESPACE
-
-using DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback;
-using DSB_FM_NAMESPACE::Workspace::ShowTopWidgetCallback;
+namespace dfmplugin_workspace {
 
 class CustomTopWidgetInterface : public QObject
 {
@@ -56,5 +51,5 @@ private:
     ShowTopWidgetCallback showTopWidgetFunc;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 #endif   // CUSTOMTOPWIDGETINTERFACE_H

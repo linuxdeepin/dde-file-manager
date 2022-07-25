@@ -36,7 +36,7 @@ class QShowEvent;
 class QWidget;
 QT_END_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class BaseDialog : public DTK_WIDGET_NAMESPACE::DAbstractDialog
 {
     Q_OBJECT
@@ -53,6 +53,6 @@ private:
     DTK_WIDGET_NAMESPACE::DTitlebar *titlebar { nullptr };
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // BASEDIALOG_H

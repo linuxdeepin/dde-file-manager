@@ -30,7 +30,7 @@
 #include <QWidget>
 #include <QFileDialog>
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class FileDialogPrivate;
 class FileDialogStatusBar;
@@ -129,9 +129,7 @@ private Q_SLOTS:
     void handleEnterPressed();
     void handleUrlChanged(const QUrl &url);
     void onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
-
     void handleRenameStartAcceptBtn(const quint64 windowID, const QUrl &url);
-
     void handleRenameEndAcceptBtn(const quint64 windowID, const QUrl &url);
 
 protected:
@@ -142,7 +140,8 @@ protected:
 private:
     void initializeUi();
     void initConnect();
-    void initEventConnect();
+    void initEventsConnect();
+    void initEventsFilter();
     void updateViewState();
     FileDialogStatusBar *statusBar() const;
     void adjustPosition(QWidget *w);
@@ -152,6 +151,6 @@ private:
     QScopedPointer<FileDialogPrivate> d;
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // FILEDIALOG_H

@@ -28,7 +28,7 @@
 #include <QWidget>
 #include <QUrl>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractBaseView
 {
@@ -57,6 +57,6 @@ protected:
     void notifySelectUrlChanged(const QList<QUrl> &urlList);
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // BASEVIEW_H

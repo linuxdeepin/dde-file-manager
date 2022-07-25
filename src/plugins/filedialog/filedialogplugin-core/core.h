@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class Core : public dpf::Plugin
 {
@@ -41,8 +41,13 @@ public:
 private slots:
     void onAllPluginsStarted();
     void bindScene(const QString &parentScene);
+    void bindSceneOnAdded(const QString &newScene);
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // CORE_H

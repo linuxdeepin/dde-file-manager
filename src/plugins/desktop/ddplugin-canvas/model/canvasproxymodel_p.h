@@ -30,7 +30,7 @@
 
 #include <QTimer>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasProxyModelPrivate : public QObject
 {
@@ -81,6 +81,6 @@ private:
 };
 
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASPROXYMODEL_P_H

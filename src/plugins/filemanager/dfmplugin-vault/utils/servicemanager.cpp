@@ -21,154 +21,20 @@
 #include "servicemanager.h"
 
 #include <mutex>
+#include <QUrl>
 
-DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 ServiceManager::ServiceManager(QObject *parent)
     : QObject(parent)
 {
 }
 
-FileEncryptService *ServiceManager::fileEncryptServiceInstance()
+ServiceManager::ExpandFieldMap ServiceManager::basicViewFieldFunc(const QUrl &url)
 {
-    static FileEncryptService *vaultService = nullptr;
-    if (vaultService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(FileEncryptService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
+    BasicExpand expandFiledMap;
+    expandFiledMap.insert("kFilePosition", qMakePair(tr("Location"), url.url()));
 
-        vaultService = ctx.service<FileEncryptService>(FileEncryptService::name());
-        if (!vaultService) {
-            qCritical() << "Failed, init vault \"sideBarService\" is empty";
-            abort();
-        }
-    }
-    return vaultService;
-}
-
-SideBarService *ServiceManager::sideBarServiceInstance()
-{
-    static SideBarService *sideBarService = nullptr;
-    if (sideBarService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(SideBarService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        sideBarService = ctx.service<SideBarService>(SideBarService::name());
-        if (!sideBarService) {
-            qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
-            abort();
-        }
-    }
-    return sideBarService;
-}
-
-WindowsService *ServiceManager::windowServiceInstance()
-{
-    static WindowsService *windowsService = nullptr;
-    if (windowsService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(WindowsService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        windowsService = ctx.service<WindowsService>(WindowsService::name());
-        if (!windowsService) {
-            qCritical() << "Failed, init windows \"sideBarService\" is empty";
-            abort();
-        }
-    }
-    return windowsService;
-}
-
-ComputerService *ServiceManager::computerServiceInstance()
-{
-    static ComputerService *computerService = nullptr;
-    if (computerService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(ComputerService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        computerService = ctx.service<ComputerService>(ComputerService::name());
-        if (!computerService) {
-            qCritical() << "Failed, init computer \"computerService\" is empty";
-            abort();
-        }
-    }
-    return computerService;
-}
-
-TitleBarService *ServiceManager::titleBarServiceInstance()
-{
-    static TitleBarService *titleBarService = nullptr;
-    if (titleBarService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(TitleBarService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        titleBarService = ctx.service<TitleBarService>(TitleBarService::name());
-        if (!titleBarService) {
-            qCritical() << "Failed, init titlebar \"titleBarService\" is empty";
-            abort();
-        }
-    }
-    return titleBarService;
-}
-
-WorkspaceService *ServiceManager::workspaceServiceInstance()
-{
-    static WorkspaceService *workspaceService = nullptr;
-    if (workspaceService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(WorkspaceService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-        if (!workspaceService) {
-            qCritical() << "Failed, init workspace \"workspaceService\" is empty";
-            abort();
-        }
-    }
-    return workspaceService;
-}
-
-FileOperationsService *ServiceManager::fileOperationsServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-}
-
-QMap<Property::BasicExpandType, Property::BasicExpand> ServiceManager::basicViewFieldFunc(const QUrl &url)
-{
-    Property::BasicExpand expandFiledMap;
-
-    expandFiledMap.insert(Property::BasicFieldExpandEnum::kFilePosition, qMakePair(tr("Location"), url.url()));
-
-    QMap<Property::BasicExpandType, Property::BasicExpand> expandMap;
-    expandMap.insert(Property::BasicExpandType::kFieldReplace, expandFiledMap);
+    ExpandFieldMap expandMap;
+    expandMap.insert("kFieldReplace", expandFiledMap);
     return expandMap;
 }

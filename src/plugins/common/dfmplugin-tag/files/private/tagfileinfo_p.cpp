@@ -22,7 +22,7 @@
 #include "tagfileinfo_p.h"
 
 DFMBASE_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagFileInfoPrivate::TagFileInfoPrivate(AbstractFileInfo *qq)
     : AbstractFileInfoPrivate(qq)

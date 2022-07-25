@@ -31,7 +31,7 @@
 #include <QStandardItem>
 #include <QMetaType>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileViewItemPrivate;
 
@@ -97,7 +97,7 @@ public:
     FileViewItem *parent { nullptr };
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewItem);
 Q_DECLARE_METATYPE(DPWORKSPACE_NAMESPACE::FileViewItem *);

@@ -26,7 +26,7 @@
 #include <QDebug>
 #include <DGuiApplicationHelper>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 static QWidget *mainWidget = nullptr;
 
 extern "C" FileType fileType(const QString &filePath)

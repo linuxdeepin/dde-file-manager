@@ -26,18 +26,13 @@
 #include "dialogs/usersharepasswordsettingdialog.h"
 #include "views/titlebarwidget.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/search/searchservice.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -45,8 +40,7 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 
-DPTITLEBAR_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
@@ -75,9 +69,7 @@ void TitleBarHelper::removeTitleBar(quint64 windowId)
 
 quint64 TitleBarHelper::windowId(QWidget *sender)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    return windowService->findWindowId(sender);
+    return FMWindowsIns.findWindowId(sender);
 }
 
 QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
@@ -85,21 +77,21 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
     QMenu *menu = new QMenu();
 
     QAction *action { new QAction(QObject::tr("New window")) };
-    action->setData(TitleBar::MenuAction::kNewWindow);
+    action->setData(MenuAction::kNewWindow);
     menu->addAction(action);
 
     menu->addSeparator();
 
     action = new QAction(QObject::tr("Connect to Server"));
-    action->setData(TitleBar::MenuAction::kConnectToServer);
+    action->setData(MenuAction::kConnectToServer);
     menu->addAction(action);
 
     action = new QAction(QObject::tr("Set share password"));
-    action->setData(TitleBar::MenuAction::kSetUserSharePassword);
+    action->setData(MenuAction::kSetUserSharePassword);
     menu->addAction(action);
 
     action = new QAction(QObject::tr("Settings"));
-    action->setData(TitleBar::MenuAction::kSettings);
+    action->setData(MenuAction::kSettings);
     menu->addAction(action);
 
     QObject::connect(menu, &QMenu::triggered, [id](QAction *act) {
@@ -110,11 +102,6 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
     });
 
     return menu;
-}
-
-bool TitleBarHelper::crumbSupportedUrl(const QUrl &url)
-{
-    return url.scheme() == Global::kFile;
 }
 
 QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
@@ -133,18 +120,29 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
         CrumbData data { QUrl::fromLocalFile(kHomePath), getDisplayName("Home"), iconName };
         list.append(data);
     } else {
-        QStorageInfo storageInfo(path);
-        if (storageInfo.isValid()) {
-            QString iconName = QStringLiteral("drive-harddisk-symbolic");
-            prefixPath = storageInfo.rootPath();
-            // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
+        const QString &&iconName = QStringLiteral("drive-harddisk-symbolic");
 
-            if (prefixPath == "/") {
-                CrumbData data(UrlRoute::rootUrl(Global::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
-                list.append(data);
-            } else {
-                CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
-                list.append(data);
+        // for gvfs files do not construct QStorageInfo object which costs a lots time.
+        QRegularExpression rex(Global::Regex::kGvfsRoot);
+        auto match = rex.match(path);
+        if (match.hasMatch()) {
+            prefixPath = match.captured();
+            CrumbData data { QUrl::fromLocalFile(prefixPath), "", iconName };
+            list.append(data);
+        } else {
+            QStorageInfo storageInfo(path);
+            if (storageInfo.isValid()) {
+
+                prefixPath = storageInfo.rootPath();
+                // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
+
+                if (prefixPath == "/") {
+                    CrumbData data(UrlRoute::rootUrl(Global::Scheme::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
+                    list.append(data);
+                } else {
+                    CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
+                    list.append(data);
+                }
             }
         }
     }
@@ -173,20 +171,22 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
     return list;
 }
 
+QList<CrumbData> TitleBarHelper::tansToCrumbDataList(const QList<QVariantMap> &mapGroup)
+{
+    QList<CrumbData> group;
+    for (auto &&map : mapGroup) {
+        const auto &url { map[CustomKey::kUrl].toUrl() };
+        const auto &text { map[CustomKey::kDisplayText].toString() };
+        const auto &icon { map[CustomKey::kIconName].toString() };
+        group.push_back(CrumbData { url, text, icon });
+    }
+    return group;
+}
+
 bool TitleBarHelper::displayIcon()
 {
     QGSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     return settings.get("contextMenuIcons").toBool();
-}
-
-bool TitleBarHelper::tabAddable(quint64 windowId)
-{
-    auto &ctx = dpfInstance.serviceContext();
-    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-    if (workspaceService)
-        return workspaceService->tabAddable(windowId);
-
-    return false;
 }
 
 void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *isSearch)
@@ -218,8 +218,8 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         TitleBarEventCaller::sendCd(sender, url);
     } else {
         if (currentUrl.isValid()) {
-            auto searchInfo = SearchService::service()->findCustomSearchInfo(currentUrl.scheme());
-            if (searchInfo.isDisableSearch) {
+            bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();
+            if (isDisableSearch) {
                 qInfo() << "search : current directory disable to search! " << currentUrl;
                 return;
             }
@@ -231,40 +231,9 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
     }
 }
 
-bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
-{
-    QString &&scheme = url.scheme();
-    if (scheme != Global::kSmb && scheme != Global::kFtp && scheme != Global::kSFtp)
-        return false;
-
-    // TODO(xust) see if i can find any other way to handle the choise (browse the smb shares and mount the samba directly)
-    if (scheme == Global::kSmb && url.path() == "/")
-        return false;
-
-    if (url.host().isEmpty()) {
-        DialogManagerInstance->showErrorDialog("", QObject::tr("Mounting device error"));
-        return true;
-    }
-
-    DeviceManager::instance()->mountNetworkDeviceAsync(url.toString(), [sender](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
-        if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
-            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
-        } else {
-            QUrl u;
-            u.setScheme(Global::kFile);
-            u.setPath(mntPath);
-            TitleBarEventCaller::sendCd(sender, u);
-        }
-    });
-
-    return true;
-}
-
 void TitleBarHelper::showSettingsDialog(quint64 windowId)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(windowId);
+    auto window = FMWindowsIns.findWindowById(windowId);
 
     if (!window) {
         qWarning() << "Invalid window id: " << windowId;
@@ -276,9 +245,7 @@ void TitleBarHelper::showSettingsDialog(quint64 windowId)
 
 void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(windowId);
+    auto window = FMWindowsIns.findWindowById(windowId);
 
     if (!window || window->property("ConnectToServerDialogShown").toBool())
         return;
@@ -295,9 +262,7 @@ void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
 
 void TitleBarHelper::showUserSharePasswordSettingDialog(quint64 windowId)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(windowId);
+    auto window = FMWindowsIns.findWindowById(windowId);
     if (!window || window->property("UserSharePwdSettingDialogShown").toBool()) {
         return;
     }
@@ -320,17 +285,17 @@ QMutex &TitleBarHelper::mutex()
 
 void TitleBarHelper::handleSettingMenuTriggered(quint64 windowId, int action)
 {
-    switch (static_cast<TitleBar::MenuAction>(action)) {
-    case TitleBar::MenuAction::kNewWindow:
+    switch (static_cast<MenuAction>(action)) {
+    case MenuAction::kNewWindow:
         TitleBarEventCaller::sendOpenWindow(QUrl());
         break;
-    case TitleBar::MenuAction::kSettings:
+    case MenuAction::kSettings:
         TitleBarHelper::showSettingsDialog(windowId);
         break;
-    case TitleBar::MenuAction::kConnectToServer:
+    case MenuAction::kConnectToServer:
         TitleBarHelper::showConnectToServerDialog(windowId);
         break;
-    case TitleBar::MenuAction::kSetUserSharePassword:
+    case MenuAction::kSetUserSharePassword:
         TitleBarHelper::showUserSharePasswordSettingDialog(windowId);
         break;
     }

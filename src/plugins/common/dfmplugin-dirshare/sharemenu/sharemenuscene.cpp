@@ -22,21 +22,18 @@
 */
 #include "sharemenuscene.h"
 #include "private/sharemenuscene_p.h"
-#include "private/shareutils.h"
-
-#include "services/common/menu/menu_defines.h"
-#include "services/common/usershare/usershareservice.h"
-#include "services/common/propertydialog/property_defines.h"
+#include "utils/usersharehelper.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_menu_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 #include <QFileInfo>
 #include <QMenu>
 
-DPDIRSHARE_USE_NAMESPACE
+using namespace dfmplugin_dirshare;
 
 ShareMenuScenePrivate::ShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
@@ -46,7 +43,7 @@ ShareMenuScenePrivate::ShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
 void ShareMenuScenePrivate::addShare(const QUrl &url)
 {
     QList<QUrl> urls { url };
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 ShareMenuScene::ShareMenuScene(QObject *parent)
@@ -65,7 +62,6 @@ QString ShareMenuScene::name() const
 
 bool ShareMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
@@ -77,7 +73,7 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
         return false;
 
     QUrl u(d->selectFiles.first());
-    if (u.scheme() != Global::kFile)
+    if (u.scheme() != Global::Scheme::kFile)
         return false;
 
     auto info = InfoFactory::create<AbstractFileInfo>(u, true);
@@ -97,13 +93,13 @@ bool ShareMenuScene::create(QMenu *parent)
 
     auto info = InfoFactory::create<AbstractFileInfo>(d->selectFiles.first(), true);
     if (info->isDir()) {
-        DSC_USE_NAMESPACE
-        if (UserShareService::service()->isSharedPath(info->absoluteFilePath())) {
+        bool shared = UserShareHelperInstance->isShared(info->absoluteFilePath());
+        if (shared) {
             auto act = parent->addAction(d->predicateName[ShareActionId::kActRemoveShareKey]);
             act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActRemoveShareKey);
             d->predicateAction.insert(ShareActionId::kActRemoveShareKey, act);
         } else {
-            if (ShareUtils::canShare(info)) {
+            if (UserShareHelper::canShare(info)) {
                 auto act = parent->addAction(d->predicateName[ShareActionId::kActAddShareKey]);
                 act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActAddShareKey);
                 d->predicateAction.insert(ShareActionId::kActAddShareKey, act);
@@ -116,7 +112,6 @@ bool ShareMenuScene::create(QMenu *parent)
 
 void ShareMenuScene::updateState(QMenu *parent)
 {
-    DSC_USE_NAMESPACE
     auto actLst = parent->actions();
     QAction *shareOrUnshare = nullptr;
     QAction *symlinkAct = nullptr;
@@ -147,19 +142,18 @@ bool ShareMenuScene::triggered(QAction *action)
         return false;
 
     QUrl u = d->selectFiles.first();
-    if (u.scheme() != Global::kFile)
+    if (u.scheme() != Global::Scheme::kFile)
         return false;
 
     if (!QFileInfo(u.path()).isDir())
         return false;
 
-    DSC_USE_NAMESPACE
     QString key = action->property(ActionPropertyKey::kActionID).toString();
     if (key == ShareActionId::kActAddShareKey) {
         d->addShare(u);
         return true;
     } else if (key == ShareActionId::kActRemoveShareKey) {
-        UserShareService::service()->removeShare(u.path());
+        UserShareHelperInstance->removeShareByPath(u.path());
         return true;
     }
 

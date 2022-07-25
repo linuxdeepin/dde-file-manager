@@ -32,6 +32,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(
     ${PROJECT_NAME}
+    DFM::base
     DFM::framework
     Qt5::Widgets
     Qt5::DBus

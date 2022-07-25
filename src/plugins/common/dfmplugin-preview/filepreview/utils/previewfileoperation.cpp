@@ -22,14 +22,14 @@
 
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QList>
 
 #include <QUrl>
 
 DFMBASE_USE_NAMESPACE
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 PreviewFileOperation::PreviewFileOperation(QObject *parent)
     : QObject(parent)
 {
@@ -39,5 +39,5 @@ void PreviewFileOperation::openFileHandle(quint64 winID, const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, winID, urls);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, winID, urls);
 }

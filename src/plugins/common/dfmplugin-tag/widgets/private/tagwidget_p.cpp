@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagWidgetPrivate::TagWidgetPrivate(TagWidget *qq, const QUrl &url)
     : url(url),

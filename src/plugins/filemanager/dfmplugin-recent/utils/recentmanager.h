@@ -25,16 +25,11 @@
 #include "dfmplugin_recent_global.h"
 #include "files/recentfileinfo.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-#include "services/common/propertydialog/property_defines.h"
-
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QUrl>
 #include <QDebug>
@@ -45,13 +40,14 @@
 #include <QThread>
 #include <QTimer>
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentManager final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(RecentManager)
-    using ExpandFieldMap = QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand>;
+    using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
+    using ExpandFieldMap = QMap<QString, BasicExpand>;
 
 public:
     static RecentManager *instance();
@@ -85,6 +81,8 @@ public:
     bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
     bool detailViewIcon(const QUrl &url, QString *iconName);
+    bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
 signals:
     void asyncHandleFileChanged();
@@ -92,21 +90,14 @@ signals:
 private:
     explicit RecentManager(QObject *parent = nullptr);
     ~RecentManager() override;
+
     void init();
+    void removeRecent(const QList<QUrl> &urls);
 
 private slots:
     void updateRecent();
     void onUpdateRecentFileInfo(const QUrl &url, qint64 readTime);
     void onDeleteExistRecentUrls(QList<QUrl> &urls);
-
-public:
-    // services instance
-    static DSB_FM_NAMESPACE::WindowsService *winServIns();
-    static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
-    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
-    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
 
 private:
     QTimer updateRecentTimer;
@@ -114,6 +105,5 @@ private:
     AbstractFileWatcherPointer watcher;
     QMap<QUrl, AbstractFileInfoPointer> recentNodes;
 };
-
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTMANAGER_H

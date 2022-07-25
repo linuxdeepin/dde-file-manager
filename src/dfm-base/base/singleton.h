@@ -24,7 +24,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 /**
  * \brief The class GC
@@ -71,6 +71,6 @@ public:
     }
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // SINGLETION_H

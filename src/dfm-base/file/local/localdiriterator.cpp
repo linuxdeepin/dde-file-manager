@@ -30,7 +30,7 @@
 #include <dfm-io/core/denumerator.h>
 
 USING_IO_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
                                                  QDir::Filters filters, QDirIterator::IteratorFlags flags,

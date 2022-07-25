@@ -30,7 +30,7 @@
 #include <QObject>
 
 class QUrl;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileWatcher : public AbstractFileWatcher
 {
     Q_OBJECT
@@ -46,6 +46,6 @@ public:
     //debug function
     static QStringList getMonitorFiles();
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // LOCALFILEWATCHER_H

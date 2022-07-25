@@ -27,9 +27,7 @@
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-class QMenu;
-
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class EntryFileInfoPrivate;
 class EntryFileInfo : public AbstractFileInfo
@@ -70,7 +68,6 @@ public:
     bool showUsedSize() const;
     bool showProgress() const;
     QUrl targetUrl() const;
-    QMenu *createMenu() const;
     bool isAccessable() const;
     QString description() const;
     QVariant extraProperty(const QString &property) const;
@@ -90,7 +87,7 @@ private:
     EntryFileInfoPrivate *d = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 typedef QSharedPointer<DFMBASE_NAMESPACE::EntryFileInfo> DFMEntryFileInfoPointer;
 Q_DECLARE_METATYPE(DFMEntryFileInfoPointer)

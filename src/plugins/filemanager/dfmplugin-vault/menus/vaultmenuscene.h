@@ -25,7 +25,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 
 class VaultMenuSceneCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -52,5 +52,5 @@ public:
 private:
     VaultMenuScenePrivate *const d { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTMENUSCENE_H

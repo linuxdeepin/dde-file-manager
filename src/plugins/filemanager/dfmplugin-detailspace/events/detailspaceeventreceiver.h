@@ -25,11 +25,9 @@
 
 #include "dfmplugin_detailspace_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
-
 #include <QObject>
 
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 
 class DetailSpaceEventReceiver final : public QObject
 {
@@ -37,19 +35,24 @@ class DetailSpaceEventReceiver final : public QObject
     Q_DISABLE_COPY(DetailSpaceEventReceiver)
 
 public:
-    static DetailSpaceEventReceiver *instance();
+    static DetailSpaceEventReceiver &instance();
 
     void connectService();
 
 public slots:
     void handleTileBarShowDetailView(quint64 windowId, bool checked);
-
-    void setSelect(quint64 windowId, const QUrl &url);
+    void handleSetSelect(quint64 windowId, const QUrl &url);
+    bool handleViewExtensionRegister(CustomViewExtensionView view, int index);
+    void handleViewExtensionUnregister(int index);
+    bool handleBasicViewExtensionRegister(const QString &scheme, BasicViewFieldFunc func);
+    void handleBasicViewExtensionUnregister(const QString &scheme);
+    bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
+    void handleBasicFiledFilterRemove(const QString &scheme);
 
 private:
     explicit DetailSpaceEventReceiver(QObject *parent = nullptr);
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 
 #endif   // DETAILSPACEEVENTRECEIVER_H

@@ -2,7 +2,7 @@
 
 #include <QPainter>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 
 CompleterViewDelegate::CompleterViewDelegate(QObject *parent)
     : QStyledItemDelegate(parent)

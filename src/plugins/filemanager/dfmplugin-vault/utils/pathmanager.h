@@ -23,7 +23,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <QObject>
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class PathManager : public QObject
 {
     Q_OBJECT
@@ -41,5 +41,5 @@ signals:
 
 public slots:
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // PATHMANAGER_H

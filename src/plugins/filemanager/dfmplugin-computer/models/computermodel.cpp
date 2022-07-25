@@ -26,16 +26,17 @@
 #include "controller/computercontroller.h"
 #include "fileentity/blockentryfileentity.h"
 
-#include "services/filemanager/sidebar/sidebarservice.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/device/deviceutils.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QVector>
 #include <QTimer>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 using namespace GlobalServerDefines;
 
 ComputerModel::ComputerModel(QObject *parent)
@@ -94,8 +95,11 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
         QString &&itemName = item->info->displayName();
         if (itemName != item->itemName) {
-            DSB_FM_USE_NAMESPACE;
-            SideBarService::service()->updateItemName(item->url, itemName, item->info->renamable());
+            QVariantMap map {
+                { "Property_Key_DisplayName", itemName },
+                { "Property_Key_Editable", item->info->renamable() }
+            };
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item->info->url(), map);
             item->itemName = itemName;
         }
         return itemName;
@@ -412,9 +416,13 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
     }
     view->update(this->index(pos, 0));
 
-    DSB_FM_USE_NAMESPACE
-    if (key == DeviceProperty::kIdLabel && !val.toString().isEmpty())
-        SideBarService::service()->updateItemName(url, val.toString(), true);
+    if (key == DeviceProperty::kIdLabel && !val.toString().isEmpty()) {
+        QVariantMap map {
+            { "Property_Key_DisplayName", val.toString() },
+            { "Property_Key_Editable", true }
+        };
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
+    }
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

@@ -21,7 +21,7 @@
  */
 #include "abstractbackground.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 AbstractBackground::AbstractBackground(const QString &screenName, QWidget *parent)
     : QWidget(parent)
@@ -65,4 +65,4 @@ void AbstractBackground::updateDisplay()
 
 }
 
-DFMBASE_END_NAMESPACE
+}

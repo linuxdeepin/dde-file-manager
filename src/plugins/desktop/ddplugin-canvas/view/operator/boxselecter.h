@@ -29,7 +29,7 @@
 
 class QItemSelection;
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class BoxSelecter : public QObject
 {
@@ -70,6 +70,6 @@ private:
 
 #define BoxSelIns DDP_CANVAS_NAMESPACE::BoxSelecter::instance()
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // BOXSELECTER_H

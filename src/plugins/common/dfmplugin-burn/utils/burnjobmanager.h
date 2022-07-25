@@ -29,7 +29,7 @@
 
 #include <QObject>
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 class AbstractBurnJob;
 class BurnJobManager : public QObject
@@ -64,6 +64,6 @@ private:
     explicit BurnJobManager(QObject *parent = nullptr);
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // BURNJOBMANAGER_H

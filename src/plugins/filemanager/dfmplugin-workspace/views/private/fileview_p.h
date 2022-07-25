@@ -39,7 +39,7 @@ inline constexpr int kListViewMinimumWidth { 80 };
 inline constexpr int kListViewDefaultWidth { 120 };
 }   // namespace GlobalPrivate
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class ShortcutHelper;
 class FileViewHelper;
@@ -73,7 +73,7 @@ class FileViewPrivate
     QList<FileView::SelectionMode> enabledSelectionModes;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int currentIconSizeLevel = 1;
-    DFMGLOBAL_NAMESPACE::ItemRoles currentSortRole = DFMGLOBAL_NAMESPACE::kItemNameRole;
+    DFMGLOBAL_NAMESPACE::ItemRoles currentSortRole = DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole;
     Qt::SortOrder currentSortOrder = Qt::SortOrder::AscendingOrder;
 
     FileView::RandeIndex visibleIndexRande;
@@ -105,6 +105,6 @@ class FileViewPrivate
     void pureResizeEvent(QResizeEvent *event);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEW_P_H

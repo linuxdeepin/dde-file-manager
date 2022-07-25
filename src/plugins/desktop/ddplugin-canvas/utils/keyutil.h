@@ -26,7 +26,7 @@
 #include <QWidget>
 #include <QApplication>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 inline bool isCtrlPressed() {
     return qApp->keyboardModifiers() == Qt::ControlModifier;
@@ -44,6 +44,6 @@ inline bool isAltPressed() {
     return qApp->keyboardModifiers() == Qt::AltModifier;
 }
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // KEYUTILS_H

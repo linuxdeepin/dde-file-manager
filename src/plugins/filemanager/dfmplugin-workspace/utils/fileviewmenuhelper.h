@@ -22,17 +22,12 @@
 #ifndef FILEVIEWMENUHELPER_H
 #define FILEVIEWMENUHELPER_H
 
-#include "dfm_common_service_global.h"
 #include "dfmplugin_workspace_global.h"
 
 #include <QObject>
 #include <QString>
 
-DSC_BEGIN_NAMESPACE
-class MenuService;
-DSC_END_NAMESPACE
-
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileView;
 class FileViewMenuHelper : public QObject
@@ -52,6 +47,6 @@ private:
     FileView *view { nullptr };
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEWMENUHELPER_H

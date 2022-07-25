@@ -24,19 +24,19 @@
 #include "utils/detailspacehelper.h"
 #include "events/detailspaceeventreceiver.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-DPDETAILSPACE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+using namespace dfmplugin_detailspace;
+DFMBASE_USE_NAMESPACE
 
 void DetailSpace::initialize()
 {
-    connect(WindowsService::service(), &WindowsService::windowClosed, this, &DetailSpace::onWindowClosed, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &DetailSpace::onWindowClosed, Qt::DirectConnection);
+    DetailSpaceEventReceiver::instance().connectService();
 }
 
 bool DetailSpace::start()
 {
-    DetailSpaceEventReceiver::instance()->connectService();
     return true;
 }
 

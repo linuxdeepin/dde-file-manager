@@ -25,7 +25,7 @@
 #include <QObject>
 #include <QModelIndex>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class ClickSelecter : public QObject
 {
@@ -52,5 +52,5 @@ protected:
     QPersistentModelIndex lastPressedIndex;
     QPersistentModelIndex toggleIndex;
 };
-DDP_CANVAS_END_NAMESPACE
+}
 #endif // CLICKSELECTER_H

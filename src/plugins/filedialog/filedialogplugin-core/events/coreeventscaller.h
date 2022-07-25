@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QAbstractItemView>
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class CoreEventsCaller
 {
@@ -41,8 +41,9 @@ public:
     static void setSelectionMode(QWidget *sender, const QAbstractItemView::SelectionMode mode);
     static void setEnabledSelectionModes(QWidget *sender, const QList<QAbstractItemView::SelectionMode> &modes);
     static void setMenuDisbaled();
+    static QList<QUrl> sendGetSelectedFiles(const quint64 windowID);
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // COREEVENTSCALLER_H

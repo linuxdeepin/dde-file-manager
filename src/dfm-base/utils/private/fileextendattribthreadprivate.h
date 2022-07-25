@@ -27,7 +27,7 @@
 #include <QList>
 #include <QQueue>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class FileExtendAttribThread;
 class FileExtendAttribThreadPrivate
 {
@@ -45,5 +45,5 @@ private:
     QQueue<QUrl> dirList {};
     int state { 0 };
 };
-DFMBASE_END_NAMESPACE
+}
 #endif   //FILEEXTENDATTRIBTHREADPRIVATE_H

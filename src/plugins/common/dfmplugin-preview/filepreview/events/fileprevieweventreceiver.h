@@ -24,7 +24,7 @@
 
 #include <QObject>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class FilePreviewEventReceiver : public QObject
 {
     Q_OBJECT
@@ -39,5 +39,5 @@ public:
 public slots:
     void showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl);
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif

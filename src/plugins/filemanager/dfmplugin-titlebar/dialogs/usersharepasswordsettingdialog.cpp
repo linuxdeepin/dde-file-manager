@@ -22,9 +22,9 @@
 */
 #include "usersharepasswordsettingdialog.h"
 
-#include "services/common/usershare/usershareservice.h"
-
 #include "dfm-base/utils/windowutils.h"
+
+#include <dfm-framework/event/event.h>
 
 #include <QDebug>
 #include <QProcess>
@@ -34,9 +34,8 @@
 #include <QWindow>
 
 DFMBASE_USE_NAMESPACE
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent)
     : DDialog(parent)
@@ -86,8 +85,8 @@ void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
             return;
         }
 
-        QString userName { UserShareService::service()->getCurrentUserName() };
-        UserShareService::service()->setSharePassword(userName, password);
+        QString userName = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_CurrentUserName").toString();
+        dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_SetSmbPasswd", userName, password);
     }
     close();
 }

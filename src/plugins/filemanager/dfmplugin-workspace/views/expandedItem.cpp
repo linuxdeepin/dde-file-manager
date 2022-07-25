@@ -29,7 +29,7 @@
 
 #include <cmath>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 ExpandedItem::ExpandedItem(dfmplugin_workspace::IconItemDelegate *d, QWidget *parent)
     : QWidget(parent),

@@ -31,7 +31,7 @@
 class QPushButton;
 class QGridLayout;
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 
 class WrapperWidget : public QWidget
 {
@@ -120,6 +120,6 @@ private:
     QPropertyAnimation *downAnim = nullptr;
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 
 #endif // WALLPAPERITEM_H

@@ -23,25 +23,24 @@
 #include "utils/searchhelper.h"
 
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
-#include "services/common/menu/menu_defines.h"
-#include "services/common/menu/menuservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <DDesktopServices>
 
 #include <QProcess>
+#include <QMenu>
 
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPSEARCH_USE_NAMESPACE
+using namespace dfmplugin_search;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 static constexpr char kWorkspaceMenuSceneName[] = "WorkspaceMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
+static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
 
 AbstractMenuScene *SearchMenuCreator::create()
 {
@@ -110,6 +109,19 @@ bool SearchMenuScenePrivate::openFileLocation(const QString &path)
     return DDesktopServices::showFileItem(path);
 }
 
+void SearchMenuScenePrivate::disableSubScene(AbstractMenuScene *scene, const QString &sceneName)
+{
+    for (const auto s : scene->subscene()) {
+        if (sceneName == s->name()) {
+            scene->removeSubscene(s);
+            delete s;
+            return;
+        } else {
+            disableSubScene(s, sceneName);
+        }
+    }
+}
+
 SearchMenuScene::SearchMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new SearchMenuScenePrivate(this))
@@ -142,16 +154,16 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     QVariantHash tmpParams = params;
     QList<AbstractMenuScene *> currentScene;
     if (d->isEmptyArea) {
-        if (auto sortAndDisplayScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
+        if (auto sortAndDisplayScene = dfmplugin_menu_util::menuSceneCreateScene(kSortAndDisplayMenuSceneName))
             currentScene.append(sortAndDisplayScene);
     } else {
         const auto &parentUrl = SearchHelper::searchTargetUrl(d->currentDir);
-        if (Global::kFile == parentUrl.scheme()) {
-            if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
+        if (Global::Scheme::kFile == parentUrl.scheme()) {
+            if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
                 currentScene.append(workspaceScene);
         } else {
-            auto parentSceneName = WorkspaceService::service()->findMenuScene(parentUrl.scheme());
-            if (auto scene = MenuService::service()->createScene(parentSceneName))
+            auto parentSceneName = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", parentUrl.scheme()).toString();
+            if (auto scene = dfmplugin_menu_util::menuSceneCreateScene(parentSceneName))
                 currentScene.append(scene);
 
             const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
@@ -164,7 +176,9 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     setSubscene(currentScene);
 
     // 初始化所有子场景
-    return AbstractMenuScene::initialize(tmpParams);
+    bool ret = AbstractMenuScene::initialize(params);
+    d->disableSubScene(this, kExtendMenuSceneName);
+    return ret;
 }
 
 AbstractMenuScene *SearchMenuScene::scene(QAction *action) const
@@ -219,7 +233,7 @@ bool SearchMenuScene::triggered(QAction *action)
 
         // select all
         if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_SelectAll", d->windowId);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectAll", d->windowId);
             return true;
         }
     }

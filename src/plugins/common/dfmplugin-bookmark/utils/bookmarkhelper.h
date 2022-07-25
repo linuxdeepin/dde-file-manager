@@ -23,14 +23,9 @@
 
 #include "dfmplugin_bookmark_global.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/menu/menuservice.h"
-
 #include <QObject>
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookMarkHelper : public QObject
 {
@@ -43,16 +38,10 @@ public:
     QUrl rootUrl();
     QIcon icon();
 
-    // services instance
-    static DSB_FM_NAMESPACE::WindowsService *winServIns();
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
-    static DSC_NAMESPACE::MenuService *menuServIns();
-
 private:
     explicit BookMarkHelper(QObject *parent = nullptr);
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
-#endif // BOOKMARKHELPER_H
+#endif   // BOOKMARKHELPER_H

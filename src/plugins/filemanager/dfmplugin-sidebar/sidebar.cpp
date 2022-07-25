@@ -24,34 +24,23 @@
 #include "views/sidebarwidget.h"
 #include "views/sidebaritem.h"
 #include "utils/sidebarhelper.h"
-#include "events/sidebarunicastreceiver.h"
 #include "events/sidebareventreceiver.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/standardpaths.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-using DSB_FM_NAMESPACE::WindowsService;
-
-namespace GlobalPrivate {
-static WindowsService *windowService { nullptr };
-}   // namespace GlobalPrivate
-
 void SideBar::initialize()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "SideBar", "WindowService not loaded");
-    GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
-    connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &SideBar::onWindowOpened, Qt::DirectConnection);
-    connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &SideBar::onWindowClosed, Qt::DirectConnection);
-    SideBarUnicastReceiver::instance()->connectService();
-    SideBarEventReceiver::instance()->connectService();
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SideBar::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &SideBar::onWindowClosed, Qt::DirectConnection);
+    SideBarEventReceiver::instance()->bindEvents();
 }
 
 bool SideBar::start()
@@ -66,7 +55,7 @@ dpf::Plugin::ShutdownFlag SideBar::stop()
 
 void SideBar::onWindowOpened(quint64 windId)
 {
-    auto window = GlobalPrivate::windowService->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     auto sidebar = new SideBarWidget;
     SideBarHelper::addSideBar(windId, sidebar);

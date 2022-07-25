@@ -30,7 +30,7 @@
 #include <QSettings>
 #include <QDebug>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 class DisplayConfigGlobal : public DisplayConfig{};
 Q_GLOBAL_STATIC(DisplayConfigGlobal, displayConfig)

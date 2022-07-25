@@ -31,7 +31,7 @@ QT_BEGIN_NAMESPACE
 class QStyleOptionViewItem;
 QT_END_NAMESPACE
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 extern const char *const kEidtorShowSuffix;
 class BaseItemDelegate;
 class FileViewModel;
@@ -82,6 +82,6 @@ private:
     QTimer *keyboardSearchTimer;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEWHELPER_H

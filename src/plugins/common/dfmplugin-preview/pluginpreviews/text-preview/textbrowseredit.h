@@ -26,7 +26,7 @@
 
 #include <vector>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class TextBrowserEdit : public QPlainTextEdit
 {
     Q_OBJECT
@@ -54,5 +54,5 @@ private:
 
     int lastPosition { 0 };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // TEXTBROWSER_H

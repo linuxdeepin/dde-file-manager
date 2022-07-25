@@ -1,0 +1,35 @@
+{
+    "associations":[
+        {
+            "application/x-zerosize": "text/plain"
+        },
+        {
+            "text/markdown": "text/plain"
+        },
+        {
+            "application/json": "text/plain"
+        },
+        {
+            "text/x-python": "text/plain"
+        },
+        {
+            "text/css": "text/plain"
+        },
+        {
+            "text/x-go": "text/plain"
+        },
+        {
+            "application/javascript": "text/plain"
+        },
+        {
+            "application/vnd.coffeescript": "text/plain"
+        },
+        {
+            "text/x-qml": "text/plain"
+        },
+        {
+            "text/x-log": "text/plain"
+        }
+
+    ]
+}

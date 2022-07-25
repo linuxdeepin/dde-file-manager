@@ -24,7 +24,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <DDialog>
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultPageBase : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
@@ -34,5 +34,5 @@ public:
 protected:
     QWidget *wndptr { nullptr };   //! current window pointer.
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   //VAULTPAGEBASE_H

@@ -40,8 +40,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Svg
     DFM::base
     DFM::framework
-    DFMSERVICE::common
-    DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
 )
 
@@ -50,5 +48,5 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_DIR}
+    ${DFM_PLUGIN_FILEMANAGER_EDGE_DIR}
 )

@@ -42,7 +42,7 @@
 #include <QMutexLocker>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 BrowserPage::BrowserPage(SheetBrowser *parent, int index, DocSheet *sheet)
     : QGraphicsItem(), docSheet(sheet), sheetBrowserParent(parent), currentIndex(index)
 {

@@ -30,7 +30,7 @@
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileViewItem::FileViewItem()
     : d(new FileViewItemPrivate(this))
@@ -66,7 +66,7 @@ FileViewItem::~FileViewItem()
 
 FileViewItem &FileViewItem::operator=(const FileViewItem &other)
 {
-    setData(other.data(kItemNameRole), kItemNameRole);
+    setData(other.data(kItemFileDisplayNameRole), kItemFileDisplayNameRole);
     setData(other.data(kItemIconRole), kItemIconRole);
     setData(other.data(kItemEditRole), kItemEditRole);
     setData(other.data(kItemToolTipRole), kItemToolTipRole);
@@ -120,8 +120,10 @@ void FileViewItem::setUrl(const QUrl url)
     if (!d->fileinfo)
         abort();
 
-    d->fileinfo->refresh();
-    setData(QVariant(d->fileinfo->fileName()), kItemNameRole);
+    // refresh for GVFS files cost huge time.
+    if (!url.path().contains(QRegularExpression(Global::Regex::kGvfsRoot)))
+        d->fileinfo->refresh();
+    setData(QVariant(d->fileinfo->fileName()), kItemFileDisplayNameRole);
 }
 
 AbstractFileInfoPointer FileViewItem::fileInfo() const

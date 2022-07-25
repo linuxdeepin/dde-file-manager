@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QPushButton>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class FilePreviewDialogStatusBar : public QFrame
 {
     Q_OBJECT
@@ -46,5 +46,5 @@ private:
     QPushButton *nextBtn { nullptr };
     QPushButton *openBtn { nullptr };
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif   // FILEPREVIEWDIALOGSTATUSBAR_H

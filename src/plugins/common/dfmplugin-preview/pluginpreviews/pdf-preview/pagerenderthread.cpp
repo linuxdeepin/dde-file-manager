@@ -31,7 +31,7 @@
 #include <QMetaType>
 #include <QFileInfo>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 PageRenderThread *PageRenderThread::pageRenderThread = nullptr;   //由于pdfium不支持多线程，暂时单线程进行
 
 bool PageRenderThread::quitForever = false;

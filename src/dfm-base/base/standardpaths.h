@@ -29,7 +29,7 @@
 class QUrl;
 class QString;
 class QStandardPaths;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class StandardPaths
 {
 public:
@@ -81,6 +81,6 @@ public:
 private:
     StandardPaths();
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // STANDARDPATHS_H

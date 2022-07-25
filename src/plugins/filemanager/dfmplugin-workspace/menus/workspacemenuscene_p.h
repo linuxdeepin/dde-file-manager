@@ -25,18 +25,18 @@
 #include "interfaces/private/abstractmenuscene_p.h"
 #include "workspacemenu_defines.h"
 
-#include "services/common/dfm_common_service_global.h"
-#include "services/common/menu/menuservice.h"
-#include "services/common/menu/menu_defines.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QGSettings>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileView;
 class WorkspaceMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
 public:
     explicit WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq);
 
@@ -105,12 +105,10 @@ public:
 
 public:
     FileView *view = nullptr;
-    DSC_NAMESPACE::MenuService *menuServer = nullptr;
-
 private:
     WorkspaceMenuScene *q;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACEMENUSCENE_P_H

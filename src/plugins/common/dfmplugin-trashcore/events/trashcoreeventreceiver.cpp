@@ -25,14 +25,14 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDebug>
 #include <QUrl>
 
 #include <functional>
 
-DPTRASHCORE_USE_NAMESPACE
+using namespace dfmplugin_trashcore;
 DFMBASE_USE_NAMESPACE
 
 TrashCoreEventReceiver::TrashCoreEventReceiver(QObject *parent)
@@ -51,5 +51,5 @@ void TrashCoreEventReceiver::handleEmptyTrash(const quint64 windowId)
     QUrl url = TrashCoreHelper::toLocalFile(TrashCoreHelper::rootUrl());
     QList<QUrl> urls;
     urls.append(std::move(url));
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash, windowId, urls, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash, windowId, urls, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
 }

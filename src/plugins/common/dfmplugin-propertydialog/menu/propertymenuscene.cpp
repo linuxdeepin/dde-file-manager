@@ -21,23 +21,22 @@
 #include "propertymenuscene.h"
 #include "propertymenuscene_p.h"
 
-#include "services/common/menu/menu_defines.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
-#include "services/common/propertydialog/property_defines.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/desktopfileinfo.h>
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/utils/properties.h>
-#include <dfm-framework/framework.h>
+
+#include <dfm-framework/event/event.h>
 
 #include <QMenu>
 #include <QVariant>
 
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 AbstractMenuScene *PropertyMenuCreator::create()
 {
@@ -159,8 +158,7 @@ bool PropertyMenuScene::triggered(QAction *action)
 
     QString id = d->predicateAction.key(action);
     if (id == PropertyActionId::kProperty) {
-        dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
-                                              d->selectFiles);
+        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", d->selectFiles);
     }
 
     return AbstractMenuScene::triggered(action);

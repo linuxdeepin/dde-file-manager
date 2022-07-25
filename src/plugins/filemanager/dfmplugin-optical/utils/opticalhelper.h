@@ -25,12 +25,7 @@
 
 #include "dfmplugin_optical_global.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-#include "services/common/delegate/delegateservice.h"
-#include "services/common/menu/menuservice.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <QIcon>
 #include <QRegularExpression>
@@ -39,11 +34,15 @@ inline constexpr char kDiscburnStaging[] { "discburn" };
 inline constexpr char kBurnSegOndisc[] { "disc_files" };
 inline constexpr char kBurnSegStaging[] { "staging_files" };
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
-class OpticalHelper
+class OpticalHelper : public QObject
 {
+    Q_DISABLE_COPY(OpticalHelper)
 public:
+    static OpticalHelper *instance();
+
+    static QString scheme();
     static QIcon icon();
     static QString iconString();
     static QUrl localStagingRoot();
@@ -61,18 +60,15 @@ public:
     static void createStagingFolder(const QString &path);
     static bool isDupFileNameInPath(const QString &path, const QUrl &url);
 
-    // services instance
-    static DSB_FM_NAMESPACE::WindowsService *winServIns();
-    static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
-    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
-    static DSC_NAMESPACE::DelegateService *dlgateServIns();
-    static DSC_NAMESPACE::MenuService *menuServIns();
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+    bool isTransparent(const QUrl &url);
 
 private:
+    explicit OpticalHelper(QObject *parent = nullptr);
+
     static QRegularExpression burnRxp();
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALHELPER_H

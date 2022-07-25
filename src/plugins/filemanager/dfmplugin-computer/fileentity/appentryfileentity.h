@@ -27,11 +27,11 @@
 
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class DesktopFile;
-DFMBASE_END_NAMESPACE
+}
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 namespace ExtraPropertyName {
 inline constexpr char kExecuteCommand[] { "execute_command" };
@@ -49,12 +49,10 @@ public:
     virtual bool showProgress() const override;
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
-    virtual void onOpen() override;
     virtual QString description() const override;
     virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
     virtual QVariantHash extraProperties() const override;
     virtual bool isAccessable() const override;
-    virtual QMenu *createMenu() override;
 
 private:
     QString getFormattedExecCommand() const;
@@ -64,5 +62,5 @@ private:
     QUrl fileUrl;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // APPENTRYFILEENTITY_H

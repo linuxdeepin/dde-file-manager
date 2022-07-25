@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashEventCaller
 {
@@ -38,8 +38,9 @@ public:
     static void sendEmptyTrash(const quint64 windowId, const QList<QUrl> &urls);
     static void sendTrashPropertyDialog(const QUrl &url);
     static void sendShowEmptyTrash(quint64 winId, bool visible);
+    static bool sendCheckTabAddable(quint64 windowId);
 };
 
-DPTRASH_END_NAMESPACE
+}
 
 #endif   // TRASHEVENTCALLER_H

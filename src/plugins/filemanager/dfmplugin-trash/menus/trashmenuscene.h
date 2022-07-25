@@ -27,7 +27,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -58,5 +58,5 @@ private:
     QScopedPointer<TrashMenuScenePrivate> d;
 };
 
-DPTRASH_END_NAMESPACE
+}
 #endif   // TRASHMENUSCENE_H

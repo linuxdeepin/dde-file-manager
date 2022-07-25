@@ -35,7 +35,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
 DWIDGET_END_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class MountSecretDiskAskPasswordDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
@@ -60,6 +60,6 @@ private:
     DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordLineEdit = nullptr;
     QString password = "";
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // MOUNTSECRETDISKASKPASSWORDDIALOG_H

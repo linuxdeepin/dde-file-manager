@@ -20,14 +20,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef MYSHARESPLUGIN_H
-#define MYSHARESPLUGIN_H
+#ifndef SMBBROWSER_H
+#define SMBBROWSER_H
 
 #include "dfmplugin_smbbrowser_global.h"
 
 #include <dfm-framework/dpf.h>
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
+
+using Prehandler = std::function<void(quint64 winId, const QUrl &url, std::function<void()> after)>;
 
 class SmbBrowser : public dpf::Plugin
 {
@@ -42,14 +44,15 @@ public:
 protected Q_SLOTS:
     void onWindowCreated(quint64 winId);
     void onWindowOpened(quint64 windd);
-    void onWindowClosed(quint64 winId);
 
 private:
-    void initOperations();
     void addNeighborToSidebar();
-    void registerSambaPrehandler();
-    static void sambaPrehandler(const QUrl &url, std::function<void()> after);
+    void registerNetworkAccessPrehandler();
+    static void networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
 };
 
-DPSMBBROWSER_END_NAMESPACE
-#endif   // MYSHARESPLUGIN_H
+}
+
+Q_DECLARE_METATYPE(dfmplugin_smbbrowser::Prehandler)
+
+#endif   // SMBBROWSER_H

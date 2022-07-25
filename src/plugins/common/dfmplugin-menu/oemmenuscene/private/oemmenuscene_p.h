@@ -25,7 +25,7 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class OemMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
@@ -39,6 +39,6 @@ public:
     QList<QAction *> oemChildActions;
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // OEMMENUSCENE_P_H

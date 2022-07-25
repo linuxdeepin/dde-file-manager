@@ -25,7 +25,7 @@
 #include <player_engine.h>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 VideoWidget::VideoWidget(VideoPreview *preview)
     : dmr::PlayerWidget(nullptr), p(preview), title(new QLabel(this))
 {

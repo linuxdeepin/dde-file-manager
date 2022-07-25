@@ -31,7 +31,7 @@
 #include <QThread>
 #include <QUrl>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class TraversalDirThread : public QThread
 {
@@ -40,6 +40,10 @@ class TraversalDirThread : public QThread
     QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> dirIterator;   // 当前遍历目录的diriterator
     QList<QUrl> childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
+
+    QStringList nameFilters;
+    QDir::Filters filters;
+    QDirIterator::IteratorFlags flags;
 
 public:
     explicit TraversalDirThread(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -60,6 +64,6 @@ protected:
     virtual void run() override;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DFMTRAVERSALDIRTHREAD_H

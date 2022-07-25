@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QKeyEvent>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class ShortcutOper : public QObject
 {
@@ -49,6 +49,6 @@ protected:
     CanvasView *view;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // SHORTCUTOPER_H

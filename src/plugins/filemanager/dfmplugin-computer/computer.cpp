@@ -24,24 +24,25 @@
 #include "utils/computerutils.h"
 #include "views/computerview.h"
 #include "fileentity/entryfileentities.h"
-#include "events/computerunicastreceiver.h"
 #include "events/computereventreceiver.h"
 #include "watcher/computeritemwatcher.h"
+#include "menu/computermenuscene.h"
 
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/search/searchservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-DSB_FM_USE_NAMESPACE
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+Q_DECLARE_METATYPE(CustomViewExtensionView)
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
 
-DPCOMPUTER_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+namespace dfmplugin_computer {
 /*!
  * \class Computer
  * \brief the plugin initializer
@@ -49,13 +50,12 @@ DPCOMPUTER_BEGIN_NAMESPACE
 void Computer::initialize()
 {
     DFMBASE_USE_NAMESPACE
-    DPCOMPUTER_USE_NAMESPACE
-    DSC_USE_NAMESPACE
+    using namespace dfmplugin_computer;
 
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true, tr("Computer"));
     ViewFactory::regClass<ComputerView>(ComputerUtils::scheme());
-    UrlRoute::regScheme(Global::kEntry, "/", QIcon(), true);
-    InfoFactory::regClass<EntryFileInfo>(Global::kEntry);
+    UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
+    InfoFactory::regClass<EntryFileInfo>(Global::Scheme::kEntry);
 
     EntryEntityFactor::registCreator<UserEntryFileEntity>(SuffixInfo::kUserDir);
     EntryEntityFactor::registCreator<BlockEntryFileEntity>(SuffixInfo::kBlock);
@@ -63,18 +63,23 @@ void Computer::initialize()
     EntryEntityFactor::registCreator<StashedProtocolEntryFileEntity>(SuffixInfo::kStashedProtocol);
     EntryEntityFactor::registCreator<AppEntryFileEntity>(SuffixInfo::kAppEntry);
 
-    ComputerUnicastReceiver::instance()->connectService();
-
-    connect(WindowsService::service(), &WindowsService::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
-    connect(WindowsService::service(), &WindowsService::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
-    connect(WindowsService::service(), &WindowsService::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
 
     bindEvents();
+    followEvents();
 }
 
 bool Computer::start()
 {
-    dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
+    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Item_EjectClicked", ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
+
+    dfmplugin_menu_util::menuSceneRegisterScene(ComputerMenuCreator::name(), new ComputerMenuCreator());
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", ComputerUtils::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", ComputerUtils::scheme(), ComputerMenuCreator::name());
+
     return true;
 }
 
@@ -91,17 +96,13 @@ void Computer::onWindowCreated(quint64 winId)
 
 void Computer::onWindowOpened(quint64 winId)
 {
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
 
-    auto regSortAndQueryItems = [] {
-        SideBarService::service()->registerSortFunc(DFMBASE_NAMESPACE::Global::kComputer, [](const QUrl &a, const QUrl &b) { return ComputerUtils::sortItem(a, b); });
-        ComputerItemWatcherInstance->startQueryItems();
-    };
     if (window->workSpace())
-        regSortAndQueryItems();
+        ComputerItemWatcherInstance->startQueryItems();
     else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [regSortAndQueryItems] { regSortAndQueryItems(); }, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
 
     if (window->sideBar())
         addComputerToSidebar();
@@ -113,7 +114,9 @@ void Computer::onWindowOpened(quint64 winId)
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regComputerToSearch(); }, Qt::DirectConnection);
 
-    propertyServIns->registerCustomizePropertyView(ComputerUtils::devicePropertyDialog, DFMBASE_NAMESPACE::Global::kEntry);
+    CustomViewExtensionView func { ComputerUtils::devicePropertyDialog };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
+                         func, DFMBASE_NAMESPACE::Global::Scheme::kEntry);
 }
 
 void Computer::onWindowClosed(quint64 winId)
@@ -123,42 +126,44 @@ void Computer::onWindowClosed(quint64 winId)
 
 void Computer::addComputerToSidebar()
 {
-    SideBar::ItemInfo entry;
-    entry.group = SideBar::DefaultGroup::kDevice;
-    entry.iconName = ComputerUtils::icon().name();
-    entry.text = tr("Computer");
-    entry.url = ComputerUtils::rootUrl();
-    entry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
-    SideBarService::service()->insertItem(0, entry);
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Device" },
+        { "Property_Key_DisplayName", tr("Computer") },
+        { "Property_Key_Icon", ComputerUtils::icon() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) }
+    };
+
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, ComputerUtils::rootUrl(), map);
 }
 
 void Computer::regComputerCrumbToTitleBar()
 {
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = ComputerUtils::scheme();
-    info.hideIconViewBtn = true;
-    info.hideListViewBtn = true;
-    info.hideDetailSpaceBtn = true;
-    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == ComputerUtils::scheme(); };
-    info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-        Q_UNUSED(url);
-        return { TitleBar::CrumbData(ComputerUtils::rootUrl(), tr("Computer"), ComputerUtils::icon().name()) };
-    };
-    TitleBarService::service()->addCustomCrumbar(info);
+    QVariantMap property;
+    property["Property_Key_HideIconViewBtn"] = true;
+    property["Property_Key_HideListViewBtn"] = true;
+    property["Property_Key_HideDetailSpaceBtn"] = true;
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", ComputerUtils::scheme(), property);
 }
 
 void Computer::regComputerToSearch()
 {
-    Search::CustomSearchInfo info;
-    info.scheme = ComputerUtils::scheme();
-    info.redirectedPath = "/";
-    SearchService::service()->regCustomSearchInfo(info);
+    QVariantMap property;
+    property["Property_Key_RedirectedPath"] = "/";
+    dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", ComputerUtils::scheme(), property);
 }
 
 void Computer::bindEvents()
 {
-    static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPCOMPUTER_NAMESPACE) };
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetContextMenuEnable", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::setContextMenuEnable);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_ContextMenu_SetEnable", ComputerEventReceiver::instance(), &ComputerEventReceiver::setContextMenuEnable);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_AddDevice", ComputerItemWatcherInstance, &ComputerItemWatcher::addDevice);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_RemoveDevice", ComputerItemWatcherInstance, &ComputerItemWatcher::removeDevice);
 }
 
-DPCOMPUTER_END_NAMESPACE
+void Computer::followEvents()
+{
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", ComputerEventReceiver::instance(), &ComputerEventReceiver::handleSepateTitlebarCrumb);
+    dpfHookSequence->follow("dfmplugin_sidebar", "hook_Group_Sort", ComputerEventReceiver::instance(), &ComputerEventReceiver::handleSortItem);
+}
+
+}   // namespace dfmplugin_computer

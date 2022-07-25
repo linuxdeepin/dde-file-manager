@@ -36,7 +36,7 @@
 
 DFMBASE_USE_NAMESPACE
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class FileDialog;
 class FileDialogPrivate : public QObject
@@ -72,6 +72,6 @@ private:
     QFileDialog::Options options;
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // FILEDIALOG_P_H

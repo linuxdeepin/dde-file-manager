@@ -33,7 +33,7 @@
 
 class QMimeType;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DThumbnailProviderPrivate;
 
@@ -78,6 +78,6 @@ private:
     QScopedPointer<DThumbnailProviderPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DFM_DTHUMBNAILPROVIDER_H

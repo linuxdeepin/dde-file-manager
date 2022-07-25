@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "trashcoreeventsender.h"
+#include "utils/trashcorehelper.h"
+
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/file/local/localfilewatcher.h"
@@ -30,24 +32,25 @@
 
 #include <functional>
 
-DPTRASHCORE_USE_NAMESPACE
+using namespace dfmplugin_trashcore;
 DFMBASE_USE_NAMESPACE
 
 TrashCoreEventSender::TrashCoreEventSender(QObject *parent)
     : QObject(parent)
 {
+    isEmpty = TrashCoreHelper::isEmpty();
     initTrashWatcher();
 }
 
 void TrashCoreEventSender::initTrashWatcher()
 {
     QUrl trashFilesUrl;
-    trashFilesUrl.setScheme(Global::kFile);
+    trashFilesUrl.setScheme(Global::Scheme::kFile);
     trashFilesUrl.setPath(StandardPaths::location(StandardPaths::kTrashFilesPath));
 
     trashFileWatcher = new LocalFileWatcher(trashFilesUrl, this);
-    connect(trashFileWatcher, &LocalFileWatcher::subfileCreated, this, &TrashCoreEventSender::sendTrashStateChanged);
-    connect(trashFileWatcher, &LocalFileWatcher::fileDeleted, this, &TrashCoreEventSender::sendTrashStateChanged);
+    connect(trashFileWatcher, &LocalFileWatcher::subfileCreated, this, &TrashCoreEventSender::sendTrashStateChangedAdd);
+    connect(trashFileWatcher, &LocalFileWatcher::fileDeleted, this, &TrashCoreEventSender::sendTrashStateChangedDel);
     trashFileWatcher->startWatcher();
 }
 
@@ -57,7 +60,26 @@ TrashCoreEventSender *TrashCoreEventSender::instance()
     return &sender;
 }
 
-void TrashCoreEventSender::sendTrashStateChanged()
+void TrashCoreEventSender::sendTrashStateChangedDel()
 {
+    bool empty = TrashCoreHelper::isEmpty();
+    if (empty == isEmpty)
+        return;
+
+    isEmpty = !isEmpty;
+
+    if (!isEmpty)
+        return;
+
+    dpfSignalDispatcher->publish("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged");
+}
+
+void TrashCoreEventSender::sendTrashStateChangedAdd()
+{
+    if (!isEmpty)
+        return;
+
+    isEmpty = false;
+
     dpfSignalDispatcher->publish("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged");
 }

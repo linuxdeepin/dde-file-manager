@@ -20,10 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "singleapplication.h"
+#include "commandparser.h"
 
 #include <dfm-base/utils/windowutils.h>
-
-#include <services/filemanager/command/commandservice.h>
 
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -33,7 +32,6 @@
 #include <QDir>
 #include <QProcess>
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 SingleApplication::SingleApplication(int &argc, char **argv, int)
@@ -77,52 +75,6 @@ QString SingleApplication::userServerName(const QString &key)
         userKey = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::TempLocation), key);
     }
     return userKey;
-}
-
-bool SingleApplication::loadTranslator(QList<QLocale> localeFallback)
-{
-    DApplication::loadTranslator(localeFallback);
-
-    QStringList translateDirs;
-
-    const QStringList &dataDirs = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
-
-    for (QString path : dataDirs) {
-        translateDirs << path.append("/").append(applicationName()).append("/translations");
-    }
-
-    const QString name = QStringLiteral("dde-file-manager-app");
-
-    for (const QLocale &locale : localeFallback) {
-        QString translateFilename = QString("%1_%2").arg(name).arg(locale.name());
-        for (QString path : translateDirs) {
-            const QString &translatePath = path.append("/").append(translateFilename);
-            if (QFile::exists(translatePath + ".qm")) {
-                qDebug() << "load translate" << translatePath;
-                QTranslator *translator = new QTranslator(this);
-                translator->load(translatePath);
-                installTranslator(translator);
-                return true;
-            }
-        }
-
-        QStringList parseLocalNameList = locale.name().split("_", QString::SkipEmptyParts);
-        if (parseLocalNameList.length() > 0) {
-            translateFilename = QString("%1_%2").arg(name).arg(parseLocalNameList.at(0));
-            for (QString path : translateDirs) {
-                const QString &translatePath = path.append("/").append(translateFilename);
-                if (QFile::exists(translatePath + ".qm")) {
-                    qDebug() << "translatePath after feedback:" << translatePath;
-                    QTranslator *translator = new QTranslator(this);
-                    translator->load(translatePath);
-                    installTranslator(translator);
-                    return true;
-                }
-            }
-        }
-    }
-
-    return false;
 }
 
 void SingleApplication::openAsAdmin()
@@ -218,15 +170,15 @@ void SingleApplication::readData()
         arguments << QString::fromLocal8Bit(arg);
     }
 
-    commandServIns->process(arguments);
+    CommandParser::instance().process(arguments);
 
-    if (commandServIns->isSet("get-monitor-files")) {
+    if (CommandParser::instance().isSet("get-monitor-files")) {
         //Todo(yanghao&lxs): get-monitor-files
 
         return;
     }
 
-    commandServIns->processCommand();
+    CommandParser::instance().processCommand();
 }
 
 void SingleApplication::closeServer()

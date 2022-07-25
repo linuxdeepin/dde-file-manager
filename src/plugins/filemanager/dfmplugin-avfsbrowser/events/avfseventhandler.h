@@ -29,7 +29,7 @@
 #include <QList>
 #include <QObject>
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsEventHandler : public QObject
 {
@@ -45,12 +45,13 @@ public:
 
     bool hookOpenFiles(quint64 winId, const QList<QUrl> &urls);
     bool hookEnterPressed(quint64 winId, const QList<QUrl> &urls);
+    bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
 
     void openArchivesAsDir(quint64 winId, const QList<QUrl> &urls);
     void writeToClipbord(quint64 winId, const QList<QUrl> &urls);
     void showProperty(const QList<QUrl> &urls);
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSEVENTHANDLER_H

@@ -25,7 +25,7 @@
 #include "dfmplugin_tag_global.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagFileWatcherPrivate;
 class TagFileWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
@@ -53,6 +53,6 @@ private:
     TagFileWatcherPrivate *dptr;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGFILEWATCHER_H

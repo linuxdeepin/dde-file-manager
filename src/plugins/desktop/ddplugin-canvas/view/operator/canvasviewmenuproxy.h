@@ -23,15 +23,9 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include "services/common/dfm_common_service_global.h"
-
 #include <QObject>
 
-namespace dfm_service_common {
-class MenuService;
-}
-
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class CanvasViewMenuProxy : public QObject
 {
@@ -47,9 +41,8 @@ public slots:
 
 private:
     CanvasView *view;
-    dfm_service_common::MenuService *extensionMenuServer = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASVIEWMENUPROXY_H

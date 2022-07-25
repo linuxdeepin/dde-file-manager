@@ -30,7 +30,7 @@
 
 using namespace GlobalServerDefines;
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 DWIDGET_USE_NAMESPACE
 
 MountAskPasswordDialog::MountAskPasswordDialog(QWidget *parent)

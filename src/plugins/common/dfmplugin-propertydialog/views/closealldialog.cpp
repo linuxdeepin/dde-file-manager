@@ -31,7 +31,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 CloseAllDialog::CloseAllDialog(QWidget *parent)
     : DAbstractDialog(parent)
 {

@@ -22,7 +22,7 @@
 #include "musicpreviewplugin.h"
 
 DFMBASE_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 AbstractBasePreview *MusicPreviewPlugin::create(const QString &key)
 {
     Q_UNUSED(key)

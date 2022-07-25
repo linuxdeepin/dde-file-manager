@@ -36,7 +36,7 @@ USING_IO_NAMESPACE
 
 #define CALL_PROXY(Fun) \
     if (dptr->proxy) return dptr->proxy->Fun;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo") })
 
 /*!
@@ -984,7 +984,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     }
 
     if (!isSymLink()) {
-        const bool isDesktop = mimeTypeName() == Global::kMimeTypeAppXDesktop;
+        const bool isDesktop = mimeTypeName() == Global::Mime::kTypeAppXDesktop;
         return isDir() || isDesktop;
     }
 
@@ -1237,4 +1237,4 @@ AbstractFileInfoPrivate::AbstractFileInfoPrivate(AbstractFileInfo *qq)
 AbstractFileInfoPrivate::~AbstractFileInfoPrivate()
 {
 }
-DFMBASE_END_NAMESPACE
+}

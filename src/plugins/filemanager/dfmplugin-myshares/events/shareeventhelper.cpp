@@ -28,7 +28,7 @@
 
 #include <QDebug>
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 
 ShareEventHelper *dfmplugin_myshares::ShareEventHelper::instance()
 {
@@ -85,7 +85,7 @@ bool ShareEventHelper::hookSendChangeCurrentUrl(quint64 winId, const QUrl &url)
 {
     if (url.scheme() == ShareUtils::scheme() && url.path() != "/") {
         auto u(url);
-        u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+        u.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
         QList<QUrl> urls { u };
         ShareEventsCaller::sendOpenDirs(winId, urls, ShareEventsCaller::kOpenInCurrentWindow);
         return true;

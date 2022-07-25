@@ -34,7 +34,7 @@ Q_DECLARE_METATYPE(const QMimeData *)
 Q_DECLARE_METATYPE(QStringList *)
 Q_DECLARE_METATYPE(QMimeData *)
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 #define CanvasModelRunHook(topic, args...) \
             dpfHookSequence->run(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)

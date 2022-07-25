@@ -26,19 +26,22 @@
 #include "files/recentfilewatcher.h"
 #include "events/recenteventcaller.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/file/local/localfilehandler.h"
+
+#include <dfm-io/dfmio_utils.h>
+
+#include <DDialog>
+#include <DRecentManager>
 
 #include <QFile>
 #include <QMenu>
 #include <QCoreApplication>
 
-DPRECENT_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+using namespace dfmplugin_recent;
 DPF_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
@@ -87,14 +90,7 @@ void RecentManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const 
         RecentEventCaller::sendOpenTab(windowId, url);
     });
 
-    auto &ctx = dpfInstance.serviceContext();
-    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-    if (!workspaceService) {
-        qCritical() << "Failed, recentManager contenxtMenuHandle \"WorkspaceService\" is empty";
-        abort();
-    }
-
-    newTabAct->setDisabled(!workspaceService->tabAddable(windowId));
+    newTabAct->setDisabled(!RecentEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
     menu->addAction(QObject::tr("Clear recent history"), [url]() {
@@ -106,17 +102,13 @@ void RecentManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const 
 
 RecentManager::ExpandFieldMap RecentManager::propetyExtensionFunc(const QUrl &url)
 {
-    using BasicExpandType = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType;
-    using BasicExpand = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand;
-    using BasicFieldExpandEnum = DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum;
-
     BasicExpand expand;
     const auto &info = InfoFactory::create<AbstractFileInfo>(url);
     const QString &sourcePath = info->redirectedFileUrl().toLocalFile();
-    expand.insert(BasicFieldExpandEnum::kFileModifiedTime, qMakePair(QObject::tr("Source path"), sourcePath));
+    expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
 
     ExpandFieldMap map;
-    map[BasicExpandType::kFieldInsert] = expand;
+    map["kFieldInsert"] = expand;
 
     return map;
 }
@@ -127,7 +119,7 @@ QUrl RecentManager::urlTransform(const QUrl &url)
         return url;
 
     QUrl out { url };
-    out.setScheme(Global::kFile);
+    out.setScheme(Global::Scheme::kFile);
     return out;
 }
 
@@ -148,7 +140,7 @@ bool RecentManager::removeRecentFile(const QUrl &url)
 bool RecentManager::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleList)
 {
     if (rootUrl.scheme() == scheme()) {
-        roleList->append(kItemNameRole);
+        roleList->append(kItemFileDisplayNameRole);
         roleList->append(kItemFilePathRole);
         roleList->append(kItemFileLastReadRole);
         roleList->append(kItemFileSizeRole);
@@ -214,6 +206,34 @@ bool RecentManager::detailViewIcon(const QUrl &url, QString *iconName)
     return false;
 }
 
+bool RecentManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+
+    if (url.scheme() == RecentManager::scheme()) {
+        QVariantMap map;
+        map["CrumbData_Key_Url"] = RecentManager::rootUrl();
+        map["CrumbData_Key_DisplayText"] = tr("Recent");
+        map["CrumbData_Key_IconName"] = RecentManager::icon().name();
+        mapGroup->push_back(map);
+        return true;
+    }
+
+    return false;
+}
+
+bool RecentManager::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
+{
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != RecentManager::scheme())
+            return false;
+        (*urls).push_back(urlTransform(url));
+    }
+    return true;
+}
+
 RecentManager::RecentManager(QObject *parent)
     : QObject(parent)
 {
@@ -257,6 +277,34 @@ void RecentManager::init()
     connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &RecentManager::updateRecent);
 }
 
+void RecentManager::removeRecent(const QList<QUrl> &urls)
+{
+    DDialog dlg;
+    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+    dlg.addButton(QObject::tr("Cancel", "button"));
+    dlg.addButton(QObject::tr("Remove", "button"), true, DDialog::ButtonRecommend);
+
+    if (urls.size() == 1)
+        dlg.setTitle(QObject::tr("Do you want to remove this item?"));
+    else
+        dlg.setTitle(QObject::tr("Do yout want to remove %1 items?").arg(urls.size()));
+    dlg.setMessage(QObject::tr("It does not delete the original files"));
+
+    int code = dlg.exec();
+    if (code == 1) {
+        QStringList list;
+        for (const QUrl &url : urls) {
+            //list << DUrl::fromLocalFile(url.path()).toString();
+            //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
+            QUrl newUrl = url;
+            newUrl.setScheme(Global::Scheme::kFile);
+            list << newUrl.toString();
+        }
+
+        DTK_CORE_NAMESPACE::DRecentManager::removeItems(list);
+    }
+}
+
 void RecentManager::updateRecent()
 {
     updateRecentTimer.start();
@@ -286,69 +334,4 @@ void RecentManager::onDeleteExistRecentUrls(QList<QUrl> &urls)
             }
         }
     }
-}
-
-DSB_FM_NAMESPACE::WindowsService *RecentManager::winServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WindowsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
-}
-
-DSB_FM_NAMESPACE::TitleBarService *RecentManager::titleServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
-}
-
-SideBarService *RecentManager::sideBarServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
-}
-
-DSB_FM_NAMESPACE::WorkspaceService *RecentManager::workspaceServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
-}
-
-dfm_service_common::FileOperationsService *RecentManager::fileOperationsServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-}
-
-EventSequenceManager *RecentManager::eventSequence()
-{
-    return &dpfInstance.eventSequence();
 }

@@ -25,7 +25,7 @@
 #include "dfmplugin_trash_global.h"
 #include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashFileWatcher;
 class TrashFileWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
@@ -46,5 +46,5 @@ public:
     QMap<QUrl, AbstractFileWatcherPointer> urlToWatcherMap;
 };
 
-DPTRASH_END_NAMESPACE
+}
 #endif   // TRASHDIRITERATORPRIVATE_H

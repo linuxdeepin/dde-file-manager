@@ -20,7 +20,7 @@
  */
 #include "abstractscenecreator.h"
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 AbstractSceneCreator::AbstractSceneCreator()
 {

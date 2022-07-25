@@ -28,7 +28,7 @@
 #include <QTimer>
 #include <QDebug>
 
-DDP_WALLPAERSETTING_USE_NAMESPACE
+using namespace ddplugin_wallpapersetting;
 DFMBASE_USE_NAMESPACE
 
 namespace {

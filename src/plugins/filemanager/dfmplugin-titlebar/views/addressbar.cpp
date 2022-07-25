@@ -26,14 +26,13 @@
 #include "utils/searchhistroymanager.h"
 #include "utils/titlebarhelper.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include "dfm-base/base/schemefactory.h"
 
 #include <QCompleter>
 
-DSB_FM_USE_NAMESPACE
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 
 /*!
  * \class AddressBarPrivate
@@ -324,7 +323,7 @@ void AddressBarPrivate::onIndicatorTriggerd()
 
 void AddressBarPrivate::requestCompleteByUrl(const QUrl &url)
 {
-    if (!crumbController || !crumbController->supportedUrl(url)) {
+    if (!crumbController || !crumbController->isSupportedScheme(url.scheme())) {
         if (crumbController) {
             crumbController->cancelCompletionListTransmission();
             crumbController->disconnect();
@@ -337,6 +336,7 @@ void AddressBarPrivate::requestCompleteByUrl(const QUrl &url)
             qDebug() << "Unsupported url / scheme for completion: " << url;
             return;
         }
+        crumbController->setParent(q);
         // connections
         connect(crumbController, &CrumbInterface::completionFound, this, &AddressBarPrivate::appendToCompleterModel);
         connect(crumbController, &CrumbInterface::completionListTransmissionCompleted, this, &AddressBarPrivate::onTravelCompletionListFinished);
@@ -498,8 +498,8 @@ void AddressBar::setCurrentUrl(const QUrl &url)
 
 QUrl AddressBar::currentUrl()
 {
-    auto id = WindowsService::service()->findWindowId(this);
-    auto window = WindowsService::service()->findWindowById(id);
+    auto id = FMWindowsIns.findWindowId(this);
+    auto window = FMWindowsIns.findWindowById(id);
     if (window)
         return window->currentUrl();
     return {};

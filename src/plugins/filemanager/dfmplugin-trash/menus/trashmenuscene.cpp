@@ -22,18 +22,17 @@
 #include "trashmenuscene.h"
 #include "private/trashmenuscene_p.h"
 #include "utils/trashhelper.h"
-#include "utils/trashfilehelper.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/menu/menuservice.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 
@@ -45,7 +44,7 @@ static constexpr char kTrashMenuSceneName[] = "TrashMenu";
 static const char *const kOemMenuSceneName = "OemMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 
-DPTRASH_USE_NAMESPACE
+using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *TrashMenuCreator::create()
@@ -69,8 +68,6 @@ QString TrashMenuScene::name() const
 
 bool TrashMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
-
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
@@ -93,21 +90,21 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
             qDebug() << errString;
             return false;
         }
-        if (auto workspaceScene = MenuService::service()->createScene(kFileOperatorMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
             currentScene.append(workspaceScene);
-        if (auto dirScene = MenuService::service()->createScene(kOpenDirMenuSceneName))
+        if (auto dirScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName))
             currentScene.append(dirScene);
-        if (auto workspaceScene = MenuService::service()->createScene(kClipBoardMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName))
             currentScene.append(workspaceScene);
-        if (auto workspaceScene = MenuService::service()->createScene(kPropertyMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kPropertyMenuSceneName))
             currentScene.append(workspaceScene);
-        if (auto oemScene = MenuService::service()->createScene(kOemMenuSceneName))
+        if (auto oemScene = dfmplugin_menu_util::menuSceneCreateScene(kOemMenuSceneName))
             currentScene.append(oemScene);
     } else {
-        if (auto workspaceScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kSortAndDisplayMenuSceneName))
             currentScene.append(workspaceScene);
 
-        if (auto workspaceScene = MenuService::service()->createScene(kPropertyMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kPropertyMenuSceneName))
             currentScene.append(workspaceScene);
     }
 
@@ -120,8 +117,6 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
 
 bool TrashMenuScene::create(QMenu *parent)
 {
-    DSC_USE_NAMESPACE
-
     if (d->isEmptyArea) {
         auto isDisabled = TrashHelper::isEmpty() || !UniversalUtils::urlEquals(d->currentDir, TrashHelper::rootUrl());
 
@@ -151,14 +146,13 @@ void TrashMenuScene::updateState(QMenu *parent)
 
 bool TrashMenuScene::triggered(QAction *action)
 {
-    DSC_USE_NAMESPACE
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
         if (actId == TrashActionId::kRestore) {
-            TrashFileHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kRevocation);
+            TrashHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kRevocation);
             return true;
         } else if (actId == TrashActionId::kRestoreAll) {
-            TrashFileHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kRevocation);
+            TrashHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kRevocation);
             return true;
         } else if (actId == TrashActionId::kEmptyTrash) {
             TrashHelper::emptyTrash();
@@ -213,7 +207,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
                 continue;
 
             auto sceneName = actionScene->name();
-            auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (actId == TrashActionId::kRestoreAll
                 || actId == TrashActionId::kEmptyTrash)
                 act->setEnabled(curDir == TrashHelper::rootUrl() && !TrashHelper::isEmpty());
@@ -236,7 +230,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
                 continue;
 
             auto sceneName = actionScene->name();
-            auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (!selectSupportActions.contains(sceneName, actId) && sceneName != kOemMenuSceneName)
                 menu->removeAction(act);
 

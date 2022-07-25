@@ -24,14 +24,9 @@
 
 #include "dfmplugin_trash_global.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-#include "services/common/propertydialog/property_defines.h"
-
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QUrl>
 #include <QIcon>
@@ -40,26 +35,26 @@ QT_BEGIN_HEADER
 class QFrame;
 QT_END_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileWatcher;
-DFMBASE_END_NAMESPACE
+}
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class EmptyTrashWidget;
 class TrashHelper final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(TrashHelper)
-    using ExpandFieldMap = QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand>;
+    using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
+    using ExpandFieldMap = QMap<QString, BasicExpand>;
 
 public:
     static TrashHelper *instance();
-    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
 
     inline static QString scheme()
     {
-        return DFMBASE_NAMESPACE::Global::kTrash;
+        return DFMBASE_NAMESPACE::Global::Scheme::kTrash;
     }
 
     inline static QIcon icon()
@@ -78,6 +73,9 @@ public:
     static bool isEmpty();
     static void emptyTrash(const quint64 windowId = 0);
     static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
+    static JobHandlePointer restoreFromTrashHandle(const quint64 windowId,
+                                                   const QList<QUrl> urls,
+                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool detailViewIcon(const QUrl &url, QString *iconName);
@@ -86,12 +84,7 @@ public:
     bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
 
-    // services instance
-    static DSB_FM_NAMESPACE::WindowsService *winServIns();
-    static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
-    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
 private:
     void onTrashStateChanged();
@@ -105,5 +98,5 @@ private:
     bool isTrashEmpty;
 };
 
-DPTRASH_END_NAMESPACE
+}
 #endif   // TRASHHELPER_H

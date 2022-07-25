@@ -25,19 +25,19 @@
 #include "menus/workspacemenuscene.h"
 #include "utils/workspacehelper.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/menu/menuservice.h"
-#include "services/common/menu/menu_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
-DSC_USE_NAMESPACE
+#include <QMenu>
+
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileViewMenuHelper::FileViewMenuHelper(FileView *parent)
     : QObject(parent),
@@ -47,7 +47,7 @@ FileViewMenuHelper::FileViewMenuHelper(FileView *parent)
 
 void FileViewMenuHelper::showEmptyAreaMenu()
 {
-    auto scene = MenuService::service()->createScene(currentMenuScene());
+    auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
     if (!scene) {
         qWarning() << "Create scene failed, scene name: " << currentMenuScene();
         return;
@@ -57,7 +57,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = true;
-    params[MenuParamKey::kWindowId] = WindowsService::service()->findWindowId(view);
+    params[MenuParamKey::kWindowId] = FMWindowsIns.findWindowId(view);
 
     if (!scene->initialize(params)) {
         delete scene;
@@ -76,7 +76,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
 
 void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
-    auto scene = MenuService::service()->createScene(currentMenuScene());
+    auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
     if (!scene) {
         qWarning() << "Create scene failed, scene name: " << currentMenuScene();
         return;
@@ -99,8 +99,8 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = false;
-    params[MenuParamKey::kWindowId] = WindowsService::service()->findWindowId(view);
-    params = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    params[MenuParamKey::kWindowId] = FMWindowsIns.findWindowId(view);
+    params = dfmplugin_menu_util::menuPerfectParams(params);
 
     if (!scene->initialize(params)) {
         delete scene;

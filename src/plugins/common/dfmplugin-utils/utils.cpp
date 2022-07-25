@@ -21,38 +21,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "utils.h"
-#include "events/globaleventreceiver.h"
-#include "events/openwitheventreceiver.h"
-#include "utils/openwithhelper.h"
+#include "global/globalmanager.h"
+#include "openwith/openwithmanager.h"
+#include "appendcompress/appendcompressmanager.h"
+#include "bluetooth/bluetootheventmanager.h"
 
-#include "services/common/propertydialog/propertydialogservice.h"
-
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
-
-DPUTILS_USE_NAMESPACE
-
-static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
-{
-    const QString &suffix = fileInfo->suffix();
-    const QString &mimeTypeName = fileInfo->mimeTypeName();
-    if (suffix == DFMBASE_NAMESPACE::Global::kDesktop && mimeTypeName == "application/x-desktop") {
-        const QUrl &url = fileInfo->url();
-        return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
-    }
-    return fileInfo;
-}
+using namespace dfmplugin_utils;
 
 void Utils::initialize()
 {
-    GlobalEventReceiver::instance()->initEventConnect();
-    OpenWithEventReceiver::instance()->initEventConnect();
-    DFMBASE_NAMESPACE::InfoFactory::regInfoTransFunc<DFMBASE_NAMESPACE::AbstractFileInfo>(DFMBASE_NAMESPACE::Global::kFile, transFileInfo);
+    GlobalManager::instance().init();
+    OpenWithManager::instance().init();
+    AppendCompressManager::instance().init();
+    BluetoothEventManager::instance().init();
 }
 
 bool Utils::start()
 {
-    propertyServIns->registerControlExpand(OpenWithHelper::createOpenWithWidget, 2);
+    OpenWithManager::instance().start();
     return true;
 }

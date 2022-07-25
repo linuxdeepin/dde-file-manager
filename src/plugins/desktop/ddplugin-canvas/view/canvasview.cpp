@@ -45,7 +45,7 @@
 #include <QTimer>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 CanvasView::CanvasView(QWidget *parent)
     : QAbstractItemView(parent), d(new CanvasViewPrivate(this))
@@ -692,6 +692,11 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     shortcutOper = new ShortcutOper(q);
     menuProxy = new CanvasViewMenuProxy(q);
     viewSetting = new ViewSettingUtil(q);
+
+#ifdef QT_DEBUG
+    showGrid = true;
+#endif
+
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()

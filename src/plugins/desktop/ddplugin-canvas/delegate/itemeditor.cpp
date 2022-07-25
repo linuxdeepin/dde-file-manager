@@ -34,7 +34,7 @@
 #include <QLabel>
 
 DWIDGET_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 ItemEditor::ItemEditor(QWidget *parent) : QFrame(parent)
 {

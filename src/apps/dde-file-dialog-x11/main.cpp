@@ -105,12 +105,19 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
 
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
+    QStringList pluginsDirs;
     if (!QDir(pluginsDir).exists()) {
-        pluginsDir = DFM_PLUGIN_PATH;
+        qInfo() << QString("Path does not exist, use path : %1").arg(DFM_PLUGIN_COMMON_CORE_DIR);
+        pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
+                    << QString(DFM_PLUGIN_FILEMANAGER_CORE_DIR)
+                    << QString(DFM_PLUGIN_COMMON_EDGE_DIR)
+                    << QString(DFM_PLUGIN_FILEMANAGER_EDGE_DIR);
+    } else {
+        pluginsDirs.push_back(pluginsDir);
     }
-    qDebug() << "using plugins dir:" << pluginsDir;
 
-    DPF_NAMESPACE::LifeCycle::setPluginPaths({ pluginsDir });
+    qDebug() << "using plugins dir:" << pluginsDirs;
+    DPF_NAMESPACE::LifeCycle::setPluginPaths(pluginsDirs);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
@@ -149,7 +156,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName(ORGANIZATION_NAME);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setQuitOnLastWindowClosed(false);
-    // TODO(zhangs): installTranslator
+    a.setProperty("GTK", true);   // see: FileDialogHandle::winId()
 
     DPF_NAMESPACE::backtrace::initbacktrace();
     initLog();
@@ -159,5 +166,15 @@ int main(int argc, char *argv[])
         abort();
     }
 
-    return a.exec();
+    {
+        // load translation
+        auto appName = a.applicationName();
+        a.setApplicationName("dde-file-manager");
+        a.loadTranslator();
+        a.setApplicationName(appName);
+    }
+
+    int ret { a.exec() };
+    DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    return ret;
 }

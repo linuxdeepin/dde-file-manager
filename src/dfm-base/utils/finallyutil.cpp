@@ -22,7 +22,7 @@
 */
 #include "finallyutil.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 FinallyUtil::FinallyUtil(std::function<void()> onExit)
     : exitFunc(onExit)
@@ -40,4 +40,4 @@ void FinallyUtil::dismiss(bool dismissed)
     hasDismissed = dismissed;
 }
 
-DFMBASE_END_NAMESPACE
+}

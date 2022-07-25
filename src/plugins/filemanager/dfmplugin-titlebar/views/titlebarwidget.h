@@ -35,7 +35,7 @@
 #include <QToolButton>
 #include <QPushButton>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class TitleBarWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
@@ -87,6 +87,6 @@ private:
     bool searchButtonSwitchState { false };
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // TITLEBARWIDGET_H

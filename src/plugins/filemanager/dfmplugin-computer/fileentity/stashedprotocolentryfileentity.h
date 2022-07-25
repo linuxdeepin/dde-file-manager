@@ -27,7 +27,7 @@
 
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class StashedProtocolEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
@@ -41,12 +41,10 @@ public:
     virtual bool showProgress() const override;
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
-    virtual void onOpen() override;
     virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
-    virtual QMenu *createMenu() override;
     virtual bool isAccessable() const override;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // STASHEDPROTOCOLENTRYFILEENTITY_H

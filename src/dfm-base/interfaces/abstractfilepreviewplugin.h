@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 #define FilePreviewFactoryInterface_iid "com.deepin.filemanager.FilePreviewFactoryInterface_iid"
 
 class AbstractBasePreview;
@@ -37,5 +37,5 @@ public:
 
     virtual AbstractBasePreview *create(const QString &key) = 0;
 };
-DFMBASE_END_NAMESPACE
+}
 #endif   // FILEPREVIEWPLUGIN_H

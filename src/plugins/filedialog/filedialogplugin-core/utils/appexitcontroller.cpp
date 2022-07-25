@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 
 AppExitController::AppExitController(QObject *parent)
     : QObject(parent)

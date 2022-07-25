@@ -31,7 +31,7 @@
 #include <QDesktopWidget>
 #include <QMutex>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static const int kDefaultWidth { 700 };
 int TaskDialog::kMaxHeight { 0 };
@@ -50,12 +50,18 @@ TaskDialog::TaskDialog(QObject *parent)
  */
 void TaskDialog::addTask(const JobHandlePointer taskHandler)
 {
-
     QMutexLocker lk(addTaskMutex);
 
     TaskWidget *wid = nullptr;
-    if (!taskHandler || taskItems.contains(taskHandler)) {
-        qWarning() << "task handler is null or taskItem contains taskHandler!";
+    if (!taskHandler) {
+        qWarning() << "task handler is null";
+        return;
+    }
+
+    if (taskItems.contains(taskHandler)) {
+        show();
+        raise();
+        activateWindow();
         return;
     }
 
@@ -63,7 +69,7 @@ void TaskDialog::addTask(const JobHandlePointer taskHandler)
 
     connect(wid, &TaskWidget::heightChanged, this, &TaskDialog::adjustSize, Qt::QueuedConnection);
     connect(this, &TaskDialog::closed, wid, &TaskWidget::parentClose, Qt::QueuedConnection);
-    taskHandler->connect(taskHandler.data(), &AbstractJobHandler::finishedNotify, this, &TaskDialog::removeTask);
+    taskHandler->connect(taskHandler.get(), &AbstractJobHandler::finishedNotify, this, &TaskDialog::removeTask);
 
     wid->setTaskHandle(taskHandler);
 
@@ -129,7 +135,7 @@ void TaskDialog::blockShutdown()
  * \param taskHandler 任务控制器
  * \param wid item的widget
  */
-void TaskDialog::addTaskWidget(const JobHandlePointer &taskHandler, TaskWidget *wid)
+void TaskDialog::addTaskWidget(const JobHandlePointer taskHandler, TaskWidget *wid)
 {
     if (!wid) {
         qWarning() << "TaskWidget is a null value!";
@@ -160,6 +166,7 @@ void TaskDialog::setTitle(int taskCount)
 {
     titlebar->setTitle(QObject::tr("%1 tasks in progress").arg(QString::number(taskCount)));
 }
+
 /*!
  * \brief TaskDialog::adjustSize 调整整个进度显示的高度，当每个item中的widget发生变化时
  */

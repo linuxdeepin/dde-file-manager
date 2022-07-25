@@ -24,7 +24,7 @@
 #include "private/smbsharefileinfo_p.h"
 #include "utils/smbbrowserutils.h"
 
-DPSMBBROWSER_USE_NAMESPACE
+using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 
 SmbShareFileInfo::SmbShareFileInfo(const QUrl &url)
@@ -55,7 +55,7 @@ QIcon SmbShareFileInfo::fileIcon()
 
 bool SmbShareFileInfo::isDir() const
 {
-    return false;
+    return true;
 }
 
 bool SmbShareFileInfo::isReadable() const

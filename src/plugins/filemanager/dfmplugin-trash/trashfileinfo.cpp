@@ -33,7 +33,7 @@
 #include <QCoreApplication>
 
 DFMBASE_USE_NAMESPACE
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 class TrashFileInfoPrivate : public AbstractFileInfoPrivate
 {
 public:
@@ -80,7 +80,7 @@ TrashFileInfo::~TrashFileInfo()
 
 QString TrashFileInfo::fileName() const
 {
-    const QUrl &url = this->url();
+    const QUrl &url = TrashHelper::toLocalFile(this->url());
     if (FileUtils::isDesktopFile(url)) {
         DesktopFileInfo dfi(url);
         return dfi.fileDisplayName();
@@ -272,4 +272,4 @@ bool TrashFileInfo::isHidden() const
     return false;
 }
 
-DPTRASH_END_NAMESPACE
+}

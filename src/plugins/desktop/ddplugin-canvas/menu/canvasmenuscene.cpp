@@ -32,12 +32,13 @@
 #include "utils/renamedialog.h"
 #include "desktoputils/widgetutil.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/menu/menuservice.h"
 #include "plugins/common/dfmplugin-menu/dfmplugin_menu_global.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include <dfm-framework/framework.h>
+#include "dfm-base/dfm_menu_defines.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QVariant>
@@ -45,9 +46,8 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DPMENU_USE_NAMESPACE
 
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
@@ -67,9 +67,6 @@ AbstractMenuScene *CanvasMenuCreator::create()
 CanvasMenuScenePrivate::CanvasMenuScenePrivate(CanvasMenuScene *qq)
     : AbstractMenuScenePrivate(qq), q(qq)
 {
-    // 获取菜单服务
-    menuServer = MenuService::service();
-
     emptyDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenAsAdmin);
 
     normalDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInNewTab);
@@ -192,7 +189,7 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->gridPos = params.value(CanvasMenuParams::kDesktopGridPos).toPoint();
 
-    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     if (d->currentDir.isEmpty())
@@ -203,42 +200,42 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     QList<AbstractMenuScene *> currentScene;
     if (d->isEmptyArea) {
         // new (new doc, new dir)
-        if (auto newCreateScene = d->menuServer->createScene(kNewCreateMenuSceneName))
+        if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene(kNewCreateMenuSceneName))
             currentScene.append(newCreateScene);
 
         // file operation
-        if (auto operationScene = d->menuServer->createScene(kClipBoardMenuSceneName))
+        if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName))
             currentScene.append(operationScene);
 
     } else {
 
         // open with
-        if (auto openWithScene = d->menuServer->createScene(kOpenWithMenuSceneName))
+        if (auto openWithScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenWithMenuSceneName))
             currentScene.append(openWithScene);
 
         // file operation
-        if (auto operationScene = d->menuServer->createScene(kClipBoardMenuSceneName))
+        if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName))
             currentScene.append(operationScene);
 
         // file (open, rename, delete)
-        if (auto fileScene = d->menuServer->createScene(kFileOperatorMenuSceneName))
+        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
             currentScene.append(fileScene);
 
-        if (auto sendToScene = d->menuServer->createScene(kSendToMenuSceneName))
+        if (auto sendToScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName))
             currentScene.append(sendToScene);
     }
 
     // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
-    if (auto dirScene = d->menuServer->createScene(kOpenDirMenuSceneName))
+    if (auto dirScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName))
         currentScene.append(dirScene);
 
     if (!d->isDDEDesktopFileIncluded) {
         // oem menu
-        if (auto oemScene = d->menuServer->createScene(kOemMenuSceneName))
+        if (auto oemScene = dfmplugin_menu_util::menuSceneCreateScene(kOemMenuSceneName))
             currentScene.append(oemScene);
 
         // extend menu.must last
-        if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
+        if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName))
             currentScene.append(extendScene);
     }
 

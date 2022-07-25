@@ -32,7 +32,7 @@
 
 #include <dfm-mount/base/dmount_global.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DeviceWatcher;
 class DeviceWatcherPrivate
@@ -62,6 +62,6 @@ private:
     bool isWatching { false };
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DEVICEWATCHER_P_H

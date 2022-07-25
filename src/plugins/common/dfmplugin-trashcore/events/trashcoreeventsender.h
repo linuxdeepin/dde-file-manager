@@ -26,11 +26,11 @@
 
 #include <QObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileWatcher;
-DFMBASE_END_NAMESPACE
+}
 
-DPTRASHCORE_BEGIN_NAMESPACE
+namespace dfmplugin_trashcore {
 
 class TrashCoreEventSender final : public QObject
 {
@@ -41,7 +41,8 @@ public:
     static TrashCoreEventSender *instance();
 
 private slots:
-    void sendTrashStateChanged();
+    void sendTrashStateChangedDel();
+    void sendTrashStateChangedAdd();
 
 private:
     explicit TrashCoreEventSender(QObject *parent = nullptr);
@@ -49,8 +50,9 @@ private:
 
 private:
     DFMBASE_NAMESPACE::LocalFileWatcher *trashFileWatcher = nullptr;
+    bool isEmpty { false };
 };
 
-DPTRASHCORE_END_NAMESPACE
+}
 
 #endif   // TRASHCOREEVENTSENDER_H

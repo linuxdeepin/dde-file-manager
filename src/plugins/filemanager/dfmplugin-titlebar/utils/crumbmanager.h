@@ -31,7 +31,7 @@
 
 #include <functional>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class CrumbInterface;
 class CrumbManager final : public QObject
@@ -58,6 +58,6 @@ private:
     CrumbCreatorMap creators;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // CRUMBMANAGER_H

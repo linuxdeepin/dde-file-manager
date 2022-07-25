@@ -30,7 +30,7 @@
 
 class QTimer;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractScreenProxy : public QObject
 {
@@ -65,6 +65,6 @@ private:
     QTimer *eventShot = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif // ABSTRACTSCREENPROXY_H

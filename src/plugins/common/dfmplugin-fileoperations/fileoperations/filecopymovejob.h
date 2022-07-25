@@ -24,7 +24,7 @@
 #define FILECOPYMOVEJOB_H
 
 #include "dfmplugin_fileoperations_global.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
+#include "fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -57,7 +57,7 @@ public:
 
 private:
     bool getOperationsAndDialogService();
-    void initArguments(const JobHandlePointer &handler);
+    void initArguments(const JobHandlePointer handler);
 private slots:
     void onHandleAddTask();
     void onHandleAddTaskWithArgs(const JobInfoPointer info);
@@ -67,7 +67,7 @@ private:
     QMap<JobHandlePointer, QSharedPointer<QTimer>> copyMoveTask;
     QSharedPointer<QMutex> copyMoveTaskMutex { nullptr };
     QSharedPointer<QMutex> getOperationsAndDialogServiceMutex { nullptr };
-    QPointer<DSC_NAMESPACE::FileOperationsService> operationsService { nullptr };
+    QSharedPointer<FileOperationsService> operationsService { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
 };
 

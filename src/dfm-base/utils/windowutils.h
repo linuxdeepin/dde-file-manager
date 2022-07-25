@@ -23,7 +23,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class WindowUtils
 {
@@ -37,5 +37,5 @@ public:
     static bool keyAltIsPressed();
 };
 
-DFMBASE_END_NAMESPACE
+}
 #endif   // WINDOWUTILS_H

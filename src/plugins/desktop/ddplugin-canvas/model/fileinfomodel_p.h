@@ -26,12 +26,17 @@
 
 #include <QReadWriteLock>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class FileInfoModelPrivate : public QObject
 {
     Q_OBJECT
 public:
+    enum ModelState {
+        NullState = 0,
+        NormalState = 0x1,
+        RefreshState = 0x1 << 1
+       };
     explicit FileInfoModelPrivate(FileInfoModel *qq);
     void doRefresh();
 public slots:
@@ -42,6 +47,7 @@ public slots:
     void updateData(const QUrl &url);
 public:
     QDir::Filters filters = QDir::NoFilter;
+    ModelState modelState = NullState;
     FileProvider *fileProvider = nullptr;
     QList<QUrl> fileList;
     QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
@@ -50,6 +56,6 @@ private:
     FileInfoModel *q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // FILEINFOMODEL_P_H

@@ -29,7 +29,7 @@
 #include <DLabel>
 #include <DPasswordEdit>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class EncryptionPage : public QWidget
 {
     Q_OBJECT
@@ -94,5 +94,5 @@ private:
     DTK_WIDGET_NAMESPACE::DPushButton *echoBtn = nullptr;
     DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordEdit = nullptr;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // ENCRYPTIONPAGE_H

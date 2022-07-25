@@ -28,7 +28,7 @@
 
 #include <QUrl>
 
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 
 class DetailView;
 class DetailSpaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
@@ -55,6 +55,6 @@ private:
     DetailView *detailView { nullptr };
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 
 #endif   // DETAILSPACEWIDGET_H

@@ -27,7 +27,7 @@
 #include <QObject>
 #include <QMap>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class MimeTypeDisplayManager : public QObject
 {
@@ -65,6 +65,6 @@ private:
     static QStringList BackupMimeTypes;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // MIMETYPEDISPLAYMANAGER_H

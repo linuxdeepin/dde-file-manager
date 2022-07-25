@@ -28,12 +28,11 @@
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <DIconButton>
 #include <DHorizontalLine>
@@ -43,9 +42,8 @@
 #include <QKeyEvent>
 #include <QPushButton>
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     : AbstractFrame(parent)
@@ -83,8 +81,6 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
             view->stopWork();
     }
 
-    quint64 winId = WorkspaceHelper::instance()->windowId(this);
-    WorkspaceEventCaller::sendEnterFileView(winId, url);
     workspaceUrl = url;
 
     if (!tabBar->currentTab())
@@ -108,6 +104,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         viewStackLayout->addWidget(fileView->widget());
         viewStackLayout->setCurrentWidget(fileView->widget());
         views.insert(url.scheme(), fileView);
+        fileView->setRootUrl(url);
         tabBar->setCurrentView(fileView.get());
         tabBar->setCurrentUrl(url);
         initCustomTopWidgets(url);

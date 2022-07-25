@@ -29,7 +29,7 @@
 #include <QDebug>
 #include <QProcess>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 
 HistoryStack::HistoryStack(int threshold)
@@ -77,7 +77,7 @@ QUrl HistoryStack::back()
 
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-        if (url.scheme() != Global::kFile && !fileInfo)
+        if (url.scheme() != Global::Scheme::kFile && !fileInfo)
             break;
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
@@ -106,7 +106,7 @@ QUrl HistoryStack::forward()
 
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-        if (url.scheme() != Global::kFile && !fileInfo)
+        if (url.scheme() != Global::Scheme::kFile && !fileInfo)
             break;
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {

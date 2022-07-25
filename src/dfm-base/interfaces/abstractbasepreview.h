@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QUrl>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractBasePreview : public QObject
 {
     Q_OBJECT
@@ -51,5 +51,5 @@ public:
 signals:
     void titleChanged();
 };
-DFMBASE_END_NAMESPACE
+}
 #endif   // FILEPREVIEWINTERFACE_H

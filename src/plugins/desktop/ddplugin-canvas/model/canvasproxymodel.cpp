@@ -22,8 +22,8 @@
 #include "view/operator/fileoperatorproxy.h"
 #include "utils/fileutil.h"
 
-#include <dfm-base/utils/fileutils.h>
-#include <dfm-base/utils/sysinfoutils.h>
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/sysinfoutils.h"
 
 #include <QMimeData>
 #include <QDateTime>
@@ -31,7 +31,7 @@
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 CanvasProxyModelPrivate::CanvasProxyModelPrivate(CanvasProxyModel *qq)
     : QObject(qq), q(qq)
@@ -61,6 +61,8 @@ void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent
         auto url = srcModel->fileUrl(srcModel->index(i));
         if (hookIfs && hookIfs->dataInserted(url)) {
             qDebug() << "filter by extend module:" << url;
+            // todo:发信号通知view，该url已被劫持？view进行一些收尾处理，比如如果url为右键新建，则清理待重命名文件记录
+            // todo:清理待重命名记录时发送事件？以便于扩展模块进行收尾处理，比如滚动位置以显示该url，或选中该url，或进入重命名编辑状态
             continue;
         }
 
@@ -695,7 +697,7 @@ QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
     }
 
     // set user id
-    data->setData(QString(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
+    data->setData(QString(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
 
     return data;
 }

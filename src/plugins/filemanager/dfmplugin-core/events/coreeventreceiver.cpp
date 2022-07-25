@@ -31,7 +31,6 @@
 #include <functional>
 
 DPCORE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 CoreEventReceiver::CoreEventReceiver(QObject *parent)

@@ -30,7 +30,7 @@
 
 #include <functional>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class NetworkUtils : public QObject
 {
@@ -51,6 +51,6 @@ protected:
     NetworkUtils(QObject *parent = nullptr);
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // NETWORKUTILS_H

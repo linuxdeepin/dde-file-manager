@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagDirMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -42,6 +42,7 @@ public:
 class TagDirMenuScenePrivate;
 class TagDirMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit TagDirMenuScene(QObject *parent = nullptr);
     virtual ~TagDirMenuScene() override;
@@ -57,6 +58,6 @@ private:
     QScopedPointer<TagDirMenuScenePrivate> d;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGDIRMENUSCENE_H

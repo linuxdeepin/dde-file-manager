@@ -29,7 +29,7 @@
 #include <QMap>
 #include <QSet>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class SystemPathUtil final : public QObject
 {
@@ -64,5 +64,5 @@ private:
     QStringList xdgDirs;
 };
 
-DFMBASE_END_NAMESPACE
+}
 #endif   // SYSTEMPATHUTIL_H

@@ -29,13 +29,13 @@
 #include "utils/workspacehelper.h"
 #include "utils/fileoperatorhelper.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/utils/universalutils.h"
+
+#include <dfm-framework/event/event.h>
 
 #include <DApplication>
 
@@ -43,14 +43,16 @@
 #include <QAbstractItemView>
 #include <QTimer>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
+namespace dfmplugin_workspace {
 const char *const kEidtorShowSuffix = "_d_whether_show_suffix";
-DPWORKSPACE_END_NAMESPACE
+}
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileViewHelper::FileViewHelper(FileView *parent)
     : QObject(parent)
@@ -75,7 +77,12 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
     //  cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
-        if (ClipBoard::instance()->clipboardFileUrlList().contains(delegateServIns->urlTransform(file->url())))
+        QUrl localUrl = file->url();
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+        if (ok && !urls.isEmpty())
+            localUrl = urls.first();
+        if (ClipBoard::instance()->clipboardFileUrlList().contains(localUrl))
             return true;
 
         // the linked file only judges the URL, not the inode,
@@ -86,10 +93,8 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
         }
     }
 
-    if (delegateServIns->isTransparent(file->url()))
+    if (WorkspaceEventSequence::instance()->doCheckTransparent(file->url()))
         return true;
-
-    // Todo(yanghao)
 
     return false;
 }

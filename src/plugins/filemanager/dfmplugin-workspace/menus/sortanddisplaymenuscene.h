@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 class SortAndDisplayMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
@@ -42,6 +42,7 @@ public:
 class SortAndDisplayMenuScenePrivate;
 class SortAndDisplayMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit SortAndDisplayMenuScene(QObject *parent = nullptr);
     virtual ~SortAndDisplayMenuScene() override;
@@ -56,5 +57,5 @@ public:
 private:
     QScopedPointer<SortAndDisplayMenuScenePrivate> d;
 };
-DPWORKSPACE_END_NAMESPACE
+}
 #endif   // SORTANDDISPLAYMENUSCENE_H

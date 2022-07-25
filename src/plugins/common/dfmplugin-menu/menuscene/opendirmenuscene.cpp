@@ -21,22 +21,20 @@
 #include "private/opendirmenuscene_p.h"
 #include "action_defines.h"
 
-#include "services/common/menu/menu_defines.h"
-
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/sysinfoutils.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QVariant>
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 AbstractMenuScene *OpenDirMenuCreator::create()
 {
@@ -128,7 +126,7 @@ bool OpenDirMenuScene::triggered(QAction *action)
 
     // open in new window
     if (actionId == ActionID::kOpenInNewWindow) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, d->focusFile);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
         return true;
     }
 
@@ -140,19 +138,19 @@ bool OpenDirMenuScene::triggered(QAction *action)
         else
             urls << d->focusFile;
 
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, d->windowId, urls);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenInTerminal, d->windowId, urls);
         return true;
     }
 
     // open as admin
     if (actionId == ActionID::kOpenAsAdmin) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenAsAdmin, d->isEmptyArea ? d->currentDir : d->focusFile);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenAsAdmin, d->isEmptyArea ? d->currentDir : d->focusFile);
         return true;
     }
 
     // select all
     if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_SelectAll", d->windowId);
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectAll", d->windowId);
         return true;
     }
 

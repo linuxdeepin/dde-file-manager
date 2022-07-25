@@ -42,7 +42,7 @@
 class QLabel;
 DWIDGET_USE_NAMESPACE
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 using WMInter = com::deepin::wm;
 using AppearanceIfs = com::deepin::daemon::Appearance;
 using SessionIfs = com::deepin::SessionManager;
@@ -114,6 +114,6 @@ public:
     WallpaperSettings *q;
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 
 #endif // WALLPAPERSETTINGS_P_H

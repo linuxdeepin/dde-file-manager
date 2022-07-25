@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QModelIndex>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class OperState : public QObject
 {
@@ -53,5 +53,5 @@ protected:
     CanvasView *view = nullptr;
     QPersistentModelIndex contBegin; //for shift
 };
-DDP_CANVAS_END_NAMESPACE
+}
 #endif // OPERSTATE_H

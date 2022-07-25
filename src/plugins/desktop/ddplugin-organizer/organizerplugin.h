@@ -23,7 +23,7 @@
 
 #include "ddplugin_organizer_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 

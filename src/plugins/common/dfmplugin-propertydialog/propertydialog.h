@@ -23,10 +23,9 @@
 
 #include "dfmplugin_propertydialog_global.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 
 class PropertyDialog : public dpf::Plugin
 {
@@ -35,6 +34,17 @@ class PropertyDialog : public dpf::Plugin
 
     DPF_EVENT_NAMESPACE(DPPROPERTYDIALOG_NAMESPACE)
 
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_PropertyDialog_Show)
+    DPF_EVENT_REG_SLOT(slot_ViewExtension_Register)
+    DPF_EVENT_REG_SLOT(slot_ViewExtension_Unregister)
+    DPF_EVENT_REG_SLOT(slot_CustomView_Register)
+    DPF_EVENT_REG_SLOT(slot_CustomView_UnRegister)
+    DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Register)
+    DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Unregister)
+    DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Add)
+    DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Remove)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
@@ -42,8 +52,13 @@ public:
 
 private:
     void bindScene(const QString &parentScene);
+    void bindSceneOnAdded(const QString &newScene);
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 
 #endif   // DETAILSPACE_H

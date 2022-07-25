@@ -28,7 +28,7 @@
 #include <QUrl>
 #include <QVariantHash>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class SettingsPrivate;
 class Settings : public QObject
@@ -84,6 +84,6 @@ private:
     void onFileChanged(const QUrl &);
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // SETTINGS_H

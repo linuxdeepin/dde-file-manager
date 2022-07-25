@@ -32,7 +32,7 @@
 #include <QImage>
 #include <QPixmap>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class DocSheet;
 class BrowserPage;
 class SheetRenderer;
@@ -180,5 +180,5 @@ private:
 
     static PageRenderThread *pageRenderThread;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // PAGERENDERTHREAD_H

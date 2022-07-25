@@ -23,10 +23,11 @@
 #include "computereventreceiver.h"
 #include "computereventcaller.h"
 #include "controller/computercontroller.h"
+#include "utils/computerutils.h"
 
 #include <QDebug>
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 DFMBASE_USE_NAMESPACE
 
 ComputerEventReceiver *ComputerEventReceiver::instance()
@@ -38,6 +39,35 @@ ComputerEventReceiver *ComputerEventReceiver::instance()
 void ComputerEventReceiver::handleItemEject(const QUrl &url)
 {
     ComputerControllerInstance->actEject(url);
+}
+
+bool ComputerEventReceiver::handleSepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+    if (url.scheme() == ComputerUtils::scheme()) {
+        QVariantMap map;
+        map["CrumbData_Key_Url"] = url;
+        map["CrumbData_Key_DisplayText"] = tr("Computer");
+        map["CrumbData_Key_IconName"] = ComputerUtils::icon().name();
+        mapGroup->push_back(map);
+        return true;
+    }
+
+    return false;
+}
+
+bool ComputerEventReceiver::handleSortItem(const QString &group, const QString &subGroup, const QUrl &a, const QUrl &b)
+{
+    if (group != "Group_Device")
+        return false;
+    if (subGroup != Global::Scheme::kComputer)
+        return false;
+    return ComputerUtils::sortItem(a, b);
+}
+
+void ComputerEventReceiver::setContextMenuEnable(bool enable)
+{
+    ComputerUtils::contextMenuEnabled = enable;
 }
 
 ComputerEventReceiver::ComputerEventReceiver(QObject *parent)

@@ -33,7 +33,7 @@
  * \brief 定义了文件迭代器的通用接口
  *
  */
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractDirIterator : public QObject
 {
     Q_OBJECT
@@ -121,7 +121,7 @@ public:
     }
 };
 
-DFMBASE_END_NAMESPACE
+}
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> AbstractDirIteratorPointer;
 
 Q_DECLARE_METATYPE(AbstractDirIteratorPointer)

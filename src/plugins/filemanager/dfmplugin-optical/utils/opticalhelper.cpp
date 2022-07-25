@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "opticalhelper.h"
+#include "mastered/masteredmediafileinfo.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -29,8 +30,10 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
+
 #include <dfm-burn/dburn_global.h>
 
 #include <QCoreApplication>
@@ -38,12 +41,23 @@
 #include <QStandardPaths>
 
 DFMBASE_USE_NAMESPACE
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 
 // TODO(zhangs): rm define
 #define DISCBURN_STAGING "discburn"
 #define BURN_SEG_ONDISC "disc_files"
 #define BURN_SEG_STAGING "staging_files"
+
+OpticalHelper *OpticalHelper::instance()
+{
+    static OpticalHelper instance;
+    return &instance;
+}
+
+QString OpticalHelper::scheme()
+{
+    return Global::Scheme::kBurn;
+}
 
 QIcon OpticalHelper::icon()
 {
@@ -98,7 +112,7 @@ QUrl OpticalHelper::localDiscFile(const QUrl &dest)
 QString OpticalHelper::burnDestDevice(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::kBurn || !url.path().contains(burnRxp(), &m))
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m))
         return {};
     return m.captured(1);
 }
@@ -106,7 +120,7 @@ QString OpticalHelper::burnDestDevice(const QUrl &url)
 QString OpticalHelper::burnFilePath(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::kBurn || !url.path().contains(burnRxp(), &m))
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m))
         return {};
     return m.captured(3);
 }
@@ -114,7 +128,7 @@ QString OpticalHelper::burnFilePath(const QUrl &url)
 bool OpticalHelper::burnIsOnDisc(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::kBurn || !url.path().contains(burnRxp(), &m)) {
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m)) {
         return false;
     }
     return m.captured(2) == BURN_SEG_ONDISC;
@@ -123,7 +137,7 @@ bool OpticalHelper::burnIsOnDisc(const QUrl &url)
 bool OpticalHelper::burnIsOnStaging(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::kBurn || !url.path().contains(burnRxp(), &m)) {
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(burnRxp(), &m)) {
         return false;
     }
     return m.captured(2) == BURN_SEG_STAGING;
@@ -145,7 +159,7 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
 
     QUrl url;
     QString filePath { devid.replace('_', '/') + "/" BURN_SEG_STAGING "/" + path };
-    url.setScheme(Global::kBurn);
+    url.setScheme(Global::Scheme::kBurn);
     url.setPath(filePath);
 
     return url;
@@ -153,7 +167,7 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
 
 QUrl OpticalHelper::tansToLocalFile(const QUrl &in)
 {
-    Q_ASSERT(in.scheme() == Global::kBurn);
+    Q_ASSERT(in.scheme() == Global::Scheme::kBurn);
     QUrl url;
 
     if (burnIsOnDisc(in)) {
@@ -216,69 +230,29 @@ bool OpticalHelper::isDupFileNameInPath(const QString &path, const QUrl &url)
     return false;
 }
 
-DSB_FM_NAMESPACE::WindowsService *OpticalHelper::winServIns()
+bool OpticalHelper::isTransparent(const QUrl &url)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WindowsService::name()))
-            abort();
-    });
+    if (url.scheme() == OpticalHelper::scheme())
+        return !burnIsOnDisc(url);
 
-    return ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
+    return false;
 }
 
-DSB_FM_NAMESPACE::TitleBarService *OpticalHelper::titleServIns()
+bool OpticalHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != OpticalHelper::scheme())
+            return false;
+        (*urls).push_back(tansToLocalFile(url));
+    }
+    return true;
 }
 
-DSB_FM_NAMESPACE::WorkspaceService *OpticalHelper::workspaceServIns()
+OpticalHelper::OpticalHelper(QObject *parent)
+    : QObject(parent)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
-}
-
-DSC_NAMESPACE::FileOperationsService *OpticalHelper::fileOperationsServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-}
-
-DSC_NAMESPACE::DelegateService *OpticalHelper::dlgateServIns()
-{
-    return delegateServIns;
-}
-
-DSC_NAMESPACE::MenuService *OpticalHelper::menuServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::MenuService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::MenuService>(DSC_NAMESPACE::MenuService::name());
 }
 
 QRegularExpression OpticalHelper::burnRxp()

@@ -22,20 +22,20 @@
 #include "private/tagdirmenuscene_p.h"
 #include "utils/tagmanager.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/sysinfoutils.h"
 
 #include <DDesktopServices>
 
 #include <QProcess>
+#include <QMenu>
 
 DWIDGET_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 TagDirMenuScenePrivate::TagDirMenuScenePrivate(TagDirMenuScene *qq)
     : AbstractMenuScenePrivate(qq),
@@ -120,16 +120,16 @@ bool TagDirMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
     QList<AbstractMenuScene *> currentScene;
     if (d->isEmptyArea) {
-        if (auto newCreateScene = MenuService::service()->createScene("SortAndDisplayMenu"))
+        if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene("SortAndDisplayMenu"))
             currentScene.append(newCreateScene);
     } else {
-        if (auto newCreateScene = MenuService::service()->createScene("WorkspaceMenu"))
+        if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene("WorkspaceMenu"))
             currentScene.append(newCreateScene);
     }
     setSubscene(currentScene);

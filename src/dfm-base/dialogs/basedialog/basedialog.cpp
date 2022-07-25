@@ -33,7 +33,7 @@
 #include <QDebug>
 
 DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 BaseDialog::BaseDialog(QWidget *parent)
     : DAbstractDialog(parent),

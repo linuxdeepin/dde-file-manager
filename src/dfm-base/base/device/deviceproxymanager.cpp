@@ -29,7 +29,7 @@
 
 #include <QDBusServiceWatcher>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 static constexpr char kDesktopService[] { "com.deepin.filemanager.service" };
 static constexpr char kDevMngPath[] { "/com/deepin/filemanager/service/DeviceManager" };
 static constexpr char kDevMngIFace[] { "com.deepin.filemanager.service.DeviceManager" };
@@ -48,6 +48,18 @@ QStringList DeviceProxyManager::getAllBlockIds(GlobalServerDefines::DeviceQueryO
     } else {
         return DevMngIns->getAllBlockDevID(opts);
     }
+}
+
+QStringList DeviceProxyManager::getAllBlockIdsByUUID(const QStringList &uuids, GlobalServerDefines::DeviceQueryOptions opts)
+{
+    const auto &&devices = getAllBlockIds(opts);
+    QStringList devs;
+    for (const auto &id : devices) {
+        const auto &&info = queryBlockInfo(id);
+        if (uuids.contains(info.value(GlobalServerDefines::DeviceProperty::kUUID).toString()))
+            devs << id;
+    }
+    return devs;
 }
 
 QStringList DeviceProxyManager::getAllProtocolIds()

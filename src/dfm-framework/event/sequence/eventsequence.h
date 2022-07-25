@@ -102,11 +102,7 @@ private:
 
 class EventSequenceManager
 {
-    Q_DISABLE_COPY(EventSequenceManager)
-
 public:
-    static EventSequenceManager &instance();
-
     template<class T, class Func>
     inline bool follow(const QString &space, const QString &topic, T *obj, Func method)
     {
@@ -169,10 +165,10 @@ public:
     {
         QReadLocker lk(&rwLock);
         if (Q_LIKELY(sequenceMap.contains(type))) {
-            auto dispatcher = sequenceMap.value(type);
+            auto sequence = sequenceMap.value(type);
             lk.unlock();
-            if (dispatcher)
-                return dispatcher->traversal(param, std::forward<Args>(args)...);
+            if (sequence)
+                return sequence->traversal(param, std::forward<Args>(args)...);
         }
         return false;
     }
@@ -187,10 +183,10 @@ public:
     {
         QReadLocker lk(&rwLock);
         if (Q_LIKELY(sequenceMap.contains(type))) {
-            auto dispatcher = sequenceMap.value(type);
+            auto sequence = sequenceMap.value(type);
             lk.unlock();
-            if (dispatcher)
-                return dispatcher->traversal();
+            if (sequence)
+                return sequence->traversal();
         }
         return false;
     }
@@ -202,9 +198,6 @@ protected:
 private:
     using SequencePtr = QSharedPointer<EventSequence>;
     using EventSequenceMap = QMap<EventType, SequencePtr>;
-
-    EventSequenceManager() = default;
-    ~EventSequenceManager() = default;
 
 private:
     EventSequenceMap sequenceMap;

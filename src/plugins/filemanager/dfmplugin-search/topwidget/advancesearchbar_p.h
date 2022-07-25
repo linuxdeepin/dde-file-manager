@@ -40,7 +40,9 @@ class QLabel;
 class QComboBox;
 QT_END_NAMESPACE
 
-DPSEARCH_BEGIN_NAMESPACE
+using FilterCallback = std::function<void(DFMBASE_NAMESPACE::AbstractFileInfo *info, QVariant data)>;
+
+namespace dfmplugin_search {
 
 class AdvanceSearchBar;
 class AdvanceSearchBarPrivate : public DTK_WIDGET_NAMESPACE::DBoxWidget
@@ -93,6 +95,8 @@ public:
     AdvanceSearchBar *q;
 };
 
-DPSEARCH_END_NAMESPACE
+}
+
+Q_DECLARE_METATYPE(FilterCallback)
 
 #endif   // ADVANCESEARCHBAR_P_H

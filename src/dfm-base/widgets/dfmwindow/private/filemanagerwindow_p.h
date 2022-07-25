@@ -38,7 +38,7 @@
 #include <mutex>
 
 DWIDGET_USE_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class FileManagerWindow;
 class FileManagerWindowPrivate : public QObject
@@ -79,6 +79,6 @@ protected:
     std::once_flag detailVewFlag;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // FILEMANAGERWINDOW_P_H

@@ -33,7 +33,7 @@ const static int kArrowExpandSpacing = 10;
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 DevicePropertyDialog::DevicePropertyDialog(QWidget *parent)
     : DDialog(parent)
 {
@@ -131,7 +131,7 @@ int DevicePropertyDialog::contentHeight() const
             + 40);
 }
 
-void DevicePropertyDialog::setSelectDeviceInfo(const DSC_NAMESPACE::Property::DeviceInfo &info)
+void DevicePropertyDialog::setSelectDeviceInfo(const DeviceInfo &info)
 {
     currentFileUrl = info.deviceUrl;
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));

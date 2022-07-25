@@ -33,7 +33,7 @@
 typedef QSharedPointer<QMap<quint8, QVariant>> JobInfoPointer;
 Q_DECLARE_METATYPE(JobInfoPointer);
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractJobHandler : public QObject
 {
     Q_OBJECT
@@ -269,7 +269,7 @@ private:
     QMutex taskInfoMutex;
     QMap<NotifyType, JobInfoPointer> taskInfo;
 };
-DFMBASE_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::SupportActions)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)
