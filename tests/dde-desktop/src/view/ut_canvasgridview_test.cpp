@@ -1553,8 +1553,8 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_fetchDragEventUrlsFromSharedMemory
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_delayCustom)
 {
-    waitData(m_canvasGridView);
     GridManager::instance()->setAutoMerge(false);
+    waitData(m_canvasGridView);
     ASSERT_FALSE(GridManager::instance()->autoMerge());
 
     auto initCustom = (void (GridManager::*)(QStringList &))&GridManager::initCustom;
@@ -1580,7 +1580,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_delayCustom)
     ok = false;
     m_canvasGridView->delayCustom(1);
     QEventLoop loop;
-    QTimer::singleShot(50, &loop, &QEventLoop::quit);
+    QTimer::singleShot(500, &loop, &QEventLoop::quit);
     loop.exec();
     EXPECT_TRUE(ok);
 }
