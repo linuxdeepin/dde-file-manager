@@ -6,23 +6,23 @@
     <message>
         <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="53"/>
         <source>Invalid args</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的参数</translation>
     </message>
     <message>
         <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="54"/>
         <source>Invalid invoker</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的调用</translation>
     </message>
 </context>
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="183"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="190"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="187"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="194"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>文件管理器是一款功能强大的文件管理工具， 它包括搜索、复制、回收站、压缩/解压缩， 文件属性等管理功能。</translation>
     </message>
@@ -60,7 +60,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="176"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>删除</translation>
     </message>
 </context>
 <context>
@@ -68,7 +68,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/custommode.cpp" line="337"/>
         <source>New Collection</source>
-        <translation type="unfinished"></translation>
+        <translation>新建集合</translation>
     </message>
 </context>
 <context>
@@ -91,7 +91,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="136"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="138"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
@@ -101,7 +101,7 @@
     <message>
         <location filename="../src/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="160"/>
         <source>Cannot access %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法访问%1</translation>
     </message>
 </context>
 <context>
@@ -716,22 +716,22 @@
         <translation>正在扫描当前设备，是否终止扫描？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="800"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="804"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>无法确认%1的身份。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="801"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="805"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>当您首次登录时会看到这个提示。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="802"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="806"/>
         <source>The identity sent by the remote computer is</source>
         <translation>远程电脑发送的身份信息为</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="804"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="808"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想确认继续操作是否安全，请联系系统管理员。</translation>
     </message>
@@ -777,35 +777,35 @@
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="260"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>卸载失败</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="260"/>
         <source>Cannot stop scanning device</source>
-        <translation type="unfinished"></translation>
+        <translation>无法停止扫描设备</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/schemefactory.h" line="96"/>
         <source>The current scheme trans func has registered</source>
-        <translation type="unfinished"></translation>
+        <translation>当前的协议转换函数已注册</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/schemefactory.h" line="120"/>
         <location filename="../src/dfm-base/base/schemefactory.h" line="331"/>
         <source>The current scheme has registered the associated construction class</source>
-        <translation type="unfinished"></translation>
+        <translation>当前的协议已经注册了相关的构造类</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/schemefactory.h" line="148"/>
         <location filename="../src/dfm-base/base/schemefactory.h" line="368"/>
         <source>No scheme found for URL registration</source>
-        <translation type="unfinished"></translation>
+        <translation>没有找到用于URL注册的协议</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/schemefactory.h" line="156"/>
         <location filename="../src/dfm-base/base/schemefactory.h" line="380"/>
         <source>Scheme should be call registered &apos;regClass()&apos; function before create function</source>
-        <translation type="unfinished"></translation>
+        <translation>协议应该在创建函数之前调用“regClass()”进行注册</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="228"/>
@@ -862,12 +862,12 @@
     <message>
         <location filename="../src/dfm-base/base/urlroute.cpp" line="62"/>
         <source>Scheme cannot be registered repeatedly.</source>
-        <translation type="unfinished"></translation>
+        <translation>协议不能重复注册。</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/urlroute.cpp" line="73"/>
         <source>Scheme map to root path not exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>根目录的协议映射不存在。</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="308"/>
@@ -1146,7 +1146,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="150"/>
         <source>invalid volume name</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的卷名</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="153"/>
@@ -1176,7 +1176,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="87"/>
         <source>New File</source>
-        <translation type="unfinished"></translation>
+        <translation>新建文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="284"/>
@@ -1349,53 +1349,53 @@
         <translation>擦除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="278"/>
         <source>Cannot access</source>
-        <translation type="unfinished"></translation>
+        <translation>无法访问</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="370"/>
         <source>User directory</source>
-        <translation type="unfinished"></translation>
+        <translation>用户目录</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="374"/>
         <source>Local disk</source>
         <translation>本地磁盘</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="301"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="376"/>
         <source>Removable disk</source>
         <translation>可移动磁盘</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="303"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="378"/>
         <source>DVD</source>
         <translation>光驱设备</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="382"/>
         <source>Unconnected network shared directory</source>
         <translation>未连接的网络共享目录</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="383"/>
         <source>Network shared directory</source>
         <translation>网络共享目录</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="310"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="314"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="385"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="389"/>
         <source>Android mobile device</source>
         <translation>安卓移动设备</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="313"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="388"/>
         <source>Apple mobile device</source>
         <translation>苹果移动设备</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="318"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerutils.cpp" line="393"/>
         <source>Unknown device</source>
         <translation>未知设备</translation>
     </message>
@@ -1514,7 +1514,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="216"/>
         <source>Create Vault</source>
-        <translation type="unfinished"></translation>
+        <translation>创建保险箱</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="219"/>
@@ -1627,60 +1627,59 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="410"/>
         <source>copy file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>复制文件%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="411"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="416"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="422"/>
         <source>to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>到%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="413"/>
         <source>delete file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>删除文件%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="415"/>
         <source>cut file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>剪切文件%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="418"/>
         <source>move file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>移动文件%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="419"/>
         <source>to trash %1</source>
-        <translation type="unfinished"></translation>
+        <translation>到回收站%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="421"/>
         <source>restore file %1 from trash </source>
-        <translation type="unfinished"></translation>
+        <translation>从回收站还原文件%1 </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="424"/>
         <source>clean trash file %1  </source>
-        <translation type="unfinished"></translation>
+        <translation>清除回收站文件%1 </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="155"/>
         <source>create dfm io factory failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>创建dfm io工厂失败！</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="170"/>
         <source>create dfm io dfile failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>创建dfm io dfile 失败！</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="320"/>
-        <source>DFileCopyMoveJob</source>
-        <comment>Failed to read the file, cause: %1</comment>
-        <translation type="unfinished"></translation>
+        <source>Failed to read the file, cause: %1</source>
+        <translation>读取文件失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="395"/>
@@ -1691,17 +1690,17 @@
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="692"/>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="901"/>
         <source>Fail to create symlink, cause: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>创建链接方式失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="930"/>
         <source>create dir&apos;s iterator failed, case : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>创建目录迭代器失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1139"/>
         <source>resize file failed!</source>
-        <translation type="unfinished"></translation>
+        <translation>调整文件大小失败！</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1169"/>
@@ -1715,7 +1714,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="72"/>
         <source>Apps</source>
-        <translation type="unfinished"></translation>
+        <translation>应用</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="73"/>
@@ -1740,7 +1739,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="77"/>
         <source>Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>文件夹</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="78"/>
@@ -2035,12 +2034,12 @@
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="196"/>
         <source>Target file is exists</source>
-        <translation type="unfinished"></translation>
+        <translation>目标文件已存在</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="198"/>
         <source>Target directory is exists</source>
-        <translation type="unfinished"></translation>
+        <translation>目标目录已存在</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="200"/>
@@ -2176,67 +2175,67 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="96"/>
         <source>Operating failed</source>
-        <translation type="unfinished"></translation>
+        <translation>操作失败</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="97"/>
         <source>Mount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载失败</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="98"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"></translation>
+        <translation>卸载失败</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="103"/>
         <source>Unmounting device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在卸载设备...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="106"/>
         <source>Mounting device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在挂载设备...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="109"/>
         <source>Erasing device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在擦除设备...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="112"/>
         <source>Making filesystem for device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在为设备制作文件系统...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="115"/>
         <source>Locking device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在锁定设备...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="118"/>
         <source>Unlocking device now...</source>
-        <translation type="unfinished"></translation>
+        <translation>正在解锁设备...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="142"/>
         <source>The device is busy now</source>
-        <translation type="unfinished"></translation>
+        <translation>设备繁忙</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="151"/>
         <source>Anonymous mount is not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>不允许匿名挂载</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="154"/>
         <source>Wrong password is inputed</source>
-        <translation type="unfinished"></translation>
+        <translation>密码输入错误</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="160"/>
         <source>Error occured while mounting device</source>
-        <translation type="unfinished"></translation>
+        <translation>安装设备时发生错误</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
@@ -2978,12 +2977,12 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="216"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"></translation>
+        <translation>在显示冲突信息功能中创建源文件%1信息失败!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="226"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"></translation>
+        <translation>在显示冲突信息功能中创建目标文件%1信息失败!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="242"/>
@@ -3318,17 +3317,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="113"/>
         <source>Cannot access %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法访问%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="289"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"></translation>
+        <translation>解锁设备失败</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="289"/>
         <source>Wrong password is inputed</source>
-        <translation type="unfinished"></translation>
+        <translation>密码输入错误</translation>
     </message>
 </context>
 <context>
@@ -3336,18 +3335,18 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/events/computereventreceiver.cpp" line="50"/>
         <source>Computer</source>
-        <translation type="unfinished">计算机</translation>
+        <translation>计算机</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_computer::ComputerItemWatcher</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="369"/>
         <source>My Directories</source>
         <translation>我的目录</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="357"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="374"/>
         <source>Disks</source>
         <translation>磁盘列表</translation>
     </message>
@@ -3420,12 +3419,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="75"/>
         <source>Accessed</source>
-        <translation type="unfinished"></translation>
+        <translation>访问时间</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="79"/>
         <source>Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>修改时间</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="237"/>
@@ -3567,33 +3566,33 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="100"/>
         <source>Kindly Reminder</source>
-        <translation type="unfinished">温馨提示</translation>
+        <translation>温馨提示</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="100"/>
         <source>Please firstly install samba to continue</source>
-        <translation type="unfinished">请您先安装samba后，再进行共享相关操作！</translation>
+        <translation>请您先安装samba后，再进行共享相关操作！</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="110"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="429"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished">共享名不得包含%1，不能以-或空格开头，或以空格结尾</translation>
+        <translation>共享名不得包含%1，不能以-或空格开头，或以空格结尾</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="423"/>
         <source>To protect the files, you cannot share this folder.</source>
-        <translation type="unfinished">为了文件安全，无法共享此文件夹。</translation>
+        <translation>为了文件安全，无法共享此文件夹。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="446"/>
         <source>Sharing failed</source>
-        <translation type="unfinished">共享失败</translation>
+        <translation>共享失败</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="446"/>
         <source>The computer name is too long</source>
-        <translation type="unfinished">计算机名过长</translation>
+        <translation>计算机名过长</translation>
     </message>
 </context>
 <context>
@@ -3788,28 +3787,29 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="127"/>
         <source>It does not support burning UDF discs</source>
-        <translation type="unfinished"></translation>
+        <translation>不支持刻录UDF磁盘</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="156"/>
         <source>%1 burning is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>不支持%1刻录</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="160"/>
         <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
-        <translation type="unfinished"></translation>
+        <translation>1. 它不是%1磁盘;69/5000 
+2. 这个文件系统的版本还不支持添加文件。</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="192"/>
         <source>Mounting failed</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载失败</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="231"/>
         <source>No files to burn</source>
-        <translation type="unfinished"></translation>
+        <translation>没有需要刻录的文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="272"/>
@@ -3946,7 +3946,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="77"/>
         <source>PC Name</source>
-        <translation type="unfinished"></translation>
+        <translation>计算机名称</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
@@ -4247,7 +4247,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="139"/>
         <source>Mount device error</source>
-        <translation type="unfinished"></translation>
+        <translation>挂载设备错误</translation>
     </message>
 </context>
 <context>
@@ -4282,7 +4282,7 @@
 <context>
     <name>dfmplugin_tag::TagEditor</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="97"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="98"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation>输入标记信息，如“工作”、“家人”等。多个标记信息之间用英文半角逗号分隔。</translation>
     </message>
@@ -5328,7 +5328,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="53"/>
         <source>Encrypted file, please enter the password</source>
-        <translation type="unfinished"></translation>
+        <translation>加密文件，请输入密码</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="59"/>

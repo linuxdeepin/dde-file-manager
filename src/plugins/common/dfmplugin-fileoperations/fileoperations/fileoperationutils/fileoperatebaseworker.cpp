@@ -317,7 +317,7 @@ bool FileOperateBaseWorker::doReadFile(const AbstractFileInfoPointer &fromInfo, 
             qWarning() << "read size <=0, size: " << readSize << " from file pos: " << fromFilePos << " from file info size: " << fromFileInfoSize;
 
             AbstractJobHandler::JobErrorType errortype = fromInfo->exists() ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
-            QString errorstr = fromInfo->exists() ? QString(QObject::tr("DFileCopyMoveJob", "Failed to read the file, cause: %1")).arg("to something!") : QString();
+            QString errorstr = fromInfo->exists() ? QString(QObject::tr("Failed to read the file, cause: %1")).arg("to something!") : QString();
 
             actionForRead = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), errortype, errorstr);
 
