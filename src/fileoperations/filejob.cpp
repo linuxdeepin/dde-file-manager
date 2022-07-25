@@ -1563,7 +1563,7 @@ void FileJob::doDiscAuditLog(const DUrl &device, const QString &stagePath, bool 
         burnedFileInfoGroup = FileUtils::fileInfoList(info.absoluteFilePath());
 
     // save log
-    static const QString logKey {"dpkg"};
+    static const QString logKey {"cdrecord"};
     static QString logTemplate {tr("ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9")};
     QString &&result {success ? tr("Success") : tr("Failed")};
     QString &&burner {drive->id()};
