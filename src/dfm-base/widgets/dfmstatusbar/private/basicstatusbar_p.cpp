@@ -97,8 +97,10 @@ void BasicStatusBarPrivate::initJobConnection()
         if (!sender())
             return;
 
-        folderContains = filesCount + directoryCount;
-        q->updateStatusMessage();
+        if (filesCount + directoryCount != folderContains) {
+            folderContains = filesCount + directoryCount;
+            q->updateStatusMessage();
+        }
     };
 
     connect(fileStatisticsJog, &FileStatisticsJob::finished, this, [this]() {

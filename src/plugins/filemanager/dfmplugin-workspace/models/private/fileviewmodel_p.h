@@ -41,24 +41,25 @@ class FileNodeManagerThread : public QThread
 public:
     explicit FileNodeManagerThread(FileViewModel *parent);
     ~FileNodeManagerThread() override;
+
     inline FileViewModel *model() const
     {
         return static_cast<FileViewModel *>(parent());
     }
 
-    void removeFile(const QUrl &url);
     inline void setRootNode(const FileNodePointer &node)
     {
         root = node;
     }
-    void stop();
-    void clearChildren();
-
     FileNodePointer rootNode() const;
+
+    void stop();
+
+    void clearChildren();
     void insertChild(const QUrl &url);
     bool insertChildren(QList<QUrl> &urls);
-    void insertAllChildren(const QList<QUrl> &urls);
     void removeChildren(const QUrl &url);
+
     int childrenCount();
     FileNodePointer childByIndex(const int &index);
     QPair<int, FileNodePointer> childByUrl(const QUrl &url);
@@ -76,44 +77,48 @@ private:
     bool insertChildrenByCeiled();
 
 private:
-    QQueue<QUrl> fileQueue;
     FileNodePointer root;
-    QMutex childrenMutex;
-    bool cacheChildren = false;
-    QList<FileNodePointer> visibleChildren;
+
+    QQueue<QUrl> fileQueue;
+    QList<QUrl> childrenUrlList;
     QMap<QUrl, FileNodePointer> children;
-    QMap<QUrl, FileNodePointer> childrenAddMap;
-    QMap<QUrl, FileNodePointer> childrenRemoveMap;
-    bool stoped { false };
+
     int timeCeiling { 100 };
     int countCeiling { 1000 };
 
-    QMutex fileQueueMutex;
     QAtomicInteger<bool> isTraversalFinished { false };
+    bool stoped { false };
+
+    QMutex fileQueueMutex;
+    QMutex childrenMutex;
 };
 
 class FileViewModelPrivate : public QObject
 {
+    Q_OBJECT
+
+    friend class FileViewModel;
+
     enum EventType {
         kAddFile,
         kRmFile
     };
-    Q_OBJECT
-    friend class FileViewModel;
+
     FileViewModel *const q;
-    QSharedPointer<FileViewItem> root;
 
-    QSharedPointer<FileNodeManagerThread> nodeManager;
+    QSharedPointer<FileViewItem> rootData;
 
-    int column = 0;
     AbstractFileWatcherPointer watcher;
-    QPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
-    bool canFetchMoreFlag = true;
-    DFMBASE_NAMESPACE::DThreadList<QUrl> handlingFileList;
     QQueue<QPair<QUrl, EventType>> watcherEvent;
     QMutex watcherEventMutex;
+
+    QPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
+    QSharedPointer<FileNodeManagerThread> nodeManager;
+
+    bool canFetchMoreFlag = true;
     QAtomicInteger<bool> isUpdatedChildren = false;
     QAtomicInteger<bool> processFileEventRuning = false;
+
     //文件的刷新队列
     DFMBASE_NAMESPACE::DThreadList<QUrl> updateUrlList;
     QTimer updateTimer;
@@ -124,28 +129,17 @@ class FileViewModelPrivate : public QObject
 public:
     explicit FileViewModelPrivate(FileViewModel *qq);
     virtual ~FileViewModelPrivate();
+
 private Q_SLOTS:
-
     void doFileDeleted(const QUrl &url);
-
-    void dofileAttributeChanged(const QUrl &url, const int &isExternalSource = 1)
-    {
-        Q_UNUSED(url);
-        Q_UNUSED(isExternalSource);
-    }
-
     void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl);
-
     void dofileCreated(const QUrl &url);
     void doFileUpdated(const QUrl &url);
     void doFilesUpdated();
-    void dofileClosed(const QUrl &url) { Q_UNUSED(url); }
-    void doUpdateChild(const QUrl &child);
     void doWatcherEvent();
 
 private:
     bool checkFileEventQueue();
-    //    QString roleDisplayString(int role);
 };
 
 }

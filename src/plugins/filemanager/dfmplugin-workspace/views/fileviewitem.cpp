@@ -85,11 +85,6 @@ FileViewItem &FileViewItem::operator=(const FileViewItem &other)
     setData(other.data(kItemFilePathRole), kItemFilePathRole);
     setData(other.data(kItemColumListRole), kItemColumListRole);
     setData(other.data(kItemColumWidthScaleListRole), kItemColumWidthScaleListRole);
-    setData(other.data(kItemCornerMarkTLRole), kItemCornerMarkTLRole);
-    setData(other.data(kItemCornerMarkTLRole), kItemCornerMarkTLRole);
-    setData(other.data(kItemCornerMarkBLRole), kItemCornerMarkBLRole);
-    setData(other.data(kItemCornerMarkBRRole), kItemCornerMarkBRRole);
-    setData(other.data(kItemIconLayersRole), kItemIconLayersRole);
     setData(other.data(kItemFilePinyinNameRole), kItemFilePinyinNameRole);
     setData(other.data(kItemFileBaseNameRole), kItemFileBaseNameRole);
     setData(other.data(kItemFileSuffixRole), kItemFileSuffixRole);
@@ -131,82 +126,6 @@ AbstractFileInfoPointer FileViewItem::fileInfo() const
     return d->fileinfo;
 }
 
-void FileViewItem::setCornerMark(const QIcon &tl, const QIcon &tr, const QIcon &bl, const QIcon &br)
-{
-    if (!tl.isNull())
-        setData(tl, kTopLeft);
-    if (!tr.isNull())
-        setData(tr, kTopRight);
-    if (!tl.isNull())
-        setData(bl, kBottomLeft);
-    if (!br.isNull())
-        setData(br, kBottomRight);
-}
-
-void FileViewItem::setCornerMark(FileViewItem::CornerMark flag, const QIcon &icon)
-{
-    switch (flag) {
-    case kTopLeft:
-        return setData(icon, kItemCornerMarkTLRole);
-    case kTopRight:
-        return setData(icon, kItemCornerMarkTRRole);
-    case kBottomLeft:
-        return setData(icon, kItemCornerMarkBLRole);
-    case kBottomRight:
-        return setData(icon, kItemCornerMarkBRRole);
-    }
-}
-
-QIcon FileViewItem::cornerMarkTR()
-{
-    auto variant = QStandardItem::data(kItemCornerMarkTRRole);
-    if (variant.canConvert<QIcon>()) {
-        return qvariant_cast<QIcon>(variant);
-    }
-    return QIcon();
-}
-
-QIcon FileViewItem::cornerMarkBL()
-{
-    auto variant = QStandardItem::data(kItemCornerMarkBLRole);
-    if (variant.canConvert<QIcon>()) {
-        return qvariant_cast<QIcon>(variant);
-    }
-    return QIcon();
-}
-
-QIcon FileViewItem::cornerMarkBR()
-{
-    auto variant = QStandardItem::data(kItemCornerMarkBRRole);
-    if (variant.canConvert<QIcon>()) {
-        return qvariant_cast<QIcon>(variant);
-    }
-    return QIcon();
-}
-
-void FileViewItem::setIconLayers(const IconLayers &layers)
-{
-    QStandardItem::setData(QVariant::fromValue<IconLayers>(layers),
-                           kItemIconLayersRole);
-}
-
-IconLayers FileViewItem::iconLayers()
-{
-    QVariant variant = data(kItemIconLayersRole);
-    if (!variant.canConvert<IconLayers>())
-        return {};
-    return qvariant_cast<IconLayers>(variant);
-}
-
-QIcon FileViewItem::cornerMarkTL()
-{
-    auto variant = QStandardItem::data(kItemCornerMarkTLRole);
-    if (variant.canConvert<QIcon>()) {
-        return qvariant_cast<QIcon>(variant);
-    }
-    return QIcon();
-}
-
 QVariant FileViewItem::data(int role) const
 {
     if (d->fileinfo.isNull())
@@ -214,7 +133,7 @@ QVariant FileViewItem::data(int role) const
 
     switch (role) {
     case kItemFileLastModifiedRole:
-        return d->fileinfo->lastModified().toString(dateTimeFormat());
+        return d->fileinfo->lastModified().toString(FileUtils::dateTimeFormat());
     case kItemIconRole:
         return d->fileinfo->fileIcon();
     case kItemFileSizeRole:

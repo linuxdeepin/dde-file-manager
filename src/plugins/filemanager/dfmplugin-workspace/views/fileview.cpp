@@ -45,6 +45,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -162,12 +163,15 @@ void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 bool FileView::setRootUrl(const QUrl &url)
 {
     clearSelection();
+    selectionModel()->clear();
 
     //Todo(yanghao&lzj):!url.isSearchFile()
     setFocus();
 
     const QUrl &fileUrl = parseSelectedUrl(url);
-    model()->setRootUrl(fileUrl);
+    const QModelIndex &index = model()->setRootUrl(fileUrl);
+
+    setRootIndex(index);
 
     loadViewState(fileUrl);
     delayUpdateStatusBar();
@@ -293,7 +297,7 @@ void FileView::onSectionHandleDoubleClicked(int logicalIndex)
     if (sourceModel()->state() != FileViewModel::Idle)
         return;
 
-    int rowCount = model()->rowCount();
+    int rowCount = model()->rowCount(rootIndex());
 
     if (rowCount < 1)
         return;
@@ -306,7 +310,7 @@ void FileView::onSectionHandleDoubleClicked(int logicalIndex)
     int columnMaxWidth = 0;
 
     for (int i = 0; i < rowCount; ++i) {
-        const QModelIndex &index = model()->index(i, 0);
+        const QModelIndex &index = model()->index(i, 0, rootIndex());
         const QList<QRect> &list = itemDelegate()->paintGeomertys(option, index, true);
 
         // 第0列为文件名列，此列比较特殊，因为前面还有文件图标占用了一部分空间
@@ -469,14 +473,14 @@ void FileView::updateModelActiveIndex()
     AbstractFileWatcherPointer fileWatcher = sourceModel()->fileWatcher();
 
     for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
-        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(model()->index(i, 0));
+        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(model()->index(i, 0, rootIndex()));
 
         if (fileInfo && fileWatcher)
             fileWatcher->setEnabledSubfileWatcher(fileInfo->url(), false);
     }
 
     for (int i = rande.second; i < d->visibleIndexRande.second; ++i) {
-        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(model()->index(i, 0));
+        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(model()->index(i, 0, rootIndex()));
 
         if (fileInfo && fileWatcher) {
             fileWatcher->setEnabledSubfileWatcher(fileInfo->url(), false);
@@ -485,7 +489,7 @@ void FileView::updateModelActiveIndex()
 
     d->visibleIndexRande = rande;
     for (int i = rande.first; i <= rande.second; ++i) {
-        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(model()->index(i, 0));
+        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(model()->index(i, 0, rootIndex()));
 
         if (fileInfo) {
             if (!fileInfo->exists()) {
@@ -1057,7 +1061,7 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
         index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
     }
 
-    return model()->index(index, 0);
+    return model()->index(index, 0, rootIndex());
 }
 
 QRect FileView::visualRect(const QModelIndex &index) const
@@ -1291,7 +1295,7 @@ QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Q
                     || cursorAction == MovePageDown
                     || cursorAction == MoveNext)) {
                 // 当下一个位置没有元素时，QListView不会自动换一列选择，应该直接选中最后一个
-                index = model()->index(count() - 1, 0);
+                index = model()->index(count() - 1, 0, rootIndex());
                 lastRow = true;
             }
 
@@ -1484,8 +1488,9 @@ void FileView::updateStatusBar()
         return;
 
     int count = selectedIndexCount();
+
     if (count == 0) {
-        d->statusBar->itemCounted(model()->rowCount());
+        d->statusBar->itemCounted(model()->rowCount(rootIndex()));
         return;
     }
 

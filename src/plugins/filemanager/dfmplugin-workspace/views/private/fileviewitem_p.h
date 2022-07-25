@@ -31,7 +31,7 @@ class FileViewItemPrivate : public QSharedData
 {
     friend class FileViewItem;
     FileViewItem *const q;
-    QMimeType mimeType;
+
     AbstractFileInfoPointer fileinfo;
 
 public:

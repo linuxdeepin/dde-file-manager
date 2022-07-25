@@ -42,11 +42,7 @@ public:
     explicit FileSortFilterProxyModel(QObject *parent = nullptr);
     virtual ~FileSortFilterProxyModel() override;
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant headerData(int column, Qt::Orientation, int role) const override;
-    bool dropMimeData(const QMimeData *data, Qt::DropAction action,
-                      int row, int column, const QModelIndex &parent) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     QModelIndex setRootUrl(const QUrl &url);

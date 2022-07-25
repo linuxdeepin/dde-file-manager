@@ -27,6 +27,7 @@
 
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QAbstractItemModel>
 #include <QAbstractItemView>
@@ -72,27 +73,25 @@ public:
     virtual Qt::DropActions supportedDragActions() const override;
     virtual Qt::DropActions supportedDropActions() const override;
 
-    QModelIndex setRootUrl(const QUrl &url);
+    void beginInsertRows(const QModelIndex &parent, int first, int last);
+    void endInsertRows();
+
+    void beginRemoveRows(const QModelIndex &parent, int first, int last);
+    void endRemoveRows();
+
+    QUrl rootUrl() const;
+    QModelIndex rootIndex() const;
+    const FileViewItem *rootItem() const;
+    void setRootUrl(const QUrl &url);
+
     void clear();
     void update();
-    int rowCountMaxShow();
 
     AbstractFileWatcherPointer fileWatcher() const;
     const FileViewItem *itemFromIndex(const QModelIndex &index) const;
     AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
 
-    QUrl rootUrl() const;
-    QModelIndex rootIndex() const;
-    const FileViewItem *rootItem() const;
-
     QModelIndex findIndex(const QUrl &url) const;
-
-    void beginInsertRows(const QModelIndex &parent, int first, int last);
-    void endInsertRows();
-    void beginRemoveRows(const QModelIndex &parent, int first, int last);
-    void endRemoveRows();
-    void beginResetModel();
-    void endResetModel();
 
     State state() const;
     void setState(FileViewModel::State state);
@@ -103,6 +102,7 @@ public:
 
     void selectAndRenameFile(const QUrl &fileUrl);
 
+    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
 public slots:
     void onFilesUpdated();
     void onFileUpdated(const QUrl &url);

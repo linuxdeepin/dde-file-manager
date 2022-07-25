@@ -132,6 +132,8 @@ void FileSelectionModel::clear()
     d->timer.stop();
     d->selectedList.clear();
     d->selection.clear();
+    d->firstSelectedIndex = QModelIndex();
+    d->lastSelectedIndex = QModelIndex();
 
     QItemSelectionModel::clear();
 }

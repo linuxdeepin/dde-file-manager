@@ -65,7 +65,7 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
         if (!currentPressedIndex.isValid()) {
             QItemSelection oldSelection = currentSelection;
             caculateSelection(rect, &oldSelection);
-            view->selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect);
+            view->selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
             return;
         }
 
@@ -77,20 +77,20 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
         if (!lastSelectedIndex.isValid())
             return;
 
-        view->selectionModel()->select(QItemSelection(lastSelectedIndex, index), QItemSelectionModel::ClearAndSelect);
+        view->selectionModel()->select(QItemSelection(lastSelectedIndex, index), QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
         return;
     }
 
     // select with ctrl
     if (WindowUtils::keyCtrlIsPressed()) {
         QItemSelection oldSelection = currentSelection;
-        view->selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect);
+        view->selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 
         if (!currentPressedIndex.isValid()) {
             QItemSelection newSelection;
             caculateSelection(rect, &newSelection);
 
-            view->selectionModel()->select(newSelection, QItemSelectionModel::Toggle);
+            view->selectionModel()->select(newSelection, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
             return;
         }
 
@@ -98,7 +98,7 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
         if (!lastSelectedIndex.isValid())
             return;
 
-        view->selectionModel()->select(lastSelectedIndex, QItemSelectionModel::Toggle);
+        view->selectionModel()->select(lastSelectedIndex, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
         return;
     }
     QItemSelection newSelection;
@@ -154,7 +154,7 @@ void SelectHelper::caculateSelection(const QRect &rect, QItemSelection *selectio
 
 void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *selection)
 {
-    int itemCount = view->model()->rowCount();
+    int itemCount = view->model()->rowCount(view->rootIndex());
     QPoint offset(-view->horizontalOffset(), 0);
     QRect actualRect(qMin(rect.left(), rect.right()),
                      qMin(rect.top(), rect.bottom()) + view->verticalOffset(),
@@ -162,7 +162,7 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
                      abs(rect.height()));
 
     for (int i = 0; i < itemCount; ++i) {
-        const QModelIndex &index = view->model()->index(i, 0);
+        const QModelIndex &index = view->model()->index(i, 0, view->rootIndex());
         const QRect &itemRect = view->rectForIndex(index);
 
         QPoint iconOffset = QPoint(kIconModeColumnPadding, kIconModeColumnPadding);
@@ -194,6 +194,6 @@ void SelectHelper::caculateListViewSelection(const QRect &rect, QItemSelection *
 
     const RandeIndexList &list = view->visibleIndexes(tmpRect);
     for (const RandeIndex &index : list) {
-        selection->append(QItemSelectionRange(view->model()->index(index.first, 0), view->model()->index(index.second, 0)));
+        selection->append(QItemSelectionRange(view->model()->index(index.first, 0, view->rootIndex()), view->model()->index(index.second, 0, view->rootIndex())));
     }
 }

@@ -176,27 +176,27 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (event->source() == view && (!hoverIndex.isValid() || view->isSelected(hoverIndex)))
             return true;
 
-        bool isDropAtRootIndex = false;
+        //        bool isDropAtRootIndex = false;
         if (!hoverIndex.isValid()) {
             hoverIndex = view->model()->rootIndex();
-            isDropAtRootIndex = true;
+            //            isDropAtRootIndex = true;
         }
         if (!hoverIndex.isValid())
             return true;
 
-        QUrl toUrl = view->sourceModel()->itemFromIndex(isDropAtRootIndex ? hoverIndex : view->model()->mapToSource(hoverIndex))->url();
+        QUrl toUrl = view->model()->getUrlByIndex(hoverIndex);   // view->sourceModel()->itemFromIndex(isDropAtRootIndex ? hoverIndex : view->model()->mapToSource(hoverIndex))->url();
         QList<QUrl> fromUrls = event->mimeData()->urls();
         if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", fromUrls, toUrl)) {
             return true;
         }
 
         bool supportDropAction = view->model()->supportedDropActions() & event->dropAction();
-        bool dropEnabled = isDropAtRootIndex ? true : (view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled);
+        bool dropEnabled = /*isDropAtRootIndex ? true : (*/ view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled /*)*/;
         if (supportDropAction && dropEnabled) {
             const Qt::DropAction action = view->dragDropMode() == QAbstractItemView::InternalMove
                     ? Qt::MoveAction
                     : event->dropAction();
-            bool isDropped = view->model()->dropMimeData(event->mimeData(), action, hoverIndex.row(), hoverIndex.column(), hoverIndex);
+            bool isDropped = view->model()->dropMimeData(event->mimeData(), action, hoverIndex.row(), hoverIndex.column(), hoverIndex.parent());
             if (isDropped) {
                 if (action != event->dropAction()) {
                     event->setDropAction(action);

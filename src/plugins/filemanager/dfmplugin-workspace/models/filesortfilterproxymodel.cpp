@@ -42,18 +42,6 @@ FileSortFilterProxyModel::~FileSortFilterProxyModel()
 {
 }
 
-int FileSortFilterProxyModel::rowCount(const QModelIndex &parent) const
-{
-    return QSortFilterProxyModel::rowCount(parent);
-}
-
-int FileSortFilterProxyModel::columnCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent)
-    // TODO():
-    return getColumnRoles().length();
-}
-
 QVariant FileSortFilterProxyModel::headerData(int column, Qt::Orientation, int role) const
 {
     if (role == Qt::DisplayRole) {
@@ -62,13 +50,6 @@ QVariant FileSortFilterProxyModel::headerData(int column, Qt::Orientation, int r
     }
 
     return QVariant();
-}
-
-bool FileSortFilterProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
-{
-    bool isRootIndex = parent == rootIndex();
-    const QModelIndex &sourceIndex = isRootIndex ? parent : mapToSource(parent);
-    return viewModel()->dropMimeData(data, action, sourceIndex.row(), sourceIndex.column(), sourceIndex);
 }
 
 Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
@@ -93,10 +74,10 @@ Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
 
 QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
-    QModelIndex rootIndex = viewModel()->setRootUrl(url);
+    viewModel()->setRootUrl(url);
     resetFilter();
 
-    return createIndex(0, 0, rootIndex.internalPointer());
+    return index(0, 0, QModelIndex());
 }
 
 QUrl FileSortFilterProxyModel::rootUrl() const
@@ -106,8 +87,7 @@ QUrl FileSortFilterProxyModel::rootUrl() const
 
 QModelIndex FileSortFilterProxyModel::rootIndex() const
 {
-    const QModelIndex &sourceRootIndex = viewModel()->rootIndex();
-    return createIndex(sourceRootIndex.row(), sourceRootIndex.column(), sourceRootIndex.internalPointer());
+    return index(0, 0, QModelIndex());
 }
 
 const FileViewItem *FileSortFilterProxyModel::rootItem() const
@@ -129,13 +109,11 @@ AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex
 
 QModelIndex FileSortFilterProxyModel::getIndexByUrl(const QUrl &url) const
 {
-    // Importent: The mapping object will not update when the row count changed,
-    // therefore can not map source to proxy. So traverse the model to find the proxy index.
-    for (int i = 0; i < rowCount(); ++i) {
-        QModelIndex sourceIndex = mapToSource(index(i, 0));
-        if (sourceIndex.isValid() && UniversalUtils::urlEquals(sourceIndex.data(kItemUrlRole).toUrl(), url))
-            return index(i, 0);
-    }
+    const QModelIndex &sourceIndex = viewModel()->findIndex(url);
+    const QModelIndex &proxyIndex = mapFromSource(sourceIndex);
+
+    if (proxyIndex.isValid())
+        return proxyIndex;
 
     return QModelIndex();
 }
@@ -149,9 +127,9 @@ QUrl FileSortFilterProxyModel::getUrlByIndex(const QModelIndex &index) const
 QList<QUrl> FileSortFilterProxyModel::getCurrentDirFileUrls() const
 {
     QList<QUrl> urls {};
-    int count = rowCount();
+    int count = rowCount(rootIndex());
     for (int i = 0; i < count; ++i) {
-        const QModelIndex &proxyIndex = index(i, 0);
+        const QModelIndex &proxyIndex = index(i, 0, rootIndex());
         urls << getUrlByIndex(proxyIndex);
     }
 
@@ -173,7 +151,7 @@ int FileSortFilterProxyModel::getColumnWidth(const int &column) const
 
 ItemRoles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
 {
-    QList<ItemRoles> columnRoleList = getColumnRoles();
+    QList<ItemRoles> columnRoleList = viewModel()->getColumnRoles();
 
     if (columnRoleList.length() > column)
         return columnRoleList.at(column);
@@ -183,7 +161,7 @@ ItemRoles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
 
 int FileSortFilterProxyModel::getColumnByRole(const ItemRoles role) const
 {
-    QList<ItemRoles> columnRoleList = getColumnRoles();
+    QList<ItemRoles> columnRoleList = viewModel()->getColumnRoles();
     return columnRoleList.indexOf(role) < 0 ? 0 : columnRoleList.indexOf(role);
 }
 
@@ -260,10 +238,8 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
     if (!right.isValid())
         return false;
 
-    FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
-
-    const FileViewItem *leftItem = fileModel->itemFromIndex(left);
-    const FileViewItem *rightItem = fileModel->itemFromIndex(right);
+    const FileViewItem *leftItem = viewModel()->itemFromIndex(left);
+    const FileViewItem *rightItem = viewModel()->itemFromIndex(right);
 
     if (!leftItem)
         return false;
@@ -287,13 +263,13 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
             return sortOrder() == Qt::DescendingOrder;
     }
 
-    QVariant leftData = fileModel->data(left, sortRole());
-    QVariant rightData = fileModel->data(right, sortRole());
+    QVariant leftData = viewModel()->data(left, sortRole());
+    QVariant rightData = viewModel()->data(right, sortRole());
 
     // When the selected sort attribute value is the same, sort by file name
     if (leftData == rightData) {
-        QString leftName = fileModel->data(left, kItemFileDisplayNameRole).toString();
-        QString rightName = fileModel->data(right, kItemFileDisplayNameRole).toString();
+        QString leftName = viewModel()->data(left, kItemFileDisplayNameRole).toString();
+        QString rightName = viewModel()->data(right, kItemFileDisplayNameRole).toString();
         return FileUtils::compareString(leftName, rightName, sortOrder());
     }
 
@@ -317,13 +293,12 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
 
 bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-    FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
-    QModelIndex rowIndex = sourceModel()->index(sourceRow, 0, sourceParent);
+    QModelIndex rowIndex = viewModel()->index(sourceRow, 0, sourceParent);
 
     if (!rowIndex.isValid())
         return false;
 
-    AbstractFileInfoPointer fileInfo = fileModel->itemFromIndex(rowIndex)->fileInfo();
+    AbstractFileInfoPointer fileInfo = viewModel()->itemFromIndex(rowIndex)->fileInfo();
 
     return passFileFilters(fileInfo);
 }
@@ -426,34 +401,5 @@ QString FileSortFilterProxyModel::roleDisplayString(int role) const
 
 QList<ItemRoles> FileSortFilterProxyModel::getColumnRoles() const
 {
-    QList<ItemRoles> roles;
-    bool customOnly = WorkspaceEventSequence::instance()->doFetchCustomColumnRoles(rootUrl(), &roles);
-
-    const QVariantMap &map = DFMBASE_NAMESPACE::Application::appObtuselySetting()->value("FileViewState", rootUrl()).toMap();
-    if (map.contains("headerList")) {
-        QVariantList headerList = map.value("headerList").toList();
-
-        for (ItemRoles role : roles) {
-            if (!headerList.contains(role))
-                headerList.append(role);
-        }
-
-        roles.clear();
-        for (auto var : headerList) {
-            roles.append(static_cast<ItemRoles>(var.toInt()));
-        }
-    } else if (!customOnly) {
-        static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
-                                                                           << kItemFileLastModifiedRole
-                                                                           << kItemFileSizeRole
-                                                                           << kItemFileMimeTypeRole;
-
-        int customCount = roles.count();
-        for (auto role : defualtColumnRoleList) {
-            if (!roles.contains(role))
-                roles.insert(roles.length() - customCount, role);
-        }
-    }
-
-    return roles;
+    return viewModel()->getColumnRoles();
 }

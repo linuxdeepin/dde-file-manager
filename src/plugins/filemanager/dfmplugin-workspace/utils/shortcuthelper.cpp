@@ -106,7 +106,7 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
         const auto &urls = view->selectedUrlList();
         if (urls.isEmpty()) {
             int rowCount = view->model()->rowCount(view->rootIndex());
-            auto index = view->model()->index(rowCount - 1, 0);
+            auto index = view->model()->index(rowCount - 1, 0, view->rootIndex());
             view->setCurrentIndex(index);
             return true;
         }
@@ -274,7 +274,7 @@ void ShortcutHelper::moveToTrash()
     const QList<QUrl> &urls = view->selectedUrlList();
 
     if (!urls.isEmpty())
-        FileOperatorHelperIns->moveToTrash(view);
+        FileOperatorHelperIns->moveToTrash(view, urls);
 }
 
 void ShortcutHelper::touchFolder()

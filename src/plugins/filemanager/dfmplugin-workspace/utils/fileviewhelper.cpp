@@ -212,7 +212,7 @@ QModelIndex FileViewHelper::findIndex(const QByteArray &keys, bool matchStart, i
             continue;
         }
 
-        const QModelIndex &index = parent()->model()->index(row, 0);
+        const QModelIndex &index = parent()->model()->index(row, 0, parent()->rootIndex());
         const QString &pinyinName = parent()->model()->data(index, kItemFilePinyinNameRole).toString();
         if (matchStart ? pinyinName.startsWith(keys, Qt::CaseInsensitive)
                        : pinyinName.contains(keys, Qt::CaseInsensitive)) {
