@@ -30,6 +30,7 @@ namespace dfmplugin_search {
 class SearchMenuScene;
 class SearchMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class SearchMenuScene;
 
 public:

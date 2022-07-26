@@ -41,6 +41,7 @@ public:
 class SearchMenuScenePrivate;
 class SearchMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit SearchMenuScene(QObject *parent = nullptr);
     ~SearchMenuScene() override;

@@ -31,6 +31,7 @@ namespace dfmplugin_trash {
 class TrashMenuScene;
 class TrashMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class TrashMenuScene;
 
 public:
