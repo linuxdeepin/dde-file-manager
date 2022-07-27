@@ -333,7 +333,8 @@ bool UDiskListener::isInRemovableDeviceFolder(const QString &path) const
         UDiskDeviceInfoPointer info = m_list.at(i);
         if (mediaTypes.contains(info->getMediaType())) {
             if (!info->getMountPointUrl().isEmpty()) {
-                if (path.startsWith(info->getMountPointUrl().toLocalFile())) {
+                const QString &localPath = info->getMountPointUrl().toLocalFile();
+                if (localPath != "/" && !localPath.isEmpty() && path.startsWith(localPath)) {
                     return true;
                 }
             }
