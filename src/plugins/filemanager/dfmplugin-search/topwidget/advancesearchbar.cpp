@@ -250,10 +250,10 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
 
     auto filterData = data.value<FilterData>();
     // 如果是重置过滤条件，则都显示
-    const auto &iter = std::find_if(filterData.begin() + 1, filterData.end(), [](const QVariant &value) {
+    const auto &iter = std::find_if(filterData.begin() + 1, filterData.begin() + kLabelCount, [](const QVariant &value) {
         return value.isValid();
     });
-    if (filterData[kSearchRange].toBool() && iter == filterData.end())
+    if (filterData[kSearchRange].toBool() && (iter == filterData.begin() + kLabelCount || iter == filterData.end()))
         return true;
 
     if (!info)

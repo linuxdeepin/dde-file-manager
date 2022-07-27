@@ -75,7 +75,6 @@ dpf::Plugin::ShutdownFlag Search::stop()
 void Search::onWindowOpened(quint64 windId)
 {
     auto window = FMWindowsIns.findWindowById(windId);
-    Q_ASSERT_X(window, "Search", "Cannot find window by id");
 
     if (window->workSpace())
         regSearchToWorkspace();

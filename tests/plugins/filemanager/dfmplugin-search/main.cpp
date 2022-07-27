@@ -18,37 +18,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ADVANCESEARCHBAR_H
-#define ADVANCESEARCHBAR_H
+#include <gtest/gtest.h>
+#include <sanitizer/asan_interface.h>
+#include <QApplication>
 
-#include "dfmplugin_search_global.h"
-
-#include <dboxwidget.h>
-
-#include <QScrollArea>
-
-namespace dfmplugin_search {
-
-class AdvanceSearchBarPrivate;
-class AdvanceSearchBar : public QScrollArea
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-public:
-    explicit AdvanceSearchBar(QWidget *parent = nullptr);
-    void resetForm();
-    void refreshOptions(const QUrl &url);
+    QApplication app(argc, argv);
 
-public slots:
-    void onOptionChanged();
-    void onResetButtonPressed();
+    ::testing::InitGoogleTest(&argc, argv);
 
-protected:
-    void hideEvent(QHideEvent *event) override;
+    int ret = RUN_ALL_TESTS();
 
-private:
-    AdvanceSearchBarPrivate *d = nullptr;
-};
+#ifdef ENABLE_TSAN_TOOL
+    __sanitizer_set_report_path("../../../asan_dfmplugin-search.log");
+#endif
 
+    return ret;
 }
-
-#endif   // ADVANCESEARCHBAR_H
