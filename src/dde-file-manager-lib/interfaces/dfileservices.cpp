@@ -622,15 +622,18 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
     {
         QList<QUrl> org = DFMGlobal::instance()->clipboardFileUrlList();
         DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
+        bool isRemoved = false;
         if (!org.isEmpty() && action != DFMGlobal::UnknowAction) {
             for (const DUrl &nd : list) {
                 if (org.isEmpty())
                     break;
-                org.removeAll(nd);
+                int count = org.removeAll(nd);
+                if (count != 0)
+                    isRemoved = true;
             }
             if (org.isEmpty()) //没有文件则清空剪切板
                 DFMGlobal::clearClipboard();
-            else
+            else if (isRemoved)
                 DFMGlobal::setUrlsToClipboard(org, action);
         }
     }
