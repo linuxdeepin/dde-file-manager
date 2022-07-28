@@ -407,7 +407,10 @@ QList<QIcon> DFileInfo::additionalIcon() const
     bool needEmblem = true;
     // wayland TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
     // 当为快捷方式时，有源文件文件不存在的情况，所以增加特殊判断
-    if (!isSymLink() && !exists()) {
+    // 注意：此处将exits()替换成QFileInfo::exists()原因在于重命名时，原始文件的QFileinfo对象没有及时刷新，
+    // exits()判断的结果仍然是true（错误结果），反而静态函数QFileInfo::exits()判断的结果为false（正确结果）,
+    // 所以此处使用QFileInfo::exits()判断文件信息
+    if (!isSymLink() && !QFileInfo::exists(filePath())) {
         return icons;
     }
 

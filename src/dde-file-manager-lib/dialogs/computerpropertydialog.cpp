@@ -269,7 +269,6 @@ void ComputerPropertyDialog::initUI()
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
-        this->setFixedSize(320, 420);
     }
 
     QString distributerLogoPath = DSysInfo::distributionOrgLogo();

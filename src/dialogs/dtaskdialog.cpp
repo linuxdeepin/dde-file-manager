@@ -348,7 +348,6 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     m_jobIdItems.insert(wid->taskId(), item);
 
     wid->progressStart();
-    m_titlebar->setTitle(tr("Removing file vault, please try later"));
     QString acMark = QString("%1_%2").arg(AC_TASK_DLG_TASK_LIST_ITEM).arg(m_taskListWidget->count());
     AC_SET_OBJECT_NAME(wid, acMark);
     AC_SET_ACCESSIBLE_NAME(wid, acMark);
