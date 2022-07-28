@@ -21,7 +21,7 @@
 #include "vaultmenuscene.h"
 #include "vaultmenuscene_p.h"
 
-#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 
@@ -41,7 +41,6 @@ AbstractMenuScene *VaultMenuSceneCreator::create()
 VaultMenuScenePrivate::VaultMenuScenePrivate(VaultMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-
 }
 
 QStringList VaultMenuScenePrivate::emptyMenuActionRule()

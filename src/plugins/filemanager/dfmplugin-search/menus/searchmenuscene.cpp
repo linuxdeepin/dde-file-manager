@@ -22,8 +22,8 @@
 #include "searchmenuscene_p.h"
 #include "utils/searchhelper.h"
 
-#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
-#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/base/schemefactory.h"

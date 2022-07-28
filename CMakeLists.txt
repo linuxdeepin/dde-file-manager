@@ -7,22 +7,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
-
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_VERBOSE_MAKEFILEON ON)
-#    message("debug type open sanitize check")
-#    set(CMAKE_CXX_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
-#    set(CMAKE_C_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
-#    set(CMAKE_L_FLAGS "-fsanitize=undefined,address,leak -fno-omit-frame-pointer")
-#    set(CMAKE_CXX_FLAGS "-fsanitize=thread")
-#    set(CMAKE_C_FLAGS "-fsanitize=thread")
-#    set(CMAKE_L_FLAGS "-fsanitize=thread")
-endif()
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on

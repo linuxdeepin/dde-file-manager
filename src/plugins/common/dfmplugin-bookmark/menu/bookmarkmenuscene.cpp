@@ -23,8 +23,8 @@
 #include "private/bookmarkmenuscene_p.h"
 #include "controller/bookmarkmanager.h"
 
-#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
-#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"

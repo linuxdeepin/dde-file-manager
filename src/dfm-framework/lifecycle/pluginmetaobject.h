@@ -83,15 +83,15 @@ class PluginMetaObject final : public PluginMetaT1<Plugin>
 
 public:
     enum State {
-        Invalid,   /// 插件未操作获得任何状态
-        Reading,   /// 插件正在读取Json
-        Readed,   /// 插件读取Json完毕
-        Loading,   /// 插件正在加载
-        Loaded,   /// 插件已加载
-        Initialized,   /// 插件已经操作Initialized函数
-        Started,   /// 插件已经操作Start函数
-        Stoped,   /// 插件已停操作Stop函数
-        Shutdown,   /// 插件卸载并已经释放
+        kInvalid,   /// 插件未操作获得任何状态
+        kReading,   /// 插件正在读取Json
+        kReaded,   /// 插件读取Json完毕
+        kLoading,   /// 插件正在加载
+        kLoaded,   /// 插件已加载
+        kInitialized,   /// 插件已经操作Initialized函数
+        kStarted,   /// 插件已经操作Start函数
+        kStoped,   /// 插件已停操作Stop函数
+        kShutdown,   /// 插件卸载并已经释放
     };
 
     PluginMetaObject();

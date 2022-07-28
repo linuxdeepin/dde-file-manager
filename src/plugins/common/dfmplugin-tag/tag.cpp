@@ -31,7 +31,7 @@
 #include "menu/tagdirmenuscene.h"
 #include "events/tageventreceiver.h"
 
-#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"

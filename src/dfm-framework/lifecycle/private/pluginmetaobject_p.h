@@ -32,25 +32,25 @@
 DPF_BEGIN_NAMESPACE
 
 /// \brief kPluginName 插件名称Key
-const char kPluginName[] = "Name";
+inline constexpr char kPluginName[] { "Name" };
 /// \brief kPluginVersion 插件版本Key
-const char kPluginVersion[] = "Version";
+inline constexpr char kPluginVersion[] { "Version" };
 /// \brief kPluginCompatversion 插件兼容版本Key
-const char kPluginCompatversion[] = "CompatVersion";
+inline constexpr char kPluginCompatversion[] { "CompatVersion" };
 /// \brief kPluginCategory 插件类型Key
-const char kPluginCategory[] = "Category";
+inline constexpr char kPluginCategory[] { "Category" };
 /// \nrief kPluginVendor 插件作者
-const char kPluginVendor[] = "Vendor";
+inline constexpr char kPluginVendor[] { "Vendor" };
 /// \nrief kPluginCopyright 插件所持有的公司
-const char kPluginCopyright[] = "Copyright";
+inline constexpr char kPluginCopyright[] { "Copyright" };
 /// \nrief kPluginDescription 插件描述
-const char kPluginDescription[] = "Description";
+inline constexpr char kPluginDescription[] { "Description" };
 /// \nrief kPluginLicense 插件开源协议
-const char kPluginLicense[] = "License";
+inline constexpr char kPluginLicense[] { "License" };
 /// \nrief kPluginUrllink 插件主页链接地址
-const char kPluginUrlLink[] = "UrlLink";
+inline constexpr char kPluginUrlLink[] { "UrlLink" };
 /// \nrief kPluginDepends 插件依赖
-const char kPluginDepends[] = "Depends";
+inline constexpr char kPluginDepends[] { "Depends" };
 
 class PluginMetaObject;
 class PluginMetaObjectPrivate

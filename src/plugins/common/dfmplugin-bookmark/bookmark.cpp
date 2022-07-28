@@ -24,7 +24,7 @@
 #include "events/bookmarkeventreceiver.h"
 #include "menu/bookmarkmenuscene.h"
 
-#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"

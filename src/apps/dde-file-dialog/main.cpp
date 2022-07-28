@@ -111,6 +111,8 @@ static bool pluginsLoad()
                     << QString(DFM_PLUGIN_COMMON_EDGE_DIR)
                     << QString(DFM_PLUGIN_FILEMANAGER_EDGE_DIR);
     } else {
+        pluginsDirs.push_back(pluginsDir + "/filemanager");
+        pluginsDirs.push_back(pluginsDir + "/common");
         pluginsDirs.push_back(pluginsDir);
     }
 

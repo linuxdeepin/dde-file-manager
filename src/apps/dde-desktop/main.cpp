@@ -72,6 +72,8 @@ static bool pluginsLoad()
                     << QString(DFM_PLUGIN_COMMON_EDGE_DIR)
                     << QString(DFM_PLUGIN_DESKTOP_EDGE_DIR);
     } else {
+        pluginsDirs.push_back(pluginsDir + "/desktop");
+        pluginsDirs.push_back(pluginsDir + "/common");
         pluginsDirs.push_back(pluginsDir);
     }
     qDebug() << "using plugins dir:" << pluginsDirs;

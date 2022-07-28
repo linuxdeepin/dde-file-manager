@@ -27,7 +27,7 @@
 #include "iterator/smbshareiterator.h"
 #include "menu/smbbrowsermenuscene.h"
 
-#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
