@@ -3075,6 +3075,21 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
             }, event)
 
             emit newFileByInternal(fileUrl);
+        } else if (AppController::selectionFile.first == fileUrl) {
+            quint64 windowId = AppController::selectionFile.second;
+
+            if (windowId != parent()->windowId()) {
+                return;
+            }
+
+            AppController::selectionFile = qMakePair(DUrl(), 0);
+            DFMUrlListBaseEvent event(parent()->parent(), DUrlList() << fileUrl);
+            event.setWindowId(windowId);
+
+            TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel *>(this), 100, {
+                                        emit fileSignalManager->requestSelectFile(event);
+                                        emit this->requestSelectFiles(event.urlList());
+                                    }, event, this)
         }
     } else if (AppController::selectionAndRenameFile.first == fileUrl) {
         quint64 windowId = AppController::selectionAndRenameFile.second;

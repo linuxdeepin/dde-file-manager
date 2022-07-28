@@ -1270,7 +1270,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         locationPathLabel = new SectionValueLabel();
         QString absoluteFilePath = info->absoluteFilePath();
         //! 在属性窗口中不显示保险箱中的文件真实路径
-        if (info->fileUrl().isVaultFile()) {
+        if (info->fileUrl().isVaultFile() || (info->fileUrl().isSearchFile() && info->fileUrl().fragment().startsWith(DFMVAULT_SCHEME))) {
             absoluteFilePath = VaultController::pathToVirtualPath(absoluteFilePath);
         }
         locationPathLabel->setText(absoluteFilePath);
