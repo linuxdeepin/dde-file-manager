@@ -29,6 +29,7 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QStackedLayout>
+#include <array>
 
 #include "interfaces/dfileservices.h"
 
