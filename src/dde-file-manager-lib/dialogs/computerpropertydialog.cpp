@@ -77,6 +77,45 @@ static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision
     return "";
 }
 
+static QString editionInfo()
+{
+    QString edition {""};
+    // 专业版
+    if (DSysInfo::UosEdition::UosProfessional == DSysInfo::uosEditionType()) {
+        // 是否激活
+        QDBusInterface deepinLicenseInfo("com.deepin.license",
+                                         "/com/deepin/license/Info",
+                                         "com.deepin.license.Info",
+                                         QDBusConnection::systemBus());
+        deepinLicenseInfo.setTimeout(1000);
+        if (!deepinLicenseInfo.isValid()) {
+            qWarning() << "Dbus com.deepin.license is not valid";
+            return "";
+        }
+        qInfo() << "Start call Dbus com.deepin.license AuthorizationState";
+        int activeInfo = deepinLicenseInfo.property("AuthorizationState").toInt();
+        qInfo() << "End call Dbus com.deepin.license AuthorizationState";
+        if (activeInfo == 1) {
+            // 政务授权、企业授权、原始授权
+            qInfo() << "Start call Dbus com.deepin.license AuthorizationProperty";
+            uint authorizedInfo = deepinLicenseInfo.property("AuthorizationProperty").toUInt();
+            qInfo() << "End call Dbus com.deepin.license AuthorizationProperty";
+            if (authorizedInfo == 1) {
+                edition = DSysInfo::uosEditionName() + "(" + QObject::tr("For Government") + ")" + "(" + DSysInfo::minorVersion() + ")";
+            } else if (authorizedInfo == 2) {
+                edition = DSysInfo::uosEditionName() + "(" + QObject::tr("For Enterprise") + ")" + "(" + DSysInfo::minorVersion() + ")";
+            } else {
+                edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+            }
+        } else {
+            edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+        }
+    } else {
+        edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+    }
+    return edition;
+}
+
 GetInfoWork::GetInfoWork(QObject *parent)
     : QThread(parent)
 {
@@ -173,7 +212,9 @@ void GetInfoWork::run()
                 if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
                     Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
                 } else {
-                    Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+                    Edition = editionInfo();
+                    if (Edition.isEmpty())
+                        qWarning() << "get edition info failed";
                 }
             }
             // 获取系统版本号
@@ -463,7 +504,9 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
             Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
         } else {
-            Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+            Edition = editionInfo();
+            if (Edition.isEmpty())
+                qWarning() << "get edition info failed";
         }
         //! 获取系统版本号
         version = DSysInfo::majorVersion();
