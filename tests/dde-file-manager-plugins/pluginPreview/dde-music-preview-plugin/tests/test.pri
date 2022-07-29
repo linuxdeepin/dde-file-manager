@@ -19,7 +19,7 @@ SOURCES += \
 
 isEqual(ARCH, x86_64) {
 SOURCES += \
-    $$PWD/ut_musicmessageview.cpp \
+    $$PWD/ut_musicmessageview.cpp
 }
 
 !CONFIG(DISABLE_TSAN_TOOL) {

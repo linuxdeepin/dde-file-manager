@@ -131,14 +131,14 @@ SOURCES += \
     $$PWD/dialogs/ut_filepreviewdialog.cpp \
     $$PWD/dialogs/ut_movetotrashconflictdialog.cpp \
     $$PWD/dialogs/ut_openwithdialog.cpp \
-    $$PWD/dialogs/ut_propertydialog.cpp \
+    #$$PWD/dialogs/ut_propertydialog.cpp \
     $$PWD/dialogs/ut_shareinfoframe.cpp \
     $$PWD/dialogs/ut_trashpropertydialog.cpp \
     $$PWD/dialogs/ut_usersharepasswordsettingdialog.cpp \
     ###
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
-    $$PWD/controllers/ut_searchcontroller.cpp \
+    #$$PWD/controllers/ut_searchcontroller.cpp \
     $$PWD/sw_label/ut_llsdeepinlabellibrary_test.cpp \
     $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
     $$PWD/dbusinterface/ut_dbustype.cpp \
@@ -176,7 +176,7 @@ SOURCES += \
     $$PWD/chinese2pinyin/ut-chinese2pinyin-test.cpp \
     $$PWD/controllers/ut_dfmsidebardefaultitemhandler_test.cpp \
     $$PWD/controllers/ut_dfmsidebardeviceitemhandler_test.cpp \
-    $$PWD/controllers/ut_dfmsidebartagitemhandler.cpp \
+    #$$PWD/controllers/ut_dfmsidebartagitemhandler.cpp \
     $$PWD/controllers/ut_dfmsidebarbookmarkitemhandler.cpp \
     $$PWD/controllers/ut_tagmanagerdaemon_interface.cpp \
     $$PWD/controllers/ut_dfmavfscrumbcontroller.cpp \
@@ -232,7 +232,7 @@ SOURCES += \
     $$PWD/controllers/ut_dfmtrashcrumbcontroller.cpp \
     $$PWD/interfaces/ut_dfileproxywatcher.cpp \
     $$PWD/interfaces/ut_dfmsidebariteminterface.cpp \
-    $$PWD/interfaces/ut_dfmstyleditemdelegate.cpp\
+    #$$PWD/interfaces/ut_dfmstyleditemdelegate.cpp\
     $$PWD/interfaces/ut_dfmapplication.cpp
 
 isEqual(ARCH, x86_64) {
@@ -243,6 +243,10 @@ SOURCES += \
     $$PWD/interfaces/ut_dfmcrumbbar.cpp \
     $$PWD/controllers/ut_bookmarkmanager.cpp \
     $$PWD/views/ut_dfmvaultfileview.cpp \
+    $$PWD/interfaces/ut_dfmstyleditemdelegate.cpp \
+    $$PWD/controllers/ut_dfmsidebartagitemhandler.cpp \
+    $$PWD/controllers/ut_searchcontroller.cpp \
+    $$PWD/dialogs/ut_propertydialog.cpp
 }
 
 SOURCES += \

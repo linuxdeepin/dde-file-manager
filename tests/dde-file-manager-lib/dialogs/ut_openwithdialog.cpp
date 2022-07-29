@@ -26,6 +26,7 @@
 #include <QRect>
 #include <QPaintEvent>
 #include <QFileDialog>
+#include <QScroller>
 
 #include "stub.h"
 #include "dfmglobal.h"
@@ -102,6 +103,16 @@ namespace  {
     public:
         void SetUp() override
         {
+#ifdef __arm__
+            void(*stub_grabGesture)(QObject *target, QScroller::ScrollerGestureType scrollGestureType)
+                    = [](QObject *target, QScroller::ScrollerGestureType scrollGestureType  = QScroller::ScrollerGestureType::TouchGesture)->void{
+                Q_UNUSED(target)
+                Q_UNUSED(scrollGestureType)
+                return ;
+            };
+            Stub stu2;
+            stu2.set(ADDR(QScroller, grabGesture), stub_grabGesture);
+#endif
             DUrl url("file:///test3");
             m_pTester = new OpenWithDialog(url);
             std::cout << "start TestOpenWithDialog";
@@ -139,7 +150,16 @@ TEST_F(TestOpenWithDialog, testInit3)
     };
     Stub stu;
     stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
-
+#ifdef __arm__
+    void(*stub_grabGesture)(QObject *target, QScroller::ScrollerGestureType scrollGestureType)
+            = [](QObject *target, QScroller::ScrollerGestureType scrollGestureType  = QScroller::ScrollerGestureType::TouchGesture)->void{
+        Q_UNUSED(target)
+        Q_UNUSED(scrollGestureType)
+        return ;
+    };
+    Stub stu2;
+    stu2.set(ADDR(QScroller, grabGesture), stub_grabGesture);
+#endif
     DUrl url("file:///test3");
     OpenWithDialog  dlg(url);
     QString str = dlg.m_url.toString();

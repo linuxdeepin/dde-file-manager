@@ -57,7 +57,7 @@ public:
 };
 }
 
-
+#ifndef __arm__
 TEST_F(TestMusicPreview, set_file_url)
 {
     EXPECT_TRUE(m_musicPerview->setFileUrl(m_url));
@@ -158,5 +158,5 @@ TEST_F(TestMusicPreview, use_updateProgress)
     EXPECT_TRUE(m_musicPerview->setFileUrl(m_url));
     PrivateupdateProgressTimer(PrivateStausBarFrame(m_musicPerview).data())->timeout({});
 }
-
+#endif
 
