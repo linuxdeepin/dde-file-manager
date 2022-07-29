@@ -162,8 +162,10 @@ void PluginEmblemManagerPrivate::run()
 void PluginEmblemManagerPrivate::startWork()
 {
     bWork = true;
-    if (!isRunning())
+    if (!isRunning()) {
         start();
+        DFMExtPluginManager::instance().monitorPlugins();
+    }
 }
 
 void PluginEmblemManagerPrivate::stopWork()

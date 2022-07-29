@@ -1345,6 +1345,7 @@ void DFileMenuManager::extensionPluginCustomMenu(DFileMenu *menu,
         return;
 
     DFMGlobal::autoInitExtPluginManager();
+    DFMExtPluginManager::instance().monitorPlugins();
 
     std::string newCurrentUrl = currentUrl.toString().toStdString();
     std::string newFocusUrl = focusFile.toString().toStdString();
