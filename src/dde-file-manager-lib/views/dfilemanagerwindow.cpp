@@ -373,7 +373,8 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             bool ret = view->setRootUrl(realUrl);
             delete view;
             view = nullptr;
-            return ret;
+            if (!ret)
+                return ret;
         }
     }
 

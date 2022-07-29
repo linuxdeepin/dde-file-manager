@@ -23,12 +23,20 @@
 #ifndef VAULTCONFIG_H
 #define VAULTCONFIG_H
 
-#define CONFIG_NODE_NAME            "INFO"
-#define CONFIG_KEY_CIPHER           "pbkgcipher"
-#define CONFIG_KEY_VERSION          "version"
-#define CONFIG_VAULT_VERSION        "new"
-#define CONFIG_VAULT_VERSION_1050   "1050"
-#define CONFIG_KEY_ALGONAME         "algoName"
+#define CONFIG_NODE_NAME                        "INFO"
+#define CONFIG_KEY_CIPHER                       "pbkgcipher"
+#define CONFIG_KEY_VERSION                      "version"
+#define CONFIG_VAULT_VERSION                    "new"
+#define CONFIG_VAULT_VERSION_1050               "1050"
+#define CONFIG_KEY_ALGONAME                     "algoName"
+#define CONFIG_KEY_ENCRYPTION_METHOD            "encryption_method"
+#define CONFIG_METHOD_VALUE_KEY                 "key_encryption"
+#define CONFIG_METHOD_VALUE_TRANSPARENT         "transparent_encryption"
+#define CONFIG_KEY_USE_USER_PASSWORD            "use_user_password"
+
+#define GROUP_POLICY_VAULT_ALGO_NAME    "dfm.vault.algo.name"
+#define DEFAULT_AES_ALGO_NAME           "aes-256-gcm"
+#define DEFAULT_SM4_ALGO_NAME           "sm4-128-ecb"
 
 #include <QVariant>
 

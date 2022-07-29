@@ -145,6 +145,7 @@
     #define AC_VAULT_ACTIVE_SET_PASSWORD_REPASSWORD_EDIT    "vault_active_set_password_repassword_edit"    // 保险箱激活 设置密码页面 重复密码 编辑框
     #define AC_VAULT_ACTIVE_SET_PASSWORD_HINT_LABEL         "vault_active_set_password_hint_label"         // 保险箱激活 设置密码页面 提示 标签
     #define AC_VAULT_ACTIVE_SET_PASSWORD_HINT_EDIT          "vault_active_set_password_hint_edit"          // 保险箱激活 设置密码页面 提示 编辑框
+    #define AC_VAULT_ACTIVE_SET_PASSWORD_TRANSPARENT_LABEL  "vault_active_set_password_transparent_label"  // 保险箱激活 设置密码页面 透明加密 标签
     #define AC_VAULT_ACTIVE_SET_PASSWORD_NEXT_BUTTON        "vault_active_set_password_next_button"        // 保险箱激活 设置密码页面 下一步 按钮
     #define AC_VAULT_ACTIVE_KEY_WIDGET                      "vault_active_key_widget"          // 保险箱激活 密钥页面
     #define AC_VAULT_ACTIVE_KEY_TITLE                       "vault_active_key_title"           // 保险箱激活 密钥页面 标题

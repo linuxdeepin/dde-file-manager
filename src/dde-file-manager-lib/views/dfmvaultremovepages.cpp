@@ -25,6 +25,7 @@
 #include "vault/interfaceactivevault.h"
 #include "vault/vaultlockmanager.h"
 #include "vault/vaulthelper.h"
+#include "vault/vaultconfig.h"
 #include "controllers/vaultcontroller.h"
 #include "app/define.h"
 #include "dfmvaultremoveprogressview.h"
@@ -201,13 +202,17 @@ void DFMVaultRemovePages::onButtonClicked(int index)
         }
     case 2: { // 删除
         if (m_stackedWidget->currentIndex() == 0) {
-            // 密码验证
-            QString strPwd = m_passwordView->getPassword();
-            QString strCipher("");
+            VaultConfig config;
+            QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+            if (encryptionMethod != CONFIG_METHOD_VALUE_TRANSPARENT) {
+                // 密码验证
+                QString strPwd = m_passwordView->getPassword();
+                QString strCipher("");
 
-            if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
-                m_passwordView->showToolTip(tr("Wrong password"), 3000, DFMVaultRemoveByPasswordView::EN_ToolTip::Warning);
-                return;
+                if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
+                    m_passwordView->showToolTip(tr("Wrong password"), 3000, DFMVaultRemoveByPasswordView::EN_ToolTip::Warning);
+                    return;
+                }
             }
         } else {
             // 密钥验证

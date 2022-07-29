@@ -1142,15 +1142,11 @@ void VaultController::unlockVault(const DSecureString &password, QString lockBas
     } else {
         strPath = unlockFileDir;
     }
-    if (QFile::exists(strPath)) {   // 如果存在,则清空目录
+    if (QFile::exists(strPath)) {   // 如果存在
         QDir dir(strPath);
         if (!dir.isEmpty()) {
-            QDirIterator dirsIterator(strPath, QDir::AllEntries | QDir::NoDotAndDotDot);
-            while (dirsIterator.hasNext()) {
-                if (!dir.remove(dirsIterator.next())) {
-                    QDir(dirsIterator.filePath()).removeRecursively();
-                }
-            }
+            qWarning() << "Unlock vault failed, mount dir is not empty!";
+            return;
         }
     } else {   // 如果不存在,则创建目录
         QDir().mkpath(strPath);

@@ -249,6 +249,7 @@ int main(int argc, char *argv[])
         DFMGlobal::initBluetoothManager();
         DFMGlobal::initRootFileManager();
         DFMGlobal::setInitAppOver();
+        DFMGlobal::initVaultDbusResponse();
     });
     DFMGlobal::initEmblemPluginManagerConnection();
 

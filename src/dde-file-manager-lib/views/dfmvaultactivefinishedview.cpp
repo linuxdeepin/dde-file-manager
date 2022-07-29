@@ -24,6 +24,7 @@
 #include "operatorcenter.h"
 #include "../../controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
+#include "vault/vaultconfig.h"
 #include "app/define.h"
 #include "accessibility/ac-lib-file-manager.h"
 
@@ -215,13 +216,29 @@ void DFMVaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Autho
 
                 std::thread t([]() {
                     // 调用创建保险箱接口
-                    // 拿到密码
-                    QString strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
+                    // 获取加密方式
+                    VaultConfig config;
+                    QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+                    if (encryptionMethod == "NoExit") {
+                        qWarning() << "Get encryption method failed!";
+                        return;
+                    }
+
+                    QString strPassword { "" };
+                    if (encryptionMethod == CONFIG_METHOD_VALUE_KEY) {
+                        // 拿到密码
+                        strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
+                    } else if (encryptionMethod == CONFIG_METHOD_VALUE_TRANSPARENT) {
+                        strPassword = OperatorCenter::getInstance()->getPasswordFromKeyring();
+                    } else {
+                        qWarning() << "Get encryption method failed, can not create vault!";
+                    }
                     if (!strPassword.isEmpty()) {
                         VaultController::ins()->createVault(strPassword);
                         OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
-                    } else
-                        qDebug() << "获取cryfs密码为空，创建保险箱失败！";
+                    } else {
+                        qWarning() << "Get password is empty, failed to create the vault!";
+                    }
                 });
                 t.detach();
             }
