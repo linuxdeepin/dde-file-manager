@@ -18,7 +18,8 @@ SOURCES += \
     $$PWD/operatorcenter.cpp \
     $$PWD/vaultlockmanager.cpp \
     $$PWD/vaulthelper.cpp \
-    $$PWD/vaultconfig.cpp
+    $$PWD/vaultconfig.cpp \
+    $$PWD/vaultdbusresponse.cpp
 
 HEADERS += \
     $$3rd_srcdir/qrencode/bitstream.h \
@@ -39,7 +40,8 @@ HEADERS += \
     $$PWD/vaultglobaldefine.h \
     $$PWD/vaultlockmanager.h \
     $$PWD/vaulthelper.h \
-    $$PWD/vaultconfig.h
+    $$PWD/vaultconfig.h \
+    $$PWD/vaultdbusresponse.h
 
 PKGCONFIG += libcrypto
 

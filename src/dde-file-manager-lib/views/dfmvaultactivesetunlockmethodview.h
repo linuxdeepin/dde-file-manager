@@ -74,12 +74,8 @@ private slots:
     void slotNextBtnClicked();
     // 类型切换
     void slotTypeChanged(int index);
-    // 随即密码长度改变
-//    void slotLengthChanged(int length);
     // 限制密码的长度
     void slotLimiPasswordLength(const QString &password);
-    // 随即生成密码按钮点击
-//    void slotGeneratePasswordBtnClicked();
 
 private:
     // 校验密码是否符合规则
@@ -103,18 +99,11 @@ private:
     DLabel              *m_pPasswordHintLabel;
     QLineEdit           *m_pTips;
 
+    DLabel              *TransparentEncryptionText;
+
     QPushButton         *m_pNext;
 
     QGridLayout         *play1;
-
-//    QLabel              *m_pLengthLabel;
-//    QSlider             *m_pLengthSlider;
-//    QLineEdit           *m_pLengthEdit;
-//    QLabel              *m_pStrengthLabel;
-//    QLabel              *m_pResultLabel;
-//    QLineEdit           *m_pResultEdit;
-//    QCheckBox           *m_pOtherMethod;
-//    QPushButton         *m_pGenerateBtn;
 };
 
 #endif // DFMVAULTSETUNLOCKMETHODVIEW_H

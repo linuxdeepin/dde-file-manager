@@ -23,6 +23,7 @@
 #include "dfmvaultremovebypasswordview.h"
 #include "interfaceactivevault.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "vault/vaultconfig.h"
 
 #include <DToolTip>
 #include <DPasswordEdit>
@@ -40,6 +41,7 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     AC_SET_ACCESSIBLE_NAME(m_pwdEdit, AC_VAULT_DELETE_PASSWORD_EDIT);
     m_pwdEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
+    m_pwdEdit->setVisible(false);
 
     // 提示按钮
     m_tipsBtn = new QPushButton(this);
@@ -47,7 +49,12 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     m_tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     QHBoxLayout *layout = new QHBoxLayout();
-    layout->addWidget(m_pwdEdit);
+    VaultConfig config;
+    QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+    if (encryptionMethod != CONFIG_METHOD_VALUE_TRANSPARENT) {
+        layout->addWidget(m_pwdEdit);
+        m_pwdEdit->setVisible(true);
+    }
     layout->addWidget(m_tipsBtn);
     layout->setContentsMargins(0, 15, 0, 0);
     this->setLayout(layout);
