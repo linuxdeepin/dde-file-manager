@@ -174,14 +174,14 @@ TEST(ScreenObject, display_mode_wayland)
     AbstractScreenManager::DisplayMode mode = static_cast<AbstractScreenManager::DisplayMode>(value);
     EXPECT_EQ(mode, smw.displayMode());
 }
-
+#ifndef __arm__
 TEST(ScreenObject, device_pixel_ratio)
 {
     ScreenManager sm;
     ScreenManagerWayland smw;
     EXPECT_EQ(sm.devicePixelRatio(),smw.devicePixelRatio());
 }
-
+#endif
 namespace  {
 class ScreenOperation : public Test , public ScreenManager
 {

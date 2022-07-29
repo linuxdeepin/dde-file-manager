@@ -186,6 +186,7 @@ TEST_F(TestShareInfoFrame, testDoShareInfoSetting)
     EXPECT_EQ(b, false);
 }
 #endif
+#ifndef __arm__
 TEST_F(TestShareInfoFrame, testUpdateShareInfo)
 {
     TestHelper::runInLoop([](){});
@@ -203,7 +204,7 @@ TEST_F(TestShareInfoFrame, testUpdateShareInfo)
     bool b = m_pTester->m_shareCheckBox->isEnabled();
     EXPECT_EQ(b, false);
 }
-
+#endif
 TEST_F(TestShareInfoFrame, testActivateWidgets)
 {
     QComboBox box;
