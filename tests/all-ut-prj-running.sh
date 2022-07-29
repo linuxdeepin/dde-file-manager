@@ -87,6 +87,8 @@ regList=(
   # dfm-extension
   dfm-framework
   plugins/filemanager/dfmplugin-myshares
+  plugins/filemanager/dfmplugin-computer
+  plugins/filemanager/dfmplugin-smbbrowser
 
 # services
   # services/dfm-business-services/dfm-desktop-service

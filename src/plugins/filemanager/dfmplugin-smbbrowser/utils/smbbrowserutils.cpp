@@ -66,8 +66,8 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls)
     if (urls.isEmpty())
         return false;
     if (urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSmb
-        || urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kFtp
-        || urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSFtp)
+        && urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kFtp
+        && urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSFtp)
         return false;
 
     if (urls.count() != 1)

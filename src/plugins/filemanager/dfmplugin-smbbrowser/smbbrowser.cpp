@@ -85,11 +85,6 @@ dpf::Plugin::ShutdownFlag SmbBrowser::stop()
     return dpf::Plugin::ShutdownFlag::kSync;
 }
 
-void SmbBrowser::onWindowCreated(quint64 winId)
-{
-    Q_UNUSED(winId)
-}
-
 void SmbBrowser::onWindowOpened(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);

@@ -57,8 +57,14 @@ SmbShareIterator::~SmbShareIterator()
 
 QUrl SmbShareIterator::next()
 {
+    if (!d->enumerator->hasNext())
+        return {};
+
     d->enumerator->next();
     auto info = d->enumerator->fileInfo();
+    if (!info)
+        return {};
+
     // TODO(xust) TODO(lanxs) if url contains '#', wrong info is returned
     QUrl url = info->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
     QStringList icons = info->attribute(DFileInfo::AttributeID::kStandardIcon).toStringList();

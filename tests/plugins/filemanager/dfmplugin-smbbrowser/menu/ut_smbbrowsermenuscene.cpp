@@ -1,0 +1,164 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     xushitong<xushitong@uniontech.com>
+ *
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "stubext.h"
+#include "plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.h"
+#include "plugins/filemanager/dfmplugin-smbbrowser/private/smbbrowsermenuscene_p.h"
+#include "dfm-base/dfm_menu_defines.h"
+#include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/utils/dialogmanager.h"
+
+#include <QMenu>
+
+#include <gtest/gtest.h>
+
+using namespace dfmplugin_smbbrowser;
+
+class UT_SmbBrowserMenuScene : public testing::Test
+{
+protected:
+    virtual void SetUp() override
+    {
+        scene = new SmbBrowserMenuScene();
+        d = scene->d.data();
+    }
+    virtual void TearDown() override
+    {
+        stub.clear();
+        delete scene;
+    }
+
+private:
+    stub_ext::StubExt stub;
+    SmbBrowserMenuScene *scene { nullptr };
+    SmbBrowserMenuScenePrivate *d { nullptr };
+};
+
+TEST_F(UT_SmbBrowserMenuScene, Name)
+{
+    EXPECT_TRUE(scene->name() == "SmbBrowserMenu");
+}
+
+TEST_F(UT_SmbBrowserMenuScene, Initialize)
+{
+    QList<QUrl> urls { QUrl::fromLocalFile("/hello/world"), QUrl::fromLocalFile("/i/can/eat/glass/without/hurt") };
+    EXPECT_FALSE(scene->initialize({ { "isEmptyArea", true } }));
+    EXPECT_FALSE(scene->initialize({ { "selectFiles", QVariant::fromValue<QList<QUrl>>(urls) } }));
+    urls.takeFirst();
+    EXPECT_NO_FATAL_FAILURE(scene->initialize({ { "isEmptyArea", false },
+                                                { "selectFiles", QVariant::fromValue<QList<QUrl>>(urls) } }));
+}
+
+TEST_F(UT_SmbBrowserMenuScene, Create)
+{
+    EXPECT_FALSE(scene->create(nullptr));
+
+    QMenu menu;
+    EXPECT_NO_FATAL_FAILURE(scene->create(&menu));
+}
+
+TEST_F(UT_SmbBrowserMenuScene, UpdateState)
+{
+    EXPECT_NO_FATAL_FAILURE(scene->updateState(nullptr));
+    QMenu menu;
+    EXPECT_NO_FATAL_FAILURE(scene->updateState(&menu));
+}
+
+TEST_F(UT_SmbBrowserMenuScene, Triggered)
+{
+    DFMBASE_USE_NAMESPACE
+
+    EXPECT_FALSE(scene->triggered(nullptr));
+
+    auto act = new QAction("hello");
+    act->setProperty(ActionPropertyKey::kActionID, "hello");
+    d->predicateAction.insert("hello", act);
+    EXPECT_FALSE(scene->triggered(act));
+
+    d->selectFiles.append(QUrl::fromLocalFile("/hello/world"));
+
+    QList<bool> arg1 { false, true };
+    QList<dfmmount::DeviceError> arg2 { dfmmount::DeviceError::kNoError, dfmmount::DeviceError::kGIOErrorAlreadyMounted };
+    QList<QString> arg3 { "/hello/world", "" };
+    stub.set_lamda(&DeviceManager::mountNetworkDeviceAsync, [&](void *, const QString &, CallbackType1 cb, int) {
+        __DBG_STUB_INVOKE__
+        cb(arg1.first(), arg2.first(), arg3.first());
+    });
+    stub.set_lamda(&DialogManager::showErrorDialogWhenOperateDeviceFailed, [] { __DBG_STUB_INVOKE__ });
+
+    EXPECT_NO_FATAL_FAILURE(scene->triggered(act));
+
+    arg1.takeFirst();
+    act->setProperty(ActionPropertyKey::kActionID, "open-smb");
+    d->predicateAction.insert("open-smb", act);
+    typedef bool (dpf::EventDispatcherManager::*Publish1)(int, quint64, QUrl &);
+    auto publish1 = static_cast<Publish1>(&dpf::EventDispatcherManager::publish);
+    stub.set_lamda(publish1, [] { __DBG_STUB_INVOKE__ return true; });
+    EXPECT_NO_FATAL_FAILURE(scene->triggered(act));
+
+    act->setProperty(ActionPropertyKey::kActionID, "open-smb-in-new-win");
+    d->predicateAction.insert("open-smb-in-new-win", act);
+    typedef bool (dpf::EventDispatcherManager::*Publish2)(int, QUrl);
+    auto publish2 = static_cast<Publish2>(&dpf::EventDispatcherManager::publish);
+    stub.set_lamda(publish2, [] { __DBG_STUB_INVOKE__ return true; });
+    EXPECT_NO_FATAL_FAILURE(scene->triggered(act));
+    delete act;
+}
+
+TEST_F(UT_SmbBrowserMenuScene, Scene)
+{
+    EXPECT_EQ(nullptr, scene->scene(nullptr));
+
+    auto act = new QAction("hello");
+    d->predicateAction.insert("hello", act);
+    EXPECT_STREQ(scene->scene(act)->metaObject()->className(), "dfmbase::AbstractMenuScene");
+
+    d->predicateAction.clear();
+    EXPECT_NO_FATAL_FAILURE(scene->scene(act));
+    delete act;
+    act = nullptr;
+}
+
+class UT_SmbBrowserMenuCreator : public testing::Test
+{
+protected:
+    virtual void SetUp() override {}
+    virtual void TearDown() override { stub.clear(); }
+
+private:
+    stub_ext::StubExt stub;
+    SmbBrowserMenuCreator creator;
+};
+
+TEST_F(UT_SmbBrowserMenuCreator, Name)
+{
+    EXPECT_TRUE(SmbBrowserMenuCreator::name() == "SmbBrowserMenu");
+}
+
+TEST_F(UT_SmbBrowserMenuCreator, Create)
+{
+    auto scene = creator.create();
+    EXPECT_TRUE(scene != nullptr);
+    EXPECT_STREQ("dfmbase::AbstractMenuScene", scene->metaObject()->className());
+    EXPECT_NO_FATAL_FAILURE(delete scene);
+}

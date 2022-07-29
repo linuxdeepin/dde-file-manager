@@ -66,6 +66,9 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
 
 bool SmbBrowserMenuScene::create(QMenu *parent)
 {
+    if (!parent)
+        return false;
+
     auto act = parent->addAction(d->predicateName[SmbBrowserActionId::kOpenSmb]);
     act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kOpenSmb);
     d->predicateAction[SmbBrowserActionId::kOpenSmb] = act;
@@ -85,6 +88,9 @@ void SmbBrowserMenuScene::updateState(QMenu *parent)
 
 bool SmbBrowserMenuScene::triggered(QAction *action)
 {
+    if (!action)
+        return false;
+
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (!d->predicateAction.contains(actId))
         return false;
