@@ -421,13 +421,7 @@ QWidget *DListItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
     d->editingIndex = index;
 
     QLineEdit *edit = new QLineEdit(parent);
-
-    const DAbstractFileInfoPointer &file_info = this->parent()->fileInfo(index);
-    if (file_info->fileUrl().isSearchFile()) {
-        edit->setFixedHeight(LIST_EDITER_HEIGHT * 2 - 10);
-    } else {
-        edit->setFixedHeight(LIST_EDITER_HEIGHT);
-    }
+    edit->setFixedHeight(LIST_EDITER_HEIGHT);
     edit->setObjectName("DListItemDelegate_Editor");
 
     connect(edit, &QLineEdit::destroyed, this, [this, d] {
