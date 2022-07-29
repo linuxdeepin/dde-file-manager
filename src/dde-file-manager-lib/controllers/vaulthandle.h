@@ -65,9 +65,10 @@ private:
      * @param lockBaseDir       保险箱加密文件夹
      * @param unlockFileDir     保险箱解密文件夹
      * @param passWord          保险箱密码
+     * @param isCreate          true:创建 false:解锁
      * @return                  返回ErrorCode枚举值
      */
-    int runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString passWord);
+    int runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString passWord, bool isCreate);
 
     /**
      * @brief vaultLockProcess  加锁保险箱
@@ -75,6 +76,30 @@ private:
      * @return                  返回ErrorCode枚举值
      */
     int lockVaultProcess(QString unlockFileDir);
+
+    /**
+     * @brief isSupportAlgoName 是否支持该算法
+     * @param algoName 算法名
+     * @return
+     */
+    bool isSupportAlgoName(const QString &algoName);
+
+    /**
+     * @brief syncGroupPolicyAlgoName 同步组策略记录的算法名
+     */
+    void syncGroupPolicyAlgoName();
+
+    /**
+     * @brief algoNameOfSupport 获得CryFS支持的加密算法
+     * @return 算法名集合
+     */
+    QStringList algoNameOfSupport();
+
+    /**
+     * @brief encryptAlgoNameOfGroupPolicy 获得组策略指定加密算法
+     * @return
+     */
+    QString encryptAlgoNameOfGroupPolicy();
 
 signals:
     /**
