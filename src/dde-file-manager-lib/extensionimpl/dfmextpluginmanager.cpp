@@ -111,22 +111,23 @@ bool DFMExtPluginManager::initPlugins()
 
 bool DFMExtPluginManager::monitorPlugins()
 {
-    std::call_once(d->watcherFlag, [this]() {
-        // Watcher must init in main thread!
-        DThreadUtil::runInMainThread([this] {
-            d->extensionWathcer = new DFileSystemWatcher(this);
-            if (!d->extensionWathcer)
-                return false;
+    // Watcher must init in main thread!
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
 
-            connect(d->extensionWathcer, &DFileSystemWatcher::fileDeleted, d, &DFMExtPluginManagerPrivate::onExtensionFileDeleted, Qt::DirectConnection);
-            connect(d->extensionWathcer, &DFileSystemWatcher::fileCreated, d,
-                    [this](const QString &path, const QString &name) {
-                        d->onExtensionFileCreatedLater(path, name, DFMExtPluginManagerPrivate::kDefaultWatiTime);
-                    },
-                    Qt::DirectConnection);
-            connect(d->extensionWathcer, &DFileSystemWatcher::fileMoved, d, &DFMExtPluginManagerPrivate::onExtensionFileMoved, Qt::DirectConnection);
-            return d->extensionWathcer->addPath(d->pluginDefaultPath);
-        });
+    std::call_once(d->watcherFlag, [this]() {
+        d->extensionWathcer = new DFileSystemWatcher(this);
+        if (!d->extensionWathcer)
+            return false;
+
+        connect(d->extensionWathcer, &DFileSystemWatcher::fileDeleted, d, &DFMExtPluginManagerPrivate::onExtensionFileDeleted, Qt::DirectConnection);
+        connect(d->extensionWathcer, &DFileSystemWatcher::fileCreated, d,
+                [this](const QString &path, const QString &name) {
+                    d->onExtensionFileCreatedLater(path, name, DFMExtPluginManagerPrivate::kDefaultWatiTime);
+                },
+                Qt::DirectConnection);
+        connect(d->extensionWathcer, &DFileSystemWatcher::fileMoved, d, &DFMExtPluginManagerPrivate::onExtensionFileMoved, Qt::DirectConnection);
+        qInfo() << "Monitor plugins success";
+        return d->extensionWathcer->addPath(d->pluginDefaultPath);
     });
     return true;
 }

@@ -1208,6 +1208,11 @@ bool DFMGlobal::fileNameCorrection(const QByteArray &filePath)
 
 bool DFMGlobal::autoInitExtPluginManager()
 {
+    static QMutex mutex;
+    if (!mutex.tryLock())
+        return false;
+
+
     if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Invalid) {
         qInfo() << "extPluginPath:" << DFMExtPluginManager::instance().pluginPaths();
         DFMExtPluginManager::instance().scanPlugins();
@@ -1225,14 +1230,13 @@ bool DFMGlobal::autoInitExtPluginManager()
     }
 
     if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Initialized) {
-       if (!DFMExtPluginManager::instance().monitorPlugins()) {
-           qWarning() << "init plugin monitor failed!";
-           return false;
-       }
         qInfo() << "extPlugin initialization has been successful!";
+        mutex.unlock();
+        return true;
     }
 
-    return true;
+    mutex.unlock();
+    return false;
 }
 
 bool DFMGlobal::isDesktopFile(const DUrl &url)
