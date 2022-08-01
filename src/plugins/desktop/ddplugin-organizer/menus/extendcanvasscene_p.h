@@ -43,8 +43,10 @@ public:
     void updateNormalMenu(QMenu *parent);
 
     QMenu *organizeBySubActions(QMenu *menu);
+    QMenu *displaySizeSubActions(QMenu *menu);
 
     static QString classifierToActionID(Classifier cf);
+    static QString displaySizeToActionID(DisplaySize size);
 public:
     bool turnOn = false;
 private:

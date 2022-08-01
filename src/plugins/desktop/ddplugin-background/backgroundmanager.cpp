@@ -265,8 +265,6 @@ void BackgroundManager::onBackgroundBuild()
         }
 
         d->backgroundWidgets.insert(screeName, bwp);
-
-        bwp->show();
     } else {
         // check whether to add
         for (QWidget *win : root) {
@@ -290,8 +288,6 @@ void BackgroundManager::onBackgroundBuild()
                 bwp = createBackgroundWidget(win);
                 d->backgroundWidgets.insert(screenName, bwp);
             }
-
-            bwp->show();
         }
 
         // clean up invalid widget

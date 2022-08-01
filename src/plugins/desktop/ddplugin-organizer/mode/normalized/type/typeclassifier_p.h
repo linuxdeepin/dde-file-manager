@@ -36,7 +36,8 @@ public:
     const QSet<QString> picSuffix;
     const QSet<QString> muzSuffix;
     const QSet<QString> vidSuffix;
-    const QSet<QString> appMimeType;
+    const QSet<QString> appSuffix;
+    //const QSet<QString> appMimeType;
 private:
     TypeClassifier *q;
 };

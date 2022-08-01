@@ -168,7 +168,7 @@ void CanvasManager::setIconLevel(int level)
         return;
 
     CanvasItemDelegate *delegate = allView.first()->itemDelegate();
-    if (level >= delegate->minimumIconLevel() && level <= delegate->maximumIconLevel()) {
+    if (level != delegate->iconLevel() && level >= delegate->minimumIconLevel() && level <= delegate->maximumIconLevel()) {
         for (auto v : allView) {
             v->itemDelegate()->setIconLevel(level);
             v->updateGrid();
@@ -178,6 +178,16 @@ void CanvasManager::setIconLevel(int level)
         // notify others that icon size changed
         d->hookIfs->iconSizeChanged(level);
     }
+}
+
+int CanvasManager::iconLevel() const
+{
+    auto allView = views();
+    if (allView.isEmpty())
+        return DispalyIns->iconLevel();
+
+    CanvasItemDelegate *delegate = allView.first()->itemDelegate();
+    return delegate->iconLevel();
 }
 
 FileInfoModel *CanvasManager::fileModel() const
@@ -229,7 +239,6 @@ void CanvasManager::onCanvasBuild()
             view = d->createView(primary, 1);
 
         d->viewMap.insert(screeName, view);
-        view->show();
     } else {
         int screenNum = 0;
         // init grid
@@ -253,8 +262,6 @@ void CanvasManager::onCanvasBuild()
                 view = d->createView(win, screenNum);
                 d->viewMap.insert(screenName, view);
             }
-
-            view->show();
         }
 
         // 检查移除的窗口

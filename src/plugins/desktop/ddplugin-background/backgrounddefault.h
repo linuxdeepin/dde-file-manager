@@ -22,7 +22,6 @@
 #ifndef BACKGROUNDDEFAULT_H
 #define BACKGROUNDDEFAULT_H
 
-
 #include "ddplugin_background_global.h"
 
 #include "interfaces/background/abstractbackground.h"

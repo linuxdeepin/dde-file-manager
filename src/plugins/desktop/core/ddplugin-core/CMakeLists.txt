@@ -6,7 +6,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(EXT_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../../desktoputils/widgetutil.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../desktoputils/widgetutil.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../desktoputils/ddpugin_eventinterface_helper.h
     )
 

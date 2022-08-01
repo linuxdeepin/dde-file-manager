@@ -6,7 +6,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(EXT_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../../desktoputils/widgetutil.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../desktoputils/widgetutil.cpp
     )
 
 FILE(GLOB_RECURSE CANVAS_FILES
@@ -37,7 +36,6 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
-    
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}
 )

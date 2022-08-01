@@ -49,9 +49,9 @@ CollectionHolderPrivate::~CollectionHolderPrivate()
     }
 }
 
-void CollectionHolderPrivate::onAdjustFrameSizeMode(const CollectionFrameSizeMode &sizeMode)
+void CollectionHolderPrivate::onAdjustFrameSizeMode(const CollectionFrameSize &size)
 {
-    this->sizeMode = sizeMode;
+    sizeMode = size;
     emit q->styleChanged(id);
 }
 

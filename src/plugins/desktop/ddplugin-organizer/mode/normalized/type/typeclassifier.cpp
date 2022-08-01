@@ -38,9 +38,10 @@ namespace  {
 
     inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,md,latex";
     inline const char kTypeSuffixPic[] = "jpg,jpeg,jpe,bmp,png,gif,svg,tif,tiff";
-    inline const char kTypeSuffixMuz[] = "au,snd,mid,mp3,aif,aifc,aiff,m3u,ra,ram,wav,cda,wma,ape,mp2,mpa";
-    inline const char kTypeSuffixVid[] = "avi,mov,mp4,mpg,mpeg,qt,rm,rmvb,mkv,asx,asf,flv,3gp,mpe";
-    inline const char kTypeMimeApp[] = "application/x-shellscript,application/x-desktop,application/x-executable";
+    inline const char kTypeSuffixMuz[] = "au,snd,mid,mp3,aif,aifc,aiff,m3u,ra,ram,wav,cda,wma,ape";
+    inline const char kTypeSuffixVid[] = "avi,mov,mp4,mp2,mpa,mpg,mpeg,mpe,qt,rm,rmvb,mkv,asx,asf,flv,3gp";
+    inline const char kTypeSuffixApp[] = "desktop";
+    //inline const char kTypeMimeApp[] = "application/x-shellscript,application/x-desktop,application/x-executable";
 }
 
 #define InitSuffixTable(table, suffix) \
@@ -55,7 +56,8 @@ TypeClassifierPrivate::TypeClassifierPrivate(TypeClassifier *qq) : q(qq)
     InitSuffixTable(picSuffix, kTypeSuffixPic)
     InitSuffixTable(muzSuffix, kTypeSuffixMuz)
     InitSuffixTable(vidSuffix, kTypeSuffixVid)
-    InitSuffixTable(appMimeType, kTypeMimeApp)
+    InitSuffixTable(appSuffix, kTypeSuffixApp)
+    //InitSuffixTable(appMimeType, kTypeMimeApp)
 }
 
 TypeClassifierPrivate::~TypeClassifierPrivate()
@@ -129,19 +131,31 @@ QString TypeClassifier::classify(const QUrl &url) const
     if (itemInfo->isDir())
         return kTypeKeyFld;
 
-    const QString &suffix = itemInfo->suffix();
-    if (d->docSuffix.contains(suffix.toLower()))
+    // classified by suffix.
+    const QString &suffix = itemInfo->suffix().toLower();
+    if (d->docSuffix.contains(suffix))
         return kTypeKeyDoc;
-
-    const QString &mimeType = itemInfo->mimeTypeName();
-    if (d->appMimeType.contains(mimeType))
+    else if (d->appSuffix.contains(suffix))
         return kTypeKeyApp;
-    else if (mimeType.startsWith("video/"))
+    else if (d->vidSuffix.contains(suffix))
         return kTypeKeyVid;
-    else if (mimeType.startsWith("image/"))
+    else if (d->picSuffix.contains(suffix))
         return kTypeKeyPic;
-    else if (mimeType.startsWith("audio/"))
+    else if (d->muzSuffix.contains(suffix))
         return kTypeKeyMuz;
+
+#if 0
+     // classified by mimetype.
+//    const QString &mimeType = itemInfo->mimeTypeName();
+//    if (d->appMimeType.contains(mimeType))
+//        return kTypeKeyApp;
+//    else if (mimeType.startsWith("video/"))
+//        return kTypeKeyVid;
+//    else if (mimeType.startsWith("image/"))
+//        return kTypeKeyPic;
+//    else if (mimeType.startsWith("audio/"))
+//        return kTypeKeyMuz;
+#endif
 
     return kTypeKeyOth;
 }

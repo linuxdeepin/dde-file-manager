@@ -107,3 +107,13 @@ bool CanvasViewHook::drawFile(int viewIndex, const QUrl &file, QPainter *painter
 {
     return CanvasViewRunHook(hook_CanvasView_DrawFile, viewIndex, file, painter, option, extData);
 }
+
+bool CanvasViewHook::shortcutkeyPress(int viewIndex, int key, int modifiers, void *extData) const
+{
+    return CanvasViewRunHook(hook_CanvasView_ShortcutKeyPress, viewIndex, key, modifiers, extData);
+}
+
+bool CanvasViewHook::shortcutAction(int viewIndex, int keySequence, void *extData) const
+{
+    return CanvasViewRunHook(hook_CanvasView_ShortcutAction, viewIndex, keySequence, extData);
+}

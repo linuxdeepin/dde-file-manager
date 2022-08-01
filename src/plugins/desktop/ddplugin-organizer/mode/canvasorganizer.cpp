@@ -145,4 +145,3 @@ bool CanvasOrganizer::filterDropData(int viewIndex, const QMimeData *mimeData, c
     return false;
 }
 
-

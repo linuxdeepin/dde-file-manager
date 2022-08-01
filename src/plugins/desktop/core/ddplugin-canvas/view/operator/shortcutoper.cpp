@@ -79,6 +79,14 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
     if (!event || !view)
         return false;
 
+    {
+        QVariantHash extData;
+        extData.insert("DisableShortcut", disableShortcut());
+        extData.insert("QKeyEvent", (qlonglong)event);
+        if (view->d->hookIfs && view->d->hookIfs->shortcutkeyPress(view->screenNum(), event->key(), event->modifiers(), &extData))
+            return true;
+    }
+
     if (disableShortcut()) {
         bool specialShortcut = false;
         if (event->modifiers() == Qt::NoModifier || event->modifiers() == Qt::KeypadModifier) {
@@ -175,6 +183,13 @@ void ShortcutOper::acitonTriggered()
         return;
 
     auto key = actionShortcutKey(ac);
+    {
+        QVariantHash extData;
+        extData.insert("DisableShortcut", disableShortcut());
+        if (view->d->hookIfs && view->d->hookIfs->shortcutAction(view->screenNum(), key, &extData))
+            return;
+    }
+
     switch (key) {
     case QKeySequence::Copy:
         FileOperatorProxyIns->copyFiles(view);

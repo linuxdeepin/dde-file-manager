@@ -206,7 +206,7 @@ void NormalizedMode::layout()
             style.key = holder->id();
         }
 
-        int currentHeightTime = style.sizeMode == CollectionFrameSizeMode::kSmall ? kSmallCollectionGridRowCount : kLargeCollectionGridRowCount;
+        int currentHeightTime = style.sizeMode == CollectionFrameSize::kSmall ? kSmallCollectionGridRowCount : kLargeCollectionGridRowCount;
         auto pos = d->findValidPos(nextPos, screenIdx, style, kCollectionGridColumnCount, currentHeightTime);
 
         Q_ASSERT(screenIdx > 0);

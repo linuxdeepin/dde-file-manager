@@ -27,6 +27,7 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QPoint>
+#include <QMetaMethod>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -40,6 +41,12 @@ DDP_ORGANIZER_USE_NAMESPACE
 
 #define CanvasModelUnfollow(topic, args...) \
         dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
+
+#define CheckFilterConnected(sig) \
+        if (!isSignalConnected(QMetaMethod::fromSignal(&sig))) {\
+            qWarning() << "filter signal was not connected to any object" << #sig;\
+            return false; \
+        }
 
 CanvasModelShell::CanvasModelShell(QObject *parent)
     : QObject(parent)
@@ -80,18 +87,21 @@ bool CanvasModelShell::take(const QUrl &url)
 bool CanvasModelShell::eventDataRested(QList<QUrl> *urls, void *extData)
 {
     Q_UNUSED(extData);
+    CheckFilterConnected(CanvasModelShell::filterDataRested)
     return filterDataRested(urls);
 }
 
 bool CanvasModelShell::eventDataInserted(const QUrl &url, void *extData)
 {
     Q_UNUSED(extData);
+    CheckFilterConnected(CanvasModelShell::filterDataInserted)
     return filterDataInserted(url);
 }
 
 bool CanvasModelShell::eventDataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData)
 {
     Q_UNUSED(extData);
+    CheckFilterConnected(CanvasModelShell::filterDataRenamed)
     return filterDataRenamed(oldUrl, newUrl);
 }
 

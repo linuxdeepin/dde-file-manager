@@ -22,10 +22,11 @@
 #include "private/framemanager_p.h"
 #include "config/configpresenter.h"
 #include "interface/canvasmodelshell.h"
+#include "interface/canvasviewshell.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menus/extendcanvasscene.h"
 
-#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 #include "dfm-base/dfm_desktop_defines.h"
 
 #include <QAbstractItemView>
@@ -130,6 +131,35 @@ void FrameManagerPrivate::buildOrganizer()
     q->switchMode(CfgPresenter->mode());
 }
 
+int FrameManagerPrivate::covertIconLevel(int lv, bool toDisplay)
+{
+    int ret = -1;
+    if (toDisplay) { // 1 is samll and 3 is large in canvas
+        if (lv <= 1)
+            ret = DisplaySize::kSmaller;
+        else if (lv >= 3)
+            ret = DisplaySize::kLarger;
+        else
+            ret = DisplaySize::kNormal;
+    } else {
+        switch (static_cast<DisplaySize>(lv)) {
+        case DisplaySize::kSmaller:
+            ret = 1;
+            break;
+        case DisplaySize::kNormal:
+            ret = 2;
+            break;
+        case DisplaySize::kLarger:
+            ret = 3;
+            break;
+        default:
+            ret = 1;
+            break;
+        }
+    }
+    return ret;
+}
+
 void FrameManagerPrivate::refeshCanvas()
 {
     if (canvas)
@@ -174,6 +204,38 @@ void FrameManagerPrivate::switchToNormalized(int cf)
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
         buildOrganizer();
     }
+}
+
+void FrameManagerPrivate::displaySizeChanged(int size)
+{
+    auto displaySize = static_cast<DisplaySize>(size);
+    if (displaySize == CfgPresenter->displaySize())
+        return;
+
+    qDebug() << "change display size" << size << (canvas != nullptr);
+    if (canvas) {
+        CfgPresenter->setDisplaySize(displaySize);
+        canvas->setIconLevel(covertIconLevel(size, false));
+        // todo changed adjust collection size;
+    }
+}
+
+bool FrameManagerPrivate::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
+{
+    // disbale ctrl + = to zooom in if organizer turns on.
+    return modifiers == Qt::ControlModifier && key == Qt::Key_Equal;
+}
+
+bool FrameManagerPrivate::filterShortcutAction(int viewIndex, int keySequence) const
+{
+    // disbale zooom in or zoom out by key shourcut if organizer turns on.
+    return keySequence == QKeySequence::ZoomIn || keySequence == QKeySequence::ZoomOut;
+}
+
+bool FrameManagerPrivate::filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const
+{
+    // disbale zooom in or zoom out by mouse wheel if organizer turns on.
+    return ctrl;
 }
 
 QWidget *FrameManagerPrivate::findView(QWidget *root) const
@@ -227,6 +289,8 @@ bool FrameManager::initialize()
     connect(CfgPresenter, &ConfigPresenter::changeEnableState, d, &FrameManagerPrivate::enableChanged);
     connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized);
     connect(CfgPresenter, &ConfigPresenter::switchToCustom, d, &FrameManagerPrivate::switchToCustom);
+    connect(CfgPresenter, &ConfigPresenter::changeDisplaySize, d, &FrameManagerPrivate::displaySizeChanged);
+
     return true;
 }
 
@@ -273,8 +337,29 @@ void FrameManager::turnOn(bool build)
     d->canvas = new CanvasInterface(this);
     d->canvas->initialize();
 
+    // disable zoomin and zoomout by hook canvas's event.
+    {
+        CanvasViewShell *canvasViewShell = d->canvas->canvasView();
+        connect(canvasViewShell, &CanvasViewShell::filterShortcutkeyPress, d, &FrameManagerPrivate::filterShortcutkeyPress, Qt::DirectConnection);
+        connect(canvasViewShell, &CanvasViewShell::filterShortcutAction, d, &FrameManagerPrivate::filterShortcutAction, Qt::DirectConnection);
+        connect(canvasViewShell, &CanvasViewShell::filterWheel, d, &FrameManagerPrivate::filterWheel, Qt::DirectConnection);
+    }
+
     d->model = new FileProxyModel(this);
     d->model->setModelShell(d->canvas->fileInfoModel());
+
+    // adjust canvas icon level
+    {
+        int viewIconLevel = d->canvas->iconLevel();
+        DisplaySize size  = static_cast<DisplaySize>(d->covertIconLevel(viewIconLevel, true));
+        CfgPresenter->setDisplaySize(size);
+
+        int newIconLevel = d->covertIconLevel(size, false);
+        if (viewIconLevel != newIconLevel) {
+            qInfo() << "adjust canvas icon level from" << viewIconLevel << "to" << newIconLevel;
+            d->canvas->setIconLevel(newIconLevel);
+        }
+    }
 
     if (build) {
         onBuild();

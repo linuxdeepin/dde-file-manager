@@ -281,7 +281,7 @@ CollectionStyle OrganizerConfig::collectionStyle(bool custom, const QString &key
         style.rect = QRect(x, y, w, h);
     }
 
-    style.sizeMode = d->settings->value(kKeySizeMode).value<CollectionFrameSizeMode>();
+    style.sizeMode = d->settings->value(kKeySizeMode).value<CollectionFrameSize>();
 
     d->settings->endGroup();
     d->settings->endGroup();

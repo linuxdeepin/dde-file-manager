@@ -174,6 +174,9 @@ void WindowFrame::buildBaseWindow()
 
         d->updateProperty(winPtr, primary, true);
         d->windows.insert(primary->name(), winPtr);
+
+        //! 必须先隐藏，否则后面调用show时无法带动子窗口显示
+        winPtr->hide();
     } else {
         //多屏
         for (auto screenName : d->windows.keys()) {
@@ -197,6 +200,8 @@ void WindowFrame::buildBaseWindow()
             }
 
             d->updateProperty(winPtr, s, (s == primary));
+            //! 必须先隐藏，否则后面调用show时无法带动子窗口显示
+            winPtr->hide();
         }
     }
 
@@ -206,8 +211,11 @@ void WindowFrame::buildBaseWindow()
 
     layoutChildren();
 
-    for (auto win : d->windows)
+    for (auto win : d->windows) {
+        // the root windows must be hide before show
+        Q_ASSERT(win->isVisible() == false);
         win->show();
+    }
 
     emit windowShowed();
 }

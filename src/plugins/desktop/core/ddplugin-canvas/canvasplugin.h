@@ -47,6 +47,8 @@ private:
     DPF_EVENT_REG_SLOT(slot_CanvasManager_FileInfoModel)
     DPF_EVENT_REG_SLOT(slot_CanvasManager_Update)
     DPF_EVENT_REG_SLOT(slot_CanvasManager_Edit)
+    DPF_EVENT_REG_SLOT(slot_CanvasManager_IconLevel)
+    DPF_EVENT_REG_SLOT(slot_CanvasManager_SetIconLevel)
 
     DPF_EVENT_REG_HOOK(hook_CanvasManager_RequestWallpaperSetting)
 
@@ -73,6 +75,8 @@ private:
     DPF_EVENT_REG_HOOK(hook_CanvasView_DragLeave)
     DPF_EVENT_REG_HOOK(hook_CanvasView_KeyboardSearch)
     DPF_EVENT_REG_HOOK(hook_CanvasView_DrawFile)
+    DPF_EVENT_REG_HOOK(hook_CanvasView_ShortcutKeyPress)
+    DPF_EVENT_REG_HOOK(hook_CanvasView_ShortcutAction)
 
     // CanvasGrid begin
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_Items)

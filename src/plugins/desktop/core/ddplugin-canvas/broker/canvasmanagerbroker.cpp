@@ -44,6 +44,8 @@ CanvasManagerBroker::~CanvasManagerBroker()
     CanvasManagerDisconnect(slot_CanvasManager_FileInfoModel);
     CanvasManagerDisconnect(slot_CanvasManager_Update);
     CanvasManagerDisconnect(slot_CanvasManager_Edit);
+    CanvasManagerDisconnect(slot_CanvasManager_IconLevel);
+    CanvasManagerDisconnect(slot_CanvasManager_SetIconLevel);
 }
 
 bool CanvasManagerBroker::init()
@@ -51,6 +53,8 @@ bool CanvasManagerBroker::init()
     CanvasManagerSlot(slot_CanvasManager_FileInfoModel, &CanvasManagerBroker::fileInfoModel);
     CanvasManagerSlot(slot_CanvasManager_Update, &CanvasManagerBroker::update);
     CanvasManagerSlot(slot_CanvasManager_Edit, &CanvasManagerBroker::edit);
+    CanvasManagerSlot(slot_CanvasManager_IconLevel, &CanvasManagerBroker::iconLevel);
+    CanvasManagerSlot(slot_CanvasManager_SetIconLevel, &CanvasManagerBroker::setIconLevel);
     return true;
 }
 
@@ -62,6 +66,16 @@ void CanvasManagerBroker::update()
 void CanvasManagerBroker::edit(const QUrl &url)
 {
     canvas->openEditor(url);
+}
+
+int CanvasManagerBroker::iconLevel()
+{
+    return canvas->iconLevel();
+}
+
+void CanvasManagerBroker::setIconLevel(int lv)
+{
+    canvas->setIconLevel(lv);
 }
 
 QAbstractItemModel *CanvasManagerBroker::fileInfoModel()

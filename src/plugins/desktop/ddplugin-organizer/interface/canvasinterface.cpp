@@ -21,9 +21,18 @@
 #include "canvasinterface_p.h"
 #include "fileinfomodelshell.h"
 
+#include <dpf.h>
+
 #include <QFileInfo>
 
 DDP_ORGANIZER_USE_NAMESPACE
+
+#define CanvasManagerPush(topic) \
+        dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic))
+
+
+#define CanvasManagerPush2(topic, args...) \
+        dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic), ##args)
 
 CanvasInterfacePrivate::CanvasInterfacePrivate(CanvasInterface *qq) : q(qq)
 {
@@ -62,6 +71,16 @@ bool CanvasInterface::initialize()
     d->canvasGrid->initialize();
 
     return true;
+}
+
+int CanvasInterface::iconLevel()
+{
+    return CanvasManagerPush(slot_CanvasManager_IconLevel).toInt();
+}
+
+void CanvasInterface::setIconLevel(int lv)
+{
+    CanvasManagerPush2(slot_CanvasManager_SetIconLevel, lv);
 }
 
 FileInfoModelShell *CanvasInterface::fileInfoModel()

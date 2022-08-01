@@ -43,12 +43,18 @@ public:
     SurfacePointer createSurface(QWidget *root);
     void layoutSurface(QWidget *root, SurfacePointer surface, bool hidden = false);
     void buildOrganizer();
+    int covertIconLevel(int lv, bool toDisplay);
 public slots:
     void refeshCanvas();
 public slots:
     void enableChanged(bool e);
     void switchToCustom();
     void switchToNormalized(int cf);
+    void displaySizeChanged(int size);
+public slots:
+    bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const;
+    bool filterShortcutAction(int viewIndex, int keySequence) const;
+    bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const;
 protected:
     QWidget *findView(QWidget *root) const;
 public:

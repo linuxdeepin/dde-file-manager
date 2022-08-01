@@ -24,6 +24,7 @@
 
 #include <QPoint>
 #include <QMimeData>
+#include <QMetaMethod>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(const QMimeData *)
@@ -42,6 +43,12 @@ DDP_ORGANIZER_USE_NAMESPACE
 #define CanvasViewUnfollow(topic, args...) \
         dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
+#define CheckFilterConnected(sig) {\
+        if (!isSignalConnected(QMetaMethod::fromSignal(&sig))) {\
+            qWarning() << "filter signal was not connected to any object" << #sig;\
+            return false; \
+        }}
+
 CanvasViewShell::CanvasViewShell(QObject *parent)
     : QObject(parent)
 {
@@ -51,11 +58,19 @@ CanvasViewShell::CanvasViewShell(QObject *parent)
 CanvasViewShell::~CanvasViewShell()
 {
     CanvasViewUnfollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
+    CanvasViewUnfollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
+    CanvasViewUnfollow(hook_CanvasView_ShortcutAction, &CanvasViewShell::eventShortcutAction);
+    CanvasViewUnfollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
+    CanvasViewUnfollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 }
 
 bool CanvasViewShell::initialize()
 {
     CanvasViewFollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
+    CanvasViewFollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
+    CanvasViewFollow(hook_CanvasView_ShortcutAction, &CanvasViewShell::eventShortcutAction);
+    CanvasViewFollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
+    CanvasViewFollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 
     return true;
 }
@@ -83,8 +98,40 @@ QSize CanvasViewShell::gridSize(int viewIndex)
 bool CanvasViewShell::eventDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     Q_UNUSED(extData)
-
+    CheckFilterConnected(CanvasViewShell::filterDropData)
     return filterDropData(viewIndex, mimeData, viewPoint);
+}
+
+bool CanvasViewShell::eventShortcutkeyPress(int viewIndex, int key, int modifiers, void *extData)
+{
+    Q_UNUSED(extData)
+    CheckFilterConnected(CanvasViewShell::filterShortcutkeyPress)
+    return filterShortcutkeyPress(viewIndex, key, modifiers);
+}
+
+bool CanvasViewShell::eventShortcutAction(int viewIndex, int keySequence, void *extData)
+{
+    Q_UNUSED(extData)
+    CheckFilterConnected(CanvasViewShell::filterShortcutAction)
+    return filterShortcutAction(viewIndex, keySequence);
+}
+
+bool CanvasViewShell::eventWheel(int viewIndex, const QPoint &angleDelta, void *extData)
+{
+    CheckFilterConnected(CanvasViewShell::filterWheel)
+
+    if (extData) {
+        QVariantHash *ext = reinterpret_cast<QVariantHash *>(extData);
+        bool ctrl = ext->value("CtrlPressed").toBool();
+        return filterWheel(viewIndex, angleDelta, ctrl);
+    }
+    return false;
+}
+
+bool CanvasViewShell::eventContextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &viewPos, void *extData)
+{
+    CheckFilterConnected(CanvasViewShell::filterContextMenu)
+    return filterContextMenu(viewIndex, dir, files, viewPos);
 }
 
 

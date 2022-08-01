@@ -50,7 +50,7 @@ public:
 
 signals:
     void sigRequestClose(const QString &id);
-    void sigRequestAdjustSizeMode(const CollectionFrameSizeMode &sizeMode);
+    void sigRequestAdjustSizeMode(const CollectionFrameSize &size);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;

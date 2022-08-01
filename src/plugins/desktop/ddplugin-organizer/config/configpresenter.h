@@ -38,6 +38,8 @@ public:
     void setEnable(bool e);
     OrganizerMode mode() const;
     void setMode(OrganizerMode m);
+    DisplaySize displaySize() const;
+    void setDisplaySize(DisplaySize size);
     Classifier classification() const;
     void setClassification(Classifier cf);
     QList<CollectionBaseDataPtr> customProfile() const;
@@ -57,6 +59,7 @@ signals:
     void changeEnableState(bool e);
     void switchToNormalized(int);
     void switchToCustom();
+    void changeDisplaySize(int);
     void newCollection(const QList<QUrl> &);
 public slots:
 protected:
@@ -66,6 +69,7 @@ private:
     OrganizerConfig *conf = nullptr;
     bool enable = false;
     OrganizerMode curMode = OrganizerMode::kNormalized;
+    DisplaySize curDisplaySize = DisplaySize::kSmaller;
     Classifier curClassifier = Classifier::kType;
 };
 

@@ -49,6 +49,8 @@ public:
     virtual bool dragLeave(int viewIndex, const QMimeData *, void *extData = nullptr) const;
     virtual bool keyboardSearch(int viewIndex, const QString &search, void *extData = nullptr) const;
     virtual bool drawFile(int viewIndex, const QUrl &file, QPainter *painter, const QStyleOptionViewItem *option, void *extData = nullptr) const;
+    virtual bool shortcutkeyPress(int viewIndex, int key, int modifiers, void *extData = nullptr) const;
+    virtual bool shortcutAction(int viewIndex, int keySequence, void *extData = nullptr) const;
 };
 
 }

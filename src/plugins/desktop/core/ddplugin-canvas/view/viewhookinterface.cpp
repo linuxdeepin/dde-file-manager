@@ -82,6 +82,16 @@ bool ViewHookInterface::drawFile(int viewIndex, const QUrl &file, QPainter *pain
     return false;
 }
 
+bool ViewHookInterface::shortcutkeyPress(int viewIndex, int key, int modifiers, void *extData) const
+{
+    return false;
+}
+
+bool ViewHookInterface::shortcutAction(int viewIndex, int keySequence, void *extData) const
+{
+    return false;
+}
+
 bool ViewHookInterface::keyPress(int viewIndex, int key, int modifiers, void *extData) const
 {
     return false;

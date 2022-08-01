@@ -543,6 +543,9 @@ QRect CanvasView::itemRect(const QModelIndex &index) const
 
 void CanvasView::keyPressEvent(QKeyEvent *event)
 {
+    if (d->hookIfs->keyPress(screenNum(), event->key(), event->modifiers()))
+        return;
+
     if (d->keySelecter->filterKeys().contains(static_cast<Qt::Key>(event->key()))) {
         d->keySelecter->keyPressed(event);
         return;
@@ -618,6 +621,14 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
 
 void CanvasView::wheelEvent(QWheelEvent *event)
 {
+    {
+        QVariantHash ext;
+        ext.insert("QWheelEvent", (qlonglong)event);
+        ext.insert("CtrlPressed", isCtrlPressed());
+        if (d->hookIfs && d->hookIfs->wheel(screenNum(), event->angleDelta(), &ext))
+            return;
+    }
+
     if (isCtrlPressed()) {
         d->menuProxy->changeIconLevel(event->angleDelta().y() > 0);
         event->accept();

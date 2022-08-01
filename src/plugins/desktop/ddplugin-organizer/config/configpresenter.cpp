@@ -62,7 +62,8 @@ bool ConfigPresenter::initialize()
             qWarning() << "mode is invalid:" << m;
             m = 0;
         }
-        curMode = static_cast<OrganizerMode>(m);
+        // jsut release normal mode
+        curMode = OrganizerMode::kNormalized; //static_cast<OrganizerMode>(m);
     }
 
     {
@@ -71,8 +72,10 @@ bool ConfigPresenter::initialize()
             qWarning() << "classification is invalid:" << cf;
             cf = 0;
         }
-        curClassifier = static_cast<Classifier>(cf);
+        // // jsut release that classified by type
+        curClassifier = Classifier::kType; //static_cast<Classifier>(cf);
     }
+
     return true;
 }
 
@@ -98,6 +101,16 @@ void ConfigPresenter::setMode(OrganizerMode m)
     curMode = m;
     conf->setMode(m);
     conf->sync();
+}
+
+DisplaySize ConfigPresenter::displaySize() const
+{
+    return curDisplaySize;
+}
+
+void ConfigPresenter::setDisplaySize(DisplaySize size)
+{
+    curDisplaySize = size;
 }
 
 Classifier ConfigPresenter::classification() const

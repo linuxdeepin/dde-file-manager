@@ -39,13 +39,13 @@ public:
     ~CollectionHolderPrivate();
 
 public slots:
-    void onAdjustFrameSizeMode(const CollectionFrameSizeMode &sizeMode);
+    void onAdjustFrameSizeMode(const CollectionFrameSize &size);
 
 public:
     CollectionHolder *q;
     QString id;
     int screenIndex = 1;
-    CollectionFrameSizeMode sizeMode = CollectionFrameSizeMode::kSmall;
+    CollectionFrameSize sizeMode = CollectionFrameSize::kSmall;
     QPointer<CollectionDataProvider> provider = nullptr;
     QPointer<FileProxyModel> model = nullptr;
     QPointer<CollectionFrame> frame = nullptr;

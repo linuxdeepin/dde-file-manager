@@ -44,6 +44,7 @@ public:
     void update();
     void openEditor(const QUrl &url);
     void setIconLevel(int level);
+    int iconLevel() const;
     FileInfoModel *fileModel() const;
     CanvasProxyModel *model() const;
     CanvasSelectionModel *selectionModel() const;

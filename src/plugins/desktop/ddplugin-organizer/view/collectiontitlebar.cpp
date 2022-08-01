@@ -151,14 +151,14 @@ void CollectionTitleBarPrivate::showMenu()
         action->setText(tr("Large"));
         subMenu->addAction(action);
         connect(action, &QAction::triggered, this, [=] () {
-            emit q->sigRequestAdjustSizeMode(CollectionFrameSizeMode::kLarge);
+            emit q->sigRequestAdjustSizeMode(CollectionFrameSize::kLarge);
         });
 
         action = new QAction(subMenu);
         action->setText(tr("Small"));
         subMenu->addAction(action);
         connect(action, &QAction::triggered, this, [=] () {
-            emit q->sigRequestAdjustSizeMode(CollectionFrameSizeMode::kSmall);
+            emit q->sigRequestAdjustSizeMode(CollectionFrameSize::kSmall);
         });
     }
 
