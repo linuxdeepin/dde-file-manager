@@ -44,9 +44,7 @@ DConfigManager::DConfigManager(QObject *parent)
     addConfig(kDefaultCfgPath);
 }
 
-DConfigManager
-        *
-        DConfigManager::instance()
+DConfigManager *DConfigManager::instance()
 {
     static DConfigManager ins;
     return &ins;
@@ -54,6 +52,13 @@ DConfigManager
 
 DConfigManager::~DConfigManager()
 {
+#if DCONFIG_SUPPORTED
+    QWriteLocker locker(&d->lock);
+
+    auto configs = d->configs.values();
+    std::for_each(configs.begin(), configs.end(), [](DConfig *cfg) { delete cfg; });
+    d->configs.clear();
+#endif
 }
 
 bool DConfigManager::addConfig(const QString &config, QString *err)

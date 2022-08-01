@@ -35,6 +35,10 @@ GSettingManager *GSettingManager::instance()
 
 GSettingManager::~GSettingManager()
 {
+    QWriteLocker locker(&d->lock);
+    auto settings = d->settings.values();
+    std::for_each(settings.begin(), settings.end(), [](QGSettings *setting) { delete setting; });
+    d->settings.clear();
 }
 
 bool GSettingManager::isSchemaInstalled(const QString &schemaId)
