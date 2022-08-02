@@ -117,6 +117,7 @@ public:
     static bool menuHidden(const QString &scene);
     static void menuFilterHiddenActions(QMenu *menu, const QString &scene);
     static QString getActionPredicateByType(MenuAction type);
+    static void resetAllActionVisibility(bool visible);
 
 public slots:
     void actionTriggered(QAction *action);
