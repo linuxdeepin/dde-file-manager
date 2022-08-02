@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "anythingserver.h"
+#include <QProcess>
 
 DAEMONPANYTHING_USE_NAMESPACE
 
@@ -40,6 +41,21 @@ bool AnythingPlugin::start()
         return false;
     }
 
+    // load kernel module vfs_monitor
+    QProcess process;
+    process.start("modprobe", { "vfs_monitor" }, QIODevice::ReadOnly);
+    if (process.waitForFinished(1000)) {
+        if (process.exitCode() == 0) {
+            qInfo() << "load kernel module vfs_monitor succeeded.";
+        } else {
+            qInfo() << "load kernel module vfs_monitor failed.";
+            return false;
+        }
+    } else {
+        qInfo() << "load kernel module vfs_monitor timed out.";
+        return false;
+    }
+
     // define the anything backend instance fucntion.
     typedef void (*AnythingObj)();
 
@@ -55,4 +71,18 @@ bool AnythingPlugin::start()
     // unload this share library, but donot unload at here.
     //backendLib.unload();
     return true;
+}
+
+dpf::Plugin::ShutdownFlag AnythingPlugin::stop()
+{
+    // unload kernel module vfs_monitor
+    QProcess process;
+    process.start("rmmod", { "vfs_monitor" }, QIODevice::ReadOnly);
+    if (process.waitForFinished(1000)) {
+        qInfo() << "unload kernel module vfs_monitor" << (process.exitCode() == 0 ? " succeeded." : " failed.");
+    } else {
+        qInfo() << "unload kernel module vfs_monitor timed out.";
+    }
+
+    return kSync;
 }
