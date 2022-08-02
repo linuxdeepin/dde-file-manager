@@ -91,6 +91,10 @@
 #include <unistd.h>
 
 
+#define DFM_MENU_ACTION_HIDDEN "dfm.menu.action.hidden"
+#define DD_MENU_ACTION_HIDDEN "dd.menu.action.hidden"
+#define DFD_MENU_ACTION_HIDDEB "dfd.menu.action.hidden"
+
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
 
 
@@ -1099,6 +1103,15 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         actions_initialized = true;
         DFileMenuData::initData();
         DFileMenuData::initActions();
+
+        // 菜单项策略若清空隐藏项后需要重置成显示
+        if (DTK_POLICY_SUPPORT)
+            connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, [](const QString &key){
+                if (key == DFM_MENU_ACTION_HIDDEN || key == DD_MENU_ACTION_HIDDEN || key == DFD_MENU_ACTION_HIDDEB) {
+                    if (GroupPolicy::instance()->getValue(key).toList().isEmpty())
+                        DFileMenuManager::resetAllActionVisibility(true);
+                }
+            });
     }
 
     if (!isUseCachedAction) {
@@ -1191,6 +1204,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             action->setMenu(subMenu);
         }
     }
+
     return menu;
 }
 
@@ -1577,6 +1591,12 @@ void DFileMenuManager::menuFilterHiddenActions(QMenu *menu, const QString &scene
 QString DFileMenuManager::getActionPredicateByType(MenuAction type)
 {
     return DFileMenuData::actionPredicate.value(type);
+}
+
+void DFileMenuManager::resetAllActionVisibility(bool visible)
+{
+    for(const auto temp : DFileMenuData::actions)
+        temp->setVisible(visible);
 }
 
 void DFileMenuManager::actionTriggered(QAction *action)
