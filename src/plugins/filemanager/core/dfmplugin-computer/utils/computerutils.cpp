@@ -318,40 +318,34 @@ QList<QUrl> ComputerUtils::systemBlkDevUrlByUUIDs(const QStringList &uuids)
     return ret;
 }
 
-void ComputerUtils::diskHideToDConfig(int attr, const QVariant &var)
+void ComputerUtils::diskHideDCfgSaver(const QVariant &var)
 {
     auto systemUUIDs = allSystemUUIDs().toSet();
 
     auto currentHiddenDisks = DConfigManager::instance()->value(kDefaultCfgPath, kKeyHideDisk).toStringList().toSet();
-    if (attr == Application::GenericAttribute::kHiddenSystemPartition) {
-        if (var.toBool())
-            currentHiddenDisks += systemUUIDs;
-        else
-            currentHiddenDisks -= systemUUIDs;
+    if (var.toBool())
+        currentHiddenDisks += systemUUIDs;
+    else
+        currentHiddenDisks -= systemUUIDs;
 
-        QVariant var = QVariant::fromValue<QStringList>(currentHiddenDisks.toList());
-        DConfigManager::instance()->setValue(kDefaultCfgPath, kKeyHideDisk, var);
-    } else if (attr == Application::GenericAttribute::kHideLoopPartitions) {
-        // TODO(xust)
-    }
+    QVariant dvar = QVariant::fromValue<QStringList>(currentHiddenDisks.toList());
+    DConfigManager::instance()->setValue(kDefaultCfgPath, kKeyHideDisk, dvar);
 }
 
-void ComputerUtils::diskHideToDSetting(const QString &cfgPath, const QString &cfgKey, const QVariant &var)
+void ComputerUtils::diskHideToAppSet(const QString &cfgPath, const QString &cfgKey, const QVariant &var)
 {
     auto systemUUIDs = allSystemUUIDs().toSet();
     const auto &&hiddenDisks = var.toStringList().toSet();
 
     bool allSystemDisksHidden = (hiddenDisks + systemUUIDs == hiddenDisks);
     Application::instance()->setGenericAttribute(Application::GenericAttribute::kHiddenSystemPartition, allSystemDisksHidden);
-
-    // TODO(xust) sync HideLoopPartitions
 }
 
-bool ComputerUtils::isEqualDiskHideConfig(const QVariant &varDConf, const QVariant &varDSet)
+bool ComputerUtils::isEqualDiskHideConfig(const QVariant &varDConf, const QVariant &varAppSet)
 {
     const auto &&systemUUIDs = allSystemUUIDs();
     const auto &&currHiddenDisks = varDConf.toStringList().toSet();
-    if (varDSet.toBool()) {
+    if (varAppSet.toBool()) {
         return std::all_of(systemUUIDs.cbegin(), systemUUIDs.cend(), [=](const QString &uuid) {
             return currHiddenDisks.contains(uuid);
         });

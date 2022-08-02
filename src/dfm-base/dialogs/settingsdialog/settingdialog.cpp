@@ -22,8 +22,8 @@
 */
 
 #include "settingdialog.h"
-#include "settingdialog_p.h"
 
+#include "dfm-base/base/configs/settingbackend.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
@@ -41,9 +41,9 @@
 #include <QDebug>
 
 #ifndef ENABLE_QUICK_SEARCH
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonDocument>
+#    include <QJsonObject>
+#    include <QJsonArray>
+#    include <QJsonDocument>
 #endif
 
 using namespace dfmbase;
@@ -54,70 +54,6 @@ const char *const kGroupsName { "groups" };
 const char *const kOptionsName { "options" };
 }
 #endif
-
-SettingBackend::SettingBackend(QObject *parent)
-    : DSettingsBackend(parent)
-{
-    Q_ASSERT(Application::instance());
-
-    connect(Application::instance(), &Application::appAttributeEdited, this, &SettingBackend::onValueChanged);
-    connect(Application::instance(), &Application::genericAttributeEdited, this, &SettingBackend::onValueChanged);
-}
-
-QStringList SettingBackend::keys() const
-{
-    return keyToAA.keys() + keyToGA.keys();
-}
-
-QVariant SettingBackend::getOption(const QString &key) const
-{
-    int attribute = keyToAA.value(key, static_cast<Application::ApplicationAttribute>(-1));
-
-    if (attribute >= 0) {
-        return Application::instance()->appAttribute(static_cast<Application::ApplicationAttribute>(attribute));
-    }
-
-    attribute = keyToGA.value(key, static_cast<Application::GenericAttribute>(-1));
-
-    Q_ASSERT(attribute >= 0);
-
-    return Application::instance()->genericAttribute(static_cast<Application::GenericAttribute>(attribute));
-}
-
-void SettingBackend::doSync()
-{
-}
-
-void SettingBackend::doSetOption(const QString &key, const QVariant &value)
-{
-    QSignalBlocker blocker(this);
-    Q_UNUSED(blocker)
-
-    int attribute = keyToAA.value(key, static_cast<Application::ApplicationAttribute>(-1));
-
-    if (attribute >= 0) {
-        return Application::instance()->setAppAttribute(static_cast<Application::ApplicationAttribute>(attribute), value);
-    }
-
-    attribute = keyToGA.value(key, static_cast<Application::GenericAttribute>(-1));
-
-    Q_ASSERT(attribute >= 0);
-
-    Application::instance()->setGenericAttribute(static_cast<Application::GenericAttribute>(attribute), value);
-}
-
-void SettingBackend::onValueChanged(int attribute, const QVariant &value)
-{
-    QString key = keyToAA.key(static_cast<Application::ApplicationAttribute>(attribute));
-
-    if (key.isEmpty()) {
-        key = keyToGA.key(static_cast<Application::GenericAttribute>(attribute));
-    }
-
-    Q_ASSERT(!key.isEmpty());
-
-    emit optionChanged(key, value);
-}
 
 #ifndef ENABLE_QUICK_SEARCH
 static QByteArray removeQuickSearchIndex(const QByteArray &data)
@@ -294,7 +230,7 @@ SettingDialog::SettingDialog(QWidget *parent)
     }
 
     // load conf value
-    auto backen = new SettingBackend(this);
+    auto backen = SettingBackend::instance();
     if (dtkSettings) {
         dtkSettings->setParent(this);
         dtkSettings->setBackend(backen);

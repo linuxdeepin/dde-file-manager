@@ -22,7 +22,6 @@
 */
 #include "dconfigmanager.h"
 #include "private/dconfigmanager_p.h"
-#include "configsynchronizer.h"
 
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/utils/finallyutil.h"

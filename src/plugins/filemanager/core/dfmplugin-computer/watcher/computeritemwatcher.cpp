@@ -28,7 +28,7 @@
 #include "fileentity/stashedprotocolentryfileentity.h"
 
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/configs/dconfig/configsynchronizer.h"
+#include "dfm-base/base/configs/configsynchronizer.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
@@ -171,8 +171,8 @@ void ComputerItemWatcher::initConfSync()
     SyncPair pair {
         { SettingType::kGenAttr, Application::GenericAttribute::kHiddenSystemPartition },
         { kDefaultCfgPath, kKeyHideDisk },
-        &ComputerUtils::diskHideToDConfig,
-        &ComputerUtils::diskHideToDSetting,
+        &ComputerUtils::diskHideDCfgSaver,
+        &ComputerUtils::diskHideToAppSet,
         &ComputerUtils::isEqualDiskHideConfig
     };
     ins->watchChange(pair);

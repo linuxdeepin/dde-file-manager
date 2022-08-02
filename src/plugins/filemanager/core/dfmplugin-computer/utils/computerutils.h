@@ -100,9 +100,9 @@ public:
 
     static QStringList allSystemUUIDs();
     static QList<QUrl> systemBlkDevUrlByUUIDs(const QStringList &uuids);
-    static void diskHideToDConfig(int attr, const QVariant &var);
-    static void diskHideToDSetting(const QString &cfgPath, const QString &cfgKey, const QVariant &var);
-    static bool isEqualDiskHideConfig(const QVariant &varDConf, const QVariant &varDSet);
+    static void diskHideDCfgSaver(const QVariant &var);
+    static void diskHideToAppSet(const QString &cfgPath, const QString &cfgKey, const QVariant &var);
+    static bool isEqualDiskHideConfig(const QVariant &varDConf, const QVariant &varAppSet);
 
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.

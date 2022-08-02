@@ -21,7 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "configsynchronizer.h"
-#include "dconfigmanager.h"
+#include "dconfig/dconfigmanager.h"
+#include "settingbackend.h"
 #include "private/configsynchronizer_p.h"
 
 #include <QDebug>
@@ -55,6 +56,11 @@ bool ConfigSynchronizer::watchChange(const SyncPair &pair)
     }
 
     d->syncPairs.insert(uniKey, pair);
+    if (pair.set.type == kAppAttr)
+        SettingBackend::instance()->addSettingAccessor(static_cast<Application::ApplicationAttribute>(pair.set.val), pair.saver);
+    else if (pair.set.type == kGenAttr)
+        SettingBackend::instance()->addSettingAccessor(static_cast<Application::GenericAttribute>(pair.set.val), pair.saver);
+
     return true;
 }
 
@@ -66,67 +72,18 @@ ConfigSynchronizerPrivate::ConfigSynchronizerPrivate(ConfigSynchronizer *qq)
 
 void ConfigSynchronizerPrivate::initConn()
 {
-    auto appIns = Application::instance();
-    q->connect(appIns, &Application::appAttributeChanged, q, [this](Application::ApplicationAttribute aa, const QVariant &var) {
-        onAppAttrChanged(aa, var);
-    });
-    q->connect(appIns, &Application::genericAttributeChanged, q, [this](Application::GenericAttribute ga, const QVariant &var) {
-        onGenAttrChanged(ga, var);
-    });
     q->connect(DConfigManager::instance(), &DConfigManager::valueChanged, q, [this](const QString &path, const QString &key) {
         onDConfChanged(path, key);
     });
 }
 
-void ConfigSynchronizerPrivate::onAppAttrChanged(Application::ApplicationAttribute aa, const QVariant &var)
-{
-    syncToDConf(kAppAttr, aa, var);
-}
-
-void ConfigSynchronizerPrivate::onGenAttrChanged(Application::GenericAttribute ga, const QVariant &var)
-{
-    syncToDConf(kGenAttr, ga, var);
-}
-
-void ConfigSynchronizerPrivate::syncToDConf(SettingType type, int attr, const QVariant &var)
-{
-    const auto &setKey = SyncPair::serialize({ type, attr }, {});
-    if (setKey.isEmpty())
-        return;
-
-    for (auto iter = syncPairs.cbegin(); iter != syncPairs.cend(); ++iter) {
-        if (iter.key().startsWith(setKey)) {
-            if (auto syncFunc = iter.value().toDconf) {
-                auto currDconfVar = DConfigManager::instance()->value(iter.value().cfg.path, iter.value().cfg.key);
-                if (auto compairFunc = iter.value().compair) {
-                    if (compairFunc(currDconfVar, var))
-                        continue;
-                }
-                syncFunc(attr, var);
-                qDebug() << QString("%1:%2 is synced to DConfig by custom sync func.").arg(type).arg(attr);
-            } else {
-                const auto &cfgPath = iter.value().cfg.path;
-                const auto &cfgKey = iter.value().cfg.key;
-                if (!cfgPath.isEmpty() && !cfgKey.isEmpty()) {
-                    const auto &&currVar = DConfigManager::instance()->value(cfgPath, cfgKey);
-                    // the value of dconfig and dsetting is wrote to local file by async, and when the local
-                    // file changed, the changed signal is emitted.
-                    // so before set to dconfig/dsetting, make sure that the value is different from current.
-                    if (currVar != var)
-                        DConfigManager::instance()->setValue(cfgPath, cfgKey, var);
-                }
-            }
-        }
-    }
-}
-
 void ConfigSynchronizerPrivate::onDConfChanged(const QString &cfgPath, const QString &cfgKey)
 {
-    auto newVal = DConfigManager::instance()->value(cfgPath, cfgKey);   // assume that when the signal is emitted, the value is updated, not very sure, need verify
-    syncToSetting(cfgPath, cfgKey, newVal);
+    auto newVal = DConfigManager::instance()->value(cfgPath, cfgKey);
+    syncToAppSet(cfgPath, cfgKey, newVal);
 }
 
-void ConfigSynchronizerPrivate::syncToSetting(const QString &cfgPath, const QString &cfgKey, const QVariant &var)
+void ConfigSynchronizerPrivate::syncToAppSet(const QString &cfgPath, const QString &cfgKey, const QVariant &var)
 {
     const auto &confKey = SyncPair::serialize({}, { cfgPath, cfgKey });
     if (confKey.isEmpty())
@@ -134,17 +91,17 @@ void ConfigSynchronizerPrivate::syncToSetting(const QString &cfgPath, const QStr
 
     for (auto iter = syncPairs.cbegin(); iter != syncPairs.cend(); ++iter) {
         if (iter.key().endsWith(confKey)) {
-            if (auto syncFunc = iter.value().toAttr) {
-                QVariant currDSetVal;
+            if (auto syncFunc = iter.value().toAppSet) {
+                QVariant appSetVal;
                 if (iter.value().set.type == SettingType::kAppAttr)
-                    currDSetVal = Application::appAttribute(static_cast<Application::ApplicationAttribute>(iter.value().set.val));
+                    appSetVal = Application::appAttribute(static_cast<Application::ApplicationAttribute>(iter.value().set.val));
                 else if (iter.value().set.type == SettingType::kGenAttr)
-                    currDSetVal = Application::genericAttribute(static_cast<Application::GenericAttribute>(iter.value().set.val));
+                    appSetVal = Application::genericAttribute(static_cast<Application::GenericAttribute>(iter.value().set.val));
                 else
                     continue;
 
-                if (auto compairFunc = iter.value().compair) {
-                    if (compairFunc(var, currDSetVal))
+                if (auto isEqual = iter.value().isEqual) {
+                    if (isEqual(var, appSetVal))
                         continue;
                 }
 
@@ -155,15 +112,15 @@ void ConfigSynchronizerPrivate::syncToSetting(const QString &cfgPath, const QStr
                 switch (iter.value().set.type) {
                 case kAppAttr: {
                     auto key = static_cast<Application::ApplicationAttribute>(val);
-                    const auto &&currVar = Application::instance()->appAttribute(key);
-                    if (currVar != var)
+                    const auto &&appSetVal = Application::instance()->appAttribute(key);
+                    if (appSetVal != var)
                         Application::instance()->setAppAttribute(key, var);
                     break;
                 }
                 case kGenAttr: {
                     auto key = static_cast<Application::GenericAttribute>(val);
-                    const auto &&currVar = Application::instance()->genericAttribute(key);
-                    if (currVar != var)
+                    const auto &&appSetVal = Application::instance()->genericAttribute(key);
+                    if (appSetVal != var)
                         Application::instance()->setGenericAttribute(key, var);
                     break;
                 }

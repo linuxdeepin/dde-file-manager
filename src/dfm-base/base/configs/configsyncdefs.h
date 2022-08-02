@@ -31,9 +31,9 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-using SyncAttrToDConf = std::function<void(int, const QVariant &)>;
-using SyncDConfToAttr = std::function<void(const QString &, const QString &, const QVariant &)>;
-using ConfCompair = std::function<bool(const QVariant &dconfVal, const QVariant &dsetVal)>;
+using ConfigSaver = std::function<void(const QVariant &)>;
+using SyncToAppSet = std::function<void(const QString &, const QString &, const QVariant &)>;
+using IsConfEqual = std::function<bool(const QVariant &dconfVal, const QVariant &dsetVal)>;
 
 enum SettingType {
     kNone = -1,
@@ -41,7 +41,7 @@ enum SettingType {
     kGenAttr,
 };
 
-struct SettingItem
+struct AppSetItem
 {
     SettingType type { kNone };
     int val { -1 };
@@ -54,12 +54,12 @@ struct ConfigItem
 
 struct SyncPair
 {
-    SettingItem set;
+    AppSetItem set;
     ConfigItem cfg;
 
-    SyncAttrToDConf toDconf { nullptr };
-    SyncDConfToAttr toAttr { nullptr };
-    ConfCompair compair { nullptr };
+    ConfigSaver saver { nullptr };
+    SyncToAppSet toAppSet { nullptr };
+    IsConfEqual isEqual { nullptr };
 
     inline bool isValid() const
     {
@@ -69,7 +69,7 @@ struct SyncPair
     {
         return serialize(set, cfg);
     }
-    static inline QString serialize(const SettingItem &set, const ConfigItem &cfg)
+    static inline QString serialize(const AppSetItem &set, const ConfigItem &cfg)
     {
         if (set.type == kNone)
             return QString(":%1/%2").arg(cfg.path).arg(cfg.key);

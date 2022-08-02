@@ -20,21 +20,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "configcenter.h"
+#ifndef CONFIGSYNCHRONIZER_P_H
+#define CONFIGSYNCHRONIZER_P_H
 
-DFMBASE_USE_NAMESPACE
+#include "dfm_base_global.h"
 
-ConfigCenter *ConfigCenter::instance()
+#include "dfm-base/base/configs/configsyncdefs.h"
+#include "dfm-base/base/application/application.h"
+
+#include <QRegularExpression>
+#include <QSet>
+
+DFMBASE_BEGIN_NAMESPACE
+
+class ConfigSynchronizer;
+class ConfigSynchronizerPrivate
 {
-    static ConfigCenter ins;
-    return &ins;
-}
+    friend class ConfigSynchronizer;
 
-ConfigCenter::ConfigCenter(QObject *parent)
-    : QObject { parent }
-{
-}
+public:
+    explicit ConfigSynchronizerPrivate(ConfigSynchronizer *qq);
 
-ConfigCenter::~ConfigCenter()
-{
-}
+    void initConn();
+    void onDConfChanged(const QString &cfgPath, const QString &cfgKey);
+    void syncToAppSet(const QString &cfgPath, const QString &cfgKey, const QVariant &var);
+
+private:
+    ConfigSynchronizer *q { nullptr };
+    QHash<QString, SyncPair> syncPairs;
+};
+
+DFMBASE_END_NAMESPACE
+
+#endif   // CONFIGSYNCHRONIZER_P_H
