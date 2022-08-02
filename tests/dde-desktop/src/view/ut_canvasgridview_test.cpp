@@ -1417,7 +1417,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayArrage)
     loop.exec();
     EXPECT_TRUE(ok);
 }
-
+/*
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
@@ -1450,7 +1450,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge)
     //restore
     GridManager::instance()->setAutoMerge(false);
 }
-
+*/
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_refresh)
 {
     ASSERT_FALSE(GridManager::instance()->autoMerge());
@@ -1540,6 +1540,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_startDrag)
     EXPECT_TRUE(judge);
 }
 #endif
+/*
 TEST_F(CanvasGridViewTest, canvasGridViewTest_fetchDragEventUrlsFromSharedMemory)
 {
     bool ret = m_canvasGridView->fetchDragEventUrlsFromSharedMemory();
@@ -1550,7 +1551,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_fetchDragEventUrlsFromSharedMemory
     ret = m_canvasGridView->fetchDragEventUrlsFromSharedMemory();
     EXPECT_EQ(ret, false);
 }
-
+*/
 TEST_F(CanvasGridViewTest, canvasGridViewTest_delayCustom)
 {
     GridManager::instance()->setAutoMerge(false);
