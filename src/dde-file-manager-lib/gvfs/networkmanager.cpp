@@ -413,14 +413,14 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
     qDebug() << path << fullPath << p1 << p2;
     bool doChangeCurrentUrl = false;
     if (p1) {
-        //下面这种情况，虽然DUrl(path) != p1->getMountPointUrl(), 但是他们都表示同一个共享目录test33,
-        //因此应排除这种情况，不应赋值doChangeCurrentUrl = true去再次执行DFMChangeCurrentUrlEvent事件，
+        //下面这种情况，虽然DUrl(path) != p1->getMountPointUrl(), 但是他们都表示同一个共享目录test33,一个是网络路径，一个是本地路径，
+        //不用再执行ChangeCurrentUrl：
+        //DUrl(path) = DUrl("smb://x.x.x.x/test33")
+        //p1->getMountPointUrl() = DUrl("file:///run/user/1000/gvfs/smb-share:server=x.x.x.x,share=test33")
+        //不用赋值doChangeCurrentUrl = true去再次重复执行DFMChangeCurrentUrlEvent事件，
         //否则会引起函数QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)进入时，上一个d->jobController未结束，
         //调用setParent函数时遇父子线程不一致，槽函数_q_onFileCreated()与watcher的连接失效，导致响应不到subfileCreated信号，
-        //界面不能及时刷新（fix bug:#145465）。
-        //例如，当出现bug #145465时，情况如下，temPath = shareName：
-        //DUrl(path) = DUrl("smb://x.x.x.x/test33")
-        //p1->getMountPointUrl() =  DUrl("file:///run/user/1000/gvfs/smb-share:server=x.x.x.x,share=test33")
+        //导致界面不能及时刷新（fix bug:#145465）。
         QString temPath = DUrl(path).path();
         temPath = temPath.mid(1);
         const QString& shareName = FileUtils::smbAttribute(p1->getMountPointUrl().path(),FileUtils::SmbAttribute::kShareName);
@@ -434,15 +434,15 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
         } else {
             qWarning() << p1->getMountPointUrl() << "can't get data";
         }
-    } else {
+    } else { // 当出现bug #145465时，网络路径和本地路径相同时走此分支
         std::string stdPath = path.toStdString();
         gchar *url = const_cast<gchar *>(stdPath.c_str());
 
         if (fetch_networks(url, e)) {
             bool re = FileUtils::isSmbHostOnly(e->fileUrl());
             if(re){
-                RemoteMountsStashManager::insertStashedSmbDevice("smb://"+e->fileUrl().host());//当进行smb地址访问时，添加smb聚合设备到配置中
-                addSmbServerToHistory(e->fileUrl());//通知侧边栏和计算机界面显示smb挂载聚合项
+                RemoteMountsStashManager::insertStashedSmbDevice(QString("%://").arg(SMB_SCHEME)+e->fileUrl().host()); //当进行smb地址访问时，添加smb聚合设备到配置中
+                addSmbServerToHistory(e->fileUrl()); //通知侧边栏和计算机界面显示smb挂载聚合项
                 emit addSmbMountIntegration(e->fileUrl());
             }
             QWidget *main_window = WindowManager::getWindowById(e->windowId());
