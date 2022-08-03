@@ -306,6 +306,8 @@ void clearStageDir(const QString &stagingRoot)
 
 void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QString &displayName)
 {
+    DFMApplication::syncGenericAttribute();
+
     if (!DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
         return;
     QString key {mpt}, protocol, host, share, sharePath;
@@ -402,6 +404,8 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
 
 QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
 {
+    DFMApplication::syncGenericAttribute();
+
     QList<QVariantMap> ret;
     QFile configFile(CONFIG_PATH);
     if (!configFile.open(QIODevice::ReadOnly)) {
@@ -443,6 +447,8 @@ QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
 
 void RemoteMountsStashManager::removeRemoteMountItem(const QString &key)
 {
+    DFMApplication::syncGenericAttribute();
+
     QFile configFile(CONFIG_PATH);
     if (!configFile.open(QIODevice::ReadOnly)) {
         return;
@@ -566,6 +572,8 @@ QString RemoteMountsStashManager::normalizeConnUrl(const QString &url)
  */
 QStringList RemoteMountsStashManager::stashedSmbDevices()
 {
+    DFMApplication::syncGenericAttribute();
+
     QFile configFile(CONFIG_PATH);
     if (!configFile.open(QIODevice::ReadOnly))
         return QStringList();
@@ -621,6 +629,8 @@ QStringList RemoteMountsStashManager::stashedSmbDevices()
 
 void RemoteMountsStashManager::removeStashedSmbDevice(const QString &url)
 {
+    DFMApplication::syncGenericAttribute();
+
     QFile configFile(CONFIG_PATH);
     if (!configFile.open(QIODevice::ReadOnly)) {
         return;
@@ -669,6 +679,8 @@ void RemoteMountsStashManager::removeStashedSmbDevice(const QString &url)
 
 void RemoteMountsStashManager::insertStashedSmbDevice(const QString &url)
 {
+    DFMApplication::syncGenericAttribute();
+
     QMutex mutex;
     QMutexLocker locker(&mutex);
     QFile configFile(CONFIG_PATH);
