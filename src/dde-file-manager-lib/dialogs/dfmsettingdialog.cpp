@@ -28,6 +28,7 @@
 #include "app/filesignalmanager.h"
 #include "dfmsettings.h"
 #include "private/dfmsettingdialog_p.h"
+#include "grouppolicy.h"
 
 #include <QCheckBox>
 #include <QFrame>
