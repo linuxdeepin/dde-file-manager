@@ -400,8 +400,23 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
     UDiskDeviceInfoPointer p2 = deviceListener->getDeviceByMountPointFilePath(fullPath);
 
     qDebug() << path << fullPath << p1 << p2;
-
+    bool doChangeCurrentUrl = false;
     if (p1) {
+        //下面这种情况，虽然DUrl(path) != p1->getMountPointUrl(), 但是他们都表示同一个共享目录test33,
+        //因此应排除这种情况，不应赋值doChangeCurrentUrl = true去再次执行DFMChangeCurrentUrlEvent事件，
+        //否则会引起函数QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)进入时，上一个d->jobController未结束，
+        //调用setParent函数时遇父子线程不一致，槽函数_q_onFileCreated()与watcher的连接失效，导致响应不到subfileCreated信号，
+        //界面不能及时刷新（fix bug:#145465）。
+        //例如，当出现bug #145465时，情况如下，temPath = shareName：
+        //DUrl(path) = DUrl("smb://x.x.x.x/test33")
+        //p1->getMountPointUrl() =  DUrl("file:///run/user/1000/gvfs/smb-share:server=x.x.x.x,share=test33")
+        QString temPath = DUrl(path).path();
+        temPath = temPath.mid(1);
+        QString shareName = FileUtils::smbAttribute(p1->getMountPointUrl().path(),FileUtils::SmbAttribute::kShareName);
+        if (temPath != shareName)
+            doChangeCurrentUrl = true;
+    }
+    if (doChangeCurrentUrl) {
         e->setData(p1->getMountPointUrl());
         if (DUrl(path) != p1->getMountPointUrl()) {
             DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, e->fileUrl(), WindowManager::getWindowById(e->windowId()));
