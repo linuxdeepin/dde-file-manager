@@ -2,6 +2,7 @@
 #include "dtagedit.h"
 #include "../app/define.h"
 #include "../tag/tagmanager.h"
+#include "../tag/tagutil.h"
 #include "../utils/singleton.h"
 #include "../app/filesignalmanager.h"
 #include "../controllers/appcontroller.h"
@@ -44,12 +45,8 @@ void DTagEdit::setFilesForTagging(const QList<DUrl> &files)
 
 void DTagEdit::setDefaultCrumbs(const QStringList &list)
 {
-    m_isSettingDefault = true;
-
-    for (const QString &crumb : list)
-        m_crumbEdit->appendCrumb(crumb);
-
-    m_isSettingDefault = false;
+    const auto &tagsMap = TagManager::instance()->getTagColor(list);
+    updateCrumbsColor(tagsMap);
 }
 
 void DTagEdit::onFocusOut()
@@ -136,8 +133,7 @@ void DTagEdit::initializeConnect()
     QObject::connect(this, &DTagEdit::windowDeactivate, this, &DTagEdit::onFocusOut);
 
     QObject::connect(m_crumbEdit, &DCrumbEdit::crumbListChanged, this, [=]{
-        //初始化设置默认tag值的时候不需要执行tag变更逻辑
-        if (!m_isSettingDefault) {
+        if (!m_crumbEdit->property("updateCrumbsColor").toBool()) {
             processTags();
         }
     });
@@ -149,5 +145,53 @@ void DTagEdit::processTags()
     //防止DTagEdit对象被析构后m_files无法访问
     QList<DUrl> files = m_files;
 
+    updateCrumbsColor(tagsColor(tagList));
     DFileService::instance()->onTagEditorChanged(tagList, files);
+}
+
+void DTagEdit::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)
+{
+    if (tagsColor.isEmpty())
+        return;
+
+    m_crumbEdit->setProperty("updateCrumbsColor", true);
+    m_crumbEdit->clear();
+
+    for (auto it = tagsColor.begin(); it != tagsColor.end(); ++it) {
+        DCrumbTextFormat format = m_crumbEdit->makeTextFormat();
+        format.setText(it.key());
+
+        format.setBackground(QBrush(it.value()));
+        format.setBackgroundRadius(5);
+
+        m_crumbEdit->insertCrumb(format, 0);
+    }
+
+    m_crumbEdit->setProperty("updateCrumbsColor", false);
+}
+
+QMap<QString, QColor> DTagEdit::tagsColor(const QStringList &tagList)
+{
+    const auto &allTags = TagManager::instance()->getAllTags();
+    QMap<QString, QColor> tagsMap;
+
+    for (const auto &tag : tagList) {
+        const auto &tagMap = TagManager::instance()->getTagColor({ tag });
+        if (tagMap.isEmpty()) {
+            QColor tagColor;
+            if (allTags.contains(tag)) {
+                tagColor = allTags[tag];
+            } else {
+                const auto &colorName = TagManager::instance()->randomColor();
+                tagColor = TagManager::instance()->getColorByColorName(colorName);
+                TagManager::instance()->registerTagColor(tag, colorName);
+            }
+
+            tagsMap[tag] = tagColor;
+        } else {
+            tagsMap.unite(tagMap);
+        }
+    }
+
+    return tagsMap;
 }
