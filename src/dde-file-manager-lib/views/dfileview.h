@@ -168,6 +168,8 @@ public:
 
     int verticalOffset() const override;
 
+    void cancelDrag();
+
 public slots:
     bool cd(const DUrl &url);
     bool cdUp();
