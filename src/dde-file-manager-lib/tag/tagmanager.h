@@ -98,6 +98,7 @@ public:
     QString getColorByDisplayName(const QString &colorDisplayName) const;
     QString getColorNameByColor(const QColor &color) const;
     QSet<QString> allTagOfDefaultColors() const;
+    QString randomColor() const;
 
     ///###:modify
     bool makeFilesTags(const QList<QString>& tags, const QList<DUrl>& files);
@@ -109,6 +110,8 @@ public:
     bool changeTagName(const QPair<QString, QString>& oldAndNewName);
 
     bool makeFilesTagThroughColor(const QString &color, const QList<DUrl>& files);
+
+    bool registerTagColor(const QString &tagName, const QString &color);
 #endif
     static bool changeFilesName(const QList<QPair<QByteArray, QByteArray> > &oldAndNewFilesName);
 
@@ -135,6 +138,9 @@ signals:
 
 private:
     void init_connect()noexcept;
+
+private:
+    QMap<QString, QString> tagColorMap;
 #endif
 };
 
