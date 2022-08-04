@@ -924,6 +924,18 @@ int DFileView::verticalOffset() const
     return DListView::verticalOffset();
 }
 
+void DFileView::cancelDrag()
+{
+    auto allDragObjs =  this->findChildren<QDrag*>();
+    if (allDragObjs.isEmpty())
+        return;
+
+    for(auto tempDrag : allDragObjs) {
+        if (tempDrag)
+            tempDrag->cancel();
+    }
+}
+
 void DFileView::setFilters(QDir::Filters filters)
 {
     model()->setFilters(filters);
