@@ -257,7 +257,8 @@ HEADERS += \
     $$PWD/plugins/schemepluginmanager.h \
     $$PWD/plugins/pluginemblemmanager.h \
     $$PWD/plugins/private/pluginemblemmanagerprivate.h \
-    $$PWD/dialogs/collectiondelegate.h
+    $$PWD/dialogs/collectiondelegate.h \
+    $$PWD/dialogs/dumpisooptdialog.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -477,7 +478,8 @@ SOURCES += \
     $$PWD/plugins/schemepluginmanager.cpp \
     $$PWD/plugins/pluginemblemmanager.cpp \
     $$PWD/plugins/private/pluginemblemmanagerprivate.cpp \
-    $$PWD/dialogs/collectiondelegate.cpp
+    $$PWD/dialogs/collectiondelegate.cpp \
+    $$PWD/dialogs/dumpisooptdialog.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

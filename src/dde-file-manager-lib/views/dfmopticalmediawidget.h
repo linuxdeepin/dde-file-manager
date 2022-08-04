@@ -72,6 +72,7 @@ public:
     //fix: 动态更新光驱磁盘状态
 private slots:
     void selectBurnFilesOptionUpdate();
+    void onDumpBtnClicked();
 
 private:
     QScopedPointer<DFMOpticalMediaWidgetPrivate> d_ptr;

@@ -225,7 +225,8 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
         FileJob *job = qobject_cast<FileJob *>(sender());
         if (job) {
             QList<FileJob::JobType> opticalTypes{FileJob::JobType::OpticalBurn, FileJob::JobType::OpticalBlank,
-                                                 FileJob::JobType::OpticalImageBurn, FileJob::JobType::Trash, FileJob::JobType::Restore};
+                                                 FileJob::JobType::OpticalImageBurn, FileJob::JobType::OpticalDumpImage,
+                                                 FileJob::JobType::Trash, FileJob::JobType::Restore};
             auto curType = job->jobType();
             if (opticalTypes.contains(curType)) {
                 wid->setHoverEnable(false);
@@ -725,6 +726,7 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
                 ? tr("Erasing disc %1, please wait...")
                 : tr("Burning disc %1, please wait...")).arg(data["optical_op_dest"]);
         msg2 = "";
+
         if (data["optical_op_type"] != QString::number(FileJob::JobType::OpticalBlank)) {
             const QHash<QString, QString> msg2map = {
                 {"0", ""}, // unused right now
@@ -733,8 +735,16 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
             };
             msg2 = msg2map.value(data["optical_op_phase"], "");
         }
+
+        QString speedText { data["optical_op_speed"] };
+        if (data["optical_op_type"] == QString::number(FileJob::JobType::OpticalDumpImage)) {
+            msg1 = tr("Creating an ISO image");
+            msg2 = tr("to %1").arg(data["optical_op_dump_path"]);
+            speedText = "";
+        }
+
         wid->setMsgText(msg1, msg2);
-        wid->setSpeedText(data["optical_op_speed"], "");
+        wid->setSpeedText(speedText, "");
 
         if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
             wid->setProgressValue(-1);// stop
