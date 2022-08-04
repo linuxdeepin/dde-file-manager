@@ -88,6 +88,7 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QScreen>
+#include <QLabel>
 #include <DSysInfo>
 #include <ddiskdevice.h>
 
@@ -288,6 +289,8 @@ void DialogManager::addJob(QSharedPointer<FileJob> job)
     connect(job.data(), &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
     connect(job.data(), &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
     connect(job.data(), &FileJob::requestOpticalJobCompletionDialog, this, &DialogManager::showOpticalJobCompletionDialog);
+    connect(job.data(), &FileJob::requestOpticalDumpISOFailedDialog, this, &DialogManager::showOpticalDumpISOFailedDialog);
+    connect(job.data(), &FileJob::requestOpticalDumpISOSuccessDialog, this, &DialogManager::showOpticalDumpISOSuccessDialog);
 }
 
 
@@ -597,6 +600,8 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     case FileJob::OpticalCheck:
         failure_type = tr("Data verification failed");
         break;
+    case FileJob::OpticalDumpImage: // dump iso don't show detail error info
+        return;
     }
     QString failure_str = QString(tr("%1: %2")).arg(failure_type).arg(err);
     d.setTitle(failure_str);
@@ -643,6 +648,84 @@ void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QSt
     d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
+    d.exec();
+}
+
+void DialogManager::showOpticalDumpISOSuccessDialog(const QString &path)
+{
+    DDialog d;
+    d.setFixedSize(400, 242);
+    d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
+    d.addButton(QObject::tr("Close", "button"));
+    d.addButton(QObject::tr("View Image File", "button"), true, DDialog::ButtonType::ButtonRecommend);
+    connect(&d, &DDialog::buttonClicked, this, [path](int index, const QString &text) {
+        qInfo() << "button clicked" << text;
+        if (index == 1) {
+            if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  path << "--raw"))
+                return;
+
+            QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  path << "--raw");
+        }
+    });
+
+    QFrame *contentFrame = new QFrame;
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(0);
+    contentFrame->setLayout(mainLayout);
+    d.addContent(contentFrame);
+
+    // add textlabel
+    QLabel *textLabel = new QLabel;
+    textLabel->setText(QObject::tr("Image successfully created"));
+    textLabel->setAlignment(Qt::AlignHCenter);
+    QFont font = textLabel->font();
+    font.setPixelSize(14);
+    font.setWeight(QFont::Medium);
+    font.setFamily("SourceHanSansSC");
+    textLabel->setFont(font);
+    mainLayout->addWidget(textLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    // add icon label
+    QLabel *iconLabel = new QLabel;
+    iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(96, 96));
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    d.moveToCenter();
+    d.exec();
+}
+
+void DialogManager::showOpticalDumpISOFailedDialog()
+{
+    DDialog d;
+    d.setFixedSize(400, 242);
+    d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
+    d.addButton(QObject::tr("Close", "button"));
+
+    QFrame *contentFrame = new QFrame;
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(0);
+    contentFrame->setLayout(mainLayout);
+    d.addContent(contentFrame);
+
+    // add textlabel
+    QLabel *textLabel = new QLabel;
+    textLabel->setText(QObject::tr("Image creation failed"));
+    textLabel->setAlignment(Qt::AlignHCenter);
+    QFont font = textLabel->font();
+    font.setPixelSize(14);
+    font.setWeight(QFont::Medium);
+    font.setFamily("SourceHanSansSC");
+    textLabel->setFont(font);
+    mainLayout->addWidget(textLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    // add icon label
+    QLabel *iconLabel = new QLabel;
+    iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(96, 96));
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    d.moveToCenter();
     d.exec();
 }
 

@@ -1527,6 +1527,78 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
     }
 }
 
+void FileJob::doISODump(const DUrl &device, const DUrl &image)
+{
+    Q_ASSERT(image.isValid());
+    Q_ASSERT(device.isValid());
+
+    if (device.path().isEmpty()) {
+        qWarning() << "devpath is empty";
+        return;
+    }
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (nodes.isEmpty()) {
+        qWarning() << "break the process that caused by can't get the node list from: " << device.path();
+        return;
+    }
+    m_tarPath = device.path();
+    m_dumpIsoPath = image.path();
+    const QString &udiskspath = nodes.first();
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    // set status
+    m_isOpticalJob = true;
+    if (drive->opticalBlank()) {
+        QString filePath = device.path() + "/" BURN_SEG_STAGING;
+        qDebug() << "ghostSignal path" << filePath;
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(filePath), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        blkdev->unmount({});
+    }
+    emit fileSignalManager->stopCdScanTimer(m_tarPath);
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[m_tarPath.mid(5)].bBurningOrErasing = true;
+    m_opticalOpSpeed.clear();
+    jobPrepared();
+
+    // do dump job
+    DISOMasterNS::DISOMaster *jobIsomaster = new DISOMasterNS::DISOMaster(this);
+    connect(jobIsomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, this, std::bind(&FileJob::opticalJobUpdated, this, jobIsomaster, std::placeholders::_1, std::placeholders::_2));
+    jobIsomaster->acquireDevice(device.path());
+    jobIsomaster->getDeviceProperty();
+    jobIsomaster->dumpISO(image);
+    jobIsomaster->releaseDevice();
+
+    // must show %100
+    if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
+        for (int i = 0; i < 20; i++) {
+            m_opticalJobProgress = 100;
+            QThread::msleep(100);
+        }
+    }
+
+    // restore status
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[m_tarPath.mid(5)].bBurningOrErasing = false;
+    ISOMaster->nullifyDevicePropertyCache(device.path());
+    if (m_isJobAdded)
+        jobRemoved();
+    emit finished();
+    m_isOpticalJob = false;
+
+    // last dialog
+    if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+        // show failed dialog
+        emit requestOpticalDumpISOFailedDialog();
+    } else {
+        // show success dialog
+        emit requestOpticalDumpISOSuccessDialog(m_dumpIsoPath);
+    }
+
+    emit fileSignalManager->restartCdScanTimer(m_tarPath);
+    m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+}
+
+
 void FileJob::doDiscAuditLog(const DUrl &device, const QString &stagePath, bool success)
 {
     static qint64 index {0};
@@ -1613,7 +1685,7 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
         m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed && jobisom) {
         QStringList msg = jobisom->getInfoMessages();
-        qDebug() << "ISOMaster failed:" << msg;
+        qWarning() << "ISOMaster failed:" << msg;
         emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
         return;
     }
@@ -1696,13 +1768,14 @@ void FileJob::jobUpdated()
 
     QMap<QString, QString> jobDataDetail;
 
-    if (m_jobType >= OpticalBurn && m_jobType <= OpticalImageBurn) {
+    if (m_jobType >= OpticalBurn && m_jobType <= OpticalDumpImage) {
         jobDataDetail["optical_op_type"] = QString::number(m_jobType);
         jobDataDetail["optical_op_status"] = QString::number(m_opticalJobStatus);
         jobDataDetail["optical_op_progress"] = QString::number(m_opticalJobProgress);
         jobDataDetail["optical_op_phase"] = QString::number(m_opticalJobPhase);
         jobDataDetail["optical_op_speed"] = m_opticalOpSpeed;
         jobDataDetail["optical_op_dest"] = m_tarPath;
+        jobDataDetail["optical_op_dump_path"] = m_dumpIsoPath;
     } else if (m_jobType == Restore && m_isInSameDisk) {
         jobDataDetail.insert("type", "restore");
         jobDataDetail.insert("file", m_restoreFileName);
