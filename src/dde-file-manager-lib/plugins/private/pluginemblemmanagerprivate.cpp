@@ -130,8 +130,13 @@ void PluginEmblemManagerPrivate::run()
         data.first = "";
         data.second = -1;
         mutexQueue.lock();
-        while (filePathQueue.isEmpty())
+        while (filePathQueue.isEmpty()) {
+            if (!bWork) {
+                mutexQueue.unlock();
+                return;
+            }
             pathQueueNotEmpty.wait(&mutexQueue);
+        }
         data = filePathQueue.dequeue();
         mutexQueue.unlock();
         if (data.first == "" || data.second == -1)
@@ -171,6 +176,7 @@ void PluginEmblemManagerPrivate::startWork()
 void PluginEmblemManagerPrivate::stopWork()
 {
     bWork = false;
+    pathQueueNotEmpty.wakeOne();
     wait();
 }
 
