@@ -274,17 +274,6 @@ install(FILES ${AssetsPath}/.readme DESTINATION ${OemMenuDir})
 set(ContexMenuDir "${CMAKE_INSTALL_PREFIX}/share/applications/context-menus")
 install(FILES ${AssetsPath}/.readme DESTINATION ${ContexMenuDir})
 
-set(DFMAppId "org.deepin.dde.file-manager")
-set(ConfigPath ${AssetsPath}/configs)
-set(DConfigTemplate org.deepin.dde.file-manager.json)
+include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
 
-if(DEFINED DSG_DATA_DIR)
-    MESSAGE("-- DConfig is supported.")
-    dconfig_meta_files(APPID ${DFMAppId}
-        BASE ${ConfigPath}
-        FILES ${ConfigPath}/${DConfigTemplate})
-else()
-    MESSAGE("-- DConfig is not supported!")
-    set(DSG_DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/dsg)
-    install(FILES ${ConfigPath}/${DConfigTemplate} DESTINATION ${DSG_DATA_DIR}/configs/${DFMAppId})
-endif()
