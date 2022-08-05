@@ -44,6 +44,7 @@ public:
     void initDestDevices();
     void addSubStageActions(QMenu *menu);
     bool disbaleWoringDevAction(QAction *act);
+    void addToSendto(QMenu *menu);
 
 private:
     QList<QVariantMap> destDeviceDataGroup;

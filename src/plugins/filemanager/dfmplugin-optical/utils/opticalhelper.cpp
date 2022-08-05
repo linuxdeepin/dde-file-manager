@@ -31,6 +31,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -228,6 +229,12 @@ bool OpticalHelper::isDupFileNameInPath(const QString &path, const QUrl &url)
             return true;
     }
     return false;
+}
+
+bool OpticalHelper::isBurnEnabled()
+{
+    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.optical", "burnEnable");
+    return ret.isValid() ? ret.toBool() : true;
 }
 
 bool OpticalHelper::isTransparent(const QUrl &url)

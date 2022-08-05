@@ -183,6 +183,13 @@ QString MasteredMediaFileInfo::emptyDirectoryTip() const
     return QObject::tr("Folder is empty");
 }
 
+Qt::DropActions MasteredMediaFileInfo::supportedDropActions()
+{
+    if (!OpticalHelper::isBurnEnabled())
+        return Qt::IgnoreAction;
+    return AbstractFileInfo::supportedDropActions();
+}
+
 void MasteredMediaFileInfo::backupInfo(const QUrl &url)
 {
     if (OpticalHelper::burnDestDevice(url).length() == 0)

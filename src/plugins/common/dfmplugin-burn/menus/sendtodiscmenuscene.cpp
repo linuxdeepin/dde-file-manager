@@ -45,6 +45,7 @@ using namespace GlobalServerDefines;
 namespace ActionId {
 static constexpr char kStageKey[] { "stage-file-to-burning" };
 static constexpr char kStagePrex[] { "_stage-file-to-burning-" };
+static constexpr char kSendToOptical[] { "send-file-to-burnning-" };
 static constexpr char kMountImageKey[] { "mount-image" };
 }
 
@@ -121,6 +122,43 @@ bool SendToDiscMenuScenePrivate::disbaleWoringDevAction(QAction *act)
     return false;
 }
 
+void SendToDiscMenuScenePrivate::addToSendto(QMenu *menu)
+{
+    if (!menu)
+        return;
+
+    if (destDeviceDataGroup.isEmpty())
+        return;
+
+    QAction *sendTo { nullptr };
+    for (auto act : menu->actions()) {
+        if (act->property(ActionPropertyKey::kActionID).toString() == "send-to") {
+            sendTo = act;
+            break;
+        }
+    }
+
+    if (!sendTo) {
+        qWarning() << "cannot find sendTo menu!!";
+        return;
+    }
+
+    auto subMenu = sendTo->menu();
+    if (!subMenu)
+        return;
+
+    int i = 0;
+    for (const auto &dev : destDeviceDataGroup) {
+        auto label = DeviceUtils::convertSuitableDisplayName(dev);
+        auto act = subMenu->addAction(label);
+        const QString &&actId = QString("%1%2").arg(ActionId::kSendToOptical).arg(i);
+        act->setProperty(ActionPropertyKey::kActionID, actId);
+        act->setData(dev[DeviceProperty::kDevice].toString());
+        predicateAction.insert(actId, act);
+    }
+    sendTo->setVisible(true);
+}
+
 AbstractMenuScene *SendToDiscMenuCreator::create()
 {
     return new SendToDiscMenuScene();
@@ -195,6 +233,8 @@ bool SendToDiscMenuScene::create(QMenu *parent)
         }
     }
 
+    d->addToSendto(parent);
+
     // mount image
     auto focusInfo { InfoFactory::create<AbstractFileInfo>(d->focusFile) };
     if (focusInfo) {
@@ -223,7 +263,8 @@ bool SendToDiscMenuScene::triggered(QAction *action)
         return false;
 
     QString &&key { action->property(ActionPropertyKey::kActionID).toString() };
-    if (key == ActionId::kStageKey || key.startsWith(ActionId::kStagePrex)) {
+    if (key == ActionId::kStageKey || key.startsWith(ActionId::kStagePrex)
+        || key.startsWith(ActionId::kSendToOptical)) {
         QString dev { action->data().toString() };
         d->actionStageFileForBurning(dev);
         return true;
@@ -293,10 +334,15 @@ void SendToDiscMenuScene::updateStageAction(QMenu *parent)
     // disable action in self disc
     if (d->disableStage) {
         stageAct->setEnabled(false);
-        return;
     }
 
-    stageAct->setEnabled(true);
+    if (!BurnHelper::isBurnEnabled()) {
+        std::for_each(d->predicateAction.begin(), d->predicateAction.end(), [](QAction *act) {
+            const auto &&id = act->property(ActionPropertyKey::kActionID).toString();
+            if (id.startsWith(ActionId::kSendToOptical) || id.startsWith(ActionId::kStageKey) || id.startsWith(ActionId::kStagePrex))
+                act->setEnabled(false);
+        });
+    }
 }
 
 void SendToDiscMenuScene::updateMountAction(QMenu *parent)

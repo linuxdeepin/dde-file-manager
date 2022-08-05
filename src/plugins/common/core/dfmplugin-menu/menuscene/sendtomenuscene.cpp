@@ -106,17 +106,16 @@ bool SendToMenuScene::create(QMenu *parent)
         }
 
         if (!d->isSystemPathIncluded) {
+            auto sendToAct = parent->addAction(d->predicateName[ActionID::kSendTo]);
+            sendToAct->setProperty(ActionPropertyKey::kActionID, ActionID::kSendTo);
+            d->predicateAction[ActionID::kSendTo] = sendToAct;
+
             QMenu *sendToMenu = new QMenu(parent);
             d->addSubActions(sendToMenu);
-            if (sendToMenu->actions().isEmpty()) {
-                delete sendToMenu;
-                sendToMenu = nullptr;
-            } else {
-                auto sendToAct = parent->addAction(d->predicateName[ActionID::kSendTo]);
-                sendToAct->setMenu(sendToMenu);
-                sendToAct->setProperty(ActionPropertyKey::kActionID, ActionID::kSendTo);
-                d->predicateAction[ActionID::kSendTo] = sendToAct;
-            }
+            sendToAct->setMenu(sendToMenu);
+
+            if (sendToMenu->actions().isEmpty())
+                sendToAct->setVisible(false);
         }
     }
     return AbstractMenuScene::create(parent);
@@ -180,9 +179,7 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
     }
 
     using namespace GlobalServerDefines;
-    QAction *firstOptical { nullptr };
     auto devs = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
-    devs << DevProxyMng->getAllBlockIds(DeviceQueryOption::kOptical);
     auto dedupedDevs = devs.toSet();
     int idx = 0;
     for (const QString &dev : dedupedDevs) {
@@ -191,26 +188,11 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
         QString mpt = data.value(DeviceProperty::kMountPoint).toString();
         QString devDesc = data.value(DeviceProperty::kDevice).toString();
 
-        QAction *act { nullptr };
         if (data.value(DeviceProperty::kOptical).toBool()) {
-            act = subMenu->addAction(label);
-            if (!firstOptical)
-                firstOptical = act;
-
-            auto u = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
-                                         + "/" + qApp->organizationName() + "/discburn/" + devDesc.replace("/", "_"));
-            act->setData(u);
+            continue;   // this should be added in burn plugin.
         } else {
-            if (firstOptical) {
-                act = new QAction(label, subMenu);
-                subMenu->insertAction(firstOptical, act);
-            } else {
-                act = subMenu->addAction(label);
-            }
+            QAction *act = subMenu->addAction(label);
             act->setData(QUrl::fromLocalFile(mpt));
-        }
-
-        if (act) {
             QString actId = ActionID::kSendToRemovablePrefix + QString::number(idx++);
             predicateAction.insert(actId, act);
             act->setProperty(ActionPropertyKey::kActionID, actId);
@@ -245,12 +227,7 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         for (const QUrl &url : urlsTrans) {
             QString linkName = FileUtils::nonExistSymlinkFileName(url);
             QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
-            dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
-                                         windowId,
-                                         url,
-                                         linkUrl,
-                                         false,
-                                         true);
+            dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, windowId, url, linkUrl, false, true);
         }
     }
 }

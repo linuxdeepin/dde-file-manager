@@ -2,7 +2,7 @@
     "magic":"dsg.config.meta",
     "version":"1.0",
     "contents":{
-	"dfm.disk.hidden":{
+        "dfm.disk.hidden":{
             "value":[],
             "serial":0,
             "flags":[],

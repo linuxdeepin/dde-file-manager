@@ -56,7 +56,7 @@ bool OpticalFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sourc
     if (sources.isEmpty())
         return false;
 
-    if (target.scheme() != scheme() || sources.first().scheme() != scheme())
+    if (target.scheme() != scheme())
         return false;
 
     Q_UNUSED(windowId)
@@ -159,5 +159,9 @@ bool OpticalFileHelper::openFileInTerminal(const quint64 windowId, const QList<Q
 
 void OpticalFileHelper::pasteFilesHandle(const QList<QUrl> sources, const QUrl target, bool isCopy)
 {
+    if (!OpticalHelper::isBurnEnabled()) {
+        qInfo() << "Burn is disabled, cannot paste files to disc: " << sources;
+        return;
+    }
     dpfSlotChannel->push("dfmplugin_burn", "slot_PasteTo", sources, target, isCopy);
 }

@@ -28,6 +28,7 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <DDialog>
 #include <QObject>
@@ -202,4 +203,10 @@ void BurnHelper::updateBurningStateToPersistence(const QString &id, const QStrin
 
     Application::dataPersistence()->setValue(Persistence::kBurnStateGroup, dev, info);
     Application::dataPersistence()->sync();
+}
+
+bool BurnHelper::isBurnEnabled()
+{
+    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.optical", "burnEnable");
+    return ret.isValid() ? ret.toBool() : true;
 }

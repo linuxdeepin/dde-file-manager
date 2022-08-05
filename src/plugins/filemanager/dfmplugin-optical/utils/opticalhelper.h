@@ -59,6 +59,7 @@ public:
     static bool isSupportedUDFMedium(int type);
     static void createStagingFolder(const QString &path);
     static bool isDupFileNameInPath(const QString &path, const QUrl &url);
+    static bool isBurnEnabled();
 
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
     bool isTransparent(const QUrl &url);

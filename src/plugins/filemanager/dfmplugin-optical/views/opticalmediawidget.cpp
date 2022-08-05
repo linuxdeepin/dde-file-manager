@@ -172,6 +172,10 @@ void OpticalMediaWidget::updateUi()
         lbUDFSupport->setVisible(false);
         iconCaution->setVisible(false);
     }
+
+    if (!OpticalHelper::isBurnEnabled()) {
+        pbBurn->setEnabled(false);
+    }
 }
 
 void OpticalMediaWidget::handleErrorMount()

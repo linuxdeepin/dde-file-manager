@@ -36,6 +36,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
@@ -98,6 +99,11 @@ bool Optical::start()
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
 
     addFileOperations();
+
+    QString err;
+    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.optical", &err);
+    if (!ret)
+        qWarning() << "create dconfig failed: " << err;
 
     return true;
 }

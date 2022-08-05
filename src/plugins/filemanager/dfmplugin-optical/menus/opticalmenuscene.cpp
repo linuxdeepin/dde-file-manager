@@ -175,6 +175,9 @@ QString OpticalMenuScenePrivate::findSceneName(QAction *act) const
 
 bool OpticalMenuScenePrivate::enablePaste() const
 {
+    if (!OpticalHelper::isBurnEnabled())
+        return false;
+
     auto &&clipboard { ClipBoard::instance() };
     return clipboard->clipboardAction() != ClipBoard::kUnknownAction
             && !clipboard->clipboardFileUrlList().isEmpty();

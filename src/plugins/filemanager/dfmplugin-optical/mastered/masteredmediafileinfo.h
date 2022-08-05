@@ -53,6 +53,7 @@ public:
     bool canHidden() const override;
     bool canTag() const override;
     QString emptyDirectoryTip() const override;
+    virtual Qt::DropActions supportedDropActions() override;
 
 private:
     void backupInfo(const QUrl &url);
