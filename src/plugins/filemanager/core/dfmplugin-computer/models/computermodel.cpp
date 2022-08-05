@@ -200,7 +200,7 @@ bool ComputerModel::setData(const QModelIndex &index, const QVariant &value, int
 Qt::ItemFlags ComputerModel::flags(const QModelIndex &index) const
 {
     Qt::ItemFlags flags = Qt::ItemFlag::ItemNeverHasChildren;
-    if (items.count() <= index.row())
+    if (!index.isValid() || items.count() <= index.row())
         return flags;
 
     if (index.data(kItemShapeTypeRole) != ComputerItemData::kSplitterItem) {
