@@ -45,6 +45,7 @@ public:
 private:
     static QMutex &mutex();
     static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
+    static QUrl kLastSelectedUrl;
 };
 
 }   // namespace dfmplugin_detailspace

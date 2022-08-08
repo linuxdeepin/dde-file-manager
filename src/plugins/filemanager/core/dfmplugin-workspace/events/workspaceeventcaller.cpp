@@ -88,11 +88,6 @@ void WorkspaceEventCaller::sendShowCustomTopWidget(const quint64 windowID, const
     dpfSlotChannel->push(kEventNS, "slot_ShowCustomTopWidget", windowID, scheme, visible);
 }
 
-void WorkspaceEventCaller::sendSetSelectDetailFileUrl(const quint64 windowId, const QUrl &url)
-{
-    dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Select", windowId, url);
-}
-
 void WorkspaceEventCaller::sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
 {
     dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, paintArea, url);

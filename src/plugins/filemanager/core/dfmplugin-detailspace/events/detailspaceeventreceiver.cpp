@@ -24,6 +24,8 @@
 #include "utils/detailspacehelper.h"
 #include "utils/detailmanager.h"
 
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
 #include <dfm-framework/event/event.h>
 
 #include <functional>
@@ -38,25 +40,25 @@ DetailSpaceEventReceiver &DetailSpaceEventReceiver::instance()
 
 void DetailSpaceEventReceiver::connectService()
 {
+    // self
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_DetailView_Show",
                             this, &DetailSpaceEventReceiver::handleTileBarShowDetailView);
-    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_DetailView_Select",
-                            this, &DetailSpaceEventReceiver::handleSetSelect);
-
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_ViewExtension_Register",
                             this, &DetailSpaceEventReceiver::handleViewExtensionRegister);
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_ViewExtension_Unregister",
                             this, &DetailSpaceEventReceiver::handleViewExtensionUnregister);
-
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicViewExtension_Register",
                             this, &DetailSpaceEventReceiver::handleBasicViewExtensionRegister);
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicViewExtension_Unregister",
                             this, &DetailSpaceEventReceiver::handleBasicViewExtensionUnregister);
-
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicFiledFilter_Add",
                             this, &DetailSpaceEventReceiver::handleBasicFiledFilterAdd);
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicFiledFilter_Remove",
                             this, &DetailSpaceEventReceiver::handleBasicFiledFilterRemove);
+
+    // workspace
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_SelectionChanged",
+                                   this, &DetailSpaceEventReceiver::handleViewSelectionChanged);
 }
 
 void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, bool checked)
@@ -105,6 +107,21 @@ bool DetailSpaceEventReceiver::handleBasicFiledFilterAdd(const QString &scheme, 
 void DetailSpaceEventReceiver::handleBasicFiledFilterRemove(const QString &scheme)
 {
     DetailManager::instance().removeBasicFiledFilters(scheme);
+}
+
+void DetailSpaceEventReceiver::handleViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)
+{
+    Q_UNUSED(selected)
+    Q_UNUSED(deselected)
+
+    const QList<QUrl> &urls { dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", windowID).value<QList<QUrl>>() };
+    if (urls.isEmpty()) {
+        auto window { FMWindowsIns.findWindowById(windowID) };
+        if (window)
+            DetailSpaceHelper::setDetailViewSelectFileUrl(windowID, window->currentUrl());
+    } else {
+        DetailSpaceHelper::setDetailViewSelectFileUrl(windowID, urls.first());
+    }
 }
 
 DetailSpaceEventReceiver::DetailSpaceEventReceiver(QObject *parent)

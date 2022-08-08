@@ -38,7 +38,6 @@ class DetailSpace : public dpf::Plugin
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_DetailView_Show)
-    DPF_EVENT_REG_SLOT(slot_DetailView_Select)
     DPF_EVENT_REG_SLOT(slot_ViewExtension_Register)
     DPF_EVENT_REG_SLOT(slot_ViewExtension_Unregister)
     DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Register)

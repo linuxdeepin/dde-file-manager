@@ -33,6 +33,7 @@ using namespace dfmplugin_detailspace;
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, DetailSpaceWidget *> DetailSpaceHelper::kDetailSpaceMap {};
+QUrl DetailSpaceHelper::kLastSelectedUrl {};
 
 DetailSpaceWidget *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId)
 {
@@ -74,6 +75,8 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
             return;
         }
         w->setVisible(checked);
+        if (kLastSelectedUrl.isValid() && !kLastSelectedUrl.isEmpty())
+            setDetailViewSelectFileUrl(windowId, kLastSelectedUrl);
     } else {
         if (w) {
             w->setVisible(checked);
@@ -85,6 +88,10 @@ void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl 
 {
     DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
     if (w) {
+        if (!w->isVisible()) {
+            kLastSelectedUrl = url;
+            return;
+        }
         w->setCurrentUrl(url);
         QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(url);
         if (!widgetMap.isEmpty()) {

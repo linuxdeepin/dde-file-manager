@@ -49,7 +49,6 @@ public:
     static void sendTabMoved(const quint64 windowID, const int from, const int to);
     static void sendTabRemoved(const quint64 windowID, const int index);
     static void sendShowCustomTopWidget(const quint64 windowId, const QString &scheme, bool visible);
-    static void sendSetSelectDetailFileUrl(const quint64 windowId, const QUrl &url);
 
     static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url);
 

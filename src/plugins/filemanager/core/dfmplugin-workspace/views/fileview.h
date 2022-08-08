@@ -205,7 +205,6 @@ private:
     void initializeStatusBar();
     void initializeConnect();
 
-    void setDetailFileUrl(const QItemSelection &selected, const QItemSelection &deselected);
     void delayUpdateStatusBar();
     void updateStatusBar();
     void updateLoadingIndicator();

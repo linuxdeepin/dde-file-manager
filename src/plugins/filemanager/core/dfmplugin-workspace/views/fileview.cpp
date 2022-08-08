@@ -770,9 +770,6 @@ void FileView::onSelectionChanged(const QItemSelection &selected, const QItemSel
 {
     delayUpdateStatusBar();
 
-    // TODO(lixiang):  need remove from workspace
-    setDetailFileUrl(selected, deselected);
-
     quint64 winId = WorkspaceHelper::instance()->windowId(this);
     WorkspaceEventCaller::sendViewSelectionChanged(winId, selected, deselected);
 }
@@ -892,30 +889,6 @@ void FileView::trashStateChanged()
 bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     return DListView::edit(index, trigger, event);
-}
-
-void FileView::setDetailFileUrl(const QItemSelection &selected, const QItemSelection &deselected)
-{
-    static QUrl current;
-    if (selected.indexes().isEmpty() && (!deselected.indexes().isEmpty())) {
-        QList<QUrl> urls = selectedUrlList();
-        if (!urls.isEmpty())
-            WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), urls.back());
-        else {
-            QUrl url = rootUrl();
-            if (current != url) {
-                current = url;
-                WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), url);
-            }
-        }
-    } else if (!selected.indexes().isEmpty()) {
-        QModelIndex index = selected.first().topLeft();
-        QUrl url = model()->getUrlByIndex(index);
-        if (current != url) {
-            current = url;
-            WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), url);
-        }
-    }
 }
 
 void FileView::resizeEvent(QResizeEvent *event)

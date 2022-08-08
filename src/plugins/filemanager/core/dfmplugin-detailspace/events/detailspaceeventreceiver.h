@@ -26,6 +26,7 @@
 #include "dfmplugin_detailspace_global.h"
 
 #include <QObject>
+#include <QItemSelection>
 
 namespace dfmplugin_detailspace {
 
@@ -48,6 +49,9 @@ public slots:
     void handleBasicViewExtensionUnregister(const QString &scheme);
     bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
     void handleBasicFiledFilterRemove(const QString &scheme);
+
+    // worksapce
+    void handleViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
 
 private:
     explicit DetailSpaceEventReceiver(QObject *parent = nullptr);
