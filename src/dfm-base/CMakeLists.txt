@@ -17,6 +17,9 @@ if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64" OR
     ADD_DEFINITIONS(-DENABLE_QUICK_SEARCH)
 endif()
 
+# signals and slots keyword is disable, use Q_SIGNALS and Q_SLOTS instead
+add_compile_definitions(QT_NO_SIGNALS_SLOTS_KEYWORDS)
+
 # qrc
 set(QRC_FILE
     qrc/skin/skin.qrc

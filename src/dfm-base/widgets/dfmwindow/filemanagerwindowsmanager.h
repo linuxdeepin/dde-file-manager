@@ -53,7 +53,7 @@ public:
     FMWindow *findWindowById(quint64 winId);
     QList<quint64> windowIdList();
 
-signals:
+Q_SIGNALS:
     void windowCreated(quint64 windId);
     void windowOpened(quint64 windId);
     void windowClosed(quint64 winId);

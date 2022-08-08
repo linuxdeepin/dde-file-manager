@@ -67,7 +67,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
 
-signals:
+Q_SIGNALS:
     void aboutToClose();
     void positionChanged(const QPoint &pos);
     void currentUrlChanged(const QUrl &url);

@@ -116,8 +116,11 @@ void FileViewItem::setUrl(const QUrl url)
         abort();
 
     // refresh for GVFS files cost huge time.
-    if (!url.path().contains(QRegularExpression(Global::Regex::kGvfsRoot)))
-        d->fileinfo->refresh();
+    // 20220809 refresh due to fix bug: https://pms.uniontech.com/bug-view-133473.html
+    // fix in right menu or short cut naturally
+    // todo lanxs
+    /*if (!url.path().contains(QRegularExpression(Global::Regex::kGvfsRoot)))
+        d->fileinfo->refresh();*/
     setData(QVariant(d->fileinfo->fileName()), kItemFileDisplayNameRole);
 }
 

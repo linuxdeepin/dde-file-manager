@@ -1163,6 +1163,13 @@ bool dfmbase::AbstractFileInfo::emblemsInited() const
     return false;
 }
 
+QVariant dfmbase::AbstractFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
+{
+    CALL_PROXY(customAttribute(key, type));
+
+    return QVariant();
+}
+
 void dfmbase::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids, DFileInfo::AttributeExtendFuncCallback callback) const
 {
     CALL_PROXY(mediaInfoAttributes(type, ids, callback));

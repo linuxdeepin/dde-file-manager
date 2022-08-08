@@ -58,7 +58,7 @@ bool GSettingManager::addSettings(const QString &schemaId, const QString &path, 
     auto gset = new QGSettings(schemaId.toLocal8Bit(), path.toLocal8Bit(), this);
     d->settings.insert(schemaId, gset);
     locker.unlock();
-    connect(gset, &QGSettings::changed, this, [=](const QString &key) { emit valueChanged(schemaId, key); });
+    connect(gset, &QGSettings::changed, this, [=](const QString &key) { Q_EMIT valueChanged(schemaId, key); });
     return true;
 }
 

@@ -48,7 +48,7 @@ public:
     virtual void pause(); /*pause playing if file is music or video*/
     virtual void stop(); /*stop playing if file is music or video*/
 
-signals:
+Q_SIGNALS:
     void titleChanged();
 };
 }

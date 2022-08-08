@@ -189,7 +189,7 @@ public:
     virtual void setSignalConnectFinished();
     virtual QMap<NotifyType, JobInfoPointer> getAllTaskInfo();
     virtual JobInfoPointer getTaskInfoByNotifyType(const NotifyType &notifyType);
-signals:   // 发送给任务调用者使用的信号
+Q_SIGNALS:   // 发送给任务调用者使用的信号
     /*!
      * @brief proccessChanged 当前任务的进度变化信号，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
@@ -245,13 +245,13 @@ signals:   // 发送给任务调用者使用的信号
      */
     void speedUpdatedNotify(const JobInfoPointer jobInfo);
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
-signals:   // 发送给任务使用的信号
+Q_SIGNALS:   // 发送给任务使用的信号
     /*!
      * \brief userAction 用户当前动作
      * \param action 当前的动作类型 这里的动作只能是action的一种和kRememberAction并存
      */
     void userAction(SupportActions actions);
-public slots:
+public Q_SLOTS:
     void operateTaskJob(SupportActions actions);
     void onProccessChanged(const JobInfoPointer jobInfo);
     void onStateChanged(const JobInfoPointer jobInfo);

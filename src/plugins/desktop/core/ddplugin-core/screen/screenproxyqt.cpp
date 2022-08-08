@@ -176,7 +176,7 @@ void ScreenProxyQt::reset()
     */
     connect(display, &DBusDisplay::PrimaryChanged, this, &ScreenProxyQt::onPrimaryChanged);
     connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this]() {
-        this->appendEvent(Screen);
+        this->appendEvent(kScreen);
     });
 
     //dock区处理
@@ -197,7 +197,7 @@ void ScreenProxyQt::reset()
 void ScreenProxyQt::onPrimaryChanged()
 {
     if (validPrimaryChanged(this))
-        appendEvent(Screen);
+        appendEvent(kScreen);
 }
 
 void ScreenProxyQt::onScreenAdded(QScreen *screen)
@@ -210,7 +210,7 @@ void ScreenProxyQt::onScreenAdded(QScreen *screen)
     connectScreen(psc);
 
     qInfo() << "add screen:" << screen->name();
-    appendEvent(Screen);
+    appendEvent(kScreen);
 }
 
 void ScreenProxyQt::onScreenRemoved(QScreen *screen)
@@ -219,25 +219,25 @@ void ScreenProxyQt::onScreenRemoved(QScreen *screen)
     if (psc.get() != nullptr) {
         disconnectScreen(psc);
         qInfo() << "del screen:" << screen->name();
-        appendEvent(Screen);
+        appendEvent(kScreen);
     }
 }
 
 void ScreenProxyQt::onScreenGeometryChanged(const QRect &rect)
 {
     Q_UNUSED(rect)
-    appendEvent(AbstractScreenProxy::Geometry);
+    appendEvent(AbstractScreenProxy::kGeometry);
 }
 
 void ScreenProxyQt::onScreenAvailableGeometryChanged(const QRect &rect)
 {
     Q_UNUSED(rect)
-    appendEvent(AbstractScreenProxy::AvailableGeometry);
+    appendEvent(AbstractScreenProxy::kAvailableGeometry);
 }
 
 void ScreenProxyQt::onDockChanged()
 {
-    appendEvent(AbstractScreenProxy::AvailableGeometry);
+    appendEvent(AbstractScreenProxy::kAvailableGeometry);
 }
 
 void ScreenProxyQt::processEvent()
@@ -247,17 +247,17 @@ void ScreenProxyQt::processEvent()
 
     if (mode != lastMode) {
         lastMode = mode;
-        events.insert(AbstractScreenProxy::Mode, 0);
+        events.insert(AbstractScreenProxy::kMode, 0);
     }
 
     //事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
-    if (events.contains(AbstractScreenProxy::Mode)) {
+    if (events.contains(AbstractScreenProxy::kMode)) {
         emit displayModeChanged();
-    } else if (events.contains(AbstractScreenProxy::Screen)) {
+    } else if (events.contains(AbstractScreenProxy::kScreen)) {
         emit screenChanged();
-    } else if (events.contains(AbstractScreenProxy::Geometry)) {
+    } else if (events.contains(AbstractScreenProxy::kGeometry)) {
         emit screenGeometryChanged();
-    } else if (events.contains(AbstractScreenProxy::AvailableGeometry)) {
+    } else if (events.contains(AbstractScreenProxy::kAvailableGeometry)) {
         emit screenAvailableGeometryChanged();
     }
 }

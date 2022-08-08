@@ -109,7 +109,7 @@ public:
     void stopScanDrive(const QString &id);
     void stopAllScanTask();
 
-signals:
+Q_SIGNALS:
     // device watch
     void devSizeChanged(const QString &id, qint64 total, qint64 avai);
 

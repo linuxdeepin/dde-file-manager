@@ -46,7 +46,7 @@ public:
 
     bool watchChange(const SyncPair &pair);
 
-signals:
+Q_SIGNALS:
 
 private:
     explicit ConfigSynchronizer(QObject *parent = nullptr);

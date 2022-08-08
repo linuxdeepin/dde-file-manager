@@ -52,12 +52,12 @@ public:
     void addTaskWidget(const JobHandlePointer taskHandler, TaskWidget *wid);
     void setTitle(int taskCount);
 
-signals:
+Q_SIGNALS:
     /*!
      * \brief closed 当前进度窗口关闭时，发送关闭信号
      */
     void closed();
-private slots:
+private Q_SLOTS:
     void adjustSize();
     void moveYCenter();
     void removeTask(const JobInfoPointer info);

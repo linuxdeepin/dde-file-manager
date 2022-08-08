@@ -22,6 +22,7 @@
 #include "emblemhelper.h"
 
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/event/event.h>
 #include <dfm-io/core/dfileinfo.h>
@@ -63,8 +64,9 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
 {
     QMap<int, QIcon> emblemsMap;
 
-    DecoratorFileInfo fileInfo(info->url());
-    QStringList emblemData = fileInfo.customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
+    // use AbstractFileInfo to access emblems, avoid query again
+    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->url());
+    QStringList emblemData = fileInfo->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
 
     if (emblemData.isEmpty())
         return emblemsMap;

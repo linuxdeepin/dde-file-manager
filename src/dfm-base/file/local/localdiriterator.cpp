@@ -85,8 +85,25 @@ QUrl LocalDirIterator::next()
  */
 bool LocalDirIterator::hasNext() const
 {
-    if (d->dfmioDirIterator)
-        return d->dfmioDirIterator->hasNext();
+    if (d->dfmioDirIterator) {
+        bool has = d->dfmioDirIterator->hasNext();
+        if (has) {
+            const QUrl &urlNext = d->dfmioDirIterator->next();
+            const bool needCache = !InfoCache::instance().cacheDisable(urlNext.scheme());
+            if (needCache) {
+                AbstractFileInfoPointer infoCache = InfoCache::instance().getCacheInfo(urlNext);
+                if (!infoCache) {
+                    // cache info
+                    auto dfileInfo = d->dfmioDirIterator->fileInfo();
+                    QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(urlNext, dfileInfo));
+                    auto infoTrans = InfoFactory::transfromInfo<AbstractFileInfo>(urlNext.scheme(), info);
+                    InfoCache::instance().cacheInfo(urlNext, infoTrans);
+                }
+            }
+        }
+
+        return has;
+    }
 
     return false;
 }

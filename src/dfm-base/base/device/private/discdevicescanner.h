@@ -45,7 +45,7 @@ private:
     void stopScan();
     void updateScanState();
 
-private slots:
+private Q_SLOTS:
     void scanOpticalDisc();
     void onDevicePropertyChangedQVar(const QString &id, const QString &propertyName, const QVariant &var);
     void onDevicePropertyChangedQDBusVar(const QString &id, const QString &propertyName, const QDBusVariant &var);

@@ -23,6 +23,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 
+#include <QElapsedTimer>
 #include <QDebug>
 
 using namespace dfmbase;
@@ -82,6 +83,10 @@ void TraversalDirThread::run()
     if (dirIterator.isNull())
         return;
 
+    QElapsedTimer timer;
+    timer.start();
+    qDebug() << "dir query start, url: " << dirUrl;
+
     while (dirIterator->hasNext()) {
         if (stopFlag)
             break;
@@ -95,4 +100,6 @@ void TraversalDirThread::run()
     }
     stopFlag = true;
     emit updateChildren(childrenList);
+
+    qDebug() << "dir query end, url: " << dirUrl << " elapsed: " << timer.elapsed();
 }

@@ -38,7 +38,7 @@ public:
     virtual QRect geometry() const = 0;
     virtual QRect availableGeometry() const = 0;
     virtual QRect handleGeometry() const = 0;
-signals:
+Q_SIGNALS:
     void geometryChanged(const QRect &);
     void availableGeometryChanged(const QRect &);
 };
@@ -47,4 +47,4 @@ typedef QSharedPointer<AbstractScreen> ScreenPointer;
 
 }
 
-#endif // ABSTRACTSCREEN_H
+#endif   // ABSTRACTSCREEN_H

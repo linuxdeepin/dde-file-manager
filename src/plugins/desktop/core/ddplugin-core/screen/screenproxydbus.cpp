@@ -170,7 +170,7 @@ void ScreenProxyDBus::reset()
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenProxyDBus::onMonitorChanged);
     connect(display, &DBusDisplay::MonitorsChanged, this, &ScreenProxyDBus::onMonitorChanged);
     connect(display, &DBusDisplay::PrimaryChanged, this, [this]() {
-        this->appendEvent(Screen);
+        this->appendEvent(kScreen);
     });
 
     connect(display, &DBusDisplay::DisplayModeChanged, this, &ScreenProxyDBus::onModeChanged);
@@ -196,13 +196,13 @@ void ScreenProxyDBus::reset()
 void ScreenProxyDBus::processEvent()
 {
     //事件优先级。由上往下，背景和画布模块在处理上层的事件已经处理过下层事件的涉及的改变，因此直接忽略
-    if (events.contains(Mode)) {
+    if (events.contains(kMode)) {
         emit displayModeChanged();
-    } else if (events.contains(Screen)) {
+    } else if (events.contains(kScreen)) {
         emit screenChanged();
-    } else if (events.contains(Geometry)) {
+    } else if (events.contains(kGeometry)) {
         emit screenGeometryChanged();
-    } else if (events.contains(AvailableGeometry)) {
+    } else if (events.contains(kAvailableGeometry)) {
         emit screenAvailableGeometryChanged();
     }
 }
@@ -238,17 +238,17 @@ void ScreenProxyDBus::onMonitorChanged()
         }
     }
     qDebug() << "save monitors:" << screenMap.keys();
-    appendEvent(Screen);
+    appendEvent(kScreen);
 }
 
 void ScreenProxyDBus::onDockChanged()
 {
-    appendEvent(AvailableGeometry);
+    appendEvent(kAvailableGeometry);
 }
 
 void ScreenProxyDBus::onScreenGeometryChanged(const QRect &rect)
 {
-    appendEvent(Geometry);
+    appendEvent(kGeometry);
 
     //fix wayland下切换合并/拆分，当主屏的geometry在合并拆分前后没有改变时，不会发送PrimaryRectChanged，而在主线能发送出来。
     //这导致没法判断到显示模式改变，这里补充触发
@@ -262,7 +262,7 @@ void ScreenProxyDBus::onModeChanged()
     if (lastMode == mode)
         return;
     lastMode = mode;
-    this->appendEvent(Mode);
+    this->appendEvent(kMode);
 }
 
 void ScreenProxyDBus::connectScreen(ScreenPointer sp)

@@ -77,7 +77,7 @@ public:
     bool isMptOfDevice(const QString &filePath, QString &id);
 
     // device signals
-signals:
+Q_SIGNALS:
     void devSizeChanged(const QString &id, qint64 total, qint64 avai);
 
     void blockDevPropertyChanged(const QString &id, const QString &property, const QVariant &val);

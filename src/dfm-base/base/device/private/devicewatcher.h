@@ -59,7 +59,7 @@ public:
 
     void queryOpticalDevUsage(const QString &id);
 
-private slots:
+private Q_SLOTS:
     void onBlkDevAdded(const QString &id);
     void onBlkDevRemoved(const QString &id);
     void onBlkDevMounted(const QString &id, const QString &mpt);

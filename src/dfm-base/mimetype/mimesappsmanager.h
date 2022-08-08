@@ -52,7 +52,7 @@ public:
 
     void initConnect();
 
-public slots:
+public Q_SLOTS:
     void startWatch();
     void handleDirectoryChanged(const QString &filePath);
     void handleFileChanged(const QString &filePath);
@@ -113,7 +113,7 @@ public:
     static bool lessByDateTime(const QFileInfo &f1, const QFileInfo &f2);
     static bool removeOneDupFromList(QStringList &list, const QString desktopFilePath);
 
-signals:
+Q_SIGNALS:
     void requestUpdateCache();
 
 private:

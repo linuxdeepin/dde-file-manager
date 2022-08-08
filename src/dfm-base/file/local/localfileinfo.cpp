@@ -65,6 +65,13 @@ LocalFileInfo::LocalFileInfo(const QUrl &url)
     init(url);
 }
 
+LocalFileInfo::LocalFileInfo(const QUrl &url, QSharedPointer<DFileInfo> dfileInfo)
+    : AbstractFileInfo(url, new LocalFileInfoPrivate(this))
+{
+    d = static_cast<LocalFileInfoPrivate *>(dptr.data());
+    init(url, dfileInfo);
+}
+
 LocalFileInfo::~LocalFileInfo()
 {
     d = nullptr;
@@ -1654,6 +1661,14 @@ bool LocalFileInfo::emblemsInited() const
     return d->enableEmblems != -1;
 }
 
+QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
+{
+    QReadLocker locker(&d->lock);
+    if (d->dfmFileInfo)
+        return d->dfmFileInfo->customAttribute(key, type);
+    return QVariant();
+}
+
 void LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids, DFileInfo::AttributeExtendFuncCallback callback) const
 {
     if (d->dfmFileInfo) {
@@ -1710,7 +1725,7 @@ QString LocalFileInfo::mimeTypeName()
     return type;
 }
 
-void LocalFileInfo::init(const QUrl &url)
+void LocalFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)
 {
     d->mimeTypeMode = QMimeDatabase::MatchDefault;
     if (url.isEmpty()) {
@@ -1728,6 +1743,11 @@ void LocalFileInfo::init(const QUrl &url)
     if (!url.isValid()) {
         qWarning("Failed, can't use valid url init fileinfo");
         abort();
+    }
+
+    if (dfileInfo) {
+        d->dfmFileInfo = dfileInfo;
+        return;
     }
 
     QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(cvtResultUrl.scheme(), static_cast<QUrl>(cvtResultUrl));

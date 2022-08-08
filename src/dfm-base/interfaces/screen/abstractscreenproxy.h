@@ -37,7 +37,11 @@ class AbstractScreenProxy : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(AbstractScreenProxy)
 public:
-    enum Event{Screen,Mode,Geometry,AvailableGeometry};
+    enum Event { kScreen,
+                 kMode,
+                 kGeometry,
+                 kAvailableGeometry };
+
 public:
     explicit AbstractScreenProxy(QObject *parent = nullptr);
 
@@ -49,22 +53,26 @@ public:
     virtual DisplayMode displayMode() const = 0;
     virtual DisplayMode lastChangedMode() const;
     virtual void reset() = 0;
+
 protected:
     virtual void processEvent() = 0;
+
 protected:
     void appendEvent(Event);
-signals:
+Q_SIGNALS:
     void screenChanged();
     void displayModeChanged();
     void screenGeometryChanged();
     void screenAvailableGeometryChanged();
+
 protected:
     DisplayMode lastMode = DisplayMode::kCustom;
     QMultiMap<Event, qint64> events;
+
 private:
     QTimer *eventShot = nullptr;
 };
 
 }
 
-#endif // ABSTRACTSCREENPROXY_H
+#endif   // ABSTRACTSCREENPROXY_H

@@ -45,6 +45,7 @@ public:
     Q_ENUMS(FlagIcon)
 
     explicit LocalFileInfo(const QUrl &url);
+    LocalFileInfo(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo);
     virtual ~LocalFileInfo() override;
 
     LocalFileInfo &operator=(const LocalFileInfo &info);
@@ -125,6 +126,7 @@ public:
     virtual void setEmblems(const QMap<int, QIcon> &maps) override;
     virtual QMap<int, QIcon> emblems() const override;
     virtual bool emblemsInited() const override;
+    virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;
 
     // media info
     virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type,
@@ -134,7 +136,7 @@ public:
     virtual bool notifyAttributeChanged() override;
 
 private:
-    void init(const QUrl &url);
+    void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
     QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString inod = QString(), const bool isGvfs = false);
 };
 }

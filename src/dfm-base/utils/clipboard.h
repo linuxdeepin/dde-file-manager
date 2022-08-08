@@ -56,9 +56,9 @@ private:
     explicit ClipBoard(QObject *parent = nullptr);
     static QList<QUrl> getUrlsByX11();
 
-signals:
+Q_SIGNALS:
     void clipboardDataChanged();
-public slots:
+public Q_SLOTS:
     void onClipboardDataChanged();
 
 private:

@@ -45,7 +45,7 @@ public:
 
     QString getUerInputedPassword() const;
 
-public slots:
+public Q_SLOTS:
     void handleButtonClicked(int index, QString text);
 
 protected:

@@ -63,7 +63,7 @@ public:
         kSavePermanently,
     };
 
-public slots:
+public Q_SLOTS:
     void handleConnect();
     void handleButtonClicked(int index, QString text);
 

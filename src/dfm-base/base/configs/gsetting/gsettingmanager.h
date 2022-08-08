@@ -54,7 +54,7 @@ public:
     QVariantList choices(const QString &schemaId, const QString &key) const;
     void reset(const QString &schemaId, const QString &key);
 
-signals:
+Q_SIGNALS:
     void valueChanged(const QString &schemaId, const QString &key);
 
 private:

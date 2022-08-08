@@ -52,7 +52,7 @@ public:
 
     bool validateConfigs(QStringList &invalidConfigs) const;
 
-signals:
+Q_SIGNALS:
     void valueChanged(const QString &config, const QString &key);
 
 private:

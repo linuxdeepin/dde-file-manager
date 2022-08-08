@@ -166,6 +166,16 @@ public:
 
         return info;
     }
+
+    // cache fileinfo in enumerator, transform fileinfo to desktop fileinfo in need
+    QSharedPointer<T> transformInfo(const QString &scheme, QSharedPointer<T> info)
+    {
+        TransFunc func = transList.value(scheme);
+        if (func)
+            info = func(info);
+
+        return info;
+    }
 };
 
 class InfoFactory final : public SchemeFactory<AbstractFileInfo>
@@ -198,6 +208,12 @@ public:
     static bool regCreator(const QString &scheme, CreateFunc creator, QString *errorString = nullptr)
     {
         return instance().SchemeFactory<AbstractFileInfo>::regCreator(scheme, creator, errorString);
+    }
+
+    template<class T>
+    static QSharedPointer<T> transfromInfo(const QString &scheme, QSharedPointer<T> info)
+    {
+        return instance().SchemeFactory<AbstractFileInfo>::transformInfo(scheme, info);
     }
 
     // 提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，

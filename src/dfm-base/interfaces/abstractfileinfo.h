@@ -200,6 +200,7 @@ public:
     virtual void setEmblems(const QMap<int, QIcon> &maps);
     virtual QMap<int, QIcon> emblems() const;
     virtual bool emblemsInited() const;
+    virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type);
 
     // media info
     virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type,

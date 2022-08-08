@@ -87,7 +87,7 @@ bool DConfigManager::addConfig(const QString &config, QString *err)
 
     d->configs.insert(config, cfg);
     locker.unlock();
-    connect(cfg, &DConfig::valueChanged, this, [=](const QString &key) { emit valueChanged(config, key); });
+    connect(cfg, &DConfig::valueChanged, this, [=](const QString &key) { Q_EMIT valueChanged(config, key); });
 #endif
     return true;
 }

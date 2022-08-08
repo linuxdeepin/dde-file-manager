@@ -35,15 +35,15 @@ public:
     explicit AbstractDesktopFrame(QObject *parent = nullptr);
     virtual QList<QWidget *> rootWindows() const = 0;
     virtual void layoutChildren() = 0;
-signals: // must connect with Qt::DirectConnection
+Q_SIGNALS:   // must connect with Qt::DirectConnection
     void windowAboutToBeBuilded();
     void windowBuilded();
     void windowShowed();
     void geometryChanged();
     void availableGeometryChanged();
-public slots:
+public Q_SLOTS:
 };
 
 }
 
-#endif // ABSTRACTDESKTOPFRAME_H
+#endif   // ABSTRACTDESKTOPFRAME_H
