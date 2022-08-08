@@ -48,7 +48,7 @@ class ComputerView : public Dtk::Widget::DListView, public DFMBASE_NAMESPACE::Ab
     Q_DISABLE_COPY(ComputerView)
 
 public:
-    ComputerView(const QUrl &url, QWidget *parent = nullptr);
+    explicit ComputerView(const QUrl &url, QWidget *parent = nullptr);
     virtual ~ComputerView() override;
 
 public:
@@ -57,8 +57,6 @@ public:
     virtual QUrl rootUrl() const override;
     virtual ViewState viewState() const override;
     virtual bool setRootUrl(const QUrl &url) override;
-    virtual QList<QAction *> toolBarActionList() const override;
-    virtual void refresh() override;
     virtual QList<QUrl> selectedUrlList() const override;
 
     // QObject interface

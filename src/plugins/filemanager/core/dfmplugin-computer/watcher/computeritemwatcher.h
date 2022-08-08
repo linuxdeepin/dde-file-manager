@@ -57,7 +57,7 @@ public:
         kGroupDisks,
     };
 
-    void addDevice(const QString &groupName, const QUrl &url);
+    void addDevice(const QString &groupName, const QUrl &url, int shape);
     void removeDevice(const QUrl &url);
 
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
@@ -82,7 +82,7 @@ Q_SIGNALS:
     void hideDisks(const QList<QUrl> &devs);
 
 protected Q_SLOTS:
-    void onDeviceAdded(const QUrl &devUrl, int groupId, bool needSidebarItem = true);
+    void onDeviceAdded(const QUrl &devUrl, int groupId, ComputerItemData::ShapeType shape = ComputerItemData::kLargeItem, bool needSidebarItem = true);
     void onDevicePropertyChangedQVar(const QString &id, const QString &propertyName, const QVariant &var);
     void onDevicePropertyChangedQDBusVar(const QString &id, const QString &propertyName, const QDBusVariant &var);
     void onGenAttributeChanged(Application::GenericAttribute ga, const QVariant &value);

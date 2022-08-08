@@ -51,8 +51,8 @@ public:
 private:
     void paintSplitter(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void paintCustomWidget(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void paintUserDirectory(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void paintDevice(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paintSmallItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paintLargeItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void prepareColor(QPainter *painter, const QStyleOptionViewItem &option) const;
 
     void drawDeviceIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

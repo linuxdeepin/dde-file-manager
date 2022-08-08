@@ -80,15 +80,6 @@ bool ComputerView::setRootUrl(const QUrl &url)
     return true;
 }
 
-QList<QAction *> ComputerView::toolBarActionList() const
-{
-    return {};
-}
-
-void ComputerView::refresh()
-{
-}
-
 QList<QUrl> ComputerView::selectedUrlList() const
 {
     auto selectionModel = this->selectionModel();
@@ -159,7 +150,7 @@ void ComputerView::initView()
     this->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     this->setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     //    this->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));
-    this->setIconSize(QSize(48, 48));
+    this->setIconSize(QSize(64, 64));
     this->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     this->setFrameShape(QFrame::Shape::NoFrame);
     this->viewport()->setAutoFillBackground(false);

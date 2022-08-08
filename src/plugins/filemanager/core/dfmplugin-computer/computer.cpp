@@ -22,7 +22,7 @@
 */
 #include "computer.h"
 #include "utils/computerutils.h"
-#include "views/computerview.h"
+#include "views/computerviewcontainer.h"
 #include "fileentity/entryfileentities.h"
 #include "events/computereventreceiver.h"
 #include "watcher/computeritemwatcher.h"
@@ -53,7 +53,7 @@ void Computer::initialize()
     using namespace dfmplugin_computer;
 
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true, tr("Computer"));
-    ViewFactory::regClass<ComputerView>(ComputerUtils::scheme());
+    ViewFactory::regClass<ComputerViewContainer>(ComputerUtils::scheme());
     UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
     InfoFactory::regClass<EntryFileInfo>(Global::Scheme::kEntry);
 

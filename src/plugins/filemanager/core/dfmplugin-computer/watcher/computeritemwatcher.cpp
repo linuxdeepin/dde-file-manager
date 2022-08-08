@@ -124,7 +124,7 @@ void ComputerItemWatcher::initConn()
         auto appUrl = ComputerUtils::makeAppEntryUrl(url.path());
         if (!appUrl.isValid())
             return;
-        this->onDeviceAdded(appUrl, getGroupId(diskGroup()), false);
+        this->onDeviceAdded(appUrl, getGroupId(diskGroup()), ComputerItemData::kLargeItem, false);
     });
     connect(appEntryWatcher.data(), &LocalFileWatcher::fileDeleted, this, [this](const QUrl &url) {
         auto appUrl = ComputerUtils::makeAppEntryUrl(url.path());
@@ -474,10 +474,10 @@ void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newN
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
 }
 
-void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)
+void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, int shape)
 {
     int groupId = addGroup(groupName);
-    onDeviceAdded(url, groupId, false);
+    onDeviceAdded(url, groupId, static_cast<ComputerItemData::ShapeType>(shape), false);
 }
 
 void ComputerItemWatcher::removeDevice(const QUrl &url)
@@ -519,14 +519,14 @@ int ComputerItemWatcher::addGroup(const QString &name)
     return data.groupId;
 }
 
-void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, bool needSidebarItem)
+void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, ComputerItemData::ShapeType shape, bool needSidebarItem)
 {
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     if (!info->exists()) return;
 
     ComputerItemData data;
     data.url = devUrl;
-    data.shape = ComputerItemData::kLargeItem;
+    data.shape = shape;
     data.info = info;
     data.groupId = groupId;
     data.itemName = info->displayName();

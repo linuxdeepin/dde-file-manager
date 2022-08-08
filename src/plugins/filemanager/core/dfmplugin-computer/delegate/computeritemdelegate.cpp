@@ -38,16 +38,18 @@
 namespace dfmplugin_computer {
 
 namespace {
-const int kLabelTotalSpacing { 6 };
-const int kTotalProgressBarSpacing { 4 };
 const int kIconLabelSpacing { 10 };
-
-const int kItemTopMargin { 20 };
-const int kItemBottomMargin { 20 };
-const int kItemLeftMargin { 10 };
-const int kItemRightMargin { 20 };
+const int kIconLeftMargin { 10 };
+const int kContentRightMargin { 20 };
 
 const char *const kRegPattern { "^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*" };
+
+const int kSplitterLineHeight { 39 };
+const int kSmallItemWidth { 108 };
+const int kSmallItemHeight { 138 };
+
+const int kLargeItemWidth { 284 };
+const int kLargeItemHeight { 84 };
 }   // namespace
 
 //!
@@ -85,43 +87,38 @@ void ComputerItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     painter->setRenderHint(QPainter::RenderHint::Antialiasing);
 
     ComputerItemData::ShapeType type = ComputerItemData::ShapeType(index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt());
-
-    if (type == ComputerItemData::kSplitterItem) {
+    switch (type) {
+    case ComputerItemData::kSplitterItem:
         paintSplitter(painter, option, index);
-    } else if (type == ComputerItemData::kWidgetItem) {
+        break;
+    case ComputerItemData::kSmallItem:
+        paintSmallItem(painter, option, index);
+        break;
+    case ComputerItemData::kLargeItem:
+        paintLargeItem(painter, option, index);
+        break;
+    case ComputerItemData::kWidgetItem:
         paintCustomWidget(painter, option, index);
-    } else if (type == ComputerItemData::kSmallItem) {
-        paintUserDirectory(painter, option, index);
-    } else {   // paint devices include local/removable devices and app entry
-        paintDevice(painter, option, index);
+        break;
+    default:
+        break;
     }
 }
 
 QSize ComputerItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     auto itemType = ComputerItemData::ShapeType(index.data(ComputerModel::kItemShapeTypeRole).toInt());
-    if (itemType == ComputerItemData::kWidgetItem) {
+    switch (itemType) {
+    case ComputerItemData::kSplitterItem:
+        return QSize(view->width() - 30, kSplitterLineHeight);
+    case ComputerItemData::kSmallItem:
+        return QSize(kSmallItemWidth, kSmallItemHeight);
+    case ComputerItemData::kLargeItem:
+        return QSize(kLargeItemWidth, kLargeItemHeight);
+    case ComputerItemData::kWidgetItem:
         return static_cast<ComputerItemData *>(index.internalPointer())->widget->size();
-    } else if (itemType == ComputerItemData::kSplitterItem) {
-        return QSize(view->width() - 12, 45);
-    } else if (itemType == ComputerItemData::kSmallItem) {
-        int borderLen = view->iconSize().width() * 2 + 24;
-        return QSize(borderLen, borderLen);
-    } else {
-        const int IconSize = view->iconSize().width();
-        const int TextMaxWidth = int(IconSize * 3.75);
-
-        QFont fnt(view->font());
-        fnt.setPixelSize(int(view->fontInfo().pixelSize() * 0.85));
-        int capacityHeight = QFontMetrics(fnt).height();
-        int devNameHeight = QFontMetrics(option.fontMetrics).height();
-        int progressHeight = 6;
-        int itemHeight = progressHeight + capacityHeight + devNameHeight
-                + kLabelTotalSpacing + kTotalProgressBarSpacing
-                + kItemTopMargin + kItemBottomMargin;
-        int itemWidth = kItemLeftMargin + IconSize + kIconLabelSpacing + TextMaxWidth + kItemRightMargin;
-        int iconHeight = kItemTopMargin + IconSize + kItemBottomMargin;
-        return QSize(itemWidth, qMax(iconHeight, itemHeight));
+    default:
+        return QSize();
     }
 }
 
@@ -190,11 +187,10 @@ void ComputerItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpt
 
     auto textRect = option.rect;
     const int IconSize = view->iconSize().width();
-    const int TextMaxWidth = int(IconSize * 3.75);
 
-    textRect.setLeft(option.rect.left() + kItemLeftMargin + IconSize + kIconLabelSpacing + 1);
-    textRect.setWidth(TextMaxWidth);
-    textRect.setTop(option.rect.top() + kItemTopMargin - 2);
+    textRect.setLeft(option.rect.left() + kIconLeftMargin + IconSize + kIconLabelSpacing);
+    textRect.setWidth(180);
+    textRect.setTop(option.rect.top() + 10);
     textRect.setHeight(view->fontInfo().pixelSize() * 2);
 
     editor->setGeometry(textRect);
@@ -216,10 +212,11 @@ void ComputerItemDelegate::closeEditor(ComputerView *view)
 void ComputerItemDelegate::paintSplitter(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QFont fnt(view->font());
-    fnt.setPixelSize(30);
+    fnt.setPixelSize(20);
+    fnt.setWeight(QFont::Medium);
     painter->setFont(fnt);
     painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
-    painter->drawText(option.rect, 0, index.data(Qt::ItemDataRole::DisplayRole).toString());
+    painter->drawText(option.rect, Qt::AlignBottom, index.data(Qt::ItemDataRole::DisplayRole).toString());
 }
 
 void ComputerItemDelegate::paintCustomWidget(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -229,31 +226,35 @@ void ComputerItemDelegate::paintCustomWidget(QPainter *painter, const QStyleOpti
     Q_UNUSED(index);
 }
 
-void ComputerItemDelegate::paintUserDirectory(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     prepareColor(painter, option);
 
     // draw round rect
     painter->drawRoundedRect(option.rect.adjusted(1, 1, -1, -1), 18, 18);
 
-    const int IconSize = view->iconSize().width() * 4 / 3;
-    const int TopMargin = IconSize / 8 + 3;
-    const int LeftMargin = IconSize / 4 + 12;
-    const int LabelTopMargin = IconSize / 4;
-
-    const int TextMaxWidth = option.rect.width() - 24;
-    const QString &ElidedText = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, TextMaxWidth);
-    const int LabelWidth = view->fontMetrics().width(ElidedText);
+    const int IconSize = view->iconSize().width();
+    const int TopMargin = 16;
+    const int LeftMargin = 22;
 
     const auto &icon = index.data(Qt::ItemDataRole::DecorationRole).value<QIcon>();
     painter->drawPixmap(option.rect.x() + LeftMargin, option.rect.y() + TopMargin, icon.pixmap(IconSize));
 
-    painter->setFont(view->font());
-    painter->setPen(qApp->palette().color((option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
-    painter->drawText(option.rect.x() + (option.rect.width() - LabelWidth) / 2, option.rect.y() + TopMargin + IconSize + LabelTopMargin, ElidedText);
+    QFont fnt(view->font());
+    fnt.setPixelSize(14);
+    fnt.setWeight(QFont::Medium);
+    painter->setFont(fnt);
+
+    const int TextMaxWidth = option.rect.width() - 20;
+    const QString &ElidedText = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, TextMaxWidth);
+    const int LabelWidth = QFontMetrics(fnt).width(ElidedText);
+    const int LabelTopMargin = 10;
+    auto labelRect = QRect(option.rect.x() + (option.rect.width() - LabelWidth) / 2, option.rect.y() + TopMargin + IconSize + LabelTopMargin, LabelWidth, 40);
+    painter->setPen(qApp->palette().color((option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : QPalette::ColorRole::Text));
+    painter->drawText(labelRect, Qt::AlignTop, ElidedText);
 }
 
-void ComputerItemDelegate::paintDevice(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void ComputerItemDelegate::paintLargeItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     prepareColor(painter, option);
 
@@ -299,14 +300,15 @@ void ComputerItemDelegate::drawDeviceIcon(QPainter *painter, const QStyleOptionV
     const auto &icon = index.data(Qt::ItemDataRole::DecorationRole).value<QIcon>();
     const int IconSize = view->iconSize().width();
     int y = option.rect.y() + (sizeHint(option, index).height() - IconSize) / 2;
-    painter->drawPixmap(option.rect.x() + kItemLeftMargin, y, icon.pixmap(IconSize));
+    painter->drawPixmap(option.rect.x() + kIconLeftMargin, y, icon.pixmap(IconSize));
 }
 
 void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
     auto fnt = view->font();
-    fnt.setWeight(66);
+    fnt.setPixelSize(16);
+    fnt.setWeight(QFont::Medium);
     painter->setFont(fnt);
 
     QString devName = index.data(Qt::DisplayRole).toString();
@@ -314,7 +316,7 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     int fsLabelWidth = view->fontMetrics().width(fs.toUpper());
 
     const int IconSize = view->iconSize().width();
-    const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kItemLeftMargin - kIconLabelSpacing - kItemRightMargin;
+    const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
     // if show-fs is enabled in setting, then add a 2pix spacing, else treat it as 0.
     DFMBASE_USE_NAMESPACE
     bool showFsTag = Application::instance()->genericAttribute(Application::GenericAttribute::kShowFileSystemTagOnDiskIcon).toBool();
@@ -323,13 +325,13 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
         fsLabelWidth += 2;
     else
         fsLabelWidth = 0;
-    devName = option.fontMetrics.elidedText(devName, Qt::ElideMiddle, TextMaxWidth - fsLabelWidth - 5);
+    devName = view->fontMetrics().elidedText(devName, Qt::ElideMiddle, TextMaxWidth - fsLabelWidth - 5);
 
     // draw label
     QRect realPaintedRectForDevName;
     QRect preRectForDevName = option.rect;
-    preRectForDevName.setLeft(option.rect.left() + kItemLeftMargin + IconSize + kIconLabelSpacing);
-    preRectForDevName.setTop(option.rect.top() + kItemTopMargin);
+    preRectForDevName.setLeft(option.rect.left() + kIconLeftMargin + IconSize + kIconLabelSpacing);
+    preRectForDevName.setTop(option.rect.top() + 10);
     preRectForDevName.setHeight(view->fontMetrics().height());
     painter->drawText(preRectForDevName, Qt::TextWrapAnywhere, devName, &realPaintedRectForDevName);
 
@@ -376,19 +378,17 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
 void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     auto fnt = view->font();
-    fnt.setPixelSize(int(view->fontInfo().pixelSize() * 0.85));
+    fnt.setPixelSize(12);
+    fnt.setWeight(QFont::Normal);
     painter->setFont(fnt);
     painter->setPen(DApplicationHelper::instance()->palette(option.widget).color(DPalette::TextTips));
 
     const int IconSize = view->iconSize().width();
     // this is the rect of device name.
     QRect detailRect = option.rect;
-    detailRect.setLeft(detailRect.left() + kItemLeftMargin + kIconLabelSpacing + IconSize);
-    detailRect.setTop(detailRect.top() + kItemTopMargin);
+    detailRect.setLeft(detailRect.left() + kIconLeftMargin + kIconLabelSpacing + IconSize);
+    detailRect.setTop(detailRect.top() + 40);
     detailRect.setHeight(view->fontMetrics().height());
-    // adjust it
-    detailRect.setTop(detailRect.bottom() + kLabelTotalSpacing);
-    detailRect.setHeight(QFontMetrics(fnt).height());
 
     qint64 sizeUsage = 0, sizeTotal = 0;
     bool totalSizeVisiable = index.data(ComputerModel::kTotalSizeVisiableRole).toBool();
@@ -410,8 +410,8 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     // paint progress bar
     bool progressVisiable = index.data(ComputerModel::kProgressVisiableRole).toBool();
     if (progressVisiable) {
-        const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kItemLeftMargin - kIconLabelSpacing - kItemRightMargin;
-        QRect progressBarRect(QPoint(detailRect.x(), detailRect.bottom() + kTotalProgressBarSpacing), QSize(TextMaxWidth, 6));
+        const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
+        QRect progressBarRect(QPoint(detailRect.x(), option.rect.y() + 64), QSize(TextMaxWidth, 6));
 
         // preset the progress bar data
         QStyleOptionProgressBar progressBar;
@@ -445,5 +445,4 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
         painter->drawText(detailRect, Qt::AlignLeft, deviceDescription);
     }
 }
-
 }
