@@ -116,14 +116,23 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
 
 void SelectHelper::select(const QList<QUrl> &urls)
 {
+    QList<QModelIndex> indexes {};
+    for (const QUrl &url : urls) {
+        const QModelIndex &index = view->model()->getIndexByUrl(url);
+        indexes << index;
+    }
+
+    select(indexes);
+}
+
+void SelectHelper::select(const QList<QModelIndex> &indexes)
+{
     QModelIndex firstIndex;
     QModelIndex lastIndex;
 
     const QModelIndex &root = view->model()->rootIndex();
     view->selectionModel()->clearSelection();
-    for (const QUrl &url : urls) {
-        const QModelIndex &index = view->model()->getIndexByUrl(url);
-
+    for (const QModelIndex &index : indexes) {
         if (!index.isValid() || index == root) {
             continue;
         }
