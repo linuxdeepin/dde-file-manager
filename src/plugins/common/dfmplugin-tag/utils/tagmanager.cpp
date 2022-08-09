@@ -455,6 +455,13 @@ bool TagManager::fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl)
     return false;
 }
 
+bool TagManager::fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction action)
+{
+    Q_UNUSED(action)
+
+    return fileDropHandle(fromUrls, toUrl);
+}
+
 bool TagManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
 {
     Q_ASSERT(mapGroup);

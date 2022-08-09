@@ -53,6 +53,7 @@ class SideBar : public dpf::Plugin
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_Group_Sort)
+    DPF_EVENT_REG_HOOK(hook_Item_DropData)
 
 public:
     virtual void initialize() override;

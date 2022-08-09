@@ -280,6 +280,9 @@ QModelIndex SideBarView::getCurrentIndex() const
 
 bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const
 {
+    if (dpfHookSequence->run("dfmplugin_sidebar", "hook_Item_DropData", srcUrls, dstUrl, action))
+        return true;
+
     auto dstInfo = InfoFactory::create<AbstractFileInfo>(dstUrl);
 
     // convert destnation url to real path if it's a symbol link.

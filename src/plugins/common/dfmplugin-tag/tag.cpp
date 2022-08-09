@@ -161,6 +161,8 @@ void Tag::followEvents()
     // titlebar crumb
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", TagManager::instance(), &TagManager::sepateTitlebarCrumb);
 
+    dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DropData", TagManager::instance(), &TagManager::fileDropHandleWithAction);
+
     // url trans
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TagHelper::instance(), &TagHelper::urlsToLocal);
 
