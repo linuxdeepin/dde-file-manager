@@ -33,7 +33,7 @@ class LogUtils final
 {
 public:
     explicit LogUtils() = delete;
-    static void checkAppCacheLogDir(const QString &subDirName = "");
+    static bool checkAppCacheLogDir(const QString &subDirName = "");
     static QString localDateTime();
     static QString localDate();
     static QString localDataTimeCSV();

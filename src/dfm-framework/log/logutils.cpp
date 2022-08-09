@@ -37,15 +37,20 @@ DPF_BEGIN_NAMESPACE
  * \param subDirName 日志目录下的子目录
  *  默认为空，则检查顶层目录
  */
-void LogUtils::checkAppCacheLogDir(const QString &subDirName)
+bool LogUtils::checkAppCacheLogDir(const QString &subDirName)
 {
-    if (!QFileInfo::exists(LogUtils::cachePath()))
+    QString &&cachePath { LogUtils::cachePath() };
+    if (cachePath.isEmpty() || !cachePath.contains("cache"))
+        return false;
+    if (!QFileInfo::exists(cachePath))
         QDir().mkdir(LogUtils::cachePath());
 
-    if (subDirName.isEmpty()) return;
+    if (subDirName.isEmpty())
+        return false;
+    if (!QFileInfo::exists(cachePath + "/" + subDirName))
+        return QDir().mkdir(cachePath + "/" + subDirName);
 
-    if (!QFileInfo::exists(cachePath() + "/" + subDirName))
-        QDir().mkdir(cachePath() + "/" + subDirName);
+    return true;
 }
 
 /*!

@@ -36,6 +36,7 @@
 #    include <QDate>
 #    include <QDir>
 #    include <QtConcurrent>
+#    include <unistd.h>
 
 DPF_BEGIN_NAMESPACE
 
@@ -88,6 +89,10 @@ static void rmExpiredLogs()
 
 static void outCheck(const QMessageLogContext &context, const QString &msg)
 {
+    // root user
+    if (static_cast<int>(getuid()) == 0)
+        return;
+
     //加锁保证内部函数执行时的互斥
     QMutexLocker lock(GlobalPrivate::mutex());
 
@@ -96,7 +101,8 @@ static void outCheck(const QMessageLogContext &context, const QString &msg)
             + LogUtils::localDate() + "_" + QString(tcFileName);
 
     // "codeTimeCheck" dir
-    LogUtils::checkAppCacheLogDir(tcDirName);
+    if (!LogUtils::checkAppCacheLogDir(tcDirName))
+        return;
 
     // 文件名称为空 或者当前日期不正确(跨天日志分割)
     if (file()->fileName().isEmpty()
