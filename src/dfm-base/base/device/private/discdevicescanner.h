@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QDBusVariant>
+#include <QThreadPool>
 
 namespace dfmbase {
 
@@ -53,6 +54,7 @@ private Q_SLOTS:
 
 private:
     QScopedPointer<QTimer> discScanTimer { new QTimer };
+    QScopedPointer<QThreadPool> threadPool { new QThreadPool };
     QStringList discDevIdGroup;
 };
 

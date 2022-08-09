@@ -28,6 +28,7 @@
 
 #include <QDebug>
 #include <QCoreApplication>
+#include <QRunnable>
 
 #include <mutex>
 
@@ -41,6 +42,25 @@ static const char kDesktopAppName[] { "dde-desktop" };
 static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 
 using namespace dfmbase;
+
+class Scanner : public QRunnable
+{
+public:
+    explicit Scanner(const QString &dev)
+        : device(dev)
+    {
+    }
+    void run() override
+    {
+        QByteArray devBytes { device.toLatin1() };
+        int fd { ::open(devBytes.data(), O_RDWR | O_NONBLOCK) };
+        if (fd != -1)
+            ::close(fd);
+    }
+
+private:
+    QString device;
+};
 
 DiscDeviceScanner::DiscDeviceScanner(QObject *parent)
     : QObject(parent)
@@ -110,7 +130,7 @@ void DiscDeviceScanner::updateScanState()
 void DiscDeviceScanner::scanOpticalDisc()
 {
     using namespace GlobalServerDefines;
-    std::for_each(discDevIdGroup.cbegin(), discDevIdGroup.cend(), [](const QString &id) {
+    std::for_each(discDevIdGroup.cbegin(), discDevIdGroup.cend(), [this](const QString &id) {
         const auto &info { DevProxyMng->queryBlockInfo(id) };
         auto &&dev { info.value(DeviceProperty::kDevice).toString() };
         bool optical { info.value(DeviceProperty::kOptical).toBool() };
@@ -118,10 +138,9 @@ void DiscDeviceScanner::scanOpticalDisc()
             return;
         if (!dev.startsWith("/dev/sr"))
             return;
-        QByteArray devBytes { dev.toLatin1() };
-        int fd { ::open(devBytes.data(), O_RDWR | O_NONBLOCK) };
-        if (fd != -1)
-            ::close(fd);
+        // QThreadPool takes ownership and deletes 'Scanner' automatically
+        Scanner *scanner = new Scanner(dev);
+        threadPool->start(scanner);
     });
 }
 
@@ -180,6 +199,7 @@ void DiscDeviceScanner::initialize()
         connect(DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this, &DiscDeviceScanner::onDevicePropertyChangedQVar);
         connect(DevMngIns, &DeviceManager::opticalDiscWorkStateChanged, this, &DiscDeviceScanner::onDiscWoringStateChanged);
 
+        threadPool->setMaxThreadCount(4);
         this->startScan();
     });
 }
