@@ -2,6 +2,12 @@
 
 #include <QPainter>
 
+inline constexpr int kIconLeftPadding = { 9 };
+inline constexpr int kTextLeftPadding = { 32 };
+inline constexpr int kIconWidth = { 14 };
+inline constexpr int kIconHeight = { 14 };
+inline constexpr int kItemHeight = { 30 };
+
 using namespace dfmplugin_titlebar;
 
 CompleterViewDelegate::CompleterViewDelegate(QObject *parent)
@@ -24,6 +30,9 @@ void CompleterViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
     }
 
+    // draw icon
+    paintItemIcon(painter, option, index);
+
     // draw text
     if (option.state & (QStyle::State_Selected | QStyle::State_MouseOver)) {
         painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
@@ -35,13 +44,45 @@ void CompleterViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     auto text = index.data(Qt::DisplayRole).toString();
     if (text.contains('\n'))
         text = text.replace('\n', ' ');
-    painter->drawText(option.rect.adjusted(31, 0, 0, 0), Qt::AlignVCenter, text);
+    painter->drawText(option.rect.adjusted(kTextLeftPadding, 0, 0, 0), Qt::AlignVCenter, text);
 }
 
 QSize CompleterViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QSize s = QStyledItemDelegate::sizeHint(option, index);
-    s.setHeight(24);
+    s.setHeight(kItemHeight);
 
     return s;
+}
+
+void CompleterViewDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    const auto &icon = index.data(Qt::DecorationRole).value<QIcon>();
+    if (icon.isNull())
+        return;
+
+    QStyleOptionViewItem opt = option;
+
+    // draw icon
+    QRect iconRect = opt.rect.adjusted(kIconLeftPadding, 0, 0, 0);
+    iconRect.setSize({ kIconWidth, kIconHeight });
+    iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
+
+    const auto &px = createCustomOpacityPixmap(icon.pixmap(iconRect.size()), 0.4f);
+    painter->drawPixmap(iconRect, px);
+}
+
+QPixmap CompleterViewDelegate::createCustomOpacityPixmap(const QPixmap &px, float opacity) const
+{
+    QPixmap tmp(px.size());
+    tmp.fill(Qt::transparent);
+
+    QPainter p(&tmp);
+    p.setCompositionMode(QPainter::CompositionMode_Source);
+    p.drawPixmap(0, 0, px);
+    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+    p.fillRect(px.rect(), QColor(0, 0, 0, static_cast<int>(255 * opacity)));
+    p.end();
+
+    return tmp;
 }

@@ -57,6 +57,9 @@ ConnectToServerDialog::ConnectToServerDialog(const QUrl &url, QWidget *parent)
     setWindowTitle(tr("Connect to Server"));
     initializeUi();
     initConnect();
+
+    protocolIPRegExp.setPattern(R"(((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})");
+    protocolIPRegExp.setCaseSensitivity(Qt::CaseInsensitive);
 }
 
 void ConnectToServerDialog::onButtonClicked(const int &index)
@@ -79,8 +82,11 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         QDir::setCurrent(currentDir);
 
         // add search history list
-        if (!SearchHistroyManager::instance()->toStringList().contains(text))
+        if (!SearchHistroyManager::instance()->getSearchHistroy().contains(text))
             SearchHistroyManager::instance()->writeIntoSearchHistory(text);
+
+        if (protocolIPRegExp.exactMatch(text))
+            SearchHistroyManager::instance()->writeIntoIPHistory(text);
     }
     close();
 }
@@ -157,7 +163,7 @@ void ConnectToServerDialog::initializeUi()
     contentFrame->setLayout(contentLayout);
     addContent(contentFrame);
 
-    const QStringList &stringList = SearchHistroyManager::instance()->toStringList();
+    const QStringList &stringList = SearchHistroyManager::instance()->getSearchHistroy();
 
     QCompleter *completer = new QCompleter(stringList, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);

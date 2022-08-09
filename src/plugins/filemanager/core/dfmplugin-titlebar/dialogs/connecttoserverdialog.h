@@ -60,6 +60,7 @@ private:
         kConnectButton
     };
 
+    QRegExp protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
     QUrl currentUrl;
     QComboBox *serverComboBox { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *theAddButton { nullptr };

@@ -26,6 +26,7 @@
 #include "views/addressbar.h"
 #include "views/completerview.h"
 #include "views/completerviewdelegate.h"
+#include "models/completerviewmodel.h"
 
 #include "dfm-base/base/urlroute.h"
 
@@ -45,7 +46,6 @@
 #include <QVariantAnimation>
 #include <QPalette>
 #include <QAction>
-#include <QStringListModel>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -58,6 +58,7 @@ class AddressBarPrivate : public QObject
     friend class AddressBar;
     AddressBar *const q;
     QStringList historyList;
+    QList<IPHistroyData> ipHistroyList;
     QTimer timer;
     DSpinner spinner;
     DIconButton *pauseButton;
@@ -73,26 +74,33 @@ class AddressBarPrivate : public QObject
     int lastPreviousKey { Qt::Key_Control };   //记录上前一个按钮
     bool isKeyPressed { false };
     CrumbInterface *crumbController { nullptr };
-    QStringListModel completerModel;
+    CompleterViewModel completerModel;
     CompleterView *completerView { nullptr };
     QCompleter *urlCompleter { nullptr };
     CompleterViewDelegate cpItemDelegate;
     // inputMethodEvent中获取不到选中的内容，故缓存光标开始位置以及选中长度
     int selectPosStart { 0 };
     int selectLength { 0 };
+    QRegExp ipRegExp;   // 0.0.0.0-255.255.255.255
+    QRegExp protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
+    bool inputIsIpAddress { false };
 
 public:
     explicit AddressBarPrivate(AddressBar *qq);
     void initializeUi();
     void initConnect();
     void initData();
-    void updateSearchHistory();
+    void updateHistory();
     void setIndicator(enum AddressBar::IndicatorType type);
     void setCompleter(QCompleter *c);
     void clearCompleterModel();
     void updateCompletionState(const QString &text);
     void doComplete();
     void requestCompleteByUrl(const QUrl &url);
+
+    void completeSearchHistory(const QString &text);
+    void completeIpAddress(const QString &text);
+    void completeLocalPath(const QString &text, const QUrl &url, int slashIndex);
 
 public Q_SLOTS:
     void startSpinner();

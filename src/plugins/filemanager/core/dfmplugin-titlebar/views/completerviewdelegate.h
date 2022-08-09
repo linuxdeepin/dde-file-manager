@@ -17,6 +17,12 @@ public:
                const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option,
                    const QModelIndex &index) const override;
+
+private:
+    void paintItemIcon(QPainter *painter,
+                       const QStyleOptionViewItem &option,
+                       const QModelIndex &index) const;
+    QPixmap createCustomOpacityPixmap(const QPixmap &px, float opacity) const;
 };
 
 }

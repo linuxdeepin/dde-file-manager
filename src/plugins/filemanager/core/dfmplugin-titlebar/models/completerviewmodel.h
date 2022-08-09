@@ -1,11 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangsheng<zhangsheng@uniontech.com>
+ * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             lanxuesong<lanxuesong@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
+ * Maintainer: liuzhangjian<liuzhangjian@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,35 +17,30 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef SEARCHHISTROYMANAGER_H
-#define SEARCHHISTROYMANAGER_H
+ */
+#ifndef COMPLETERVIEWMODEL_H
+#define COMPLETERVIEWMODEL_H
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <QObject>
+#include <DStandardItem>
+
+#include <QStandardItemModel>
+
+DWIDGET_USE_NAMESPACE
 
 namespace dfmplugin_titlebar {
 
-class SearchHistroyManager : public QObject
+class CompleterViewModel : public QStandardItemModel
 {
     Q_OBJECT
-    Q_DISABLE_COPY(SearchHistroyManager)
-
 public:
-    static SearchHistroyManager *instance();
+    explicit CompleterViewModel(QObject *parent = nullptr);
+    ~CompleterViewModel();
 
-    QStringList getSearchHistroy();
-    QList<IPHistroyData> getIPHistory();
-    void writeIntoSearchHistory(QString keyword);
-    void writeIntoIPHistory(const QString &ipAddr);
-    bool removeSearchHistory(QString keyword);
-    void clearHistory();
-
-private:
-    explicit SearchHistroyManager(QObject *parent = nullptr);
+    void setStringList(const QStringList &list);
+    void removeAll();
 };
-
 }
 
-#endif   // SEARCHHISTROYMANAGER_H
+#endif   // COMPLETERVIEWMODEL_H

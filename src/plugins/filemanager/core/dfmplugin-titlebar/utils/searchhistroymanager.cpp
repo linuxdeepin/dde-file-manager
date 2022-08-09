@@ -25,10 +25,18 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
+#include <QDateTime>
 #include <QDebug>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
+
+inline constexpr char kConfigGroupName[] { "Cache" };
+inline constexpr char kConfigSearchHistroy[] { "SearchHistroy" };
+inline constexpr char kConfigIPHistroy[] { "IPHistroy" };
+
+inline constexpr char kKeyIP[] { "ip" };
+inline constexpr char kKeyLastAccessed[] { "lastAccessed" };
 
 SearchHistroyManager *SearchHistroyManager::instance()
 {
@@ -41,9 +49,26 @@ SearchHistroyManager::SearchHistroyManager(QObject *parent)
 {
 }
 
-QStringList SearchHistroyManager::toStringList()
+QStringList SearchHistroyManager::getSearchHistroy()
 {
-    return Application::appObtuselySetting()->value("Cache", "SearchHistroy").toStringList();
+    return Application::appObtuselySetting()->value(kConfigGroupName, kConfigSearchHistroy).toStringList();
+}
+
+QList<IPHistroyData> SearchHistroyManager::getIPHistory()
+{
+    QList<IPHistroyData> data;
+    const auto &list = Application::appObtuselySetting()->value(kConfigGroupName, kConfigIPHistroy).toList();
+    for (const auto &item : list) {
+        const auto &map = item.toMap();
+        const auto &ip = map.value(kKeyIP).toString();
+        const auto &time = map.value(kKeyLastAccessed).toString();
+        if (ip.isEmpty() || time.isEmpty())
+            continue;
+
+        data << IPHistroyData(ip, QDateTime::fromString(time, Qt::ISODate));
+    }
+
+    return data;
 }
 
 void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
@@ -51,11 +76,34 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
     if (keyword.isEmpty())
         return;
 
-    QStringList list = toStringList();
+    QStringList list = getSearchHistroy();
 
     list << keyword;
 
-    Application::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+    Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
+}
+
+void SearchHistroyManager::writeIntoIPHistory(const QString &ipAddr)
+{
+    if (ipAddr.isEmpty())
+        return;
+
+    auto history = getIPHistory();
+    IPHistroyData data(ipAddr, QDateTime::currentDateTime());
+    if (history.contains(data)) {
+        int index = history.indexOf(data);
+        history.replace(index, data);
+    } else {
+        history << data;
+    }
+
+    QVariantList list;
+    for (const auto &item : history) {
+        if (item.isRecentlyAccessed())
+            list << item.toVariantMap();
+    }
+
+    Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigIPHistroy, list);
 }
 
 bool SearchHistroyManager::removeSearchHistory(QString keyword)
@@ -64,9 +112,9 @@ bool SearchHistroyManager::removeSearchHistory(QString keyword)
         return false;
 
     bool ret = false;
-    QStringList list = toStringList();
+    QStringList list = getSearchHistroy();
     if (list.removeOne(keyword)) {
-        Application::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+        Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
         ret = true;
     } else {
         qWarning() << keyword << "not exist in history";
@@ -77,6 +125,5 @@ bool SearchHistroyManager::removeSearchHistory(QString keyword)
 void SearchHistroyManager::clearHistory()
 {
     QStringList list;
-
-    Application::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+    Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
 }

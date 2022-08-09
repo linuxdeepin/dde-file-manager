@@ -31,6 +31,7 @@
 #include <QObject>
 #include <QUrl>
 #include <QVariantMap>
+#include <QDateTime>
 
 #include <functional>
 
@@ -69,6 +70,46 @@ public:
     QUrl url {};
     QString displayText;
     QString iconName;
+};
+
+class IPHistroyData
+{
+public:
+    IPHistroyData(const QString &str, const QDateTime &time)
+        : lastAccessed(time)
+    {
+        int index = str.indexOf("://");
+        accessedType = str.mid(0, index);
+        ipData = str.mid(index + 3);
+    }
+
+    inline bool isRecentlyAccessed() const
+    {
+        QDateTime startTime = QDateTime::currentDateTime();
+        QDateTime endTime = startTime.addDays(-7);
+
+        return (lastAccessed <= startTime && lastAccessed >= endTime);
+    }
+
+    inline QVariantMap toVariantMap() const
+    {
+        QVariantMap map;
+        QString ip = QString("%1://%2").arg(accessedType, ipData);
+        map.insert("ip", ip);
+        map.insert("lastAccessed", lastAccessed.toString(Qt::ISODate));
+
+        return map;
+    }
+
+    inline bool operator==(const IPHistroyData &other)
+    {
+        return (!this->ipData.compare(other.ipData)
+                && !this->accessedType.compare(other.accessedType, Qt::CaseInsensitive));
+    }
+
+    QString accessedType;
+    QString ipData;
+    QDateTime lastAccessed;
 };
 
 DPTITLEBAR_END_NAMESPACE

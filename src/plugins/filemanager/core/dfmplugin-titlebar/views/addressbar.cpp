@@ -27,7 +27,6 @@
 #include "utils/titlebarhelper.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-
 #include "dfm-base/base/schemefactory.h"
 
 #include <QCompleter>
@@ -127,6 +126,9 @@ void AddressBarPrivate::initConnect()
 
 void AddressBarPrivate::initData()
 {
+    ipRegExp.setPattern(R"(((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})");
+    protocolIPRegExp.setPattern(R"(((smb)|(ftp)|(sftp))(://)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3})");
+    protocolIPRegExp.setCaseSensitivity(Qt::CaseInsensitive);
     // 设置补全组件
     urlCompleter = new QCompleter(this);
     setCompleter(urlCompleter);
@@ -134,14 +136,17 @@ void AddressBarPrivate::initData()
     // 设置补全选择组件为popup的焦点
     completerView->setFocus(Qt::FocusReason::PopupFocusReason);
 
-    updateSearchHistory();
+    updateHistory();
 }
 
-void AddressBarPrivate::updateSearchHistory()
+void AddressBarPrivate::updateHistory()
 {
     historyList.clear();
-    historyList.append(SearchHistroyManager::instance()->toStringList());
+    historyList.append(SearchHistroyManager::instance()->getSearchHistroy());
     isHistoryInCompleterModel = false;
+
+    ipHistroyList.clear();
+    ipHistroyList = SearchHistroyManager::instance()->getIPHistory();
 }
 
 /*!
@@ -197,68 +202,30 @@ void AddressBarPrivate::clearCompleterModel()
 
 void AddressBarPrivate::updateCompletionState(const QString &text)
 {
-    int slashIndex = text.lastIndexOf('/');
-    bool hasSlash = (slashIndex != -1);
-    QString strLocalPath(text);
-    strLocalPath = hasSlash ? strLocalPath.left(slashIndex + 1) : strLocalPath;
-
-    const auto &currentDir = QDir::currentPath();
-    QUrl curUrl = q->currentUrl();
-    if (curUrl.isLocalFile())
-        QDir::setCurrent(curUrl.toLocalFile());
-
-    const QUrl &url = UrlRoute::fromUserInput(strLocalPath, false);
-    QDir::setCurrent(currentDir);
-
-    // Check if the entered text is a string to search or a url to complete.
-    if (hasSlash && url.isValid() && !url.scheme().isEmpty()) {
-        // Update Icon
-        setIndicator(AddressBar::IndicatorType::JumpTo);
-
-        // Check if (now is parent) url exist.
-        auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (url.isValid() && info && !info->exists())
-            return;
-
-        // Check if we should start a new completion transmission.
-        if (!isHistoryInCompleterModel
-            && (this->completerBaseString == text.left(slashIndex + 1)
-                || UrlRoute::fromUserInput(completerBaseString) == UrlRoute::fromUserInput(text.left(slashIndex + 1)))) {
-            urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));   // set completion prefix first
-            onCompletionModelCountChanged();   // will call complete()
-            return;
-        }
-
-        // Set Base String
-        completerBaseString = text.left(slashIndex + 1);
-
-        // start request
-        // 由于下方urlCompleter->setCompletionPrefix会触发onCompletionModelCountChanged接口
-        // 因此在这之前需要将completerModel清空，否则会使用上一次model中的数据
-        clearCompleterModel();
-
-        // set completion prefix.
-        urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));
-
-        // URL completion.
-        requestCompleteByUrl(url);
+    if (ipRegExp.exactMatch(text)) {
+        inputIsIpAddress = true;
+        completeIpAddress(text);
     } else {
-        // Update Icon
-        setIndicator(AddressBar::IndicatorType::Search);
+        inputIsIpAddress = false;
+        int slashIndex = text.lastIndexOf('/');
+        bool hasSlash = (slashIndex != -1);
+        QString strLocalPath(text);
+        strLocalPath = hasSlash ? strLocalPath.left(slashIndex + 1) : strLocalPath;
 
-        // set completion prefix.
-        urlCompleter->setCompletionPrefix(text);
+        const auto &currentDir = QDir::currentPath();
+        QUrl curUrl = q->currentUrl();
+        if (curUrl.isLocalFile())
+            QDir::setCurrent(curUrl.toLocalFile());
 
-        // Check if we already loaded history list in model
-        if (isHistoryInCompleterModel)
-            return;
+        const QUrl &url = UrlRoute::fromUserInput(strLocalPath, false);
+        QDir::setCurrent(currentDir);
 
-        // Set Base String
-        this->completerBaseString = "";
-
-        // History completion.
-        isHistoryInCompleterModel = true;
-        completerModel.setStringList(historyList);
+        // Check if the entered text is a string to search or a url to complete.
+        if (hasSlash && url.isValid() && !url.scheme().isEmpty()) {
+            completeLocalPath(text, url, slashIndex);
+        } else {
+            completeSearchHistory(text);
+        }
     }
 }
 
@@ -296,12 +263,8 @@ void AddressBarPrivate::appendToCompleterModel(const QStringList &stringList)
         if (str.isEmpty())
             continue;
 
-        if (completerModel.insertRow(completerModel.rowCount())) {
-            QModelIndex index = completerModel.index(completerModel.rowCount() - 1, 0);
-            completerModel.setData(index, str);
-        } else {
-            qWarning("Failed to append some data to completerModel.");
-        }
+        QStandardItem *item = new QStandardItem(str);
+        completerModel.appendRow(item);
     }
 }
 
@@ -342,6 +305,93 @@ void AddressBarPrivate::requestCompleteByUrl(const QUrl &url)
         connect(crumbController, &CrumbInterface::completionListTransmissionCompleted, this, &AddressBarPrivate::onTravelCompletionListFinished);
     }
     crumbController->requestCompletionList(url);
+}
+
+void AddressBarPrivate::completeSearchHistory(const QString &text)
+{
+    // Update Icon
+    setIndicator(AddressBar::IndicatorType::Search);
+
+    // set completion prefix.
+    urlCompleter->setCompletionPrefix(text);
+
+    // Check if we already loaded history list in model
+    if (isHistoryInCompleterModel)
+        return;
+
+    // Set Base String
+    this->completerBaseString = "";
+
+    // History completion.
+    isHistoryInCompleterModel = true;
+    completerModel.setStringList(historyList);
+}
+
+void AddressBarPrivate::completeIpAddress(const QString &text)
+{
+    // Update Icon
+    setIndicator(AddressBar::IndicatorType::Search);
+
+    // set completion prefix.
+    urlCompleter->setCompletionPrefix("");
+
+    // Set Base String
+    this->completerBaseString = text;
+
+    completerModel.setRowCount(3);
+    completerModel.setItem(0, 0, new QStandardItem("smb://" + text));
+    completerModel.setItem(1, 0, new QStandardItem("ftp://" + text));
+    completerModel.setItem(2, 0, new QStandardItem("sftp://" + text));
+
+    QIcon recentIcon = QIcon::fromTheme("document-open-recent-symbolic");
+    for (const auto &data : ipHistroyList) {
+        if (data.ipData == text && data.isRecentlyAccessed()) {
+            if (!data.accessedType.compare("smb", Qt::CaseInsensitive)) {
+                auto item = completerModel.item(0);
+                item->setIcon(recentIcon);
+            } else if (!data.accessedType.compare("ftp", Qt::CaseInsensitive)) {
+                auto item = completerModel.item(1);
+                item->setIcon(recentIcon);
+            } else if (!data.accessedType.compare("sftp", Qt::CaseInsensitive)) {
+                auto item = completerModel.item(2);
+                item->setIcon(recentIcon);
+            }
+        }
+    }
+}
+
+void AddressBarPrivate::completeLocalPath(const QString &text, const QUrl &url, int slashIndex)
+{
+    // Update Icon
+    setIndicator(AddressBar::IndicatorType::JumpTo);
+
+    // Check if (now is parent) url exist.
+    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    if (url.isValid() && info && !info->exists())
+        return;
+
+    // Check if we should start a new completion transmission.
+    if (!isHistoryInCompleterModel
+        && (this->completerBaseString == text.left(slashIndex + 1)
+            || UrlRoute::fromUserInput(completerBaseString) == UrlRoute::fromUserInput(text.left(slashIndex + 1)))) {
+        urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));   // set completion prefix first
+        onCompletionModelCountChanged();   // will call complete()
+        return;
+    }
+
+    // Set Base String
+    completerBaseString = text.left(slashIndex + 1);
+
+    // start request
+    // 由于下方urlCompleter->setCompletionPrefix会触发onCompletionModelCountChanged接口
+    // 因此在这之前需要将completerModel清空，否则会使用上一次model中的数据
+    clearCompleterModel();
+
+    // set completion prefix.
+    urlCompleter->setCompletionPrefix(text.mid(slashIndex + 1));
+
+    // URL completion.
+    requestCompleteByUrl(url);
 }
 
 void AddressBarPrivate::startSpinner()
@@ -388,6 +438,18 @@ void AddressBarPrivate::onReturnPressed()
             historyList.append(text);
             SearchHistroyManager::instance()->writeIntoSearchHistory(text);
         }
+
+        if (protocolIPRegExp.exactMatch(text)) {
+            IPHistroyData data(text, QDateTime::currentDateTime());
+            if (ipHistroyList.contains(data)) {
+                // update
+                int index = ipHistroyList.indexOf(data);
+                ipHistroyList.replace(index, data);
+            } else {
+                ipHistroyList << data;
+            }
+            SearchHistroyManager::instance()->writeIntoIPHistory(text);
+        }
     }
 
     bool isSearch { false };
@@ -405,15 +467,31 @@ void AddressBarPrivate::insertCompletion(const QString &completion)
     if (urlCompleter->widget() != q) {
         return;
     }
-    q->setText(completerBaseString + completion);
+
+    if (inputIsIpAddress) {
+        q->setText(completion);
+    } else {
+        q->setText(completerBaseString + completion);
+    }
 }
 
 void AddressBarPrivate::onCompletionHighlighted(const QString &highlightedCompletion)
 {
-    int completionPrefixLen = urlCompleter->completionPrefix().length();
-    int selectBeginPos = highlightedCompletion.length() - completionPrefixLen;
-    q->setText(completerBaseString + highlightedCompletion);
-    q->setSelection(q->text().length() - selectBeginPos, q->text().length());
+    if (inputIsIpAddress) {
+        if (highlightedCompletion.isEmpty()) {
+            q->setText(completerBaseString);
+            return;
+        }
+
+        int selectLength = highlightedCompletion.length() - completerBaseString.length();
+        q->setText(highlightedCompletion);
+        q->setSelection(0, selectLength);
+    } else {
+        int completionPrefixLen = urlCompleter->completionPrefix().length();
+        int selectBeginPos = highlightedCompletion.length() - completionPrefixLen;
+        q->setText(completerBaseString + highlightedCompletion);
+        q->setSelection(q->text().length() - selectBeginPos, q->text().length());
+    }
 }
 
 void AddressBarPrivate::updateIndicatorIcon()
@@ -575,7 +653,7 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
             bool ret = SearchHistroyManager::instance()->removeSearchHistory(completeResult);
             if (ret) {
                 d->historyList.clear();
-                d->historyList.append(SearchHistroyManager::instance()->toStringList());
+                d->historyList.append(SearchHistroyManager::instance()->getSearchHistroy());
                 d->completerModel.setStringList(d->historyList);
             }
         }
@@ -669,7 +747,7 @@ void AddressBar::showEvent(QShowEvent *event)
 {
     d->timer.start();
     d->updateIndicatorIcon();
-    d->updateSearchHistory();
+    d->updateHistory();
     return QLineEdit::showEvent(event);
 }
 
