@@ -57,6 +57,7 @@ public:
     QMap<QString, DFMBASE_NAMESPACE::BackgroundWidgetPointer> backgroundWidgets;
     QMap<QString, QString> backgroundPaths;
     int currentWorkspaceIndex = 1;
+    bool enableBackground = true;
 };
 
 DDP_BACKGROUND_END_NAMESPACE

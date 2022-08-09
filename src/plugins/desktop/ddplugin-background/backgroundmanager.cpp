@@ -170,7 +170,9 @@ QString BackgroundManagerPrivate::getDefaultBackground() const
 
 bool BackgroundManagerPrivate::isEnableBackground()
 {
-    return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
+    //return windowManagerHelper->windowManagerName() == DWindowManagerHelper::KWinWM || !windowManagerHelper->hasComposite();
+    // fix bug152473
+    return enableBackground;
 }
 
 BackgroundManager::BackgroundManager(QObject *parent)
