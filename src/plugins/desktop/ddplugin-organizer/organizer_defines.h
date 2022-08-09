@@ -28,7 +28,7 @@
 #include <QSharedPointer>
 #include <QRect>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 enum OrganizerMode {
     kNormalized = 0,
@@ -65,16 +65,14 @@ public:
 
 typedef QSharedPointer<CollectionBaseData> CollectionBaseDataPtr;
 
-class CollectionStyle
+struct CollectionStyle
 {
-public:
     int screenIndex = -1;
     QString key;
     QRect rect;
     CollectionFrameSize sizeMode = CollectionFrameSize::kSmall;
 };
-
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(ddplugin_organizer::CollectionFrameSize);
 

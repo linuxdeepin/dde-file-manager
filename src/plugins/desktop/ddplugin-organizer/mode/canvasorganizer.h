@@ -30,7 +30,7 @@
 
 class QMimeData;
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 class FileProxyModel;
 class CanvasModelShell;
 class CanvasViewShell;
@@ -73,6 +73,6 @@ protected:
     QList<SurfacePointer> surfaces;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // MUSTERMODE_H

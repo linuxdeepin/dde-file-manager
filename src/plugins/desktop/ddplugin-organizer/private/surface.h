@@ -25,7 +25,7 @@
 
 #include <QWidget>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class Surface : public QWidget
 {
@@ -44,6 +44,6 @@ protected:
 
 typedef QSharedPointer<Surface> SurfacePointer;
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // SURFACE_H

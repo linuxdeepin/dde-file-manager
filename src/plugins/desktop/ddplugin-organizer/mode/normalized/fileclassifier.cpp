@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 FileClassifier *ClassifierCreator::createClassifier(Classifier mode)
 {

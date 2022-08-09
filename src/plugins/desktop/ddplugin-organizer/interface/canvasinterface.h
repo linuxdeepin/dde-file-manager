@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CanvasInterfacePrivate;
 class CanvasInterface : public QObject
@@ -51,6 +51,6 @@ private:
     CanvasInterfacePrivate *d;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // CANVASINTERFACE_H

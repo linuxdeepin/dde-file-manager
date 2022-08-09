@@ -25,7 +25,7 @@
 
 #include <private/qtextengine_p.h>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 void ElideTextLayout::setLineHeight(int height)
 {

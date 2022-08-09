@@ -25,7 +25,7 @@
 
 #include <DFrame>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionFramePrivate;
 
@@ -88,6 +88,6 @@ private:
     QSharedPointer<CollectionFramePrivate> d = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONFRAME_H

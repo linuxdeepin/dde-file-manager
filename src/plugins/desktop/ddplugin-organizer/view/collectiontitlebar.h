@@ -26,7 +26,7 @@
 
 #include <DBlurEffectWidget>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionTitleBarPrivate;
 
@@ -59,6 +59,6 @@ private:
     QSharedPointer<CollectionTitleBarPrivate> d = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONTITLEBAR_H

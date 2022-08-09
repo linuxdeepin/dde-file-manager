@@ -29,7 +29,7 @@
 
 class QAbstractItemModel;
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CanvasInterface;
 class FileInfoModelShell : public QObject
@@ -55,6 +55,6 @@ protected:
     mutable QAbstractItemModel *model = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // FILEINFOMODELSHELL_H

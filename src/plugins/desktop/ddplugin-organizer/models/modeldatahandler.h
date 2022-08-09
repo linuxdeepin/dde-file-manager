@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class ModelDataHandler
 {
@@ -38,6 +38,6 @@ public:
     virtual bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl);
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // MODELDATAHANDLER_H

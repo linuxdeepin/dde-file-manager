@@ -21,7 +21,7 @@
 #include "organizerplugin.h"
 #include "framemanager.h"
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 void OrganizerPlugin::initialize()
 {

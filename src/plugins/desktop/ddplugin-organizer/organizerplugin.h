@@ -25,7 +25,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class FrameManager;
 class OrganizerPlugin : public dpf::Plugin
@@ -40,6 +40,6 @@ private:
     FrameManager *instance = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // ORGANIZERPLUGIN_H

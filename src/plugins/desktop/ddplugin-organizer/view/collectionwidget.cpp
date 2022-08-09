@@ -32,7 +32,7 @@
 static constexpr int kTitleBarHeight = 36;
 
 DWIDGET_USE_NAMESPACE
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 CollectionWidgetPrivate::CollectionWidgetPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionWidget *qq, QObject *parent)
     : QObject(parent)

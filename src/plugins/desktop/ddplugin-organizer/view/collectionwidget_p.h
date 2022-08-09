@@ -26,7 +26,7 @@
 #include <QVBoxLayout>
 #include <QPointer>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionDataProvider;
 
@@ -50,6 +50,6 @@ public:
     QPointer<CollectionDataProvider> provider = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONWIDGET_P_H

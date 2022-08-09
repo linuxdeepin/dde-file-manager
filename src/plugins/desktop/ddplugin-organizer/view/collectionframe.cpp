@@ -32,7 +32,7 @@ static constexpr int kStretchHeight = 10;
 static constexpr int kWidgetRoundRadius = 18;
 
 DWIDGET_USE_NAMESPACE
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 CollectionFramePrivate::CollectionFramePrivate(CollectionFrame *qq)
     : q(qq)

@@ -25,7 +25,7 @@
 #include <QPaintEvent>
 #endif
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 Surface::Surface(QWidget *parent) : QWidget(parent)
 {

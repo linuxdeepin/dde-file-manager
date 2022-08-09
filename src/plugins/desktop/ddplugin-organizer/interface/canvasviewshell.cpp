@@ -29,7 +29,7 @@
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(const QMimeData *)
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 #define CanvasViewPush(topic) \
         dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic))

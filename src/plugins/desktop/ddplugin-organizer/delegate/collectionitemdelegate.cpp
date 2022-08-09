@@ -54,7 +54,7 @@ QT_END_NAMESPACE
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 #define EDITOR_SHOW_SUFFIX "_d_whether_show_suffix"
 

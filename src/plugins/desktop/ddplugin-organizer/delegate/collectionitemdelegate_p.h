@@ -28,7 +28,7 @@
 #include <QTextDocument>
 #include <QAbstractItemView>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionItemDelegatePrivate
 {
@@ -63,6 +63,6 @@ public:
     CollectionItemDelegate *const q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif   // COLLECTIONITEMDELEGATE_P_H

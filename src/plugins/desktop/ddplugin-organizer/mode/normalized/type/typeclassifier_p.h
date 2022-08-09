@@ -23,7 +23,7 @@
 
 #include "typeclassifier.h"
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class TypeClassifierPrivate
 {
@@ -31,6 +31,8 @@ public:
     explicit TypeClassifierPrivate(TypeClassifier *qq);
     ~TypeClassifierPrivate();
 public:
+    TypeClassifier::Categories categories;
+    const QHash<TypeClassifier::Category, QString> categoryKey;
     const QHash<QString, QString> keyNames;
     const QSet<QString> docSuffix;
     const QSet<QString> picSuffix;
@@ -42,6 +44,6 @@ private:
     TypeClassifier *q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // TYPECLASSIFIER_P_H

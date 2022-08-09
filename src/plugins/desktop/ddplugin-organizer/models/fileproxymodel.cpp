@@ -34,7 +34,7 @@
 #include <QMimeData>
 
 DFMBASE_USE_NAMESPACE
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 FileProxyModelPrivate::FileProxyModelPrivate(FileProxyModel *qq)
     : QObject(qq)

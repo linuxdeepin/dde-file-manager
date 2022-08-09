@@ -29,7 +29,7 @@
 #include <QUrl>
 #include <QPointer>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionViewPrivate : public QObject
 {
@@ -112,6 +112,6 @@ public:
     QUrl dropTargetUrl;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONVIEW_P_H

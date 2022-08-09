@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 class OrganizerConfig;
 class ConfigPresenter : public QObject
 {
@@ -34,15 +34,20 @@ class ConfigPresenter : public QObject
 public:
     static ConfigPresenter* instance();
     bool initialize();
-    bool isEnable() const;
+public:
+    inline bool isEnable() const {return enable;}
     void setEnable(bool e);
-    OrganizerMode mode() const;
+
+    inline OrganizerMode mode() const {return curMode;}
     void setMode(OrganizerMode m);
-    DisplaySize displaySize() const;
-    void setDisplaySize(DisplaySize size);
-    Classifier classification() const;
+
+    inline DisplaySize displaySize() const {return curDisplaySize;}
+    inline void setDisplaySize(DisplaySize size) {curDisplaySize = size;}
+
+    inline Classifier classification() const {return curClassifier;}
     void setClassification(Classifier cf);
-    QList<CollectionBaseDataPtr> customProfile() const;
+
+    inline QList<CollectionBaseDataPtr> customProfile() const;
     void saveCustomProfile(const QList<CollectionBaseDataPtr> &baseDatas);
 
     QList<CollectionBaseDataPtr> normalProfile() const;
@@ -55,6 +60,9 @@ public:
     CollectionStyle customStyle(const QString &key) const;
     void updateCustomStyle(const CollectionStyle &style) const;
     void writeCustomStyle(const QList<CollectionStyle> &styles) const;
+public:
+    int enabledTypeCategories() const;
+    void setEnabledTypeCategories(int flags);
 signals:
     void changeEnableState(bool e);
     void switchToNormalized(int);
@@ -73,7 +81,7 @@ private:
     Classifier curClassifier = Classifier::kType;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #define CfgPresenter ConfigPresenter::instance()
 #endif // CONFIGPRESENTER_H

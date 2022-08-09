@@ -27,7 +27,7 @@
 
 #include <QMimeData>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 CanvasOrganizer *OrganizerCreator::createOrganizer(OrganizerMode mode)
 {

@@ -22,7 +22,7 @@
 
 #include <QUrl>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 ModelDataHandler::ModelDataHandler()
 {

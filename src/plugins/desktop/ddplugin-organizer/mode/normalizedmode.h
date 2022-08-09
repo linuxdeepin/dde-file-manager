@@ -25,7 +25,7 @@
 
 #include <QSharedPointer>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 class NormalizedModePrivate;
 class NormalizedMode : public CanvasOrganizer
 {
@@ -55,6 +55,6 @@ private:
     NormalizedModePrivate *d = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // NORMALIZEDMODE_H

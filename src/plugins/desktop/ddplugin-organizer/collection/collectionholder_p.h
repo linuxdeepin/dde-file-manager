@@ -29,7 +29,7 @@
 #include <QPointer>
 #include <QTimer>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionHolderPrivate : public QObject
 {
@@ -54,6 +54,6 @@ public:
     QTimer styleTimer;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONHOLDER_P_H

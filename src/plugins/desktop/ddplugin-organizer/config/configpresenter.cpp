@@ -26,7 +26,7 @@
 #include <QDebug>
 #include <QApplication>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 class ConfigPresenterGlobal : public ConfigPresenter{};
 Q_GLOBAL_STATIC(ConfigPresenterGlobal, configPresenter)
@@ -79,11 +79,6 @@ bool ConfigPresenter::initialize()
     return true;
 }
 
-bool ConfigPresenter::isEnable() const
-{
-    return enable;
-}
-
 void ConfigPresenter::setEnable(bool e)
 {
     enable = e;
@@ -91,31 +86,11 @@ void ConfigPresenter::setEnable(bool e)
     conf->sync();
 }
 
-OrganizerMode ConfigPresenter::mode() const
-{
-    return curMode;
-}
-
 void ConfigPresenter::setMode(OrganizerMode m)
 {
     curMode = m;
     conf->setMode(m);
     conf->sync();
-}
-
-DisplaySize ConfigPresenter::displaySize() const
-{
-    return curDisplaySize;
-}
-
-void ConfigPresenter::setDisplaySize(DisplaySize size)
-{
-    curDisplaySize = size;
-}
-
-Classifier ConfigPresenter::classification() const
-{
-    return curClassifier;
 }
 
 void ConfigPresenter::setClassification(Classifier cf)
@@ -167,6 +142,17 @@ void ConfigPresenter::updateCustomStyle(const CollectionStyle &style) const
 void ConfigPresenter::writeCustomStyle(const QList<CollectionStyle> &styles) const
 {
     conf->writeCollectionStyle(true, styles);
+    conf->sync();
+}
+
+int ConfigPresenter::enabledTypeCategories() const
+{
+    return conf->enabledTypeCategories();
+}
+
+void ConfigPresenter::setEnabledTypeCategories(int flags)
+{
+    conf->setEnabledTypeCategories(flags);
     conf->sync();
 }
 

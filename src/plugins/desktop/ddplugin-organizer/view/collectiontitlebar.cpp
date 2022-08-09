@@ -32,7 +32,7 @@ static constexpr int kNameMaxLength = 255;
 static constexpr int kMenuBtnWidth = 18;
 static constexpr int kMenuBtnHeight = 18;
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 
 CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, CollectionTitleBar *qq)

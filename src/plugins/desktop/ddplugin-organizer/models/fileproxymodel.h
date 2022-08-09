@@ -27,7 +27,7 @@
 
 #include <QAbstractProxyModel>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 class ModelDataHandler;
 class CanvasViewShell;
 class FileInfoModelShell;
@@ -71,6 +71,6 @@ private:
     FileProxyModelPrivate *d;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // FILEPROXYMODEL_H

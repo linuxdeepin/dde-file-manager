@@ -27,7 +27,7 @@
 
 #include <QTimer>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class FileProxyModelPrivate : public QObject
 {
@@ -60,6 +60,6 @@ private:
     FileProxyModel *q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // FILEPROXYMODEL_P_H

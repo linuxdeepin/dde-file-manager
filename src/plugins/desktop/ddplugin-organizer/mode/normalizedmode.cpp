@@ -26,7 +26,7 @@
 #include <QDebug>
 #include <QTime>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 static constexpr int kCollectionGridColumnCount = 4;
 static constexpr int kSmallCollectionGridRowCount = 2;

@@ -27,7 +27,7 @@
 #include <QTextOption>
 #include <QTextLayout>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionView;
 class CollectionItemDelegatePrivate;
@@ -94,6 +94,6 @@ private:
     CollectionItemDelegatePrivate *const d = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif   // COLLECTIONITEMDELEGATE_H

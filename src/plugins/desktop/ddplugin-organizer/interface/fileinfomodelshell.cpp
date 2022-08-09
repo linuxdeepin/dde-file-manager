@@ -25,7 +25,7 @@
 
 #include <QModelIndex>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 #define FileInfoModelSubscribe(topic, func) \
         dpfSignalDispatcher->subscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);

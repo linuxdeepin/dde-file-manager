@@ -23,7 +23,7 @@
 
 #include "ddplugin_organizer_global.h"
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 namespace ActionID {
 inline constexpr char kOrganizeDesktop[] = "organize-desktop";
@@ -41,6 +41,6 @@ inline constexpr char kDisplaySizeNormal[] = "display-size-normal";
 inline constexpr char kDisplaySizeLarger[] = "display-size-larger";
 } // namespace ActionID
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // ORGANIZERMENU_DEFINES_H

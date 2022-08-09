@@ -25,7 +25,7 @@
 
 #include <QVBoxLayout>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionFramePrivate
 {
@@ -91,6 +91,6 @@ public:
     CollectionFrame::CollectionFrameStretchStyle stretchStyle = CollectionFrame::CollectionFrameStretchUnLimited;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONFRAME_P_H

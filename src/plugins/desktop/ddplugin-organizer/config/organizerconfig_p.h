@@ -26,7 +26,7 @@
 #include <QSettings>
 #include <QTimer>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class OrganizerConfigPrivate
 {
@@ -41,6 +41,6 @@ private:
     OrganizerConfig *q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // ORGANIZERCONFIG_P_H

@@ -32,7 +32,7 @@
 #include <QHBoxLayout>
 #include <QAtomicInteger>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionTitleBarPrivate : public QObject
 {
@@ -66,6 +66,6 @@ public:
     QString titleName;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONTITLEBAR_P_H

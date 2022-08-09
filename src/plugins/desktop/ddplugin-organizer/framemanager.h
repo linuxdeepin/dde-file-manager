@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class FrameManagerPrivate;
 class FrameManager : public QObject
@@ -53,6 +53,6 @@ private:
     FrameManagerPrivate *d;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // FRAMEMANAGER_H

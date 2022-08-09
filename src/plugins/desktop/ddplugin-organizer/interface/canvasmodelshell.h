@@ -27,7 +27,7 @@
 
 class QMimeData;
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 class CanvasInterface;
 class CanvasModelShell : public QObject
 {
@@ -50,7 +50,7 @@ private slots:
     bool eventDataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData);
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 
 #endif // CANVASMODELSHELL_H

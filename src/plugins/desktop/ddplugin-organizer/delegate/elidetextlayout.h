@@ -25,7 +25,7 @@
 
 #include <QTextLayout>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class ElideTextLayout : public QTextLayout
 {
@@ -63,6 +63,6 @@ private:
     Qt::Alignment alignmentFlags;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // ELIDETEXTLAYOUT_H

@@ -30,7 +30,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class FrameManagerPrivate : public QObject
 {
@@ -66,6 +66,6 @@ private:
     FrameManager *q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // FRAMEMANAGER_P_H

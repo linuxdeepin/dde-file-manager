@@ -27,17 +27,17 @@
 #include <QDir>
 #include <QDebug>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 namespace  {
 inline constexpr char kGroupGeneral[] = "";   // "General" is default group in QSetting, so using empty string to access 'General' group.
 inline constexpr char kKeyEnable[] = "Enable";
 inline constexpr char kKeyMode[] = "Mode";
 
-inline constexpr char kGroupNormalized[] = "Normalized";
+inline constexpr char kGroupCollectionNormalized[] = "Collection_Normalized";
 inline constexpr char kKeyClassification[] = "Classification";
 
-inline constexpr char kGroupCustomed[] = "Customed";
+inline constexpr char kGroupCollectionCustomed[] = "Collection_Customed";
 inline constexpr char kGroupCollectionBase[] = "CollectionBase";
 inline constexpr char kKeyName[] = "Name";
 inline constexpr char kKeyKey[] = "Key";
@@ -50,6 +50,10 @@ inline constexpr char kKeyY[] = "Y";
 inline constexpr char kKeyWidth[] = "Width";
 inline constexpr char kKeyHeight[] = "Height";
 inline constexpr char kKeySizeMode[] = "SizeMode";
+
+inline constexpr char kGroupClassifierType[] = "Classifier_Type";
+inline constexpr char kKeyEnabledItems[] = "EnabledItems";
+
 } // namepace
 
 OrganizerConfigPrivate::OrganizerConfigPrivate(OrganizerConfig *qq) : q(qq)
@@ -140,18 +144,18 @@ void OrganizerConfig::sync(int ms)
 
 int OrganizerConfig::classification() const
 {
-    return d->value(kGroupNormalized, kKeyClassification, Classifier::kType).toInt();
+    return d->value(kGroupCollectionNormalized, kKeyClassification, Classifier::kType).toInt();
 }
 
 void OrganizerConfig::setClassification(int cf)
 {
-    d->setValue(kGroupNormalized, kKeyClassification, cf);
+    d->setValue(kGroupCollectionNormalized, kKeyClassification, cf);
 }
 
 QList<CollectionBaseDataPtr> OrganizerConfig::collectionBase(bool custom) const
 {
     QStringList profileKeys;
-    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
     d->settings->beginGroup(kGroupCollectionBase);
     profileKeys = d->settings->childGroups();
     d->settings->endGroup();
@@ -167,7 +171,7 @@ QList<CollectionBaseDataPtr> OrganizerConfig::collectionBase(bool custom) const
 
 CollectionBaseDataPtr OrganizerConfig::collectionBase(bool custom, const QString &key) const
 {
-    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
     d->settings->beginGroup(kGroupCollectionBase);
     d->settings->beginGroup(key);
 
@@ -205,7 +209,7 @@ CollectionBaseDataPtr OrganizerConfig::collectionBase(bool custom, const QString
 
 void OrganizerConfig::updateCollectionBase(bool custom, const CollectionBaseDataPtr &base)
 {
-    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
     d->settings->beginGroup(kGroupCollectionBase);
     // delete old datas
     d->settings->remove(base->key);
@@ -234,7 +238,7 @@ void OrganizerConfig::updateCollectionBase(bool custom, const CollectionBaseData
 
 void OrganizerConfig::writeCollectionBase(bool custom, const QList<CollectionBaseDataPtr> &base)
 {
-    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
     // delete all old datas
     d->settings->remove(kGroupCollectionBase);
     d->settings->beginGroup(kGroupCollectionBase);
@@ -266,7 +270,7 @@ void OrganizerConfig::writeCollectionBase(bool custom, const QList<CollectionBas
 
 CollectionStyle OrganizerConfig::collectionStyle(bool custom, const QString &key) const
 {
-    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
     d->settings->beginGroup(kGroupCollectionStyle);
     d->settings->beginGroup(key);
     CollectionStyle style;
@@ -291,7 +295,7 @@ CollectionStyle OrganizerConfig::collectionStyle(bool custom, const QString &key
 
 void OrganizerConfig::updateCollectionStyle(bool custom, const CollectionStyle &style)
 {
-    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
     d->settings->beginGroup(kGroupCollectionStyle);
     // delete old datas
     d->settings->remove(style.key);
@@ -313,7 +317,7 @@ void OrganizerConfig::updateCollectionStyle(bool custom, const CollectionStyle &
 
 void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionStyle> &styles)
 {
-    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(custom ? kGroupCollectionCustomed : kGroupCollectionNormalized);
     // delete all old datas
     d->settings->remove(kGroupCollectionStyle);
     d->settings->beginGroup(kGroupCollectionStyle);
@@ -337,6 +341,17 @@ void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionSt
 
     d->settings->endGroup();
     d->settings->endGroup();
+}
+
+int OrganizerConfig::enabledTypeCategories() const
+{
+    // the defalut vaule -1 represents all items.
+    return d->value(kGroupClassifierType, kKeyEnabledItems, -1).toInt();
+}
+
+void OrganizerConfig::setEnabledTypeCategories(int flags)
+{
+    d->setValue(kGroupClassifierType, kKeyEnabledItems, flags);
 }
 
 OrganizerConfig::~OrganizerConfig()

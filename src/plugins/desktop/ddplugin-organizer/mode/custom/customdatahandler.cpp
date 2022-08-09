@@ -22,7 +22,7 @@
 
 #include <QDebug>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 CustomDataHandler::CustomDataHandler(QObject *parent)
     : CollectionDataProvider(parent)

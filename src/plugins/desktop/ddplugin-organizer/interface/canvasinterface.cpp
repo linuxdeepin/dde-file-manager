@@ -25,7 +25,7 @@
 
 #include <QFileInfo>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 #define CanvasManagerPush(topic) \
         dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic))

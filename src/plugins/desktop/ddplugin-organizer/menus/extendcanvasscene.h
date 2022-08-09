@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class ExtendCanvasCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -54,6 +54,6 @@ private:
     ExtendCanvasScenePrivate *const d = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // EXTENDCANVASSCENE_H

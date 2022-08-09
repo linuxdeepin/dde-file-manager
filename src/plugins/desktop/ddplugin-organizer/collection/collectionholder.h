@@ -29,7 +29,7 @@
 #include <QObject>
 #include <QSharedPointer>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class FileProxyModel;
 class CollectionFrame;
@@ -91,6 +91,6 @@ private:
 
 typedef QSharedPointer<CollectionHolder> CollectionHolderPointer;
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONHOLDER_H

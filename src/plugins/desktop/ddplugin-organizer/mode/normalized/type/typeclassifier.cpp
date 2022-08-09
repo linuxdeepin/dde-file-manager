@@ -20,11 +20,12 @@
  */
 #include "typeclassifier_p.h"
 #include "models/modeldatahandler.h"
+#include "config/configpresenter.h"
 
 #include "file/local/localfileinfo.h"
 #include "base/schemefactory.h"
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 DFMBASE_USE_NAMESPACE
 
 namespace  {
@@ -69,18 +70,35 @@ TypeClassifier::TypeClassifier(QObject *parent)
     : FileClassifier(parent)
     , d(new TypeClassifierPrivate(this))
 {
-    QHash<QString, QString> *namePtr = const_cast<QHash<QString, QString> *>(&d->keyNames);
-    *namePtr = {
-            {kTypeKeyApp, tr("Apps")},
-            {kTypeKeyDoc, tr("Documents")},
-            {kTypeKeyPic, tr("Pictures")},
-            {kTypeKeyVid, tr("Videos")},
-            {kTypeKeyMuz, tr("Music")},
-            {kTypeKeyFld, tr("Folders")},
-            {kTypeKeyOth, tr("Other")}
+    {
+        QHash<QString, QString> *namePtr = const_cast<QHash<QString, QString> *>(&d->keyNames);
+        *namePtr = {
+                {kTypeKeyApp, tr("Apps")},
+                {kTypeKeyDoc, tr("Documents")},
+                {kTypeKeyPic, tr("Pictures")},
+                {kTypeKeyVid, tr("Videos")},
+                {kTypeKeyMuz, tr("Music")},
+                {kTypeKeyFld, tr("Folders")},
+                {kTypeKeyOth, tr("Other")}
+            };
+    }
+    {
+        QHash<TypeClassifier::Category, QString> *categoryPtr = const_cast<QHash<TypeClassifier::Category, QString> *>(&d->categoryKey);
+        *categoryPtr = {
+            {kCatApplication, kTypeKeyApp},
+            {kCatDocument, kTypeKeyDoc},
+            {kCatPicture, kTypeKeyPic},
+            {kCatVideo, kTypeKeyVid},
+            {kCatMusic, kTypeKeyMuz},
+            {kCatFloder, kTypeKeyFld}
         };
+    }
     // all datas shoud be accepted.
     handler = new ModelDataHandler();
+
+    // get enable items
+    d->categories = TypeClassifier::Categories(CfgPresenter->enabledTypeCategories());
+    qInfo() << "enabled categories" << d->categories.operator Int();
 }
 
 TypeClassifier::~TypeClassifier()
@@ -104,21 +122,33 @@ ModelDataHandler *TypeClassifier::dataHandler() const
 
 QStringList TypeClassifier::classes() const
 {
-    QStringList usedKey = d->keyNames.keys();
-    // order it
-    const QMap<QString, int> fixOrder = {
-        {kTypeKeyApp, 0},
-        {kTypeKeyDoc, 1},
-        {kTypeKeyPic, 2},
-        {kTypeKeyVid, 3},
-        {kTypeKeyMuz, 4},
-        {kTypeKeyFld, 5},
-        {kTypeKeyOth, 6}
-    };
-    const int max = fixOrder.size();
-    std::sort(usedKey.begin(), usedKey.end(), [&fixOrder, max](const QString &t1, const QString &t2){
-        return fixOrder.value(t1, max) < fixOrder.value(t2, max);
-    });
+    // classes
+    QStringList usedKey;
+    if (d->categories == kCatNone) {
+       // nothing to do.
+    } else if (d->categories == kCatAll) {
+        // append category in order.
+        usedKey.append(kTypeKeyApp);
+        usedKey.append(kTypeKeyDoc);
+        usedKey.append(kTypeKeyPic);
+        usedKey.append(kTypeKeyVid);
+        usedKey.append(kTypeKeyFld);
+    } else {
+        // test enabled category.
+        for (int i = kCatApplication; i <= kCatEnd; i = i << 1) {
+            auto cat = static_cast<Category>(i);
+            if (d->categories.testFlag(cat)) {
+                auto key = d->categoryKey.value(cat);
+                if (d->keyNames.contains(key)) {
+                    Q_ASSERT(!usedKey.contains(key));
+                    usedKey.append(key);
+                }
+            }
+        }
+    }
+
+    // the `other` is a fixed item.
+    usedKey.append(kTypeKeyOth);
     return usedKey;
 }
 
@@ -126,38 +156,30 @@ QString TypeClassifier::classify(const QUrl &url) const
 {
     auto itemInfo = InfoFactory::create<LocalFileInfo>(url);
     if (!itemInfo)
-        return QString();
+        return QString(); // must return null string to represent the file is not existed.
 
-    if (itemInfo->isDir())
-        return kTypeKeyFld;
+    QString key;
+    if (itemInfo->isDir()) {
+        key = kTypeKeyFld;
+    } else {
+        // classified by suffix.
+        const QString &suffix = itemInfo->suffix().toLower();
+        if (d->docSuffix.contains(suffix))
+            key = kTypeKeyDoc;
+        else if (d->appSuffix.contains(suffix))
+            key = kTypeKeyApp;
+        else if (d->vidSuffix.contains(suffix))
+            key = kTypeKeyVid;
+        else if (d->picSuffix.contains(suffix))
+            key = kTypeKeyPic;
+        else if (d->muzSuffix.contains(suffix))
+            key = kTypeKeyMuz;
+    }
 
-    // classified by suffix.
-    const QString &suffix = itemInfo->suffix().toLower();
-    if (d->docSuffix.contains(suffix))
-        return kTypeKeyDoc;
-    else if (d->appSuffix.contains(suffix))
-        return kTypeKeyApp;
-    else if (d->vidSuffix.contains(suffix))
-        return kTypeKeyVid;
-    else if (d->picSuffix.contains(suffix))
-        return kTypeKeyPic;
-    else if (d->muzSuffix.contains(suffix))
-        return kTypeKeyMuz;
-
-#if 0
-     // classified by mimetype.
-//    const QString &mimeType = itemInfo->mimeTypeName();
-//    if (d->appMimeType.contains(mimeType))
-//        return kTypeKeyApp;
-//    else if (mimeType.startsWith("video/"))
-//        return kTypeKeyVid;
-//    else if (mimeType.startsWith("image/"))
-//        return kTypeKeyPic;
-//    else if (mimeType.startsWith("audio/"))
-//        return kTypeKeyMuz;
-#endif
-
-    return kTypeKeyOth;
+    // set it to other if it not belong to any category or its category is disabled.
+    if (key.isEmpty() || !d->categories.testFlag(d->categoryKey.key(key)))
+        key = kTypeKeyOth;
+    return key;
 }
 
 QString TypeClassifier::className(const QString &key) const

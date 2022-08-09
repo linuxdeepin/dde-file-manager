@@ -27,7 +27,7 @@
 #include "canvasviewshell.h"
 #include "canvasgridshell.h"
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CanvasInterfacePrivate
 {
@@ -43,6 +43,6 @@ private:
     CanvasInterface *q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // CANVASINTERFACE_P_H

@@ -29,7 +29,7 @@
 #include "interfaces/private/abstractmenuscene_p.h"
 
 DFMBASE_USE_NAMESPACE
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class ExtendCanvasScenePrivate : public AbstractMenuScenePrivate
 {
@@ -53,6 +53,6 @@ private:
     ExtendCanvasScene *q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // EXTENDCANVASSCENE_P_H

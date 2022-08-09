@@ -35,7 +35,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DArrowRectangle;
 DWIDGET_END_NAMESPACE
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class RenameEdit: public DTK_WIDGET_NAMESPACE::DTextEdit
 {
@@ -102,6 +102,6 @@ protected:
     DTK_WIDGET_NAMESPACE::DArrowRectangle *tooltip = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // ITEMEDITOR_H

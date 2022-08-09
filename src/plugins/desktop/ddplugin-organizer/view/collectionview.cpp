@@ -43,7 +43,7 @@
 #include <QDrag>
 #include <QMimeData>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

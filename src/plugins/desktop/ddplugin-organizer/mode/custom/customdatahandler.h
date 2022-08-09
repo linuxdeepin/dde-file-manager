@@ -28,7 +28,7 @@
 #include <QUrl>
 #include <QHash>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CustomDataHandler : public CollectionDataProvider, public ModelDataHandler
 {
@@ -54,6 +54,6 @@ public:
     bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // CUSTOMDATAHANDLER_H

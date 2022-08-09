@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class OrganizerConfigPrivate;
 class OrganizerConfig : public QObject
@@ -52,7 +52,9 @@ public:
     CollectionStyle collectionStyle(bool custom, const QString &key) const;
     void updateCollectionStyle(bool custom, const CollectionStyle &style);
     void writeCollectionStyle(bool custom, const QList<CollectionStyle> &styles);
-
+public:
+    int enabledTypeCategories() const;
+    void setEnabledTypeCategories(int flags);
 signals:
 
 public slots:
@@ -62,6 +64,6 @@ private:
     OrganizerConfigPrivate *d;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // ORGANIZERCONFIG_H

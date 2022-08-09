@@ -24,7 +24,7 @@
 #include "models/fileproxymodel.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 
 CollectionHolderPrivate::CollectionHolderPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionHolder *qq, QObject *parent)

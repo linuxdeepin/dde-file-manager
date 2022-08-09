@@ -34,7 +34,7 @@
 #include <QLabel>
 
 DWIDGET_USE_NAMESPACE
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 ItemEditor::ItemEditor(QWidget *parent) : QFrame(parent)
 {

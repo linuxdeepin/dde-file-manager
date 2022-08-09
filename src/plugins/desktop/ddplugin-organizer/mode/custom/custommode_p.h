@@ -27,7 +27,7 @@
 
 #include <QTimer>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CustomModePrivate
 {
@@ -41,6 +41,6 @@ private:
     CustomMode *q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // CUSTOMMODE_P_H

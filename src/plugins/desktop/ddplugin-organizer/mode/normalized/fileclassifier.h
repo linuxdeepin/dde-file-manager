@@ -29,7 +29,7 @@
 #include <QHash>
 #include <QUrl>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class ModelDataHandler;
 class ClassifierCreator
@@ -61,6 +61,6 @@ public:
 signals:
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // FILECLASSIFIER_H

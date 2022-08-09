@@ -23,7 +23,7 @@
 
 #include "canvasorganizer.h"
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CustomModePrivate;
 class CustomMode : public CanvasOrganizer
@@ -57,6 +57,6 @@ private:
     CustomModePrivate *d;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // CUSTOMMODE_H

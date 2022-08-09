@@ -28,7 +28,7 @@
 
 #include <QAbstractItemModel>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class CollectionTitleBar;
 class CollectionView;
@@ -77,6 +77,6 @@ private:
     QSharedPointer<CollectionWidgetPrivate> d = nullptr;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // COLLECTIONWIDGET_H

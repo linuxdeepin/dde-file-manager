@@ -25,7 +25,7 @@
 #include "fileclassifier.h"
 #include "collection/collectionholder.h"
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
 class NormalizedModePrivate : public QObject
 {
@@ -45,6 +45,6 @@ private:
     NormalizedMode *q;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
 #endif // NORMALIZEDMODE_P_H

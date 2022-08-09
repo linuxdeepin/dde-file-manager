@@ -27,7 +27,7 @@
 #include <QMenu>
 #include <QDebug>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *ExtendCanvasCreator::create()

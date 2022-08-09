@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QPair>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
 
 CollectionDataProvider::CollectionDataProvider(QObject *parent) : QObject(parent)
 {
