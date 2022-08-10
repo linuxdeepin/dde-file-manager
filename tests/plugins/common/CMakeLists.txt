@@ -4,3 +4,4 @@ set(DESKTOP_PLUGIN_DIR "${PROJECT_SOURCE_PATH}/plugins/common")
 
 # add sub dir for business plugins
 add_subdirectory(dfmplugin-burn)
+add_subdirectory(dfmplugin-preview)

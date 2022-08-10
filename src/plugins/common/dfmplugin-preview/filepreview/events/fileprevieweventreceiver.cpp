@@ -20,6 +20,7 @@
  */
 #include "fileprevieweventreceiver.h"
 #include "utils/previewdialogmanager.h"
+#include "utils/previewhelper.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -43,5 +44,6 @@ void FilePreviewEventReceiver::connectService()
 
 void FilePreviewEventReceiver::showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
 {
-    PreviewDialogManager::instance()->showPreviewDialog(windowId, selecturls, dirUrl);
+    if(PreviewHelper::instance()->isPreviewEnabled())
+        PreviewDialogManager::instance()->showPreviewDialog(windowId, selecturls, dirUrl);
 }

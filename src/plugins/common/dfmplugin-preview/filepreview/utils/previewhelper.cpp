@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lixiang<lixianga@uniontech.com>
+ * Author:     likai<likai@uniontech.com>
  *
- * Maintainer: lixiang<lixianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,30 +19,30 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#include "filepreview.h"
-#include "events/fileprevieweventreceiver.h"
+*/
+#include "previewhelper.h"
 
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_filepreview;
 
-void FilePreview::initialize()
+PreviewHelper *PreviewHelper::instance()
 {
-    FilePreviewEventReceiver::instance()->connectService();
+    static PreviewHelper instance;
+    return &instance;
 }
 
-bool FilePreview::start()
+bool PreviewHelper::isPreviewEnabled()
 {
-    QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.preview", &err);
-    if (!ret)
-        qWarning() << "create dconfig failed: " << err;
-    return true;
+    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "previewEnable");
+    return ret.isValid() ? ret.toBool() : true;
 }
 
-dpf::Plugin::ShutdownFlag FilePreview::stop()
+PreviewHelper::PreviewHelper(QObject *parent)
+    :QObject (parent)
 {
-    return kSync;
 }
+
+
+

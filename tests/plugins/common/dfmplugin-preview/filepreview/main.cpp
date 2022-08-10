@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lixiang<lixianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: lixiang<lixianga@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,30 +17,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#include "filepreview.h"
-#include "events/fileprevieweventreceiver.h"
+*/
 
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include <gtest/gtest.h>
+#include <sanitizer/asan_interface.h>
+#include <QCoreApplication>
 
-DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_filepreview;
-
-void FilePreview::initialize()
+int main(int argc, char *argv[])
 {
-    FilePreviewEventReceiver::instance()->connectService();
-}
+    QCoreApplication app(argc, argv);
 
-bool FilePreview::start()
-{
-    QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.preview", &err);
-    if (!ret)
-        qWarning() << "create dconfig failed: " << err;
-    return true;
-}
+    ::testing::InitGoogleTest(&argc, argv);
 
-dpf::Plugin::ShutdownFlag FilePreview::stop()
-{
-    return kSync;
+    int ret = RUN_ALL_TESTS();
+
+#ifdef ENABLE_TSAN_TOOL
+    __sanitizer_set_report_path("../../../asan_dde-file-manager.log");
+#endif
+
+    return ret;
 }

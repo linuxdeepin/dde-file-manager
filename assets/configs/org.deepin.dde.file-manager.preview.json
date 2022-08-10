@@ -1,0 +1,17 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "previewEnable":{
+            "value": true,
+            "serial":0,
+            "flags":[],
+            "name":"Enable start preview",
+            "name[zh_CN]":"启用空格唤醒预览效果",
+            "description[zh_CN]":"用于控制是否允许空格唤醒预览效果",
+            "description":"It is used to control whether the space waking up preview is enabled",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}
