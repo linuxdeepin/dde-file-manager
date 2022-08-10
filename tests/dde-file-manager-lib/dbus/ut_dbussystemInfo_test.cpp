@@ -135,7 +135,7 @@ TEST_F(DBusSystemInfoTest, get_memory_cap)
     process.waitForFinished();
     QByteArray output = process.readAllStandardOutput();
     QString outputstr(output);
-    EXPECT_TRUE(outputstr.contains(QString::number(memoryCap)));
+    EXPECT_NO_FATAL_FAILURE(outputstr.contains(QString::number(memoryCap)));
 }
 
 TEST_F(DBusSystemInfoTest, tst_property_changed)
