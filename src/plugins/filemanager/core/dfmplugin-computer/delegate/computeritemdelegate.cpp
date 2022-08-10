@@ -31,9 +31,13 @@
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DPalette>
+#include <DPaletteHelper>
 
 #include <QLineEdit>
 #include <QPainter>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsBlurEffect>
 
 namespace dfmplugin_computer {
 
@@ -238,7 +242,12 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
     const int LeftMargin = 22;
 
     const auto &icon = index.data(Qt::ItemDataRole::DecorationRole).value<QIcon>();
-    painter->drawPixmap(option.rect.x() + LeftMargin, option.rect.y() + TopMargin, icon.pixmap(IconSize));
+    auto tl = option.rect.topLeft() + QPoint(LeftMargin, TopMargin);
+
+    const auto &&pm = icon.pixmap(IconSize);
+    //    const int ShadowBlurRadisu = 4;
+    //    painter->drawPixmap(tl + QPoint(-ShadowBlurRadisu, -ShadowBlurRadisu + 2), renderBlurShadow(pm, ShadowBlurRadisu));
+    painter->drawPixmap(tl, pm);
 
     QFont fnt(view->font());
     fnt.setPixelSize(14);
@@ -250,7 +259,7 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
     const int LabelWidth = QFontMetrics(fnt).width(ElidedText);
     const int LabelTopMargin = 10;
     auto labelRect = QRect(option.rect.x() + (option.rect.width() - LabelWidth) / 2, option.rect.y() + TopMargin + IconSize + LabelTopMargin, LabelWidth, 40);
-    painter->setPen(qApp->palette().color((option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : QPalette::ColorRole::Text));
+    painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
     painter->drawText(labelRect, Qt::AlignTop, ElidedText);
 }
 
@@ -273,7 +282,7 @@ void ComputerItemDelegate::paintLargeItem(QPainter *painter, const QStyleOptionV
  */
 void ComputerItemDelegate::prepareColor(QPainter *painter, const QStyleOptionViewItem &option) const
 {
-    DPalette palette(DApplicationHelper::instance()->palette(option.widget));
+    DPalette palette(DPaletteHelper::instance()->palette(option.widget));
     auto baseColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
 
     auto widgetColor = option.widget->palette().base().color();
@@ -333,6 +342,7 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     preRectForDevName.setLeft(option.rect.left() + kIconLeftMargin + IconSize + kIconLabelSpacing);
     preRectForDevName.setTop(option.rect.top() + 10);
     preRectForDevName.setHeight(view->fontMetrics().height());
+    painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
     painter->drawText(preRectForDevName, Qt::TextWrapAnywhere, devName, &realPaintedRectForDevName);
 
     // draw filesystem tag behind label
@@ -381,7 +391,7 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     fnt.setPixelSize(12);
     fnt.setWeight(QFont::Normal);
     painter->setFont(fnt);
-    painter->setPen(DApplicationHelper::instance()->palette(option.widget).color(DPalette::TextTips));
+    painter->setPen(DPaletteHelper::instance()->palette(option.widget).color(DPalette::TextTips));
 
     const int IconSize = view->iconSize().width();
     // this is the rect of device name.
@@ -411,33 +421,43 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     bool progressVisiable = index.data(ComputerModel::kProgressVisiableRole).toBool();
     if (progressVisiable) {
         const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
-        QRect progressBarRect(QPoint(detailRect.x(), option.rect.y() + 64), QSize(TextMaxWidth, 6));
+        double usedRate = sizeUsage * 1.0 / sizeTotal;
+        QRect totalRect(QPoint(detailRect.x(), option.rect.y() + 64), QSize(TextMaxWidth, 6));
+        QRect usedRect = totalRect;
+        usedRect.setRight(usedRect.left() + usedRect.width() * usedRate);
 
-        // preset the progress bar data
-        QStyleOptionProgressBar progressBar;
-        progressBar.textVisible = false;
-        progressBar.rect = progressBarRect;
-        progressBar.minimum = 0;
-        progressBar.maximum = 10000;
-        progressBar.progress = int(10000. * sizeUsage / sizeTotal);
-        if (progressBar.progress > progressBar.maximum)
-            progressBar.progress = progressBar.maximum;
+        QColor shadowColor;
+        QLinearGradient grad(usedRect.topLeft(), usedRect.topRight());
+        if (usedRate < 0.7) {
+            grad.setColorAt(0, QColor(0x0081FF));
+            grad.setColorAt(0.5, QColor(0x0081FF));
+            grad.setColorAt(1, QColor(0x06BEFD));
+            shadowColor = QColor(0, 129, 255, 255 * 0.4);
+        } else if (usedRate < 0.9) {
+            grad.setColorAt(0, QColor(0xFFAE00));
+            grad.setColorAt(0.5, QColor(0xFFD007));
+            grad.setColorAt(1, QColor(0xF6FF0D));
+            shadowColor = QColor(248, 174, 44, 255 * 0.4);
+        } else {
+            grad.setColorAt(0, QColor(0xFF0000));
+            grad.setColorAt(0.5, QColor(0xFF237A));
+            grad.setColorAt(1, QColor(0xFF9393));
+            shadowColor = QColor(255, 0, 83, 255 * 0.3);
+        }
 
-        QColor usageColor;
-        if (progressBar.progress < 7000)
-            usageColor = QColor(0xFF0081FF);
-        else if (progressBar.progress < 9000)
-            usageColor = QColor(0xFFF8AE2C);
-        else
-            usageColor = QColor(0xFFFF6170);
+        painter->setPen(Qt::NoPen);
 
-        // paint progress bar
-        progressBar.palette = option.widget ? option.widget->palette() : qApp->palette();
-        progressBar.palette.setColor(QPalette::ColorRole::Highlight, usageColor);
-        painter->setPen(Qt::PenStyle::NoPen);
-        auto style = option.widget && option.widget->style() ? option.widget->style() : qApp->style();
-        style->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &progressBar, painter, option.widget);
-        style->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &progressBar, painter, option.widget);
+        const int BlurRadius = 6;
+        auto shadowRect = usedRect;
+        shadowRect.adjust(-BlurRadius, -BlurRadius, BlurRadius, BlurRadius);
+        shadowRect.moveTop(shadowRect.top() + 4);
+        painter->drawPixmap(shadowRect, renderBlurShadow(usedRect.size(), shadowColor, BlurRadius));
+
+        painter->setBrush(QColor(0, 0, 0, 25));
+        painter->drawRoundedRect(totalRect, 3, 3);
+
+        painter->setBrush(grad);
+        painter->drawRoundedRect(usedRect, 3, 3);
     }
 
     QString deviceDescription = index.data(ComputerModel::kDeviceDescriptionRole).toString();
@@ -445,4 +465,42 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
         painter->drawText(detailRect, Qt::AlignLeft, deviceDescription);
     }
 }
+
+QPixmap ComputerItemDelegate::renderBlurShadow(const QSize &sz, const QColor &color, int blurRadius) const
+{
+    QPixmap pm(sz);
+    pm.fill(Qt::transparent);
+    QPainter p(&pm);
+    p.setPen(Qt::NoPen);
+    p.setBrush(color);
+    p.drawRect(0, 0, sz.width(), sz.height());
+    p.end();
+
+    return renderBlurShadow(pm, blurRadius);
+}
+
+QPixmap ComputerItemDelegate::renderBlurShadow(const QPixmap &pm, int blurRadius) const
+{
+    auto size = pm.size();
+    size.rwidth() += (2 * blurRadius);
+    size.rheight() += (2 * blurRadius);
+
+    QGraphicsBlurEffect *eff = new QGraphicsBlurEffect;
+    eff->setBlurRadius(blurRadius);
+
+    QGraphicsScene sc;
+    QGraphicsPixmapItem item;
+    item.setPixmap(pm);
+    item.setGraphicsEffect(eff);
+    sc.addItem(&item);
+
+    QPixmap ret(size);
+    ret.fill(Qt::transparent);
+    QPainter pp(&ret);
+    sc.render(&pp, QRectF(), QRectF(-blurRadius, -blurRadius, size.width(), size.height()));
+    pp.end();
+    delete eff;
+    return ret;
+}
+
 }
