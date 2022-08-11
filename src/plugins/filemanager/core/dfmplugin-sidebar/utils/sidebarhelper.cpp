@@ -29,6 +29,8 @@
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/configs/settingbackend.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/utils/systempathutil.h"
 
 #include <dfm-framework/dpf.h>
@@ -196,6 +198,49 @@ void SideBarHelper::updateSideBarSelection(quint64 winId)
             continue;
         sb->updateSelection();
     }
+}
+
+void SideBarHelper::bindSettings()
+{
+    static constexpr char kConf[] { "org.deepin.dde.file-manager.sidebar" };
+    static constexpr char kKey[] { "itemVisiable" };
+    static const std::map<QString, QString> kvs {
+        { "advance.items_in_sidebar.recent", "recent" },
+        { "advance.items_in_sidebar.home", "home" },
+        { "advance.items_in_sidebar.desktop", "desktop" },
+        { "advance.items_in_sidebar.videos", "videos" },
+        { "advance.items_in_sidebar.music", "music" },
+        { "advance.items_in_sidebar.pictures", "pictures" },
+        { "advance.items_in_sidebar.documents", "documents" },
+        { "advance.items_in_sidebar.downloads", "downloads" },
+        { "advance.items_in_sidebar.trash", "trash" },
+        { "advance.items_in_sidebar.computer", "computer" },
+        { "advance.items_in_sidebar.vault", "vault" },
+        { "advance.items_in_sidebar.root", "root_disk" },
+        { "advance.items_in_sidebar.data", "data_disk" },
+        { "advance.items_in_sidebar.other_disks", "other_disks" },
+        { "advance.items_in_sidebar.computers_in_lan", "computers_in_lan" },
+        { "advance.items_in_sidebar.my_shares", "my_shares" },
+        { "advance.items_in_sidebar.mounted_share_dirs", "mounted_share_dirs" },
+        { "advance.items_in_sidebar.tags", "tags" },
+    };
+
+    auto getter = [](const QString &key) {
+        return DConfigManager::instance()->value(kConf, kKey).toMap().value(key, true);
+    };
+    auto saver = [](const QString &key, const QVariant &val) {
+        auto curr = DConfigManager::instance()->value(kConf, kKey).toMap();
+        curr[key] = val;
+        DConfigManager::instance()->setValue(kConf, kKey, curr);
+    };
+
+    auto bindConf = [getter, saver](const QString &settingKey, const QString &dconfKey) {
+        using namespace std;
+        using namespace std::placeholders;
+        SettingBackend::instance()->addSettingAccessor(settingKey, bind(getter, dconfKey), bind(saver, dconfKey, _1));
+    };
+
+    std::for_each(kvs.begin(), kvs.end(), [bindConf](std::pair<QString, QString> pair) { bindConf(pair.first, pair.second); });
 }
 
 QMutex &SideBarHelper::mutex()

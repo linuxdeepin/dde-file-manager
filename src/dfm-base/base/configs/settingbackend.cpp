@@ -84,7 +84,7 @@ SettingBackend *SettingBackend::instance()
 
 QStringList SettingBackend::keys() const
 {
-    return d->keyToAA.keys() + d->keyToGA.keys();
+    return d->keyToAA.keys() + d->keyToGA.keys() + d->getters.keys();
 }
 
 QVariant SettingBackend::getOption(const QString &key) const

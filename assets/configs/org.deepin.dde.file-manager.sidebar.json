@@ -1,0 +1,36 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+        "itemVisiable":{
+            "value": {"recent":true,
+                      "home":true,
+                      "desktop":true,
+                      "videos":true,
+                      "music":true,
+                      "pictures":true,
+                      "documents":true,
+                      "downloads":true,
+                      "trash":true,
+                      "computer":true,
+                      "vault":true,
+                      "root_disk":true,
+                      "data_disk":true,
+                      "other_disks":true,
+                      "computers_in_lan":true,
+                      "my_shares":true,
+                      "mounted_share_dirs":true,
+                      "tags":true
+                     },
+            "serial":0,
+            "flags":[],
+            "name":"Items visiable",
+            "name[zh_CN]":"子项可见性",
+            "description[zh_CN]":"用于控制侧边栏中各子项是否可见",
+            "description":"It's used to control whether the items are visiable in sidebar",
+            "permissions":"readwrite",
+            "visibility":"public"
+        }
+    }
+}
+

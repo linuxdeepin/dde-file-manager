@@ -278,6 +278,140 @@
                     ]
                 },
                 {
+                    "key": "items_in_sidebar",
+                    "name": qsTranslate("GenerateSettingTranslate", "Items on sidebar pane"),
+                    "options": [
+                        {
+                            "key": "quick_access_splitter",
+                            "name": qsTranslate("GenerateSettingTranslate", "Quick access"),
+                            "type": "splitter"
+                        },
+                        {
+                            "key": "recent",
+                            "text": qsTranslate("GenerateSettingTranslate", "Recent"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "home",
+                            "text": qsTranslate("GenerateSettingTranslate", "Home"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "desktop",
+                            "text": qsTranslate("GenerateSettingTranslate", "Desktop"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "videos",
+                            "text": qsTranslate("GenerateSettingTranslate", "Videos"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "music",
+                            "text": qsTranslate("GenerateSettingTranslate", "Music"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "pictures",
+                            "text": qsTranslate("GenerateSettingTranslate", "Pictures"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "documents",
+                            "text": qsTranslate("GenerateSettingTranslate", "Documents"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "downloads",
+                            "text": qsTranslate("GenerateSettingTranslate", "Downloads"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "trash",
+                            "text": qsTranslate("GenerateSettingTranslate", "Trash"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "partitions_splitter",
+                            "name": qsTranslate("GenerateSettingTranslate", "Partitions"),
+                            "type": "splitter"
+                        },
+                        {
+                            "key": "computer",
+                            "text": qsTranslate("GenerateSettingTranslate", "Computer"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "vault",
+                            "text": qsTranslate("GenerateSettingTranslate", "Vault"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "root",
+                            "text": qsTranslate("GenerateSettingTranslate", "System disk"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "data",
+                            "text": qsTranslate("GenerateSettingTranslate", "Data disk"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "other_disks",
+                            "text": qsTranslate("GenerateSettingTranslate", "Mounted partitions and discs"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "network_splitters",
+                            "name": qsTranslate("GenerateSettingTranslate", "Network"),
+                            "type": "splitter"
+                        },
+                        {
+                            "key": "computers_in_lan",
+                            "text": qsTranslate("GenerateSettingTranslate", "Computers in LAN"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "my_shares",
+                            "text": qsTranslate("GenerateSettingTranslate", "My shares"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "mounted_share_dirs",
+                            "text": qsTranslate("GenerateSettingTranslate", "Mounted sharing folders"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
+                            "key": "tag_splitter",
+                            "name": qsTranslate("GenerateSettingTranslate", "Tag"),
+                            "type": "splitter"
+                        },
+                        {
+                            "key": "tags",
+                            "text": qsTranslate("GenerateSettingTranslate", "Added tags"),
+                            "type": "checkbox",
+                            "default": true
+                        }
+                    ]
+                },
+                {
                     "key": "other",
                     "name": qsTranslate("GenerateSettingTranslate", "Other"),
                     "options": [

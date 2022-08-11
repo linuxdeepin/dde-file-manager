@@ -30,6 +30,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -45,6 +46,12 @@ void SideBar::initialize()
 
 bool SideBar::start()
 {
+    QString err;
+    if (!DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.sidebar", &err)) {
+        qDebug() << "register dconfig failed: " << err;
+        return false;
+    }
+    SideBarHelper::bindSettings();
     return true;
 }
 

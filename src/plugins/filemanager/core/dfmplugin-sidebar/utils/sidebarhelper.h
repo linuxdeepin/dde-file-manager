@@ -52,6 +52,8 @@ public:
     static SortFunc sortFunc(const QString &subGroup);
     static void updateSideBarSelection(quint64 winId);
 
+    static void bindSettings();
+
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.
 

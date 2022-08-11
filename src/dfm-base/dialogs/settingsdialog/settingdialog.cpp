@@ -39,6 +39,8 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QDebug>
+#include <QLabel>
+#include <QApplication>
 
 #ifndef ENABLE_QUICK_SEARCH
 #    include <QJsonObject>
@@ -208,6 +210,7 @@ SettingDialog::SettingDialog(QWidget *parent)
 {
     widgetFactory()->registerWidget("mountCheckBox", &SettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &SettingDialog::createAutoMountOpenCheckBox);
+    widgetFactory()->registerWidget("splitter", &SettingDialog::createSplitter);
 
 #ifdef DISABLE_COMPRESS_PREIVEW
     // load temlate
@@ -291,6 +294,14 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountOpenCheckBox(QObject *
     });
 
     return qMakePair(openCheckBox, nullptr);
+}
+
+QPair<QWidget *, QWidget *> SettingDialog::createSplitter(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    auto name = option->name().toStdString();
+    auto lab = new QLabel(qApp->translate("GenerateSettingTranslate", name.c_str()));
+    return qMakePair(lab, nullptr);
 }
 
 void SettingDialog::mountCheckBoxStateChangedHandle(DSettingsOption *option, int state)
