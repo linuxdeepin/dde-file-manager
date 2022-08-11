@@ -158,14 +158,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="394"/>
-        <location filename="../view/watermaskframe.cpp" line="395"/>
+        <location filename="../view/watermaskframe.cpp" line="144"/>
+        <location filename="../view/watermaskframe.cpp" line="145"/>
         <source>Not authorized</source>
         <translation>Не уповноважено</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="405"/>
-        <location filename="../view/watermaskframe.cpp" line="406"/>
+        <location filename="../view/watermaskframe.cpp" line="153"/>
+        <location filename="../view/watermaskframe.cpp" line="154"/>
         <source>In trial period</source>
         <translation>Період тестування</translation>
     </message>
