@@ -280,7 +280,7 @@ void DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked()
             qWarning() << "auto Generate password failed!";
             return;
         }
-        qInfo() << "打印密码，方便调试功能，记得清除此打印！随机密码为：" << strPassword;
+
         // 保存随机密码到Keyring
         if (OperatorCenter::getInstance()->setPasswordToKeyring(strPassword)) {
             // 记录加密方式
