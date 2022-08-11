@@ -77,8 +77,8 @@ public:
     bool hiddableView() const;
     void setRenamable(const bool renamable = false);
     bool renamable() const;
-    void setDragEnabled(bool enable);
-    bool dragEnabled() const;
+    void setFileShiftable(bool enable);
+    bool fileShiftable() const;
 
     void setStyle(const CollectionStyle &style);
     CollectionStyle style() const;

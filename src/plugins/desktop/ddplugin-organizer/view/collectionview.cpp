@@ -625,6 +625,15 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
         return false;
     }
 
+    if (!fileShiftable) {
+        // disbale shift file from other collection
+        auto key = provider->key(firstUrl);
+        if (id != key) {
+            qDebug() << "disbale shift file from other collection.";
+            return true;
+        }
+    }
+
     auto urls = event->mimeData()->urls();
     auto index = posToNode(dropPos);
     provider->moveUrls(urls, id, index);
@@ -866,6 +875,16 @@ void CollectionView::setCanvasViewShell(CanvasViewShell *sh)
 void CollectionView::setCanvasGridShell(CanvasGridShell *sh)
 {
     d->canvasGridShell = sh;
+}
+
+void CollectionView::setFileShiftable(const bool enable)
+{
+    d->fileShiftable = enable;
+}
+
+bool CollectionView::fileShiftable() const
+{
+    return d->fileShiftable;
 }
 
 QMargins CollectionView::cellMargins() const
@@ -1181,13 +1200,27 @@ void CollectionView::wheelEvent(QWheelEvent *event)
 
 void CollectionView::mousePressEvent(QMouseEvent *event)
 {
-    if (event->buttons().testFlag(Qt::LeftButton)) {
+    bool leftButtonPressed = event->buttons().testFlag(Qt::LeftButton);
+    if (leftButtonPressed) {
         d->canUpdateVerticalBarRange = false;
     }
 
     d->checkTouchDarg(event);
 
-    return QAbstractItemView::mousePressEvent(event);
+    auto pos = event->pos();
+    auto index = indexAt(pos);
+    if (index.isValid() && isPersistentEditorOpen(index))
+        return;
+
+    d->pressedAlreadySelected = selectionModel()->isSelected(index);
+    d->pressedIndex = index;
+    d->pressedModifiers = event->modifiers();
+
+    QAbstractItemView::mousePressEvent(event);
+    if (leftButtonPressed && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
+        // reselect index(maybe the user wants to drag and copy by Ctrl)
+        selectionModel()->select(d->pressedIndex, QItemSelectionModel::Select);
+    }
 }
 
 void CollectionView::mouseReleaseEvent(QMouseEvent *event)
@@ -1197,7 +1230,13 @@ void CollectionView::mouseReleaseEvent(QMouseEvent *event)
         d->updateVerticalBarRange();
     }
 
-    return QAbstractItemView::mouseReleaseEvent(event);
+    if (d->pressedIndex.isValid() && d->pressedIndex == indexAt(event->pos())
+            && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
+        // not drag and cot by Ctrl,so deselect index
+        selectionModel()->select(d->pressedIndex, QItemSelectionModel::Deselect);
+    }
+
+    QAbstractItemView::mouseReleaseEvent(event);
 }
 
 void CollectionView::mouseMoveEvent(QMouseEvent *event)
@@ -1321,4 +1360,9 @@ void CollectionView::dropEvent(QDropEvent *event)
     }
 
     QAbstractItemView::dropEvent(event);
+}
+
+bool CollectionView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
+{
+    return QAbstractItemView::edit(index, trigger, event);
 }

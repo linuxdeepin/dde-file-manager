@@ -45,6 +45,8 @@ public:
     void setCanvasModelShell(CanvasModelShell *sh);
     void setCanvasViewShell(CanvasViewShell *sh);
     void setCanvasGridShell(CanvasGridShell *sh);
+    void setFileShiftable(const bool enable);
+    bool fileShiftable() const;
     QMargins cellMargins() const;
     FileProxyModel *model() const;
     CollectionItemDelegate *itemDelegate() const;
@@ -80,6 +82,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
 
+    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 private:
     QSharedPointer<CollectionViewPrivate> d = nullptr;
 };

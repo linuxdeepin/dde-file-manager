@@ -274,14 +274,14 @@ bool CollectionHolder::renamable() const
     return d->widget->renamable();
 }
 
-void CollectionHolder::setDragEnabled(bool enable)
+void CollectionHolder::setFileShiftable(bool enable)
 {
-    d->widget->setDragEnabled(enable);
+    d->widget->setFileShiftable(enable);
 }
 
-bool CollectionHolder::dragEnabled() const
+bool CollectionHolder::fileShiftable() const
 {
-    return d->widget->dragEnabled();
+    return d->widget->fileShiftable();
 }
 
 void CollectionHolder::setStyle(const CollectionStyle &style)

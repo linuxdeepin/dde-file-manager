@@ -106,14 +106,14 @@ void CollectionWidget::setModel(QAbstractItemModel *model)
     d->view->setModel(model);
 }
 
-void CollectionWidget::setDragEnabled(bool enable)
+void CollectionWidget::setFileShiftable(bool enable)
 {
-    d->view->setDragEnabled(enable);
+    d->view->setFileShiftable(enable);
 }
 
-bool CollectionWidget::dragEnabled() const
+bool CollectionWidget::fileShiftable() const
 {
-    return d->view->dragEnabled();
+    return d->view->fileShiftable();
 }
 
 void CollectionWidget::setTitleName(const QString &name)

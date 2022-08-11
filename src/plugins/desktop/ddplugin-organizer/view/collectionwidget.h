@@ -51,8 +51,8 @@ public:
     void setCanvasGridShell(CanvasGridShell *sh);
 
     void setModel(QAbstractItemModel *model);
-    void setDragEnabled(bool enable);
-    bool dragEnabled() const;
+    void setFileShiftable(bool enable);
+    bool fileShiftable() const;
 
     void setTitleName(const QString &name);
     QString titleName() const;

@@ -92,6 +92,7 @@ public:
     CanvasModelShell *canvasModelShell = nullptr;
     CanvasViewShell *canvasViewShell = nullptr;
     CanvasGridShell *canvasGridShell = nullptr;
+    bool fileShiftable = false;
 
     QString id;
     QPointer<CollectionDataProvider> provider = nullptr;
@@ -110,6 +111,10 @@ public:
 
     QTimer touchDragTimer;
     QUrl dropTargetUrl;
+
+    QPersistentModelIndex pressedIndex;
+    Qt::KeyboardModifiers pressedModifiers;
+    bool pressedAlreadySelected = false;
 };
 
 }

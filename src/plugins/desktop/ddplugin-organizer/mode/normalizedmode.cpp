@@ -271,10 +271,10 @@ void NormalizedMode::rebuild()
 
             d->holders.insert(key, collectionHolder);
 
-            // disable rename,move,drag,close,stretch
+            // disable rename,move,fileShift,close,stretch
             collectionHolder->setRenamable(false);
             collectionHolder->setMovable(false);
-            collectionHolder->setDragEnabled(false);
+            collectionHolder->setFileShiftable(false);
             collectionHolder->setClosable(false);
             collectionHolder->setStretchable(false);
 
