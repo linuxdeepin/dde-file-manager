@@ -135,6 +135,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         if (!ok)
             return false;
+        fileInfo->refresh();
     }
     return true;
 }

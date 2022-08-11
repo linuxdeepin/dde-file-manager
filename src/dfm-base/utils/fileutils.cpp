@@ -33,6 +33,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
@@ -632,7 +633,7 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
 {
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
-    if (info && info->exists()) {
+    if (info && DecoratorFile(fileUrl).exists()) {
         QString baseName = info->fileDisplayName() == info->fileName() ? info->baseName() : info->fileDisplayName();
         QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;
@@ -1103,7 +1104,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
 
 QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir, std::function<bool(const QString &)> functionCheck)
 {
-    if (!targetDir || !targetDir->exists()) {
+    if (!targetDir || ! DecoratorFile(targetDir->url()).exists()) {
         return QString();
     }
 
@@ -1128,6 +1129,7 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
 
     int number = 0;
     QString newFileName;
+    QUrl newUrl;
     do {
         newFileName = number > 0 ? QString("%1(%2 %3)").arg(fileBaseName, copyText).arg(number) : QString("%1(%2)").arg(fileBaseName, copyText);
 
@@ -1136,11 +1138,10 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
         }
 
         ++number;
-        QUrl newUrl;
         newUrl = targetDir->url();
         newUrl.setPath(newUrl.path() + "/" + newFileName);
         targetFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-    } while ((targetFileInfo && targetFileInfo->exists()) || (functionCheck ? functionCheck(newFileName) : false));
+    } while ((targetFileInfo && DecoratorFile(newUrl).exists()) || (functionCheck ? functionCheck(newFileName) : false));
 
     return newFileName;
 }

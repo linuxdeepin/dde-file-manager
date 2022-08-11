@@ -172,6 +172,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         if (!ok) {
             return false;
         }
+        fileInfo->refresh();
 
         // save info
         {
@@ -238,7 +239,7 @@ bool DoRestoreTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer 
     QDir parentDir(UrlRoute::urlParent(toUrl).path());
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
-    if (restoreInfo->exists()) {
+    if (DecoratorFile(toUrl).exists()) {
         action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
     } else {
         do {
@@ -331,7 +332,7 @@ bool DoRestoreTrashFilesWorker::doCopyAndClearTrashFile(const AbstractFileInfoPo
     const QUrl &restoreUrl = restoreInfo->url();
     emitCurrentTaskNotify(trashUrl, restoreUrl);
 
-    if (restoreInfo->exists()) {
+    if (DecoratorFile(restoreUrl).exists()) {
         AbstractJobHandler::SupportAction actionForExist { AbstractJobHandler::SupportAction::kNoAction };
         if (trashInfo->isFile()) {
             actionForExist = doHandleErrorAndWait(trashUrl, restoreUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
@@ -372,7 +373,7 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
         return false;
 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    if (!targetFileInfo->exists()) {
+    if (!DecoratorFile(parentUrl).exists()) {
         do {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
             if (!fileHandler.mkdir(parentUrl))

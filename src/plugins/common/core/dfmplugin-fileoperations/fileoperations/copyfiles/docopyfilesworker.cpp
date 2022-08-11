@@ -24,6 +24,7 @@
 #include "storageinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
 #include <dfm-io/dfmio_global.h>
@@ -120,7 +121,7 @@ bool DoCopyFilesWorker::initArgs()
         return false;
     }
 
-    if (!targetInfo->exists()) {
+    if (!DecoratorFile(targetUrl).exists()) {
         // pause and emit error msg
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError);
         cancelThreadProcessingError();
@@ -148,8 +149,9 @@ void DoCopyFilesWorker::endWork()
 
     // deal target files
     for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
-        if (info->exists()) {
-            completeTargetFiles.append(info->url());
+        const QUrl &url = info->url();
+        if (DecoratorFile(url).exists()) {
+            completeTargetFiles.append(url);
             info->refresh();
         }
     }
