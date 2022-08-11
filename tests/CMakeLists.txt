@@ -58,9 +58,9 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DQT_DEBUG")
 
 add_subdirectory(apps)
 add_subdirectory(dfm-base)
-add_subdirectory(dde-dock-plugins)
 add_subdirectory(dfm-extension)
 add_subdirectory(dfm-framework)
+add_subdirectory(external)
 add_subdirectory(plugins)
 
 

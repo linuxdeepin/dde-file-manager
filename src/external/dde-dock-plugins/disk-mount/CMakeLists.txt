@@ -16,7 +16,7 @@ FILE (GLOB MOUNT_PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
-set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../)
+set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../)
 include_directories(${SRC_DIR})
 set(BASE_DEV_DIR ${SRC_DIR}/dfm-base/base/device)
 FILE (GLOB BASE_DEVICE_FILES
