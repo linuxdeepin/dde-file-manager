@@ -56,6 +56,7 @@ CollectionViewPrivate::CollectionViewPrivate(const QString &uuid, CollectionData
     , q(qq)
     , id(uuid)
     , provider(dataProvider)
+    , menuProxy(new CollectionViewMenu(qq))
 {
     touchDragTimer.setSingleShot(true);
     touchDragTimer.setTimerType(Qt::PreciseTimer);
@@ -1262,6 +1263,23 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     QAbstractItemView::keyPressEvent(event);
 
     // must accept event
+    event->accept();
+}
+
+void CollectionView::contextMenuEvent(QContextMenuEvent *event)
+{
+    qInfo() << "request menus........" << event->pos();
+    if (CollectionViewMenu::disableMenu())
+        return;
+
+    const QModelIndex &index = indexAt(event->pos());
+    itemDelegate()->revertAndcloseEditor();
+
+    if (!index.isValid())
+        d->menuProxy->emptyAreaMenu();
+    else
+        d->menuProxy->normalMenu(index, model()->flags(index), d->pointToPos(event->pos()));
+
     event->accept();
 }
 

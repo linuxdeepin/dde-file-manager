@@ -18,42 +18,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EXTENDCANVASSCENE_P_H
-#define EXTENDCANVASSCENE_P_H
+#ifndef COLLECTIONVIEWMENU_H
+#define COLLECTIONVIEWMENU_H
 
-#include "ddplugin_organizer_global.h"
+#include <QObject>
 
-#include "extendcanvasscene.h"
-#include "organizer_defines.h"
-
-#include "interfaces/private/abstractmenuscene_p.h"
-
-DFMBASE_USE_NAMESPACE
 namespace ddplugin_organizer {
-
-class ExtendCanvasScenePrivate : public AbstractMenuScenePrivate
+class CollectionView;
+class CollectionViewMenu : public QObject
 {
     Q_OBJECT
 public:
-    explicit ExtendCanvasScenePrivate(ExtendCanvasScene *qq);
-    void emptyMenu(QMenu *parent);
-    void normalMenu(QMenu *parent);
+    explicit CollectionViewMenu(CollectionView *parent);
+    static bool disableMenu();
+    void emptyAreaMenu();
+    void normalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos);
+signals:
 
-    void updateEmptyMenu(QMenu *parent);
-    void updateNormalMenu(QMenu *parent);
-
-    QMenu *organizeBySubActions(QMenu *menu);
-    QMenu *displaySizeSubActions(QMenu *menu);
-
-    static QString classifierToActionID(Classifier cf);
-    static QString displaySizeToActionID(DisplaySize size);
-public:
-    bool turnOn = false;
-    bool onCollection = false;
+public slots:
+protected:
+    QWidget *getCanvasView();
 private:
-    ExtendCanvasScene *q;
+    CollectionView *view;
 };
-
 }
 
-#endif // EXTENDCANVASSCENE_P_H
+#endif // COLLECTIONVIEWMENU_H

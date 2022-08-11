@@ -286,10 +286,10 @@ bool FrameManager::initialize()
     if (enable)
         turnOn(false); // builded by signal.
 
-    connect(CfgPresenter, &ConfigPresenter::changeEnableState, d, &FrameManagerPrivate::enableChanged);
-    connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized);
-    connect(CfgPresenter, &ConfigPresenter::switchToCustom, d, &FrameManagerPrivate::switchToCustom);
-    connect(CfgPresenter, &ConfigPresenter::changeDisplaySize, d, &FrameManagerPrivate::displaySizeChanged);
+    connect(CfgPresenter, &ConfigPresenter::changeEnableState, d, &FrameManagerPrivate::enableChanged, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::switchToCustom, d, &FrameManagerPrivate::switchToCustom, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::changeDisplaySize, d, &FrameManagerPrivate::displaySizeChanged, Qt::QueuedConnection);
 
     return true;
 }

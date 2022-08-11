@@ -268,7 +268,7 @@ bool ExtendCanvasScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-
+    d->onCollection = params.value(CollectionMenuParams::kOnColletion, false).toBool();
     return d->onDesktop;
 }
 
@@ -306,7 +306,6 @@ void ExtendCanvasScene::updateState(QMenu *parent)
         d->updateNormalMenu(parent);
     }
 
-
     AbstractMenuScene::updateState(parent);
 }
 
@@ -340,6 +339,24 @@ bool ExtendCanvasScene::triggered(QAction *action)
     }
 
     return AbstractMenuScene::triggered(action);
+}
+
+bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
+{
+    if (d->onCollection && caller && action) {
+        auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+        bool isCanvas = caller->name() == "CanvasMenu";
+        Q_ASSERT_X(isCanvas, "ExtendCanvasScene", "parent scene is not CanvasMenu");
+        if (isCanvas) {
+            qDebug() << "filter action" << actionId;
+            // todo 处理需集合响应的菜单项
+            return false;
+        } else {
+            qCritical() << "ExtendCanvasScene's parent is not CanvasMenu";
+        }
+    }
+
+    return false;
 }
 
 

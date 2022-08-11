@@ -78,7 +78,7 @@ bool CustomMode::initialize(FileProxyModel *m)
     Q_ASSERT(!model);
     model = m;
 
-    connect(CfgPresenter, &ConfigPresenter::newCollection, this, &CustomMode::onNewCollection);
+    connect(CfgPresenter, &ConfigPresenter::newCollection, this, &CustomMode::onNewCollection, Qt::QueuedConnection);
 
     d->dataHandler = new CustomDataHandler();
     connect(d->dataHandler, &CustomDataHandler::itemsChanged, this, [this](){

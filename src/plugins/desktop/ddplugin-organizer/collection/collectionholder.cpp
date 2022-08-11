@@ -38,15 +38,8 @@ CollectionHolderPrivate::CollectionHolderPrivate(const QString &uuid, Collection
 
 CollectionHolderPrivate::~CollectionHolderPrivate()
 {
-    if (frame) {
-        frame->setParent(nullptr);
-        delete frame;
-    }
-
-    if (widget) {
-        widget->setParent(nullptr);
-        delete widget;
-    }
+    widget.clear();
+    frame.clear();
 }
 
 void CollectionHolderPrivate::onAdjustFrameSizeMode(const CollectionFrameSize &size)

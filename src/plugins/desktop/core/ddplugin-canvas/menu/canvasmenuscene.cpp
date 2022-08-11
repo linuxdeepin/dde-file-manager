@@ -192,6 +192,7 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
+    d->view = reinterpret_cast<CanvasView *>(params.value(CanvasMenuParams::kDesktopCanvasView).toLongLong());
     if (d->currentDir.isEmpty())
         return false;
 
@@ -265,8 +266,6 @@ bool CanvasMenuScene::create(QMenu *parent)
     if (!parent)
         return false;
 
-    d->view = qobject_cast<CanvasView *>(parent->parent());
-
     if (d->isEmptyArea) {
         this->emptyMenu(parent);
     } else {
@@ -293,8 +292,10 @@ void CanvasMenuScene::updateState(QMenu *parent)
 
 bool CanvasMenuScene::triggered(QAction *action)
 {
-    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    if (filterActionBySubscene(this, action))
+        return true;
 
+    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.values().contains(action)) {
         // sort by
         {

@@ -41,6 +41,9 @@ inline constexpr char kDisplaySizeNormal[] = "display-size-normal";
 inline constexpr char kDisplaySizeLarger[] = "display-size-larger";
 } // namespace ActionID
 
+namespace CollectionMenuParams {
+inline constexpr char kOnColletion[] = "OnColletion";
+}
 }
 
 #endif // ORGANIZERMENU_DEFINES_H

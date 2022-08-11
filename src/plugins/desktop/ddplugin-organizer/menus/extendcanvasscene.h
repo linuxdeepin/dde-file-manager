@@ -49,6 +49,7 @@ public:
     bool create(QMenu *parent) override;
     void updateState(QMenu *parent) override;
     bool triggered(QAction *action) override;
+    bool actionFilter(AbstractMenuScene *caller, QAction *action) override;
 
 private:
     ExtendCanvasScenePrivate *const d = nullptr;

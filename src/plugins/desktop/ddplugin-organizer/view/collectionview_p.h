@@ -22,6 +22,7 @@
 #define COLLECTIONVIEW_P_H
 
 #include "view/collectionview.h"
+#include "view/collectionviewmenu.h"
 #include "mode/collectiondataprovider.h"
 
 #include <QAtomicInteger>
@@ -93,6 +94,7 @@ public:
     CanvasViewShell *canvasViewShell = nullptr;
     CanvasGridShell *canvasGridShell = nullptr;
     bool fileShiftable = false;
+    CollectionViewMenu *menuProxy = nullptr;
 
     QString id;
     QPointer<CollectionDataProvider> provider = nullptr;

@@ -81,6 +81,13 @@ bool AbstractMenuScene::triggered(QAction *action)
     return false;
 }
 
+bool AbstractMenuScene::actionFilter(AbstractMenuScene *caller, QAction *action)
+{
+    // just filter the parent of this scene.
+    //! must not called children's 'actionFilter' function in this function.
+    return false;
+}
+
 AbstractMenuScene *AbstractMenuScene::scene(QAction *action) const
 {
     for (AbstractMenuScene *scene : subScene)
@@ -108,7 +115,7 @@ void AbstractMenuScene::removeSubscene(AbstractMenuScene *scene)
     subScene.removeOne(scene);
 }
 
-void AbstractMenuScene::setSubscene(const QList<dfmbase::AbstractMenuScene *> &scenes)
+void AbstractMenuScene::setSubscene(const QList<AbstractMenuScene *> &scenes)
 {
     //! if these already were subscenes before setting, the caller is responsible for managing their lifecycle
 

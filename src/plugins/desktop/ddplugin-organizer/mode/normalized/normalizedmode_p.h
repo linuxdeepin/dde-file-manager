@@ -37,6 +37,8 @@ public:
     QPoint findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height);
 
     void collectionStyleChanged(const QString &id);
+    CollectionHolderPointer createCollection(const QString &id);
+    void switchCollection();
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs);
     FileClassifier *classifier = nullptr;

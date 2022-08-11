@@ -21,8 +21,6 @@
 #ifndef CANVASMENU_DEFINES_H
 #define CANVASMENU_DEFINES_H
 
-#include "ddplugin_canvas_global.h"
-
 namespace ddplugin_canvas {
 
 namespace ActionID {
@@ -41,6 +39,7 @@ inline constexpr char kSrtType[] = "sort-by-type";
 
 namespace CanvasMenuParams {
 inline constexpr char kDesktopGridPos[] = "DesktopGridPos";
+inline constexpr char kDesktopCanvasView[] = "DesktopCanvasView";
 }
 
 }

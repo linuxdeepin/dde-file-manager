@@ -101,6 +101,56 @@ void NormalizedModePrivate::collectionStyleChanged(const QString &id)
     }
 }
 
+CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &id)
+{
+    QString name = classifier->className(id);
+    Q_ASSERT(!name.isEmpty());
+
+    CollectionHolderPointer holder;
+    holder.reset(new CollectionHolder(id, classifier));
+    holder->createFrame(q->surfaces.first().data(), q->model);
+    holder->setName(name);
+
+    // disable rename,move,file shift,close,stretch
+    holder->setRenamable(false);
+    holder->setMovable(false);
+    holder->setFileShiftable(false);
+    holder->setClosable(false);
+    holder->setStretchable(false);
+
+    // enable adjust
+    holder->setAdjustable(true);
+
+    return holder;
+}
+
+void NormalizedModePrivate::switchCollection()
+{
+    bool changed = false;
+    for (const CollectionBaseDataPtr &base : classifier->baseData()) {
+        if (holders.contains(base->key)) {
+            if (base->items.isEmpty()) {
+                qDebug() << "Collection " << base->key << "is empty, remove it.";
+                holders.remove(base->key);
+                changed = true;
+            }
+        } else {
+            if (!base->items.isEmpty()) {
+                // create new collection.
+                qDebug() << "Collection " << base->key << "isn't existed, create it.";
+                CollectionHolderPointer collectionHolder(createCollection(base->key));
+                connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, &NormalizedModePrivate::collectionStyleChanged);
+                holders.insert(base->key, collectionHolder);
+                changed = true;
+            }
+        }
+    }
+
+    // relayout all collections.
+    if (changed)
+        q->layout();
+}
+
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
 {
     // order by config
@@ -254,38 +304,29 @@ void NormalizedMode::rebuild()
 
     // 从分类器中获取组,根据组创建分区
     for (const QString &key : d->classifier->keys()) {
-        const QString &name = d->classifier->name(key);
         auto files = d->classifier->items(key);
         qDebug() << "type" << key << "files" << files.size();
 
         // 复用已有分组
         CollectionHolderPointer collectionHolder = d->holders.value(key);
-        // 创建没有的组
 
-        if (collectionHolder.isNull()) {
-            collectionHolder.reset(new CollectionHolder(key, d->classifier));
-            collectionHolder->createFrame(surfaces.first().data(), model);
-            collectionHolder->setName(name);
-
-            connect(collectionHolder.data(), &CollectionHolder::styleChanged, d, &NormalizedModePrivate::collectionStyleChanged);
-
-            d->holders.insert(key, collectionHolder);
-
-            // disable rename,move,fileShift,close,stretch
-            collectionHolder->setRenamable(false);
-            collectionHolder->setMovable(false);
-            collectionHolder->setFileShiftable(false);
-            collectionHolder->setClosable(false);
-            collectionHolder->setStretchable(false);
-
-            // enable adjust
-            collectionHolder->setAdjustable(true);
+        // remove or do not create the collection that is empty.
+        bool unused = files.isEmpty();
+        if (unused) {
+            // remove it.
+            if (!collectionHolder.isNull()) {
+                d->holders.remove(key);
+                collectionHolder.clear();
+            }
+        } else {
+            // 创建没有的组
+            if (collectionHolder.isNull()) {
+                collectionHolder = d->createCollection(key);
+                connect(collectionHolder.data(), &CollectionHolder::styleChanged, d, &NormalizedModePrivate::collectionStyleChanged);
+                d->holders.insert(key, collectionHolder);
+            }
         }
-
-        collectionHolder->show();
     }
-    // 删除无需的组
-
 
     layout();
 
@@ -295,6 +336,7 @@ void NormalizedMode::rebuild()
 void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     d->classifier->replace(oldUrl, newUrl);
+    d->switchCollection();
 }
 
 void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int last)
@@ -306,6 +348,8 @@ void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int la
         QUrl url = model->fileUrl(index);
         d->classifier->append(url);
    }
+
+    d->switchCollection();
 }
 
 void NormalizedMode::onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last)
@@ -317,6 +361,8 @@ void NormalizedMode::onFileAboutToBeRemoved(const QModelIndex &parent, int first
         QUrl url = model->fileUrl(index);
         d->classifier->remove(url);
     }
+
+    d->switchCollection();
 }
 
 void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)

@@ -64,6 +64,7 @@ public:
     int enabledTypeCategories() const;
     void setEnabledTypeCategories(int flags);
 signals:
+    // use Qt::QueuedConnection
     void changeEnableState(bool e);
     void switchToNormalized(int);
     void switchToCustom();

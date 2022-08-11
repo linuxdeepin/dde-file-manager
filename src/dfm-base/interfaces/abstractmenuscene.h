@@ -42,6 +42,7 @@ public:
     virtual bool create(QMenu *parent);
     virtual void updateState(QMenu *parent);
     virtual bool triggered(QAction *action);
+    virtual bool actionFilter(AbstractMenuScene *caller, QAction *action);
     virtual AbstractMenuScene *scene(QAction *action) const;
     virtual bool addSubscene(AbstractMenuScene *scene);
     virtual void removeSubscene(AbstractMenuScene *scene);
@@ -51,11 +52,23 @@ public:
     }
 
 protected:
-    virtual void setSubscene(const QList<dfmbase::AbstractMenuScene *> &scenes);
+    virtual void setSubscene(const QList<AbstractMenuScene *> &scenes);
 
 protected:
     QList<AbstractMenuScene *> subScene;
 };
+
+//! this function must not be called in `actionFilter`
+inline bool filterActionBySubscene(AbstractMenuScene *self, QAction *action) {
+    if (!self || !action)
+        return false;
+
+    for (AbstractMenuScene *child : self->subscene())
+        if (child->actionFilter(self, action))
+            return true;
+
+    return false;
+}
 
 }
 
