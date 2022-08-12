@@ -26,6 +26,8 @@
 
 #include "dfm_base_global.h"
 
+#include "dfm-base/interfaces/abstractfileinfo.h"
+
 #include <QMimeDatabase>
 
 namespace dfmbase {
@@ -37,11 +39,15 @@ class DMimeDatabase : public QMimeDatabase
 public:
     DMimeDatabase();
 
-    QMimeType mimeTypeForFile(const QString &fileName, MatchMode mode = MatchDefault) const;
-    QMimeType mimeTypeForFile(const QFileInfo &fileInfo, MatchMode mode = MatchDefault) const;
+    QMimeType mimeTypeForFile(const QUrl &url, MatchMode mode = MatchDefault) const;
+    QMimeType mimeTypeForFile(const AbstractFileInfoPointer &fileInfo, MatchMode mode = MatchDefault) const;
+
     QMimeType mimeTypeForFile(const QString &fileName, MatchMode mode, const QString &inod, const bool isGvfs = false) const;
-    QMimeType mimeTypeForFile(const QFileInfo &fileInfo, MatchMode mode, const QString &inod, const bool isGvfs = false) const;
+
     QMimeType mimeTypeForUrl(const QUrl &url) const;
+private:
+    QMimeType mimeTypeForFile(const QFileInfo &fileInfo, MatchMode mode, const QString &inod, const bool isGvfs = false) const;
+
 
 private:
     QHash<QString, QMimeType> inodMimetypeCache;

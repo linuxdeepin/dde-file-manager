@@ -51,6 +51,9 @@ public:
 private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr;   // dfmio的文件迭代器
     QUrl currentUrl;   // 当前迭代器所在位置文件的url
+    QSet<QString> hideFileList;
+    bool isLocalDevice = false;
+    bool isCdRomDevice = false;
 };
 }
 #endif   // ABSTRACTDIRITERATOR_P_H

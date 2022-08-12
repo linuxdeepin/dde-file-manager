@@ -24,6 +24,7 @@
 #include "dmimedatabase.h"
 
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QUrl>
 #include <QFileInfo>
@@ -43,21 +44,22 @@ DMimeDatabase::DMimeDatabase()
 {
 }
 
-QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase::MatchMode mode) const
+QMimeType DMimeDatabase::mimeTypeForFile(const QUrl &url, QMimeDatabase::MatchMode mode) const
 {
-    return mimeTypeForFile(QFileInfo(fileName), mode);
+    const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    return mimeTypeForFile(fileInfo, mode);
 }
 
-QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabase::MatchMode mode) const
+QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo, QMimeDatabase::MatchMode mode) const
 {
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
     QMimeType result;
-    QString path = fileInfo.path();
+    QString path = fileInfo->path();
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
     if (!isMatchExtension) {
         //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
-        if (fileInfo.fileName().endsWith(".pid") || path.endsWith("msg.lock")
-            || fileInfo.fileName().endsWith(".lock") || fileInfo.fileName().endsWith("lockfile")) {
+        if (fileInfo->fileName().endsWith(".pid") || path.endsWith("msg.lock")
+            || fileInfo->fileName().endsWith(".lock") || fileInfo->fileName().endsWith("lockfile")) {
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
                                               | QRegularExpression::DontCaptureOption
@@ -69,18 +71,18 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
             isMatchExtension = match.hasMatch();
         } else {
             // filemanger will be blocked when blacklist contais the filepath.
-            QString filePath = fileInfo.absoluteFilePath();
-            if (fileInfo.isSymLink()) {
-                filePath = fileInfo.symLinkTarget();
+            QString filePath = fileInfo->absoluteFilePath();
+            if (fileInfo->isSymLink()) {
+                filePath = fileInfo->symLinkTarget();
             }
             isMatchExtension = blackList.contains(filePath);
         }
     }
 
     if (isMatchExtension || FileUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
-        result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
+        result = QMimeDatabase::mimeTypeForFile(fileInfo->filePath(), QMimeDatabase::MatchExtension);
     } else {
-        result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
+        result = QMimeDatabase::mimeTypeForFile(fileInfo->filePath(), mode);
     }
 
     // temporary dirty fix, once WPS get installed, the whole mimetype database thing get fscked up.
@@ -90,8 +92,8 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
     // https://codereview.qt-project.org/c/qt/qtbase/+/244887
     // `file` command works but libmagic didn't even comes with any pkg-config support..
 
-    if (officeSuffixList.contains(fileInfo.suffix()) && wrongMimeTypeNames.contains(result.name())) {
-        QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo.fileName());
+    if (officeSuffixList.contains(fileInfo->suffix()) && wrongMimeTypeNames.contains(result.name())) {
+        QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo->fileName());
         if (!results.isEmpty()) {
             return results.first();
         }
@@ -177,7 +179,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
 QMimeType DMimeDatabase::mimeTypeForUrl(const QUrl &url) const
 {
     if (url.isLocalFile())
-        return mimeTypeForFile(url.toLocalFile());
+        return mimeTypeForFile(url);
 
     return QMimeDatabase::mimeTypeForUrl(url);
 }

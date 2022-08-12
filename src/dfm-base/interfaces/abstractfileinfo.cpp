@@ -1182,6 +1182,28 @@ bool dfmbase::AbstractFileInfo::notifyAttributeChanged()
     return false;
 }
 
+void dfmbase::AbstractFileInfo::setIsLocalDevice(const bool isLocalDevice)
+{
+    CALL_PROXY(setIsLocalDevice(isLocalDevice));
+}
+
+void dfmbase::AbstractFileInfo::setIsCdRomDevice(const bool isCdRowDevice)
+{
+    CALL_PROXY(setIsCdRomDevice(isCdRowDevice));
+}
+
+void dfmbase::AbstractFileInfo::cacheAttribute(const DFileInfo::AttributeID id, const QVariant &value)
+{
+    CALL_PROXY(cacheAttribute(id, value));
+}
+
+QVariant dfmbase::AbstractFileInfo::attribute(const DFileInfo::AttributeID id)
+{
+    CALL_PROXY(attribute(id));
+
+    return QVariant();
+}
+
 QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeName()
 {
     CALL_PROXY(mimeTypeName());

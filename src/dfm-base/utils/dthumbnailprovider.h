@@ -50,15 +50,15 @@ public:
 
     static DThumbnailProvider *instance();
 
-    bool hasThumbnail(const QFileInfo &info) const;
+    bool hasThumbnail(const QUrl &url) const;
     bool hasThumbnail(const QMimeType &mimeType) const;
 
-    QString thumbnailFilePath(const QFileInfo &info, Size size) const;
+    QString thumbnailFilePath(const QUrl &fileUrl, Size size) const;
 
-    QString createThumbnail(const QFileInfo &info, Size size);
+    QString createThumbnail(const QUrl &url, Size size);
 
     using CallBack = std::function<void(const QString &)>;
-    void appendToProduceQueue(const QString &filePath, Size size, CallBack callback = nullptr);
+    void appendToProduceQueue(const QUrl &url, Size size, CallBack callback = nullptr);
 
     QString errorString() const;
 

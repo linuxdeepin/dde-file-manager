@@ -34,7 +34,7 @@ extern "C" FileType fileType(const QString &filePath)
     FileType fileType = FileType::kUnknown;
 
     DFMBASE_NAMESPACE::DMimeDatabase db;
-    const QMimeType mimeType = db.mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
+    const QMimeType mimeType = db.mimeTypeForFile(QUrl::fromLocalFile(filePath), QMimeDatabase::MatchContent);
 
     if (mimeType.name() == QLatin1String("application/pdf")) {
         fileType = kPDF;

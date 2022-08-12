@@ -25,9 +25,11 @@
 #include "base/urlroute.h"
 #include "base/schemefactory.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-io/local/dlocalenumerator.h>
 #include <dfm-io/core/denumerator.h>
+#include <dfm-io/dfmio_utils.h>
 
 USING_IO_NAMESPACE
 using namespace dfmbase;
@@ -97,6 +99,18 @@ bool LocalDirIterator::hasNext() const
                     auto dfileInfo = d->dfmioDirIterator->fileInfo();
                     QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(urlNext, dfileInfo));
                     auto infoTrans = InfoFactory::transfromInfo<AbstractFileInfo>(urlNext.scheme(), info);
+
+                    const QString &fileName = dfileInfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
+                    bool isHidden = false;
+                    if (fileName.startsWith(".")) {
+                        isHidden = true;
+                    } else {
+                        isHidden = d->hideFileList.contains(fileName);
+                    }
+                    infoTrans->cacheAttribute(DFileInfo::AttributeID::kStandardIsHidden, isHidden);
+                    infoTrans->setIsLocalDevice(d->isLocalDevice);
+                    infoTrans->setIsCdRomDevice(d->isCdRomDevice);
+
                     InfoCache::instance().cacheInfo(urlNext, infoTrans);
                 }
             }
@@ -158,4 +172,13 @@ QUrl LocalDirIterator::url() const
         return UrlRoute::pathToReal(d->dfmioDirIterator->uri().path());
 
     return QUrl();
+}
+
+void LocalDirIterator::cacheBlockIOAttribute()
+{
+    const QUrl &url = d->currentUrl.toString() + QDir::separator() + ".hidden";
+    d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
+
+    d->isLocalDevice = FileUtils::isLocalDevice(d->currentUrl);
+    d->isCdRomDevice = FileUtils::isCdRomDevice(d->currentUrl);
 }

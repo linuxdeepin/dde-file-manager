@@ -73,6 +73,10 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     std::atomic_bool permissionsInited { false };
     QFileDevice::Permissions permissions;
 
+    // device
+    QVariant isLocalDevice;
+    QVariant isCdRomDevice;
+
 public:
     explicit LocalFileInfoPrivate(LocalFileInfo *qq);
     virtual ~LocalFileInfoPrivate();

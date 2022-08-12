@@ -119,6 +119,8 @@ public:
         Q_UNUSED(keyword);
         return false;
     }
+    // cache some block io attribute
+    virtual void cacheBlockIOAttribute(){}
 };
 
 }

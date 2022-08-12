@@ -50,6 +50,7 @@ public:
     virtual QUrl fileUrl() const override;
     virtual const AbstractFileInfoPointer fileInfo() const override;
     virtual QUrl url() const override;
+    virtual void cacheBlockIOAttribute() override;
     bool enableIteratorByKeyword(const QString &keyword) override
     {
         Q_UNUSED(keyword);

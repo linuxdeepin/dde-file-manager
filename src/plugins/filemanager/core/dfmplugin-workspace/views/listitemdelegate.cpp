@@ -494,8 +494,10 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         const QVariant &data = index.data(rol);
 
         const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+        // 这里访问网络挂载非常卡，需要刘阳明做优化
+        // todo liuyangming
         if (WorkspaceEventSequence::instance()->doPaintListItem(rol, url, painter, &columnRect))
-            continue;
+          continue;
 
         QPalette::ColorGroup cGroup = QPalette::Inactive;
         Qt::TextElideMode elideMode = Qt::ElideRight;

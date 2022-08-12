@@ -135,6 +135,13 @@ public:
 
     virtual bool notifyAttributeChanged() override;
 
+    // cache attribute
+    virtual void cacheAttribute(const DFMIO::DFileInfo::AttributeID id, const QVariant &value) override;
+    virtual QVariant attribute(const DFMIO::DFileInfo::AttributeID id) override;
+
+    virtual void setIsLocalDevice(const bool isLocalDevice) override;
+    virtual void setIsCdRomDevice(const bool isCdRowDevice) override;
+
 private:
     void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);
     QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString inod = QString(), const bool isGvfs = false);

@@ -49,7 +49,7 @@ typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPoin
 
 namespace dfmbase {
 class AbstractFileInfoPrivate;
-class AbstractFileInfo : public QSharedData
+class AbstractFileInfo : public QSharedData, public QEnableSharedFromThis<AbstractFileInfo>
 {
 
 public:
@@ -208,6 +208,13 @@ public:
                                      DFMIO::DFileInfo::AttributeExtendFuncCallback callback = nullptr) const;
 
     virtual bool notifyAttributeChanged();
+
+    // cache attribute
+    virtual void cacheAttribute(const DFMIO::DFileInfo::AttributeID id, const QVariant &value);
+    virtual QVariant attribute(const DFMIO::DFileInfo::AttributeID id);
+
+    virtual void setIsLocalDevice(const bool isLocalDevice);
+    virtual void setIsCdRomDevice(const bool isCdRowDevice);
 
 protected:
     explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);

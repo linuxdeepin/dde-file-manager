@@ -814,8 +814,6 @@ bool LocalFileInfo::isSymLink() const
         if (d->dfmFileInfo) {
             isSymLink = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, &success).toBool();
         }
-        if (!success)
-            isSymLink = QFileInfo(d->url.path()).isSymLink();
 
         d->attributes.insert(DFileInfo::AttributeID::kStandardIsSymlink, isSymLink);
     } else {
@@ -872,11 +870,10 @@ bool LocalFileInfo::canFetch() const
     if (isPrivate())
         return false;
 
-    const QString &path = filePath();
     bool isArchive = false;
-    QFileInfo f(path);
-    if (f.exists())
-        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(f).name());
+    if(this->exists())
+        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(url()).name());
+
     return isDir() || (isArchive && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
 }
 
@@ -1528,8 +1525,20 @@ QIcon LocalFileInfo::fileIcon()
     d->enableThumbnail = 0;
 #else
     const QString &filePath = this->absoluteFilePath();
-    if (d->enableThumbnail < 0)
-        d->enableThumbnail = FileUtils::isLocalDevice(fileUrl) && !FileUtils::isCdRomDevice(QUrl::fromLocalFile(filePath));
+    if (d->enableThumbnail < 0) {
+        bool isLocalDevice = false;
+        bool isCdRomDevice = false;
+        if(d->isLocalDevice.isValid())
+            isLocalDevice = d->isLocalDevice.toBool();
+        else
+            isLocalDevice = FileUtils::isLocalDevice(fileUrl);
+        if(d->isCdRomDevice.isValid())
+            isCdRomDevice = d->isCdRomDevice.toBool();
+        else
+            isCdRomDevice = FileUtils::isCdRomDevice(fileUrl);
+
+        d->enableThumbnail = isLocalDevice && !isCdRomDevice;
+    }
 #endif
 
     bool thumbEnabled = (d->enableThumbnail > 0) && DThumbnailProvider::instance()->hasThumbnail(fileMimeType());
@@ -1547,7 +1556,11 @@ QString LocalFileInfo::iconName()
         if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
             iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(absoluteFilePath());
         if (iconNameValue.isEmpty()) {
-            iconNameValue = AbstractFileInfo::iconName();
+            if (d->dfmFileInfo) {
+                const QStringList &list = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIcon, nullptr).toStringList();
+                if(!list.isEmpty())
+                    iconNameValue = list.first();
+            }
         }
 
         QWriteLocker locker(&d->lock);
@@ -1604,8 +1617,9 @@ QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDat
     if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
         locker.unlock();
 
+        const QMimeType &type = this->mimeType(url.path(), mode);
         QWriteLocker locker(&d->lock);
-        d->mimeType = this->mimeType(url.path(), mode);
+        d->mimeType = type;
         d->mimeTypeMode = mode;
     }
 
@@ -1699,6 +1713,33 @@ bool LocalFileInfo::notifyAttributeChanged()
     return false;
 }
 
+void LocalFileInfo::cacheAttribute(const DFileInfo::AttributeID id, const QVariant &value)
+{
+    if (!value.isValid())
+        return;
+
+    QWriteLocker locker(&d->lock);
+    d->attributes.insert(id, value);
+}
+
+QVariant LocalFileInfo::attribute(const DFileInfo::AttributeID id)
+{
+    QReadLocker locker(&d->lock);
+    return d->dfmFileInfo->attribute(id);
+}
+
+void LocalFileInfo::setIsLocalDevice(const bool isLocalDevice)
+{
+    QWriteLocker locker(&d->lock);
+    d->isLocalDevice = isLocalDevice;
+}
+
+void LocalFileInfo::setIsCdRomDevice(const bool isCdRowDevice)
+{
+    QWriteLocker locker(&d->lock);
+    d->isCdRomDevice = isCdRowDevice;
+}
+
 QString LocalFileInfo::mimeTypeName()
 {
     QString type;
@@ -1769,7 +1810,7 @@ QMimeType LocalFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchM
     if (isGvfs) {
         return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
     }
-    return db.mimeTypeForFile(filePath, mode);
+    return db.mimeTypeForFile(this->sharedFromThis(), mode);
 }
 
 QIcon LocalFileInfoPrivate::thumbIcon()
@@ -1781,9 +1822,8 @@ QIcon LocalFileInfoPrivate::thumbIcon()
             return icon;
     }
 
-    auto curFilePath = q->absoluteFilePath();
     {
-        const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(curFilePath, DThumbnailProvider::kLarge));
+        const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(url, DThumbnailProvider::kLarge));
         if (!icon.isNull()) {
             QPixmap pixmap = icon.pixmap(DThumbnailProvider::kLarge, DThumbnailProvider::kLarge);
             QPainter pa(&pixmap);
@@ -1812,7 +1852,7 @@ QIcon LocalFileInfoPrivate::thumbIcon()
                 getIconTimer->moveToThread(qApp->thread());
 
                 QObject::connect(getIconTimer, &QTimer::timeout, [=] {
-                    DThumbnailProvider::instance()->appendToProduceQueue(curFilePath, DThumbnailProvider::kLarge, [=](const QString &path) {
+                    DThumbnailProvider::instance()->appendToProduceQueue(url, DThumbnailProvider::kLarge, [=](const QString &path) {
                         if (that)
                             onRequestThumbFinished(path);
                     });
