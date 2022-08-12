@@ -319,10 +319,11 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
     fnt.setPixelSize(16);
     fnt.setWeight(QFont::Medium);
     painter->setFont(fnt);
+    QFontMetrics fm(fnt);
 
     QString devName = index.data(Qt::DisplayRole).toString();
     auto fs = index.data(ComputerModel::DataRoles::kFileSystemRole).toString();
-    int fsLabelWidth = view->fontMetrics().width(fs.toUpper());
+    int fsLabelWidth = fm.width(fs.toUpper());
 
     const int IconSize = view->iconSize().width();
     const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
@@ -334,14 +335,14 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
         fsLabelWidth += 2;
     else
         fsLabelWidth = 0;
-    devName = view->fontMetrics().elidedText(devName, Qt::ElideMiddle, TextMaxWidth - fsLabelWidth - 5);
+    devName = fm.elidedText(devName, Qt::ElideMiddle, TextMaxWidth - fsLabelWidth - 5);
 
     // draw label
     QRect realPaintedRectForDevName;
     QRect preRectForDevName = option.rect;
     preRectForDevName.setLeft(option.rect.left() + kIconLeftMargin + IconSize + kIconLabelSpacing);
     preRectForDevName.setTop(option.rect.top() + 10);
-    preRectForDevName.setHeight(view->fontMetrics().height());
+    preRectForDevName.setHeight(fm.height());
     painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
     painter->drawText(preRectForDevName, Qt::TextWrapAnywhere, devName, &realPaintedRectForDevName);
 
@@ -421,7 +422,7 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     bool progressVisiable = index.data(ComputerModel::kProgressVisiableRole).toBool();
     if (progressVisiable) {
         const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
-        double usedRate = sizeUsage * 1.0 / sizeTotal;
+        double usedRate = sizeTotal == 0 ? 0 : sizeUsage * 1.0 / sizeTotal;
         QRect totalRect(QPoint(detailRect.x(), option.rect.y() + 64), QSize(TextMaxWidth, 6));
         QRect usedRect = totalRect;
         usedRect.setRight(usedRect.left() + usedRect.width() * usedRate);
