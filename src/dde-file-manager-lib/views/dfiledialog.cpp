@@ -147,7 +147,6 @@ DFileDialog::DFileDialog(QWidget *parent)
 {
     d_ptr->view = qobject_cast<DFileView *>(DFileManagerWindow::getFileView()->widget());
     if (d_ptr->view) {
-        d_ptr->view->setAlwaysOpenInCurrentWindow(true);    // 文件对话框只能在本窗口打开新目录
         connect(d_ptr->view, &DFileView::clicked, this, &DFileDialog::listViewItemClicked);
         DFileSystemModel *model = d_ptr->view->model();
         if (model) {
@@ -1128,6 +1127,7 @@ void DFileDialog::handleNewView(DFMBaseView *view)
     }
 
     d->view = fileView;
+    d_ptr->view->setAlwaysOpenInCurrentWindow(true);    // 文件对话框只能在本窗口打开新目录
 
     QSet<DFMGlobal::MenuAction> whitelist;
 

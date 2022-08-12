@@ -16,6 +16,7 @@
 #define protected public
 #include "views/dfiledialog.h"
 #include "views/dfilemanagerwindow_p.h"
+#include "views/computerview.h"
 
 
 namespace  {
@@ -388,7 +389,14 @@ TEST_F(TestDFileDialog, tst_fmEventFilter)
 TEST_F(TestDFileDialog, tst_handleNewView)
 {
     DFileView view;
+    ComputerView cpView;
+
+    m_fileDialog->handleNewView(&cpView);
+    EXPECT_EQ(m_fileDialog->d_ptr->view, nullptr);
+
     m_fileDialog->handleNewView(&view);
+    EXPECT_EQ(m_fileDialog->d_ptr->view, &view);
+
     view.setRootUrl(DUrl("/home"));
     view.selectAll();
     QEventLoop loop;
@@ -451,4 +459,3 @@ TEST_F(TestDFileDialog, tst_adjustPostion)
 
     EXPECT_NE(pt0, pt1);
 }
-

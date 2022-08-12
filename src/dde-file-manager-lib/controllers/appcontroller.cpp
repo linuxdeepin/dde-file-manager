@@ -174,7 +174,7 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event,
         return;
     }
 
-    if (urls.size() > 1 || DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()) {
+    if (urls.size() > 1 || (DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool() && !g_isFileDialogMode)) {
         // 选择多文件打开的时候调用函数 openFiles，单文件打开调用 openFile，部分 controller 没有实现 openFiles 函数，因此在这里转换成 file:// 的 url，
         // 通过 fileController 来进行打开调用
         DUrlList lstUrls;
