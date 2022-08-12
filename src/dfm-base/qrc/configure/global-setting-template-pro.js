@@ -21,7 +21,7 @@
                             "items": [
                                 qsTranslate("GenerateSettingTranslate", "Click"),
                                 qsTranslate("GenerateSettingTranslate", "Double click")
-                                ],
+                            ],
                             "default": 1
                         }
                     ]
@@ -139,12 +139,6 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Show file extensions"),
                             "type": "checkbox",
                             "default": true
-                        },
-                        {
-                            "key": "show_recent",
-                            "text": qsTranslate("GenerateSettingTranslate", "Display recent file entry in left panel"),
-                            "type": "checkbox",
-                            "default": true
                         }
 
                     ]
@@ -199,10 +193,9 @@
                     "options": [
                         {
                             "key": "compress_file_preview",
-                            "text": qsTranslate("GenerateSettingTranslate", "Compress file preview"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Compressed file preview"),
                             "type": "checkbox",
-                            "default": false,
-                            "hide": true
+                            "default": false
                         },
                         {
                             "key": "text_file_preview",
@@ -423,17 +416,17 @@
                             "default": false
                         },
                         {
-                            "key": "hide_loop_partitions",
-                            "text": qsTranslate("GenerateSettingTranslate", "Hide loop partitions"),
-                            "type": "checkbox",
-                            "default": true
-                        },
-                        {
                             "key": "show_crumbbar_clickable_area",
                             "text": "Show crumb bar clickable area",
                             "type": "checkbox",
                             "default": false,
                             "hide": true
+                        },
+                        {
+                            "key": "hide_loop_partitions",
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide loop partitions"),
+                            "type": "checkbox",
+                            "default": true
                         },
                         {
                             "key": "show_filesystemtag_on_diskicon",
@@ -446,5 +439,5 @@
             ]
         }
 
-      ]
+    ]
 }

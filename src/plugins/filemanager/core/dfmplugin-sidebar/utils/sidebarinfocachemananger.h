@@ -50,6 +50,7 @@ public:
     CacheInfoList indexCacheMap(const Group &name) const;
     bool containsHiddenUrl(const QUrl &url);
     ItemInfo itemInfo(const QUrl &url);   // the funcs is for QHash<QUrl, ItemInfo> bindedInfos;
+    QList<QUrl> findItems(const QString &visiableKey);
 
     bool addItemInfoCache(const ItemInfo &info);
     bool insertItemInfoCache(Index i, const ItemInfo &info);

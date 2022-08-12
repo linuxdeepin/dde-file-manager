@@ -421,6 +421,24 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
     };
 
+    static const QStringList kItemVisiableControlKeys { "root_disk", "data_disk", "other_disks", "mounted_share_dirs" };
+    QString key;
+    switch (info->order()) {
+    case EntryFileInfo::kOrderSysDiskRoot:
+        key = kItemVisiableControlKeys[0];
+        break;
+    case EntryFileInfo::kOrderSysDiskData:
+        key = kItemVisiableControlKeys[1];
+        break;
+    case EntryFileInfo::kOrderSmb:
+    case EntryFileInfo::kOrderFtp:
+        key = kItemVisiableControlKeys[3];
+        break;
+    default:
+        key = kItemVisiableControlKeys[2];
+        break;
+    }
+
     Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
     if (info->renamable())
         flags |= Qt::ItemIsEditable;
@@ -441,7 +459,9 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
-        { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) }
+        { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) },
+        { "Property_Key_VisiableControl", key }
+
     };
 
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->url(), map);

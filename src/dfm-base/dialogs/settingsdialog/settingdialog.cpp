@@ -299,8 +299,7 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountOpenCheckBox(QObject *
 QPair<QWidget *, QWidget *> SettingDialog::createSplitter(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
-    auto name = option->name().toStdString();
-    auto lab = new QLabel(qApp->translate("GenerateSettingTranslate", name.c_str()));
+    auto lab = new QLabel(qApp->translate("GenerateSettingTranslate", option->name().toStdString().c_str()));
     return qMakePair(lab, nullptr);
 }
 

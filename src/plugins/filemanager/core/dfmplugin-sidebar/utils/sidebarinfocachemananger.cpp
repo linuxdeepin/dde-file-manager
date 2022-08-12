@@ -144,6 +144,16 @@ ItemInfo SideBarInfoCacheMananger::itemInfo(const QUrl &url)
     return bindedInfos.value(url);
 }
 
+QList<QUrl> SideBarInfoCacheMananger::findItems(const QString &visiableKey)
+{
+    QList<QUrl> ret;
+    for (const auto &item : bindedInfos.values()) {
+        if (item.visiableControlKey == visiableKey)
+            ret.append(item.url);
+    }
+    return ret;
+}
+
 bool SideBarInfoCacheMananger::contains(const ItemInfo &info) const
 {
     const CacheInfoList &cache = cacheInfoMap.value(info.group);

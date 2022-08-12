@@ -41,17 +41,20 @@ void SideBar::initialize()
 {
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SideBar::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &SideBar::onWindowClosed, Qt::DirectConnection);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &SideBar::onConfigChanged, Qt::DirectConnection);
+
     SideBarEventReceiver::instance()->bindEvents();
 }
 
 bool SideBar::start()
 {
     QString err;
-    if (!DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.sidebar", &err)) {
+    if (!DConfigManager::instance()->addConfig(ConfigInfos::kConfName, &err)) {
         qDebug() << "register dconfig failed: " << err;
         return false;
     }
     SideBarHelper::bindSettings();
+
     return true;
 }
 
@@ -67,9 +70,28 @@ void SideBar::onWindowOpened(quint64 windId)
     auto sidebar = new SideBarWidget;
     SideBarHelper::addSideBar(windId, sidebar);
     window->installSideBar(sidebar);
+
+    sidebar->updateItemVisiable(SideBarHelper::hiddenRules());
 }
 
 void SideBar::onWindowClosed(quint64 winId)
 {
     SideBarHelper::removeSideBar(winId);
+}
+
+void SideBar::onConfigChanged(const QString &cfg, const QString &key)
+{
+    if (cfg != QString(ConfigInfos::kConfName))
+        return;
+
+    if (key == QString(ConfigInfos::kVisiableKey)) {
+        for (const auto &id : FMWindowsIns.windowIdList()) {
+            auto win = FMWindowsIns.findWindowById(id);
+            if (win) {
+                auto sb = dynamic_cast<SideBarWidget *>(win->sideBar());
+                if (sb)
+                    sb->updateItemVisiable(SideBarHelper::hiddenRules());
+            }
+        }
+    }
 }

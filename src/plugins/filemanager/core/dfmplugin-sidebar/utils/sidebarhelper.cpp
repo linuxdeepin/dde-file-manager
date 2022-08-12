@@ -105,6 +105,8 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
     info.flags = flags;
     info.clickedCb = defaultCdAction;
     info.contextMenuCb = defaultContenxtMenu;
+    info.visiableControlKey = pathKey.toLower();
+    SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
 
     item->setFlags(flags);
 
@@ -202,10 +204,7 @@ void SideBarHelper::updateSideBarSelection(quint64 winId)
 
 void SideBarHelper::bindSettings()
 {
-    static constexpr char kConf[] { "org.deepin.dde.file-manager.sidebar" };
-    static constexpr char kKey[] { "itemVisiable" };
     static const std::map<QString, QString> kvs {
-        { "advance.items_in_sidebar.recent", "recent" },
         { "advance.items_in_sidebar.home", "home" },
         { "advance.items_in_sidebar.desktop", "desktop" },
         { "advance.items_in_sidebar.videos", "videos" },
@@ -226,12 +225,12 @@ void SideBarHelper::bindSettings()
     };
 
     auto getter = [](const QString &key) {
-        return DConfigManager::instance()->value(kConf, kKey).toMap().value(key, true);
+        return hiddenRules().value(key, true);
     };
     auto saver = [](const QString &key, const QVariant &val) {
-        auto curr = DConfigManager::instance()->value(kConf, kKey).toMap();
+        auto curr = hiddenRules();
         curr[key] = val;
-        DConfigManager::instance()->setValue(kConf, kKey, curr);
+        DConfigManager::instance()->setValue(ConfigInfos::kConfName, ConfigInfos::kVisiableKey, curr);
     };
 
     auto bindConf = [getter, saver](const QString &settingKey, const QString &dconfKey) {
@@ -241,6 +240,11 @@ void SideBarHelper::bindSettings()
     };
 
     std::for_each(kvs.begin(), kvs.end(), [bindConf](std::pair<QString, QString> pair) { bindConf(pair.first, pair.second); });
+}
+
+QVariantMap SideBarHelper::hiddenRules()
+{
+    return DConfigManager::instance()->value(ConfigInfos::kConfName, ConfigInfos::kVisiableKey).toMap();
 }
 
 QMutex &SideBarHelper::mutex()

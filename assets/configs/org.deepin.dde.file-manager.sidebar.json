@@ -3,8 +3,7 @@
     "version":"1.0",
     "contents":{
         "itemVisiable":{
-            "value": {"recent":true,
-                      "home":true,
+            "value": {"home":true,
                       "desktop":true,
                       "videos":true,
                       "music":true,

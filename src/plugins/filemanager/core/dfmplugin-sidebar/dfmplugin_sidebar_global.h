@@ -58,6 +58,7 @@ inline constexpr char kQtItemFlags[] { "Property_Key_QtItemFlags" };   // value 
 inline constexpr char kIsEjectable[] { "Property_Key_Ejectable" };   // value is bool, tem will set actionList(right edge)
 inline constexpr char kIsEditable[] { "Property_Key_Editable" };   // value is bool
 inline constexpr char kIsHidden[] { "Property_Key_Hidden" };   // value is bool, item will be hidden
+inline constexpr char kVisiableControlKey[] { "Property_Key_VisiableControl" };   // a string, used to identify the item when visiable state changed in dconfig;
 // calllbacks
 inline constexpr char kCallbackItemClicked[] { "Property_Key_CallbackItemClicked" };   // value is ItemClickedActionCallback
 inline constexpr char kCallbackContextMenu[] { "Property_Key_CallbackContextMenu" };   // value is ContextMenuCallback
@@ -65,6 +66,11 @@ inline constexpr char kCallbackRename[] { "Property_Key_CallbackRename" };   // 
 inline constexpr char kCallbackFindMe[] { "Property_Key_CallbackFindMe" };   // value is FindMeCallback
 
 }   // namespace PropertyKey
+
+namespace ConfigInfos {
+inline constexpr char kConfName[] { "org.deepin.dde.file-manager.sidebar" };
+inline constexpr char kVisiableKey[] { "itemVisiable" };
+}   // namespace ConfigInfos
 
 using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
@@ -84,6 +90,7 @@ struct ItemInfo
     bool isEjectable { false };   // TODO(zhangs): update
     bool isEditable { false };
     bool isHidden { false };   // TODO(zhangs): update
+    QString visiableControlKey;
 
     ItemClickedActionCallback clickedCb { nullptr };
     ContextMenuCallback contextMenuCb { nullptr };
@@ -100,6 +107,7 @@ struct ItemInfo
           finalUrl { map[PropertyKey::kFinalUrl].toUrl() },
           flags { qvariant_cast<Qt::ItemFlags>(map[PropertyKey::kQtItemFlags]) },
           isEjectable { map[PropertyKey::kIsEjectable].toBool() },
+          visiableControlKey({ map[PropertyKey::kVisiableControlKey].toString() }),
           clickedCb { qvariant_cast<ItemClickedActionCallback>(map[PropertyKey::kCallbackItemClicked]) },
           contextMenuCb { qvariant_cast<ContextMenuCallback>(map[PropertyKey::kCallbackContextMenu]) },
           renameCb { qvariant_cast<RenameCallback>(map[PropertyKey::kCallbackRename]) },

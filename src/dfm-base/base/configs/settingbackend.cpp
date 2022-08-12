@@ -41,7 +41,6 @@ BidirectionHash<QString, Application::ApplicationAttribute> SettingBackendPrivat
 BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::keyToGA {
     { "base.hidden_files.show_hidden", Application::kShowedHiddenFiles },
     { "base.hidden_files.show_suffix", Application::kShowedFileSuffix },
-    { "base.hidden_files.show_recent", Application::kShowRecentFileEntry },
     { "advance.index.index_internal", Application::kIndexInternal },
     { "advance.index.index_external", Application::kIndexExternal },
     { "advance.index.index_search", Application::kIndexFullTextSearch },
@@ -61,6 +60,7 @@ BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::k
     { "advance.other.hide_loop_partitions", Application::kHideLoopPartitions },
     { "advance.other.show_crumbbar_clickable_area", Application::kShowCsdCrumbBarClickableArea },
     { "advance.other.show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
+    { "advance.items_in_sidebar.recent", Application::kShowRecentFileEntry }
 };
 
 SettingBackend::SettingBackend(QObject *parent)

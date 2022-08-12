@@ -222,8 +222,8 @@ QVariantMap TagHelper::createSidebarItemInfo(const QString &tag)
         { "Property_Key_Editable", true },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
-        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) }
-
+        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
+        { "Property_Key_VisiableControl", "tags" }
     };
 
     return infoMap;

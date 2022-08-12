@@ -101,7 +101,8 @@ void SmbBrowser::addNeighborToSidebar()
         { "Property_Key_Group", "Group_Network" },
         { "Property_Key_DisplayName", tr("Computers in LAN") },
         { "Property_Key_Icon", SmbBrowserUtils::icon() },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) }
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_VisiableControl", "computers_in_lan" }
     };
 
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, SmbBrowserUtils::netNeighborRootUrl(), map);

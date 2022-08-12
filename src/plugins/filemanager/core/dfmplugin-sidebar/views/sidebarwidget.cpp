@@ -94,20 +94,31 @@ QAbstractItemView *SideBarWidget::view()
 
 int SideBarWidget::addItem(SideBarItem *item)
 {
+
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     // TODO(zhangs): custom group
+
     int r { kSidebarModelIns->appendRow(item) };
-    if (r >= 0 && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url()))
-        setItemVisible(item->url(), false);
+    bool hideAddedItem = r >= 0 && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url());
+    if (!SideBarHelper::hiddenRules().value(item->itemInfo().visiableControlKey, true).toBool())
+        hideAddedItem = true;
+
+    if (hideAddedItem)
+        setItemVisiable(item->url(), false);
     return r;
 }
 
 bool SideBarWidget::insertItem(const int index, SideBarItem *item)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
+
     bool r { kSidebarModelIns->insertRow(index, item) };
-    if (r && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url()))
-        setItemVisible(item->url(), false);
+    bool hideInsertedItem = r && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url());
+    if (!SideBarHelper::hiddenRules().value(item->itemInfo().visiableControlKey, true).toBool())
+        hideInsertedItem = true;
+
+    if (hideInsertedItem)
+        setItemVisiable(item->url(), false);
     return r;
 }
 
@@ -159,12 +170,23 @@ void SideBarWidget::editItem(const QUrl &url)
         sidebarView->edit(idx);
 }
 
-void SideBarWidget::setItemVisible(const QUrl &url, bool visible)
+void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     int r = kSidebarModelIns->findRowByUrl(url);
     if (r > 0)
         sidebarView->setRowHidden(r, !visible);
+    updateSeparatorVisibleState();
+}
+
+void SideBarWidget::updateItemVisiable(const QVariantMap &states)
+{
+    for (auto iter = states.cbegin(); iter != states.cend(); ++iter) {
+        auto urls = SideBarInfoCacheMananger::instance()->findItems(iter.key());
+        bool visiable = iter.value().toBool();
+        std::for_each(urls.cbegin(), urls.cend(), [visiable, this](const QUrl &url) { setItemVisiable(url, visiable); });
+    }
+    updateSeparatorVisibleState();
 }
 
 QList<QUrl> SideBarWidget::findItems(const QString &group) const
@@ -273,7 +295,6 @@ void SideBarWidget::initDefaultModel()
         for (const QString &name : names) {
             SideBarItem *item = SideBarHelper::createDefaultItem(name, DefaultGroup::kCommon);
             addItem(item);
-            SideBarInfoCacheMananger::instance()->addItemInfoCache(item->itemInfo());
         }
     });
 
@@ -311,11 +332,20 @@ void SideBarWidget::updateSeparatorVisibleState()
     QString lastGroupName = kNotExistedGroup;
     int lastGroupItemCount = 0;
     int lastShowSeparatorIndex = -1;
+    bool allItemsInvisiable = true;
 
     for (int i = 0; i < kSidebarModelIns->rowCount(); i++) {
         SideBarItem *item = kSidebarModelIns->itemFromIndex(i);
+        bool isSplitter = dynamic_cast<SideBarItemSeparator *>(item);
+        if (!isSplitter) {
+            if (sidebarView->isRowHidden(i))
+                continue;
+            else
+                allItemsInvisiable = false;
+        }
+
         if (item->group() != lastGroupName) {
-            if (dynamic_cast<SideBarItemSeparator *>(item)) {   // Separator
+            if (isSplitter) {   // Separator
                 if (lastGroupItemCount == 0) {
                     sidebarView->setRowHidden(i, true);
                 } else {
@@ -337,4 +367,8 @@ void SideBarWidget::updateSeparatorVisibleState()
         if (dynamic_cast<SideBarItemSeparator *>(item))
             sidebarView->setRowHidden(lastShowSeparatorIndex, true);
     }
+
+    // when no item is visiable in sidebar, do something, such as hide sidebar?
+    if (allItemsInvisiable)
+        qDebug() << "nothing in sidebar is visiable, maybe hide sidebar?";
 }

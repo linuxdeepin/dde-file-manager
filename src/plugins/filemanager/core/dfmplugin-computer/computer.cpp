@@ -131,7 +131,8 @@ void Computer::addComputerToSidebar()
         { "Property_Key_Group", "Group_Device" },
         { "Property_Key_DisplayName", tr("Computer") },
         { "Property_Key_Icon", ComputerUtils::icon() },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) }
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_VisiableControl", "computer" }
     };
 
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, ComputerUtils::rootUrl(), map);

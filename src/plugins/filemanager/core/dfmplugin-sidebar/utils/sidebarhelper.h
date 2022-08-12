@@ -53,6 +53,7 @@ public:
     static void updateSideBarSelection(quint64 winId);
 
     static void bindSettings();
+    static QVariantMap hiddenRules();
 
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.

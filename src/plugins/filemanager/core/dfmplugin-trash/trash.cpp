@@ -123,7 +123,8 @@ void Trash::installToSideBar()
         { "Property_Key_DisplayName", tr("Trash") },
         { "Property_Key_Icon", TrashHelper::icon() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        { "Property_Key_VisiableControl", "trash" }
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", TrashHelper::rootUrl(), map);
 }

@@ -62,7 +62,7 @@ void SideBarEventReceiver::handleItemHidden(const QUrl &url, bool visible)
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar)
-        sidebar->setItemVisible(url, visible);
+        sidebar->setItemVisiable(url, visible);
 }
 
 void SideBarEventReceiver::handleItemTriggerEdit(quint64 winId, const QUrl &url)
@@ -104,14 +104,13 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return false;
+    SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
         auto sidebar = allSideBar.first();
         if (item) {
-            if (!SideBarInfoCacheMananger::instance()->addItemInfoCache(info))
-                return false;
             if (sidebar->addItem(item) == -1)
                 return false;
             // for select to computer
@@ -195,6 +194,7 @@ bool SideBarEventReceiver::handleItemInsert(int index, const QUrl &url, const QV
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return false;
+    SideBarInfoCacheMananger::instance()->insertItemInfoCache(index, info);
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
@@ -206,8 +206,7 @@ bool SideBarEventReceiver::handleItemInsert(int index, const QUrl &url, const QV
             QUrl &&sidebarUrl = sidebar->currentUrl().url();
             if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
                 sidebar->setCurrentUrl(item->url());
-            if (ret)
-                return SideBarInfoCacheMananger::instance()->insertItemInfoCache(index, info);
+            return ret;
         }
     }
 

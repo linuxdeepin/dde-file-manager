@@ -139,12 +139,6 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Show file extensions"),
                             "type": "checkbox",
                             "default": true
-                        },
-                        {
-                            "key": "show_recent",
-                            "text": qsTranslate("GenerateSettingTranslate", "Display recent file entry in left panel"),
-                            "type": "checkbox",
-                            "default": true
                         }
 
                     ]

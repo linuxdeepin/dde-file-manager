@@ -119,7 +119,8 @@ void MyShares::addToSidebar()
         { "Property_Key_Group", "Group_Network" },
         { "Property_Key_DisplayName", ShareUtils::displayName() },
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
-        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) }
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_VisiableControl", "my_shares" }
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", ShareUtils::rootUrl(), map);
 }

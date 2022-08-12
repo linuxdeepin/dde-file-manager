@@ -55,7 +55,8 @@ public:
     void updateItem(const QUrl &url, const ItemInfo &newInfo);
     int findItem(const QUrl &url) const;
     void editItem(const QUrl &url);
-    void setItemVisible(const QUrl &url, bool visible);
+    void setItemVisiable(const QUrl &url, bool visible);
+    void updateItemVisiable(const QVariantMap &states);
     QList<QUrl> findItems(const QString &group) const;
     void updateSelection();
 
