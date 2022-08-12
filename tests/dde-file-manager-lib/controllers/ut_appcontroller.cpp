@@ -39,6 +39,10 @@
 #include "gvfs/secretmanager.h"
 #include "controllers/appcontroller.h"
 #include "interfaces/dumountmanager.h"
+#include "app/define.h"
+#include "interfaces/dfmapplication.h"
+#include "interfaces/dfmevent.h"
+#include "interfaces/dfmglobal.h"
 #include "utils.h"
 
 DFM_USE_NAMESPACE
@@ -1068,6 +1072,7 @@ TEST_F(AppControllerTest, start_showErrorDialog){
     TestHelper::runInLoop([=](){
     });
 }
+
 /*smb挂载项聚合后，侧边栏常驻项变成了smb://x.x.x.x，不适用下面的用例
 TEST_F(AppControllerTest, start_actionRemoveStashedMount) {
     RemoteMountsStashManager::stashRemoteMount("/run/user/1000/gvfs/smb-share:server=1.2.3.4,share=test", "test");
@@ -1085,3 +1090,61 @@ TEST_F(AppControllerTest, start_actionRemoveStashedMount) {
     EXPECT_NO_FATAL_FAILURE(RemoteMountsStashManager::stashCurrentMounts());
 }
 */
+
+TEST_F(AppControllerTest,start_openAction_two) {
+    url.setScheme(FILE_SCHEME);
+    url.setPath("~/Music");
+
+    DUrl recenturl,searchurl,burnurl;
+    recenturl.setScheme(RECENT_SCHEME);
+    searchurl.setScheme(SEARCH_SCHEME);
+    burnurl.setScheme(BURN_SCHEME);
+
+    QVariant (*processEventlamda)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
+            (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant();
+    };
+
+
+    StubExt tempSt;
+    tempSt.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
+            ADDR(DFMEventDispatcher,processEvent),processEventlamda);
+
+    class testFileInfo : public DFileInfo {
+    public:
+        explicit testFileInfo(const DUrl &fileUrl) :
+            DFileInfo(fileUrl)
+        {
+
+        }
+        bool isGvfsMountFile() const override {
+            inThere = true;
+            return true;
+        }
+
+        mutable bool inThere = false;
+    };
+
+    testFileInfo *tpInfo = new testFileInfo(url);
+    DAbstractFileInfoPointer testInfo = DAbstractFileInfoPointer(tpInfo);
+    stl.set_lamda(ADDR(DFileService,createFileInfo),[testInfo](){
+        return testInfo;
+    });
+
+    auto oldOpenState = DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool();
+    auto oldDialogMode = g_isFileDialogMode;
+
+    // 总是打开新窗口，并且是对话框
+    if (!oldOpenState) {
+        DFMApplication::instance()->setAppAttribute(DFMApplication::AA_AllwayOpenOnNewWindow, true);
+        g_isFileDialogMode = true;
+    }
+
+    EXPECT_NO_FATAL_FAILURE(controller->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList() << url)));
+    EXPECT_TRUE(tpInfo->inThere);
+
+    // 还原配置，放置影响其他用例
+    DFMApplication::instance()->setAppAttribute(DFMApplication::AA_AllwayOpenOnNewWindow, oldOpenState);
+    g_isFileDialogMode = oldDialogMode;
+}
+
