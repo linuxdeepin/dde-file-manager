@@ -6,7 +6,13 @@ HEADERS += \
     $$PWD/singleton.h \
     $$PWD/cryptoutils.h \
     $$PWD/desktopinfo.h \
-    $$PWD/grouppolicy.h
+    $$PWD/grouppolicy.h \
+    $$PWD/rlog/rlog.h \
+    $$PWD/rlog/reportdatainterface.h \
+    $$PWD/rlog/committhread.h \
+    $$PWD/rlog/smbreportdata.h \
+    $$PWD/rlog/vaultreportdata.h \
+    $$PWD/rlog/searchreportdata.h
 
 SOURCES += \
     $$PWD/utils.cpp \
@@ -15,4 +21,9 @@ SOURCES += \
     $$PWD/qobjecthelper.cpp \
     $$PWD/cryptoutils.cpp \
     $$PWD/desktopinfo.cpp \
-    $$PWD/grouppolicy.cpp
+    $$PWD/grouppolicy.cpp \
+    $$PWD/rlog/rlog.cpp \
+    $$PWD/rlog/committhread.cpp \
+    $$PWD/rlog/smbreportdata.cpp \
+    $$PWD/rlog/vaultreportdata.cpp \
+    $$PWD/rlog/searchreportdata.cpp

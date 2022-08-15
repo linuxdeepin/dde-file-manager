@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "rlog/rlog.h"
 //fix: 设置光盘容量属性
 #include "../views/dfmopticalmediawidget.h"
 
@@ -1617,21 +1618,33 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 //            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
 //                                         tr("Mounting device error"), QString(error->message));
 //        }
+        QString errorUiMsg = tr("Wrong username or password");
         if (showWarnDlg) {
+            errorUiMsg = tr("Mounting device error");
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                          tr("Mounting device error"), QString());
             qInfo() << "Mounting device error: " << QString(error->message);
         } else {
             //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
             if (status == MOUNT_PASSWORD_WRONG && bshow) {
+                errorUiMsg = tr("Wrong username or password");
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr("Wrong username or password"));
             } else if (status == MOUNT_CANCEL && bshow) {
+                errorUiMsg = tr(error->message);
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr(error->message));
             }
 
         }
+
+        QVariantMap args;
+        args.insert("result",false);
+        args.insert("errorId",error->code);
+        args.insert("errorSysMsg",error->message);
+        args.insert("errorUiMsg",errorUiMsg);
+        rlog->commit("Smb",args);
+
         qCDebug(mountManager()) << "g_file_mount_enclosing_volume_finish" << succeeded << error;
         qCDebug(mountManager()) << "username" << g_mount_operation_get_username(op) << error->message;
     } else {
@@ -1650,6 +1663,10 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         }
 
         status = MOUNT_SUCCESS;
+
+        QVariantMap args;
+        args.insert("result",true);
+        rlog->commit("Smb",args);
     }
 
     AskingPasswordHash.remove(op);

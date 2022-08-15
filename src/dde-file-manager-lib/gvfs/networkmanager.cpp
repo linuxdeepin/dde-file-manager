@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "rlog/rlog.h"
 #include "networkmanager.h"
 #include "dfmeventdispatcher.h"
 #include "dfileservices.h"
@@ -229,6 +230,9 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
                 eventLoop->setProperty("success",true);
 
             addSmbServerToHistory(event->fileUrl());
+            QVariantMap args;
+            args.insert("result",true);
+            rlog->commit("Smb",args);
         }
         if (eventLoop) {
             // 挂载完成时, 返回 1, 在fetch_networks中再次调用g_file_enumerate_children_async获取列表
@@ -356,6 +360,9 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     NetworkNodes.insert(neturl, nodeList);
 
     addSmbServerToHistory(neturl);
+    QVariantMap args;
+    args.insert("result",true);
+    rlog->commit("Smb",args);
     qDebug() << "request NetworkNodeList successfully";
 }
 
@@ -433,6 +440,10 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
                 RemoteMountsStashManager::insertStashedSmbDevice("smb://"+e->fileUrl().host());//当进行smb地址访问时，添加smb聚合设备到配置中
                 addSmbServerToHistory(e->fileUrl());//通知侧边栏和计算机界面显示smb挂载聚合项
                 emit addSmbMountIntegration(e->fileUrl());
+
+                QVariantMap args;
+                args.insert("result",true);
+                rlog->commit("Smb",args);
             }
             QWidget *main_window = WindowManager::getWindowById(e->windowId());
 
