@@ -67,6 +67,7 @@ public:
     void handleMoveMimeData(QDropEvent *event, const QUrl &url);
     bool drop(QDropEvent *event);
 
+    bool continuousSelection(QKeyEvent *event, QPersistentModelIndex &newCurrent) const;
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);
     void updateColumnCount(const int &viewWidth, const int &itemWidth);
@@ -115,6 +116,7 @@ public:
     QUrl dropTargetUrl;
 
     QPersistentModelIndex pressedIndex;
+    QPersistentModelIndex currentSelectionStartIndex;
     Qt::KeyboardModifiers pressedModifiers;
     bool pressedAlreadySelected = false;
 };

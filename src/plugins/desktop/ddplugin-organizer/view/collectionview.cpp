@@ -729,6 +729,71 @@ bool CollectionViewPrivate::dropFiles(QDropEvent *event) const
     return true;
 }
 
+bool CollectionViewPrivate::continuousSelection(QKeyEvent *event, QPersistentModelIndex &newCurrent) const
+{
+    QPersistentModelIndex oldCurrent = q->currentIndex();
+    if (newCurrent.isValid() && newCurrent != oldCurrent && newCurrent.isValid()) {
+        if (!q->hasFocus() && QApplication::focusWidget() == q->indexWidget(oldCurrent))
+            q->setFocus();
+        QItemSelectionModel::SelectionFlags command = q->selectionCommand(newCurrent, event);
+        if (command != QItemSelectionModel::NoUpdate
+             || q->style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, nullptr, q)) {
+            // note that we don't check if the new current index is enabled because moveCursor() makes sure it is
+            if (command & QItemSelectionModel::Current) {
+                q->selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
+
+                auto &&currentSelectionStartFile = q->model()->fileUrl(currentSelectionStartIndex);
+                auto &&currentSelectionStartNode = provider->items(id).indexOf(currentSelectionStartFile);
+                if (Q_UNLIKELY(-1 == currentSelectionStartNode)) {
+                    qWarning() << "warning:can not find file:" << currentSelectionStartFile << " in collection:" << id
+                               << ".Or no file is selected.So fix to 0.";
+                    currentSelectionStartNode = 0;
+                }
+
+                auto &&currentSelectionEndFile = q->model()->fileUrl(newCurrent);
+                auto &&currentSelectionEndNode = provider->items(id).indexOf(currentSelectionEndFile);
+                if (Q_UNLIKELY(-1 == currentSelectionEndNode)) {
+                    qWarning() << "warning:can not find file:" << currentSelectionEndFile << " in collection:" << id
+                               << ".Give up switch selection!";
+                    return false;
+                }
+
+                int minNode = qMin(currentSelectionStartNode, currentSelectionEndNode);
+                int maxNode = qMax(currentSelectionStartNode, currentSelectionEndNode);
+
+                if (Q_UNLIKELY(minNode < 0)) {
+                    qWarning() << "warning:minNode error:" << minNode << " and fix to 0";
+                    minNode = 0;
+                }
+                if (Q_UNLIKELY(maxNode >= provider->items(id).count())) {
+                    qWarning() << "warning:maxNode error:" << maxNode << "and fix to " << provider->items(id).count() - 1;
+                    maxNode = provider->items(id).count() - 1;
+                }
+
+                QItemSelection selections;
+                for (int node = minNode; node <= maxNode; ++node) {
+                    auto &&fileUrl = provider->items(id).at(node);
+                    auto &&index = q->model()->index(fileUrl);
+                    if (!selections.contains(index)) {
+                        selections.push_back(QItemSelectionRange(index));
+                    }
+                }
+                q->selectionModel()->select(selections, QItemSelectionModel::ClearAndSelect);
+            } else {
+                q->selectionModel()->setCurrentIndex(newCurrent, command);
+                if (newCurrent.isValid()) {
+                    // We copy the same behaviour as for mousePressEvent().
+                    QRect rect(q->visualRect(newCurrent).center(), QSize(1, 1));
+                    q->setSelection(rect, command);
+                }
+            }
+            event->accept();
+            return true;
+        }
+    }
+    return false;
+}
+
 void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &itemHeight)
 {
     const int availableHeight = viewHeight - viewMargins.top() - viewMargins.bottom();
@@ -999,14 +1064,17 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
         return model()->index(url);
     }
 
+    if (Qt::ControlModifier == modifiers) {
+        // Do not allow move when hold ctrl
+        return current;
+    }
+
     auto currentUrl = model()->fileUrl(current);
     auto node = d->provider->items(d->id).indexOf(currentUrl);
     if (Q_UNLIKELY(-1 == node)) {
         qWarning() << "current url not belong to me." << currentUrl << d->provider->items(d->id);
         return QModelIndex();
     }
-
-    // todo(wangcl) hand modifiers(ctrl and shift)
 
     switch (cursorAction) {
     case MovePrevious :
@@ -1033,7 +1101,7 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
         break;
     case MoveUp : {
 
-        if (node > d->columnCount) {
+        if (node >= d->columnCount) {
             // not first row
             node -= d->columnCount;
         } else {
@@ -1048,7 +1116,7 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
             node += d->columnCount;
         } else {
             auto &&pos = d->nodeToPos(node);
-            auto lastNode = d->provider->items(d->id).count() - 1;
+            auto &&lastNode = d->provider->items(d->id).count() - 1;
             auto &&lastPos = d->nodeToPos(lastNode);
             if (pos.x() != lastPos.x()) {
                 // there are some files in the next row,select last file
@@ -1069,15 +1137,33 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
     }
         break;
     case MovePageUp : {
-        // todo:返回上一页的第一个
-        // todo:shift?范围选择
-        return QModelIndex();
+        auto &&pos = d->nodeToPos(node);
+        pos.setX(pos.x() - d->rowCount);
+        if (pos.x() < 0)
+            pos.setX(0);
+        node = d->posToNode(pos);
     }
+        break;
     case MovePageDown : {
-        // todo:返回下一页的最后一个
-        // todo:shift?范围选择
-        return QModelIndex();
+        int pageFileCount = d->rowCount * d->columnCount;
+        if (node + pageFileCount < d->provider->items(d->id).count()) {
+            // The following file more than one page,turn the page
+            node += pageFileCount;
+        } else {
+            // The following file is less than one page
+            auto &&pos = d->nodeToPos(node);
+            auto &&lastNode = d->provider->items(d->id).count() - 1;
+            auto &&lastPos = d->nodeToPos(lastNode);
+            if (pos.x() != lastPos.x()) {
+                // select last file
+                node = lastNode;
+            } else {
+                // already on the last line,ignore
+                return current;
+            }
+        }
     }
+        break;
     }
 
     auto &&afterUrl = d->provider->items(d->id).at(node);
@@ -1260,6 +1346,98 @@ void CollectionView::resizeEvent(QResizeEvent *event)
 
 void CollectionView::keyPressEvent(QKeyEvent *event)
 {
+    if (event->key() == Qt::Key_Shift) {
+        // record the starting index of range selection
+        d->currentSelectionStartIndex = currentIndex();
+        return QAbstractItemView::keyPressEvent(event);
+    }
+
+    switch (event->modifiers()) {
+    case Qt::NoModifier:
+        switch (event->key()) {
+        case Qt::Key_F1: {
+            // todo:help?
+            break;
+        }
+        case Qt::Key_Escape: {
+            // todo:clear clipboard
+            break;
+        }
+        default:
+            break;
+        }
+        break;
+    case Qt::KeypadModifier:
+        switch (event->key()) {
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+            // todo:open file or files
+            break;
+        case Qt::Key_F5:
+            // todo:refresh
+            break;
+        case Qt::Key_Delete:
+            // todo:delete file or files
+            break;
+        default:
+            break;
+        }
+        break;
+    case Qt::AltModifier:
+        if (event->key() == Qt::Key_M) {
+            // todo:menu
+        }
+        break;
+    case Qt::ShiftModifier: {
+        if (event->key() == Qt::Key_Delete) {
+            //todo:delete file forever
+            return;
+        }
+
+        // Qabstractitemview will select the elements within the rectangle
+        // Special treatment: select continuous elements
+        QPersistentModelIndex newCurrent;
+        switch (event->key()) {
+        case Qt::Key_Down:
+            newCurrent = moveCursor(MoveDown, event->modifiers());
+            break;
+        case Qt::Key_Up:
+            newCurrent = moveCursor(MoveUp, event->modifiers());
+            break;
+        case Qt::Key_Left:
+            newCurrent = moveCursor(MoveLeft, event->modifiers());
+            break;
+        case Qt::Key_Right:
+            newCurrent = moveCursor(MoveRight, event->modifiers());
+            break;
+        case Qt::Key_Home:
+            newCurrent = moveCursor(MoveHome, event->modifiers());
+            break;
+        case Qt::Key_End:
+            newCurrent = moveCursor(MoveEnd, event->modifiers());
+            break;
+        case Qt::Key_PageUp:
+            newCurrent = moveCursor(MovePageUp, event->modifiers());
+            break;
+        case Qt::Key_PageDown:
+            newCurrent = moveCursor(MovePageDown, event->modifiers());
+            break;
+        case Qt::Key_Tab:
+                newCurrent = moveCursor(MoveNext, event->modifiers());
+            break;
+        case Qt::Key_Backtab:
+                newCurrent = moveCursor(MovePrevious, event->modifiers());
+            break;
+        }
+
+        if (d->continuousSelection(event, newCurrent))
+            return;
+    }
+        break;
+    default:
+        break;
+    }
+
     QAbstractItemView::keyPressEvent(event);
 
     // must accept event
