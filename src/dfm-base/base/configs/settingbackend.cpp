@@ -152,11 +152,11 @@ void SettingBackend::onValueChanged(int attribute, const QVariant &value)
 {
     QString key = d->keyToAA.key(static_cast<Application::ApplicationAttribute>(attribute));
 
-    if (key.isEmpty()) {
+    if (key.isEmpty())
         key = d->keyToGA.key(static_cast<Application::GenericAttribute>(attribute));
-    }
 
-    Q_ASSERT(!key.isEmpty());
+    if (key.isEmpty())
+        return;
 
     emit optionChanged(key, value);
 }

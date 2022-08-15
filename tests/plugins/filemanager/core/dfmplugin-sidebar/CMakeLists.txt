@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(test-dfmplugin-computer)
+project(test-dfmplugin-sidebar)
 
-set(PluginPath ${PROJECT_SOURCE_PATH}/plugins/filemanager/dfmplugin-computer/)
+set(PluginPath ${PROJECT_SOURCE_PATH}/plugins/filemanager/core/dfmplugin-sidebar/)
 
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE
@@ -27,6 +27,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 add_test(
-  NAME computer
+  NAME sidebar
   COMMAND $<TARGET_FILE:${PROJECT_NAME}>
 )

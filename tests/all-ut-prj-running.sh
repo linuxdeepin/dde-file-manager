@@ -83,11 +83,12 @@ regList=(
   # apps/dde-file-manager-server
 
 # base、extension、framework
-  # dfm-base
+  dfm-base
   # dfm-extension
   dfm-framework
+  plugins/filemanager/core/dfmplugin-computer
+  plugins/filemanager/core/dfmplugin-sidebar
   plugins/filemanager/dfmplugin-myshares
-  plugins/filemanager/dfmplugin-computer
   plugins/filemanager/dfmplugin-smbbrowser
 
 # services

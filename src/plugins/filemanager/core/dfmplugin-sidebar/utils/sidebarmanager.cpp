@@ -62,7 +62,7 @@ void SideBarManager::runContextMenu(SideBarItem *item, quint64 windowId, const Q
     if (info.contextMenuCb) {
         info.contextMenuCb(windowId, url, globalPos);
     } else {
-        SideBarHelper::defaultContenxtMenu(windowId, url, globalPos);
+        SideBarHelper::defaultContextMenu(windowId, url, globalPos);
     }
 }
 

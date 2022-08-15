@@ -104,7 +104,7 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
     info.url = url;
     info.flags = flags;
     info.clickedCb = defaultCdAction;
-    info.contextMenuCb = defaultContenxtMenu;
+    info.contextMenuCb = defaultContextMenu;
     info.visiableControlKey = pathKey.toLower();
     SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
 
@@ -155,7 +155,7 @@ void SideBarHelper::defaultCdAction(quint64 windowId, const QUrl &url)
         SideBarEventCaller::sendItemActived(windowId, url);
 }
 
-void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos)
+void SideBarHelper::defaultContextMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     // ref (DFMSideBarDefaultItemHandler::contextMenu)
     QMenu *menu = new QMenu;

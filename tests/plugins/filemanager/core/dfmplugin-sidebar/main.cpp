@@ -23,19 +23,19 @@
 
 #include <gtest/gtest.h>
 #include <sanitizer/asan_interface.h>
-#include <QCoreApplication>
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
+    QApplication app(argc, argv);
 
-    auto appins = new dfmbase::Application();
+    auto ins = new dfmbase::Application();
 
     ::testing::InitGoogleTest(&argc, argv);
 
     int ret = RUN_ALL_TESTS();
 
-    delete appins;
+    delete ins;
 
 #ifdef ENABLE_TSAN_TOOL
     __sanitizer_set_report_path("../../../asan_dde-file-manager.log");

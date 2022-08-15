@@ -47,7 +47,7 @@ public:
     static SideBarItemSeparator *createSeparatorItem(const QString &group);
     static QString makeItemIdentifier(const QString &group, const QUrl &url);
     static void defaultCdAction(quint64 windowId, const QUrl &url);
-    static void defaultContenxtMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos);
+    static void defaultContextMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static bool registerSortFunc(const QString &subGroup, SortFunc func);
     static SortFunc sortFunc(const QString &subGroup);
     static void updateSideBarSelection(quint64 winId);
