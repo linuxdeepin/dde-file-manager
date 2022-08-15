@@ -54,6 +54,10 @@ QVariant FileSortFilterProxyModel::headerData(int column, Qt::Orientation, int r
 
 Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
 {
+    // single select mode will check index enabled when remove row
+    if (!index.isValid())
+        return Qt::ItemFlag::ItemIsEnabled;
+
     Qt::ItemFlags flags = QSortFilterProxyModel::flags(index);
 
     const QModelIndex &sourceIndex = mapToSource(index);
