@@ -1676,7 +1676,14 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(Menu
 
 
     QVector<MenuAction> docmentMenuActionKeys;
+#ifdef DFM_MINIMUM
     docmentMenuActionKeys << MenuAction::NewText;
+#else
+    docmentMenuActionKeys << MenuAction::NewWord
+                          << MenuAction::NewExcel
+                          << MenuAction::NewPowerpoint
+                          << MenuAction::NewText;
+#endif
 
     static const QList<QAction *> template_file_list = getTemplateFileList();
     static const QVector<MenuAction> action_type_list = getMenuActionTypeListByAction(template_file_list);
