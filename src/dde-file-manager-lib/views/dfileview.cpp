@@ -2797,7 +2797,7 @@ void DFileView::keyboardSearch(const QString &search)
 {
     D_D(DFileView);
 
-    if (search.isEmpty())
+    if (search.isEmpty() || search.data()->isNull())
         return;
 
     d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
