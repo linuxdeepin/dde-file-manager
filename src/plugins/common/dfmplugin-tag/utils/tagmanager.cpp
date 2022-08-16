@@ -107,6 +107,21 @@ QMap<QString, QString> TagManager::getTagsColorName(const QStringList &tags) con
     return result;
 }
 
+QList<QColor> TagManager::getTagColors(const QList<QUrl> &urls) const
+{
+    QStringList tags = getTagsByUrls(urls);
+    TagsMap tagMap = getTagsColor(tags);
+    QList<QColor> colors {};
+
+    TagsMap::const_iterator it = tagMap.begin();
+    while (it != tagMap.end()) {
+        colors.append(it.value());
+        ++it;
+    }
+
+    return colors;
+}
+
 TagManager::TagsMap TagManager::getTagsColor(const QList<QString> &tags) const
 {
     TagsMap result;
@@ -352,18 +367,14 @@ bool TagManager::canTagFile(const AbstractFileInfoPointer &fileInfo) const
 
 bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
+    auto fileInfo = InfoCache::instance().getCacheInfo(url);
+    if (!canTagFile(fileInfo))
+        return false;
+
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
         return false;
 
-    QStringList tags = getTagsByUrls({ url });
-    TagsMap tagMap = getTagsColor(tags);
-    QList<QColor> colors;
-
-    TagsMap::const_iterator it = tagMap.begin();
-    while (it != tagMap.end()) {
-        colors.append(it.value());
-        ++it;
-    }
+    const QList<QColor> &colors = getTagColors({ url });
 
     if (!colors.isEmpty()) {
         QRectF boundingRect(0, 0, (colors.size() + 1) * kTagDiameter / 2, kTagDiameter);
@@ -380,18 +391,14 @@ bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painte
 
 bool TagManager::paintIconTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
+    auto fileInfo = InfoCache::instance().getCacheInfo(url);
+    if (!canTagFile(fileInfo))
+        return false;
+
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
         return false;
 
-    QStringList tags = getTagsByUrls({ url });
-    TagsMap tagMap = getTagsColor(tags);
-    QList<QColor> colors;
-
-    TagsMap::const_iterator it = tagMap.begin();
-    while (it != tagMap.end()) {
-        colors.append(it.value());
-        ++it;
-    }
+    const QList<QColor> &colors = getTagColors({ url });
 
     if (!colors.isEmpty()) {
         QRectF boundingRect(0, 0, (colors.size() + 1) * kTagDiameter / 2, kTagDiameter);

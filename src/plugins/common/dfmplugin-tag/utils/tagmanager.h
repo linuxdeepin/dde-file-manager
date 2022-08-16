@@ -100,6 +100,7 @@ private:
     void initializeConnection();
 
     QMap<QString, QString> getTagsColorName(const QStringList &tags) const;
+    QList<QColor> getTagColors(const QList<QUrl> &urls) const;
 
     TagDBusHelper *dbusHelper;
 };
