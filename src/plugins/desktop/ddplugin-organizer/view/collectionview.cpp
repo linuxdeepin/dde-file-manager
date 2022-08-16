@@ -729,7 +729,7 @@ bool CollectionViewPrivate::dropFiles(QDropEvent *event) const
     return true;
 }
 
-bool CollectionViewPrivate::continuousSelection(QKeyEvent *event, QPersistentModelIndex &newCurrent) const
+bool CollectionViewPrivate::continuousSelection(QEvent *event, QPersistentModelIndex &newCurrent) const
 {
     QPersistentModelIndex oldCurrent = q->currentIndex();
     if (newCurrent.isValid() && newCurrent != oldCurrent && newCurrent.isValid()) {
@@ -787,7 +787,6 @@ bool CollectionViewPrivate::continuousSelection(QKeyEvent *event, QPersistentMod
                     q->setSelection(rect, command);
                 }
             }
-            event->accept();
             return true;
         }
     }
@@ -1275,6 +1274,17 @@ void CollectionView::paintEvent(QPaintEvent *event)
         itemDelegate()->paint(&painter, option, index);
         painter.restore();
     }
+
+    if (d->elasticBand.isValid()) {
+        QStyleOptionRubberBand opt;
+        opt.initFrom(this);
+        opt.shape = QRubberBand::Rectangle;
+        opt.opaque = false;
+        opt.rect = d->elasticBand;
+        painter.save();
+        style()->drawControl(QStyle::CE_RubberBand, &opt, &painter);
+        painter.restore();
+    }
 }
 
 void CollectionView::wheelEvent(QWheelEvent *event)
@@ -1299,19 +1309,42 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
     if (index.isValid() && isPersistentEditorOpen(index))
         return;
 
+    d->pressedModifiers = event->modifiers();
+
+    if (Qt::ShiftModifier == d->pressedModifiers) {
+        // Qabstractitemview will select the elements within the rectangle
+        // Special treatment: select continuous elements
+
+        QPersistentModelIndex newCurrent(index);
+        if (d->continuousSelection(event, newCurrent)) {
+            event->accept();
+            return;
+        }
+    }
+
     d->pressedAlreadySelected = selectionModel()->isSelected(index);
     d->pressedIndex = index;
-    d->pressedModifiers = event->modifiers();
+
 
     QAbstractItemView::mousePressEvent(event);
     if (leftButtonPressed && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
         // reselect index(maybe the user wants to drag and copy by Ctrl)
         selectionModel()->select(d->pressedIndex, QItemSelectionModel::Select);
     }
+
+    QPoint viewPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
+    d->pressedPosition = viewPoint;
 }
 
 void CollectionView::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (d->elasticBand.isValid()) {
+        // clear elasticBand
+        d->elasticBand = QRect();
+
+        update();
+    }
+
     d->canUpdateVerticalBarRange = true;
     if (d->needUpdateVerticalBarRange) {
         d->updateVerticalBarRange();
@@ -1319,7 +1352,7 @@ void CollectionView::mouseReleaseEvent(QMouseEvent *event)
 
     if (d->pressedIndex.isValid() && d->pressedIndex == indexAt(event->pos())
             && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
-        // not drag and cot by Ctrl,so deselect index
+        // not drag and copy by Ctrl,so deselect index
         selectionModel()->select(d->pressedIndex, QItemSelectionModel::Deselect);
     }
 
@@ -1328,7 +1361,15 @@ void CollectionView::mouseReleaseEvent(QMouseEvent *event)
 
 void CollectionView::mouseMoveEvent(QMouseEvent *event)
 {
-    return QAbstractItemView::mouseMoveEvent(event);
+    QAbstractItemView::mouseMoveEvent(event);
+
+    if (event->buttons().testFlag(Qt::LeftButton)) {
+        QRect rect(d->pressedPosition, event->pos() + QPoint(horizontalOffset(), verticalOffset()));
+        d->elasticBand = rect.normalized();
+        update();
+    } else {
+        d->elasticBand = QRect();
+    }
 }
 
 void CollectionView::resizeEvent(QResizeEvent *event)
@@ -1430,8 +1471,10 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             break;
         }
 
-        if (d->continuousSelection(event, newCurrent))
+        if (d->continuousSelection(event, newCurrent)) {
+            event->accept();
             return;
+        }
     }
         break;
     default:
