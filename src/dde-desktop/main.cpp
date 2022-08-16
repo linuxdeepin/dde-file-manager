@@ -6,6 +6,7 @@
 #include "config/config.h"
 #include "desktop.h"
 #include "view/canvasgridview.h"
+#include "daemonplugin.h"
 
 #include <controllers/appcontroller.h>
 #include <dfmglobal.h>
@@ -127,6 +128,7 @@ int main(int argc, char *argv[])
 
     bool preload = false;
     bool fileDialogOnly = false;
+    bool noGrandSearch = false;
     for (const QString &arg : app.arguments()) {
         if (arg == "--preload") {
             preload = true;
@@ -137,6 +139,9 @@ int main(int argc, char *argv[])
             break;
         }
     }
+
+    if (app.arguments().contains("--no-grandsearch"))
+        noGrandSearch = true;
 
     //因bug#46452，--file-dialog-only不再判断root
 //    if (fileDialogOnly && getuid() != 0) {
@@ -214,6 +219,26 @@ int main(int argc, char *argv[])
     } else {
         if (!fileDialogOnly) {
             Desktop::instance()->loadView();
+
+            if (!noGrandSearch) {
+                // 4s后启动全局搜索
+                QTimer::singleShot(4000, Desktop::instance(), []() {
+                   qInfo() << "try to start grand search daemon...";
+                    GrandSearch::DaemonPlugin *srv = new GrandSearch::DaemonPlugin(qApp);
+                    if (srv->initialize()) {
+                        if (srv->start()) {
+                            QObject::connect(qApp, &DApplication::aboutToQuit, srv, &GrandSearch::DaemonPlugin::stop);
+                            qInfo() << "grand search daemo started successfully.";
+                            return;
+                        } else {
+                            qCritical() << "started grand search failed.";
+                        }
+                    } else {
+                        qWarning() << "initialize grand search failed.";
+                    }
+                    delete srv;
+                });
+            }
         }
     }
 
@@ -236,6 +261,7 @@ int main(int argc, char *argv[])
     DFMGlobal::initEmblemPluginManagerConnection();
 
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
+
     int ret = app.exec();
     qInfo() << "exit: " << ret << "pid:" << getpid();
     return ret;
