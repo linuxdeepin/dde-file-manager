@@ -1,5 +1,4 @@
 SOURCES += \
-    #$$PWD/dde-wallpaper-chooser/ut-frame-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-button-test.cpp\
     $$PWD/dde-wallpaper-chooser/ut-waititem-test.cpp \
     $$PWD/dde-wallpaper-chooser/ut-wallpaperitem-test.cpp \
@@ -23,9 +22,10 @@ SOURCES += \
     $$PWD/presenter/ut-gridmanager-test.cpp \
     $$PWD/presenter/ut-gridcore-test.cpp \
     $$PWD/model/ut-dfileselectionmodel.cpp \
-    #$$PWD/screen/ut-screenmanager-test.cpp \
     #$$PWD/presenter/ut-dfmsocketinterface-test.cpp\
-    $$PWD/dde-wallpaper-chooser/ut-autoactivatewindow.cpp
+    $$PWD/dde-wallpaper-chooser/ut-autoactivatewindow.cpp \
+    $$PWD/grandsearchdaemon/ut_daemonplugin.cpp \
+    $$PWD/grandsearchdaemon/ut_daemonlibrary.cpp
 
 isEqual(ARCH, x86_64) {
     SOURCES += \

@@ -3,6 +3,8 @@ include($$PWD/util/util.pri)
 include($$PWD/dbus/dbus.pri)
 
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
+include($$PWD/../grandsearchdaemon/grandsearchdaemon.pri)
+
 #无热区设置
 #include($$PWD/../dde-zone/dde-zone.pri)
 DEFINES += DISABLE_ZONE
