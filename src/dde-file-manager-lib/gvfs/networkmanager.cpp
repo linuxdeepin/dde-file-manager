@@ -360,9 +360,6 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     NetworkNodes.insert(neturl, nodeList);
 
     addSmbServerToHistory(neturl);
-    QVariantMap args;
-    args.insert("result",true);
-    rlog->commit("Smb",args);
     qDebug() << "request NetworkNodeList successfully";
 }
 

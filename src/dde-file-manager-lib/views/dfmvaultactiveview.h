@@ -42,6 +42,7 @@ class DFMVaultActiveView : public DFMVaultPageBase
 {
 public:
     explicit DFMVaultActiveView(QWidget *parent = nullptr);
+    ~DFMVaultActiveView();
 
 protected:
     // 重写基类关闭事件

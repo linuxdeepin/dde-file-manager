@@ -1,5 +1,7 @@
 #include "vaultreportdata.h"
 
+#include <QDateTime>
+
 QString VaultReportData::type() const
 {
     return "Vault";
@@ -7,6 +9,8 @@ QString VaultReportData::type() const
 
 QJsonObject VaultReportData::prepareData(const QVariantMap &args) const
 {
-    //TODO，id=1000500000
-    return QJsonObject::fromVariantMap(args);
+    QVariantMap temArgs = args;
+    temArgs.insert("tid", 1000500000);
+    temArgs.insert("sysTime", QDateTime::currentDateTime().toTime_t());
+    return QJsonObject::fromVariantMap(temArgs);
 }

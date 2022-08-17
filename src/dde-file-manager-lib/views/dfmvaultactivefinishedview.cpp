@@ -27,6 +27,7 @@
 #include "vault/vaultconfig.h"
 #include "app/define.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "rlog/rlog.h"
 
 #include <DLabel>
 #include <DDialog>
@@ -167,6 +168,11 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
         // 保险箱初始化操作
         VaultController::ins()->restoreLeftoverErrorInputTimes();
         VaultController::ins()->restoreNeedWaitMinutes();
+
+        // 上报保险箱创建成功日志
+        QVariantMap data;
+        data.insert("mode", 1);
+        rlog->commit("Vault", data);
     } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }

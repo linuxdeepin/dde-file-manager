@@ -3,31 +3,51 @@
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonDocument>
-CommitLog::CommitLog(QObject *parent) : QObject(parent)
-{
 
+#define PACKAGE_NAME "dde-file-manager"
+
+CommitLog::CommitLog(QObject *parent)
+    : QObject(parent)
+{
 }
 
 CommitLog::~CommitLog()
 {
+    if (m_library.isLoaded())
+        m_library.unload();
     qInfo() << " - destroyed";
 }
 
 void CommitLog::commit(const QVariant &args)
 {
-    if(args.isNull() || !args.isValid())
+    if (args.isNull() || !args.isValid())
         return;
-    const QJsonObject& dataObj = QJsonObject::fromVariantHash(args.toHash());
+    const QJsonObject &dataObj = QJsonObject::fromVariantHash(args.toHash());
     QJsonDocument doc(dataObj);
-    const QByteArray& sendData = doc.toJson(QJsonDocument::Compact);
-    qInfo() << "sendData = "<< sendData;
-    //TODO: call external function: void WriteEventLog(const std::string &eventdata);
+    const QByteArray &sendData = doc.toJson(QJsonDocument::Compact);
+    m_writeEventLog(sendData.data());
 }
 
-void CommitLog::init()
+bool CommitLog::init()
 {
-    //TODO: call external function: bool Initialize(const std::string &packagename,bool enable_sig = true);
-    m_isInitialized = true;
+    m_library.setFileName("deepin-event-log");
+    if (!m_library.load()) {
+        qWarning() << "Load library failed";
+        return false;
+    }
+
+    m_initEventLog = reinterpret_cast<InitEventLog>(m_library.resolve("Initialize"));
+    m_writeEventLog = reinterpret_cast<WriteEventLog>(m_library.resolve("WriteEventLog"));
+
+    if (!m_initEventLog || !m_writeEventLog) {
+        qWarning() << "Library init failed";
+        return false;
+    }
+
+    if (!m_initEventLog(PACKAGE_NAME, false)) {
+        qWarning() << "Initialize called failed";
+        return false;
+    }
+
+    return true;
 }
-
-
