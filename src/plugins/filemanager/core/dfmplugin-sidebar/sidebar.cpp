@@ -54,6 +54,7 @@ bool SideBar::start()
         return false;
     }
     SideBarHelper::bindSettings();
+    SideBarHelper::bindRecentConf();
 
     return true;
 }

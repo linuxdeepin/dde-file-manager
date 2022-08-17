@@ -23,6 +23,7 @@
 #include "avfsutils.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/application/application.h"
@@ -47,12 +48,13 @@ AvfsUtils *AvfsUtils::instance()
 
 bool AvfsUtils::isSupportedArchives(const QUrl &url)
 {
-    return supportedArchives().contains(MimeDatabase::mimeTypeForUrl(url).name());
+    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    return info ? supportedArchives().contains(info->mimeTypeName()) : false;
 }
 
 bool AvfsUtils::isSupportedArchives(const QString &path)
 {
-    return supportedArchives().contains(MimeDatabase::mimeTypeForFile(path).name());
+    return isSupportedArchives(QUrl::fromLocalFile(path));
 }
 
 bool AvfsUtils::isAvfsMounted()

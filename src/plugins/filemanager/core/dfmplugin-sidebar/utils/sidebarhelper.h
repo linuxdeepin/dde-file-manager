@@ -55,6 +55,11 @@ public:
     static void bindSettings();
     static QVariantMap hiddenRules();
 
+    static void bindRecentConf();
+    static void saveRecentToConf(const QVariant &var);
+    static void syncRecentToAppSet(const QString &, const QString &, const QVariant &);
+    static bool isRecentConfEqual(const QVariant &dcon, const QVariant &dset);
+
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.
 

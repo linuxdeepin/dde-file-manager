@@ -25,6 +25,7 @@
 #include "plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.h"
 
 #include "dfm-base/base/configs/settingbackend.h"
+#include "dfm-base/base/configs/configsynchronizer.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <gtest/gtest.h>
@@ -43,6 +44,9 @@ protected:
 private:
     stub_ext::StubExt stub;
 };
+
+DFMBASE_USE_NAMESPACE
+DPSIDEBAR_USE_NAMESPACE
 
 TEST_F(UT_SideBarHelper, AllSideBar) {}
 TEST_F(UT_SideBarHelper, FindSideBarByWindowId) {}
@@ -66,7 +70,6 @@ TEST_F(UT_SideBarHelper, BindSettings)
     auto add = static_cast<Add>(&SettingBackend::addSettingAccessor);
     stub.set_lamda(add, [] { __DBG_STUB_INVOKE__ });
 
-    DPSIDEBAR_USE_NAMESPACE
     EXPECT_NO_FATAL_FAILURE(SideBarHelper::bindSettings());
 }
 
@@ -75,6 +78,36 @@ TEST_F(UT_SideBarHelper, HiddenRules)
     using namespace dfmbase;
     stub.set_lamda(&DConfigManager::value, [] { __DBG_STUB_INVOKE__ return QVariantMap(); });
 
-    DPSIDEBAR_USE_NAMESPACE
     EXPECT_NO_FATAL_FAILURE(SideBarHelper::hiddenRules());
+}
+
+TEST_F(UT_SideBarHelper, BindRecentConf)
+{
+    stub.set_lamda(&ConfigSynchronizer::watchChange, [] { __DBG_STUB_INVOKE__ return true; });
+    EXPECT_NO_FATAL_FAILURE(SideBarHelper::bindRecentConf());
+}
+
+TEST_F(UT_SideBarHelper, SaveRecentToDConf)
+{
+    stub.set_lamda(&DConfigManager::setValue, [] { __DBG_STUB_INVOKE__ });
+    EXPECT_NO_FATAL_FAILURE(SideBarHelper::saveRecentToConf(true));
+    EXPECT_NO_FATAL_FAILURE(SideBarHelper::saveRecentToConf(false));
+}
+
+TEST_F(UT_SideBarHelper, SyncRecentToAppSet)
+{
+    stub.set_lamda(&Application::setGenericAttribute, [] { __DBG_STUB_INVOKE__ });
+    EXPECT_NO_FATAL_FAILURE(SideBarHelper::syncRecentToAppSet("hello", "world", "true"));
+    EXPECT_NO_FATAL_FAILURE(SideBarHelper::syncRecentToAppSet("hello", "world", "false"));
+}
+
+TEST_F(UT_SideBarHelper, IsRecentConfEqual)
+{
+    QVariantMap dcon {
+        { "recent", true },
+        { "computer", false }
+    };
+    EXPECT_TRUE(SideBarHelper::isRecentConfEqual(dcon, true));
+    dcon["recent"] = false;
+    EXPECT_FALSE(SideBarHelper::isRecentConfEqual(dcon, true));
 }

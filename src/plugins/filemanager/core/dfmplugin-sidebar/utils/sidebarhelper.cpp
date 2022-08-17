@@ -30,6 +30,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/configs/settingbackend.h"
+#include "dfm-base/base/configs/configsynchronizer.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/utils/systempathutil.h"
 
@@ -245,6 +246,35 @@ void SideBarHelper::bindSettings()
 QVariantMap SideBarHelper::hiddenRules()
 {
     return DConfigManager::instance()->value(ConfigInfos::kConfName, ConfigInfos::kVisiableKey).toMap();
+}
+
+void SideBarHelper::bindRecentConf()
+{
+    SyncPair pair {
+        { SettingType::kGenAttr, Application::kShowRecentFileEntry },
+        { ConfigInfos::kConfName, ConfigInfos::kVisiableKey },
+        saveRecentToConf,
+        syncRecentToAppSet,
+        isRecentConfEqual
+    };
+    ConfigSynchronizer::instance()->watchChange(pair);
+}
+
+void SideBarHelper::saveRecentToConf(const QVariant &var)
+{
+    auto &&rule = hiddenRules();
+    rule["recent"] = var.toBool();
+    DConfigManager::instance()->setValue(ConfigInfos::kConfName, ConfigInfos::kVisiableKey, rule);
+}
+
+void SideBarHelper::syncRecentToAppSet(const QString &, const QString &, const QVariant &)
+{
+    Application::instance()->setGenericAttribute(Application::kShowRecentFileEntry, hiddenRules().value("recent", true).toBool());
+}
+
+bool SideBarHelper::isRecentConfEqual(const QVariant &dcon, const QVariant &dset)
+{
+    return dcon.toMap().value("recent", true).toBool() && dset.toBool();
 }
 
 QMutex &SideBarHelper::mutex()
