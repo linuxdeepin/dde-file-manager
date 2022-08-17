@@ -86,10 +86,14 @@ regList=(
   dfm-base
   # dfm-extension
   dfm-framework
+
+  plugins/common/dfmplugin-burn
+
   plugins/filemanager/core/dfmplugin-computer
   plugins/filemanager/core/dfmplugin-sidebar
   plugins/filemanager/dfmplugin-myshares
   plugins/filemanager/dfmplugin-smbbrowser
+  plugins/filemanager/dfmplugin-optical
 
 # services
   # services/dfm-business-services/dfm-desktop-service
