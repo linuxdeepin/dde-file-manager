@@ -22,7 +22,6 @@
  */
 
 #include "singleapplication.h"
-#include "rlog/rlog.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "durl.h"
@@ -49,7 +48,6 @@ QString SingleApplication::UserID = "1000";
 SingleApplication::SingleApplication(int &argc, char **argv, int): DApplication(argc, argv)
 {
     m_localServer = new QLocalServer;
-    rlog->init();
     initConnect();
 }
 

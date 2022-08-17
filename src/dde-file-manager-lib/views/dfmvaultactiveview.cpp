@@ -48,6 +48,7 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
 {
     AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_WIDGET);
     this->setIcon(QIcon::fromTheme("dfm_vault"));
+    this->setAttribute(Qt::WA_DeleteOnClose, true);
 
     // 初始化试图容器
     m_pStackedWidget = new QStackedWidget(this);
@@ -81,6 +82,11 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     connect(VaultController::ins(), &VaultController::sigCloseWindow, this, &DFMVaultActiveView::close);
 }
 
+DFMVaultActiveView::~DFMVaultActiveView()
+{
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
+}
+
 void DFMVaultActiveView::setBeginingState()
 {
     m_pStackedWidget->setCurrentIndex(0);
@@ -93,6 +99,7 @@ void DFMVaultActiveView::closeEvent(QCloseEvent *event)
 {
     VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     setBeginingState();
+
     // 响应基类关闭事件
     DFMVaultPageBase::closeEvent(event);
 }

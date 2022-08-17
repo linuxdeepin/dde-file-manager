@@ -1,5 +1,7 @@
 #include "searchreportdata.h"
 
+#include <QDateTime>
+
 QString SearchReportData::type() const
 {
     return "Search";
@@ -7,6 +9,8 @@ QString SearchReportData::type() const
 
 QJsonObject SearchReportData::prepareData(const QVariantMap &args) const
 {
-    //TODO,tid=1000500002
-    return QJsonObject::fromVariantMap(args);
+    QVariantMap temArgs = args;
+    temArgs.insert("tid", 1000500002);
+    temArgs.insert("sysTime", QDateTime::currentDateTime().toTime_t());
+    return QJsonObject::fromVariantMap(temArgs);
 }

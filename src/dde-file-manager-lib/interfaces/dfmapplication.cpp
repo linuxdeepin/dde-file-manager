@@ -33,6 +33,7 @@
 #include "dfmsettings.h"
 #include "utils.h"
 #include "searchservice/searchservice.h"
+#include "rlog/rlog.h"
 
 #include <QCoreApplication>
 #include <QMetaEnum>
@@ -112,12 +113,12 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
             break;
         case DFMApplication::GA_AlwaysShowOfflineRemoteConnections:
-            gsGlobal->sync(); // cause later invocations may update the config file, so sync the config before.
+            gsGlobal->sync();   // cause later invocations may update the config file, so sync the config before.
             //smb挂载聚合功能实现后，这里无需刷新计算机界面以及调用stashCurrentMounts();
             //因为现在smb挂载项是否常驻的区别在于：最后一个挂载项移除之后，是否移除smb聚合项
-            if (value.toBool()) { // stash all mounted remote connections
-            //RemoteMountsStashManager::stashCurrentMounts();
-            } else { // remove all stashed remote connections
+            if (value.toBool()) {   // stash all mounted remote connections
+                //RemoteMountsStashManager::stashCurrentMounts();
+            } else {   // remove all stashed remote connections
                 RemoteMountsStashManager::clearRemoteMounts();
             }
             //Q_EMIT self->reloadComputerModel();
@@ -126,8 +127,18 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             Q_EMIT self->reloadComputerModel();
             break;
         case DFMApplication::GA_IndexFullTextSearch:
-            if (value.toBool() && qAppName() == "dde-file-manager")
-                searchServ->createFullTextIndex();
+            if (qAppName() == "dde-file-manager") {
+                if (value.toBool()) {
+                    QVariantMap data;
+                    data.insert("mode", 1);
+                    RLog::instance()->commit("Search", data);
+                    searchServ->createFullTextIndex();
+                } else {
+                    QVariantMap data;
+                    data.insert("mode", 2);
+                    RLog::instance()->commit("Search", data);
+                }
+            }
             break;
         default:
             break;
@@ -151,7 +162,6 @@ DFMApplication::DFMApplication(QObject *parent)
 
 DFMApplication::~DFMApplication()
 {
-
 }
 
 QVariant DFMApplication::appAttribute(DFMApplication::ApplicationAttribute aa)

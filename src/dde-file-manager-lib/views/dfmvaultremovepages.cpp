@@ -33,6 +33,7 @@
 #include "dfmvaultremovebyrecoverykeyview.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "vaulthelper.h"
+#include "rlog/rlog.h"
 
 #include <DLabel>
 #include <QFrame>
@@ -311,6 +312,10 @@ void DFMVaultRemovePages::onLockVault(int state)
 void DFMVaultRemovePages::onVualtRemoveFinish(bool result)
 {
     if (result) {
+        // 上报保险箱删除成功日志
+        QVariantMap data;
+        data.insert("mode", 2);
+        rlog->commit("Vault", data);
         setInfo(tr("Deleted successfully"));
     } else {
         setInfo(tr("Failed to delete"));

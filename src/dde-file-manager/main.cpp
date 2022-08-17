@@ -50,6 +50,7 @@
 #include "accessible/accessiblelist.h"
 #include "dfmapplication.h"
 #include "views/dfilemanagerwindow.h"
+#include "rlog/rlog.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -284,6 +285,10 @@ int main(int argc, char *argv[])
     }
 
     if (isSingleInstance) {
+        qInfo() << "RLog init start!";
+        rlog->init();
+        qInfo() << "RLog init finished!";
+
         // init app
         Q_UNUSED(FileManagerApp::instance())
 
