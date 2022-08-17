@@ -214,7 +214,7 @@ public:
     virtual QVariant attribute(const DFMIO::DFileInfo::AttributeID id);
 
     virtual void setIsLocalDevice(const bool isLocalDevice);
-    virtual void setIsCdRomDevice(const bool isCdRowDevice);
+    virtual void setIsCdRomDevice(const bool isCdRomDevice);
 
 protected:
     explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);

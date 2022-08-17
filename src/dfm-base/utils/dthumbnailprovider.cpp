@@ -234,6 +234,47 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     return false;
 }
 
+// true 1, false 0, invalid -1
+int DThumbnailProvider::hasThumbnailFast(const QString &mime) const
+{
+    if (mime.startsWith("image") && !Application::instance()->genericAttribute(Application::kPreviewImage).toBool())
+        return 0;
+
+    if ((mime.startsWith("video")
+         || DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportVideoMimeTypes().contains(mime))
+        && !Application::instance()->genericAttribute(Application::kPreviewVideo).toBool())
+        return 0;
+
+    if (mime == DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain && !Application::instance()->genericAttribute(Application::kPreviewTextFile).toBool())
+        return 0;
+
+    if (Q_LIKELY(mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppCRRMedia
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf)
+        && !Application::instance()->genericAttribute(Application::kPreviewDocumentFile).toBool()) {
+        return 0;
+    }
+
+    if (DThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
+        return 1;
+
+    if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("video/"))) {
+        DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
+
+        return 1;
+    }
+
+    if (Q_LIKELY(mime == DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppVRRMedia
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppVMAsf
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf)) {
+        DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
+
+        return 1;
+    }
+
+    return -1;
+}
+
 QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) const
 {
     AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);

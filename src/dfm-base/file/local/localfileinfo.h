@@ -140,7 +140,7 @@ public:
     virtual QVariant attribute(const DFMIO::DFileInfo::AttributeID id) override;
 
     virtual void setIsLocalDevice(const bool isLocalDevice) override;
-    virtual void setIsCdRomDevice(const bool isCdRowDevice) override;
+    virtual void setIsCdRomDevice(const bool isCdRomDevice) override;
 
 private:
     void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);

@@ -1541,7 +1541,16 @@ QIcon LocalFileInfo::fileIcon()
     }
 #endif
 
-    bool thumbEnabled = (d->enableThumbnail > 0) && DThumbnailProvider::instance()->hasThumbnail(fileMimeType());
+    bool hasThumbnail = false;
+    const int checkFast = DThumbnailProvider::instance()->hasThumbnailFast(mimeTypeName());
+    if(1 == checkFast)
+        hasThumbnail = true;
+    else if (0 == checkFast)
+        hasThumbnail = false;
+    else
+        hasThumbnail = DThumbnailProvider::instance()->hasThumbnail(fileMimeType());
+
+    bool thumbEnabled = (d->enableThumbnail > 0) && hasThumbnail;
     return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
 }
 
@@ -1734,10 +1743,10 @@ void LocalFileInfo::setIsLocalDevice(const bool isLocalDevice)
     d->isLocalDevice = isLocalDevice;
 }
 
-void LocalFileInfo::setIsCdRomDevice(const bool isCdRowDevice)
+void LocalFileInfo::setIsCdRomDevice(const bool isCdRomDevice)
 {
     QWriteLocker locker(&d->lock);
-    d->isCdRomDevice = isCdRowDevice;
+    d->isCdRomDevice = isCdRomDevice;
 }
 
 QString LocalFileInfo::mimeTypeName()

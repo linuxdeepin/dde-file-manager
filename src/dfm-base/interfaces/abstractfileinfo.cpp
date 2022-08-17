@@ -1187,9 +1187,9 @@ void dfmbase::AbstractFileInfo::setIsLocalDevice(const bool isLocalDevice)
     CALL_PROXY(setIsLocalDevice(isLocalDevice));
 }
 
-void dfmbase::AbstractFileInfo::setIsCdRomDevice(const bool isCdRowDevice)
+void dfmbase::AbstractFileInfo::setIsCdRomDevice(const bool isCdRomDevice)
 {
-    CALL_PROXY(setIsCdRomDevice(isCdRowDevice));
+    CALL_PROXY(setIsCdRomDevice(isCdRomDevice));
 }
 
 void dfmbase::AbstractFileInfo::cacheAttribute(const DFileInfo::AttributeID id, const QVariant &value)
