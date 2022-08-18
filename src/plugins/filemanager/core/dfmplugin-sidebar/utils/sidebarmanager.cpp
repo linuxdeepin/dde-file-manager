@@ -22,7 +22,7 @@
 */
 #include "sidebarmanager.h"
 #include "utils/sidebarhelper.h"
-#include "views/sidebaritem.h"
+#include "sidebaritem.h"
 
 #include <dfm-framework/event/event.h>
 

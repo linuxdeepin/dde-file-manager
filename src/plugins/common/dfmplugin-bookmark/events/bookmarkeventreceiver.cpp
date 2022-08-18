@@ -52,7 +52,7 @@ void BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled(const QString &sch
 
 void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group)
 {
-    if (group != "Bookmark")
+    if (group != "Bookmark")   //maybe Group_Bookmark ?
         return;
     auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_Group_UrlList", winId, group);
     BookMarkManager::instance()->sortItemsByOrder(items.value<QList<QUrl>>());

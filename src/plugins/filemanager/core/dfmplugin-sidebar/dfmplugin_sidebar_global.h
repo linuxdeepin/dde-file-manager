@@ -45,6 +45,7 @@ inline constexpr char kBookmark[] { "Group_Bookmark" };
 inline constexpr char kNetwork[] { "Group_Network" };
 inline constexpr char kTag[] { "Group_Tag" };
 inline constexpr char kOther[] { "Group_Other" };
+inline constexpr char kNotExistedGroup[] { "__not_existed_group" };
 }   // namespace DefaultGroup
 
 namespace PropertyKey {
@@ -70,6 +71,7 @@ inline constexpr char kCallbackFindMe[] { "Property_Key_CallbackFindMe" };   // 
 namespace ConfigInfos {
 inline constexpr char kConfName[] { "org.deepin.dde.file-manager.sidebar" };
 inline constexpr char kVisiableKey[] { "itemVisiable" };
+inline constexpr char kGroupExpandedKey[] { "groupExpanded" };
 }   // namespace ConfigInfos
 
 using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;

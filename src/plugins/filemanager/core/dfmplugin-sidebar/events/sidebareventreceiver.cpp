@@ -21,8 +21,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebareventreceiver.h"
-#include "views/sidebarwidget.h"
-#include "views/sidebaritem.h"
+
+#include "sidebarwidget.h"
+#include "sidebaritem.h"
 #include "utils/sidebarhelper.h"
 #include "utils/sidebarinfocachemananger.h"
 

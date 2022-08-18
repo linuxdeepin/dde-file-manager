@@ -927,7 +927,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
             if (selectionMode() != QAbstractItemView::SingleSelection)
                 d->selectHelper->setSelection(selectionModel()->selection());
             if (!WindowUtils::keyCtrlIsPressed()) {
-                itemDelegate()->hideNotEditingIndexWidget();
+                if (itemDelegate())
+                    itemDelegate()->hideNotEditingIndexWidget();
                 if (qApp->keyboardModifiers() == Qt::NoModifier)
                     setCurrentIndex(QModelIndex());
                 if (dragDropMode() != NoDragDrop) {
@@ -1178,7 +1179,9 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
     const QModelIndex &index = indexAt(event->pos());
 
     if (d->fileViewHelper->isEmptyArea(event->pos())) {
-        itemDelegate()->hideNotEditingIndexWidget();
+        BaseItemDelegate *de = itemDelegate();
+        if (de)
+            de->hideNotEditingIndexWidget();
         clearSelection();
 
         d->viewMenuHelper->showEmptyAreaMenu();

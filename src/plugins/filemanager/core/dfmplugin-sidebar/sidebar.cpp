@@ -21,8 +21,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebar.h"
-#include "views/sidebarwidget.h"
-#include "views/sidebaritem.h"
+
+#include "sidebarwidget.h"
+#include "sidebaritem.h"
 #include "utils/sidebarhelper.h"
 #include "events/sidebareventreceiver.h"
 
@@ -77,6 +78,17 @@ void SideBar::onWindowOpened(quint64 windId)
 
 void SideBar::onWindowClosed(quint64 winId)
 {
+    qInfo() << "FMWindowsIns.windowIdList().count() = " << FMWindowsIns.windowIdList().count();
+    if (FMWindowsIns.windowIdList().count() > 1)   // It's not last window.
+        return;
+
+    auto win = FMWindowsIns.findWindowById(FMWindowsIns.windowIdList().first());
+    if (win) {
+        SideBarWidget *sb = dynamic_cast<SideBarWidget *>(win->sideBar());
+        if (sb)
+            sb->saveStateWhenClose();
+    }
+
     SideBarHelper::removeSideBar(winId);
 }
 
@@ -90,9 +102,23 @@ void SideBar::onConfigChanged(const QString &cfg, const QString &key)
             auto win = FMWindowsIns.findWindowById(id);
             if (win) {
                 auto sb = dynamic_cast<SideBarWidget *>(win->sideBar());
-                if (sb)
+                if (sb) {
                     sb->updateItemVisiable(SideBarHelper::hiddenRules());
+                }
             }
         }
     }
+#ifdef TREEVIEW
+    if (key == QString(ConfigInfos::kGroupExpandedKey)) {
+        if (FMWindowsIns.windowIdList().count() <= 0)
+            return;
+        auto win = FMWindowsIns.findWindowById(FMWindowsIns.windowIdList().first());
+        if (win) {
+            auto sb = dynamic_cast<SideBarWidget *>(win->sideBar());
+            if (sb) {
+                sb->updateItemVisiable(SideBarHelper::groupExpandRules());
+            }
+        }
+    }
+#endif
 }

@@ -54,6 +54,7 @@ public:
 
     void updateItem(const QUrl &url, const ItemInfo &newInfo);
     int findItem(const QUrl &url) const;
+    QModelIndex findItemIndex(const QUrl &url) const;
     void editItem(const QUrl &url);
     void setItemVisiable(const QUrl &url, bool visible);
     void updateItemVisiable(const QVariantMap &states);
@@ -70,13 +71,12 @@ private:
     void initializeUi();
     void initDefaultModel();
     void initConnect();
-    void updateSeparatorVisibleState();
 
 private:
-    QUrl sidebarUrl;
     SideBarView *sidebarView { nullptr };
     static QSharedPointer<SideBarModel> kSidebarModelIns;
     QStringList currentGroups;
+    QMap<QString, QString> groupDisplayName;
 };
 DPSIDEBAR_END_NAMESPACE
 

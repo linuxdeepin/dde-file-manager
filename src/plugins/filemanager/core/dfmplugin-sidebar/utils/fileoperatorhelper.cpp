@@ -21,8 +21,7 @@
  */
 #include "fileoperatorhelper.h"
 #include "utils/sidebarhelper.h"
-#include "views/sidebarview.h"
-
+#include "sidebarview.h"
 #include "dfm-base/dfm_event_defines.h"
 #include <dfm-framework/dpf.h>
 

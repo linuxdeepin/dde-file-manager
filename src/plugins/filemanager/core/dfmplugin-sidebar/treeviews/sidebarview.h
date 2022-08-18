@@ -24,7 +24,7 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include <DListView>
+#include <DTreeView>
 
 DWIDGET_USE_NAMESPACE
 
@@ -33,7 +33,7 @@ DPSIDEBAR_BEGIN_NAMESPACE
 class SideBarItem;
 class SideBarModel;
 class SideBarViewPrivate;
-class SideBarView : public DListView
+class SideBarView : public DTreeView
 {
     Q_OBJECT
     friend class SideBarViewPrivate;
@@ -47,6 +47,9 @@ public:
     QModelIndex getCurrentIndex() const;
     SideBarItem *itemAt(const QPoint &pt) const;
     QUrl urlAt(const QPoint &pt) const;
+    void saveStateWhenClose();
+    void setCurrentUrl(const QUrl &sidebarUrl);
+    QUrl currentUrl() const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -59,9 +62,19 @@ protected:
     Qt::DropAction canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const;
     bool isAccepteDragEvent(QDropEvent *event);
 
+private:
+    inline QString dragEventUrls() const;
+public Q_SLOTS:
+    void updateSeparatorVisibleState();
+    void onChangeExpandState(const QModelIndex &index, bool expand);
 Q_SIGNALS:
     void requestRemoveItem();
+
+private:
+    QUrl sidebarUrl;
+    QVariantMap groupExpandState;
 };
+
 DPSIDEBAR_END_NAMESPACE
 
 #endif   // SIDEBARVIEW_H

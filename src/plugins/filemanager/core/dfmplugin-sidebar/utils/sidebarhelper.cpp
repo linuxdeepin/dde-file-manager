@@ -20,10 +20,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "dfmplugin_sidebar_global.h"
 #include "sidebarhelper.h"
 #include "sidebarinfocachemananger.h"
-#include "views/sidebaritem.h"
-#include "views/sidebarwidget.h"
+#include "sidebaritem.h"
+#include "sidebarwidget.h"
+
 #include "events/sidebareventcaller.h"
 #include "events/sidebareventreceiver.h"
 
@@ -100,7 +102,8 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
                                         text,
                                         group,
                                         url);
-    auto flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled };
+    auto flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled /*| Qt::ItemIsDragEnabled*/ };
+
     ItemInfo info;
     info.group = group;
     info.icon = QIcon::fromTheme(iconName);
@@ -144,7 +147,13 @@ SideBarItem *SideBarHelper::createItemByInfo(const ItemInfo &info)
 SideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
 {
     SideBarItemSeparator *item = new SideBarItemSeparator(group);
+
+    //    if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag) {
+    //        auto flags { Qt::ItemIsEnabled | Qt::ItemIsDropEnabled };
+    //        item->setFlags(flags);
+    //    } else //TODO(zhuangshu):in treeview mode, features drag bookmark and tag are not ready.
     item->setFlags(Qt::NoItemFlags);
+
     return item;
 }
 
@@ -225,7 +234,7 @@ void SideBarHelper::bindSettings()
         { "advance.items_in_sidebar.computers_in_lan", "computers_in_lan" },
         { "advance.items_in_sidebar.my_shares", "my_shares" },
         { "advance.items_in_sidebar.mounted_share_dirs", "mounted_share_dirs" },
-        { "advance.items_in_sidebar.tags", "tags" },
+        { "advance.items_in_sidebar.tags", "tags" }
     };
 
     auto getter = [](const QString &key) {
@@ -256,6 +265,11 @@ QVariantMap SideBarHelper::hiddenRules()
     return DConfigManager::instance()->value(ConfigInfos::kConfName, ConfigInfos::kVisiableKey).toMap();
 }
 
+QVariantMap SideBarHelper::groupExpandRules()
+{
+    return DConfigManager::instance()->value(ConfigInfos::kConfName, ConfigInfos::kGroupExpandedKey).toMap();
+}
+
 void SideBarHelper::bindRecentConf()
 {
     SyncPair pair {
@@ -283,6 +297,18 @@ void SideBarHelper::syncRecentToAppSet(const QString &, const QString &, const Q
 bool SideBarHelper::isRecentConfEqual(const QVariant &dcon, const QVariant &dset)
 {
     return dcon.toMap().value("recent", true).toBool() && dset.toBool();
+}
+
+void SideBarHelper::saveGroupsStateToConfig(const QVariant &var)
+{
+    const QStringList keys = var.toMap().keys();
+
+    auto &&rule = groupExpandRules();
+    foreach (const QString &key, keys) {
+        bool value = var.toMap().value(key).toBool();
+        rule[key] = value;
+    }
+    DConfigManager::instance()->setValue(ConfigInfos::kConfName, ConfigInfos::kGroupExpandedKey, rule);
 }
 
 QMutex &SideBarHelper::mutex()

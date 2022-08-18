@@ -213,7 +213,7 @@ QVariantMap TagHelper::createSidebarItemInfo(const QString &tag)
 {
     ContextMenuCallback contextMenuCb { TagManager::contenxtMenuHandle };
     RenameCallback renameCb { TagManager::renameHandle };
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable };
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable /*| Qt::ItemIsDragEnabled*/ | Qt::ItemIsEditable };   //TODO(zhuangshu)
     QVariantMap infoMap {
         { "Property_Key_Url", makeTagUrlByTagName(tag) },
         { "Property_Key_Group", "Group_Tag" },

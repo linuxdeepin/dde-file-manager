@@ -3,7 +3,7 @@
     "version":"1.0",
     "contents":{
         "itemVisiable":{
-            "value": {"recent":true,
+            "value":{"recent":true,
                       "home":true,
                       "desktop":true,
                       "videos":true,
@@ -28,6 +28,24 @@
             "name[zh_CN]":"子项可见性",
             "description[zh_CN]":"用于控制侧边栏中各子项是否可见",
             "description":"It's used to control whether the items are visiable in sidebar",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "groupExpanded":{
+            "value":{"Group_Common":true,
+                    "Group_Device":true,
+                    "Group_Bookmark":true,
+                    "Group_Network":true,
+                    "Group_Tag":true,
+                    "Group_Other":true,
+                    "__not_existed_group":false
+                    },
+            "serial":0,
+            "flags":[],
+            "name":"Items visiable",
+            "name[zh_CN]":"分组折叠/展开状态",
+            "description[zh_CN]":"用于控制侧边栏中各分组的折叠/展开状态",
+            "description":"It's used to control whether the groups are expaned/unexpanded in sidebar",
             "permissions":"readwrite",
             "visibility":"public"
         }
