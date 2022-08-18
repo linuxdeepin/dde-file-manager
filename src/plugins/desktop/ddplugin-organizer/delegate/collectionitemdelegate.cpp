@@ -24,6 +24,7 @@
 #include "view/collectionview.h"
 #include "view/collectionview_p.h"
 #include "models/fileproxymodel.h"
+#include "utils/fileoperator.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -285,13 +286,12 @@ void CollectionItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     FileProxyModel *regionModel = qobject_cast<FileProxyModel *>(model);
     Q_ASSERT(regionModel);
 
-    // todo
-//    if (const AbstractFileInfoPointer &fileInfo = regionModel->fileInfo(index)) {
-//        QUrl oldUrl = fileInfo->url();
-//        QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
-//        QMetaObject::invokeMethod(FileOperatorProxyIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId())
-//                                  , Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
-//    }
+    if (const AbstractFileInfoPointer &fileInfo = regionModel->fileInfo(index)) {
+        QUrl oldUrl = fileInfo->url();
+        QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
+        QMetaObject::invokeMethod(FileOperatorIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId())
+                                  , Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
+    }
 }
 
 bool CollectionItemDelegate::mayExpand(QModelIndex *who) const
@@ -419,8 +419,7 @@ bool CollectionItemDelegate::isTransparent(const QModelIndex &index) const
 {
     // in cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
-        // todo
-        DFMLocalFileInfoPointer file /*= parent()->model()->fileInfo(index)*/;
+        DFMLocalFileInfoPointer file = parent()->model()->fileInfo(index);
         if (!file.get())
             return false;
 

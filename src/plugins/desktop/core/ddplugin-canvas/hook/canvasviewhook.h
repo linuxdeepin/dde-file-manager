@@ -44,7 +44,6 @@ public:
     bool keyboardSearch(int viewIndex, const QString &search, void *extData = nullptr) const override;
     bool drawFile(int viewIndex, const QUrl &file, QPainter *painter, const QStyleOptionViewItem *option, void *extData = nullptr) const override;
     bool shortcutkeyPress(int viewIndex, int key, int modifiers, void *extData = nullptr) const override;
-    bool shortcutAction(int viewIndex, int keySequence, void *extData = nullptr) const override;
 };
 
 }

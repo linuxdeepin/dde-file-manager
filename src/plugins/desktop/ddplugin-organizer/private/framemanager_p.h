@@ -53,7 +53,6 @@ public slots:
     void displaySizeChanged(int size);
 public slots:
     bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const;
-    bool filterShortcutAction(int viewIndex, int keySequence) const;
     bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const;
 protected:
     QWidget *findView(QWidget *root) const;

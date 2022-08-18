@@ -30,17 +30,30 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <dfm-framework/dpf.h>
+
 #include <QDebug>
 #include <QMimeData>
 
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
+#define CanvasModelSubscribe(topic, func) \
+    dpfSignalDispatcher->subscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
+
+#define CanvasModelUnsubscribe(topic, func) \
+    dpfSignalDispatcher->unsubscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
+
 FileProxyModelPrivate::FileProxyModelPrivate(FileProxyModel *qq)
     : QObject(qq)
     , q(qq)
 {
+    CanvasModelSubscribe(signal_CanvasModel_OpenEditor, &FileProxyModelPrivate::renameRequired);
+}
 
+FileProxyModelPrivate::~FileProxyModelPrivate()
+{
+    CanvasModelUnsubscribe(signal_CanvasModel_OpenEditor, &FileProxyModelPrivate::renameRequired);
 }
 
 void FileProxyModelPrivate::reset()
@@ -168,6 +181,11 @@ void FileProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent, 
         fileMap.insert(url, shell->fileInfo(shell->index(url)));
 
     q->endInsertRows();
+
+    if (files.contains(waitForRenameFile)) {
+        emit q->openEditor(waitForRenameFile);
+        clearRenameReuired();
+    }
 }
 
 void FileProxyModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent, int start, int end)
@@ -247,6 +265,16 @@ void FileProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &ne
     }
 }
 
+void FileProxyModelPrivate::renameRequired(const QUrl &url)
+{
+    waitForRenameFile = url;
+}
+
+void FileProxyModelPrivate::clearRenameReuired()
+{
+    waitForRenameFile.clear();
+}
+
 void FileProxyModelPrivate::doRefresh(bool global)
 {
     if (global) {
@@ -304,6 +332,11 @@ void FileProxyModel::setHandler(ModelDataHandler *handler)
 ModelDataHandler *FileProxyModel::handler() const
 {
     return d->handler;
+}
+
+QUrl FileProxyModel::rootUrl() const
+{
+    return d->shell->rootUrl();
 }
 
 QModelIndex FileProxyModel::rootIndex() const

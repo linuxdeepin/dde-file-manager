@@ -31,6 +31,7 @@
 
 namespace ddplugin_organizer {
 
+class CollectionView;
 class FileOperatorPrivate;
 class FileOperator : public QObject
 {
@@ -41,11 +42,27 @@ public:
     static FileOperator *instance();
     void setDataProvider(CollectionDataProvider *provider);
 
+    void copyFiles(const CollectionView *view);
+    void cutFiles(const CollectionView *view);
+    void pasteFiles(const CollectionView *view);
+    void pasteFiles(const CollectionView *view, const QPoint pos);
+    void openFiles(const CollectionView *view);
+    void openFiles(const CollectionView *view, const QList<QUrl> &urls);
+    Q_INVOKABLE void renameFile(int wid, const QUrl &oldUrl, const QUrl &newUrl);
+    void renameFiles(const CollectionView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace);
+    void renameFiles(const CollectionView *view, const QList<QUrl> &urls, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair);
+    void moveToTrash(const CollectionView *view);
+    void deleteFiles(const CollectionView *view);
+    void undoFiles(const CollectionView *view);
+
     void dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index);
     void dropFilesToCanvas(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
     void dropToTrash(const QList<QUrl> &urls);
     void dropToApp(const QList<QUrl> &urls, const QString &app);
 
+    QHash<QUrl, QUrl> renameFileData() const;
+    void removeRenameFileData(const QUrl &oldUrl);
+    void clearRenameFileData();
 public:
     void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
 

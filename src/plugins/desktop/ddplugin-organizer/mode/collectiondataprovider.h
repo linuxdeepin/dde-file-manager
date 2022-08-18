@@ -47,6 +47,7 @@ public:
 protected:
     virtual QString replace(const QUrl &oldUrl, const QUrl &newUrl) = 0;
     virtual QString append(const QUrl &) = 0;
+    virtual QString prepend(const QUrl &) = 0;
     virtual void insert(const QUrl &, const QString &, const int) = 0;
     virtual QString remove(const QUrl &) = 0;
     virtual QString change(const QUrl &) = 0;

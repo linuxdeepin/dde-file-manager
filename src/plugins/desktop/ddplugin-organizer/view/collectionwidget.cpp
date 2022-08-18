@@ -156,6 +156,11 @@ bool CollectionWidget::adjustable() const
     return d->titleBar->adjustable();
 }
 
+void CollectionWidget::openEditor(const QUrl &url)
+{
+    d->view->openEditor(url);
+}
+
 void CollectionWidget::resizeEvent(QResizeEvent *event)
 {
     DBlurEffectWidget::resizeEvent(event);

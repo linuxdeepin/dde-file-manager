@@ -43,6 +43,7 @@ inline constexpr char kDisplaySizeLarger[] = "display-size-larger";
 
 namespace CollectionMenuParams {
 inline constexpr char kOnColletion[] = "OnColletion";
+inline constexpr char kColletionView[] = "ColletionView";
 }
 }
 

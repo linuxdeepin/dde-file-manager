@@ -112,8 +112,3 @@ bool CanvasViewHook::shortcutkeyPress(int viewIndex, int key, int modifiers, voi
 {
     return CanvasViewRunHook(hook_CanvasView_ShortcutKeyPress, viewIndex, key, modifiers, extData);
 }
-
-bool CanvasViewHook::shortcutAction(int viewIndex, int keySequence, void *extData) const
-{
-    return CanvasViewRunHook(hook_CanvasView_ShortcutAction, viewIndex, keySequence, extData);
-}

@@ -41,37 +41,9 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
-#define regAction(shortcut, autoRepeat)                                             \
-    {                                                                               \
-        QAction *action = new QAction(view);                                        \
-        action->setAutoRepeat(autoRepeat);                                          \
-        action->setShortcut(shortcut);                                              \
-        action->setProperty("_view_shortcut_key", shortcut);                        \
-        view->addAction(action);                                                    \
-        connect(action, &QAction::triggered, this, &ShortcutOper::acitonTriggered); \
-    }
-
-#define actionShortcutKey(action) action->property("_view_shortcut_key").value<QKeySequence::StandardKey>()
-
 ShortcutOper::ShortcutOper(CanvasView *parent)
     : QObject(parent), view(parent)
 {
-}
-
-void ShortcutOper::regShortcut()
-{
-    regAction(QKeySequence::HelpContents, true);   // F1
-    regAction(QKeySequence::Refresh, true);   // F5
-    regAction(QKeySequence::Delete, true);   // Del
-    regAction(QKeySequence::SelectAll, true);   // ctrl+a
-    regAction(QKeySequence::ZoomIn, true);   // ctrl+-
-    regAction(QKeySequence::ZoomOut, true);   // ctrl++(c_s_=)
-    regAction(QKeySequence::Copy, false);   // ctrl+c
-    regAction(QKeySequence::Cut, false);   // ctrl+x
-    regAction(QKeySequence::Paste, false);   // ctrl+v
-    regAction(QKeySequence::Undo, true);   // ctrl+z
-    //regAction(QKeySequence::New, [this](){qDebug() << "New";});// ctrl+n
-    //regAction(QKeySequence::Open, &ShortcutOper::openAction); // ctrl+o
 }
 
 bool ShortcutOper::keyPressed(QKeyEvent *event)
@@ -111,11 +83,15 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
     auto key = event->key();
     if (modifiers == Qt::NoModifier) {
         switch (key) {
+        case Qt::Key_F1:
+            helpAction();
+            return true;
         case Qt::Key_Tab:
             tabToFirst();
             return true;
         case Qt::Key_Escape:
             clearClipBoard();
+            return true;
         default:
             break;
         }
@@ -130,7 +106,13 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         case Qt::Key_Space:
             if (!event->isAutoRepeat())
                 previewFiles();
-            break;
+            return true;
+        case Qt::Key_F5:
+            view->refresh();
+            return true;
+        case Qt::Key_Delete:
+            FileOperatorProxyIns->moveToTrash(view);
+            return true;
         default:
             break;
         }
@@ -138,7 +120,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         switch (key) {
         case Qt::Key_Delete:
             FileOperatorProxyIns->deleteFiles(view);
-            break;
+            return true;
         case Qt::Key_T:
             // open terminal. but no need to do it.
             return true;
@@ -147,14 +129,32 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         }
     } else if (modifiers == Qt::ControlModifier) {
         switch (event->key()) {
-        case Qt::Key_Equal:
+        case Qt::Key_Minus:
             CanvasIns->onChangeIconLevel(true);
+            return true;
+        case Qt::Key_Equal:
+            CanvasIns->onChangeIconLevel(false);
             return true;
         case Qt::Key_H:
             swichHidden();
             return true;
         case Qt::Key_I:
             FileOperatorProxyIns->showFilesProperty(view);
+            return true;
+        case Qt::Key_A:
+            view->selectAll();
+            return true;
+        case Qt::Key_C:
+            FileOperatorProxyIns->copyFiles(view);
+            return true;
+        case Qt::Key_X:
+            FileOperatorProxyIns->cutFiles(view);
+            return true;
+        case Qt::Key_V:
+            FileOperatorProxyIns->pasteFiles(view);
+            return true;
+        case Qt::Key_Z:
+            FileOperatorProxyIns->undoFiles(view);
             return true;
         default:
             break;
@@ -174,64 +174,6 @@ bool ShortcutOper::disableShortcut() const
     return DFMBASE_NAMESPACE::Application::appObtuselySetting()->value(
                                                                        "ApplicationAttribute", "DisableDesktopShortcuts", false)
             .toBool();
-}
-
-void ShortcutOper::acitonTriggered()
-{
-    QAction *ac = qobject_cast<QAction *>(sender());
-    if (!ac)
-        return;
-
-    auto key = actionShortcutKey(ac);
-    {
-        QVariantHash extData;
-        extData.insert("DisableShortcut", disableShortcut());
-        if (view->d->hookIfs && view->d->hookIfs->shortcutAction(view->screenNum(), key, &extData))
-            return;
-    }
-
-    switch (key) {
-    case QKeySequence::Copy:
-        FileOperatorProxyIns->copyFiles(view);
-        break;
-    case QKeySequence::Cut:
-        FileOperatorProxyIns->cutFiles(view);
-        break;
-    case QKeySequence::Paste:
-        FileOperatorProxyIns->pasteFiles(view);
-        break;
-    case QKeySequence::Undo:
-        qDebug() << "Undo";
-        FileOperatorProxyIns->undoFiles(view);
-        break;
-    default:
-        break;
-    }
-
-    if (!disableShortcut()) {
-        switch (key) {
-        case QKeySequence::HelpContents:
-            helpAction();
-            break;
-        case QKeySequence::Refresh:
-            view->refresh();
-            break;
-        case QKeySequence::Delete:
-            FileOperatorProxyIns->moveToTrash(view);
-            break;
-        case QKeySequence::SelectAll:
-            view->selectAll();
-            break;
-        case QKeySequence::ZoomIn:
-            CanvasIns->onChangeIconLevel(true);
-            break;
-        case QKeySequence::ZoomOut:
-            CanvasIns->onChangeIconLevel(false);
-            break;
-        default:
-            break;
-        }
-    }
 }
 
 void ShortcutOper::helpAction()

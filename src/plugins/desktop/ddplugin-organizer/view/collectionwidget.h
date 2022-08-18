@@ -63,6 +63,7 @@ public:
     void setAdjustable(const bool adjustable = false);
     bool adjustable() const;
 
+    void openEditor(const QUrl &url);
 signals:
     void sigRequestClose(const QString &id);
     void sigRequestAdjustSizeMode(const CollectionFrameSize &size);

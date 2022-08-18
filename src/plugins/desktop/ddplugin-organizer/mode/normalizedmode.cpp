@@ -211,6 +211,8 @@ bool NormalizedMode::initialize(FileProxyModel *m)
     connect(model, &FileProxyModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
     connect(model, &FileProxyModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
 
+    connect(model, &FileProxyModel::openEditor, this, &NormalizedMode::onOpenEditor, Qt::DirectConnection);
+
     // creating if there already are files.
     if (!model->files().isEmpty())
         rebuild();
@@ -346,7 +348,7 @@ void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int la
         if (Q_UNLIKELY(!index.isValid()))
             continue;
         QUrl url = model->fileUrl(index);
-        d->classifier->append(url);
+        d->classifier->prepend(url);
    }
 
     d->switchCollection();
@@ -373,6 +375,19 @@ void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelI
         QModelIndex index = model->index(i, 0);
         d->classifier->change(model->fileUrl(index));
     }
+}
+
+void NormalizedMode::onOpenEditor(const QUrl &url)
+{
+    auto key = d->classifier->key(url);
+    if (key.isEmpty())
+        return;
+
+    auto holder = d->holders.value(key);
+    if (Q_UNLIKELY(!holder))
+        return;
+
+    holder->openEditor(url);
 }
 
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)

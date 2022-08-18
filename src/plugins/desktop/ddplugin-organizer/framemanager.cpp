@@ -222,15 +222,18 @@ void FrameManagerPrivate::displaySizeChanged(int size)
 
 bool FrameManagerPrivate::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
 {
-    // disbale ctrl + = to zooom in if organizer turns on.
-    return modifiers == Qt::ControlModifier && key == Qt::Key_Equal;
+    Q_UNUSED(viewIndex)
+
+    if (Qt::ControlModifier == modifiers) {
+        static const QList<int> filterKeys {
+                                            Qt::Key_Equal       // disbale ctrl + = to zooom out
+                                            , Qt::Key_Minus     // disbale ctrl + - to zooom in
+                                            };
+        return filterKeys.contains(key);
+    }
+    return false;
 }
 
-bool FrameManagerPrivate::filterShortcutAction(int viewIndex, int keySequence) const
-{
-    // disbale zooom in or zoom out by key shourcut if organizer turns on.
-    return keySequence == QKeySequence::ZoomIn || keySequence == QKeySequence::ZoomOut;
-}
 
 bool FrameManagerPrivate::filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const
 {
@@ -341,7 +344,6 @@ void FrameManager::turnOn(bool build)
     {
         CanvasViewShell *canvasViewShell = d->canvas->canvasView();
         connect(canvasViewShell, &CanvasViewShell::filterShortcutkeyPress, d, &FrameManagerPrivate::filterShortcutkeyPress, Qt::DirectConnection);
-        connect(canvasViewShell, &CanvasViewShell::filterShortcutAction, d, &FrameManagerPrivate::filterShortcutAction, Qt::DirectConnection);
         connect(canvasViewShell, &CanvasViewShell::filterWheel, d, &FrameManagerPrivate::filterWheel, Qt::DirectConnection);
     }
 

@@ -21,8 +21,13 @@
 #include "extendcanvasscene_p.h"
 #include "organizermenu_defines.h"
 #include "config/configpresenter.h"
+#include "view/collectionview.h"
+#include "models/fileproxymodel.h"
+#include "utils/renamedialog.h"
+#include "utils/fileoperator.h"
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/menuutils.h"
+#include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -269,6 +274,7 @@ bool ExtendCanvasScene::initialize(const QVariantHash &params)
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->onCollection = params.value(CollectionMenuParams::kOnColletion, false).toBool();
+    d->view = reinterpret_cast<CollectionView *>(params.value(CollectionMenuParams::kColletionView).toLongLong());
     return d->onDesktop;
 }
 
@@ -350,6 +356,42 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
         if (isCanvas) {
             qDebug() << "filter action" << actionId;
             // todo 处理需集合响应的菜单项
+
+            if (Q_UNLIKELY(!d->view)) {
+                qWarning() << "warning:can not get collection view, and filter action failed.";
+                return false;
+            }
+
+            if (dfmplugin_menu::ActionID::kSelectAll == actionId) {
+                d->view->selectAll();
+                return true;
+            } else if (dfmplugin_menu::ActionID::kRename == actionId) {
+                if (1 == d->selectFiles.count()) {
+                    auto index = d->view->model()->index(d->focusFile);
+                    if (Q_UNLIKELY(!index.isValid()))
+                        return false;
+                    d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+                } else {
+                    RenameDialog renameDlg(d->selectFiles.count());
+                    renameDlg.moveToCenter();
+
+                    // see DDialog::exec,it will return the index of buttons
+                    if (1 == renameDlg.exec()) {
+                        RenameDialog::ModifyMode mode = renameDlg.modifyMode();
+                        if (RenameDialog::kReplace == mode) {
+                            auto content = renameDlg.getReplaceContent();
+                            FileOperatorIns->renameFiles(d->view, d->selectFiles, content, true);
+                        } else if (RenameDialog::kAdd == mode) {
+                            auto content = renameDlg.getAddContent();
+                            FileOperatorIns->renameFiles(d->view, d->selectFiles, content);
+                        } else if (RenameDialog::kCustom == mode) {
+                            auto content = renameDlg.getCustomContent();
+                            FileOperatorIns->renameFiles(d->view, d->selectFiles, content, false);
+                        }
+                    }
+                }
+                return true;
+            }
             return false;
         } else {
             qCritical() << "ExtendCanvasScene's parent is not CanvasMenu";

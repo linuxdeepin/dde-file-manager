@@ -59,7 +59,6 @@ CanvasViewShell::~CanvasViewShell()
 {
     CanvasViewUnfollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
     CanvasViewUnfollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
-    CanvasViewUnfollow(hook_CanvasView_ShortcutAction, &CanvasViewShell::eventShortcutAction);
     CanvasViewUnfollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
     CanvasViewUnfollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 }
@@ -68,7 +67,6 @@ bool CanvasViewShell::initialize()
 {
     CanvasViewFollow(hook_CanvasView_DropData, &CanvasViewShell::eventDropData);
     CanvasViewFollow(hook_CanvasView_ShortcutKeyPress, &CanvasViewShell::eventShortcutkeyPress);
-    CanvasViewFollow(hook_CanvasView_ShortcutAction, &CanvasViewShell::eventShortcutAction);
     CanvasViewFollow(hook_CanvasView_Wheel, &CanvasViewShell::eventWheel);
     CanvasViewFollow(hook_CanvasView_ContextMenu, &CanvasViewShell::eventContextMenu);
 
@@ -107,13 +105,6 @@ bool CanvasViewShell::eventShortcutkeyPress(int viewIndex, int key, int modifier
     Q_UNUSED(extData)
     CheckFilterConnected(CanvasViewShell::filterShortcutkeyPress)
     return filterShortcutkeyPress(viewIndex, key, modifiers);
-}
-
-bool CanvasViewShell::eventShortcutAction(int viewIndex, int keySequence, void *extData)
-{
-    Q_UNUSED(extData)
-    CheckFilterConnected(CanvasViewShell::filterShortcutAction)
-    return filterShortcutAction(viewIndex, keySequence);
 }
 
 bool CanvasViewShell::eventWheel(int viewIndex, const QPoint &angleDelta, void *extData)

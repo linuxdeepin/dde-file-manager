@@ -76,7 +76,6 @@ private:
     DPF_EVENT_REG_HOOK(hook_CanvasView_KeyboardSearch)
     DPF_EVENT_REG_HOOK(hook_CanvasView_DrawFile)
     DPF_EVENT_REG_HOOK(hook_CanvasView_ShortcutKeyPress)
-    DPF_EVENT_REG_HOOK(hook_CanvasView_ShortcutAction)
 
     // CanvasGrid begin
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_Items)
@@ -85,6 +84,8 @@ private:
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_TryAppendAfter)
 
     // CanvasModel begin
+    DPF_EVENT_REG_SIGNAL(signal_CanvasModel_OpenEditor)
+
     DPF_EVENT_REG_SLOT(slot_CanvasModel_RootUrl)
     DPF_EVENT_REG_SLOT(slot_CanvasModel_UrlIndex)
     DPF_EVENT_REG_SLOT(slot_CanvasModel_Index)

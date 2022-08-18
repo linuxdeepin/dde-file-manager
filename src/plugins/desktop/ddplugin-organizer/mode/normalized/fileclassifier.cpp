@@ -21,6 +21,7 @@
 #include "fileclassifier.h"
 #include "type/typeclassifier.h"
 #include "models/modeldatahandler.h"
+#include "config/configpresenter.h"
 
 #include <QDebug>
 
@@ -41,7 +42,9 @@ FileClassifier *ClassifierCreator::createClassifier(Classifier mode)
 
 FileClassifier::FileClassifier(QObject *parent) : CollectionDataProvider(parent)
 {
-
+    connect(this, &FileClassifier::itemsChanged, this, [=] () {
+        CfgPresenter->saveNormalProfile(baseData());
+    });
 }
 
 void FileClassifier::reset(const QList<QUrl> &urls)
@@ -179,6 +182,38 @@ QString FileClassifier::append(const QUrl &url)
             emit itemsChanged(cur);
 
             collections[ret]->items.append(url);
+            emit itemsChanged(ret);
+        }
+    }
+
+    return ret;
+}
+
+QString FileClassifier::prepend(const QUrl &url)
+{
+    QString ret = classify(url);
+    if (ret.isEmpty()) {
+        qWarning() << "can not find file:" << url;
+        return ret;
+    }
+
+    QString cur = key(url);
+
+    // do not exist
+    if (cur.isEmpty()) {
+        auto it = collections.find(ret);
+        if (it != collections.end()) {
+            it.value()->items.prepend(url);
+            emit itemsChanged(ret);
+        } else {
+            Q_ASSERT_X(it == collections.end(), "TypeClassifier", QString("unrecognized type %0").arg(ret).toStdString().c_str());
+        }
+    } else { // existed
+        if (cur != ret) {
+            collections[cur]->items.removeOne(url);
+            emit itemsChanged(cur);
+
+            collections[ret]->items.prepend(url);
             emit itemsChanged(ret);
         }
     }

@@ -19,12 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperator_p.h"
+#include "view/collectionview.h"
+#include "models/fileproxymodel.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <QUrl>
 #include <QVariant>
+#include <QItemSelectionModel>
 
 using namespace ddplugin_organizer;
 using namespace dfmbase;
@@ -32,6 +36,7 @@ using namespace Global;
 
 static constexpr char const kCollectionKey[] = "CollectionKey";
 static constexpr char const kDropFilesIndex[] = "DropFilesIndex";
+static constexpr char const kViewObject[] = "ViewObject";
 
 
 class FileOperatorGlobal : public FileOperator {};
@@ -61,9 +66,30 @@ void FileOperatorPrivate::callBackPasteFiles(const JobInfoPointer info)
     }
 }
 
-void FileOperatorPrivate::callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets)
+void FileOperatorPrivate::callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets, const CollectionView *view)
 {
-    // todo(wangcl) 批量文件重命名的回调响应流程
+    q->clearRenameFileData();
+
+    // clear selected and current
+    view->selectionModel()->clearSelection();
+    view->selectionModel()->clearCurrentIndex();
+
+    Q_ASSERT(sources.count() == targets.count());
+
+    for (int i = 0; i < targets.count(); ++i) {
+        renameFileData.insert(sources.at(i), targets.at(i));
+    }
+}
+
+QList<QUrl> FileOperatorPrivate::getSelectedUrls(const CollectionView *view) const
+{
+    auto indexs = view->selectionModel()->selectedIndexes();
+    QList<QUrl> urls;
+    for (auto index : indexs) {
+        urls <<  view->model()->fileUrl(index);
+    }
+
+    return urls;
 }
 
 FileOperator::FileOperator(QObject *parent)
@@ -86,6 +112,110 @@ FileOperator *FileOperator::instance()
 void FileOperator::setDataProvider(CollectionDataProvider *provider)
 {
     d->provider = provider;
+}
+
+void FileOperator::copyFiles(const CollectionView *view)
+{
+    auto &&urls = d->getSelectedUrls(view);
+    if (urls.isEmpty())
+        return;
+
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
+}
+
+void FileOperator::cutFiles(const CollectionView *view)
+{
+    auto &&urls = d->getSelectedUrls(view);
+    if (urls.isEmpty())
+        return;
+
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
+}
+
+void FileOperator::pasteFiles(const CollectionView *view)
+{
+    auto urls = ClipBoard::instance()->clipboardFileUrlList();
+    if (urls.isEmpty())
+        return;
+
+    ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
+    if (ClipBoard::kCopyAction == action) {
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    } else if (ClipBoard::kCutAction == action) {
+        dpfSignalDispatcher->publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+
+        // clear clipboard after cutting files from clipboard
+        ClipBoard::instance()->clearClipboard();
+    } else {
+        qWarning() << "clipboard action:" << action << "    urls:" << urls;
+    }
+}
+
+void FileOperator::pasteFiles(const CollectionView *view, const QPoint pos)
+{
+    // todo 自定义集合，需要传递位置信息
+}
+
+void FileOperator::openFiles(const CollectionView *view)
+{
+    auto &&urls = d->getSelectedUrls(view);
+    if (!urls.isEmpty())
+        openFiles(view, urls);
+}
+
+void FileOperator::openFiles(const CollectionView *view, const QList<QUrl> &urls)
+{
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, view->winId(), urls);
+}
+
+void FileOperator::renameFile(int wid, const QUrl &oldUrl, const QUrl &newUrl)
+{
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, wid, oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+}
+
+void FileOperator::renameFiles(const CollectionView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace)
+{
+    QVariantMap data;
+    data.insert(kViewObject, reinterpret_cast<qlonglong>(view));
+
+    QPair<FileOperatorPrivate::CallBackFunc, QVariant> funcData(FileOperatorPrivate::kCallBackRenameFiles, data);
+    QVariant custom = QVariant::fromValue(funcData);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles, view->winId(), urls, pair, replace, custom, d->callBack);
+}
+
+void FileOperator::renameFiles(const CollectionView *view, const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
+{
+    QVariantMap data;
+    data.insert(kViewObject, reinterpret_cast<qlonglong>(view));
+
+    QPair<FileOperatorPrivate::CallBackFunc, QVariant> funcData(FileOperatorPrivate::kCallBackRenameFiles, data);
+    QVariant custom = QVariant::fromValue(funcData);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles, view->winId(), urls, pair, custom, d->callBack);
+}
+
+void FileOperator::moveToTrash(const CollectionView *view)
+{
+    auto &&urls = d->getSelectedUrls(view);
+    if (urls.isEmpty())
+        return;
+
+    dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+}
+
+void FileOperator::deleteFiles(const CollectionView *view)
+{
+    auto &&urls = d->getSelectedUrls(view);
+    if (urls.isEmpty())
+        return;
+
+    dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+}
+
+void FileOperator::undoFiles(const CollectionView *view)
+{
+
 }
 
 void FileOperator::dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index)
@@ -138,6 +268,21 @@ void FileOperator::dropToApp(const QList<QUrl> &urls, const QString &app)
     dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urls, apps);
 }
 
+QHash<QUrl, QUrl> FileOperator::renameFileData() const
+{
+    return d->renameFileData;
+}
+
+void FileOperator::removeRenameFileData(const QUrl &oldUrl)
+{
+    d->renameFileData.remove(oldUrl);
+}
+
+void FileOperator::clearRenameFileData()
+{
+    d->renameFileData.clear();
+}
+
 void FileOperator::callBackFunction(const Global::CallbackArgus args)
 {
     const QVariant &customValue = args->value(CallbackKey::kCustom);
@@ -171,7 +316,12 @@ void FileOperator::callBackFunction(const Global::CallbackArgus args)
     case FileOperatorPrivate::CallBackFunc::kCallBackRenameFiles: {
         auto sources = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
         auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
-        d->callBackRenameFiles(sources, targets);
+        CollectionView *view = reinterpret_cast<CollectionView *>(custom.second.toLongLong());
+        if (Q_UNLIKELY(!view)) {
+            qWarning() << "warning:can not get collection view.";
+            break;
+        }
+        d->callBackRenameFiles(sources, targets, view);
     } break;
     default:
         break;

@@ -33,11 +33,9 @@ class ShortcutOper : public QObject
     Q_OBJECT
 public:
     explicit ShortcutOper(CanvasView *parent);
-    void regShortcut();
     bool keyPressed(QKeyEvent *event);
     bool disableShortcut() const;
 protected slots:
-    void acitonTriggered();
     void helpAction();
     void tabToFirst();
     void showMenu();

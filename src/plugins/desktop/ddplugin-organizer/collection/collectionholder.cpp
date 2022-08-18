@@ -139,6 +139,11 @@ void CollectionHolder::show()
     d->frame->raise();
 }
 
+void CollectionHolder::openEditor(const QUrl &url)
+{
+    d->widget->openEditor(url);
+}
+
 void CollectionHolder::setMovable(const bool movable)
 {
     auto features = d->frame->collectionFeatures();

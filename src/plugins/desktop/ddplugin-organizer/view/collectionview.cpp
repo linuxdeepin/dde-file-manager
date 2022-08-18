@@ -32,6 +32,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <DApplication>
 #include <DFileDragClient>
@@ -518,6 +519,112 @@ bool CollectionViewPrivate::drop(QDropEvent *event)
     return true;
 }
 
+void CollectionViewPrivate::openFiles()
+{
+    FileOperatorIns->openFiles(q);
+}
+
+void CollectionViewPrivate::moveToTrash()
+{
+    FileOperatorIns->moveToTrash(q);
+}
+
+void CollectionViewPrivate::showMenu()
+{
+    // same as canvas
+    if (CollectionViewMenu::disableMenu())
+        return;
+
+    QModelIndexList indexList = q->selectionModel()->selectedIndexes();
+    bool isEmptyArea = indexList.isEmpty();
+    Qt::ItemFlags flags;
+    QModelIndex index;
+    if (isEmptyArea) {
+        index = q->rootIndex();
+        flags = q->model()->flags(index);
+        if (!flags.testFlag(Qt::ItemIsEnabled))
+            return;
+    } else {
+        index = q->currentIndex();
+
+        // the current index may be not in selected indexs."
+        if (!indexList.contains(index)) {
+            qDebug() << "current index is not selected.";
+            index = indexList.last();
+        }
+
+        flags = q->model()->flags(index);
+        if (!flags.testFlag(Qt::ItemIsEnabled)) {
+            qInfo() << "file is disbale, switch to empty area" << q->model()->fileUrl(index);
+            isEmptyArea = true;
+            flags = q->rootIndex().flags();
+        }
+    }
+
+    q->itemDelegate()->revertAndcloseEditor();
+    if (isEmptyArea) {
+        q->selectionModel()->clearSelection();
+        menuProxy->emptyAreaMenu();
+    } else {
+        auto gridPos = pointToPos(q->visualRect(index).center());
+        menuProxy->normalMenu(index, q->model()->flags(index), gridPos);
+    }
+}
+
+void CollectionViewPrivate::deleteFiles()
+{
+    FileOperatorIns->deleteFiles(q);
+}
+
+void CollectionViewPrivate::clearClipBoard()
+{
+    auto urls = ClipBoard::instance()->clipboardFileUrlList();
+    if (!urls.isEmpty()) {
+        QString errString;
+        auto itemInfo =  InfoFactory::create<LocalFileInfo>(urls.first(), true, &errString);
+        if (Q_UNLIKELY(!itemInfo)) {
+            qInfo() << "create LocalFileInfo error: " << errString << urls.first();
+            return ;
+        }
+        auto homePath = q->model()->rootUrl().toLocalFile();
+        if (itemInfo && (itemInfo->absolutePath() == homePath))
+            ClipBoard::instance()->clearClipboard();
+    }
+}
+
+void CollectionViewPrivate::selectAll()
+{
+    QItemSelection selections;
+    for (int node = 0; node < provider->items(id).count(); ++node) {
+        auto &&fileUrl = provider->items(id).at(node);
+        auto &&index = q->model()->index(fileUrl);
+        if (!selections.contains(index)) {
+            selections.push_back(QItemSelectionRange(index));
+        }
+    }
+    q->selectionModel()->select(selections, QItemSelectionModel::ClearAndSelect);
+}
+
+void CollectionViewPrivate::copyFiles()
+{
+    FileOperatorIns->copyFiles(q);
+}
+
+void CollectionViewPrivate::cutFiles()
+{
+    FileOperatorIns->cutFiles(q);
+}
+
+void CollectionViewPrivate::pasteFiles()
+{
+    FileOperatorIns->pasteFiles(q);
+}
+
+void CollectionViewPrivate::undoFiles()
+{
+    FileOperatorIns->undoFiles(q);
+}
+
 bool CollectionViewPrivate::dropFilter(QDropEvent *event)
 {
     //Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
@@ -967,6 +1074,39 @@ CollectionItemDelegate *CollectionView::itemDelegate() const
     return qobject_cast<CollectionItemDelegate *>(QAbstractItemView::itemDelegate());
 }
 
+void CollectionView::openEditor(const QUrl &url)
+{
+    QModelIndex index = model()->index(url);
+    if (Q_UNLIKELY(!index.isValid()))
+        return;
+    selectionModel()->select(index, QItemSelectionModel::Select);
+    this->setCurrentIndex(index);
+    this->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+    this->activateWindow();
+}
+
+void CollectionView::setModel(QAbstractItemModel *model)
+{
+    QAbstractItemView::setModel(model);
+
+    // must update root index for view
+    setRootIndex(this->model()->rootIndex());
+}
+
+void CollectionView::reset()
+{
+    QAbstractItemView::reset();
+    // the reset will be called on model()->endResetModel().
+    // all data and state will be cleared in QAbstractItemView::reset.
+    // it need to reset root index there.
+    setRootIndex(model()->rootIndex());
+}
+
+void CollectionView::selectAll()
+{
+    d->selectAll();
+}
+
 QRect CollectionView::visualRect(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -1372,6 +1512,38 @@ void CollectionView::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
+void CollectionView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    auto pos = event->pos();
+    const QModelIndex &index = indexAt(pos);
+    if (!index.isValid())
+        return;
+    if (isPersistentEditorOpen(index)) {
+        itemDelegate()->commitDataAndCloseEditor();
+        QTimer::singleShot(200, this, [this, pos]() {
+            // file info and url changed,but pos will not change
+            const QModelIndex &renamedIndex = indexAt(pos);
+            if (!renamedIndex.isValid()) {
+                qWarning() << "renamed index is invalid.";
+                return;
+            }
+            const QUrl &renamedUrl = model()->fileUrl(renamedIndex);
+            FileOperatorIns->openFiles(this, { renamedUrl });
+        });
+        return;
+    }
+    // process in QAbstractItemView::mouseDoubleClickEvent
+    // this can prevent opening editor by calling edit.
+    QPersistentModelIndex persistent = index;
+    if ((event->button() == Qt::LeftButton) && !edit(persistent, DoubleClicked, event)
+        && !style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, 0, this))
+        emit activated(persistent);
+
+    const QUrl &url = model()->fileUrl(index);
+    FileOperatorIns->openFiles(this, { url });
+    event->accept();
+}
+
 void CollectionView::resizeEvent(QResizeEvent *event)
 {
     QAbstractItemView::resizeEvent(event);
@@ -1398,40 +1570,41 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
         switch (event->key()) {
         case Qt::Key_F1: {
             // todo:help?
-            break;
+            return;
         }
         case Qt::Key_Escape: {
-            // todo:clear clipboard
-            break;
+            d->clearClipBoard();
+            return;
         }
         default:
             break;
         }
-        break;
+    Q_FALLTHROUGH();
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
         case Qt::Key_Enter:
-            // todo:open file or files
-            break;
+            d->openFiles();
+            return;
         case Qt::Key_F5:
-            // todo:refresh
-            break;
+            // use canvas refresh
+            return QAbstractItemView::keyPressEvent(event);
         case Qt::Key_Delete:
-            // todo:delete file or files
-            break;
+            d->moveToTrash();
+            return;
         default:
             break;
         }
         break;
     case Qt::AltModifier:
         if (event->key() == Qt::Key_M) {
-            // todo:menu
+            d->showMenu();
+            return;
         }
         break;
     case Qt::ShiftModifier: {
         if (event->key() == Qt::Key_Delete) {
-            //todo:delete file forever
+            d->deleteFiles();
             return;
         }
 
@@ -1474,6 +1647,28 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
         if (d->continuousSelection(event, newCurrent)) {
             event->accept();
             return;
+        }
+    }
+        break;
+    case Qt::ControlModifier: {
+        switch (event->key()) {
+        case Qt::Key_A:
+            d->selectAll();
+            return;
+        case Qt::Key_C:
+            d->copyFiles();
+            return;
+        case Qt::Key_X:
+            d->cutFiles();
+            return;
+        case Qt::Key_V:
+            d->pasteFiles();
+            return;
+        case Qt::Key_Z:
+            d->undoFiles();
+            return;
+        default:
+            break;
         }
     }
         break;

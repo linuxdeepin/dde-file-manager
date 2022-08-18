@@ -43,6 +43,7 @@ public:
     FileInfoModelShell *modelShell() const;
     void setHandler(ModelDataHandler *);
     ModelDataHandler *handler() const;
+    QUrl rootUrl() const;
     QModelIndex rootIndex() const;
     QModelIndex index(const QUrl &url, int column = 0) const;
     DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
@@ -65,6 +66,7 @@ public:
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 signals:
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
+    void openEditor(const QUrl &url);
 private:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
 private:

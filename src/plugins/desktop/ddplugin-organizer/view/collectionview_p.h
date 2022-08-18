@@ -67,6 +67,16 @@ public:
     void handleMoveMimeData(QDropEvent *event, const QUrl &url);
     bool drop(QDropEvent *event);
 
+    void openFiles();
+    void moveToTrash();
+    void showMenu();
+    void deleteFiles();
+    void clearClipBoard();
+    void selectAll();
+    void copyFiles();
+    void cutFiles();
+    void pasteFiles();
+    void undoFiles();
     bool continuousSelection(QEvent *event, QPersistentModelIndex &newCurrent) const;
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);

@@ -71,6 +71,7 @@ void CollectionViewMenu::emptyAreaMenu()
     params[MenuParamKey::kWindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = true;
     params[CollectionMenuParams::kOnColletion] = true;
+    params[CollectionMenuParams::kColletionView] = reinterpret_cast<qlonglong>(view);
 
     //find canvasview
     if (auto canvas = getCanvasView()) {
@@ -126,6 +127,7 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
     params[MenuParamKey::kIsEmptyArea] = false;
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[CollectionMenuParams::kOnColletion] = true;
+    params[CollectionMenuParams::kColletionView] = reinterpret_cast<qlonglong>(view);
     params = dfmplugin_menu_util::menuPerfectParams(params);
 
     //find canvasview

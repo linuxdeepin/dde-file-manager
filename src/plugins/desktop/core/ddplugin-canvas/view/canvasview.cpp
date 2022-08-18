@@ -470,7 +470,7 @@ void CanvasView::refresh()
 void CanvasView::reset()
 {
     QAbstractItemView::reset();
-    // the reset wiill be called on model()->endResetModel().
+    // the reset will be called on model()->endResetModel().
     // all data and state will be cleared in QAbstractItemView::reset.
     // it need to reset root index there.
     setRootIndex(model()->rootIndex());
@@ -666,7 +666,6 @@ void CanvasView::initUI()
     d->operState().setView(this);
     Q_ASSERT(model());
     setRootIndex(model()->rootIndex());
-    d->shortcutOper->regShortcut();
 
     // water mask
     if (d->isWaterMaskOn()) {

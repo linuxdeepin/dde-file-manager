@@ -136,6 +136,11 @@ QString CustomDataHandler::append(const QUrl &)
     return "";
 }
 
+QString CustomDataHandler::prepend(const QUrl &)
+{
+    return "";
+}
+
 void CustomDataHandler::insert(const QUrl &url, const QString &key, const int index)
 {
     auto it = collections.find(key);

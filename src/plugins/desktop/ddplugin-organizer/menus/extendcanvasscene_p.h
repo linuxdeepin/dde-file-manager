@@ -50,6 +50,7 @@ public:
 public:
     bool turnOn = false;
     bool onCollection = false;
+    CollectionView *view = nullptr;
 private:
     ExtendCanvasScene *q;
 };

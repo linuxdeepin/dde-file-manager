@@ -28,6 +28,7 @@
 
 namespace ddplugin_organizer {
 
+class CollectionView;
 class ExtendCanvasCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:

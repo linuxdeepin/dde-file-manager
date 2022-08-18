@@ -51,9 +51,15 @@ public:
     FileProxyModel *model() const;
     CollectionItemDelegate *itemDelegate() const;
 
+    void openEditor(const QUrl &url);
+
+    void setModel(QAbstractItemModel *model) override;
+    void reset() override;
+    void selectAll() override;
     QRect visualRect(const QModelIndex &index) const override;
     void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
     QModelIndex indexAt(const QPoint &point) const override;
+    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 
 protected:
     QModelIndex moveCursor(CursorAction cursorAction,
@@ -73,6 +79,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
@@ -82,7 +89,6 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
 
-    bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 private:
     QSharedPointer<CollectionViewPrivate> d = nullptr;
 };

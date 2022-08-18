@@ -58,6 +58,7 @@ public:
     void setSurface(Surface *surface);
     Surface *surface() const;
     void show();
+    void openEditor(const QUrl &url);
 
     void setMovable(const bool movable = false);
     bool movable() const;
