@@ -230,9 +230,6 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         if (info->targetUrl().isValid())
             insertUrlMapper(dev, info->targetUrl());
 
-        if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()
-            && ComputerUtils::shouldLoopPartitionsHide())
-            continue;
         addSidebarItem(info);
     }
 
@@ -421,23 +418,16 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
     };
 
-    static const QStringList kItemVisiableControlKeys { "root_disk", "data_disk", "other_disks", "mounted_share_dirs" };
+    static const QStringList kItemVisiableControlKeys { "builtin_disks", "loop_dev", "other_disks", "mounted_share_dirs" };
     QString key;
-    switch (info->order()) {
-    case EntryFileInfo::kOrderSysDiskRoot:
-        key = kItemVisiableControlKeys[0];
-        break;
-    case EntryFileInfo::kOrderSysDiskData:
+    if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool())
         key = kItemVisiableControlKeys[1];
-        break;
-    case EntryFileInfo::kOrderSmb:
-    case EntryFileInfo::kOrderFtp:
+    else if (info->extraProperty(DeviceProperty::kHintSystem).toBool())
+        key = kItemVisiableControlKeys[0];
+    else if (info->order() == EntryFileInfo::kOrderSmb || info->order() == EntryFileInfo::kOrderFtp)
         key = kItemVisiableControlKeys[3];
-        break;
-    default:
+    else
         key = kItemVisiableControlKeys[2];
-        break;
-    }
 
     Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
     if (info->renamable())
@@ -608,16 +598,7 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
     if (ga == Application::GenericAttribute::kShowFileSystemTagOnDiskIcon) {
         Q_EMIT hideFileSystemTag(!value.toBool());
     } else if (ga == Application::GenericAttribute::kHiddenSystemPartition) {
-        bool hide = value.toBool();
-        Q_EMIT hideNativeDisks(hide);
-        for (const auto &data : initedDatas) {
-            if (data.info && !data.info->extraProperty(DeviceProperty::kRemovable).toBool() && data.info->suffix() == SuffixInfo::kBlock && !data.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
-                if (hide)
-                    removeSidebarItem(data.url);
-                else
-                    addSidebarItem(data.info);
-            }
-        }
+        Q_EMIT hideNativeDisks(value.toBool());
     } else if (ga == Application::GenericAttribute::kAlwaysShowOfflineRemoteConnections) {
         if (!value.toBool()) {
             QStringList mounts = StashMountsUtils::stashedMounts().keys();
@@ -633,15 +614,6 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
     } else if (ga == Application::GenericAttribute::kHideLoopPartitions) {
         bool hide = value.toBool();
         Q_EMIT hideLoopPartitions(hide);
-        bool unused = false;
-        for (const auto &item : getBlockDeviceItems(unused)) {
-            if (item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
-                if (hide)
-                    removeSidebarItem(item.url);
-                else
-                    addSidebarItem(item.info);
-            }
-        }
     }
 }
 

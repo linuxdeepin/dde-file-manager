@@ -352,14 +352,14 @@
                             "default": true
                         },
                         {
-                            "key": "root",
-                            "text": qsTranslate("GenerateSettingTranslate", "System disk"),
+                            "key": "builtin",
+                            "text": qsTranslate("GenerateSettingTranslate", "Built-in disks"),
                             "type": "checkbox",
                             "default": true
                         },
                         {
-                            "key": "data",
-                            "text": qsTranslate("GenerateSettingTranslate", "Data disk"),
+                            "key": "loop",
+                            "text": qsTranslate("GenerateSettingTranslate", "Loop partitions"),
                             "type": "checkbox",
                             "default": true
                         },
@@ -410,8 +410,8 @@
                     "name": qsTranslate("GenerateSettingTranslate", "Other"),
                     "options": [
                         {
-                            "key": "hide_system_partition",
-                            "text": qsTranslate("GenerateSettingTranslate", "Hide system disk"),
+                            "key": "hide_builtin_partition",
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide built-in disks on the Computer page"),
                             "type": "checkbox",
                             "default": false
                         },
@@ -424,7 +424,7 @@
                         },
                         {
                             "key": "hide_loop_partitions",
-                            "text": qsTranslate("GenerateSettingTranslate", "Hide loop partitions"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide loop partitions on the Computer page"),
                             "type": "checkbox",
                             "default": true
                         },

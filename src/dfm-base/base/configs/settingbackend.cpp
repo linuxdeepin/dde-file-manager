@@ -56,7 +56,7 @@ BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::k
     { "advance.mount.always_show_offline_remote_connection", Application::kAlwaysShowOfflineRemoteConnections },
     { "advance.dialog.default_chooser_dialog", Application::kOverrideFileChooserDialog },
     { "advance.dialog.delete_confirmation_dialog", Application::kShowDeleteConfirmDialog },
-    { "advance.other.hide_system_partition", Application::kHiddenSystemPartition },
+    { "advance.other.hide_builtin_partition", Application::kHiddenSystemPartition },
     { "advance.other.hide_loop_partitions", Application::kHideLoopPartitions },
     { "advance.other.show_crumbbar_clickable_area", Application::kShowCsdCrumbBarClickableArea },
     { "advance.other.show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
