@@ -130,12 +130,12 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             if (qAppName() == "dde-file-manager") {
                 if (value.toBool()) {
                     QVariantMap data;
-                    data.insert("mode", 1);
+                    data.insert("mode", SearchReportData::TurnOn);
                     RLog::instance()->commit("Search", data);
                     searchServ->createFullTextIndex();
                 } else {
                     QVariantMap data;
-                    data.insert("mode", 2);
+                    data.insert("mode", SearchReportData::TurnOff);
                     RLog::instance()->commit("Search", data);
                 }
             }

@@ -171,7 +171,7 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
 
         // 上报保险箱创建成功日志
         QVariantMap data;
-        data.insert("mode", 1);
+        data.insert("mode", VaultReportData::Created);
         rlog->commit("Vault", data);
     } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));

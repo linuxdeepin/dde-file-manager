@@ -1636,7 +1636,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 
         QVariantMap args;
         args.insert("result",false);
-        args.insert("errorId",error->code);
+        args.insert("errorId",SmbReportData::Mount_Error);//since error->code always 0 here
         args.insert("errorSysMsg",error->message);
         args.insert("errorUiMsg",errorUiMsg);
         rlog->commit("Smb",args);
