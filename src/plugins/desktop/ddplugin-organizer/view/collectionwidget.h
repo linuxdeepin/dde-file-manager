@@ -27,6 +27,7 @@
 #include "DBlurEffectWidget"
 
 #include <QAbstractItemModel>
+#include <QItemSelectionModel>
 
 namespace ddplugin_organizer {
 
@@ -64,6 +65,7 @@ public:
     bool adjustable() const;
 
     void openEditor(const QUrl &url);
+    void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);
 signals:
     void sigRequestClose(const QString &id);
     void sigRequestAdjustSizeMode(const CollectionFrameSize &size);

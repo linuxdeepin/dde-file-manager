@@ -22,6 +22,7 @@
 #include "models/fileproxymodel.h"
 #include "config/configpresenter.h"
 #include "interface/canvasviewshell.h"
+#include "utils/fileoperator.h"
 
 #include <QDebug>
 #include <QTime>
@@ -31,7 +32,7 @@ using namespace ddplugin_organizer;
 static constexpr int kCollectionGridColumnCount = 4;
 static constexpr int kSmallCollectionGridRowCount = 2;
 static constexpr int kLargeCollectionGridRowCount = 4;
-static constexpr int kCollectionGridMargin = 4;
+static constexpr int kCollectionGridMargin = 2;
 
 NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq) : q(qq)
 {
@@ -211,7 +212,7 @@ bool NormalizedMode::initialize(FileProxyModel *m)
     connect(model, &FileProxyModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
     connect(model, &FileProxyModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
 
-    connect(model, &FileProxyModel::openEditor, this, &NormalizedMode::onOpenEditor, Qt::DirectConnection);
+    connect(model, &FileProxyModel::openEditor, this, &NormalizedMode::onOpenEditor, Qt::QueuedConnection);
 
     // creating if there already are files.
     if (!model->files().isEmpty())
@@ -339,6 +340,23 @@ void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     d->classifier->replace(oldUrl, newUrl);
     d->switchCollection();
+
+    const auto &renameFileData = FileOperatorIns->renameFileData();
+    if (renameFileData.contains(oldUrl) && renameFileData.value(oldUrl) == newUrl) {
+        FileOperatorIns->removeRenameFileData(oldUrl);
+        auto key = d->classifier->key(newUrl);
+        if (key.isEmpty()) {
+            qWarning() << "warning:can not find key for :" << newUrl;
+            return;
+        }
+        auto holder = d->holders.value(key);
+        if (Q_UNLIKELY(!holder)) {
+            qWarning() << "warning:can not find holder for :" << key;
+            return;
+        }
+
+        holder->selectUrl(newUrl, QItemSelectionModel::Select);
+    }
 }
 
 void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int last)

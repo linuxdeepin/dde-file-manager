@@ -52,6 +52,7 @@ public:
     CollectionItemDelegate *itemDelegate() const;
 
     void openEditor(const QUrl &url);
+    void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);
 
     void setModel(QAbstractItemModel *model) override;
     void reset() override;

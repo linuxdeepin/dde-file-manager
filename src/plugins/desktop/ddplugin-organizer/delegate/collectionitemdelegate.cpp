@@ -59,13 +59,12 @@ using namespace ddplugin_organizer;
 
 #define EDITOR_SHOW_SUFFIX "_d_whether_show_suffix"
 
-const int CollectionItemDelegate::kTextPadding = 4;
+const int CollectionItemDelegate::kTextPadding = 2;
 const int CollectionItemDelegate::kIconSpacing = 5;
 const int CollectionItemDelegate::kIconBackRadius = 18;
 const int CollectionItemDelegate::kIconRectRadius = 4;
 
 static constexpr int kIconTopSpacing = 4;
-static constexpr int kIconBottomSpacing = 2;
 
 CollectionItemDelegatePrivate::CollectionItemDelegatePrivate(CollectionItemDelegate *qq)
     : q(qq)
@@ -140,7 +139,7 @@ CollectionItemDelegate::CollectionItemDelegate(QAbstractItemView *parentPtr)
                              << tr("Large")
                              << tr("Super large");
     // word number of per line
-    d->charOfLine << 7 << 7 << 7 << 10 << 10;
+    d->charOfLine << 6 << 6 << 6 << 9 << 9;
 
     // 初始化默认图标为小
     const int iconLevel = 1;
@@ -688,31 +687,31 @@ QRect CollectionItemDelegate::textPaintRect(const QStyleOptionViewItem &option, 
 
 void CollectionItemDelegate::updateItemSizeHint() const
 {
-    // todo(wangcl) 现有UI不合适，设计师需要继续调整
-//    int textFontWidth = parent()->fontMetrics().width("中");
-//    auto iconSize = parent()->iconSize();
+    // old style
+    //int width = parent()->iconSize().width() * 17 / 10;
+    //int height = parent()->iconSize().height() + 10 + 2 * d->textLineHeight;
 
-//    int width;
-//    {
-//        // defalut word num
-//        const int minWidth = iconSize.width();
-//        int num = 7;
-//        int index = d->iconSizes.indexOf(iconSize.width());
-//        if (index >= 0 && index < d->charOfLine.size())
-//            num = d->charOfLine.at(index);
+    // new style
+    int textFontWidth = parent()->fontMetrics().width("中");
+    auto iconSize = parent()->iconSize();
 
-//        width = kTextPadding + num * textFontWidth + kTextPadding;
-//        if (Q_UNLIKELY(width < minWidth))
-//            width = minWidth;
-//    }
+    int width;
+    {
+        // defalut word num
+        const int minWidth = iconSize.width();
+        int num = 6;
+        int index = d->iconSizes.indexOf(iconSize.width());
+        if (index >= 0 && index < d->charOfLine.size())
+            num = d->charOfLine.at(index);
 
-//    int height = kIconTopSpacing + iconSize.height() + kIconBottomSpacing + kTextPadding + 2 * d->textLineHeight + kTextPadding;
+        width = kTextPadding + num * textFontWidth + kTextPadding;
+        if (Q_UNLIKELY(width < minWidth))
+            width = minWidth;
+    }
 
-//    d->itemSizeHint = QSize(width, height);
+    // two rows
+    int height = kIconTopSpacing + iconSize.height() + kTextPadding + 2 * d->textLineHeight + kTextPadding;
 
-    int width = parent()->iconSize().width() * 17 / 10;
-    int height = parent()->iconSize().height()
-            + 10 + 2 * d->textLineHeight;
     d->itemSizeHint = QSize(width, height);
 }
 

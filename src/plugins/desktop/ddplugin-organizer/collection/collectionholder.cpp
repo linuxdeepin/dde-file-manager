@@ -38,8 +38,10 @@ CollectionHolderPrivate::CollectionHolderPrivate(const QString &uuid, Collection
 
 CollectionHolderPrivate::~CollectionHolderPrivate()
 {
-    widget.clear();
-    frame.clear();
+    if (frame) {
+        frame->setParent(nullptr);
+        delete frame;
+    }
 }
 
 void CollectionHolderPrivate::onAdjustFrameSizeMode(const CollectionFrameSize &size)
@@ -142,6 +144,11 @@ void CollectionHolder::show()
 void CollectionHolder::openEditor(const QUrl &url)
 {
     d->widget->openEditor(url);
+}
+
+void CollectionHolder::selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags)
+{
+    d->widget->selectUrl(url, flags);
 }
 
 void CollectionHolder::setMovable(const bool movable)

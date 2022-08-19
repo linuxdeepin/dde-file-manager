@@ -28,6 +28,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QItemSelectionModel>
 
 namespace ddplugin_organizer {
 
@@ -59,6 +60,7 @@ public:
     Surface *surface() const;
     void show();
     void openEditor(const QUrl &url);
+    void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);
 
     void setMovable(const bool movable = false);
     bool movable() const;

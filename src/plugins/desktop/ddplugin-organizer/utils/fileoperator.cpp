@@ -316,7 +316,8 @@ void FileOperator::callBackFunction(const Global::CallbackArgus args)
     case FileOperatorPrivate::CallBackFunc::kCallBackRenameFiles: {
         auto sources = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
         auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
-        CollectionView *view = reinterpret_cast<CollectionView *>(custom.second.toLongLong());
+        auto viewData = custom.second.toMap();
+        CollectionView *view = reinterpret_cast<CollectionView *>(viewData.value(kViewObject).toLongLong());
         if (Q_UNLIKELY(!view)) {
             qWarning() << "warning:can not get collection view.";
             break;

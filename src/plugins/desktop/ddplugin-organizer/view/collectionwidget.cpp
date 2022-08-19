@@ -161,6 +161,11 @@ void CollectionWidget::openEditor(const QUrl &url)
     d->view->openEditor(url);
 }
 
+void CollectionWidget::selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags)
+{
+    d->view->selectUrl(url, flags);
+}
+
 void CollectionWidget::resizeEvent(QResizeEvent *event)
 {
     DBlurEffectWidget::resizeEvent(event);

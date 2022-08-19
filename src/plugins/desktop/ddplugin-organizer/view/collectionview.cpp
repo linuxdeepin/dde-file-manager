@@ -48,9 +48,10 @@ using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-static constexpr int kCollectionViewMargin = 4;
-static constexpr int kCollectionItemVerticalMaxMargin = 5;
-static constexpr int kCollectionItemVertiaclMinMargin = 1;
+static constexpr int kCollectionViewMargin = 2;
+static constexpr int kCollectionItemVerticalMargin = 2;
+static constexpr int kIconOffset = 10;
+static constexpr int kIconSelectMargin = 3;
 
 CollectionViewPrivate::CollectionViewPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionView *qq, QObject *parent)
     : QObject(parent)
@@ -182,11 +183,11 @@ QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
 {
     QItemSelection selection;
     const QRect actualRect(qMin(rect.left(), rect.right())
-                           , qMin(rect.top(), rect.bottom()) + q->verticalOffset()
+                           , qMin(rect.top(), rect.bottom())
                            , abs(rect.width())
                            , abs(rect.height()));
-    const QPoint offset(-q->horizontalOffset(), 0);
-    const QPoint iconOffset(10, 10);    // todo(wangcl):define
+    const QPoint offset(q->horizontalOffset(), q->verticalOffset());
+    const QPoint iconOffset(kIconOffset, kIconOffset);
 
     for (auto url : provider->items(id)) {
         auto index = q->model()->index(url);
@@ -194,11 +195,10 @@ QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
         QRect realItemRect(itemRect.topLeft() + offset + iconOffset, itemRect.bottomRight() + offset - iconOffset);
 
         // least 3 pixels
-        static const int diff = 3;
-        if (actualRect.left() > realItemRect.right() - diff
-                || actualRect.top() > realItemRect.bottom() - diff
-                || actualRect.right() < realItemRect.left() + diff
-                || actualRect.bottom() < realItemRect.top() + diff)
+        if (actualRect.left() > realItemRect.right() - kIconSelectMargin
+                || actualRect.top() > realItemRect.bottom() - kIconSelectMargin
+                || actualRect.right() < realItemRect.left() + kIconSelectMargin
+                || actualRect.bottom() < realItemRect.top() + kIconSelectMargin)
             continue;
 
         if (!selection.contains(index)) {
@@ -909,17 +909,11 @@ void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &ite
         cellHeight = itemHeight;
         rowCount = 1;
     } else {
-        int margin = (availableHeight - rowCount * itemHeight) / (rowCount + 1) / 2;
-        if (margin > kCollectionItemVerticalMaxMargin)
-            margin = kCollectionItemVerticalMaxMargin;
-        else if (margin < kCollectionItemVertiaclMinMargin)
-            margin = kCollectionItemVertiaclMinMargin;
+        // fixed value,required by design
+        cellHeight = itemHeight + kCollectionItemVerticalMargin;
 
-        cellHeight = itemHeight + 2 * margin;
+        // view's top and bottom margins is fixed,not need update
 
-        // update viewMargins
-        viewMargins.setTop(viewMargins.top() + margin);
-        viewMargins.setBottom(viewMargins.bottom() + margin);
         // there is a scroll bar in the vertical direction, so you don't need to care about the unused height
     }
 
@@ -1083,6 +1077,22 @@ void CollectionView::openEditor(const QUrl &url)
     this->setCurrentIndex(index);
     this->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
     this->activateWindow();
+}
+
+void CollectionView::selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags)
+{
+    auto index = model()->index(url);
+    if (Q_UNLIKELY(!index.isValid())) {
+        qWarning() << "warning:can not find index for:" << url;
+        return;
+    }
+
+    selectionModel()->select(index, flags);
+    // can not setting repeated,becase QAbstractItemView::setCurrentIndex will be cleared select items
+    if (!currentIndex().isValid())
+        this->setCurrentIndex(index);
+    this->activateWindow();
+    this->update();
 }
 
 void CollectionView::setModel(QAbstractItemModel *model)
@@ -1420,7 +1430,7 @@ void CollectionView::paintEvent(QPaintEvent *event)
         opt.initFrom(this);
         opt.shape = QRubberBand::Rectangle;
         opt.opaque = false;
-        opt.rect = d->elasticBand;
+        opt.rect = d->elasticBand.translated(-horizontalOffset(), -verticalOffset());
         painter.save();
         style()->drawControl(QStyle::CE_RubberBand, &opt, &painter);
         painter.restore();
