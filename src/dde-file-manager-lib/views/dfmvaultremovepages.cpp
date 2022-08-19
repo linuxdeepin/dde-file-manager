@@ -314,7 +314,7 @@ void DFMVaultRemovePages::onVualtRemoveFinish(bool result)
     if (result) {
         // 上报保险箱删除成功日志
         QVariantMap data;
-        data.insert("mode", 2);
+        data.insert("mode", VaultReportData::Deleted);
         rlog->commit("Vault", data);
         setInfo(tr("Deleted successfully"));
     } else {

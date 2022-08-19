@@ -1,7 +1,8 @@
 #ifndef REPORTDATAINTERFACE_H
 #define REPORTDATAINTERFACE_H
 
-#include "rlog/rlog.h"
+#include <QJsonObject>
+#include <QVariantMap>
 
 class ReportDataInterface
 {

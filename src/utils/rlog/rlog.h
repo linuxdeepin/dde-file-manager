@@ -1,6 +1,10 @@
 #ifndef RLOG_H
 #define RLOG_H
 
+#include "smbreportdata.h"
+#include "vaultreportdata.h"
+#include "searchreportdata.h"
+
 #include <QObject>
 #include <QHash>
 #include <QMap>

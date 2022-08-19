@@ -8,6 +8,10 @@
 class VaultReportData : public ReportDataInterface
 {
 public:
+    enum VaultMode{
+      Created = 1, //创建保险箱
+      Deleted      //删除保险箱
+    };
     QString type() const override;
     QJsonObject prepareData(const QVariantMap &args) const override;
 };

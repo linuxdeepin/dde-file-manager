@@ -247,6 +247,12 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             if (eventLoop) {
                 eventLoop->exit(EventLoopCode::FetchFailed);
             }
+            QVariantMap args;
+            args.insert("result",false);
+            args.insert("errorId",SmbReportData::Fetch_Error);
+            args.insert("errorSysMsg","enumerator is null");
+            args.insert("errorUiMsg","enumerator is null");
+            rlog->commit("Smb",args);
 
             return;
         }
@@ -273,6 +279,12 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
     if (error) {
         if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
             qWarning("Failed to fetch network locations: %s", error->message);//指定的位置未挂载
+            QVariantMap args;
+            args.insert("result",false);
+            args.insert("errorId",SmbReportData::NotMount);
+            args.insert("errorSysMsg",error->message);
+            args.insert("errorUiMsg",error->message);
+            rlog->commit("Smb",args);
             DFMEvent *event = static_cast<DFMEvent *>(user_data);
             if (event->fileUrl() == DUrl::fromNetworkFile("/")) {
                 NetworkManager::restartGVFSD();
