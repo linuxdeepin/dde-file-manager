@@ -448,17 +448,21 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
 
         painter->setPen(Qt::NoPen);
 
-        const int BlurRadius = 6;
-        auto shadowRect = usedRect;
-        shadowRect.adjust(-BlurRadius, -BlurRadius, BlurRadius, BlurRadius);
-        shadowRect.moveTop(shadowRect.top() + 4);
-        painter->drawPixmap(shadowRect, renderBlurShadow(usedRect.size(), shadowColor, BlurRadius));
+        if (usedRate != 0) {
+            const int BlurRadius = 6;
+            auto shadowRect = usedRect;
+            shadowRect.adjust(-BlurRadius, -BlurRadius, BlurRadius, BlurRadius);
+            shadowRect.moveTop(shadowRect.top() + 4);
+            painter->drawPixmap(shadowRect, renderBlurShadow(usedRect.size(), shadowColor, BlurRadius));
+        }
 
         painter->setBrush(QColor(0, 0, 0, 25));
         painter->drawRoundedRect(totalRect, 3, 3);
 
-        painter->setBrush(grad);
-        painter->drawRoundedRect(usedRect, 3, 3);
+        if (usedRate != 0) {
+            painter->setBrush(grad);
+            painter->drawRoundedRect(usedRect, 3, 3);
+        }
     }
 
     QString deviceDescription = index.data(ComputerModel::kDeviceDescriptionRole).toString();
