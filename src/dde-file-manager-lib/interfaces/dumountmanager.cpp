@@ -45,6 +45,11 @@ DUMountManager::~DUMountManager()
 QString DUMountManager::getDriveName(const QString &blkName)
 {
     QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blkName));
+    auto backingDev = blkd->cryptoBackingDevice();
+    if (backingDev.length() > 1) {
+        auto backingBlk = DDiskManager::createBlockDevice(backingDev);
+        return backingBlk ? backingBlk->drive() : "";
+    }
     return blkd ? blkd->drive() : QString();
 }
 
@@ -147,7 +152,11 @@ bool DUMountManager::umountBlocksOnDrive(const QString &driveName)
     qInfo() << "start umount blocks on drive:" << driveName;
     for (const QString &blkStr : DDiskManager::blockDevices({})) {
         QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blkStr));
-        if (blkd && blkd->drive() == driveName) {
+        auto drvName = blkd ? blkd->drive() : "";
+        if (blkd->cryptoBackingDevice().length() > 1)
+            drvName = getDriveName(blkd->path());
+
+        if (drvName == driveName) {
             if (!umountBlock(blkStr)) {
                 qWarning() << "umountBlock failed: drive = " << driveName << ", block str = " << blkStr;
                 errorMsg = "umount block failed";
