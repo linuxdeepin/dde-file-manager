@@ -23,8 +23,6 @@
 #ifndef FILEVIEWMODEL_H
 #define FILEVIEWMODEL_H
 
-#include "views/fileviewitem.h"
-
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -42,12 +40,11 @@ class QAbstractItemView;
 
 namespace dfmplugin_workspace {
 
-class FileViewModelPrivate;
+class FileItemData;
+class FileDataHelper;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
-    friend class FileViewModelPrivate;
-    QSharedPointer<FileViewModelPrivate> d;
 
 public:
     enum State {
@@ -70,48 +67,46 @@ public:
     virtual QMimeData *mimeData(const QModelIndexList &indexes) const override;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 
-    virtual Qt::DropActions supportedDragActions() const override;
-    virtual Qt::DropActions supportedDropActions() const override;
+    QUrl rootUrl(const QModelIndex &rootIndex) const;
+    QModelIndex rootIndex(const QUrl &rootUrl) const;
 
-    void beginInsertRows(const QModelIndex &parent, int first, int last);
-    void endInsertRows();
+    QModelIndex setRootUrl(const QUrl &url);
 
-    void beginRemoveRows(const QModelIndex &parent, int first, int last);
-    void endRemoveRows();
+    void clear(const QUrl &rootUrl);
+    void update(const QUrl &rootUrl);
 
-    QUrl rootUrl() const;
-    QModelIndex rootIndex() const;
-    const FileViewItem *rootItem() const;
-    void setRootUrl(const QUrl &url);
-
-    void clear();
-    void update();
-
-    AbstractFileWatcherPointer fileWatcher() const;
-    const FileViewItem *itemFromIndex(const QModelIndex &index) const;
     AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
+    QList<QUrl> getChildrenUrls(const QUrl &rootUrl) const;
 
     QModelIndex findIndex(const QUrl &url) const;
 
     State state() const;
     void setState(FileViewModel::State state);
-    void childrenUpdated();
 
-    void traversCurrDir();
-    void stopTraversWork();
+    void traversRootDir(const QModelIndex &rootIndex);
+    void stopTraversWork(const QUrl &rootUrl);
 
-    void selectAndRenameFile(const QUrl &fileUrl);
+    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles(const QUrl &rootUrl) const;
 
-    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
-public slots:
+    void setIndexActive(const QModelIndex &index, bool enable);
+
+public Q_SLOTS:
     void onFilesUpdated();
     void onFileUpdated(const QUrl &url);
+    void onInsert(int rootIndex, int firstIndex, int count);
+    void onInsertFinish();
+    void onRemove(int rootIndex, int firstIndex, int count);
+    void onRemoveFinish();
 
-signals:
+Q_SIGNALS:
     void stateChanged();
-    void modelChildrenUpdated();
+    void childrenUpdated(const QUrl &url);
     void updateFiles();
     void selectAndEditFile(const QUrl &url);
+
+private:
+    FileDataHelper *fileDataHelper;
+    State currentState = Idle;
 };
 
 }

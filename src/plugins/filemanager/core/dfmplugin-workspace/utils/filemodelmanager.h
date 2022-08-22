@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ *             max-lv<lvwujun@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,28 +19,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEVIEWITEM_P_H
-#define FILEVIEWITEM_P_H
+#ifndef FILEMODELMANAGER_H
+#define FILEMODELMANAGER_H
 
-#include "views/fileviewitem.h"
+#include "dfmplugin_workspace_global.h"
+
+#include <QAbstractItemView>
 
 namespace dfmplugin_workspace {
 
-class FileViewItem;
-class FileViewItemPrivate : public QSharedData
+class FileViewModel;
+class FileSortFilterProxyModel;
+class FileModelManager : public QObject
 {
-    friend class FileViewItem;
-    FileViewItem *const q;
-
-    AbstractFileInfoPointer fileinfo;
-
+    Q_OBJECT
 public:
-    explicit FileViewItemPrivate(FileViewItem *qq)
-        : q(qq)
-    {
-    }
+    static FileModelManager *instance();
+    FileSortFilterProxyModel *createProxyModel(QAbstractItemView *view);
+
+private:
+    explicit FileModelManager(QObject *parent = nullptr);
+
+    FileViewModel *sourceDataModel = nullptr;
 };
 
 }
 
-#endif   // FILEVIEWITEM_P_H
+#endif   // FILEMODELMANAGER_H

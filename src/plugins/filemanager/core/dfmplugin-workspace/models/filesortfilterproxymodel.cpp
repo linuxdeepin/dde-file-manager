@@ -36,6 +36,8 @@ FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
 {
     setDynamicSortFilter(true);
     resetFilter();
+
+    connect(viewModel(), &FileViewModel::childrenUpdated, this, &FileSortFilterProxyModel::onChildrenUpdate);
 }
 
 FileSortFilterProxyModel::~FileSortFilterProxyModel()
@@ -60,14 +62,11 @@ Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
 
     Qt::ItemFlags flags = QSortFilterProxyModel::flags(index);
 
-    const QModelIndex &sourceIndex = mapToSource(index);
-    if (sourceIndex.isValid()) {
-        const FileViewItem *item = viewModel()->itemFromIndex(sourceIndex);
-        if (item) {
-            const AbstractFileInfoPointer info = item->fileInfo();
-            if (!passNameFilters(info))
-                flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        }
+    const AbstractFileInfoPointer &info = itemFileInfo(index);
+
+    if (info) {
+        if (!passNameFilters(info))
+            flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     }
 
     if (readOnly)
@@ -76,33 +75,44 @@ Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
     return flags;
 }
 
+Qt::DropActions FileSortFilterProxyModel::supportedDragActions() const
+{
+    const QModelIndex &rootIndex = viewModel()->findIndex(rootUrl);
+    const AbstractFileInfoPointer info = viewModel()->fileInfo(rootIndex);
+
+    if (info)
+        return info->supportedDragActions();
+
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+
+Qt::DropActions FileSortFilterProxyModel::supportedDropActions() const
+{
+    const QModelIndex &rootIndex = viewModel()->findIndex(rootUrl);
+    const AbstractFileInfoPointer info = viewModel()->fileInfo(rootIndex);
+
+    if (info)
+        return info->supportedDropActions();
+
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+
 QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
-    viewModel()->setRootUrl(url);
+    const QModelIndex &rootIndex = viewModel()->setRootUrl(url);
     resetFilter();
 
-    return index(0, 0, QModelIndex());
+    return mapFromSource(rootIndex);
 }
 
-QUrl FileSortFilterProxyModel::rootUrl() const
+void FileSortFilterProxyModel::clear()
 {
-    return viewModel()->rootUrl();
+    viewModel()->clear(rootUrl);
 }
 
-QModelIndex FileSortFilterProxyModel::rootIndex() const
+void FileSortFilterProxyModel::update()
 {
-    return index(0, 0, QModelIndex());
-}
-
-const FileViewItem *FileSortFilterProxyModel::rootItem() const
-{
-    return viewModel()->rootItem();
-}
-
-const FileViewItem *FileSortFilterProxyModel::itemFromIndex(const QModelIndex &index) const
-{
-    const QModelIndex &sourceIndex = mapToSource(index);
-    return viewModel()->itemFromIndex(sourceIndex);
+    viewModel()->update(rootUrl);
 }
 
 AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex &index) const
@@ -130,14 +140,7 @@ QUrl FileSortFilterProxyModel::getUrlByIndex(const QModelIndex &index) const
 
 QList<QUrl> FileSortFilterProxyModel::getCurrentDirFileUrls() const
 {
-    QList<QUrl> urls {};
-    int count = rowCount(rootIndex());
-    for (int i = 0; i < count; ++i) {
-        const QModelIndex &proxyIndex = index(i, 0, rootIndex());
-        urls << getUrlByIndex(proxyIndex);
-    }
-
-    return urls;
+    return viewModel()->getChildrenUrls(rootUrl);
 }
 
 int FileSortFilterProxyModel::getColumnWidth(const int &column) const
@@ -155,7 +158,7 @@ int FileSortFilterProxyModel::getColumnWidth(const int &column) const
 
 ItemRoles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
 {
-    QList<ItemRoles> columnRoleList = viewModel()->getColumnRoles();
+    QList<ItemRoles> columnRoleList = viewModel()->getColumnRoles(rootUrl);
 
     if (columnRoleList.length() > column)
         return columnRoleList.at(column);
@@ -165,7 +168,7 @@ ItemRoles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
 
 int FileSortFilterProxyModel::getColumnByRole(const ItemRoles role) const
 {
-    QList<ItemRoles> columnRoleList = viewModel()->getColumnRoles();
+    QList<ItemRoles> columnRoleList = viewModel()->getColumnRoles(rootUrl);
     return columnRoleList.indexOf(role) < 0 ? 0 : columnRoleList.indexOf(role);
 }
 
@@ -235,23 +238,32 @@ void FileSortFilterProxyModel::setReadOnly(const bool readOnly)
     this->readOnly = readOnly;
 }
 
+void FileSortFilterProxyModel::stopWork()
+{
+    viewModel()->stopTraversWork(rootUrl);
+}
+
+void FileSortFilterProxyModel::setActive(const QModelIndex &index, bool enable)
+{
+    const QModelIndex &sourceIndex = mapToSource(index);
+    viewModel()->setIndexActive(sourceIndex, enable);
+}
+
+void FileSortFilterProxyModel::onChildrenUpdate(const QUrl &url)
+{
+    if (UniversalUtils::urlEquals(url, rootUrl))
+        Q_EMIT modelChildrenUpdated();
+}
+
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    if (!left.isValid())
+    if (!left.isValid() || !left.parent().isValid())
         return false;
-    if (!right.isValid())
-        return false;
-
-    const FileViewItem *leftItem = viewModel()->itemFromIndex(left);
-    const FileViewItem *rightItem = viewModel()->itemFromIndex(right);
-
-    if (!leftItem)
-        return false;
-    if (!rightItem)
+    if (!right.isValid() || !right.parent().isValid())
         return false;
 
-    AbstractFileInfoPointer leftInfo = leftItem->fileInfo();
-    AbstractFileInfoPointer rightInfo = rightItem->fileInfo();
+    const AbstractFileInfoPointer &leftInfo = viewModel()->fileInfo(left);
+    const AbstractFileInfoPointer &rightInfo = viewModel()->fileInfo(right);
 
     if (!leftInfo)
         return false;
@@ -306,7 +318,7 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     if (!sourceParent.isValid())
         return true;
 
-    AbstractFileInfoPointer fileInfo = viewModel()->itemFromIndex(rowIndex)->fileInfo();
+    const AbstractFileInfoPointer &fileInfo = viewModel()->fileInfo(rowIndex);
 
     return passFileFilters(fileInfo);
 }
@@ -343,7 +355,6 @@ bool FileSortFilterProxyModel::passFileFilters(const AbstractFileInfoPointer &fi
     if ((filters & QDir::Executable) && !fileInfo->isExecutable())
         return false;
 
-    //Todo(yanghao):
     return true;
 }
 
@@ -390,7 +401,7 @@ QString FileSortFilterProxyModel::roleDisplayString(int role) const
 {
     QString displayName;
 
-    if (WorkspaceEventSequence::instance()->doFetchCustomRoleDiaplayName(rootUrl(), static_cast<ItemRoles>(role), &displayName))
+    if (WorkspaceEventSequence::instance()->doFetchCustomRoleDiaplayName(rootUrl, static_cast<ItemRoles>(role), &displayName))
         return displayName;
 
     switch (role) {
@@ -409,5 +420,5 @@ QString FileSortFilterProxyModel::roleDisplayString(int role) const
 
 QList<ItemRoles> FileSortFilterProxyModel::getColumnRoles() const
 {
-    return viewModel()->getColumnRoles();
+    return viewModel()->getColumnRoles(rootUrl);
 }

@@ -22,7 +22,6 @@
 #ifndef FILEVIEW_P_H
 #define FILEVIEW_P_H
 
-#include "views/fileviewitem.h"
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 

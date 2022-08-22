@@ -23,7 +23,6 @@
 #include "private/listitemdelegate_p.h"
 #include "listitemdelegate.h"
 #include "fileview.h"
-#include "fileviewitem.h"
 #include "listitemeditor.h"
 #include "models/filesortfilterproxymodel.h"
 #include "dfm-base/dfm_base_global.h"

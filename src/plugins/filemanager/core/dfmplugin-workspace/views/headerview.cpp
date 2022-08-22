@@ -200,10 +200,10 @@ void HeaderView::leaveEvent(QEvent *e)
 
 void HeaderView::contextMenuEvent(QContextMenuEvent *event)
 {
-    const FileViewItem *rootItem = proxyModel()->rootItem();
+    //    const FileViewItem *rootItem = proxyModel()->rootItem();
 
-    if (!rootItem || !rootItem->fileInfo())
-        return;
+    //    if (!rootItem || !rootItem->fileInfo())
+    //        return;
 
     QMenu *menu = new QMenu;
 

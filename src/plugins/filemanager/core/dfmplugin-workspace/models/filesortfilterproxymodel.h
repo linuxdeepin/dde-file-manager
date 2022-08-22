@@ -23,7 +23,6 @@
 #define FILESORTFILTERPROXYMODEL_H
 
 #include "dfmplugin_workspace_global.h"
-#include "views/fileviewitem.h"
 #include "events/workspaceeventsequence.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
@@ -44,14 +43,14 @@ public:
 
     QVariant headerData(int column, Qt::Orientation, int role) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
+    Qt::DropActions supportedDragActions() const override;
+    Qt::DropActions supportedDropActions() const override;
 
     QModelIndex setRootUrl(const QUrl &url);
 
-    QUrl rootUrl() const;
-    QModelIndex rootIndex() const;
-    const FileViewItem *rootItem() const;
+    void clear();
+    void update();
 
-    const FileViewItem *itemFromIndex(const QModelIndex &index) const;
     AbstractFileInfoPointer itemFileInfo(const QModelIndex &index) const;
 
     QModelIndex getIndexByUrl(const QUrl &url) const;
@@ -75,6 +74,15 @@ public:
     void toggleHiddenFiles();
 
     void setReadOnly(const bool readOnly);
+    void stopWork();
+
+    void setActive(const QModelIndex &index, bool enable = true);
+
+Q_SIGNALS:
+    void modelChildrenUpdated();
+
+public Q_SLOTS:
+    void onChildrenUpdate(const QUrl &url);
 
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
@@ -87,6 +95,8 @@ private:
     FileViewModel *viewModel() const;
 
 private:
+    QUrl rootUrl;
+
     QVariant filterData;
     FileViewFilterCallback filterCallback;
     QDir::Filters filters = QDir::NoFilter;

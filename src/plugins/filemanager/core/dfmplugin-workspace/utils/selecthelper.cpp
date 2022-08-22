@@ -130,7 +130,7 @@ void SelectHelper::select(const QList<QModelIndex> &indexes)
     QModelIndex firstIndex;
     QModelIndex lastIndex;
 
-    const QModelIndex &root = view->model()->rootIndex();
+    const QModelIndex &root = view->rootIndex();
     view->selectionModel()->clearSelection();
     for (const QModelIndex &index : indexes) {
         if (!index.isValid() || index == root) {

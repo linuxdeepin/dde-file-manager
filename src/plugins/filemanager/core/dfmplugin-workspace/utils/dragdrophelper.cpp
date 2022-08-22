@@ -186,8 +186,11 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (event->source() == view && (!hoverIndex.isValid() || view->isSelected(hoverIndex)))
             return true;
 
-        if (!hoverIndex.isValid())
-            hoverIndex = view->model()->rootIndex();
+        //        bool isDropAtRootIndex = false;
+        if (!hoverIndex.isValid()) {
+            hoverIndex = view->rootIndex();
+            //            isDropAtRootIndex = true;
+        }
 
         if (!hoverIndex.isValid())
             return true;
@@ -318,15 +321,20 @@ void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
 
 QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos)
 {
-    const QModelIndex &index = view->indexAt(pos);
-    if (index.isValid()) {
-        const FileViewItem *item = view->model()->itemFromIndex(index);
-        if (item)
-            return view->model()->itemFromIndex(index)->fileInfo();
-    } else {
-        return view->model()->rootItem()->fileInfo();
-    }
-    return nullptr;
+    QModelIndex index = view->indexAt(pos);
+    if (!index.isValid())
+        index = view->rootIndex();
+
+    return view->model()->itemFileInfo(index);
+
+    //    if (index.isValid()) {
+    //        const FileViewItem *item = view->model()->itemFromIndex(index);
+    //        if (item)
+    //            return view->model()->itemFromIndex(index)->fileInfo();
+    //    } else {
+    //        return view->model()->rootItem()->fileInfo();
+    //    }
+    //    return nullptr;
 }
 
 bool DragDropHelper::isSameUser(const QMimeData *data)

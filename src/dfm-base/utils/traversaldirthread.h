@@ -63,7 +63,8 @@ Q_SIGNALS:
 protected:
     virtual void run() override;
 };
-
 }
+
+typedef QSharedPointer<DFMBASE_NAMESPACE::TraversalDirThread> TraversalThreadPointer;
 
 #endif   // DFMTRAVERSALDIRTHREAD_H

@@ -85,7 +85,7 @@ void TraversalDirThread::run()
 
     QElapsedTimer timer;
     timer.start();
-    qDebug() << "dir query start, url: " << dirUrl;
+    qInfo() << "dir query start, url: " << dirUrl;
 
     dirIterator->cacheBlockIOAttribute();
 
@@ -103,5 +103,5 @@ void TraversalDirThread::run()
     stopFlag = true;
     emit updateChildren(childrenList);
 
-    qDebug() << "dir query end, file count: " << childrenList.size() << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+    qInfo() << "dir query end, file count: " << childrenList.size() << " url: " << dirUrl << " elapsed: " << timer.elapsed();
 }

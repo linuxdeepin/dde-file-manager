@@ -1,5 +1,4 @@
 #include "listitemeditor.h"
-#include "views/fileviewitem.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/fileutils.h"
@@ -81,7 +80,7 @@ bool ListItemEditor::event(QEvent *ee)
 {
     switch (ee->type()) {
     case QEvent::FocusOut:
-            emit inputFocusOut();
+        emit inputFocusOut();
         break;
     default:
         break;

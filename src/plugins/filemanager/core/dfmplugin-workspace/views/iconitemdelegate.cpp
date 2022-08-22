@@ -25,7 +25,6 @@
 #include "private/iconitemdelegate_p.h"
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
-#include "fileviewitem.h"
 #include "fileview.h"
 #include "iconitemeditor.h"
 #include "models/filesortfilterproxymodel.h"
