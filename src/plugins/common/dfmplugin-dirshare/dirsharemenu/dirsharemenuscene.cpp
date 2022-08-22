@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "sharemenuscene.h"
-#include "private/sharemenuscene_p.h"
+#include "dirsharemenuscene.h"
+#include "private/dirsharemenuscene_p.h"
 #include "utils/usersharehelper.h"
 
 #include "dfm-base/dfm_global_defines.h"
@@ -35,32 +35,32 @@
 
 using namespace dfmplugin_dirshare;
 
-ShareMenuScenePrivate::ShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
+DirShareMenuScenePrivate::DirShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
 }
 
-void ShareMenuScenePrivate::addShare(const QUrl &url)
+void DirShareMenuScenePrivate::addShare(const QUrl &url)
 {
     QList<QUrl> urls { url };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
-ShareMenuScene::ShareMenuScene(QObject *parent)
-    : AbstractMenuScene(parent), d(new ShareMenuScenePrivate(this))
+DirShareMenuScene::DirShareMenuScene(QObject *parent)
+    : AbstractMenuScene(parent), d(new DirShareMenuScenePrivate(this))
 {
 }
 
-ShareMenuScene::~ShareMenuScene()
+DirShareMenuScene::~DirShareMenuScene()
 {
 }
 
-QString ShareMenuScene::name() const
+QString DirShareMenuScene::name() const
 {
-    return ShareMenuCreator::name();
+    return DirShareMenuCreator::name();
 }
 
-bool ShareMenuScene::initialize(const QVariantHash &params)
+bool DirShareMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
@@ -83,7 +83,7 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
     return AbstractMenuScene::initialize(params);
 }
 
-bool ShareMenuScene::create(QMenu *parent)
+bool DirShareMenuScene::create(QMenu *parent)
 {
     if (!parent)
         return false;
@@ -110,30 +110,12 @@ bool ShareMenuScene::create(QMenu *parent)
     return AbstractMenuScene::create(parent);
 }
 
-void ShareMenuScene::updateState(QMenu *parent)
+void DirShareMenuScene::updateState(QMenu *parent)
 {
-    auto actLst = parent->actions();
-    QAction *shareOrUnshare = nullptr;
-    QAction *symlinkAct = nullptr;
-
-    for (const auto act : actLst) {
-        if (act->property(ActionPropertyKey::kActionID).toString() == "create-system-link")
-            symlinkAct = act;
-        if (d->predicateAction.values().contains(act))
-            shareOrUnshare = act;
-    }
-
-    if (shareOrUnshare && symlinkAct) {
-        parent->removeAction(shareOrUnshare);
-        parent->insertSeparator(symlinkAct);
-        parent->insertAction(symlinkAct, shareOrUnshare);
-        parent->insertSeparator(symlinkAct);
-    }
-
     AbstractMenuScene::updateState(parent);
 }
 
-bool ShareMenuScene::triggered(QAction *action)
+bool DirShareMenuScene::triggered(QAction *action)
 {
     if (!d->predicateAction.values().contains(action))
         return false;
@@ -160,18 +142,18 @@ bool ShareMenuScene::triggered(QAction *action)
     return AbstractMenuScene::triggered(action);
 }
 
-AbstractMenuScene *ShareMenuScene::scene(QAction *action) const
+AbstractMenuScene *DirShareMenuScene::scene(QAction *action) const
 {
     if (action == nullptr)
         return nullptr;
 
     if (!d->predicateAction.key(action).isEmpty())
-        return const_cast<ShareMenuScene *>(this);
+        return const_cast<DirShareMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
 }
 
-AbstractMenuScene *ShareMenuCreator::create()
+AbstractMenuScene *DirShareMenuCreator::create()
 {
-    return new ShareMenuScene();
+    return new DirShareMenuScene();
 }

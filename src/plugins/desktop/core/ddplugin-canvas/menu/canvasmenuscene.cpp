@@ -50,11 +50,12 @@ using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
 DPMENU_USE_NAMESPACE
 
+static const char *const kBaseSortMenuSceneName = "BaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
 static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
 static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
-static const char *const kSendToMenuSceneName = "SendToMenu";
+static const char *const kShareMenuSceneName = "ShareMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 static const char *const kExtendMenuSceneName = "ExtendMenu";
 static const char *const kOemMenuSceneName = "OemMenu";
@@ -101,54 +102,6 @@ void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
             }
         }
     }
-}
-
-void CanvasMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &sortRule)
-{
-    auto actions = menu->actions();
-    qSort(actions.begin(), actions.end(), [&sortRule](QAction *act1, QAction *act2) {
-        const auto &property1 = act1->property(ActionPropertyKey::kActionID).toString();
-        const auto &property2 = act2->property(ActionPropertyKey::kActionID).toString();
-
-        auto index1 = sortRule.indexOf(property1);
-        if (index1 == -1)
-            return false;
-
-        auto index2 = sortRule.indexOf(property2);
-        if (index2 == -1)
-            return true;
-
-        return index1 < index2;
-    });
-
-    // insert separator
-    std::function<void(int)> insertSeparator;
-    insertSeparator = [&](int index) {
-        if (index >= sortRule.size() || dfmplugin_menu::ActionID::kSeparator == sortRule[index])
-            return;
-
-        auto rule = sortRule[index];
-        auto iter = std::find_if(actions.begin(), actions.end(), [&rule](const QAction *act) {
-            auto p = act->property(ActionPropertyKey::kActionID);
-            return p == rule;
-        });
-
-        if (iter != actions.end()) {
-            QAction *separatorAct = new QAction(menu);
-            separatorAct->setSeparator(true);
-            actions.insert(iter, separatorAct);
-        } else {
-            insertSeparator(++index);
-        }
-    };
-
-    int index = sortRule.indexOf(dfmplugin_menu::ActionID::kSeparator);
-    while (-1 != index) {
-        insertSeparator(++index);
-        index = sortRule.indexOf(dfmplugin_menu::ActionID::kSeparator, index);
-    }
-
-    menu->addActions(actions);
 }
 
 CanvasMenuScene::CanvasMenuScene(QObject *parent)
@@ -199,6 +152,10 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     // todo(wangcl):handle computer,home,trash.and custom menu.
 
     QList<AbstractMenuScene *> currentScene;
+    // sort
+    if (auto sortScene = dfmplugin_menu_util::menuSceneCreateScene(kBaseSortMenuSceneName))
+        currentScene.append(sortScene);
+
     if (d->isEmptyArea) {
         // new (new doc, new dir)
         if (auto newCreateScene = dfmplugin_menu_util::menuSceneCreateScene(kNewCreateMenuSceneName))
@@ -222,8 +179,8 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
         if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
             currentScene.append(fileScene);
 
-        if (auto sendToScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName))
-            currentScene.append(sendToScene);
+        if (auto shareScene = dfmplugin_menu_util::menuSceneCreateScene(kShareMenuSceneName))
+            currentScene.append(shareScene);
     }
 
     // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
@@ -282,11 +239,6 @@ bool CanvasMenuScene::create(QMenu *parent)
 
 void CanvasMenuScene::updateState(QMenu *parent)
 {
-    if (d->isEmptyArea)
-        d->sortMenuAction(parent, d->emptyMenuActionRules());
-    else
-        d->sortMenuAction(parent, d->normalMenuActionRules());
-
     AbstractMenuScene::updateState(parent);
 }
 

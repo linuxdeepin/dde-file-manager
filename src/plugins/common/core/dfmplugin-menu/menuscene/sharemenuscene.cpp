@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "sendtomenuscene.h"
-#include "private/sendtomenuscene_p.h"
+#include "sharemenuscene.h"
+#include "private/sharemenuscene_p.h"
 #include "action_defines.h"
 #include "menuutils.h"
 
@@ -47,22 +47,22 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
 
-SendToMenuScene::SendToMenuScene(QObject *parent)
+ShareMenuScene::ShareMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
-      d(new SendToMenuScenePrivate(this))
+      d(new ShareMenuScenePrivate(this))
 {
 }
 
-SendToMenuScene::~SendToMenuScene()
+ShareMenuScene::~ShareMenuScene()
 {
 }
 
-QString SendToMenuScene::name() const
+QString ShareMenuScene::name() const
 {
-    return SendToMenuCreator::name();
+    return ShareMenuCreator::name();
 }
 
-bool SendToMenuScene::initialize(const QVariantHash &params)
+bool ShareMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
@@ -90,7 +90,7 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     return AbstractMenuScene::initialize(params);
 }
 
-bool SendToMenuScene::create(QMenu *parent)
+bool ShareMenuScene::create(QMenu *parent)
 {
     if (!parent)
         return false;
@@ -106,28 +106,54 @@ bool SendToMenuScene::create(QMenu *parent)
         }
 
         if (!d->isSystemPathIncluded) {
-            auto sendToAct = parent->addAction(d->predicateName[ActionID::kSendTo]);
-            sendToAct->setProperty(ActionPropertyKey::kActionID, ActionID::kSendTo);
-            d->predicateAction[ActionID::kSendTo] = sendToAct;
+            auto shareAct = parent->addAction(d->predicateName[ActionID::kShare]);
+            shareAct->setProperty(ActionPropertyKey::kActionID, ActionID::kShare);
+            d->predicateAction[ActionID::kShare] = shareAct;
 
-            QMenu *sendToMenu = new QMenu(parent);
-            d->addSubActions(sendToMenu);
-            sendToAct->setMenu(sendToMenu);
+            QMenu *shareMenu = new QMenu(parent);
+            d->addSubActions(shareMenu);
+            shareAct->setMenu(shareMenu);
 
-            if (sendToMenu->actions().isEmpty())
-                sendToAct->setVisible(false);
+            if (shareMenu->actions().isEmpty())
+                shareAct->setVisible(false);
         }
     }
     return AbstractMenuScene::create(parent);
 }
 
-void SendToMenuScene::updateState(QMenu *parent)
+void ShareMenuScene::updateState(QMenu *parent)
 {
-    // TODO(xust)
+    // remove device self action
+    if (!d->isEmptyArea) {
+        auto actions = parent->actions();
+        bool removed = false;
+        for (auto act : actions) {
+            if (removed)
+                break;
+
+            if (act->isSeparator())
+                continue;
+
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
+
+            if (actId == "send-to") {
+                auto subMenu = act->menu();
+                for (QAction *action : subMenu->actions()) {
+                    const QUrl &urlData = action->data().toUrl();
+                    if (urlData.isValid() && d->focusFile.toString().startsWith(urlData.toString())) {
+                        subMenu->removeAction(action);
+                        removed = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     AbstractMenuScene::updateState(parent);
 }
 
-bool SendToMenuScene::triggered(QAction *action)
+bool ShareMenuScene::triggered(QAction *action)
 {
     if (!action)
         return false;
@@ -140,42 +166,42 @@ bool SendToMenuScene::triggered(QAction *action)
     return AbstractMenuScene::triggered(action);
 }
 
-dfmbase::AbstractMenuScene *SendToMenuScene::scene(QAction *action) const
+dfmbase::AbstractMenuScene *ShareMenuScene::scene(QAction *action) const
 {
     if (action == nullptr)
         return nullptr;
 
     if (!d->predicateAction.key(action).isEmpty())
-        return const_cast<SendToMenuScene *>(this);
+        return const_cast<ShareMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
 }
 
-dfmbase::AbstractMenuScene *SendToMenuCreator::create()
+dfmbase::AbstractMenuScene *ShareMenuCreator::create()
 {
-    return new SendToMenuScene();
+    return new ShareMenuScene();
 }
 
-SendToMenuScenePrivate::SendToMenuScenePrivate(AbstractMenuScene *qq)
+ShareMenuScenePrivate::ShareMenuScenePrivate(AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[ActionID::kSendTo] = tr("Send to");
-    predicateName[ActionID::kSendToBluetooth] = tr("Bluetooth");
+    predicateName[ActionID::kShare] = tr("Share");
+    predicateName[ActionID::kShareToBluetooth] = tr("Bluetooth");
     predicateName[ActionID::kSendToDesktop] = tr("Send to desktop");
 }
 
-void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
+void ShareMenuScenePrivate::addSubActions(QMenu *subMenu)
 {
     if (!subMenu)
         return;
 
     bool bluetoothAvailable = dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_IsAvailable").toBool();
     if (bluetoothAvailable) {
-        auto *act = subMenu->addAction(predicateName[ActionID::kSendToBluetooth]);
-        act->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
+        auto *act = subMenu->addAction(predicateName[ActionID::kShareToBluetooth]);
+        act->setProperty(ActionPropertyKey::kActionID, ActionID::kShareToBluetooth);
         if (folderSelected)
             act->setEnabled(false);
-        predicateAction[ActionID::kSendToBluetooth] = act;
+        predicateAction[ActionID::kShareToBluetooth] = act;
     }
 
     using namespace GlobalServerDefines;
@@ -200,7 +226,7 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
     }
 }
 
-void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
+void ShareMenuScenePrivate::handleActionTriggered(QAction *act)
 {
     if (!act)
         return;
@@ -211,7 +237,7 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         filePaths << f->absoluteFilePath();
     }
     QString actId = act->property(ActionPropertyKey::kActionID).toString();
-    if (actId == ActionID::kSendToBluetooth) {
+    if (actId == ActionID::kShareToBluetooth) {
         dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", filePaths, "");
     } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;

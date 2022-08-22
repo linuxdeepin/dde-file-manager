@@ -19,33 +19,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRASHMENUSCENE_P_H
-#define TRASHMENUSCENE_P_H
+#ifndef BASESORTMENUSCENE_P_H
+#define BASESORTMENUSCENE_P_H
 
-#include "dfmplugin_trash_global.h"
+#include "dfmplugin_menu_global.h"
 
 #include <interfaces/private/abstractmenuscene_p.h>
 
-namespace dfmplugin_trash {
+DPMENU_BEGIN_NAMESPACE
 
-class TrashMenuScene;
-class TrashMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
+class BaseSortMenuScene;
+class BaseSortMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
     Q_OBJECT
-    friend class TrashMenuScene;
+    friend class BaseSortMenuScene;
 
 public:
-    explicit TrashMenuScenePrivate(TrashMenuScene *qq);
+    explicit BaseSortMenuScenePrivate(BaseSortMenuScene *qq);
 
-    void updateMenu(QMenu *menu);
-    void updateSubMenu(QMenu *menu);
+    void sort(QMenu *menu, const QList<QStringList> &rule);
+    QList<QStringList> actionSortRule();
+    QStringList sendToRule();
+    QStringList stageToRule();
+
+    bool checkPrefixRule(const QString &id);
+    QList<QAction *> findActionByKey(const QMap<QString, QAction *> &map, const QString &key);
+    void insertActToMap(QAction *action, QMap<QString, QAction *> &map);
 
 private:
-    TrashMenuScene *q;
-
-    QMultiHash<QString, QString> selectSupportActions;
+    BaseSortMenuScene *q;
 };
 
-}
+DPMENU_END_NAMESPACE
 
-#endif   // TRASHMENUSCENE_P_H
+#endif   // BASESORTMENUSCENE_P_H

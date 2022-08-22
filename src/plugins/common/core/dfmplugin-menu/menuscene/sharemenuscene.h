@@ -23,12 +23,12 @@
 #ifndef SHAREMENUSCENE_H
 #define SHAREMENUSCENE_H
 
-#include "dfmplugin_dirshare_global.h"
+#include "dfmplugin_menu_global.h"
 
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-namespace dfmplugin_dirshare {
+namespace dfmplugin_menu {
 
 class ShareMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -54,11 +54,12 @@ public:
     virtual bool create(QMenu *parent) override;
     virtual void updateState(QMenu *parent) override;
     virtual bool triggered(QAction *action) override;
-    virtual DFMBASE_NAMESPACE::AbstractMenuScene *scene(QAction *action) const override;
+    virtual dfmbase::AbstractMenuScene *scene(QAction *action) const override;
 
 private:
     QScopedPointer<ShareMenuScenePrivate> d;
 };
 
 }
+
 #endif   // SHAREMENUSCENE_H

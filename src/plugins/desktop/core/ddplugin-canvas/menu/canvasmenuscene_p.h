@@ -42,7 +42,6 @@ public:
 
     void filterDisableAction(QMenu *menu);
 
-    void sortMenuAction(QMenu *menu, const QStringList &sortRule);
     inline QStringList emptyMenuActionRules()
     {
         static QStringList actionRule {

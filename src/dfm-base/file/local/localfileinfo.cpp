@@ -871,7 +871,7 @@ bool LocalFileInfo::canFetch() const
         return false;
 
     bool isArchive = false;
-    if(this->exists())
+    if (this->exists())
         isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(url()).name());
 
     return isDir() || (isArchive && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
@@ -1528,11 +1528,11 @@ QIcon LocalFileInfo::fileIcon()
     if (d->enableThumbnail < 0) {
         bool isLocalDevice = false;
         bool isCdRomDevice = false;
-        if(d->isLocalDevice.isValid())
+        if (d->isLocalDevice.isValid())
             isLocalDevice = d->isLocalDevice.toBool();
         else
             isLocalDevice = FileUtils::isLocalDevice(fileUrl);
-        if(d->isCdRomDevice.isValid())
+        if (d->isCdRomDevice.isValid())
             isCdRomDevice = d->isCdRomDevice.toBool();
         else
             isCdRomDevice = FileUtils::isCdRomDevice(fileUrl);
@@ -1567,7 +1567,7 @@ QString LocalFileInfo::iconName()
         if (iconNameValue.isEmpty()) {
             if (d->dfmFileInfo) {
                 const QStringList &list = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIcon, nullptr).toStringList();
-                if(!list.isEmpty())
+                if (!list.isEmpty())
                     iconNameValue = list.first();
             }
         }

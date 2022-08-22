@@ -41,10 +41,12 @@ DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
+static const char *const kBaseSortMenuSceneName = "BaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
 static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
 static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
+static const char *const kShareMenuSceneName = "ShareMenu";
 static const char *const kSendToMenuSceneName = "SendToMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 static const char *const kExtendMenuSceneName = "ExtendMenu";
@@ -59,59 +61,6 @@ WorkspaceMenuScenePrivate::WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq)
     : AbstractMenuScenePrivate(qq),
       q(qq)
 {
-}
-
-void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &sortRule)
-{
-    auto actions = menu->actions();
-    // sort
-    qSort(actions.begin(), actions.end(), [&sortRule](QAction *act1, QAction *act2) {
-        const auto &property1 = act1->property(ActionPropertyKey::kActionID).toString();
-        auto index1 = sortRule.indexOf(property1);
-        if (index1 == -1)
-            return false;
-
-        const auto &property2 = act2->property(ActionPropertyKey::kActionID).toString();
-        auto index2 = sortRule.indexOf(property2);
-        if (index2 == -1)
-            return true;
-
-        return index1 < index2;
-    });
-
-    // insert separator func
-    std::function<void(int)> insertSeparator;
-    insertSeparator = [&](int index) {
-        if (index >= sortRule.size() || sortRule[index] == dfmplugin_menu::ActionID::kSeparator)
-            return;
-
-        auto rule = sortRule[index];
-        auto iter = std::find_if(actions.begin(), actions.end(), [&rule](const QAction *act) {
-            auto p = act->property(ActionPropertyKey::kActionID);
-            return p == rule;
-        });
-
-        if (iter != actions.end()) {
-            QAction *separatorAct = new QAction(menu);
-            separatorAct->setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kSeparator);
-            separatorAct->setSeparator(true);
-            actions.insert(iter, separatorAct);
-        } else {
-            insertSeparator(++index);
-        }
-    };
-
-    // insert separator
-    int index = sortRule.indexOf(dfmplugin_menu::ActionID::kSeparator);
-    while (index != -1) {
-        if (++index >= sortRule.size())
-            break;
-
-        insertSeparator(index);
-        index = sortRule.indexOf(dfmplugin_menu::ActionID::kSeparator, index);
-    }
-
-    menu->addActions(actions);
 }
 
 WorkspaceMenuScene::WorkspaceMenuScene(QObject *parent)
@@ -144,6 +93,9 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
         return false;
 
     QList<AbstractMenuScene *> currentScene;
+    // sort
+    if (auto sortScene = dfmplugin_menu_util::menuSceneCreateScene(kBaseSortMenuSceneName))
+        currentScene.append(sortScene);
 
     // file operation
     if (auto operationScene = dfmplugin_menu_util::menuSceneCreateScene(kClipBoardMenuSceneName))
@@ -166,8 +118,9 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
         if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
             currentScene.append(fileScene);
 
-        if (auto sendToScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName))
-            currentScene.append(sendToScene);
+        // share menu
+        if (auto shareScene = dfmplugin_menu_util::menuSceneCreateScene(kShareMenuSceneName))
+            currentScene.append(shareScene);
     }
 
     if (!d->isDDEDesktopFileIncluded) {
@@ -223,12 +176,6 @@ bool WorkspaceMenuScene::create(QMenu *parent)
 
 void WorkspaceMenuScene::updateState(QMenu *parent)
 {
-    if (d->isEmptyArea) {
-        d->sortMenuAction(parent, d->emptyMenuActionRule());
-    } else {
-        d->sortMenuAction(parent, d->normalMenuActionRule());
-    }
-
     AbstractMenuScene::updateState(parent);
 }
 

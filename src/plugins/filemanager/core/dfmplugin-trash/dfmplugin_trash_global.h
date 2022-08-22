@@ -32,6 +32,8 @@ namespace TrashActionId {
 inline constexpr char kRestore[] { "restore" };
 inline constexpr char kRestoreAll[] { "restore-all" };
 inline constexpr char kEmptyTrash[] { "empty-trash" };
+inline constexpr char kSourcePath[] { "sort-by-source-path" };
+inline constexpr char kTimeDeleted[] { "sort-by-time-deleted" };
 }
 DPTRASH_END_NAMESPACE
 

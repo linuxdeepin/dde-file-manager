@@ -43,63 +43,6 @@ VaultMenuScenePrivate::VaultMenuScenePrivate(VaultMenuScene *qq)
 {
 }
 
-QStringList VaultMenuScenePrivate::emptyMenuActionRule()
-{
-    static QStringList actionRule {
-        "new-folder",
-        "new-document",
-        "separator-line",
-        "display-as",
-        "sort-by",
-        "refresh",
-        "separator-line",
-        "paste",
-        "select-all",
-        "property"
-    };
-
-    return actionRule;
-}
-
-QStringList VaultMenuScenePrivate::normalMenuActionRule()
-{
-    static QStringList actionRule {
-        "open",
-        "open-with",
-        "separator-line",
-        "open-in-new-window",
-        "open-in-new-tab",
-        "cut",
-        "copy",
-        "rename",
-        "delete",
-        "separator-line",
-        "property"
-    };
-
-    return actionRule;
-}
-
-void VaultMenuScenePrivate::filterMenuAction(QMenu *menu, const QStringList &actions)
-{
-    QList<QAction *> actionlist = menu->actions();
-    if (actionlist.isEmpty())
-        return;
-
-    //QList<QAction *> removeActions;
-    for (auto act : actionlist) {
-        if (act->isSeparator())
-            continue;
-        QVariant actionId = act->property(ActionPropertyKey::kActionID);
-        QString actionStr = actionId.toString();
-        if (!actions.contains(actionStr)) {
-            act->setVisible(false);
-        }
-    }
-
-    menu->addActions(actionlist);
-}
-
 VaultMenuScene::VaultMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new VaultMenuScenePrivate(this))
@@ -160,11 +103,6 @@ bool VaultMenuScene::create(QMenu *parent)
 void VaultMenuScene::updateState(QMenu *parent)
 {
     AbstractMenuScene::updateState(parent);
-    if (d->isEmptyArea) {
-        d->filterMenuAction(parent, d->emptyMenuActionRule());
-    } else {
-        d->filterMenuAction(parent, d->normalMenuActionRule());
-    }
 }
 
 bool VaultMenuScene::triggered(QAction *action)

@@ -22,6 +22,8 @@
 #define ACTION_DEFINES_H
 
 namespace dfmplugin_menu {
+inline constexpr char kActionID[] = "actionID";
+
 namespace ActionID {
 // NewCreateMenu
 inline constexpr char kNewFolder[] = "new-folder";
@@ -51,14 +53,20 @@ inline constexpr char kCreateSymlink[] = "create-system-link";
 inline constexpr char kEmptyTrash[] = "empty-trash";
 inline constexpr char kSetAsWallpaper[] = "set-as-wallpaper";
 
-// "OpenWithMenu"
+// OpenWithMenu
 inline constexpr char kOpenWith[] = "open-with";
 inline constexpr char kOpenWithCustom[] = "open-with-custom";
 inline constexpr char kOpenWithApp[] = "open-with-app";
 
+// DirShareMenu
+inline constexpr char kDirShare[] = "dir-share";
+
+// ShareMenu
+inline constexpr char kShare[] = "share";
+inline constexpr char kShareToBluetooth[] = "share-to-bluetooth";
+
 // SendToMenu
 inline constexpr char kSendTo[] = "send-to";
-inline constexpr char kSendToBluetooth[] = "send-to-bluetooth";
 inline constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
 inline constexpr char kSendToDesktop[] = "send-to-desktop";
 

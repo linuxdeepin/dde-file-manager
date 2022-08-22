@@ -24,8 +24,9 @@
 #include "menuscene/fileoperatormenuscene.h"
 #include "menuscene/openwithmenuscene.h"
 #include "menuscene/newcreatemenuscene.h"
-#include "menuscene/sendtomenuscene.h"
+#include "menuscene/sharemenuscene.h"
 #include "menuscene/menuutils.h"
+#include "menuscene/basesortmenuscene.h"
 #include "extendmenuscene/extendmenuscene.h"
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 #include "oemmenuscene/oemmenuscene.h"
@@ -87,9 +88,10 @@ bool MenuHandle::init()
     registerScene(OpenDirMenuCreator::name(), new OpenDirMenuCreator);   // 注册文件夹场景
     registerScene(FileOperatorMenuCreator::name(), new FileOperatorMenuCreator);   // 注册文件场景
     registerScene(OpenWithMenuCreator::name(), new OpenWithMenuCreator);
-    registerScene(SendToMenuCreator::name(), new SendToMenuCreator);
+    registerScene(ShareMenuCreator::name(), new ShareMenuCreator);
     registerScene(ExtendMenuCreator::name(), new ExtendMenuCreator);
     registerScene(OemMenuCreator::name(), new OemMenuCreator);
+    registerScene(BaseSortMenuCreator::name(), new BaseSortMenuCreator);
 
     return true;
 }

@@ -75,6 +75,7 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
@@ -129,6 +130,18 @@ bool TrashMenuScene::create(QMenu *parent)
         act->setProperty(ActionPropertyKey::kActionID, TrashActionId::kEmptyTrash);
         act->setEnabled(!isDisabled);
         d->predicateAction[TrashActionId::kEmptyTrash] = act;
+
+        // sort by
+        QAction *actSortByPath = new QAction(d->predicateName[TrashActionId::kSourcePath], parent);
+        actSortByPath->setCheckable(true);
+        actSortByPath->setProperty(ActionPropertyKey::kActionID, TrashActionId::kSourcePath);
+        d->predicateAction[TrashActionId::kSourcePath] = actSortByPath;
+
+        QAction *actSortByDeleted = new QAction(d->predicateName[TrashActionId::kTimeDeleted], parent);
+        actSortByDeleted->setCheckable(true);
+        actSortByDeleted->setProperty(ActionPropertyKey::kActionID, TrashActionId::kTimeDeleted);
+        d->predicateAction[TrashActionId::kTimeDeleted] = actSortByDeleted;
+
         parent->addSeparator();
     } else {
         auto act = parent->addAction(d->predicateName[TrashActionId::kRestore]);
@@ -157,6 +170,12 @@ bool TrashMenuScene::triggered(QAction *action)
         } else if (actId == TrashActionId::kEmptyTrash) {
             TrashHelper::emptyTrash();
             return true;
+        } else if (actId == TrashActionId::kSourcePath) {
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileOriginalPath);
+            return true;
+        } else if (actId == TrashActionId::kTimeDeleted) {
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileDeletionDate);
+            return true;
         }
         qWarning() << "action not found, id: " << actId;
         return false;
@@ -182,6 +201,8 @@ TrashMenuScenePrivate::TrashMenuScenePrivate(TrashMenuScene *qq)
     predicateName[TrashActionId::kRestore] = tr("Restore");
     predicateName[TrashActionId::kRestoreAll] = tr("Restore all");
     predicateName[TrashActionId::kEmptyTrash] = tr("Empty trash");
+    predicateName[TrashActionId::kSourcePath] = tr("Source path");
+    predicateName[TrashActionId::kTimeDeleted] = tr("Time deleted");
 
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCopy);
@@ -212,6 +233,12 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
                 || actId == TrashActionId::kEmptyTrash)
                 act->setEnabled(curDir == TrashHelper::rootUrl() && !TrashHelper::isEmpty());
 
+            if (sceneName == "SortAndDisplayMenu" && actId == "sort-by") {
+                auto subMenu = act->menu();
+                updateSubMenu(subMenu);
+                continue;
+            }
+
             if (sceneNameCurrent.isEmpty())
                 sceneNameCurrent = sceneName;
 
@@ -221,6 +248,11 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
             }
         }
     } else {
+        //        selectSupportActions.insert(kFileOperatorMenuSceneName, dfmplugin_menu::ActionID::kOpen);
+        //        selectSupportActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInNewWindow);
+        QAction *actionOpen = nullptr;
+        QAction *actionOpenNewWind = nullptr;
+        QAction *actionRestore = nullptr;
         for (auto act : actions) {
             if (act->isSeparator())
                 continue;
@@ -249,6 +281,47 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
                 || actId == dfmplugin_menu::ActionID::kDelete
                 || actId == dfmplugin_menu::ActionID::kCut)
                 act->setEnabled(curDir == TrashHelper::rootUrl());
+
+            if (actId == TrashActionId::kRestore)
+                actionRestore = act;
+            if (focusFileInfo->isDir()) {
+                if (actId == dfmplugin_menu::ActionID::kOpen)
+                    actionOpen = act;
+                if (actId == dfmplugin_menu::ActionID::kOpenInNewWindow)
+                    actionOpenNewWind = act;
+            }
+        }
+        if (actionRestore && actionOpen)
+            menu->insertAction(actionRestore, actionOpen);
+        if (actionRestore && actionOpenNewWind)
+            menu->insertAction(actionRestore, actionOpenNewWind);
+        menu->insertSeparator(actionRestore);
+    }
+}
+
+void TrashMenuScenePrivate::updateSubMenu(QMenu *menu)
+{
+    auto actions = menu->actions();
+    auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
+        auto actId = act->property(ActionPropertyKey::kActionID).toString();
+        return actId == "sort-by-time-modified";
+    });
+
+    if (iter != actions.end()) {
+        menu->insertAction(*iter, predicateAction[TrashActionId::kTimeDeleted]);
+        menu->insertAction(predicateAction[TrashActionId::kTimeDeleted], predicateAction[TrashActionId::kSourcePath]);
+        menu->removeAction(*iter);
+
+        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
+        switch (role) {
+        case Global::ItemRoles::kItemFileOriginalPath:
+            predicateAction[TrashActionId::kSourcePath]->setChecked(true);
+            break;
+        case Global::ItemRoles::kItemFileDeletionDate:
+            predicateAction[TrashActionId::kTimeDeleted]->setChecked(true);
+            break;
+        default:
+            break;
         }
     }
 }

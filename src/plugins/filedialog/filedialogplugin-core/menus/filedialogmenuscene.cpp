@@ -59,7 +59,7 @@ void FileDialogMenuScene::updateState(QMenu *parent)
     static const QStringList whiteActIdList { "new-folder", "new-document", "display-as", "sort-by",
                                               "open", "rename", "delete", "copy", "cut", "paste" };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
-                                              "OpenWithMenu", "SendToMenu", "SortAndDisplayMenu" };
+                                              "OpenWithMenu", "ShareMenu", "SortAndDisplayMenu" };
 
     auto actions = parent->actions();
     std::for_each(actions.begin(), actions.end(), [this](QAction *act) {

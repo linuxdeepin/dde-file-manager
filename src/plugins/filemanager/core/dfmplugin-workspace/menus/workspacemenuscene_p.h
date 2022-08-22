@@ -40,54 +40,6 @@ class WorkspaceMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePri
 public:
     explicit WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq);
 
-    void sortMenuAction(QMenu *menu, const QStringList &sortRule);
-
-    inline QStringList emptyMenuActionRule()
-    {
-        static QStringList actionRule {
-            dfmplugin_menu::ActionID::kNewFolder,
-            dfmplugin_menu::ActionID::kNewDoc,
-            dfmplugin_menu::ActionID::kSeparator,
-            ActionID::kDisplayAs,
-            ActionID::kSortBy,
-            dfmplugin_menu::ActionID::kOpenAsAdmin,
-            dfmplugin_menu::ActionID::kOpenInTerminal,
-            ActionID::kRefresh,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kPaste,
-            dfmplugin_menu::ActionID::kSelectAll
-        };
-
-        return actionRule;
-    }
-
-    inline QStringList normalMenuActionRule()
-    {
-        static QStringList actionRule {
-            dfmplugin_menu::ActionID::kOpen,
-            dfmplugin_menu::ActionID::kOpenWith,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kOpenInNewWindow,
-            dfmplugin_menu::ActionID::kOpenInNewTab,
-            dfmplugin_menu::ActionID::kOpenAsAdmin,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kEmptyTrash,
-            dfmplugin_menu::ActionID::kCut,
-            dfmplugin_menu::ActionID::kCopy,
-            dfmplugin_menu::ActionID::kRename,
-            dfmplugin_menu::ActionID::kDelete,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kCreateSymlink,
-            dfmplugin_menu::ActionID::kSendToDesktop,
-            dfmplugin_menu::ActionID::kSendTo,
-            dfmplugin_menu::ActionID::kSetAsWallpaper,
-            dfmplugin_menu::ActionID::kSeparator,
-            dfmplugin_menu::ActionID::kOpenInTerminal
-        };
-
-        return actionRule;
-    }
-
     inline bool isRefreshOn() const
     {
         // the gsetting control for refresh action

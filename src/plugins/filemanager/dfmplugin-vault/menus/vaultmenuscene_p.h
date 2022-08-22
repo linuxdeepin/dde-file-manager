@@ -31,12 +31,6 @@ public:
     friend class VaultMenuScene;
     explicit VaultMenuScenePrivate(VaultMenuScene *qq = nullptr);
 
-    inline QStringList emptyMenuActionRule();
-
-    inline QStringList normalMenuActionRule();
-
-    void filterMenuAction(QMenu *menu, const QStringList &actions);
-
 private:
     void updateMenu(QMenu *menu);
 };

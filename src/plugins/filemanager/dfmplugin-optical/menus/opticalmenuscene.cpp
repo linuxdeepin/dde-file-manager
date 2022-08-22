@@ -117,7 +117,7 @@ void OpticalMenuScene::updateState(QMenu *parent)
         ""   // for oem
     };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
-                                              "OpenWithMenu", "SendToMenu", "SortAndDisplayMenu", "PropertyMenu",
+                                              "OpenWithMenu", "ShareMenu", "SortAndDisplayMenu", "PropertyMenu",
                                               "BookmarkMenu", "SendToDiscMenu", "OemMenu" };
 
     auto actions = parent->actions();

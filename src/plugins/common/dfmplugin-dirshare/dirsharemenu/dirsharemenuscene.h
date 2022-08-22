@@ -20,46 +20,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SENDTOMENUSCENE_H
-#define SENDTOMENUSCENE_H
+#ifndef DIRSHAREMENUSCENE_H
+#define DIRSHAREMENUSCENE_H
 
-#include "dfmplugin_menu_global.h"
+#include "dfmplugin_dirshare_global.h"
 
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-namespace dfmplugin_menu {
+namespace dfmplugin_dirshare {
 
-class SendToMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
+class DirShareMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
     static QString name()
     {
-        return "SendToMenu";
+        return "DirShareMenu";
     }
 
     virtual dfmbase::AbstractMenuScene *create() override;
 };
 
-class SendToMenuScenePrivate;
-class SendToMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+class DirShareMenuScenePrivate;
+class DirShareMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
     Q_OBJECT
 public:
-    explicit SendToMenuScene(QObject *parent = nullptr);
-    virtual ~SendToMenuScene() override;
+    explicit DirShareMenuScene(QObject *parent = nullptr);
+    virtual ~DirShareMenuScene() override;
 
     virtual QString name() const override;
     virtual bool initialize(const QVariantHash &params) override;
     virtual bool create(QMenu *parent) override;
     virtual void updateState(QMenu *parent) override;
     virtual bool triggered(QAction *action) override;
-    virtual dfmbase::AbstractMenuScene *scene(QAction *action) const override;
+    virtual DFMBASE_NAMESPACE::AbstractMenuScene *scene(QAction *action) const override;
 
 private:
-    QScopedPointer<SendToMenuScenePrivate> d;
+    QScopedPointer<DirShareMenuScenePrivate> d;
 };
 
 }
-
-#endif   // SENDTOMENUSCENE_H
+#endif   // DIRSHAREMENUSCENE_H

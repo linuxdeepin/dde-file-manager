@@ -155,7 +155,6 @@ bool ExtendMenuScene::create(QMenu *parent)
         auto *action = builder.buildAciton(actionData, parent);
         if (action == nullptr)
             continue;
-
         //自动释放
         action->setParent(parent);
 

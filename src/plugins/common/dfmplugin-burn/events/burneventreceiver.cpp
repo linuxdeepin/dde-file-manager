@@ -109,6 +109,7 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
                     dlg->setISOImage(urls.front());
                     dlg->exec();
                 }
+                return;
             }
 
             if (r == 0 || r == -1)

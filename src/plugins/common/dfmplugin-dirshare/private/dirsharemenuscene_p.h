@@ -20,32 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SENDTOMENUSCENE_P_H
-#define SENDTOMENUSCENE_P_H
+#ifndef DIRSHAREMENUSCENE_P_H
+#define DIRSHAREMENUSCENE_P_H
 
-#include "menuscene/sendtomenuscene.h"
+#include "dfmplugin_dirshare_global.h"
+#include <interfaces/private/abstractmenuscene_p.h>
 
-#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
-
-namespace dfmplugin_menu {
+namespace dfmplugin_dirshare {
 DFMBASE_USE_NAMESPACE
 
-class SendToMenuScenePrivate : public AbstractMenuScenePrivate
+class DirShareMenuScene;
+class DirShareMenuScenePrivate : public AbstractMenuScenePrivate
 {
     Q_OBJECT
-    friend class SendToMenuScene;
+    friend class DirShareMenuScene;
 
 public:
-    explicit SendToMenuScenePrivate(AbstractMenuScene *qq);
+    explicit DirShareMenuScenePrivate(AbstractMenuScene *qq);
 
 private:
-    void addSubActions(QMenu *subMenu);
-    void handleActionTriggered(QAction *act);
-
-private:
-    bool folderSelected { false };
+    void addShare(const QUrl &url);
 };
 
 }
 
-#endif   // SENDTOMENUSCENE_P_H
+#endif   // DIRSHAREMENUSCENE_P_H

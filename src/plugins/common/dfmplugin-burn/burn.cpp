@@ -53,7 +53,7 @@ void Burn::initialize()
 bool Burn::start()
 {
     dfmplugin_menu_util::menuSceneRegisterScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
-    bindScene("SendToMenu");
+    bindScene("ShareMenu");
 
     DiscStateManager::instance()->initilaize();
 

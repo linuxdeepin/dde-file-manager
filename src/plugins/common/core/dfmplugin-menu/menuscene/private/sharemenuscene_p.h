@@ -23,13 +23,13 @@
 #ifndef SHAREMENUSCENE_P_H
 #define SHAREMENUSCENE_P_H
 
-#include "dfmplugin_dirshare_global.h"
-#include <interfaces/private/abstractmenuscene_p.h>
+#include "menuscene/sharemenuscene.h"
 
-namespace dfmplugin_dirshare {
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+
+namespace dfmplugin_menu {
 DFMBASE_USE_NAMESPACE
 
-class ShareMenuScene;
 class ShareMenuScenePrivate : public AbstractMenuScenePrivate
 {
     Q_OBJECT
@@ -39,7 +39,11 @@ public:
     explicit ShareMenuScenePrivate(AbstractMenuScene *qq);
 
 private:
-    void addShare(const QUrl &url);
+    void addSubActions(QMenu *subMenu);
+    void handleActionTriggered(QAction *act);
+
+private:
+    bool folderSelected { false };
 };
 
 }

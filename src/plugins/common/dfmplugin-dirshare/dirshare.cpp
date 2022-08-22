@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dirshare.h"
-#include "sharemenu/sharemenuscene.h"
+#include "dirsharemenu/dirsharemenuscene.h"
 #include "widget/sharecontrolwidget.h"
 #include "utils/usersharehelper.h"
 
@@ -44,7 +44,7 @@ void DirShare::initialize()
 bool DirShare::start()
 {
     UserShareHelperInstance;
-    dfmplugin_menu_util::menuSceneRegisterScene(ShareMenuCreator::name(), new ShareMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(DirShareMenuCreator::name(), new DirShareMenuCreator);
 
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
@@ -78,7 +78,7 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
 void DirShare::bindScene(const QString &parentScene)
 {
     if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
-        dfmplugin_menu_util::menuSceneBind(ShareMenuCreator::name(), parentScene);
+        dfmplugin_menu_util::menuSceneBind(DirShareMenuCreator::name(), parentScene);
     } else {
         waitToBind << parentScene;
         if (!eventSubscribed)
