@@ -19,14 +19,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stubext.h"
 #include "delegate/collectionitemdelegate.h"
 #include "delegate/collectionitemdelegate_p.h"
 #include "view/collectionview.h"
 #include "view/collectionview_p.h"
+#include "models/fileproxymodel.h"
+
+#include "dfm-base/dfm_global_defines.h"
+
+#include "dpf.h"
+
+#include "stubext.h"
 
 #include <gtest/gtest.h>
 
+#include <QPainter>
+#include <QRectF>
+#include <QUrl>
+
+DPF_USE_NAMESPACE
 using namespace testing;
 using namespace ddplugin_organizer;
 
@@ -60,3 +71,138 @@ TEST_F(CollectionItemDelegateTest, updateItemSizeHint) {
 
     EXPECT_EQ(delegate.d->itemSizeHint, QSize(170, 110));
 }
+
+TEST_F(CollectionItemDelegateTest, paintEmblems)
+{
+    QString inspace;
+    QString intopic;
+    QPainter *inpainter = nullptr;
+    QRectF inRect;
+    QUrl inurl;
+    stub.set_lamda((QVariant (EventChannelManager::*)(const QString &, const QString &
+                                                      , QPainter *, const QRectF &, const QUrl &))
+                   &EventChannelManager::push,
+                   [&](EventChannelManager *, const QString &space, const QString &topic
+                   , QPainter *p, const QRectF &r, const QUrl &url){
+        inspace = space;
+        intopic = topic;
+        inpainter = p;
+        inRect = r;
+        inurl = url;
+        return QVariant::fromValue(true);
+    });
+
+    QPainter p;
+    QRectF r(10, 10, 10, 10);
+    QUrl url = QUrl::fromLocalFile("/usr");
+    CollectionItemDelegate::paintEmblems(&p, r, url);
+
+    EXPECT_EQ(inspace, QString("dfmplugin_emblem"));
+    EXPECT_EQ(intopic, QString("slot_FileEmblems_Paint"));
+    EXPECT_EQ(inpainter, &p);
+    EXPECT_EQ(inRect, r);
+    EXPECT_EQ(inurl, url);
+}
+
+TEST_F(CollectionItemDelegateTest, paintLabel)
+{
+    FileProxyModel model;
+    CollectionView view(QString("testuuid"), nullptr);
+    view.setModel(&model);
+
+    CollectionItemDelegate delgate(&view);
+
+    bool isHighlight = true;
+    stub.set_lamda(&CollectionItemDelegatePrivate::isHighlight, [&isHighlight](){
+        return isHighlight;
+    });
+
+    stub.set_lamda(&FileProxyModel::fileUrl, [](){
+        return QUrl::fromLocalFile("/usr");
+    });
+
+    bool drawHighlightText = false;
+    stub.set_lamda(&CollectionItemDelegate::drawHighlightText, [&drawHighlightText](){
+        drawHighlightText = true;
+    });
+
+    bool drawNormlText = false;
+    stub.set_lamda(&CollectionItemDelegate::drawNormlText, [&drawNormlText](){
+        drawNormlText = true;
+    });
+
+    bool ret = true;
+    QUrl inurl;
+    stub.set_lamda(&CollectionItemDelegate::extendPaintText, [&ret, &inurl](
+                   QPainter *painter, const QUrl &url, QRectF *rect){
+        inurl = url;
+        return ret;
+    });
+
+    QPainter painter;
+    QRect rect(10, 10, 100, 100);
+    delgate.paintLabel(&painter, QStyleOptionViewItem(), QModelIndex(), rect);
+
+    EXPECT_EQ(inurl, QUrl::fromLocalFile("/usr"));
+    EXPECT_FALSE(drawHighlightText);
+    EXPECT_FALSE(drawNormlText);
+
+    isHighlight = true;
+    drawNormlText = false;
+    drawHighlightText = false;
+    ret = false;
+    inurl.clear();
+
+    delgate.paintLabel(&painter, QStyleOptionViewItem(), QModelIndex(), rect);
+
+    EXPECT_EQ(inurl, QUrl::fromLocalFile("/usr"));
+    EXPECT_TRUE(drawHighlightText);
+    EXPECT_FALSE(drawNormlText);
+
+
+    isHighlight = false;
+    drawNormlText = false;
+    drawHighlightText = false;
+    inurl.clear();
+
+    delgate.paintLabel(&painter, QStyleOptionViewItem(), QModelIndex(), rect);
+
+    EXPECT_EQ(inurl, QUrl::fromLocalFile("/usr"));
+    EXPECT_FALSE(drawHighlightText);
+    EXPECT_TRUE(drawNormlText);
+}
+
+//TEST_F(CollectionItemDelegateTest, extendPaintText)
+//{
+//    QString inspace;
+//    QString intopic;
+//    QPainter *inpainter = nullptr;
+//    QRectF inRect;
+//    QUrl inurl;
+//    int inrole = -1;
+//    auto func = (bool (EventSequenceManager::*)(const QString &, const QString &,
+//                                                          const int, const QUrl &, QPainter *, QRectF *))
+//                       &EventSequenceManager::run;
+//    stub.set_lamda(func,
+//                   [&](EventSequenceManager *, const QString &space, const QString &topic
+//                   , const int role, const QUrl &url, QPainter *p, QRectF *r){
+//        inspace = space;
+//        intopic = topic;
+//        inpainter = p;
+//        inRect = *r;
+//        inurl = url;
+//        inrole = role;
+//        return true;
+//    });
+//    QPainter p;
+//    QRectF r(10, 10, 10, 10);
+//    QUrl url = QUrl::fromLocalFile("/usr");
+//    CollectionItemDelegate::extendPaintText(&p, url, &r);
+
+//    EXPECT_EQ(inspace, QString("ddplugin_canvas"));
+//    EXPECT_EQ(intopic, QString("hook_CanvasItemDelegate_PaintText"));
+//    EXPECT_EQ(inpainter, &p);
+//    EXPECT_EQ(inRect, r);
+//    EXPECT_EQ(inurl, url);
+//    EXPECT_EQ(inrole, dfmbase::Global::ItemRoles::kItemFileDisplayNameRole);
+//}

@@ -104,6 +104,9 @@ EventHandle::~EventHandle()
 
     CanvasCoreDisconnect(slot_DesktopFrame_RootWindows);
     CanvasCoreDisconnect(slot_DesktopFrame_LayoutWidget);
+
+    delete frame;
+    frame = nullptr;
 }
 
 bool EventHandle::init()

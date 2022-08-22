@@ -92,6 +92,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
 
+    void scrollContentsBy(int dx, int dy) override;
 private:
     QSharedPointer<CollectionViewPrivate> d = nullptr;
 };

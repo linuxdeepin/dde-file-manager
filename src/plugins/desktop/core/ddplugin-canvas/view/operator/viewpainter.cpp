@@ -50,7 +50,7 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
     expandItem.second = QPoint(-1, -1);
 
     // item may need expand.
-    // the expand item need to draw at last. otherwise other item will override the expeand text.
+    // the expand item need to draw at last. otherwise other item will overlap the expeand text.
     itemDelegate()->mayExpand(&expandItem.first);
 
     // todo:封装优化代码

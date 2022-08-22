@@ -70,6 +70,7 @@ signals:
     void switchToCustom();
     void changeDisplaySize(int);
     void newCollection(const QList<QUrl> &);
+    void showOptionWindow();
 public slots:
 protected:
     explicit ConfigPresenter(QObject *parent = nullptr);

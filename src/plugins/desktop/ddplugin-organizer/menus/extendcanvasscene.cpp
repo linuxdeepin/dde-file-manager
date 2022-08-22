@@ -67,9 +67,9 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySize));
     }
 
-//    tempAction = parent->addAction(predicateName.value(ActionID::kOrganizeOptions));
-//    predicateAction[ActionID::kOrganizeOptions] = tempAction;
-//    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeOptions));
+    tempAction = parent->addAction(predicateName.value(ActionID::kOrganizeOptions));
+    predicateAction[ActionID::kOrganizeOptions] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeOptions));
 }
 
 void ExtendCanvasScenePrivate::normalMenu(QMenu *parent)
@@ -340,6 +340,8 @@ bool ExtendCanvasScene::triggered(QAction *action)
             emit CfgPresenter->changeDisplaySize(DisplaySize::kNormal);
         } else if (actionId == ActionID::kDisplaySizeLarger) {
             emit CfgPresenter->changeDisplaySize(DisplaySize::kLarger);
+        } else if (actionId == ActionID::kOrganizeOptions) {
+            emit CfgPresenter->showOptionWindow();
         }
         return true;
     }

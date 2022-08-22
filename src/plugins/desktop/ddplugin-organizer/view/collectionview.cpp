@@ -126,11 +126,10 @@ QRect CollectionViewPrivate::visualRect(const QPoint &pos) const
 {
     const QPoint &&point = posToPoint(pos);
 
-    QRect rect(point.x(), point.y(), cellWidth, cellHeight);
-    rect.moveLeft(rect.left() - q->horizontalOffset());
-    rect.moveTop(rect.top() - q->verticalOffset());
+    QRect orgRect(point.x(), point.y(), cellWidth, cellHeight);
 
-    return rect;
+    // translate postion
+    return orgRect.translated(-q->horizontalOffset(), -q->verticalOffset());
 }
 
 void CollectionViewPrivate::updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize)
@@ -1124,9 +1123,15 @@ void CollectionView::selectUrl(const QUrl &url, const QItemSelectionModel::Selec
 void CollectionView::setModel(QAbstractItemModel *model)
 {
     QAbstractItemView::setModel(model);
-
     // must update root index for view
     setRootIndex(this->model()->rootIndex());
+
+    // the default selection model is setted after QAbstractItemView::setModel.
+    Q_ASSERT(selectionModel());
+
+    //! when selection changed, we need to update all view.
+    //! otherwise the expanded text will partly remain.
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, (void (QWidget::*)())&QWidget::update);
 }
 
 void CollectionView::reset()
@@ -1417,10 +1422,12 @@ void CollectionView::paintEvent(QPaintEvent *event)
 
     if (d->showGrid) {
         painter.save();
-        for (auto node = 0 ; node <= endNode - startNode; ++node) {
+        for (auto node = startNode ; node <= endNode; ++node) {
             auto pos = d->nodeToPos(node);
             auto point = d->posToPoint(pos);
-            auto rect = QRect(point.x(), point.y(), d->cellWidth, d->cellHeight);
+
+            // translate postion
+            auto rect = QRect(point.x(), point.y(), d->cellWidth, d->cellHeight).translated(-horizontalOffset(), -verticalOffset());
 
             auto rowMode = pos.x() % 2;
             auto colMode = pos.y() % 2;
@@ -1439,16 +1446,36 @@ void CollectionView::paintEvent(QPaintEvent *event)
         painter.restore();
     }
 
-    for (auto node = startNode ; node <= endNode ; ++node) {
-        if (node >= d->provider->items(d->id).count())
-            break;
+    // draw files
+    {
+        QModelIndex expandItem;
+        // item may need expand.
+        // the expand item need to draw at last. otherwise other item will overlap the expeand text.
+        itemDelegate()->mayExpand(&expandItem);
 
-        auto url = d->provider->items(d->id).at(node);
-        auto index = model()->index(url);
-        option.rect = visualRect(index).marginsRemoved(d->cellMargins);
-        painter.save();
-        itemDelegate()->paint(&painter, option, index);
-        painter.restore();
+        for (auto node = startNode ; node <= endNode ; ++node) {
+            if (node >= d->provider->items(d->id).count())
+                break;
+
+            auto url = d->provider->items(d->id).at(node);
+            auto index = model()->index(url);
+
+            // drawed in end.
+            if (index == expandItem)
+                continue;
+
+            option.rect = visualRect(index).marginsRemoved(d->cellMargins);
+            painter.save();
+            itemDelegate()->paint(&painter, option, index);
+            painter.restore();
+        }
+
+        if (expandItem.isValid()) {
+            option.rect = visualRect(expandItem).marginsRemoved(d->cellMargins);
+            painter.save();
+            itemDelegate()->paint(&painter, option, expandItem);
+            painter.restore();
+        }
     }
 
     if (d->elasticBand.isValid()) {
@@ -1830,6 +1857,15 @@ void CollectionView::dropEvent(QDropEvent *event)
     }
 
     QAbstractItemView::dropEvent(event);
+}
+
+void CollectionView::scrollContentsBy(int dx, int dy)
+{
+    // scroll the viewport to let the editor scrolled with item.
+    viewport()->scroll(dx, dy);
+
+    // just update viewport.
+    QAbstractItemView::scrollContentsBy(dx, dy);
 }
 
 bool CollectionView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)

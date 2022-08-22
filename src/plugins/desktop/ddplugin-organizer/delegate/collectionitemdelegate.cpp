@@ -184,9 +184,7 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
                   (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   //why Enabled?
 
         // paint emblems to icon
-        // todo:url = parent()->model()->fileUrl(index)
-        QUrl url;
-        paintEmblems(painter, rIcon, url);
+        paintEmblems(painter, rIcon,  parent()->model()->fileUrl(index));
 
         // do not draw text if index is in editing,
         if (!parent()->isPersistentEditorOpen(index)) {
@@ -850,19 +848,18 @@ QRect CollectionItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 QRectF CollectionItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
 {
     //todo(zy) uing extend painter by registering.
-//    if (!dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url)) {
-//        static std::once_flag printLog;
-//        std::call_once(printLog, []() {
-//            qWarning() << "publish `kPaintEmblems` event failed!";
-//        });
-//    }
+    if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, url).toBool()) {
+        static std::once_flag printLog;
+        std::call_once(printLog, []() {
+            qWarning() << "publish `kPaintEmblems` event failed!";
+        });
+    }
     return rect;
 }
 
 bool CollectionItemDelegate::extendPaintText(QPainter *painter, const QUrl &url, QRectF *rect)
 {
     const int role = Global::ItemRoles::kItemFileDisplayNameRole;
-
     // using canvas hook event.
     return dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", role, url, painter, rect);
 }
@@ -873,9 +870,7 @@ void CollectionItemDelegate::paintLabel(QPainter *painter, const QStyleOptionVie
     QRectF textRect = d->availableTextRect(rLabel);
 
     // expend painting
-    // todo:url = parent()->model()->fileUrl(index)
-    QUrl url;
-    if (extendPaintText(painter, url, &textRect))
+    if (extendPaintText(painter, parent()->model()->fileUrl(index), &textRect))
         return;
 
     painter->save();

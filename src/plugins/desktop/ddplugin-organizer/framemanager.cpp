@@ -49,9 +49,8 @@ FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq)
 
 FrameManagerPrivate::~FrameManagerPrivate()
 {
-    delete organizer;
-    // 退出自动整理
-    // 刷新桌面
+    delete options;
+    options = nullptr;
 }
 
 void FrameManagerPrivate::buildSurface()
@@ -220,6 +219,24 @@ void FrameManagerPrivate::displaySizeChanged(int size)
     }
 }
 
+void FrameManagerPrivate::showOptionWindow()
+{
+    if (options) {
+        options->activateWindow();
+        return;
+    }
+
+    options = new OptionsWindow();
+    options->setAttribute(Qt::WA_DeleteOnClose);
+    options->initialize();
+    connect(options, &OptionsWindow::destroyed, this, [this](){
+        options = nullptr;
+    }, Qt::DirectConnection);
+
+    // todo find screen that the cursor on and move options window to center of the screen.
+    options->showNormal();
+}
+
 bool FrameManagerPrivate::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
 {
     Q_UNUSED(viewIndex)
@@ -293,6 +310,7 @@ bool FrameManager::initialize()
     connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::switchToCustom, d, &FrameManagerPrivate::switchToCustom, Qt::QueuedConnection);
     connect(CfgPresenter, &ConfigPresenter::changeDisplaySize, d, &FrameManagerPrivate::displaySizeChanged, Qt::QueuedConnection);
+    connect(CfgPresenter, &ConfigPresenter::showOptionWindow, d, &FrameManagerPrivate::showOptionWindow, Qt::QueuedConnection);
 
     return true;
 }

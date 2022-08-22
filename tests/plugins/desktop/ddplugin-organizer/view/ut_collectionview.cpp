@@ -19,11 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stubext.h"
+
 #include "view/collectionview_p.h"
 #include "view/collectionview.h"
 #include "delegate/collectionitemdelegate.h"
 #include "interface/canvasmanagershell.h"
+
+#include "stubext.h"
 
 #include <gtest/gtest.h>
 #include <QMenu>
@@ -108,4 +110,23 @@ TEST_F(CollectionViewTest, setCanvasManagerShell) {
 
     delete sh;
     sh = nullptr;
+}
+
+TEST_F(CollectionViewTest, scrollContentsBy)
+{
+    CollectionView view("dd", nullptr);
+    int dx = -1;
+    int dy = -1;
+    QWidget *port = nullptr;
+    stub.set_lamda((void (QWidget::*)(int, int))&QWidget::scroll, [&](QWidget *self, int x, int y) {
+        port = self;
+        dx = x;
+        dy = y;
+        return ;
+    });
+
+    view.scrollContentsBy(0, 100);
+    EXPECT_EQ(port, view.viewport());
+    EXPECT_EQ(dx, 0);
+    EXPECT_EQ(dy, 100);
 }

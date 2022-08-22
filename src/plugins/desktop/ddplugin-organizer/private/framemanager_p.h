@@ -27,6 +27,7 @@
 #include "mode/canvasorganizer.h"
 #include "models/fileproxymodel.h"
 #include "interface/canvasinterface.h"
+#include "options/optionswindow.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -51,6 +52,7 @@ public slots:
     void switchToCustom();
     void switchToNormalized(int cf);
     void displaySizeChanged(int size);
+    void showOptionWindow();
 public slots:
     bool filterShortcutkeyPress(int viewIndex, int key, int modifiers) const;
     bool filterWheel(int viewIndex, const QPoint &angleDelta, bool ctrl) const;
@@ -61,6 +63,7 @@ public:
     CanvasOrganizer *organizer = nullptr;
     FileProxyModel *model = nullptr;
     CanvasInterface *canvas = nullptr;
+    OptionsWindow *options = nullptr;
 private:
     FrameManager *q;
 };
