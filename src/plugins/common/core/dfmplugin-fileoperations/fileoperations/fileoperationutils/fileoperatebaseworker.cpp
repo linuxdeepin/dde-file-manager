@@ -146,7 +146,7 @@ bool FileOperateBaseWorker::createFileDevice(const AbstractFileInfoPointer &from
                                              const AbstractFileInfoPointer &needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
                                              bool *skip)
 {
-    file.reset(nullptr);
+    file.reset();
     QUrl url = needOpenInfo->url();
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     QSharedPointer<DIOFactory> factory { nullptr };
@@ -644,7 +644,7 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
 
     // 创建新的目标文件并做检查
     QString fileNewName = fileName;
-    newTargetInfo.reset(nullptr);
+    newTargetInfo.reset();
     if (!doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, skip, true))
         return false;
 
@@ -719,7 +719,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
 
     newTargetUrl.setPath(newPath);
 
-    newTargetInfo.reset(nullptr);
+    newTargetInfo.reset();
     newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl);
 
     if (!newTargetInfo) {

@@ -367,7 +367,7 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
     const QUrl &parentUrl = UrlRoute::urlParent(toUrl);
     if (!parentUrl.isValid())
         return false;
-    targetFileInfo.reset(nullptr);
+    targetFileInfo.reset();
     targetFileInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
     if (!targetFileInfo)
         return false;

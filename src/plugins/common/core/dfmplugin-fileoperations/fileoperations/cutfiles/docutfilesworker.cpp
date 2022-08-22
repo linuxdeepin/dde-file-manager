@@ -263,7 +263,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
     const QUrl &sourceUrl = sourceInfo->url();
 
-    toInfo.reset(nullptr);
+    toInfo.reset();
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
         if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->fileName(), toInfo, ok))
             return ok ? *ok : false;
