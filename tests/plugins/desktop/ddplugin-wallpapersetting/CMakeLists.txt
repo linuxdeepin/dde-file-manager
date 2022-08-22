@@ -14,8 +14,6 @@ file(GLOB_RECURSE SRC_FILES
     "${DESKTOP_PLUGIN_SRC_DIR}/*.h"
     "${DESKTOP_PLUGIN_SRC_DIR}/*.cpp"
     "${DESKTOP_PLUGIN_DIR}/desktoputils/*"
-    "${DESKTOP_PLUGIN_DIR}/ddplugin-background/backgrounddefault.h"
-    "${DESKTOP_PLUGIN_DIR}/ddplugin-background/backgrounddefault.cpp"
 )
 
 add_executable(${PROJECT_NAME}

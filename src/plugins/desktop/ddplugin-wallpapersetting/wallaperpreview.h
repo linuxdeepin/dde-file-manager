@@ -22,7 +22,7 @@
 #define WALLAPERPREVIEW_H
 
 #include "ddplugin_wallpapersetting_global.h"
-#include "ddplugin-background/backgrounddefault.h"
+#include "backgroundpreview.h"
 
 #include "interfaces/screen/abstractscreen.h"
 #include <com_deepin_wm.h>
@@ -33,14 +33,6 @@
 namespace ddplugin_wallpapersetting {
 
 using WMInter = com::deepin::wm;
-class PreviewWidget : public DDP_BACKGROUND_NAMESPACE::BackgroundDefault
-{
-    Q_OBJECT
-public:
-    using BackgroundDefault::BackgroundDefault;
-};
-
-typedef QSharedPointer<PreviewWidget> PreviewWidgetPtr;
 
 class WallaperPreview : public QObject
 {

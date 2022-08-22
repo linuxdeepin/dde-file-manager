@@ -17,25 +17,33 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
+#ifndef BACKGROUNDPREVIEW_H
+#define BACKGROUNDPREVIEW_H
 
-#include <gtest/gtest.h>
-#include <sanitizer/asan_interface.h>
-#include <DApplication>
+#include "ddplugin_wallpapersetting_global.h"
 
-DWIDGET_USE_NAMESPACE
+#include "interfaces/background/abstractbackground.h"
 
-int main(int argc, char *argv[])
+namespace ddplugin_wallpapersetting {
+
+class BackgroundPreview : public DFMBASE_NAMESPACE::AbstractBackground
 {
-    DApplication app(argc, argv);
+public:
+    explicit BackgroundPreview(const QString &screenName, QWidget *parent = nullptr);
+    virtual void setMode(int mode) override;
+    virtual void setDisplay(const QString &path) override;
+    virtual void updateDisplay() override;
+protected:
+    void paintEvent(QPaintEvent *event) override;
+    QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap);
 
-    ::testing::InitGoogleTest(&argc, argv);
+private:
+    QPixmap pixmap;
+    QPixmap noScalePixmap;
+};
 
-    int ret = RUN_ALL_TESTS();
-
-#ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../../asan_ddplugin-wallpapersetting.log");
-#endif
-
-    return ret;
+typedef QSharedPointer<BackgroundPreview> PreviewWidgetPtr;
 }
+
+#endif // BACKGROUNDPREVIEW_H

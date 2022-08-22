@@ -165,7 +165,7 @@ void WallaperPreview::updateGeometry()
 
 PreviewWidgetPtr WallaperPreview::createWidget(ScreenPointer sc)
 {
-    PreviewWidgetPtr wid(new PreviewWidget(sc->name()));
+    PreviewWidgetPtr wid(new BackgroundPreview(sc->name()));
     wid->setProperty("isPreview", true);
     wid->setProperty("myScreen", sc->name()); // assert screen->name is unique
     wid->setGeometry(sc->geometry());

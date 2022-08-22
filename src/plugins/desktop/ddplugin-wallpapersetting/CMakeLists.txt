@@ -13,8 +13,6 @@ FILE(GLOB_RECURSE SRC_FILES
 
 set(EXT_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../ddplugin-background/backgrounddefault.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../ddplugin-background/backgrounddefault.cpp
     )
 
 # 指定资源文件
