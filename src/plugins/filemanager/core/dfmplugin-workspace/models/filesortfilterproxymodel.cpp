@@ -302,6 +302,10 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     if (!rowIndex.isValid())
         return false;
 
+    // root index should not be filtered
+    if (!sourceParent.isValid())
+        return true;
+
     AbstractFileInfoPointer fileInfo = viewModel()->itemFromIndex(rowIndex)->fileInfo();
 
     return passFileFilters(fileInfo);
