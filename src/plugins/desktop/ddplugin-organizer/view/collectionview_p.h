@@ -96,14 +96,19 @@ private:
     bool dropMimeData(QDropEvent *event) const;
     bool dropFiles(QDropEvent *event) const;
 
+public slots:
+    void onIconSizeChanged(const int level);
+
 private slots:
     void onItemsChanged(const QString &key);
 
 public:
     CollectionView *q = nullptr;
+    CollectionItemDelegate *delegate = nullptr;
     CanvasModelShell *canvasModelShell = nullptr;
     CanvasViewShell *canvasViewShell = nullptr;
     CanvasGridShell *canvasGridShell = nullptr;
+    CanvasManagerShell *canvasManagerShell = nullptr;
     bool fileShiftable = false;
     CollectionViewMenu *menuProxy = nullptr;
 

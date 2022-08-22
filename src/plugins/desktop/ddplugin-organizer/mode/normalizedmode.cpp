@@ -110,6 +110,10 @@ CollectionHolderPointer NormalizedModePrivate::createCollection(const QString &i
     CollectionHolderPointer holder;
     holder.reset(new CollectionHolder(id, classifier));
     holder->createFrame(q->surfaces.first().data(), q->model);
+    holder->setCanvasModelShell(q->canvasModelShell);
+    holder->setCanvasViewShell(q->canvasViewShell);
+    holder->setCanvasGridShell(q->canvasGridShell);
+    holder->setCanvasManagerShell(q->canvasManagerShell);
     holder->setName(name);
 
     // disable rename,move,file shift,close,stretch

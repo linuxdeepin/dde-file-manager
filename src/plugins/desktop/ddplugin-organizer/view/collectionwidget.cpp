@@ -101,6 +101,11 @@ void CollectionWidget::setCanvasGridShell(CanvasGridShell *sh)
     d->view->setCanvasGridShell(sh);
 }
 
+void CollectionWidget::setCanvasManagerShell(CanvasManagerShell *sh)
+{
+    d->view->setCanvasManagerShell(sh);
+}
+
 void CollectionWidget::setModel(QAbstractItemModel *model)
 {
     d->view->setModel(model);
@@ -154,6 +159,16 @@ void CollectionWidget::setAdjustable(const bool adjustable)
 bool CollectionWidget::adjustable() const
 {
     return d->titleBar->adjustable();
+}
+
+void CollectionWidget::setCollectionSize(const CollectionFrameSize &size)
+{
+    d->titleBar->setCollectionSize(size);
+}
+
+CollectionFrameSize CollectionWidget::collectionSize() const
+{
+    return d->titleBar->collectionSize();
 }
 
 void CollectionWidget::openEditor(const QUrl &url)

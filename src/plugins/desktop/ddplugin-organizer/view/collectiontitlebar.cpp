@@ -138,7 +138,6 @@ void CollectionTitleBarPrivate::updateDisplayName()
 void CollectionTitleBarPrivate::showMenu()
 {
     QAction *action = nullptr;
-    // todo:调试确认（与标题栏隐藏存在冲突）
     if (adjustable) {
         action = new QAction(menu);
         action->setText(tr("Size"));
@@ -149,25 +148,34 @@ void CollectionTitleBarPrivate::showMenu()
 
         action = new QAction(subMenu);
         action->setText(tr("Large"));
+        action->setCheckable(true);
+        if (CollectionFrameSize::kLarge == this->size)
+            action->setChecked(true);
         subMenu->addAction(action);
+
         connect(action, &QAction::triggered, this, [=] () {
             emit q->sigRequestAdjustSizeMode(CollectionFrameSize::kLarge);
+            action->setChecked(true);
         });
 
         action = new QAction(subMenu);
         action->setText(tr("Small"));
+        action->setCheckable(true);
+        if (CollectionFrameSize::kSmall == this->size)
+            action->setChecked(true);
         subMenu->addAction(action);
         connect(action, &QAction::triggered, this, [=] () {
             emit q->sigRequestAdjustSizeMode(CollectionFrameSize::kSmall);
+            action->setChecked(true);
         });
     }
 
-//    if (renamable) {
-//        action = new QAction(menu);
-//        action->setText(tr("Rename"));
-//        menu->addAction(action);
-//        connect(action, &QAction::triggered, this, &CollectionTitleBarPrivate::modifyTitleName);
-//    }
+    if (renamable) {
+        action = new QAction(menu);
+        action->setText(tr("Rename"));
+        menu->addAction(action);
+        connect(action, &QAction::triggered, this, &CollectionTitleBarPrivate::modifyTitleName);
+    }
 
     if (closable) {
         menu->addSeparator();
@@ -267,6 +275,16 @@ void CollectionTitleBar::setTitleName(const QString &name)
 QString CollectionTitleBar::titleName() const
 {
     return d->titleName;
+}
+
+void CollectionTitleBar::setCollectionSize(const CollectionFrameSize &size)
+{
+    d->size = size;
+}
+
+CollectionFrameSize CollectionTitleBar::collectionSize() const
+{
+    return d->size;
 }
 
 bool CollectionTitleBar::eventFilter(QObject *obj, QEvent *event)

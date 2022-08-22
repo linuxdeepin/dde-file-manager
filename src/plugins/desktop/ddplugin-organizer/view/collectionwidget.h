@@ -37,6 +37,7 @@ class CollectionDataProvider;
 class CanvasModelShell;
 class CanvasViewShell;
 class CanvasGridShell;
+class CanvasManagerShell;
 class CollectionWidgetPrivate;
 
 class CollectionWidget : public Dtk::Widget::DBlurEffectWidget
@@ -50,6 +51,7 @@ public:
     void setCanvasModelShell(CanvasModelShell *sh);
     void setCanvasViewShell(CanvasViewShell *sh);
     void setCanvasGridShell(CanvasGridShell *sh);
+    void setCanvasManagerShell(CanvasManagerShell *sh);
 
     void setModel(QAbstractItemModel *model);
     void setFileShiftable(bool enable);
@@ -63,6 +65,9 @@ public:
     bool closable() const;
     void setAdjustable(const bool adjustable = false);
     bool adjustable() const;
+    void setCollectionSize(const CollectionFrameSize &size);
+    CollectionFrameSize collectionSize() const;
+
 
     void openEditor(const QUrl &url);
     void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);

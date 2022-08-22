@@ -216,7 +216,7 @@ void FrameManagerPrivate::displaySizeChanged(int size)
     if (canvas) {
         CfgPresenter->setDisplaySize(displaySize);
         canvas->setIconLevel(covertIconLevel(size, false));
-        // todo changed adjust collection size;
+        q->layout();
     }
 }
 
@@ -322,6 +322,7 @@ void FrameManager::switchMode(OrganizerMode mode)
     d->organizer->setCanvasModelShell(d->canvas->canvasModel());
     d->organizer->setCanvasViewShell(d->canvas->canvasView());
     d->organizer->setCanvasGridShell(d->canvas->canvasGrid());
+    d->organizer->setCanvasManagerShell(d->canvas->canvasManager());
     d->organizer->initialize(d->model);
 }
 

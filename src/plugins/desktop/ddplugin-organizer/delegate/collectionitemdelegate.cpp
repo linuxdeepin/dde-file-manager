@@ -688,29 +688,29 @@ QRect CollectionItemDelegate::textPaintRect(const QStyleOptionViewItem &option, 
 void CollectionItemDelegate::updateItemSizeHint() const
 {
     // old style
-    //int width = parent()->iconSize().width() * 17 / 10;
-    //int height = parent()->iconSize().height() + 10 + 2 * d->textLineHeight;
+    int width = parent()->iconSize().width() * 17 / 10;
+    int height = parent()->iconSize().height() + 10 + 2 * d->textLineHeight;
 
     // new style
-    int textFontWidth = parent()->fontMetrics().width("中");
-    auto iconSize = parent()->iconSize();
+//    int textFontWidth = parent()->fontMetrics().width("中");
+//    auto iconSize = parent()->iconSize();
 
-    int width;
-    {
-        // defalut word num
-        const int minWidth = iconSize.width();
-        int num = 6;
-        int index = d->iconSizes.indexOf(iconSize.width());
-        if (index >= 0 && index < d->charOfLine.size())
-            num = d->charOfLine.at(index);
+//    int width;
+//    {
+//        // defalut word num
+//        const int minWidth = iconSize.width();
+//        int num = 6;
+//        int index = d->iconSizes.indexOf(iconSize.width());
+//        if (index >= 0 && index < d->charOfLine.size())
+//            num = d->charOfLine.at(index);
 
-        width = kTextPadding + num * textFontWidth + kTextPadding;
-        if (Q_UNLIKELY(width < minWidth))
-            width = minWidth;
-    }
+//        width = kTextPadding + num * textFontWidth + kTextPadding;
+//        if (Q_UNLIKELY(width < minWidth))
+//            width = minWidth;
+//    }
 
-    // two rows
-    int height = kIconTopSpacing + iconSize.height() + kTextPadding + 2 * d->textLineHeight + kTextPadding;
+//    // two rows
+//    int height = kIconTopSpacing + iconSize.height() + kTextPadding + 2 * d->textLineHeight + kTextPadding;
 
     d->itemSizeHint = QSize(width, height);
 }

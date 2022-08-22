@@ -24,6 +24,7 @@
 #include "interface/canvasmodelshell.h"
 #include "interface/canvasviewshell.h"
 #include "interface/canvasgridshell.h"
+#include "interface/canvasmanagershell.h"
 
 #include <QMimeData>
 
@@ -113,6 +114,19 @@ void CanvasOrganizer::setCanvasGridShell(CanvasGridShell *sh)
         return;
 
     // hook canvas grid, must be DirectConnection
+}
+
+void CanvasOrganizer::setCanvasManagerShell(CanvasManagerShell *sh)
+{
+    if (sh == canvasManagerShell)
+        return;
+
+    if (canvasManagerShell)
+        disconnect(canvasManagerShell, nullptr, this, nullptr);
+
+    canvasManagerShell = sh;
+    if (!canvasManagerShell)
+        return;
 }
 
 void CanvasOrganizer::setSurfaces(QList<SurfacePointer> surfaces)

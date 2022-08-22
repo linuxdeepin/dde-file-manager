@@ -39,6 +39,7 @@ class CollectionDataProvider;
 class CanvasModelShell;
 class CanvasViewShell;
 class CanvasGridShell;
+class CanvasManagerShell;
 class Surface;
 class CollectionHolderPrivate;
 class CollectionHolder : public QObject
@@ -51,6 +52,7 @@ public:
     void setCanvasModelShell(CanvasModelShell *sh);
     void setCanvasViewShell(CanvasViewShell *sh);
     void setCanvasGridShell(CanvasGridShell *sh);
+    void setCanvasManagerShell(CanvasManagerShell *sh);
     QString id() const;
     QString name();
     void setName(const QString &);

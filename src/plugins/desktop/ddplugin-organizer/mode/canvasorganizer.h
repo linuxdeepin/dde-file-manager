@@ -35,6 +35,7 @@ class FileProxyModel;
 class CanvasModelShell;
 class CanvasViewShell;
 class CanvasGridShell;
+class CanvasManagerShell;
 class OrganizerCreator
 {
 public:
@@ -54,6 +55,7 @@ public:
     virtual void setCanvasModelShell(CanvasModelShell *sh);
     virtual void setCanvasViewShell(CanvasViewShell *sh);
     virtual void setCanvasGridShell(CanvasGridShell *sh);
+    virtual void setCanvasManagerShell(CanvasManagerShell *sh);
     virtual void setSurfaces(QList<SurfacePointer> surfaces);
     virtual void reset();
 
@@ -70,6 +72,7 @@ protected:
     CanvasModelShell *canvasModelShell = nullptr;
     CanvasViewShell *canvasViewShell = nullptr;
     CanvasGridShell *canvasGridShell = nullptr;
+    CanvasManagerShell *canvasManagerShell = nullptr;
     QList<SurfacePointer> surfaces;
 };
 

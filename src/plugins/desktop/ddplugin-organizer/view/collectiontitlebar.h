@@ -47,6 +47,8 @@ public:
     bool adjustable() const;
     void setTitleName(const QString &name);
     QString titleName() const;
+    void setCollectionSize(const CollectionFrameSize &size);
+    CollectionFrameSize collectionSize() const;
 
 signals:
     void sigRequestClose(const QString &id);

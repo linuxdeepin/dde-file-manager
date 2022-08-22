@@ -47,7 +47,7 @@ public:
     inline Classifier classification() const {return curClassifier;}
     void setClassification(Classifier cf);
 
-    inline QList<CollectionBaseDataPtr> customProfile() const;
+    QList<CollectionBaseDataPtr> customProfile() const;
     void saveCustomProfile(const QList<CollectionBaseDataPtr> &baseDatas);
 
     QList<CollectionBaseDataPtr> normalProfile() const;

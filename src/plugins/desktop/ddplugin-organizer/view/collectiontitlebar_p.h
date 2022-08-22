@@ -64,6 +64,7 @@ public:
     bool closable = false;
     bool adjustable = false;
     QString titleName;
+    CollectionFrameSize size = CollectionFrameSize::kSmall;
 };
 
 }

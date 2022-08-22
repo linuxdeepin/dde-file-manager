@@ -199,6 +199,7 @@ void CustomMode::rebuild()
             collectionHolder->setCanvasModelShell(canvasModelShell);
             collectionHolder->setCanvasViewShell(canvasViewShell);
             collectionHolder->setCanvasGridShell(canvasGridShell);
+            collectionHolder->setCanvasManagerShell(canvasManagerShell);
             collectionHolder->setName(name);
 
             connect(collectionHolder.data(), &CollectionHolder::sigRequestClose, this, &CustomMode::onDeleteCollection);

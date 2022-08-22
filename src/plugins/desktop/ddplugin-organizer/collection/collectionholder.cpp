@@ -82,6 +82,11 @@ void CollectionHolder::setCanvasGridShell(CanvasGridShell *sh)
     d->widget->setCanvasGridShell(sh);
 }
 
+void CollectionHolder::setCanvasManagerShell(CanvasManagerShell *sh)
+{
+    d->widget->setCanvasManagerShell(sh);
+}
+
 QString CollectionHolder::id() const
 {
     return d->id;
@@ -296,6 +301,7 @@ void CollectionHolder::setStyle(const CollectionStyle &style)
 
     if (style.rect.isValid())
         d->frame->setGeometry(style.rect);
+    d->widget->setCollectionSize(style.sizeMode);
     d->screenIndex = style.screenIndex;
     d->sizeMode = style.sizeMode;
 }

@@ -34,6 +34,7 @@ class CollectionDataProvider;
 class CanvasModelShell;
 class CanvasViewShell;
 class CanvasGridShell;
+class CanvasManagerShell;
 class CollectionViewPrivate;
 class CollectionView : public QAbstractItemView
 {
@@ -45,6 +46,7 @@ public:
     void setCanvasModelShell(CanvasModelShell *sh);
     void setCanvasViewShell(CanvasViewShell *sh);
     void setCanvasGridShell(CanvasGridShell *sh);
+    void setCanvasManagerShell(CanvasManagerShell *sh);
     void setFileShiftable(const bool enable);
     bool fileShiftable() const;
     QMargins cellMargins() const;

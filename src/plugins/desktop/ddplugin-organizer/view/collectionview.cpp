@@ -25,6 +25,7 @@
 #include "interface/canvasmodelshell.h"
 #include "interface/canvasviewshell.h"
 #include "interface/canvasgridshell.h"
+#include "interface/canvasmanagershell.h"
 #include "utils/fileoperator.h"
 
 #include "dfm-base/utils/windowutils.h"
@@ -74,7 +75,6 @@ CollectionViewPrivate::~CollectionViewPrivate()
 
 void CollectionViewPrivate::initUI()
 {
-    q->setRootIndex(q->model()->rootIndex());
     q->setAttribute(Qt::WA_TranslucentBackground);
 
     q->viewport()->setAttribute(Qt::WA_TranslucentBackground);
@@ -87,7 +87,7 @@ void CollectionViewPrivate::initUI()
     q->setDragDropMode(QAbstractItemView::DragDrop);
     q->setDefaultDropAction(Qt::CopyAction);
 
-    auto delegate = new CollectionItemDelegate(q);
+    delegate = new CollectionItemDelegate(q);
     q->setItemDelegate(delegate);
 
     // todo:disble selection???
@@ -1014,6 +1014,13 @@ void CollectionViewPrivate::onItemsChanged(const QString &key)
     q->update();
 }
 
+void CollectionViewPrivate::onIconSizeChanged(const int level)
+{
+    qDebug() << "icon size changed to " << level;
+    delegate->setIconLevel(level);
+    q->update();
+}
+
 CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent)
     : QAbstractItemView(parent)
     , d(new CollectionViewPrivate(uuid, dataProvider, this))
@@ -1041,6 +1048,25 @@ void CollectionView::setCanvasViewShell(CanvasViewShell *sh)
 void CollectionView::setCanvasGridShell(CanvasGridShell *sh)
 {
     d->canvasGridShell = sh;
+}
+
+void CollectionView::setCanvasManagerShell(CanvasManagerShell *sh)
+{
+    if (sh == d->canvasManagerShell)
+        return;
+
+    if (d->canvasManagerShell)
+        disconnect(d->canvasManagerShell, nullptr, this, nullptr);
+
+    d->canvasManagerShell = sh;
+    if (!d->canvasManagerShell)
+        return;
+
+    // must be DirectConnection,for update icon size immediately
+    connect(d->canvasManagerShell, &CanvasManagerShell::iconSizeChanged, d.data(), &CollectionViewPrivate::onIconSizeChanged, Qt::DirectConnection);
+
+    const int level = d->canvasManagerShell->iconLevel();
+    d->delegate->setIconLevel(level);
 }
 
 void CollectionView::setFileShiftable(const bool enable)

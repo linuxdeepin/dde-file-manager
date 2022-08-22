@@ -26,6 +26,7 @@
 #include "canvasmodelshell.h"
 #include "canvasviewshell.h"
 #include "canvasgridshell.h"
+#include "canvasmanagershell.h"
 
 namespace ddplugin_organizer {
 
@@ -39,6 +40,7 @@ public:
    CanvasModelShell *canvaModel = nullptr;
    CanvasViewShell *canvasView = nullptr;
    CanvasGridShell *canvasGrid = nullptr;
+   CanvasManagerShell *canvasManager = nullptr;
 private:
     CanvasInterface *q;
 };

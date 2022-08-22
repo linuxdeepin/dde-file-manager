@@ -70,6 +70,9 @@ bool CanvasInterface::initialize()
     d->canvasGrid = new CanvasGridShell(this);
     d->canvasGrid->initialize();
 
+    d->canvasManager = new CanvasManagerShell(this);
+    d->canvasManager->initialize();
+
     return true;
 }
 
@@ -101,6 +104,11 @@ CanvasViewShell *CanvasInterface::canvasView()
 CanvasGridShell *CanvasInterface::canvasGrid()
 {
     return d->canvasGrid;
+}
+
+CanvasManagerShell *CanvasInterface::canvasManager()
+{
+    return d->canvasManager;
 }
 
 

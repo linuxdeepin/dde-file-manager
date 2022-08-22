@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangyu<zhangyub@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,23 +17,32 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
+#ifndef CANVASMANAGERSHELL_H
+#define CANVASMANAGERSHELL_H
 
-#include <gtest/gtest.h>
-#include <sanitizer/asan_interface.h>
-#include <QApplication>
+#include "ddplugin_organizer_global.h"
 
-int main(int argc, char *argv[])
+#include <QObject>
+
+namespace ddplugin_organizer {
+
+class CanvasManagerShell : public QObject
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
+public:
+    explicit CanvasManagerShell(QObject *parent = nullptr);
+    ~CanvasManagerShell();
 
-    ::testing::InitGoogleTest(&argc, argv);
+    bool initialize();
+public:
+    int iconLevel() const;
+    void setIconLevel(const int level);
 
-    int ret = RUN_ALL_TESTS();
+signals:
+    void iconSizeChanged(const int level);
+};
 
-#ifdef ENABLE_TSAN_TOOL
-    __sanitizer_set_report_path("../../../asan_ddplugin-organizer.log");
-#endif
-
-    return ret;
 }
+
+#endif // CANVASMANAGERSHELL_H
