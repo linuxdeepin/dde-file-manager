@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "mountcontroldbus.h"
 #include "private/mountcontroldbus_p.h"
 #include "private/mountcontrol_adapter.h"
@@ -52,9 +52,7 @@ MountControlDBus::MountControlDBus(QObject *parent)
     //    QDBusConnection::systemBus().registerObject(kMountControlObjPath, this);
 }
 
-MountControlDBus::~MountControlDBus()
-{
-}
+MountControlDBus::~MountControlDBus() { }
 
 QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
 {
@@ -85,26 +83,48 @@ QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
         qDebug() << "try to mount" << path << "on" << mntPath;
     }
 
-    auto arg = d->convertArg(opts);
-    if (aPath.contains(QRegularExpression("^//localhost/")))
-        arg = "ip=127.0.0.1," + arg;
-    ret = ::mount(aPath.toStdString().c_str(), mntPath.toStdString().c_str(), "cifs", 0, arg.c_str());
-    if (ret != 0) {
-        qWarning() << "mounting failed: " << path << strerror(errno) << errno;
-        d->rmdir(mntPath);
+    auto params(opts);
+
+    while (true) {
+        auto arg = d->convertArg(params);
+        static QRegularExpression regxLocalhost("^//localhost/");
+        if (aPath.contains(regxLocalhost))
+            arg = "ip=127.0.0.1," + arg;
+
+        QString args(arg.c_str());
+        static QRegularExpression regxCheckPasswd(",pass=.*,dom");
+        args.replace(regxCheckPasswd, ",pass=******,dom");
+        qInfo() << "mount: trying mount" << aPath << "on" << mntPath << "with opts:" << args;
+
+        ret = ::mount(aPath.toStdString().c_str(), mntPath.toStdString().c_str(), "cifs", 0,
+                      arg.c_str());
+
+        if (ret == 0) {
+            return mntPath;
+        } else {
+            // if params contains 'timeout', remove and retry.
+            if (params.value(MountOpts::kTimeout, 0).toInt() != 0) {
+                params.remove(MountOpts::kTimeout);
+                qInfo() << "mount: remove timeout param and remount...";
+                continue;
+            } else {
+                qWarning() << "mount: failed: " << path << strerror(errno) << errno;
+                qInfo() << "mount: clean dir" << mntPath;
+                d->rmdir(mntPath);
+                break;
+            }
+        }
     }
 
-    QString qarg(arg.c_str());
-    qarg.replace(QRegularExpression(",pass=.*,"), ",pass=******,");
-    qInfo() << "mount:" << aPath << "on" << mntPath << "opts:" << qarg << "result: " << ret << "failed reason: " << strerror(errno) << errno;
-    return ret == 0 ? mntPath : "";
+    return "";
 }
 
 bool MountControlDBus::Unmount(const QString &path)
 {
     QString aPath = path;
     if (aPath.startsWith("smb://"))
-        aPath.remove("smb:");   // smb://1.2.3.4/share ==> //1.2.3.4/share which is the same format with infos in /proc/mounts
+        aPath.remove("smb:");   // smb://1.2.3.4/share ==> //1.2.3.4/share which is the same format
+                                // with infos in /proc/mounts
 
     QString mpt;
     int ret = d->checkMount(path, mpt);
@@ -162,7 +182,8 @@ uint MountControlDBusPrivate::invokerUid()
     // referenced from Qt, default value is -2 for uid.
     // On Windows and on systems where files do not have owners this function returns ((uint) -2).
     uint uid = -2;
-    QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
+    QDBusConnection c =
+            QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
     if (c.isConnected())
         uid = c.interface()->serviceUid(q->message().service()).value();
     return uid;
@@ -173,16 +194,21 @@ std::string MountControlDBusPrivate::convertArg(const QVariantMap &opts)
     QString param;
     using namespace MountOpts;
 
-    if (opts.contains(kUser) && opts.contains(kPasswd)
-        && !opts.value(kUser).toString().isEmpty() && !opts.value(kPasswd).toString().isEmpty()) {
+    if (opts.contains(kUser) && opts.contains(kPasswd) && !opts.value(kUser).toString().isEmpty()
+        && !opts.value(kPasswd).toString().isEmpty()) {
         const QString &user = opts.value(kUser).toString();
         const QString &passwd = opts.value(kPasswd).toString();
         param += QString("user=%1,pass=%2,").arg(user).arg(decryPasswd(passwd));
     } else {
-        param += "guest,user=whocares,";   // user is necessary even for anonymous mount
+        param += "guest,user=nobody,";   // user is necessary even for anonymous mount
     }
     if (opts.contains(kDomain) && !opts.value(kDomain).toString().isEmpty())
         param += QString("dom=%1,").arg(opts.value(kDomain).toString());
+
+    // this param is supported by cifs only.
+    if (opts.contains(kTimeout) /* && isTimeoutSupported()*/)
+        param += QString("echo_interval=1,wait_reconnect_timeout=%1,")
+                         .arg(opts.value(kTimeout).toString());
 
     auto user = getpwuid(invokerUid());
     if (user) {
@@ -220,6 +246,17 @@ void MountControlDBusPrivate::clean()
     }
 }
 
+bool MountControlDBusPrivate::isTimeoutSupported()
+{
+    QProcess p;
+    p.start("bash", QStringList { "-c", "modinfo cifs | grep ^version | awk '{print $2}'" });
+    p.waitForFinished(-1);
+    auto &&version = QString(p.readAll().trimmed());
+    if (version > "")   // TODO(xust) TODO(wangrong)
+        return true;
+    return false;
+}
+
 bool MountControlDBusPrivate::mkdirMntRoot()
 {
     // if /media/$user/smbmounts does not exist
@@ -241,20 +278,24 @@ bool MountControlDBusPrivate::mkdirMntRoot()
 bool MountControlDBusPrivate::checkAuth()
 {
     qint64 pid = 0;
-    QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
+    QDBusConnection c =
+            QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
     if (c.isConnected())
         pid = c.interface()->servicePid(q->message().service()).value();
 
     if (pid > 0) {
         using namespace PolkitQt1;
-        Authority::Result result = Authority::instance()->checkAuthorizationSync(kPolicyKitActionId, UnixProcessSubject(pid),   /// 第一个参数是需要验证的action，和规则文件写的保持一致
-                                                                                 Authority::AllowUserInteraction);
+        Authority::Result result = Authority::instance()->checkAuthorizationSync(
+                kPolicyKitActionId,
+                UnixProcessSubject(pid),   /// 第一个参数是需要验证的action，和规则文件写的保持一致
+                Authority::AllowUserInteraction);
         return result == Authority::Yes;
     }
     return false;
 }
 
-MountControlDBusPrivate::MntCheckErr MountControlDBusPrivate::checkMount(const QString &path, QString &mpt)
+MountControlDBusPrivate::MntCheckErr MountControlDBusPrivate::checkMount(const QString &path,
+                                                                         QString &mpt)
 {
     class Helper
     {
@@ -287,7 +328,8 @@ MountControlDBusPrivate::MntCheckErr MountControlDBusPrivate::checkMount(const Q
         QStringList opts = QString(mnt_fs_get_options(fs)).split(",");
         qDebug() << "mount opts:" << opts;
 
-        auto iter = std::find_if(opts.cbegin(), opts.cend(), [](const QString &opt) { return opt.startsWith("uid="); });
+        auto iter = std::find_if(opts.cbegin(), opts.cend(),
+                                 [](const QString &opt) { return opt.startsWith("uid="); });
         if (iter == opts.cend())
             return kNotOwner;
         QString uidArg = *iter;

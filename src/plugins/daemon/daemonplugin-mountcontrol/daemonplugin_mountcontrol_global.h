@@ -36,6 +36,7 @@ inline constexpr char kPasswd[] { "passwd" };
 inline constexpr char kDomain[] { "domain" };
 //inline constexpr char kFsType[] { "fsType" };
 inline constexpr char kMountName[] { "mntName" };
+inline constexpr char kTimeout[] {"timeout"};
 }
 
 DAEMONPMOUNTCONTROL_END_NAMESPACE

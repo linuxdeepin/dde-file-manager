@@ -65,6 +65,8 @@ private:
     std::string convertArg(const QVariantMap &opts);
     QString decryPasswd(const QString &passwd);
     void clean();
+    bool isTimeoutSupported();
+
 
 private:
     MountControlDBus *q { nullptr };

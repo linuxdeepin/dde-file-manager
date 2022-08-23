@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "devicemanager.h"
 #include "deviceutils.h"
 #include "private/devicemanager_p.h"
@@ -57,21 +57,29 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
     QStringList filteredRet;
     for (const auto &id : ret) {
         const auto &&data = d->watcher->getDevInfo(id, DeviceType::kBlockDevice, false);
-        if (opts.testFlag(DeviceQueryOption::kMounted) && data.value(DeviceProperty::kMountPoint).toString().isEmpty())
+        if (opts.testFlag(DeviceQueryOption::kMounted)
+            && data.value(DeviceProperty::kMountPoint).toString().isEmpty())
             continue;
-        if (opts.testFlag(DeviceQueryOption::kRemovable) && !data.value(DeviceProperty::kRemovable).toBool())
+        if (opts.testFlag(DeviceQueryOption::kRemovable)
+            && !data.value(DeviceProperty::kRemovable).toBool())
             continue;
-        if (opts.testFlag(DeviceQueryOption::kMountable) && !DeviceHelper::isMountableBlockDev(data, errMsg))
+        if (opts.testFlag(DeviceQueryOption::kMountable)
+            && !DeviceHelper::isMountableBlockDev(data, errMsg))
             continue;
-        if (opts.testFlag(DeviceQueryOption::kNotIgnored) && data.value(DeviceProperty::kHintIgnore).toBool())
+        if (opts.testFlag(DeviceQueryOption::kNotIgnored)
+            && data.value(DeviceProperty::kHintIgnore).toBool())
             continue;
-        if (opts.testFlag(DeviceQueryOption::kNotMounted) && !data.value(DeviceProperty::kMountPoint).toString().isEmpty())
+        if (opts.testFlag(DeviceQueryOption::kNotMounted)
+            && !data.value(DeviceProperty::kMountPoint).toString().isEmpty())
             continue;
-        if (opts.testFlag(DeviceQueryOption::kOptical) && !data.value(DeviceProperty::kOptical).toBool())
+        if (opts.testFlag(DeviceQueryOption::kOptical)
+            && !data.value(DeviceProperty::kOptical).toBool())
             continue;
-        if (opts.testFlag(DeviceQueryOption::kSystem) && !data.value(DeviceProperty::kHintSystem).toBool())
+        if (opts.testFlag(DeviceQueryOption::kSystem)
+            && !data.value(DeviceProperty::kHintSystem).toBool())
             continue;
-        if (opts.testFlag(DeviceQueryOption::kLoop) && !data.value(DeviceProperty::kIsLoopDevice).toBool())
+        if (opts.testFlag(DeviceQueryOption::kLoop)
+            && !data.value(DeviceProperty::kIsLoopDevice).toBool())
             continue;
         filteredRet << id;
     }
@@ -540,6 +548,12 @@ void DeviceManager::unmountProtocolDevAsync(const QString &id, const QVariantMap
     dev->unmountAsync(opts, cb);
 }
 
+/*!
+ * \brief DeviceManager::mountNetworkDeviceAsync
+ * \param address: like smb://1.2.3.4/HelloWorld
+ * \param cb: callback when mount finished.
+ * \param timeout: seconds.
+ */
 void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType1 cb, int timeout)
 {
     Q_ASSERT_X(!address.isEmpty(), __FUNCTION__, "address is emtpy");
@@ -549,15 +563,19 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
         return;
     }
 
-    static QMap<QString, QString> defaultPort { { "smb", "139" }, { "ftp", "21" }, { "sftp", "22" } };
+    static QMap<QString, QString> defaultPort { { "smb", "139" },
+                                                { "ftp", "21" },
+                                                { "sftp", "22" } };
     QString host = u.host();
     QString port = defaultPort.value(u.scheme(), "21");
 
     using namespace std::placeholders;
-    auto func = std::bind(DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
+    auto func = std::bind(DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice, _1, _2, _3,
+                          address);
 
     auto wrappedCb = [=](bool ok, DeviceError err, const QString &msg) {
-        if (cb) cb(ok, err, msg);
+        if (cb)
+            cb(ok, err, msg);
         QApplication::restoreOverrideCursor();
     };
 
@@ -565,7 +583,8 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
         QApplication::restoreOverrideCursor();
         if (ok) {
-            DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice, wrappedCb, timeout);
+            DProtocolDevice::mountNetworkDevice(
+                    address, func, DeviceManagerPrivate::askForUserChoice, wrappedCb, timeout);
         } else {
             wrappedCb(false, DeviceError::kUserErrorTimedOut, "");
             qDebug() << "cannot access network " << host << ":" << port;
@@ -584,7 +603,8 @@ void DeviceManager::doAutoMountAtStart()
 
 void DeviceManager::detachAllRemovableBlockDevs()
 {
-    const QStringList &&devs = getAllBlockDevID(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
+    const QStringList &&devs =
+            getAllBlockDevID(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
     QStringList operated;
     for (const auto &id : devs) {
         if (operated.contains(id))
@@ -598,7 +618,8 @@ void DeviceManager::detachAllRemovableBlockDevs()
  * \param id
  * \param cb
  * \return
- * this function will unmount all associated block devices, and returns the id list of the unmounted devices.
+ * this function will unmount all associated block devices, and returns the id list of the unmounted
+ * devices.
  */
 QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
 {
@@ -612,7 +633,8 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
 
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
-            QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a 'device busy' error.
+            QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
+                                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -631,7 +653,8 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
         unmountBlockDevAsync(dev, {}, [allUnmounted, func, opCount, dev](bool ok, DeviceError err) {
             *allUnmounted &= ok;
             *opCount -= 1;
-            qDebug() << "detach device: " << dev << ", siblings remain: " << *opCount << ", success? " << ok << DeviceUtils::errMessage(err);
+            qDebug() << "detach device: " << dev << ", siblings remain: " << *opCount
+                     << ", success? " << ok << DeviceUtils::errMessage(err);
             if (*opCount == 0) {
                 func(*allUnmounted, err);
                 delete opCount;
@@ -698,9 +721,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager()
-{
-}
+DeviceManager::~DeviceManager() { }
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -727,7 +748,8 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 
     if (type == DeviceType::kBlockDevice) {
         auto &&info = getBlockDevInfo(id);
-        if (info.value(DeviceProperty::kIsEncrypted).toBool() || info.value(DeviceProperty::kCryptoBackingDevice).toString() != "/")
+        if (info.value(DeviceProperty::kIsEncrypted).toBool()
+            || info.value(DeviceProperty::kCryptoBackingDevice).toString() != "/")
             return;
         if (info.value(DeviceProperty::kHintIgnore).toBool())
             return;
@@ -739,22 +761,22 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 }
 
 DeviceManagerPrivate::DeviceManagerPrivate(DeviceManager *qq)
-    : watcher(new DeviceWatcher(qq)),
-      discScanner(new DiscDeviceScanner(qq)),
-      q(qq)
+    : watcher(new DeviceWatcher(qq)), discScanner(new DiscDeviceScanner(qq)), q(qq)
 {
 }
 
 void DeviceManagerPrivate::mountAllBlockDev()
 {
-    const QStringList &devs { q->getAllBlockDevID(DeviceQueryOption::kRemovable | DeviceQueryOption::kMountable
-                                                  | DeviceQueryOption::kNotIgnored | DeviceQueryOption::kNotMounted) };
+    const QStringList &devs { q->getAllBlockDevID(
+            DeviceQueryOption::kRemovable | DeviceQueryOption::kMountable
+            | DeviceQueryOption::kNotIgnored | DeviceQueryOption::kNotMounted) };
     qDebug() << "start to mount block devs: " << devs;
     for (const auto &dev : devs)
         q->mountBlockDevAsync(dev);
 }
 
-MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault, const QString &domainDefault, const QString &uri)
+MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,
+                                                                       const QString &domainDefault, const QString &uri)
 {
     MountAskPasswordDialog dlg;
     dlg.setTitle(message);
@@ -776,7 +798,8 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
             info.userName = data.value(kUser).toString();
             info.domain = data.value(kDomain).toString();
             info.passwd = data.value(kPasswd).toString();
-            info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(data.value(kPasswdSaveMode).toInt());
+            info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(
+                    data.value(kPasswdSaveMode).toInt());
         }
     } else {
         info.cancelled = true;
@@ -791,7 +814,8 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
     QString newMsg = message;
     QString title;
     if (message.startsWith("Can’t verify the identity of")
-        && message.endsWith("If you want to be absolutely sure it is safe to continue, contact the system administrator.")) {
+        && message.endsWith("If you want to be absolutely sure it is safe to continue, contact the "
+                            "system administrator.")) {
         QString arg1, arg2;
         QRegularExpression reg("“.*?”");
         auto matcher = reg.match(message);
@@ -803,10 +827,11 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
             arg2 = matcher.captured(0);
 
             title = QObject::tr("Can’t verify the identity of %1.").arg(arg1);
-            newMsg = QObject::tr("This happens when you log in to a computer the first time.") + '\n'
-                    + QObject::tr("The identity sent by the remote computer is") + '\n'
+            newMsg = QObject::tr("This happens when you log in to a computer the first time.")
+                    + '\n' + QObject::tr("The identity sent by the remote computer is") + '\n'
                     + arg2 + '\n'
-                    + QObject::tr("If you want to be absolutely sure it is safe to continue, contact the system administrator.");
+                    + QObject::tr("If you want to be absolutely sure it is safe to continue, "
+                                  "contact the system administrator.");
         }
         newMsg = newMsg.replace("\\r\\n", "\n");
 
