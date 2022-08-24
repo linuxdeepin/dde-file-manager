@@ -81,6 +81,9 @@ FILE (GLOB BASE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base/device/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/device/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/device/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/db/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/db/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/db/*.cpp"
 )
 
 FILE (GLOB ALL_FILES
@@ -152,8 +155,9 @@ set(DBUSSERVICE_CPP
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 find_package(Qt5 COMPONENTS DBus REQUIRED)
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Qt5 COMPONENTS Sql REQUIRED)
 find_package(Qt5 COMPONENTS X11Extras REQUIRED)
+find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(KF5Codecs REQUIRED)
 
@@ -206,6 +210,7 @@ target_link_libraries( ${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Concurrent
     Qt5::DBus
+    Qt5::Sql
     Qt5::X11Extras
     PkgConfig::dfm-burn
     PkgConfig::dfm-io

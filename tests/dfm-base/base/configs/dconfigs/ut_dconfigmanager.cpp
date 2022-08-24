@@ -44,8 +44,11 @@ private:
 DFMBASE_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
+#define DCONFIG_SUPPORTED (DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 29, 0))
+
 TEST_F(UT_DConfigManager, AddConfig)
 {
+#if DCONFIG_SUPPORTED
     DConfigManager::instance()->d->configs.insert("fake", nullptr);
     QString err;
     EXPECT_FALSE(DConfigManager::instance()->addConfig("fake", &err));
@@ -73,6 +76,7 @@ TEST_F(UT_DConfigManager, AddConfig)
     EXPECT_TRUE(DConfigManager::instance()->d->configs.contains("valid config"));
     EXPECT_NO_FATAL_FAILURE(DConfigManager::instance()->d->configs.clear());
     delete retVal;
+#endif
 }
 
 TEST_F(UT_DConfigManager, RemoveConfig)
