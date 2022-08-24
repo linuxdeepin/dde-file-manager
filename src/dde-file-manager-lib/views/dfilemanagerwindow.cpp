@@ -406,16 +406,11 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
             if (!fileInfo || !fileInfo->exists()) {
                 DUrl searchUrl = current_view ? current_view->rootUrl() : DUrl::fromLocalFile(QDir::homePath());
-
-                if (searchUrl.isComputerFile()) {
-                    searchUrl = DUrl::fromLocalFile("/");
-                }
-
                 if (searchUrl.isSearchFile()) {
                     searchUrl = searchUrl.searchTargetUrl();
                 }
 
-                if (!q_ptr->isCurrentUrlSupportSearch(searchUrl)) {
+                if (!searchUrl.isComputerFile() && !q_ptr->isCurrentUrlSupportSearch(searchUrl)) {
                     return false;
                 }
 
