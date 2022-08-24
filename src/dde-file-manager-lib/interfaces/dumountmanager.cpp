@@ -31,6 +31,7 @@
 #include <QUrl>
 #include <QScopedPointer>
 #include <QDebug>
+#include <QThread>
 
 DUMountManager::DUMountManager(QObject *parent)
     :QObject(parent)
@@ -202,6 +203,7 @@ bool DUMountManager::removeDrive(const QString &driveName)
     umountBlocksOnDrive(driveName);
 
     qInfo() << "start remove drive:" << driveName;
+    QThread::msleep(500); // make a short delay to make sure that the resource is already released.
     if (drv->canPowerOff()) {
         drv->powerOff({});
 
