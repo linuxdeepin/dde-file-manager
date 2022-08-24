@@ -36,8 +36,8 @@ class ShareFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
 
 public:
     explicit ShareFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfo *qq);
-
     virtual ~ShareFileInfoPrivate();
+    void refresh();
 
 private:
     ShareInfo info;

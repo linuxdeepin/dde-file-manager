@@ -104,3 +104,38 @@ TEST_F(UT_ShareFileInfo, CanTag)
 {
     EXPECT_FALSE(info->canTag());
 }
+
+TEST_F(UT_ShareFileInfo, Refresh)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&ShareFileInfoPrivate::refresh, [] { __DBG_STUB_INVOKE__ });
+    EXPECT_NO_FATAL_FAILURE(info->refresh());
+}
+
+class UT_ShareFileInfoPrivate : public testing::Test
+{
+protected:
+    virtual void SetUp() override
+    {
+        info = new ShareFileInfo(QUrl("share:///test"));
+        d = dynamic_cast<ShareFileInfoPrivate *>(info->dptr.data());
+    }
+    virtual void TearDown() override
+    {
+        stub.clear();
+        delete info;
+    }
+
+private:
+    stub_ext::StubExt stub;
+    ShareFileInfo *info { nullptr };
+    ShareFileInfoPrivate *d { nullptr };
+};
+
+TEST_F(UT_ShareFileInfoPrivate, Refresh)
+{
+    typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
+    auto push = static_cast<Push>(&dpf::EventChannelManager::push);
+    stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return QVariantMap(); });
+    EXPECT_NO_FATAL_FAILURE(d->refresh());
+}

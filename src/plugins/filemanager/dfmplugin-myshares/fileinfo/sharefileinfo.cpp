@@ -72,12 +72,17 @@ ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq
     : AbstractFileInfoPrivate(qq)
 {
     this->url = url;
-    if (url.path() != "/")
-        info = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", url.path()).value<QVariantMap>();
+    refresh();
 }
 
 ShareFileInfoPrivate::~ShareFileInfoPrivate()
 {
+}
+
+void ShareFileInfoPrivate::refresh()
+{
+    if (url.path() != "/")
+        info = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", url.path()).value<QVariantMap>();
 }
 
 bool dfmplugin_myshares::ShareFileInfo::canDrag()
@@ -93,4 +98,10 @@ bool dfmplugin_myshares::ShareFileInfo::isWritable() const
 bool dfmplugin_myshares::ShareFileInfo::canTag() const
 {
     return false;
+}
+
+void dfmplugin_myshares::ShareFileInfo::refresh()
+{
+    auto d = dynamic_cast<ShareFileInfoPrivate *>(dptr.data());
+    d->refresh();
 }
