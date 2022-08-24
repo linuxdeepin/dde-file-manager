@@ -66,11 +66,6 @@ ComputerController *ComputerController::instance()
 void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
 {
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-    if (!info) {
-        qDebug() << "cannot create info of " << url;
-        ComputerUtils::setCursorState();
-        return;
-    }
 
     DFMBASE_USE_NAMESPACE;
     QString suffix = info->suffix();
@@ -81,16 +76,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
 
     bool isOptical = info->extraProperty(DeviceProperty::kOptical).toBool();
     if (!info->isAccessable() && !isOptical) {
-        qDebug() << "cannot access device: " << url;
-        bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
-                && !info->extraProperty(DeviceProperty::kHasFileSystem).toBool()
-                && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool()
-                && !info->extraProperty(DeviceProperty::kOpticalDrive).toBool();
-        if (needAskForFormat) {
-            if (DialogManagerInstance->askForFormat())
-                actFormat(winId, info);
-        }
-        ComputerUtils::setCursorState();
+        handleUnAccessableDevCdCall(winId, info);
         return;
     }
 
@@ -98,24 +84,10 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     if (target.isValid()) {
         if (isOptical)
             target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(url));
-        if (DeviceUtils::isSamba(target) || DeviceUtils::isFtp(target)) {
-            QString ip, port;
-            if (!NetworkUtils::instance()->parseIp(target.path(), ip, port)) {
-                qDebug() << "parse ip address failed: " << target;
-                ComputerEventCaller::cdTo(winId, target);
-            } else {
-                ComputerUtils::setCursorState(true);
-                NetworkUtils::instance()->doAfterCheckNet(ip, port, [winId, target, ip](bool ok) {
-                    ComputerUtils::setCursorState(false);
-                    if (ok)
-                        ComputerEventCaller::cdTo(winId, target);
-                    else
-                        DialogManagerInstance->showErrorDialog(tr("Mount error"), tr("Cannot access %1").arg(ip));
-                });
-            }
-        } else {
+        if (DeviceUtils::isSamba(target) || DeviceUtils::isFtp(target))
+            handleNetworkCdCall(winId, info);
+        else
             ComputerEventCaller::cdTo(winId, target);
-        }
     } else {
         if (suffix == SuffixInfo::kBlock) {
             mountDevice(winId, info);
@@ -150,6 +122,7 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
 
     if (!scene->initialize(params)) {
         delete scene;
+        scene = nullptr;
         return;
     }
 
@@ -162,6 +135,7 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
     if (act)
         scene->triggered(act);
     delete scene;
+    scene = nullptr;
 }
 
 void ComputerController::doRename(quint64 winId, const QUrl &url, const QString &name)
@@ -191,6 +165,9 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
 
 void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString &alias)
 {
+    if (!info)
+        return;
+
     QString uuid = info->extraProperty(DeviceProperty::kUUID).toString();
     if (uuid.isEmpty()) {
         qWarning() << "params exception!" << info->url();
@@ -592,4 +569,43 @@ void ComputerController::waitUDisks2DataReady(const QString &id)
     }
     if (info)
         delete info;
+}
+
+void ComputerController::handleUnAccessableDevCdCall(quint64 winId, DFMEntryFileInfoPointer info)
+{
+    if (!info)
+        return;
+
+    qDebug() << "cannot access device: " << info->url();
+    bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
+            && !info->extraProperty(DeviceProperty::kHasFileSystem).toBool()
+            && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool()
+            && !info->extraProperty(DeviceProperty::kOpticalDrive).toBool();
+    if (needAskForFormat) {
+        if (DialogManagerInstance->askForFormat())
+            actFormat(winId, info);
+    }
+    ComputerUtils::setCursorState();
+}
+
+void ComputerController::handleNetworkCdCall(quint64 winId, DFMEntryFileInfoPointer info)
+{
+    if (!info)
+        return;
+
+    auto target = info->targetUrl();
+    QString ip, port;
+    if (!NetworkUtils::instance()->parseIp(target.path(), ip, port)) {
+        qDebug() << "parse ip address failed: " << target;
+        ComputerEventCaller::cdTo(winId, target);
+    } else {
+        ComputerUtils::setCursorState(true);
+        NetworkUtils::instance()->doAfterCheckNet(ip, port, [winId, target, ip](bool ok) {
+            ComputerUtils::setCursorState(false);
+            if (ok)
+                ComputerEventCaller::cdTo(winId, target);
+            else
+                DialogManagerInstance->showErrorDialog(tr("Mount error"), tr("Cannot access %1").arg(ip));
+        });
+    }
 }

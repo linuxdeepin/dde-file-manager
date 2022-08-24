@@ -306,7 +306,7 @@ QStringList ComputerUtils::allSystemUUIDs()
         if (!uuid.isEmpty())
             uuids << uuid;
     });
-    return uuids.toList();
+    return uuids.values();
 }
 
 QList<QUrl> ComputerUtils::systemBlkDevUrlByUUIDs(const QStringList &uuids)

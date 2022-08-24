@@ -53,7 +53,6 @@ public:
 protected Q_SLOTS:
     void onWindowCreated(quint64 winId);
     void onWindowOpened(quint64 windd);
-    void onWindowClosed(quint64 winId);
 
 private:
     void addComputerToSidebar();

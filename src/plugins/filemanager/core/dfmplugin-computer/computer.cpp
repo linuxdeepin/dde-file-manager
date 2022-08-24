@@ -65,7 +65,6 @@ void Computer::initialize()
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
 
     bindEvents();
     followEvents();
@@ -116,12 +115,7 @@ void Computer::onWindowOpened(quint64 winId)
 
     CustomViewExtensionView func { ComputerUtils::devicePropertyDialog };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
-                         func, DFMBASE_NAMESPACE::Global::Scheme::kEntry);
-}
-
-void Computer::onWindowClosed(quint64 winId)
-{
-    Q_UNUSED(winId);
+                         func, QString(DFMBASE_NAMESPACE::Global::Scheme::kEntry));
 }
 
 void Computer::addComputerToSidebar()
