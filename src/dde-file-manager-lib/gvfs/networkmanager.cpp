@@ -385,7 +385,6 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
         args.insert("errorId", SmbReportData::ShareFoldList_Error);
         args.insert("errorSysMsg", "Share fold list error.");
         args.insert("errorUiMsg", "Share fold list error.");
-        rlog->commit("Smb", args);
     }
     rlog->commit("Smb", args);
 
