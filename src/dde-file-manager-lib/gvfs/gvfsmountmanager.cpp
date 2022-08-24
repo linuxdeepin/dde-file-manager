@@ -1615,6 +1615,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 //                                         tr("Mounting device error"), QString(error->message));
 //        }
         QString errorUiMsg = tr("Wrong username or password");
+        bool userCanceled = false;
         if (showWarnDlg) {
             errorUiMsg = tr("Mounting device error");
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
@@ -1627,6 +1628,7 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr("Wrong username or password"));
             } else if (status == MOUNT_CANCEL && bshow) {
+                userCanceled = true;
                 errorUiMsg = tr(error->message);
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr(error->message));
@@ -1635,11 +1637,11 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         }
 
         QVariantMap args;
-        args.insert("result",false);
-        args.insert("errorId",SmbReportData::Mount_Error);//since error->code always 0 here
-        args.insert("errorSysMsg",error->message);
-        args.insert("errorUiMsg",errorUiMsg);
-        rlog->commit("Smb",args);
+        args.insert("result", false);
+        args.insert("errorId",userCanceled ? SmbReportData::UserCancel_Error : SmbReportData::Mount_Error);//Here do not use error->code, since error->code always 0 here
+        args.insert("errorSysMsg", error->message);
+        args.insert("errorUiMsg", userCanceled ? "User cancel mount dialog." : errorUiMsg);
+        rlog->commit("Smb", args);
 
         qCDebug(mountManager()) << "g_file_mount_enclosing_volume_finish" << succeeded << error;
         qCDebug(mountManager()) << "username" << g_mount_operation_get_username(op) << error->message;
