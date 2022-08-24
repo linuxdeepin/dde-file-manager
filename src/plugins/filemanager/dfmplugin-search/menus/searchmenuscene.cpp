@@ -197,18 +197,28 @@ bool SearchMenuScene::create(QMenu *parent)
     if (!parent)
         return false;
 
+    // 创建子场景菜单
+    AbstractMenuScene::create(parent);
+
     if (d->isEmptyArea) {
         QAction *tempAction = parent->addAction(d->predicateName.value(dfmplugin_menu::ActionID::kSelectAll));
         d->predicateAction[dfmplugin_menu::ActionID::kSelectAll] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(dfmplugin_menu::ActionID::kSelectAll));
     } else {
-        QAction *tempAction = parent->addAction(d->predicateName.value(SearchActionId::kOpenFileLocation));
-        d->predicateAction[SearchActionId::kOpenFileLocation] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, QString(SearchActionId::kOpenFileLocation));
+        auto actionList = parent->actions();
+        auto iter = std::find_if(actionList.begin(), actionList.end(), [](const QAction *action) {
+            const auto &p = action->property(ActionPropertyKey::kActionID);
+            return (p == SearchActionId::kOpenFileLocation);
+        });
+
+        if (iter == actionList.end()) {
+            QAction *tempAction = parent->addAction(d->predicateName.value(SearchActionId::kOpenFileLocation));
+            d->predicateAction[SearchActionId::kOpenFileLocation] = tempAction;
+            tempAction->setProperty(ActionPropertyKey::kActionID, QString(SearchActionId::kOpenFileLocation));
+        }
     }
 
-    // 创建子场景菜单
-    return AbstractMenuScene::create(parent);
+    return true;
 }
 
 void SearchMenuScene::updateState(QMenu *parent)
