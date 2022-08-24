@@ -3626,7 +3626,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         unusedList << MenuAction::OpenInNewWindow
                    << MenuAction::OpenInNewTab
                    << MenuAction::SendToDesktop
-                   << MenuAction::AddToBookMark;
+                   << MenuAction::AddToBookMark
+
+                   // #bug154317, Based on product requirements, bookmarks are not displayed in the right menu of the desktop
+                   << MenuAction::BookmarkRemove;
     } else {
         unusedList << MenuAction::SendToDesktop;
     }
