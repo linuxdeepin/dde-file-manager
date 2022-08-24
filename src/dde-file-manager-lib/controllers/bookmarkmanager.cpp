@@ -400,6 +400,10 @@ void BookMarkManager::update(const QVariant &value)
     // 清空缓存中已不存在的书签
     for (const DUrl &url : bookmarkUrlList) {
         const BookmarkData data = m_bookmarkDataMap.value(url);
+        // #bug154317, the second reason that the desktop to show bookmarks
+        //  item on right-click menu is because there is no sync clearing.
+        // (Based on product requirements, bookmarks are not displayed in the right menu of the desktop).
+        m_bookmarkDataMap.remove(url);
         m_bookmarks[url] = nullptr;
         DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileDeleted, data.m_url);
     }
