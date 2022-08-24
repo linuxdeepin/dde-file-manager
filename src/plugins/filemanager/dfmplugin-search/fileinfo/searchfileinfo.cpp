@@ -92,6 +92,14 @@ qint64 SearchFileInfo::size() const
     return AbstractFileInfo::size();
 }
 
+QString SearchFileInfo::fileName() const
+{
+    if (SearchHelper::isRootUrl(url()))
+        return QObject::tr("Search");
+
+    return AbstractFileInfo::fileName();
+}
+
 QString SearchFileInfo::emptyDirectoryTip() const
 {
     return QObject::tr("No results");

@@ -85,6 +85,11 @@ void Search::onWindowOpened(quint64 windId)
         regSearchCrumbToTitleBar();
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Search::regSearchCrumbToTitleBar, Qt::DirectConnection);
+
+    if (window->detailView())
+        regSearchToDetailView();
+    else
+        connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Search::regSearchToDetailView, Qt::DirectConnection);
 }
 
 void Search::regSearchCrumbToTitleBar()
@@ -113,6 +118,13 @@ void Search::regSearchToWorkspace()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
 }
 
+void Search::regSearchToDetailView()
+{
+    QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
+                         SearchHelper::scheme(), filtes);
+}
+
 void Search::bindEvents()
 {
     // hook events
@@ -124,6 +136,8 @@ void Search::bindEvents()
                             SearchHelper::instance(), &SearchHelper::customRoleData);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
                             SearchHelper::instance(), &SearchHelper::blockPaste);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch",
+                            SearchHelper::instance(), &SearchHelper::searchIconName);
 
     // subscribe signal events
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Search_Start",

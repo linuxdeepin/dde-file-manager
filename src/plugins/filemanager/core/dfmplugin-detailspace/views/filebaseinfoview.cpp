@@ -229,6 +229,10 @@ void FileBaseInfoView::basicFill(const QUrl &url)
         localUrl = urls.first();
 
     AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
+    if (localinfo && localinfo->isSymLink()) {
+        const QUrl &targetUrl = QUrl::fromLocalFile(localinfo->symLinkTarget());
+        localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
+    }
 
     if (fileType && fileType->RightValue().isEmpty() && localinfo) {
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(localinfo->mimeTypeName());
@@ -266,6 +270,9 @@ void FileBaseInfoView::basicFill(const QUrl &url)
             break;
         case MimeDatabase::FileType::kUnknown:
             fileType->setRightValue(tr("Unknown"), Qt::ElideNone, Qt::AlignLeft, true);
+            break;
+        case MimeDatabase::FileType::kDesktopApplication:
+            fileType->setRightValue(tr("Application"), Qt::ElideNone, Qt::AlignLeft, true);
             break;
         default:
             break;

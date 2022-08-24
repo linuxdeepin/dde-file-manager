@@ -47,6 +47,7 @@ private slots:
     void onWindowOpened(quint64 windId);
     void regSearchCrumbToTitleBar();
     void regSearchToWorkspace();
+    void regSearchToDetailView();
     void bindEvents();
 };
 

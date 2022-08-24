@@ -212,6 +212,16 @@ bool SearchHelper::blockPaste(quint64 winId, const QUrl &to)
     return false;
 }
 
+bool SearchHelper::searchIconName(const QUrl &url, QString *iconName)
+{
+    if (url.scheme() == SearchHelper::scheme()) {
+        *iconName = "search";
+        return true;
+    }
+
+    return false;
+}
+
 QString SearchHelper::checkWildcardAndToRegularExpression(const QString &pattern)
 {
     if (!pattern.contains('*') && !pattern.contains('?'))

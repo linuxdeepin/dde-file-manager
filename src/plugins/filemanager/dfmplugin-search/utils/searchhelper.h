@@ -65,6 +65,8 @@ public:
     // disable paste
     bool blockPaste(quint64 winId, const QUrl &to);
 
+    bool searchIconName(const QUrl &url, QString *iconName);
+
     QString checkWildcardAndToRegularExpression(const QString &pattern);
     QString wildcardToRegularExpression(const QString &pattern);
     inline QString anchoredPattern(const QString &expression)

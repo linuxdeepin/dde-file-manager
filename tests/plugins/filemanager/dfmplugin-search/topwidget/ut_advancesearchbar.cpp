@@ -227,6 +227,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_4)
     st.set_lamda(VADDR(LocalFileInfo, size), [] { return 10; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
+        filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
         filter.comboValid[AdvanceSearchBarPrivate::kSizeRange] = true;
         filter.sizeRange = QPair<quint64, quint64>(100, 1024);
         return filter;
@@ -253,6 +254,8 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_5)
     st.set_lamda(VADDR(LocalFileInfo, lastModified), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
+        filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
+        filter.comboValid[AdvanceSearchBarPrivate::kSizeRange] = false;
         filter.comboValid[AdvanceSearchBarPrivate::kDateRange] = true;
 
         QDate today = QDate::currentDate();
@@ -282,6 +285,9 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_6)
     st.set_lamda(VADDR(LocalFileInfo, lastModified), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
+        filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
+        filter.comboValid[AdvanceSearchBarPrivate::kSizeRange] = false;
+        filter.comboValid[AdvanceSearchBarPrivate::kDateRange] = false;
         filter.comboValid[AdvanceSearchBarPrivate::kAccessDateRange] = true;
 
         QDate today = QDate::currentDate();
@@ -311,6 +317,10 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_7)
     st.set_lamda(VADDR(LocalFileInfo, lastModified), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
+        filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
+        filter.comboValid[AdvanceSearchBarPrivate::kSizeRange] = false;
+        filter.comboValid[AdvanceSearchBarPrivate::kDateRange] = false;
+        filter.comboValid[AdvanceSearchBarPrivate::kAccessDateRange] = false;
         filter.comboValid[AdvanceSearchBarPrivate::kCreateDateRange] = true;
 
         QDate today = QDate::currentDate();

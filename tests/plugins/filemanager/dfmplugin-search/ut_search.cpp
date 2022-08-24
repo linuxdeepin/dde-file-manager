@@ -80,6 +80,7 @@ TEST(SearchTest, ut_onWindowOpened_1)
     st.set_lamda(&FileManagerWindowsManager::findWindowById, [&w] { return &w; });
     st.set_lamda(&FileManagerWindow::workSpace, []() { return nullptr; });
     st.set_lamda(&FileManagerWindow::titleBar, []() { return nullptr; });
+    st.set_lamda(&FileManagerWindow::detailView, []() { return nullptr; });
 
     Search search;
     EXPECT_NO_FATAL_FAILURE(search.onWindowOpened(0));
@@ -92,9 +93,11 @@ TEST(SearchTest, ut_onWindowOpened_2)
     st.set_lamda(&FileManagerWindowsManager::findWindowById, [&w] { return &w; });
     st.set_lamda(&FileManagerWindow::workSpace, []() { return reinterpret_cast<AbstractFrame *>(1); });
     st.set_lamda(&FileManagerWindow::titleBar, []() { return reinterpret_cast<AbstractFrame *>(1); });
+    st.set_lamda(&FileManagerWindow::detailView, []() { return reinterpret_cast<AbstractFrame *>(1); });
 
     st.set_lamda(&Search::regSearchToWorkspace, []() { return; });
     st.set_lamda(&Search::regSearchCrumbToTitleBar, []() { return; });
+    st.set_lamda(&Search::regSearchToDetailView, []() { return; });
 
     Search search;
     EXPECT_NO_FATAL_FAILURE(search.onWindowOpened(0));
@@ -134,6 +137,18 @@ TEST(SearchTest, ut_regSearchToWorkspace)
 
     Search search;
     EXPECT_NO_FATAL_FAILURE(search.regSearchToWorkspace());
+}
+
+TEST(SearchTest, ut_regSearchToDetailView)
+{
+    stub_ext::StubExt st;
+    typedef QVariant (EventChannelManager::*Push)(const QString &, const QString &, QString, QStringList &);
+
+    auto push = static_cast<Push>(&EventChannelManager::push);
+    st.set_lamda(push, [] { return QVariant(); });
+
+    Search search;
+    EXPECT_NO_FATAL_FAILURE(search.regSearchToDetailView());
 }
 
 TEST(SearchTest, ut_bindEvents)
