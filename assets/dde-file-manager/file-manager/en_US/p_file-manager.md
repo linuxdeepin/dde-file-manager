@@ -458,6 +458,18 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 2. Select **Unmount**, right-click the disc icon again and select **Erase**.
 3. Click **Erase** in the pop-up prompt box.
 
+#### Save as Image File
+
+1. Open File Manager and click the CD Icon in the left panel to enter the CD interface.
+
+![cd](fig/cd_save_as_iso.png)
+
+2. Click **Save as Image File** in the top right corner.
+
+![cd](fig/cd_create_iso.png)
+
+3. In the pop-up window, select a save path, and click **Create ISO Image** to save files as an ISO image file.
+
 ### Create Link
 
 1. On File Manager interface, right-click the item to create a link for.
@@ -516,9 +528,9 @@ There are three ways to log in UnionTech OS Assistant, including: cell phone qui
 Use the "Discovery Settings" function to set how your phone and computer are discovered. In the UnionTech OS Assistant screen, click **Discovery Settings** in the upper right corner; on the computer system tray, right-click the icon ![icon](../common/found.svg) and select **Discovery Settings**, you can choose:
 
 - **Discoverable for everyone**: Within the LAN, all devices that are on the same network and in the same network segment are allowed to discover this phone or computer.
-- **Discoverable for the same Union ID only**: Within the LAN, only devices logged into the same Union ID are allowed to discover this phone or computer.
+- **Discoverable for the same UOS ID only**: Within the LAN, only devices logged into the same UOS ID are allowed to discover this phone or computer.
 - **Undiscoverable**: All devices are not allowed to discover this phone or computer.
-- **Discoverable for remote devices with the same Union ID** (computer side): Remote devices logged into the same Union ID are allowed to discover this computer.
+- **Discoverable for remote devices with the same UOS ID** (computer side): Remote devices logged into the same UOS ID are allowed to discover this computer.
 
  
 
@@ -538,7 +550,7 @@ After the network connection is successful, then perform the following steps.
 
 #### Search Computer
 
-Prerequisite: The phone and the computer are on the same wireless network and in the same network segment (sending files to each other is supported, instead of viewing and editing files), or they have logged into the same Union ID; the phone and computer are discoverable.
+Prerequisite: The phone and the computer are on the same wireless network and in the same network segment (sending files to each other is supported, instead of viewing and editing files), or they have logged into the same UOS ID; the phone and computer are discoverable.
 
 1. In UnionTech OS Assistant interface on your phone, click "Search Computer".
 
@@ -564,14 +576,14 @@ After the connection between the mobile phone and PC is successful, files can be
 
 - **By wireless delivery**
 
-   When the devices are logged into the same Union ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
+   When the devices are logged into the same UOS ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
    1. On the computer, right-click the file you want to deliver and select **Wireless Deliver**. 
 
    2. In the pop-up window, select the phone or computer you want to deliver to.
 
    >![icon](../common/notes.svg) Notes:
    >- You need to install UnionTech OS Assistant on the cell phone and log in to your account to receive the files delivered from the computer.
-   >- After logging in to the same Union ID, you can perform the remote delivery.
+   >- After logging in to the same UOS ID, you can perform the remote delivery.
 
 
 #### View/Edit Files
