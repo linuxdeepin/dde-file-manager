@@ -248,12 +248,14 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     , DDirIterator()
     , parent(parent)
     , rootUrl(url)
-    , targetUrl(url.searchTargetUrl())
     , keyword(url.searchKeyword())
 {
     Q_UNUSED(nameFilters)
     Q_UNUSED(filter)
     Q_UNUSED(flags)
+
+    const DUrl &tmpUrl = url.searchTargetUrl();
+    targetUrl = tmpUrl.isComputerFile() ? DUrl::fromLocalFile("/") : tmpUrl;
 
     initConnect();
     doSearch();
