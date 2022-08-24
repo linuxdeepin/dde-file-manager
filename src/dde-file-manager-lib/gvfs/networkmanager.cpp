@@ -372,6 +372,23 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     NetworkNodes.insert(neturl, nodeList);
 
     addSmbServerToHistory(neturl);
+    bool result = true;
+
+    if (FileUtils::isSmbHostOnly(neturl) && nodeList.isEmpty()) {
+        result = false;//此处如果neturl为smb://x.x.x.x格式 且 没有获取到共享目录，则为远端断网超时，作失败处理
+        qDebug() << "request NetworkNodeList failed, maybe the remove device disconnect network.";
+    }
+
+    QVariantMap args;
+    args.insert("result", result);
+    if (!result) {
+        args.insert("errorId", SmbReportData::ShareFoldList_Error);
+        args.insert("errorSysMsg", "Share fold list error.");
+        args.insert("errorUiMsg", "Share fold list error.");
+        rlog->commit("Smb", args);
+    }
+    rlog->commit("Smb", args);
+
     qDebug() << "request NetworkNodeList successfully";
 }
 
