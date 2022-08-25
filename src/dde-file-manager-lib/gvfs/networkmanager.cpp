@@ -383,8 +383,8 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     args.insert("result", result);
     if (!result) {
         args.insert("errorId", SmbReportData::ShareFoldList_Error);
-        args.insert("errorSysMsg", "Share fold list error.");
-        args.insert("errorUiMsg", "Share fold list error.");
+        args.insert("errorSysMsg", "Get shared folders failed");
+        args.insert("errorUiMsg", "Get shared folders failed");
     }
     rlog->commit("Smb", args);
 
