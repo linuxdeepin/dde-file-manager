@@ -22,6 +22,7 @@
 #include "events/propertyeventcall.h"
 #include "utils/propertydialogmanager.h"
 
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/utils/fileutils.h"
@@ -215,8 +216,16 @@ void BasicWidget::basicFill(const QUrl &url)
 
     connect(hideFile, &QCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
 
-    if (filePosition && filePosition->RightValue().isEmpty())
-        filePosition->setRightValue(url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
+    if (filePosition && filePosition->RightValue().isEmpty()) {
+        filePosition->setRightValue(info->isSymLink() ? info->symLinkTarget() : url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
+        if (info->isSymLink()) {
+            auto &&symlink = info->symLinkTarget();
+            connect(filePosition, &KeyValueLabel::valueAreaClicked, this, [symlink] {
+                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl::fromLocalFile(symlink));
+            });
+        }
+    }
+
     if (fileCreated && fileCreated->RightValue().isEmpty())
         fileCreated->setRightValue(info->birthTime().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
     if (fileAccessed && fileAccessed->RightValue().isEmpty())

@@ -34,6 +34,20 @@
 DWIDGET_USE_NAMESPACE
 namespace dfmbase {
 
+class ClickableLabel : public DLabel
+{
+    Q_OBJECT
+public:
+    explicit ClickableLabel(QWidget *parent = nullptr)
+        : DLabel(parent) {}
+
+protected:
+    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
+Q_SIGNALS:
+    void clicked();
+};
+
 class KeyValueLabel : public QFrame
 {
     Q_OBJECT
@@ -83,12 +97,15 @@ public:
 
     QString RightValue();
 
+Q_SIGNALS:
+    void valueAreaClicked();
+
 protected:
     void paintEvent(QPaintEvent *evt) override;
 
 private:
     DLabel *leftValueLabel = nullptr;
-    DLabel *rightValueLabel = nullptr;
+    ClickableLabel *rightValueLabel = nullptr;
     QGridLayout *glayout = nullptr;
     QMap<KeyType, QVariant> propertyMap {};
 };

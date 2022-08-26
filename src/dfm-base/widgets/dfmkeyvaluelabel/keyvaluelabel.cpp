@@ -41,7 +41,8 @@ void KeyValueLabel::initUI()
 {
     leftValueLabel = new DLabel(this);
     leftValueLabel->setMinimumWidth(110);
-    rightValueLabel = new DLabel(this);
+    rightValueLabel = new ClickableLabel(this);
+    connect(rightValueLabel, &ClickableLabel::clicked, this, &KeyValueLabel::valueAreaClicked);
     rightValueLabel->setMinimumWidth(130);
     glayout = new QGridLayout;
     glayout->setMargin(0);
@@ -214,4 +215,10 @@ void KeyValueLabel::paintEvent(QPaintEvent *evt)
         setRowMinimumHeight(boundingRect.height() - boundingRect.y());
     }
     QFrame::paintEvent(evt);
+}
+
+void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
+{
+    DLabel::mouseReleaseEvent(event);
+    Q_EMIT clicked();
 }
