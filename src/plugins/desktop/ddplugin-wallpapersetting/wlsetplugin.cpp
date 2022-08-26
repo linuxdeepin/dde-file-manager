@@ -28,16 +28,16 @@
 using namespace ddplugin_wallpapersetting;
 
 #define WlSetSlot(topic, args...) \
-            dpfSlotChannel->connect(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+    dpfSlotChannel->connect(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 #define CanvasMangerFollow(topic, args...) \
-            dpfHookSequence->follow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
+    dpfHookSequence->follow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
 #define WlSetDisconnect(topic) \
-            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE), QT_STRINGIFY2(topic))
+    dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE), QT_STRINGIFY2(topic))
 
 #define CanvasMangerUnfollow(topic, args...) \
-            dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
+    dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
 void WlSetPlugin::initialize()
 {
@@ -50,17 +50,15 @@ bool WlSetPlugin::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag WlSetPlugin::stop()
+void WlSetPlugin::stop()
 {
     delete handle;
     handle = nullptr;
-    return kSync;
 }
 
 EventHandle::EventHandle(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 EventHandle::~EventHandle()
@@ -151,4 +149,3 @@ bool EventHandle::hookCanvasRequest(const QString &screen)
     wallpaperSetting(screen);
     return true;
 }
-

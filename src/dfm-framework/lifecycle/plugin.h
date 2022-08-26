@@ -34,13 +34,6 @@ class Plugin : public QObject
 {
     Q_OBJECT
 public:
-    enum ShutdownFlag {
-        kSync,   /// Sync relase flag
-        kAsync,   /// Async relase flag
-    };
-
-    explicit Plugin();
-    virtual ~Plugin() override;
     virtual void initialize();
 
     /*!
@@ -49,7 +42,8 @@ public:
      * false that a problem with current internal implementation
      */
     virtual bool start() = 0;
-    virtual ShutdownFlag stop();
+
+    virtual void stop();
 
 signals:
     void asyncStopFinished();

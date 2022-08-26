@@ -54,8 +54,3 @@ bool Vault::start()
 
     return true;
 }
-
-dpf::Plugin::ShutdownFlag Vault::stop()
-{
-    return kSync;
-}

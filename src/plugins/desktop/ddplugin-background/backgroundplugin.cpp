@@ -27,7 +27,6 @@ DPF_USE_NAMESPACE
 
 void BackgroundPlugin::initialize()
 {
-
 }
 
 bool BackgroundPlugin::start()
@@ -38,10 +37,8 @@ bool BackgroundPlugin::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag BackgroundPlugin::stop()
+void BackgroundPlugin::stop()
 {
     delete backgroundManager;
     backgroundManager = nullptr;
-
-    return kSync;
 }

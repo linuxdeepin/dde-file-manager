@@ -108,11 +108,6 @@ bool Optical::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Optical::stop()
-{
-    return kSync;
-}
-
 void Optical::addOpticalCrumbToTitleBar()
 {
     static std::once_flag flag;

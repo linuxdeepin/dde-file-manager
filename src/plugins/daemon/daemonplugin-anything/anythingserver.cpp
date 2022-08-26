@@ -60,7 +60,7 @@ bool AnythingPlugin::start()
     typedef void (*AnythingObj)();
 
     //resolve the anything backend instance fire function.
-    AnythingObj ins = (AnythingObj) backendLib.resolve("fireAnything");
+    AnythingObj ins = (AnythingObj)backendLib.resolve("fireAnything");
     if (ins) {
         ins();
         qInfo() << "found export func 'fireAnything' and load anything backend OK!!";
@@ -73,7 +73,7 @@ bool AnythingPlugin::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag AnythingPlugin::stop()
+void AnythingPlugin::stop()
 {
     // unload kernel module vfs_monitor
     QProcess process;
@@ -83,6 +83,4 @@ dpf::Plugin::ShutdownFlag AnythingPlugin::stop()
     } else {
         qInfo() << "unload kernel module vfs_monitor timed out.";
     }
-
-    return kSync;
 }

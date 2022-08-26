@@ -50,7 +50,7 @@ DWIDGET_USE_NAMESPACE
 #define BUILD_VERSION ((QString(VERSION) == "") ? "6.0.0.0" : QString(VERSION))
 
 /// @brief PLUGIN_INTERFACE 默认插件iid
-static const char *const kFmPluginInterface = "org.deepin.plugin.desktop";
+static const char *const kDesktopPluginInterface = "org.deepin.plugin.desktop";
 static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
 static const char *const kPluginCore = "ddplugin-core";
 static const char *const kLibCore = "libddplugin-core.so";
@@ -58,10 +58,6 @@ static const char *const kLibCore = "libddplugin-core.so";
 static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
-
-    // set plugin iid from qt style
-    DPF_NAMESPACE::LifeCycle::addPluginIID(kFmPluginInterface);
-    DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
 
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     QStringList pluginsDirs;
@@ -77,7 +73,7 @@ static bool pluginsLoad()
         pluginsDirs.push_back(pluginsDir);
     }
     qDebug() << "using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::setPluginPaths(pluginsDirs);
+    DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

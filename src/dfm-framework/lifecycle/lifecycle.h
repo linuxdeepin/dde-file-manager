@@ -24,6 +24,7 @@
 
 #include "dfm-framework/lifecycle/pluginmetaobject.h"
 #include "dfm-framework/lifecycle/plugin.h"
+#include "dfm-framework/lifecycle/plugincreator.h"
 #include "dfm-framework/dfm_framework_global.h"
 
 #include <QString>
@@ -34,17 +35,17 @@ DPF_BEGIN_NAMESPACE
 class LifeCycle final : public QObject
 {
     Q_OBJECT
+
 public:
-    static void addPluginIID(const QString &pluginIIDs);
-    static void addBlackPluginNames(const QStringList &names);
+    static void initialize(const QStringList &IIDs, const QStringList &paths);
+    static void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames);
+
     static QStringList pluginIIDs();
     static QStringList pluginPaths();
     static QStringList blackList();
-    static void setPluginPaths(const QStringList &pluginPaths);
-    static QStringList servicePaths();
-    static void setServicePaths(const QStringList &servicePaths);
     static PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
                                                  const QString version = "");
+
     static bool readPlugins();
     static bool loadPlugins();
     static void shutdownPlugins();

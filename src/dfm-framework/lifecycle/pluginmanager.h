@@ -22,9 +22,9 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
-#include "dfm-framework/lifecycle/plugin.h"
-#include "dfm-framework/lifecycle/pluginsetting.h"
 #include "dfm-framework/dfm_framework_global.h"
+#include "dfm-framework/lifecycle/plugin.h"
+#include "dfm-framework/lifecycle/pluginmetaobject.h"
 
 #include <QPluginLoader>
 #include <QSettings>
@@ -48,12 +48,10 @@ public:
     explicit PluginManager();
     QStringList pluginIIDs() const;
     QStringList pluginPaths() const;
-    QStringList servicePaths() const;
     QStringList blackList() const;
     void addPluginIID(const QString &pluginIIDs);
     void addBlackPluginName(const QString &name);
     void setPluginPaths(const QStringList &pluginPaths);
-    void setServicePaths(const QStringList &servicePaths);
 
     bool readPlugins();
     bool loadPlugins();

@@ -37,7 +37,6 @@ class Optical : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
 
 private:
     void addOpticalCrumbToTitleBar();

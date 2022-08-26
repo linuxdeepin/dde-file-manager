@@ -28,12 +28,6 @@
 #define DPF_END_NAMESPACE }
 #define DPF_USE_NAMESPACE using namespace DPF_NAMESPACE;
 
-#if defined(DPF_LIBRARY)
-#    define DPF_EXPORT Q_DECL_EXPORT
-#else
-#    define DPF_EXPORT Q_DECL_IMPORT
-#endif
-
 #define DPF_STR(s) #s
 #define DPF_MACRO_TO_STR(s) DPF_STR(s)
 

@@ -67,11 +67,6 @@ bool Search::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Search::stop()
-{
-    return kSync;
-}
-
 void Search::onWindowOpened(quint64 windId)
 {
     auto window = FMWindowsIns.findWindowById(windId);

@@ -72,11 +72,6 @@ bool MyShares::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag MyShares::stop()
-{
-    return dpf::Plugin::ShutdownFlag::kSync;
-}
-
 void MyShares::onWindowOpened(quint64 winId)
 {
     DFMBASE_USE_NAMESPACE

@@ -40,7 +40,6 @@ class DBusRegister : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
 
 private:
     static std::once_flag &onceFlag();

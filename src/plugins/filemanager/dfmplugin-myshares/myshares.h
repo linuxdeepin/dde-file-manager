@@ -36,7 +36,6 @@ class MyShares : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
 
 protected Q_SLOTS:
     void onWindowOpened(quint64 windd);

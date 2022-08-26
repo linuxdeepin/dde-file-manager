@@ -20,33 +20,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef GLOBALMANAGER_H
-#define GLOBALMANAGER_H
+#ifndef PLUGINCREATOR_H
+#define PLUGINCREATOR_H
 
-#include "dfmplugin_utils_global.h"
-#include "global/globaleventreceiver.h"
+#include "dfm-framework/dfm_framework_global.h"
+#include "dfm-framework/lifecycle/plugin.h"
 
 #include <QObject>
 
-namespace dfmplugin_utils {
+DPF_BEGIN_NAMESPACE
 
-class GlobalManager : public QObject
+class PluginCreator : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(GlobalManager)
 
 public:
-    static GlobalManager &instance();
-
-    void init();
-
-private:
-    explicit GlobalManager(QObject *parent = nullptr);
-
-private:
-    QScopedPointer<GlobalEventReceiver> eventReceiver { new GlobalEventReceiver };
+    virtual QSharedPointer<Plugin> create(const QString &pluginName) = 0;
 };
 
-}
+DPF_END_NAMESPACE
 
-#endif   // GLOBALMANAGER_H
+#endif   // PLUGINCREATOR_H

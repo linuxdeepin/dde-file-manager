@@ -87,11 +87,6 @@ bool SmbBrowser::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag SmbBrowser::stop()
-{
-    return dpf::Plugin::ShutdownFlag::kSync;
-}
-
 void SmbBrowser::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     QFileInfo info(url.path());

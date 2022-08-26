@@ -70,7 +70,7 @@ TEST(SearchTest, ut_start)
 TEST(SearchTest, ut_stop)
 {
     Search search;
-    EXPECT_EQ(dpf::Plugin::ShutdownFlag::kSync, search.stop());
+    EXPECT_NO_FATAL_FAILURE(search.stop());
 }
 
 TEST(SearchTest, ut_onWindowOpened_1)

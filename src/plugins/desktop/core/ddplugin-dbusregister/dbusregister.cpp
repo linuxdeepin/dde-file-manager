@@ -68,11 +68,6 @@ bool DBusRegister::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag DBusRegister::stop()
-{
-    return kSync;
-}
-
 std::once_flag &DBusRegister::onceFlag()
 {
     static std::once_flag flag;

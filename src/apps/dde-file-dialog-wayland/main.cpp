@@ -96,14 +96,6 @@ static bool pluginsLoad()
         "dfmplugin-vault"
     };
 
-    // don't load plugins of blackNameList
-    DPF_NAMESPACE::LifeCycle::addBlackPluginNames(blackNameList);
-
-    // set plugin iid from qt style
-    DPF_NAMESPACE::LifeCycle::addPluginIID(kDialogPluginInterface);
-    DPF_NAMESPACE::LifeCycle::addPluginIID(kFmPluginInterface);
-    DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
-
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     QStringList pluginsDirs;
     if (!QDir(pluginsDir).exists()) {
@@ -119,7 +111,10 @@ static bool pluginsLoad()
     }
 
     qDebug() << "using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::setPluginPaths(pluginsDirs);
+    DPF_NAMESPACE::LifeCycle::initialize({ kDialogPluginInterface,
+                                           kFmPluginInterface,
+                                           kCommonPluginInterface },
+                                         pluginsDirs, blackNameList);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

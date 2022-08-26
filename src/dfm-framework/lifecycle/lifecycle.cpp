@@ -28,20 +28,25 @@ DPF_BEGIN_NAMESPACE
 Q_GLOBAL_STATIC(PluginManager, pluginManager);
 
 /*!
- * \brief Add a class of plug-in IID to the framework,
+ * \brief LifeCycle::initialize
+ * \param IIDs Add a class of plug-in IID to the framework,
  * the framework will load the IID plug-in to achieve an
- * APP can load a variety of different IID plug-in capabilities
- * \param pluginIID: like org.deepin.plugin.[XXX]
+ * APP can load a variety of different IID plug-in capabilities,
+ * like org.deepin.plugin.[XXX]
+ * \param paths
  */
-void LifeCycle::addPluginIID(const QString &pluginIID)
+void LifeCycle::initialize(const QStringList &IIDs, const QStringList &paths)
 {
-    return pluginManager->addPluginIID(pluginIID);
+    for (const QString &id : IIDs)
+        pluginManager->addPluginIID(id);
+    pluginManager->setPluginPaths(paths);
 }
 
-void LifeCycle::addBlackPluginNames(const QStringList &names)
+void LifeCycle::initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames)
 {
-    for (const QString &name : names)
+    for (const QString &name : blackNames)
         pluginManager->addBlackPluginName(name);
+    initialize(IIDs, paths);
 }
 
 /*!
@@ -65,33 +70,6 @@ QStringList LifeCycle::pluginPaths()
 QStringList LifeCycle::blackList()
 {
     return pluginManager->blackList();
-}
-
-/*!
- * \brief LifeCycle::setPluginPaths
- * \param pluginPaths
- */
-void LifeCycle::setPluginPaths(const QStringList &pluginPaths)
-{
-    return pluginManager->setPluginPaths(pluginPaths);
-}
-
-/*!
- * \brief LifeCycle::servicePaths
- * \return service path list
- */
-QStringList LifeCycle::servicePaths()
-{
-    return pluginManager->servicePaths();
-}
-
-/*!
- * \brief LifeCycle::setServicePaths
- * \param servicePaths
- */
-void LifeCycle::setServicePaths(const QStringList &servicePaths)
-{
-    return pluginManager->setServicePaths(servicePaths);
 }
 
 PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,

@@ -22,8 +22,8 @@
 #ifndef PLUGINMANAGER_P_H
 #define PLUGINMANAGER_P_H
 
-#include "dfm-framework/lifecycle/pluginsetting.h"
 #include "dfm-framework/dfm_framework_global.h"
+#include "dfm-framework/lifecycle/pluginmetaobject.h"
 
 #include <QQueue>
 #include <QStringList>
@@ -48,46 +48,49 @@ class PluginManagerPrivate : public QSharedData
     PluginManager *const q;
     QStringList pluginLoadIIDs;
     QStringList pluginLoadPaths;
-    QStringList serviceLoadPaths;
     QStringList blackPlguinNames;
-    QList<PluginMetaObjectPointer> plugins;
+    QStringList loadedVirtualPlugins;
+    QStringList unloadedVirtualPlugins;
     QQueue<PluginMetaObjectPointer> readQueue;
     QQueue<PluginMetaObjectPointer> loadQueue;
-    PluginSetting setting;
 
 public:
     explicit PluginManagerPrivate(PluginManager *qq);
     virtual ~PluginManagerPrivate();
-    QStringList pluginIIDs() const;
-    void addPluginIID(const QString &pluginIIDs);
-    QStringList pluginPaths() const;
-    void setPluginPaths(const QStringList &pluginPaths);
-    QStringList servicePaths() const;
-    void setServicePaths(const QStringList &servicePaths);
-    void setPluginEnable(const PluginMetaObject &meta, bool enabled);
+
     PluginMetaObjectPointer pluginMetaObj(const QString &name, const QString &version = "");
     bool loadPlugin(PluginMetaObjectPointer &pluginMetaObj);
     bool initPlugin(PluginMetaObjectPointer &pluginMetaObj);
     bool startPlugin(PluginMetaObjectPointer &pluginMetaObj);
     void stopPlugin(PluginMetaObjectPointer &pluginMetaObj);
+
     bool readPlugins();
     bool loadPlugins();
-    void initPlugins();
-    void startPlugins();
+    bool initPlugins();
+    bool startPlugins();
     void stopPlugins();
+
     static QMutex *mutex();
     static void scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
                                const QStringList &pluginPaths,
                                const QStringList &pluginIIDs,
                                const QStringList &blackList);
-    static void readJsonToMeta(const PluginMetaObjectPointer &metaObject);
+    static void scanfRealPlugin(QQueue<PluginMetaObjectPointer> *destQueue, PluginMetaObjectPointer metaObj,
+                                const QJsonObject &dataJson, const QStringList &blackList);
+    static void scanfVirtualPlugin(QQueue<PluginMetaObjectPointer> *destQueue, const QString &fileName,
+                                   const QJsonObject &dataJson, const QStringList &blackList);
+    static void readJsonToMeta(PluginMetaObjectPointer metaObject);
+    static void jsonToMeta(PluginMetaObjectPointer metaObject, const QJsonObject &metaData);
     static void dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue,
-                            QQueue<PluginMetaObjectPointer> *srcQueue);
+                            const QQueue<PluginMetaObjectPointer> *srcQueue);
 
 private:
-    bool doLoadPlugin(PluginMetaObjectPointer &pointer);
-    void doUnloadPlugin(PluginMetaObjectPointer &pointer);
-    static bool doPluginSort(const PluginDependGroup &group,
+    bool doLoadPlugin(PluginMetaObjectPointer pointer);
+    bool doInitPlugin(PluginMetaObjectPointer pointer);
+    bool doStartPlugin(PluginMetaObjectPointer pointer);
+    void doStopPlugin(PluginMetaObjectPointer pointer);
+
+    static bool doPluginSort(const PluginDependGroup group,
                              QMap<QString, PluginMetaObjectPointer> src,
                              QQueue<PluginMetaObjectPointer> *dest);
 };

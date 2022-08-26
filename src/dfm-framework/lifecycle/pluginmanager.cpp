@@ -46,7 +46,9 @@ PluginManager::PluginManager()
  */
 void PluginManager::addPluginIID(const QString &pluginIID)
 {
-    d->addPluginIID(pluginIID);
+    if (d->pluginLoadIIDs.contains(pluginIID))
+        return;
+    d->pluginLoadIIDs.push_back(pluginIID);
 }
 
 void PluginManager::addBlackPluginName(const QString &name)
@@ -62,16 +64,7 @@ void PluginManager::addBlackPluginName(const QString &name)
  */
 void PluginManager::setPluginPaths(const QStringList &pluginPaths)
 {
-    d->setPluginPaths(pluginPaths);
-}
-
-/*! \brief setServicePaths 设置当前插件服务加载的路径
- * \param const QStringList &servicePaths 传入路径列表
- * \return void
- */
-void PluginManager::setServicePaths(const QStringList &servicePaths)
-{
-    d->setServicePaths(servicePaths);
+    d->pluginLoadPaths = pluginPaths;
 }
 
 PluginMetaObjectPointer PluginManager::pluginMetaObj(const QString &pluginName, const QString version) const
@@ -168,7 +161,7 @@ void PluginManager::stopPlugins()
  */
 QStringList PluginManager::pluginIIDs() const
 {
-    return d->pluginIIDs();
+    return d->pluginLoadIIDs;
 }
 
 /*!
@@ -177,15 +170,7 @@ QStringList PluginManager::pluginIIDs() const
  */
 QStringList PluginManager::pluginPaths() const
 {
-    return d->pluginPaths();
-}
-
-/*! \brief servicePaths 获取插件服务路径
- * \return QString 返回设置的插件服务路径，默认为空
- */
-QStringList PluginManager::servicePaths() const
-{
-    return d->servicePaths();
+    return d->pluginLoadPaths;
 }
 
 QStringList PluginManager::blackList() const

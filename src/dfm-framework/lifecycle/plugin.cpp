@@ -24,33 +24,6 @@
 DPF_USE_NAMESPACE
 
 /*!
- * \class DiskControlWidget
- *
- * \brief DiskControlWidget is Plug-in interface class, used to implement the plug-in, use the following way:
- * \code
- * class Core : public Plugin
- * {
- *     Q_OBJECT
- *     Q_PLUGIN_METADATA(IID PLUGIN_INTERFACE FILE "core.json")
- * public:
- *     virtual void initialized() override;
- *     virtual bool start() override;
- *     virtual PluginMetaObject::ShutDownFlag stop() override;
- * };
- * \endcode
- * Q_PLUGIN_METADATA see Qt macro definitions
- * PLUGIN_INTERFACE
- */
-
-Plugin::Plugin()
-{
-}
-
-Plugin::~Plugin()
-{
-}
-
-/*!
  * \brief Plugin::initialize This function is multi-threaded execution
  * and can be used internally for some thread-safe functions, class operations
  */
@@ -60,15 +33,7 @@ void Plugin::initialize()
 
 /*!
  * \brief Plugin::stop
- * \return Release method
- * Sync (synchronous) and Async (asynchronous) are currently supported
- * If Async is used, then the builder of the plugin should send the signal
- * \code
- * emit asyncStopFinished
- * \endcode
- * Otherwise it will lead to memory leaks or the inability to uninstall the plugin.
  */
-Plugin::ShutdownFlag Plugin::stop()
+void Plugin::stop()
 {
-    return ShutdownFlag::kSync;
 }

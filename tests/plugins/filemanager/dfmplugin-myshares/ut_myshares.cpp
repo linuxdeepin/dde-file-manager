@@ -99,7 +99,7 @@ TEST_F(UT_MyShares, Initialize)
 
 TEST_F(UT_MyShares, Stop)
 {
-    EXPECT_EQ(dpf::Plugin::ShutdownFlag::kSync, ins.stop());
+    EXPECT_NO_FATAL_FAILURE(ins.stop());
 }
 
 // complete protected/private functions' ut

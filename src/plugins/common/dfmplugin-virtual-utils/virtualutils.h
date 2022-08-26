@@ -20,34 +20,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPENWITHMANAGER_H
-#define OPENWITHMANAGER_H
+#ifndef VIRTUALUTILS_H
+#define VIRTUALUTILS_H
 
 #include "dfmplugin_utils_global.h"
-#include "openwith/openwitheventreceiver.h"
 
-#include <QObject>
+#include <dfm-framework/dpf.h>
 
 namespace dfmplugin_utils {
 
-class OpenWithManager : public QObject
+class VirtualUtils : public DPF_NAMESPACE::PluginCreator
 {
     Q_OBJECT
-    Q_DISABLE_COPY(OpenWithManager)
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "virtualutils.json")
 
 public:
-    static OpenWithManager &instance();
-
-    void init();
-    void start();
-
-private:
-    explicit OpenWithManager(QObject *parent = nullptr);
-
-private:
-    QScopedPointer<OpenWithEventReceiver> eventReceiver { new OpenWithEventReceiver };
+    virtual QSharedPointer<DPF_NAMESPACE::Plugin> create(const QString &pluginName) override;
 };
+}   // dfmplugin_utils
 
-}
-
-#endif   // OPENWITHMANAGER_H
+#endif   // VIRTUALUTILS_H

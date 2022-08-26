@@ -24,6 +24,7 @@
 
 #include "dfm-framework/dfm_framework_global.h"
 #include "dfm-framework/lifecycle/pluginmetaobject.h"
+#include "dfm-framework/lifecycle/plugincreator.h"
 
 #include <QString>
 #include <QStringList>
@@ -39,18 +40,22 @@ inline constexpr char kPluginVersion[] { "Version" };
 inline constexpr char kPluginCompatversion[] { "CompatVersion" };
 /// \brief kPluginCategory 插件类型Key
 inline constexpr char kPluginCategory[] { "Category" };
-/// \nrief kPluginVendor 插件作者
+/// \brief kPluginVendor 插件作者
 inline constexpr char kPluginVendor[] { "Vendor" };
-/// \nrief kPluginCopyright 插件所持有的公司
+/// \brief kPluginCopyright 插件所持有的公司
 inline constexpr char kPluginCopyright[] { "Copyright" };
-/// \nrief kPluginDescription 插件描述
+/// \brief kPluginDescription 插件描述
 inline constexpr char kPluginDescription[] { "Description" };
-/// \nrief kPluginLicense 插件开源协议
+/// \brief kPluginLicense 插件开源协议
 inline constexpr char kPluginLicense[] { "License" };
-/// \nrief kPluginUrllink 插件主页链接地址
+/// \brief kPluginUrllink 插件主页链接地址
 inline constexpr char kPluginUrlLink[] { "UrlLink" };
-/// \nrief kPluginDepends 插件依赖
+/// \brief kPluginDepends 插件依赖
 inline constexpr char kPluginDepends[] { "Depends" };
+/// \brief kPluginDepends virtual plugin meta info
+inline constexpr char kVirtualPluginMeta[] { "Meta" };
+/// \brief kPluginDepends virtual plugin info list
+inline constexpr char kVirtualPluginList[] { "VirtualPlugins" };
 
 class PluginMetaObject;
 class PluginMetaObjectPrivate
@@ -61,6 +66,9 @@ class PluginMetaObjectPrivate
     PluginMetaObject const *q;
 
 public:
+    bool isVirtual { false };
+    QString realName;   // only virtual plugin
+
     QString iid;
     QString name;
     QString version;
@@ -76,7 +84,6 @@ public:
     QList<PluginDepend> depends;
     QSharedPointer<Plugin> plugin;
     QSharedPointer<QPluginLoader> loader;
-    QSharedPointer<PluginContext> context;
 
     explicit PluginMetaObjectPrivate(PluginMetaObject *q)
         : q(q), loader(new QPluginLoader(nullptr))

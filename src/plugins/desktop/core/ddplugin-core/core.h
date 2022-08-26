@@ -65,6 +65,7 @@ private slots:
     void publishWindowShowed();
     void publishGeometryChanged();
     void publishAvailableGeometryChanged();
+
 public:
     WindowFrame *frame = nullptr;
     DFMBASE_NAMESPACE::AbstractScreenProxy *screenProxy = nullptr;
@@ -77,13 +78,15 @@ class Core : public DPF_NAMESPACE::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual dpf::Plugin::ShutdownFlag stop() override;
+    virtual void stop() override;
 
 protected slots:
     void onStart();
+
 private:
     DFMBASE_NAMESPACE::Application *app = nullptr;
     EventHandle *handle = nullptr;
+
 private:
     DPF_EVENT_NAMESPACE(DDPCORE_NAMESPACE)
     // AbstractScreenProxy begin

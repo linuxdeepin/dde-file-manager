@@ -40,11 +40,6 @@ bool DetailSpace::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag DetailSpace::stop()
-{
-    return kSync;
-}
-
 void DetailSpace::onWindowClosed(quint64 windId)
 {
     DetailSpaceHelper::removeDetailSpace(windId);

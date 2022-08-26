@@ -69,7 +69,7 @@ class OpenWithDialog : public DFMBASE_NAMESPACE::BaseDialog
 {
     Q_OBJECT
 public:
-    explicit OpenWithDialog(const QList<QUrl> &urlList, QWidget *parent = nullptr);
+    explicit OpenWithDialog(const QList<QUrl> &list, QWidget *parent = nullptr);
     explicit OpenWithDialog(const QUrl &url, QWidget *parent = nullptr);
     ~OpenWithDialog() override;
 
@@ -97,7 +97,7 @@ private:
     QPushButton *cancelButton { nullptr };
     QPushButton *chooseButton { nullptr };
     QList<QUrl> urlList;
-    QUrl url;
+    QUrl curUrl;
     QMimeType mimeType;
 
     OpenWithDialogListItem *checkedItem { nullptr };

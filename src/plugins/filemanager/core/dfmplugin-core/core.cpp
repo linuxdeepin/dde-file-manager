@@ -87,11 +87,10 @@ bool Core::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Core::stop()
+void Core::stop()
 {
     if (GlobalPrivate::kDFMApp)
         delete GlobalPrivate::kDFMApp;
-    return kSync;
 }
 
 void Core::onAllPluginsInitialized()

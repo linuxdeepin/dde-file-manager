@@ -1,11 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     xushitong<xushitong@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             lanxuesong<lanxuesong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,32 +17,22 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef BLUETOOTHEVENTMANAGER_H
-#define BLUETOOTHEVENTMANAGER_H
-
+ */
+#ifndef OPENWITHHELPER_H
+#define OPENWITHHELPER_H
 #include "dfmplugin_utils_global.h"
 
 #include <QObject>
+#include <QUrl>
 
 namespace dfmplugin_utils {
-
-class BluetoothEventManager : public QObject
+class OpenWithHelper : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(BluetoothEventManager)
-
 public:
-    static BluetoothEventManager &instance();
-    void init();
+    explicit OpenWithHelper(QObject *parent = nullptr);
 
-    bool bluetoothAvailable();
-    void sendFiles(const QStringList &paths, const QString &deviceId = "");
-
-private:
-    explicit BluetoothEventManager(QObject *parent = nullptr);
+    static QWidget *createOpenWithWidget(const QUrl &url);
 };
-
 }
-
-#endif   // BLUETOOTHEVENTMANAGER_H
+#endif   // OPENWITHHELPER_H

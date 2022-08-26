@@ -37,7 +37,6 @@ class FilePreview : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
 };
 }   // namespace dfmplugin_filepreview
 #endif   // FILEPREVIEW_H

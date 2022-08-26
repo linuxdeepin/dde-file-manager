@@ -72,9 +72,6 @@ static void initLog()
 
 static bool pluginsLoad()
 {
-    // set plugin iid from qt style
-    DPF_NAMESPACE::LifeCycle::addPluginIID(kDaemonInterface);
-
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     QStringList pluginsDirs;
     if (!QDir(pluginsDir).exists()) {
@@ -91,7 +88,7 @@ static bool pluginsLoad()
     }
 
     qDebug() << "using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::setPluginPaths(pluginsDirs);
+    DPF_NAMESPACE::LifeCycle::initialize({ kDaemonInterface }, pluginsDirs);
 
     qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

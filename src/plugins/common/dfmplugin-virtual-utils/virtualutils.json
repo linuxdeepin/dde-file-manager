@@ -1,0 +1,63 @@
+{
+    "Meta": {
+        "Name": "dfmplugin-virtual-utils"
+    },
+    "VirtualPlugins": [
+        {
+            "Name" : "dfmplugin-appendcompress",
+            "Version" : "1.0.0",
+            "CompatVersion" : "1.0.0",
+            "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+            "Copyright" : "Copyright (C) 2022 Uniontech Software Technology Co., Ltd.",
+            "License" : [
+            ],
+            "Category" : "",
+            "Description" : "",
+            "UrlLink" : "https://www.uniontech.com",
+            "Depends" : [
+            ]
+        },
+        {
+            "Name" : "dfmplugin-bluetooth",
+            "Version" : "1.0.0",
+            "CompatVersion" : "1.0.0",
+            "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+            "Copyright" : "Copyright (C) 2022 Uniontech Software Technology Co., Ltd.",
+            "License" : [
+            ],
+            "Category" : "",
+            "Description" : "",
+            "UrlLink" : "https://www.uniontech.com",
+            "Depends" : [
+            ]
+        },
+        {
+            "Name" : "dfmplugin-global",
+            "Version" : "1.0.0",
+            "CompatVersion" : "1.0.0",
+            "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+            "Copyright" : "Copyright (C)  2022 Uniontech Software Technology Co., Ltd.",
+            "License" : [
+            ],
+            "Category" : "",
+            "Description" : "",
+            "UrlLink" : "https://www.uniontech.com",
+            "Depends" : [
+            ]
+        },
+        {
+            "Name" : "dfmplugin-openwith",
+            "Version" : "1.0.0",
+            "CompatVersion" : "1.0.0",
+            "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+            "Copyright" : "Copyright (C) 2022 Uniontech Software Technology Co., Ltd.",
+            "License" : [
+            ],
+            "Category" : "",
+            "Description" : "",
+            "UrlLink" : "https://www.uniontech.com",
+            "Depends" : [
+            ]
+        }
+    ]
+}

@@ -71,7 +71,7 @@ TEST_F(UT_SmbBrowser, Start)
 TEST_F(UT_SmbBrowser, Stop)
 {
     EXPECT_NO_FATAL_FAILURE(ins.stop());
-    EXPECT_TRUE(ins.stop() == dpf::Plugin::ShutdownFlag::kSync);
+    EXPECT_NO_FATAL_FAILURE(ins.stop());
 }
 
 TEST_F(UT_SmbBrowser, OnWindowOpened)

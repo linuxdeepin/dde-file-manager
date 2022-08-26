@@ -85,11 +85,6 @@ bool Trash::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Trash::stop()
-{
-    return kSync;
-}
-
 void Trash::onWindowOpened(quint64 windId)
 {
     auto window = FMWindowsIns.findWindowById(windId);

@@ -48,11 +48,6 @@ bool BookMark::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag BookMark::stop()
-{
-    return kSync;
-}
-
 void BookMark::onWindowCreated(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);

@@ -42,10 +42,6 @@ bool FileOperations::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag FileOperations::stop()
-{
-    return kSync;
-}
 /*!
  * \brief FileOperations::initEventHandle Initialize all event handling
  */

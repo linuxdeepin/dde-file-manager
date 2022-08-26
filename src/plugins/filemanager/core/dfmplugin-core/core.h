@@ -38,7 +38,7 @@ class Core : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual dpf::Plugin::ShutdownFlag stop() override;
+    virtual void stop() override;
 
 private slots:
     void onAllPluginsInitialized();

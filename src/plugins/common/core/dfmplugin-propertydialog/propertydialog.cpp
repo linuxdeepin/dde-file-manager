@@ -42,11 +42,6 @@ bool PropertyDialog::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag PropertyDialog::stop()
-{
-    return kSync;
-}
-
 void PropertyDialog::bindScene(const QString &parentScene)
 {
     if (dfmplugin_menu_util::menuSceneContains(parentScene)) {

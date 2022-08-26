@@ -48,7 +48,6 @@ class Computer : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
 
 protected Q_SLOTS:
     void onWindowCreated(quint64 winId);

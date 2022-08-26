@@ -80,11 +80,6 @@ bool Workspace::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Workspace::stop()
-{
-    return kSync;
-}
-
 void Workspace::onWindowOpened(quint64 windId)
 {
     DFMBASE_USE_NAMESPACE

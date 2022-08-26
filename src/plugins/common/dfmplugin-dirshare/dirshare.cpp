@@ -56,11 +56,6 @@ bool DirShare::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag DirShare::stop()
-{
-    return kSync;
-}
-
 QWidget *DirShare::createShareControlWidget(const QUrl &url)
 {
     DFMBASE_USE_NAMESPACE

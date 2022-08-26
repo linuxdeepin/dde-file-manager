@@ -161,8 +161,8 @@ OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title,
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
-OpenWithDialog::OpenWithDialog(const QList<QUrl> &urlList, QWidget *parent)
-    : BaseDialog(parent), urlList(urlList)
+OpenWithDialog::OpenWithDialog(const QList<QUrl> &list, QWidget *parent)
+    : BaseDialog(parent), urlList(list)
 {
     setWindowFlags(windowFlags()
                    & ~Qt::WindowMaximizeButtonHint
@@ -175,7 +175,7 @@ OpenWithDialog::OpenWithDialog(const QList<QUrl> &urlList, QWidget *parent)
 }
 
 OpenWithDialog::OpenWithDialog(const QUrl &url, QWidget *parent)
-    : BaseDialog(parent), url(url)
+    : BaseDialog(parent), curUrl(url)
 {
     setWindowFlags(windowFlags()
                    & ~Qt::WindowMaximizeButtonHint
@@ -274,16 +274,16 @@ void OpenWithDialog::initConnect()
 void OpenWithDialog::initData()
 {
     //在选择默认程序时，有多个url，要传多个url
-    if (url.isValid() && urlList.isEmpty()) {
-        const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    if (curUrl.isValid() && urlList.isEmpty()) {
+        const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(curUrl);
 
         if (!fileInfo)
             return;
         mimeType = fileInfo->fileMimeType();
 
-        if (FileUtils::isDesktopFile(url))
+        if (FileUtils::isDesktopFile(curUrl))
             setToDefaultCheckBox->hide();
-    } else if (!url.isValid() && !urlList.isEmpty()) {
+    } else if (!curUrl.isValid() && !urlList.isEmpty()) {
         QList<QUrl> openlist;
         bool bhide = true;
         for (auto url : urlList) {
@@ -461,9 +461,9 @@ void OpenWithDialog::openFileByApp()
     QList<QString> apps;
     apps << app;
 
-    if (url.isValid()) {
+    if (curUrl.isValid()) {
         QList<QUrl> urlList;
-        urlList << url;
+        urlList << curUrl;
         if (dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urlList, apps)) {
             close();
             return;

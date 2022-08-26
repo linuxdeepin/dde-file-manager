@@ -228,9 +228,8 @@ bool Menu::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Menu::stop()
+void Menu::stop()
 {
     delete handle;
     handle = nullptr;
-    return kSync;
 }

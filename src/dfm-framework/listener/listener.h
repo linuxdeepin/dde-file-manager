@@ -28,18 +28,18 @@
 
 DPF_BEGIN_NAMESPACE
 
-class ListenerPrivate;
 class Listener final : public QObject
 {
     Q_OBJECT
-    friend class ListenerPrivate;
-    ListenerPrivate *const d;
-    friend class PluginManagerPrivate;
+    Q_DISABLE_COPY(Listener)
 
 public:
     explicit Listener(QObject *parent = nullptr);
     static Listener *instance();
-signals:
+
+Q_SIGNALS:
+    void pluginInitialized(const QString &iid, const QString &name);
+    void pluginStarted(const QString &iid, const QString &name);
     void pluginsInitialized();
     void pluginsStarted();
 };

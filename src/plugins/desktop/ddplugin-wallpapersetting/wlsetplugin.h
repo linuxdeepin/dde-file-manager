@@ -41,9 +41,11 @@ public slots:
     void onQuit();
 
     bool hookCanvasRequest(const QString &screen);
+
 protected:
     void onChanged();
     void show(QString name, int mode);
+
 private:
     WallpaperSettings *wallpaperSettings = nullptr;
 };
@@ -55,10 +57,11 @@ class WlSetPlugin : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    virtual void stop() override;
 
 private:
     EventHandle *handle = nullptr;
+
 private:
     DPF_EVENT_NAMESPACE(DDP_WALLPAERSETTING_NAMESPACE)
     DPF_EVENT_REG_SIGNAL(signal_WallpaperSettings_WallpaperChanged)

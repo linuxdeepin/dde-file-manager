@@ -38,13 +38,13 @@ DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE
 
 #define CanvasCorePublish(topic) \
-            dpfSignalDispatcher->publish(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic))
+    dpfSignalDispatcher->publish(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic))
 
 #define CanvasCoreSlot(topic, args...) \
-            dpfSlotChannel->connect(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+    dpfSlotChannel->connect(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 #define CanvasCoreDisconnect(topic) \
-            dpfSlotChannel->disconnect(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic))
+    dpfSlotChannel->disconnect(QT_STRINGIFY(DDPCORE_NAMESPACE), QT_STRINGIFY2(topic))
 
 static void registerFileSystem()
 {
@@ -69,15 +69,13 @@ bool ddplugin_core::Core::start()
     return handle->init();
 }
 
-dpf::Plugin::ShutdownFlag ddplugin_core::Core::stop()
+void ddplugin_core::Core::stop()
 {
     delete handle;
     handle = nullptr;
 
     delete app;
     app = nullptr;
-
-    return kSync;
 }
 
 void Core::onStart()
@@ -86,9 +84,9 @@ void Core::onStart()
     handle->frame->buildBaseWindow();
 }
 
-EventHandle::EventHandle(QObject *parent) : QObject(parent)
+EventHandle::EventHandle(QObject *parent)
+    : QObject(parent)
 {
-
 }
 
 EventHandle::~EventHandle()

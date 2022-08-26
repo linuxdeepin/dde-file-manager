@@ -46,8 +46,3 @@ bool TrashCore::start()
 
     return true;
 }
-
-dpf::Plugin::ShutdownFlag TrashCore::stop()
-{
-    return kSync;
-}

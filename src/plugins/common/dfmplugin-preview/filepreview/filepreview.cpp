@@ -39,8 +39,3 @@ bool FilePreview::start()
         qWarning() << "create dconfig failed: " << err;
     return true;
 }
-
-dpf::Plugin::ShutdownFlag FilePreview::stop()
-{
-    return kSync;
-}

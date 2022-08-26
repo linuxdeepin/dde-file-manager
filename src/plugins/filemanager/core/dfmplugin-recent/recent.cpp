@@ -84,11 +84,6 @@ bool Recent::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Recent::stop()
-{
-    return kSync;
-}
-
 void Recent::onRecentDisplayChanged(bool enabled)
 {
     if (enabled) {

@@ -66,7 +66,7 @@ class Menu : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    virtual void stop() override;
 
 private:
     MenuHandle *handle = nullptr;

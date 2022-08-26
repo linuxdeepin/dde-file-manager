@@ -82,11 +82,6 @@ bool Computer::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Computer::stop()
-{
-    return kSync;
-}
-
 void Computer::onWindowCreated(quint64 winId)
 {
     Q_UNUSED(winId);

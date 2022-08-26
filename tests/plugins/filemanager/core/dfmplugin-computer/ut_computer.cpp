@@ -86,7 +86,7 @@ TEST_F(UT_Computer, Start)
 TEST_F(UT_Computer, Stop)
 {
     EXPECT_NO_FATAL_FAILURE(ins.stop());
-    EXPECT_EQ(dpf::Plugin::kSync, ins.stop());
+    EXPECT_NO_FATAL_FAILURE(ins.stop());
 }
 
 TEST_F(UT_Computer, OnWindowCreated)

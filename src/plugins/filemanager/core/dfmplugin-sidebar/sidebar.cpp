@@ -60,11 +60,6 @@ bool SideBar::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag SideBar::stop()
-{
-    return kSync;
-}
-
 void SideBar::onWindowOpened(quint64 windId)
 {
     auto window = FMWindowsIns.findWindowById(windId);

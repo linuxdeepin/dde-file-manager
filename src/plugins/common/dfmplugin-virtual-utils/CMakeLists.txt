@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(dfmplugin-utils)
+project(dfmplugin-virtual-utils)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -15,7 +15,7 @@ FILE(GLOB UTILS_FILES
     )
 
 find_package(Dtk REQUIRED Widget REQUIRED)
-
+find_package(Qt5 COMPONENTS Svg REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -27,11 +27,13 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${DtkWidget_INCLUDE_DIRS}
+        ${Qt5Svg_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
+    Qt5::Svg
     ${DtkWidget_LIBRARIES}
 )
 

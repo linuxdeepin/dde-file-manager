@@ -60,7 +60,6 @@ class DirShare : public DPF_NAMESPACE::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
 
 private:
     static QWidget *createShareControlWidget(const QUrl &url);

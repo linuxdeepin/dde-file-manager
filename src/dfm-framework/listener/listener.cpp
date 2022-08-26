@@ -20,12 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "listener.h"
-#include "dfm-framework/listener/private/listener_p.h"
 
 DPF_BEGIN_NAMESPACE
 
 Listener::Listener(QObject *parent)
-    : QObject(parent), d(new ListenerPrivate(this))
+    : QObject(parent)
 {
 }
 
@@ -33,18 +32,6 @@ Listener *Listener::instance()
 {
     static dpf::Listener listener;
     return &listener;
-}
-
-ListenerPrivate::ListenerPrivate(Listener *parent)
-    : QObject(parent), q(parent)
-{
-    QObject::connect(this, &ListenerPrivate::pluginsInitialized,
-                     q, &Listener::pluginsInitialized,
-                     Qt::UniqueConnection);
-
-    QObject::connect(this, &ListenerPrivate::pluginsStarted,
-                     q, &Listener::pluginsStarted,
-                     Qt::UniqueConnection);
 }
 
 DPF_END_NAMESPACE

@@ -78,11 +78,6 @@ bool AvfsBrowser::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag AvfsBrowser::stop()
-{
-    return kSync;
-}
-
 void AvfsBrowser::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_OpenLocalFiles", AvfsEventHandler::instance(), &AvfsEventHandler::hookOpenFiles);

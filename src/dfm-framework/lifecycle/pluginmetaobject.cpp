@@ -159,6 +159,7 @@ PluginMetaObject::PluginMetaObject()
  */
 PluginMetaObject::PluginMetaObject(const PluginMetaObject &meta)
 {
+    d->isVirtual = meta.isVirtual();
     d->iid = meta.iid();
     d->name = meta.name();
     d->version = meta.version();
@@ -177,6 +178,7 @@ PluginMetaObject::PluginMetaObject(const PluginMetaObject &meta)
   */
 PluginMetaObject &PluginMetaObject::operator=(const PluginMetaObject &meta)
 {
+    d->isVirtual = meta.isVirtual();
     d->iid = meta.iid();
     d->name = meta.name();
     d->version = meta.version();
@@ -190,6 +192,11 @@ PluginMetaObject &PluginMetaObject::operator=(const PluginMetaObject &meta)
     d->plugin = plugin();
     d->loader = meta.d->loader;
     return *this;
+}
+
+bool PluginMetaObject::isVirtual() const
+{
+    return d->isVirtual;
 }
 
 /*!
@@ -295,6 +302,8 @@ Q_CORE_EXPORT QDebug operator<<(QDebug out, const DPF_NAMESPACE::PluginMetaObjec
     out << kPluginLicense << ":" << metaObj.license() << "; ";
     out << kPluginUrlLink << ":" << metaObj.urlLink() << "; ";
     out << kPluginDepends << ":" << metaObj.depends() << ";";
+    out << "isVirtual"
+        << ":" << metaObj.isVirtual() << "; ";
     out << "}";
     return out;
 }

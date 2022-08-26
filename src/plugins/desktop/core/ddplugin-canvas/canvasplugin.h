@@ -34,10 +34,11 @@ class CanvasPlugin : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    virtual void stop() override;
 
 private:
     CanvasManager *proxy = nullptr;
+
 private:
     DPF_EVENT_NAMESPACE(DDP_CANVAS_NAMESPACE)
     // CanvasManager begin

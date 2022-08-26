@@ -67,7 +67,6 @@ public:
  */
 
 class Plugin;
-class PluginContext;
 
 /*!
  * \brief The PluginMetaObject class
@@ -97,6 +96,8 @@ public:
     PluginMetaObject();
     PluginMetaObject(const PluginMetaObject &meta);
     PluginMetaObject &operator=(const PluginMetaObject &meta);
+
+    bool isVirtual() const;
     QString fileName() const;
     QString iid() const;
     QString name() const;

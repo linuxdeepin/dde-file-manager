@@ -30,6 +30,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <DApplicationSettings>
+#include <DSysInfo>
 #include <QIcon>
 #include <QDir>
 #include <QTextCodec>
@@ -94,11 +95,7 @@ static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
 
-    // set plugin iid from qt style
-    DPF_NAMESPACE::LifeCycle::addPluginIID(kFmPluginInterface);
-    DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
-
-    QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
+    const QString &&pluginsDir { qApp->applicationDirPath() + "/../../plugins" };
     QStringList pluginsDirs;
     if (!QDir(pluginsDir).exists()) {
         qInfo() << QString("Path does not exist, use path : %1").arg(DFM_PLUGIN_COMMON_CORE_DIR);
@@ -113,7 +110,10 @@ static bool pluginsLoad()
     }
 
     qDebug() << "using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::setPluginPaths(pluginsDirs);
+    if (DTK_CORE_NAMESPACE::DSysInfo::isCommunityEdition())   // TODO(zhangs): use config
+        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, { "dfmplugin-vault" });
+    else
+        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

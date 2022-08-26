@@ -66,11 +66,6 @@ bool TitleBar::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag TitleBar::stop()
-{
-    return kSync;
-}
-
 void TitleBar::onWindowCreated(quint64 windId)
 {
     GlobalPrivate::kTitleBar = new TitleBarWidget;

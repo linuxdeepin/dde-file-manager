@@ -44,9 +44,8 @@ bool CanvasPlugin::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag CanvasPlugin::stop()
+void CanvasPlugin::stop()
 {
     delete proxy;
     proxy = nullptr;
-    return kSync;
 }

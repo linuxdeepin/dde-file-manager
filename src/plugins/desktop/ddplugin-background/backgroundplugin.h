@@ -35,7 +35,7 @@ class BackgroundPlugin : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    virtual void stop() override;
 
 private:
     BackgroundManager *backgroundManager = nullptr;
@@ -43,4 +43,4 @@ private:
 
 DDP_BACKGROUND_END_NAMESPACE
 
-#endif // BACKGROUNDPLUGIN_H
+#endif   // BACKGROUNDPLUGIN_H
