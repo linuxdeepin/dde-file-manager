@@ -28,6 +28,8 @@
 #include "stubext.h"
 
 #include <gtest/gtest.h>
+#include <DApplication>
+
 #include <QMenu>
 
 using namespace testing;
@@ -50,6 +52,26 @@ public:
 
     stub_ext::StubExt stub;
 };
+
+TEST_F(CollectionViewPrivateTest, helpAction) {
+
+    using namespace Dtk::Widget;
+
+    typedef void (*fptr)(DApplication*);
+    fptr utHandleHelp = (fptr)((void(DApplication::*)())&DApplication::handleHelpAction);
+
+    bool isCall = false;
+    stub.set_lamda(utHandleHelp, [&] () {
+        isCall = true;
+    });
+
+    EXPECT_FALSE(isCall);
+
+    QString testUuid("testUuid");
+    CollectionView view(testUuid, nullptr);
+    view.d->helpAction();
+    EXPECT_TRUE(isCall);
+}
 
 TEST_F(CollectionViewPrivateTest, onIconSizeChanged) {
 

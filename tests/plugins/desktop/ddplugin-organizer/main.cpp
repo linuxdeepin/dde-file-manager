@@ -21,11 +21,13 @@
 
 #include <gtest/gtest.h>
 #include <sanitizer/asan_interface.h>
-#include <QApplication>
+#include <DApplication>
+
+using namespace Dtk::Widget;
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    DApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);
 

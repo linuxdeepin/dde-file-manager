@@ -67,6 +67,7 @@ public:
     void handleMoveMimeData(QDropEvent *event, const QUrl &url);
     bool drop(QDropEvent *event);
 
+    void helpAction();
     void openFiles();
     void moveToTrash();
     void showMenu();

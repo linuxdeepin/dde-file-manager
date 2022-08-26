@@ -50,7 +50,17 @@ FileOperatorPrivate::FileOperatorPrivate(FileOperator *qq)
 
 void FileOperatorPrivate::callBackTouchFile(const QUrl &target, const QVariantMap &customData)
 {
-    // todo(wangcl) 右键菜单新建的回调响应流程
+    /*
+     * 1.在自动集合模式下，无需关注该流程。即菜单响应不会被拦截，直接由canvas插件响应，
+     *   被新建的文件根据需求，将直接被分类器分配到对应的集合中，并置顶显示。
+     *
+     * 2.在自定义集合模式下，需要拦截新建菜单的响应，调用FileOperator::touchFile和
+     *   FileOperator::touchFolder（待添加的函数，具体实现参考canvas插件中的FileOperatorProxy类）
+     *   ，以在本回调函数中记录底层返回的即将新建的文件名称。记录之后，在真正的文件被创建时，
+     *   集合才能第一时间从canvas中过滤出该文件，防止该文件被首先显示到canvas中。
+     *   另外，此场景新建文件的位置，是置顶显示还是鼠标最近的可用位置需要与产品确认。
+     *
+    */
 }
 
 void FileOperatorPrivate::callBackPasteFiles(const JobInfoPointer info)
@@ -153,7 +163,14 @@ void FileOperator::pasteFiles(const CollectionView *view)
 
 void FileOperator::pasteFiles(const CollectionView *view, const QPoint pos)
 {
-    // todo 自定义集合，需要传递位置信息
+    /*
+     * 1.文件粘贴与通过右键菜单新建文件存在相似的逻辑，即自动整理模式下，
+     *   直接由canvas插件响应，真实文件创建时，由分类器直接分配到对应的集合中即可，
+     *   该功能由FileOperator::pasteFiles(const CollectionView *view)函数完成。
+     *
+     * 2.在自定义整理模式下，参考FileOperator::dropFilesToCollection中的备注信息。
+     *
+    */
 }
 
 void FileOperator::openFiles(const CollectionView *view)

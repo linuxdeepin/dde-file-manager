@@ -518,6 +518,20 @@ bool CollectionViewPrivate::drop(QDropEvent *event)
     return true;
 }
 
+void CollectionViewPrivate::helpAction()
+{
+    class PublicApplication : public DApplication
+    {
+    public:
+        using DApplication::handleHelpAction;
+    };
+
+    QString appName = qApp->applicationName();
+    qApp->setApplicationName("dde");
+    reinterpret_cast<PublicApplication *>(DApplication::instance())->handleHelpAction();
+    qApp->setApplicationName(appName);
+}
+
 void CollectionViewPrivate::openFiles()
 {
     FileOperatorIns->openFiles(q);
@@ -1632,7 +1646,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
     case Qt::NoModifier:
         switch (event->key()) {
         case Qt::Key_F1: {
-            // todo:help?
+            d->helpAction();
             return;
         }
         case Qt::Key_Escape: {
