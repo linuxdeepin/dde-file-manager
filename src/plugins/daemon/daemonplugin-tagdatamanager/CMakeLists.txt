@@ -22,12 +22,14 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 
 find_package(Qt5 COMPONENTS
     DBus
+    Sql
     REQUIRED
 )
 
 target_link_libraries(${PROJECT_NAME}
     DFM::framework
     Qt5::DBus
+    Qt5::Sql
 )
 
 #install library file
