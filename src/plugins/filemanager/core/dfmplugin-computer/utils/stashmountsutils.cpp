@@ -71,7 +71,7 @@ QMap<QString, QString> StashMountsUtils::stashedMounts()
 {
     QMap<QString, QString> ret;
 
-    QStringList keys = cfgSettings()->keys(StashedMountsKeys::kJsonGroup).toList();
+    QStringList keys = cfgSettings()->keys(StashedMountsKeys::kJsonGroup).values();
     for (const auto &key : keys) {
         if (!key.startsWith(Global::Scheme::kSmb)) {   // old v1 version, which's key is start with '/run/user...'
             QMap<QString, QVariant> vals = cfgSettings()->value(StashedMountsKeys::kJsonGroup, key).toMap();

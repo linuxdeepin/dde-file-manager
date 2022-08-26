@@ -401,6 +401,9 @@ void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
 
 void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
+    if (!info)
+        return;
+
     // additem to sidebar
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool() || info->suffix() == SuffixInfo::kProtocol;
     if (ComputerUtils::shouldSystemPartitionHide() && info->suffix() == SuffixInfo::kBlock && !removable)
