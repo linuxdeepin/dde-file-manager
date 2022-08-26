@@ -40,7 +40,7 @@ class QLabel;
 class QComboBox;
 QT_END_NAMESPACE
 
-using FilterCallback = std::function<void(DFMBASE_NAMESPACE::AbstractFileInfo *info, QVariant data)>;
+using FilterCallback = std::function<bool(DFMBASE_NAMESPACE::AbstractFileInfo *info, QVariant data)>;
 
 namespace dfmplugin_search {
 
