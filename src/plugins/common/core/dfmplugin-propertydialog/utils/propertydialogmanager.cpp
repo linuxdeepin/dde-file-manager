@@ -88,11 +88,14 @@ void PropertyDialogManager::unregisterCustomView(const QString &scheme)
 
 QWidget *PropertyDialogManager::createCustomView(const QUrl &url)
 {
-    auto &&scheme = url.scheme();
-    if (!viewCreateFunctionHash.contains(scheme))
-        return nullptr;
-
-    return viewCreateFunctionHash[scheme](url);
+    for (auto creator : viewCreateFunctionHash.values()) {
+        if (creator) {
+            auto wid = creator(url);
+            if (wid)
+                return wid;
+        }
+    }
+    return nullptr;
 }
 
 bool PropertyDialogManager::registerBasicViewExtension(BasicViewFieldFunc func, const QString &scheme)
