@@ -389,8 +389,8 @@ bool FileUtils::isCdRomDevice(const QUrl &url)
 bool FileUtils::trashIsEmpty()
 {
     const QString &path = StandardPaths::location(StandardPaths::kTrashFilesPath);
-    DecoratorFileInfo fileInfo(path);
-    if (!fileInfo.exists())
+    DecoratorFile file(path);
+    if (!file.exists())
         return true;
 
     DecoratorFileEnumerator enumerator(path, QStringList(),
@@ -1104,7 +1104,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
 
 QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir, std::function<bool(const QString &)> functionCheck)
 {
-    if (!targetDir || ! DecoratorFile(targetDir->url()).exists()) {
+    if (!targetDir || !DecoratorFile(targetDir->url()).exists()) {
         return QString();
     }
 
