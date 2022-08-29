@@ -54,7 +54,9 @@ void SideBarManager::runContextMenu(SideBarItem *item, quint64 windowId, const Q
     if (!SideBarHelper::contextMenuEnabled)
         return;
 
-    if (!item)
+    SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
+
+    if (!item || separatorItem)
         return;
 
     auto url = item->url();
