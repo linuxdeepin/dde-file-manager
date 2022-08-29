@@ -447,6 +447,9 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         if (item->url().isTaggedFile() && !fileInfo->canTag()) {
             return Qt::IgnoreAction;
         }
+
+        if(item->url().isSMBFile())
+            return Qt::IgnoreAction;
     }
 
     if (!info || !info->canDrop()) {

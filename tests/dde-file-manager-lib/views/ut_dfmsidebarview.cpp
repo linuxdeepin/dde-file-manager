@@ -63,6 +63,17 @@ namespace  {
     };
 }
 
+TEST_F(TestDFMSideBarView, ignoreSmbDropEvent)
+{
+    QMimeData data;
+    DFMSideBarItem *item = DFMSideBarItem::createSeparatorItem(QString("smb://1.2.3.4"));
+    item->setUrl(DUrl("smb://1.2.3.4"));
+    m_view->m_urlsForDragEvent.append(DUrl("smb://x.x.x.x"));
+    Qt::DropAction result = m_view->canDropMimeData(item, &data, Qt::IgnoreAction);
+    EXPECT_TRUE(result == Qt::IgnoreAction);
+    delete item;
+}
+
 //TEST_F(TestDFMSideBarView, get_previous_index)
 //{
 //    ASSERT_NE(m_view, nullptr);
