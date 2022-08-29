@@ -161,7 +161,10 @@ void BasicWidget::basicExpand(const QUrl &url)
             row++;
         }
     }
-    glayout->addWidget(tempFrame, row, 0, 1, 6);
+    if (url.isValid() && url.path().split("/", QString::SkipEmptyParts).last().startsWith("."))
+        tempFrame->hide();
+    else
+        glayout->addWidget(tempFrame, row, 0, 1, 6);
     glayout->setColumnStretch(0, 1);
 
     frameMain->setLayout(glayout);
