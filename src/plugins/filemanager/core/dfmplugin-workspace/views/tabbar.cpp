@@ -29,6 +29,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -207,6 +208,12 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
                     redirectToWhenDelete.setScheme(Global::Scheme::kFile);
                     redirectToWhenDelete.setPath(localPath);
                 }
+
+                {   // this is for reset the rootUrl of FileView to make sure that when device remounted the files can be iterated
+                    QUrl &&home { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kHomePath)) };
+                    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, home);
+                }
+
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);
             } else {
                 removeTab(i);

@@ -61,10 +61,7 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QString &path)
 {
     if (path.isEmpty())
         return;
-    QUrl u;
-    u.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
-    u.setPath(path);
-    cdTo(sender, u);
+    cdTo(sender, ComputerUtils::makeLocalUrl(path));
 }
 
 void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
@@ -81,10 +78,9 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
 
 void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
 {
-    QUrl u;
-    u.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
-    u.setPath(path);
-    cdTo(winId, u);
+    if (path.isEmpty())
+        return;
+    cdTo(winId, ComputerUtils::makeLocalUrl(path));
 }
 
 void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url)
