@@ -22,8 +22,6 @@
 #define ACTION_DEFINES_H
 
 namespace dfmplugin_menu {
-inline constexpr char kActionID[] = "actionID";
-
 namespace ActionID {
 // NewCreateMenu
 inline constexpr char kNewFolder[] = "new-folder";

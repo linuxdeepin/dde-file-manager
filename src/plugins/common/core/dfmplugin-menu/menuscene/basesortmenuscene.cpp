@@ -24,6 +24,8 @@
 
 #include "menuscene/action_defines.h"
 
+#include "dfm-base/dfm_menu_defines.h"
+
 #include "plugins/common/dfmplugin-tag/dfmplugin_tag_global.h"
 #include "plugins/filemanager/core/dfmplugin-trash/dfmplugin_trash_global.h"
 #include "plugins/filemanager/core/dfmplugin-workspace/menus/workspacemenu_defines.h"
@@ -70,9 +72,9 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                 actsNew << actionsMap.value(id);
                 actionsMap.remove(id);
             }
-            if (id == dfmplugin_menu::ActionID::kSeparator && !actsNew.isEmpty() && actsNew.last()->property(kActionID).toString() != dfmplugin_menu::ActionID::kSeparator) {
+            if (id == dfmplugin_menu::ActionID::kSeparator && !actsNew.isEmpty() && actsNew.last()->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString() != dfmplugin_menu::ActionID::kSeparator) {
                 QAction *separatorAct = new QAction(menu);
-                separatorAct->setProperty(kActionID, dfmplugin_menu::ActionID::kSeparator);
+                separatorAct->setProperty(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kSeparator);
                 separatorAct->setSeparator(true);
                 actsNew << separatorAct;
             }
@@ -93,7 +95,7 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                             actionParent = new QAction(menu);
                             actionParent->setText(tr("%1").arg(predicateName.value(parentId)));
                             predicateAction[parentId] = actionParent;
-                            actionParent->setProperty(kActionID, parentId);
+                            actionParent->setProperty(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID, parentId);
                         }
                         if (nullptr == menuParent) {
                             menuParent = new QMenu(menu);
@@ -109,7 +111,7 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                         if (nullptr == actionParent) {
                             actionParent = new QAction(tr("%1").arg(predicateName.value(parentId)), menu);
                             predicateAction[parentId] = actionParent;
-                            actionParent->setProperty(kActionID, parentId);
+                            actionParent->setProperty(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID, parentId);
                         }
                         if (nullptr == menuParent) {
                             menuParent = new QMenu(menu);
@@ -117,7 +119,7 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                         }
                         for (QAction *action : list) {
                             menuParent->addAction(action);
-                            actionsMap.remove(action->property(kActionID).toString());
+                            actionsMap.remove(action->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString());
                         }
                     }
                 }
@@ -294,14 +296,14 @@ QList<QAction *> BaseSortMenuScenePrivate::findActionByKey(const QMap<QString, Q
 
 void BaseSortMenuScenePrivate::insertActToMap(QAction *action, QMap<QString, QAction *> &map)
 {
-    if (action->property(kActionID).toString() == dfmplugin_menu::ActionID::kSeparator)
+    if (action->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString() == dfmplugin_menu::ActionID::kSeparator)
         return;
     if (!action->menu()) {
-        map.insert(action->property(kActionID).toString(), action);
+        map.insert(action->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString(), action);
     } else {
         QList<QAction *> acts = action->menu()->actions();
         action->setMenu(nullptr);
-        map.insert(action->property(kActionID).toString(), action);
+        map.insert(action->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString(), action);
         for (QAction *action : acts) {
             insertActToMap(action, map);
         }
@@ -311,7 +313,7 @@ void BaseSortMenuScenePrivate::insertActToMap(QAction *action, QMap<QString, QAc
 BaseSortMenuScene::BaseSortMenuScene(QObject *parent)
     : AbstractMenuScene(parent), d(new BaseSortMenuScenePrivate(this))
 {
-    d->predicateName[ActionID::kSendTo] = tr("Send to");
+    d->predicateName[ActionID::kSendTo] = tr("Send to");   // virtual action, when has secend action, need generate this action
 }
 
 BaseSortMenuScene::~BaseSortMenuScene()

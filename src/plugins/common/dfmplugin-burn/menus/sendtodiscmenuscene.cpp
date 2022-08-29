@@ -214,6 +214,8 @@ bool SendToDiscMenuScene::create(QMenu *parent)
 
 void SendToDiscMenuScene::updateState(QMenu *parent)
 {
+    updateStageAction(parent);
+
     return AbstractMenuScene::updateState(parent);
 }
 
@@ -247,4 +249,53 @@ AbstractMenuScene *SendToDiscMenuScene::scene(QAction *action) const
         return const_cast<SendToDiscMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
+}
+
+void SendToDiscMenuScene::updateStageAction(QMenu *parent)
+{
+    auto actions { parent->actions() };
+
+    QAction *sendToAct { nullptr };
+    QAction *stageAct { nullptr };
+
+    for (auto act : actions) {
+        QString &&id { act->property(ActionPropertyKey::kActionID).toString() };
+        if (id == ActionId::kStageKey)
+            stageAct = act;
+        if (id == "send-to")
+            sendToAct = act;
+    }
+
+    if (!stageAct)
+        return;
+
+    // hide action if contains dde desktop filef
+    if (d->isDDEDesktopFileIncluded) {
+        stageAct->setVisible(false);
+        return;
+    }
+
+    // disbale action if dev working
+    if (d->destDeviceDataGroup.size() == 1 && d->disbaleWoringDevAction(stageAct))
+        return;
+    if (d->destDeviceDataGroup.size() > 1 && stageAct->menu()) {
+        auto &&actions { stageAct->menu()->actions() };
+        for (int i = 0; i != actions.size(); ++i) {
+            if (d->disbaleWoringDevAction(actions[i]))
+                return;
+        }
+    }
+
+    // disable action in self disc
+    if (d->disableStage) {
+        stageAct->setEnabled(false);
+    }
+
+    if (!BurnHelper::isBurnEnabled()) {
+        std::for_each(d->predicateAction.begin(), d->predicateAction.end(), [](QAction *act) {
+            const auto &&id = act->property(ActionPropertyKey::kActionID).toString();
+            if (id.startsWith(ActionId::kSendToOptical) || id.startsWith(ActionId::kStageKey) || id.startsWith(ActionId::kStagePrex))
+                act->setEnabled(false);
+        });
+    }
 }

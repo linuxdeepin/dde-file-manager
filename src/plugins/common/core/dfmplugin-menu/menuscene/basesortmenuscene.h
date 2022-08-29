@@ -27,7 +27,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class BaseSortMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -58,5 +58,5 @@ private:
     QScopedPointer<BaseSortMenuScenePrivate> d;
 };
 
-DPMENU_END_NAMESPACE
+}
 #endif   // BASESORTMENUSCENE_H
