@@ -572,7 +572,7 @@ void FileViewModel::traversCurrDir()
     d->traversalThread = new TraversalDirThread(
             rootUrl(), QStringList(),
             QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
-            QDirIterator::NoIteratorFlags);
+            QDirIterator::FollowSymlinks);
 
     d->traversalThread->setParent(this);
 
