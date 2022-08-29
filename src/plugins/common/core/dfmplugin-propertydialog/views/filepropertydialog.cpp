@@ -95,6 +95,7 @@ void FilePropertyDialog::createHeadUI(const QUrl &url)
 
     editStackWidget = new EditStackedWidget(this);
     editStackWidget->selectFile(url);
+    connect(editStackWidget, &EditStackedWidget::selectUrlRenamed, this, &FilePropertyDialog::onSelectUrlRenamed);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(10, 10, 10, 10);
@@ -204,6 +205,12 @@ void FilePropertyDialog::addExtendedControl(QWidget *widget)
 void FilePropertyDialog::closeDialog()
 {
     emit closed(currentFileUrl);
+}
+
+void FilePropertyDialog::onSelectUrlRenamed(const QUrl &url)
+{
+    if (permissionManagerWidget)
+        permissionManagerWidget->updateFileUrl(url);
 }
 
 void FilePropertyDialog::mousePressEvent(QMouseEvent *event)

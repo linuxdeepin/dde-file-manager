@@ -77,6 +77,8 @@ public slots:
 
     void closeDialog();
 
+    void onSelectUrlRenamed(const QUrl &url);
+
 signals:
     void closed(const QUrl url);
 

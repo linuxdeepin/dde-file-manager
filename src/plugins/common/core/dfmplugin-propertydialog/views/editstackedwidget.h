@@ -97,6 +97,9 @@ public slots:
 
     void mouseProcess(QMouseEvent *event);
 
+Q_SIGNALS:
+    void selectUrlRenamed(const QUrl &url);
+
 private:
     NameTextEdit *fileNameEdit { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *nameEditIcon { nullptr };

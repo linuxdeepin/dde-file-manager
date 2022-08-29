@@ -47,6 +47,8 @@ public:
 public:
     void selectFileUrl(const QUrl &url);
 
+    void updateFileUrl(const QUrl &url);
+
 private:
     void initUI();
 

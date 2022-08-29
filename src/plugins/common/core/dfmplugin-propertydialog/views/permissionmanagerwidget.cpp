@@ -128,6 +128,11 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     connect(otherComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
 }
 
+void PermissionManagerWidget::updateFileUrl(const QUrl &url)
+{
+    selectUrl = url;
+}
+
 void PermissionManagerWidget::initUI()
 {
     setExpandedSeparatorVisible(false);
