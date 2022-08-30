@@ -85,8 +85,11 @@ Q_LOGGING_CATEGORY(fileJob, "file.job", QtInfoMsg)
 #define MAX_BUFFER_LEN 1024 * 1024 * 1
 #define BIG_FILE_SIZE 500 * 1024 * 1024
 #define THREAD_SLEEP_TIME 200
+#define COPY_FILE_STORE_NUM 2000
 QQueue<DFileCopyMoveJob*> DFileCopyMoveJobPrivate::CopyLargeFileOnDiskQueue;
 QMutex DFileCopyMoveJobPrivate::CopyLargeFileOnDiskMutex;
+DUrlList DFileCopyMoveJobPrivate::copyingFiles;
+QMutex DFileCopyMoveJobPrivate::copyingFilesMutex;
 
 static long qt_gettid()
 {
@@ -2394,7 +2397,11 @@ bool DFileCopyMoveJobPrivate::doThreadPoolCopyFile()
     const DAbstractFileInfoPointer fromInfo = threadInfo->fromInfo;
     const DAbstractFileInfoPointer toInfo = threadInfo->toInfo;
     const QSharedPointer<DFileHandler> handler = threadInfo->handler;
+
+    saveCopyFileUrl(toInfo->fileUrl());
     bool ok = doCopySmallFilesOnDisk(fromInfo, toInfo, threadInfo->fromDevice, threadInfo->toDevice, threadInfo->handler);
+    removeCopyFileUrl(toInfo->fileUrl());
+
     removeCurrentDevice(fromInfo->fileUrl());
     removeCurrentDevice(toInfo->fileUrl());
     if (!ok)
@@ -2764,7 +2771,9 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, 
     beginJob(JobInfo::Copy, fromInfo->fileUrl(), toInfo->fileUrl());
     bool ok = true;
     if (m_refineStat == DFileCopyMoveJob::NoRefine) {
+         saveCopyFileUrl(toInfo->fileUrl());
          ok = doCopyFile(fromInfo, toInfo, handler, blockSize);
+         removeCopyFileUrl(toInfo->fileUrl());
          //fix bug 62202 不执行优化拷贝结束后直接返回
          removeCurrentDevice(fromInfo->fileUrl());
          removeCurrentDevice(toInfo->fileUrl());
@@ -2779,7 +2788,9 @@ bool DFileCopyMoveJobPrivate::copyFile(const DAbstractFileInfoPointer fromInfo, 
             while (m_pool.activeThreadCount() > 0) {
                 QThread::msleep(10);
             }
+            saveCopyFileUrl(toInfo->fileUrl());
             ok = doCopyFile(fromInfo,toInfo,handler,blockSize);
+            removeCopyFileUrl(toInfo->fileUrl());
         }
         //1.判断源文件是本地，目标文件也是本地执行读写线程分离处理
         //2.判断源文件是本地，目标文件是（除光盘外的）块设备，
@@ -3164,6 +3175,7 @@ void DFileCopyMoveJobPrivate::releaseCopyInfo(const DFileCopyMoveJobPrivate::Fil
     }
     for (auto fd : m_writeOpenFd) {
         close(fd);
+        removeCopyFileUrl(m_writeOpenFd.key(fd));
     }
     m_writeOpenFd.clear();
 }
@@ -3229,6 +3241,7 @@ bool DFileCopyMoveJobPrivate::writeToFileByQueue()
                 toFd = open(path.c_str(), m_openFlag, 0777);
                 if (toFd > -1) {
                     m_writeOpenFd.insert(info->toinfo->fileUrl(), toFd);
+                    saveCopyFileUrl(info->toinfo->fileUrl());
                     action = DFileCopyMoveJob::NoAction;
                 } else {
                     qCDebug(fileJob()) << "open error:" << info->toinfo->fileUrl() << QThread::currentThreadId();
@@ -3440,6 +3453,7 @@ write_data: {
             syncfs(toFd);
 
             close(toFd);
+            removeCopyFileUrl(info->toinfo->fileUrl());
             m_writeOpenFd.remove(info->toinfo->fileUrl());
             QSharedPointer<DFileHandler> handler = info->handler ? info->handler :
                                                    QSharedPointer<DFileHandler>(DFileService::instance()->createFileHandler(nullptr, info->frominfo->fileUrl()));
@@ -3474,6 +3488,7 @@ void DFileCopyMoveJobPrivate::cancelReadFileDealWriteThread()
     QMutexLocker lk(&m_copyInfoQueueMutex);
     for (auto fd : m_writeOpenFd) {
         close(fd);
+        removeCopyFileUrl(m_writeOpenFd.key(fd));
     }
     m_writeOpenFd.clear();
     while (!m_writeFileQueue.isEmpty()) {
@@ -4039,6 +4054,23 @@ void DFileCopyMoveJobPrivate::initRefineState()
     return;
 }
 
+void DFileCopyMoveJobPrivate::saveCopyFileUrl(const DUrl &url)
+{
+    QMutexLocker lk(&copyingFilesMutex);
+
+    while (copyingFiles.size() > COPY_FILE_STORE_NUM) {
+        copyingFiles.removeFirst();
+    }
+    if (!copyingFiles.contains(url))
+        copyingFiles.append(url);
+}
+
+void DFileCopyMoveJobPrivate::removeCopyFileUrl(const DUrl &url)
+{
+    QMutexLocker lk(&copyingFilesMutex);
+    copyingFiles.removeOne(url);
+}
+
 //! 用于保存回收站剪切出去的文件在回收站的原始路径
 void DFileCopyMoveJob::setCurTrashData(QVariant fileNameList)
 {
@@ -4103,6 +4135,12 @@ DFileCopyMoveJob::Actions DFileCopyMoveJob::supportActions(DFileCopyMoveJob::Err
     }
 
     return CancelAction;
+}
+
+bool DFileCopyMoveJob::isCopyingFile(const DUrl &url)
+{
+    QMutexLocker lk(&DFileCopyMoveJobPrivate::copyingFilesMutex);
+    return DFileCopyMoveJobPrivate::copyingFiles.contains(url);
 }
 
 void DFileCopyMoveJob::start(const DUrlList &sourceUrls, const DUrl &targetUrl)
