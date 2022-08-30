@@ -7,23 +7,20 @@ set(ModelPath ${PluginPath}/treemodels/)
 set(ViewPath ${PluginPath}/treeviews/)
 set(EventPath ${PluginPath}/events/)
 set(UtilsPath ${PluginPath}/utils/)
-include_directories(${PluginPath}/treeviews)
-include_directories(${PluginPath}/treemodels)
+include_directories(${ViewPath})
+include_directories(${ModelPath})
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE
     FILES_MATCHING PATTERN "*.cpp" "*.h")
 #file(GLOB_RECURSE SRC_FILES
 #    FILES_MATCHING PATTERN "${PluginPath}/*.cpp" "${PluginPath}/*.h")
 file(GLOB SRC_FILES
-    FILES_MATCHING PATTERN "${PluginPath}/sidebar.h" "${PluginPath}/sidebar.cpp"
+    FILES_MATCHING PATTERN "${PluginPath}/*.h" "${PluginPath}/*.cpp"
     FILES_MATCHING PATTERN "${UtilsPath}/*.h" "${UtilsPath}/*.cpp"
     FILES_MATCHING PATTERN "${EventPath}/*.h" "${EventPath}/*.cpp"
-    FILES_MATCHING PATTERN "${ModelPath}/sidebarmodel.h" "${ModelPath}/sidebarmodel.cpp"
-    FILES_MATCHING PATTERN "${ViewPath}/sidebarview.h" "${ViewPath}/sidebarview.cpp"
-    FILES_MATCHING PATTERN "${ViewPath}/sidebaritem.h" "${ViewPath}/sidebaritem.cpp"
-    FILES_MATCHING PATTERN "${ViewPath}/sidebaritemdelegate.h" "${ViewPath}/sidebaritemdelegate.cpp"
-    FILES_MATCHING PATTERN "${ViewPath}/sidebarwidget.h" "${ViewPath}/sidebarwidget.cpp"
-    FILES_MATCHING PATTERN "${ViewPath}/private/sidebarview_p.h"
+    FILES_MATCHING PATTERN "${ModelPath}/*.h" "${ModelPath}/*.cpp"
+    FILES_MATCHING PATTERN "${ViewPath}/*.h" "${ViewPath}/*.cpp"
+    FILES_MATCHING PATTERN "${ViewPath}/private/*.h"
     )
 
 add_executable(${PROJECT_NAME}

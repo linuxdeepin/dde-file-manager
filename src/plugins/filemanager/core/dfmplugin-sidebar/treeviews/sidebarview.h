@@ -50,6 +50,7 @@ public:
     void saveStateWhenClose();
     void setCurrentUrl(const QUrl &sidebarUrl);
     QUrl currentUrl() const;
+    QModelIndex findItemIndex(const QUrl &url) const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

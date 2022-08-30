@@ -22,6 +22,7 @@
 */
 
 #include "stubext.h"
+#include "plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarview.h"
 #include "plugins/filemanager/core/dfmplugin-sidebar/treemodels/sidebarmodel.h"
 #include "plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebaritem.h"
 
@@ -32,7 +33,7 @@
 DFMBASE_USE_NAMESPACE
 DPSIDEBAR_USE_NAMESPACE
 
-class UT_SideBarModel : public testing::Test
+class UT_SidebarView : public testing::Test
 {
 protected:
     virtual void SetUp() override
@@ -48,6 +49,9 @@ protected:
 
         model->appendRow(group1_item1);
         model->appendRow(group1_item2);   //two items under group1
+
+        view = new SideBarView;
+        view->setModel(model);
     }
     virtual void TearDown() override
     {
@@ -56,6 +60,8 @@ protected:
             model->clear();
             delete model;
         }
+        if (view)
+            delete view;
     }
     SideBarItem *createGroupItem(const QString &group)
     {
@@ -76,41 +82,17 @@ protected:
         return item;
     }
     SideBarModel *model = nullptr;
+    SideBarView *view = nullptr;
 
 private:
     stub_ext::StubExt stub;
 };
 
-TEST_F(UT_SideBarModel, AppendGroupItem)
+TEST_F(UT_SidebarView, FindItemIndex)
 {
-    SideBarItem *item = createGroupItem(QString("group3"));
-    EXPECT_TRUE(model->rowCount() == 2);
-    model->appendRow(item);
-    EXPECT_TRUE(model->rowCount() == 3);
-}
+    QModelIndex index1 = view->findItemIndex(QUrl("test/url3"));
+    EXPECT_TRUE(index1.row() == 0);
 
-TEST_F(UT_SideBarModel, AppendSubItem)
-{
-    SideBarItem *item = createSubItem("item", QUrl("test/url6"), QString("group1"));
-    EXPECT_TRUE(model->rowCount(model->index(0, 0)) == 2);
-    model->appendRow(item);   //item is append under group1
-    EXPECT_TRUE(model->rowCount(model->index(0, 0)) == 3);
-}
-
-TEST_F(UT_SideBarModel, InsertSubRow)
-{
-    SideBarItem *item = createSubItem("item123456", QUrl("test/url6"), QString("group1"));
-    EXPECT_TRUE(model->rowCount(model->index(0, 0)) == 2);
-
-    model->insertRow(1, item);   //item would be insert under group1 and before the second item.
-    EXPECT_TRUE(model->rowCount(model->index(0, 0)) == 3);
-    EXPECT_TRUE(model->index(1, 0, model->index(0, 0)).data().toString() == "item123456");
-}
-
-TEST_F(UT_SideBarModel, RemoveRowWithUrl)
-{
-    EXPECT_TRUE(model->rowCount(model->index(0, 0)) == 2);
-    bool re = model->removeRow(QUrl("test/url3"));
-    EXPECT_TRUE(re);
-    EXPECT_TRUE(model->rowCount(model->index(0, 0)) == 1);
+    QModelIndex index2 = view->findItemIndex(QUrl("test/url4"));
+    EXPECT_TRUE(index2.row() == 1);
 }

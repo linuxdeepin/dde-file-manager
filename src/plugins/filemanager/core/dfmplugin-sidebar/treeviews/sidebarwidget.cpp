@@ -62,22 +62,6 @@ SideBarWidget::SideBarWidget(QFrame *parent)
 void SideBarWidget::setCurrentUrl(const QUrl &url)
 {
     sidebarView->setCurrentUrl(url);
-    const QModelIndex &index = findItemIndex(url);
-    if (!index.isValid() || index.row() < 0 || index.column() < 0) {
-        sidebarView->clearSelection();
-        return;
-    }
-
-    SideBarItem *currentItem = kSidebarModelIns->itemFromIndex(index);
-    if (currentItem && currentItem->parent()) {
-        SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(currentItem->parent());
-        //If the current item's group is not expanded, do not set current index, otherwise
-        //the unexpanded group would be expaned again.
-        if (groupItem && !groupItem->isExpanded())
-            return;
-    }
-
-    sidebarView->setCurrentIndex(index);
 }
 
 QUrl SideBarWidget::currentUrl() const
@@ -107,6 +91,7 @@ int SideBarWidget::addItem(SideBarItem *item)
 
     if (hideAddedItem)
         setItemVisiable(item->url(), false);
+
     return r;
 }
 
@@ -122,6 +107,7 @@ bool SideBarWidget::insertItem(const int index, SideBarItem *item)
 
     if (hideInsertedItem)
         setItemVisiable(item->url(), false);
+
     return r;
 }
 
@@ -167,25 +153,7 @@ int SideBarWidget::findItem(const QUrl &url) const
 //but do not effect our function.
 QModelIndex SideBarWidget::findItemIndex(const QUrl &url) const
 {
-    int count = kSidebarModelIns->rowCount();
-    for (int i = 0; i < count; i++) {
-        SideBarItem *topItem = kSidebarModelIns->itemFromIndex(i);
-        SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(topItem);
-        if (groupItem) {
-            int childCount = groupItem->rowCount();
-            for (int j = 0; j < childCount; j++) {
-                QStandardItem *childItem = groupItem->child(j);
-                SideBarItem *item = dynamic_cast<SideBarItem *>(childItem);
-                if (!item)
-                    continue;
-                bool foundByCb = item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), url);
-                if (foundByCb || (item->url().scheme() == url.scheme() && item->url().path() == url.path()))
-                    return item->index();
-            }
-        }
-    }
-
-    return QModelIndex();
+    return sidebarView->findItemIndex(url);
 }
 
 void SideBarWidget::editItem(const QUrl &url)
@@ -245,6 +213,7 @@ QList<QUrl> SideBarWidget::findItems(const QString &group) const
                 break;
         }
     }
+
     return ret;
 }
 

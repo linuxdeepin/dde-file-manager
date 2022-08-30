@@ -250,15 +250,14 @@ void SideBarView::dropEvent(QDropEvent *event)
 
     if (isActionDone) {
         //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
-        QWidget *parentptr = parentWidget();
-        QWidget *curwindow = nullptr;
-        while (parentptr) {
-            curwindow = parentptr;
-            parentptr = parentptr->parentWidget();
+        QWidget *parentPtr = parentWidget();
+        QWidget *curWindow = nullptr;
+        while (parentPtr) {
+            curWindow = parentPtr;
+            parentPtr = parentPtr->parentWidget();
         }
-        if (curwindow) {
-            qApp->setActiveWindow(curwindow);
-        }
+        if (curWindow)
+            qApp->setActiveWindow(curWindow);
 
         event->accept();
     } else {
@@ -351,11 +350,57 @@ void SideBarView::saveStateWhenClose()
 void SideBarView::setCurrentUrl(const QUrl &url)
 {
     sidebarUrl = url;
+
+    const QModelIndex &index = findItemIndex(url);
+    if (!index.isValid() || index.row() < 0 || index.column() < 0) {
+        this->clearSelection();
+        return;
+    }
+    SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
+    if (!sidebarModel)
+        return;
+    SideBarItem *currentItem = sidebarModel->itemFromIndex(index);
+    if (currentItem && currentItem->parent()) {
+        SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(currentItem->parent());
+        //If the current item's group is not expanded, do not set current index, otherwise
+        //the unexpanded group would be expaned again.
+        if (groupItem && !groupItem->isExpanded())
+            return;
+    }
+
+    this->setCurrentIndex(index);
 }
 
 QUrl SideBarView::currentUrl() const
 {
     return sidebarUrl;
+}
+
+QModelIndex SideBarView::findItemIndex(const QUrl &url) const
+{
+    SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
+    if (!sidebarModel)
+        return QModelIndex();
+
+    int count = sidebarModel->rowCount();
+    for (int i = 0; i < count; i++) {
+        SideBarItem *topItem = sidebarModel->itemFromIndex(i);
+        SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(topItem);
+        if (groupItem) {
+            int childCount = groupItem->rowCount();
+            for (int j = 0; j < childCount; j++) {
+                QStandardItem *childItem = groupItem->child(j);
+                SideBarItem *item = dynamic_cast<SideBarItem *>(childItem);
+                if (!item)
+                    continue;
+                bool foundByCb = item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), url);
+                if (foundByCb || (item->url().scheme() == url.scheme() && item->url().path() == url.path()))
+                    return item->index();
+            }
+        }
+    }
+
+    return QModelIndex();
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
@@ -454,6 +499,7 @@ void SideBarView::updateSeparatorVisibleState()
                     temGroupExpandState = SideBarHelper::groupExpandRules();
                 else
                     temGroupExpandState = groupExpandState;
+
                 bool groupExpaned = temGroupExpandState.value(groupItem->group(), true).toBool();
                 groupItem->setExpanded(groupExpaned);
                 this->setExpanded(groupItem->index(), groupExpaned);
@@ -468,11 +514,11 @@ void SideBarView::updateSeparatorVisibleState()
                         break;
                     }
                 }
-                if (allChildIsHiden || childCount <= 0) {   //The top item dont have child item or they are hiden
+                if (allChildIsHiden || childCount <= 0)   //The top item dont have child item or they are hiden
                     this->setRowHidden(i, QModelIndex(), true);
-                } else {   //sub item
+                else   //sub item
                     this->setRowHidden(i, QModelIndex(), false);   //The other top be shown include its children
-                }
+
                 lastGroupName = item->group();
             }
         }
@@ -502,10 +548,11 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
         if (groupExpandState.isEmpty() && !gMap.isEmpty())
             groupExpandState = gMap;
 
-        groupExpandState[groupItem->group()] = expand;
-        if (expand) {
-            setCurrentUrl(sidebarUrl);   //When expand the group item, need to highlight the current item
-        }
+        if (groupExpandState.keys().contains(groupItem->group()))
+            groupExpandState[groupItem->group()] = expand;
+
+        if (expand)
+            setCurrentUrl(sidebarUrl);   //To make sure, when expand the group item, the current item is highlighted.
     }
 }
 

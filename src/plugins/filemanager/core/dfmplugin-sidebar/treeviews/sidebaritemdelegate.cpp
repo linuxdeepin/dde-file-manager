@@ -150,9 +150,9 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QString text = index.data().toString();
     qreal min = rect.width() * 0.6;
     qreal max = rect.width() * 0.7;
-    if (metricsLabel.width(text) > (isEjectable ? min : max)) {
+    if (metricsLabel.width(text) > (isEjectable ? min : max))
         text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? min : max));
-    }
+
     int rowHeight = rect.height();
     painter->drawText(QRectF(rect.x() + 22, rect.y() + 6, rect.width(), rowHeight), Qt::AlignLeft, text);
     painter->restore();
@@ -168,9 +168,8 @@ void SideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
 {
     Q_UNUSED(model);
     QByteArray n = editor->metaObject()->userProperty().name();
-    if (!n.isEmpty()) {
+    if (!n.isEmpty())
         Q_EMIT rename(index, editor->property(n).toString());
-    }
 
     return;
 }
@@ -228,9 +227,9 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
             QPoint pos = e->pos();
             if (e->button() == Qt::LeftButton && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
                 SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
-                if (sidebarView) {
+                if (sidebarView)
                     emit changeExpandState(index, !sidebarView->isExpanded(index));
-                }
+
                 event->accept();
                 return true;
             } else if (e->button() == Qt::LeftButton && ejectBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
