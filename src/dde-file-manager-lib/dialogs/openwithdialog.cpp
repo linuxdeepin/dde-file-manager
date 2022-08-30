@@ -262,7 +262,7 @@ void OpenWithDialog::initUI()
 
     main_layout->addWidget(m_scrollArea);
     main_layout->addLayout(bottom_layout);
-    main_layout->setContentsMargins(0, 35, 0, 10);
+    main_layout->setContentsMargins(0, 50, 0, 10);
 }
 
 void OpenWithDialog::initConnect()
