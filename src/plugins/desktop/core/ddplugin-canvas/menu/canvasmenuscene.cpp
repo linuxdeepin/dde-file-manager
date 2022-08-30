@@ -59,6 +59,8 @@ static const char *const kShareMenuSceneName = "ShareMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 static const char *const kExtendMenuSceneName = "ExtendMenu";
 static const char *const kOemMenuSceneName = "OemMenu";
+static const char *const kBookmarkSceneName = "BookmarkMenu";
+static const char *const kPorpertySceneName = "PropertyMenu";
 
 AbstractMenuScene *CanvasMenuCreator::create()
 {
@@ -69,9 +71,12 @@ CanvasMenuScenePrivate::CanvasMenuScenePrivate(CanvasMenuScene *qq)
     : AbstractMenuScenePrivate(qq), q(qq)
 {
     emptyDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenAsAdmin);
+    emptyDisableActions.insert(kPorpertySceneName, "property");
 
     normalDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInNewTab);
     normalDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInNewWindow);
+    normalDisableActions.insert(kBookmarkSceneName, "add-bookmark");
+    normalDisableActions.insert(kBookmarkSceneName, "remove-bookmark");
 }
 
 void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)

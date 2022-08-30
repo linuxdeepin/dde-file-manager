@@ -22,27 +22,18 @@
 #include "basesortmenuscene.h"
 #include "private/basesortmenuscene_p.h"
 
-#include "menuscene/action_defines.h"
-
-#include "dfm-base/dfm_menu_defines.h"
-
-#include "plugins/common/dfmplugin-tag/dfmplugin_tag_global.h"
-#include "plugins/filemanager/core/dfmplugin-trash/dfmplugin_trash_global.h"
-#include "plugins/filemanager/core/dfmplugin-workspace/menus/workspacemenu_defines.h"
-#include "plugins/desktop/core/ddplugin-canvas/menu/canvasmenu_defines.h"
-#include "plugins/filemanager/core/dfmplugin-recent/dfmplugin_recent_global.h"
-#include "plugins/common/dfmplugin-burn/dfmplugin_burn_global.h"
-#include "plugins/common/dfmplugin-dirshare/dfmplugin_dirshare_global.h"
-#include "plugins/common/dfmplugin-bookmark/dfmplugin_bookmark_global.h"
-#include "plugins/common/core/dfmplugin-propertydialog/dfmplugin_propertydialog_global.h"
-
 #include <QMenu>
-#include <QDebug>
 
 #include <mutex>
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+namespace ActionID {
+static constexpr char kActionID[] { "actionID" };
+static constexpr char kSeparatorLine[] { "separator-line" };
+static constexpr char kSendTo[] { "send-to" };
+}
 
 AbstractMenuScene *BaseSortMenuCreator::create()
 {
@@ -72,9 +63,9 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                 actsNew << actionsMap.value(id);
                 actionsMap.remove(id);
             }
-            if (id == dfmplugin_menu::ActionID::kSeparator && !actsNew.isEmpty() && actsNew.last()->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString() != dfmplugin_menu::ActionID::kSeparator) {
+            if (id == ActionID::kSeparatorLine && !actsNew.isEmpty() && actsNew.last()->property(ActionID::kActionID).toString() != ActionID::kSeparatorLine) {
                 QAction *separatorAct = new QAction(menu);
-                separatorAct->setProperty(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kSeparator);
+                separatorAct->setProperty(ActionID::kActionID, ActionID::kSeparatorLine);
                 separatorAct->setSeparator(true);
                 actsNew << separatorAct;
             }
@@ -95,7 +86,7 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                             actionParent = new QAction(menu);
                             actionParent->setText(tr("%1").arg(predicateName.value(parentId)));
                             predicateAction[parentId] = actionParent;
-                            actionParent->setProperty(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID, parentId);
+                            actionParent->setProperty(ActionID::kActionID, parentId);
                         }
                         if (nullptr == menuParent) {
                             menuParent = new QMenu(menu);
@@ -111,7 +102,7 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                         if (nullptr == actionParent) {
                             actionParent = new QAction(tr("%1").arg(predicateName.value(parentId)), menu);
                             predicateAction[parentId] = actionParent;
-                            actionParent->setProperty(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID, parentId);
+                            actionParent->setProperty(ActionID::kActionID, parentId);
                         }
                         if (nullptr == menuParent) {
                             menuParent = new QMenu(menu);
@@ -119,7 +110,7 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                         }
                         for (QAction *action : list) {
                             menuParent->addAction(action);
-                            actionsMap.remove(action->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString());
+                            actionsMap.remove(action->property(ActionID::kActionID).toString());
                         }
                     }
                 }
@@ -142,101 +133,102 @@ QList<QStringList> BaseSortMenuScenePrivate::actionSortRule()
 
     std::call_once(flag, [&]() {
         // file
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kOpen });   // 打开
-        ret.append(QStringList { DPRECENT_NAMESPACE::RecentActionID::kOpenFileLocation });   // 打开文件所在位置
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kOpenWith,
-                                 DPMENU_NAMESPACE::ActionID::kOpenWithApp,
-                                 DPMENU_NAMESPACE::ActionID::kOpenWithCustom });   // 打开方式
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kOpenInNewWindow });   // 在新窗口打开
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kOpenInNewTab });   // 在新标签中打开
+        ret.append(QStringList { "open" });   // 打开
+        ret.append(QStringList { "open-file-location" });   // 打开文件所在位置
+        ret.append(QStringList { "open-with",   // 打开方式
+                                 "open-with-app",
+                                 "open-with-custom" });
+        ret.append(QStringList { "open-in-new-window" });   // 在新窗口打开
+        ret.append(QStringList { "open-in-new-tab" });   // 在新标签中打开
 
         // empty
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kNewFolder });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kNewDoc,
-                                 DPMENU_NAMESPACE::ActionID::kNewOfficeText,
-                                 DPMENU_NAMESPACE::ActionID::kNewSpreadsheets,
-                                 DPMENU_NAMESPACE::ActionID::kNewPresentation,
-                                 DPMENU_NAMESPACE::ActionID::kNewPlainText });
+        ret.append(QStringList { "new-folder" });
+        ret.append(QStringList { "new-document",
+                                 "new-office-text",
+                                 "new-spreadsheets",
+                                 "new-presentation",
+                                 "new-plain-text" });
         // empty trash
-        ret.append(QStringList { DPTRASH_NAMESPACE::TrashActionId::kRestoreAll });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kEmptyTrash });
+        ret.append(QStringList { "restore-all" });
+        ret.append(QStringList { "empty-trash" });
 
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
+        ret.append(QStringList { ActionID::kSeparatorLine });
 
-        ret.append(QStringList { dfmplugin_workspace::ActionID::kDisplayAs,
-                                 dfmplugin_workspace::ActionID::kDisplayIcon,
-                                 dfmplugin_workspace::ActionID::kDisplayList });   // 显示方式
+        ret.append(QStringList { "auto-arrange" });
+        ret.append(QStringList { "display-as",   // 显示方式
+                                 "display-as-icon",
+                                 "display-as-list" });
 
-        ret.append(QStringList { dfmplugin_workspace::ActionID::kSortBy,
-                                 dfmplugin_workspace::ActionID::kSrtName,
-                                 DPRECENT_NAMESPACE::RecentActionID::kSortByPath,
-                                 DPTRASH_NAMESPACE::TrashActionId::kSourcePath,
-                                 DPRECENT_NAMESPACE::RecentActionID::kSortByLastRead,
-                                 dfmplugin_workspace::ActionID::kSrtTimeModified,
-                                 DPTRASH_NAMESPACE::TrashActionId::kTimeDeleted,
-                                 dfmplugin_workspace::ActionID::kSrtSize,
-                                 dfmplugin_workspace::ActionID::kSrtType });   // 排序方式
+        ret.append(QStringList { "sort-by",
+                                 "sort-by-name",
+                                 "sort-by-path",
+                                 "sort-by-source-path",
+                                 "sort-by-lastRead",
+                                 "sort-by-time-modified",
+                                 "sort-by-time-deleted",
+                                 "sort-by-size",
+                                 "sort-by-type" });   // 排序方式
 
-        ret.append(QStringList { ddplugin_canvas::ActionID::kIconSize,
-                                 ddplugin_canvas::ActionID::kIconSizeTiny,
-                                 ddplugin_canvas::ActionID::kIconSizeSmall,
-                                 ddplugin_canvas::ActionID::kIconSizeMedium,
-                                 ddplugin_canvas::ActionID::kIconSizeLarge,
-                                 ddplugin_canvas::ActionID::kIconSizeSuperLarge });   // icon size
-        ret.append(QStringList { ddplugin_canvas::ActionID::kAutoArrange });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
+        ret.append(QStringList { "icon-size",
+                                 "Tiny",
+                                 "Small",
+                                 "Medium",
+                                 "Large",
+                                 "Super large" });   // icon size
+        ret.append(QStringList { ActionID::kSeparatorLine });
 
         QStringList listStageTo;
-        listStageTo << DPBURN_NAMESPACE::ActionId::kStageKey;
+        listStageTo << "stage-file-to-burning";
         listStageTo << stageToRule();
 
         ret.append(listStageTo);   // 添加至光盘刻录
 
-        ret.append(QStringList { DPBURN_NAMESPACE::ActionId::kMountImageKey });   // 挂载
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
+        ret.append(QStringList { "mount-image" });   // 挂载
+        ret.append(QStringList { ActionID::kSeparatorLine });
 
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kEmptyTrash });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
+        ret.append(QStringList { "empty-trash" });
+        ret.append(QStringList { ActionID::kSeparatorLine });
 
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kCut });   // 剪切
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kCopy });   // 复制
-        ret.append(QStringList { DPRECENT_NAMESPACE::RecentActionID::kRemove });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kRename });   // 重命名
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kDelete });   // 删除
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kPaste });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSelectAll });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
+        ret.append(QStringList { "cut" });   // 剪切
+        ret.append(QStringList { "copy" });   // 复制
+        ret.append(QStringList { "remove" });   // 移除
+        ret.append(QStringList { "rename" });   // 重命名
+        ret.append(QStringList { "delete" });   // 删除
+        ret.append(QStringList { "paste" });
+        ret.append(QStringList { "select-all" });
+        ret.append(QStringList { ActionID::kSeparatorLine });
 
-        ret.append(QStringList { DPDIRSHARE_NAMESPACE::ShareActionId::kActAddShareKey });   // 添加共享
-        ret.append(QStringList { DPDIRSHARE_NAMESPACE::ShareActionId::kActRemoveShareKey });   // 移除共享
+        ret.append(QStringList { "refresh" });
+        ret.append(QStringList { ActionID::kSeparatorLine });
+
+        ret.append(QStringList { "add-share" });   // 添加共享
+        ret.append(QStringList { "remove-share" });   // 移除共享
 
         QStringList sendToList;
-        sendToList << DPMENU_NAMESPACE::ActionID::kSendTo;
-        sendToList << DPMENU_NAMESPACE::ActionID::kCreateSymlink;
-        sendToList << DPMENU_NAMESPACE::ActionID::kSendToDesktop;
+        sendToList << ActionID::kSendTo;
+        sendToList << "create-system-link";
+        sendToList << "send-to-desktop";
         sendToList << sendToRule();
 
         ret.append(sendToList);   // 发送到
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kShare,
-                                 DPMENU_NAMESPACE::ActionID::kShareToBluetooth });   // 共享
-        ret.append(QStringList { DPBOOKMARK_NAMESPACE::BookmarkActionId::kActAddBookmarkKey });   // 添加书签
-        ret.append(QStringList { DPBOOKMARK_NAMESPACE::BookmarkActionId::kActRemoveBookmarkKey });   // 移除书签
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSetAsWallpaper });   // 设置壁纸
-        ret.append(QStringList { ddplugin_canvas::ActionID::kDisplaySettings });   // 壁纸设置
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
+        ret.append(QStringList { "share",
+                                 "share-to-bluetooth" });   // 共享
+        ret.append(QStringList { "add-bookmark" });   // 添加书签
+        ret.append(QStringList { "remove-bookmark" });   // 移除书签
+        ret.append(QStringList { "set-as-wallpaper" });   // 设置壁纸
+        ret.append(QStringList { "display-settings" });   // 显示设置
+        ret.append(QStringList { "wallpaper-settings" });   // 壁纸与屏保
+        ret.append(QStringList { ActionID::kSeparatorLine });
 
-        ret.append(QStringList { DPTAG_NAMESPACE::TagActionId::kActTagAddKey });   // 标记信息
-        ret.append(QStringList { DPTAG_NAMESPACE::TagActionId::kActTagColorListKey });   // 标记颜色列表
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
+        ret.append(QStringList { "tag-add" });   // 标记信息
+        ret.append(QStringList { "tag-color-list" });   // 标记颜色列表
+        ret.append(QStringList { ActionID::kSeparatorLine });
 
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kOpenAsAdmin });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kOpenInTerminal });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
+        ret.append(QStringList { "open-as-administrator" });
+        ret.append(QStringList { "open-in-terminal" });
+        ret.append(QStringList { ActionID::kSeparatorLine });
 
-        ret.append(QStringList { ddplugin_canvas::ActionID::kRefresh });
-        ret.append(QStringList { DPMENU_NAMESPACE::ActionID::kSeparator });
-
-        ret.append(QStringList { DPPROPERTYDIALOG_NAMESPACE::PropertyActionId::kProperty });
+        ret.append(QStringList { "property" });
     });
 
     return ret;
@@ -248,8 +240,8 @@ QStringList BaseSortMenuScenePrivate::sendToRule()
 
     static std::once_flag flag;
     std::call_once(flag, []() {
-        list << DPMENU_NAMESPACE::ActionID::kSendToRemovablePrefix;
-        list << DPBURN_NAMESPACE::ActionId::kSendToOptical;
+        list << "send-to-removable-";
+        list << "send-file-to-burnning-";
     });
 
     return list;
@@ -261,7 +253,7 @@ QStringList BaseSortMenuScenePrivate::stageToRule()
 
     static std::once_flag flag;
     std::call_once(flag, []() {
-        list << DPBURN_NAMESPACE::ActionId::kStagePrex;
+        list << "_stage-file-to-burning-";
     });
 
     return list;
@@ -296,14 +288,14 @@ QList<QAction *> BaseSortMenuScenePrivate::findActionByKey(const QMap<QString, Q
 
 void BaseSortMenuScenePrivate::insertActToMap(QAction *action, QMap<QString, QAction *> &map)
 {
-    if (action->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString() == dfmplugin_menu::ActionID::kSeparator)
+    if (action->property(ActionID::kActionID).toString() == ActionID::kSeparatorLine)
         return;
     if (!action->menu()) {
-        map.insert(action->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString(), action);
+        map.insert(action->property(ActionID::kActionID).toString(), action);
     } else {
         QList<QAction *> acts = action->menu()->actions();
         action->setMenu(nullptr);
-        map.insert(action->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString(), action);
+        map.insert(action->property(ActionID::kActionID).toString(), action);
         for (QAction *action : acts) {
             insertActToMap(action, map);
         }
