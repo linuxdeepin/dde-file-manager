@@ -41,21 +41,18 @@
 #include <QDebug>
 #include <QLabel>
 #include <QApplication>
-
-#ifndef ENABLE_QUICK_SEARCH
-#    include <QJsonObject>
-#    include <QJsonArray>
-#    include <QJsonDocument>
-#endif
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonObject>
+#include <QJsonArray>
 
 using namespace dfmbase;
 
-#ifndef ENABLE_QUICK_SEARCH
 namespace {
-const char *const kGroupsName { "groups" };
-const char *const kOptionsName { "options" };
+inline constexpr char kGroupsName[] { "groups" };
+inline constexpr char kItemKey[] { "key" };
+inline constexpr char kOptionsName[] { "options" };
 }
-#endif
 
 #ifndef ENABLE_QUICK_SEARCH
 static QByteArray removeQuickSearchIndex(const QByteArray &data)
@@ -165,21 +162,84 @@ void cleanQsTr(QByteArray &data, int &from)
     }
 }
 
-static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(QByteArray()))
+void SettingDialog::settingFilter(QByteArray &data)
 {
-    QFile file(fileName);
-
-    if (!file.open(QFile::ReadOnly)) {
-        return nullptr;
+    QJsonParseError err;
+    QJsonDocument doc { QJsonDocument::fromJson(data, &err) };
+    if (err.error != QJsonParseError::NoError) {
+        qWarning() << "config template json is not valid!" << err.errorString();
+        return;
     }
 
-    QByteArray data = file.readAll();
+    if (!doc.object().contains(kGroupsName)) {
+        qWarning() << "config template is not valid, no group item";
+        return;
+    }
 
+    bool updated = false;
+
+    auto &&primaryGroups = doc.object().value(kGroupsName).toArray();
+    for (int i = 0; i < primaryGroups.count(); ++i) {
+        auto &&primaryGroup = primaryGroups.at(i).toObject();
+        if (primaryGroup.isEmpty())
+            continue;
+
+        QString &&priGroupKey = primaryGroup.value(kItemKey).toString();
+
+        auto &&secondaryGroups = primaryGroup.value(kGroupsName).toArray();
+        for (int j = 0; j < secondaryGroups.count(); ++j) {
+            auto &&secondaryGroup = secondaryGroups.at(j).toObject();
+            if (secondaryGroup.isEmpty())
+                continue;
+
+            QString &&secGroupKey = secondaryGroup.value(kItemKey).toString();
+
+            auto &&options = secondaryGroup.value(kOptionsName).toArray();
+            for (int k = 0; k < options.count(); ++k) {
+                auto option = options.at(k).toObject();
+                if (option.isEmpty())
+                    continue;
+
+                QString &&optKey = option.value(kItemKey).toString();
+                QString key = QString("%1.%2.%3").arg(priGroupKey).arg(secGroupKey).arg(optKey);
+                if (SettingDialog::needHide(key)) {
+                    option.insert("hide", true);
+                    options.replace(k, option);
+                    updated = true;
+                }
+            }
+
+            if (updated) {
+                secondaryGroup.insert(kOptionsName, options);
+                secondaryGroups.replace(j, secondaryGroup);
+            }
+        }
+
+        if (updated) {
+            primaryGroup.insert(kGroupsName, secondaryGroups);
+            primaryGroups.replace(i, primaryGroup);
+        }
+    }
+
+    if (updated) {
+        QJsonObject obj;
+        obj.insert(kGroupsName, primaryGroups);
+        QJsonDocument newDoc;
+        newDoc.setObject(obj);
+        data = newDoc.toJson();
+    }
+}
+
+void SettingDialog::loadSettings(const QString &templateFile)
+{
+    QFile file(templateFile);
+    if (!file.open(QFile::ReadOnly))
+        return;
+    QByteArray data = file.readAll();
     file.close();
 
     for (int i = 0; i < data.size(); ++i) {
         char ch = data.at(i);
-
         switch (ch) {
         case '\\':
             break;
@@ -194,16 +254,18 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
             break;
         }
     }
+
 #ifndef ENABLE_QUICK_SEARCH
-    auto const &byteArray = removeQuickSearchIndex(data);
-    return DSettings::fromJson(byteArray);
-#else
-    return DSettings::fromJson(data);
+    data = removeQuickSearchIndex(data);
 #endif
+
+    settingFilter(data);
+    dtkSettings = DSettings::fromJson(data);
 }
 
 QPointer<QCheckBox> SettingDialog::kAutoMountCheckBox = nullptr;
 QPointer<QCheckBox> SettingDialog::kAutoMountOpenCheckBox = nullptr;
+QSet<QString> SettingDialog::kHiddenSettingItems {};
 
 SettingDialog::SettingDialog(QWidget *parent)
     : DSettingsDialog(parent)
@@ -211,17 +273,6 @@ SettingDialog::SettingDialog(QWidget *parent)
     widgetFactory()->registerWidget("mountCheckBox", &SettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &SettingDialog::createAutoMountOpenCheckBox);
     widgetFactory()->registerWidget("splitter", &SettingDialog::createSplitter);
-
-#ifdef DISABLE_COMPRESS_PREIVEW
-    // load temlate
-    m_settings = fromJsJson(":/configure/global-setting-template-pro.js").data();
-#else
-#    ifdef DISABLE_FFMEPG
-    m_settings = fromJsJson(":/configure/global-setting-template-fedora.js").data();
-#    else
-    dtkSettings = fromJsJson(":/configure/global-setting-template.js").data();
-#    endif
-#endif
 
     if (WindowUtils::isWayLand()) {
         setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
@@ -232,6 +283,19 @@ SettingDialog::SettingDialog(QWidget *parent)
         setFixedSize(QSize(700, 700));
     }
 
+    QString settingTemplate =
+#ifdef DISABLE_COMPRESS_PREIVEW
+            ":/configure/global-setting-template-pro.js";
+#else
+#    ifdef DISABLE_FFMEPG
+            ":/configure/global-setting-template-fedora.js";
+#    else
+            ":/configure/global-setting-template.js";
+#    endif
+#endif
+
+    loadSettings(settingTemplate);
+
     // load conf value
     auto backen = SettingBackend::instance();
     if (dtkSettings) {
@@ -239,6 +303,19 @@ SettingDialog::SettingDialog(QWidget *parent)
         dtkSettings->setBackend(backen);
         updateSettings("GenerateSettingTranslate", dtkSettings);
     }
+}
+
+void SettingDialog::setItemVisiable(const QString &key, bool visiable)
+{
+    if (visiable)
+        kHiddenSettingItems.remove(key);
+    else
+        kHiddenSettingItems.insert(key);
+}
+
+bool SettingDialog::needHide(const QString &key)
+{
+    return kHiddenSettingItems.contains(key);
 }
 
 QPair<QWidget *, QWidget *> SettingDialog::createAutoMountCheckBox(QObject *opt)

@@ -33,10 +33,13 @@
 #include "dfm-base/base/configs/configsynchronizer.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/dialogs/settingsdialog/settingdialog.h"
 
 #include <dfm-framework/dpf.h>
 
 #include <QMenu>
+
+#include <DSysInfo>
 
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -241,6 +244,11 @@ void SideBarHelper::bindSettings()
     };
 
     std::for_each(kvs.begin(), kvs.end(), [bindConf](std::pair<QString, QString> pair) { bindConf(pair.first, pair.second); });
+
+    if (DSysInfo::isCommunityEdition()) {
+        SettingDialog::setItemVisiable("advance.items_in_sidebar.vault", false);
+        qDebug() << "hide vault config in community edition.";
+    }
 }
 
 QVariantMap SideBarHelper::hiddenRules()
