@@ -152,11 +152,13 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
         }
     }
 
-    if (sources.isEmpty() || targets.isEmpty())
+    if (sources.isEmpty())
         return true;
 
     switch (eventType) {
     case kCutFile:
+        if (targets.isEmpty())
+            return true;
         handleOperationCut(windowId, sources, targets.first(), AbstractJobHandler::JobFlag::kRevocation, handle);
         break;
     case kDeleteFiles:
@@ -169,9 +171,14 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
         handleOperationRestoreFromTrash(windowId, sources, AbstractJobHandler::JobFlag::kRevocation, handle);
         break;
     case kRenameFile:
+        if (targets.isEmpty())
+            return true;
         handleOperationRenameFile(windowId, sources.first(), targets.first(), AbstractJobHandler::JobFlag::kRevocation);
         break;
     case kRenameFiles:
+        if (targets.isEmpty())
+            return true;
+
         for (int i = 0; i < sources.size(); ++i) {
             handleOperationRenameFile(windowId, sources[i], targets[i], AbstractJobHandler::JobFlag::kRevocation);
         }
