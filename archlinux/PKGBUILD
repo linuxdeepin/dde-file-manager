@@ -9,7 +9,7 @@ license=('GPL3')
 depends=('deepin-qt5integration-git' 'deepin-anything-git' 'disomaster-git' 'docparser-git' 'file' 'gio-qt'
          'libmediainfo' 'lucene++' 'avfs' 'polkit-qt5' 'poppler' 'ffmpegthumbnailer' 'jemalloc'
          'kcodecs' 'startdde-git' 'taglib' 'htmlcxx' 'libgsf' 'mimetic' 'boost-libs')
-makedepends=('boost' 'qt5-tools' 'deepin-dock-git' 'deepin-movie-git' 'deepin-gettext-tools-git')
+makedepends=('boost' 'qt5-tools' 'deepin-dock-git' 'deepin-movie-git' 'deepin-gettext-tools-git' 'pcre')
 optdepends=('deepin-manual: for help menual'
             'deepin-shortcut-viewer: for shortcut display'
             'deepin-screensaver: for screensaver chooser'

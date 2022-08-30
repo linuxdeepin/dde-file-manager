@@ -56,7 +56,8 @@ Build-Depends:
  libgsf-1-dev,
  libboost-filesystem-dev,
  libdocparser-dev,
- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
+ deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
+ libpcre3-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
