@@ -633,7 +633,7 @@ QModelIndex FileView::currentPressIndex() const
 
 bool FileView::isDragTarget(const QModelIndex &index) const
 {
-    return d->currentDragHoverIndex == index;
+    return d->dragDropHelper->isDragTarget(index);
 }
 
 QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const
@@ -971,7 +971,6 @@ void FileView::mouseMoveEvent(QMouseEvent *event)
 
 void FileView::mouseReleaseEvent(QMouseEvent *event)
 {
-    d->currentDragHoverIndex = QModelIndex();
     d->selectHelper->release();
     if (!QScroller::hasScroller(this)) return DListView::mouseReleaseEvent(event);
 }
@@ -986,19 +985,7 @@ void FileView::dragEnterEvent(QDragEnterEvent *event)
 
 void FileView::dragMoveEvent(QDragMoveEvent *event)
 {
-    if (isIconViewMode()) {
-        d->currentDragHoverIndex = d->fileViewHelper->isEmptyArea(event->pos()) ? rootIndex() : indexAt(event->pos());
-    } else {
-        d->currentDragHoverIndex = indexAt(event->pos());
-        if (!d->currentDragHoverIndex.isValid()) {
-            d->currentDragHoverIndex = rootIndex();
-        }
-    }
-
     if (d->dragDropHelper->dragMove(event)) {
-        if (!event->isAccepted())
-            d->currentDragHoverIndex = QModelIndex();
-
         viewport()->update();
         return;
     }
@@ -1016,7 +1003,6 @@ void FileView::dragLeaveEvent(QDragLeaveEvent *event)
 
 void FileView::dropEvent(QDropEvent *event)
 {
-    d->currentDragHoverIndex = QModelIndex();
     if (d->dragDropHelper->drop(event))
         return;
 
@@ -1034,6 +1020,9 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
     } else if (isIconViewMode()) {
         index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
     }
+
+    if (index == -1)
+        return rootIndex();
 
     return model()->index(index, 0, rootIndex());
 }

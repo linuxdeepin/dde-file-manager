@@ -30,6 +30,7 @@
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDropEvent>
+#include <QModelIndex>
 
 namespace dfmbase {
 class AbstractFileInfo;
@@ -49,6 +50,8 @@ public:
     bool dragLeave(QDragLeaveEvent *event);
     bool drop(QDropEvent *event);
 
+    bool isDragTarget(const QModelIndex &index) const;
+
 private:
     bool handleDFileDrag(const QMimeData *data, const QUrl &url);
     void handleDropEvent(QDropEvent *event, bool *fall = nullptr);
@@ -59,6 +62,7 @@ private:
 
     FileView *view { nullptr };
     QList<QUrl> currentDragUrls;
+    QUrl currentHoverIndexUrl;
 };
 
 }
