@@ -26,6 +26,7 @@
 #include "app/define.h"
 
 #include "shutil/fileutils.h"
+#include "io/dfilecopymovejob.h"
 
 #include "controllers/pathmanager.h"
 #include "controllers/filecontroller.h"
@@ -984,10 +985,13 @@ QIcon DFileInfo::fileIcon() const
     if (!d->icon.isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->icon.name().isEmpty())) {
         return d->icon;
     }
+    const DUrl &fileUrl = this->fileUrl();
+
+    if(DFileCopyMoveJob::isCopyingFile(fileUrl))
+        return DFileIconProvider::globalProvider()->icon(*this);
 
     d->iconFromTheme = false;
 
-    const DUrl &fileUrl = this->fileUrl();
 
 #ifdef DFM_MINIMUM
     d->hasThumbnail = 0;

@@ -202,6 +202,8 @@ public:
 
     static Actions supportActions(Error error);
 
+    static bool isCopyingFile(const DUrl &url);
+
 public Q_SLOTS:
     void start(const DUrlList &sourceUrls, const DUrl &targetUrl);
     void stop();

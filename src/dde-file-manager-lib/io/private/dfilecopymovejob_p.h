@@ -249,6 +249,11 @@ public:
                                const QSharedPointer<DFileDevice> &toDevice);
     // 初始化优化状态
     void initRefineState();
+
+    void saveCopyFileUrl(const DUrl &url);
+    void removeCopyFileUrl(const DUrl &url);
+
+public:
     //! 剪切回收站文件路径
     QQueue<QString> m_fileNameList;
 
@@ -385,6 +390,9 @@ public:
     QList<QSharedPointer<DirSetPermissonInfo>> m_dirPermissonList;
 
     qint64 m_gvfsFileInnvliadProgress = 0;
+
+    static DUrlList copyingFiles;
+    static QMutex copyingFilesMutex;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };
