@@ -60,7 +60,7 @@ bool ImagePreview::canPreview(const QUrl &url, QByteArray *format) const
     if (f.isEmpty()) {
         DFMBASE_NAMESPACE::DMimeDatabase mimeDatabase;
 
-        const QMimeType &mt = mimeDatabase.mimeTypeForFile(url.toLocalFile(), QMimeDatabase::MatchContent);
+        const QMimeType &mt = mimeDatabase.mimeTypeForFile(url, QMimeDatabase::MatchContent);
 
         f = mt.preferredSuffix().toLatin1();
 

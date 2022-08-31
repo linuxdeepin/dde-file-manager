@@ -54,6 +54,10 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
 {
     // 如果是低速设备，则先从扩展名去获取mime信息；对于本地文件，保持默认的获取策略
     QMimeType result;
+
+    if (!fileInfo)
+        return QMimeType();
+
     QString path = fileInfo->path();
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
     if (!isMatchExtension) {
