@@ -77,6 +77,10 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
     // 判断是否有线程在处理错误,1.无，当前线程加入到处理队列，阻塞其他线程的错误处理，发送错误信号，阻塞自己。收到错误处理，恢复自己。
     // 判读是否有retry操作,当前错误处理线程就切换（错误处理线程不出队列），继续处理，外部判读处理完成就切换处理线程
     // 当前处理线程为队列的第一个对象
+    if (checkRememberAction(urlFrom)) {
+        return currentAction;
+    }
+
     errorThreadIdQueueMutex.lock();
 
     if (urlFrom == urlTo) {
@@ -84,9 +88,11 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
         errorThreadIdQueueMutex.unlock();
         return currentAction;
     }
+    errorThreadIdQueueMutex.unlock();
 
     setStat(AbstractJobHandler::JobState::kPauseState);
 
+    errorThreadIdQueueMutex.lock();
     errorThreadIdQueue.clear();
     errorThreadIdQueue.enqueue(QThread::currentThreadId());
 
@@ -102,9 +108,6 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
     errorThreadIdQueueMutex.unlock();
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
-
-    if (rememberSelect.load() && currentAction != AbstractJobHandler::SupportAction::kNoAction)
-        return currentAction;
 
     // 发送错误处理 阻塞自己
     const QString &errorMsgAll = errorMsg.isEmpty() ? AbstractJobHandler::errorToString(error) : (AbstractJobHandler::errorToString(error) + ": " + errorMsg);
@@ -712,12 +715,8 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     fileNewName = formatFileName(fileNewName);
     // 创建文件的名称
     QUrl newTargetUrl = toInfo->url();
-    const QString &newTargetPath = newTargetUrl.path();
-
-    QString newPath = newTargetPath.endsWith("/") ? newTargetPath + fileNewName
-                                                  : newTargetPath + "/" + fileNewName;
-
-    newTargetUrl.setPath(newPath);
+    const QString &newTargetPath = newTargetUrl.path() + QDir::separator() + fileNewName;
+    newTargetUrl.setPath(newTargetPath);
 
     newTargetInfo.reset();
     newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl);
@@ -752,57 +751,43 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
                 return false;
             }
         };
-        bool fromIsFile = fromInfo->isFile() || fromInfo->isSymLink();
         bool newTargetIsFile = newTargetInfo->isFile() || newTargetInfo->isSymLink();
         AbstractJobHandler::JobErrorType errortype = newTargetIsFile ? AbstractJobHandler::JobErrorType::kFileExistsError
                                                                      : AbstractJobHandler::JobErrorType::kDirectoryExistsError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), newTargetInfo->url(), errortype);
         switch (action) {
-        case AbstractJobHandler::SupportAction::kReplaceAction:
-            if (newTargetInfo->isSymLink()) {
-                LocalFileHandler handler;
-                if (!handler.deleteFile(newTargetInfo->url()))
-                    return false;
-            }
-
-            if (newTargetUrl == fromInfo->url()) {
-                skipWritSize += (isCountSize && (fromInfo->isSymLink() || fromInfo->size() <= 0)) ? dirSize : fromInfo->size();
+        case AbstractJobHandler::SupportAction::kReplaceAction: {
+            const QVariant &var = doActionReplace(fromInfo, newTargetInfo, isCountSize);
+            if (var.isValid()) {
                 cancelThreadProcessingError();
-                return true;
+                return var.toBool();
             }
-
-            if (fromIsFile && newTargetIsFile) {
-                break;
-            } else {
-                // TODO:: something is doing here
+            break;
+        }
+        case AbstractJobHandler::SupportAction::kMergeAction: {
+            const QVariant &var = doActionMerge(fromInfo, newTargetInfo, isCountSize);
+            if (var.isValid()) {
                 cancelThreadProcessingError();
-                return false;
+                return var.toBool();
             }
-        case AbstractJobHandler::SupportAction::kMergeAction:
-            if (!fromIsFile && fromIsFile == newTargetIsFile) {
-                break;
-            } else {
-                // TODO:: something is doing here
-                cancelThreadProcessingError();
-                return false;
-            }
-        case AbstractJobHandler::SupportAction::kSkipAction:
+            break;
+        }
+        case AbstractJobHandler::SupportAction::kSkipAction: {
             skipWritSize += isCountSize && (fromInfo->isSymLink() || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
             cancelThreadProcessingError();
             setSkipValue(skip, action);
             return false;
+        }
         case AbstractJobHandler::SupportAction::kCoexistAction: {
-
             auto nameCheckFunc = [](const QString &name) -> bool {
                 return FileOperationsUtils::fileNameUsing.contains(name);
             };
             fileNewName = FileUtils::nonExistFileName(newTargetInfo, toInfo, nameCheckFunc);
-            FileOperationsUtils::addUsingName(fileNewName);
-
             if (fileNewName.isEmpty()) {
                 cancelThreadProcessingError();
                 return false;
             }
+            FileOperationsUtils::addUsingName(fileNewName);
 
             bool ok = doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, skip);
             cancelThreadProcessingError();
@@ -821,6 +806,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
         return true;
     }
 
+    cancelThreadProcessingError();
     return true;
 }
 
@@ -998,6 +984,78 @@ void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::Support
 {
     if (skip)
         *skip = action == AbstractJobHandler::SupportAction::kSkipAction;
+}
+
+QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize)
+{
+    if (newTargetInfo->isSymLink()) {
+        LocalFileHandler handler;
+        if (!handler.deleteFile(newTargetInfo->url()))
+            return false;
+    }
+
+    const QUrl &newTargetUrl = newTargetInfo->url();
+    if (newTargetUrl == fromInfo->url()) {
+        skipWritSize += (isCountSize && (fromInfo->isSymLink() || fromInfo->size() <= 0)) ? dirSize : fromInfo->size();
+        cancelThreadProcessingError();
+        return true;
+    }
+
+    return QVariant();
+}
+
+QVariant FileOperateBaseWorker::doActionReplace(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize)
+{
+    const QVariant &var = checkLinkAndSameUrl(fromInfo, newTargetInfo, isCountSize);
+    if (var.isValid())
+        return var;
+
+    const bool fromIsFile = fromInfo->isFile() || fromInfo->isSymLink();
+    const bool newTargetIsFile = newTargetInfo->isFile() || newTargetInfo->isSymLink();
+
+    if (fromIsFile == newTargetIsFile) {
+        return QVariant();
+    } else {
+        cancelThreadProcessingError();
+        return false;
+    }
+}
+
+QVariant FileOperateBaseWorker::doActionMerge(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize)
+{
+    const bool fromIsFile = fromInfo->isFile() || fromInfo->isSymLink();
+    const bool newTargetIsFile = newTargetInfo->isFile() || newTargetInfo->isSymLink();
+
+    if (!fromIsFile && !newTargetIsFile) {
+        // target is dir, do merged
+        return QVariant();
+    } else if (fromIsFile && newTargetIsFile) {
+        return checkLinkAndSameUrl(fromInfo, newTargetInfo, isCountSize);
+    } else {
+        cancelThreadProcessingError();
+        return false;
+    }
+}
+
+bool FileOperateBaseWorker::checkRememberAction(const QUrl &url)
+{
+    if (!rememberSelect.load())
+        return false;
+
+    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    if (!info)
+        return false;
+
+    if (info->isDir() && currentAction == AbstractJobHandler::SupportAction::kReplaceAction)
+        return false;
+
+    if (info->isFile() && currentAction == AbstractJobHandler::SupportAction::kMergeAction)
+        return false;
+
+    if (currentAction != AbstractJobHandler::SupportAction::kNoAction)
+        return true;
+
+    return false;
 }
 
 bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip)
@@ -1221,6 +1279,8 @@ void FileOperateBaseWorker::cancelThreadProcessingError()
     errorThreadIdQueue.removeOne(QThread::currentThreadId());
     if (errorThreadIdQueue.count() <= 0)
         resume();
+    else
+        qWarning() << "errorThreadIdQueue count error, count: " << errorThreadIdQueue.count();
 
     errorCondition.wakeAll();
 }

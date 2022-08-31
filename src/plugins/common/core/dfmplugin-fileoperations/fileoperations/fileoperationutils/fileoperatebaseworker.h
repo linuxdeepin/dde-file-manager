@@ -120,6 +120,13 @@ public:
 private:
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
 
+private:
+    QVariant checkLinkAndSameUrl(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
+    QVariant doActionReplace(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
+    QVariant doActionMerge(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
+
+    bool checkRememberAction(const QUrl &url);
+
 protected:
     QTime time;   // time eslape
     AbstractFileInfoPointer targetInfo { nullptr };   // target file infor pointer
