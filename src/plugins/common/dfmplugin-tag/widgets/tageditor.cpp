@@ -91,6 +91,11 @@ void TagEditor::keyPressEvent(QKeyEvent *event)
     DArrowRectangle::keyPressEvent(event);
 }
 
+void TagEditor::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+}
+
 void TagEditor::initializeWidgets()
 {
     crumbEdit = new DCrumbEdit;

@@ -55,6 +55,7 @@ public slots:
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
     void initializeWidgets();
