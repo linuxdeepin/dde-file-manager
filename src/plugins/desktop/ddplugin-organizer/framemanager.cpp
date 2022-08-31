@@ -130,35 +130,6 @@ void FrameManagerPrivate::buildOrganizer()
     q->switchMode(CfgPresenter->mode());
 }
 
-int FrameManagerPrivate::covertIconLevel(int lv, bool toDisplay)
-{
-    int ret = -1;
-    if (toDisplay) { // 1 is samll and 3 is large in canvas
-        if (lv <= 1)
-            ret = DisplaySize::kSmaller;
-        else if (lv >= 3)
-            ret = DisplaySize::kLarger;
-        else
-            ret = DisplaySize::kNormal;
-    } else {
-        switch (static_cast<DisplaySize>(lv)) {
-        case DisplaySize::kSmaller:
-            ret = 1;
-            break;
-        case DisplaySize::kNormal:
-            ret = 2;
-            break;
-        case DisplaySize::kLarger:
-            ret = 3;
-            break;
-        default:
-            ret = 1;
-            break;
-        }
-    }
-    return ret;
-}
-
 void FrameManagerPrivate::refeshCanvas()
 {
     if (canvas)
@@ -214,7 +185,7 @@ void FrameManagerPrivate::displaySizeChanged(int size)
     qDebug() << "change display size" << size << (canvas != nullptr);
     if (canvas) {
         CfgPresenter->setDisplaySize(displaySize);
-        canvas->setIconLevel(covertIconLevel(size, false));
+        canvas->setIconLevel(OrganizerUtils::covertIconLevel(size, false));
         q->layout();
     }
 }
@@ -233,8 +204,9 @@ void FrameManagerPrivate::showOptionWindow()
         options = nullptr;
     }, Qt::DirectConnection);
 
-    // todo find screen that the cursor on and move options window to center of the screen.
-    options->showNormal();
+    options->moveToCenter(QCursor::pos());
+    options->show();
+
 }
 
 bool FrameManagerPrivate::filterShortcutkeyPress(int viewIndex, int key, int modifiers) const
@@ -372,10 +344,10 @@ void FrameManager::turnOn(bool build)
     // adjust canvas icon level
     {
         int viewIconLevel = d->canvas->iconLevel();
-        DisplaySize size  = static_cast<DisplaySize>(d->covertIconLevel(viewIconLevel, true));
+        DisplaySize size  = static_cast<DisplaySize>(OrganizerUtils::covertIconLevel(viewIconLevel, true));
         CfgPresenter->setDisplaySize(size);
 
-        int newIconLevel = d->covertIconLevel(size, false);
+        int newIconLevel = OrganizerUtils::covertIconLevel(size, false);
         if (viewIconLevel != newIconLevel) {
             qInfo() << "adjust canvas icon level from" << viewIconLevel << "to" << newIconLevel;
             d->canvas->setIconLevel(newIconLevel);

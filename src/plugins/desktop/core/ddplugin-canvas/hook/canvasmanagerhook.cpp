@@ -51,3 +51,8 @@ void CanvasManagerHook::hiddenFlagChanged(bool hidden) const
 {
     CanvasManagerPublish(signal_CanvasManager_HiddenFlagChanged, hidden);
 }
+
+void CanvasManagerHook::autoArrangeChanged(bool on) const
+{
+    CanvasManagerPublish(signal_CanvasManager_AutoArrangeChanged, on);
+}

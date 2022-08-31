@@ -8,7 +8,7 @@ project(test-ddplugin-canvas)
 file(GLOB_RECURSE UT_CXX_FILE
     "${CMAKE_CURRENT_SOURCE_DIR}/*")
 
-set(DESKTOP_PLUGIN_SRC_DIR "${DESKTOP_PLUGIN_DIR}/ddplugin-canvas")
+set(DESKTOP_PLUGIN_SRC_DIR "${DESKTOP_PLUGIN_DIR}/core/ddplugin-canvas")
 
 file(GLOB_RECURSE SRC_FILES
     "${DESKTOP_PLUGIN_SRC_DIR}/*.h"

@@ -41,6 +41,8 @@ public slots:
     void edit(const QUrl &url);
     int iconLevel();
     void setIconLevel(int lv);
+    bool autoArrange();
+    void setAutoArrange(bool on);
     QAbstractItemModel *fileInfoModel();
 private:
     CanvasManager *canvas = nullptr;

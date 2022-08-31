@@ -37,7 +37,7 @@ public:
     // signals
     virtual void iconSizeChanged(int level) const;
     virtual void hiddenFlagChanged(bool hidden) const;
-
+    virtual void autoArrangeChanged(bool on) const;
     virtual bool requestWallpaperSetting(const QString &screen) const;
 };
 

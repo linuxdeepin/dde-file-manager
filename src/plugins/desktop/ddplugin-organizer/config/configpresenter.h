@@ -61,8 +61,8 @@ public:
     void updateCustomStyle(const CollectionStyle &style) const;
     void writeCustomStyle(const QList<CollectionStyle> &styles) const;
 public:
-    int enabledTypeCategories() const;
-    void setEnabledTypeCategories(int flags);
+    ItemCategories enabledTypeCategories() const;
+    void setEnabledTypeCategories(ItemCategories flags);
 signals:
     // use Qt::QueuedConnection
     void changeEnableState(bool e);

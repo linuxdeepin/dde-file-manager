@@ -46,6 +46,8 @@ CanvasManagerBroker::~CanvasManagerBroker()
     CanvasManagerDisconnect(slot_CanvasManager_Edit);
     CanvasManagerDisconnect(slot_CanvasManager_IconLevel);
     CanvasManagerDisconnect(slot_CanvasManager_SetIconLevel);
+    CanvasManagerDisconnect(slot_CanvasManager_AutoArrange);
+    CanvasManagerDisconnect(slot_CanvasManager_SetAutoArrange);
 }
 
 bool CanvasManagerBroker::init()
@@ -55,6 +57,8 @@ bool CanvasManagerBroker::init()
     CanvasManagerSlot(slot_CanvasManager_Edit, &CanvasManagerBroker::edit);
     CanvasManagerSlot(slot_CanvasManager_IconLevel, &CanvasManagerBroker::iconLevel);
     CanvasManagerSlot(slot_CanvasManager_SetIconLevel, &CanvasManagerBroker::setIconLevel);
+    CanvasManagerSlot(slot_CanvasManager_AutoArrange, &CanvasManagerBroker::autoArrange);
+    CanvasManagerSlot(slot_CanvasManager_SetAutoArrange, &CanvasManagerBroker::setAutoArrange);
     return true;
 }
 
@@ -76,6 +80,16 @@ int CanvasManagerBroker::iconLevel()
 void CanvasManagerBroker::setIconLevel(int lv)
 {
     canvas->setIconLevel(lv);
+}
+
+bool CanvasManagerBroker::autoArrange()
+{
+    return canvas->autoArrange();
+}
+
+void CanvasManagerBroker::setAutoArrange(bool on)
+{
+    canvas->setAutoArrange(on);
 }
 
 QAbstractItemModel *CanvasManagerBroker::fileInfoModel()

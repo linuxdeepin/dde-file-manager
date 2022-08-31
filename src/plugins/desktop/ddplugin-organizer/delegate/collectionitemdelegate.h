@@ -44,8 +44,8 @@ public:
     QSize iconSize(int lv) const;
     int iconLevel() const;
     int setIconLevel(int lv);
-    int minimumIconLevel() const;
-    int maximumIconLevel() const;
+    static int minimumIconLevel();
+    static int maximumIconLevel();
     QString iconSizeLevelDescription(int i) const;
     QSize sizeHint(const QStyleOptionViewItem &opt, const QModelIndex &index) const override;
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index) const;

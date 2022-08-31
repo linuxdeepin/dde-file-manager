@@ -41,9 +41,6 @@ NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq) : q(qq)
 
 NormalizedModePrivate::~NormalizedModePrivate()
 {
-    delete classifier;
-    classifier = nullptr;
-
     holders.clear();
 }
 
@@ -185,10 +182,7 @@ NormalizedMode::NormalizedMode(QObject *parent)
 
 NormalizedMode::~NormalizedMode()
 {
-    if (model && (model->handler() == d->classifier->dataHandler()))
-        model->setHandler(nullptr);
-
-    delete d;
+    removeClassifier();
 }
 
 OrganizerMode NormalizedMode::mode() const
@@ -229,6 +223,10 @@ void NormalizedMode::reset()
 {
     auto type = CfgPresenter->classification();
     qInfo() << "normalized mode reset to " << type;
+
+    // delete the current classifier
+    removeClassifier();
+
     setClassifier(type);
     Q_ASSERT(d->classifier);
 }
@@ -440,10 +438,8 @@ bool NormalizedMode::setClassifier(Classifier id)
             return true;
         }
 
-        if (model->handler() == d->classifier->dataHandler())
-            model->setHandler(nullptr);
-
-       delete d->classifier;
+        // remove old classifier.
+        removeClassifier();
     }
 
     // clear all collections
@@ -456,5 +452,16 @@ bool NormalizedMode::setClassifier(Classifier id)
     model->setHandler(d->classifier->dataHandler());
     model->refresh(model->rootIndex(), false, 0);
     return true;
+}
+
+void NormalizedMode::removeClassifier()
+{
+    if (d->classifier) {
+        if (model && model->handler() == d->classifier->dataHandler())
+            model->setHandler(nullptr);
+
+       delete d->classifier;
+       d->classifier = nullptr;
+    }
 }
 

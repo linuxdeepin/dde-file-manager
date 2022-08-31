@@ -128,22 +128,24 @@ bool CollectionItemDelegatePrivate::needExpend(const QStyleOptionViewItem &optio
     }
 }
 
+const QList<int> CollectionItemDelegatePrivate::kIconSizes = {32, 48, 64, 96, 128};
+
 CollectionItemDelegate::CollectionItemDelegate(QAbstractItemView *parentPtr)
     : QStyledItemDelegate(parentPtr), d(new CollectionItemDelegatePrivate(this))
 {
     // 初始化图标等级、大小信息
-    d->iconSizes << 32 << 48 << 64 << 96 << 128;
     d->iconLevelDescriptions << tr("Tiny")
                              << tr("Small")
                              << tr("Medium")
                              << tr("Large")
                              << tr("Super large");
+    Q_ASSERT(d->iconLevelDescriptions.size() == d->kIconSizes.size());
     // word number of per line
-    d->charOfLine << 6 << 6 << 6 << 9 << 9;
+    // d->charOfLine << 6 << 6 << 6 << 9 << 9;
 
     // 初始化默认图标为小
     const int iconLevel = 1;
-    Q_ASSERT(iconLevel < d->iconSizes.size());
+    Q_ASSERT(iconLevel < d->kIconSizes.size());
     setIconLevel(iconLevel);
     d->textLineHeight = parent()->fontMetrics().height();
 
@@ -601,7 +603,7 @@ CollectionView *CollectionItemDelegate::parent() const
 QSize CollectionItemDelegate::iconSize(int lv) const
 {
     if (lv >= minimumIconLevel() && lv <= maximumIconLevel()) {
-        int size = d->iconSizes.at(lv);
+        int size = d->kIconSizes.at(lv);
         return QSize(size, size);
     }
 
@@ -627,14 +629,14 @@ int CollectionItemDelegate::setIconLevel(int lv)
     return -1;
 }
 
-int CollectionItemDelegate::minimumIconLevel() const
+int CollectionItemDelegate::minimumIconLevel()
 {
     return 0;
 }
 
-int CollectionItemDelegate::maximumIconLevel() const
+int CollectionItemDelegate::maximumIconLevel()
 {
-    return d->iconSizes.count() - 1;
+    return CollectionItemDelegatePrivate::kIconSizes.count() - 1;
 }
 
 QString CollectionItemDelegate::iconSizeLevelDescription(int i) const

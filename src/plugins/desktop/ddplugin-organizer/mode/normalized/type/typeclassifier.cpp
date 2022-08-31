@@ -83,7 +83,7 @@ TypeClassifier::TypeClassifier(QObject *parent)
             };
     }
     {
-        QHash<TypeClassifier::Category, QString> *categoryPtr = const_cast<QHash<TypeClassifier::Category, QString> *>(&d->categoryKey);
+        QHash<ItemCategory, QString> *categoryPtr = const_cast<QHash<ItemCategory, QString> *>(&d->categoryKey);
         *categoryPtr = {
             {kCatApplication, kTypeKeyApp},
             {kCatDocument, kTypeKeyDoc},
@@ -97,7 +97,7 @@ TypeClassifier::TypeClassifier(QObject *parent)
     handler = new ModelDataHandler();
 
     // get enable items
-    d->categories = TypeClassifier::Categories(CfgPresenter->enabledTypeCategories());
+    d->categories = CfgPresenter->enabledTypeCategories();
     qInfo() << "enabled categories" << d->categories.operator Int();
 }
 
@@ -136,7 +136,7 @@ QStringList TypeClassifier::classes() const
     } else {
         // test enabled category.
         for (int i = kCatApplication; i <= kCatEnd; i = i << 1) {
-            auto cat = static_cast<Category>(i);
+            auto cat = static_cast<ItemCategory>(i);
             if (d->categories.testFlag(cat)) {
                 auto key = d->categoryKey.value(cat);
                 if (d->keyNames.contains(key)) {

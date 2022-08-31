@@ -44,6 +44,20 @@ enum Classifier {
     kSize
 };
 
+enum ItemCategory {
+    kCatNone = 0,
+    kCatApplication = 0x01,
+    kCatDocument = 0x02,
+    kCatPicture = 0x04,
+    kCatVideo = 0x08,
+    kCatMusic = 0x10,
+    kCatFloder = 0x20,
+
+    kCatEnd = kCatFloder,
+    kCatAll = -1
+};
+Q_DECLARE_FLAGS(ItemCategories, ItemCategory)
+
 enum DisplaySize {
     kSmaller = 0,
     kNormal,

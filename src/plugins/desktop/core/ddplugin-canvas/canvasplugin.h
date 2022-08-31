@@ -44,12 +44,15 @@ private:
     // CanvasManager begin
     DPF_EVENT_REG_SIGNAL(signal_CanvasManager_IconSizeChanged)
     DPF_EVENT_REG_SIGNAL(signal_CanvasManager_HiddenFlagChanged)
+    DPF_EVENT_REG_SIGNAL(signal_CanvasManager_AutoArrangeChanged)
 
     DPF_EVENT_REG_SLOT(slot_CanvasManager_FileInfoModel)
     DPF_EVENT_REG_SLOT(slot_CanvasManager_Update)
     DPF_EVENT_REG_SLOT(slot_CanvasManager_Edit)
     DPF_EVENT_REG_SLOT(slot_CanvasManager_IconLevel)
     DPF_EVENT_REG_SLOT(slot_CanvasManager_SetIconLevel)
+    DPF_EVENT_REG_SLOT(slot_CanvasManager_AutoArrange)
+    DPF_EVENT_REG_SLOT(slot_CanvasManager_SetAutoArrange)
 
     DPF_EVENT_REG_HOOK(hook_CanvasManager_RequestWallpaperSetting)
 

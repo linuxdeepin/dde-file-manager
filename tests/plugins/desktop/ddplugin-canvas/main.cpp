@@ -21,11 +21,13 @@
 
 #include <gtest/gtest.h>
 #include <sanitizer/asan_interface.h>
-#include <QCoreApplication>
+#include <DApplication>
+
+DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
+    DApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);
 

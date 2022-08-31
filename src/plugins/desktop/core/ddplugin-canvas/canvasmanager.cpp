@@ -164,8 +164,13 @@ void CanvasManager::openEditor(const QUrl &url)
 void CanvasManager::setIconLevel(int level)
 {
     auto allView = views();
-    if (allView.isEmpty())
+    if (allView.isEmpty()) {
+        if (DispalyIns->iconLevel() != level) {
+            DispalyIns->setIconLevel(level);
+            d->hookIfs->iconSizeChanged(level);
+        }
         return;
+    }
 
     CanvasItemDelegate *delegate = allView.first()->itemDelegate();
     if (level != delegate->iconLevel() && level >= delegate->minimumIconLevel() && level <= delegate->maximumIconLevel()) {
@@ -188,6 +193,23 @@ int CanvasManager::iconLevel() const
 
     CanvasItemDelegate *delegate = allView.first()->itemDelegate();
     return delegate->iconLevel();
+}
+
+bool CanvasManager::autoArrange() const
+{
+    return DispalyIns->autoAlign();
+}
+
+void CanvasManager::setAutoArrange(bool on)
+{
+    DispalyIns->setAutoAlign(on);
+    GridIns->setMode(on ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
+    if (on) {
+        GridIns->arrange();
+        update();
+    }
+
+    d->hookIfs->autoArrangeChanged(on);
 }
 
 FileInfoModel *CanvasManager::fileModel() const

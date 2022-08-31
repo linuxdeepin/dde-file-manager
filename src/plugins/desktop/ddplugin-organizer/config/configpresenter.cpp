@@ -145,12 +145,12 @@ void ConfigPresenter::writeCustomStyle(const QList<CollectionStyle> &styles) con
     conf->sync();
 }
 
-int ConfigPresenter::enabledTypeCategories() const
+ItemCategories ConfigPresenter::enabledTypeCategories() const
 {
-    return conf->enabledTypeCategories();
+    return ItemCategories(conf->enabledTypeCategories());
 }
 
-void ConfigPresenter::setEnabledTypeCategories(int flags)
+void ConfigPresenter::setEnabledTypeCategories(ItemCategories flags)
 {
     conf->setEnabledTypeCategories(flags);
     conf->sync();

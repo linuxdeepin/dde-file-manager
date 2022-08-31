@@ -35,7 +35,7 @@ TEST(FrameManagerPrivate, showOptionWindow)
 
     stub_ext::StubExt stub;
     bool show = false;
-    stub.set_lamda(&QWidget::showNormal, [&show](){
+    stub.set_lamda(&QWidget::show, [&show](){
         show = true;
     });
 

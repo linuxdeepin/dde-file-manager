@@ -206,3 +206,12 @@ TEST_F(CollectionItemDelegateTest, paintLabel)
 //    EXPECT_EQ(inurl, url);
 //    EXPECT_EQ(inrole, dfmbase::Global::ItemRoles::kItemFileDisplayNameRole);
 //}
+
+TEST(CollectionItemDelegate, iconLevelRange)
+{
+    QList<int> iconSizes = {32, 48, 64, 96, 128};
+    ASSERT_EQ(CollectionItemDelegatePrivate::kIconSizes, iconSizes);
+
+    EXPECT_EQ(CollectionItemDelegate::minimumIconLevel(), 0);
+    EXPECT_EQ(CollectionItemDelegate::maximumIconLevel(), 4);
+}

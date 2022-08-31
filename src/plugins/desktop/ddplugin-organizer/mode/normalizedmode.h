@@ -33,8 +33,8 @@ class NormalizedMode : public CanvasOrganizer
     friend class NormalizedModePrivate;
 public:
    explicit NormalizedMode(QObject *parent = nullptr);
-   OrganizerMode mode() const override;
    ~NormalizedMode() override;
+   OrganizerMode mode() const override;
    bool initialize(FileProxyModel *) override;
    void reset() override;
    void layout() override;
@@ -52,6 +52,7 @@ protected slots:
     bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl) override;
 protected:
     bool setClassifier(Classifier id);
+    void removeClassifier();
 private:
     NormalizedModePrivate *d = nullptr;
 };

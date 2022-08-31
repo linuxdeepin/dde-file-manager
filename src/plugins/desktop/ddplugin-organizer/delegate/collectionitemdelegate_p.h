@@ -54,8 +54,8 @@ public:
     // default icon size is 48px.
     int currentIconLevel = -1;
     int textLineHeight = -1;
-    QList<int> iconSizes;
-    QList<int> charOfLine;
+    static const QList<int> kIconSizes;
+    //QList<int> charOfLine;
     QStringList iconLevelDescriptions;
     QSize itemSizeHint;
 

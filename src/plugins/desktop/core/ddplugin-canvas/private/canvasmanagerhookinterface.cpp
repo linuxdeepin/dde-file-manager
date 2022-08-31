@@ -46,3 +46,8 @@ void CanvasManagerHookInterface::hiddenFlagChanged(bool hidden) const
 {
     return;
 }
+
+void CanvasManagerHookInterface::autoArrangeChanged(bool on) const
+{
+    return;
+}

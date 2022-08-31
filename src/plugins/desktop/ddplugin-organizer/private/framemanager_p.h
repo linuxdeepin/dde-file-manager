@@ -28,6 +28,7 @@
 #include "models/fileproxymodel.h"
 #include "interface/canvasinterface.h"
 #include "options/optionswindow.h"
+#include "utils/organizerutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -44,7 +45,6 @@ public:
     SurfacePointer createSurface(QWidget *root);
     void layoutSurface(QWidget *root, SurfacePointer surface, bool hidden = false);
     void buildOrganizer();
-    int covertIconLevel(int lv, bool toDisplay);
 public slots:
     void refeshCanvas();
 public slots:

@@ -305,12 +305,7 @@ bool CanvasMenuScene::triggered(QAction *action)
         // Auto arrange
         if (actionId == ActionID::kAutoArrange) {
             bool align = action->isChecked();
-            DispalyIns->setAutoAlign(align);
-            GridIns->setMode(align ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
-            if (align) {
-                GridIns->arrange();
-                CanvasIns->update();
-            }
+            CanvasIns->setAutoArrange(align);
             return true;
         }
 

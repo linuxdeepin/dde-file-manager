@@ -35,7 +35,7 @@ public:
 public:
     void iconSizeChanged(int level) const override;
     void hiddenFlagChanged(bool hidden) const override;
-
+    void autoArrangeChanged(bool on) const override;
     bool requestWallpaperSetting(const QString &screen) const override;
 };
 

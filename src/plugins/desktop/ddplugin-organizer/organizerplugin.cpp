@@ -34,10 +34,8 @@ bool OrganizerPlugin::start()
     return instance->initialize();
 }
 
-dpf::Plugin::ShutdownFlag OrganizerPlugin::stop()
+void OrganizerPlugin::stop()
 {
     delete instance;
     instance = nullptr;
-
-    return kSync;
 }
