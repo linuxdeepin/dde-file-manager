@@ -259,7 +259,6 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
             lbDstTitle->setText(tr("Target folder"));
             QString filecount = targetInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(targetInfo->countChildFile()) : QObject::tr("%1 items").arg(targetInfo->countChildFile());
             lbDstFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
-            lbDstFileSize->setText(QString(tr("Contains: %1")).arg(QObject::tr("%1 item")));
         } else {
             lbDstTitle->setText(tr("Target file"));
             lbDstFileSize->setText(QString(tr("Size: %1")).arg(targetInfo->sizeFormat()));

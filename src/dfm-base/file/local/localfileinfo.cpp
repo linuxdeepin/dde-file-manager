@@ -1429,7 +1429,7 @@ int LocalFileInfo::countChildFile() const
         const QString &path = absoluteFilePath();
         QReadLocker locker(&d->lock);
         DecoratorFileEnumerator enumerator(path);
-        return enumerator.fileCount();
+        return int(enumerator.fileCount());
     }
 
     return -1;
