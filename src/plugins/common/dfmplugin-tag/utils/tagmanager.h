@@ -78,6 +78,7 @@ public:
     bool fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction action);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
+    bool registerTagColor(const QString &tagName, const QString &color);
 
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static void renameHandle(quint64 windowId, const QUrl &url, const QString &name);
@@ -103,6 +104,7 @@ private:
     QList<QColor> getTagColors(const QList<QUrl> &urls) const;
 
     TagDBusHelper *dbusHelper;
+    QMap<QString, QString> tagColorMap;
 };
 
 }

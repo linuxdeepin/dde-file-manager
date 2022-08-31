@@ -237,7 +237,7 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
         QMap<QString, QVariant> tagWithColorName {};
 
         for (const QString &tagName : tags) {
-            QString colorName = TagHelper::instance()->getColorNameByTag(tagName);
+            QString colorName = tagColorMap.contains(tagName) ? tagColorMap[tagName] : TagHelper::instance()->getColorNameByTag(tagName);
             tagWithColorName[tagName] = QVariant { QList<QString> { colorName } };
         }
 
@@ -482,6 +482,17 @@ bool TagManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGro
     }
 
     return false;
+}
+
+bool TagManager::registerTagColor(const QString &tagName, const QString &color)
+{
+    if (tagColorMap.contains(tagName)) {
+        qInfo() << "This tag name has registed: " << tagName;
+        return false;
+    }
+
+    tagColorMap[tagName] = color;
+    return true;
 }
 
 void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)

@@ -21,6 +21,7 @@
  */
 #include "tageditor.h"
 #include "utils/tagmanager.h"
+#include "utils/taghelper.h"
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_tag;
@@ -51,12 +52,8 @@ void TagEditor::setFilesForTagging(const QList<QUrl> &files)
 
 void TagEditor::setDefaultCrumbs(const QStringList &list)
 {
-    isSettingDefault = true;
-
-    for (const QString &crumb : list)
-        crumbEdit->appendCrumb(crumb);
-
-    isSettingDefault = false;
+    const auto &tagsMap = TagManager::instance()->getTagsColor(list);
+    updateCrumbsColor(tagsMap);
 }
 
 void TagEditor::onFocusOut()
@@ -141,7 +138,7 @@ void TagEditor::initializeConnect()
     QObject::connect(this, &TagEditor::windowDeactivate, this, &TagEditor::onFocusOut);
 
     QObject::connect(crumbEdit, &DCrumbEdit::crumbListChanged, this, [=] {
-        if (!isSettingDefault)
+        if (!crumbEdit->property("updateCrumbsColor").toBool())
             processTags();
     });
 }
@@ -151,5 +148,53 @@ void TagEditor::processTags()
     QList<QString> tags = crumbEdit->crumbList();
     QList<QUrl> tempFiles = files;
 
+    updateCrumbsColor(preTag(tags));
     TagManager::instance()->setTagsForFiles(tags, tempFiles);
+}
+
+QMap<QString, QColor> TagEditor::preTag(const QStringList &tagList)
+{
+    const auto &allTags = TagManager::instance()->getAllTags();
+    QMap<QString, QColor> tagsMap;
+
+    for (const auto &tag : tagList) {
+        const auto &tagMap = TagManager::instance()->getTagsColor({ tag });
+        if (tagMap.isEmpty()) {
+            QColor tagColor;
+            if (allTags.contains(tag)) {
+                tagColor = allTags[tag];
+            } else {
+                const auto &colorName = TagHelper::instance()->getColorNameByTag(tag);
+                tagColor = TagHelper::instance()->qureyColorByColorName(colorName);
+                TagManager::instance()->registerTagColor(tag, colorName);
+            }
+
+            tagsMap[tag] = tagColor;
+        } else {
+            tagsMap.unite(tagMap);
+        }
+    }
+
+    return tagsMap;
+}
+
+void TagEditor::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)
+{
+    if (tagsColor.isEmpty())
+        return;
+
+    crumbEdit->setProperty("updateCrumbsColor", true);
+    crumbEdit->clear();
+
+    for (auto it = tagsColor.begin(); it != tagsColor.end(); ++it) {
+        DCrumbTextFormat format = crumbEdit->makeTextFormat();
+        format.setText(it.key());
+
+        format.setBackground(QBrush(it.value()));
+        format.setBackgroundRadius(5);
+
+        crumbEdit->insertCrumb(format, 0);
+    }
+
+    crumbEdit->setProperty("updateCrumbsColor", false);
 }
