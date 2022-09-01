@@ -487,9 +487,10 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
                  }
             });
         }
+        if(!e->property("success").toBool()){//挂载失败
+            emit mountFailed(fileUrl);
+        }
     }
-    if(!e->property("success").toBool())//挂载失败
-        emit mountFailed(fileUrl);
     delete e;
 }
 
