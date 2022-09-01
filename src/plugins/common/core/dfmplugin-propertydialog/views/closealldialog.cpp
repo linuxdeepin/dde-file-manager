@@ -50,7 +50,7 @@ CloseAllDialog::~CloseAllDialog()
 
 void CloseAllDialog::initUI()
 {
-    resize(QSize(400, 50));
+    setFixedSize(400, 50);
 
     messageLabel = new DLabel(this);
     //    AC_SET_OBJECT_NAME(messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
