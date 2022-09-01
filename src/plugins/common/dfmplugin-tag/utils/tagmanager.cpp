@@ -209,26 +209,26 @@ bool TagManager::setTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
             dirtyTagNames << tag;
     }
 
-    if (!dirtyTagNames.isEmpty()) {
-        return TagManager::instance()->removeTagsOfFiles(dirtyTagNames, files);
-    } else {
-        bool ret = false;
-        for (const QUrl &url : files) {
-            QStringList tagsOfFile = TagManager::instance()->getTagsByUrls({ url });
-            QStringList newTags;
+    bool result = false;
+    if (!dirtyTagNames.isEmpty())
+        result = TagManager::instance()->removeTagsOfFiles(dirtyTagNames, files) || result;
 
-            for (const QString &tag : tags) {
-                if (!tagsOfFile.contains(tag))
-                    newTags.append(tag);
-            }
+    for (const QUrl &url : files) {
+        QStringList tagsOfFile = TagManager::instance()->getTagsByUrls({ url });
+        QStringList newTags;
 
-            if (!newTags.isEmpty()) {
-                tagsOfFile.append(newTags);
-                ret = TagManager::instance()->addTagsForFiles(tagsOfFile, { url });
-            }
+        for (const QString &tag : tags) {
+            if (!tagsOfFile.contains(tag))
+                newTags.append(tag);
         }
-        return ret;
+
+        if (!newTags.isEmpty()) {
+            tagsOfFile.append(newTags);
+            result = TagManager::instance()->addTagsForFiles(tagsOfFile, { url }) || result;
+        }
     }
+
+    return result;
 }
 
 bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &files)
@@ -258,6 +258,8 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
                 qWarning() << "Create tags successfully! But failed to tag files";
 
             return true;
+        } else {
+            qWarning() << "The tag don't exist.";
         }
     }
 
