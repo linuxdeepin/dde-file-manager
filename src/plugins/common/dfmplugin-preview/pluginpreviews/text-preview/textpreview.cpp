@@ -77,7 +77,7 @@ bool TextPreview::setFileUrl(const QUrl &url)
     char *buf = new char[static_cast<unsigned long>(len)];
     device.seekg(0, ios::beg).read(buf, static_cast<streamsize>(len));
     device.close();
-    string strBuf = buf;
+    std::string strBuf(buf, len);
     textBrowser->setFileData(strBuf);
     delete[] buf;
     buf = nullptr;
