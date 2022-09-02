@@ -161,7 +161,8 @@ void BasicWidget::basicExpand(const QUrl &url)
             row++;
         }
     }
-    if (url.isValid() && url.path().split("/", QString::SkipEmptyParts).last().startsWith("."))
+    QStringList list = url.path().split("/", QString::SkipEmptyParts);
+    if (!list.isEmpty() && url.isValid() && list.last().startsWith("."))
         tempFrame->hide();
     else
         glayout->addWidget(tempFrame, row, 0, 1, 6);

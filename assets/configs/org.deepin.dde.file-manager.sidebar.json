@@ -36,9 +36,7 @@
                     "Group_Device":true,
                     "Group_Bookmark":true,
                     "Group_Network":true,
-                    "Group_Tag":true,
-                    "Group_Other":true,
-                    "__not_existed_group":false
+                    "Group_Tag":true
                     },
             "serial":0,
             "flags":[],

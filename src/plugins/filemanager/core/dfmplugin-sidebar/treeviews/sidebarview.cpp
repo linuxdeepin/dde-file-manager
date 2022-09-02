@@ -39,6 +39,10 @@
 #include <QApplication>
 #include <QMouseEvent>
 #include <QUrl>
+#include <QProxyStyle>
+#include <DPaletteHelper>
+#include <DGuiApplicationHelper>
+#include <QStyledItemDelegate>
 
 #include <unistd.h>
 
@@ -81,14 +85,61 @@ void SideBarViewPrivate::notifyOrderChanged()
     });
 }
 
+class SidebarViewStyle : public QProxyStyle
+{
+public:
+    SidebarViewStyle(QStyle *style = nullptr);
+
+    void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = 0) const;
+};
+
+SidebarViewStyle::SidebarViewStyle(QStyle *style)
+    : QProxyStyle(style)
+{
+}
+
+void SidebarViewStyle::drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+{
+    if (element == QStyle::PE_IndicatorItemViewItemDrop && !option->rect.isNull()) {
+        painter->setRenderHint(QPainter::Antialiasing);
+        QStyleOption opt(*option);
+        opt.rect.setLeft(0);
+        if (widget)
+            opt.rect.setRight(widget->width());
+        DPalette pl(DPaletteHelper::instance()->palette(widget));
+        QColor bgColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+        QPalette::ColorGroup colorGroup = QPalette::Normal;
+        bgColor = opt.palette.color(colorGroup, QPalette::Highlight);
+        QPen pen = painter->pen();
+        pen.setColor(bgColor);
+        pen.setWidth(2);
+        painter->setPen(pen);
+
+        int height = opt.rect.height();
+        if (height > 0) {
+            QPoint posLeft = opt.rect.topLeft();
+            QPoint posRight = opt.rect.bottomRight();
+            painter->drawRoundedRect(QRect(posLeft + QPoint(12, 0), posRight + QPoint(-14, 0)), 8, 8);
+            return;
+        } else {
+            QPoint pos = opt.rect.bottomLeft();
+            painter->drawRect(QRect(pos + QPoint(-40, 0), opt.rect.bottomRight()));
+            return;
+        }
+    }
+    QProxyStyle::drawPrimitive(element, option, painter, widget);
+}
+
 SideBarView::SideBarView(QWidget *parent)
     : DTreeView(parent), d(new SideBarViewPrivate(this))
 {
     setRootIsDecorated(false);
+    setIndentation(0);
     setVerticalScrollMode(ScrollPerPixel);
     setIconSize(QSize(16, 16));
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    this->setHeaderHidden(true);
+    setHeaderHidden(true);
+    setExpandsOnDoubleClick(false);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setMouseTracking(true);   // sp3 feature 35，解除注释以便鼠标在移动时就能触发 mousemoveevent
@@ -99,6 +150,8 @@ SideBarView::SideBarView(QWidget *parent)
     connect(this, &DTreeView::clicked, d, &SideBarViewPrivate::currentChanged);
 
     d->lastOpTime = 0;
+
+    setStyle(new SidebarViewStyle(style()));
 }
 
 SideBarModel *SideBarView::model() const
@@ -128,18 +181,20 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
 void SideBarView::mouseMoveEvent(QMouseEvent *event)
 {
     DTreeView::mouseMoveEvent(event);
-#if QT_CONFIG(draganddrop)
-    if (state() == DraggingState) {
-        startDrag(Qt::MoveAction);
-        setState(NoState);   // the startDrag will return when the dnd operation is done
-        stopAutoScroll();
-        QPoint pt = mapFromGlobal(QCursor::pos());
-        QRect rc = geometry();
-        if (!rc.contains(pt)) {
-            Q_EMIT requestRemoveItem();   // model()->removeRow(currentIndex().row());
-        }
-    }
-#endif   // QT_CONFIG(draganddrop)
+    //The following code is from the history code and must be commented, otherwise if operate computer by VPN,
+    //the bookmark or tag items can not response mouse click event.
+    //#if QT_CONFIG(draganddrop)
+    //    if (state() == DraggingState) {
+    //        startDrag(Qt::MoveAction);
+    //        setState(NoState);   // the startDrag will return when the dnd operation is done
+    //        stopAutoScroll();
+    //        QPoint pt = mapFromGlobal(QCursor::pos());
+    //        QRect rc = geometry();
+    //        if (!rc.contains(pt)) {
+    //            Q_EMIT requestRemoveItem();   // model()->removeRow(currentIndex().row());
+    //        }
+    //    }
+    //#endif   // QT_CONFIG(draganddrop)
 }
 
 void SideBarView::mouseReleaseEvent(QMouseEvent *event)
@@ -352,7 +407,7 @@ void SideBarView::setCurrentUrl(const QUrl &url)
     sidebarUrl = url;
 
     const QModelIndex &index = findItemIndex(url);
-    if (!index.isValid() || index.row() < 0 || index.column() < 0) {
+    if (!index.isValid()) {
         this->clearSelection();
         return;
     }
@@ -554,6 +609,7 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
         if (expand)
             setCurrentUrl(sidebarUrl);   //To make sure, when expand the group item, the current item is highlighted.
     }
+    update(index);
 }
 
 bool SideBarViewPrivate::fetchDragEventUrlsFromSharedMemory()

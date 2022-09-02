@@ -148,11 +148,13 @@ SideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
 {
     SideBarItemSeparator *item = new SideBarItemSeparator(group);
 
-    //    if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag) {
-    //        auto flags { Qt::ItemIsEnabled | Qt::ItemIsDropEnabled };
-    //        item->setFlags(flags);
-    //    } else //TODO(zhuangshu):in treeview mode, features drag bookmark and tag are not ready.
-    item->setFlags(Qt::NoItemFlags);
+    //Currently, only bookmark and tag groups support internal drag.
+    //In the next stage, quick access would be instead of bookmark.
+    if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag) {
+        auto flags { Qt::ItemIsEnabled | Qt::ItemIsDropEnabled };
+        item->setFlags(flags);
+    } else
+        item->setFlags(Qt::NoItemFlags);
 
     return item;
 }

@@ -22,6 +22,7 @@
 */
 
 #include "smbbrowser.h"
+#include "events/smbbrowsereventcaller.h"
 #include "utils/smbbrowserutils.h"
 #include "fileinfo/smbsharefileinfo.h"
 #include "iterator/smbshareiterator.h"
@@ -37,7 +38,13 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 
+#include <QMenu>
+
 using namespace dfmplugin_smbbrowser;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+
+Q_DECLARE_METATYPE(ContextMenuCallback);
+
 DFMBASE_USE_NAMESPACE
 
 void SmbBrowser::initialize()
@@ -85,6 +92,25 @@ dpf::Plugin::ShutdownFlag SmbBrowser::stop()
     return dpf::Plugin::ShutdownFlag::kSync;
 }
 
+void SmbBrowser::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
+{
+    QFileInfo info(url.path());
+    bool bEnabled = info.exists();
+
+    QMenu *menu = new QMenu;
+    auto newWindowAct = menu->addAction(QObject::tr("Open in new window"), [url]() { SmbBrowserEventCaller::sendOpenWindow(url); });
+    newWindowAct->setEnabled(bEnabled);
+
+    auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
+        SmbBrowserEventCaller::sendOpenTab(windowId, url);
+    });
+
+    newTabAct->setEnabled(bEnabled && SmbBrowserEventCaller::sendCheckTabAddable(windowId));
+
+    menu->exec(globalPos);
+    delete menu;
+}
+
 void SmbBrowser::onWindowOpened(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);
@@ -96,13 +122,15 @@ void SmbBrowser::onWindowOpened(quint64 winId)
 
 void SmbBrowser::addNeighborToSidebar()
 {
+    ContextMenuCallback contextMenuCb { SmbBrowser::contenxtMenuHandle };
     Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
     QVariantMap map {
         { "Property_Key_Group", "Group_Network" },
         { "Property_Key_DisplayName", tr("Computers in LAN") },
         { "Property_Key_Icon", SmbBrowserUtils::icon() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_VisiableControl", "computers_in_lan" }
+        { "Property_Key_VisiableControl", "computers_in_lan" },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
     };
 
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, SmbBrowserUtils::netNeighborRootUrl(), map);

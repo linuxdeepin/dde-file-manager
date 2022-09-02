@@ -65,9 +65,11 @@ protected:
 
 private:
     inline QString dragEventUrls() const;
+
 public Q_SLOTS:
     void updateSeparatorVisibleState();
     void onChangeExpandState(const QModelIndex &index, bool expand);
+
 Q_SIGNALS:
     void requestRemoveItem();
 

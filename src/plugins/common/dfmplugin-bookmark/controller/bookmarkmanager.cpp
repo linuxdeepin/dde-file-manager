@@ -179,7 +179,7 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
     ItemClickedActionCallback cdCb { BookMarkManager::cdBookMarkUrlCallBack };
     ContextMenuCallback contextMenuCb { BookMarkManager::contextMenuHandle };
     RenameCallback renameCb { BookMarkManager::renameCallBack };
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable /*| Qt::ItemIsDragEnabled*/ };   //TODO(zhuangshu)
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled };
     QVariantMap map {
         { "Property_Key_Group", "Group_Bookmark" },
         { "Property_Key_DisplayName", bookmarkName },

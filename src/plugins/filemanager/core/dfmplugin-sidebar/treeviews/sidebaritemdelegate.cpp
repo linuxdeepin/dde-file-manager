@@ -84,15 +84,11 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     auto widgetColor = option.widget->palette().base().color();
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
         widgetColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
-    painter->setBrush(widgetColor);
-    painter->setPen(Qt::NoPen);
-    QRect rectBg(opt.rect.topLeft() + QPoint(-40, 0), opt.rect.bottomRight() + QPoint(-40, 0));
-    painter->drawRect(rectBg);
 
     //Draw background - end
     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
     SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
-    QPoint dx = (separatorItem ? QPoint(10, 0) : QPoint(-10, 0));
+    QPoint dx = QPoint(10, 0);
     QPoint dw = QPoint(-12, 0);
     bool selected = opt.state.testFlag(QStyle::State_Selected);
     if (selected) {   //Draw selected background
@@ -129,7 +125,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     bool isEjectable = false;
     if (item) {
         if (!separatorItem) {
-            painter->drawPixmap(rect.topLeft() + QPoint(0, 8), item->icon().pixmap(QSize(18, 18)));
+            painter->drawPixmap(rect.topLeft() + QPoint(20, 8), item->icon().pixmap(QSize(18, 18)));
 
             SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
             if (sidebarItem) {
@@ -148,15 +144,15 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         painter->setPen("#ffffff");
     QFontMetrics metricsLabel(option.widget->font());
     QString text = index.data().toString();
-    qreal min = rect.width() * 0.6;
+    qreal min = rect.width() * 0.5;
     qreal max = rect.width() * 0.7;
-    if (metricsLabel.width(text) > (isEjectable ? min : max))
+    if (metricsLabel.width(text) > (isEjectable ? min : max)) {
         text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? min : max));
-
+    }
     int rowHeight = rect.height();
-    painter->drawText(QRectF(rect.x() + 22, rect.y() + 6, rect.width(), rowHeight), Qt::AlignLeft, text);
+    painter->drawText(QRectF(rect.x() + (separatorItem ? 0 : 20) + 22, rect.y() + 6, rect.width(), rowHeight), Qt::AlignLeft, text);
     painter->restore();
-    //return DStyledItemDelegate::paint(painter, option, index);
+    //    return DStyledItemDelegate::paint(painter, option, index);
 }
 
 QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -168,8 +164,9 @@ void SideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
 {
     Q_UNUSED(model);
     QByteArray n = editor->metaObject()->userProperty().name();
-    if (!n.isEmpty())
+    if (!n.isEmpty()) {
         Q_EMIT rename(index, editor->property(n).toString());
+    }
 
     return;
 }
@@ -214,7 +211,11 @@ void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
     DStyledItemDelegate::updateEditorGeometry(editor, option, index);
     //When DTK calculates the width of editor, it does not care about the icon width, so adjust the width of editor here.
     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
-    editor->setFixedWidth(sidebarView->width() - 59);
+    editor->setFixedWidth(sidebarView->width() - 50);
+    QRect rect = editor->geometry();
+    rect.setHeight(rect.height() + 4);
+    rect.moveTo(40, rect.top());
+    editor->setGeometry(rect);
 }
 
 bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
@@ -222,25 +223,35 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
     if (index.isValid()) {
         if (event->type() == QEvent::MouseButtonPress) {
             QMouseEvent *e = static_cast<QMouseEvent *>(event);
-            QRect expandBtRect(option.rect.width() - 40, option.rect.topRight().y() + 4, 24, 24);
-            QRect ejectBtRect(option.rect.bottomRight() + QPoint(-32, -26), option.rect.bottomRight());
-            QPoint pos = e->pos();
-            if (e->button() == Qt::LeftButton && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
-                SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
-                if (sidebarView)
-                    emit changeExpandState(index, !sidebarView->isExpanded(index));
-
-                event->accept();
-                return true;
-            } else if (e->button() == Qt::LeftButton && ejectBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
-                QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+            if (e->button() == Qt::LeftButton) {
+                QStandardItem *item = qobject_cast<const SideBarModel *>(model)->itemFromIndex(index);
                 SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
+                SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
+                bool ejectable = false;
                 if (sidebarItem) {
-                    QUrl url = sidebarItem->itemInfo().url;
-                    SideBarEventCaller::sendEject(url);
+                    ItemInfo info = sidebarItem->itemInfo();
+                    ejectable = info.isEjectable;
                 }
-                event->accept();
-                return true;
+                QRect expandBtRect(option.rect.width() - 40, option.rect.topRight().y() + 4, 24, 24);
+                QRect ejectBtRect(option.rect.bottomRight() + QPoint(-32, -26), option.rect.bottomRight());
+                QPoint pos = e->pos();
+                if (separatorItem && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
+                    SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
+                    if (sidebarView)
+                        emit changeExpandState(index, !sidebarView->isExpanded(index));
+
+                    event->accept();
+                    return true;
+                } else if (ejectable && ejectBtRect.contains(pos)) {   //The eject icon is pressed.
+                    QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+                    SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
+                    if (sidebarItem) {
+                        QUrl url = sidebarItem->itemInfo().url;
+                        SideBarEventCaller::sendEject(url);
+                    }
+                    event->accept();
+                    return true;
+                }
             }
         }
     }
