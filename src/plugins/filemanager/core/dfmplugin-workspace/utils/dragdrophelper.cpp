@@ -224,6 +224,8 @@ bool DragDropHelper::drop(QDropEvent *event)
             }
 
             view->selectionModel()->clear();
+            if (event->isAccepted())
+                return true; // TODO (xust) this is a temp workaround.
         }
     }
 
