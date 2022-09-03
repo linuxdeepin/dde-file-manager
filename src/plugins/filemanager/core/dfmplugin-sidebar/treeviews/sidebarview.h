@@ -51,6 +51,7 @@ public:
     void setCurrentUrl(const QUrl &sidebarUrl);
     QUrl currentUrl() const;
     QModelIndex findItemIndex(const QUrl &url) const;
+    QVariantMap groupExpandState() const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -75,7 +76,6 @@ Q_SIGNALS:
 
 private:
     QUrl sidebarUrl;
-    QVariantMap groupExpandState;
 };
 
 }

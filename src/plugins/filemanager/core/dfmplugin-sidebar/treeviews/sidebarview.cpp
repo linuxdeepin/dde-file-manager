@@ -19,6 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include "sidebarwidget.h"
 #include "sidebarview.h"
 #include "sidebarmodel.h"
 #include "sidebaritem.h"
@@ -397,9 +399,10 @@ void SideBarView::saveStateWhenClose()
 {
     if (SideBarHelper::groupExpandRules().isEmpty())
         return;
-    if (groupExpandState.isEmpty())
-        groupExpandState = SideBarHelper::groupExpandRules();
-    SideBarHelper::saveGroupsStateToConfig(groupExpandState);
+    if (d->groupExpandState.isEmpty())
+        d->groupExpandState = SideBarHelper::groupExpandRules();
+
+    SideBarHelper::saveGroupsStateToConfig(d->groupExpandState);
 }
 
 void SideBarView::setCurrentUrl(const QUrl &url)
@@ -456,6 +459,11 @@ QModelIndex SideBarView::findItemIndex(const QUrl &url) const
     }
 
     return QModelIndex();
+}
+
+QVariantMap SideBarView::groupExpandState() const
+{
+    return d->groupExpandState;
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
@@ -537,6 +545,25 @@ QString SideBarView::dragEventUrls() const
 
 void SideBarView::updateSeparatorVisibleState()
 {
+    QVariantMap lastWindowGroupState;
+    //`groupExpandState` is empty means that user have not operated the group expanding state and
+    // the group expanding state must be got from the previous actived window.
+    if (d->groupExpandState.isEmpty()) {
+        auto lastActivedWinId = FMWindowsIns.previousActivedWindowId();
+        auto win = FMWindowsIns.findWindowById(lastActivedWinId);
+        if (win) {
+            SideBarWidget *sb = dynamic_cast<SideBarWidget *>(win->sideBar());
+            if (sb) {
+                SideBarView *view = dynamic_cast<SideBarView *>(sb->view());
+                if (view) {
+                    lastWindowGroupState = view->groupExpandState();
+                    if (!lastWindowGroupState.isEmpty())
+                        d->groupExpandState = lastWindowGroupState;   //synchronize the sidebar group expanding state from the previous actived window
+                }
+            }
+        }
+    }
+
     QString lastGroupName = DefaultGroup::kNotExistedGroup;
     bool allItemsInvisiable = true;
     SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
@@ -550,10 +577,10 @@ void SideBarView::updateSeparatorVisibleState()
             SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
             if (groupItem) {   // Separator
                 QVariantMap temGroupExpandState;
-                if (groupExpandState.isEmpty())
+                if (d->groupExpandState.isEmpty())
                     temGroupExpandState = SideBarHelper::groupExpandRules();
                 else
-                    temGroupExpandState = groupExpandState;
+                    temGroupExpandState = d->groupExpandState;
 
                 bool groupExpaned = temGroupExpandState.value(groupItem->group(), true).toBool();
                 groupItem->setExpanded(groupExpaned);
@@ -600,11 +627,11 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
         groupItem->setExpanded(expand);
 
         const QVariantMap &gMap = SideBarHelper::groupExpandRules();
-        if (groupExpandState.isEmpty() && !gMap.isEmpty())
-            groupExpandState = gMap;
+        if (d->groupExpandState.isEmpty() && !gMap.isEmpty())
+            d->groupExpandState = gMap;
 
-        if (groupExpandState.keys().contains(groupItem->group()))
-            groupExpandState[groupItem->group()] = expand;
+        if (d->groupExpandState.keys().contains(groupItem->group()))
+            d->groupExpandState[groupItem->group()] = expand;
 
         if (expand)
             setCurrentUrl(sidebarUrl);   //To make sure, when expand the group item, the current item is highlighted.

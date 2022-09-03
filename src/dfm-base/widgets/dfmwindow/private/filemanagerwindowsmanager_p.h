@@ -51,6 +51,7 @@ private:
     QPointer<FileManagerWindowsManager> manager;
     QHash<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> windows;
     FileManagerWindowsManager::WindowCreator customCreator {};
+    quint64 previousActivedWindowId = 0;
 };
 
 DFMBASE_END_NAMESPACE

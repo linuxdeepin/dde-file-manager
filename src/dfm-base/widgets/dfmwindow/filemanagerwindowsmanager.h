@@ -52,11 +52,11 @@ public:
     quint64 findWindowId(const QWidget *window);
     FMWindow *findWindowById(quint64 winId);
     QList<quint64> windowIdList();
-
+    quint64 previousActivedWindowId();
 Q_SIGNALS:
     void windowCreated(quint64 windId);
     void windowOpened(quint64 windId);
-    void windowClosed(quint64 winId);
+    void windowClosed(quint64 windId);
 
 private:
     explicit FileManagerWindowsManager(QObject *parent = nullptr);

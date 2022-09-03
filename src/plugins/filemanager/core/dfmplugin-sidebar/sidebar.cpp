@@ -73,15 +73,13 @@ void SideBar::onWindowOpened(quint64 windId)
 
 void SideBar::onWindowClosed(quint64 winId)
 {
-    qInfo() << "FMWindowsIns.windowIdList().count() = " << FMWindowsIns.windowIdList().count();
-    if (FMWindowsIns.windowIdList().count() > 1)   // It's not last window.
-        return;
-
-    auto win = FMWindowsIns.findWindowById(FMWindowsIns.windowIdList().first());
-    if (win) {
-        SideBarWidget *sb = dynamic_cast<SideBarWidget *>(win->sideBar());
-        if (sb)
-            sb->saveStateWhenClose();
+    if (FMWindowsIns.windowIdList().count() == 1) {
+        auto win = FMWindowsIns.findWindowById(FMWindowsIns.windowIdList().first());
+        if (win) {
+            SideBarWidget *sb = dynamic_cast<SideBarWidget *>(win->sideBar());
+            if (sb)
+                sb->saveStateWhenClose();
+        }
     }
 
     SideBarHelper::removeSideBar(winId);

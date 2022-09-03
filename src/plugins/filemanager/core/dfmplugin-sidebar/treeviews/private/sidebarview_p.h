@@ -45,6 +45,7 @@ class SideBarViewPrivate : public QObject
     qint64 lastOpTime;   //上次操作的时间（ms）
     QUrl draggedUrl;
     QString draggedGroup;
+    QVariantMap groupExpandState;
 
     explicit SideBarViewPrivate(SideBarView *qq);
     bool fetchDragEventUrlsFromSharedMemory();
