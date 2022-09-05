@@ -1,8 +1,6 @@
-/**
- * Copyright (C) 2020 UOS Technology Co., Ltd.
- *
- * to mark the desktop UI
- **/
+// SPDX-FileCopyrightText: 2020 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef DDE_FILE_MANAGER_ACCESSIBLE_LIST_H
 #define DDE_FILE_MANAGER_ACCESSIBLE_LIST_H

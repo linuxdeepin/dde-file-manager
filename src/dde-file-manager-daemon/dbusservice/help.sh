@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 echo "=====fileoperation====="
 qdbusxml2cpp -i controllers/fileoperation.h  -i dbusservice/dbustype/dbusinforet.h -c FileOperationAdaptor -l FileOperation -a dbusadaptor/fileoperation_adaptor fileoperation.xml
 qdbusxml2cpp -i dbusservice/dbustype/dbusinforet.h -c FileOperationInterface -p dbusinterface/fileoperation_interface fileoperation.xml

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 DESKTOP_TEMP_FILE=dde-file-manager.desktop.tmp
 DESKTOP_SOURCE_FILE=dde-file-manager.desktop
 

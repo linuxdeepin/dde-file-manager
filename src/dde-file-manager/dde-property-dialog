@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 #shell name: dde-property-dialog.sh
 #description: reuqest show files's or folders's property dialog.
 #usage: just use it in bash like dde-property-dialog path1 path2 ...

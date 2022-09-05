@@ -1,9 +1,39 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name:  dde-file-manager
 
-Files: *
-Copyright: 2017 Deepin Technology Co., Ltd.
-License: GPL-3+
+Files: src/*
+Copyright: 2017 - 2022, Uniontech Software Technology Co., Ltd.
+License: GPL3+
+
+Files: tests/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL3+
+
+Files: 3rdparty/cpp-stub/*
+Copyright: 2019 coolxv
+License: MIT
+
+Files: 3rdparty/stub-ext/*
+Copyright: 2020 Zhang Yu
+License: MIT
+
+Files：3rdparty/fsearch/*
+Copyright：2020 Christian Boxdörfer
+License：GPL2+
+
+Files: 3rdparty/accessibility/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL3+
+
+Files: 3rdparty/qrencode/*
+Copyright: 2006-2011 Kentaro Fukuchi
+License:  GPL2+
+
+Files: 3rdparty/test-prj-running.sh
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL3+
+
+License: GPL3+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 3 of the License, or
