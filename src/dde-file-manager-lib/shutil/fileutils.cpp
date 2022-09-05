@@ -1806,14 +1806,14 @@ bool FileUtils::writeJsonnArrayFile(const QString &filePath, const QJsonArray &a
 void FileUtils::mountAVFS()
 {
     QProcess p;
-    p.start("/usr/bin/umountavfs");
+    p.start("umountavfs", QStringList{});
     p.waitForFinished();
-    QProcess::startDetached("/usr/bin/mountavfs");
+    QProcess::startDetached("mountavfs", {});
 }
 
 void FileUtils::umountAVFS()
 {
-    QProcess::startDetached("/usr/bin/umountavfs");
+    QProcess::startDetached("umountavfs", {});
 }
 
 void FileUtils::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
