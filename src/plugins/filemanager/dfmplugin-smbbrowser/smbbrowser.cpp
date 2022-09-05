@@ -158,8 +158,8 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
             DialogManager::instance()->showErrorDialog(tr("Mount device error"), "");
             qDebug() << DeviceUtils::errMessage(err);
         }
-    },
-                                       10000);
+    }/*,
+                                       10000*/);
 }
 
 QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node)
