@@ -1,4 +1,7 @@
-//fix: 设置光盘容量属性
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "interfaces/dfmstandardpaths.h"
 
 #include "dfmopticalmediawidget.h"

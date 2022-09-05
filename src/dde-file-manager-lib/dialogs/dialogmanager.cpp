@@ -1,26 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-//fix:一旦刻录失败，必须清楚磁盘临时缓存的数据文件，否则下次刻录操作等就会报一些错误，不能正常进行操作流程
 #include "qfile.h"
 #include "dfilemenumanager.h"
 #include "disomaster.h"

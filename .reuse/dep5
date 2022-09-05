@@ -1,0 +1,94 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: dde-file-manager
+Upstream-Contact: UnionTech Software Technology Co., Ltd. <>
+Source: https://github.com/linuxdeepin/dde-file-manager
+
+# ci
+Files: .github/* .gitlab-ci.yml
+Copyright: None
+License: CC0-1.0
+
+# ignore files
+Files: .gitignore .clang-format .clog.toml .project.json .qmake.conf
+Copyright: None
+License: CC0-1.0
+
+# debian & Arch & rpm
+Files: debian/*  archlinux/* rpm/*
+Copyright: None
+License: CC0-1.0
+
+# xml dict json conf policy theme mimetype
+Files: src/*.xml src/*.dict src/*.json src/*.conf src/*.policy src/*.theme src/*.mimetype src/*/testFiles/* */templates/* src/*.readme
+Copyright: None
+License: CC0-1.0
+
+# Project file
+Files: *.pro *.pri *.qrc .tx/*
+Copyright: None
+License: CC0-1.0
+
+#DBus interface
+Files: src/*/dbusinterface/* src/*/dbusadaptor/*
+Copyright: 2016 The Qt Company Ltd.
+License: CC0-1.0
+
+#fulltext search
+Files: src/*/fulltext/chinese*
+Copyright: 2009-2014 Alan Wright
+License: LGPL-3.0-or-later
+
+# README & DOCS
+Files: README.md README.zh_CN.md CHANGELOG.md docs/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: CC-BY-4.0
+
+# desktop & png & svg & service & mov
+Files: src/*.desktop src/*.png src/*.svg src/*.service src/*.mov
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# translations
+Files: src/*/translations/* src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin.ts
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# ui qss js ini
+Files: src/*.ui src/*.qss src/*.js src/*/config.ini
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# tests
+Files: tests/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# assets
+Files: assets/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# cpp-stub
+Files: 3rdparty/cpp-stub/*
+Copyright: 2019 coolxv
+License: MIT
+
+# stub-ext
+Files: 3rdparty/stub-ext/*
+Copyright: 2020 Zhang Yu
+License: MIT
+
+# fsearch
+Files: 3rdparty/fsearch/*
+Copyright: 2020 Christian Boxdörfer
+License: GPL-2.0-or-later
+
+# accessibility
+Files: 3rdparty/accessibility/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# qrencode
+Files: 3rdparty/qrencode/*
+Copyright: 2006-2011 Kentaro Fukuchi
+License:  GPL-2.0-or-later 
