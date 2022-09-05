@@ -38,6 +38,7 @@ VideoPreview::VideoPreview(QObject *parent)
     setlocale(LC_NUMERIC, "C");
 
     playerWidget = new VideoWidget(this);
+    playerWidget->setMinimumSize(800,355);
     statusBar = new VideoStatusBar(this);
 
     connect(&playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, &VideoPreview::sigPlayState);
