@@ -2,7 +2,7 @@
 Actions=new-window;
 Categories=Utility;
 Comment=Browse the file system
-Exec=/usr/bin/dde-file-manager -n %U
+Exec=dde-file-manager -n %U
 GenericName=File Manager
 Icon=dde-file-manager
 MimeType=inode/directory;
