@@ -54,7 +54,7 @@ bool UserShareManager::addGroup(const QString &groupName)
 
     QStringList args;
     args << groupName;
-    bool ret = QProcess::startDetached("/usr/sbin/groupadd", args);
+    bool ret = QProcess::startDetached("groupadd", args);
     qDebug() << "groupadd" << groupName << ret;
     return ret;
 }
