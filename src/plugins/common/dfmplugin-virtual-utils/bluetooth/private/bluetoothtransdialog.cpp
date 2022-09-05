@@ -178,6 +178,20 @@ QString BluetoothTransDialog::humanizeObexErrMsg(const QString &msg)
     }
 }
 
+void BluetoothTransDialog::setNextButtonEnable(bool enable)
+{
+    if (stackedWidget->currentIndex() != Page::kSelectDevicePage) {
+        for (auto btn: getButtons())
+            btn->setEnabled(true);
+        return;
+    }
+
+    auto btns = getButtons();
+    if (btns.count() == 2) {
+        btns[1]->setEnabled(enable);
+    }
+}
+
 bool BluetoothTransDialog::isBluetoothIdle()
 {
     return BluetoothManagerInstance->canSendBluetoothRequest();
@@ -249,8 +263,10 @@ void BluetoothTransDialog::initConn()
                 item->setCheckState(Qt::Checked);
                 selectedDeviceName = item->text();
                 selectedDeviceId = item->data(kDevIdRole).toString();
-            } else
+                setNextButtonEnable(true);  // when an item is selected, the next button should be enable.
+            } else {
                 item->setCheckState(Qt::Unchecked);
+            }
         }
     });
 
@@ -668,6 +684,10 @@ void BluetoothTransDialog::removeDevice(const QString &id)
 {
     for (int i = 0; i < devModel->rowCount(); i++) {
         if (devModel->data(devModel->index(i, 0), kDevIdRole).toString() == id) {
+            auto item = devModel->item(i);
+            if (item && item->checkState() == Qt::Checked)
+                setNextButtonEnable(false); // set the next button disable when the selected item is removed.
+
             devModel->removeRow(i);
             if (devModel->rowCount() == 0 && stackedWidget->currentIndex() == kSelectDevicePage)
                 stackedWidget->setCurrentIndex(kNoneDevicePage);
@@ -805,6 +825,14 @@ void BluetoothTransDialog::onPageChagned(const int &nIdx)
     case kSelectDevicePage:
         addButton(TXT_CANC);
         addButton(TXT_NEXT, true, ButtonType::ButtonRecommend);
+        setNextButtonEnable(false);
+        for (int i = 0; i < devModel->rowCount(); ++i) {
+            auto item = devModel->item(i);
+            if (item && item->checkState() == Qt::Checked) {
+                setNextButtonEnable(true);
+                break;
+            }
+        }
         break;
     case kNoneDevicePage:
     case kWaitForRecvPage:

@@ -82,6 +82,7 @@ private:
     void changeLabelTheme(QLabel *obj, bool isTitle = false);
     void setObjTextStyle(QWidget *obj, int size, bool bold);
     QString humanizeObexErrMsg(const QString &msg);
+    void setNextButtonEnable(bool enable);
 
 private Q_SLOTS:
     void showBluetoothSetting();
