@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPSIDEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_sidebar {
 
 class SideBarWidget;
 class SideBar : public dpf::Plugin
@@ -66,6 +66,6 @@ private slots:
     void onConfigChanged(const QString &cfg, const QString &key);
 };
 
-DPSIDEBAR_END_NAMESPACE
+}   //namespace dfmplugin_sidebar
 
 #endif   // SIDEBAR_H

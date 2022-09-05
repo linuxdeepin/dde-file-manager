@@ -35,7 +35,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPSIDEBAR_USE_NAMESPACE
+using namespace dfmplugin_sidebar;
 DFMBASE_USE_NAMESPACE
 
 void SideBar::initialize()

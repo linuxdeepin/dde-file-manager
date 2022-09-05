@@ -41,7 +41,7 @@
 #include <QCloseEvent>
 #include <QTimer>
 
-DPSIDEBAR_USE_NAMESPACE
+using namespace dfmplugin_sidebar;
 DFMBASE_USE_NAMESPACE
 
 QSharedPointer<SideBarModel> SideBarWidget::kSidebarModelIns { nullptr };

@@ -28,7 +28,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-DPSIDEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_sidebar {
 
 class SideBarItem;
 class SideBarModel;
@@ -78,6 +78,6 @@ private:
     QVariantMap groupExpandState;
 };
 
-DPSIDEBAR_END_NAMESPACE
+}
 
 #endif   // SIDEBARVIEW_H

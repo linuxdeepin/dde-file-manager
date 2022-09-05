@@ -31,7 +31,8 @@
 
 class QAbstractItemView;
 
-DPSIDEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_sidebar {
+
 class SideBarView;
 class SideBarModel;
 class SideBarItem;
@@ -78,6 +79,6 @@ private:
     QStringList currentGroups;
     QMap<QString, QString> groupDisplayName;
 };
-DPSIDEBAR_END_NAMESPACE
+}
 
 #endif   // SIDEBARWIDGET_H
