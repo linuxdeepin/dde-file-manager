@@ -295,7 +295,7 @@
                     "options": [
                         {
                             "key": "hide_system_partition",
-                            "text": qsTranslate("GenerateSettingTranslate", "Hide system disk"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide built-in disks"),
                             "type": "checkbox",
                             "default": false
                         },

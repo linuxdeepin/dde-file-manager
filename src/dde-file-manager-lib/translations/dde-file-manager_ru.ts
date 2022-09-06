@@ -248,93 +248,83 @@
     <message>
         <location filename="../models/computermodel.cpp" line="900"/>
         <source>Quick Access</source>
-        <translation type="unfinished"/>
+        <translation>Быстрый доступ</translation>
     </message>
 </context>
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="306"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="324"/>
         <source>Computer</source>
         <translation>Компьютер</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="315"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="333"/>
         <source>Basic Info</source>
         <translation>Основная Информация</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="326"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="146"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="344"/>
         <source>Computer name</source>
-        <translation type="unfinished"/>
+        <translation>Имя компьютера</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="109"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="328"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="148"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="346"/>
         <source>Edition</source>
         <translation>Издание</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="111"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="327"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="339"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="150"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="345"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="357"/>
         <source>Version</source>
         <translation>Версия</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="113"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="330"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="152"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="348"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="115"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="331"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="372"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="154"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="349"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="390"/>
         <source>Processor</source>
         <translation>Процессор</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="118"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="332"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="369"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="157"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="350"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="387"/>
         <source>Memory</source>
         <translation>Память</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="143"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="226"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="470"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="533"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="182"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="244"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="488"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="530"/>
         <source>Bit</source>
         <translation>Бит</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="248"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="544"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="266"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="541"/>
         <source>Available</source>
         <translation>Доступный</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="329"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="378"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="347"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="396"/>
         <source>OS build</source>
-        <translation type="unfinished"/>
+        <translation>Билд ОС</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="392"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="410"/>
         <source>Obtaining...</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="501"/>
-        <source>For Government</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="503"/>
-        <source>For Enterprise</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -349,7 +339,7 @@
         <location filename="../dialogs/connecttoserverdialog.cpp" line="179"/>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="251"/>
         <source>Favorite</source>
-        <translation type="unfinished"/>
+        <translation>В Избранное</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="242"/>
@@ -383,7 +373,7 @@
         <location filename="../dialogs/connecttoserverdialog.cpp" line="172"/>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="423"/>
         <source>Unfavorite</source>
-        <translation type="unfinished"/>
+        <translation>Удалить из Избранного</translation>
     </message>
 </context>
 <context>
@@ -636,40 +626,40 @@
 <context>
     <name>DFMVaultActiveFinishedView</name>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="56"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="57"/>
         <source>Encrypt File Vault</source>
         <translation>Зашифровать Хранилище Файлов</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="64"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="65"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
         <translation>Нажмите &apos;Зашифровать&apos; и введите пароль пользователя.</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="80"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="81"/>
         <source>Encrypting...</source>
         <translation>Шифрование...</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="95"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="149"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="177"/>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="200"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="96"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="150"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="183"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="206"/>
         <source>Encrypt</source>
         <translation>Зашифровать</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="171"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="177"/>
         <source>Failed to create file vault: %1</source>
         <translation>Не удалось создать хранилище файлов: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="263"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="269"/>
         <source>OK</source>
         <translation>Oк</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivefinishedview.cpp" line="90"/>
+        <location filename="../views/dfmvaultactivefinishedview.cpp" line="91"/>
         <source>The setup is complete</source>
         <translation>Настройка завершена</translation>
     </message>
@@ -679,32 +669,32 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Save Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить ключ восстановления</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="60"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"/>
+        <translation>Сохраните ключ в безопасном месте, чтобы можно было восстановить пароль от Хранилища</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="67"/>
         <source>Save to default path</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить в пути по умолчанию</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="73"/>
         <source>Save to other locations</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить в других местах</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>Нет доступа, выберите другой</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="84"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Выбор пути</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="103"/>
@@ -714,7 +704,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="115"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"/>
+        <translation>Путь по умолчанию невидим другим пользователям, и не будет показан</translation>
     </message>
 </context>
 <context>
@@ -765,17 +755,17 @@
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="66"/>
         <source>Encryption method</source>
-        <translation type="unfinished"/>
+        <translation>Тип шифрования</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="71"/>
         <source>Key encryption</source>
-        <translation type="unfinished"/>
+        <translation>Шифрование ключа</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="71"/>
         <source>Transparent encryption</source>
-        <translation type="unfinished"/>
+        <translation>Прозрачное шифрование</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="82"/>
@@ -856,17 +846,17 @@
 <context>
     <name>DFMVaultFileView</name>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="54"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="57"/>
         <source>Cannot open this path</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="54"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="57"/>
         <source>Hint</source>
-        <translation type="unfinished"/>
+        <translation>Подсказка</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="55"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="58"/>
         <source>OK</source>
         <translation>Oк</translation>
     </message>
@@ -935,77 +925,77 @@
 <context>
     <name>DFMVaultRemovePages</name>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="63"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="64"/>
         <source>Delete File Vault</source>
         <translation>Удалить хранилище файлов</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="112"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="113"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
         <translation>После удаления файлы в нем будут удалены безвозвратно</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="197"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="198"/>
         <source>Use Key</source>
         <translation>Использовать ключ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="116"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="117"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="116"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="117"/>
         <source>Use Key</source>
         <comment>button</comment>
         <translation>Использовать ключ</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="116"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="117"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="150"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="304"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="151"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="305"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oк</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="194"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="195"/>
         <source>Use Password</source>
         <translation>Использовать пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="213"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="214"/>
         <source>Wrong password</source>
         <translation>Неверный пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="224"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="225"/>
         <source>Wrong recovery key</source>
         <translation>Неверный ключ восстановления</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="300"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="301"/>
         <source>Failed to delete file vault</source>
         <translation>Не удалось удалить хранилище файлов</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="314"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="319"/>
         <source>Deleted successfully</source>
         <translation>Успешно удалено</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="316"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="321"/>
         <source>Failed to delete</source>
         <translation>Не удалось удалить</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="146"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="147"/>
         <source>Removing...</source>
         <translation>Удаление...</translation>
     </message>
@@ -1020,24 +1010,24 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="140"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="297"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"/>
+        <translation>Не удалось получить файл ключа</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="84"/>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Проверка не удалась</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="144"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="189"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Выбор пути</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="177"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="265"/>
         <source>Retrieve Password</source>
-        <translation type="unfinished"/>
+        <translation>Восстановить пароль</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="184"/>
@@ -1057,7 +1047,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
         <source>Keep it safe</source>
-        <translation type="unfinished"/>
+        <translation>Храните его в безопасном месте</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="244"/>
@@ -1069,7 +1059,7 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="244"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Проверка ключа</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="244"/>
@@ -1086,7 +1076,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="278"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"/>
+        <translation>Пароль от хранилища: %1</translation>
     </message>
 </context>
 <context>
@@ -1099,7 +1089,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="70"/>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Забыли пароль?</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="143"/>
@@ -1131,12 +1121,12 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="262"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Подождите %1 мин. и попробуйте еще раз</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="289"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Неверный пароль. Подождите %1 мин. и попробуйте еще раз</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="292"/>
@@ -1163,187 +1153,187 @@
 <context>
     <name>DFileCopyMoveJob</name>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="212"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="215"/>
         <source>Permission error</source>
         <translation>Ошибка доступа</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="214"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="217"/>
         <source>The action is denied</source>
         <translation>Действие отклонено</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="220"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="223"/>
         <source>Failed to open the file</source>
         <translation>Не удалось открыть файл</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="222"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="225"/>
         <source>Failed to read the file</source>
         <translation>Не удалось прочитать файл</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="224"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="227"/>
         <source>Failed to write the file</source>
         <translation>Не удалось прочитать файл</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="226"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="229"/>
         <source>Failed to create the directory</source>
         <translation>Не удалось создать каталог</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="228"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="231"/>
         <source>Failed to delete the file</source>
         <translation>Не удалось удалить файл</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="230"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="233"/>
         <source>Failed to move the file</source>
         <translation>Не удалось переместить файл</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="232"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="235"/>
         <source>Original file does not exist</source>
         <translation>Исходный файл не существует</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="234"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="237"/>
         <source>Failed, file size must be less than 4GB</source>
         <translation>Не удалось, размер файла должен быть меньше 4Гб</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="236"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="239"/>
         <source>Not enough free space on the target disk</source>
         <translation>Недостаточно свободного места на целевом диске</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="238"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="241"/>
         <source>File integrity was damaged</source>
         <translation>Целостность файла повреждена</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="240"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="243"/>
         <source>The target device is read only</source>
         <translation>Устройство назначения доступно только для чтения</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="242"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="245"/>
         <source>Target folder is inside the source folder</source>
         <translation>Целевая папка находится внутри исходной папки</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="244"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="247"/>
         <source>The action is not supported</source>
         <translation>Действие не поддерживается</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="246"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="249"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>У вас нет прав для просмотра файлов </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="248"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="251"/>
         <source>Failed to position the file pointer!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="670"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="673"/>
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>копировать</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1234"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1237"/>
         <source>Failed to open the directory, cause: file name too long</source>
         <translation>Не удалось открыть каталог: слишком длинное имя файла</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1427"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2417"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1430"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2424"/>
         <source>Failed to open the file, cause: file name too long</source>
         <translation>Не удалось открыть файл: слишком длинное имя файла</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2705"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2712"/>
         <source>Failed to create symlink, cause: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3296"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3380"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3309"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3393"/>
         <source>Failed to write the file, cause:</source>
         <translation>Не удалось записать файл:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3794"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3809"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4473"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4511"/>
         <source>Syncing data</source>
         <translation>Синхронизация данных</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4473"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4511"/>
         <source>Please wait</source>
         <translation>Пожалуйста подождите</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1244"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1247"/>
         <source>Failed to create the directory, cause: %1</source>
         <translation>Не удалось создать каталог потому, что: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1439"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1952"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1992"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3843"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1442"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1482"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1955"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1995"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3858"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Не удалось открыть файл потому, что: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3241"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3839"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1478"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1991"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3254"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3854"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Не удалось открыть файл: отказано в доступе</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1589"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2102"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1592"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2105"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Не удалось прочитать файл потому, что: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1643"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1716"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2146"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2193"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1646"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1719"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2149"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2196"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Не удалось записать файл потому, что: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1850"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2301"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1853"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2304"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Целостность файла была нарушена потому, что: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2429"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2436"/>
         <source>Failed to open the file, cause: </source>
         <translation>Не удалось открыть файл, по причине:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2507"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2514"/>
         <source>Failed to read the file, cause: </source>
         <translation>Не удалось прочитать файл, по причине:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2605"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2612"/>
         <source>Failed to delete the file, cause: %1</source>
         <translation>Не удалось удалить файл потому, что: %1</translation>
     </message>
@@ -1396,12 +1386,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1304"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1299"/>
         <source>Trash</source>
         <translation>Корзина</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1313"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1308"/>
         <source>Empty</source>
         <translation>Очистить</translation>
     </message>
@@ -1437,7 +1427,7 @@
         <translation>Время создания</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="909"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1601"/>
         <source>Last access</source>
         <translation>Последний доступ</translation>
@@ -1570,7 +1560,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="741"/>
         <source>Creating an ISO image</source>
-        <translation type="unfinished"/>
+        <translation>Создание ISO-образа</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="742"/>
@@ -1640,32 +1630,32 @@
 <context>
     <name>DUMountManager</name>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="167"/>
-        <location filename="../interfaces/dumountmanager.cpp" line="178"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="177"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="188"/>
         <source>Authentication timed out</source>
         <translation>Истекло время аутентификации</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="169"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="179"/>
         <location filename="../../fileoperations/filejob.cpp" line="794"/>
         <location filename="../../fileoperations/filejob.cpp" line="1060"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Диск занят, не могу отмонтировать сейчас</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="181"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="191"/>
         <source>Disk is busy, cannot eject now</source>
         <translation> Диск занят и не может быть извлечён сейчас</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="236"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="247"/>
         <source>The device is busy, cannot eject now</source>
         <translation>Устройство занято и не может быть извлечено сейчас</translation>
     </message>
     <message>
-        <location filename="../interfaces/dumountmanager.cpp" line="201"/>
-        <location filename="../interfaces/dumountmanager.cpp" line="250"/>
-        <location filename="../interfaces/dumountmanager.cpp" line="260"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="212"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="261"/>
+        <location filename="../interfaces/dumountmanager.cpp" line="271"/>
         <source>The device is busy, cannot remove now</source>
         <translation>Устройство занято, сейчас извлечь нельзя</translation>
     </message>
@@ -1751,7 +1741,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="521"/>
         <source>Device or resource busy</source>
-        <translation type="unfinished"/>
+        <translation>Устройство или ресурс заняты</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="533"/>
@@ -2178,67 +2168,67 @@
         <translation>Процесс записи завершен</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1639"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1709"/>
         <source>ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1640"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1710"/>
         <source>Success</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1640"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1710"/>
         <source>Failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1827"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1897"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1831"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1901"/>
         <source>%1 m %2 s</source>
         <translation>%1 m %2 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1836"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1906"/>
         <source>%1 h %2 m %3 s</source>
         <translation>%1 h %2 m %3 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="1843"/>
+        <location filename="../../fileoperations/filejob.cpp" line="1913"/>
         <source>%1 d %2 h %3 m %4 s</source>
         <translation>%1 d %2 h %3 m %4 s</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3554"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3624"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 является дубликатом файла.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3557"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3627"/>
         <source>Insufficient disc space.</source>
         <translation>Недостаточно места на диске.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3560"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3630"/>
         <source>Lost connection to drive.</source>
         <translation>Потеряна связь с приводом.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3563"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3633"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>Привод CD/DVD не готов. Попробуйте другой диск.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3566"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3636"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>Дисковод CD/DVD занят. Выйдите из программы, используя привод, и снова вставьте диск.</translation>
     </message>
     <message>
-        <location filename="../../fileoperations/filejob.cpp" line="3573"/>
+        <location filename="../../fileoperations/filejob.cpp" line="3643"/>
         <source>Unknown error</source>
         <translation>Неизвестная ошибка</translation>
     </message>
@@ -2475,7 +2465,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="127"/>
         <location filename="../configure/global-setting-template.js" line="127"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"/>
+        <translation>Показывать папки вперемешку с файлами</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="135"/>
@@ -2496,7 +2486,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="145"/>
         <location filename="../configure/global-setting-template.js" line="145"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>Показывать расширения файлов</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="162"/>
@@ -2538,14 +2528,14 @@
         <location filename="../configure/global-setting-template-pro.js" line="239"/>
         <location filename="../configure/global-setting-template.js" line="238"/>
         <source>Music preview</source>
-        <translation type="unfinished"/>
+        <translation>Предпросмотр музыки</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="263"/>
         <location filename="../configure/global-setting-template-pro.js" line="263"/>
         <location filename="../configure/global-setting-template.js" line="262"/>
         <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation type="unfinished"/>
+        <translation>Показывать число и размеры объектов для примонтированных MTP-устройств</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -2579,15 +2569,15 @@
         <location filename="../configure/global-setting-template-fedora.js" line="299"/>
         <location filename="../configure/global-setting-template-pro.js" line="299"/>
         <location filename="../configure/global-setting-template.js" line="298"/>
-        <source>Hide system disk</source>
-        <translation>Скрыть системный диск</translation>
+        <source>Hide built-in disks</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="305"/>
         <location filename="../configure/global-setting-template-pro.js" line="305"/>
         <location filename="../configure/global-setting-template.js" line="311"/>
         <source>Hide loop partitions</source>
-        <translation type="unfinished"/>
+        <translation>Скрыть loop-разделы</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="318"/>
@@ -2686,88 +2676,78 @@
     </message>
 </context>
 <context>
-    <name>GetInfoWork</name>
-    <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="188"/>
-        <source>For Government</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="190"/>
-        <source>For Enterprise</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="829"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="830"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>Не удается подтвердить подлинность %1.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="830"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="831"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Это происходит при первом вашем входе в систему.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="831"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="832"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Идентификация, отправленная удаленным компьютером</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="833"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="834"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Если вы хотите быть абсолютно уверены в безопасности действия и его продолжения, обратитесь к системному администратору.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="889"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="893"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="890"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="894"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1620"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1622"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1628"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1631"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1629"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1634"/>
         <source>Mounting device error</source>
         <translation>Ошибка подключения устройства</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="889"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1628"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="890"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1617"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1627"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1629"/>
         <source>Wrong username or password</source>
         <translation>Неверное имя пользователя или пароль</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1857"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1868"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1895"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="2014"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="2038"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1872"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1883"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1910"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2029"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2053"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Подтвердить</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1863"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="2035"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1878"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2050"/>
         <source>Cannot find the mounted device</source>
         <translation>Не удается найти подключенное устройство</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1777"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1792"/>
         <source>No key available to unlock device</source>
         <translation>Ключа для разблокировки устройства не существует</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1854"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1869"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>Диск смонтирован пользователем &quot;%1&quot;, вы не сможете его размонтировать.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1892"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1907"/>
         <source>Cannot unmount the device</source>
         <translation>Не могу отключить устройство</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="2010"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2025"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Не могу извлечь устройство &quot;%1&quot;</translation>
     </message>
@@ -3165,7 +3145,7 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1205"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="230"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="236"/>
         <source>Size</source>
@@ -3180,7 +3160,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1206"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
         <source>Type</source>
         <translation>Тип</translation>
@@ -3189,7 +3169,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="175"/>
         <location filename="../dialogs/propertydialog.cpp" line="1209"/>
         <location filename="../dialogs/propertydialog.cpp" line="1230"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="359"/>
         <source>Time modified</source>
         <translation>Время изменения</translation>
@@ -3252,7 +3232,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1440"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Отсоединенный сетевой каталог</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1458"/>
@@ -3270,53 +3250,53 @@
         <translation>Группа</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="941"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="940"/>
         <source>Lock</source>
         <translation>Заблокировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="942"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="941"/>
         <source>Auto lock</source>
         <translation>Автоматическая блокировка</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="943"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="942"/>
         <source>Never</source>
         <translation>Никогда</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="944"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="943"/>
         <source>5 minutes</source>
         <translation>5 минут</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="945"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="944"/>
         <source>10 minutes</source>
         <translation>10 минут</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="946"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="945"/>
         <source>20 minutes</source>
         <translation>20 минут</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="947"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="946"/>
         <source>Delete File Vault</source>
         <translation>Удалить хранилище файлов</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="948"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="947"/>
         <source>Unlock</source>
         <translation>Разблокировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="949"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="948"/>
         <source>Unlock by key</source>
         <translation>Разблокировка ключом</translation>
     </message>
@@ -3351,9 +3331,9 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="90"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="87"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="616"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
         <translation>Открыть в новом окне</translation>
@@ -3362,262 +3342,262 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="94"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="620"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Открыть в новой вкладке</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>Open with</source>
         <translation>Открыть с помощью</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
         <location filename="../plugins/dfmadditionalmenu.cpp" line="375"/>
         <source>Compress</source>
         <translation>Сжать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>Extract</source>
         <translation>Извлечь</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
         <source>Extract here</source>
         <translation>Извлечь сюда</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
         <source>Cut</source>
         <translation>Вырезать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="100"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="78"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="933"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="932"/>
         <source>Rename</source>
         <translation>Переименовать</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="107"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="85"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="976"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="972"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
         <source>Create link</source>
         <translation>Создать ссылку</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
         <source>Send to desktop</source>
         <translation>Отправить на рабочий стол</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>Send to</source>
         <translation>Отправить в</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
         <source>Bluetooth</source>
         <translation>Bluetooth</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
         <source>Add to bookmark</source>
         <translation>Добавить в закладки</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="113"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>New folder</source>
         <translation>Новая папка</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
         <source>New window</source>
         <translation>Новое окно</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
         <source>Select all</source>
         <translation>Выбрать все</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="98"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
         <source>Clear recent history</source>
         <translation>Очистить недавнюю историю</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1314"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1309"/>
         <source>Empty Trash</source>
         <translation>Очистить корзину</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
         <source>Display as</source>
         <translation>Отобразить как</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
         <source>Sort by</source>
         <translation>Сортировать по</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
         <source>New document</source>
         <translation>Новый документ</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1207"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
         <source>Time created</source>
         <translation>Время создания</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1210"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="918"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="917"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="377"/>
         <source>Source path</source>
         <translation>Путь к источнику</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="920"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="919"/>
         <source>Share folder</source>
         <translation>Общедоступная папка</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="921"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="920"/>
         <source>Cancel sharing</source>
         <translation>Отменить общий доступ</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="922"/>
         <source>Connect to Server</source>
         <translation>Соединиться с Сервером</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="924"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
         <source>Set share password</source>
         <translation>Установить пароль общего доступа</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="925"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="924"/>
         <source>Format</source>
         <translation>Форматировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="929"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="928"/>
         <source>Tag information</source>
         <translation>Информация о метках</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
         <source>Open as administrator</source>
         <translation>Открыть в качестве администратора</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Select default program</source>
         <translation>Выбрать программу по умолчанию</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
         <source>Open file location</source>
         <translation>Открыть местоположение файла</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
         <source>Remove bookmark</source>
         <translation>Удалить закладку</translation>
     </message>
     <message>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="931"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="930"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
         <source>Office Text</source>
         <translation>Офисный</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
         <source>Spreadsheets</source>
         <translation>Таблица</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
         <source>Plain Text</source>
         <translation>Обычный</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
         <source>Open in terminal</source>
         <translation>Открыть в терминале</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
         <source>Restore</source>
         <translation>Восстановить</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
         <source>Restore all</source>
         <translation>Восстановить все</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="916"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="979"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="915"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="975"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>Очистить сохраненный пароль и отмонтировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="922"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="921"/>
         <source>File Vault</source>
         <translation>Файловое Хранилище</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="938"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="937"/>
         <source>Add to disc</source>
         <translation>Добавить на диск</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="978"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="974"/>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="312"/>
@@ -3630,15 +3610,15 @@
         <translation>Открыть после авто-монтирования</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="935"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="934"/>
         <source>Mount</source>
         <translation>Подключить</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="50"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="977"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="973"/>
         <source>Unmount</source>
         <translation>Отключить</translation>
     </message>
@@ -3696,48 +3676,48 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="372"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
         <source>Eject</source>
         <translation>Извлечь</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
         <source>Safely Remove</source>
         <translation>Безопасное Извлечение</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="215"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="910"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="909"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="910"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
         <source>Icon</source>
         <translation>Значок</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="913"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
         <source>List</source>
         <translation>Список</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="914"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="913"/>
         <source>Extend</source>
         <translation>Расширить</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="915"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="914"/>
         <source>Set as wallpaper</source>
         <translation>Сделать фоном рабочего стола</translation>
     </message>
@@ -3817,12 +3797,12 @@
         <translation>Создать символическую ссылку</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="919"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="918"/>
         <source>Path</source>
         <translation>Путь</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="917"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="916"/>
         <location filename="../models/trashfileinfo.cpp" line="325"/>
         <location filename="../models/trashfileinfo.cpp" line="333"/>
         <source>Time deleted</source>
@@ -3834,24 +3814,24 @@
         <translation>Загрузка...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="876"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="877"/>
         <source>File has been moved or deleted</source>
         <translation>Файл был перемещен или удален</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="882"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="883"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>У вас нет прав для просмотра файлов </translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="878"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="891"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="897"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="879"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="892"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="898"/>
         <source>You do not have permission to access this folder</source>
         <translation>У вас нет разрешения на доступ к этой папке</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="902"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="903"/>
         <location filename="../models/masteredmediafileinfo.cpp" line="281"/>
         <location filename="../models/recentfileinfo.cpp" line="264"/>
         <location filename="../models/trashfileinfo.cpp" line="366"/>
@@ -3887,7 +3867,7 @@
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="586"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
         <source>Presentation</source>
         <translation>Презентация</translation>
     </message>
@@ -4154,7 +4134,7 @@
         <translation>Закладки</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="926"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="925"/>
         <source>Erase</source>
         <translation>Очистить</translation>
     </message>
@@ -4164,7 +4144,7 @@
         <translation>Копировать путь</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="623"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="626"/>
         <source>Edit address</source>
         <translation>Редактировать адресс</translation>
     </message>
@@ -4190,13 +4170,13 @@
         <translation>Моё хранилище</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="710"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="810"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="713"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="813"/>
         <source>Failed to create file info</source>
         <translation>Не удалось создать информацию о файле</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="766"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="769"/>
         <source>Failed to create file handler</source>
         <translation>Не удалось создать обработчик файлов</translation>
     </message>
@@ -4231,22 +4211,22 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1567"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1562"/>
         <location filename="../../usershare/usersharemanager.cpp" line="567"/>
         <source>Failed to start Samba services</source>
-        <translation type="unfinished"/>
+        <translation>Не удалось запустить службы Samba</translation>
     </message>
     <message>
         <location filename="../dialogs/dumpisooptdialog.cpp" line="71"/>
         <source>Create ISO Image</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Создать ISO-образ</translation>
     </message>
     <message>
         <location filename="../dialogs/dumpisooptdialog.cpp" line="84"/>
         <location filename="../views/dfmopticalmediawidget.cpp" line="351"/>
         <source>Save as Image File</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить как файл образа</translation>
     </message>
     <message>
         <location filename="../dialogs/dumpisooptdialog.cpp" line="95"/>
@@ -4257,6 +4237,16 @@
         <location filename="../dialogs/dumpisooptdialog.cpp" line="106"/>
         <source>Save the ISO image here:</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="104"/>
+        <source>For Government</source>
+        <translation>Для правительства</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="106"/>
+        <source>For Enterprise</source>
+        <translation>Для крупного бизнеса</translation>
     </message>
 </context>
 <context>
@@ -4309,12 +4299,12 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
         <source>Share name</source>
-        <translation type="unfinished"/>
+        <translation>Имя общего ресурса</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="102"/>
         <source>Permission</source>
-        <translation type="unfinished"/>
+        <translation>Разрешения</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="111"/>
@@ -4334,7 +4324,7 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="120"/>
         <source>Network path</source>
-        <translation type="unfinished"/>
+        <translation>Сетевой путь</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="153"/>
@@ -4344,7 +4334,7 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="165"/>
         <source>Share password</source>
-        <translation type="unfinished"/>
+        <translation>Пароль общего ресурса</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="186"/>
@@ -4362,13 +4352,13 @@
         <location filename="../dialogs/shareinfoframe.cpp" line="275"/>
         <location filename="../dialogs/shareinfoframe.cpp" line="552"/>
         <source>Change password</source>
-        <translation type="unfinished"/>
+        <translation>Изменить пароль</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="275"/>
         <location filename="../dialogs/shareinfoframe.cpp" line="552"/>
         <source>Set password</source>
-        <translation type="unfinished"/>
+        <translation>Задать пароль</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="308"/>
