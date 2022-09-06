@@ -41,10 +41,14 @@
 
 #include <dfm-framework/event/event.h>
 
+#include <QMenu>
+
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 using namespace dfmplugin_myshares;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 
+Q_DECLARE_METATYPE(ContextMenuCallback);
 void MyShares::initialize()
 {
     DFMBASE_USE_NAMESPACE
@@ -70,6 +74,25 @@ bool MyShares::start()
     hookEvent();
 
     return true;
+}
+
+void MyShares::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
+{
+    QFileInfo info(url.path());
+    bool bEnabled = info.exists();
+
+    QMenu *menu = new QMenu;
+    auto newWindowAct = menu->addAction(QObject::tr("Open in new window"), [url]() { ShareEventsCaller::sendOpenWindow(url); });
+    newWindowAct->setEnabled(bEnabled);
+
+    auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
+        ShareEventsCaller::sendOpenTab(windowId, url);
+    });
+
+    newTabAct->setEnabled(bEnabled && ShareEventsCaller::sendCheckTabAddable(windowId));
+
+    menu->exec(globalPos);
+    delete menu;
 }
 
 void MyShares::onWindowOpened(quint64 winId)
@@ -106,6 +129,7 @@ void MyShares::addToSidebar()
     if (count == 0)
         return;
 
+    ContextMenuCallback contextMenuCb { MyShares::contenxtMenuHandle };
     Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
     QString iconName { ShareUtils::icon().name() };
     if (!iconName.endsWith("-symbolic"))
@@ -115,7 +139,8 @@ void MyShares::addToSidebar()
         { "Property_Key_DisplayName", ShareUtils::displayName() },
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_VisiableControl", "my_shares" }
+        { "Property_Key_VisiableControl", "my_shares" },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", ShareUtils::rootUrl(), map);
 }

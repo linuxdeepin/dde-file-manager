@@ -250,7 +250,7 @@ void PluginManagerPrivate::scanfVirtualPlugin(QQueue<PluginMetaObjectPointer> *d
     }
 
     QJsonArray &&virtualJsonArray { dataJson.value(kVirtualPluginList).toArray() };
-    for (auto iter = virtualJsonArray.cbegin(); iter != virtualJsonArray.cend(); ++iter) {
+    for (auto iter = virtualJsonArray.begin(); iter != virtualJsonArray.end(); ++iter) {
         QJsonObject &&object { iter->toObject() };
         QString &&name { object.value(kPluginName).toString() };
         if (blackList.contains(name)) {
@@ -290,7 +290,7 @@ void PluginManagerPrivate::readJsonToMeta(PluginMetaObjectPointer metaObject)
     QJsonObject &&metaData = jsonObj.value("MetaData").toObject();
     if (metaObject->isVirtual()) {
         QJsonArray &&virtualJsonArray { metaData.value(kVirtualPluginList).toArray() };
-        for (auto iter = virtualJsonArray.cbegin(); iter != virtualJsonArray.cend(); ++iter) {
+        for (auto iter = virtualJsonArray.begin(); iter != virtualJsonArray.end(); ++iter) {
             QJsonObject &&object { iter->toObject() };
             QString &&name = object.value(kPluginName).toString();
             if (name.isEmpty() || metaObject->d->name != name)

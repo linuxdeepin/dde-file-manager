@@ -45,6 +45,9 @@ public:
     static void sendCancelSharing(const QUrl &url);
     static void sendShowProperty(const QList<QUrl> &urls);
     static void sendSwitchDisplayMode(quint64 winId, DFMBASE_NAMESPACE::Global::ViewMode mode);
+    static void sendOpenWindow(const QUrl &url);
+    static void sendOpenTab(quint64 windowId, const QUrl &url);
+    static bool sendCheckTabAddable(quint64 windowId);
 };
 
 }
