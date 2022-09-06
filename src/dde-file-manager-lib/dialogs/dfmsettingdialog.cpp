@@ -87,6 +87,10 @@ void SettingBackend::doSetOption(const QString &key, const QVariant &value)
     if (key == QString("advance.other.hide_system_partition")) {
         fileSignalManager->requestHideSystemPartition(value.toBool());
     }
+
+    if (key == QString("advance.mount.always_show_offline_remote_connection")) {
+        GroupPolicy::instance()->setValue("dfm.samba.permanent", value);
+    }
 }
 
 void SettingBackend::onValueChanged(int attribute, const QVariant &value)

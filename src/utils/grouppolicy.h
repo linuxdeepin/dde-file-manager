@@ -26,12 +26,17 @@ public:
     QVariant getValue(const QString &key, const QVariant &fallback = QVariant());
     void setValue(const QString &key, const QVariant &value);
 
+    using SyncFunc = std::function<void(const QVariant&)>;
+    bool addSyncFunc(const QString &key, SyncFunc func);
+    bool isConfigSetted(const QString &key, QVariant *settedValue = nullptr);
+
 signals:
     void valueChanged(const QString &key);
 
 protected:
     explicit GroupPolicy(QObject *parent = nullptr);
 private:
+    QMap<QString, SyncFunc> m_synchorinizers;
 
 #if (DTK_POLICY_SUPPORT)
     Dtk::Core::DConfig *m_config;

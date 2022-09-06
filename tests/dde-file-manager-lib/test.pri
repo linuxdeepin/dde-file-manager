@@ -73,7 +73,8 @@ SOURCES += \
     $$PWD/views/ut_dfmvaultactivesavekeyfileview.cpp \
     $$PWD/models/ut_dfmappentryfileinfo.cpp \
     $$PWD/controllers/ut_dfmappentrycontroller.cpp \
-    $$PWD/vault/ut_vaultdbusresponse.cpp
+    $$PWD/vault/ut_vaultdbusresponse.cpp \
+    $$PWD/utils/ut_grouppolicy.cpp
 
 isEqual(ARCH, x86_64) {
 SOURCES += \
