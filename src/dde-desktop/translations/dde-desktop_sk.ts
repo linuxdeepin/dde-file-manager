@@ -33,7 +33,7 @@
         <translation>Pozadie a šetrič obrazovky</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3706"/>
+        <location filename="../view/canvasgridview.cpp" line="3709"/>
         <source>Properties</source>
         <translation>Vlastnosti</translation>
     </message>

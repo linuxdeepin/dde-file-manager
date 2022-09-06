@@ -33,7 +33,7 @@
         <translation>الخلفيات و شاشة التوقف</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3706"/>
+        <location filename="../view/canvasgridview.cpp" line="3709"/>
         <source>Properties</source>
         <translation>الخصائص</translation>
     </message>

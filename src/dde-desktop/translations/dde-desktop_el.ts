@@ -33,7 +33,7 @@
         <translation>Wallpaper και Screensaver</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3706"/>
+        <location filename="../view/canvasgridview.cpp" line="3709"/>
         <source>Properties</source>
         <translation>Ιδιότητες</translation>
     </message>
