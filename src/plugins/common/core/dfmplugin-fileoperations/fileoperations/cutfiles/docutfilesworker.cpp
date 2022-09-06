@@ -173,6 +173,7 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     bool ok = false;
     AbstractFileInfoPointer toInfo = nullptr;
     if (doRenameFile(fromInfo, targetPathInfo, toInfo, &ok) || ok) {
+        currentWriteSize += fromInfo->size();
         return true;
     }
 
@@ -191,6 +192,7 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, &result))
         return result;
 
+    currentWriteSize += fromInfo->size();
     return true;
 }
 
@@ -268,6 +270,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
         if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->fileName(), toInfo, ok))
             return ok ? *ok : false;
 
+        emitCurrentTaskNotify(sourceInfo->url(), toInfo->url());
         bool result = renameFileByHandler(sourceInfo, toInfo);
         if (result) {
             if (targetPathInfo == this->targetInfo) {
