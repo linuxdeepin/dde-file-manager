@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "virtualutils.h"
+#include "utils.h"
 #include "global/virtualglobalplugin.h"
 #include "openwith/virtualopenwithplugin.h"
 #include "appendcompress/virtualappendcompressplugin.h"

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(dfmplugin-virtual-utils)
+project(dfmplugin-utils)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

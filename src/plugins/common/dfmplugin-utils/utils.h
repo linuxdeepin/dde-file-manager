@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef VIRTUALUTILS_H
-#define VIRTUALUTILS_H
+#ifndef UTILS_H
+#define UTILS_H
 
 #include "dfmplugin_utils_global.h"
 
@@ -39,4 +39,4 @@ public:
 };
 }   // dfmplugin_utils
 
-#endif   // VIRTUALUTILS_H
+#endif   // UTILS_H
