@@ -249,8 +249,16 @@ void SideBarView::dropEvent(QDropEvent *event)
         return DTreeView::dropEvent(event);
     }
 
+    QUrl targetItemUrl;
+    if (!item->itemInfo().finalUrl.isEmpty()) {
+        targetItemUrl = item->itemInfo().finalUrl;
+    } else {
+        targetItemUrl = item->url();
+    }
+
     qDebug() << "source: " << event->mimeData()->urls();
     qDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();
+    qDebug() << "item->itemInfo().finalUrl: " << item->itemInfo().finalUrl;
 
     //wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
     //QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
@@ -293,13 +301,14 @@ void SideBarView::dropEvent(QDropEvent *event)
             action = canDropMimeData(item, event->mimeData(), event->possibleActions());
         }
 
-        if (urls.size() > 0 && onDropData(urls, item->url(), action)) {
+        if (urls.size() > 0 && onDropData(urls, targetItemUrl, action)) {
             event->setDropAction(action);
             isActionDone = true;
         }
     }
     if (!copyUrls.isEmpty()) {
-        if (onDropData(copyUrls, item->url(), Qt::CopyAction)) {   // 对于只读权限的，只能进行 copy动作
+
+        if (onDropData(copyUrls, targetItemUrl, Qt::CopyAction)) {   // 对于只读权限的，只能进行 copy动作
             event->setDropAction(Qt::CopyAction);
             isActionDone = true;
         }
@@ -477,8 +486,13 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     }
 
     // TODO(zhangs): impl me!
-
-    auto itemInfo = InfoFactory::create<AbstractFileInfo>(item->url());
+    QUrl targetItemUrl;
+    if (!item->itemInfo().finalUrl.isEmpty()) {
+        targetItemUrl = item->itemInfo().finalUrl;
+    } else {
+        targetItemUrl = item->url();
+    }
+    auto itemInfo = InfoFactory::create<AbstractFileInfo>(targetItemUrl);
     if (!itemInfo || !itemInfo->canDrop()) {
         return Qt::IgnoreAction;
     }
