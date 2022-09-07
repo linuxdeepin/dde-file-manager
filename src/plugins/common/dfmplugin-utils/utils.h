@@ -29,10 +29,10 @@
 
 namespace dfmplugin_utils {
 
-class VirtualUtils : public DPF_NAMESPACE::PluginCreator
+class Utils : public DPF_NAMESPACE::PluginCreator
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "virtualutils.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "utils.json")
 
 public:
     virtual QSharedPointer<DPF_NAMESPACE::Plugin> create(const QString &pluginName) override;

@@ -1,6 +1,6 @@
 {
     "Meta": {
-        "Name": "dfmplugin-virtual-utils"
+        "Name": "dfmplugin-utils"
     },
     "VirtualPlugins": [
         {

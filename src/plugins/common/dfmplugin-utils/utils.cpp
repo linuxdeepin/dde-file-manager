@@ -33,7 +33,7 @@ static constexpr char kBluetooth[] { "dfmplugin-bluetooth" };
 static constexpr char kGlobal[] { "dfmplugin-global" };
 static constexpr char kOpenWith[] { "dfmplugin-openwith" };
 
-QSharedPointer<DPF_NAMESPACE::Plugin> VirtualUtils::create(const QString &pluginName)
+QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 {
     qInfo() << "Create plugin: " << pluginName;
 
