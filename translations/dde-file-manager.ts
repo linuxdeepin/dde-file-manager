@@ -64,7 +64,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="140"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="136"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
@@ -135,546 +135,6 @@
         <source>copy</source>
         <comment>Extra name added to new file name when used for file name.</comment>
         <translation>复制</translation>
-    </message>
-</context>
-<context>
-    <name>GenerateSettingTranslate</name>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="5"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="5"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="5"/>
-        <source>Basic</source>
-        <translation>基础设置</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="9"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="9"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="9"/>
-        <source>Open behavior</source>
-        <translation>打开行为</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="14"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="14"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="14"/>
-        <source>Always open folder in new window</source>
-        <translation>总是在新窗口打开文件夹</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="19"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="19"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="19"/>
-        <source>Open file:</source>
-        <translation>打开文件：</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="22"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="22"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="22"/>
-        <source>Click</source>
-        <translation>单击</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="23"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="23"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="23"/>
-        <source>Double click</source>
-        <translation>双击</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="31"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="31"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="31"/>
-        <source>New window and tab</source>
-        <translation>新窗口和新标签</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="35"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="35"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="35"/>
-        <source>Open from default window:</source>
-        <translation>从默认窗口打开：</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="39"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="68"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="344"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="39"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="68"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="338"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="39"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="68"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="344"/>
-        <source>Computer</source>
-        <translation>计算机</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="40"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="69"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="291"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="40"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="69"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="285"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="40"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="69"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="291"/>
-        <source>Home</source>
-        <translation>主目录</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="41"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="70"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="297"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="41"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="70"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="291"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="41"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="70"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="297"/>
-        <source>Desktop</source>
-        <translation>桌面</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="42"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="303"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="42"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="297"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="42"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="303"/>
-        <source>Videos</source>
-        <translation>视频</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="309"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="303"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="309"/>
-        <source>Music</source>
-        <translation>音乐</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="44"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="73"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="315"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="44"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="73"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="309"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="44"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="73"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="315"/>
-        <source>Pictures</source>
-        <translation>图片</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="45"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="74"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="321"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="45"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="74"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="315"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="45"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="74"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="321"/>
-        <source>Documents</source>
-        <translation>文档</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="46"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="75"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="327"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="46"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="75"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="321"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="46"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="75"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="327"/>
-        <source>Downloads</source>
-        <translation>下载</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="63"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="63"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="63"/>
-        <source>Open in new tab:</source>
-        <translation>从新标签打开：</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="67"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="67"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="67"/>
-        <source>Current Directory</source>
-        <translation>当前目录</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="95"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="95"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="95"/>
-        <source>View</source>
-        <translation>视图</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="99"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="99"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="99"/>
-        <source>Default size:</source>
-        <translation>默认大小：</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="102"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="102"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="102"/>
-        <source>Extra small</source>
-        <translation>特小</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="103"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="103"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="103"/>
-        <source>Small</source>
-        <translation>小</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="104"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="104"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="104"/>
-        <source>Medium</source>
-        <translation>中</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="105"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="105"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="105"/>
-        <source>Large</source>
-        <translation>大</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="106"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="106"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="106"/>
-        <source>Extra large</source>
-        <translation>特大</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="112"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="112"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="112"/>
-        <source>Default view:</source>
-        <translation>默认视图：</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="116"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="116"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="116"/>
-        <source>Icon</source>
-        <translation>图标视图</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="117"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="117"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="117"/>
-        <source>List</source>
-        <translation>列表视图</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="129"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="129"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="129"/>
-        <source>Hidden files</source>
-        <translation>隐藏文件</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="133"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="133"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="133"/>
-        <source>Show hidden files</source>
-        <translation>显示隐藏文件</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="139"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="139"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="139"/>
-        <source>Show file extensions</source>
-        <translation>显示文件扩展名</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="414"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="408"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="414"/>
-        <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="427"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="421"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="427"/>
-        <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="151"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="151"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="151"/>
-        <source>Advanced</source>
-        <translation>高级设置</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="155"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="155"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="155"/>
-        <source>Index</source>
-        <translation>索引</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="159"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="159"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="159"/>
-        <source>Auto index internal disk</source>
-        <translation>自动索引内置磁盘</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="165"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="165"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="165"/>
-        <source>Index external storage device after connected to computer</source>
-        <translation>连接电脑后索引外部存储设备</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="171"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="171"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="171"/>
-        <source>Full-Text search</source>
-        <translation>全文搜索</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="183"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="183"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="183"/>
-        <source>Show hidden files in search results</source>
-        <translation>搜索结果显示隐藏文件</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="192"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="192"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="192"/>
-        <source>Preview</source>
-        <translation>预览</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="202"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="196"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="202"/>
-        <source>Text preview</source>
-        <translation>文本预览</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="208"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="202"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="208"/>
-        <source>Document preview</source>
-        <translation>文档预览</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="214"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="208"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="214"/>
-        <source>Image preview</source>
-        <translation>图片预览</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="220"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="214"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="220"/>
-        <source>Video preview</source>
-        <translation>视频预览</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="228"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="222"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="228"/>
-        <source>Mount</source>
-        <translation>挂载</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="232"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="226"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="232"/>
-        <source>Auto mount</source>
-        <translation>自动挂载</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="238"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="232"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="238"/>
-        <source>Open after auto mount</source>
-        <translation>自动挂载后打开</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="244"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="238"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="244"/>
-        <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation>MTP挂载路径下显示文件统计详情</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="250"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="244"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="250"/>
-        <source>Keep showing the mounted Samba shares</source>
-        <translation>Samba共享端常驻显示挂载入口</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="258"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="252"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="258"/>
-        <source>Dialog</source>
-        <translation>对话框</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="262"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="256"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="262"/>
-        <source>Use the file chooser dialog of File Manager</source>
-        <translation>使用文件管理器的文件选择对话框</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="268"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="262"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="268"/>
-        <source>Ask for my confirmation when deleting files</source>
-        <translation>开启普通删除提示</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="276"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="270"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="276"/>
-        <source>Items on sidebar pane</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="280"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="274"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="280"/>
-        <source>Quick access</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="285"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="279"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="285"/>
-        <source>Recent</source>
-        <translation type="unfinished">最近使用</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="333"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="327"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="333"/>
-        <source>Trash</source>
-        <translation type="unfinished">回收站</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="339"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="333"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="339"/>
-        <source>Partitions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="350"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="344"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="350"/>
-        <source>Vault</source>
-        <translation type="unfinished">保险箱</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="356"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="350"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="356"/>
-        <source>Built-in disks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="362"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="356"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="362"/>
-        <source>Loop partitions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="368"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="362"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="368"/>
-        <source>Mounted partitions and discs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="374"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="368"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="374"/>
-        <source>Network</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="379"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="373"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="379"/>
-        <source>Computers in LAN</source>
-        <translation type="unfinished">网络邻居</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="385"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="379"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="385"/>
-        <source>My shares</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="391"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="385"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="391"/>
-        <source>Mounted sharing folders</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="397"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="391"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="397"/>
-        <source>Tag</source>
-        <translation type="unfinished">标记</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="402"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="396"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="402"/>
-        <source>Added tags</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="410"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="404"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="410"/>
-        <source>Other</source>
-        <translation>其他</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="433"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro.js" line="427"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="433"/>
-        <source>Show file system on disk icon</source>
-        <translation>在磁盘图标上显示文件系统标签</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora.js" line="196"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template.js" line="196"/>
-        <source>Compressed file preview</source>
-        <translation>压缩文件预览</translation>
     </message>
 </context>
 <context>
@@ -1029,32 +489,34 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="362"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="503"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="505"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="31"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="84"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="177"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="401"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="79"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="96"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="224"/>
         <source>Open in new window</source>
         <translation>在新窗口打开</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="365"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="507"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="509"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="35"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="88"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="181"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="405"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="83"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="99"/>
         <source>Open in new tab</source>
         <translation>在新标签中打开</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="372"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="516"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="518"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="47"/>
         <source>Rename</source>
         <translation>重命名</translation>
@@ -1326,7 +788,7 @@
         <translation>灰色</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="520"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="522"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="67"/>
         <source>Remove</source>
         <translation>移除</translation>
@@ -1710,44 +1172,44 @@
         <translation>清除回收站文件%1 </translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="156"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="159"/>
         <source>create dfm io factory failed!</source>
         <translation>创建dfm io工厂失败！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="171"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="174"/>
         <source>create dfm io dfile failed!</source>
         <translation>创建dfm io dfile 失败！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="322"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="325"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>读取文件失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="397"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="400"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>文件内容写入失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="694"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="903"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="697"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="889"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>创建链接方式失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="932"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="918"/>
         <source>create dir&apos;s iterator failed, case : %1</source>
         <translation>创建目录迭代器失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1141"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1199"/>
         <source>resize file failed!</source>
         <translation>调整文件大小失败！</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1171"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1197"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1229"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1255"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>文件完整性检查失败，原因：%1</translation>
     </message>
@@ -3569,7 +3031,7 @@
     <name>dfmplugin_computer::Computer</name>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="55"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="126"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="121"/>
         <source>Computer</source>
         <translation>计算机</translation>
     </message>
@@ -4049,7 +3511,7 @@
 <context>
     <name>dfmplugin_myshares::MyShares</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="55"/>
         <source>My Shares</source>
         <translation>我的共享</translation>
     </message>
@@ -4306,7 +3768,7 @@
     <name>dfmplugin_recent::Recent</name>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="122"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="117"/>
         <source>Recent</source>
         <translation>最近使用</translation>
     </message>
@@ -4550,12 +4012,12 @@
 <context>
     <name>dfmplugin_smbbrowser::SmbBrowser</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="129"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="124"/>
         <source>Computers in LAN</source>
         <translation>网络邻居</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="163"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="158"/>
         <source>Mount device error</source>
         <translation>挂载设备错误</translation>
     </message>
@@ -4699,7 +4161,7 @@
     <name>dfmplugin_trash::Trash</name>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="123"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="118"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
@@ -4766,14 +4228,6 @@
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="74"/>
         <source>Contains %1 %2</source>
         <translation>包含%1个%2</translation>
-    </message>
-</context>
-<context>
-    <name>dfmplugin_utils::BluetoothEventManager</name>
-    <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/bluetootheventmanager.cpp" line="55"/>
-        <source>Sending files now, please try later.</source>
-        <translation>当前已有发送中的文件，请稍后再试。</translation>
     </message>
 </context>
 <context>
@@ -4940,6 +4394,14 @@
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp" line="49"/>
         <source>Open with</source>
         <translation>打开方式</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_utils::VirtualBluetoothPlugin</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="30"/>
+        <source>Sending files now, please try later.</source>
+        <translation type="unfinished">当前已有发送中的文件，请稍后再试。</translation>
     </message>
 </context>
 <context>
