@@ -423,14 +423,20 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 
     static const QStringList kItemVisiableControlKeys { "builtin_disks", "loop_dev", "other_disks", "mounted_share_dirs" };
     QString key;
-    if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool())
+    QString subGroup = Global::Scheme::kComputer;
+    if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
         key = kItemVisiableControlKeys[1];
-    else if (info->extraProperty(DeviceProperty::kHintSystem).toBool())
+    } else if (info->extraProperty(DeviceProperty::kHintSystem).toBool()) {
         key = kItemVisiableControlKeys[0];
-    else if (info->order() == EntryFileInfo::kOrderSmb || info->order() == EntryFileInfo::kOrderFtp)
+    } else if (info->order() == EntryFileInfo::kOrderSmb || info->order() == EntryFileInfo::kOrderFtp) {
         key = kItemVisiableControlKeys[3];
-    else
+        if (info->order() == EntryFileInfo::kOrderSmb)
+            subGroup = Global::Scheme::kSmb;
+        else if (info->order() == EntryFileInfo::kOrderFtp)
+            subGroup = Global::Scheme::kFtp;
+    } else {
         key = kItemVisiableControlKeys[2];
+    }
 
     Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
     if (info->renamable())
@@ -442,8 +448,8 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         iconName += "-symbolic";
 
     QVariantMap map {
-        { "Property_Key_Group", "Group_Device" },
-        { "Property_Key_SubGroup", Global::Scheme::kComputer },
+        { "Property_Key_Group", key == kItemVisiableControlKeys[3] ? "Group_Network" : "Group_Device" },
+        { "Property_Key_SubGroup", subGroup },
         { "Property_Key_DisplayName", info->displayName() },
         { "Property_Key_Icon", QIcon::fromTheme(iconName) },
         { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },

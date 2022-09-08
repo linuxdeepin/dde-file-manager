@@ -58,10 +58,12 @@ bool ComputerEventReceiver::handleSepateTitlebarCrumb(const QUrl &url, QList<QVa
 
 bool ComputerEventReceiver::handleSortItem(const QString &group, const QString &subGroup, const QUrl &a, const QUrl &b)
 {
-    if (group != "Group_Device")
+    if (!(group == "Group_Device" || group == "Group_Network"))
         return false;
-    if (subGroup != Global::Scheme::kComputer)
+
+    if (!(subGroup == Global::Scheme::kComputer || subGroup == Global::Scheme::kSmb || subGroup == Global::Scheme::kFtp))
         return false;
+
     return ComputerUtils::sortItem(a, b);
 }
 

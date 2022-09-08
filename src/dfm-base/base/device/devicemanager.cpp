@@ -765,6 +765,7 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
         dlg.setDomainLineVisible(false);
 
     DFMMOUNT::MountPassInfo info;
+    QApplication::restoreOverrideCursor();
     if (dlg.exec() == QDialog::Accepted) {
         QJsonObject loginInfo = dlg.getLoginData();
         auto data = loginInfo.toVariantMap();

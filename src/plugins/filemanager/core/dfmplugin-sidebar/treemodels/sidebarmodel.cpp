@@ -235,8 +235,23 @@ int SideBarModel::appendRow(SideBarItem *item)
                     groupOther = this->itemFromIndex(i);
                 if (groupId == item->group()) {
                     SideBarItem *groupItem = this->itemFromIndex(i);
-                    groupItem->appendRow(item);
-                    return groupItem->row() - 1;   //The return value is the index related to the parent item.
+                    bool itemInserted = false;
+                    for (int r = 0; r < groupItem->rowCount(); r++) {
+                        QStandardItem *childItem = groupItem->child(r);
+                        auto tmpItem = dynamic_cast<SideBarItem *>(childItem);
+                        if (!tmpItem)
+                            continue;
+                        bool sorted { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort", groupId, item->subGourp(), item->url(), tmpItem->url()) };
+                        if (sorted) {
+                            groupItem->insertRow(r, item);
+                            itemInserted = true;
+                            break;
+                        }
+                    }
+                    if (!itemInserted)
+                        groupItem->appendRow(item);
+
+                    return groupItem->row() - 1;
                 }
             }
         }
