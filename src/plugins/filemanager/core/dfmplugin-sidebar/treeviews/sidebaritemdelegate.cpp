@@ -248,6 +248,11 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                     if (sidebarItem) {
                         QUrl url = sidebarItem->itemInfo().url;
                         SideBarEventCaller::sendEject(url);
+                        //onItemActived() slot function would be triggered with mouse clicking,
+                        //in order to avoid mount device again, we set item action to disable state as a mark.
+                        DViewItemActionList list = sidebarItem->actionList(Qt::RightEdge);
+                        if (list.count() > 0)
+                            list.first()->setDisabled(true);
                     }
                     event->accept();
                     return true;

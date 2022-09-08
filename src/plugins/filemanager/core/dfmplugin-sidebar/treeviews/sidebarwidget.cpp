@@ -234,8 +234,14 @@ void SideBarWidget::saveStateWhenClose()
 void SideBarWidget::onItemActived(const QModelIndex &index)
 {
     SideBarItem *item = kSidebarModelIns->itemFromIndex(index);
-    if (dynamic_cast<SideBarItemSeparator *>(item))
+    if (!item || dynamic_cast<SideBarItemSeparator *>(item))
         return;
+
+    DViewItemActionList list = item->actionList(Qt::RightEdge);
+    if (list.count() > 0 && !list.first()->isEnabled()) {
+        list.first()->setDisabled(false);
+        return;
+    }
 
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::kItemUrlRole)) };

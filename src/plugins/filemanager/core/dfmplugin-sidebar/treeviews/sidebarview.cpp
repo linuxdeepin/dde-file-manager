@@ -177,6 +177,7 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
         event->accept();
         return;
     }
+
     DTreeView::mousePressEvent(event);
 }
 
@@ -211,9 +212,8 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
     d->previousRowCount = model()->rowCount();
     d->urlsForDragEvent = event->mimeData()->urls();
 
-    if (isAccepteDragEvent(event)) {
+    if (isAccepteDragEvent(event))
         return;
-    }
 
     DTreeView::dragEnterEvent(event);
 
@@ -225,15 +225,13 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 
 void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 {
-    if (isAccepteDragEvent(event)) {
+    if (isAccepteDragEvent(event))
         return;
-    }
 
     DTreeView::dragMoveEvent(event);
 
-    if (event->source() != this) {
+    if (event->source() != this)
         event->ignore();
-    }
 }
 
 void SideBarView::dropEvent(QDropEvent *event)
@@ -245,16 +243,14 @@ void SideBarView::dropEvent(QDropEvent *event)
 
     d->dropPos = event->pos();
     SideBarItem *item = itemAt(event->pos());
-    if (!item) {
+    if (!item)
         return DTreeView::dropEvent(event);
-    }
 
     QUrl targetItemUrl;
-    if (!item->itemInfo().finalUrl.isEmpty()) {
+    if (!item->itemInfo().finalUrl.isEmpty())
         targetItemUrl = item->itemInfo().finalUrl;
-    } else {
+    else
         targetItemUrl = item->url();
-    }
 
     qDebug() << "source: " << event->mimeData()->urls();
     qDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();
@@ -307,7 +303,6 @@ void SideBarView::dropEvent(QDropEvent *event)
         }
     }
     if (!copyUrls.isEmpty()) {
-
         if (onDropData(copyUrls, targetItemUrl, Qt::CopyAction)) {   // 对于只读权限的，只能进行 copy动作
             event->setDropAction(Qt::CopyAction);
             isActionDone = true;
