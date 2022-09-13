@@ -24,14 +24,17 @@
 #include "sidebarview.h"
 #include "sidebarmodel.h"
 #include "sidebaritem.h"
+
 #include "utils/sidebarinfocachemananger.h"
 #include "utils/fileoperatorhelper.h"
 #include "utils/sidebarhelper.h"
 #include "private/sidebarview_p.h"
 
+#include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <dfm-framework/dpf.h>
 

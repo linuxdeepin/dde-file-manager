@@ -23,10 +23,13 @@
 #include "events/bookmarkeventcaller.h"
 #include "utils/bookmarkhelper.h"
 
+#include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
@@ -62,6 +65,7 @@ static constexpr char kKeyLocateUrl[] { "locateUrl" };
 static constexpr char kKeyMountPoint[] { "mountPoint" };
 static constexpr char kKeyName[] { "name" };
 static constexpr char kKeyUrl[] { "url" };
+static constexpr char kKeyIndex[] { "index" };
 
 void BookmarkData::resetData(const QVariantMap &map)
 {
@@ -77,6 +81,7 @@ void BookmarkData::resetData(const QVariantMap &map)
     deviceUrl = map.value(kKeyMountPoint).toString();
     name = map.value(kKeyName).toString();
     url = QUrl::fromUserInput(map.value(kKeyUrl).toString());
+    index = map.value(kKeyIndex).toInt();
 }
 
 QVariantMap BookmarkData::serialize()
@@ -88,6 +93,7 @@ QVariantMap BookmarkData::serialize()
     v.insert(kKeyMountPoint, deviceUrl);
     v.insert(kKeyName, name);
     v.insert(kKeyUrl, url);
+    v.insert(kKeyIndex, index);
     return v;
 }
 
@@ -133,11 +139,9 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
     if (!urlsTemp.isEmpty()) {
         QList<QUrl> urlsTrans {};
         bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urlsTemp, &urlsTrans);
-
         if (ok && !urlsTrans.isEmpty())
             urlsTemp = urlsTrans;
     }
-
     for (const QUrl &url : urlsTemp) {
         QFileInfo info(url.path());
         if (info.isDir()) {
@@ -147,10 +151,20 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             getMountInfo(url, bookmarkData.deviceUrl, bookmarkData.locateUrl);
             bookmarkData.name = info.fileName();
             bookmarkData.url = url;
+            QString temPath = url.path();
+            QUrl temUrl = url;
+            temUrl.setPath(QUrl::fromPercentEncoding(temPath.toUtf8()));   //Convert to readable character.
+            QString temName;
+            int pos = temUrl.path().lastIndexOf('/') + 1;
+            temName = temUrl.path().right(temUrl.path().length() - pos);
+
+            if (isDublicated(temName))
+                return false;
+
             QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
+            bookmarkData.index = list.count();
             list << bookmarkData.serialize();
             Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
-
             bookmarkDataMap[url] = bookmarkData;
             addBookMarkItem(url, info.fileName());
         }
@@ -162,13 +176,30 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
 void BookMarkManager::addBookMarkItemsFromConfig()
 {
     QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
+    int index = 0;
     for (const QVariant &data : list) {
         QMap<QString, QVariant> bookMarkMap = data.toMap();
         if (bookMarkMap.contains(kKeyUrl)) {
             BookmarkData bookmarkData;
             bookmarkData.resetData(bookMarkMap);
-            const QString &name = bookMarkMap.value(kKeyName).toString();
-            bookmarkDataMap[bookmarkData.url] = bookmarkData;
+            QString name = bookmarkData.name;
+            if (!bookmarkData.url.isValid())
+                continue;
+            if (name.isEmpty()) {
+                if (bookmarkData.url == QUrl("recent:/"))
+                    name = tr("Recent");
+                else if (bookmarkData.url == QUrl("trash:/"))
+                    name = tr("Trash");
+            }
+            if (!defaultItemNames.keys().contains(bookmarkData.url))   //It's not a default item.
+            {
+                bookmarkData.index = index++;
+                bookmarkDataMap[bookmarkData.url] = bookmarkData;
+            } else {   //It's a default item.
+                QPair pair = { name, index++ };   //Here we update the index to the same as configuration
+                defaultItemNames.insert(bookmarkData.url, pair);
+                continue;
+            }
             addBookMarkItem(bookmarkData.url, name);
         }
     }
@@ -181,7 +212,7 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
     RenameCallback renameCb { BookMarkManager::renameCallBack };
     Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled };
     QVariantMap map {
-        { "Property_Key_Group", "Group_Bookmark" },
+        { "Property_Key_Group", "Group_Common" },
         { "Property_Key_DisplayName", bookmarkName },
         { "Property_Key_Icon", BookMarkHelper::instance()->icon() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
@@ -189,15 +220,94 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) }
     };
+
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, map);
 }
 
+QMap<QUrl, BookmarkData> BookMarkManager::bookmarkDataMap = {};
+QMap<QUrl, QPair<QString, int>> BookMarkManager::defaultItemNames = {};
+const QList<QPair<QString, QString>> BookMarkManager::defNames {
+    QPair("Recent", tr("Recent")),
+    QPair("Home", SystemPathUtil::instance()->systemPathDisplayName("Home")),
+    QPair("Desktop", SystemPathUtil::instance()->systemPathDisplayName("Desktop")),
+    QPair("Videos", SystemPathUtil::instance()->systemPathDisplayName("Videos")),
+    QPair("Music", SystemPathUtil::instance()->systemPathDisplayName("Music")),
+    QPair("Pictures", SystemPathUtil::instance()->systemPathDisplayName("Pictures")),
+    QPair("Documents", SystemPathUtil::instance()->systemPathDisplayName("Documents")),
+    QPair("Downloads", SystemPathUtil::instance()->systemPathDisplayName("Downloads")),
+    QPair("Trash", SystemPathUtil::instance()->systemPathDisplayName("Trash"))
+};
 BookMarkManager::BookMarkManager(QObject *parent)
     : QObject(parent)
 {
     // TODO: 配置文件内容改变后，当前并没有发送valueEdited信号
     connect(Application::genericSetting(), &Settings::valueEdited, this,
             &BookMarkManager::onFileEdited);
+
+    QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
+    if (list.isEmpty()) {
+        QVariantList defaultList;
+        int index = 0;
+        for (int i = 0; i < defNames.count(); i++) {
+            QPair<QString, QString> name = defNames.at(i);
+            QString path { SystemPathUtil::instance()->systemPath(name.first) };
+            QUrl url;
+            if (name.first == "Trash") {
+                url = QUrl("trash:/");
+            } else if (name.first == "Recent")
+                url = QUrl("recent:/");
+            else
+                url = { UrlRoute::pathToReal(path) };
+            if (list.count() <= 0) {
+                QVariantMap v;
+                v.insert(kKeyName, name.first);
+                v.insert(kKeyUrl, url);
+                v.insert(kKeyIndex, index);
+                defaultList << v;
+            }
+            defaultItemNames.insert(url, QPair { name.first, index++ });
+        }
+        Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, defaultList);
+    } else {
+        int index = 0;
+        for (const QVariant &data : list) {
+            QMap<QString, QVariant> bookMarkMap = data.toMap();
+            if (bookMarkMap.contains(kKeyUrl)) {
+                BookmarkData bookmarkData;
+                bookmarkData.resetData(bookMarkMap);
+                QString name = bookmarkData.name;
+                bool isDefaultName = false;
+                QUrl url;
+                for (int i = 0; i < defNames.count(); i++) {
+                    QPair<QString, QString> defName = defNames.at(i);
+                    QString path { SystemPathUtil::instance()->systemPath(defName.first) };
+
+                    if (defName.first == "Trash")
+                        url = QUrl("trash:/");
+                    else if (defName.first == "Recent")
+                        url = QUrl("recent:/");
+                    else
+                        url = { UrlRoute::pathToReal(path) };
+
+                    if (defName.first == name) {
+                        QVariantMap v;
+                        v.insert(kKeyName, defName.first);
+                        v.insert(kKeyUrl, url);
+                        v.insert(kKeyIndex, index);
+                        isDefaultName = true;
+                        defaultItemNames.insert(url, QPair { defName.first, index++ });
+                        break;
+                    }
+                }
+                if (isDefaultName)
+                    continue;
+                if (!bookmarkData.url.isValid())
+                    continue;
+                bookmarkData.index = index++;
+                bookmarkDataMap[url] = bookmarkData;
+            }
+        }
+    }
 }
 
 void BookMarkManager::update(const QVariant &value)
@@ -248,6 +358,21 @@ QMap<QUrl, BookmarkData> BookMarkManager::getBookMarkDataMap() const
     return bookmarkDataMap;
 }
 
+int BookMarkManager::defaultItemIndex(const QUrl &url)
+{
+    int index = -1;
+    QMapIterator<QUrl, QPair<QString, int>> it(defaultItemNames);
+    while (it.hasNext()) {
+        it.next();
+        if (it.key() == url) {
+            index = it.value().second;
+            break;
+        }
+    }
+
+    return index;
+}
+
 int BookMarkManager::showRemoveBookMarkDialog(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);
@@ -295,12 +420,62 @@ QSet<QString> BookMarkManager::getBookMarkDisabledSchemes()
 void BookMarkManager::sortItemsByOrder(const QList<QUrl> &order)
 {
     QVariantList sorted;
+    int index = 0;
     for (auto url : order) {
-        auto item = bookmarkDataMap.value(url);
-        if (item.url.isValid())
-            sorted << item.serialize();
+        QString name = defaultItemNames.value(url).first;
+        if (name.isEmpty()) {   //Do not a default item
+            auto item = bookmarkDataMap.value(url);
+            if (item.url.isValid()) {
+                QVariantMap v = item.serialize();
+                v.insert(kKeyIndex, index++);
+                sorted << v;
+            }
+        } else {
+            QVariantMap bData;
+            name = defaultItemNames.value(url).first;
+            bData.insert(kKeyName, name);
+            bData.insert(kKeyUrl, url);
+            bData.insert(kKeyIndex, index);
+            QPair pair = { name, index++ };
+            defaultItemNames.insert(url, pair);
+            sorted << bData;
+        }
     }
+
     Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, sorted);
+}
+
+bool BookMarkManager::isDublicated(const QString &name)
+{
+    for (int i = 0; i < defNames.count(); i++) {
+        if (defNames[i].second == name)
+            return true;
+    }
+
+    QMapIterator<QUrl, BookmarkData> it(bookmarkDataMap);
+    while (it.hasNext()) {
+        it.next();
+        if (it.value().name == name)
+            return true;
+    }
+    return false;
+}
+
+QMap<QUrl, QPair<QString, int>> BookMarkManager::defaultNames() const
+{
+    return defaultItemNames;
+}
+
+bool BookMarkManager::handleItemSort(const QUrl &a, const QUrl &b)
+{
+    int aIndex = defaultItemIndex(a);
+    if (aIndex < 0)
+        aIndex = bookmarkDataMap.value(a).index;
+    int bIndex = defaultItemIndex(b);
+    if (bIndex < 0)
+        bIndex = bookmarkDataMap.value(b).index;
+
+    return aIndex < bIndex;
 }
 
 void BookMarkManager::onFileEdited(const QString &group, const QString &key, const QVariant &value)
@@ -390,6 +565,12 @@ void BookMarkManager::contextMenuHandle(quint64 windowId, const QUrl &url, const
 void BookMarkManager::renameCallBack(quint64 windowId, const QUrl &url, const QString &name)
 {
     Q_UNUSED(windowId);
+
+    if (isDublicated(name)) {
+        qInfo() << "new name = " << name;
+        qInfo() << "New bookmark name would be dublicated as one of the existed ones.";
+        return;
+    }
     BookMarkManager::instance()->bookMarkRename(url, name);
 
     QVariantMap map {
@@ -454,9 +635,9 @@ QString BookMarkManager::bookMarkActionCreatedCallBack(bool isNormal, const QUrl
         return QString();
 
     if (BookMarkManager::instance()->getBookMarkDataMap().contains(url))
-        return QString(tr("Remove bookmark"));
+        return QString(tr("Remove from quick access"));
     else
-        return QString(tr("Add to bookmark"));
+        return QString(tr("Pin to quick access"));
 }
 
 void BookMarkManager::bookMarkActionClickedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)

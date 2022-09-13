@@ -37,7 +37,7 @@ class SideBarView : public DTreeView
 {
     Q_OBJECT
     friend class SideBarViewPrivate;
-    SideBarViewPrivate *const d;
+    SideBarViewPrivate *const d = nullptr;
 
 public:
     explicit SideBarView(QWidget *parent = nullptr);
@@ -52,6 +52,7 @@ public:
     QUrl currentUrl() const;
     QModelIndex findItemIndex(const QUrl &url) const;
     QVariantMap groupExpandState() const;
+    QMap<QUrl, QPair<QString, int>> defaultItemNames();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
