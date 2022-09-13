@@ -24,6 +24,7 @@ DFMSideBarItem *DFMSideBarTagItemHandler::createItem(const DUrl &url)
     QString iconName = TagManager::instance()->getTagIconName(url.fileName());
     QIcon icon = QIcon::fromTheme(iconName);
     DFMSideBarItem * item = new DFMSideBarItem(icon, url.fileName(), url);
+    item->setReportName("Tag");
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsEditable);
     item->setData(SIDEBAR_ID_TAG, DFMSideBarItem::ItemUseRegisteredHandlerRole);

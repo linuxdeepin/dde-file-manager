@@ -11,6 +11,7 @@
 #include "accessibility/ac-lib-file-manager.h"
 #include "plugins/schemepluginmanager.h"
 #include "shutil/fileutils.h"
+#include "rlog/rlog.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
@@ -70,6 +71,21 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
 #endif
     }
     DListView::mousePressEvent(event);
+}
+
+void DFMSideBarView::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (QApplication::applicationName() == "dde-file-manager") {
+        QModelIndex index = indexAt(event->pos());
+        if (index.isValid() && index.data(DFMSideBarItem::ItemTypeRole) == DFMSideBarItem::SidebarItem) {
+            QString reportName = index.data(DFMSideBarItem::ItemReportNameRole).toString();
+            QVariantMap data;
+            data.insert("sidebar_item", reportName);
+            rlog->commit("Sidebar", data);
+        }
+    }
+
+    DListView::mouseReleaseEvent(event);
 }
 
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
@@ -430,7 +446,7 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
             return Qt::IgnoreAction;
         }
 
-        if(item->url().isSMBFile())
+        if (item->url().isSMBFile())
             return Qt::IgnoreAction;
     }
 
