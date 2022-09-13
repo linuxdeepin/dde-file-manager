@@ -303,6 +303,7 @@ public:
     static void initVaultDbusResponse();
 
     static QString getUser();
+    static QString hostName();
     static int getUserId();
     static bool isRootUser();
     static bool isServerSys();

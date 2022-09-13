@@ -27,7 +27,7 @@
 #include "controllers/vaultcontroller.h"
 #include "controllers/masteredmediacontroller.h"
 #include "dialogs/dialogmanager.h"
-
+#include "log/auditlog.h"
 #include "tag/tagmanager.h"
 
 #ifdef SW_LABEL
@@ -1656,9 +1656,9 @@ void FileJob::doDiscAuditLog(const DUrl &device, const QString &stagePath, bool 
     static qint64 baseID {QDateTime::currentSecsSinceEpoch()};
 
     qInfo() << "Create D-Bus Auditd interface object start";
-    QDBusInterface auditd("org.deepin.PermissionManger.Auditd",
-                          "/org/deepin/PermissoinManger/Auditd",
-                          "org.deepin.PermissionManger.Auditd",
+    QDBusInterface auditd("org.deepin.PermissionManager.Auditd",
+                          "/org/deepin/PermissionManager/Auditd",
+                          "org.deepin.PermissionManager.Auditd",
                           QDBusConnection::systemBus());
     auditd.setTimeout(500);
     if (!auditd.isValid()) {

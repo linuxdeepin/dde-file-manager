@@ -167,6 +167,7 @@ public:
     void setDoClearTrashState(const bool bdoing);
     //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
     void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
+    void dealPastedAudit(const DUrlList &srcUrlList, const DUrlList &targetUrlList);
     //判断当前的可访问的smb和ftp中是否包含某个url
     bool isSmbFtpContain(const DUrl &url);
 
