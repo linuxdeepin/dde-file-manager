@@ -32,6 +32,7 @@
 using namespace std;
 DFMBASE_USE_NAMESPACE
 using namespace plugin_filepreview;
+static constexpr int kReadTextSize { 1024 * 1024 * 5 };
 
 TextPreview::TextPreview(QObject *parent)
     : AbstractBasePreview(parent)
@@ -73,6 +74,9 @@ bool TextPreview::setFileUrl(const QUrl &url)
     long len = device.seekg(0, ios::end).tellg();
     if (len <= 0)
         return false;
+
+    if (len > kReadTextSize)
+        len = kReadTextSize;
 
     char *buf = new char[static_cast<unsigned long>(len)];
     device.seekg(0, ios::beg).read(buf, static_cast<streamsize>(len));
