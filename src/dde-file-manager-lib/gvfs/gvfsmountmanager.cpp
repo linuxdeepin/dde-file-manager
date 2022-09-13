@@ -1760,8 +1760,11 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     succeeded = g_volume_mount_finish(volume, res, &error);
     QVolume qVolume = gVolumeToqVolume(volume);
 
+    bool mounted = true;
+
     // 返回false 的情况，如果有挂载点也算成功，此时要看看 gio 相关流程是否存在bug
     if (!succeeded && !try_to_get_mounted_point(volume)) {
+        mounted = false;
         qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
                                 << error->message << user_data << error->code;
 
@@ -1789,6 +1792,8 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
         }
     }
     AskedPasswordWhileMountDisk = false;
+
+    UDiskListener::addMountRlog(qVolume.unix_device(), mounted);
 }
 
 void GvfsMountManager::unmount(const QDiskInfo &diskInfo)
