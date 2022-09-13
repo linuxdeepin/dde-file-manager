@@ -12,7 +12,8 @@ HEADERS += \
     $$PWD/rlog/committhread.h \
     $$PWD/rlog/smbreportdata.h \
     $$PWD/rlog/vaultreportdata.h \
-    $$PWD/rlog/searchreportdata.h
+    $$PWD/rlog/searchreportdata.h \
+    $$PWD/rlog/sidebarreportdata.h
 
 SOURCES += \
     $$PWD/utils.cpp \
@@ -26,4 +27,5 @@ SOURCES += \
     $$PWD/rlog/committhread.cpp \
     $$PWD/rlog/smbreportdata.cpp \
     $$PWD/rlog/vaultreportdata.cpp \
-    $$PWD/rlog/searchreportdata.cpp
+    $$PWD/rlog/searchreportdata.cpp \
+    $$PWD/rlog/sidebarreportdata.cpp

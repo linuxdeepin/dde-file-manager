@@ -33,6 +33,7 @@ DFMSideBarItem *DFMSideBarDefaultItemHandler::createItem(const QString &pathKey)
                     systemPathManager->getSystemPathDisplayName(pathKey),
                     DUrl::fromUserInput(pathStr)
                 );
+    item->setReportName(reportName(pathKey));
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
     item->setData(SIDEBAR_ID_DEFAULT, DFMSideBarItem::ItemUseRegisteredHandlerRole);
@@ -108,6 +109,11 @@ QMenu *DFMSideBarDefaultItemHandler::contextMenu(const DFMSideBar *sidebar, cons
     }
 
     return menu;
+}
+
+QString DFMSideBarDefaultItemHandler::reportName(const QString &pathKey)
+{
+    return pathKey;
 }
 
 DFM_END_NAMESPACE

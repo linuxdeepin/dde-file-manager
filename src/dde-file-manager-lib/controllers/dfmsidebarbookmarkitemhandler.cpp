@@ -28,7 +28,7 @@ DFMSideBarItem *DFMSideBarBookmarkItemHandler::createItem(const DUrl &url)
 
     QIcon icon = QIcon::fromTheme("folder-bookmark-symbolic");
     DFMSideBarItem * item = new DFMSideBarItem(icon, displayName, url, "bookmark");
-
+    item->setReportName("Bookmark");
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemNeverHasChildren);
     item->setRegisteredHandler(SIDEBAR_ID_BOOKMARK);
 

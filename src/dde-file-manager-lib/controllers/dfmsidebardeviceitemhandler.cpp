@@ -20,6 +20,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "interfaces/drootfilemanager.h"
 #include "shutil/fileutils.h"
+#include "dblockdevice.h"
 
 #include <QAction>
 
@@ -75,7 +76,9 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
             iconName = "folder-remote-symbolic";
         }
     }
+
     DFMSideBarItem *item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
+    item->setReportName(reportName(url));
 
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
 
@@ -166,6 +169,41 @@ void DFMSideBarDeviceItemHandler::rename(const DFMSideBarItem *item, QString nam
         newUrl.setPath(name); // 直接构造 URL 会忽略掉一些特殊符号，因此使用 setPath
         DFileService::instance()->renameFile(this, item->url(), newUrl);
     }
+}
+
+QString DFMSideBarDeviceItemHandler::reportName(const DUrl &url)
+{
+    if (url.scheme() == SMB_SCHEME) {
+        return "Smb";
+    } else if (url.scheme() == DFMROOT_SCHEME) {
+        // 截获盘符名
+        QString tmp = url.path();
+        int startIndex = tmp.indexOf("/");
+        int endIndex = tmp.indexOf(".");
+        int count = endIndex - startIndex - 1;
+        QString result = tmp.mid(startIndex + 1, count);
+        // 组装盘符绝对路径
+        QString localPath = "/dev/" + result;
+        // 获得块设备路径
+        QStringList devicePaths = DDiskManager::resolveDeviceNode(localPath, {});
+        if (!devicePaths.isEmpty()) {
+            QString devicePath = devicePaths.first();
+            // 获得块设备对象
+            DBlockDevice *blDev = DDiskManager::createBlockDevice(devicePath);
+            // 获得块设备挂载点
+            QByteArrayList mounts = blDev->mountPoints();
+            if (!mounts.isEmpty()) {
+                QString mountPath = mounts.first();
+                // 如果挂载点为"/"，则为系统盘
+                if (mountPath == "/") {
+                    return "System Disk";
+                } else {    // 数据盘
+                    return "Data Disk";
+                }
+            }
+        }
+    }
+    return "unknow disk";
 }
 
 DFM_END_NAMESPACE

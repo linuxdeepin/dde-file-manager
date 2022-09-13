@@ -105,4 +105,9 @@ void DFMSideBarItem::setRegisteredHandler(const QString &identifier)
     this->setData(identifier, ItemUseRegisteredHandlerRole);
 }
 
+void DFMSideBarItem::setReportName(const QString &reportName)
+{
+    this->setData(reportName, ItemReportNameRole);
+}
+
 DFM_END_NAMESPACE

@@ -24,6 +24,7 @@ public:
         ItemUniqueKeyRole,
         ItemVolTagRole,
         ItemSmbMountedUrls,
+        ItemReportNameRole,
         ItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 
@@ -53,6 +54,7 @@ public:
     void setUrl(const DUrl &url);
     void setGroupName(const QString &groupName);
     void setRegisteredHandler(const QString &identifier);
+    void setReportName(const QString &reportName);
 
     constexpr static int SidebarItemType = QStandardItem::UserType + 1;
 
