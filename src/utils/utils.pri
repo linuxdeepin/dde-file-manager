@@ -1,4 +1,5 @@
 HEADERS += \
+    $$PWD/rlog/blockmountreportdata.h \
     $$PWD/utils.h \
     $$PWD/xutil.h \
     $$PWD/debugobejct.h \
@@ -16,6 +17,7 @@ HEADERS += \
     $$PWD/rlog/sidebarreportdata.h
 
 SOURCES += \
+    $$PWD/rlog/blockmountreportdata.cpp \
     $$PWD/utils.cpp \
     $$PWD/xutil.cpp \
     $$PWD/debugobejct.cpp \
