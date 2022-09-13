@@ -24,6 +24,8 @@
 
 #include <QAction>
 
+#define REPORT_SHARE_DIR "Sharing Folders"
+
 DFM_BEGIN_NAMESPACE
 
 DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const DUrl &url, bool withText)
@@ -174,33 +176,37 @@ void DFMSideBarDeviceItemHandler::rename(const DFMSideBarItem *item, QString nam
 QString DFMSideBarDeviceItemHandler::reportName(const DUrl &url)
 {
     if (url.scheme() == SMB_SCHEME) {
-        return "Smb";
+        return REPORT_SHARE_DIR;
     } else if (url.scheme() == DFMROOT_SCHEME) {
-        // 截获盘符名
-        QString tmp = url.path();
-        int startIndex = tmp.indexOf("/");
-        int endIndex = tmp.indexOf(".");
-        int count = endIndex - startIndex - 1;
-        QString result = tmp.mid(startIndex + 1, count);
-        // 组装盘符绝对路径
-        QString localPath = "/dev/" + result;
-        // 获得块设备路径
-        QStringList devicePaths = DDiskManager::resolveDeviceNode(localPath, {});
-        if (!devicePaths.isEmpty()) {
-            QString devicePath = devicePaths.first();
-            // 获得块设备对象
-            DBlockDevice *blDev = DDiskManager::createBlockDevice(devicePath);
-            // 获得块设备挂载点
-            QByteArrayList mounts = blDev->mountPoints();
-            if (!mounts.isEmpty()) {
-                QString mountPath = mounts.first();
-                // 如果挂载点为"/"，则为系统盘
-                if (mountPath == "/") {
-                    return "System Disk";
-                } else {    // 数据盘
-                    return "Data Disk";
+        QString strPath = url.path();
+        if (strPath.endsWith(SUFFIX_UDISKS)) {
+            // 截获盘符名
+            int startIndex = strPath.indexOf("/");
+            int endIndex = strPath.indexOf(".");
+            int count = endIndex - startIndex - 1;
+            QString result = strPath.mid(startIndex + 1, count);
+            // 组装盘符绝对路径
+            QString localPath = "/dev/" + result;
+            // 获得块设备路径
+            QStringList devicePaths = DDiskManager::resolveDeviceNode(localPath, {});
+            if (!devicePaths.isEmpty()) {
+                QString devicePath = devicePaths.first();
+                // 获得块设备对象
+                DBlockDevice *blDev = DDiskManager::createBlockDevice(devicePath);
+                // 获得块设备挂载点
+                QByteArrayList mounts = blDev->mountPoints();
+                if (!mounts.isEmpty()) {
+                    QString mountPath = mounts.first();
+                    // 如果挂载点为"/"，则为系统盘
+                    if (mountPath == "/") {
+                        return "System Disk";
+                    } else {    // 数据盘
+                        return "Data Disk";
+                    }
                 }
             }
+        } else if (strPath.endsWith(SUFFIX_GVFSMP)) {
+            return REPORT_SHARE_DIR;
         }
     }
     return "unknow disk";
