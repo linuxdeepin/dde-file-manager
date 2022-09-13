@@ -720,15 +720,16 @@ void FileNodeManagerThread::stop()
 
 void FileNodeManagerThread::clearChildren()
 {
-    childrenMutex.lock();
+    int childCount = childrenCount();
 
-    model()->beginRemoveRows(model()->rootIndex(), 0, childrenUrlList.count());
-    model()->removeRows(0, childrenUrlList.count(), model()->rootIndex());
-    children.clear();
-    childrenUrlList.clear();
+    model()->beginRemoveRows(model()->rootIndex(), 0, childCount);
+    model()->removeRows(0, childCount, model()->rootIndex());
+    {
+        QMutexLocker lk(&childrenMutex);
+        children.clear();
+        childrenUrlList.clear();
+    }
     model()->endRemoveRows();
-
-    childrenMutex.unlock();
 }
 
 FileNodePointer FileNodeManagerThread::rootNode() const
