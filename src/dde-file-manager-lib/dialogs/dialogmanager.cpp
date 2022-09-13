@@ -478,6 +478,31 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     return code;
 }
 
+std::pair<bool, bool> DialogManager::showRenameNameDotBeginDialog()
+{
+    DDialog d;
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
+    auto checkBox = new QCheckBox(tr("Don't ask again"));
+    d.insertContent(0, checkBox);
+    d.addButton(tr("Hide"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("Cancel"));
+
+    d.setDefaultButton(1);
+    d.setIcon(m_dialogWarningIcon);
+    int code = d.exec();
+
+    bool noAsk = false;
+    auto widget = d.getContent(0);
+    if(widget) {
+        auto box = qobject_cast<QCheckBox*>(widget);
+        if(box)
+            noAsk = box->isChecked();
+    }
+    const bool hide = (code == 0);
+    return std::make_pair(noAsk, hide);
+}
+
 int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
 {
     // 获取父对话框字体特性

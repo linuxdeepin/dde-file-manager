@@ -63,7 +63,7 @@ QVariant SettingBackend::getOption(const QString &key) const
 
 void SettingBackend::doSync()
 {
-
+    DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_RenameHideFileOperate, 0);
 }
 
 void SettingBackend::doSetOption(const QString &key, const QVariant &value)

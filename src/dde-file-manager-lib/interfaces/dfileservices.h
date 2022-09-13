@@ -105,7 +105,7 @@ public:
     bool decompressFile(const QObject *sender, const DUrlList &list) const;
     bool decompressFileHere(const QObject *sender, const DUrlList &list) const;
     bool writeFilesToClipboard(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list) const;
-    bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false) const;
+    bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false, const bool checkHide = true) const;
     bool multiFilesReplaceName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const;
     bool multiFilesAddStrToName(const QList<DUrl> &urls, const QPair<QString, DFileService::AddTextFlags> &pair)const;
     bool multiFilesCustomName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const;

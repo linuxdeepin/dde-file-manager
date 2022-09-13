@@ -458,11 +458,12 @@ QSharedPointer<DFMWriteUrlsToClipboardEvent> DFMWriteUrlsToClipboardEvent::fromJ
     return event;
 }
 
-DFMRenameEvent::DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent)
+DFMRenameEvent::DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent, const bool checkHide)
     : DFMEvent(RenameFile, sender)
 {
     setData(QPair<DUrl, DUrl>(from, to));
     setProperty(QT_STRINGIFY(DFMRenameEvent::silent), silent);
+    setProperty(QT_STRINGIFY(DFMRenameEvent::checkHide), checkHide);
 }
 
 DUrlList DFMRenameEvent::handleUrlList() const
@@ -475,6 +476,11 @@ DUrlList DFMRenameEvent::handleUrlList() const
 bool DFMRenameEvent::silent() const
 {
     return property(QT_STRINGIFY(DFMRenameEvent::silent), false);
+}
+
+bool DFMRenameEvent::checkHide() const
+{
+    return property(QT_STRINGIFY(DFMRenameEvent::checkHide), true);
 }
 
 QSharedPointer<DFMRenameEvent> DFMRenameEvent::fromJson(const QJsonObject &json)

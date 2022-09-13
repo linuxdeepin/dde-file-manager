@@ -57,6 +57,7 @@ public:
 
     static bool customHiddenFileMatch(const QString &absolutePath, const QString &fileName);
     static bool privateFileMatch(const QString &absolutePath, const QString &fileName);
+    static bool doHiddenFileRemind(const QString &name, bool *checkRule = nullptr);
 
     bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
