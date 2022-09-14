@@ -121,4 +121,6 @@ void TitleBar::bindEvents()
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStopSpinner);
     dpfSlotChannel->connect(curSpace, "slot_FilterButton_Show",
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleShowFilterButton);
+    dpfSlotChannel->connect(curSpace, "slot_NewWindowAndTab_SetEnable",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleSetNewWindowAndTabEnable);
 }

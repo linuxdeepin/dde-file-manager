@@ -51,6 +51,9 @@ public:
     static void showConnectToServerDialog(quint64 windowId);
     static void showUserSharePasswordSettingDialog(quint64 windowId);
 
+public:
+    static bool newWindowAndTabEnabled;
+
 private:
     static QMutex &mutex();
     static void handleSettingMenuTriggered(quint64 windowId, int action);

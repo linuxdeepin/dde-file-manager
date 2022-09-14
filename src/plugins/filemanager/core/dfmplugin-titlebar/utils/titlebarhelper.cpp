@@ -45,6 +45,8 @@ DFMBASE_USE_NAMESPACE
 
 QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
 
+bool TitleBarHelper::newWindowAndTabEnabled { true };
+
 TitleBarWidget *TitleBarHelper::findTileBarByWindowId(quint64 windowId)
 {
     if (!kTitleBarMap.contains(windowId))

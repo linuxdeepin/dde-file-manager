@@ -53,6 +53,8 @@ public slots:
     void handleShowFilterButton(quint64 windowId, bool visible);
     void handleViewModeChanged(quint64 windowId, int mode);
 
+    void handleSetNewWindowAndTabEnable(bool enable);
+
 private:
     explicit TitleBarEventReceiver(QObject *parent = nullptr);
 };

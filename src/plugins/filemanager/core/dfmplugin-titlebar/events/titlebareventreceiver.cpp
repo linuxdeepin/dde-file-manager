@@ -133,6 +133,11 @@ void TitleBarEventReceiver::handleViewModeChanged(quint64 windowId, int mode)
     w->setViewModeState(mode);
 }
 
+void TitleBarEventReceiver::handleSetNewWindowAndTabEnable(bool enable)
+{
+    TitleBarHelper::newWindowAndTabEnabled = enable;
+}
+
 TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)
     : QObject(parent)
 {

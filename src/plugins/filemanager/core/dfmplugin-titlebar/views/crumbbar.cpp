@@ -384,13 +384,16 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
     quint64 id { window()->internalWinId() };
     bool tabAddable { TitleBarEventCaller::sendCheckTabAddable(id) };
     bool displayIcon { TitleBarHelper::displayIcon() };
+    bool displayNewWindowAndTab { TitleBarHelper::newWindowAndTabEnabled };
     QMenu *menu { new QMenu() };
     QUrl url { index.data(CrumbModel::FileUrlRole).toUrl() };
     QIcon copyIcon, newWndIcon, newTabIcon, editIcon;
     if (displayIcon) {
         copyIcon = QIcon::fromTheme("edit-copy");
-        newWndIcon = QIcon::fromTheme("window-new");
-        newTabIcon = QIcon::fromTheme("tab-new");
+        if (displayNewWindowAndTab) {
+            newWndIcon = QIcon::fromTheme("window-new");
+            newTabIcon = QIcon::fromTheme("tab-new");
+        }
         editIcon = QIcon::fromTheme("entry-edit");
     }
 
@@ -398,14 +401,16 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
         d->writeUrlToClipboard(url);
     });
 
-    menu->addAction(newWndIcon, QObject::tr("Open in new window"), [url]() {
-        TitleBarEventCaller::sendOpenWindow(url);
-    });
+    if (displayNewWindowAndTab) {
+        menu->addAction(newWndIcon, QObject::tr("Open in new window"), [url]() {
+            TitleBarEventCaller::sendOpenWindow(url);
+        });
 
-    QAction *tabAct = menu->addAction(newTabIcon, QObject::tr("Open in new tab"), [url, id]() {
-        TitleBarEventCaller::sendOpenTab(id, url);
-    });
-    tabAct->setDisabled(!tabAddable);
+        QAction *tabAct = menu->addAction(newTabIcon, QObject::tr("Open in new tab"), [url, id]() {
+            TitleBarEventCaller::sendOpenTab(id, url);
+        });
+        tabAct->setDisabled(!tabAddable);
+    }
 
     menu->addSeparator();
 

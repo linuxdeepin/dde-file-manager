@@ -46,6 +46,7 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Spinner_Start)
     DPF_EVENT_REG_SLOT(slot_Spinner_Stop)
     DPF_EVENT_REG_SLOT(slot_FilterButton_Show)
+    DPF_EVENT_REG_SLOT(slot_NewWindowAndTab_SetEnable);
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_Crumb_Seprate)

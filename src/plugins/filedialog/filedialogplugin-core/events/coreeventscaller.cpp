@@ -75,6 +75,7 @@ void CoreEventsCaller::setMenuDisbaled()
 {
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_ContextMenu_SetEnable", false);
     dpfSlotChannel->push("dfmplugin_computer", "slot_ContextMenu_SetEnable", false);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_NewWindowAndTab_SetEnable", false);
 }
 
 QList<QUrl> CoreEventsCaller::sendGetSelectedFiles(const quint64 windowID)
