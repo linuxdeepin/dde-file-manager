@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <signal.h>
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
@@ -12,6 +13,7 @@
 #include "app/filemanagerdaemon.h"
 #include "client/filemanagerclient.h"
 #include "log/dfmLogManager.h"
+#include "anything/anything.h"
 
 #include "ddiskmanager.h"
 
@@ -21,6 +23,12 @@
 #include <pwd.h>
 #include <sys/types.h>
 
+static void handleSIGTERM(int sig)
+{
+    if (qApp) {
+        qApp->quit();
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -50,6 +58,11 @@ int main(int argc, char *argv[])
     if (!logDir.exists()) {
         QDir().mkpath(logPath);
     }
+
+    // handle SIGTERM signal from systemctl stop
+    signal(SIGTERM, handleSIGTERM);
+
+    initAnything();
 
     QDBusConnection connection = QDBusConnection::systemBus();
     DFM_NAMESPACE::DFMLogManager::setlogFilePath(logPath + QCoreApplication::applicationName() + ".log");
