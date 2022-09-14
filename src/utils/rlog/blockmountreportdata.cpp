@@ -5,6 +5,7 @@
 #include "blockmountreportdata.h"
 
 #include <QVariantMap>
+#include <QDateTime>
 
 static constexpr int BlockMountTid { 1000500004 };
 

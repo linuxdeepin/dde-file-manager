@@ -564,9 +564,9 @@ bool DFileService::writeFilesToClipboard(const QObject *sender, DFMGlobal::Clipb
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(sender, action, list)).toBool();
 }
 
-bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent) const
+bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent, const bool checkHide /*= true*/) const
 {
-    bool ok = DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to, silent).toBool();
+    bool ok = DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to, silent, checkHide).toBool();
 
     return ok;
 }
