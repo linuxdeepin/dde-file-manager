@@ -16,6 +16,7 @@
 #include "utils.h"
 #include "searchservice/searchservice.h"
 #include "rlog/rlog.h"
+#include "rlog/datas/searchreportdata.h"
 
 #include <QCoreApplication>
 #include <QMetaEnum>

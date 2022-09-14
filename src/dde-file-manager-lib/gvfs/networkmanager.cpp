@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "rlog/rlog.h"
+#include "rlog/datas/smbreportdata.h"
 #include "networkmanager.h"
 #include "dfmeventdispatcher.h"
 #include "dfileservices.h"

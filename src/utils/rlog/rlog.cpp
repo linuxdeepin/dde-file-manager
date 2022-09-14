@@ -3,12 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "rlog.h"
-#include "rlog/vaultreportdata.h"
-#include "rlog/smbreportdata.h"
-#include "rlog/searchreportdata.h"
-#include "rlog/blockmountreportdata.h"
-#include "rlog/committhread.h"
-#include "rlog/sidebarreportdata.h"
+#include "committhread.h"
+#include "datas/reportdatainterface.h"
 
 #include <QDebug>
 #include <QJsonDocument>
@@ -75,21 +71,6 @@ void RLog::init()
     }
 
     m_commonData.insert("dfmVersion", QApplication::applicationVersion());
-
-    ReportDataInterface *vault = new VaultReportData();
-    registerLogData(vault->type(), vault);
-
-    ReportDataInterface *smb = new SmbReportData();
-    registerLogData(smb->type(), smb);
-
-    ReportDataInterface *search = new SearchReportData();
-    registerLogData(search->type(), search);
-
-    ReportDataInterface *sidebar = new SidebarReportData();
-    registerLogData(sidebar->type(), sidebar);
-
-    ReportDataInterface *blkMnt = new BlockMountReportData();
-    registerLogData(blkMnt->type(), blkMnt);
 
     m_commitLog = new CommitLog();
     if (!m_commitLog->init())

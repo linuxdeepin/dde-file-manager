@@ -6,7 +6,8 @@ PKGCONFIG       += dtkwidget gio-qt udisks2-qt5
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
-               $$PWD/../../dde-file-manager-lib
+               $$PWD/../../dde-file-manager-lib \
+               $$PWD/../../utils \
 
 TARGET          = $$qtLibraryTarget(dde-disk-mount-plugin)
 DESTDIR          = $$_PRO_FILE_PWD_/../
