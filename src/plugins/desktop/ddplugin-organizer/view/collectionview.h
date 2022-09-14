@@ -64,6 +64,7 @@ public:
     QModelIndex indexAt(const QPoint &point) const override;
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 
+    void sort(int role);
 protected:
     QModelIndex moveCursor(CursorAction cursorAction,
                                    Qt::KeyboardModifiers modifiers) override;
@@ -75,7 +76,7 @@ protected:
 
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
     QRegion visualRegionForSelection(const QItemSelection &selection) const override;
-
+    bool lessThan(const QUrl &left, const QUrl &right) const;
 protected:
     void paintEvent(QPaintEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;

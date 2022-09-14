@@ -129,6 +129,13 @@ CanvasMenuScene::CanvasMenuScene(QObject *parent)
     d->predicateName[ActionID::kSrtTimeModified] = tr("Time modified");
     d->predicateName[ActionID::kSrtSize] = tr("Size");
     d->predicateName[ActionID::kSrtType] = tr("Type");
+
+    // subactions of icon size
+    d->predicateName[ActionID::kIconSizeTiny] = tr("Tiny");
+    d->predicateName[ActionID::kIconSizeSmall] = tr("Small");
+    d->predicateName[ActionID::kIconSizeMedium] = tr("Medium");
+    d->predicateName[ActionID::kIconSizeLarge] = tr("Large");
+    d->predicateName[ActionID::kIconSizeSuperLarge] = tr("Super large");
 }
 
 QString CanvasMenuScene::name() const
@@ -449,18 +456,23 @@ QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
 {
     int mininum = d->view->itemDelegate()->minimumIconLevel();
     int maxinum = d->view->itemDelegate()->maximumIconLevel();
+    Q_ASSERT(mininum == 0);
+
+    const QStringList keys {ActionID::kIconSizeTiny,
+                ActionID::kIconSizeSmall, ActionID::kIconSizeMedium,
+                ActionID::kIconSizeLarge, ActionID::kIconSizeSuperLarge};
+    Q_ASSERT(maxinum == keys.size() - 1);
 
     QMenu *subMenu = new QMenu(menu);
     d->iconSizeAction.clear();
-
+    int current = d->view->itemDelegate()->iconLevel();
     for (int i = mininum; i <= maxinum; ++i) {
-        const QString &text = d->view->itemDelegate()->iconSizeLevelDescription(i);
-        QAction *tempAction = subMenu->addAction(text);
+        const QString &key = keys.at(i);
+        QAction *tempAction = subMenu->addAction(d->predicateName.value(key));
         tempAction->setCheckable(true);
-        tempAction->setChecked(i == d->view->itemDelegate()->iconLevel());
+        tempAction->setChecked(i == current);
         d->iconSizeAction.insert(tempAction, i);
-        d->predicateAction[text] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, text);
+        tempAction->setProperty(ActionPropertyKey::kActionID, key);
     }
     return subMenu;
 }

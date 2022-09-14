@@ -170,11 +170,11 @@ QList<QStringList> BaseSortMenuScenePrivate::actionSortRule()
                                  "sort-by-type" });   // 排序方式
 
         ret.append(QStringList { "icon-size",
-                                 "Tiny",
-                                 "Small",
-                                 "Medium",
-                                 "Large",
-                                 "Super large" });   // icon size
+                                 "tiny",
+                                 "small",
+                                 "medium",
+                                 "large",
+                                 "super-large" });   // icon size
         ret.append(QStringList { ActionID::kSeparatorLine });
 
         QStringList listStageTo;

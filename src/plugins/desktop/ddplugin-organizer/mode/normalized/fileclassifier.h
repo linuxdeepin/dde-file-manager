@@ -59,7 +59,6 @@ public:
     void insert(const QUrl &, const QString &, const int) override;
     QString remove(const QUrl &) override;
     QString change(const QUrl &) override;
-signals:
 };
 
 }

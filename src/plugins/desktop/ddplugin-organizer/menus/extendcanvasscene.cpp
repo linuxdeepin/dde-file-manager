@@ -25,6 +25,7 @@
 #include "models/fileproxymodel.h"
 #include "utils/renamedialog.h"
 #include "utils/fileoperator.h"
+#include "core/ddplugin-canvas/menu/canvasmenu_defines.h"
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/menuutils.h"
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
@@ -60,11 +61,13 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
         predicateAction[ActionID::kOrganizeBy] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeBy));
 
+#ifdef EnableDisplaySizeMenu
         // display size
         tempAction = parent->addAction(predicateName.value(ActionID::kDisplaySize));
         tempAction->setMenu(displaySizeSubActions(parent));
         predicateAction[ActionID::kDisplaySize] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySize));
+#endif
     }
 
     tempAction = parent->addAction(predicateName.value(ActionID::kOrganizeOptions));
@@ -84,43 +87,122 @@ void ExtendCanvasScenePrivate::normalMenu(QMenu *parent)
 void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 {
     auto actions = parent->actions();
-    auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
-        return ac->property(ActionPropertyKey::kActionID).toString() == QString("display-settings");
-    });
-
-    if (actionIter == actions.end()) {
-        qWarning() << "can not find action:" << "display-settings";
-        return ;
-    }
-
-    QAction *indexAction = *actionIter;
-    parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeDesktop]);
-    if (turnOn) {
-        parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeBy]);
-        parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeOptions]);
-
-        if (CfgPresenter->mode() == OrganizerMode::kCustom) {
-            predicateAction[ActionID::kOrganizeByCustom]->setChecked(true);
-        } else if (CfgPresenter->mode() == OrganizerMode::kNormalized) {
-            QString id = classifierToActionID(CfgPresenter->classification());
-            if (auto ac = predicateAction.value(id))
-                ac->setChecked(true);
-        }
-
-        auto iconSizeIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
-            return ac->property(ActionPropertyKey::kActionID).toString() == QString("icon-size");
+    // auto arrage
+    {
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kAutoArrange;
         });
 
-        if (iconSizeIter != actions.end()) {
+        if (actionIter != actions.end() && turnOn) {
+            bool hide = false;
+            if (CfgPresenter->mode() == OrganizerMode::kCustom) {
+                hide = onCollection; // don't show on colletion.
+            } else if (CfgPresenter->mode() == OrganizerMode::kNormalized) {
+                hide = true; // don't show in normal mode.
+            }
+            if (hide)
+                (*actionIter)->setVisible(false);
+        }
+    }
+
+    // sort by
+    {
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kSortBy;
+        });
+
+        // normal mode
+        if (actionIter != actions.end()
+                && turnOn
+                && CfgPresenter->mode() == OrganizerMode::kNormalized
+                ) {
+            // on desktop
+            if (!onCollection)
+                (*actionIter)->setVisible(false);
+        }
+    }
+
+    // select all
+    {
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+            return ac->property(ActionPropertyKey::kActionID).toString() == dfmplugin_menu::ActionID::kSelectAll;
+        });
+
+        // normal mode
+        if (actionIter != actions.end()
+                && turnOn
+                && CfgPresenter->mode() == OrganizerMode::kNormalized
+                ) {
+            // on desktop
+            if (!onCollection)
+                (*actionIter)->setVisible(false);
+        }
+    }
+
+    // wallpager
+    {
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kWallpaperSettings;
+        });
+
+        // normal mode
+        if (actionIter != actions.end()
+                && turnOn
+                && CfgPresenter->mode() == OrganizerMode::kNormalized
+                ) {
+            // on onCollection
+            if (onCollection)
+                (*actionIter)->setVisible(false);
+        }
+    }
+
+    // Organize Desktop
+    {
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kDisplaySettings;
+        });
+
+        if (actionIter == actions.end()) {
+            qWarning() << "can not find action:" << "display-settings";
+        } else {
+            QAction *indexAction = *actionIter;
+            parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeDesktop]);
+            if (turnOn) {
+                parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeBy]);
+                parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeOptions]);
+
+                if (CfgPresenter->mode() == OrganizerMode::kCustom) {
+                    predicateAction[ActionID::kOrganizeByCustom]->setChecked(true);
+                } else if (CfgPresenter->mode() == OrganizerMode::kNormalized) {
+                    QString id = classifierToActionID(CfgPresenter->classification());
+                    if (auto ac = predicateAction.value(id))
+                        ac->setChecked(true);
+                }
+
+                // on collection
+                if (onCollection)
+                    indexAction->setVisible(false);
+            } else {
+                parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeOptions]);
+            }
+        }
+    }
+
+    // icon size
+    {
+        auto iconSizeIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+            return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kIconSize;
+        });
+
+        if (iconSizeIter != actions.end() && turnOn) {
             (*iconSizeIter)->setVisible(false);
             (*iconSizeIter)->setEnabled(false);
-
+#ifdef EnableDisplaySizeMenu
             if (auto ac = predicateAction.value(displaySizeToActionID(CfgPresenter->displaySize())))
                 ac->setChecked(true);
             parent->insertAction((*iconSizeIter), predicateAction[ActionID::kDisplaySize]);
+#endif
         }
-    } else {
-        parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeOptions]);
     }
 }
 
@@ -169,6 +251,8 @@ QMenu *ExtendCanvasScenePrivate::organizeBySubActions(QMenu *menu)
     return subMenu;
 }
 
+#ifdef EnableDisplaySizeMenu
+
 QMenu *ExtendCanvasScenePrivate::displaySizeSubActions(QMenu *menu)
 {
     QMenu *subMenu = new QMenu(menu);
@@ -190,6 +274,7 @@ QMenu *ExtendCanvasScenePrivate::displaySizeSubActions(QMenu *menu)
 
     return subMenu;
 }
+#endif
 
 QString ExtendCanvasScenePrivate::classifierToActionID(Classifier cf)
 {
@@ -219,6 +304,28 @@ QString ExtendCanvasScenePrivate::classifierToActionID(Classifier cf)
     return ret;
 }
 
+bool ExtendCanvasScenePrivate::triggerSortby(const QString &actionId)
+{
+    static const QMap<QString, Global::ItemRoles> sortRole = {
+        { ddplugin_canvas::ActionID::kSrtName, Global::ItemRoles::kItemFileDisplayNameRole },
+        { ddplugin_canvas::ActionID::kSrtSize, Global::ItemRoles::kItemFileSizeRole },
+        { ddplugin_canvas::ActionID::kSrtType, Global::ItemRoles::kItemFileMimeTypeRole },
+        { ddplugin_canvas::ActionID::kSrtTimeModified, Global::ItemRoles::kItemFileLastModifiedRole }
+    };
+
+    if (sortRole.contains(actionId)) {
+        Global::ItemRoles role = sortRole.value(actionId);
+        if (view)
+            view->sort(role);
+        else
+            qCritical() << "invaild view to sort.";
+        return true;
+    }
+
+    return false;
+}
+
+#ifdef EnableDisplaySizeMenu
 QString ExtendCanvasScenePrivate::displaySizeToActionID(DisplaySize size)
 {
     QString ret;
@@ -237,6 +344,7 @@ QString ExtendCanvasScenePrivate::displaySizeToActionID(DisplaySize size)
     }
     return ret;
 }
+#endif
 
 ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
     : AbstractMenuScene(parent)
@@ -255,11 +363,13 @@ ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
 
     d->predicateName[ActionID::kCreateACollection] = tr("Create a collection");
 
+#ifdef EnableDisplaySizeMenu
     // display size and sub actions
     d->predicateName[ActionID::kDisplaySize] = tr("Display Size");
     d->predicateName[ActionID::kDisplaySizeSmaller] = tr("Smaller");
     d->predicateName[ActionID::kDisplaySizeNormal] = tr("Normal");
     d->predicateName[ActionID::kDisplaySizeLarger] = tr("Larger");
+#endif
 }
 
 QString ExtendCanvasScene::name() const
@@ -334,13 +444,17 @@ bool ExtendCanvasScene::triggered(QAction *action)
             emit CfgPresenter->switchToNormalized(Classifier::kTimeCreated);
         } else if (actionId == ActionID::kCreateACollection) {
             emit CfgPresenter->newCollection(d->selectFiles);
-        } else if (actionId == ActionID::kDisplaySizeSmaller) {
+        }
+#ifdef EnableDisplaySizeMenu
+        else if (actionId == ActionID::kDisplaySizeSmaller) {
             emit CfgPresenter->changeDisplaySize(DisplaySize::kSmaller);
         } else if (actionId == ActionID::kDisplaySizeNormal) {
             emit CfgPresenter->changeDisplaySize(DisplaySize::kNormal);
         } else if (actionId == ActionID::kDisplaySizeLarger) {
             emit CfgPresenter->changeDisplaySize(DisplaySize::kLarger);
-        } else if (actionId == ActionID::kOrganizeOptions) {
+        }
+#endif
+        else if (actionId == ActionID::kOrganizeOptions) {
             emit CfgPresenter->showOptionWindow();
         }
         return true;
@@ -366,6 +480,8 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
 
             if (dfmplugin_menu::ActionID::kSelectAll == actionId) {
                 d->view->selectAll();
+                return true;
+            } else if (d->triggerSortby(actionId)) {
                 return true;
             } else if (dfmplugin_menu::ActionID::kRename == actionId) {
                 if (1 == d->selectFiles.count()) {

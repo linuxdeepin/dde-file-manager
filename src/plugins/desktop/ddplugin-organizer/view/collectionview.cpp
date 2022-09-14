@@ -48,6 +48,7 @@
 using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 static constexpr int kCollectionViewMargin = 2;
 static constexpr int kCollectionItemVerticalMargin = 2;
@@ -1416,6 +1417,57 @@ QRegion CollectionView::visualRegionForSelection(const QItemSelection &selection
     return region;
 }
 
+bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
+{
+    auto fileSortOrder = d->sortOrder;
+    int fileSortRole = d->sortRole;
+    auto m = model();
+    QModelIndex leftIdx = m->index(left);
+    QModelIndex rightIdx = m->index(right);
+
+    if (!leftIdx.isValid() || !rightIdx.isValid())
+        return false;
+
+    DFMLocalFileInfoPointer leftInfo = m->fileInfo(leftIdx);
+    DFMLocalFileInfoPointer rightInfo = m->fileInfo(rightIdx);
+
+    // The folder is fixed in the front position
+    if (leftInfo->isDir()) {
+        if (!rightInfo->isDir())
+            return true;
+    } else {
+        if (rightInfo->isDir())
+            return false;
+    }
+
+    QVariant leftData = m->data(leftIdx, fileSortRole);
+    QVariant rightData = m->data(rightIdx, fileSortRole);
+
+    // When the selected sort attribute value is the same, sort by file name
+    auto compareByName = [fileSortOrder, m, leftIdx, rightIdx]() {
+        QString leftName = m->data(leftIdx, kItemFileDisplayNameRole).toString();
+        QString rightName = m->data(rightIdx, kItemFileDisplayNameRole).toString();
+        return FileUtils::compareString(leftName, rightName, fileSortOrder);
+    };
+
+    switch (fileSortRole) {
+    case kItemFileLastModifiedRole:
+    case kItemFileMimeTypeRole:
+    case kItemFileDisplayNameRole: {
+        QString leftString = leftData.toString();
+        QString rightString = rightData.toString();
+        return leftString == rightString ? compareByName() : FileUtils::compareString(leftString, rightString, fileSortOrder);
+    }
+    case kItemFileSizeRole: {
+        qint64 leftSize = leftData.toLongLong();
+        qint64 rightSize = rightData.toLongLong();
+        return leftSize == rightSize ? compareByName() : ((fileSortOrder == Qt::DescendingOrder) ^ (leftSize < rightSize)) == 0x01;
+    }
+    default:
+        return false;
+    }
+}
+
 void CollectionView::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
@@ -1885,4 +1937,25 @@ void CollectionView::scrollContentsBy(int dx, int dy)
 bool CollectionView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     return QAbstractItemView::edit(index, trigger, event);
+}
+
+void CollectionView::sort(int role)
+{
+    // toggle order if resort
+    if (role == d->sortRole)
+        d->sortOrder = d->sortOrder == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+    else
+        d->sortOrder = Qt::AscendingOrder;
+
+    d->sortRole = role;
+    auto items = d->provider->items(d->id);
+    if (items.isEmpty())
+        return;
+
+    std::sort(items.begin(), items.end(), [this](const QUrl &left, const QUrl &right) {
+        return lessThan(left, right);
+    });
+
+    d->provider->sorted(d->id, items);
+    return;
 }

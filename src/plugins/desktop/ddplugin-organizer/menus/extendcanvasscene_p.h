@@ -43,10 +43,14 @@ public:
     void updateNormalMenu(QMenu *parent);
 
     QMenu *organizeBySubActions(QMenu *menu);
-    QMenu *displaySizeSubActions(QMenu *menu);
-
     static QString classifierToActionID(Classifier cf);
+
+#ifdef EnableDisplaySizeMenu
+    QMenu *displaySizeSubActions(QMenu *menu);
     static QString displaySizeToActionID(DisplaySize size);
+#endif
+
+    bool triggerSortby(const QString &actionId);
 public:
     bool turnOn = false;
     bool onCollection = false;

@@ -25,6 +25,8 @@
 #include "view/collectionviewmenu.h"
 #include "mode/collectiondataprovider.h"
 
+#include <dfm_global_defines.h>
+
 #include <QAtomicInteger>
 #include <QTimer>
 #include <QUrl>
@@ -137,6 +139,9 @@ public:
     QPoint pressedPosition;
     QRect elasticBand;
     bool pressedAlreadySelected = false;
+
+    Qt::SortOrder sortOrder = Qt::DescendingOrder;
+    int sortRole = DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole;
 };
 
 }

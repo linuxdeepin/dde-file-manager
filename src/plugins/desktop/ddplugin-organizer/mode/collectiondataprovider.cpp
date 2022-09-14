@@ -70,6 +70,26 @@ QList<QUrl> CollectionDataProvider::items(const QString &key) const
     return ret;
 }
 
+bool CollectionDataProvider::sorted(const QString &key, const QList<QUrl> &urls)
+{
+    auto it = collections.find(key);
+    if (it == collections.end())
+        return false;
+
+    if ((*it)->items.size() != urls.size())
+        return false;
+
+    // check data, \a all member of urls must be in items.
+    for (const QUrl &url : urls) {
+        if (!(*it)->items.contains(url))
+            return false;
+    }
+
+    (*it)->items = urls;
+    emit itemsChanged(key);
+    return true;
+}
+
 void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &targetKey, int targetIndex)
 {
     if (urls.isEmpty())

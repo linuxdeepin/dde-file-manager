@@ -36,11 +36,11 @@ inline constexpr char kSrtTimeModified[] = "sort-by-time-modified";
 inline constexpr char kSrtSize[] = "sort-by-size";
 inline constexpr char kSrtType[] = "sort-by-type";
 // icon size
-inline constexpr char kIconSizeTiny[] = "Tiny";
-inline constexpr char kIconSizeSmall[] = "Small";
-inline constexpr char kIconSizeMedium[] = "Medium";
-inline constexpr char kIconSizeLarge[] = "Large";
-inline constexpr char kIconSizeSuperLarge[] = "Super large";
+inline constexpr char kIconSizeTiny[] = "tiny";
+inline constexpr char kIconSizeSmall[] = "small";
+inline constexpr char kIconSizeMedium[] = "medium";
+inline constexpr char kIconSizeLarge[] = "large";
+inline constexpr char kIconSizeSuperLarge[] = "super-large";
 }
 
 namespace CanvasMenuParams {

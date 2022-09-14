@@ -130,11 +130,6 @@ CanvasItemDelegate::CanvasItemDelegate(QAbstractItemView *parentPtr)
 {
     // 初始化图标等级、大小信息
     d->iconSizes << 32 << 48 << 64 << 96 << 128;
-    d->iconLevelDescriptions << tr("Tiny")
-                             << tr("Small")
-                             << tr("Medium")
-                             << tr("Large")
-                             << tr("Super large");
 
     // 初始化默认图标为小
     const int iconLevel = 1;
@@ -629,14 +624,6 @@ int CanvasItemDelegate::minimumIconLevel() const
 int CanvasItemDelegate::maximumIconLevel() const
 {
     return d->iconSizes.count() - 1;
-}
-
-QString CanvasItemDelegate::iconSizeLevelDescription(int i) const
-{
-    bool validIndex = (i <= maximumIconLevel()) && (i >= minimumIconLevel());
-    if (validIndex)
-        return d->iconLevelDescriptions.at(i);
-    return QString();
 }
 
 QRect CanvasItemDelegate::iconRect(const QRect &paintRect) const

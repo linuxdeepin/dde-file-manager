@@ -54,3 +54,15 @@ TEST(ExtendCanvasScene, triggered_organizeoptions)
     EXPECT_TRUE(scene.triggered(&tempAction));
     EXPECT_TRUE(show);
 }
+
+TEST(ExtendCanvasScenePrivate, triggerSortby)
+{
+    ExtendCanvasScenePrivate obj(nullptr);
+
+    EXPECT_FALSE(obj.triggerSortby("name"));
+    EXPECT_FALSE(obj.triggerSortby("sort-by"));
+    EXPECT_TRUE(obj.triggerSortby("sort-by-name"));
+    EXPECT_TRUE(obj.triggerSortby("sort-by-time-modified"));
+    EXPECT_TRUE(obj.triggerSortby("sort-by-size"));
+    EXPECT_TRUE(obj.triggerSortby("sort-by-type"));
+}

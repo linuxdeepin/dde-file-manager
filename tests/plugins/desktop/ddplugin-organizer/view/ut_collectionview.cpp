@@ -24,6 +24,7 @@
 #include "view/collectionview.h"
 #include "delegate/collectionitemdelegate.h"
 #include "interface/canvasmanagershell.h"
+#include "mode/normalized/type/typeclassifier.h"
 
 #include "stubext.h"
 
@@ -151,4 +152,46 @@ TEST_F(CollectionViewTest, scrollContentsBy)
     EXPECT_EQ(port, view.viewport());
     EXPECT_EQ(dx, 0);
     EXPECT_EQ(dy, 100);
+}
+
+TEST_F(CollectionViewTest, sort)
+{
+    class TestProvider : public CollectionDataProvider
+    {
+    public:
+        TestProvider() : CollectionDataProvider(nullptr)
+        {
+
+        }
+    protected:
+        QString replace(const QUrl &oldUrl, const QUrl &newUrl) {return "";}
+        QString append(const QUrl &) {return "";}
+        QString prepend(const QUrl &){return "";}
+        void insert(const QUrl &, const QString &, const int) {}
+        QString remove(const QUrl &) {return "";}
+        QString change(const QUrl &) {return "";}
+    };
+
+    TestProvider test;
+    CollectionView view("dd", &test);
+    bool callLess = false;
+    stub.set_lamda(&CollectionView::lessThan, [&callLess]() {
+        callLess = true;
+        return false;
+    });
+
+    ASSERT_EQ(view.d->sortRole, (int)DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole);
+    ASSERT_EQ(view.d->sortOrder, Qt::DescendingOrder);
+
+    view.sort(DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole);
+    EXPECT_EQ(view.d->sortRole, (int)DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole);
+    EXPECT_EQ(view.d->sortOrder, Qt::AscendingOrder);
+
+    view.sort(DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole);
+    EXPECT_EQ(view.d->sortRole, (int)DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole);
+    EXPECT_EQ(view.d->sortOrder, Qt::DescendingOrder);
+
+    view.sort(DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileDisplayNameRole);
+    EXPECT_EQ(view.d->sortRole, (int)DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileDisplayNameRole);
+    EXPECT_EQ(view.d->sortOrder, Qt::AscendingOrder);
 }
