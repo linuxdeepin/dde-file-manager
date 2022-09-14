@@ -102,7 +102,7 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
                                         text,
                                         group,
                                         url);
-    auto flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled };
+    auto flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled /*| Qt::ItemIsDragEnabled*/ };
 
     ItemInfo info;
     info.group = group;
@@ -150,7 +150,7 @@ SideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
 
     //Currently, only bookmark and tag groups support internal drag.
     //In the next stage, quick access would be instead of bookmark.
-    if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag || item->group() == DefaultGroup::kCommon) {
+    if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag) {
         auto flags { Qt::ItemIsEnabled | Qt::ItemIsDropEnabled };
         item->setFlags(flags);
     } else

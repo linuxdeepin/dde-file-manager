@@ -41,7 +41,6 @@ struct BookmarkData
     QString deviceUrl;
     QString name;
     QUrl url;
-    int index = -1;
 
     QString udisksDBusPath;
     QString udisksMountPoint;
@@ -74,9 +73,6 @@ public:
 
     void addSchemeOfBookMarkDisabled(const QString &scheme);
     QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
-    int defaultItemIndex(const QUrl &url);
-    QMap<QUrl, QPair<QString, int>> defaultNames() const;
-    bool handleItemSort(const QUrl &a, const QUrl &b);
 
 private:
     explicit BookMarkManager(QObject *parent = nullptr);
@@ -87,16 +83,13 @@ private:
     void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
     QSet<QString> getBookMarkDisabledSchemes();
     void sortItemsByOrder(const QList<QUrl> &order);
-    static bool isDublicated(const QString &name);
 
 private slots:
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);
 
 private:
-    static /*mutable*/ QMap<QUrl, BookmarkData> bookmarkDataMap;
+    mutable QMap<QUrl, BookmarkData> bookmarkDataMap;
     QSet<QString> bookMarkDisabledSchemes;
-    static QMap<QUrl, QPair<QString, int>> defaultItemNames;
-    static const QList<QPair<QString, QString>> defNames;
 };
 
 }

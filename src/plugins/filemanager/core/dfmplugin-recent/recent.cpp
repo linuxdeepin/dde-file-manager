@@ -111,7 +111,7 @@ void Recent::addRecentItem()
 {
     ContextMenuCallback contextMenuCb { RecentManager::contenxtMenuHandle };
 
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
     QVariantMap map {
         { "Property_Key_Group", "Group_Common" },
         { "Property_Key_DisplayName", tr("Recent") },
@@ -121,7 +121,8 @@ void Recent::addRecentItem()
         // use old config to hide it for compatibility
         { "Property_Key_VisiableControl", "recent" }*/
     };
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
+
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, RecentManager::rootUrl(), map);
 }
 
 void Recent::removeRecentItem()

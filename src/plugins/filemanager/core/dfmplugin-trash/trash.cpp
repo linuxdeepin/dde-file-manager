@@ -112,7 +112,7 @@ void Trash::installToSideBar()
 {
     ContextMenuCallback contextMenuCb { TrashHelper::contenxtMenuHandle };
 
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
     QVariantMap map {
         { "Property_Key_Group", "Group_Common" },
         { "Property_Key_DisplayName", tr("Trash") },

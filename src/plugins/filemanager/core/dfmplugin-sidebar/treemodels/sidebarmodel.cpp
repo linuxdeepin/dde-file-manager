@@ -241,26 +241,11 @@ int SideBarModel::appendRow(SideBarItem *item)
                         auto tmpItem = dynamic_cast<SideBarItem *>(childItem);
                         if (!tmpItem)
                             continue;
-
-                        //sort for devices group and network group
-                        bool sorted = { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort", groupId, item->subGourp(), item->url(), tmpItem->url()) };
+                        bool sorted { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort", groupId, item->subGourp(), item->url(), tmpItem->url()) };
                         if (sorted) {
                             groupItem->insertRow(r, item);
                             itemInserted = true;
-                            qInfo() << item->url();
                             break;
-                        }
-                        //sort for quick access group
-                        if (item->group() == DefaultGroup::kCommon) {
-                            qInfo() << "item->group() == DefaultGroup::kCommon)";
-                            auto sorted { dpfSlotChannel->push("dfmplugin_bookmark", "slot_Item_Sort", item->url(), tmpItem->url()) };
-                            bool isSorted = sorted.value<bool>();
-                            if (isSorted) {
-                                groupItem->insertRow(r, item);
-                                itemInserted = true;
-                                qInfo() << item->url();
-                                break;
-                            }
                         }
                     }
                     if (!itemInserted)

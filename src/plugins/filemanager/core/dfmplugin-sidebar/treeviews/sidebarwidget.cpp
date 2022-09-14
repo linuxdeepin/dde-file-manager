@@ -200,17 +200,17 @@ void SideBarWidget::updateItemVisiable(const QVariantMap &states)
 QList<QUrl> SideBarWidget::findItems(const QString &group) const
 {
     QList<QUrl> ret;
+    bool groupTraversed { false };
     for (int r = 0; r < kSidebarModelIns->rowCount(); r++) {
         auto item = kSidebarModelIns->itemFromIndex(kSidebarModelIns->index(r, 0));
         if (item && item->group() == group) {
-            for (int i = 0; i < item->rowCount(); i++) {
-                QStandardItem *subItem = item->child(i);
-                if (!subItem)
-                    continue;
-                auto u = subItem->index().data(SideBarItem::kItemUrlRole).toUrl();
-                if (u.isValid())
-                    ret << u;
-            }
+            auto u = item->url();
+            if (u.isValid())
+                ret << u;
+            groupTraversed = true;
+        } else {
+            if (groupTraversed)
+                break;
         }
     }
 
@@ -306,12 +306,12 @@ void SideBarWidget::initDefaultModel()
     groupDisplayName.insert(DefaultGroup::kNotExistedGroup, tr("Unkown Group"));
 
     // create defualt separator line;
-    //    QMap<QString, SideBarItem *> temGroupItem;
+    QMap<QString, SideBarItem *> temGroupItem;
     for (const QString &group : currentGroups) {
         auto item = SideBarHelper::createSeparatorItem(group);
         item->setData(groupDisplayName.value(group), Qt::DisplayRole);
         addItem(item);
-        //        temGroupItem.insert(group, item);
+        temGroupItem.insert(group, item);
     }
 
     // use cahce info

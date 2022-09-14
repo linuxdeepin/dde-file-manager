@@ -213,7 +213,7 @@ void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
     editor->setFixedWidth(sidebarView->width() - 50);
     QRect rect = editor->geometry();
-    rect.setHeight(rect.height() + 2);
+    rect.setHeight(rect.height() + 4);
     rect.moveTo(40, rect.top());
     editor->setGeometry(rect);
 }

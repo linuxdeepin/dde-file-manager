@@ -69,7 +69,7 @@ public:
     bool isVisible();
 
 private:
-    bool expanded = true;   // TODO(zhuangshu): Maybe it's better to store it to `ItemInfo`, do it later
+    bool expanded = true;   // TODO(zhuangshu): Maybe it's better to storage it to ItemInfo, do it later
     bool visible = true;
 };
 
