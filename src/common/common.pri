@@ -71,8 +71,8 @@ unix {
         DEFINES += __arm__
     }
     #优化通过指定 -Wl,--as-needed 选项，链接过程中，链接器会检查所有的依赖库，没有实际被引用的库，不再写入可执行文件头。最终生成的可执行文件头中包含的都是必要的链接库信息
-    QMAKE_CXX += -Wl,--as-need -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,-O1
-    QMAKE_CXXFLAGS += -Wl,--as-need -fPIE -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,-O1
+    QMAKE_CXX += -Wl,--as-needed -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,-O1
+    QMAKE_CXXFLAGS += -Wl,--as-needed -fPIE -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,-O1
     QMAKE_LFLAGS += -Wl,--as-needed -pie
     isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
         #mips编译优化-pg是用于测试性能提升
