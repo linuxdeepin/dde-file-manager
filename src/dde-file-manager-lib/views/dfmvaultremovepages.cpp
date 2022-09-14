@@ -15,6 +15,7 @@
 #include "accessibility/ac-lib-file-manager.h"
 #include "vaulthelper.h"
 #include "rlog/rlog.h"
+#include "rlog/datas/vaultreportdata.h"
 
 #include <DLabel>
 #include <QFrame>

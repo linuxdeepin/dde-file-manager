@@ -1,5 +1,4 @@
 HEADERS += \
-    $$PWD/rlog/blockmountreportdata.h \
     $$PWD/utils.h \
     $$PWD/xutil.h \
     $$PWD/debugobejct.h \
@@ -9,15 +8,15 @@ HEADERS += \
     $$PWD/desktopinfo.h \
     $$PWD/grouppolicy.h \
     $$PWD/rlog/rlog.h \
-    $$PWD/rlog/reportdatainterface.h \
     $$PWD/rlog/committhread.h \
-    $$PWD/rlog/smbreportdata.h \
-    $$PWD/rlog/vaultreportdata.h \
-    $$PWD/rlog/searchreportdata.h \
-    $$PWD/rlog/sidebarreportdata.h
+    $$PWD/rlog/datas/reportdatainterface.h \
+    $$PWD/rlog/datas/blockmountreportdata.h \
+    $$PWD/rlog/datas/smbreportdata.h \
+    $$PWD/rlog/datas/vaultreportdata.h \
+    $$PWD/rlog/datas/searchreportdata.h \
+    $$PWD/rlog/datas/sidebarreportdata.h
 
 SOURCES += \
-    $$PWD/rlog/blockmountreportdata.cpp \
     $$PWD/utils.cpp \
     $$PWD/xutil.cpp \
     $$PWD/debugobejct.cpp \
@@ -27,7 +26,8 @@ SOURCES += \
     $$PWD/grouppolicy.cpp \
     $$PWD/rlog/rlog.cpp \
     $$PWD/rlog/committhread.cpp \
-    $$PWD/rlog/smbreportdata.cpp \
-    $$PWD/rlog/vaultreportdata.cpp \
-    $$PWD/rlog/searchreportdata.cpp \
-    $$PWD/rlog/sidebarreportdata.cpp
+    $$PWD/rlog/datas/blockmountreportdata.cpp \
+    $$PWD/rlog/datas/smbreportdata.cpp \
+    $$PWD/rlog/datas/vaultreportdata.cpp \
+    $$PWD/rlog/datas/searchreportdata.cpp \
+    $$PWD/rlog/datas/sidebarreportdata.cpp

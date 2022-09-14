@@ -89,8 +89,6 @@ public:
     bool isBatchedRemovingSmbMount();
     void clearLoginData();
 
-    static void addMountRlog(const QString &dev, bool ok);
-
 private:
     void initDiskManager();
     void initConnect();
