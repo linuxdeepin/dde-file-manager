@@ -1761,14 +1761,10 @@ QString LocalFileInfo::mimeTypeName()
         bool success = false;
         if (d->dfmFileInfo) {
             type = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardContentType, &success).toString();
+
+            if (success)
+                d->attributes.insert(DFileInfo::AttributeID::kStandardContentType, type);
         }
-        locker.unlock();
-
-        if (!success)
-            type = fileMimeType().name();
-
-        locker.relock();
-        d->attributes.insert(DFileInfo::AttributeID::kStandardContentType, type);
     } else {
         type = d->attributes.value(DFileInfo::AttributeID::kStandardContentType).toString();
     }
