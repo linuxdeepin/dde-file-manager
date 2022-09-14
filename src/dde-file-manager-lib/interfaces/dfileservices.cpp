@@ -40,6 +40,7 @@
 #include "execinfo.h"
 #include "math.h"
 #include "gvfs/networkmanager.h"
+#include "log/auditlog.h"
 
 #include <QUrl>
 #include <QDebug>
@@ -1148,6 +1149,37 @@ void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUr
             QString strStagingPath = strFilePath.mid(0, strFilePath.indexOf(strTag) + strTag.length());
             QProcess::execute("chmod -R u+w " + strStagingPath); // 之前尝试使用 DLocalFileHandler 去处理权限问题但是会失败，因此这里采用命令去更改权限
         }
+    }
+}
+
+void DFileService::dealPastedAudit(const DUrlList &srcUrlList, const DUrlList &targetUrlList)
+{
+    Q_ASSERT(!srcUrlList.isEmpty());
+
+    DUrlList srcDiscUrlList;
+    DUrlList destDiscUrlList;
+
+    const QString &srcParentUrlPath { srcUrlList.first().parentUrl().toLocalFile() };
+
+    // find all urls copy from disc
+    std::for_each(targetUrlList.begin(), targetUrlList.end(),
+                  [srcParentUrlPath, &srcDiscUrlList, &destDiscUrlList] (const DUrl &targetUrl) {
+        if (!targetUrl.isValid())
+            return;
+
+        DUrl srcUrl { DUrl::fromLocalFile(srcParentUrlPath + "/" + targetUrl.fileName()) };
+        if (srcUrl.isValid() && deviceListener->isFileFromDisc(srcUrl.toLocalFile())) {
+            srcDiscUrlList.push_back(srcUrl);
+            destDiscUrlList.push_back(targetUrl);
+        }
+    });
+
+    // only audit log for copy from disc
+    if (!srcDiscUrlList.isEmpty() && srcDiscUrlList.size() == destDiscUrlList.size()) {
+        QtConcurrent::run([=] {
+            AuditLog::doCopyFromDiscAuditLog(srcDiscUrlList, destDiscUrlList);
+        });
+        return;
     }
 }
 

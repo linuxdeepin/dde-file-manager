@@ -577,6 +577,23 @@ QString DFMGlobal::getUser()
     return user;
 }
 
+QString DFMGlobal::hostName()
+{
+    static QString name;
+    if (!name.isEmpty())
+        return name;
+
+#if (_XOPEN_SOURCE >= 500) || (_POSIX_C_SOURCE >= 200112L)
+    char buf[256] {0};
+    if (::gethostname(buf, sizeof (buf)) == 0) {
+        name = QString(buf);
+        return name;
+    }
+#endif
+
+    return {};
+}
+
 int DFMGlobal::getUserId()
 {
     return static_cast<int>(getuid());

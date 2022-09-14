@@ -954,14 +954,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
         }
         //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
         this->dealpasteEnd(targetUrlList, event);
-        //! 判断目标目录是否是保险箱目录如果是，发送信号激活计算保险大小的线程
-        if(!targetUrlList.isEmpty() && targetUrlList.at(0).toLocalFile().contains(VaultController::makeVaultLocalPath())) {
-            emit VaultController::ins()->sigFinishedCopyFile();
-        }
-        // 光盘缓存文件映射
-        if (!targetUrlList.isEmpty() && targetUrlList.at(0).burnIsOnLocalStaging()) {
-            MasteredMediaController::mapStagingFilesPath(thisJob->sourceUrlList(), targetUrlList);
-        }
+        this->dealpasteEndV2(thisJob->sourceUrlList(), targetUrlList, event);
     });
 
     return job->targetUrlList();
@@ -999,6 +992,23 @@ void FileController::dealpasteEnd(const DUrlList &list, const QSharedPointer<DFM
 
     //到dfileservice里面作处理
     DFileService::instance()->dealPasteEnd(event, list);
+}
+
+void FileController::dealpasteEndV2(const DUrlList &srcUrlList, const DUrlList &targetUrlList, const QSharedPointer<DFMPasteEvent> &event) const
+{
+    Q_UNUSED(event)
+
+    // 判断目标目录是否是保险箱目录如果是，发送信号激活计算保险大小的线程
+    if(!targetUrlList.isEmpty() && targetUrlList.at(0).toLocalFile().contains(VaultController::makeVaultLocalPath()))
+        emit VaultController::ins()->sigFinishedCopyFile();
+
+    // 光盘缓存文件映射
+    if (!targetUrlList.isEmpty() && targetUrlList.at(0).burnIsOnLocalStaging())
+        MasteredMediaController::mapStagingFilesPath(srcUrlList, targetUrlList);
+
+    // audit log
+    if (!targetUrlList.isEmpty() && srcUrlList.size() >= targetUrlList.size())
+        DFileService::instance()->dealPastedAudit(srcUrlList, targetUrlList);
 }
 
 /**
