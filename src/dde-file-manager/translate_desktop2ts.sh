@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
 #
@@ -7,4 +7,4 @@
 DESKTOP_SOURCE_FILE=dde-file-manager.desktop
 DESKTOP_TS_DIR=translations/dde-file-manager-desktop/
 
-/usr/bin/deepin-desktop-ts-convert desktop2ts $DESKTOP_SOURCE_FILE $DESKTOP_TS_DIR
+deepin-desktop-ts-convert desktop2ts $DESKTOP_SOURCE_FILE $DESKTOP_TS_DIR
