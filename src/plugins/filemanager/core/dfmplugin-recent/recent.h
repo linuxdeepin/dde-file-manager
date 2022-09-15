@@ -40,6 +40,7 @@ private slots:
     void onRecentDisplayChanged(bool enabled);
     void onWindowOpened(quint64 windId);
     void regRecentCrumbToTitleBar();
+    void onAllPluginsInitialized();
 
 private:
     void installToSideBar();

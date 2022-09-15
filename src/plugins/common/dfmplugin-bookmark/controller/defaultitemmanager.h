@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     gongheng <gongheng@uniontech.com>
+ * Author:     zhuangshu <zhuangshu@uniontech.com>
  *
  * Maintainer: zhengyouge <zhengyouge@uniontech.com>
  *
@@ -18,34 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef BOOKMARKEVENTRECEIVER_H
-#define BOOKMARKEVENTRECEIVER_H
+#ifndef DEFAULTITEMMANAGER_H
+#define DEFAULTITEMMANAGER_H
 
 #include "dfmplugin_bookmark_global.h"
+
+#include "bookmarkmanager.h"
 
 #include <QObject>
 
 namespace dfmplugin_bookmark {
 
-class BookMarkEventReceiver : public QObject
+class DefaultItemManagerPrivate;
+class DefaultItemManager : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(BookMarkEventReceiver)
+    friend class DefaultItemManagerPrivate;
+    DefaultItemManagerPrivate *const d = nullptr;
 
 public:
-    static BookMarkEventReceiver *instance();
-
-public Q_SLOTS:
-    void handleRenameFile(quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool result, const QString &errorMsg);
-    void handleAddSchemeOfBookMarkDisabled(const QString &scheme);
-    void handleSidebarOrderChanged(quint64 winId, const QString &group);
-    bool handleItemSort(const QString &group, const QString &subGroup, const QUrl &a, const QUrl &b);
-    void handlePluginItem(const QVariantMap &args);
+    static DefaultItemManager *instance();
+    void initDefaultItems();
+    void addPluginItem(const QVariantMap &args);
+    QMap<QString, QString> defaultItemDisplayName();
+    QList<BookmarkData> defaultItemInitOrder();
+    QMap<QString, BookmarkData> pluginItems();
 
 private:
-    explicit BookMarkEventReceiver(QObject *parent = nullptr);
+    explicit DefaultItemManager(QObject *parent = nullptr);
 };
 
 }
 
-#endif   // BOOKMARKEVENTRECEIVER_H
+#endif   // DEFAULTITEMMANAGER_H

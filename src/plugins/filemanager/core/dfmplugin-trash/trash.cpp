@@ -31,6 +31,8 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include "dfm-base/utils/systempathutil.h"
+
 using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 using CreateTopWidgetCallback = std::function<QWidget *()>;
@@ -54,11 +56,13 @@ void Trash::initialize()
     WatcherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
 
+    connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Trash::onAllPluginsInitialized);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
 }
 
 bool Trash::start()
 {
+    // show first window when all plugin initialized
     dfmplugin_menu_util::menuSceneRegisterScene(TrashMenuCreator::name(), new TrashMenuCreator());
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", TrashHelper::scheme());
@@ -112,7 +116,7 @@ void Trash::installToSideBar()
 {
     ContextMenuCallback contextMenuCb { TrashHelper::contenxtMenuHandle };
 
-    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
     QVariantMap map {
         { "Property_Key_Group", "Group_Common" },
         { "Property_Key_DisplayName", tr("Trash") },
@@ -148,4 +152,19 @@ void Trash::addCustomTopWidget()
     };
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
+}
+
+void Trash::onAllPluginsInitialized()
+{
+    const QString &nameKey = "Trash";
+    const QString &displayName = SystemPathUtil::instance()->systemPathDisplayName(nameKey);
+
+    QVariantMap map {
+        { "Property_Key_NameKey", nameKey },
+        { "Property_Key_DisplayName", displayName },
+        { "Property_Key_Url", QUrl("trash:/") },
+        { "Property_Key_Index", -1 },
+        { "Property_Key_IsDefaultItem", true }
+    };
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", map);
 }

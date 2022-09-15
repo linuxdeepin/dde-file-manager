@@ -200,17 +200,17 @@ void SideBarWidget::updateItemVisiable(const QVariantMap &states)
 QList<QUrl> SideBarWidget::findItems(const QString &group) const
 {
     QList<QUrl> ret;
-    bool groupTraversed { false };
     for (int r = 0; r < kSidebarModelIns->rowCount(); r++) {
         auto item = kSidebarModelIns->itemFromIndex(kSidebarModelIns->index(r, 0));
-        if (item && item->group() == group) {
-            auto u = item->url();
+        if (!(item && item->group() == group))
+            continue;
+        for (int i = 0; i < item->rowCount(); i++) {
+            QStandardItem *subItem = item->child(i);
+            if (!subItem)
+                continue;
+            auto u = subItem->index().data(SideBarItem::kItemUrlRole).toUrl();
             if (u.isValid())
                 ret << u;
-            groupTraversed = true;
-        } else {
-            if (groupTraversed)
-                break;
         }
     }
 
@@ -305,16 +305,14 @@ void SideBarWidget::initDefaultModel()
     groupDisplayName.insert(DefaultGroup::kOther, tr("Other"));
     groupDisplayName.insert(DefaultGroup::kNotExistedGroup, tr("Unkown Group"));
 
-    // create defualt separator line;
-    QMap<QString, SideBarItem *> temGroupItem;
+    // create defualt separator item.
     for (const QString &group : currentGroups) {
         auto item = SideBarHelper::createSeparatorItem(group);
         item->setData(groupDisplayName.value(group), Qt::DisplayRole);
         addItem(item);
-        temGroupItem.insert(group, item);
     }
 
-    // use cahce info
+    // use cache info to create items of groups.
     auto allGroup = SideBarInfoCacheMananger::instance()->groups();
     std::for_each(allGroup.cbegin(), allGroup.cend(), [this](const QString &name) {
         auto list = SideBarInfoCacheMananger::instance()->indexCacheMap(name);
@@ -324,18 +322,20 @@ void SideBarWidget::initDefaultModel()
         }
     });
 
-    // create defualt items
-    static std::once_flag flag;
-    std::call_once(flag, [this]() {
-        static const QStringList names { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
+    //The following code is moved to bookmark plugin.
+    /*
+     //create defualt items
+        static std::once_flag flag;
+        std::call_once(flag, [this]() {
+            static const QStringList names { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
 
-        for (const QString &name : names) {
-            SideBarItem *item = SideBarHelper::createDefaultItem(name, DefaultGroup::kCommon);
-            addItem(item);
-            SideBarInfoCacheMananger::instance()->addItemInfoCache(item->itemInfo());
-        }
-    });
-
+            for (const QString &name : names) {
+                SideBarItem *item = SideBarHelper::createDefaultItem(name, DefaultGroup::kCommon);
+                addItem(item);
+                SideBarInfoCacheMananger::instance()->addItemInfoCache(item->itemInfo());
+            }
+        });
+    */
     // init done, then we should update the separator visible state.
     sidebarView->updateSeparatorVisibleState();
 }

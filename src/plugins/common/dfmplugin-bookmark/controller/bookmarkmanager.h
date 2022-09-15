@@ -40,7 +40,10 @@ struct BookmarkData
     QString locateUrl;
     QString deviceUrl;
     QString name;
+    QString transName;
     QUrl url;
+    bool defaultItem = false;
+    int index = -1;
 
     QString udisksDBusPath;
     QString udisksMountPoint;
@@ -59,12 +62,13 @@ public:
     bool addBookMark(const QList<QUrl> &urls);
     bool removeBookMark(const QUrl &url);
 
-    void addBookMarkItem(const QUrl &url, const QString &bookmarkName) const;
+    void addBookMarkItem(const QUrl &url, const QString &bookmarkName, bool isDefaultItem = false) const;
     void addBookMarkItemsFromConfig();
 
     static void contextMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static void renameCallBack(quint64 windowId, const QUrl &url, const QString &name);
     static void cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url);
+    static void cdDefaultItemUrlCallBack(quint64 windowId, const QUrl &url);
 
     static QString bookMarkActionCreatedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected);
     static void bookMarkActionClickedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected);
@@ -73,6 +77,9 @@ public:
 
     void addSchemeOfBookMarkDisabled(const QString &scheme);
     QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
+    bool handleItemSort(const QUrl &a, const QUrl &b);
+    void initDefaultItems();
+    static bool isNameDublicated(const QString &name);
 
 private:
     explicit BookMarkManager(QObject *parent = nullptr);
@@ -88,7 +95,7 @@ private slots:
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);
 
 private:
-    mutable QMap<QUrl, BookmarkData> bookmarkDataMap;
+    static QMap<QUrl, BookmarkData> bookmarkDataMap;
     QSet<QString> bookMarkDisabledSchemes;
 };
 

@@ -21,6 +21,7 @@
 #include "bookmark.h"
 #include "utils/bookmarkhelper.h"
 #include "controller/bookmarkmanager.h"
+#include "controller/defaultitemmanager.h"
 #include "events/bookmarkeventreceiver.h"
 #include "menu/bookmarkmenuscene.h"
 
@@ -38,6 +39,7 @@ void BookMark::initialize()
             &BookMark::onWindowCreated, Qt::DirectConnection);
 
     bindEvents();
+    followEvents();
 }
 
 bool BookMark::start()
@@ -54,7 +56,10 @@ void BookMark::onWindowCreated(quint64 winId)
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
 
     connect(window, &FileManagerWindow::sideBarInstallFinished, this,
-            []() { BookMarkManager::instance()->addBookMarkItemsFromConfig(); },
+            []() {
+                BookMarkManager::instance()->initDefaultItems();
+                BookMarkManager::instance()->addBookMarkItemsFromConfig();
+            },
             Qt::DirectConnection);
 }
 
@@ -87,8 +92,15 @@ void BookMark::bindEvents()
     dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult,
                                    BookMarkEventReceiver::instance(),
                                    &BookMarkEventReceiver::handleRenameFile);
-    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted", BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleSidebarOrderChanged);
-
+    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted",
+                                   BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleSidebarOrderChanged);
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPBOOKMARK_NAMESPACE), "slot_Scheme_Disable",
                             BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPBOOKMARK_NAMESPACE), "slot_AddPluginItem",
+                            BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handlePluginItem);
+}
+
+void BookMark::followEvents()
+{
+    dpfHookSequence->follow("dfmplugin_sidebar", "hook_Group_Sort", BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleItemSort);
 }

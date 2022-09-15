@@ -157,57 +157,22 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
         int count = this->rowCount();
         for (int i = 0; i < count; i++) {
             const QModelIndex &index = this->index(i, 0);
-            if (index.isValid()) {
-                if (index.data(SideBarItem::Roles::kItemGroupRole).toString() == item->group()) {
-                    SideBarItem *groupItem = this->itemFromIndex(index);
-                    if (groupItem) {
-                        int rows = groupItem->rowCount();
-                        if (row >= 0 && row < rows)
-                            groupItem->insertRow(row, item);
-                        else
-                            groupItem->insertRow(0, item);
-                    }
-                    return true;
-                }
-            }
-        }
-    }
-    //The following code is from the listview implemetation, we can keep it here temporarily.
-    /*
-    if (rowCount() == 0) {
-    } else {
-        int groupStart = -1;
-        int groupEnd = -1;
-        // find insert group
-        for (int r = 0; r < rowCount(); r++) {
-            auto foundItem = dynamic_cast<SideBarItem *>(this->item(r, 0));
-            if (!foundItem)
+            if (!index.isValid())
                 continue;
-
-            if (foundItem->group() == item->group()) {
-                if (-1 == groupStart)
-                    groupStart = r;
-                groupEnd = r;
-            } else {
-                if (groupStart != -1)
-                    break;
+            if (index.data(SideBarItem::Roles::kItemGroupRole).toString() != item->group())
+                continue;
+            SideBarItem *groupItem = this->itemFromIndex(index);
+            if (groupItem) {
+                int rows = groupItem->rowCount();
+                if (row >= 0 && row < rows)
+                    groupItem->insertRow(row, item);
+                else
+                    groupItem->insertRow(0, item);
             }
-        }
-
-        if (-1 != groupEnd && -1 != groupStart) {
-            int groupCount = groupEnd - groupStart;   // don't treat the splitter as a group item
-            // if the index is greater than the total number of elements in the group,
-            // then inserted at the end of the group.
-            if (row > groupCount)
-                row = groupCount;
-            // all item must be insterted below group splitter, so:
-            row += 1;
-            QStandardItemModel::insertRow(row + groupStart, item);
-        } else {
-            QStandardItemModel::appendRow(item);
+            return true;
         }
     }
-*/
+
     return true;
 }
 
@@ -220,84 +185,51 @@ int SideBarModel::appendRow(SideBarItem *item)
     if (r > 0)
         return r;
 
-    SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
+    SideBarItemSeparator *topItem = dynamic_cast<SideBarItemSeparator *>(item);
     SideBarItem *groupOther = nullptr;
-    if (groupItem) {   //Top item
+    if (topItem) {   //Top item
         QStandardItemModel::appendRow(item);
         return rowCount() - 1;   //The return value is the index of top item.
     } else {   //Sub item
         int count = this->rowCount();
         for (int i = 0; i < count; i++) {
             const QModelIndex &index = this->index(i, 0);
-            if (index.isValid()) {
-                QString groupId = index.data(SideBarItem::Roles::kItemGroupRole).toString();
-                if (groupId == DefaultGroup::kOther)
-                    groupOther = this->itemFromIndex(i);
-                if (groupId == item->group()) {
-                    SideBarItem *groupItem = this->itemFromIndex(i);
-                    bool itemInserted = false;
-                    for (int r = 0; r < groupItem->rowCount(); r++) {
-                        QStandardItem *childItem = groupItem->child(r);
-                        auto tmpItem = dynamic_cast<SideBarItem *>(childItem);
-                        if (!tmpItem)
-                            continue;
-                        bool sorted { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort", groupId, item->subGourp(), item->url(), tmpItem->url()) };
-                        if (sorted) {
-                            groupItem->insertRow(r, item);
-                            itemInserted = true;
-                            break;
-                        }
-                    }
-                    if (!itemInserted)
-                        groupItem->appendRow(item);
+            if (!index.isValid())
+                continue;
+            QString groupId = index.data(SideBarItem::Roles::kItemGroupRole).toString();
+            if (groupId == DefaultGroup::kOther)
+                groupOther = this->itemFromIndex(i);
+            if (groupId != item->group())
+                continue;
+            SideBarItem *groupItem = this->itemFromIndex(i);
+            bool itemInserted = false;
+            for (int row = 0; row < groupItem->rowCount(); row++) {
+                QStandardItem *childItem = groupItem->child(row);
+                auto tmpItem = dynamic_cast<SideBarItem *>(childItem);
+                if (!tmpItem)
+                    continue;
 
-                    return groupItem->row() - 1;
+                //Sort for devices group and network group, all so for quick access group.
+                //Both of Computer plugin and bookmark plugin are following the the `hook_Group_Sort` event.
+                bool sorted = { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort", groupId, item->subGourp(), item->url(), tmpItem->url()) };
+                if (sorted) {
+                    groupItem->insertRow(row, item);
+                    itemInserted = true;
+                    break;
                 }
             }
+            if (!itemInserted)
+                groupItem->appendRow(item);
+
+            return groupItem->row() - 1;
         }
     }
-    if (groupOther && !groupItem) {   //If can not find out the parent item, just append it to Group_Other
+    if (groupOther && !topItem) {   //If can not find out the parent item, just append it to Group_Other
         groupOther->appendRow(item);
         return groupOther->row() - 1;
     }
     QStandardItemModel::appendRow(item);
     return rowCount() - 1;
-    //The following code is from the listview implemetation, we can keep it here temporarily.
-    /*
-    if (rowCount() == 0) {//Only group item can be added as a top item
-        QStandardItemModel::appendRow(item);//The added item is a top item (group item)
-        qInfo()<<"Top item = "<<groupItem->data(SideBarItem::Roles::ItemGroupRole).toString();
-        return 0;
-    } else {
-        const QString &currentGroup = item->group();
-        const QString &subGroup = item->subGourp();
-
-        bool foundGroup = false;
-        for (int r = 0; r < rowCount(); r++) {
-            auto tmpItem = dynamic_cast<SideBarItem *>(this->item(r, 0));
-            if (!tmpItem)
-                continue;
-            if (tmpItem->group() == currentGroup) {
-                foundGroup = true;
-                bool sorted { dpfHookSequence->run("dfmplugin_sidebar", "hook_Group_Sort",
-                                                   currentGroup, subGroup, item->url(), tmpItem->url()) };
-
-                if (sorted) {
-                    QStandardItemModel::insertRow(r, item);
-                    return r;
-                }
-            } else {
-                if (foundGroup) {   // if already found group, then insert the item after the last same group item's position
-                    QStandardItemModel::insertRow(r, item);
-                    return r;
-                }
-            }
-        }
-    }
-
-    QStandardItemModel::appendRow(item);
-    return rowCount() - 1;
-    */
 }
 
 bool SideBarModel::removeRow(SideBarItem *item)
@@ -333,10 +265,10 @@ bool SideBarModel::removeRow(const QUrl &url)
             int childCount = groupItem->rowCount();
             for (int j = 0; j < childCount; j++) {
                 QStandardItem *childItem = groupItem->child(j);
-                SideBarItem *item = dynamic_cast<SideBarItem *>(childItem);
-                if (!item)
+                SideBarItem *subItem = dynamic_cast<SideBarItem *>(childItem);
+                if (!subItem)
                     continue;
-                if ((item->url().scheme() == url.scheme() && item->url().path() == url.path())) {
+                if ((subItem->url().scheme() == url.scheme() && subItem->url().path() == url.path())) {
                     QStandardItemModel::removeRows(j, 1, groupItem->index());
                     return true;
                 }
@@ -359,22 +291,22 @@ void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
         int childCount = groupItem->rowCount();
         for (int j = 0; j < childCount; j++) {
             QStandardItem *childItem = groupItem->child(j);
-            SideBarItem *item = dynamic_cast<SideBarItem *>(childItem);
-            if (!item)
+            SideBarItem *subItem = dynamic_cast<SideBarItem *>(childItem);
+            if (!subItem)
                 continue;
-            bool foundByCb = item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), url);
-            if (foundByCb || (item->url().scheme() == url.scheme() && item->url().path() == url.path())) {
-                item->setIcon(newInfo.icon);
-                item->setText(newInfo.displayName);
-                item->setUrl(newInfo.url);
-                item->setFlags(newInfo.flags);
-                item->setGroup(newInfo.group);
-                Qt::ItemFlags flags = item->flags();
+            bool foundByCb = subItem->itemInfo().findMeCb && subItem->itemInfo().findMeCb(subItem->url(), url);
+            if (foundByCb || (subItem->url().scheme() == url.scheme() && subItem->url().path() == url.path())) {
+                subItem->setIcon(newInfo.icon);
+                subItem->setText(newInfo.displayName);
+                subItem->setUrl(newInfo.url);
+                subItem->setFlags(newInfo.flags);
+                subItem->setGroup(newInfo.group);
+                Qt::ItemFlags flags = subItem->flags();
                 if (newInfo.isEditable)
                     flags |= Qt::ItemIsEditable;
                 else
                     flags &= (~Qt::ItemIsEditable);
-                item->setFlags(flags);
+                subItem->setFlags(flags);
                 return;
             }
         }
@@ -412,11 +344,11 @@ QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
             int childCount = groupItem->rowCount();
             for (int j = 0; j < childCount; j++) {
                 QStandardItem *childItem = groupItem->child(j);
-                SideBarItem *item = dynamic_cast<SideBarItem *>(childItem);
-                if (!item)
+                SideBarItem *subItem = dynamic_cast<SideBarItem *>(childItem);
+                if (!subItem)
                     continue;
-                if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, item->url())) {
-                    return item->index();
+                if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, subItem->url())) {
+                    return subItem->index();
                 }
             }
         }

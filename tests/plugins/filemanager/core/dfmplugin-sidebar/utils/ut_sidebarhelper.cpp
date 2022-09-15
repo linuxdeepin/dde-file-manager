@@ -54,18 +54,6 @@ TEST_F(UT_SideBarHelper, FindSideBarByWindowId) {}
 TEST_F(UT_SideBarHelper, AddSideBar) {}
 TEST_F(UT_SideBarHelper, RemoveSideBar) {}
 TEST_F(UT_SideBarHelper, WindowId) {}
-TEST_F(UT_SideBarHelper, CreateDefaultItem)
-{
-    using namespace dfmbase;
-    SideBarItem *item = SideBarHelper::createDefaultItem(QString("test/url"), DefaultGroup::kCommon);
-
-    ASSERT_TRUE(item != nullptr);
-    EXPECT_TRUE(item != nullptr && item->group() == DefaultGroup::kCommon);
-    if (item) {
-        delete item;
-        item = nullptr;
-    }
-}
 TEST_F(UT_SideBarHelper, CreateItemByInfo) {}
 TEST_F(UT_SideBarHelper, CreateSeparatorItem) {}
 TEST_F(UT_SideBarHelper, MakeItemIdentifier) {}

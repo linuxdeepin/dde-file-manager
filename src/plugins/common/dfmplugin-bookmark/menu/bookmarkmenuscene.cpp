@@ -67,8 +67,8 @@ bool BookmarkMenuScene::initialize(const QVariantHash &params)
         d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
         d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-        d->predicateName.insert(BookmarkActionId::kActAddBookmarkKey, tr("Add to bookmark"));
-        d->predicateName.insert(BookmarkActionId::kActRemoveBookmarkKey, tr("Remove bookmark"));
+        d->predicateName.insert(BookmarkActionId::kActAddBookmarkKey, tr("Pin to quickaccess"));
+        d->predicateName.insert(BookmarkActionId::kActRemoveBookmarkKey, tr("Remove from quick access"));
     }
 
     return AbstractMenuScene::initialize(params);

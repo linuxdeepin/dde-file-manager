@@ -37,7 +37,7 @@ class SideBarView : public DTreeView
 {
     Q_OBJECT
     friend class SideBarViewPrivate;
-    SideBarViewPrivate *const d;
+    SideBarViewPrivate *const d = nullptr;
 
 public:
     explicit SideBarView(QWidget *parent = nullptr);

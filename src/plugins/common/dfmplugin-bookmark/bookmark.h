@@ -35,6 +35,7 @@ class BookMark : public DPF_NAMESPACE::Plugin
     DPF_EVENT_NAMESPACE(DPBOOKMARK_NAMESPACE)
 
     DPF_EVENT_REG_SLOT(slot_Scheme_Disable)
+    DPF_EVENT_REG_SLOT(slot_AddPluginItem)
 
 public:
     virtual void initialize() override;
@@ -46,6 +47,7 @@ private slots:
 private:
     void bindScene(const QString &parentScene);
     void bindEvents();
+    void followEvents();
     void onMenuSceneAdded(const QString &scene);
 
     QSet<QString> menuScenes;

@@ -42,7 +42,6 @@ public:
     static void addSideBar(quint64 windowId, SideBarWidget *titleBar);
     static void removeSideBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
-    static SideBarItem *createDefaultItem(const QString &pathKey, const QString &group);
     static SideBarItem *createItemByInfo(const ItemInfo &info);
     static SideBarItemSeparator *createSeparatorItem(const QString &group);
     static QString makeItemIdentifier(const QString &group, const QUrl &url);

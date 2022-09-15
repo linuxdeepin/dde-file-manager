@@ -44,6 +44,9 @@ private:
     void installToSideBar();
     void addFileOperations();
     void addCustomTopWidget();
+    void followEvents();
+private slots:
+    void onAllPluginsInitialized();
 };
 
 }

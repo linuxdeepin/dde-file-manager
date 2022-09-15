@@ -89,37 +89,6 @@ quint64 SideBarHelper::windowId(QWidget *sender)
     return FMWindowsIns.findWindowId(sender);
 }
 
-SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QString &group)
-{
-    QString iconName { SystemPathUtil::instance()->systemPathIconName(pathKey) };
-    QString text { SystemPathUtil::instance()->systemPathDisplayName(pathKey) };
-    QString path { SystemPathUtil::instance()->systemPath(pathKey) };
-    if (!iconName.contains("-symbolic"))
-        iconName.append("-symbolic");
-
-    QUrl url { UrlRoute::pathToReal(path) };
-    SideBarItem *item = new SideBarItem(QIcon::fromTheme(iconName),
-                                        text,
-                                        group,
-                                        url);
-    auto flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled /*| Qt::ItemIsDragEnabled*/ };
-
-    ItemInfo info;
-    info.group = group;
-    info.icon = QIcon::fromTheme(iconName);
-    info.displayName = text;
-    info.url = url;
-    info.flags = flags;
-    info.clickedCb = defaultCdAction;
-    info.contextMenuCb = defaultContextMenu;
-    info.visiableControlKey = pathKey.toLower();
-    SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
-
-    item->setFlags(flags);
-
-    return item;
-}
-
 SideBarItem *SideBarHelper::createItemByInfo(const ItemInfo &info)
 {
     SideBarItem *item = new SideBarItem(info.icon,
@@ -150,7 +119,7 @@ SideBarItemSeparator *SideBarHelper::createSeparatorItem(const QString &group)
 
     //Currently, only bookmark and tag groups support internal drag.
     //In the next stage, quick access would be instead of bookmark.
-    if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag) {
+    if (item->group() == DefaultGroup::kBookmark || item->group() == DefaultGroup::kTag || item->group() == DefaultGroup::kCommon) {
         auto flags { Qt::ItemIsEnabled | Qt::ItemIsDropEnabled };
         item->setFlags(flags);
     } else

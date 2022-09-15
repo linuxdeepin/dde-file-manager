@@ -37,6 +37,7 @@ public:
     static void sendShowBookMarkPropertyDialog(const QUrl &url);
     static void sendOpenBookMarkInWindow(quint64 windowId, const QUrl &url);
     static bool sendCheckTabAddable(quint64 windowId);
+    static void sendDefaultItemActived(quint64 windowId, const QUrl &url);
 };
 
 }
