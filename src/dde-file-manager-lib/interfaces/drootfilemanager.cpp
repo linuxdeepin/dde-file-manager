@@ -7,6 +7,7 @@
 #include "dabstractfileinfo.h"
 #include "dabstractfilewatcher.h"
 #include "dfiledevice.h"
+#include "dfmapplication.h"
 
 #include "app/filesignalmanager.h"
 #include "app/define.h"
@@ -58,6 +59,25 @@ DRootFileManager::DRootFileManager(QObject *parent)
     if (DTK_POLICY_SUPPORT) {
         connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, this, &DRootFileManager::policyHideSystemPartition);
         connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::settingHideSystemPartition);
+
+        {
+            auto syncSambaPermanent = [](const QVariant &var) {
+                DFMApplication::setGenericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections, var);
+            };
+
+            static constexpr char SambaPermanentKey[] { "dfm.samba.permanent" };
+            GroupPolicy::instance()->addSyncFunc(SambaPermanentKey, syncSambaPermanent);
+//            QVariant var;
+//            bool confSetted = GroupPolicy::instance()->isConfigSetted(SambaPermanentKey, &var);
+//            bool showOffline = DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool();
+//            if (!confSetted) {
+//                GroupPolicy::instance()->setValue(SambaPermanentKey, showOffline);
+//            } else {
+//                auto currDConf = GroupPolicy::instance()->getValue(SambaPermanentKey).toBool();
+//                if (currDConf != showOffline) // 以组策略的值优先
+//                    syncSambaPermanent(currDConf);
+//            }
+        }
     }
 
     connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::hideSystemPartition);

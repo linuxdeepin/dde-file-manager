@@ -6,6 +6,8 @@
 #include "filebatchprocess.h"
 #include "dfmeventdispatcher.h"
 
+#include "controllers/filecontroller.h"
+
 #include <QDebug>
 #include <QByteArray>
 
@@ -189,8 +191,6 @@ QSharedMap<DUrl, DUrl> FileBatchProcess::customText(const QList<DUrl> &originUrl
     return result;
 }
 
-
-
 ////###: use the value of map to rename the file who name is the key of map.
 QMap<DUrl, DUrl> FileBatchProcess::batchProcessFile(const QSharedMap<DUrl, DUrl> &map)
 {
@@ -206,6 +206,7 @@ QMap<DUrl, DUrl> FileBatchProcess::batchProcessFile(const QSharedMap<DUrl, DUrl>
     // 实现批量回退
     DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>();
 
+    bool checkHideRule = false;
     for (; beg != end; ++beg) {
         DUrl currentName{ beg.key() };
         DUrl hopedName{ beg.value() };
@@ -214,8 +215,14 @@ QMap<DUrl, DUrl> FileBatchProcess::batchProcessFile(const QSharedMap<DUrl, DUrl>
             continue;
         }
 
+        if(!checkHideRule) {
+            bool checkPass = FileController::doHiddenFileRemind(hopedName.fileName(), &checkHideRule);
+            if(!checkPass)
+                break;
+        }
+
        ///###: just cache files that rename successfully.
-       if (DFileService::instance()->renameFile(nullptr, currentName, hopedName) == true ) {
+       if (DFileService::instance()->renameFile(nullptr, currentName, hopedName, false, false) == true ) {
            cache[currentName] = hopedName;
        }
     }

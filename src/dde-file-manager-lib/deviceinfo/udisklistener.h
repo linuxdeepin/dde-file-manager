@@ -88,6 +88,9 @@ public:
     void setBatchedRemovingSmbMount(bool value);//设置批量卸载smb的标志
     bool isBatchedRemovingSmbMount();
     void clearLoginData();
+
+    static void addMountRlog(const QString &dev, bool ok);
+
 private:
     void initDiskManager();
     void initConnect();

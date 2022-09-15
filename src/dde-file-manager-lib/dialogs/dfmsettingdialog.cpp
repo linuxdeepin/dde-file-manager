@@ -63,7 +63,7 @@ QVariant SettingBackend::getOption(const QString &key) const
 
 void SettingBackend::doSync()
 {
-
+    DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_RenameHideFileOperate, 0);
 }
 
 void SettingBackend::doSetOption(const QString &key, const QVariant &value)
@@ -86,6 +86,10 @@ void SettingBackend::doSetOption(const QString &key, const QVariant &value)
     //fix bug 39785 【专业版 sp3】【文件管理器】【5.2.0.8-1】文管菜单设置隐藏系统盘，关闭所有文管窗口，再打开新文管窗口，系统盘没有隐藏
     if (key == QString("advance.other.hide_system_partition")) {
         fileSignalManager->requestHideSystemPartition(value.toBool());
+    }
+
+    if (key == QString("advance.mount.always_show_offline_remote_connection")) {
+        GroupPolicy::instance()->setValue("dfm.samba.permanent", value);
     }
 }
 

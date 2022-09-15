@@ -1,4 +1,5 @@
 HEADERS += \
+    $$PWD/rlog/blockmountreportdata.h \
     $$PWD/utils.h \
     $$PWD/xutil.h \
     $$PWD/debugobejct.h \
@@ -12,9 +13,11 @@ HEADERS += \
     $$PWD/rlog/committhread.h \
     $$PWD/rlog/smbreportdata.h \
     $$PWD/rlog/vaultreportdata.h \
-    $$PWD/rlog/searchreportdata.h
+    $$PWD/rlog/searchreportdata.h \
+    $$PWD/rlog/sidebarreportdata.h
 
 SOURCES += \
+    $$PWD/rlog/blockmountreportdata.cpp \
     $$PWD/utils.cpp \
     $$PWD/xutil.cpp \
     $$PWD/debugobejct.cpp \
@@ -26,4 +29,5 @@ SOURCES += \
     $$PWD/rlog/committhread.cpp \
     $$PWD/rlog/smbreportdata.cpp \
     $$PWD/rlog/vaultreportdata.cpp \
-    $$PWD/rlog/searchreportdata.cpp
+    $$PWD/rlog/searchreportdata.cpp \
+    $$PWD/rlog/sidebarreportdata.cpp

@@ -373,7 +373,7 @@ public:
 class DFMRenameEvent : public DFMEvent
 {
 public:
-    explicit DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false);
+    explicit DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false, const bool checkHide = true);
 
     inline DUrl fromUrl() const
     {
@@ -387,6 +387,7 @@ public:
     DUrlList handleUrlList() const override;
 
     bool silent() const;
+    bool checkHide() const;
 
     inline static QVariant makeData(const DUrl &from, const DUrl &to)
     {

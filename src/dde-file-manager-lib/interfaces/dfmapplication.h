@@ -62,6 +62,7 @@ public:
         GA_ShowFileSystemTagOnDiskIcon, // 在磁盘图标上显示文件系统信息
         GA_ShowDeleteConfirmDialog, // 显示删除确认对话框
         GA_HideLoopPartitions, // 隐藏 loop 分区
+        GA_RenameHideFileOperate, // 重命名隐藏文件时，记住的操作，1隐藏，2取消 0未设置
     };
 
     Q_ENUM(GenericAttribute)

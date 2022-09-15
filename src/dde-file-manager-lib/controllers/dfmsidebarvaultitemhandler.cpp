@@ -38,6 +38,7 @@ DFMSideBarItem *DFMSideBarVaultItemHandler::createItem(const QString &pathKey)
                 systemPathManager->getSystemPathDisplayName(pathKey),
                 VaultController::makeVaultUrl(VaultController::makeVaultLocalPath())
                 );
+    item->setReportName("Vault");
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
     item->setData(SIDEBAR_ID_VAULT, DFMSideBarItem::ItemUseRegisteredHandlerRole);

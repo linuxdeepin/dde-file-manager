@@ -6,7 +6,9 @@
 #include "rlog/vaultreportdata.h"
 #include "rlog/smbreportdata.h"
 #include "rlog/searchreportdata.h"
+#include "rlog/blockmountreportdata.h"
 #include "rlog/committhread.h"
+#include "rlog/sidebarreportdata.h"
 
 #include <QDebug>
 #include <QJsonDocument>
@@ -82,6 +84,12 @@ void RLog::init()
 
     ReportDataInterface *search = new SearchReportData();
     registerLogData(search->type(), search);
+
+    ReportDataInterface *sidebar = new SidebarReportData();
+    registerLogData(sidebar->type(), sidebar);
+
+    ReportDataInterface *blkMnt = new BlockMountReportData();
+    registerLogData(blkMnt->type(), blkMnt);
 
     m_commitLog = new CommitLog();
     if (!m_commitLog->init())

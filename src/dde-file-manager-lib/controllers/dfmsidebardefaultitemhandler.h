@@ -19,6 +19,8 @@ public:
 
     void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
     QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
+
+    static QString reportName(const QString &pathKey);
 };
 
 DFM_END_NAMESPACE

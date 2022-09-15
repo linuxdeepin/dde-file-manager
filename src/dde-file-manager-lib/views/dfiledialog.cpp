@@ -1273,11 +1273,11 @@ void DFileDialog::onAcceptButtonClicked()
                 DDialog dialog(this);
 
                 dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-                dialog.setTitle(tr("This file will be hidden if the file name starts with a dot (.). Do you want to hide it?"));
+                dialog.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
+                dialog.addButton(tr("Hide","button"), false, DDialog::ButtonWarning);
                 dialog.addButton(tr("Cancel","button"), true);
-                dialog.addButton(tr("Confirm","button"), false, DDialog::ButtonWarning);
 
-                if (dialog.exec() != DDialog::Accepted) {
+                if (dialog.exec() != 0) {
                     return;
                 }
             }

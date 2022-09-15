@@ -57,6 +57,7 @@ public:
 
     static bool customHiddenFileMatch(const QString &absolutePath, const QString &fileName);
     static bool privateFileMatch(const QString &absolutePath, const QString &fileName);
+    static bool doHiddenFileRemind(const QString &name, bool *checkRule = nullptr);
 
     bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
@@ -69,6 +70,7 @@ private:
     DUrlList pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event, DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false, bool bold = false) const;
     //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
     void dealpasteEnd(const DUrlList &lsit, const QSharedPointer<DFMPasteEvent> &event) const;
+    void dealpasteEndV2(const DUrlList &srcUrlList, const DUrlList &targetUrlList, const QSharedPointer<DFMPasteEvent> &event) const;
     bool isExtDeviceJobCase(void *curJob, const DUrl &url) const;
     bool isDiscburnJobCase(void *curJob, const DUrl &url) const;
     bool fileAdded(const DUrl &url) const;

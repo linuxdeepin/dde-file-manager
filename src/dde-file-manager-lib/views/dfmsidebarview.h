@@ -18,6 +18,7 @@ class DFMSideBarView : public DListView
 public:
     explicit DFMSideBarView(QWidget *parent = nullptr);
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;

@@ -28,6 +28,8 @@ public:
     void cdAction(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
     QMenu * contextMenu(const DFMSideBar *sidebar, const DFMSideBarItem* item) override;
     void rename(const DFMSideBarItem *item, QString name) override;
+
+    static QString reportName(const DUrl &url);
 };
 
 DFM_END_NAMESPACE

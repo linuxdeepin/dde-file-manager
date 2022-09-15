@@ -33,7 +33,7 @@
         <translation>배경화면 및 화면보호기</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3706"/>
+        <location filename="../view/canvasgridview.cpp" line="3709"/>
         <source>Properties</source>
         <translation>속성</translation>
     </message>
