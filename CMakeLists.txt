@@ -82,7 +82,7 @@ add_subdirectory(src/dfm-framework)
 add_subdirectory(src/plugins)
 add_subdirectory(src/external)
 
-option(ENABLE_UNIT_TESTS "Enable unit tests" ON)
+option(ENABLE_UNIT_TESTS "Enable unit tests" OFF)
 message(STATUS "Enable testing: ${ENABLE_UNIT_TESTS}")
 if(ENABLE_UNIT_TESTS)
     enable_testing()
