@@ -15,16 +15,14 @@
  */
 
 /*!
-    \page componments-zh.html
-    \title Componments (zh)
-    \nextpage Knowledge Base (zh)
+    \page components.html
+    \title Components
+    \nextpage Crumb Bar and Address Bar
 
-    开发者文档 - 组件
-
-    这里是深度文件管理器各个组件的开发设计流程文档.
+    This is a list of topics about the components of Deepin File Manager.
 
     \list
-        \li \l {Crumb Bar and Address Bar (zh)} {面包屑栏和地址栏}
+        \li \l {Crumb Bar and Address Bar}
     \endlist
 
     \sa {All DFM Classes}
