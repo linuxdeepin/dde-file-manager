@@ -100,68 +100,6 @@ int indexOfChar(const QByteArray &data, char ch, int from)
     return from;
 }
 
-void cleanQsTr(QByteArray &data, int &from)
-{
-    const QByteArray &qsTr = QByteArrayLiteral("qsTr");
-    const QByteArray &qsTranslate = QByteArrayLiteral("anslate(");
-
-    if (qsTr != QByteArray(data.data() + from, qsTr.size())) {
-        return;
-    }
-
-    int index = from + qsTr.size();
-
-    if (data.at(index) == '(') {
-        data.remove(from, index - from + 1);
-    } else if (qsTranslate == QByteArray(data.data() + index, qsTranslate.size())) {
-        index += qsTranslate.size();
-
-        // find the first parameter of qsTranslate
-        if (data.at(index) == '"' || data.at(index) == '\'') {
-            index = indexOfChar(data, data.at(index), index + 1);
-
-            if (index >= data.size()) {
-                return;
-            }
-        } else {
-            return;
-        }
-
-        int quote1_index = data.indexOf('"', index + 1);
-        int quote2_index = data.indexOf('\'', index + 1);
-
-        if (quote1_index > 0) {
-            index = quote1_index;
-        }
-
-        if (quote2_index > 0 && quote2_index < index) {
-            index = quote2_index;
-        }
-
-        data.remove(from, index - from);
-    } else {
-        return;
-    }
-
-    // keep the strings that need to be translated
-    if (data.at(from) == '"' || data.at(from) == '\'') {
-        from = indexOfChar(data, data.at(from), from + 1);
-
-        if (from >= data.size()) {
-            return;
-        }
-    } else {
-        return;
-    }
-
-    from = indexOfChar(data, ')', from + 1);
-
-    if (from < data.size()) {
-        data.remove(from, 1);
-        from -= 1;
-    }
-}
-
 void SettingDialog::settingFilter(QByteArray &data)
 {
     QJsonParseError err;
@@ -238,23 +176,6 @@ void SettingDialog::loadSettings(const QString &templateFile)
     QByteArray data = file.readAll();
     file.close();
 
-    for (int i = 0; i < data.size(); ++i) {
-        char ch = data.at(i);
-        switch (ch) {
-        case '\\':
-            break;
-        case '\'':
-        case '"':
-            i = indexOfChar(data, ch, i + 1);
-            break;
-        case 'q':
-            cleanQsTr(data, i);
-            break;
-        default:
-            break;
-        }
-    }
-
 #ifndef ENABLE_QUICK_SEARCH
     data = removeQuickSearchIndex(data);
 #endif
@@ -301,7 +222,7 @@ SettingDialog::SettingDialog(QWidget *parent)
     if (dtkSettings) {
         dtkSettings->setParent(this);
         dtkSettings->setBackend(backen);
-        updateSettings("GenerateSettingTranslate", dtkSettings);
+        updateSettings("QObject", dtkSettings);
     }
 }
 
@@ -376,7 +297,7 @@ QPair<QWidget *, QWidget *> SettingDialog::createAutoMountOpenCheckBox(QObject *
 QPair<QWidget *, QWidget *> SettingDialog::createSplitter(QObject *opt)
 {
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
-    auto lab = new QLabel(qApp->translate("GenerateSettingTranslate", option->name().toStdString().c_str()));
+    auto lab = new QLabel(qApp->translate("QObject", option->name().toStdString().c_str()));
     return qMakePair(lab, nullptr);
 }
 

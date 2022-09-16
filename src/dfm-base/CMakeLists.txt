@@ -185,6 +185,33 @@ pkg_search_module(gsettings
     IMPORTED_TARGET
 )
 
+# for generating middle source files of SettingsTemplate to translate.
+pkg_check_modules(Dtk REQUIRED IMPORTED_TARGET dtkcore)
+set(TRANS_OF_SETTINGS_CPP)
+set (DTK_SETTINGS_TOOLS_EXECUTABLE ${DTKCORE_TOOL_DIR}/dtk-settings)
+if (EXISTS ${DTK_SETTINGS_TOOLS_EXECUTABLE})
+    FILE (GLOB SETTING_TEMPALTE_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/qrc/configure/*.js")
+
+    foreach(temp ${SETTING_TEMPALTE_FILES})
+#        message("---- found template: ${temp}")
+        string(REPLACE ".js" "-trans.cpp" TARGET_CPP ${temp})
+#        message("---- convert to ${TARGET_CPP}")
+        execute_process(COMMAND ${DTK_SETTINGS_TOOLS_EXECUTABLE} ${temp} -o ${TARGET_CPP})
+
+        string(REPLACE "/" ";" PATH_FRAGS ${TARGET_CPP})
+        list(GET PATH_FRAGS -1 FUNC_NAME)
+        string(REPLACE ".cpp" "" FUNC_NAME ${FUNC_NAME})
+        string(REPLACE "-" "_" FUNC_NAME ${FUNC_NAME})
+        execute_process(COMMAND sed -i "5s/GenerateSettingTranslate/${FUNC_NAME}/" ${TARGET_CPP})
+
+        list(APPEND TRANS_OF_SETTINGS_CPP ${TARGET_CPP})
+    endforeach()
+
+#    message(">>>> cpp source files for translating are generated: ${TRANS_OF_SETTINGS_CPP}")
+    list(APPEND TRANS_OF_SETTINGS_CPP ${CMAKE_CURRENT_SOURCE_DIR}/qrc/configure/global-setting-template-manully-trans.cpp)
+endif()
+
 add_library(${PROJECT_NAME}
     SHARED
     ${QRC_RESOURCES}
@@ -198,6 +225,7 @@ add_library(${PROJECT_NAME}
     ${DIALOGS_FILES}
     ${DBUSSERVER_FILES}
     ${SHORTCUT_FILES}
+    ${TRANS_OF_SETTINGS_CPP}
 )
 
 
