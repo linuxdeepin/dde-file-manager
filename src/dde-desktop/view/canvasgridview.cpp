@@ -1831,6 +1831,11 @@ void CanvasGridView::focusInEvent(QFocusEvent *event)
 
     /// set menu actions filter
     setMenuActionsFilter();
+
+    // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::focusInEvent
+    // Set WA_InputMethodEnabled to enbale using input method on desktop no matter whether the current index is valid or not.
+    if (!testAttribute(Qt::WA_InputMethodEnabled))
+        setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void CanvasGridView::focusOutEvent(QFocusEvent *event)
@@ -1967,6 +1972,15 @@ void CanvasGridView::keyboardSearch(const QString &search)
         return;
 
     d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
+}
+
+QVariant CanvasGridView::inputMethodQuery(Qt::InputMethodQuery query) const
+{
+    // When no item is selected, return input method area where the current mouse is located
+    if (query == Qt::ImCursorRectangle && !currentIndex().isValid())
+        return QRect(mapFromGlobal(QCursor::pos()), iconSize());
+
+    return QAbstractItemView::inputMethodQuery(query);
 }
 
 QPixmap CanvasGridView::renderToPixmap(const QModelIndexList &indexes) const
@@ -2504,6 +2518,16 @@ void CanvasGridView::onRefreshFinished()
     else {  //自定义
         delayCustom();
     }
+}
+
+void CanvasGridView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    QAbstractItemView::currentChanged(current, previous);
+
+    // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::currentChanged
+    // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
+    if (!testAttribute(Qt::WA_InputMethodEnabled))
+        setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void CanvasGridView::EnableUIDebug(bool enable)
