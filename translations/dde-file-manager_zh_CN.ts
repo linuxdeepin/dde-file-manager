@@ -28,23 +28,6 @@
     </message>
 </context>
 <context>
-    <name>BaseSortMenuScene</name>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/basesortmenuscene.cpp" line="308"/>
-        <source>Send to</source>
-        <translation>发送到</translation>
-    </message>
-</context>
-<context>
-    <name>BaseSortMenuScenePrivate</name>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/basesortmenuscene.cpp" line="87"/>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/basesortmenuscene.cpp" line="103"/>
-        <source>%1</source>
-        <translation>%1</translation>
-    </message>
-</context>
-<context>
     <name>DAttachedProtocolDevice</name>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedprotocoldevice.cpp" line="66"/>
@@ -211,22 +194,22 @@
         <translation>正在扫描当前设备，是否终止扫描？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="804"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="805"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>无法确认%1的身份。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="805"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="806"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>当您首次登录时会看到这个提示。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="806"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="807"/>
         <source>The identity sent by the remote computer is</source>
         <translation>远程电脑发送的身份信息为</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="808"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="809"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想确认继续操作是否安全，请联系系统管理员。</translation>
     </message>
@@ -1215,34 +1198,6 @@
     </message>
 </context>
 <context>
-    <name>ddplugin_canvas::CanvasItemDelegate</name>
-    <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/delegate/canvasitemdelegate.cpp" line="133"/>
-        <source>Tiny</source>
-        <translation>极小</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/delegate/canvasitemdelegate.cpp" line="134"/>
-        <source>Small</source>
-        <translation>小</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/delegate/canvasitemdelegate.cpp" line="135"/>
-        <source>Medium</source>
-        <translation>中</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/delegate/canvasitemdelegate.cpp" line="136"/>
-        <source>Large</source>
-        <translation>大</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/delegate/canvasitemdelegate.cpp" line="137"/>
-        <source>Super large</source>
-        <translation>极大</translation>
-    </message>
-</context>
-<context>
     <name>ddplugin_canvas::CanvasMenuScene</name>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="116"/>
@@ -1298,6 +1253,31 @@
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="131"/>
         <source>Type</source>
         <translation>类型</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="134"/>
+        <source>Tiny</source>
+        <translation>极小</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
+        <source>Small</source>
+        <translation>小</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="136"/>
+        <source>Medium</source>
+        <translation>中</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="137"/>
+        <source>Large</source>
+        <translation>大</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
+        <source>Super large</source>
+        <translation>极大</translation>
     </message>
 </context>
 <context>
@@ -1410,27 +1390,27 @@
 <context>
     <name>ddplugin_organizer::CollectionItemDelegate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="136"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="137"/>
         <source>Tiny</source>
         <translation>极小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="137"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="138"/>
         <source>Small</source>
         <translation>小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="138"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="139"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="139"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="140"/>
         <source>Large</source>
         <translation>大</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="140"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="141"/>
         <source>Super large</source>
         <translation>极大</translation>
     </message>
@@ -1474,67 +1454,67 @@
 <context>
     <name>ddplugin_organizer::ExtendCanvasScene</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="245"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="353"/>
         <source>Organize desktop</source>
         <translation>开启桌面整理</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="246"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="354"/>
         <source>Organize options</source>
         <translation>集合选项</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="247"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="355"/>
         <source>Organize by</source>
         <translation>集合方式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="250"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="358"/>
         <source>Custom collection</source>
         <translation>自定义集合</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="251"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="359"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="252"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="360"/>
         <source>Time accessed</source>
         <translation>访问时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="253"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="361"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="254"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="362"/>
         <source>Time created</source>
         <translation>创建时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="256"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="364"/>
         <source>Create a collection</source>
         <translation>创建集合</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="259"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="368"/>
         <source>Display Size</source>
         <translation>视图大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="260"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="369"/>
         <source>Smaller</source>
         <translation>缩小视图</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="261"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="370"/>
         <source>Normal</source>
         <translation>正常视图</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="262"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="371"/>
         <source>Larger</source>
         <translation>放大视图</translation>
     </message>
@@ -1545,6 +1525,40 @@
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp" line="282"/>
         <source>%1 are not allowed</source>
         <translation>不得含有%1</translation>
+    </message>
+</context>
+<context>
+    <name>ddplugin_organizer::MethodComBox</name>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/methodcombox.cpp" line="48"/>
+        <source>Type</source>
+        <translation>类型</translation>
+    </message>
+</context>
+<context>
+    <name>ddplugin_organizer::OptionsWindow</name>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="107"/>
+        <source>Desktop options</source>
+        <translation>桌面选项</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="129"/>
+        <source>Auto arrange icons</source>
+        <translation>自动排列图标</translation>
+    </message>
+</context>
+<context>
+    <name>ddplugin_organizer::OrganizationGroup</name>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="53"/>
+        <source>Organize desktop</source>
+        <translation>开启桌面整理</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="68"/>
+        <source>Organize by</source>
+        <translation>集合方式</translation>
     </message>
 </context>
 <context>
@@ -1632,6 +1646,19 @@
     </message>
 </context>
 <context>
+    <name>ddplugin_organizer::SizeSlider</name>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="105"/>
+        <source>Display size</source>
+        <translation>视图大小</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="117"/>
+        <source>Icon size</source>
+        <translation>图标大小</translation>
+    </message>
+</context>
+<context>
     <name>ddplugin_organizer::TypeClassifier</name>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="76"/>
@@ -1667,6 +1694,39 @@
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="82"/>
         <source>Other</source>
         <translation>其他</translation>
+    </message>
+</context>
+<context>
+    <name>ddplugin_organizer::TypeMethodGroup</name>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="38"/>
+        <source>Apps</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="39"/>
+        <source>Documents</source>
+        <translation>文档</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="40"/>
+        <source>Pictures</source>
+        <translation>图片</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="41"/>
+        <source>Videos</source>
+        <translation>视频</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="42"/>
+        <source>Music</source>
+        <translation>音乐</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="43"/>
+        <source>Folders</source>
+        <translation>文件夹</translation>
     </message>
 </context>
 <context>
@@ -3338,6 +3398,14 @@
     </message>
 </context>
 <context>
+    <name>dfmplugin_menu::BaseSortMenuScene</name>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/basesortmenuscene.cpp" line="308"/>
+        <source>Send to</source>
+        <translation>发送到</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_menu::ClipBoardMenuScenePrivate</name>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="49"/>
@@ -3974,37 +4042,37 @@
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="294"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="300"/>
         <source>Quick access</source>
         <translation>快捷访问</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="295"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="301"/>
         <source>Partitions</source>
         <translation>分区</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="296"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="302"/>
         <source>Network</source>
         <translation>网络</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="297"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="303"/>
         <source>Tag</source>
         <translation>标记</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="298"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="304"/>
         <source>Bookmark</source>
         <translation>书签</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="299"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="305"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="300"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="306"/>
         <source>Unkown Group</source>
         <translation>未分组</translation>
     </message>

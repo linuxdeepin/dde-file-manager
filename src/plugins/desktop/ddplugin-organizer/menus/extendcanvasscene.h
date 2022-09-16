@@ -42,6 +42,8 @@ public:
 class ExtendCanvasScenePrivate;
 class ExtendCanvasScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
+
 public:
     explicit ExtendCanvasScene(QObject *parent = nullptr);
     QString name() const override;

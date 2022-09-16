@@ -43,6 +43,8 @@ public:
 class BaseSortMenuScenePrivate;
 class BaseSortMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
+
 public:
     explicit BaseSortMenuScene(QObject *parent = nullptr);
     virtual ~BaseSortMenuScene() override;

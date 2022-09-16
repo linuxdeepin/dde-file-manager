@@ -26,8 +26,8 @@
 
 #include <mutex>
 
-DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+using namespace dfmplugin_menu;
 
 namespace ActionID {
 static constexpr char kActionID[] { "actionID" };
@@ -84,7 +84,7 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                         // check parent action
                         if (nullptr == actionParent) {
                             actionParent = new QAction(menu);
-                            actionParent->setText(tr("%1").arg(predicateName.value(parentId)));
+                            actionParent->setText(predicateName.value(parentId));
                             predicateAction[parentId] = actionParent;
                             actionParent->setProperty(ActionID::kActionID, parentId);
                         }
@@ -100,7 +100,7 @@ void BaseSortMenuScenePrivate::sort(QMenu *menu, const QList<QStringList> &rule)
                     auto list = findActionByKey(actionsMap, id);
                     if (!list.isEmpty()) {
                         if (nullptr == actionParent) {
-                            actionParent = new QAction(tr("%1").arg(predicateName.value(parentId)), menu);
+                            actionParent = new QAction(predicateName.value(parentId), menu);
                             predicateAction[parentId] = actionParent;
                             actionParent->setProperty(ActionID::kActionID, parentId);
                         }
