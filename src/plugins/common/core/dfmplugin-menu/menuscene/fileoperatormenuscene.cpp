@@ -53,7 +53,6 @@ FileOperatorMenuScenePrivate::FileOperatorMenuScenePrivate(FileOperatorMenuScene
     predicateName[ActionID::kOpen] = tr("Open");
     predicateName[ActionID::kRename] = tr("Rename");
     predicateName[ActionID::kDelete] = tr("Delete");
-    predicateName[ActionID::kCreateSymlink] = tr("Create link");
     predicateName[ActionID::kEmptyTrash] = tr("Empty Trash");
     predicateName[ActionID::kSetAsWallpaper] = tr("Set as wallpaper");
 }
@@ -122,10 +121,6 @@ bool FileOperatorMenuScene::create(QMenu *parent)
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOpen));
 
     if (d->selectFiles.count() == 1) {
-        tempAction = parent->addAction(d->predicateName.value(ActionID::kCreateSymlink));
-        d->predicateAction[ActionID::kCreateSymlink] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCreateSymlink));
-
         auto focusFileInfo = d->focusFileInfo;
         if (d->focusFileInfo->isSymLink()) {
             const auto &targetFile = d->focusFileInfo->symLinkTarget();
@@ -275,21 +270,6 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // delete
     if (actionId == ActionID::kDelete) {
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
-        return true;
-    }
-
-    // creat link
-    if (actionId == ActionID::kCreateSymlink) {
-        QString linkName = FileUtils::nonExistSymlinkFileName(d->focusFile);
-        QString linkPath { QFileDialog::getSaveFileName(nullptr, QObject::tr("Create symlink"), linkName) };
-        if (!linkPath.isEmpty()) {
-            dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
-                                         d->windowId,
-                                         d->focusFile,
-                                         QUrl::fromLocalFile(linkPath),
-                                         true,
-                                         false);
-        }
         return true;
     }
 

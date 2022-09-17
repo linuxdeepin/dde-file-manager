@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BASESORTMENUSCENE_H
-#define BASESORTMENUSCENE_H
+#ifndef SENDTOMENUSCENE_H
+#define SENDTOMENUSCENE_H
 
 #include "dfmplugin_menu_global.h"
 
@@ -29,25 +29,23 @@
 
 namespace dfmplugin_menu {
 
-class BaseSortMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
+class SendToMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
     static QString name()
     {
-        return "BaseSortMenu";
+        return "SendToMenu";
     }
 
     virtual DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
 };
 
-class BaseSortMenuScenePrivate;
-class BaseSortMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+class SendToMenuScenePrivate;
+class SendToMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
-    Q_OBJECT
-
 public:
-    explicit BaseSortMenuScene(QObject *parent = nullptr);
-    virtual ~BaseSortMenuScene() override;
+    explicit SendToMenuScene(QObject *parent = nullptr);
+    virtual ~SendToMenuScene() override;
 
     virtual QString name() const override;
     virtual bool initialize(const QVariantHash &params) override;
@@ -57,8 +55,8 @@ public:
     virtual DFMBASE_NAMESPACE::AbstractMenuScene *scene(QAction *action) const override;
 
 private:
-    QScopedPointer<BaseSortMenuScenePrivate> d;
+    QScopedPointer<SendToMenuScenePrivate> d;
 };
 
 }
-#endif   // BASESORTMENUSCENE_H
+#endif   // SENDTOMENUSCENE_H

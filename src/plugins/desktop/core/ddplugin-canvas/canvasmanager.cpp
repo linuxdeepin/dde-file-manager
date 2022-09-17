@@ -27,6 +27,7 @@
 #include "view/operator/fileoperatorproxy.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menu/canvasmenuscene.h"
+#include "menu/canvasbasesortmenuscene.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -108,6 +109,7 @@ void CanvasManager::init()
 
     // register menu
     dfmplugin_menu_util::menuSceneRegisterScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(CanvasBaseSortMenuCreator::name(), new CanvasBaseSortMenuCreator);
 
     // self hook
     d->hookIfs = new CanvasManagerHook(this);

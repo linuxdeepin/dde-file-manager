@@ -121,10 +121,27 @@ void SendToDiscMenuScenePrivate::addToSendto(QMenu *menu)
     if (destDeviceDataGroup.isEmpty())
         return;
 
+    QAction *sendTo { nullptr };
+    for (auto act : menu->actions()) {
+        if (act->property(ActionPropertyKey::kActionID).toString() == "send-to") {
+            sendTo = act;
+            break;
+        }
+    }
+
+    if (!sendTo) {
+        qWarning() << "cannot find sendTo menu!!";
+        return;
+    }
+
+    auto subMenu = sendTo->menu();
+    if (!subMenu)
+        return;
+
     int i = 0;
     for (const auto &dev : destDeviceDataGroup) {
         auto label = DeviceUtils::convertSuitableDisplayName(dev);
-        auto act = menu->addAction(label);
+        auto act = subMenu->addAction(label);
         const QString &&actId = QString("%1%2").arg(ActionId::kSendToOptical).arg(i++);
         act->setProperty(ActionPropertyKey::kActionID, actId);
         act->setData(dev[DeviceProperty::kDevice].toString());
@@ -192,8 +209,13 @@ bool SendToDiscMenuScene::create(QMenu *parent)
         QAction *act { parent->addAction(d->predicateName[ActionId::kStageKey]) };
         act->setProperty(ActionPropertyKey::kActionID, ActionId::kStageKey);
         d->predicateAction.insert(ActionId::kStageKey, act);
-        // use menu if has multi otical devs
-        d->addSubStageActions(parent);
+        // use menu
+        QMenu *stageMenu { new QMenu(parent) };
+        d->addSubStageActions(stageMenu);
+        if (stageMenu->actions().isEmpty())
+            delete stageMenu;
+        else
+            act->setMenu(stageMenu);
     }
 
     d->addToSendto(parent);
@@ -255,15 +277,12 @@ void SendToDiscMenuScene::updateStageAction(QMenu *parent)
 {
     auto actions { parent->actions() };
 
-    QAction *sendToAct { nullptr };
     QAction *stageAct { nullptr };
 
     for (auto act : actions) {
         QString &&id { act->property(ActionPropertyKey::kActionID).toString() };
         if (id == ActionId::kStageKey)
             stageAct = act;
-        if (id == "send-to")
-            sendToAct = act;
     }
 
     if (!stageAct)

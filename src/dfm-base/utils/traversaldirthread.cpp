@@ -97,8 +97,6 @@ void TraversalDirThread::run()
         if (!fileurl.isValid())
             continue;
 
-        qDebug() << "query file, url: " << fileurl;
-
         emit updateChild(fileurl);
         childrenList.append(fileurl);
     }

@@ -29,6 +29,7 @@
 #include "events/workspaceeventreceiver.h"
 #include "menus/workspacemenuscene.h"
 #include "menus/sortanddisplaymenuscene.h"
+#include "menus/basesortmenuscene.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -59,6 +60,7 @@ bool Workspace::start()
 
     dfmplugin_menu_util::menuSceneRegisterScene(WorkspaceMenuCreator::name(), new WorkspaceMenuCreator());
     dfmplugin_menu_util::menuSceneRegisterScene(SortAndDisplayMenuCreator::name(), new SortAndDisplayMenuCreator());
+    dfmplugin_menu_util::menuSceneRegisterScene(BaseSortMenuCreator::name(), new BaseSortMenuCreator());
     dfmplugin_menu_util::menuSceneBind(SortAndDisplayMenuCreator::name(), WorkspaceMenuCreator::name());
 
     const QString &scheme = Global::Scheme::kFile;

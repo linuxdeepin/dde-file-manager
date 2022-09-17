@@ -50,11 +50,12 @@ using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
 DPMENU_USE_NAMESPACE
 
-static const char *const kBaseSortMenuSceneName = "BaseSortMenu";
+static const char *const kCanvasBaseSortMenuSceneName = "CanvasBaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
 static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
 static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
+static const char *const kSendToMenuSceneName = "SendToMenu";
 static const char *const kShareMenuSceneName = "ShareMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 static const char *const kExtendMenuSceneName = "ExtendMenu";
@@ -165,7 +166,7 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
 
     QList<AbstractMenuScene *> currentScene;
     // sort
-    if (auto sortScene = dfmplugin_menu_util::menuSceneCreateScene(kBaseSortMenuSceneName))
+    if (auto sortScene = dfmplugin_menu_util::menuSceneCreateScene(kCanvasBaseSortMenuSceneName))
         currentScene.append(sortScene);
 
     if (d->isEmptyArea) {
@@ -189,6 +190,10 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
 
         // file (open, rename, delete)
         if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
+            currentScene.append(fileScene);
+
+        // send to
+        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName))
             currentScene.append(fileScene);
 
         if (auto shareScene = dfmplugin_menu_util::menuSceneCreateScene(kShareMenuSceneName))
@@ -458,9 +463,9 @@ QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
     int maxinum = d->view->itemDelegate()->maximumIconLevel();
     Q_ASSERT(mininum == 0);
 
-    const QStringList keys {ActionID::kIconSizeTiny,
-                ActionID::kIconSizeSmall, ActionID::kIconSizeMedium,
-                ActionID::kIconSizeLarge, ActionID::kIconSizeSuperLarge};
+    const QStringList keys { ActionID::kIconSizeTiny,
+                             ActionID::kIconSizeSmall, ActionID::kIconSizeMedium,
+                             ActionID::kIconSizeLarge, ActionID::kIconSizeSuperLarge };
     Q_ASSERT(maxinum == keys.size() - 1);
 
     QMenu *subMenu = new QMenu(menu);

@@ -118,6 +118,10 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
         if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kFileOperatorMenuSceneName))
             currentScene.append(fileScene);
 
+        // send to
+        if (auto fileScene = dfmplugin_menu_util::menuSceneCreateScene(kSendToMenuSceneName))
+            currentScene.append(fileScene);
+
         // share menu
         if (auto shareScene = dfmplugin_menu_util::menuSceneCreateScene(kShareMenuSceneName))
             currentScene.append(shareScene);

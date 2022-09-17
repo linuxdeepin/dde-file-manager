@@ -26,7 +26,7 @@
 #include "menuscene/newcreatemenuscene.h"
 #include "menuscene/sharemenuscene.h"
 #include "menuscene/menuutils.h"
-#include "menuscene/basesortmenuscene.h"
+#include "menuscene/sendtomenuscene.h"
 #include "extendmenuscene/extendmenuscene.h"
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 #include "oemmenuscene/oemmenuscene.h"
@@ -91,7 +91,7 @@ bool MenuHandle::init()
     registerScene(ShareMenuCreator::name(), new ShareMenuCreator);
     registerScene(ExtendMenuCreator::name(), new ExtendMenuCreator);
     registerScene(OemMenuCreator::name(), new OemMenuCreator);
-    registerScene(BaseSortMenuCreator::name(), new BaseSortMenuCreator);
+    registerScene(SendToMenuCreator::name(), new SendToMenuCreator);
 
     return true;
 }

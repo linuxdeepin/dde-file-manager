@@ -99,12 +99,6 @@ bool ShareMenuScene::create(QMenu *parent)
         if (d->isFocusOnDDEDesktopFile)
             return AbstractMenuScene::create(parent);
 
-        if (!d->onDesktop) {
-            auto *act = parent->addAction(d->predicateName[ActionID::kSendToDesktop]);
-            act->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToDesktop);
-            d->predicateAction[ActionID::kSendToDesktop] = act;
-        }
-
         if (!d->isSystemPathIncluded) {
             auto shareAct = parent->addAction(d->predicateName[ActionID::kShare]);
             shareAct->setProperty(ActionPropertyKey::kActionID, ActionID::kShare);
@@ -187,7 +181,6 @@ ShareMenuScenePrivate::ShareMenuScenePrivate(AbstractMenuScene *qq)
 {
     predicateName[ActionID::kShare] = tr("Share");
     predicateName[ActionID::kShareToBluetooth] = tr("Bluetooth");
-    predicateName[ActionID::kSendToDesktop] = tr("Send to desktop");
 }
 
 void ShareMenuScenePrivate::addSubActions(QMenu *subMenu)
@@ -242,18 +235,5 @@ void ShareMenuScenePrivate::handleActionTriggered(QAction *act)
     } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
-    } else if (actId == ActionID::kSendToDesktop) {
-        QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
-        QList<QUrl> urlsTrans = selectFiles;
-        QList<QUrl> urls {};
-        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urlsTrans, &urls);
-        if (ok && !urls.isEmpty())
-            urlsTrans = urls;
-
-        for (const QUrl &url : urlsTrans) {
-            QString linkName = FileUtils::nonExistSymlinkFileName(url);
-            QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
-            dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, windowId, url, linkUrl, false, true);
-        }
     }
 }

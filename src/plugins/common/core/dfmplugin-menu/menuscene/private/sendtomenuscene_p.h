@@ -19,37 +19,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BASESORTMENUSCENE_P_H
-#define BASESORTMENUSCENE_P_H
+#ifndef SENDTOMENUSCENE_P_H
+#define SENDTOMENUSCENE_P_H
 
 #include "dfmplugin_menu_global.h"
 
 #include <interfaces/private/abstractmenuscene_p.h>
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
-class BaseSortMenuScene;
-class BaseSortMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
+class SendToMenuScene;
+class SendToMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
     Q_OBJECT
-    friend class BaseSortMenuScene;
+    friend class SendToMenuScene;
 
 public:
-    explicit BaseSortMenuScenePrivate(BaseSortMenuScene *qq);
-
-    void sort(QMenu *menu, const QList<QStringList> &rule);
-    QList<QStringList> actionSortRule();
-    QStringList sendToRule();
-    QStringList stageToRule();
-
-    bool checkPrefixRule(const QString &id);
-    QList<QAction *> findActionByKey(const QMap<QString, QAction *> &map, const QString &key);
-    void insertActToMap(QAction *action, QMap<QString, QAction *> &map);
+    explicit SendToMenuScenePrivate(SendToMenuScene *qq);
 
 private:
-    BaseSortMenuScene *q;
+    SendToMenuScene *q;
+
+    QMultiHash<QString, QString> selectSupportActions;
 };
 
-DPMENU_END_NAMESPACE
+}
 
-#endif   // BASESORTMENUSCENE_P_H
+#endif   // SENDTOMENUSCENE_P_H
