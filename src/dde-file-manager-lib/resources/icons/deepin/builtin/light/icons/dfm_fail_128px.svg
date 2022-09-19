@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>fail</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FF674A" offset="0%"></stop>
+            <stop stop-color="#EC5783" offset="100%"></stop>
+        </linearGradient>
+        <circle id="path-2" cx="64" cy="64" r="49"></circle>
+        <filter x="-12.2%" y="-6.1%" width="124.5%" height="124.5%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="0" dy="6" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 1   0 0 0 0 0.443137255   0 0 0 0 0.443137255  0 0 0 0.3 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="启动盘_-制作失败" transform="translate(-156.000000, -173.000000)">
+            <g id="bootmaker_1">
+                <g id="Group-5" transform="translate(156.000000, 173.000000)">
+                    <g id="progress-2">
+                        <g id="icon/fail">
+                            <g id="Oval-1">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                                <use fill="url(#linearGradient-1)" fill-rule="evenodd" xlink:href="#path-2"></use>
+                            </g>
+                            <path d="M48.4142136,45.7304474 L64.677,61.9936609 L80.9411255,45.7304474 C81.6810663,44.9905066 82.8565504,44.9515624 83.6423379,45.6136146 L83.7695526,45.7304474 C84.5506012,46.511496 84.5506012,47.7778259 83.7695526,48.5588745 L83.7695526,48.5588745 L67.506,64.8216609 L83.7695526,81.0857864 C84.5506012,81.866835 84.5506012,83.133165 83.7695526,83.9142136 C82.988504,84.6952621 81.7221741,84.6952621 80.9411255,83.9142136 L64.677,67.6506609 L48.4142136,83.9142136 C47.6742728,84.6541543 46.4987886,84.6930986 45.7130012,84.0310463 L45.5857864,83.9142136 C44.8047379,83.133165 44.8047379,81.866835 45.5857864,81.0857864 L45.5857864,81.0857864 L61.849,64.8216609 L45.5857864,48.5588745 C44.8047379,47.7778259 44.8047379,46.511496 45.5857864,45.7304474 C46.366835,44.9493988 47.633165,44.9493988 48.4142136,45.7304474 Z" id="形状结合" fill="#FFFFFF" fill-rule="nonzero"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

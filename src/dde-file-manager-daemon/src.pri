@@ -54,7 +54,10 @@ HEADERS += \
     $$PWD/vault/vaultbruteforceprevention.h \
     $$PWD/dbusservice/dbusadaptor/vaultbruteforceprevention_adaptor.h \
     $$PWD/dbusservice/dbusinterface/vaultbruteforceprevention_interface.h \
-    $$PWD/anything/anything.h
+    $$PWD/anything/anything.h \
+    $$PWD/disk/diskmanager.h \
+    $$PWD/dbusservice/dbusinterface/disk_interface.h \
+    $$PWD/dbusservice/dbusadaptor/disk_adaptor.h
 
 SOURCES += \
     $$PWD/app/filemanagerdaemon.cpp \
@@ -103,4 +106,7 @@ SOURCES += \
     $$PWD/vault/vaultbruteforceprevention.cpp \
     $$PWD/dbusservice/dbusadaptor/vaultbruteforceprevention_adaptor.cpp \
     $$PWD/dbusservice/dbusinterface/vaultbruteforceprevention_interface.cpp \
-    $$PWD/anything/anything.cpp
+    $$PWD/anything/anything.cpp \
+    $$PWD/disk/diskmanager.cpp \
+    $$PWD/dbusservice/dbusinterface/disk_interface.cpp \
+    $$PWD/dbusservice/dbusadaptor/disk_adaptor.cpp

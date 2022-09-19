@@ -210,6 +210,7 @@ public:
         OpticalBlank,
         Vault,
         ConnectToServer,
+        ChangeDiskPassword,
 
         ///###: tag protocol.
         TagInfo,
