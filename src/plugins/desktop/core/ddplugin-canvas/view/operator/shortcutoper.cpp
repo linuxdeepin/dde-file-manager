@@ -130,10 +130,10 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
     } else if (modifiers == Qt::ControlModifier) {
         switch (event->key()) {
         case Qt::Key_Minus:
-            CanvasIns->onChangeIconLevel(true);
+            CanvasIns->onChangeIconLevel(false);
             return true;
         case Qt::Key_Equal:
-            CanvasIns->onChangeIconLevel(false);
+            CanvasIns->onChangeIconLevel(true);
             return true;
         case Qt::Key_H:
             swichHidden();

@@ -46,6 +46,7 @@ public:
     void updateRegionView();
     void updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize);
     void updateVerticalBarRange();
+    void updateSelection();
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
     QRect itemRect(const QModelIndex &index) const;
     QRect visualRect(const QPoint &pos) const;

@@ -132,6 +132,7 @@ QStringList TypeClassifier::classes() const
         usedKey.append(kTypeKeyDoc);
         usedKey.append(kTypeKeyPic);
         usedKey.append(kTypeKeyVid);
+        usedKey.append(kTypeKeyMuz);
         usedKey.append(kTypeKeyFld);
     } else {
         // test enabled category.

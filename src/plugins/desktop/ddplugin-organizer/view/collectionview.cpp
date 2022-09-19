@@ -158,6 +158,24 @@ void CollectionViewPrivate::updateVerticalBarRange()
     qDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
 }
 
+void CollectionViewPrivate::updateSelection()
+{
+    auto idxs = q->selectedIndexes();
+    if (idxs.isEmpty())
+        return;
+
+    auto items = provider->items(id).toSet();
+    QItemSelection selection;
+    for (auto idx : idxs) {
+        auto url = q->model()->fileUrl(idx);
+        if (!items.contains(url))
+            selection << QItemSelectionRange(idx);
+    }
+
+    if (!selection.isEmpty())
+        q->selectionModel()->select(selection, QItemSelectionModel::Deselect);
+}
+
 int CollectionViewPrivate::verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const
 {
     Q_UNUSED(index)
@@ -1024,6 +1042,7 @@ void CollectionViewPrivate::onItemsChanged(const QString &key)
     if (id != key)
         return;
 
+    updateSelection();
     updateVerticalBarRange();
     q->update();
 }
@@ -1106,6 +1125,16 @@ FileProxyModel *CollectionView::model() const
 CollectionItemDelegate *CollectionView::itemDelegate() const
 {
     return qobject_cast<CollectionItemDelegate *>(QAbstractItemView::itemDelegate());
+}
+
+WId CollectionView::winId() const
+{
+    // If it not the top widget and QAbstractItemView::winId() is called,that will cause errors in window system coordinates and graphics.
+    if (isTopLevel()) {
+        return QAbstractItemView::winId();
+    } else {
+        return topLevelWidget()->winId();
+    }
 }
 
 void CollectionView::openEditor(const QUrl &url)
@@ -1477,6 +1506,7 @@ void CollectionView::paintEvent(QPaintEvent *event)
 
     auto option = viewOptions();
     QPainter painter(viewport());
+    painter.setRenderHint(QPainter::Antialiasing);
 
     auto repaintRect = viewport()->geometry().translated(horizontalOffset(), verticalOffset());
     auto topLeft = repaintRect.topLeft();

@@ -232,7 +232,8 @@ void FileOperator::deleteFiles(const CollectionView *view)
 
 void FileOperator::undoFiles(const CollectionView *view)
 {
-
+    dpfSignalDispatcher->publish(GlobalEventType::kRevocation,
+                                 view->winId(), nullptr);
 }
 
 void FileOperator::dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index)

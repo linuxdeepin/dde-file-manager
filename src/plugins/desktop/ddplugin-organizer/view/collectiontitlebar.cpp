@@ -74,9 +74,9 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
     nameWidget->setCurrentWidget(nameLabel);
 
     menuBtn = new DPushButton(q);
-//    menuBtn->setIcon()
+    menuBtn->setIcon(QIcon(":/images/more.svg")); // using DDciIcon in future
     menuBtn->setFixedSize(kMenuBtnWidth, kMenuBtnHeight);
-    menuBtn->setText("...");
+    menuBtn->setFlat(true);
 
     mainLayout = new QHBoxLayout(q);
     mainLayout->setContentsMargins(10, 0, 12, 0);

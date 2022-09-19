@@ -472,6 +472,7 @@ QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
         tempAction->setCheckable(true);
         tempAction->setChecked(i == current);
         d->iconSizeAction.insert(tempAction, i);
+        d->predicateAction[key] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, key);
     }
     return subMenu;

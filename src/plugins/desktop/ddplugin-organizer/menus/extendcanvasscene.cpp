@@ -77,6 +77,11 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
 
 void ExtendCanvasScenePrivate::normalMenu(QMenu *parent)
 {
+    if (Q_UNLIKELY(selectFiles.isEmpty())) {
+        qWarning() << "no files for normal menu.";
+        return;
+    }
+
     if (turnOn && CfgPresenter->mode() == OrganizerMode::kCustom) {
         QAction *tempAction = parent->addAction(predicateName.value(ActionID::kCreateACollection));
         predicateAction[ActionID::kCreateACollection] = tempAction;
@@ -385,6 +390,11 @@ bool ExtendCanvasScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->onCollection = params.value(CollectionMenuParams::kOnColletion, false).toBool();
     d->view = reinterpret_cast<CollectionView *>(params.value(CollectionMenuParams::kColletionView).toLongLong());
+
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
+
     return d->onDesktop;
 }
 
@@ -471,8 +481,6 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
         Q_ASSERT_X(isCanvas, "ExtendCanvasScene", "parent scene is not CanvasMenu");
         if (isCanvas) {
             qDebug() << "filter action" << actionId;
-            // todo 处理需集合响应的菜单项
-
             if (Q_UNLIKELY(!d->view)) {
                 qWarning() << "warning:can not get collection view, and filter action failed.";
                 return false;
@@ -487,8 +495,9 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
                 if (1 == d->selectFiles.count()) {
                     auto index = d->view->model()->index(d->focusFile);
                     if (Q_UNLIKELY(!index.isValid()))
-                        return false;
-                    d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+                       qWarning() << "can not rename: invaild file" << d->focusFile;
+                    else
+                        d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
                 } else {
                     RenameDialog renameDlg(d->selectFiles.count());
                     renameDlg.moveToCenter();

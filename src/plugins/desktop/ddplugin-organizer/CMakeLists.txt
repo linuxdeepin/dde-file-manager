@@ -19,10 +19,16 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )
 
+# 指定资源文件
+set(QRCS
+    images.qrc
+)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${CORE_FILES}
     ${EXT_FILES}
+    ${QRCS}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)

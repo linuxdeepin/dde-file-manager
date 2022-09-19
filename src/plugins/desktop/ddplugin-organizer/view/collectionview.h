@@ -52,6 +52,7 @@ public:
     QMargins cellMargins() const;
     FileProxyModel *model() const;
     CollectionItemDelegate *itemDelegate() const;
+    WId winId() const;
 
     void openEditor(const QUrl &url);
     void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);
