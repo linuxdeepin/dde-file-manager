@@ -173,6 +173,11 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
 
+    QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
+        QString cryptInfo = settings.value("DI_CRYPT_INFO").toString();
+        if (!cryptInfo.isEmpty())
+            actionKeys.insert(actionKeys.indexOf(MenuAction::Settings), MenuAction::ChangeDiskPassword);
+
     DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
     menu->setAccessibleInfo(AC_FILE_MENU_TOOLBAR_SEETINGS);
     return menu;
@@ -903,6 +908,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Vault] = QObject::tr("File Vault");
     actionKeys[MenuAction::ConnectToServer] = QObject::tr("Connect to Server");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
+    actionKeys[MenuAction::ChangeDiskPassword] = QObject::tr("Change disk password");
     actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
     actionKeys[MenuAction::OpticalBlank] = QObject::tr("Erase");
 

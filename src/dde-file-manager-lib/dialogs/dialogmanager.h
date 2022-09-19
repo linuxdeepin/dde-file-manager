@@ -111,6 +111,7 @@ public slots:
     void showConnectToServerDialog(quint64 winId);
     void showUserSharePasswordSettingDialog(quint64 winId);
     void showSharePasswordSettingDialog(QFrame *parent = nullptr);
+    void showChangeDiskPasswordDialog(quint64 winId);
     void showGlobalSettingsDialog(quint64 winId);
     void showDiskSpaceOutOfUsedDialogLater();
     void showDiskSpaceOutOfUsedDialog();

@@ -17,6 +17,7 @@ class AccessControlManager;
 class VaultManager;
 class RevocationManager;
 class VaultBruteForcePrevention;
+class DiskManager;
 
 class AppController : public QObject
 {
@@ -39,6 +40,7 @@ private:
     VaultManager *m_vaultManager = nullptr;
     RevocationManager *m_revocationManager = nullptr;
     VaultBruteForcePrevention *m_vaultForce = nullptr;
+    DiskManager *m_diskManager = nullptr;
 };
 
-#endif // APPCONTROLLER_H
+#endif   // APPCONTROLLER_H

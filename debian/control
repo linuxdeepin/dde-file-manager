@@ -57,7 +57,8 @@ Build-Depends:
  libboost-filesystem-dev,
  libdocparser-dev,
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
- libpcre3-dev
+ libpcre3-dev,
+ libcryptsetup-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 

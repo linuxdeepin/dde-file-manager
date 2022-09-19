@@ -11,8 +11,10 @@
 #include "vault/vaultmanager.h"
 #include "revocation/revocationmanager.h"
 #include "vault/vaultbruteforceprevention.h"
+#include "disk/diskmanager.h"
 
-AppController::AppController(QObject *parent) : QObject(parent)
+AppController::AppController(QObject *parent)
+    : QObject(parent)
 {
     initControllers();
     initConnect();
@@ -20,20 +22,19 @@ AppController::AppController(QObject *parent) : QObject(parent)
 
 AppController::~AppController()
 {
-
 }
 
 void AppController::initControllers()
 {
     m_accessController = new AccessControlManager(this);
     m_userShareManager = new UserShareManager(this);
-    m_tagManagerDaemon = new TagManagerDaemon{ this };
+    m_tagManagerDaemon = new TagManagerDaemon { this };
     m_vaultManager = new VaultManager(this);
     m_revocationManager = new RevocationManager(this);
     m_vaultForce = new VaultBruteForcePrevention(this);
+    m_diskManager = new DiskManager(this);
 }
 
 void AppController::initConnect()
 {
 }
-

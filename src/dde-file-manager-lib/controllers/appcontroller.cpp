@@ -855,7 +855,7 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                         QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("The device was not ejected")),  Q_ARG(QString, tr("Disk is busy, cannot eject now")));
                         return;
                     }
-                  
+
                     if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
                         qDebug() << "blk action has been canceled";
                         return;
@@ -1105,6 +1105,11 @@ void AppController::actionConnectToServer(quint64 winId)
 void AppController::actionSetUserSharePassword(quint64 winId)
 {
     dialogManager->showUserSharePasswordSettingDialog(winId);
+}
+
+void AppController::actionChangeDiskPassword(quint64 winId)
+{
+    dialogManager->showChangeDiskPasswordDialog(winId);
 }
 
 void AppController::actionSettings(quint64 winId)
