@@ -1523,6 +1523,7 @@ void FileView::updateListHeaderView()
 
     d->headerView->setModel(Q_NULLPTR);
     d->headerView->setModel(model());
+    d->headerView->setRootIndex(rootIndex());
 
     d->headerView->setDefaultSectionSize(kDefualtHeaderSectionWidth);
     if (d->allowedAdjustColumnSize) {
