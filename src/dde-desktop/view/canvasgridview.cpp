@@ -1085,7 +1085,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             }
             break;
         case Qt::Key_F5:
-            Refresh();
+            Refresh(false);
             return;
         case Qt::Key_Delete:
             if (canDeleted && !selectUrlsMap.contains(rootUrl.toString()) && !selectUrls.isEmpty()) {
@@ -2572,9 +2572,14 @@ QString CanvasGridView::DumpPos(qint32 x, qint32 y)
     return QJsonDocument(debug).toJson();
 }
 
-void CanvasGridView::Refresh()
+void CanvasGridView::Refresh(bool silent)
 {
-    d->fileViewHelper->viewFlicker();
+    if (silent) {
+        if (auto m = model())
+            m->refresh();
+    } else {
+        d->fileViewHelper->viewFlicker();
+    }
 }
 
 void CanvasGridView::initUI()

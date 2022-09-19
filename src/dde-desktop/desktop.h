@@ -36,7 +36,7 @@ public slots:
     Q_SCRIPTABLE void FixGeometry(int screenNum);
     Q_SCRIPTABLE void Reset();
     Q_SCRIPTABLE void PrintInfo();
-    Q_SCRIPTABLE void Refresh();
+    Q_SCRIPTABLE void Refresh(bool silent = true);
     Q_SCRIPTABLE QList<int> GetIconSize();
     Q_SCRIPTABLE int GetIconSizeMode();
     Q_SCRIPTABLE bool SetIconSizeMode(int);

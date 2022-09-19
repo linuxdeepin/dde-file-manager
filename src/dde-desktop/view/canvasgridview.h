@@ -158,7 +158,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE QString Size();
     Q_SCRIPTABLE QString Dump();
     Q_SCRIPTABLE QString DumpPos(qint32 x, qint32 y);
-    Q_SCRIPTABLE void Refresh(); // 刷新桌面图标
+    Q_SCRIPTABLE void Refresh(bool silent); // 刷新桌面图标
 protected:
     void delayAutoMerge(int ms = 50);
     void delayArrage(int ms = 50);

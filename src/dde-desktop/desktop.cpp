@@ -231,11 +231,11 @@ void Desktop::PrintInfo()
     qInfo() << "************Desktop Infomation End **************";
 }
 
-void Desktop::Refresh()
+void Desktop::Refresh(bool silent)
 {
     if (d->m_canvas)
         for (CanvasViewPointer view : d->m_canvas->canvas().values()) {
-            view->Refresh();
+            view->Refresh(silent);
         }
 }
 
