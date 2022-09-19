@@ -48,6 +48,7 @@
 #include "extensionimpl/dfmextmendefine.h"
 #include "extensionimpl/private/dfmextmenuimpl_p.h"
 #include "utils/grouppolicy.h"
+#include "rlog/rlog.h"
 
 #include <dgiomount.h>
 #include <dgiofile.h>
@@ -66,6 +67,7 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QWidgetAction>
+#include <QApplication>
 
 #include <dgiosettings.h>
 #include <unistd.h>
@@ -1575,6 +1577,47 @@ void DFileMenuManager::resetAllActionVisibility(bool visible)
         temp->setVisible(visible);
 }
 
+void DFileMenuManager::commitReportData(QAction *action, DFileMenu *menu)
+{
+    QString appName = QApplication::applicationName();
+    if (appName != "dde-file-manager" && appName != "dde-desktop")
+        return;
+
+    QString itemName("");
+    QString location("");
+    QStringList types {};
+
+    if (action->property(DCustomActionDefines::kCustomActionFlag).isValid()) {
+        itemName = "Extended menu";
+    } else {
+        itemName = action->text();
+    }
+
+    DUrlList selected = menu->property(DCustomActionDefines::kCustomActionDataSelectedFiles).value<DUrlList>();
+    int count = selected.count();
+    if (count > 0) {
+        location = "File";
+    } else {
+        location = "Workspace";
+    }
+
+    for (int i = 0; i < count; ++i) {
+        const DUrl &u = selected.at(i);
+        DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
+        if (info) {
+            QString type = info->mimeTypeName();
+            if (!types.contains(type))
+                types << type;
+        }
+    }
+
+    QVariantMap data;
+    data.insert("item_name", itemName);
+    data.insert("location", location);
+    data.insert("type", types);
+    rlog->commit("FileMenu", data);
+}
+
 void DFileMenuManager::actionTriggered(QAction *action)
 {
     qDebug() << action << action->data().isValid();
@@ -1582,6 +1625,8 @@ void DFileMenuManager::actionTriggered(QAction *action)
     if (!(menu->property("ToolBarSettingsMenu").isValid() && menu->property("ToolBarSettingsMenu").toBool())) {
         disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
     }
+
+    commitReportData(action, menu);
 
     //扩展菜单
     if (action->property(DCustomActionDefines::kCustomActionFlag).isValid()) {
