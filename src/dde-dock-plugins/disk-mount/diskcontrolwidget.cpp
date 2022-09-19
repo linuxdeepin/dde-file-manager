@@ -9,6 +9,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "interfaces/dumountmanager.h"
 #include "diskglobal.h"
+#include "rlog/datas/blockmountreportdata.h"
 
 #include <dgiovolumemanager.h>
 #include <dgiomount.h>
@@ -542,6 +543,8 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
     if (!blkDev->hasFileSystem()) return;
 
     QString mountPoint = blkDev->mount({});
+    BlockMountReportData::report({{"dev", blkDev->device()},
+                                  {"result", !mountPoint.isEmpty()}});
 
     if (mountPoint.isEmpty() || blkDev->lastError().type() != QDBusError::NoError) {
         qDebug() << "auto mount error: " << blkDev->lastError().type() << blkDev->lastError().message();

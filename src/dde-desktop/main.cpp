@@ -7,6 +7,8 @@
 #include "desktop.h"
 #include "view/canvasgridview.h"
 #include "daemonplugin.h"
+#include "app/define.h"
+#include "rlog/rlog.h"
 
 #include <controllers/appcontroller.h>
 #include <dfmglobal.h>
@@ -257,10 +259,15 @@ int main(int argc, char *argv[])
         DFMGlobal::initRootFileManager();
         DFMGlobal::setInitAppOver();
         DFMGlobal::initVaultDbusResponse();
+        DFMGlobal::initRlogManager();
     });
     DFMGlobal::initEmblemPluginManagerConnection();
 
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
+
+    qInfo() << "RLog init start!";
+    rlog->init();
+    qInfo() << "RLog init finished!";
 
     int ret = app.exec();
     qInfo() << "exit: " << ret << "pid:" << getpid();

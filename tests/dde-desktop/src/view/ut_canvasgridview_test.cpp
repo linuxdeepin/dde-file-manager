@@ -2364,6 +2364,43 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_shiftAndArrowKeys)
     }
 }
 
+TEST(CanvasGridView, inputMethodQuery)
+{
+    CanvasGridView view("");
+    stub_ext::StubExt stub;
+    QSize size(123, 456);
+    stub.set_lamda(&CanvasGridView::iconSize, [size](){
+        return size;
+    });
+
+    auto rect = view.inputMethodQuery(Qt::ImCursorRectangle).toRect();
+    EXPECT_EQ(rect.size(), size);
+}
+
+TEST(CanvasGridView, focusInEvent_inputMethod)
+{
+    CanvasGridView view("");
+    view.setAttribute(Qt::WA_InputMethodEnabled, false);
+    view.setCurrentIndex(QModelIndex());
+
+    ASSERT_FALSE(view.testAttribute(Qt::WA_InputMethodEnabled));
+    ASSERT_FALSE(view.currentIndex().isValid());
+    QFocusEvent e(QEvent::FocusIn);
+    view.focusInEvent(&e);
+
+    EXPECT_TRUE(view.testAttribute(Qt::WA_InputMethodEnabled));
+}
+
+TEST(CanvasGridView, currentChanged_inputMethod)
+{
+    CanvasGridView view("");
+    view.setAttribute(Qt::WA_InputMethodEnabled, false);
+    ASSERT_FALSE(view.testAttribute(Qt::WA_InputMethodEnabled));
+
+    view.currentChanged(QModelIndex(), QModelIndex());
+    EXPECT_TRUE(view.testAttribute(Qt::WA_InputMethodEnabled));
+}
+
 TEST(CanvasGridViewTest_end, endTest)
 {
     auto path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);

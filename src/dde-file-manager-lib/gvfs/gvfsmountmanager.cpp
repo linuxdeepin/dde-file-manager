@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "rlog/rlog.h"
+#include "rlog/datas/blockmountreportdata.h"
+#include "rlog/datas/smbreportdata.h"
 //fix: 设置光盘容量属性
 #include "../views/dfmopticalmediawidget.h"
 
@@ -1793,7 +1795,7 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     }
     AskedPasswordWhileMountDisk = false;
 
-    UDiskListener::addMountRlog(qVolume.unix_device(), mounted);
+    BlockMountReportData::report({{"dev", qVolume.unix_device()}, {"result", mounted}});
 }
 
 void GvfsMountManager::unmount(const QDiskInfo &diskInfo)

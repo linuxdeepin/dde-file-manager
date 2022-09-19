@@ -301,6 +301,7 @@ public:
     static void initRootFileManager();
     static void initEmblemPluginManagerConnection();
     static void initVaultDbusResponse();
+    static void initRlogManager();
 
     static QString getUser();
     static QString hostName();

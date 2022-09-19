@@ -39,6 +39,14 @@
 #include "plugins/pluginemblemmanager.h"
 #include "vault/vaultdbusresponse.h"
 
+#include "utils/rlog/rlog.h"
+#include "utils/rlog/datas/blockmountreportdata.h"
+#include "utils/rlog/datas/smbreportdata.h"
+#include "utils/rlog/datas/vaultreportdata.h"
+#include "utils/rlog/datas/searchreportdata.h"
+#include "utils/rlog/datas/sidebarreportdata.h"
+#include "utils/rlog/datas/filemenureportdata.h"
+
 #include <DArrowRectangle>
 
 #include <QApplication>
@@ -568,6 +576,20 @@ void DFMGlobal::initVaultDbusResponse()
     VaultDbusResponse::instance()->connectLockScreenDBus();
     // 解锁保险箱
     VaultDbusResponse::instance()->transparentUnlockVault();
+}
+
+void DFMGlobal::initRlogManager()
+{
+    QList<ReportDataInterface *> datas {
+        new BlockMountReportData,
+        new SmbReportData,
+        new SidebarReportData,
+        new SearchReportData,
+        new VaultReportData,
+        new FileMenuReportData
+    };
+
+    std::for_each(datas.cbegin(), datas.cend(), [](ReportDataInterface *dat) { rlog->registerLogData(dat->type(), dat); });
 }
 
 QString DFMGlobal::getUser()

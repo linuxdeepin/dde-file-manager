@@ -87,6 +87,8 @@ public:
     virtual void rowsInserted(const QModelIndex &parent, int first, int last) override;
     virtual void keyboardSearch(const QString &search) override;
 
+    QVariant inputMethodQuery(Qt::InputMethodQuery query) const override;
+
 #if QT_CONFIG(draganddrop)
     virtual void startDrag(Qt::DropActions supportedActions) override;
 #endif
@@ -149,6 +151,7 @@ public slots:
     virtual void selectAll() override;
 protected slots:
     void onRefreshFinished();
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 // Debug interface
 public Q_SLOTS:
     Q_SCRIPTABLE void EnableUIDebug(bool enable);

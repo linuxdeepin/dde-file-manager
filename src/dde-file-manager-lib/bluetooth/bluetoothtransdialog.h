@@ -114,6 +114,7 @@ private:
      * @return                   可读性处理后的字符串
      */
     QString humanizedStrOfObexErrMsg(const QString &msg);
+    void setNextButtonEnable(bool enable);
 
 private Q_SLOTS:
     void showBluetoothSetting();

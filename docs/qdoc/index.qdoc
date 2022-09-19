@@ -17,7 +17,7 @@
 /*!
     \page index.html
     \title Developer Documentation Index
-    \nextpage Componments
+    \nextpage Components
 
     \section1 Welcome!
 
@@ -37,7 +37,7 @@
     Currently there are two main sections of the documentation page.
 
     \list
-        \li \l {Componments} {Componments of Deepin File Manager}
+        \li \l {Components} {Components of Deepin File Manager}
         \li \l {All DFM Classes} {All Deepin File Manager C++ Classes}
     \endlist
 

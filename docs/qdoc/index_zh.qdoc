@@ -17,7 +17,7 @@
 /*!
     \page index-zh.html
     \title Developer Documentation Index (zh)
-    \nextpage {Componments (zh)} {组件}
+    \nextpage {Components (zh)} {组件}
 
     \section1 欢迎！
 
@@ -37,7 +37,7 @@
     当前我们的文档页包含以下两个主要部分：
 
     \list
-        \li \l {Componments (zh)} {深度文件管理器 组件页}
+        \li \l {Components (zh)} {深度文件管理器 组件页}
         \li \l {All DFM Classes} {深度文件管理器的所有 C++ 类}
     \endlist
     

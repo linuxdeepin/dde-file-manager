@@ -10,6 +10,7 @@
 #include "app/define.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "rlog/rlog.h"
+#include "rlog/datas/vaultreportdata.h"
 
 #include <DLabel>
 #include <DDialog>

@@ -140,6 +140,20 @@ QString BluetoothTransDialog::humanizedStrOfObexErrMsg(const QString &msg)
     }
 }
 
+void BluetoothTransDialog::setNextButtonEnable(bool enable)
+{
+    if (m_stack->currentIndex() != Page::SelectDevicePage) {
+        for (auto btn: getButtons())
+            btn->setEnabled(true);
+        return;
+    }
+
+    auto btns = getButtons();
+    if (btns.count() == 2) {
+        btns[1]->setEnabled(enable);
+    }
+}
+
 bool BluetoothTransDialog::canSendFiles()
 {
     return bluetoothManager->canSendBluetoothRequest();
@@ -211,8 +225,10 @@ void BluetoothTransDialog::initConn()
                 item->setCheckState(Qt::Checked);
                 m_selectedDevice = item->text();
                 m_selectedDeviceId = item->data(DevIdRole).toString();
-            } else
+                setNextButtonEnable(true);  // when an item is selected, the next button should be enable.
+            } else {
                 item->setCheckState(Qt::Unchecked);
+            }
         }
     });
 
@@ -612,6 +628,10 @@ void BluetoothTransDialog::removeDevice(const QString &id)
 {
     for (int i = 0; i < m_devModel->rowCount(); i++) {
         if (m_devModel->data(m_devModel->index(i, 0), DevIdRole).toString() == id) {
+            auto item = m_devModel->item(i);
+            if (item && item->checkState() == Qt::Checked)
+                setNextButtonEnable(false); // set the next button disable when the selected item is removed.
+
             m_devModel->removeRow(i);
             if (m_devModel->rowCount() == 0 && m_stack->currentIndex() == SelectDevicePage)
                 m_stack->setCurrentIndex(NoneDevicePage);
@@ -735,6 +755,14 @@ void BluetoothTransDialog::onPageChagned(const int &nIdx)
     case SelectDevicePage:
         addButton(TXT_CANC);
         addButton(TXT_NEXT, true, ButtonType::ButtonRecommend);
+        setNextButtonEnable(false);
+        for (int i = 0; i < m_devModel->rowCount(); ++i) {
+            auto item = m_devModel->item(i);
+            if (item && item->checkState() == Qt::Checked) {
+                setNextButtonEnable(true);
+                break;
+            }
+        }
         break;
     case NoneDevicePage:
     case WaitForRecvPage:

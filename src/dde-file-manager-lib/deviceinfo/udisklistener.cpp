@@ -614,31 +614,6 @@ void UDiskListener::clearLoginData()
     gvfsMountManager->clearLoginData();
 }
 
-void UDiskListener::addMountRlog(const QString &dev, bool ok)
-{
-    const auto &blks = DDiskManager::resolveDeviceNode(dev, {});
-    if (blks.count() == 0) {
-        qWarning() << "rlog: cannot resolveDevice for " << dev;
-        return;
-    }
-
-    const QString &blkObjPath = blks.first();
-    QScopedPointer<DBlockDevice> blk { DDiskManager::createBlockDevice(blkObjPath, nullptr) };
-    if (!blk) {
-        qWarning() << "rlog: cannot create block object";
-        return;
-    }
-
-    QVariantMap rec {
-        {"fileSystem", blk->idType()},
-        {"standardSize", blk->size()},
-        {"mountResult", ok}
-    };
-
-    qInfo() << "rlog: mount result: " << rec;
-    rlog->commit("BlockMount", rec);
-}
-
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
 {
     qDebug() << diskInfo;
