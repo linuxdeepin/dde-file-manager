@@ -99,6 +99,9 @@ public:
     static QString getActionPredicateByType(MenuAction type);
     static void resetAllActionVisibility(bool visible);
 
+private:
+    static void commitReportData(QAction *action, DFileMenu *menu);
+
 public slots:
     void actionTriggered(QAction *action);
 };

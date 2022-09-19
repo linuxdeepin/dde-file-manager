@@ -7,8 +7,7 @@
 #include <QDebug>
 #include <QJsonObject>
 #include <QJsonDocument>
-
-#define PACKAGE_NAME "dde-file-manager"
+#include <QApplication>
 
 CommitLog::CommitLog(QObject *parent)
     : QObject(parent)
@@ -48,7 +47,7 @@ bool CommitLog::init()
         return false;
     }
 
-    if (!m_initEventLog(PACKAGE_NAME, false)) {
+    if (!m_initEventLog(QApplication::applicationName().toStdString(), false)) {
         qWarning() << "Initialize called failed";
         return false;
     }

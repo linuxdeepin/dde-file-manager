@@ -14,7 +14,8 @@ HEADERS += \
     $$PWD/rlog/datas/smbreportdata.h \
     $$PWD/rlog/datas/vaultreportdata.h \
     $$PWD/rlog/datas/searchreportdata.h \
-    $$PWD/rlog/datas/sidebarreportdata.h
+    $$PWD/rlog/datas/sidebarreportdata.h \
+    $$PWD/rlog/datas/filemenureportdata.h
 
 SOURCES += \
     $$PWD/utils.cpp \
@@ -30,4 +31,5 @@ SOURCES += \
     $$PWD/rlog/datas/smbreportdata.cpp \
     $$PWD/rlog/datas/vaultreportdata.cpp \
     $$PWD/rlog/datas/searchreportdata.cpp \
-    $$PWD/rlog/datas/sidebarreportdata.cpp
+    $$PWD/rlog/datas/sidebarreportdata.cpp \
+    $$PWD/rlog/datas/filemenureportdata.cpp
