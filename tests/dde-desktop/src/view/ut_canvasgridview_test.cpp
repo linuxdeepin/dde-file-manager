@@ -38,7 +38,7 @@
 #include "view/desktopitemdelegate.h"
 #include "../dde-desktop/desktop.h"
 #include "../dde-desktop/desktop.cpp"
-#include "dfileviewhelper.h"
+#include "canvasviewhelper.h"
 #include "addr_pri.h"
 #include "stub.h"
 #include "diconitemdelegate.h"
@@ -1888,7 +1888,7 @@ TEST_F(CanvasGridViewTest, test_DumpPos)
 
     QString temp = m_canvasGridView->DumpPos(0, 0);
     EXPECT_TRUE(!temp.isEmpty());
-    m_canvasGridView->Refresh();
+    m_canvasGridView->Refresh(true);
 }
 
 TEST_F(CanvasGridViewTest, test_currentCursorFile)
@@ -2362,6 +2362,30 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_shiftAndArrowKeys)
     for (auto tpp : removeList) {
         dir.remove(tpp);
     }
+}
+
+TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_refresh)
+{
+    ASSERT_NE(m_canvasGridView, nullptr);
+    stub_ext::StubExt stub;
+    bool model = false;
+    stub.set_lamda(&DFileSystemModel::refresh, [&model](){
+        model = true;
+    });
+    bool flash = false;
+    stub.set_lamda(VADDR(CanvasViewHelper,viewFlicker), [&flash](){
+        flash = true;
+    });
+
+    m_canvasGridView->Refresh(true);
+    EXPECT_TRUE(model);
+    EXPECT_FALSE(flash);
+
+    model = false;
+    flash = false;
+    m_canvasGridView->Refresh(false);
+    EXPECT_TRUE(flash);
+    EXPECT_FALSE(model);
 }
 
 TEST(CanvasGridView, inputMethodQuery)
