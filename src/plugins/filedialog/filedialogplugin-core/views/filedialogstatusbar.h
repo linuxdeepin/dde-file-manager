@@ -69,9 +69,11 @@ public:
 
 private slots:
     void onWindowTitleChanged(const QString &title);
+    void onFileNameTextEdited(const QString &text);
 
 private:
     void initializeUi();
+    void initializeConnect();
     void updateLayout();
 
     void showEvent(QShowEvent *event) override;

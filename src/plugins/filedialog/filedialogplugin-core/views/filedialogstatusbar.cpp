@@ -23,6 +23,7 @@
 #include "filedialogstatusbar.h"
 
 #include "dfm-base/mimetype/dmimedatabase.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QLineEdit>
 #include <QComboBox>
@@ -40,6 +41,7 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     : QFrame(parent)
 {
     initializeUi();
+    initializeConnect();
 }
 
 void FileDialogStatusBar::setMode(FileDialogStatusBar::Mode mode)
@@ -190,6 +192,17 @@ void FileDialogStatusBar::onWindowTitleChanged(const QString &title)
     titleLabel->setObjectName(title);
 }
 
+void FileDialogStatusBar::onFileNameTextEdited(const QString &text)
+{
+    QString dstText = DFMBASE_NAMESPACE::FileUtils::preprocessingFileName(text);
+    if (text != dstText) {
+        int currPos = fileNameEdit->cursorPosition();
+        fileNameEdit->setText(dstText);
+        currPos += dstText.length() - text.length();
+        fileNameEdit->setCursorPosition(currPos);
+    }
+}
+
 void FileDialogStatusBar::initializeUi()
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -227,6 +240,11 @@ void FileDialogStatusBar::initializeUi()
 
     mainLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
     mainLayout->addLayout(contentLayout);
+}
+
+void FileDialogStatusBar::initializeConnect()
+{
+    connect(fileNameEdit, &QLineEdit::textEdited, this, &FileDialogStatusBar::onFileNameTextEdited);
 }
 
 void FileDialogStatusBar::updateLayout()
