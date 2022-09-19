@@ -258,7 +258,12 @@ HEADERS += \
     $$PWD/plugins/pluginemblemmanager.h \
     $$PWD/plugins/private/pluginemblemmanagerprivate.h \
     $$PWD/dialogs/collectiondelegate.h \
-    $$PWD/dialogs/dumpisooptdialog.h
+    $$PWD/dialogs/dumpisooptdialog.h \
+    $$PWD/diskpwdmanager/progresswidget.h \
+    $$PWD/diskpwdmanager/changeresultwidget.h \
+    $$PWD/diskpwdmanager/pwdconfirmwidget.h \
+    $$PWD/diskpwdmanager/diskpwdchangedialog.h \
+    $$PWD/diskpwdmanager/globaldefine.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -479,7 +484,11 @@ SOURCES += \
     $$PWD/plugins/pluginemblemmanager.cpp \
     $$PWD/plugins/private/pluginemblemmanagerprivate.cpp \
     $$PWD/dialogs/collectiondelegate.cpp \
-    $$PWD/dialogs/dumpisooptdialog.cpp
+    $$PWD/dialogs/dumpisooptdialog.cpp \
+    $$PWD/diskpwdmanager/progresswidget.cpp \
+    $$PWD/diskpwdmanager/changeresultwidget.cpp \
+    $$PWD/diskpwdmanager/pwdconfirmwidget.cpp \
+    $$PWD/diskpwdmanager/diskpwdchangedialog.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

@@ -21,8 +21,8 @@
 #include "views/dtagactionwidget.h"
 #include "views/dfileview.h"
 #ifndef DISABLE_QUICK_SEARCH
-#include "shutil/danythingmonitor.h"
-#endif // DISABLE_QUICK_SEARCH
+#    include "shutil/danythingmonitor.h"
+#endif   // DISABLE_QUICK_SEARCH
 #include "shutil/dsqlitehandle.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
 #include "interfaces/dfileservices.h"
@@ -38,14 +38,12 @@
 #include <QProcess>
 #include <QWidgetAction>
 
-
 DFM_BEGIN_NAMESPACE
 
 static FileEventProcessor eventProcessor;
 
 FileEventProcessor::FileEventProcessor()
 {
-
 }
 
 static bool isAvfsMounted()
@@ -53,7 +51,8 @@ static bool isAvfsMounted()
     QProcess p;
     QString cmd = "/bin/bash";
     QStringList args;
-    args << "-c" << "ps -ax -o 'cmd'|grep '.avfs$'";
+    args << "-c"
+         << "ps -ax -o 'cmd'|grep '.avfs$'";
     p.start(cmd, args);
     p.waitForFinished();
     QString avfsBase = qgetenv("AVFSBASE");
@@ -90,20 +89,20 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
 {
     switch (static_cast<int>(event->action())) {
     case DFMGlobal::RenameTag: {
-        QList<DUrl> selectedUrl{ event->urlList() };
+        QList<DUrl> selectedUrl { event->urlList() };
 
         if (!selectedUrl.isEmpty()) {
-//            DUrl url{ selectedUrl.first() };
+            //            DUrl url{ selectedUrl.first() };
             DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(event->windowId()));
 
             if (window) {
-//                window->getLeftSideBar()->scene()->onRequestRenameTag(url);
+                //                window->getLeftSideBar()->scene()->onRequestRenameTag(url);
             }
         }
         break;
     }
     case DFMGlobal::ChangeTagColor: {
-        QAction *action{ event->menu()->actionAt("Change color of present tag") };
+        QAction *action { event->menu()->actionAt("Change color of present tag") };
 
         if (QWidgetAction *widgetAction = qobject_cast<QWidgetAction *>(action)) {
 
@@ -117,9 +116,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
                     break;
                 }
 
-                QSharedPointer<DFMChangeTagColorEvent> tagEvent{
+                QSharedPointer<DFMChangeTagColorEvent> tagEvent {
                     dMakeEventPointer<DFMChangeTagColorEvent>(event->sender(),
-                    checked_colors.last(), event->selectedUrls()[0])
+                                                              checked_colors.last(), event->selectedUrls()[0])
                 };
 
                 AppController::instance()->actionChangeTagColor(tagEvent);
@@ -202,8 +201,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::OpenWithCustom:
         if (event->selectedUrls().size() == 1) {
             AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
-        }
-        else {
+        } else {
             AppController::instance()->actionOpenFilesWithCustom(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
         }
 
@@ -274,16 +272,16 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::ClearTrash:
         AppController::instance()->actionClearTrash(event->sender());
         break;
-    case DFMGlobal::NewWord: /// sub menu
+    case DFMGlobal::NewWord:   /// sub menu
         AppController::instance()->actionNewWord(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->currentUrl()));
         break;
-    case DFMGlobal::NewExcel: /// sub menu
+    case DFMGlobal::NewExcel:   /// sub menu
         AppController::instance()->actionNewExcel(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->currentUrl()));
         break;
-    case DFMGlobal::NewPowerpoint: /// sub menu
+    case DFMGlobal::NewPowerpoint:   /// sub menu
         AppController::instance()->actionNewPowerpoint(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->currentUrl()));
         break;
-    case DFMGlobal::NewText: /// sub menu
+    case DFMGlobal::NewText:   /// sub menu
         AppController::instance()->actionNewText(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->currentUrl()));
         break;
     case DFMGlobal::OpenInTerminal:
@@ -337,6 +335,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::SetUserSharePassword:
         AppController::instance()->actionSetUserSharePassword(event->windowId());
         break;
+    case DFMGlobal::ChangeDiskPassword:
+        AppController::instance()->actionChangeDiskPassword(event->windowId());
+        break;
     case DFMGlobal::FormatDevice:
         AppController::instance()->actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
@@ -345,7 +346,7 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
         break;
     case DFMGlobal::RemoveFromRecent:
         /*解决在最近使用的文档里面搜索以后删除不了的问题*/
-        if (event->urlList().first().isRecentFile()||event->urlList().first().isSearchFile()) {
+        if (event->urlList().first().isRecentFile() || event->urlList().first().isSearchFile()) {
             DFileService::instance()->deleteFiles(event->sender(), event->urlList(), false, true);
         }
         break;
@@ -373,26 +374,26 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             QString serverIP;
             quint16 port = 139;
             DUrl temUrl;
-            if(url.scheme() == SMB_SCHEME){
+            if (url.scheme() == SMB_SCHEME) {
                 serverIP = url.host();
             } else {
                 QString path = QUrl::fromPercentEncoding(url.path().toUtf8());
-                if(FileUtils::isSmbPath(path)){
-                    serverIP = FileUtils::smbAttribute(path,FileUtils::SmbAttribute::kServer);
-                }else if(url.scheme() == FILE_SCHEME){
-                    if(path.contains("ftp:host")){
-                        serverIP = path.section("ftp:host=",-1);
-                        serverIP = serverIP.section("/",0,0);
+                if (FileUtils::isSmbPath(path)) {
+                    serverIP = FileUtils::smbAttribute(path, FileUtils::SmbAttribute::kServer);
+                } else if (url.scheme() == FILE_SCHEME) {
+                    if (path.contains("ftp:host")) {
+                        serverIP = path.section("ftp:host=", -1);
+                        serverIP = serverIP.section("/", 0, 0);
                         port = 21;
-                    }else if(path.contains("sftp:host")){
-                        serverIP = path.section("sftp:host=",-1);
-                        serverIP = serverIP.section("/",0,0);
+                    } else if (path.contains("sftp:host")) {
+                        serverIP = path.section("sftp:host=", -1);
+                        serverIP = serverIP.section("/", 0, 0);
                         port = 22;
                     }
                 }
             }
-            bool re = CheckNetwork::isHostAndPortConnectV2(serverIP,port);
-            if(!serverIP.isEmpty() && !re){
+            bool re = CheckNetwork::isHostAndPortConnectV2(serverIP, port);
+            if (!serverIP.isEmpty() && !re) {
                 WindowManager::instance()->showNewWindow(DUrl(COMPUTER_ROOT), e->force());
                 continue;
             }
@@ -403,7 +404,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
     }
     case DFMEvent::ChangeCurrentUrl: {
         const QSharedPointer<DFMChangeCurrentUrlEvent> &e = event.staticCast<DFMChangeCurrentUrlEvent>();
-        const DAbstractFileInfoPointer &fileInfo  = fileService->createFileInfo(nullptr, e->fileUrl());
+        const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(nullptr, e->fileUrl());
         if (fileInfo && fileInfo->exists() && fileInfo->isFile()) {
             DUrlList urls;
             fmEvent(dMakeEventPointer<DFMOpenUrlEvent>(event->sender(), urls << event->fileUrl(), DFMOpenUrlEvent::OpenNewWindow), resultData);
@@ -429,9 +430,9 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(Q_NULLPTR, url);
 
             if (DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewCompressFile).toBool()
-                    && isAvfsMounted()
-                    && FileUtils::isArchive(url.toLocalFile())
-                    && fileInfo->mimeType().name() != "application/vnd.debian.binary-package") {
+                && isAvfsMounted()
+                && FileUtils::isArchive(url.toLocalFile())
+                && fileInfo->mimeType().name() != "application/vnd.debian.binary-package") {
                 // 修复bug-63703 设置菜单压缩文件预览，搜索界面打开压缩文件时，没有正常预览压缩文件
                 if (url.isSearchFile())
                     url = url.searchedFileUrl();
@@ -458,8 +459,7 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
             }
         }
 
-        if (!fileList.empty())
-        {
+        if (!fileList.empty()) {
             if (fileList.size() == 1)
                 DThreadUtil::runInMainThread(DFileService::instance(), &DFileService::openFile, event->sender(), fileList[0]);
             else
@@ -488,10 +488,10 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
 
         if (e->dirOpenMode() == DFMOpenUrlEvent::OpenInCurrentWindow) {
             const QSharedPointer<DFMEvent> &newEvent = dMakeEventPointer<DFMChangeCurrentUrlEvent>(event->sender(), dirList.first(), WindowManager::getWindowById(event->windowId()));
-            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *)>(&DFMEventDispatcher::processEvent), newEvent, Q_NULLPTR);
+            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant (DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *)>(&DFMEventDispatcher::processEvent), newEvent, Q_NULLPTR);
         } else {
             const QSharedPointer<DFMEvent> &newEvent = dMakeEventPointer<DFMOpenNewWindowEvent>(event->sender(), dirList, e->dirOpenMode() == DFMOpenUrlEvent::ForceOpenNewWindow);
-            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *)>(&DFMEventDispatcher::processEvent), newEvent, Q_NULLPTR);
+            result = DThreadUtil::runInMainThread(DFMEventDispatcher::instance(), static_cast<QVariant (DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *)>(&DFMEventDispatcher::processEvent), newEvent, Q_NULLPTR);
         }
 
         if (resultData) {

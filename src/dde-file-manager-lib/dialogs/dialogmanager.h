@@ -110,6 +110,7 @@ public slots:
     void showBreakSymlinkDialog(const QString &targetName, const DUrl &linkfile);
     void showConnectToServerDialog(quint64 winId);
     void showUserSharePasswordSettingDialog(quint64 winId);
+    void showChangeDiskPasswordDialog(quint64 winId);
     void showSharePasswordSettingDialog(QFrame *parent = nullptr);
     void showGlobalSettingsDialog(quint64 winId);
     void showDiskSpaceOutOfUsedDialogLater();
@@ -136,11 +137,11 @@ public slots:
 
     void refreshPropertyDialogs(const DUrl &oldUrl, const DUrl &newUrl);
 
-    int showMessageDialog(messageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm","button"));
+    int showMessageDialog(messageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
     void showBluetoothTransferDlg(const DUrlList &files);
 
-    void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
-    int showStopScanningDialog();              // 显示设备正在被扫描的提示
+    void showFormatDialog(const QString &devId);   // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
+    int showStopScanningDialog();   // 显示设备正在被扫描的提示
 
     /**
     * DUrlListCompare 用于判断传入url列表是否与m_urlList一样
@@ -157,16 +158,16 @@ private:
     QIcon m_dialogWarningIcon;
     QIcon m_dialogErrorIcon;
     QMutex m_mutexJob;
-    DTaskDialog *m_taskDialog {nullptr};
-    CloseAllDialogIndicator *m_closeIndicatorDialog {nullptr};
-    TrashPropertyDialog *m_trashDialog {nullptr};
-    ComputerPropertyDialog *m_computerDialog {nullptr};
-    QMap<QString, QSharedPointer<FileJob> > m_jobs {};
+    DTaskDialog *m_taskDialog { nullptr };
+    CloseAllDialogIndicator *m_closeIndicatorDialog { nullptr };
+    TrashPropertyDialog *m_trashDialog { nullptr };
+    ComputerPropertyDialog *m_computerDialog { nullptr };
+    QMap<QString, QSharedPointer<FileJob>> m_jobs {};
     QMap<DUrl, PropertyDialog *> m_propertyDialogs {};
-    QTimer *m_closeIndicatorTimer {nullptr};
-    QTimer *m_updateJobTaskTimer {nullptr};
-    dde_file_manager::FilePreviewDialog *m_filePreviewDialog {nullptr};
-    Dtk::Widget::DDialog *m_noPemesrsionDialog {nullptr};
+    QTimer *m_closeIndicatorTimer { nullptr };
+    QTimer *m_updateJobTaskTimer { nullptr };
+    dde_file_manager::FilePreviewDialog *m_filePreviewDialog { nullptr };
+    Dtk::Widget::DDialog *m_noPemesrsionDialog { nullptr };
 
     std::unique_ptr<DMultiFilePropertyDialog> m_multiFilesPropertyDialog;
 
@@ -174,4 +175,4 @@ private:
     DUrlList m_urlList;
 };
 
-#endif // DIALOGMANAGER_H
+#endif   // DIALOGMANAGER_H

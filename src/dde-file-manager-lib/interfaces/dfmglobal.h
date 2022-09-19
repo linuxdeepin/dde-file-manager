@@ -37,62 +37,74 @@
 #define MIME_PROHIBIT_DRAG "ProhibitDragInSource"
 #define ISDRAGPROHIBIT "yes"
 
-#define ASYN_CALL(Fun, Code, captured...) {\
-        QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\
-        auto onFinished = [watcher, captured]{\
-                                              const QVariantList & args = watcher->reply().arguments();\
-                                              Q_UNUSED(args);\
-                                              Code;\
-                                              watcher->deleteLater();\
-                                             };\
-        if(watcher->isFinished()) onFinished();\
-        else QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher, onFinished);}
+#define ASYN_CALL(Fun, Code, captured...)                                                       \
+    {                                                                                           \
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(Fun);                    \
+        auto onFinished = [watcher, captured] {                                                 \
+            const QVariantList &args = watcher->reply().arguments();                            \
+            Q_UNUSED(args);                                                                     \
+            Code;                                                                               \
+            watcher->deleteLater();                                                             \
+        };                                                                                      \
+        if (watcher->isFinished())                                                              \
+            onFinished();                                                                       \
+        else                                                                                    \
+            QObject::connect(watcher, &QDBusPendingCallWatcher::finished, watcher, onFinished); \
+    }
 
 #if QT_VERSION >= 0x050500
-#define TIMER_SINGLESHOT(Time, Code, captured...){ \
-        QTimer::singleShot(Time, [captured] {Code;});\
-    }
+#    define TIMER_SINGLESHOT(Time, Code, captured...)       \
+        {                                                   \
+            QTimer::singleShot(Time, [captured] { Code; }); \
+        }
 #else
-#define TIMER_SINGLESHOT(Time, Code, captured...){ \
-        QTimer *timer = new QTimer;\
-        timer->setSingleShot(true);\
-        timer->setInterval(Time);\
-        timer->moveToThread(qApp->thread());\
-        QObject::connect(timer, &QTimer::timeout, timer, [timer, captured] {\
-                                                                            timer->deleteLater();\
-                                                                            Code;\
-                                                                           });\
-        if (QThread::currentThread() == qApp->thread()) timer->start();\
-        else QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);\
-    }
+#    define TIMER_SINGLESHOT(Time, Code, captured...)                            \
+        {                                                                        \
+            QTimer *timer = new QTimer;                                          \
+            timer->setSingleShot(true);                                          \
+            timer->setInterval(Time);                                            \
+            timer->moveToThread(qApp->thread());                                 \
+            QObject::connect(timer, &QTimer::timeout, timer, [timer, captured] { \
+                timer->deleteLater();                                            \
+                Code;                                                            \
+            });                                                                  \
+            if (QThread::currentThread() == qApp->thread())                      \
+                timer->start();                                                  \
+            else                                                                 \
+                QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection); \
+        }
 #endif
 
-#define TIMER_SINGLESHOT_CONNECT_TYPE(Obj, Time, Code, ConnectType, captured...){ \
-        QTimer *timer = new QTimer;\
-        timer->setSingleShot(true);\
-        timer->setInterval(Time);\
-        timer->moveToThread(qApp->thread());\
-        QObject::connect(timer, &QTimer::timeout, Obj, [timer, captured] {\
-                                                                          timer->deleteLater();\
-                                                                          Code;\
-                                                                         }, ConnectType);\
-        if (QThread::currentThread() == qApp->thread()) timer->start();\
-        else QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);\
+#define TIMER_SINGLESHOT_CONNECT_TYPE(Obj, Time, Code, ConnectType, captured...) \
+    {                                                                            \
+        QTimer *timer = new QTimer;                                              \
+        timer->setSingleShot(true);                                              \
+        timer->setInterval(Time);                                                \
+        timer->moveToThread(qApp->thread());                                     \
+        QObject::connect(timer, &QTimer::timeout, Obj, [timer, captured] {       \
+            timer->deleteLater();                                                \
+            Code;                                                                \
+        },                                                                       \
+                         ConnectType);                                           \
+        if (QThread::currentThread() == qApp->thread())                          \
+            timer->start();                                                      \
+        else                                                                     \
+            QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);     \
     }
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 4, 0)
-#define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...)\
-    TIMER_SINGLESHOT_CONNECT_TYPE(Obj, Time, Code, Qt::AutoConnection, captured)
+#    define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...) \
+        TIMER_SINGLESHOT_CONNECT_TYPE(Obj, Time, Code, Qt::AutoConnection, captured)
 #else
-#define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...)\
-    QTimer::singleShot(Time, Obj, [captured]{Code;});
+#    define TIMER_SINGLESHOT_OBJECT(Obj, Time, Code, captured...) \
+        QTimer::singleShot(Time, Obj, [captured] { Code; });
 #endif
 
 #define ASYN_CALL_SLOT(obj, fun, args...) \
-    TIMER_SINGLESHOT_CONNECT_TYPE(obj, 0, {obj->fun(args);}, Qt::QueuedConnection, obj, args)
+    TIMER_SINGLESHOT_CONNECT_TYPE(obj, 0, { obj->fun(args); }, Qt::QueuedConnection, obj, args)
 
 #ifdef QT_STRINGIFY
-#undef QT_STRINGIFY
+#    undef QT_STRINGIFY
 #endif
 #define QT_STRINGIFY(x...) #x
 
@@ -170,13 +182,13 @@ public:
         Separator,
         ClearRecent,
         ClearTrash,
-        DisplayAs, /// sub menu
-        SortBy, /// sub menu
-        NewDocument, /// sub menu
-        NewWord, /// sub menu
-        NewExcel, /// sub menu
-        NewPowerpoint, /// sub menu
-        NewText, /// sub menu
+        DisplayAs,   /// sub menu
+        SortBy,   /// sub menu
+        NewDocument,   /// sub menu
+        NewWord,   /// sub menu
+        NewExcel,   /// sub menu
+        NewPowerpoint,   /// sub menu
+        NewText,   /// sub menu
         OpenInTerminal,
         Restore,
         RestoreAll,
@@ -210,6 +222,7 @@ public:
         OpticalBlank,
         Vault,
         ConnectToServer,
+        ChangeDiskPassword,
 
         ///###: tag protocol.
         TagInfo,
@@ -362,13 +375,12 @@ public:
                           qreal backgroundRadius = 4,
                           QList<QRectF> *boundingRegion = nullptr);
 
-
     /**
      * @brief setToolTip 设置tooltip显示
      * @param label 需要显示的控件
      * @param bAlwaysShow 是否总是显示
      */
-    static void setToolTip(QLabel* label, bool bAlwaysShow = false);
+    static void setToolTip(QLabel *label, bool bAlwaysShow = false);
 
     /**
      * @brief showAlertMessage 显示气泡提示信息
@@ -386,7 +398,9 @@ public:
     static bool startWithHanzi(const QString &text);
     template<typename T>
     static bool startWithHanzi(T)
-    { return false;}
+    {
+        return false;
+    }
     /**
      * @brief startWithSymbol 判断字符串是由符号开头
      * @param text
@@ -412,7 +426,7 @@ public:
     static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
 
     ///###: this function detect what the charset of str is.
-    static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString{});
+    static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString {});
     static QString preprocessingFileName(QString name);
 
     static void setMimeDataUserID(QMimeData *mime);
@@ -452,11 +466,11 @@ signals:
     void callInLiveThread(FunctionType *func);
 };
 
-template <typename ReturnType>
+template<typename ReturnType>
 class _TMP
 {
 public:
-    template <typename Fun, typename... Args>
+    template<typename Fun, typename... Args>
     static ReturnType runInThread(QSemaphore *s, QThread *thread, Fun fun, Args &&... args)
     {
         if (QThread::currentThread() == thread)
@@ -490,11 +504,11 @@ public:
         return result;
     }
 };
-template <>
+template<>
 class _TMP<void>
 {
 public:
-    template <typename Fun, typename... Args>
+    template<typename Fun, typename... Args>
     static void runInThread(QSemaphore *s, QThread *thread, Fun fun, Args &&... args)
     {
         if (QThread::currentThread() == thread)
@@ -527,12 +541,12 @@ public:
     }
 };
 
-template <typename Fun, typename... Args>
+template<typename Fun, typename... Args>
 auto runInThread(QSemaphore *s, QThread *thread, Fun fun, Args &&... args) -> decltype(fun(args...))
 {
     return _TMP<decltype(fun(args...))>::runInThread(s, thread, fun, std::forward<Args>(args)...);
 }
-template <typename Fun, typename... Args>
+template<typename Fun, typename... Args>
 typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QSemaphore *s, QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args &&... args)
 {
     return _TMP<typename QtPrivate::FunctionPointer<Fun>::ReturnType>::runInThread(s, thread, [&] {
@@ -540,14 +554,14 @@ typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QSemaphore *s, 
     });
 }
 
-template <typename Fun, typename... Args>
+template<typename Fun, typename... Args>
 auto runInThread(QThread *thread, Fun fun, Args &&... args) -> decltype(fun(args...))
 {
     QSemaphore s;
 
     return runInThread(&s, thread, fun, std::forward<Args>(args)...);
 }
-template <typename Fun, typename... Args>
+template<typename Fun, typename... Args>
 typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QThread *thread, typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args &&... args)
 {
     QSemaphore s;
@@ -555,7 +569,7 @@ typename QtPrivate::FunctionPointer<Fun>::ReturnType runInThread(QThread *thread
     return runInThread(&s, thread, obj, fun, std::forward<Args>(args)...);
 }
 
-template <typename Fun, typename... Args>
+template<typename Fun, typename... Args>
 auto runInMainThread(Fun fun, Args &&... args) -> decltype(fun(args...))
 {
     if (!QCoreApplication::instance()) {
@@ -564,7 +578,7 @@ auto runInMainThread(Fun fun, Args &&... args) -> decltype(fun(args...))
 
     return runInThread(QCoreApplication::instance()->thread(), fun, std::forward<Args>(args)...);
 }
-template <typename Fun, typename... Args>
+template<typename Fun, typename... Args>
 typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename QtPrivate::FunctionPointer<Fun>::Object *obj, Fun fun, Args &&... args)
 {
     if (!QCoreApplication::instance()) {
@@ -577,7 +591,7 @@ typename QtPrivate::FunctionPointer<Fun>::ReturnType runInMainThread(typename Qt
 
 // namespace dfm_util: 通用的工具
 namespace dfm_util {
-template <typename T>
+template<typename T>
 // 工具函数：判断一个值是否在一个集合中
 inline bool isContains(const T &source)
 {
@@ -585,8 +599,8 @@ inline bool isContains(const T &source)
     return false;
 }
 
-template <typename T, typename ...Args>
-inline bool isContains(const T &source, const T &cmp, const Args &...args)
+template<typename T, typename... Args>
+inline bool isContains(const T &source, const T &cmp, const Args &... args)
 {
     if (source == cmp)
         return true;
@@ -595,5 +609,4 @@ inline bool isContains(const T &source, const T &cmp, const Args &...args)
 }
 }
 
-
-#endif // DFMGLOBAL_H
+#endif   // DFMGLOBAL_H
