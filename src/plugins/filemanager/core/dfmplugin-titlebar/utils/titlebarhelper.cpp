@@ -116,35 +116,34 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
         return list;
 
     QString prefixPath { "/" };
-    if (path.startsWith(kHomePath)) {
+
+    // for gvfs files do not construct QStorageInfo object which costs a lots time.
+    const QString &&iconName = QStringLiteral("drive-harddisk-symbolic");
+
+    // for root user, $HOME is /root and the mount path of gvfsd is /root/.gvfs, so promote it to the prior condition
+    QRegularExpression rex(Global::Regex::kGvfsRoot);
+    auto match = rex.match(path);
+    if (match.hasMatch()) {
+        prefixPath = match.captured();
+        CrumbData data { QUrl::fromLocalFile(prefixPath), "", iconName };
+        list.append(data);
+    } else if (path.startsWith(kHomePath)) {
         prefixPath = kHomePath;
         QString iconName { SystemPathUtil::instance()->systemPathIconName("Home") };
         CrumbData data { QUrl::fromLocalFile(kHomePath), getDisplayName("Home"), iconName };
         list.append(data);
     } else {
-        const QString &&iconName = QStringLiteral("drive-harddisk-symbolic");
+        QStorageInfo storageInfo(path);
+        if (storageInfo.isValid()) {
+            prefixPath = storageInfo.rootPath();
+            // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
 
-        // for gvfs files do not construct QStorageInfo object which costs a lots time.
-        QRegularExpression rex(Global::Regex::kGvfsRoot);
-        auto match = rex.match(path);
-        if (match.hasMatch()) {
-            prefixPath = match.captured();
-            CrumbData data { QUrl::fromLocalFile(prefixPath), "", iconName };
-            list.append(data);
-        } else {
-            QStorageInfo storageInfo(path);
-            if (storageInfo.isValid()) {
-
-                prefixPath = storageInfo.rootPath();
-                // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
-
-                if (prefixPath == "/") {
-                    CrumbData data(UrlRoute::rootUrl(Global::Scheme::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
-                    list.append(data);
-                } else {
-                    CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
-                    list.append(data);
-                }
+            if (prefixPath == "/") {
+                CrumbData data(UrlRoute::rootUrl(Global::Scheme::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
+                list.append(data);
+            } else {
+                CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
+                list.append(data);
             }
         }
     }
