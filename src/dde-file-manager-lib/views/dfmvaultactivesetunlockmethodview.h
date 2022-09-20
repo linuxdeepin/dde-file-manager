@@ -21,6 +21,7 @@ class OperatorCenter;
 class QSlider;
 class QComboBox;
 class QGridLayout;
+class QVBoxLayout;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
@@ -35,6 +36,7 @@ class DFMVaultActiveSetUnlockMethodView : public QWidget
     Q_OBJECT
 public:
     explicit DFMVaultActiveSetUnlockMethodView(QWidget *parent = nullptr);
+    ~DFMVaultActiveSetUnlockMethodView();
     void clearText();
 
 signals:
@@ -82,6 +84,7 @@ private:
     QLineEdit           *m_pTips;
 
     DLabel              *TransparentEncryptionText;
+    QVBoxLayout         *textLay;
 
     QPushButton         *m_pNext;
 
