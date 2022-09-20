@@ -214,7 +214,7 @@ bool OperatorCenter::createDirAndFile()
             configFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup);
             configFile.close();
         } else {
-            qInfo() << "保险箱：创建配置文件失败！";
+            qWarning() << "Vault: create config file failed!";
         }
     }
 

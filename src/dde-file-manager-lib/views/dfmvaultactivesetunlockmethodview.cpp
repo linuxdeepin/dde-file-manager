@@ -104,12 +104,15 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     m_pTips->setPlaceholderText(tr("Optional"));
 
     // 透明加密描述文本
-    TransparentEncryptionText = new DLabel("\n" + tr("The file vault will be automatically unlocked when accessed, "
+    textLay = new QVBoxLayout();
+    TransparentEncryptionText = new DLabel(tr("The file vault will be automatically unlocked when accessed, "
                                               "without verifying the password. "
                                               "Files in it will be inaccessible under other user accounts. "), this);
     AC_SET_ACCESSIBLE_NAME(TransparentEncryptionText, AC_VAULT_ACTIVE_SET_PASSWORD_TRANSPARENT_LABEL);
     TransparentEncryptionText->setVisible(false);
     TransparentEncryptionText->setWordWrap(true);
+    textLay->setContentsMargins(10, 0, 0, 0);
+    textLay->addWidget(TransparentEncryptionText);
 
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
@@ -133,6 +136,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
 
     play1->addWidget(m_pPasswordHintLabel, 3, 0, 1, 1, Qt::AlignLeft);
     play1->addWidget(m_pTips, 3, 1, 1, 5);
+    play1->setColumnMinimumWidth(0, 80);
 
     QVBoxLayout *play = new QVBoxLayout(this);
     play->setMargin(0);
@@ -143,7 +147,16 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     play->addWidget(m_pNext);
 
     // 创建文件夹与目录
-    if (!OperatorCenter::getInstance()->createDirAndFile()) return;
+    if (!OperatorCenter::getInstance()->createDirAndFile())
+        qWarning() << "Vault: create dir failed!";
+}
+
+DFMVaultActiveSetUnlockMethodView::~DFMVaultActiveSetUnlockMethodView()
+{
+    if (textLay) {
+        delete textLay;
+        textLay = nullptr;
+    }
 }
 
 void DFMVaultActiveSetUnlockMethodView::clearText()
@@ -291,12 +304,12 @@ void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
         m_pPasswordHintLabel->setVisible(false);
         m_pTips->setVisible(false);
 
-        play1->addWidget(TransparentEncryptionText, 1, 0, 3, 6);
+        play1->addLayout(textLay, 1, 1, 3, 5);
         TransparentEncryptionText->setVisible(true);
 
         m_pNext->setEnabled(true);
     } else { // 密钥加密
-        play1->removeWidget(TransparentEncryptionText);
+        play1->removeItem(textLay);
         TransparentEncryptionText->setVisible(false);
 
         play1->addWidget(m_pPasswordLabel, 1, 0, 1, 1, Qt::AlignLeft);
