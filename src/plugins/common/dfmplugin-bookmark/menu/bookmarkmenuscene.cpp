@@ -55,21 +55,21 @@ QString BookmarkMenuScene::name() const
 bool BookmarkMenuScene::initialize(const QVariantHash &params)
 {
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (d->selectFiles.count() != 1) {
-        d->showBookMarkMenu = false;
-    } else {
-        d->showBookMarkMenu = true;
-        const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
-        d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
-        d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
-        d->focusFile = d->selectFiles.first();
-        d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
-        d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
+    if (d->selectFiles.count() <= 0)
+        return AbstractMenuScene::initialize(params);
 
-        d->predicateName.insert(BookmarkActionId::kActAddBookmarkKey, tr("Pin to quick access"));
-        d->predicateName.insert(BookmarkActionId::kActRemoveBookmarkKey, tr("Remove from quick access"));
-    }
+    d->showBookMarkMenu = true;
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->focusFile = d->selectFiles.first();
+    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
+
+    d->predicateName.insert(BookmarkActionId::kActAddBookmarkKey, tr("Pin to quick access"));
+    d->predicateName.insert(BookmarkActionId::kActRemoveBookmarkKey, tr("Remove from quick access"));
 
     return AbstractMenuScene::initialize(params);
 }
@@ -86,17 +86,10 @@ bool BookmarkMenuScene::create(QMenu *parent)
     if ((info && !info->isDir()) || d->isSystemPathIncluded)
         return AbstractMenuScene::create(parent);
 
-    if (BookMarkManager::instance()->getBookMarkDataMap().contains(d->focusFile)) {
-        auto action = parent->addAction(d->predicateName[BookmarkActionId::kActRemoveBookmarkKey]);
-        action->setText(d->predicateName.value(BookmarkActionId::kActRemoveBookmarkKey));
-        action->setProperty(ActionPropertyKey::kActionID, QString(BookmarkActionId::kActRemoveBookmarkKey));
-        d->predicateAction.insert(BookmarkActionId::kActRemoveBookmarkKey, action);
-    } else {
-        auto action = parent->addAction(d->predicateName[BookmarkActionId::kActAddBookmarkKey]);
-        action->setText(d->predicateName.value(BookmarkActionId::kActAddBookmarkKey));
-        action->setProperty(ActionPropertyKey::kActionID, QString(BookmarkActionId::kActAddBookmarkKey));
-        d->predicateAction.insert(BookmarkActionId::kActAddBookmarkKey, action);
-    }
+    auto action = parent->addAction(d->predicateName[BookmarkActionId::kActAddBookmarkKey]);
+    action->setText(d->predicateName.value(BookmarkActionId::kActAddBookmarkKey));
+    action->setProperty(ActionPropertyKey::kActionID, QString(BookmarkActionId::kActAddBookmarkKey));
+    d->predicateAction.insert(BookmarkActionId::kActAddBookmarkKey, action);
 
     return AbstractMenuScene::create(parent);
 }

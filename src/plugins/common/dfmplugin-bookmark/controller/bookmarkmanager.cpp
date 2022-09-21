@@ -165,7 +165,7 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             temName = temUrl.path().right(temUrl.path().length() - pos);
 
             if (isNameDublicated(temName))
-                return false;
+                continue;
 
             QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
             bookmarkData.index = list.count();
@@ -505,7 +505,7 @@ void BookMarkManager::contextMenuHandle(quint64 windowId, const QUrl &url, const
     });
     renameAct->setEnabled(bEnabled);
 
-    menu->addAction(QObject::tr("Remove bookmark"),
+    menu->addAction(QObject::tr("Remove from quick access"),
                     [url]() { BookMarkManager::instance()->removeBookMark(url); });
 
     menu->addSeparator();

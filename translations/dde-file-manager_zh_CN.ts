@@ -539,8 +539,8 @@
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="508"/>
-        <source>Remove bookmark</source>
-        <translation>移除书签</translation>
+        <source>Remove from quick access</source>
+        <translation>从快捷访问移除</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="513"/>
