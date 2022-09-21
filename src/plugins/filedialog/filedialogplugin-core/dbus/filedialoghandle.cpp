@@ -216,8 +216,12 @@ void FileDialogHandle::selectNameFilter(const QString &filter)
 {
     D_D(FileDialogHandle);
 
-    if (d->dialog)
-        d->dialog->selectNameFilter(filter);
+    CoreHelper::delayInvokeProxy(
+            [d, filter] {
+                if (d->dialog)
+                    d->dialog->selectNameFilter(filter);
+            },
+            d->dialog->internalWinId(), this);
 }
 
 QString FileDialogHandle::selectedNameFilter() const
