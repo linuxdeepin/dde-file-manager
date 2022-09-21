@@ -146,7 +146,7 @@ QString CanvasMenuScene::name() const
 
 bool CanvasMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
@@ -161,8 +161,6 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     d->view = reinterpret_cast<CanvasView *>(params.value(CanvasMenuParams::kDesktopCanvasView).toLongLong());
     if (d->currentDir.isEmpty())
         return false;
-
-    // todo(wangcl):handle computer,home,trash.and custom menu.
 
     QList<AbstractMenuScene *> currentScene;
     // sort

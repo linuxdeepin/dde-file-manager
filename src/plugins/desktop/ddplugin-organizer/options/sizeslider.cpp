@@ -82,7 +82,7 @@ void SizeSlider::switchMode(SizeSlider::Mode mode)
         slider->setPageStep(1);
         slider->slider()->setSingleStep(1);
         slider->slider()->setTickInterval(1);
-        //slider->slider()->setTickPosition(QSlider::TicksBothSides);
+        slider->setEnabledAcrossStyle(true);
 
         connect(slider, &DSlider::valueChanged, this, &SizeSlider::setIconLevel);
         connect(slider, &DSlider::iconClicked, this, &SizeSlider::iconClicked);
@@ -102,6 +102,8 @@ void SizeSlider::resetToView()
     slider->slider()->setRange(DisplaySize::kSmaller, DisplaySize::kLarger);
     slider->blockSignals(false);
 
+    slider->setBelowTicks(ticks(slider->maximum() - slider->minimum() + 1));
+
     label->setText(tr("Display size"));
     auto cur = CfgPresenter->displaySize();
 
@@ -120,6 +122,7 @@ void SizeSlider::resetToIcon()
     slider->blockSignals(true);
     slider->slider()->setRange(min, max);
     slider->blockSignals(false);
+    slider->setBelowTicks(ticks(max - min + 1));
 
     int cur = iconLevel();
     if (min > cur || max < cur) {
@@ -165,6 +168,14 @@ void SizeSlider::iconClicked(DSlider::SliderIcons icon, bool checked)
 int SizeSlider::iconLevel()
 {
     return dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasManager_IconLevel").toInt();
+}
+
+QStringList SizeSlider::ticks(int count)
+{
+    QStringList ret;
+    for (int i = 0; i < count; ++i)
+        ret << "";
+    return ret;
 }
 
 void SizeSlider::setIconLevel(int lv)

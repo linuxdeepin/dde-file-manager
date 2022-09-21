@@ -37,9 +37,8 @@ QList<QUrl> CanvasSelectionModel::selectedUrls()
 {
     auto indexs = selectedIndexes();
     QList<QUrl> urls;
-    for (auto index : indexs) {
+    for (auto index : indexs)
         urls <<  model()->fileUrl(index);
-    }
 
     return urls;
 }

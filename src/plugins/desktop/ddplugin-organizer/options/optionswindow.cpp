@@ -142,7 +142,7 @@ bool OptionsWindow::initialize()
     // size slider
     d->sizeSlider = new SizeSlider(this);
     d->sizeSlider->setRoundEdge(SwitchWidget::kBoth);
-    d->sizeSlider->setFixedSize(400, 84);
+    d->sizeSlider->setFixedSize(400, 94);
     d->sizeSlider->switchMode(CfgPresenter->isEnable() ? SizeSlider::View : SizeSlider::Icon);
     contentLayout->addWidget(d->sizeSlider);
 

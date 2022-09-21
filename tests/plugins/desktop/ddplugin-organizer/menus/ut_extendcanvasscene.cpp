@@ -37,6 +37,73 @@ DFMBASE_USE_NAMESPACE
 using namespace testing;
 using namespace ddplugin_organizer;
 
+TEST(ExtendCanvasScene, initialize_empty)
+{
+    QUrl dir("file://desktop");
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = dir;
+    params[MenuParamKey::kOnDesktop] = false;
+    params[MenuParamKey::kWindowId] = 1;
+    params[MenuParamKey::kIsEmptyArea] = true;
+    params[CollectionMenuParams::kOnColletion] = true;
+    params[CollectionMenuParams::kColletionView] = 2;
+
+    {
+        ExtendCanvasScene scene;
+        EXPECT_FALSE(scene.initialize(params));
+    }
+
+    {
+        stub_ext::StubExt stub;
+        stub.set_lamda(&ConfigPresenter::isEnable, []() {
+            return true;
+        });
+
+        ExtendCanvasScene scene;
+        params[MenuParamKey::kOnDesktop] = true;
+        EXPECT_TRUE(scene.initialize(params));
+        EXPECT_EQ(scene.d->turnOn, true);
+        EXPECT_EQ(scene.d->isEmptyArea, true);
+        EXPECT_EQ(scene.d->onDesktop, true);
+        EXPECT_EQ(scene.d->selectFiles.size(), 0);
+        EXPECT_EQ(scene.d->onCollection, true);
+        EXPECT_EQ(reinterpret_cast<qintptr>(scene.d->view), 2);
+        EXPECT_EQ(scene.d->focusFile.isEmpty(), true);
+        EXPECT_EQ(scene.d->currentDir, dir);
+    }
+}
+
+TEST(ExtendCanvasScene, initialize_normal)
+{
+    QUrl dir("file://desktop");
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = dir;
+    params[MenuParamKey::kOnDesktop] = true;
+    params[MenuParamKey::kWindowId] = 1;
+    params[MenuParamKey::kIsEmptyArea] = false;
+    params[CollectionMenuParams::kOnColletion] = true;
+    params[CollectionMenuParams::kColletionView] = 2;
+    QList<QUrl> selectUrls {QUrl("file://etc"), QUrl("file://usr")};
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(&ConfigPresenter::isEnable, []() {
+        return false;
+    });
+
+    ExtendCanvasScene scene;
+    EXPECT_TRUE(scene.initialize(params));
+    EXPECT_EQ(scene.d->turnOn, false);
+    EXPECT_EQ(scene.d->isEmptyArea, false);
+    EXPECT_EQ(scene.d->onDesktop, true);
+    EXPECT_EQ(scene.d->onCollection, true);
+    EXPECT_EQ(reinterpret_cast<qintptr>(scene.d->view), 2);
+    EXPECT_EQ(scene.d->currentDir, dir);
+
+    ASSERT_EQ(scene.d->selectFiles, selectUrls);
+    EXPECT_EQ(scene.d->focusFile, selectUrls.first());
+}
+
 TEST(ExtendCanvasScene, triggered_organizeoptions)
 {
     ExtendCanvasScene scene;

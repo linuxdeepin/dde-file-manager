@@ -84,7 +84,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     }
 
     QVariantHash params;
-    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
+    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl();
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kWindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = true;
@@ -132,7 +132,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
 
     QVariantHash params;
-    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
+    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl();
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kWindowId] = view->winId();

@@ -55,6 +55,7 @@ public:
     void delaySelectUrls(const QList<QUrl> &urls, int ms = 10);
     void doSelectUrls(const QList<QUrl> &urls);
 
+    void filterDesktopFile(QList<QUrl> &urls);
 public:
     FileOperatorProxy *const q;
     QSharedPointer<QTimer> selectTimer;

@@ -81,6 +81,7 @@ public:
     void cutFiles();
     void pasteFiles();
     void undoFiles();
+    void previewFiles();
     bool continuousSelection(QEvent *event, QPersistentModelIndex &newCurrent) const;
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);

@@ -28,6 +28,7 @@
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -160,6 +161,15 @@ void FileOperatorProxyPrivate::doSelectUrls(const QList<QUrl> &urls)
     }
 }
 
+void FileOperatorProxyPrivate::filterDesktopFile(QList<QUrl> &urls)
+{
+    // computer and trash desktop files cannot be copied or cut.
+    // filter the URL of these files copied and cut through shortcut keys here
+    urls.removeAll(DesktopAppUrl::computerDesktopFileUrl());
+    urls.removeAll(DesktopAppUrl::trashDesktopFileUrl());
+    urls.removeAll(DesktopAppUrl::homeDesktopFileUrl());
+}
+
 FileOperatorProxy::FileOperatorProxy(QObject *parent)
     : QObject(parent), d(new FileOperatorProxyPrivate(this))
 {
@@ -195,12 +205,18 @@ void FileOperatorProxy::touchFolder(const CanvasView *view, const QPoint pos)
 
 void FileOperatorProxy::copyFiles(const CanvasView *view)
 {
-    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, view->selectionModel()->selectedUrls());
+    auto urls = view->selectionModel()->selectedUrls();
+    d->filterDesktopFile(urls);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
 
 void FileOperatorProxy::cutFiles(const CanvasView *view)
 {
-    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, view->selectionModel()->selectedUrls());
+    auto urls = view->selectionModel()->selectedUrls();
+    d->filterDesktopFile(urls);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
 }
 
 void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)

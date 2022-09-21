@@ -390,8 +390,8 @@ bool ExtendCanvasScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->onCollection = params.value(CollectionMenuParams::kOnColletion, false).toBool();
     d->view = reinterpret_cast<CollectionView *>(params.value(CollectionMenuParams::kColletionView).toLongLong());
+    d->currentDir = params[MenuParamKey::kCurrentDir].toUrl();
 
-    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
 

@@ -53,6 +53,7 @@ public:
     void callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets, const CollectionView *view);
 
     QList<QUrl> getSelectedUrls(const CollectionView *view) const;
+    static void filterDesktopFile(QList<QUrl> &urls);
 public:
     FileOperator *q = nullptr;
     QPointer<CollectionDataProvider> provider = nullptr;

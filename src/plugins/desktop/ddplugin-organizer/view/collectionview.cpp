@@ -657,6 +657,11 @@ void CollectionViewPrivate::undoFiles()
     FileOperatorIns->undoFiles(q);
 }
 
+void CollectionViewPrivate::previewFiles()
+{
+    FileOperatorIns->previewFiles(q);
+}
+
 bool CollectionViewPrivate::dropFilter(QDropEvent *event)
 {
     //Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
@@ -1745,6 +1750,9 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Enter:
             d->openFiles();
             return;
+        case Qt::Key_Space:
+            if (!event->isAutoRepeat())
+                d->previewFiles();
         case Qt::Key_F5:
             // use canvas refresh
             return QAbstractItemView::keyPressEvent(event);

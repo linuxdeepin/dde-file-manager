@@ -261,18 +261,16 @@ void ShortcutOper::swichHidden()
 
 void ShortcutOper::previewFiles()
 {
-    QList<QUrl> urls = view->selectionModel()->selectedUrls();
+    const QList<QUrl> urls = view->selectionModel()->selectedUrls();
     if (urls.isEmpty())
         return;
 
     QList<QUrl> selectUrls;
-    for (QUrl &url : urls) {
-        selectUrls.append(UrlRoute::fromLocalFile(url.path()));
-    }
-    urls = view->selectionModel()->selectedUrls();
     QList<QUrl> currentDirUrls;
-    for (QUrl &url : urls) {
+    for (const QUrl &url : urls) {
+        selectUrls.append(UrlRoute::fromLocalFile(url.path()));
         currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
     }
+
     dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }

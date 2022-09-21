@@ -25,6 +25,7 @@
 #include "delegate/collectionitemdelegate.h"
 #include "interface/canvasmanagershell.h"
 #include "mode/normalized/type/typeclassifier.h"
+#include "models/fileproxymodel_p.h"
 
 #include "stubext.h"
 
@@ -32,6 +33,8 @@
 #include <DApplication>
 
 #include <QMenu>
+#include <QItemSelection>
+#include <QItemSelectionRange>
 
 using namespace testing;
 using namespace ddplugin_organizer;
@@ -154,24 +157,24 @@ TEST_F(CollectionViewTest, scrollContentsBy)
     EXPECT_EQ(dy, 100);
 }
 
+class TestProvider : public CollectionDataProvider
+{
+public:
+    TestProvider() : CollectionDataProvider(nullptr)
+    {
+
+    }
+protected:
+    QString replace(const QUrl &oldUrl, const QUrl &newUrl) {return "";}
+    QString append(const QUrl &) {return "";}
+    QString prepend(const QUrl &){return "";}
+    void insert(const QUrl &, const QString &, const int) {}
+    QString remove(const QUrl &) {return "";}
+    QString change(const QUrl &) {return "";}
+};
+
 TEST_F(CollectionViewTest, sort)
 {
-    class TestProvider : public CollectionDataProvider
-    {
-    public:
-        TestProvider() : CollectionDataProvider(nullptr)
-        {
-
-        }
-    protected:
-        QString replace(const QUrl &oldUrl, const QUrl &newUrl) {return "";}
-        QString append(const QUrl &) {return "";}
-        QString prepend(const QUrl &){return "";}
-        void insert(const QUrl &, const QString &, const int) {}
-        QString remove(const QUrl &) {return "";}
-        QString change(const QUrl &) {return "";}
-    };
-
     TestProvider test;
     CollectionView view("dd", &test);
     bool callLess = false;
@@ -194,4 +197,79 @@ TEST_F(CollectionViewTest, sort)
     view.sort(DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileDisplayNameRole);
     EXPECT_EQ(view.d->sortRole, (int)DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileDisplayNameRole);
     EXPECT_EQ(view.d->sortOrder, Qt::AscendingOrder);
+}
+
+TEST_F(CollectionViewTest, updateSelection)
+{
+    TestProvider test;
+    QUrl url1("file:///usr");
+    QUrl url2("file:///etc");
+
+    stub.set_lamda(VADDR(TestProvider, items), [url1,url2]() {
+        return QList<QUrl>{url2};
+    });
+
+    CollectionView view("dd", &test);
+    FileProxyModel model;
+    model.d->fileList = {url1, url2};
+    model.d->fileMap.insert(url1, nullptr);
+    model.d->fileMap.insert(url2, nullptr);
+
+    QModelIndex idx1(0, 0, (void *)nullptr, &model);
+    QModelIndex idx2(1, 0, (void *)nullptr, &model);
+
+    stub.set_lamda(VADDR(QAbstractProxyModel,flags), [](){
+        return Qt::ItemFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    });
+
+    view.setModel(&model);
+    {
+        QItemSelection sel;
+        sel << QItemSelectionRange(idx1);
+        sel << QItemSelectionRange(idx2);
+
+        view.selectionModel()->select(sel, QItemSelectionModel::ClearAndSelect);
+        auto idxs = view.selectedIndexes();
+        ASSERT_EQ(idxs.size(), 2);
+        ASSERT_EQ(idxs.first(), idx1);
+        ASSERT_EQ(idxs.last(), idx2);
+        ASSERT_TRUE(idx1.isValid());
+        ASSERT_TRUE(idx2.isValid());
+
+        // make sure model::index is working.
+        QItemSelection s1;
+        s1 << QItemSelectionRange(idx1);
+        QItemSelection newSelection = s1;
+        newSelection.merge(s1, QItemSelectionModel::Deselect);
+        ASSERT_EQ(newSelection.size(), 0);
+    }
+
+    view.d->updateSelection();
+
+    auto idxs = view.selectedIndexes();
+    ASSERT_EQ(idxs.size(), 1);
+    ASSERT_EQ(idxs.first(), idx2);
+}
+
+TEST_F(CollectionViewTest, keyPressEvent_space)
+{
+    TestProvider test;
+    CollectionView view("dd", &test);
+    bool preview = false;
+    stub.set_lamda(&CollectionViewPrivate::previewFiles, [&preview](){
+        preview = true;;
+    });
+
+    {
+        QKeyEvent key(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier,"", true);
+        view.keyPressEvent(&key);
+        EXPECT_FALSE(preview);
+    }
+
+    {
+        preview = false;
+        QKeyEvent key(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier,"", false);
+        view.keyPressEvent(&key);
+        EXPECT_TRUE(preview);
+    }
 }

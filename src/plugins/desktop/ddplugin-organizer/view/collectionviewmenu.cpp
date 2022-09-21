@@ -66,7 +66,7 @@ bool CollectionViewMenu::disableMenu()
 void CollectionViewMenu::emptyAreaMenu()
 {
     QVariantHash params;
-    params[MenuParamKey::kCurrentDir] = view->model()->fileUrl(view->model()->rootIndex()).toString();
+    params[MenuParamKey::kCurrentDir] = view->model()->fileUrl(view->model()->rootIndex());
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kWindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = true;
@@ -120,7 +120,7 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
 
     QVariantHash params;
-    params[MenuParamKey::kCurrentDir] = view->model()->fileUrl(view->model()->rootIndex()).toString();
+    params[MenuParamKey::kCurrentDir] = view->model()->fileUrl(view->model()->rootIndex());
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kWindowId] = view->winId();

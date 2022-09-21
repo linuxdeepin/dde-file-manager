@@ -50,6 +50,7 @@ protected:
     void resetToView();
     void resetToIcon();
     int iconLevel();
+    static QStringList ticks(int count);
 private:
     DTK_WIDGET_NAMESPACE::DSlider *slider = nullptr;
     QLabel *label = nullptr;

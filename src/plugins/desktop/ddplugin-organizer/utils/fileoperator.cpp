@@ -25,6 +25,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QUrl>
 #include <QVariant>
@@ -102,6 +103,15 @@ QList<QUrl> FileOperatorPrivate::getSelectedUrls(const CollectionView *view) con
     return urls;
 }
 
+void FileOperatorPrivate::filterDesktopFile(QList<QUrl> &urls)
+{
+    // computer and trash desktop files cannot be copied or cut.
+    // filter the URL of these files copied and cut through shortcut keys here
+    urls.removeAll(DesktopAppUrl::computerDesktopFileUrl());
+    urls.removeAll(DesktopAppUrl::trashDesktopFileUrl());
+    urls.removeAll(DesktopAppUrl::homeDesktopFileUrl());
+}
+
 FileOperator::FileOperator(QObject *parent)
     : QObject(parent)
     , d(new FileOperatorPrivate(this))
@@ -130,6 +140,7 @@ void FileOperator::copyFiles(const CollectionView *view)
     if (urls.isEmpty())
         return;
 
+    d->filterDesktopFile(urls);
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
 
@@ -139,6 +150,7 @@ void FileOperator::cutFiles(const CollectionView *view)
     if (urls.isEmpty())
         return;
 
+    d->filterDesktopFile(urls);
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
 }
 
@@ -234,6 +246,28 @@ void FileOperator::undoFiles(const CollectionView *view)
 {
     dpfSignalDispatcher->publish(GlobalEventType::kRevocation,
                                  view->winId(), nullptr);
+}
+
+void FileOperator::previewFiles(const CollectionView *view)
+{
+    QList<QUrl> urls;
+    auto m = view->model();
+    Q_ASSERT(m);
+
+    for (auto idx :view->selectionModel()->selectedIndexes())
+        urls <<  m->fileUrl(idx);
+
+    if (urls.isEmpty())
+        return;
+
+    QList<QUrl> selectUrls;
+    QList<QUrl> currentDirUrls;
+    for (const QUrl &url : urls) {
+        selectUrls.append(UrlRoute::fromLocalFile(url.path()));
+        currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
+    }
+
+    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }
 
 void FileOperator::dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index)
