@@ -224,7 +224,7 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     if (urlFrom.scheme() == Global::Scheme::kTrash && urlToTemp.scheme() == Global::Scheme::kTrash) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (urlToTemp.scheme() == Global::Scheme::kTrash && urlToTemp != TrashHelper::rootUrl()) {
+    } else if (urlToTemp.scheme() == Global::Scheme::kTrash && !UniversalUtils::urlEquals(urlToTemp, TrashHelper::rootUrl())) {
         *action = Qt::IgnoreAction;
         return true;
     } else if (urlFrom.scheme() == Global::Scheme::kTrash || urlToTemp.scheme() == Global::Scheme::kTrash) {
