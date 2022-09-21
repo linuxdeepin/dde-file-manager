@@ -221,7 +221,7 @@ void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
 bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (index.isValid()) {
-        if (event->type() == QEvent::MouseButtonPress) {
+        if (event->type() == QEvent::MouseButtonRelease) {
             QMouseEvent *e = static_cast<QMouseEvent *>(event);
             if (e->button() == Qt::LeftButton) {
                 QStandardItem *item = qobject_cast<const SideBarModel *>(model)->itemFromIndex(index);
@@ -238,7 +238,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                 if (separatorItem && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
                     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
                     if (sidebarView)
-                        emit changeExpandState(index, !sidebarView->isExpanded(index));
+                        Q_EMIT changeExpandState(index, !sidebarView->isExpanded(index));
 
                     event->accept();
                     return true;
