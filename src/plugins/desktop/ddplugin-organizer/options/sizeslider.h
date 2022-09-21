@@ -32,6 +32,8 @@ namespace ddplugin_organizer {
 
 class SizeSlider : public ContentBackgroundWidget
 {
+    Q_OBJECT
+
 public:
     enum Mode {View, Icon };
 public:

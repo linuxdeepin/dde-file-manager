@@ -375,7 +375,7 @@
         <translation>根目录的协议映射不存在。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="324"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="245"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
@@ -383,7 +383,7 @@
         <translation>自动挂载</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="350"/>
+        <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="271"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
@@ -504,12 +504,12 @@
         <translation>位</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="362"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="493"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="505"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="31"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="84"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="177"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="401"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="146"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="405"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="79"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="85"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="96"/>
@@ -518,12 +518,12 @@
         <translation>在新窗口打开</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="365"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="496"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="509"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="35"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="88"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="181"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="405"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="150"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="409"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="83"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="88"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="99"/>
@@ -531,21 +531,21 @@
         <translation>在新标签中打开</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="372"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="503"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="518"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="47"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="377"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="508"/>
         <source>Remove bookmark</source>
         <translation>移除书签</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="382"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="513"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="59"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="188"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="157"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="99"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="262"/>
         <source>Properties</source>
@@ -590,7 +590,7 @@
         <translation>弹出</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="162"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="179"/>
         <source>Add to disc</source>
         <translation>添加至光盘刻录</translation>
     </message>
@@ -940,7 +940,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="163"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="180"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="39"/>
         <source>Mount</source>
         <translation>挂载</translation>
@@ -1088,7 +1088,7 @@
         <translation>新建文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="284"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="136"/>
         <source>Create symlink</source>
         <translation>创建链接</translation>
     </message>
@@ -1376,32 +1376,32 @@
         <translation>正在搜索...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="81"/>
         <source>New window</source>
         <translation>新建窗口</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="87"/>
         <source>Connect to Server</source>
         <translation>连接到服务器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="91"/>
         <source>Set share password</source>
         <translation>设置共享密码</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="95"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="397"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="400"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="412"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="417"/>
         <source>Edit address</source>
         <translation>编辑地址</translation>
     </message>
@@ -1642,82 +1642,82 @@
 <context>
     <name>ddplugin_canvas::CanvasMenuScene</name>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="116"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="117"/>
         <source>Sort by</source>
         <translation>排序方式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="117"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="118"/>
         <source>Icon size</source>
         <translation>图标大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="118"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
         <source>Auto arrange</source>
         <translation>自动排列</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="120"/>
         <source>Display Settings</source>
         <translation>显示设置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="120"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
         <source>Refresh</source>
         <translation>刷新</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="123"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="124"/>
         <source>Wallpaper and Screensaver</source>
         <translation>壁纸与屏保</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="125"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="126"/>
         <source>Set Wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="128"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="129"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="129"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="130"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="130"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="131"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="131"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="132"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="134"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
         <source>Tiny</source>
         <translation type="unfinished">极小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="135"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="136"/>
         <source>Small</source>
         <translation type="unfinished">小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="136"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="137"/>
         <source>Medium</source>
         <translation type="unfinished">中</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="137"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <source>Large</source>
         <translation type="unfinished">大</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
+        <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="139"/>
         <source>Super large</source>
         <translation type="unfinished">极大</translation>
     </message>
@@ -1896,67 +1896,67 @@
 <context>
     <name>ddplugin_organizer::ExtendCanvasScene</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="353"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="358"/>
         <source>Organize desktop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="354"/>
-        <source>Organize options</source>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="359"/>
+        <source>Desktop options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="355"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="360"/>
         <source>Organize by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="358"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="363"/>
         <source>Custom collection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="359"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="364"/>
         <source>Type</source>
         <translation type="unfinished">类型</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="360"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="365"/>
         <source>Time accessed</source>
         <translation type="unfinished">访问时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="361"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="366"/>
         <source>Time modified</source>
         <translation type="unfinished">修改时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="362"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="367"/>
         <source>Time created</source>
         <translation type="unfinished">创建时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="364"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="369"/>
         <source>Create a collection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="368"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="373"/>
         <source>Display Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="369"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="374"/>
         <source>Smaller</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="370"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="375"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="371"/>
+        <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="376"/>
         <source>Larger</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3322,44 +3322,44 @@
 <context>
     <name>dfmplugin_bookmark::BookMarkManager</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="259"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="367"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>抱歉， 找不到您的书签目录， 是否移除？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="262"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="370"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="263"/>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="371"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>移 除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="457"/>
-        <source>Remove bookmark</source>
-        <translation>移除书签</translation>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="599"/>
+        <source>Remove from quick access</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="459"/>
-        <source>Add to bookmark</source>
-        <translation>添加书签</translation>
+        <location filename="../src/plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="601"/>
+        <source>Pin to quick access</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_bookmark::BookmarkMenuScene</name>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="70"/>
-        <source>Add to bookmark</source>
-        <translation>添加书签</translation>
+        <source>Pin to quick access</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="71"/>
-        <source>Remove bookmark</source>
-        <translation>移除书签</translation>
+        <source>Remove from quick access</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3840,14 +3840,6 @@
     </message>
 </context>
 <context>
-    <name>dfmplugin_menu::BaseSortMenuScene</name>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/basesortmenuscene.cpp" line="308"/>
-        <source>Send to</source>
-        <translation type="unfinished">发送到</translation>
-    </message>
-</context>
-<context>
     <name>dfmplugin_menu::ClipBoardMenuScenePrivate</name>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="49"/>
@@ -3884,16 +3876,11 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="56"/>
-        <source>Create link</source>
-        <translation>创建链接</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="57"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="58"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="57"/>
         <source>Set as wallpaper</source>
         <translation>设置壁纸</translation>
     </message>
@@ -3973,21 +3960,34 @@
     </message>
 </context>
 <context>
+    <name>dfmplugin_menu::SendToMenuScenePrivate</name>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="182"/>
+        <source>Send to</source>
+        <translation type="unfinished">发送到</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="183"/>
+        <source>Create link</source>
+        <translation type="unfinished">创建链接</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="184"/>
+        <source>Send to desktop</source>
+        <translation type="unfinished">发送到桌面</translation>
+    </message>
+</context>
+<context>
     <name>dfmplugin_menu::ShareMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="188"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="182"/>
         <source>Share</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="189"/>
+        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="183"/>
         <source>Bluetooth</source>
         <translation type="unfinished">蓝牙</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="190"/>
-        <source>Send to desktop</source>
-        <translation type="unfinished">发送到桌面</translation>
     </message>
 </context>
 <context>
@@ -4277,8 +4277,9 @@
 <context>
     <name>dfmplugin_recent::Recent</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="54"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="120"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="162"/>
         <source>Recent</source>
         <translation>最近使用</translation>
     </message>
@@ -4670,8 +4671,8 @@
 <context>
     <name>dfmplugin_trash::Trash</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="118"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="122"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
@@ -5574,42 +5575,42 @@
 <context>
     <name>filedialog_core::FileDialogStatusBar</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="52"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="54"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>保 存</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="52"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="54"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>打 开</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="59"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="61"/>
         <source>Save File</source>
         <comment>button</comment>
         <translation>保存文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="59"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="61"/>
         <source>Open File</source>
         <comment>button</comment>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="199"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="212"/>
         <source>File Name</source>
         <translation>文件名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="200"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="213"/>
         <source>Format</source>
         <translation>格式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="215"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="217"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="228"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="230"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>

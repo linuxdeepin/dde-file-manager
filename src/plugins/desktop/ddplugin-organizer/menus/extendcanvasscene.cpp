@@ -356,7 +356,7 @@ ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
     , d(new ExtendCanvasScenePrivate(this))
 {
     d->predicateName[ActionID::kOrganizeDesktop] = tr("Organize desktop");
-    d->predicateName[ActionID::kOrganizeOptions] = tr("Organize options");
+    d->predicateName[ActionID::kOrganizeOptions] = tr("Desktop options");
     d->predicateName[ActionID::kOrganizeBy] = tr("Organize by");
 
     // organize by subactions

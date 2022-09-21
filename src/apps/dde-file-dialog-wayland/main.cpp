@@ -155,20 +155,20 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
     a.setProperty("GTK", true);
 
-    DPF_NAMESPACE::backtrace::initbacktrace();
-    initLog();
-
-    if (!pluginsLoad()) {
-        qCritical() << "Load pugin failed!";
-        abort();
-    }
-
     {
         // load translation
         auto appName = a.applicationName();
         a.setApplicationName("dde-file-manager");
         a.loadTranslator();
         a.setApplicationName(appName);
+    }
+
+    DPF_NAMESPACE::backtrace::initbacktrace();
+    initLog();
+
+    if (!pluginsLoad()) {
+        qCritical() << "Load pugin failed!";
+        abort();
     }
 
     int ret { a.exec() };

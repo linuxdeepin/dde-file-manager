@@ -136,6 +136,13 @@ int main(int argc, char *argv[])
     a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
     a.setApplicationVersion(BUILD_VERSION);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    {
+        // load translation
+        QString appName = a.applicationName();
+        a.setApplicationName("dde-file-manager");
+        a.loadTranslator();
+        a.setApplicationName(appName);
+    }
 
     DPF_NAMESPACE::backtrace::initbacktrace();
     initLog();
@@ -162,14 +169,6 @@ int main(int argc, char *argv[])
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";
         abort();
-    }
-
-    {
-        // load translation
-        QString appName = a.applicationName();
-        a.setApplicationName("dde-file-manager");
-        a.loadTranslator();
-        a.setApplicationName(appName);
     }
 
     int ret { a.exec() };
