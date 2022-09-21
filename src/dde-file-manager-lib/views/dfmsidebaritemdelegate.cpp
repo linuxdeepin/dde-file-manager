@@ -113,7 +113,7 @@ void DFMSideBarItemDelegate::paintSeparator(QPainter *painter, const QStyleOptio
     painter->save();
 
     int yPoint = option.rect.top() + option.rect.height() / 2;
-    qDrawShadeLine(painter, 0, yPoint, option.rect.width(), yPoint, option.palette);
+    qDrawShadeLine(painter, 0, yPoint + 1, option.rect.width(), yPoint + 1, option.palette);
 
     painter->restore();
 }
