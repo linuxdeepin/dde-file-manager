@@ -17,10 +17,16 @@
 #include "interfaces/dfmglobal.h"
 #include "app/define.h"
 #include "dfmapplication.h"
+#include "dfmsettings.h"
 
 #include "shutil/fileutils.h"
 
 DFM_USE_NAMESPACE
+
+#define REMOTE_MOUNTS     "RemoteMounts" //缓存的smb常驻项数据
+#define STASHED_SMB_DEVICES     "StashedSmbDevices" //smb聚合项组
+#define SMB_INTEGRATIONS     "SmbIntegrations" //smb聚合项数据列表
+
 QString getThumbnailsPath(){
     QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).at(0);
     QString thumbnailPath = joinPath(cachePath, "thumbnails");
@@ -286,8 +292,7 @@ void clearStageDir(const QString &stagingRoot)
 
 void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QString &displayName)
 {
-    DFMApplication::syncGenericAttribute();
-
+    Q_UNUSED(displayName)
     if (!DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
         return;
     QString key {mpt}, protocol, host, share, sharePath;
@@ -309,55 +314,18 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
     }
 
     // stash to local config file
-    QFile configFile(CONFIG_PATH);
-    if (!configFile.open(QIODevice::ReadOnly))
-        return;
-
-    QJsonParseError err;
-    QJsonDocument config = QJsonDocument::fromJson(configFile.readAll(), &err);
-    if (err.error != QJsonParseError::NoError) {
-        qWarning() << "config file is not valid json file: " << err.errorString();
-        configFile.close();
-        return;
-    }
-    configFile.close();
-
-    QJsonObject newMount;
-    QJsonObject obj = config.object();
-    QJsonObject remoteMountsObj;
-    ///添加到SMB聚合列表字段，无论是否配置SMB常驻，侧边栏和计算机界面的smb聚合项都以此为数据源做界面显示 - start
-    bool newSmbDeviceInserted = false;
-    if(protocol == SMB_SCHEME && !host.isEmpty()){//本次缓存的是smb挂载
+    if(protocol == SMB_SCHEME && !host.isEmpty()){
         QString newSmbDevice = QString("%1://%2").arg(protocol).arg(host);
-        if(obj.contains("StashedSmbDevices")){
-            QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
-            if(stashedSmbDevices.isObject()){
-                QJsonObject temObj = stashedSmbDevices.toObject();
-                QJsonArray stashSbDeviceArray = temObj.value("SmbIntegrations").toArray();
-                if(!stashSbDeviceArray.contains(QJsonValue(newSmbDevice))){
-                    stashSbDeviceArray << QJsonValue(newSmbDevice);
-                    temObj.insert("SmbIntegrations",stashSbDeviceArray);
-                    obj.insert("StashedSmbDevices",temObj);
-                    newSmbDeviceInserted = true;
-                }
-            }
-        }else{
-            QJsonArray stashSbDeviceArray;
-            stashSbDeviceArray << QJsonValue(newSmbDevice);
-            QJsonObject temObj;
-            temObj.insert("SmbIntegrations",stashSbDeviceArray);
-            obj.insert("StashedSmbDevices",temObj);
-            newSmbDeviceInserted = true;
+        QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(STASHED_SMB_DEVICES, SMB_INTEGRATIONS).toList();
+        if(!stashedSmbDevices.contains(QVariant::fromValue(newSmbDevice))) {
+            stashedSmbDevices.append(newSmbDevice);
+            DFMApplication::genericSetting()->setValue(STASHED_SMB_DEVICES,SMB_INTEGRATIONS, stashedSmbDevices);
         }
     }
-    if(!newSmbDeviceInserted){
-        return ;
-    }
-    ///添加到SMB聚合列表字段... - end
 
-    /* 实现smb挂载侧边栏聚合后，这里不再读取RemoteMounts字段及插入常驻挂载（请保留此部分注释）
-    if (obj.contains("RemoteMounts")) {
-        QJsonValue remoteMounts = obj.value("RemoteMounts");
+    /* 实现smb挂载侧边栏聚合后，这里不再读取RemoteMounts字段及插入常驻挂载（请保留此部分注释，未来做聚合和非聚合之间的切换时作参考）
+    if (obj.contains(REMOTE_MOUNTS)) {
+        QJsonValue remoteMounts = obj.value(REMOTE_MOUNTS);
         if (remoteMounts.isObject()) {
             remoteMountsObj = remoteMounts.toObject();
             if (remoteMountsObj.keys().contains(key)) {
@@ -371,15 +339,8 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
     newMount.insert(REMOTE_PROTOCOL, protocol);
     newMount.insert(REMOTE_DISPLAYNAME, displayName);
     remoteMountsObj.insert(key, newMount);//smb挂载聚合后，无需写.remote缓存路径
-    obj.insert("RemoteMounts", remoteMountsObj);
+    obj.insert(REMOTE_MOUNTS, remoteMountsObj);
     */
-
-    config.setObject(obj);
-    configFile.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    configFile.write(config.toJson());
-    configFile.close();
-
-    qInfo() << "remote mounts: " << mpt << "is stashed.";
 }
 
 QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
@@ -402,7 +363,7 @@ QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
     }
 
     QJsonObject obj = config.object();
-    QJsonValue remoteMounts = obj.value("RemoteMounts");
+    QJsonValue remoteMounts = obj.value(REMOTE_MOUNTS);
     if (remoteMounts.isObject()) {
         QJsonObject mountsObj = remoteMounts.toObject();
         const QStringList &itemKeys = mountsObj.keys();
@@ -424,74 +385,26 @@ QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
     }
     return ret;
 }
-
+/**
+ * @brief RemoteMountsStashManager::removeRemoteMountItem
+ * 将缓存的smb常驻地址从配置文件的`RemoteMounts`字段中移除
+ * @param key
+ */
 void RemoteMountsStashManager::removeRemoteMountItem(const QString &key)
 {
-    DFMApplication::syncGenericAttribute();
-
-    QFile configFile(CONFIG_PATH);
-    if (!configFile.open(QIODevice::ReadOnly)) {
-        return;
-    }
-
-    QByteArray data = configFile.readAll();
-    configFile.close();
-
-    QJsonParseError err;
-    QJsonDocument config = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError) {
-        qWarning() << "config file is not valid json file: " << err.errorString();
-        return;
-    }
-
-    QJsonObject obj = config.object();
-    QJsonValue remoteMounts = obj.value("RemoteMounts");
-    if (remoteMounts.isObject()) {
-        QJsonObject mountsObj = remoteMounts.toObject();
-        if (!mountsObj.contains(key)) {
-            return;
-        }
-        mountsObj.remove(key);
-        obj.insert("RemoteMounts", mountsObj);
-        config.setObject(obj);
-        configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
-        configFile.write(config.toJson());
-        configFile.close();
-
-        qInfo() << "remote mount: " << key << "is unstashed.";
+    QSet<QString> set = DFMApplication::genericSetting()->keys(REMOTE_MOUNTS);
+    if(set.contains(key)) {
+       DFMApplication::genericSetting()->remove(REMOTE_MOUNTS,key);
+       qInfo()<<"Stashed smb url : "<<key<<" removed from RemoteMounts";
     }
 }
 
 void RemoteMountsStashManager::clearRemoteMounts()
 {
-    //考虑到smb聚合功能实现之后的兼容性，调用此函数移除配置中的RemoteMounts之后，将不会再添加它；
-    //smb聚合项的缓存到配置文件的新字段StashedSmbDevices中。
-    QFile configFile(CONFIG_PATH);
-    if (!configFile.open(QIODevice::ReadOnly)) {
-        return;
-    }
+    //1.当用户手动从设置菜单中取消勾选`sambar共享端常驻显示挂载入口`复选框时,会调用此函数将配置文件中`RemoteMounts`字段缓存的常驻入口清空；
+    //2.实现smb聚合功能后，新增`StashedSmbDevices`字段记录聚合的ip地址；
 
-    QByteArray data = configFile.readAll();
-    configFile.close();
-
-    QJsonParseError err;
-    QJsonDocument config = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError) {
-        qWarning() << "config file is not valid json file: " << err.errorString();
-        return;
-    }
-
-    QJsonObject obj = config.object();
-    if (!obj.contains("RemoteMounts"))
-        return;
-    obj.remove("RemoteMounts");
-
-    config.setObject(obj);
-    configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
-    configFile.write(config.toJson());
-    configFile.close();
-
-    qInfo() << "stashed remote mounts are cleared";
+    DFMApplication::genericSetting()->removeGroup(REMOTE_MOUNTS);
 }
 
 void RemoteMountsStashManager::stashCurrentMounts()
@@ -552,152 +465,63 @@ QString RemoteMountsStashManager::normalizeConnUrl(const QString &url)
  */
 QStringList RemoteMountsStashManager::stashedSmbDevices()
 {
-    DFMApplication::syncGenericAttribute();
+    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(STASHED_SMB_DEVICES, SMB_INTEGRATIONS).toList();
 
-    QFile configFile(CONFIG_PATH);
-    if (!configFile.open(QIODevice::ReadOnly))
-        return QStringList();
+    QStringList smbHostList;
+    foreach (const QVariant& var, stashedSmbDevices)
+        smbHostList << var.toString();
 
-    QJsonParseError err;
-    QJsonDocument config = QJsonDocument::fromJson(configFile.readAll(), &err);
-    if (err.error != QJsonParseError::NoError) {
-        qWarning() << "config file is not valid json file: " << err.errorString();
-        configFile.close();
-        return QStringList();
-    }
-    configFile.close();
+    ///为了和SMB挂载项聚合功能实现前的配置兼容，这里也要读出原有缓存的smb常驻信息并提取smb://x.x.x.x在此函数中一起返回
+    QSet<QString> keys = DFMApplication::genericSetting()->keys(REMOTE_MOUNTS);
+    foreach (const QString &key, keys) {
+        QVariantMap stashedSmbData = DFMApplication::genericSetting()->value(REMOTE_MOUNTS, key).toMap();
+        QString protocol = stashedSmbData.value("protocol").toString();
+        if(protocol == SMB_SCHEME) {
+            QString server = QString("%1://%2").arg(protocol).arg(stashedSmbData.value("host").toString());
+            smbHostList << server;
 
-    QJsonObject obj = config.object();
-    QStringList smbDevices;
-    if(obj.contains("StashedSmbDevices")){
-        QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
-        if(stashedSmbDevices.isObject()){
-            QJsonObject temObj = stashedSmbDevices.toObject();
-            QJsonArray jsonArray = temObj.value("SmbIntegrations").toArray();
-            foreach (QJsonValue va, jsonArray) {
-                QString tem = va.toString();
-                if(!tem.isEmpty())
-                    smbDevices << tem;
+            if (!smbHostList.contains(server)) {
+                smbHostList.append(server);//用户升级到smb聚合版本后，smbHostList为空，将REMOTE_MOUNTS中的ip添加到STASHED_SMB_DEVICES中
             }
         }
     }
-    ///为了和SMB挂载项聚合功能实现前的配置兼容，这里读出原有缓存的smb挂载信息并提取smb://x.x.x.x保存到
-    ///StashedSmbDevices字段中
-    if(obj.contains("RemoteMounts")){
-        QJsonValue remoteMounts = obj.value("RemoteMounts");
-        if (remoteMounts.isObject()) {
-            QJsonObject mountsObj = remoteMounts.toObject();
-            const QStringList &itemKeys = mountsObj.keys();
-            for (const auto &itemKey: itemKeys) {
-                QJsonValue mountItem = mountsObj.value(itemKey);
-                if (!mountItem.isObject())
-                    continue;
-                QJsonObject mountObj = mountItem.toObject();
-                if(mountObj.value("protocol").toString() == SMB_SCHEME){
-                    smbDevices << QString("%1://%2").arg(SMB_SCHEME).arg(mountObj.value("host").toString());
-                }
-            }
-            config.setObject(obj);
-            configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
-            configFile.write(config.toJson());
-            configFile.close();
-        }
-    }
-    smbDevices.removeDuplicates();
-    return smbDevices;
+
+    smbHostList.removeDuplicates();
+
+    DFMApplication::genericSetting()->setValue(STASHED_SMB_DEVICES,SMB_INTEGRATIONS, QVariant::fromValue<QStringList>(smbHostList));
+
+    qDebug()<<"smbHostList = "<<smbHostList;
+    return smbHostList;
 }
 
+/**
+ * @brief RemoteMountsStashManager::removeStashedSmbDevice
+ * 从配置中移除smb聚合ip
+ * @param url
+ */
 void RemoteMountsStashManager::removeStashedSmbDevice(const QString &url)
 {
-    DFMApplication::syncGenericAttribute();
-
-    QFile configFile(CONFIG_PATH);
-    if (!configFile.open(QIODevice::ReadOnly)) {
+    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(STASHED_SMB_DEVICES, SMB_INTEGRATIONS).toList();
+    if (stashedSmbDevices.isEmpty() || !stashedSmbDevices.contains(QVariant::fromValue(url)))
         return;
+
+    if (stashedSmbDevices.contains(QVariant::fromValue(url))) {
+        stashedSmbDevices.removeOne(QVariant::fromValue(url));
+        DFMApplication::genericSetting()->setValue(STASHED_SMB_DEVICES,SMB_INTEGRATIONS, stashedSmbDevices);
     }
-
-    QByteArray data = configFile.readAll();
-    configFile.close();
-
-    QJsonParseError err;
-    QJsonDocument config = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError) {
-        qWarning() << "config file is not valid json file: " << err.errorString();
-        return;
-    }
-
-    QJsonObject obj = config.object();
-        if(obj.contains("StashedSmbDevices")){
-            QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
-            if(stashedSmbDevices.isObject()){
-                QJsonObject temObj = stashedSmbDevices.toObject();
-                QJsonArray jsonArray = temObj.value("SmbIntegrations").toArray();
-                int count = jsonArray.count();
-                for(int i = 0;i<count;i++){
-                    QString tem = jsonArray.at(i).toString();
-                    if(tem == url){
-                       jsonArray.removeAt(i);
-                       break;
-                    }
-                }
-                if(jsonArray.count() >0 ){
-                    temObj.insert("SmbIntegrations",jsonArray);
-                    obj.insert("StashedSmbDevices", temObj);
-                }
-                else
-                    obj.remove("StashedSmbDevices");
-            }
-        }
-        config.setObject(obj);
-        configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
-        configFile.write(config.toJson());
-        configFile.close();
-
-        qInfo() << " smb merged remote mount: " << url << "is unstashed.";
-
 }
 
+/**
+ * @brief RemoteMountsStashManager::insertStashedSmbDevice
+ * 添加smb聚合ip到配置文件
+ * @param url
+ */
 void RemoteMountsStashManager::insertStashedSmbDevice(const QString &url)
 {
-    DFMApplication::syncGenericAttribute();
-
-    QMutex mutex;
-    QMutexLocker locker(&mutex);
-    QFile configFile(CONFIG_PATH);
-    if (!configFile.open(QIODevice::ReadOnly)) {
+    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(STASHED_SMB_DEVICES, SMB_INTEGRATIONS).toList();
+    if (stashedSmbDevices.contains(QVariant::fromValue(url)))
         return;
-    }
 
-    QByteArray data = configFile.readAll();
-    configFile.close();
-
-    QJsonParseError err;
-    QJsonDocument config = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError) {
-        qWarning() << "config file is not valid json file: " << err.errorString();
-        return;
-    }
-    QJsonObject obj = config.object();
-    if(obj.contains("StashedSmbDevices")){
-        QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
-        if(stashedSmbDevices.isObject()){
-            QJsonObject temObj = stashedSmbDevices.toObject();
-            QJsonArray stashSbDeviceArray = temObj.value("SmbIntegrations").toArray();
-            if(!stashSbDeviceArray.contains(QJsonValue(url))){
-                stashSbDeviceArray << QJsonValue(url);
-                temObj.insert("SmbIntegrations",stashSbDeviceArray);
-                obj.insert("StashedSmbDevices",temObj);
-            }
-        }
-    }else{
-        QJsonArray stashSbDeviceArray;
-        stashSbDeviceArray << QJsonValue(url);
-        QJsonObject temObj;
-        temObj.insert("SmbIntegrations",stashSbDeviceArray);
-        obj.insert("StashedSmbDevices",temObj);
-    }
-    config.setObject(obj);
-    configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
-    configFile.write(config.toJson());
-    configFile.close();
+    stashedSmbDevices.append(url);
+    DFMApplication::genericSetting()->setValue(STASHED_SMB_DEVICES,SMB_INTEGRATIONS, stashedSmbDevices);
 }
