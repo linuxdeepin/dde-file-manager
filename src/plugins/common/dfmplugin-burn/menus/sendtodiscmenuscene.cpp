@@ -204,6 +204,9 @@ bool SendToDiscMenuScene::create(QMenu *parent)
     if (!parent)
         return false;
 
+    if(d->isDDEDesktopFileIncluded)
+        return AbstractMenuScene::create(parent);
+
     // stage file to disc
     if (!d->destDeviceDataGroup.isEmpty() || d->disableStage) {
         QAction *act { parent->addAction(d->predicateName[ActionId::kStageKey]) };
