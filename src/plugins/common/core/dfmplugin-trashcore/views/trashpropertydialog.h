@@ -40,6 +40,8 @@ public:
 private:
     void initUI();
 
+    void updateLeftInfo(const int &count);
+
 public slots:
     void slotTrashDirSizeChange(qint64 size, int filesCount, int directoryCount);
 

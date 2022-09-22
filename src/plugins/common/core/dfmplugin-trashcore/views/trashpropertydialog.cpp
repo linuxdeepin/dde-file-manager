@@ -52,26 +52,13 @@ void TrashPropertyDialog::initUI()
 
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 
-    QIcon trashIcon;
-    if (info->countChildFile() > 0) {
-        trashIcon = QIcon::fromTheme("user-trash-full");
-    } else {
-        trashIcon = QIcon::fromTheme("user-trash");
-    }
-
     trashIconLabel = new DLabel(this);
     trashIconLabel->setFixedSize(160, 160);
-    trashIconLabel->setPixmap(trashIcon.pixmap(trashIconLabel->size()));
     trashIconLabel->setAlignment(Qt::AlignCenter);
-
-    const int fCount = info->countChildFile();
-    QString itemStr = tr("item");
-    if (fCount != 1)
-        itemStr = tr("items");
 
     DHorizontalLine *hLine = new DHorizontalLine(this);
     fileCountAndFileSize = new KeyValueLabel(this);
-    fileCountAndFileSize->setLeftValue(QString(tr("Contains %1 %2")).arg(QString::number(fCount), itemStr), Qt::ElideMiddle, Qt::AlignLeft, true);
+    updateLeftInfo(info->countChildFile());
     fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignHCenter);
 
     QFrame *infoFrame = new QFrame;
@@ -96,13 +83,31 @@ void TrashPropertyDialog::initUI()
     addContent(contenFrame);
 
     connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &TrashPropertyDialog::slotTrashDirSizeChange);
+    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kExcludeSourceFile | FileStatisticsJob::FileHint::kSingleDepth);
     fileCalculationUtils->start(QList<QUrl>() << url);
+}
+
+void TrashPropertyDialog::updateLeftInfo(const int &count)
+{
+    QIcon trashIcon;
+    if (count > 0) {
+        trashIcon = QIcon::fromTheme("user-trash-full");
+    } else {
+        trashIcon = QIcon::fromTheme("user-trash");
+    }
+    if(trashIconLabel)
+        trashIconLabel->setPixmap(trashIcon.pixmap(trashIconLabel->size()));
+
+    QString itemStr = tr("item");
+    if (count > 1)
+        itemStr = tr("items");
+    if(fileCountAndFileSize)
+        fileCountAndFileSize->setLeftValue(QString(tr("Contains %1 %2")).arg(QString::number(count), itemStr), Qt::ElideMiddle, Qt::AlignLeft, true);
 }
 
 void TrashPropertyDialog::slotTrashDirSizeChange(qint64 size, int filesCount, int directoryCount)
 {
-    Q_UNUSED(filesCount)
-    Q_UNUSED(directoryCount)
+    updateLeftInfo(filesCount + directoryCount);
     fileCountAndFileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignHCenter);
 }
 
