@@ -60,6 +60,7 @@ private:
 
 private:
     QUrl backerUrl;
+    QString curDevId;
     QVariantMap devInfoMap;
 };
 

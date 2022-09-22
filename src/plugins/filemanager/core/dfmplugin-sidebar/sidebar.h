@@ -65,6 +65,6 @@ private slots:
     void onConfigChanged(const QString &cfg, const QString &key);
 };
 
-}   //namespace dfmplugin_sidebar
+}   // namespace dfmplugin_sidebar
 
 #endif   // SIDEBAR_H

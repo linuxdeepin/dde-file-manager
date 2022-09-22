@@ -36,7 +36,6 @@
 #include <X11/Xlib.h>
 
 using namespace dfmbase;
-ClipBoard *ClipBoard::self { nullptr };
 
 namespace GlobalData {
 static QList<QUrl> clipboardFileUrls;
@@ -55,6 +54,7 @@ void onClipboardDataChanged()
         QMutexLocker lk(&clipboardFileUrlsMutex);
         clipboardFileUrls.clear();
     }
+
     clipbordFileinode.clear();
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
     if (!mimeData || mimeData->formats().isEmpty()) {
@@ -101,7 +101,7 @@ void onClipboardDataChanged()
             clipbordFileinode << statInfo.st_ino;
     }
 }
-}
+}   // namespace GlobalData
 
 ClipBoard::ClipBoard(QObject *parent)
     : QObject(parent)
@@ -112,9 +112,8 @@ ClipBoard::ClipBoard(QObject *parent)
 
 ClipBoard *ClipBoard::instance()
 {
-    if (!self)
-        self = new ClipBoard;
-    return self;
+    static ClipBoard ins;
+    return &ins;
 }
 /*!
  * \brief ClipBoard::setUrlsToClipboard Set URLs to clipboard
@@ -218,7 +217,7 @@ bool ClipBoard::supportCut()
 {
     Q_ASSERT(qApp);
 
-    QByteArray userId = qApp->clipboard()->mimeData()->data(GlobalData::kUserIdKey);
+    const QByteArray &userId = qApp->clipboard()->mimeData()->data(GlobalData::kUserIdKey);
     return !userId.isEmpty() && (userId.toInt() == static_cast<int>(getuid()));
 }
 

@@ -91,8 +91,8 @@ bool MasteredMediaFileInfo::isDir() const
 QString MasteredMediaFileInfo::fileDisplayName() const
 {
     if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
-        QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url())) };
-        QString idLabel { qvariant_cast<QString>(devInfoMap[DeviceProperty::kIdLabel]) };
+        const auto &map { DevProxyMng->queryBlockInfo(curDevId) };
+        QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
         return idLabel;
     }
 
@@ -140,8 +140,8 @@ bool MasteredMediaFileInfo::canDrop()
 {
     if (!OpticalHelper::burnIsOnDisc(backerUrl))
         return true;
-    QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url())) };
-    quint64 avil { qvariant_cast<quint64>(devInfoMap[DeviceProperty::kSizeFree]) };
+    const auto &map { DevProxyMng->queryBlockInfo(curDevId) };
+    quint64 avil { qvariant_cast<quint64>(map[DeviceProperty::kSizeFree]) };
     return avil > 0;
 }
 
@@ -198,8 +198,7 @@ void MasteredMediaFileInfo::backupInfo(const QUrl &url)
     if (OpticalHelper::burnIsOnDisc(url)) {
         QString &&devFile { OpticalHelper::burnDestDevice(url) };
         QString &&mnt { DeviceUtils::getMountInfo(devFile) };
-        QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url)) };
-        devInfoMap = DevProxyMng->queryBlockInfo(id);
+        curDevId = { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url)) };
         if (mnt.isEmpty())
             return;
         backerUrl = QUrl::fromLocalFile(mnt + OpticalHelper::burnFilePath(url));

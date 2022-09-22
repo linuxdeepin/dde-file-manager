@@ -30,6 +30,8 @@ namespace dfmbase {
 class ClipBoard : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(ClipBoard)
+
 public:
     enum ClipboardAction : uint8_t {
         kCutAction,
@@ -40,30 +42,29 @@ public:
     };
 
 public:
-    virtual ~ClipBoard() = default;
     static ClipBoard *instance();
     static QList<QUrl> getRemoteUrls();
-    QList<QUrl> clipboardFileUrlList() const;
-    QList<quint64> clipboardFileInodeList() const;
-    ClipboardAction clipboardAction() const;
+
     static void clearClipboard();
     static void setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::ClipboardAction action, QMimeData *mimeData = nullptr);
     static void setDataToClipboard(QMimeData *mimeData);
-
     static bool supportCut();
+
+    QList<QUrl> clipboardFileUrlList() const;
+    QList<quint64> clipboardFileInodeList() const;
+    ClipboardAction clipboardAction() const;
 
 private:
     explicit ClipBoard(QObject *parent = nullptr);
+    virtual ~ClipBoard() = default;
     static QList<QUrl> getUrlsByX11();
 
 Q_SIGNALS:
     void clipboardDataChanged();
+
 public Q_SLOTS:
     void onClipboardDataChanged();
-
-private:
-    static ClipBoard *self;
 };
-}
+}   // namespace dfmbase
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::ClipBoard::ClipboardAction)
 #endif   // CLIPBOARD_H
