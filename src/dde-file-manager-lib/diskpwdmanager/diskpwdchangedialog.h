@@ -19,7 +19,7 @@ public:
     explicit DiskPwdChangeDialog(QWidget *parent = nullptr);
 
 public slots:
-    void pwdConConfirmed();
+    void pwdConfirmed();
     void pwdChangeFinished(bool success, const QString &msg);
 
 private:

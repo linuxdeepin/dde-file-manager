@@ -43,7 +43,7 @@ void DiskPwdChangeDialog::initUI()
 void DiskPwdChangeDialog::initConnect()
 {
     connect(m_confirmWidget, &PwdConfirmWidget::sigClosed, this, &DiskPwdChangeDialog::close);
-    connect(m_confirmWidget, &PwdConfirmWidget::sigConfirmed, this, &DiskPwdChangeDialog::pwdConConfirmed);
+    connect(m_confirmWidget, &PwdConfirmWidget::sigConfirmed, this, &DiskPwdChangeDialog::pwdConfirmed);
     connect(m_progressWidget, &ProgressWidget::sigChangeFinished, this, &DiskPwdChangeDialog::pwdChangeFinished);
     connect(m_resultWidget, &ChangeResultWidget::sigClosed, this, &DiskPwdChangeDialog::close);
 }
@@ -60,7 +60,7 @@ void DiskPwdChangeDialog::displayNextPage()
     }
 }
 
-void DiskPwdChangeDialog::pwdConConfirmed()
+void DiskPwdChangeDialog::pwdConfirmed()
 {
     DWindowManagerHelper::instance()->setMotifFunctions(windowHandle(), DWindowManagerHelper::FUNC_CLOSE, false);
     m_progressWidget->start();

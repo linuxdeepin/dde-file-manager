@@ -174,9 +174,9 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::Settings;
 
     QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
-        QString cryptInfo = settings.value("DI_CRYPT_INFO").toString();
-        if (!cryptInfo.isEmpty())
-            actionKeys.insert(actionKeys.indexOf(MenuAction::Settings), MenuAction::ChangeDiskPassword);
+    QString cryptInfo = settings.value("DI_CRYPT_INFO").toString();
+    if (!cryptInfo.isEmpty())
+        actionKeys.insert(actionKeys.indexOf(MenuAction::Settings), MenuAction::ChangeDiskPassword);
 
     DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
     menu->setAccessibleInfo(AC_FILE_MENU_TOOLBAR_SEETINGS);
