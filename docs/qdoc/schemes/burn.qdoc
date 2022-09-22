@@ -1,18 +1,6 @@
-/*
- * Copyright (C) 2017 ~ 2019 Deepin Technology Co., Ltd.
- *
- * Author:     Chris Xiong <chirs241097@gmail.com>
- *
- * Maintainer: Chris Xiong <chirs241097@gmail.com>
- *
- * GNU Free Documentation License Usage
- * Alternatively, this file may be used under the terms of the GNU Free
- * Documentation License version 1.3 as published by the Free Software
- * Foundation and appearing in the file included in the packaging of
- * this file. Please review the following information to ensure
- * the GNU Free Documentation License version 1.3 requirements
- * will be met: https://www.gnu.org/licenses/fdl-1.3.html.
- */
+// SPDX-FileCopyrightText: 2017 ~ 2019 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: CC-BY-4.0
 
 /*!
     \page burn-scheme.html
