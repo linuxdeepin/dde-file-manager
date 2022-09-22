@@ -162,10 +162,10 @@ bool TrashMenuScene::triggered(QAction *action)
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
         if (actId == TrashActionId::kRestore) {
-            TrashHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kRevocation);
+            TrashHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint);
             return true;
         } else if (actId == TrashActionId::kRestoreAll) {
-            TrashHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kRevocation);
+            TrashHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kNoHint);
             return true;
         } else if (actId == TrashActionId::kEmptyTrash) {
             TrashHelper::emptyTrash();
