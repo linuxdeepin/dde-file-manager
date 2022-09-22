@@ -19,6 +19,7 @@
 #include "waititem.h"
 #ifndef DISABLE_SCREENSAVER
 #include "screensaver_interface.h"
+#include "dbus/customconfiginterface.h"
 #endif
 #include "dfileservices.h"
 
@@ -47,6 +48,8 @@
 #define SCREENSAVER_BUTTON_ID "screensaver"
 #define SessionManagerService "com.deepin.SessionManager"
 #define SessionManagerPath "/com/deepin/SessionManager"
+#define CUSTOMSCREENSAVER_BUTTON_ID "custom-screensaver"
+#define DEEPINCUSTOMSCREENSAVER "deepin-custom-screensaver"
 
 
 #define BUTTON_NARROW_WIDTH     79
@@ -1060,7 +1063,7 @@ void Frame::refreshList()
                                                                   QDBusConnection::sessionBus(), this);
         }
 
-        const QStringList &saverNameList = m_dbusScreenSaver->allScreenSaver();
+        QStringList saverNameList = m_dbusScreenSaver->allScreenSaver();
         const QString &currentScreensaver = m_dbusScreenSaver->currentScreenSaver();
         if (saverNameList.isEmpty() && !m_dbusScreenSaver->isValid()) {
             qWarning() << "com.deepin.ScreenSaver allScreenSaver fail. retry";
@@ -1076,19 +1079,35 @@ void Frame::refreshList()
             m_itemwait = nullptr;
         }
 
+
+         // 记录具有参数配置界面的屏保
+        QStringList customScreenSavers;
+        // 支持多个屏保程序参数配置
+        int customSaverCount = 0;
+        for (const QString &name : saverNameList) {
+            // 置顶具有参数配置的屏保程序
+            if (hasConfigSettings(name)) {
+                customScreenSavers.append(name);
+                saverNameList.move(saverNameList.indexOf(name), customSaverCount);
+                customSaverCount++;
+            }
+        }
+
         bool isPressed = false; //记录当前设置的屏保是否已被选中
         for (const QString &name : saverNameList) {
             if("flurry" == name){
                 continue;//临时屏蔽名字为flurry的屏保
             }
-
             const QString &coverPath = m_dbusScreenSaver->GetScreenSaverCover(name);
 
             WallpaperItem *item = m_wallpaperList->addWallpaper(coverPath);
             item->setData(name);
             item->setUseThumbnailManager(false);
             item->setDeletable(false);
-            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+            // 确保具有参数配置界面，才添加配置按钮
+            if (customScreenSavers.contains(name))
+                item->addButton(CUSTOMSCREENSAVER_BUTTON_ID, tr("Custom Screensaver"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"), BUTTON_WIDE_WIDTH, 1, 0, 1, 2);
             item->show();
             connect(item, &WallpaperItem::tab, this, [=]() {
                 if (m_mode == WallpaperMode) {
@@ -1168,6 +1187,12 @@ void Frame::onItemButtonClicked(const QString &buttonID)
 #ifndef DISABLE_SCREENSAVER
     else if (buttonID == SCREENSAVER_BUTTON_ID) {
         m_dbusScreenSaver->setCurrentScreenSaver(item->data());
+    } else {
+        if (!m_dbusCustomConfigInterface) {
+            m_dbusCustomConfigInterface = new CustomConfigInterface("com.deepin.CustomConfig", "/com/deepin/CustomConfig",
+                                                                  QDBusConnection::sessionBus(), this);
+        }
+        m_dbusCustomConfigInterface->StartCustomConfig(DEEPINCUSTOMSCREENSAVER);
     }
 #endif
 
@@ -1247,4 +1272,16 @@ void Frame::applyToGreeter()
 
     qInfo() << "dbus Appearance greeterbackground is called " << m_currentSelectedWallpaper;
     m_dbusAppearance->Set("greeterbackground", m_currentSelectedWallpaper);
+}
+
+bool Frame::hasConfigSettings(const QString &screenSaverName)
+{
+    QString jsonFilePath("/etc/deepin-screensaver/");
+    jsonFilePath += screenSaverName + "/" + screenSaverName + ".json";
+    QFileInfo jsonFile(jsonFilePath);
+    if (!jsonFile.exists() || !jsonFile.isReadable()) {
+        return false;
+    }
+
+    return true;
 }
