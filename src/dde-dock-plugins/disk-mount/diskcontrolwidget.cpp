@@ -630,10 +630,12 @@ void DiskControlWidget::refreshDesktop()
 {
     qDebug() << "call desktop.canvas.reFresh";
     // call desktop.canvas.reFresh
-    DDBusSender()
-            .service("com.deepin.dde.desktop")
-            .path("/com/deepin/dde/desktop")
-            .interface("com.deepin.dde.desktop")
-            .method(QString("Refresh"))
-            .call();
+    QTimer::singleShot(100, nullptr, []{
+        DDBusSender()
+                .service("com.deepin.dde.desktop")
+                .path("/com/deepin/dde/desktop")
+                .interface("com.deepin.dde.desktop")
+                .method(QString("Refresh"))
+                .call();
+    });
 }
