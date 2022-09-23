@@ -233,6 +233,16 @@ bool RecentManager::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
     return true;
 }
 
+bool RecentManager::isTransparent(const QUrl &url, TransparentStatus *status)
+{
+    if (url.scheme() == RecentManager::scheme()) {
+        *status = TransparentStatus::kUntransparent;
+        return true;
+    }
+
+    return false;
+}
+
 RecentManager::RecentManager(QObject *parent)
     : QObject(parent)
 {

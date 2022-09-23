@@ -237,10 +237,13 @@ bool OpticalHelper::isBurnEnabled()
     return ret.isValid() ? ret.toBool() : true;
 }
 
-bool OpticalHelper::isTransparent(const QUrl &url)
+bool OpticalHelper::isTransparent(const QUrl &url, Global::TransparentStatus *status)
 {
-    if (url.scheme() == OpticalHelper::scheme())
-        return !burnIsOnDisc(url);
+    if (url.scheme() == OpticalHelper::scheme()) {
+        if (!burnIsOnDisc(url))
+            *status = Global::TransparentStatus::kTransparent;
+        return true;
+    }
 
     return false;
 }

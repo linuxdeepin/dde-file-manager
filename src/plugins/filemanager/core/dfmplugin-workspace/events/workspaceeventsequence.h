@@ -45,7 +45,7 @@ public:
     bool doFetchCustomColumnRoles(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
     bool doFetchCustomRoleDiaplayName(const QUrl &rootUrl, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     bool doFetchCustomRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
-    bool doCheckTransparent(const QUrl &url);
+    bool doCheckTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
 
 private:
     explicit WorkspaceEventSequence(QObject *parent = nullptr);

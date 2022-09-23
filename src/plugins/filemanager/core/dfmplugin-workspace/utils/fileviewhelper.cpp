@@ -75,6 +75,18 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
     if (!file.get())
         return false;
 
+    TransparentStatus status = TransparentStatus::kDefault;
+    if (WorkspaceEventSequence::instance()->doCheckTransparent(file->url(), &status)) {
+        switch (status) {
+        case TransparentStatus::kTransparent:
+            return true;
+        case TransparentStatus::kUntransparent:
+            return false;
+        default:
+            break;
+        }
+    }
+
     //  cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
         QUrl localUrl = file->url();
@@ -92,9 +104,6 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
                 return true;
         }
     }
-
-    if (WorkspaceEventSequence::instance()->doCheckTransparent(file->url()))
-        return true;
 
     return false;
 }

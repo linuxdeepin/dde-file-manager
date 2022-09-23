@@ -44,6 +44,12 @@ enum class ViewMode {
     kAllViewMode = kIconMode | kListMode | kExtendMode
 };
 
+enum class TransparentStatus : uint8_t {
+    kDefault,
+    kTransparent,
+    kUntransparent
+};
+
 enum class CallbackKey : uint8_t {
     kWindowId,   // quint64 windowId
     kSuccessed,   // bool
@@ -181,6 +187,8 @@ Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorHandleCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ItemRoles);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::TransparentStatus);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::TransparentStatus *)
 Q_DECLARE_METATYPE(QList<DFMBASE_NAMESPACE::Global::ItemRoles> *)
 
 #endif   // DFM_GLOBAL_DEFINES_H

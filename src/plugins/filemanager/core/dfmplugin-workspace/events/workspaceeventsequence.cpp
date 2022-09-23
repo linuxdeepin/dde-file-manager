@@ -79,9 +79,9 @@ bool WorkspaceEventSequence::doFetchCustomRoleData(const QUrl &rootUrl, const QU
     return dpfHookSequence->run(kCurrentEventSpace, "hook_Model_FetchCustomRoleData", rootUrl, url, role, data);
 }
 
-bool WorkspaceEventSequence::doCheckTransparent(const QUrl &url)
+bool WorkspaceEventSequence::doCheckTransparent(const QUrl &url, TransparentStatus *status)
 {
-    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_CheckTransparent", url);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_CheckTransparent", url, status);
 }
 
 WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)

@@ -84,6 +84,7 @@ public:
     bool detailViewIcon(const QUrl &url, QString *iconName);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+    bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
 
 signals:
     void asyncHandleFileChanged();

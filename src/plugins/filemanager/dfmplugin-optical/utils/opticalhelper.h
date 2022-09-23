@@ -25,6 +25,7 @@
 
 #include "dfmplugin_optical_global.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/clipboard.h"
 
 #include <QIcon>
@@ -62,7 +63,7 @@ public:
     static bool isBurnEnabled();
 
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
-    bool isTransparent(const QUrl &url);
+    bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
 
 private:
     explicit OpticalHelper(QObject *parent = nullptr);
