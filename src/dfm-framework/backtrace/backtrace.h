@@ -26,11 +26,8 @@
 DPF_BEGIN_NAMESPACE
 namespace backtrace {
 
-void initbacktrace();
+void installStackTraceHandler();
 
 }
 DPF_END_NAMESPACE
-#endif // BACKTRACE_H
-
-
-
+#endif   // BACKTRACE_H

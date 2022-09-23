@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
 
     DApplicationSettings setting;
 
-    DPF_NAMESPACE::backtrace::initbacktrace();
+    DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
 
     CommandParser::instance().process();
@@ -236,7 +236,6 @@ int main(int argc, char *argv[])
         }
         signal(SIGTERM, handleSIGTERM);
         signal(SIGPIPE, handleSIGPIPE);
-
     } else {
         a.handleNewClient(uniqueKey);
         return 0;

@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
 
-    DPF_NAMESPACE::backtrace::initbacktrace();
+    DPF_NAMESPACE::backtrace::installStackTraceHandler();
 
     initLog();
     if (!pluginsLoad()) {

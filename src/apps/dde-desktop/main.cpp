@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
         a.setApplicationName(appName);
     }
 
-    DPF_NAMESPACE::backtrace::initbacktrace();
+    DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
 
     // Notify dde-desktop start up
