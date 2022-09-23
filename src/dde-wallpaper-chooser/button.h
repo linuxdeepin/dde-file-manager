@@ -6,6 +6,7 @@
 #define BUTTON_H
 
 #include <QPushButton>
+#include <QLabel>
 
 class Button : public QPushButton
 {
@@ -18,6 +19,20 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent *event);
+};
+
+class EditLabel :public QLabel
+{
+    Q_OBJECT
+public:
+    explicit EditLabel(QWidget *parent = nullptr);
+
+private:
+    void mousePressEvent(QMouseEvent *event);
+
+Q_SIGNALS:
+    void editLabelClicked();
+
 };
 
 #endif // BUTTON_H

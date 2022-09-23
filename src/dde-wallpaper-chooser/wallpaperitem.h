@@ -51,6 +51,7 @@ public:
 
     QPushButton *addButton(const QString &id, const QString &text, const int btnWidth, int row, int column, int rowSpan, int columnSpan);
 
+    void addEdit(const QString &id);
 signals:
     void pressed();
     void hoverIn();

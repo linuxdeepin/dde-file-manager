@@ -28,6 +28,7 @@ class WallpaperList;
 class WallpaperListView;
 class ComDeepinDaemonAppearanceInterface;
 class ComDeepinScreenSaverInterface;
+class CustomConfigInterface;
 class DeepinWM;
 class BackgroundHelper;
 class CheckBox;
@@ -97,6 +98,7 @@ private:
     ComDeepinDaemonAppearanceInterface * m_dbusAppearance = nullptr;
 #ifndef DISABLE_SCREENSAVER
     ComDeepinScreenSaverInterface *m_dbusScreenSaver = nullptr;
+    CustomConfigInterface *m_dbusCustomConfigInterface = nullptr;
 #endif
     DeepinWM * m_dbusDeepinWM = nullptr;
     DRegionMonitor * m_mouseArea = nullptr;
@@ -117,6 +119,8 @@ private:
     void setWallpaperSlideShow(QString slideShow);
     void applyToDesktop();
     void applyToGreeter();
+
+    bool hasConfigSettings(const QString &screenSaverName);
 
     QString m_screenName;
 

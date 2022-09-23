@@ -46,3 +46,16 @@ void Button::keyPressEvent(QKeyEvent *event)
     }
     //QPushButton::keyPressEvent(event);
 }
+
+EditLabel::EditLabel(QWidget *parent) :
+    QLabel(parent)
+{
+
+}
+
+void EditLabel::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    emit editLabelClicked();
+
+}
