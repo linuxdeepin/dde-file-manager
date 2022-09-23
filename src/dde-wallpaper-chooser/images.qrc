@@ -15,5 +15,6 @@
         <file>images/close_round_hover.svg</file>
         <file>images/close_round_normal.svg</file>
         <file>images/close_round_press.svg</file>
+        <file>images/edit.svg</file>
     </qresource>
 </RCC>

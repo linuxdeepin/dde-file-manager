@@ -166,6 +166,22 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text, co
     return button;
 }
 
+/*!
+ * \brief WallpaperItem::setEntranceIconOfSettings, add Settings entrance icon for custom screensavers
+ * \param id, the name of custom screensaver with custom configuration
+ */
+void WallpaperItem::setEntranceIconOfSettings(const QString &id)
+{
+    EditLabel *editLabel = new EditLabel(m_wrapper);
+    QPixmap pmap(":/images/edit.svg");
+    editLabel->setPixmap(pmap);
+    editLabel->move(m_wrapper->width()-pmap.width(), 0);
+
+    connect(editLabel, &EditLabel::editLabelClicked, this, [this, id] {
+        emit buttonClicked(id);
+    });
+}
+
 void WallpaperItem::slideUp()
 {
     if (m_wrapper->y() < 0 && m_downAnim->state() == QAbstractAnimation::Stopped)

@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -793,7 +795,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="69"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="180"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="193"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</translation>
     </message>
@@ -818,18 +820,18 @@
         <translation>Optional</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="107"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="108"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="115"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="118"/>
         <source>Next</source>
         <translation>Next</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="203"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="219"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="216"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="232"/>
         <source>Passwords do not match</source>
         <translation>Passwords do not match</translation>
     </message>
@@ -2019,7 +2021,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1400"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
-        <location filename="../dialogs/dialogmanager.h" line="140"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
@@ -4293,7 +4294,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="665"/>
-        <location filename="../../utils/utils.cpp" line="531"/>
+        <location filename="../../utils/utils.cpp" line="444"/>
         <source>Unknown</source>
         <translation>Unknown</translation>
     </message>
