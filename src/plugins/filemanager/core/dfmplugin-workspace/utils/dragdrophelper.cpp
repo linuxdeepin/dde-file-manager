@@ -112,7 +112,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
 
         for (const QUrl &url : fromUrls) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-            if (!info->canRename()) {
+            if (event->dropAction() == Qt::DropAction::MoveAction && !info->canRename()) {
                 event->ignore();
                 return true;
             }
