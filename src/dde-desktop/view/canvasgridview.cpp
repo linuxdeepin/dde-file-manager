@@ -1321,14 +1321,25 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(hoverIndex);
         CanvasGridView *view = dynamic_cast<CanvasGridView *>(event->source());
         if (fileInfo) {
-            if (view && !DFMGlobal::keyCtrlIsPressed()) {
-                event->setDropAction(Qt::MoveAction);
+            bool moveOnSelf = false;
+            if (view) {
+                if (!DFMGlobal::keyCtrlIsPressed())
+                    event->setDropAction(Qt::MoveAction);
+
+                // hover on self.
+                if (hoverIndex == itemDelegate()->expandedIndex()) {
+                     QPoint gridPos = gridAt(pos);
+                     // the gridPos that cursor is on is empty. and file can be move to this gridpos.
+                     moveOnSelf = GridManager::instance()->isEmpty(m_screenNum, gridPos.x(), gridPos.y());
+                 }
             }
 
             if (!fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
                     !fileInfo->supportedDropActions().testFlag(event->dropAction())) {
-                // not support drag
-                event->ignore();
+                if (moveOnSelf)
+                    event->accept(); // just move
+                else
+                    event->ignore(); // not support drag
             } else {
                 if (DFileDragClient::checkMimeData(event->mimeData())) {
                     event->acceptProposedAction();
