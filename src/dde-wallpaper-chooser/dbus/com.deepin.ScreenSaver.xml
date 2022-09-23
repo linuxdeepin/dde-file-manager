@@ -12,6 +12,17 @@
         <arg name="name" type="s" direction="in"/>
         <arg name="imagePath" type="s" direction="out"/>
     </method>
+    <method name='StartCustomConfig'>
+        <arg name="name" type="s" direction="in"/>
+        <arg name="ok" type="b" direction="out"/>
+    </method>
+    <method name='ConfigurableItems'>
+        <arg name="name" type="as" direction="out"/>
+    </method>
+    <method name='IsConfigurable'>
+        <arg name="name" type="s" direction="in"/>
+        <arg name="ok" type="b" direction="out"/>
+    </method>
     <property name='isRunning' type='b' access='read'></property>
     <property name='currentScreenSaver' type='s' access='readwrite'></property>
     <property name='allScreenSaver' type='as' access='read'></property>
