@@ -105,6 +105,7 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return false;
+
     SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();

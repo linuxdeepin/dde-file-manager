@@ -225,7 +225,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
             QMouseEvent *e = static_cast<QMouseEvent *>(event);
             if (e->button() == Qt::LeftButton) {
                 QStandardItem *item = qobject_cast<const SideBarModel *>(model)->itemFromIndex(index);
-                SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
+                SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
                 SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
                 bool ejectable = false;
                 if (sidebarItem) {
@@ -244,7 +244,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                     return true;
                 } else if (ejectable && ejectBtRect.contains(pos)) {   //The eject icon is pressed.
                     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
-                    SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
+                    SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
                     if (sidebarItem) {
                         QUrl url = sidebarItem->itemInfo().url;
                         SideBarEventCaller::sendEject(url);

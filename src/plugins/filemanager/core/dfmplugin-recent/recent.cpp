@@ -125,6 +125,12 @@ void Recent::addRecentItem()
         { "Property_Key_VisiableControl", "recent" }*/
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
+
+    QVariantMap itemMap {
+        { "Property_Key_NameKey", "Recent" },
+        { "Property_Key_PluginItemData", map }
+    };
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", itemMap);
 }
 
 void Recent::removeRecentItem()
@@ -162,14 +168,15 @@ void Recent::onAllPluginsInitialized()
     const QString &nameKey = "Recent";
     const QString &displayName = tr("Recent");
 
-    QVariantMap map {
+    QVariantMap bookmarkMap {
         { "Property_Key_NameKey", nameKey },
         { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Url", QUrl("recent:/") },
+        { "Property_Key_Url", RecentManager::rootUrl() },
         { "Property_Key_Index", 0 },
-        { "Property_Key_IsDefaultItem", true }
+        { "Property_Key_IsDefaultItem", true },
     };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", map);
+
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);
 }
 
 void Recent::installToSideBar()

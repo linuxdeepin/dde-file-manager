@@ -232,23 +232,6 @@ int SideBarModel::appendRow(SideBarItem *item)
     return rowCount() - 1;
 }
 
-bool SideBarModel::removeRow(SideBarItem *item)
-{
-    // TODO(zhuangshu): To support tree view
-    if (!item)
-        return false;
-
-    for (int row = rowCount() - 1; row >= 0; row--) {
-        auto foundItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
-        if (item == foundItem) {
-            QStandardItemModel::removeRow(row);
-            return true;
-        }
-    }
-
-    return false;
-}
-
 bool SideBarModel::removeRow(const QUrl &url)
 {
     if (!url.isValid())
@@ -265,7 +248,7 @@ bool SideBarModel::removeRow(const QUrl &url)
             int childCount = groupItem->rowCount();
             for (int j = 0; j < childCount; j++) {
                 QStandardItem *childItem = groupItem->child(j);
-                SideBarItem *subItem = dynamic_cast<SideBarItem *>(childItem);
+                SideBarItem *subItem = static_cast<SideBarItem *>(childItem);
                 if (!subItem)
                     continue;
                 if ((subItem->url().scheme() == url.scheme() && subItem->url().path() == url.path())) {
@@ -291,7 +274,7 @@ void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
         int childCount = groupItem->rowCount();
         for (int j = 0; j < childCount; j++) {
             QStandardItem *childItem = groupItem->child(j);
-            SideBarItem *subItem = dynamic_cast<SideBarItem *>(childItem);
+            SideBarItem *subItem = static_cast<SideBarItem *>(childItem);
             if (!subItem)
                 continue;
             bool foundByCb = subItem->itemInfo().findMeCb && subItem->itemInfo().findMeCb(subItem->url(), url);
@@ -344,7 +327,7 @@ QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
             int childCount = groupItem->rowCount();
             for (int j = 0; j < childCount; j++) {
                 QStandardItem *childItem = groupItem->child(j);
-                SideBarItem *subItem = dynamic_cast<SideBarItem *>(childItem);
+                SideBarItem *subItem = static_cast<SideBarItem *>(childItem);
                 if (!subItem)
                     continue;
                 if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, subItem->url())) {

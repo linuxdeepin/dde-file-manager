@@ -19,6 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "dfmplugin_bookmark_global.h"
 #include "bookmarkmenuscene.h"
 #include "private/bookmarkmenuscene_p.h"
 #include "controller/bookmarkmanager.h"

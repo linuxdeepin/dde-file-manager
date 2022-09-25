@@ -40,9 +40,12 @@ public:
     static DefaultItemManager *instance();
     void initDefaultItems();
     void addPluginItem(const QVariantMap &args);
-    QMap<QString, QString> defaultItemDisplayName();
+    QMap<QString, QUrl> defaultItemUrls();
     QList<BookmarkData> defaultItemInitOrder();
-    QMap<QString, BookmarkData> pluginItems();
+    QMap<QString, QVariantMap> pluginItemData();
+    bool isDefaultItem(const BookmarkData &data);
+    bool isDefaultUrl(const BookmarkData &data);
+    BookmarkData pluginItemDataToBookmark(const QVariantMap &data);
 
 private:
     explicit DefaultItemManager(QObject *parent = nullptr);

@@ -452,7 +452,7 @@ QModelIndex SideBarView::findItemIndex(const QUrl &url) const
             int childCount = groupItem->rowCount();
             for (int j = 0; j < childCount; j++) {
                 QStandardItem *childItem = groupItem->child(j);
-                SideBarItem *item = dynamic_cast<SideBarItem *>(childItem);
+                SideBarItem *item = static_cast<SideBarItem *>(childItem);
                 if (!item)
                     continue;
                 bool foundByCb = item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), url);

@@ -50,7 +50,6 @@ public:
 
     int addItem(SideBarItem *item);
     bool insertItem(const int index, SideBarItem *item);
-    bool removeItem(SideBarItem *item);
     bool removeItem(const QUrl &url);
 
     void updateItem(const QUrl &url, const ItemInfo &newInfo);

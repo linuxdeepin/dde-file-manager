@@ -44,7 +44,6 @@ public:
     SideBarItem *itemFromIndex(int index, const QModelIndex &parent = QModelIndex()) const;
     bool insertRow(int row, SideBarItem *item);
     int appendRow(SideBarItem *item);
-    bool removeRow(SideBarItem *item);
     bool removeRow(const QUrl &url);
     void updateRow(const QUrl &url, const ItemInfo &newInfo);
     //    QStringList groups() const;

@@ -81,7 +81,6 @@ QAbstractItemView *SideBarWidget::view()
 
 int SideBarWidget::addItem(SideBarItem *item)
 {
-    qInfo() << "item = " << item->url();
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     // TODO(zhangs): custom group
     int r { kSidebarModelIns->appendRow(item) };
@@ -109,12 +108,6 @@ bool SideBarWidget::insertItem(const int index, SideBarItem *item)
         setItemVisiable(item->url(), false);
 
     return r;
-}
-
-bool SideBarWidget::removeItem(SideBarItem *item)
-{
-    Q_ASSERT(qApp->thread() == QThread::currentThread());
-    return kSidebarModelIns->removeRow(item);
 }
 
 bool SideBarWidget::removeItem(const QUrl &url)

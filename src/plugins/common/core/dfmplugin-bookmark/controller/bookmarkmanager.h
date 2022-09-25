@@ -42,7 +42,7 @@ struct BookmarkData
     QString name;
     QString transName;
     QUrl url;
-    bool defaultItem = false;
+    bool isDefaultItem = false;
     int index = -1;
 
     QString udisksDBusPath;
@@ -63,40 +63,38 @@ public:
     bool removeBookMark(const QUrl &url);
 
     void addBookMarkItem(const QUrl &url, const QString &bookmarkName, bool isDefaultItem = false) const;
-    void addBookMarkItemsFromConfig();
-
-    static void contextMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
-    static void renameCallBack(quint64 windowId, const QUrl &url, const QString &name);
-    static void cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url);
-    static void cdDefaultItemUrlCallBack(quint64 windowId, const QUrl &url);
-
-    static QString bookMarkActionCreatedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected);
-    static void bookMarkActionClickedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected);
+    void addQuickAccessItemsFromConfig();
 
     void fileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 
     void addSchemeOfBookMarkDisabled(const QString &scheme);
     QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
     bool handleItemSort(const QUrl &a, const QUrl &b);
-    void initDefaultItems();
-    static bool isNameDublicated(const QString &name);
+    void bookmarkDataToQuickAccess();
+    void initData();
+    bool isItemDuplicated(const BookmarkData &data);
+    bool bookMarkRename(const QUrl &url, const QString &newName);
+    QSet<QString> getBookmarkDisabledSchemes();
+    int showRemoveBookMarkDialog(quint64 winId);
 
 private:
     explicit BookMarkManager(QObject *parent = nullptr);
     void update(const QVariant &value);
     void removeAllBookMarkSidebarItems();
-    void bookMarkRename(const QUrl &url, const QString &newName);
-    int showRemoveBookMarkDialog(quint64 winId);
+
     void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
-    QSet<QString> getBookMarkDisabledSchemes();
     void sortItemsByOrder(const QList<QUrl> &order);
+
+    void addQuickAccessDataFromConfig(const QVariantList &dataList = QVariantList());
 
 private slots:
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);
 
 private:
-    static QMap<QUrl, BookmarkData> bookmarkDataMap;
-    QSet<QString> bookMarkDisabledSchemes;
+    QMap<QUrl, BookmarkData> quickAccessDataMap = {};
+    QMap<QUrl, BookmarkData> bookmarkDataMap = {};
+    QSet<QString> bookmarkDisabledSchemes;
+    QList<QUrl> sortedUrls;
 };
 
 }

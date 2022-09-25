@@ -126,6 +126,12 @@ void Trash::installToSideBar()
         { "Property_Key_VisiableControl", "trash" }
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", TrashHelper::rootUrl(), map);
+
+    QVariantMap itemMap {
+        { "Property_Key_NameKey", "Trash" },
+        { "Property_Key_PluginItemData", map }
+    };
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", itemMap);
 }
 
 void Trash::addFileOperations()
@@ -159,12 +165,13 @@ void Trash::onAllPluginsInitialized()
     const QString &nameKey = "Trash";
     const QString &displayName = SystemPathUtil::instance()->systemPathDisplayName(nameKey);
 
-    QVariantMap map {
+    QVariantMap bookmarkMap {
         { "Property_Key_NameKey", nameKey },
         { "Property_Key_DisplayName", displayName },
         { "Property_Key_Url", QUrl("trash:/") },
         { "Property_Key_Index", -1 },
         { "Property_Key_IsDefaultItem", true }
     };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", map);
+
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);
 }

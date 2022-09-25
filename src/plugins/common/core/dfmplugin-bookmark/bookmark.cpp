@@ -57,8 +57,9 @@ void BookMark::onWindowCreated(quint64 winId)
 
     connect(window, &FileManagerWindow::sideBarInstallFinished, this,
             []() {
-                BookMarkManager::instance()->initDefaultItems();
-                BookMarkManager::instance()->addBookMarkItemsFromConfig();
+                DefaultItemManager::instance()->initDefaultItems();
+                BookMarkManager::instance()->bookmarkDataToQuickAccess();
+                BookMarkManager::instance()->addQuickAccessItemsFromConfig();
             },
             Qt::DirectConnection);
 }

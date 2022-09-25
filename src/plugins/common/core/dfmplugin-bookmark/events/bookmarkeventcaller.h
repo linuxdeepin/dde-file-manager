@@ -21,7 +21,7 @@
 #ifndef BOOKMARKEVENTCALLER_H
 #define BOOKMARKEVENTCALLER_H
 
-#include "dfmplugin_bookmark_global.h"
+//#include "dfmplugin_bookmark_global.h"
 
 #include <QObject>
 
