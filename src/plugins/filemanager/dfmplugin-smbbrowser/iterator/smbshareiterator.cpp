@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "smbshareiterator.h"
 #include "private/smbshareiterator_p.h"
 #include "utils/smbbrowserutils.h"
@@ -57,9 +57,6 @@ SmbShareIterator::~SmbShareIterator()
 
 QUrl SmbShareIterator::next()
 {
-    if (!d->enumerator->hasNext())
-        return {};
-
     d->enumerator->next();
     auto info = d->enumerator->fileInfo();
     if (!info)
