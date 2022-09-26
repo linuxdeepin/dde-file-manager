@@ -1256,7 +1256,7 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         CanvasGridView *view = dynamic_cast<CanvasGridView *>(event->source());
         if (view && event->mimeData()) {
             //拖拽复制时，不做让位处理
-            if (!GridManager::instance()->shouldArrange() && !DFMGlobal::keyCtrlIsPressed()) {
+            if (!DFMGlobal::keyCtrlIsPressed()) {
                 d->startDodge = true;
             }
         }
