@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "optical.h"
 #include "utils/opticalhelper.h"
 #include "utils/opticalfilehelper.h"
@@ -36,7 +36,6 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
@@ -47,7 +46,7 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(QList<QVariantMap> *)
 
-//using CreateTopWidgetCallback = std::function<dfmplugin_optical::OpticalMediaWidget *()>;
+// using CreateTopWidgetCallback = std::function<dfmplugin_optical::OpticalMediaWidget *()>;
 
 using namespace dfmplugin_optical;
 
@@ -62,19 +61,22 @@ void Optical::initialize()
 
     bindEvents();
 
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this,
+    connect(
+            &FMWindowsIns, &FileManagerWindowsManager::windowCreated, this,
             [this]() {
                 addOpticalCrumbToTitleBar();
             },
             Qt::DirectConnection);
 
-    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted,
+    connect(
+            DevProxyMng, &DeviceProxyManager::blockDevUnmounted,
             this, [this](const QString &id) {
                 onDeviceChanged(id, true);
             },
             Qt::DirectConnection);
     // for blank disc
-    connect(DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this,
+    connect(
+            DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this,
             [this](const QString &id, const QString &property, const QVariant &val) {
                 if (id.contains(QRegularExpression("/sr[0-9]*$"))
                     && property == GlobalServerDefines::DeviceProperty::kOptical && !val.toBool()) {
@@ -99,11 +101,6 @@ bool Optical::start()
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
 
     addFileOperations();
-
-    QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.optical", &err);
-    if (!ret)
-        qWarning() << "create dconfig failed: " << err;
 
     return true;
 }

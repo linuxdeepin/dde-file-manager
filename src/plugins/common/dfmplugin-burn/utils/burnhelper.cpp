@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "burnhelper.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -147,7 +147,7 @@ QString BurnHelper::parseXorrisoErrorMessage(const QStringList &msg)
             return QObject::tr("The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.");
         }
         if (msgs.contains("-volid: Text too long")) {
-            //something is wrong if the following return statement is reached.
+            // something is wrong if the following return statement is reached.
             return QObject::tr("invalid volume name");
         }
     }
@@ -207,6 +207,6 @@ void BurnHelper::updateBurningStateToPersistence(const QString &id, const QStrin
 
 bool BurnHelper::isBurnEnabled()
 {
-    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.optical", "burnEnable");
+    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.burn", "burnEnable");
     return ret.isValid() ? ret.toBool() : true;
 }

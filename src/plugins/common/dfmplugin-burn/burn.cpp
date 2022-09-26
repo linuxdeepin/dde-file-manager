@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "burn.h"
 #include "menus/sendtodiscmenuscene.h"
 #include "utils/discstatemanager.h"
@@ -35,6 +35,7 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <QWidget>
 #include <QTimer>
@@ -60,6 +61,11 @@ bool Burn::start()
     connect(Application::dataPersistence(), &Settings::valueChanged, this, &Burn::onPersistenceDataChanged, Qt::DirectConnection);
     Application::dataPersistence()->removeGroup(Persistence::kBurnStateGroup);
     DevMngIns->startOpticalDiscScan();
+
+    QString err;
+    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.burn", &err);
+    if (!ret)
+        qWarning() << "create dconfig failed: " << err;
 
     return true;
 }

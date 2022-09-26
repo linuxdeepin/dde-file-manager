@@ -19,15 +19,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "dconfigmanager.h"
 #include "private/dconfigmanager_p.h"
 
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/utils/finallyutil.h"
-
 #include <DConfig>
 
+#include <QDebug>
 #include <QSet>
 
 static constexpr char kCfgAppId[] { "org.deepin.dde.file-manager" };
@@ -131,6 +129,8 @@ QVariant DConfigManager::value(const QString &config, const QString &key, const 
 
     if (d->configs.contains(config))
         return d->configs.value(config)->value(key, fallback);
+    else
+        qWarning() << "Config: " << config << "is not registered!!!";
     return fallback;
 #else
     return QVariant();

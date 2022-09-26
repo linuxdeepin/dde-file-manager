@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "opticalhelper.h"
 #include "mastered/masteredmediafileinfo.h"
 
@@ -233,7 +233,7 @@ bool OpticalHelper::isDupFileNameInPath(const QString &path, const QUrl &url)
 
 bool OpticalHelper::isBurnEnabled()
 {
-    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.optical", "burnEnable");
+    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.burn", "burnEnable");
     return ret.isValid() ? ret.toBool() : true;
 }
 

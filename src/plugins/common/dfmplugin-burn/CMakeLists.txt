@@ -45,3 +45,7 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_COMMON_EDGE_DIR}
 )
+
+# install dconfig files.
+include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
+INSTALL_DCONFIG("org.deepin.dde.file-manager.burn.json")

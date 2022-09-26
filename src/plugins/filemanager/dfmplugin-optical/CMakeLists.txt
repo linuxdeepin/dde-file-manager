@@ -50,7 +50,3 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_FILEMANAGER_EDGE_DIR}
 )
-
-# install dconfig files.
-include(${CMAKE_SOURCE_DIR}/install_dconfig.cmake)
-INSTALL_DCONFIG("org.deepin.dde.file-manager.optical.json")
