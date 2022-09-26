@@ -10,11 +10,8 @@
 #include <QVBoxLayout>
 #include <QAbstractAnimation>
 #include <qabstractslider.h>
-
-#define private public
-#define protected public
-
 #include <QWidget>
+#include <QScrollBar>
 #include "../dde-wallpaper-chooser/wallpaperitem.h"
 #include "../dde-wallpaper-chooser/frame.h"
 #include "../dde-wallpaper-chooser/wallpaperlist.h"
@@ -275,6 +272,13 @@ TEST_F(WallpaperlistTest, test_setcurrentindex)
     EXPECT_TRUE(m_list->m_index == 0);
     EXPECT_TRUE(isslideup);
     EXPECT_TRUE(isslidedown);
+
+    {
+        int start = m_list->scrollAnimation.startValue().toInt();
+        int end = m_list->scrollAnimation.endValue().toInt();
+        int current = m_list->horizontalScrollBar()->value();
+        EXPECT_GE((start - end) * (current - start), 0);
+    }
 }
 
 TEST_F(WallpaperlistTest, test_showDeleteButtonForItem)

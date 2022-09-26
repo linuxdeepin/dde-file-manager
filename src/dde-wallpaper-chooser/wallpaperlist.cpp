@@ -337,6 +337,19 @@ void WallpaperList::setCurrentIndex(int index)
     int nextIndex = m_items.indexOf(qobject_cast<WallpaperItem *>(itemAt(width() - ItemWidth / 2, ItemHeight / 2)),0);
     scrollAnimation.setStartValue(((prevIndex+nextIndex)/2-visualCount/2) * (ItemWidth+m_contentLayout->spacing()));
     scrollAnimation.setEndValue((index-visualCount/2) * (ItemWidth+m_contentLayout->spacing()));
+
+    //the starting direction is opposite to the target direction
+    {
+        int start = scrollAnimation.startValue().toInt();
+        int end = scrollAnimation.endValue().toInt();
+        int current = horizontalScrollBar()->value();
+        if (((start - end) * (current - start)) < 0) {
+            qDebug() << "the starting direction is opposite to the target direction"
+                     << start << end << current << horizontalScrollBar()->maximum();
+            scrollAnimation.setStartValue(current);
+        }
+    }
+
     scrollAnimation.start();
     m_index = m_items.indexOf(item, 0);
 }

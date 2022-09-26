@@ -409,17 +409,6 @@ void Frame::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void Frame::paintEvent(QPaintEvent *event)
-{
-    DBlurEffectWidget::paintEvent(event);
-
-    QPainter pa(this);
-
-    pa.setCompositionMode(QPainter::CompositionMode_SourceOut);
-    pa.setPen(QPen(QColor(255, 255, 255, 20), 1));
-    pa.drawLine(QPoint(0, 0), QPoint(width(), 0));
-}
-
 bool Frame::event(QEvent *event)
 {
 #ifndef DISABLE_SCREENSAVER
