@@ -28,6 +28,7 @@
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_menu_defines.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QMenu>
 
@@ -60,8 +61,10 @@ bool OpticalMenuScene::initialize(const QVariantHash &params)
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
-    if (!d->selectFiles.isEmpty())
+    if (!d->selectFiles.isEmpty()) {
         d->focusFile = d->selectFiles.first();
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile);
+    }
 
     QString backer { MasteredMediaFileInfo(d->currentDir).extraProperties()["mm_backer"].toString() };
     if (backer.isEmpty())
@@ -93,8 +96,7 @@ void OpticalMenuScene::updateState(QMenu *parent)
         "open-with",
         "delete",
         "copy",
-        "create-system-link",
-        "send-to-desktop",
+        "send-to",
         "property",
         "open-in-new-window",
         "open-in-new-tab",
@@ -112,13 +114,14 @@ void OpticalMenuScene::updateState(QMenu *parent)
         "open-as-administrator",
         "open-in-terminal",
         "paste",
+        "refresh",
         "select-all",
         "property",
         ""   // for oem
     };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
                                               "OpenWithMenu", "ShareMenu", "SortAndDisplayMenu", "PropertyMenu",
-                                              "BookmarkMenu", "SendToDiscMenu", "OemMenu" };
+                                              "BookmarkMenu", "SendToMenu", "SendToDiscMenu", "OemMenu", "WorkspaceMenu" };
 
     auto actions = parent->actions();
     std::for_each(actions.begin(), actions.end(), [this](QAction *act) {
@@ -145,13 +148,22 @@ void OpticalMenuScene::updateState(QMenu *parent)
             if (!whiteNormalActIdList.contains(id))
                 act->setVisible(false);
 
+            // cannot deletes file in disc
             static const QStringList discBlackActIdList { "delete" };
             if (OpticalHelper::burnIsOnDisc(d->focusFile) && discBlackActIdList.contains(id))
                 act->setVisible(false);
 
-            static const QStringList nativeBlackActIdList { "create-system-link", "send-to-desktop" };
+            // cannot "send-to" for files to be burned
+            static const QStringList nativeBlackActIdList { "send-to" };
             if (!OpticalHelper::burnIsOnDisc(d->focusFile) && nativeBlackActIdList.contains(id))
                 act->setVisible(false);
+
+            if (d->focusFileInfo && d->focusFileInfo->isDir()) {
+                // cannot "open-*" for dirs to be burned
+                static const QStringList nativeDirBlackActIdList { "open-as-administrator", "open-in-terminal", "add-bookmark" };
+                if (!OpticalHelper::burnIsOnDisc(d->focusFile) && nativeDirBlackActIdList.contains(id))
+                    act->setVisible(false);
+            }
         }
 
         if (act->isSeparator())
