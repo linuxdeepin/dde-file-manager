@@ -36,10 +36,12 @@ class CanvasViewShell;
 class CanvasGridShell;
 class CanvasManagerShell;
 class CollectionViewPrivate;
+class CollectionViewBroker;
 class CollectionView : public QAbstractItemView
 {
     Q_OBJECT
     friend class CollectionViewPrivate;
+    friend class CollectionViewBroker;
 public:
     explicit CollectionView(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent = nullptr);
     ~CollectionView() override;

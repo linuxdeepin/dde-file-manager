@@ -28,10 +28,10 @@
 #include <QUrl>
 #include <QRectF>
 #include <QWidget>
+#include <QAbstractItemView>
 
 Q_DECLARE_METATYPE(QRectF *)
 Q_DECLARE_METATYPE(QPoint *)
-Q_DECLARE_METATYPE(QWidget *)
 
 using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE
@@ -75,10 +75,16 @@ QRectF TagEventCaller::getItemRect(const quint64 windowID, const QUrl &url, cons
     return ret.toRectF();
 }
 
-QList<QWidget *> TagEventCaller::getDesktopRootViewList()
+QAbstractItemView *TagEventCaller::getDesktopView(int viewIdx)
 {
-    const QVariant &ret = dpfSlotChannel->push("ddplugin_core", "slot_DesktopFrame_RootWindows");
-    return ret.value<QList<QWidget *>>();
+    const QVariant &ret = dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasManager_View", viewIdx);
+    return ret.value<QAbstractItemView *>();
+}
+
+QAbstractItemView *TagEventCaller::getCollectionView(const QString &id)
+{
+    const QVariant &ret = dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionView_View", id);
+    return ret.value<QAbstractItemView *>();
 }
 
 int TagEventCaller::getDesktopViewIndex(const QString &url, QPoint *pos)
@@ -86,12 +92,27 @@ int TagEventCaller::getDesktopViewIndex(const QString &url, QPoint *pos)
     return dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasGrid_Point", url, pos).toInt();
 }
 
+QString TagEventCaller::getCollectionViewId(const QUrl &url, QPoint *pos)
+{
+    return dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionView_GridPoint", url, pos).toString();
+}
+
 QRect TagEventCaller::getVisualRect(int viewIndex, const QUrl &url)
 {
     return dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasView_VisualRect", viewIndex, url).toRect();
 }
 
+QRect TagEventCaller::getCollectionVisualRect(const QString &id, const QUrl &url)
+{
+    return dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionView_VisualRect", id, url).toRect();
+}
+
 QRect TagEventCaller::getIconRect(int viewIndex, QRect visualRect)
 {
     return dpfSlotChannel->push("ddplugin_canvas", "slot_CanvasItemDelegate_IconRect", viewIndex, visualRect).toRect();
+}
+
+QRect TagEventCaller::getCollectionIconRect(const QString &id, QRect visualRect)
+{
+    return dpfSlotChannel->push("ddplugin_organizer", "slot_CollectionItemDelegate_IconRect", id, visualRect).toRect();
 }

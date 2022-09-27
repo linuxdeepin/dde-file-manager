@@ -26,6 +26,8 @@
 
 #include "dfm-base/dfm_global_defines.h"
 
+class QAbstractItemView;
+
 namespace dfmplugin_tag {
 
 class TagEventCaller
@@ -42,10 +44,14 @@ public:
     static QRectF getVisibleGeometry(const quint64 windowID);
     static QRectF getItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
 
-    static QList<QWidget *> getDesktopRootViewList();
+    static QAbstractItemView *getDesktopView(int viewIdx);
+    static QAbstractItemView *getCollectionView(const QString &id);
     static int getDesktopViewIndex(const QString &url, QPoint *pos);
+    static QString getCollectionViewId(const QUrl &url, QPoint *pos);
     static QRect getVisualRect(int viewIndex, const QUrl &url);
+    static QRect getCollectionVisualRect(const QString &id, const QUrl &url);
     static QRect getIconRect(int viewIndex, QRect visualRect);
+    static QRect getCollectionIconRect(const QString &id, QRect visualRect);
 };
 
 }

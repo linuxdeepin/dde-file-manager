@@ -26,6 +26,7 @@
 #include <QObject>
 
 class QAbstractItemModel;
+class QAbstractItemView;
 
 namespace ddplugin_canvas {
 class CanvasManager;
@@ -44,6 +45,7 @@ public slots:
     bool autoArrange();
     void setAutoArrange(bool on);
     QAbstractItemModel *fileInfoModel();
+    QAbstractItemView *view(int viewIdx);
 private:
     CanvasManager *canvas = nullptr;
 };

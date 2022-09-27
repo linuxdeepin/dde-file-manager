@@ -24,6 +24,7 @@
 #include "mode/normalizedmode.h"
 #include "fileclassifier.h"
 #include "collection/collectionholder.h"
+#include "normalizedmodebroker.h"
 
 namespace ddplugin_organizer {
 
@@ -43,6 +44,7 @@ public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs);
     FileClassifier *classifier = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
+    NormalizedModeBroker *broker = nullptr;
 private:
     NormalizedMode *q;
 };

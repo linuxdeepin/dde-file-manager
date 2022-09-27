@@ -107,6 +107,11 @@ DFrame *CollectionHolder::frame() const
     return d->frame;
 }
 
+CollectionWidget *CollectionHolder::widget() const
+{
+    return d->widget;
+}
+
 void CollectionHolder::createFrame(Surface *surface, FileProxyModel *model)
 {
     d->surface = surface;

@@ -18,39 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ORGANIZERPLUGIN_H
-#define ORGANIZERPLUGIN_H
+#ifndef NORMALIZEDMODEBROKER_H
+#define NORMALIZEDMODEBROKER_H
 
-#include "ddplugin_organizer_global.h"
-
-#include <dfm-framework/dpf.h>
+#include "broker/organizerbroker.h"
 
 namespace ddplugin_organizer {
-
-class FrameManager;
-class OrganizerPlugin : public dpf::Plugin
+class NormalizedMode;
+class CollectionView;
+class NormalizedModeBroker : public OrganizerBroker
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "organizerplugin.json")
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual void stop() override;
+    explicit NormalizedModeBroker(NormalizedMode *parent = nullptr);
+public slots:
+    QString gridPoint(const QUrl &item, QPoint *point) override;
+    QRect visualRect(const QString &id, const QUrl &item) override;
+    QAbstractItemView *view(const QString &id) override;
+    QRect iconRect(const QString &id, QRect vrect) override;
 private:
-    FrameManager *instance = nullptr;
-private:
-    DPF_EVENT_NAMESPACE(DDP_ORGANIZER_NAMESPACE)
-
-    // CollectionView begin
-    DPF_EVENT_REG_SLOT(slot_CollectionView_GridPoint)
-    DPF_EVENT_REG_SLOT(slot_CollectionView_VisualRect)
-    DPF_EVENT_REG_SLOT(slot_CollectionView_View)
-
-    // CollectionItemDelegate begin
-    DPF_EVENT_REG_SLOT(slot_CollectionItemDelegate_IconRect)
-
+    NormalizedMode *mode;
 };
 
 }
 
-#endif // ORGANIZERPLUGIN_H
+#endif // NORMALIZEDMODEBROKER_H

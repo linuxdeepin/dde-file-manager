@@ -21,8 +21,11 @@
 #include "canvasmanagerbroker.h"
 #include "canvasmanager.h"
 #include "model/fileinfomodel.h"
+#include "view/canvasview.h"
 
 #include <dfm-framework/dpf.h>
+
+#include <QAbstractItemView>
 
 using namespace ddplugin_canvas;
 
@@ -48,6 +51,7 @@ CanvasManagerBroker::~CanvasManagerBroker()
     CanvasManagerDisconnect(slot_CanvasManager_SetIconLevel);
     CanvasManagerDisconnect(slot_CanvasManager_AutoArrange);
     CanvasManagerDisconnect(slot_CanvasManager_SetAutoArrange);
+    CanvasManagerDisconnect(slot_CanvasManager_View);
 }
 
 bool CanvasManagerBroker::init()
@@ -59,6 +63,7 @@ bool CanvasManagerBroker::init()
     CanvasManagerSlot(slot_CanvasManager_SetIconLevel, &CanvasManagerBroker::setIconLevel);
     CanvasManagerSlot(slot_CanvasManager_AutoArrange, &CanvasManagerBroker::autoArrange);
     CanvasManagerSlot(slot_CanvasManager_SetAutoArrange, &CanvasManagerBroker::setAutoArrange);
+    CanvasManagerSlot(slot_CanvasManager_View, &CanvasManagerBroker::view);
     return true;
 }
 
@@ -95,6 +100,15 @@ void CanvasManagerBroker::setAutoArrange(bool on)
 QAbstractItemModel *CanvasManagerBroker::fileInfoModel()
 {
     return canvas->fileModel();
+}
+
+QAbstractItemView *CanvasManagerBroker::view(int viewIdx)
+{
+    auto views = canvas->views();
+    if (viewIdx > 0 && viewIdx <= views.size())
+        return views.at(viewIdx - 1).get();
+
+    return nullptr;
 }
 
 

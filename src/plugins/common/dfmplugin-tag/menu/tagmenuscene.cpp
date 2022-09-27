@@ -63,6 +63,9 @@ bool TagMenuScene::initialize(const QVariantHash &params)
         d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    if (d->onDesktop)
+        d->onCollection = params.value("OnColletion", false).toBool();
+
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
@@ -120,21 +123,36 @@ bool TagMenuScene::triggered(QAction *action)
     QRectF iconRect;
 
     if (d->onDesktop) {
-        // get rect from desktop
         QPoint pos(0, 0);
-        int viewIndex = TagEventCaller::getDesktopViewIndex(d->focusFile.toString(), &pos);
-        const QRect &visualRect = TagEventCaller::getVisualRect(viewIndex, d->focusFile);
-        iconRect = TagEventCaller::getIconRect(viewIndex, visualRect);
-
-        QList<QWidget *> rootViewList = TagEventCaller::getDesktopRootViewList();
-        if (rootViewList.length() >= viewIndex && rootViewList.at(viewIndex - 1)) {
-            QWidget *rootView = rootViewList.at(viewIndex - 1);
-            QWidget *view = findDesktopView(rootView);
-            if (view) {
-                viewRect = view->rect();
-
+        if (d->onCollection) { // get rect from collection
+            const QString id = TagEventCaller::getCollectionViewId(d->focusFile.toString(), &pos);
+            if (id.isEmpty()) {
+                qCritical() << "can not find file on collection" << d->focusFile;
+                return true;
+            }
+            const QRect &visualRect = TagEventCaller::getCollectionVisualRect(id, d->focusFile);
+            iconRect = TagEventCaller::getCollectionIconRect(id, visualRect);
+            if (auto view = TagEventCaller::getCollectionView(id)) {
+                viewRect = d->getSurfaceRect(view);
                 QPoint iconTopLeft = view->mapToGlobal(iconRect.topLeft().toPoint());
                 iconRect.setRect(iconTopLeft.x(), iconTopLeft.y(), iconRect.width(), iconRect.height());
+            } else {
+                qWarning() << "can not get collection view, id:" << id;
+            }
+        } else {         // get rect from desktop
+            int viewIndex = TagEventCaller::getDesktopViewIndex(d->focusFile.toString(), &pos);
+            if (viewIndex < 0) {
+                qCritical() << "can not find file on canvas" << d->focusFile << viewIndex;
+                return true;
+            }
+            const QRect &visualRect = TagEventCaller::getVisualRect(viewIndex, d->focusFile);
+            iconRect = TagEventCaller::getIconRect(viewIndex, visualRect);
+            if (auto view = TagEventCaller::getDesktopView(viewIndex)) {
+                viewRect = view->rect();
+                QPoint iconTopLeft = view->mapToGlobal(iconRect.topLeft().toPoint());
+                iconRect.setRect(iconTopLeft.x(), iconTopLeft.y(), iconRect.width(), iconRect.height());
+            } else {
+                qWarning() << "can not get canvas view, index:" << viewIndex;
             }
         }
     } else {
@@ -238,22 +256,6 @@ QAction *TagMenuScene::createColorListAction() const
     connect(colorListWidget, &TagColorListWidget::checkedColorChanged, this, &TagMenuScene::onColorClicked);
 
     return action;
-}
-
-QWidget *TagMenuScene::findDesktopView(QWidget *root) const
-{
-    if (Q_UNLIKELY(!root))
-        return nullptr;
-
-    for (QObject *obj : root->children()) {
-        if (QWidget *widget = dynamic_cast<QWidget *>(obj)) {
-            QString type = widget->property(DesktopFrameProperty::kPropWidgetName).toString();
-            if (type == "canvas") {
-                return widget;
-            }
-        }
-    }
-    return nullptr;
 }
 
 AbstractMenuScene *TagMenuCreator::create()

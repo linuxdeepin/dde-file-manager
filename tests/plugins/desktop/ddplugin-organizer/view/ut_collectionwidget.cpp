@@ -51,8 +51,8 @@ public:
     stub_ext::StubExt stub;
 };
 
-TEST_F(CollectionWidgetTest, setCanvasManagerShell) {
-
+TEST_F(CollectionWidgetTest, setCanvasManagerShell)
+{
     QString testUuid("tsetUuid");
     CollectionWidget widget(testUuid, nullptr);
 
@@ -77,7 +77,8 @@ TEST_F(CollectionWidgetTest, setCanvasManagerShell) {
     expectSh = nullptr;
 }
 
-TEST_F(CollectionWidgetTest, setCollectionSize) {
+TEST_F(CollectionWidgetTest, setCollectionSize)
+{
 
     CollectionFrameSize setSize = CollectionFrameSize::kLarge;
     bool isCall = false;
@@ -95,8 +96,8 @@ TEST_F(CollectionWidgetTest, setCollectionSize) {
     EXPECT_TRUE(isCall);
 }
 
-TEST_F(CollectionWidgetTest, collectionSize) {
-
+TEST_F(CollectionWidgetTest, collectionSize)
+{
     CollectionFrameSize getSize = CollectionFrameSize::kSmall;
     bool isCall = false;
     stub.set_lamda(ADDR(CollectionTitleBar, collectionSize), [&] () {
@@ -110,4 +111,13 @@ TEST_F(CollectionWidgetTest, collectionSize) {
     auto resutl = widget.collectionSize();
     EXPECT_TRUE(isCall);
     EXPECT_EQ(resutl, getSize);
+}
+
+TEST_F(CollectionWidgetTest, view)
+{
+    CollectionWidget widget("tsetUuid", nullptr);
+    auto fake = reinterpret_cast<CollectionView *>(0x1);
+    widget.d->view = fake;
+
+    EXPECT_EQ(widget.view(), fake);
 }

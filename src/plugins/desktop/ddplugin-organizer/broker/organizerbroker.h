@@ -18,39 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ORGANIZERPLUGIN_H
-#define ORGANIZERPLUGIN_H
+#ifndef ORGANIZERBROKER_H
+#define ORGANIZERBROKER_H
 
-#include "ddplugin_organizer_global.h"
+#include <QObject>
+#include <QPoint>
+#include <QRect>
 
-#include <dfm-framework/dpf.h>
-
+class QAbstractItemView;
 namespace ddplugin_organizer {
 
-class FrameManager;
-class OrganizerPlugin : public dpf::Plugin
+class OrganizerBroker : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "organizerplugin.json")
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual void stop() override;
-private:
-    FrameManager *instance = nullptr;
-private:
-    DPF_EVENT_NAMESPACE(DDP_ORGANIZER_NAMESPACE)
+    explicit OrganizerBroker(QObject *parent = nullptr);
+    ~OrganizerBroker() override;
+    virtual bool init();
 
-    // CollectionView begin
-    DPF_EVENT_REG_SLOT(slot_CollectionView_GridPoint)
-    DPF_EVENT_REG_SLOT(slot_CollectionView_VisualRect)
-    DPF_EVENT_REG_SLOT(slot_CollectionView_View)
+signals:
 
-    // CollectionItemDelegate begin
-    DPF_EVENT_REG_SLOT(slot_CollectionItemDelegate_IconRect)
-
+public slots:
+    virtual QString gridPoint(const QUrl &item, QPoint *point) = 0;
+    virtual QRect visualRect(const QString &id, const QUrl &item) = 0;
+    virtual QAbstractItemView * view(const QString &id) = 0;
+    virtual QRect iconRect(const QString &id, QRect vrect) = 0;
 };
-
 }
 
-#endif // ORGANIZERPLUGIN_H
+#endif // ORGANIZERBROKER_H

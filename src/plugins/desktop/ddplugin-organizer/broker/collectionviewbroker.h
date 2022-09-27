@@ -18,39 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ORGANIZERPLUGIN_H
-#define ORGANIZERPLUGIN_H
+#ifndef COLLECTIONVIEWBROKER_H
+#define COLLECTIONVIEWBROKER_H
 
-#include "ddplugin_organizer_global.h"
-
-#include <dfm-framework/dpf.h>
+#include <QObject>
+#include <QRect>
 
 namespace ddplugin_organizer {
 
-class FrameManager;
-class OrganizerPlugin : public dpf::Plugin
+class CollectionView;
+class CollectionViewBroker : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "organizerplugin.json")
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual void stop() override;
+    explicit CollectionViewBroker(CollectionView *parent = nullptr);
+    inline CollectionView *getView() const {return view;}
+    void setView(CollectionView *v);
+    bool gridPoint(const QUrl &file, QPoint &pos) const;
+    QRect visualRect(const QUrl &file) const;
+signals:
+
+public slots:
 private:
-    FrameManager *instance = nullptr;
-private:
-    DPF_EVENT_NAMESPACE(DDP_ORGANIZER_NAMESPACE)
-
-    // CollectionView begin
-    DPF_EVENT_REG_SLOT(slot_CollectionView_GridPoint)
-    DPF_EVENT_REG_SLOT(slot_CollectionView_VisualRect)
-    DPF_EVENT_REG_SLOT(slot_CollectionView_View)
-
-    // CollectionItemDelegate begin
-    DPF_EVENT_REG_SLOT(slot_CollectionItemDelegate_IconRect)
-
+    CollectionView *view = nullptr;
 };
 
 }
 
-#endif // ORGANIZERPLUGIN_H
+#endif // COLLECTIONVIEWBROKER_H

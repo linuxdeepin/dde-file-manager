@@ -57,6 +57,7 @@ public:
     QString name();
     void setName(const QString &);
     Dtk::Widget::DFrame *frame() const;
+    CollectionWidget *widget() const;
     void createFrame(Surface *surface, FileProxyModel *model);
     void setSurface(Surface *surface);
     Surface *surface() const;

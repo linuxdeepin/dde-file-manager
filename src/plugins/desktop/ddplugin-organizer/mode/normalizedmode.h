@@ -31,6 +31,7 @@ class NormalizedMode : public CanvasOrganizer
 {
     Q_OBJECT
     friend class NormalizedModePrivate;
+    friend class NormalizedModeBroker;
 public:
    explicit NormalizedMode(QObject *parent = nullptr);
    ~NormalizedMode() override;

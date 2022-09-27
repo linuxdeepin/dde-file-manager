@@ -68,6 +68,7 @@ public:
     void setCollectionSize(const CollectionFrameSize &size);
     CollectionFrameSize collectionSize() const;
 
+    CollectionView *view() const;
 
     void openEditor(const QUrl &url);
     void selectUrl(const QUrl &url, const QItemSelectionModel::SelectionFlag &flags);

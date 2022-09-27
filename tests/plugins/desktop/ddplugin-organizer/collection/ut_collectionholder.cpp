@@ -45,7 +45,8 @@ public:
 };
 
 
-TEST_F(CollectionHolderTest, setCanvasManagerShell) {
+TEST_F(CollectionHolderTest, setCanvasManagerShell)
+{
 
     CanvasManagerShell *expectSh = nullptr;
     bool isCall = false;
@@ -73,4 +74,14 @@ TEST_F(CollectionHolderTest, setCanvasManagerShell) {
 
     expectSh->deleteLater();
     delete holder.d->widget;
+}
+
+TEST_F(CollectionHolderTest, widget)
+{
+    CollectionHolder holder(QString("testuuid"), nullptr);
+    auto w = new CollectionWidget(QString("testuuid"), nullptr);
+    holder.d->widget = w;
+
+    EXPECT_EQ(holder.widget(), w);
+    delete w;
 }

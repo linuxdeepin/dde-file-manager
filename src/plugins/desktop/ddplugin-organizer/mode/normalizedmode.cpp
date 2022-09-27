@@ -34,9 +34,12 @@ static constexpr int kSmallCollectionGridRowCount = 2;
 static constexpr int kLargeCollectionGridRowCount = 4;
 static constexpr int kCollectionGridMargin = 2;
 
-NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq) : q(qq)
+NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
+    : QObject(qq)
+    , q(qq)
 {
-
+    broker = new NormalizedModeBroker(qq);
+    broker->init();
 }
 
 NormalizedModePrivate::~NormalizedModePrivate()

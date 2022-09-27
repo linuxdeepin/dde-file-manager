@@ -52,4 +52,5 @@ TEST(NormalizedMode, removeClassifier)
     mode.removeClassifier();
     EXPECT_EQ(mode.d->classifier, nullptr);
     EXPECT_EQ(model.handler(), nullptr);
+    EXPECT_NE(mode.d->broker, nullptr);
 }

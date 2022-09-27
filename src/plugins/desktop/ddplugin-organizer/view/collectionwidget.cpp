@@ -171,6 +171,11 @@ CollectionFrameSize CollectionWidget::collectionSize() const
     return d->titleBar->collectionSize();
 }
 
+CollectionView *CollectionWidget::view() const
+{
+    return d->view;
+}
+
 void CollectionWidget::openEditor(const QUrl &url)
 {
     d->view->openEditor(url);
