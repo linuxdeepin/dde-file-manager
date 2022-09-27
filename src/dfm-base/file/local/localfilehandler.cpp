@@ -376,11 +376,6 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
             result = FileUtils::openFiles(pathList);
         }*/
         result = doOpenFiles(pathList);
-        if (!result) {
-            // deal open file with custom dialog
-            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", packUrl);
-            return true;
-        }
     } else {
         return true;
     }

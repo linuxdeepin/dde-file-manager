@@ -684,8 +684,9 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
             else if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash)
                 dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
-            error = fileHandler.errorString();
-            dialogManager->showErrorDialog("open file error", error);
+            // deal open file with custom dialog
+            dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", urls);
+            ok = true;
         }
     }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
