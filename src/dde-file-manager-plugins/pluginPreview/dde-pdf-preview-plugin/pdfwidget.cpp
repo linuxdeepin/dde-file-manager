@@ -115,7 +115,7 @@ void PdfWidget::initUI()
 
     d->pageListWidget = new DListWidget(this);
     d->pageListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    d->pageListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    d->pageListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     d->pageListWidget->setVerticalScrollMode(QListWidget::ScrollPerPixel);
     d->pageListWidget->setStyleSheet("QListWidget::item:selected{"
                                         "background: white;"
@@ -128,6 +128,7 @@ void PdfWidget::initUI()
     d->mainLayout->setSpacing(0);
     d->mainLayout->addWidget(d->thumbListWidget);
     d->mainLayout->addWidget(d->pageListWidget);
+    d->mainLayout->addSpacing(40);
 
     setLayout(d->mainLayout);
 
@@ -356,7 +357,6 @@ void PdfWidget::resizeEvent(QResizeEvent *event)
 
     d->pageScrollBar->setFixedSize(d->pageScrollBar->sizeHint().width(), event->size().height() - 30);
     d->pageScrollBar->move(event->size().width() - d->pageScrollBar->width(), 30);
-    d->pageListWidget->setFixedWidth(width() - d->thumbListWidget->width());
 
     resizeCurrentPage();
 }

@@ -13,6 +13,7 @@ constexpr int kReadTextSize { 1024 * 1024 * 5 };
 TextBrowserEdit::TextBrowserEdit(QWidget *parent)
     : QPlainTextEdit(parent)
 {
+    setViewportMargins(0, 0, 40, 0);
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &TextBrowserEdit::scrollbarValueChange);
     connect(verticalScrollBar(), &QScrollBar::sliderMoved, this, &TextBrowserEdit::sliderPositionValueChange);
 }
