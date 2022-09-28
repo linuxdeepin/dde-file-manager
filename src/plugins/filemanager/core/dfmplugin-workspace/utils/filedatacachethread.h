@@ -47,9 +47,13 @@ public:
     QUrl dequeueFileQueue();
 
     int childrenCount();
+    bool containsChild(const QUrl &url);
+
     void addChildren(const QList<QUrl> &urls);
     void removeChildren(const QList<QUrl> &urls);
+
     FileItemData *getChild(int rowIndex) const;
+
     void clearChildren();
     void refreshChildren();
 

@@ -21,11 +21,14 @@
  */
 #include "filesortfilterproxymodel.h"
 #include "fileviewmodel.h"
+#include "utils/workspacehelper.h"
+#include "views/fileview.h"
 
 #include "base/application/settings.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -99,6 +102,7 @@ Qt::DropActions FileSortFilterProxyModel::supportedDropActions() const
 
 QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
+    rootUrl = url;
     const QModelIndex &rootIndex = viewModel()->setRootUrl(url);
     resetFilter();
 
@@ -249,10 +253,41 @@ void FileSortFilterProxyModel::setActive(const QModelIndex &index, bool enable)
     viewModel()->setIndexActive(sourceIndex, enable);
 }
 
+ModelState FileSortFilterProxyModel::currentState() const
+{
+    return state;
+}
+
 void FileSortFilterProxyModel::onChildrenUpdate(const QUrl &url)
 {
     if (UniversalUtils::urlEquals(url, rootUrl))
         Q_EMIT modelChildrenUpdated();
+}
+
+void FileSortFilterProxyModel::onTraverPrehandle(const QUrl &url, const QModelIndex &index)
+{
+    if (UniversalUtils::urlEquals(url, rootUrl)) {
+        auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
+        if (prehandler) {
+            quint64 winId = FileManagerWindowsManager::instance().findWindowId(dynamic_cast<FileView *>(parent()));
+            QPointer<FileViewModel> guard(viewModel());
+            prehandler(winId, url, [guard, index]() {
+                if (guard)
+                    guard->traversRootDir(index);
+            });
+        }
+    }
+}
+
+void FileSortFilterProxyModel::onStateChanged(const QUrl &url, ModelState state)
+{
+    if (UniversalUtils::urlEquals(url, rootUrl)) {
+        if (state == this->state)
+            return;
+
+        this->state = state;
+        Q_EMIT stateChanged();
+    }
 }
 
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const

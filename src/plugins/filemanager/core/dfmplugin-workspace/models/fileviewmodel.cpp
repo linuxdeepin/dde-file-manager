@@ -33,7 +33,6 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/application/application.h"
 
 #include <dfm-framework/event/event.h>
@@ -249,13 +248,9 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    auto url = rootUrl(parent);
-    auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
-    if (prehandler) {
-        // TODO(liuyangming)
-        //        QPointer<FileViewModel> guard(this);
-        //        quint64 winId = DFMBASE_NAMESPACE::FileManagerWindowsManager::instance().findWindowId(d->view);
-        //        prehandler(winId, url, [=]() { if (guard) this->traversRootDir(parent); });
+    const QUrl &url = rootUrl(parent);
+    if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme())) {
+        Q_EMIT traverPrehandle(url, parent);
     } else {
         traversRootDir(parent);
     }
@@ -378,33 +373,18 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     return ret;
 }
 
-FileViewModel::State FileViewModel::state() const
-{
-    return currentState;
-}
-
-void FileViewModel::setState(FileViewModel::State state)
-{
-    if (currentState == state)
-        return;
-
-    currentState = state;
-
-    emit stateChanged();
-}
-
 void FileViewModel::traversRootDir(const QModelIndex &rootIndex)
 {
     if (rootIndex.isValid()) {
-        setState(Busy);
+        Q_EMIT stateChanged(rootUrl(rootIndex), ModelState::kBusy);
         fileDataHelper->doTravers(rootIndex.row());
     }
 }
 
 void FileViewModel::stopTraversWork(const QUrl &rootUrl)
 {
-    setState(Idle);
-    fileDataHelper->doStopTravers(rootUrl);
+    fileDataHelper->doStopWork(rootUrl);
+    Q_EMIT stateChanged(rootUrl, ModelState::kIdle);
 }
 
 QList<ItemRoles> FileViewModel::getColumnRoles(const QUrl &rootUrl) const

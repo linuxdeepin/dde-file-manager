@@ -67,9 +67,9 @@ void RootInfo::startWatcher()
                 this, &RootInfo::doFileUpdated);
         connect(watcher.data(), &AbstractFileWatcher::fileRename,
                 this, &RootInfo::dofileMoved);
-    }
 
-    watcher->startWatcher();
+        watcher->startWatcher();
+    }
 }
 
 void RootInfo::refreshChildren()
@@ -122,7 +122,8 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
     if (info)
         info->refresh();
 
-    dofileCreated(toUrl);
+    if (!fileCache->containsChild(toUrl))
+        dofileCreated(toUrl);
 }
 
 void RootInfo::dofileCreated(const QUrl &url)

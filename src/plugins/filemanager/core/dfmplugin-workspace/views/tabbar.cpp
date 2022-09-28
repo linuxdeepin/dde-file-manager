@@ -209,11 +209,6 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
                     redirectToWhenDelete.setPath(localPath);
                 }
 
-                {   // this is for reset the rootUrl of FileView to make sure that when device remounted the files can be iterated
-                    QUrl &&home { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kHomePath)) };
-                    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, home);
-                }
-
                 dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);
             } else {
                 removeTab(i);

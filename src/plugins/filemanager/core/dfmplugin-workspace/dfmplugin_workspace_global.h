@@ -49,6 +49,12 @@ inline QList<int> iconSizeList()
     return { 48, 64, 96, 128, 256 };
 }
 
+// model defines
+enum class ModelState : uint8_t {
+    kIdle,
+    kBusy
+};
+
 inline constexpr int kIconViewSpacing { 5 };
 inline constexpr int kListViewSpacing { 0 };
 inline constexpr int kIconModeColumnPadding { 10 };

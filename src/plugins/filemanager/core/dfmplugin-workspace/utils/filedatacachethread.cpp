@@ -73,6 +73,12 @@ int FileDataCacheThread::childrenCount()
     return childrenUrlList.count();
 }
 
+bool FileDataCacheThread::containsChild(const QUrl &url)
+{
+    QReadLocker lk(&childrenLock);
+    return chilrenDataMap.contains(url);
+}
+
 void FileDataCacheThread::onHandleAddFile(const QUrl url)
 {
     {
@@ -122,18 +128,27 @@ void FileDataCacheThread::addChildren(const QList<QUrl> &urls)
 {
     int count = childrenCount();
 
-    root->insert(root->rowIndex, count, urls.count());
-
-    QWriteLocker lk(&childrenLock);
     for (const QUrl &url : urls) {
-        childrenUrlList.append(url);
+        if (stoped)
+            return;
+
+        if (containsChild(url))
+            continue;
+
         FileItemData *data = new FileItemData(url);
         data->setParentData(root->data);
-        chilrenDataMap.insert(url, data);
-    }
-    lk.unlock();
 
-    root->insertFinish();
+        root->insert(root->rowIndex, count, 1);
+
+        QWriteLocker lk(&childrenLock);
+        childrenUrlList.append(url);
+        chilrenDataMap.insert(url, data);
+        lk.unlock();
+
+        root->insertFinish();
+
+        ++count;
+    }
 }
 
 void FileDataCacheThread::removeChildren(const QList<QUrl> &urls)

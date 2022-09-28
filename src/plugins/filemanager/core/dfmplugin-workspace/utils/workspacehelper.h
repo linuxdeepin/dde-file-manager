@@ -88,6 +88,7 @@ public:
     DFMBASE_NAMESPACE::Global::ItemRoles sortRole(quint64 windowId);
 
     bool reigsterViewRoutePrehandler(const QString &scheme, const FileViewRoutePrehaldler prehandler);
+    bool haveViewRoutePrehandler(const QString &scheme) const;
     FileViewRoutePrehaldler viewRoutePrehandler(const QString &scheme);
 
     void closePersistentEditor(const quint64 windowID);

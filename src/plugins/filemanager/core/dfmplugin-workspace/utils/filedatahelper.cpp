@@ -141,8 +141,8 @@ void FileDataHelper::doTravers(const int rootIndex)
                 info->fileCache.data(), &FileDataCacheThread::onHandleTraversalFinished,
                 Qt::QueuedConnection);
         connect(info->fileCache.data(), &FileDataCacheThread::finished,
-                this, [this] {
-                    this->model()->setState(FileViewModel::Idle);
+                this, [this, info] {
+                    this->model()->stateChanged(info->url, ModelState::kIdle);
                 },
                 Qt::QueuedConnection);
 
@@ -150,12 +150,18 @@ void FileDataHelper::doTravers(const int rootIndex)
     }
 }
 
-void FileDataHelper::doStopTravers(const QUrl &rootUrl)
+void FileDataHelper::doStopWork(const QUrl &rootUrl)
 {
     RootInfo *info = findRootInfo(rootUrl);
-    if (info && !info->traversal.isNull() && info->traversal->isRunning()) {
-        info->traversal->stop();
-        info->needTraversal = true;
+    if (info) {
+
+        if (!info->traversal.isNull() && info->traversal->isRunning()) {
+            info->traversal->stop();
+            info->needTraversal = true;
+        }
+
+        if (!info->fileCache.isNull() && info->fileCache->isRunning())
+            info->fileCache->stop();
     }
 }
 

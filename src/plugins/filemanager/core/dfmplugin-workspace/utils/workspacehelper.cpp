@@ -257,6 +257,11 @@ bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const F
     return true;
 }
 
+bool WorkspaceHelper::haveViewRoutePrehandler(const QString &scheme) const
+{
+    return kPrehandlers.contains(scheme);
+}
+
 FileViewRoutePrehaldler WorkspaceHelper::viewRoutePrehandler(const QString &scheme)
 {
     return kPrehandlers.value(scheme, nullptr);

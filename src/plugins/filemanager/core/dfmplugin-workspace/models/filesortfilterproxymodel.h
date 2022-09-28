@@ -78,11 +78,15 @@ public:
 
     void setActive(const QModelIndex &index, bool enable = true);
 
+    ModelState currentState() const;
 Q_SIGNALS:
     void modelChildrenUpdated();
+    void stateChanged();
 
 public Q_SLOTS:
     void onChildrenUpdate(const QUrl &url);
+    void onTraverPrehandle(const QUrl &url, const QModelIndex &index);
+    void onStateChanged(const QUrl &url, ModelState state);
 
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
@@ -104,6 +108,8 @@ private:
     mutable QMap<QUrl, bool> nameFiltersMatchResultMap;
 
     bool readOnly = false;
+
+    ModelState state = ModelState::kIdle;
 };
 
 }

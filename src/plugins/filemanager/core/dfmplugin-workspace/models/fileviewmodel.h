@@ -23,6 +23,8 @@
 #ifndef FILEVIEWMODEL_H
 #define FILEVIEWMODEL_H
 
+#include "dfmplugin_workspace_global.h"
+
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -47,11 +49,6 @@ class FileViewModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    enum State {
-        Idle,
-        Busy
-    };
-
     explicit FileViewModel(QAbstractItemView *parent = nullptr);
     virtual ~FileViewModel() override;
 
@@ -80,9 +77,6 @@ public:
 
     QModelIndex findIndex(const QUrl &url) const;
 
-    State state() const;
-    void setState(FileViewModel::State state);
-
     void traversRootDir(const QModelIndex &rootIndex);
     void stopTraversWork(const QUrl &rootUrl);
 
@@ -99,14 +93,14 @@ public Q_SLOTS:
     void onRemoveFinish();
 
 Q_SIGNALS:
-    void stateChanged();
+    void stateChanged(const QUrl &url, ModelState state);
     void childrenUpdated(const QUrl &url);
     void updateFiles();
     void selectAndEditFile(const QUrl &url);
+    void traverPrehandle(const QUrl &url, const QModelIndex &index);
 
 private:
     FileDataHelper *fileDataHelper;
-    State currentState = Idle;
 };
 
 }

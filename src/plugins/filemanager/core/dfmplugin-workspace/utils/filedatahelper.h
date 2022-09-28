@@ -53,7 +53,7 @@ public:
     int filesCount(const int rootIndex);
 
     void doTravers(const int rootIndex);
-    void doStopTravers(const QUrl &rootUrl);
+    void doStopWork(const QUrl &rootUrl);
 
     void update(const QUrl &rootUrl);
     void clear(const QUrl &rootUrl);

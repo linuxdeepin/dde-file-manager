@@ -87,7 +87,7 @@ FileView::~FileView()
 {
     disconnect(model(), &FileSortFilterProxyModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
     disconnect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
-    disconnect(sourceModel(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
+    disconnect(model(), &FileSortFilterProxyModel::stateChanged, this, &FileView::onModelStateChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 }
 
@@ -293,7 +293,7 @@ void FileView::onHeaderSectionResized(int logicalIndex, int oldSize, int newSize
 
 void FileView::onSectionHandleDoubleClicked(int logicalIndex)
 {
-    if (sourceModel()->state() != FileViewModel::Idle)
+    if (model()->currentState() != ModelState::kIdle)
         return;
 
     int rowCount = model()->rowCount(rootIndex());
@@ -793,7 +793,6 @@ QList<QAbstractItemView::SelectionMode> FileView::fetchSupportSelectionModes()
 
 bool FileView::cdUp()
 {
-    // Todo(yanghao):
     const QUrl &oldCurrentUrl = rootUrl();
     QUrl parentUrl = UrlRoute::urlParent(oldCurrentUrl);
 
@@ -828,12 +827,15 @@ DirOpenMode FileView::currentDirOpenMode() const
 
 void FileView::onRowCountChanged()
 {
-    delayUpdateStatusBar();
-    updateModelActiveIndex();
+    if (model()->currentState() == ModelState::kIdle) {
+        delayUpdateStatusBar();
+        updateModelActiveIndex();
+    }
 }
 
 void FileView::onModelReseted()
 {
+    qInfo() << "call onModelReseted";
     updateModelActiveIndex();
 }
 
@@ -1402,14 +1404,14 @@ void FileView::initializeConnect()
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::updateModelActiveIndex);
 
     connect(model(), &FileSortFilterProxyModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
+    connect(model(), &FileSortFilterProxyModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(sourceModel(), &FileViewModel::dataChanged, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
-    connect(sourceModel(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
+    connect(sourceModel(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
     connect(sourceModel(), &FileViewModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
-    connect(sourceModel(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
     connect(this, &DListView::clicked, this, &FileView::onClicked);
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
     connect(this, &DListView::iconSizeChanged, this, &FileView::updateHorizontalOffset, Qt::QueuedConnection);
@@ -1429,7 +1431,7 @@ void FileView::initializeConnect()
 
 void FileView::updateStatusBar()
 {
-    if (sourceModel()->state() != FileViewModel::Idle)
+    if (model()->currentState() != ModelState::kIdle)
         return;
 
     int count = selectedIndexCount();
@@ -1448,8 +1450,8 @@ void FileView::updateStatusBar()
 
 void FileView::updateLoadingIndicator()
 {
-    auto state = sourceModel()->state();
-    if (state == FileViewModel::Busy) {
+    auto state = model()->currentState();
+    if (state == ModelState::kBusy) {
         QString tip;
 
         const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex()); /* sourceModel()->rootItem()->fileInfo();*/
@@ -1459,7 +1461,7 @@ void FileView::updateLoadingIndicator()
         d->statusBar->showLoadingIncator(tip);
     }
 
-    if (state == FileViewModel::Idle) {
+    if (state == ModelState::kIdle) {
         d->statusBar->hideLoadingIncator();
         updateStatusBar();
     }
@@ -1468,7 +1470,7 @@ void FileView::updateLoadingIndicator()
 void FileView::updateContentLabel()
 {
     d->initContentLabel();
-    if (sourceModel()->state() == FileViewModel::Busy
+    if (model()->currentState() == ModelState::kBusy
         /*|| model()->canFetchMore(model()->rootIndex())*/) {
         d->contentLabel->setText(QString());
         return;
@@ -1489,7 +1491,7 @@ void FileView::updateContentLabel()
 
 void FileView::updateSelectedUrl()
 {
-    if (d->preSelectionUrls.isEmpty() || sourceModel()->state() != FileViewModel::Idle)
+    if (d->preSelectionUrls.isEmpty() || model()->currentState() != ModelState::kIdle)
         return;
 
     selectFiles(d->preSelectionUrls);
@@ -1601,12 +1603,13 @@ void FileView::doSort()
 
 void FileView::onModelStateChanged()
 {
+    qInfo() << "call onModelStateChanged";
     updateContentLabel();
     updateLoadingIndicator();
     updateSelectedUrl();
 
     if (d->headerView) {
-        d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, sourceModel()->state() == FileViewModel::Busy);
+        d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->currentState() == ModelState::kBusy);
     }
 }
 
