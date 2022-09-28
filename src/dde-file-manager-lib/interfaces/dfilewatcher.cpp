@@ -95,6 +95,7 @@ bool DFileWatcherPrivate::start()
 
     started = true;
 
+    bool pathAdded = false;
     foreach (const QString &path, parentPathList(this->path)) {
         if (watchFileList.contains(path))
             continue;
@@ -109,15 +110,20 @@ bool DFileWatcherPrivate::start()
                 }
                 if (shouldAddToPath && !watcher_file_private->addPath(path)) {
                     qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
-                    q->stopWatcher();
-                    started = false;
-                    return false;
+                    continue;
                 }
             }
         }
 
+        pathAdded = true;
         watchFileList << path;
         filePathToWatcherCount[path] = filePathToWatcherCount.value(path, 0) + 1;
+    }
+
+    if(!pathAdded) {
+        q->stopWatcher();
+        started = false;
+        return false;
     }
 
     q->connect(watcher_file_private, &DFileSystemWatcher::fileDeleted,
