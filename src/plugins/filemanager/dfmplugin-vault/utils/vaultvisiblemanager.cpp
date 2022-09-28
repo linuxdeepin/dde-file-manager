@@ -126,7 +126,7 @@ void VaultVisibleManager::addSideBarVaultItem()
         Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
         QVariantMap map {
             { "Property_Key_Group", "Group_Device" },
-            { "Property_Key_DisplayName", tr("My Vault") },
+            { "Property_Key_DisplayName", tr("File Vault") },
             { "Property_Key_Icon", VaultHelper::instance()->icon() },
             { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
             { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
