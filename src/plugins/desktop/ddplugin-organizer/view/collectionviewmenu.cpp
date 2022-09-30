@@ -105,7 +105,7 @@ void CollectionViewMenu::emptyAreaMenu()
 void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
     QList<QUrl> selectUrls;
-    for (const QModelIndex &idx : view->selectionModel()->selectedIndexes()) {
+    for (const QModelIndex &idx : view->selectedIndexes()) {
         auto url = view->model()->fileUrl(idx);
         if (url.isValid())
             selectUrls << url;

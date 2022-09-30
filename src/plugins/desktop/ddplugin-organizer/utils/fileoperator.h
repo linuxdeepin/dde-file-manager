@@ -55,7 +55,7 @@ public:
     void deleteFiles(const CollectionView *view);
     void undoFiles(const CollectionView *view);
     void previewFiles(const CollectionView *view);
-
+    void showFilesProperty(const CollectionView *view);
     void dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index);
     void dropFilesToCanvas(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
     void dropToTrash(const QList<QUrl> &urls);

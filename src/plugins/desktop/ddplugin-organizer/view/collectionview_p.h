@@ -46,7 +46,6 @@ public:
     void updateRegionView();
     void updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize);
     void updateVerticalBarRange();
-    void updateSelection();
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
     QRect itemRect(const QModelIndex &index) const;
     QRect visualRect(const QPoint &pos) const;
@@ -54,6 +53,7 @@ public:
     int verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const;
     QItemSelection selection(const QRect &rect) const;
     void selectItems(const QList<QUrl> &fileUrl) const;
+    void selectRect(const QRect &rect) const ;
 
     QPoint pointToPos(const QPoint &point) const;
     QPoint posToPoint(const QPoint &pos) const;
@@ -82,7 +82,9 @@ public:
     void pasteFiles();
     void undoFiles();
     void previewFiles();
+    void showFilesProperty();
     bool continuousSelection(QEvent *event, QPersistentModelIndex &newCurrent) const;
+    QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);
     void updateColumnCount(const int &viewWidth, const int &itemWidth);
@@ -144,6 +146,9 @@ public:
 
     Qt::SortOrder sortOrder = Qt::DescendingOrder;
     int sortRole = DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole;
+
+    QString searchKeys;
+    QTimer *searchTimer = nullptr;
 };
 
 }

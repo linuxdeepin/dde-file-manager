@@ -70,6 +70,15 @@ QList<QUrl> CollectionDataProvider::items(const QString &key) const
     return ret;
 }
 
+bool CollectionDataProvider::contains(const QString &key, const QUrl &url) const
+{
+    auto it = collections.find(key);
+    if (it == collections.end())
+        return false;
+
+    return (*it)->items.contains(url);
+}
+
 bool CollectionDataProvider::sorted(const QString &key, const QList<QUrl> &urls)
 {
     auto it = collections.find(key);

@@ -54,6 +54,7 @@ public:
     QMargins cellMargins() const;
     FileProxyModel *model() const;
     CollectionItemDelegate *itemDelegate() const;
+    CollectionDataProvider *dataProvider() const;
     WId winId() const;
 
     void openEditor(const QUrl &url);
@@ -66,8 +67,10 @@ public:
     void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
     QModelIndex indexAt(const QPoint &point) const override;
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
-
+    void keyboardSearch(const QString &search) override;
     void sort(int role);
+
+    using QAbstractItemView::selectedIndexes;
 protected:
     QModelIndex moveCursor(CursorAction cursorAction,
                                    Qt::KeyboardModifiers modifiers) override;

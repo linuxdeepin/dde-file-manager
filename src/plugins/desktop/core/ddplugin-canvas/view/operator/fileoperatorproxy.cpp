@@ -76,8 +76,7 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
         qDebug() << "item:" << path << " is overload";
     } else {
         // record the location and move the file after the real file is created
-        if (CanvasGrid::Mode::Align != GridIns->mode())
-            touchFileData = qMakePair(path, qMakePair(screenNum, pos));
+        touchFileData = qMakePair(path, qMakePair(screenNum, pos));
     }
 }
 

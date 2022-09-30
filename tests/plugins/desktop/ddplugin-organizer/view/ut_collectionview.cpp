@@ -27,6 +27,7 @@
 #include "mode/normalized/type/typeclassifier.h"
 #include "models/fileproxymodel_p.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "stubext.h"
 
 #include <gtest/gtest.h>
@@ -37,6 +38,7 @@
 #include <QItemSelectionRange>
 
 using namespace testing;
+using namespace dfmbase;
 using namespace ddplugin_organizer;
 
 class CollectionViewPrivateTest : public Test
@@ -199,58 +201,6 @@ TEST_F(CollectionViewTest, sort)
     EXPECT_EQ(view.d->sortOrder, Qt::AscendingOrder);
 }
 
-TEST_F(CollectionViewTest, updateSelection)
-{
-    TestProvider test;
-    QUrl url1("file:///usr");
-    QUrl url2("file:///etc");
-
-    stub.set_lamda(VADDR(TestProvider, items), [url1,url2]() {
-        return QList<QUrl>{url2};
-    });
-
-    CollectionView view("dd", &test);
-    FileProxyModel model;
-    model.d->fileList = {url1, url2};
-    model.d->fileMap.insert(url1, nullptr);
-    model.d->fileMap.insert(url2, nullptr);
-
-    QModelIndex idx1(0, 0, (void *)nullptr, &model);
-    QModelIndex idx2(1, 0, (void *)nullptr, &model);
-
-    stub.set_lamda(VADDR(QAbstractProxyModel,flags), [](){
-        return Qt::ItemFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    });
-
-    view.setModel(&model);
-    {
-        QItemSelection sel;
-        sel << QItemSelectionRange(idx1);
-        sel << QItemSelectionRange(idx2);
-
-        view.selectionModel()->select(sel, QItemSelectionModel::ClearAndSelect);
-        auto idxs = view.selectedIndexes();
-        ASSERT_EQ(idxs.size(), 2);
-        ASSERT_EQ(idxs.first(), idx1);
-        ASSERT_EQ(idxs.last(), idx2);
-        ASSERT_TRUE(idx1.isValid());
-        ASSERT_TRUE(idx2.isValid());
-
-        // make sure model::index is working.
-        QItemSelection s1;
-        s1 << QItemSelectionRange(idx1);
-        QItemSelection newSelection = s1;
-        newSelection.merge(s1, QItemSelectionModel::Deselect);
-        ASSERT_EQ(newSelection.size(), 0);
-    }
-
-    view.d->updateSelection();
-
-    auto idxs = view.selectedIndexes();
-    ASSERT_EQ(idxs.size(), 1);
-    ASSERT_EQ(idxs.first(), idx2);
-}
-
 TEST_F(CollectionViewTest, keyPressEvent_space)
 {
     TestProvider test;
@@ -272,4 +222,196 @@ TEST_F(CollectionViewTest, keyPressEvent_space)
         view.keyPressEvent(&key);
         EXPECT_TRUE(preview);
     }
+}
+
+TEST_F(CollectionViewTest, keyPressEvent_I)
+{
+    TestProvider test;
+    CollectionView view("dd", &test);
+    bool show = false;
+    stub.set_lamda(&CollectionViewPrivate::showFilesProperty, [&show](){
+        show = true;;
+    });
+
+    {
+        QKeyEvent key(QEvent::KeyPress, Qt::Key_I, Qt::ControlModifier,"", false);
+        view.keyPressEvent(&key);
+        EXPECT_TRUE(show);
+    }
+}
+
+TEST_F(CollectionViewTest, dataProvider)
+{
+    TestProvider test;
+    CollectionView view("dd", &test);
+    EXPECT_EQ(&test, view.dataProvider());
+}
+
+TEST_F(CollectionViewTest, keyboardSearch)
+{
+    TestProvider test;
+    CollectionView view("dd", &test);
+    bool find = false;
+    stub.set_lamda(&CollectionViewPrivate::findIndex, [&find](){
+        find = true;
+        return QModelIndex();
+    });
+
+    ASSERT_NE(view.d->searchTimer, nullptr);
+    view.d->searchKeys.clear();
+
+    view.keyboardSearch("");
+    EXPECT_TRUE(view.d->searchKeys.isEmpty());
+    EXPECT_FALSE(find);
+    EXPECT_FALSE(view.d->searchTimer->isActive());
+
+    view.d->searchTimer->stop();
+    view.d->searchKeys.clear();
+    find = false;
+
+    view.keyboardSearch("1");
+    QTimer wait;
+    QEventLoop loop;
+    loop.connect(&wait, &QTimer::timeout, &loop, &QEventLoop::quit);
+    wait.start(220);
+    EXPECT_EQ(view.d->searchKeys, QString("1"));
+    EXPECT_TRUE(find);
+    ASSERT_TRUE(view.d->searchTimer->isActive());
+
+    loop.exec();
+    EXPECT_TRUE(view.d->searchKeys.isEmpty());
+}
+
+TEST_F(CollectionViewTest, isIndexHidden)
+{
+    TestProvider test;
+    QUrl url1("file:///usr");
+    QUrl url2("file:///etc");
+
+    stub.set_lamda(VADDR(TestProvider, contains), [url2](CollectionDataProvider *self, const QString &key, const QUrl &url) {
+        return key == "dd" && url == url2;
+    });
+
+    CollectionView view("dd", &test);
+    FileProxyModel model;
+    model.d->fileList = {url1, url2};
+    model.d->fileMap.insert(url1, nullptr);
+    model.d->fileMap.insert(url2, nullptr);
+
+    view.setModel(&model);
+
+    QModelIndex idx1(0, 0, (void *)nullptr, &model);
+    QModelIndex idx2(1, 0, (void *)nullptr, &model);
+
+    EXPECT_TRUE(view.isIndexHidden(idx1));
+    EXPECT_FALSE(view.isIndexHidden(idx2));
+}
+
+TEST_F(CollectionViewTest, selectedIndexes)
+{
+    TestProvider test;
+    QUrl url1("file:///usr");
+    QUrl url2("file:///etc");
+
+    stub.set_lamda(VADDR(TestProvider, items), [url1,url2]() {
+        return QList<QUrl>{url2};
+    });
+
+    stub.set_lamda(VADDR(TestProvider, contains), [url2](CollectionDataProvider *self, const QString &key, const QUrl &url) {
+        return key == "dd" && url == url2;
+    });
+
+    CollectionView view("dd", &test);
+    FileProxyModel model;
+    model.d->fileList = {url1, url2};
+    model.d->fileMap.insert(url1, nullptr);
+    model.d->fileMap.insert(url2, nullptr);
+
+    QModelIndex idx1(0, 0, (void *)nullptr, &model);
+    QModelIndex idx2(1, 0, (void *)nullptr, &model);
+
+    stub.set_lamda(VADDR(QAbstractProxyModel,flags), [](){
+        return Qt::ItemFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    });
+
+    view.setModel(&model);
+
+    view.selectionModel()->select(QItemSelection(idx1, idx2), QItemSelectionModel::ClearAndSelect);
+    ASSERT_EQ(view.selectionModel()->selectedIndexes().size(), 2);
+
+    auto idxs = view.selectedIndexes();
+    ASSERT_EQ(idxs.size(), 1);
+    ASSERT_EQ(idxs.first(), idx2);
+}
+
+TEST_F(CollectionViewTest, selectRect)
+{
+    TestProvider test;
+    CollectionView view("dd", &test);
+    FileProxyModel model;
+    view.setModel(&model);
+
+    stub.set_lamda(&CollectionViewPrivate::selection,[](){
+        return QItemSelection();
+    });
+
+    QItemSelectionModel::SelectionFlags flag;
+    stub.set_lamda((void (*)(QItemSelectionModel *, const QItemSelection &, QItemSelectionModel::SelectionFlags))
+                   ((void (QItemSelectionModel::*)(const QItemSelection &, QItemSelectionModel::SelectionFlags))&QItemSelectionModel::select),
+                   [&flag](QItemSelectionModel *self, const QItemSelection &, QItemSelectionModel::SelectionFlags cmd){
+        flag = cmd;
+    });
+
+    Qt::KeyboardModifiers key = Qt::NoModifier;
+    stub.set_lamda(&QGuiApplication::keyboardModifiers,[&key](){
+        return key;
+    });
+
+    QRect r(QPoint(0,0), view.size());
+    view.d->selectRect(r);
+    EXPECT_EQ(flag, QItemSelectionModel::ClearAndSelect);
+
+    key = Qt::ControlModifier;
+    view.d->selectRect(r);
+    EXPECT_EQ(flag, QItemSelectionModel::ToggleCurrent);
+
+    key = Qt::ShiftModifier;
+    view.d->selectRect(r);
+    EXPECT_EQ(flag, QItemSelectionModel::SelectCurrent);
+}
+
+TEST_F(CollectionViewTest, findIndex)
+{
+    TestProvider test;
+    QUrl url1("file:///usr");
+    QUrl url2("file:///un");
+
+    stub.set_lamda(VADDR(TestProvider, items), [url1,url2]() {
+        return QList<QUrl>{url1, url2};
+    });
+
+    CollectionView view("dd", &test);
+    FileProxyModel model;
+    model.d->fileList = {url1, url2};
+    model.d->fileMap.insert(url1, nullptr);
+    model.d->fileMap.insert(url2, nullptr);
+
+    view.setModel(&model);
+
+    QModelIndex idx1(0, 0, (void *)nullptr, &model);
+    QModelIndex idx2(1, 0, (void *)nullptr, &model);
+
+    stub.set_lamda(VADDR(FileProxyModel, data), [idx1,idx2](FileProxyModel *, const QModelIndex &index, int role) {
+        QVariant var;
+        if (role ==  Global::ItemRoles::kItemFilePinyinNameRole) {
+           if (index == idx1)
+               var = QVariant::fromValue(QString("usr"));
+           else if (index == idx2)
+               var = QVariant::fromValue(QString("un"));
+        }
+        return var;
+    });
+
+    EXPECT_EQ(view.d->findIndex("u", true, QModelIndex(), false, false), idx1);
+    EXPECT_EQ(view.d->findIndex("u", true, idx1, false, true), idx2);
 }

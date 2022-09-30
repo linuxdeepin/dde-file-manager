@@ -40,6 +40,7 @@ public:
     virtual QString name(const QString &key) const;
     virtual QList<QString> keys() const;
     virtual QList<QUrl> items(const QString &key) const;
+    virtual bool contains(const QString &key, const QUrl &url) const;
     virtual bool sorted(const QString &key, const QList<QUrl> &urls);
     virtual void moveUrls(const QList<QUrl> &urls, const QString &targetKey, int targetIndex);
     virtual void addPreItems(const QString &targetKey, const QList<QUrl> &urls, int targetIndex);

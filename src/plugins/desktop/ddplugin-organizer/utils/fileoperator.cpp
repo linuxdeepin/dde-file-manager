@@ -94,7 +94,7 @@ void FileOperatorPrivate::callBackRenameFiles(const QList<QUrl> &sources, const 
 
 QList<QUrl> FileOperatorPrivate::getSelectedUrls(const CollectionView *view) const
 {
-    auto indexs = view->selectionModel()->selectedIndexes();
+    auto indexs = view->selectedIndexes();
     QList<QUrl> urls;
     for (auto index : indexs) {
         urls <<  view->model()->fileUrl(index);
@@ -250,13 +250,7 @@ void FileOperator::undoFiles(const CollectionView *view)
 
 void FileOperator::previewFiles(const CollectionView *view)
 {
-    QList<QUrl> urls;
-    auto m = view->model();
-    Q_ASSERT(m);
-
-    for (auto idx :view->selectionModel()->selectedIndexes())
-        urls <<  m->fileUrl(idx);
-
+    auto &&urls = d->getSelectedUrls(view);
     if (urls.isEmpty())
         return;
 
@@ -268,6 +262,15 @@ void FileOperator::previewFiles(const CollectionView *view)
     }
 
     dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
+}
+
+void FileOperator::showFilesProperty(const CollectionView *view)
+{
+    auto &&urls = d->getSelectedUrls(view);
+    if (urls.isEmpty())
+        return;
+
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 void FileOperator::dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index)

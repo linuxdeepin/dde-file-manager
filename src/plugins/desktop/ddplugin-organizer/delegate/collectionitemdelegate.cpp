@@ -295,7 +295,7 @@ void CollectionItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
 
 bool CollectionItemDelegate::mayExpand(QModelIndex *who) const
 {
-    QModelIndexList list = parent()->selectionModel()->selectedIndexes();
+    QModelIndexList list = parent()->selectedIndexes();
     bool expend = list.size() == 1;
     if (expend && who)
         *who = list.first();

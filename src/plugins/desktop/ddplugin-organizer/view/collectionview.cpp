@@ -97,6 +97,13 @@ void CollectionViewPrivate::initUI()
 void CollectionViewPrivate::initConnect()
 {
     connect(provider, &CollectionDataProvider::itemsChanged, this, &CollectionViewPrivate::onItemsChanged);
+
+    searchTimer = new QTimer(this);
+    searchTimer->setSingleShot(true);
+    searchTimer->setInterval(200);
+    connect(searchTimer, &QTimer::timeout, this, [this](){
+        searchKeys.clear();
+    });
 }
 
 void CollectionViewPrivate::updateRegionView()
@@ -156,24 +163,6 @@ void CollectionViewPrivate::updateVerticalBarRange()
 
     q->verticalScrollBar()->setRange(0, height);
     qDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
-}
-
-void CollectionViewPrivate::updateSelection()
-{
-    auto idxs = q->selectedIndexes();
-    if (idxs.isEmpty())
-        return;
-
-    auto items = provider->items(id).toSet();
-    QItemSelection selection;
-    for (auto idx : idxs) {
-        auto url = q->model()->fileUrl(idx);
-        if (!items.contains(url))
-            selection << QItemSelectionRange(idx);
-    }
-
-    if (!selection.isEmpty())
-        q->selectionModel()->select(selection, QItemSelectionModel::Deselect);
 }
 
 int CollectionViewPrivate::verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const
@@ -244,9 +233,24 @@ void CollectionViewPrivate::selectItems(const QList<QUrl> &fileUrl) const
         q->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 
         // update new focus index.
-        auto lastIndex = q->selectionModel()->selectedIndexes().last();
+        auto lastIndex = q->selectedIndexes().last();
         q->setCurrentIndex(lastIndex);
     }
+}
+
+void CollectionViewPrivate::selectRect(const QRect &rect) const
+{
+    auto selectModel = q->selectionModel();
+    if (Q_UNLIKELY(!selectModel))
+        return;
+
+    auto rectSelection = selection(rect);
+    if (qApp->keyboardModifiers() == Qt::ControlModifier)
+        selectModel->select(rectSelection, QItemSelectionModel::ToggleCurrent);
+    else if (qApp->keyboardModifiers() == Qt::ShiftModifier)
+        selectModel->select(rectSelection, QItemSelectionModel::SelectCurrent);
+    else
+        selectModel->select(rectSelection, QItemSelectionModel::ClearAndSelect);
 }
 
 QPoint CollectionViewPrivate::pointToPos(const QPoint &point) const
@@ -567,7 +571,7 @@ void CollectionViewPrivate::showMenu()
     if (CollectionViewMenu::disableMenu())
         return;
 
-    QModelIndexList indexList = q->selectionModel()->selectedIndexes();
+    QModelIndexList indexList = q->selectedIndexes();
     bool isEmptyArea = indexList.isEmpty();
     Qt::ItemFlags flags;
     QModelIndex index;
@@ -660,6 +664,11 @@ void CollectionViewPrivate::undoFiles()
 void CollectionViewPrivate::previewFiles()
 {
     FileOperatorIns->previewFiles(q);
+}
+
+void CollectionViewPrivate::showFilesProperty()
+{
+    FileOperatorIns->showFilesProperty(q);
 }
 
 bool CollectionViewPrivate::dropFilter(QDropEvent *event)
@@ -758,7 +767,7 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
     QPoint viewPoint(event->pos().x() + q->horizontalOffset(), event->pos().y() + q->verticalOffset());
     auto dropPos = pointToPos(viewPoint);
     auto targetIndex = q->indexAt(event->pos());
-    bool dropOnSelf = targetIndex.isValid() ? q->selectionModel()->selectedIndexes().contains(targetIndex) : false;
+    bool dropOnSelf = targetIndex.isValid() ? q->selectedIndexes().contains(targetIndex) : false;
 
     if (dropOnSelf) {
         qInfo() << "drop on self, skip. drop:" << dropPos.x() << dropPos.y();
@@ -937,6 +946,44 @@ bool CollectionViewPrivate::continuousSelection(QEvent *event, QPersistentModelI
     return false;
 }
 
+QModelIndex CollectionViewPrivate::findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const
+{
+    int start = -1;
+    auto itemList = provider->items(id);
+    if (current.isValid()) {
+        auto curUrl = q->model()->fileUrl(current);
+        start = itemList.indexOf(curUrl);
+    }
+
+    // current index is invalid.
+    if (start < 0) {
+        start = 0;
+        excludeCurrent = false;
+    }
+
+    const int count = itemList.size();
+    for (int i = excludeCurrent ? 1 : 0; i < count; ++i) {
+        int next = reverseOrder ? count + start - i : start + i;
+        next = next % count;
+        if (excludeCurrent && next == start)
+            continue;
+
+        auto item = itemList.at(next);
+        QModelIndex index = q->model()->index(item);
+        if (!index.isValid())
+            continue;
+
+        const QString &pinyinName = q->model()->data(index, Global::ItemRoles::kItemFilePinyinNameRole).toString();
+
+        if (matchStart ? pinyinName.startsWith(key, Qt::CaseInsensitive)
+                       : pinyinName.contains(key, Qt::CaseInsensitive)) {
+            return index;
+        }
+    }
+
+    return QModelIndex();
+}
+
 void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &itemHeight)
 {
     const int availableHeight = viewHeight - viewMargins.top() - viewMargins.bottom();
@@ -1047,7 +1094,6 @@ void CollectionViewPrivate::onItemsChanged(const QString &key)
     if (id != key)
         return;
 
-    updateSelection();
     updateVerticalBarRange();
     q->update();
 }
@@ -1130,6 +1176,11 @@ FileProxyModel *CollectionView::model() const
 CollectionItemDelegate *CollectionView::itemDelegate() const
 {
     return qobject_cast<CollectionItemDelegate *>(QAbstractItemView::itemDelegate());
+}
+
+CollectionDataProvider *CollectionView::dataProvider() const
+{
+    return d->provider;
 }
 
 WId CollectionView::winId() const
@@ -1416,10 +1467,8 @@ int CollectionView::verticalOffset() const
 
 bool CollectionView::isIndexHidden(const QModelIndex &index) const
 {
-    Q_UNUSED(index)
-
-    // disable hidden index
-    return false;
+    auto url = model()->fileUrl(index);
+    return !d->provider->contains(d->id, url);
 }
 
 void CollectionView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command)
@@ -1667,9 +1716,13 @@ void CollectionView::mouseMoveEvent(QMouseEvent *event)
 {
     QAbstractItemView::mouseMoveEvent(event);
 
-    if (event->buttons().testFlag(Qt::LeftButton)) {
+    // left button pressed on empty area.
+    if (event->buttons().testFlag(Qt::LeftButton) && !d->pressedIndex.isValid()) {
         QRect rect(d->pressedPosition, event->pos() + QPoint(horizontalOffset(), verticalOffset()));
         d->elasticBand = rect.normalized();
+
+        //update selection
+        d->selectRect(d->elasticBand);
         update();
     } else {
         d->elasticBand = QRect();
@@ -1825,6 +1878,9 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
         case Qt::Key_C:
             d->copyFiles();
             return;
+        case Qt::Key_I:
+            d->showFilesProperty();
+            return;
         case Qt::Key_X:
             d->cutFiles();
             return;
@@ -1880,7 +1936,7 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
     if (isPersistentEditorOpen(currentIndex()))
         closePersistentEditor(currentIndex());
 
-    QModelIndexList validIndexes = selectionModel()->selectedIndexes();
+    QModelIndexList validIndexes = selectedIndexes();
     if (validIndexes.count() > 1) {
         QMimeData *data = model()->mimeData(validIndexes);
         if (!data)
@@ -1975,6 +2031,24 @@ void CollectionView::scrollContentsBy(int dx, int dy)
 bool CollectionView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     return QAbstractItemView::edit(index, trigger, event);
+}
+
+void CollectionView::keyboardSearch(const QString &search)
+{
+    if (search.isEmpty())
+        return;
+
+    bool reverseOrder = qApp->keyboardModifiers() == Qt::ShiftModifier;
+    d->searchKeys.append(search);
+    QModelIndex current = currentIndex();
+    QModelIndex index = d->findIndex(d->searchKeys, true, current, reverseOrder, !d->searchTimer->isActive());
+
+    if (index.isValid()) {
+        selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+        setCurrentIndex(index);
+    }
+
+    d->searchTimer->start();
 }
 
 void CollectionView::sort(int role)
