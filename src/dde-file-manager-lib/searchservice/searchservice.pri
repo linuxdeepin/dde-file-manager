@@ -51,7 +51,7 @@ SOURCES += \
     $$PWD/../../../3rdparty/fsearch/string_utils.c
 #    -----------fsearch source---------------
 
-!CONFIG(DISABLE_ANYTHING) {
+CONFIG(ENABLE_ANYTHING) {
 message("Can support deepin-anything to search.")
 HEADERS += \
     $$PWD/searcher/anything/anythingsearcher.h
