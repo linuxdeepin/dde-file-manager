@@ -490,7 +490,7 @@ SOURCES += \
     $$PWD/diskpwdmanager/pwdconfirmwidget.cpp \
     $$PWD/diskpwdmanager/diskpwdchangedialog.cpp
 
-!CONFIG(DISABLE_ANYTHING) {
+CONFIG(ENABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h
     SOURCES += $$PWD/shutil/danythingmonitor.cpp
 }
