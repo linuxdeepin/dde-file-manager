@@ -105,7 +105,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_statusbar = new DStatusBar(this);
     m_statusbar->scalingSlider()->setMaximum(iconsizes.count() - 1);
     m_statusbar->scalingSlider()->setMinimum(0);
-    m_statusbar->scalingSlider()->setTickInterval(1);
+    m_statusbar->scalingSlider()->slider()->setTickInterval(1);
     m_statusbar->scalingSlider()->setPageStep(1);
     m_statusbar->scalingSlider()->hide();
     m_statusbar->setMaximumHeight(22);
@@ -291,7 +291,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(m_view, &QAbstractItemView::doubleClicked, std::bind(enterfunc, std::placeholders::_1, 1));
     connect(m_view, &QAbstractItemView::clicked, std::bind(enterfunc, std::placeholders::_1, 0));
     connect(re, &ViewReturnEater::entered, std::bind(enterfunc, std::placeholders::_1, -1));
-    connect(m_statusbar->scalingSlider(), &QSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
+    connect(m_statusbar->scalingSlider(), &DSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
 
     connect(&DeviceInfoParser::Instance(), SIGNAL(loadFinished()), this, SLOT(repaint()));

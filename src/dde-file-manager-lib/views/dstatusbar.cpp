@@ -72,10 +72,9 @@ void DStatusBar::initUI()
     m_loadingIndicator->setSpeed(20);
     m_loadingIndicator->hide();
 
-    m_scaleSlider = new QSlider(this);
+    m_scaleSlider = new DSlider(Qt::Horizontal, this);
     AC_SET_OBJECT_NAME(m_scaleSlider, AC_COMPUTER_STATUS_BAR_SCALE_SLIDER);
     AC_SET_ACCESSIBLE_NAME(m_scaleSlider, AC_COMPUTER_STATUS_BAR_SCALE_SLIDER);
-    m_scaleSlider->setOrientation(Qt::Horizontal);
     m_scaleSlider->adjustSize();
     m_scaleSlider->setFixedWidth(120);
 
@@ -217,7 +216,7 @@ void DStatusBar::setComBoxItems(const QStringList &filters)
     m_comboBoxLabel->setVisible(m_comboBox->isVisible());
 }
 
-QSlider *DStatusBar::scalingSlider() const
+DSlider *DStatusBar::scalingSlider() const
 {
     return m_scaleSlider;
 }
