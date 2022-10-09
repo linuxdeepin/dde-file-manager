@@ -34,7 +34,7 @@ public:
     explicit CustomMode(QObject *parent = nullptr);
     ~CustomMode() override;
     OrganizerMode mode() const override;
-    bool initialize(FileProxyModel *) override;
+    bool initialize(CollectionModel *) override;
     void reset() override;
     void layout() override;
     void detachLayout() override;

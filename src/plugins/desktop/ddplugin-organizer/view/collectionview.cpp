@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "collectionview_p.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 #include "delegate/collectionitemdelegate.h"
 #include "mode/collectiondataprovider.h"
 #include "interface/canvasmodelshell.h"
@@ -1168,9 +1168,9 @@ QMargins CollectionView::cellMargins() const
     return d->cellMargins;
 }
 
-FileProxyModel *CollectionView::model() const
+CollectionModel *CollectionView::model() const
 {
-    return qobject_cast<FileProxyModel *>(QAbstractItemView::model());
+    return qobject_cast<CollectionModel *>(QAbstractItemView::model());
 }
 
 CollectionItemDelegate *CollectionView::itemDelegate() const

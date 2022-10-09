@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "custom/custommode_p.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 #include "interface/canvasgridshell.h"
 #include "interface/canvasmodelshell.h"
 #include "interface/canvasviewshell.h"
@@ -71,7 +71,7 @@ OrganizerMode CustomMode::mode() const
     return OrganizerMode::kCustom;
 }
 
-bool CustomMode::initialize(FileProxyModel *m)
+bool CustomMode::initialize(CollectionModel *m)
 {
     Q_ASSERT(m);
     Q_ASSERT(!d->dataHandler);
@@ -93,13 +93,13 @@ bool CustomMode::initialize(FileProxyModel *m)
     FileOperatorIns->setDataProvider(d->dataHandler);
 
     // must be DirectConnection to keep sequential
-    connect(model, &FileProxyModel::rowsInserted, this, &CustomMode::onFileInserted, Qt::DirectConnection);
-    connect(model, &FileProxyModel::rowsAboutToBeRemoved, this, &CustomMode::onFileAboutToBeRemoved, Qt::DirectConnection);
-    connect(model, &FileProxyModel::dataReplaced, this, &CustomMode::onFileRenamed, Qt::DirectConnection);
+    connect(model, &CollectionModel::rowsInserted, this, &CustomMode::onFileInserted, Qt::DirectConnection);
+    connect(model, &CollectionModel::rowsAboutToBeRemoved, this, &CustomMode::onFileAboutToBeRemoved, Qt::DirectConnection);
+    connect(model, &CollectionModel::dataReplaced, this, &CustomMode::onFileRenamed, Qt::DirectConnection);
 
     // connect after refreshing model to avoid that redundantly rebuilding by modelReset.
-    connect(model, &FileProxyModel::dataChanged, this, &CustomMode::onFileDataChanged, Qt::QueuedConnection);
-    connect(model, &FileProxyModel::modelReset, this, &CustomMode::rebuild, Qt::QueuedConnection);
+    connect(model, &CollectionModel::dataChanged, this, &CustomMode::onFileDataChanged, Qt::QueuedConnection);
+    connect(model, &CollectionModel::modelReset, this, &CustomMode::rebuild, Qt::QueuedConnection);
 
     {
         int srcState = model->modelShell()->modelState();

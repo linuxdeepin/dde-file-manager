@@ -42,11 +42,6 @@ void CanvasManagerHookInterface::iconSizeChanged(int level) const
     return;
 }
 
-void CanvasManagerHookInterface::hiddenFlagChanged(bool hidden) const
-{
-    return;
-}
-
 void CanvasManagerHookInterface::autoArrangeChanged(bool on) const
 {
     return;

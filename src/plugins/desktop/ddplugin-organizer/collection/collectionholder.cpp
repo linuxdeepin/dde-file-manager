@@ -21,7 +21,7 @@
 #include "collectionholder_p.h"
 #include "view/collectionframe.h"
 #include "view/collectionwidget.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 using namespace ddplugin_organizer;
@@ -112,7 +112,7 @@ CollectionWidget *CollectionHolder::widget() const
     return d->widget;
 }
 
-void CollectionHolder::createFrame(Surface *surface, FileProxyModel *model)
+void CollectionHolder::createFrame(Surface *surface, CollectionModel *model)
 {
     d->surface = surface;
 

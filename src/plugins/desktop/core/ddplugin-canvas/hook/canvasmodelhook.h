@@ -43,6 +43,8 @@ public:
     bool mimeData(const QList<QUrl> &urls, QMimeData *out, void *extData = nullptr) const override;
     bool mimeTypes (QStringList *types, void *extData = nullptr) const override;
     bool sortData (int role, int order, QList<QUrl> *files, void *extData = nullptr) const override; // 待定，还需考虑ui交互问题
+
+    void hiddenFlagChanged(bool show) const override;
 };
 
 }

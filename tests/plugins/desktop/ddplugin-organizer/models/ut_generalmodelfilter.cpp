@@ -1,0 +1,133 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     zhangyu<zhangyub@uniontech.com>
+ *
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "models/generalmodelfilter.h"
+#include "models/filters/hiddenfilefilter.h"
+#include "models/filters/innerdesktopappfilter.h"
+
+#include "stubext.h"
+
+#include <gtest/gtest.h>
+
+using namespace ddplugin_organizer;
+
+TEST(GeneralModelFilter, construct)
+{
+    GeneralModelFilter obj;
+    ASSERT_EQ(obj.modelFilters.size(), 2);
+    EXPECT_NE(dynamic_cast<HiddenFileFilter *>(obj.modelFilters.at(0).get()), nullptr);
+    EXPECT_NE(dynamic_cast<InnerDesktopAppFilter *>(obj.modelFilters.at(1).get()), nullptr);
+}
+
+TEST(GeneralModelFilter, installFilter)
+{
+    GeneralModelFilter obj;
+    obj.modelFilters.clear();
+
+    QSharedPointer<ModelDataHandler> cur(new ModelDataHandler());
+    obj.installFilter(cur);
+    ASSERT_EQ(obj.modelFilters.size(), 1);
+    EXPECT_EQ(obj.modelFilters.at(0), cur);
+}
+
+TEST(GeneralModelFilter, removeFilter)
+{
+    GeneralModelFilter obj;
+    obj.modelFilters.clear();
+
+    QSharedPointer<ModelDataHandler> cur(new ModelDataHandler());
+    obj.modelFilters << cur;
+
+    obj.removeFilter(cur);
+    EXPECT_EQ(obj.modelFilters.size(), 0);
+}
+
+namespace testing {
+
+class TestModelFilter : public ModelDataHandler
+{
+public:
+    explicit TestModelFilter() : ModelDataHandler(){}
+    bool acceptInsert(const QUrl &url) override{instert = true; return false;}
+    QList<QUrl> acceptReset(const QList<QUrl> &urls) override {reset = true; return {};}
+    bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override {rename = true; return false;}
+    bool acceptUpdate(const QUrl &url) override {update = true; return false;}
+public:
+    bool instert = false;
+    bool reset = false;
+    bool rename = false;
+    bool update = false;
+};
+
+}
+
+class GeneralModelFilterTest : public testing::Test
+{
+public:
+    virtual void SetUp() override {
+        obj.modelFilters.clear();
+        obj.modelFilters << QSharedPointer<ModelDataHandler>(filter = new testing::TestModelFilter());
+    }
+    virtual void TearDown() override {}
+    GeneralModelFilter obj;
+    testing::TestModelFilter *filter;
+};
+
+
+TEST_F(GeneralModelFilterTest, acceptInsert)
+{
+    QUrl cur("file://usr");
+    EXPECT_FALSE(obj.acceptInsert(cur));
+    EXPECT_TRUE(filter->instert);
+    EXPECT_FALSE(filter->reset);
+    EXPECT_FALSE(filter->rename);
+    EXPECT_FALSE(filter->update);
+}
+
+TEST_F(GeneralModelFilterTest, acceptReset)
+{
+    QUrl cur("file://usr");
+    EXPECT_TRUE(obj.acceptReset({cur}).isEmpty());
+    EXPECT_FALSE(filter->instert);
+    EXPECT_TRUE(filter->reset);
+    EXPECT_FALSE(filter->rename);
+    EXPECT_FALSE(filter->update);
+}
+
+TEST_F(GeneralModelFilterTest, acceptRename)
+{
+    QUrl cur("file://usr");
+    EXPECT_FALSE(obj.acceptRename(QUrl(), cur));
+    EXPECT_FALSE(filter->instert);
+    EXPECT_FALSE(filter->reset);
+    EXPECT_TRUE(filter->rename);
+    EXPECT_FALSE(filter->update);
+}
+
+TEST_F(GeneralModelFilterTest, acceptUpdate)
+{
+    QUrl cur("file://usr");
+    EXPECT_FALSE(obj.acceptUpdate(cur));
+    EXPECT_FALSE(filter->instert);
+    EXPECT_FALSE(filter->reset);
+    EXPECT_FALSE(filter->rename);
+    EXPECT_TRUE(filter->update);
+}

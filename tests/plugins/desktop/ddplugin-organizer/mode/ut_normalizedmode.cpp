@@ -20,7 +20,7 @@
 */
 
 #include "mode/normalized/normalizedmode_p.h"
-#include "models/fileproxymodel_p.h"
+#include "models/collectionmodel_p.h"
 #include "mode/normalized/type/typeclassifier.h"
 #include "config/configpresenter.h"
 
@@ -37,7 +37,7 @@ DDP_ORGANIZER_USE_NAMESPACE
 TEST(NormalizedMode, removeClassifier)
 {
     NormalizedMode mode;
-    FileProxyModel model;
+    CollectionModel model;
     stub_ext::StubExt stub;
     stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [](){
         return ItemCategories(0);

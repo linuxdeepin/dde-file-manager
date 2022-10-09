@@ -43,7 +43,6 @@ private:
     DPF_EVENT_NAMESPACE(DDP_CANVAS_NAMESPACE)
     // CanvasManager begin
     DPF_EVENT_REG_SIGNAL(signal_CanvasManager_IconSizeChanged)
-    DPF_EVENT_REG_SIGNAL(signal_CanvasManager_HiddenFlagChanged)
     DPF_EVENT_REG_SIGNAL(signal_CanvasManager_AutoArrangeChanged)
 
     DPF_EVENT_REG_SLOT(slot_CanvasManager_FileInfoModel)
@@ -90,6 +89,7 @@ private:
 
     // CanvasModel begin
     DPF_EVENT_REG_SIGNAL(signal_CanvasModel_OpenEditor)
+    DPF_EVENT_REG_SIGNAL(signal_CanvasModel_HiddenFlagChanged)
 
     DPF_EVENT_REG_SLOT(slot_CanvasModel_RootUrl)
     DPF_EVENT_REG_SLOT(slot_CanvasModel_UrlIndex)

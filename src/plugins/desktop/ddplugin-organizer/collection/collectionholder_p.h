@@ -47,7 +47,7 @@ public:
     int screenIndex = 1;
     CollectionFrameSize sizeMode = CollectionFrameSize::kSmall;
     QPointer<CollectionDataProvider> provider = nullptr;
-    QPointer<FileProxyModel> model = nullptr;
+    QPointer<CollectionModel> model = nullptr;
     QPointer<CollectionFrame> frame = nullptr;
     QPointer<CollectionWidget> widget = nullptr;
     QPointer<Surface> surface = nullptr;

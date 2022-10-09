@@ -49,6 +49,8 @@ private:
     // CollectionItemDelegate begin
     DPF_EVENT_REG_SLOT(slot_CollectionItemDelegate_IconRect)
 
+    // CollectionModel begin
+    DPF_EVENT_REG_SLOT(slot_CollectionModel_Refresh)
 };
 
 }

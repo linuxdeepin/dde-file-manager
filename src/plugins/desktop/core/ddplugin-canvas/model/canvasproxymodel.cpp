@@ -827,6 +827,9 @@ void CanvasProxyModel::setShowHiddenFiles(bool show)
         d->filters |= QDir::Hidden;
     else
         d->filters &= ~QDir::Hidden;
+
+    if (d->hookIfs)
+        d->hookIfs->hiddenFlagChanged(show);
 }
 
 bool CanvasProxyModel::fetch(const QUrl &url)

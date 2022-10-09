@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "typeclassifier_p.h"
-#include "models/modeldatahandler.h"
+#include "models/generalmodelfilter.h"
 #include "config/configpresenter.h"
 
 #include "file/local/localfileinfo.h"
@@ -94,7 +94,7 @@ TypeClassifier::TypeClassifier(QObject *parent)
         };
     }
     // all datas shoud be accepted.
-    handler = new ModelDataHandler();
+    handler = new GeneralModelFilter();
 
     // get enable items
     d->categories = CfgPresenter->enabledTypeCategories();

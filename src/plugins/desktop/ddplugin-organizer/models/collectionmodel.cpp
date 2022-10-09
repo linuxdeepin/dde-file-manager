@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fileproxymodel_p.h"
+#include "collectionmodel_p.h"
 #include "interface/canvasmodelshell.h"
 #include "interface/canvasviewshell.h"
 #include "interface/fileinfomodelshell.h"
@@ -44,19 +44,19 @@ using namespace ddplugin_organizer;
 #define CanvasModelUnsubscribe(topic, func) \
     dpfSignalDispatcher->unsubscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
 
-FileProxyModelPrivate::FileProxyModelPrivate(FileProxyModel *qq)
+CollectionModelPrivate::CollectionModelPrivate(CollectionModel *qq)
     : QObject(qq)
     , q(qq)
 {
-    CanvasModelSubscribe(signal_CanvasModel_OpenEditor, &FileProxyModelPrivate::renameRequired);
+    CanvasModelSubscribe(signal_CanvasModel_OpenEditor, &CollectionModelPrivate::renameRequired);
 }
 
-FileProxyModelPrivate::~FileProxyModelPrivate()
+CollectionModelPrivate::~CollectionModelPrivate()
 {
-    CanvasModelUnsubscribe(signal_CanvasModel_OpenEditor, &FileProxyModelPrivate::renameRequired);
+    CanvasModelUnsubscribe(signal_CanvasModel_OpenEditor, &CollectionModelPrivate::renameRequired);
 }
 
-void FileProxyModelPrivate::reset()
+void CollectionModelPrivate::reset()
 {
     fileList.clear();
     fileMap.clear();
@@ -69,31 +69,31 @@ void FileProxyModelPrivate::reset()
 
     // for rename
     connect(shell, &FileInfoModelShell::dataReplaced,
-            this, &FileProxyModelPrivate::sourceDataRenamed);
+            this, &CollectionModelPrivate::sourceDataRenamed);
 
     connect(model, &QAbstractItemModel::dataChanged,
-            this, &FileProxyModelPrivate::sourceDataChanged);
+            this, &CollectionModelPrivate::sourceDataChanged);
 
     connect(model, &QAbstractItemModel::rowsInserted,
-            this, &FileProxyModelPrivate::sourceRowsInserted);
+            this, &CollectionModelPrivate::sourceRowsInserted);
 
     connect(model, &QAbstractItemModel::rowsAboutToBeRemoved,
-            this, &FileProxyModelPrivate::sourceRowsAboutToBeRemoved);
+            this, &CollectionModelPrivate::sourceRowsAboutToBeRemoved);
 
     connect(model, &QAbstractItemModel::modelAboutToBeReset,
-            this, &FileProxyModelPrivate::sourceAboutToBeReset);
+            this, &CollectionModelPrivate::sourceAboutToBeReset);
 
     connect(model, &QAbstractItemModel::modelReset,
-            this, &FileProxyModelPrivate::sourceReset);
+            this, &CollectionModelPrivate::sourceReset);
 }
 
-void FileProxyModelPrivate::clearMapping()
+void CollectionModelPrivate::clearMapping()
 {
     fileList.clear();
     fileMap.clear();
 }
 
-void FileProxyModelPrivate::createMapping()
+void CollectionModelPrivate::createMapping()
 {
     auto source = q->sourceModel();
     if (!source || !shell)
@@ -113,7 +113,7 @@ void FileProxyModelPrivate::createMapping()
     fileMap = maps;
 }
 
-void FileProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft, const QModelIndex &sourceBottomright, const QVector<int> &roles)
+void CollectionModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft, const QModelIndex &sourceBottomright, const QVector<int> &roles)
 {
     if (!sourceTopleft.isValid() || !sourceBottomright.isValid())
         return;
@@ -126,6 +126,10 @@ void FileProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft, 
     for (int i = begin; i <= end; ++i) {
         auto url = shell->fileUrl(q->sourceModel()->index(i, 0));
         auto cur = q->index(url);
+
+        if (handler)
+            handler->acceptUpdate(url);
+
         if (cur.isValid())
             idxs << cur;
     }
@@ -141,18 +145,18 @@ void FileProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft, 
     emit q->dataChanged(idxs.first(), idxs.last(), roles);
 }
 
-void FileProxyModelPrivate::sourceAboutToBeReset()
+void CollectionModelPrivate::sourceAboutToBeReset()
 {
     q->beginResetModel();
 }
 
-void FileProxyModelPrivate::sourceReset()
+void CollectionModelPrivate::sourceReset()
 {
     createMapping();
     q->endResetModel();
 }
 
-void FileProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent, int start, int end)
+void CollectionModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent, int start, int end)
 {
     Q_UNUSED(sourceParent)
     if (!handler) {
@@ -188,7 +192,7 @@ void FileProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent, 
     }
 }
 
-void FileProxyModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent, int start, int end)
+void CollectionModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent, int start, int end)
 {
     Q_UNUSED(sourceParent)
     if ((start < 0) || (end < 0))
@@ -217,7 +221,7 @@ void FileProxyModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &source
     }
 }
 
-void FileProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
+void CollectionModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     int row = fileList.indexOf(oldUrl);
     auto newInfo = shell->fileInfo(shell->index(newUrl));
@@ -265,17 +269,17 @@ void FileProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &ne
     }
 }
 
-void FileProxyModelPrivate::renameRequired(const QUrl &url)
+void CollectionModelPrivate::renameRequired(const QUrl &url)
 {
     waitForRenameFile = url;
 }
 
-void FileProxyModelPrivate::clearRenameReuired()
+void CollectionModelPrivate::clearRenameReuired()
 {
     waitForRenameFile.clear();
 }
 
-void FileProxyModelPrivate::doRefresh(bool global)
+void CollectionModelPrivate::doRefresh(bool global)
 {
     if (global) {
         shell->refresh(shell->rootIndex());
@@ -286,20 +290,20 @@ void FileProxyModelPrivate::doRefresh(bool global)
     }
 }
 
-FileProxyModel::FileProxyModel(QObject *parent)
+CollectionModel::CollectionModel(QObject *parent)
     : QAbstractProxyModel(parent)
-    , d(new FileProxyModelPrivate(this))
+    , d(new CollectionModelPrivate(this))
 {
 
 }
 
-FileProxyModel::~FileProxyModel()
+CollectionModel::~CollectionModel()
 {
     delete d;
     d = nullptr;
 }
 
-void FileProxyModel::setModelShell(FileInfoModelShell *shell)
+void CollectionModel::setModelShell(FileInfoModelShell *shell)
 {
     if (auto model = sourceModel()) {
        model->disconnect(this);
@@ -319,32 +323,32 @@ void FileProxyModel::setModelShell(FileInfoModelShell *shell)
     endResetModel();
 }
 
-FileInfoModelShell *FileProxyModel::modelShell() const
+FileInfoModelShell *CollectionModel::modelShell() const
 {
     return d->shell;
 }
 
-void FileProxyModel::setHandler(ModelDataHandler *handler)
+void CollectionModel::setHandler(ModelDataHandler *handler)
 {
     d->handler = handler;
 }
 
-ModelDataHandler *FileProxyModel::handler() const
+ModelDataHandler *CollectionModel::handler() const
 {
     return d->handler;
 }
 
-QUrl FileProxyModel::rootUrl() const
+QUrl CollectionModel::rootUrl() const
 {
     return d->shell->rootUrl();
 }
 
-QModelIndex FileProxyModel::rootIndex() const
+QModelIndex CollectionModel::rootIndex() const
 {
     return createIndex(INT_MAX, 0, (void *)this);
 }
 
-QModelIndex FileProxyModel::index(const QUrl &url, int column) const
+QModelIndex CollectionModel::index(const QUrl &url, int column) const
 {
     if (!url.isValid())
         return QModelIndex();
@@ -357,7 +361,7 @@ QModelIndex FileProxyModel::index(const QUrl &url, int column) const
     return QModelIndex();
 }
 
-DFMLocalFileInfoPointer FileProxyModel::fileInfo(const QModelIndex &index) const
+DFMLocalFileInfoPointer CollectionModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return d->shell->fileInfo(index);
@@ -368,12 +372,12 @@ DFMLocalFileInfoPointer FileProxyModel::fileInfo(const QModelIndex &index) const
     return d->fileMap.value(fileUrl(index));
 }
 
-QList<QUrl> FileProxyModel::files() const
+QList<QUrl> CollectionModel::files() const
 {
     return d->fileList;
 }
 
-QUrl FileProxyModel::fileUrl(const QModelIndex &index) const
+QUrl CollectionModel::fileUrl(const QModelIndex &index) const
 {
     if (index == rootIndex())
         return d->shell->rootUrl();
@@ -384,7 +388,7 @@ QUrl FileProxyModel::fileUrl(const QModelIndex &index) const
     return d->fileList.at(index.row());
 }
 
-void FileProxyModel::refresh(const QModelIndex &parent, bool global, int ms)
+void CollectionModel::refresh(const QModelIndex &parent, bool global, int ms)
 {
     if (parent != rootIndex())
         return;
@@ -405,7 +409,7 @@ void FileProxyModel::refresh(const QModelIndex &parent, bool global, int ms)
     }
 }
 
-void FileProxyModel::update()
+void CollectionModel::update()
 {
     for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
         itor.value()->refresh();
@@ -413,7 +417,7 @@ void FileProxyModel::update()
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()), 0));
 }
 
-bool FileProxyModel::fetch(const QList<QUrl> &urls)
+bool CollectionModel::fetch(const QList<QUrl> &urls)
 {
     int row = d->fileList.count();
     beginInsertRows(rootIndex(), row, row + urls.count() - 1);
@@ -427,7 +431,7 @@ bool FileProxyModel::fetch(const QList<QUrl> &urls)
     return true;
 }
 
-bool FileProxyModel::take(const QList<QUrl> &urls)
+bool CollectionModel::take(const QList<QUrl> &urls)
 {
     // remove one by one
     for (const QUrl &url : urls) {
@@ -444,7 +448,7 @@ bool FileProxyModel::take(const QList<QUrl> &urls)
     return true;
 }
 
-QModelIndex FileProxyModel::mapToSource(const QModelIndex &proxyIndex) const
+QModelIndex CollectionModel::mapToSource(const QModelIndex &proxyIndex) const
 {
     auto url = fileUrl(proxyIndex);
     if (!url.isValid())
@@ -453,7 +457,7 @@ QModelIndex FileProxyModel::mapToSource(const QModelIndex &proxyIndex) const
     return d->shell->index(url);
 }
 
-QModelIndex FileProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
+QModelIndex CollectionModel::mapFromSource(const QModelIndex &sourceIndex) const
 {
     auto url = d->shell->fileUrl(sourceIndex);
     if (!url.isValid())
@@ -462,7 +466,7 @@ QModelIndex FileProxyModel::mapFromSource(const QModelIndex &sourceIndex) const
     return index(url);
 }
 
-QModelIndex FileProxyModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex CollectionModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     if (row < 0 || column < 0 || d->fileList.count() <= row)
@@ -475,7 +479,7 @@ QModelIndex FileProxyModel::index(int row, int column, const QModelIndex &parent
     return QModelIndex();
 }
 
-QModelIndex FileProxyModel::parent(const QModelIndex &child) const
+QModelIndex CollectionModel::parent(const QModelIndex &child) const
 {
     if (child != rootIndex() && child.isValid())
         return rootIndex();
@@ -483,7 +487,7 @@ QModelIndex FileProxyModel::parent(const QModelIndex &child) const
     return QModelIndex();
 }
 
-int FileProxyModel::rowCount(const QModelIndex &parent) const
+int CollectionModel::rowCount(const QModelIndex &parent) const
 {
     if (parent == rootIndex())
         return d->fileList.count();
@@ -491,7 +495,7 @@ int FileProxyModel::rowCount(const QModelIndex &parent) const
     return 0;
 }
 
-int FileProxyModel::columnCount(const QModelIndex &parent) const
+int CollectionModel::columnCount(const QModelIndex &parent) const
 {
     if (parent == rootIndex())
         return 1;
@@ -499,7 +503,7 @@ int FileProxyModel::columnCount(const QModelIndex &parent) const
     return 0;
 }
 
-QVariant FileProxyModel::data(const QModelIndex &index, int role) const
+QVariant CollectionModel::data(const QModelIndex &index, int role) const
 {
     QModelIndex sourceIndex = mapToSource(index);
     if (!index.isValid() || !sourceIndex.isValid())
@@ -508,7 +512,7 @@ QVariant FileProxyModel::data(const QModelIndex &index, int role) const
     return sourceModel()->data(sourceIndex, role);
 }
 
-QMimeData *FileProxyModel::mimeData(const QModelIndexList &indexes) const
+QMimeData *CollectionModel::mimeData(const QModelIndexList &indexes) const
 {
     QMimeData *data = new QMimeData();
     QList<QUrl> urls;
@@ -524,7 +528,7 @@ QMimeData *FileProxyModel::mimeData(const QModelIndexList &indexes) const
     return data;
 }
 
-bool FileProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
     Q_UNUSED(row);
     Q_UNUSED(column);
@@ -578,7 +582,7 @@ bool FileProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     return true;
 }
 
-void FileProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
+void CollectionModel::setSourceModel(QAbstractItemModel *sourceModel)
 {
     Q_UNUSED(sourceModel);
     qWarning() << "forbid setting source model";

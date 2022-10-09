@@ -47,11 +47,6 @@ void CanvasManagerHook::iconSizeChanged(int level) const
     CanvasManagerPublish(signal_CanvasManager_IconSizeChanged, level);
 }
 
-void CanvasManagerHook::hiddenFlagChanged(bool hidden) const
-{
-    CanvasManagerPublish(signal_CanvasManager_HiddenFlagChanged, hidden);
-}
-
 void CanvasManagerHook::autoArrangeChanged(bool on) const
 {
     CanvasManagerPublish(signal_CanvasManager_AutoArrangeChanged, on);

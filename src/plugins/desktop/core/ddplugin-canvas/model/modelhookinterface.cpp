@@ -81,3 +81,8 @@ bool ModelHookInterface::sortData(int role, int order, QList<QUrl> *files, void 
 {
     return false;
 }
+
+void ModelHookInterface::hiddenFlagChanged(bool show) const
+{
+
+}

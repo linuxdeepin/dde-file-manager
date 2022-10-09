@@ -20,8 +20,6 @@
  */
 #include "modeldatahandler.h"
 
-#include <QUrl>
-
 using namespace ddplugin_organizer;
 
 ModelDataHandler::ModelDataHandler()
@@ -44,6 +42,12 @@ bool ModelDataHandler::acceptRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     Q_UNUSED(oldUrl)
     Q_UNUSED(newUrl)
+    return true;
+}
+
+bool ModelDataHandler::acceptUpdate(const QUrl &url)
+{
+    Q_UNUSED(url)
     return true;
 }
 

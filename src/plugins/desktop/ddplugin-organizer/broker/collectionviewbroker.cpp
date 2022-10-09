@@ -21,7 +21,7 @@
 #include "collectionviewbroker.h"
 #include "view/collectionview_p.h"
 
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 
 using namespace ddplugin_organizer;
 

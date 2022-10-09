@@ -39,6 +39,9 @@ using namespace ddplugin_canvas;
 #define CanvasModelRunHook(topic, args...) \
             dpfHookSequence->run(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)
 
+#define CanvasModelPublish(topic, args...) \
+            dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)
+
 CanvasModelHook::CanvasModelHook(QObject *parent)
     : QObject(parent)
     , ModelHookInterface()
@@ -94,4 +97,9 @@ bool CanvasModelHook::mimeTypes(QStringList *types, void *extData) const
 bool CanvasModelHook::sortData(int role, int order, QList<QUrl> *files, void *extData) const
 {
     return CanvasModelRunHook(hook_CanvasModel_SortData, role, order, files, extData);
+}
+
+void CanvasModelHook::hiddenFlagChanged(bool show) const
+{
+    CanvasModelPublish(signal_CanvasModel_HiddenFlagChanged, show);
 }

@@ -20,7 +20,7 @@
  */
 #include "fileoperator_p.h"
 #include "view/collectionview.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"

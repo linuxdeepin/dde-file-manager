@@ -20,7 +20,7 @@
  */
 #include "collectionviewmenu.h"
 #include "collectionview.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 #include "menus/organizermenu_defines.h"
 #include "private/surface.h"
 

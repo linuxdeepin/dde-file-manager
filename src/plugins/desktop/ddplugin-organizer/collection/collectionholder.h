@@ -32,7 +32,7 @@
 
 namespace ddplugin_organizer {
 
-class FileProxyModel;
+class CollectionModel;
 class CollectionFrame;
 class CollectionWidget;
 class CollectionDataProvider;
@@ -58,7 +58,7 @@ public:
     void setName(const QString &);
     Dtk::Widget::DFrame *frame() const;
     CollectionWidget *widget() const;
-    void createFrame(Surface *surface, FileProxyModel *model);
+    void createFrame(Surface *surface, CollectionModel *model);
     void setSurface(Surface *surface);
     Surface *surface() const;
     void show();

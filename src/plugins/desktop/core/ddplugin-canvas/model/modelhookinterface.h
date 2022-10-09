@@ -46,6 +46,9 @@ public:
     virtual bool mimeData(const QList<QUrl> &urls, QMimeData *out, void *extData = nullptr) const;
     virtual bool mimeTypes (QStringList *types, void *extData = nullptr) const;
     virtual bool sortData (int role, int order, QList<QUrl> *files, void *extData = nullptr) const; // 待定，还需考虑ui交互问题
+
+    //signals
+    virtual void hiddenFlagChanged(bool hidden) const;
 };
 
 }

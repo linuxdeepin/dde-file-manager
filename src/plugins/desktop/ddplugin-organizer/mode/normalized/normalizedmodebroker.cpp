@@ -24,6 +24,7 @@
 #include "view/collectionview.h"
 #include "broker/collectionviewbroker.h"
 #include "delegate/collectionitemdelegate.h"
+#include "models/collectionmodel.h"
 
 using namespace ddplugin_organizer;
 
@@ -32,6 +33,12 @@ NormalizedModeBroker::NormalizedModeBroker(NormalizedMode *parent)
     , mode(parent)
 {
     Q_ASSERT(mode);
+}
+
+void NormalizedModeBroker::refreshModel(bool global, int ms)
+{
+    if (auto m = mode->getModel())
+        m->refresh(m->rootIndex(), global, ms);
 }
 
 QString NormalizedModeBroker::gridPoint(const QUrl &item, QPoint *point)

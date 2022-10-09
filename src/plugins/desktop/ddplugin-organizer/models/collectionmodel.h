@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEPROXYMODEL_H
-#define FILEPROXYMODEL_H
+#ifndef COLLECTIONMODEL_H
+#define COLLECTIONMODEL_H
 
 #include "ddplugin_organizer_global.h"
 
@@ -31,14 +31,14 @@ namespace ddplugin_organizer {
 class ModelDataHandler;
 class CanvasViewShell;
 class FileInfoModelShell;
-class FileProxyModelPrivate;
-class FileProxyModel : public QAbstractProxyModel
+class CollectionModelPrivate;
+class CollectionModel : public QAbstractProxyModel
 {
     Q_OBJECT
-    friend class FileProxyModelPrivate;
+    friend class CollectionModelPrivate;
 public:
-    explicit FileProxyModel(QObject *parent = nullptr);
-    ~FileProxyModel() override;
+    explicit CollectionModel(QObject *parent = nullptr);
+    ~CollectionModel() override;
     void setModelShell(FileInfoModelShell *shell);
     FileInfoModelShell *modelShell() const;
     void setHandler(ModelDataHandler *);
@@ -70,9 +70,9 @@ signals:
 private:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
 private:
-    FileProxyModelPrivate *d;
+    CollectionModelPrivate *d;
 };
 
 }
 
-#endif // FILEPROXYMODEL_H
+#endif // COLLECTIONMODEL_H

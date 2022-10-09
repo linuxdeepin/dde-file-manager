@@ -18,10 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEPROXYMODEL_P_H
-#define FILEPROXYMODEL_P_H
+#ifndef COLLECTIONMODEL_P_H
+#define COLLECTIONMODEL_P_H
 
-#include "fileproxymodel.h"
+#include "collectionmodel.h"
 
 #include <file/local/localfileinfo.h>
 
@@ -29,12 +29,12 @@
 
 namespace ddplugin_organizer {
 
-class FileProxyModelPrivate : public QObject
+class CollectionModelPrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileProxyModelPrivate(FileProxyModel *qq);
-    ~FileProxyModelPrivate();
+    explicit CollectionModelPrivate(CollectionModel *qq);
+    ~CollectionModelPrivate();
     void reset();
     void clearMapping();
     void createMapping();
@@ -62,9 +62,9 @@ public:
     QSharedPointer<QTimer> refreshTimer;
     QUrl waitForRenameFile;
 private:
-    FileProxyModel *q;
+    CollectionModel *q;
 };
 
 }
 
-#endif // FILEPROXYMODEL_P_H
+#endif // COLLECTIONMODEL_P_H

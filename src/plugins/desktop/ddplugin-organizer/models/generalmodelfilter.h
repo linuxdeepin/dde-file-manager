@@ -18,28 +18,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMANAGERHOOKINTERFACE_H
-#define CANVASMANAGERHOOKINTERFACE_H
+#ifndef GENERALMODELFILTER_H
+#define GENERALMODELFILTER_H
 
-#include "ddplugin_canvas_global.h"
+#include "modeldatahandler.h"
 
-#include <QString>
+#include <QSharedPointer>
 
-namespace ddplugin_canvas {
+namespace ddplugin_organizer {
 
-class CanvasManagerHookInterface
+class GeneralModelFilter : public ModelDataHandler
 {
 public:
-    explicit CanvasManagerHookInterface();
-    virtual ~CanvasManagerHookInterface();
-
-public:
-    // signals
-    virtual void iconSizeChanged(int level) const;
-    virtual void autoArrangeChanged(bool on) const;
-    virtual bool requestWallpaperSetting(const QString &screen) const;
+    explicit GeneralModelFilter();
+    bool installFilter(const QSharedPointer<ModelDataHandler> &filter);
+    void removeFilter(const QSharedPointer<ModelDataHandler> &filter);
+    bool acceptInsert(const QUrl &url) override;
+    QList<QUrl> acceptReset(const QList<QUrl> &urls) override;
+    bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override;
+    bool acceptUpdate(const QUrl &url) override;
+protected:
+    QList<QSharedPointer<ModelDataHandler>> modelFilters;
 };
 
 }
 
-#endif // CANVASMANAGERHOOKINTERFACE_H
+#endif // GENERALMODELFILTER_H

@@ -23,7 +23,7 @@
 #include "itemeditor.h"
 #include "view/collectionview.h"
 #include "view/collectionview_p.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 #include "utils/fileoperator.h"
 
 #include "dfm-base/base/application/application.h"
@@ -282,7 +282,7 @@ void CollectionItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     if (index.data(Global::ItemRoles::kItemFileNameOfRenameRole) == newName)
         return;
 
-    FileProxyModel *regionModel = qobject_cast<FileProxyModel *>(model);
+    CollectionModel *regionModel = qobject_cast<CollectionModel *>(model);
     Q_ASSERT(regionModel);
 
     if (const AbstractFileInfoPointer &fileInfo = regionModel->fileInfo(index)) {

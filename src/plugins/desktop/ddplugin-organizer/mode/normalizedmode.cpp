@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "normalized/normalizedmode_p.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 #include "config/configpresenter.h"
 #include "interface/canvasviewshell.h"
 #include "utils/fileoperator.h"
@@ -193,7 +193,7 @@ OrganizerMode NormalizedMode::mode() const
     return OrganizerMode::kNormalized;
 }
 
-bool NormalizedMode::initialize(FileProxyModel *m)
+bool NormalizedMode::initialize(CollectionModel *m)
 {
     Q_ASSERT(m);
     model = m;
@@ -206,14 +206,14 @@ bool NormalizedMode::initialize(FileProxyModel *m)
     Q_ASSERT(d->classifier);
 
     // must be DirectConnection to keep sequential
-    connect(model, &FileProxyModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);
-    connect(model, &FileProxyModel::rowsAboutToBeRemoved, this, &NormalizedMode::onFileAboutToBeRemoved, Qt::DirectConnection);
-    connect(model, &FileProxyModel::dataReplaced, this, &NormalizedMode::onFileRenamed, Qt::DirectConnection);
+    connect(model, &CollectionModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);
+    connect(model, &CollectionModel::rowsAboutToBeRemoved, this, &NormalizedMode::onFileAboutToBeRemoved, Qt::DirectConnection);
+    connect(model, &CollectionModel::dataReplaced, this, &NormalizedMode::onFileRenamed, Qt::DirectConnection);
 
-    connect(model, &FileProxyModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
-    connect(model, &FileProxyModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
+    connect(model, &CollectionModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
+    connect(model, &CollectionModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
 
-    connect(model, &FileProxyModel::openEditor, this, &NormalizedMode::onOpenEditor, Qt::QueuedConnection);
+    connect(model, &CollectionModel::openEditor, this, &NormalizedMode::onOpenEditor, Qt::QueuedConnection);
 
     // creating if there already are files.
     if (!model->files().isEmpty())

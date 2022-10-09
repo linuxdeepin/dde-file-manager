@@ -28,7 +28,7 @@
 
 namespace ddplugin_organizer {
 
-class FileProxyModel;
+class CollectionModel;
 class CollectionItemDelegate;
 class CollectionDataProvider;
 class CanvasModelShell;
@@ -52,7 +52,7 @@ public:
     void setFileShiftable(const bool enable);
     bool fileShiftable() const;
     QMargins cellMargins() const;
-    FileProxyModel *model() const;
+    CollectionModel *model() const;
     CollectionItemDelegate *itemDelegate() const;
     CollectionDataProvider *dataProvider() const;
     WId winId() const;

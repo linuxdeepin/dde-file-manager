@@ -22,7 +22,7 @@
 #include "organizermenu_defines.h"
 #include "config/configpresenter.h"
 #include "view/collectionview.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 #include "utils/renamedialog.h"
 #include "utils/fileoperator.h"
 #include "core/ddplugin-canvas/menu/canvasmenu_defines.h"

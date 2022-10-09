@@ -82,7 +82,6 @@ void CanvasOrganizer::setCanvasModelShell(CanvasModelShell *sh)
     connect(canvasModelShell, &CanvasModelShell::filterDataRested, this, &CanvasOrganizer::filterDataRested, Qt::DirectConnection);
     connect(canvasModelShell, &CanvasModelShell::filterDataInserted, this, &CanvasOrganizer::filterDataInserted, Qt::DirectConnection);
     connect(canvasModelShell, &CanvasModelShell::filterDataRenamed, this, &CanvasOrganizer::filterDataRenamed, Qt::DirectConnection);
-
 }
 
 void CanvasOrganizer::setCanvasViewShell(CanvasViewShell *sh)

@@ -20,7 +20,7 @@
 */
 
 #include "stubext.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel_p.h"
 #include "view/collectionframe.h"
 #include "collection/collectionholder_p.h"
 #include "collection/collectionholder.h"

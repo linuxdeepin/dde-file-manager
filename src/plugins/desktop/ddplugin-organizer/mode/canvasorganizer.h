@@ -31,7 +31,7 @@
 class QMimeData;
 
 namespace ddplugin_organizer {
-class FileProxyModel;
+class CollectionModel;
 class CanvasModelShell;
 class CanvasViewShell;
 class CanvasGridShell;
@@ -49,7 +49,8 @@ public:
     explicit CanvasOrganizer(QObject *parent = nullptr);
     ~CanvasOrganizer() override;
     virtual OrganizerMode mode() const = 0;
-    virtual bool initialize(FileProxyModel *) = 0;
+    virtual bool initialize(CollectionModel *) = 0;
+    inline CollectionModel *getModel() const {return model;}
     virtual void layout();
     virtual void detachLayout();
     virtual void setCanvasModelShell(CanvasModelShell *sh);
@@ -68,7 +69,7 @@ protected slots:
     virtual bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
     virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
 protected:
-    FileProxyModel *model = nullptr;
+    CollectionModel *model = nullptr;
     CanvasModelShell *canvasModelShell = nullptr;
     CanvasViewShell *canvasViewShell = nullptr;
     CanvasGridShell *canvasGridShell = nullptr;

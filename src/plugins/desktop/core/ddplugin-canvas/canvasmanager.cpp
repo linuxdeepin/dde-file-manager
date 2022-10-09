@@ -484,8 +484,6 @@ void CanvasManagerPrivate::onHiddenFlagsChanged(bool show)
     if (show != canvasModel->showHiddenFiles()) {
         canvasModel->setShowHiddenFiles(show);
         canvasModel->refresh(canvasModel->rootIndex());
-
-        hookIfs->hiddenFlagChanged(!show);
     }
 }
 

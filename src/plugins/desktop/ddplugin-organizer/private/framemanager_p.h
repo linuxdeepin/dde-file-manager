@@ -25,7 +25,7 @@
 #include "framemanager.h"
 #include "surface.h"
 #include "mode/canvasorganizer.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 #include "interface/canvasinterface.h"
 #include "options/optionswindow.h"
 #include "utils/organizerutils.h"
@@ -61,7 +61,7 @@ protected:
 public:
     QMap<QString, SurfacePointer> surfaceWidgets;
     CanvasOrganizer *organizer = nullptr;
-    FileProxyModel *model = nullptr;
+    CollectionModel *model = nullptr;
     CanvasInterface *canvas = nullptr;
     OptionsWindow *options = nullptr;
 private:

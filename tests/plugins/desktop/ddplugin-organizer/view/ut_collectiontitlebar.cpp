@@ -19,11 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stubext.h"
 #include "view/collectiontitlebar_p.h"
 #include "view/collectiontitlebar.h"
 
+#include "stubext.h"
+
 #include <gtest/gtest.h>
+
 #include <QMenu>
 
 using namespace testing;

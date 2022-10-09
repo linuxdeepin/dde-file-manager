@@ -18,28 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMANAGERHOOKINTERFACE_H
-#define CANVASMANAGERHOOKINTERFACE_H
+#ifndef INNERDESKTOPAPPFILTER_H
+#define INNERDESKTOPAPPFILTER_H
 
-#include "ddplugin_canvas_global.h"
+#include "models/modeldatahandler.h"
 
-#include <QString>
+#include <QMap>
+#include <QList>
 
-namespace ddplugin_canvas {
+class QGSettings;
 
-class CanvasManagerHookInterface
+namespace ddplugin_organizer {
+
+class InnerDesktopAppFilter : public QObject, public ModelDataHandler
 {
+    Q_OBJECT
 public:
-    explicit CanvasManagerHookInterface();
-    virtual ~CanvasManagerHookInterface();
-
-public:
-    // signals
-    virtual void iconSizeChanged(int level) const;
-    virtual void autoArrangeChanged(bool on) const;
-    virtual bool requestWallpaperSetting(const QString &screen) const;
+    explicit InnerDesktopAppFilter(QObject *parent = nullptr);
+    void update();
+    void refreshModel();
+    bool acceptInsert(const QUrl &url) override;
+    QList<QUrl> acceptReset(const QList<QUrl> &urls) override;
+    bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override;
+public slots:
+    void changed(const QString &key);
+protected:
+    QGSettings *gsettings = nullptr;
+    QMap<QString, QUrl> keys;
+    QMap<QString, bool> hidden;
 };
 
 }
 
-#endif // CANVASMANAGERHOOKINTERFACE_H
+#endif // INNERDESKTOPAPPFILTER_H

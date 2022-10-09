@@ -24,6 +24,7 @@
 #include "ddplugin_organizer_global.h"
 
 #include <QObject>
+#include <QUrl>
 
 namespace ddplugin_organizer {
 
@@ -36,8 +37,8 @@ public:
     virtual bool acceptInsert(const QUrl &url);
     virtual QList<QUrl> acceptReset(const QList<QUrl> &urls);
     virtual bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl);
+    virtual bool acceptUpdate(const QUrl &url);
 };
-
 }
 
 #endif // MODELDATAHANDLER_H

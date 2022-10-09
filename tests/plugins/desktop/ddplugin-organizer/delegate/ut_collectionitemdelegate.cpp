@@ -23,7 +23,7 @@
 #include "delegate/collectionitemdelegate_p.h"
 #include "view/collectionview.h"
 #include "view/collectionview_p.h"
-#include "models/fileproxymodel.h"
+#include "models/collectionmodel.h"
 
 #include "dfm-base/dfm_global_defines.h"
 
@@ -106,7 +106,7 @@ TEST_F(CollectionItemDelegateTest, paintEmblems)
 
 TEST_F(CollectionItemDelegateTest, paintLabel)
 {
-    FileProxyModel model;
+    CollectionModel model;
     CollectionView view(QString("testuuid"), nullptr);
     view.setModel(&model);
 
@@ -117,7 +117,7 @@ TEST_F(CollectionItemDelegateTest, paintLabel)
         return isHighlight;
     });
 
-    stub.set_lamda(&FileProxyModel::fileUrl, [](){
+    stub.set_lamda(&CollectionModel::fileUrl, [](){
         return QUrl::fromLocalFile("/usr");
     });
 

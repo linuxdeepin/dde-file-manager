@@ -25,7 +25,7 @@
 #include "delegate/collectionitemdelegate.h"
 #include "interface/canvasmanagershell.h"
 #include "mode/normalized/type/typeclassifier.h"
-#include "models/fileproxymodel_p.h"
+#include "models/collectionmodel_p.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "stubext.h"
@@ -293,7 +293,7 @@ TEST_F(CollectionViewTest, isIndexHidden)
     });
 
     CollectionView view("dd", &test);
-    FileProxyModel model;
+    CollectionModel model;
     model.d->fileList = {url1, url2};
     model.d->fileMap.insert(url1, nullptr);
     model.d->fileMap.insert(url2, nullptr);
@@ -322,7 +322,7 @@ TEST_F(CollectionViewTest, selectedIndexes)
     });
 
     CollectionView view("dd", &test);
-    FileProxyModel model;
+    CollectionModel model;
     model.d->fileList = {url1, url2};
     model.d->fileMap.insert(url1, nullptr);
     model.d->fileMap.insert(url2, nullptr);
@@ -348,7 +348,7 @@ TEST_F(CollectionViewTest, selectRect)
 {
     TestProvider test;
     CollectionView view("dd", &test);
-    FileProxyModel model;
+    CollectionModel model;
     view.setModel(&model);
 
     stub.set_lamda(&CollectionViewPrivate::selection,[](){
@@ -391,7 +391,7 @@ TEST_F(CollectionViewTest, findIndex)
     });
 
     CollectionView view("dd", &test);
-    FileProxyModel model;
+    CollectionModel model;
     model.d->fileList = {url1, url2};
     model.d->fileMap.insert(url1, nullptr);
     model.d->fileMap.insert(url2, nullptr);
@@ -401,7 +401,7 @@ TEST_F(CollectionViewTest, findIndex)
     QModelIndex idx1(0, 0, (void *)nullptr, &model);
     QModelIndex idx2(1, 0, (void *)nullptr, &model);
 
-    stub.set_lamda(VADDR(FileProxyModel, data), [idx1,idx2](FileProxyModel *, const QModelIndex &index, int role) {
+    stub.set_lamda(VADDR(CollectionModel, data), [idx1,idx2](CollectionModel *, const QModelIndex &index, int role) {
         QVariant var;
         if (role ==  Global::ItemRoles::kItemFilePinyinNameRole) {
            if (index == idx1)

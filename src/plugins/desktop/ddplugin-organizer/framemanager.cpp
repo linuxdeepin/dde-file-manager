@@ -338,7 +338,7 @@ void FrameManager::turnOn(bool build)
         connect(canvasViewShell, &CanvasViewShell::filterWheel, d, &FrameManagerPrivate::filterWheel, Qt::DirectConnection);
     }
 
-    d->model = new FileProxyModel(this);
+    d->model = new CollectionModel(this);
     d->model->setModelShell(d->canvas->fileInfoModel());
 
     // adjust canvas icon level

@@ -91,7 +91,7 @@ QString FileClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
 #if 1
     //! the newUrl must be not existed,
     //! and the oldUrl must be existed,
-    //! see FileProxyModelPrivate::sourceDataRenamed
+    //! see CollectionModelPrivate::sourceDataRenamed
     Q_ASSERT_X(newKey.isEmpty(), "FileClassifier", QString("newUrl is existed: %0").arg(newUrl.toString()).toStdString().c_str());
     Q_ASSERT_X(!oldType.isEmpty(), "FileClassifier", QString("oldUrl is not existed: %0").arg(oldUrl.toString()).toStdString().c_str());
 
