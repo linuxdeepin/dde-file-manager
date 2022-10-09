@@ -157,7 +157,6 @@ void LocalFileInfo::refresh()
     d->mimeType = QMimeType();
     d->mimeTypeMode = QMimeDatabase::MatchDefault;
     d->clearIcon();
-    d->dfmFileInfo->clearCache();
     d->dfmFileInfo->refresh();
     d->enableEmblems = -1;
     d->gioEmblemsMap.clear();
@@ -1524,7 +1523,6 @@ QIcon LocalFileInfo::fileIcon()
 #ifdef DFM_MINIMUM
     d->enableThumbnail = 0;
 #else
-    const QString &filePath = this->absoluteFilePath();
     if (d->enableThumbnail < 0) {
         bool isLocalDevice = false;
         bool isCdRomDevice = false;
@@ -1543,7 +1541,7 @@ QIcon LocalFileInfo::fileIcon()
 
     bool hasThumbnail = false;
     const int checkFast = DThumbnailProvider::instance()->hasThumbnailFast(mimeTypeName());
-    if(1 == checkFast)
+    if (1 == checkFast)
         hasThumbnail = true;
     else if (0 == checkFast)
         hasThumbnail = false;
