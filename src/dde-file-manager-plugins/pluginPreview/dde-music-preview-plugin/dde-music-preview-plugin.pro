@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets multimedia
+QT       += core gui widgets multimedia dtkwidget
 
 TARGET = dde-music-preview-plugin
 TEMPLATE = lib
