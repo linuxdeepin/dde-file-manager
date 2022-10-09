@@ -4,13 +4,16 @@
 
 #include "toolbarframe.h"
 
+#include <DSlider>
+
 #include <QPushButton>
-#include <QSlider>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QUrl>
 #include <QTimer>
 #include <QtMath>
+
+DWIDGET_USE_NAMESPACE
 
 ToolBarFrame::ToolBarFrame(const QString &uri, QWidget *parent) :
     QFrame(parent)
@@ -29,21 +32,10 @@ ToolBarFrame::ToolBarFrame(const QString &uri, QWidget *parent) :
 void ToolBarFrame::initUI()
 {
     m_playControlButton = new QPushButton(this);
-    m_playControlButton->setFixedSize(24, 24);
-    m_playControlButton->setStyleSheet("QPushButton{"
-                                       "border: none;"
-                                       "image: url(:/icons/icons/start_normal.png);"
-                                       "}"
-                                       "QPushButton::pressed{"
-                                       "image: url(:/icons/icons/start_pressed.png);"
-                                       "}"
-                                       "QPushButton::hover{"
-                                       "image: url(:/icons/icons/start_hover.png);"
-                                       "}"
-                                      );
+    m_playControlButton->setFixedSize(36, 36);
+    m_playControlButton->setIcon(QIcon::fromTheme(":/icons/icons/start_normal.png"));
 
-    m_progressSlider = new QSlider(this);
-    m_progressSlider->setOrientation(Qt::Horizontal);
+    m_progressSlider = new DSlider(Qt::Horizontal, this);
     m_progressSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_durationLabel = new QLabel(this);
@@ -53,6 +45,7 @@ void ToolBarFrame::initUI()
     layout->addWidget(m_playControlButton, 0, Qt::AlignVCenter);
     layout->addWidget(m_progressSlider, 0, Qt::AlignVCenter);
     layout->addWidget(m_durationLabel, 0, Qt::AlignVCenter);
+    layout->addSpacing(5);
 
     setLayout(layout);
 }
@@ -64,7 +57,7 @@ void ToolBarFrame::initConnections()
     connect(m_player, &QMediaPlayer::durationChanged, this, &ToolBarFrame::onPlayDurationChanged);
     connect(m_playControlButton, &QPushButton::clicked, this, &ToolBarFrame::onPlayControlButtonClicked);
     connect(m_updateProgressTimer, &QTimer::timeout, this, &ToolBarFrame::updateProgress);
-    connect(m_progressSlider, &QSlider::valueChanged, this, &ToolBarFrame::seekPosition);
+    connect(m_progressSlider, &DSlider::valueChanged, this, &ToolBarFrame::seekPosition);
 }
 
 void ToolBarFrame::onPlayDurationChanged(qint64 duration)
@@ -80,22 +73,10 @@ void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
 
     QString iconName;
     if (state == QMediaPlayer::StoppedState || state == QMediaPlayer::PausedState) {
-        iconName = "start";
+        m_playControlButton->setIcon(QIcon::fromTheme(":/icons/icons/start_normal.png"));
     } else {
-        iconName = "pause";
+        m_playControlButton->setIcon(QIcon::fromTheme(":/icons/icons/pause_normal.png"));
     }
-
-    m_playControlButton->setStyleSheet("QPushButton{"
-                                       "border: none;"
-                                       "image: url(:/icons/icons/" + iconName + "_normal.png);"
-                                       "}"
-                                       "QPushButton::pressed{"
-                                       "image: url(:/icons/icons/" + iconName + "_pressed.png);"
-                                       "}"
-                                       "QPushButton::hover{"
-                                       "image: url(:/icons/icons/" + iconName + "_hover.png);"
-                                       "}"
-                                      );
 }
 
 void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)

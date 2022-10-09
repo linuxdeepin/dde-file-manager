@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "musicmessageview.h"
+#include "cover.h"
 
 #include <QLabel>
 #include <QHBoxLayout>
@@ -49,7 +50,7 @@ void MusicMessageView::initUI()
     m_albumValue = new QLabel(this);
     m_albumValue->setObjectName("albumValue");
 
-    m_imgLabel = new QLabel(this);
+    m_imgLabel = new Cover(this);
     m_imgLabel->setFixedSize(QSize(240, 240));
 
     m_player = new QMediaPlayer(this);
@@ -87,22 +88,19 @@ void MusicMessageView::initUI()
 
     setStyleSheet("QLabel#Title{"
                   "font-size: 18px;"
+                  "color: #101010;"
                   "font:demibold;"
                   "}"
                   "QLabel#Artist{"
-                  "color: #5b5b5b;"
                   "font-size: 12px;"
                   "}"
                   "QLabel#Album{"
-                  "color: #5b5b5b;"
                   "font-size: 12px;"
                   "}"
                   "QLabel#artistValue{"
-                  "color: #5b5b5b;"
                   "font-size: 12px;"
                   "}"
                   "QLabel#albumValue{"
-                  "color: #5b5b5b;"
                   "font-size: 12px;"
                   "}");
 
@@ -143,7 +141,7 @@ void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
         if (img.isNull()) {
             img = QImage(":/icons/icons/default_music_cover.png");
         }
-        m_imgLabel->setPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
+        m_imgLabel->setCoverPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
 
         m_player->deleteLater();
 
