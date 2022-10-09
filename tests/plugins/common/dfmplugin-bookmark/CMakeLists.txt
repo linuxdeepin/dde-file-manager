@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(test-dfmplugin-bookmark)
 
-set(PluginPath ${PROJECT_SOURCE_PATH}/plugins/common/dfmplugin-bookmark/)
+set(PluginPath ${PROJECT_SOURCE_PATH}/plugins/common/core/dfmplugin-bookmark/)
 set(ControllerPath ${PluginPath}/controller/)
 
 include_directories(${ControllerPath})

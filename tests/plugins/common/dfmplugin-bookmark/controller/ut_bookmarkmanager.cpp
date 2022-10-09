@@ -22,10 +22,11 @@
 */
 
 #include "stubext.h"
-#include "plugins/common/dfmplugin-bookmark/controller/bookmarkmanager.h"
-#include "plugins/common/dfmplugin-bookmark/controller/defaultitemmanager.h"
-//#include "dfm-base/utils/systempathutil.h"
+#include "plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.h"
+#include "plugins/common/core/dfmplugin-bookmark/controller/defaultitemmanager.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
+
+#include <dfm-framework/event/event.h>
 
 #include <gtest/gtest.h>
 #include <gtest/gtest_prod.h>
@@ -34,6 +35,7 @@
 
 DFMBASE_USE_NAMESPACE
 DPBOOKMARK_USE_NAMESPACE
+DPF_USE_NAMESPACE
 
 class UT_BookmarkManager : public testing::Test
 {
@@ -71,6 +73,16 @@ TEST_F(UT_BookmarkManager, addPluginItem)
         { "Property_Key_IsDefaultItem", true }
     };
     DefaultItemManager::instance()->addPluginItem(map);
-    EXPECT_TRUE(DefaultItemManager::instance()->pluginItems().count() > 0);
-    EXPECT_TRUE(DefaultItemManager::instance()->pluginItems().first().name == nameKey);
+    EXPECT_TRUE(DefaultItemManager::instance()->pluginItemData().count() > 0);
+    EXPECT_TRUE(DefaultItemManager::instance()->pluginItemData().keys().first() == nameKey);
+};
+
+TEST_F(UT_BookmarkManager, addQuickAccess)
+{
+    stub.set_lamda(&DefaultItemManager::initDefaultItems, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&BookMarkManager::bookmarkDataToQuickAccess, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&BookMarkManager::addQuickAccessItemsFromConfig, [] { __DBG_STUB_INVOKE__ });
+    typedef bool (EventSequenceManager::*RunFunc)(const QString &, const QString &, QList<QUrl>, QList<QUrl>);
+
+    //TODO
 };
