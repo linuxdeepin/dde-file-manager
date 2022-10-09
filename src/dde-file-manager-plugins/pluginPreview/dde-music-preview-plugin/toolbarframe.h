@@ -5,15 +5,23 @@
 #ifndef TOOLBARFRAME_H
 #define TOOLBARFRAME_H
 
+#include <dtkwidget_global.h>
+
 #include <QFrame>
 #include <QMediaPlayer>
 
-
+QT_BEGIN_NAMESPACE
 class QPushButton;
 class QSlider;
 class QLabel;
 class QMediaPlayer;
 class QTimer;
+QT_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DSlider;
+DWIDGET_END_NAMESPACE
+
 class ToolBarFrame : public QFrame
 {
     Q_OBJECT
@@ -43,7 +51,7 @@ private:
 private:
     QMediaPlayer *m_player;
     QPushButton *m_playControlButton;
-    QSlider *m_progressSlider;
+    DTK_WIDGET_NAMESPACE::DSlider *m_progressSlider;
     QLabel *m_durationLabel;
     QTimer *m_updateProgressTimer;
 };

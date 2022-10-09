@@ -8,6 +8,7 @@
 #include <QFrame>
 #include <QMediaPlayer>
 class QLabel;
+class Cover;
 
 /**
  * @brief MediaMeta 音频文件信息结构体
@@ -69,7 +70,7 @@ private:
     QLabel *m_titleLabel;
     QLabel *m_artistLabel;
     QLabel *m_albumLabel;
-    QLabel *m_imgLabel;
+    Cover *m_imgLabel { nullptr };
     QLabel *m_artistValue;
     QLabel *m_albumValue;
 

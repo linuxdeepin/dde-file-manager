@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets multimedia quick
+QT       += core gui widgets multimedia quick dtkwidget
 
 TARGET = test-dde-music-preview-plugin
 TEMPLATE = app
@@ -29,13 +29,15 @@ SOURCES += \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/toolbarframe.cpp \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/musicpreview.cpp \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/musicmessageview.cpp \
-    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/musicpreviewplugin.cpp
+    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/musicpreviewplugin.cpp \
+    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/cover.cpp
 
 HEADERS += \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/toolbarframe.h \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/musicmessageview.h \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/musicpreview.h \
-    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/musicpreviewplugin.h
+    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/musicpreviewplugin.h \
+    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/cover.h
 
 RESOURCES += \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/dde-music-preview-plugin.qrc
