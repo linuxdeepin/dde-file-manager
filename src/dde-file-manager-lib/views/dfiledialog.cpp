@@ -20,6 +20,7 @@
 #include <DDialog>
 #include <DPlatformWindowHandle>
 #include <dwidgetutil.h>
+#include <DSuggestButton>
 
 #include <QEventLoop>
 #include <QPointer>
@@ -161,7 +162,7 @@ DFileDialog::DFileDialog(QWidget *parent)
 
     DFMEventDispatcher::instance()->installEventFilter(this);
 
-    connect(statusBar()->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
+    connect(statusBar()->acceptButton(), &DSuggestButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
     connect(statusBar()->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
     connect(getFileView(), &DFileView::fileDialogRename, this, &DFileDialog::disableOpenBtn);
     connect(statusBar()->comboBox(),

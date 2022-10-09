@@ -6,6 +6,8 @@
 #include "dfmglobal.h"
 #include "accessibility/ac-lib-file-manager.h"
 
+#include <DSuggestButton>
+
 #include <QLineEdit>
 #include <QComboBox>
 #include <QHBoxLayout>
@@ -16,6 +18,8 @@
 #include <QTimer>
 #include <QDebug>
 
+DWIDGET_USE_NAMESPACE
+
 FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     : QFrame(parent)
 {
@@ -24,6 +28,11 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setFrameShape(QFrame::NoFrame);
+
+    QFrame *line = new QFrame(this);
+    line->setLineWidth(0);
+    line->setMidLineWidth(0);
+    line->setFrameShape(QFrame::HLine);
 
     m_titleLabel = new QLabel(this);
     AC_SET_OBJECT_NAME(m_titleLabel, AC_FD_STATUS_BAR_TITLE_LABEL);
@@ -49,9 +58,10 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
 
     m_fileNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_fileNameEdit->installEventFilter(this);
+    m_fileNameEdit->setFixedHeight(35);
     m_filtersComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    m_acceptButton = new QPushButton(this);
+    m_acceptButton = new DSuggestButton(this);
     m_rejectButton = new QPushButton(tr("Cancel","button"), this);
 
     m_rejectButton->setObjectName(tr("Cancel","button"));
@@ -63,9 +73,12 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     m_acceptButton->setObjectName("FileDialogStatusBarAcceptButton");
 
     m_contentLayout = new QHBoxLayout();
+    m_contentLayout->setSpacing(0);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 10);
 
+    mainLayout->addWidget(line);
     mainLayout->addWidget(m_titleLabel, 0, Qt::AlignHCenter);
     mainLayout->addLayout(m_contentLayout);
 }
@@ -120,7 +133,7 @@ QLineEdit *FileDialogStatusBar::lineEdit() const
     return m_fileNameEdit;
 }
 
-QPushButton *FileDialogStatusBar::acceptButton() const
+Dtk::Widget::DSuggestButton *FileDialogStatusBar::acceptButton() const
 {
     return m_acceptButton;
 }
@@ -332,7 +345,9 @@ void FileDialogStatusBar::updateLayout()
             m_contentLayout->addSpacing(10);
             m_contentLayout->addStretch();
             m_contentLayout->addWidget(m_rejectButton);
+            m_contentLayout->addSpacing(10);
             m_contentLayout->addWidget(m_acceptButton);
+            m_contentLayout->addSpacing(10);
 
             if (m_filtersComboBox->count() > 0) {
                 m_filtersLabel->show();
@@ -351,7 +366,9 @@ void FileDialogStatusBar::updateLayout()
 
             m_contentLayout->addSpacing(10);
             m_contentLayout->addWidget(m_rejectButton);
+            m_contentLayout->addSpacing(10);
             m_contentLayout->addWidget(m_acceptButton);
+            m_contentLayout->addSpacing(10);
 
             m_fileNameLabel->show();
             m_fileNameEdit->show();
@@ -376,14 +393,18 @@ void FileDialogStatusBar::updateLayout()
     }
 
     if (m_filtersComboBox->count() > 0) {
+        label_layout->addSpacing(10);
         label_layout->addWidget(m_filtersLabel);
+        center_layout->addSpacing(10);
         center_layout->addWidget(m_filtersComboBox);
         m_filtersLabel->show();
         m_filtersComboBox->show();
     }
 
     for (auto i : m_customComboBoxList) {
+        label_layout->addSpacing(10);
         label_layout->addWidget(i.first);
+        center_layout->addSpacing(10);
         center_layout->addWidget(i.second);
     }
 
@@ -391,6 +412,7 @@ void FileDialogStatusBar::updateLayout()
 
     button_layout->addStretch();
     button_layout->addWidget(m_rejectButton, 0, Qt::AlignRight | Qt::AlignVCenter);
+    button_layout->addSpacing(10);
     button_layout->addWidget(m_acceptButton, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     m_contentLayout->addLayout(label_layout);
@@ -398,6 +420,7 @@ void FileDialogStatusBar::updateLayout()
     m_contentLayout->addLayout(center_layout);
     m_contentLayout->addSpacing(10);
     m_contentLayout->addLayout(button_layout);
+    m_contentLayout->addSpacing(10);
 }
 
 void FileDialogStatusBar::onWindowTitleChanged(const QString &title)

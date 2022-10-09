@@ -5,6 +5,8 @@
 #ifndef FILEDIALOGSTATUSBAR_H
 #define FILEDIALOGSTATUSBAR_H
 
+#include <dtkwidget_global.h>
+
 #include <QFrame>
 
 QT_BEGIN_NAMESPACE
@@ -14,6 +16,10 @@ class QLineEdit;
 class QComboBox;
 class QPushButton;
 QT_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DSuggestButton;
+DWIDGET_END_NAMESPACE
 
 class FileDialogStatusBar : public QFrame
 {
@@ -34,7 +40,7 @@ public:
 
     QLineEdit *lineEdit() const;
 
-    QPushButton *acceptButton() const;
+    Dtk::Widget::DSuggestButton *acceptButton() const;
     QPushButton *rejectButton() const;
 
     void addLineEdit(QLabel *label, QLineEdit *edit);
@@ -67,7 +73,7 @@ private:
     QLineEdit *m_fileNameEdit;
     QComboBox *m_filtersComboBox;
 
-    QPushButton *m_acceptButton;
+    DTK_WIDGET_NAMESPACE::DSuggestButton *m_acceptButton;
     QPushButton *m_rejectButton;
 
     QList<QPair<QLabel *, QLineEdit *>> m_customLineEditList;
