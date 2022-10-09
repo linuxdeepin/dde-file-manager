@@ -21,7 +21,6 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QComboBox>
-#include <QSlider>
 #include <QVBoxLayout>
 
 DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *parent)

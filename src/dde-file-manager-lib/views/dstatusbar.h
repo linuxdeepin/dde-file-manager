@@ -7,6 +7,7 @@
 
 #include <dpicturesequenceview.h>
 #include <dslider.h>
+#include <DSlider>
 
 #include <QStatusBar>
 #include <QHBoxLayout>
@@ -31,8 +32,11 @@ DFM_BEGIN_NAMESPACE
 class DFileStatisticsJob;
 DFM_END_NAMESPACE
 
-DFM_USE_NAMESPACE
+DWIDGET_BEGIN_NAMESPACE
+class DSlider;
+DWIDGET_END_NAMESPACE
 
+DFM_USE_NAMESPACE
 
 class DFMElidLabel : public QLabel
 {
@@ -79,7 +83,7 @@ public:
     void setMode(Mode mode);
     void setComBoxItems(const QStringList &filters);
 
-    QSlider *scalingSlider() const;
+    DTK_WIDGET_NAMESPACE::DSlider *scalingSlider() const;
     QPushButton *acceptButton() const;
     QPushButton *rejectButton() const;
     QLineEdit *lineEdit() const;
@@ -139,7 +143,7 @@ private:
     DPictureSequenceView *m_loadingIndicator;
     bool m_loadingIndicatorInited = false;
 
-    QSlider *m_scaleSlider;
+    DTK_WIDGET_NAMESPACE::DSlider *m_scaleSlider;
 
     QPushButton *m_acceptButton = Q_NULLPTR;
     QPushButton *m_rejectButton = Q_NULLPTR;

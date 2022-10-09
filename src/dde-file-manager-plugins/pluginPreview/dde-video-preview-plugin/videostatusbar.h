@@ -6,12 +6,16 @@
 #define VIDEOSTATUSBAR_H
 
 #include <QWidget>
-#include <QSlider>
 #include <QLabel>
 
+#include <DSlider>
 #include <danchors.h>
 
 class VideoPreview;
+
+DWIDGET_BEGIN_NAMESPACE
+class DSlider;
+DWIDGET_END_NAMESPACE
 
 class VideoStatusBar : public QWidget
 {
@@ -19,7 +23,7 @@ public:
     explicit VideoStatusBar(VideoPreview *preview);
 
     VideoPreview *p;
-    QSlider *slider;
+    DTK_WIDGET_NAMESPACE::DSlider *slider;
     QLabel *timeLabel;
     bool sliderIsPressed;
 };

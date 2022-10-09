@@ -18,7 +18,6 @@ class QPushButton;
 class QCheckBox;
 class QLabel;
 class OperatorCenter;
-class QSlider;
 class QComboBox;
 class QGridLayout;
 class QVBoxLayout;

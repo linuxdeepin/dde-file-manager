@@ -248,7 +248,7 @@ void DFileView::setItemDelegate(DFMStyledItemDelegate *delegate)
 
     DListView::setItemDelegate(delegate);
 
-    connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, delegate, &DFMStyledItemDelegate::setIconSizeByIconSizeLevel);
+    connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, delegate, &DFMStyledItemDelegate::setIconSizeByIconSizeLevel);
 
     if (isIconViewMode()) {
         d->statusBar->scalingSlider()->setMinimum(delegate->minimumIconSizeLevel());
@@ -2617,7 +2617,7 @@ void DFileView::initUI()
 
     d->statusBar = new DStatusBar(this);
     d->statusBar->scalingSlider()->setPageStep(1);
-    d->statusBar->scalingSlider()->setTickInterval(1);
+    d->statusBar->scalingSlider()->slider()->setTickInterval(1);
 
     addFooterWidget(d->statusBar);
 
@@ -2701,7 +2701,7 @@ void DFileView::initConnects()
         }
     });
 
-    connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
+    connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, this, &DFileView::viewStateChanged);
     connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);
     connect(this, &DFileView::viewStateChanged, this, &DFileView::saveViewState);
 
