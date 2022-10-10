@@ -24,7 +24,7 @@
 #include "stubext.h"
 
 #include "plugins/filemanager/core/dfmplugin-computer/utils/computerutils.h"
-#include "plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.h".h "
+#include "plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"

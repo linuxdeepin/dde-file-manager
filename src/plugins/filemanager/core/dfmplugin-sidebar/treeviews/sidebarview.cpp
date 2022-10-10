@@ -139,11 +139,8 @@ SideBarView::SideBarView(QWidget *parent)
     setIndentation(0);
     setVerticalScrollMode(ScrollPerPixel);
     setIconSize(QSize(16, 16));
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setHeaderHidden(true);
     setExpandsOnDoubleClick(false);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
     setMouseTracking(true);   // sp3 feature 35，解除注释以便鼠标在移动时就能触发 mousemoveevent
 
     setDragDropMode(QAbstractItemView::InternalMove);
