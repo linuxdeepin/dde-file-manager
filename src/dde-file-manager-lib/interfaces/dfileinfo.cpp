@@ -117,13 +117,11 @@ RequestEP::~RequestEP()
 void RequestEP::run()
 {
     forever {
-        requestEPFilesLock.lockForRead();
+        requestEPFilesLock.lockForWrite();
         if (requestEPFiles.isEmpty()) {
             requestEPFilesLock.unlock();
             return;
         }
-        requestEPFilesLock.unlock();
-        requestEPFilesLock.lockForWrite();
         auto file_info = requestEPFiles.dequeue();
         requestEPFilesLock.unlock();
 
@@ -1102,19 +1100,18 @@ QVariantHash DFileInfo::extraProperties() const
             d->getEPTimer->setSingleShot(true);
             d->getEPTimer->moveToThread(qApp->thread());
             d->getEPTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
+
+            QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url] {
+                d->requestEP = RequestEP::instance();
+
+                //线程run之前先确保fileinfo未被析构时request不会被取消
+                d->requestEP->requestEPCancelLock.lock();
+                d->requestEP->isCanceled = false;
+                d->requestEP->requestEPCancelLock.unlock();
+
+                d->requestEP->requestEP(url, const_cast<DFileInfoPrivate *>(d));
+            });
         }
-
-        QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url] {
-            d->requestEP = RequestEP::instance();
-
-            //线程run之前先确保fileinfo未被析构时request不会被取消
-            d->requestEP->requestEPCancelLock.lock();
-            d->requestEP->isCanceled = false;
-            d->requestEP->requestEPCancelLock.unlock();
-
-            d->requestEP->requestEP(url, const_cast<DFileInfoPrivate *>(d));
-            d->getEPTimer->deleteLater();
-        });
 
         QMetaObject::invokeMethod(d->getEPTimer, "start", Qt::QueuedConnection);
     }
