@@ -1854,7 +1854,7 @@ QIcon LocalFileInfoPrivate::thumbIcon()
                 getIconTimer->setSingleShot(true);
                 getIconTimer->moveToThread(qApp->thread());
 
-                QObject::connect(getIconTimer, &QTimer::timeout, [=] {
+                QObject::connect(getIconTimer, &QTimer::timeout, that, [=] {
                     DThumbnailProvider::instance()->appendToProduceQueue(url, DThumbnailProvider::kLarge, [=](const QString &path) {
                         if (that)
                             onRequestThumbFinished(path);
