@@ -47,8 +47,13 @@ DFMBASE_USE_NAMESPACE
 QT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
+static constexpr int kRadius = 8;
+static constexpr int kItemMargin = 10;
+static constexpr int kItemIconSize= 18;
+static constexpr int kEjectIconSize= 16;
+
 namespace GlobalPrivate {
-const char *const kRegPattern { "^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*" };
+const static char *const kRegPattern { "^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*" };
 void paintSeparator(QPainter *painter, const QStyleOptionViewItem &option)
 {
     painter->save();
@@ -72,12 +77,10 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     painter->save();
 
     QStyleOptionViewItem opt = option;
-    QRect rect = opt.rect;
 
     QStyledItemDelegate::initStyleOption(&opt, index);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    //Draw background - start
     DPalette palette(DPaletteHelper::instance()->palette(option.widget));
     auto baseColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
 
@@ -85,19 +88,19 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
         widgetColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
 
-    //Draw background - end
     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
     SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
-    QPoint dx = QPoint(10, 0);
+    QRect itemRect = opt.rect;
+    QPoint dx = QPoint(kItemMargin, 0);
     QPoint dw = QPoint(-12, 0);
     bool selected = opt.state.testFlag(QStyle::State_Selected);
+    QRect r(itemRect.topLeft() + dx, itemRect.bottomRight() + dw);
     if (selected) {   //Draw selected background
         QPalette::ColorGroup colorGroup = QPalette::Normal;
         QColor bgColor = option.palette.color(colorGroup, QPalette::Highlight);
         painter->setBrush(bgColor);
         painter->setPen(Qt::NoPen);
-        QRect r(opt.rect.topLeft() + dx, opt.rect.bottomRight() + dw);
-        painter->drawRoundedRect(r, 8, 8);
+        painter->drawRoundedRect(r, kRadius, kRadius);
     } else if (opt.state.testFlag(QStyle::State_MouseOver)) {   //Draw mouse over background
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
             baseColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
@@ -106,32 +109,37 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 
         painter->setBrush(baseColor);
         painter->setPen(Qt::NoPen);
-        QRect r(opt.rect.topLeft() + dx, opt.rect.bottomRight() + dw);
-        painter->drawRoundedRect(r, 8, 8);
-        if (separatorItem) {
+        painter->drawRoundedRect(r, kRadius, kRadius);
+        if (separatorItem) {   //Draw expand icon
+            QSize expandIconSize(12, 12);
             QColor c(Qt::lightGray);
             painter->setBrush(c);
             painter->setPen(Qt::NoPen);
-            QPoint tl = r.topRight() + QPoint(-26, 10);
-            QRect gRect(tl, tl + QPoint(17, 17));
-            painter->drawRoundedRect(gRect, 8, 8);
-
-            QPixmap pixmap = QIcon::fromTheme(separatorItem->isExpanded() ? "go-up" : "go-down").pixmap(12, 12);
+            QPoint tl = r.topRight() + QPoint(-26, kItemMargin);
+            QPoint br = r.topRight() + QPoint(0 - kItemMargin, 27);
+            QRect gRect(tl, br);
+            painter->drawRoundedRect(gRect, kRadius, kRadius);
+            QPixmap pixmap = QIcon::fromTheme(separatorItem->isExpanded() ? "go-up" : "go-down").pixmap(expandIconSize);
             painter->drawPixmap(gRect.topRight() + QPointF(-14, 3), pixmap);
         }
     }
 
+    QFontMetrics metricsLabel(option.widget->font());
     //Draw item icon
     bool isEjectable = false;
+    QSize iconSize(kItemIconSize, kItemIconSize);
+    QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
+    qreal iconDx = 2 * kItemMargin;
+    qreal iconDy = (itemRect.height() - iconSize.height()) / 2 + 1;
     if (item) {
         if (!separatorItem) {
-            painter->drawPixmap(rect.topLeft() + QPoint(20, 8), item->icon().pixmap(QSize(18, 18)));
-
+            painter->drawPixmap(itemRect.topLeft() + QPointF(iconDx, iconDy), item->icon().pixmap(iconSize));
             SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
             if (sidebarItem) {
                 ItemInfo info = sidebarItem->itemInfo();
                 if (info.isEjectable) {
-                    painter->drawPixmap(rect.bottomRight() + QPoint(-32, -26), QIcon::fromTheme("media-eject-symbolic").pixmap(16, 16));
+                    painter->drawPixmap(itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2),
+                                        QIcon::fromTheme("media-eject-symbolic").pixmap(ejectIconSize));
                     isEjectable = true;
                 }
             }
@@ -142,17 +150,19 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     painter->setPen(separatorItem ? Qt::gray : qApp->palette().color(QPalette::ColorRole::Text));
     if (selected)
         painter->setPen("#ffffff");
-    QFontMetrics metricsLabel(option.widget->font());
+
     QString text = index.data().toString();
-    qreal min = rect.width() * 0.5;
-    qreal max = rect.width() * 0.7;
-    if (metricsLabel.width(text) > (isEjectable ? min : max)) {
-        text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? min : max));
-    }
-    int rowHeight = rect.height();
-    painter->drawText(QRectF(rect.x() + (separatorItem ? 0 : 20) + 22, rect.y() + 6, rect.width(), rowHeight), Qt::AlignLeft, text);
+    qreal baseValue = itemRect.width() - iconSize.width() - 2 * kItemMargin;
+    qreal min = baseValue - 2 * ejectIconSize.width();
+    qreal max = baseValue - ejectIconSize.width();
+
+    if (metricsLabel.width(text) > (isEjectable ? min : max))
+        text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? int(min) : int(max)));
+    int rowHeight = itemRect.height();
+    qreal txtDx = separatorItem ? 22 : 42;
+    qreal txtDy = (itemRect.height() - metricsLabel.lineSpacing()) / 2;
+    painter->drawText(QRectF(itemRect.x() + txtDx, itemRect.y() + txtDy, itemRect.width(), rowHeight), Qt::AlignLeft, text);
     painter->restore();
-    //    return DStyledItemDelegate::paint(painter, option, index);
 }
 
 QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -233,7 +243,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                     ejectable = info.isEjectable;
                 }
                 QRect expandBtRect(option.rect.width() - 40, option.rect.topRight().y() + 4, 24, 24);
-                QRect ejectBtRect(option.rect.bottomRight() + QPoint(-32, -26), option.rect.bottomRight());
+                QRect ejectBtRect(option.rect.bottomRight() + QPoint(-28, -26), option.rect.bottomRight() + QPoint(-kItemMargin, -kItemMargin));
                 QPoint pos = e->pos();
                 if (separatorItem && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
                     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
@@ -243,8 +253,6 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                     event->accept();
                     return true;
                 } else if (ejectable && ejectBtRect.contains(pos)) {   //The eject icon is pressed.
-                    QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
-                    SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
                     if (sidebarItem) {
                         QUrl url = sidebarItem->itemInfo().url;
                         SideBarEventCaller::sendEject(url);

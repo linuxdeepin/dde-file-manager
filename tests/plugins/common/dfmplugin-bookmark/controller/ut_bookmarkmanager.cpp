@@ -73,7 +73,7 @@ TEST_F(UT_BookmarkManager, initDefaultItems)
     DefaultItemManager::instance()->initDefaultItems();
     QList<BookmarkData> list = DefaultItemManager::instance()->defaultItemInitOrder();
 
-    EXPECT_TRUE(list.count() == 7);
+    EXPECT_TRUE(list.count() == 7); //默认项数据初始化完成后，应该有7个默认项。
 }
 
 TEST_F(UT_BookmarkManager, addPluginItem)
