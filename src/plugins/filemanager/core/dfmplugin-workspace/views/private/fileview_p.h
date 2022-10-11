@@ -83,6 +83,7 @@ class FileViewPrivate
 
     int horizontalOffset { 0 };
     int cachedViewWidth { -1 };
+    bool isShowViewSelectBox { false };
 
     QList<QUrl> preSelectionUrls;
 

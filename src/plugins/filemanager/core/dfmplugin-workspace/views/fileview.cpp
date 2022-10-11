@@ -609,6 +609,12 @@ void FileView::setSort(const ItemRoles role, const Qt::SortOrder order)
     }
 }
 
+void FileView::setViewSelectState(bool isSelect)
+{
+    d->isShowViewSelectBox = isSelect;
+    viewport()->update();
+}
+
 QModelIndex FileView::currentPressIndex() const
 {
     return d->selectHelper->getCurrentPressedIndex();
@@ -980,6 +986,7 @@ void FileView::dragMoveEvent(QDragMoveEvent *event)
 
 void FileView::dragLeaveEvent(QDragLeaveEvent *event)
 {
+    setViewSelectState(false);
     if (d->dragDropHelper->dragLeave(event))
         return;
 
@@ -988,6 +995,7 @@ void FileView::dragLeaveEvent(QDragLeaveEvent *event)
 
 void FileView::dropEvent(QDropEvent *event)
 {
+    setViewSelectState(false);
     if (d->dragDropHelper->drop(event))
         return;
 
@@ -1336,6 +1344,20 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
     }
 
     return DListView::eventFilter(obj, event);
+}
+
+void FileView::paintEvent(QPaintEvent *event)
+{
+    DListView::paintEvent(event);
+
+    if (d->isShowViewSelectBox) {
+        QPainter painter(viewport());
+        QColor color = palette().color(QPalette::Active, QPalette::Highlight);
+        color.setAlphaF(255 * 0.4); // 40% transparency
+        QPen pen(color, kSelectBoxLineWidth);
+        painter.setPen(pen);
+        painter.drawRect(QRectF(kSelectBoxLineWidth/2, kSelectBoxLineWidth/2, viewport()->size().width() - kSelectBoxLineWidth, viewport()->size().height() - kSelectBoxLineWidth));
+    }
 }
 
 void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)

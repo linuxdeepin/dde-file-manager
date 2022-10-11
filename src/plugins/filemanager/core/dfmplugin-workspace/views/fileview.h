@@ -99,6 +99,7 @@ public:
     void setSelectionMode(const SelectionMode mode);
     void setEnabledSelectionModes(const QList<SelectionMode> &modes);
     void setSort(const DFMGLOBAL_NAMESPACE::ItemRoles role, const Qt::SortOrder order);
+    void setViewSelectState(bool isSelect);
 
     inline void setViewModeToList()
     {
@@ -180,6 +181,7 @@ protected:
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
     bool event(QEvent *e) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
     void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override;
 

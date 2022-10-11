@@ -70,6 +70,9 @@ inline constexpr int kColumnPadding { 10 };
 // tab defines
 inline constexpr int kMaxTabCount { 8 };
 
+// view select box
+inline constexpr int kSelectBoxLineWidth { 2 };
+
 namespace PropertyKey {
 inline constexpr char kScheme[] { "Property_Key_Scheme" };
 inline constexpr char kKeepShow[] { "Property_Key_KeepShow" };

@@ -69,9 +69,6 @@ public Q_SLOTS:
     void doFileUpdated(const QUrl &url);
     void doWatcherEvent();
 
-    void addChildren(const QList<QUrl> &urls);
-    void removeChildren(const QList<QUrl> &urls);
-
 private:
     bool checkFileEventQueue();
     void enqueueEvent(const QPair<QUrl, EventType> &e);
