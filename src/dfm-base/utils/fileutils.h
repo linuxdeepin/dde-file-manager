@@ -88,6 +88,10 @@ public:
     static bool setBackGround(const QString &pictureFilePath);
     static QString nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir, std::function<bool(const QString &)> functionCheck = nullptr);
 
+    // If toDevice is true, convert the path to the device name
+    // otherwise convert the path to the mount point name
+    static QString bindPathTransform(const QString &path, bool toDevice);
+
 private:
     static QMutex cacheCopyingMutex;
     static QSet<QUrl> copyingUrl;

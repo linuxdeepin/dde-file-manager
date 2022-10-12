@@ -1146,6 +1146,35 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     return newFileName;
 }
 
+QString FileUtils::bindPathTransform(const QString &path, bool toDevice)
+{
+    if (!path.startsWith("/") || path == "/")
+        return path;
+
+    const QMap<QString, QString> &table = DeviceUtils::fstabBindInfo();
+    if (table.isEmpty())
+        return path;
+
+    QString bindPath(path);
+    if (toDevice) {
+        for (const auto &mntPoint : table.values()) {
+            if (path.startsWith(mntPoint)) {
+                bindPath.replace(mntPoint, table.key(mntPoint));
+                break;
+            }
+        }
+    } else {
+        for (const auto &device : table.keys()) {
+            if (path.startsWith(device)) {
+                bindPath.replace(device, table[device]);
+                break;
+            }
+        }
+    }
+
+    return bindPath;
+}
+
 QUrl DesktopAppUrl::trashDesktopFileUrl()
 {
     static QUrl trash = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath) + "/dde-trash.desktop");

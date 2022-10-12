@@ -22,6 +22,7 @@
 #include "utils/searchhelper.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dbusservice/dbus_interface/anything_interface.h"
 
 #include <QDBusReply>
@@ -34,9 +35,9 @@ static qint64 kMaxTime = 500;   // 最大搜索时间（ms）
 DFMBASE_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 
-AnythingSearcher::AnythingSearcher(const QUrl &url, const QString &keyword, bool dataFlag, QObject *parent)
+AnythingSearcher::AnythingSearcher(const QUrl &url, const QString &keyword, bool isBindPath, QObject *parent)
     : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(keyword), parent),
-      isPrependData(dataFlag)
+      isBindPath(isBindPath)
 {
     anythingInterface = new ComDeepinAnythingInterface("com.deepin.anything",
                                                        "/com/deepin/anything",
@@ -55,21 +56,23 @@ bool AnythingSearcher::search()
         return false;
 
     QStringList searchDirList;
-    auto path = UrlRoute::urlToPath(searchUrl);
-    if (isPrependData)
-        path.prepend("/data");
+    auto searchPath = UrlRoute::urlToPath(searchUrl);
+    if (isBindPath) {
+        originalPath = searchPath;
+        searchPath = FileUtils::bindPathTransform(searchPath, true);
+    }
 
-    if (path.isEmpty() || keyword.isEmpty()) {
+    if (searchPath.isEmpty() || keyword.isEmpty()) {
         status.storeRelease(kCompleted);
         return false;
     }
 
     notifyTimer.start();
     // 如果挂载在此路径下的其它目录也支持索引数据, 则一并搜索
-    QStringList dirs = anythingInterface->hasLFTSubdirectories(path);
+    QStringList dirs = anythingInterface->hasLFTSubdirectories(searchPath);
     searchDirList << dirs;
-    if (searchDirList.isEmpty() || searchDirList.first() != path)
-        searchDirList.prepend(path);
+    if (searchDirList.isEmpty() || searchDirList.first() != searchPath)
+        searchDirList.prepend(searchPath);
 
     uint32_t startOffset = 0;
     uint32_t endOffset = 0;
@@ -99,9 +102,9 @@ bool AnythingSearcher::search()
                 return false;
 
             if (!SearchHelper::instance()->isHiddenFile(item, hiddenFileHash, searchDirList.first())) {
-                // 去除掉添加的data前缀
-                if (isPrependData && item.startsWith("/data"))
-                    item = item.mid(5);
+                // 搜索路径还原
+                if (isBindPath && item.startsWith(searchPath))
+                    item = item.replace(searchPath, originalPath);
                 QMutexLocker lk(&mutex);
                 allResults << QUrl::fromLocalFile(item);
             }
@@ -154,7 +157,7 @@ void AnythingSearcher::tryNotify()
     }
 }
 
-bool AnythingSearcher::isSupported(const QUrl &url, bool &isPrependData)
+bool AnythingSearcher::isSupported(const QUrl &url, bool &isBindPath)
 {
     if (!url.isValid() || UrlRoute::isVirtual(url))
         return false;
@@ -167,11 +170,11 @@ bool AnythingSearcher::isSupported(const QUrl &url, bool &isPrependData)
 
     auto path = UrlRoute::urlToPath(url);
     if (!anything.hasLFT(path)) {
-        if (path.startsWith("/home") && QDir().exists("/data/home")) {
-            path.prepend("/data");
-            if (!anything.hasLFT(path))
+        const auto &bindPath = FileUtils::bindPathTransform(path, true);
+        if (bindPath != path) {
+            if (!anything.hasLFT(bindPath))
                 return false;
-            isPrependData = true;
+            isBindPath = true;
         } else {
             return false;
         }

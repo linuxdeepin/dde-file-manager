@@ -106,7 +106,9 @@ QVariant FileItemData::data(int role) const
         const QString filePath = data(kItemFilePathRole).toString();
         const QString stdDocPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DocumentsLocation);
         const QString stdDownPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DownloadLocation);
-        if (filePath == stdDocPath || filePath == stdDownPath || filePath == "/data" + stdDocPath || filePath == "/data" + stdDownPath)
+        const QString stdDataDocPath = FileUtils::bindPathTransform(stdDocPath, true);
+        const QString stdDataDownPath = FileUtils::bindPathTransform(stdDownPath, true);
+        if (filePath == stdDocPath || filePath == stdDownPath || filePath == stdDataDocPath || filePath == stdDataDownPath)
             return QString();
 
         QString strToolTip = data(kItemFileDisplayNameRole).toString();

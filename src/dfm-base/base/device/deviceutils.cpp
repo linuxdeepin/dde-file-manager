@@ -32,6 +32,8 @@
 #include <QRegularExpressionMatch>
 
 #include <libmount.h>
+#include <fstab.h>
+#include <sys/stat.h>
 
 using namespace dfmbase;
 using namespace GlobalServerDefines::DeviceProperty;
@@ -162,6 +164,32 @@ bool DeviceUtils::isFtp(const QUrl &url)
 {
     static const QString smbMatch { "(^/run/user/\\d+/gvfs/s?ftp|^/root/\\.gvfs/s?ftp)" };
     return hasMatch(url.path(), smbMatch);
+}
+
+QMap<QString, QString> DeviceUtils::fstabBindInfo()
+{
+    static QMap<QString, QString> table;
+    struct stat statInfo;
+    int result = stat("/etc/fstab", &statInfo);
+
+    if (0 == result) {
+        static quint32 lastModify = 0;
+        if (lastModify != statInfo.st_mtime) {
+            lastModify = static_cast<quint32>(statInfo.st_mtime);
+            table.clear();
+            struct fstab *fs;
+
+            setfsent();
+            while ((fs = getfsent()) != nullptr) {
+                QString mntops(fs->fs_mntops);
+                if (mntops.contains("bind"))
+                    table.insert(fs->fs_spec, fs->fs_file);
+            }
+            endfsent();
+        }
+    }
+
+    return table;
 }
 
 QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)

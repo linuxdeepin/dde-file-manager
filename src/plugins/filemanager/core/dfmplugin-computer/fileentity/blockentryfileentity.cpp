@@ -199,20 +199,23 @@ void BlockEntryFileEntity::refresh()
 
 QUrl BlockEntryFileEntity::targetUrl() const
 {
-    auto mpt = getProperty(DeviceProperty::kMountPoint).toString();
+    auto mptList = getProperty(DeviceProperty::kMountPoints).toStringList();
     QUrl target;
-    if (mpt.isEmpty())
+    if (mptList.isEmpty())
         return target;
 
     // when enter DataDisk, enter Home directory.
-    if (QUrl::fromLocalFile(mpt) == QUrl::fromLocalFile("/data")) {
-        QString userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        if (QDir("/data" + userHome).exists())
-            return QUrl::fromLocalFile("/data" + userHome);
+    for (const auto &mpt : mptList) {
+        if (mpt != QDir::rootPath()) {
+            const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+            const QString &homeBindPath = FileUtils::bindPathTransform(userHome, true);
+            if (userHome != homeBindPath && homeBindPath.startsWith(mpt))
+                return QUrl::fromLocalFile(homeBindPath);
+        }
     }
 
     target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
-    target.setPath(mpt);
+    target.setPath(mptList.first());
     return target;
 }
 

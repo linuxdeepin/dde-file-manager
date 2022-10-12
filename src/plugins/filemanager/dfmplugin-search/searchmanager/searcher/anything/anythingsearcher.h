@@ -38,10 +38,10 @@ class AnythingSearcher : public AbstractSearcher
     friend class TaskCommanderPrivate;
 
 private:
-    explicit AnythingSearcher(const QUrl &url, const QString &keyword, bool dataFlag, QObject *parent = nullptr);
+    explicit AnythingSearcher(const QUrl &url, const QString &keyword, bool isBindPath, QObject *parent = nullptr);
     virtual ~AnythingSearcher() override;
 
-    static bool isSupported(const QUrl &url, bool &isPrependData);
+    static bool isSupported(const QUrl &url, bool &isBindPath);
     bool search() override;
     void stop() override;
     bool hasItem() const override;
@@ -53,7 +53,8 @@ private:
     QAtomicInt status = kReady;
     QList<QUrl> allResults;
     mutable QMutex mutex;
-    bool isPrependData;
+    bool isBindPath;
+    QString originalPath;
 
     //计时
     QTime notifyTimer;

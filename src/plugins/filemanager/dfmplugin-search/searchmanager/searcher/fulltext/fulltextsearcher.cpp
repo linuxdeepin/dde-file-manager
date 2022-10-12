@@ -24,6 +24,8 @@
 #include "utils/searchhelper.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 
 // Lucune++ headers
@@ -45,7 +47,7 @@
 #include <exception>
 #include <docparser.h>
 
-static constexpr char kFilterFolders[] = "^/(boot|dev|proc|sys|run|lib|usr|data/home).*$";
+static constexpr char kFilterFolders[] = "^/(boot|dev|proc|sys|run|lib|usr).*$";
 static constexpr char kSupportFiles[] = "(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
                                         "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)";
 static int kMaxResultNum = 100000;   // 最大搜索结果数
@@ -60,6 +62,7 @@ FullTextSearcherPrivate::FullTextSearcherPrivate(FullTextSearcher *parent)
     : QObject(parent),
       q(parent)
 {
+    bindPathTable = DeviceUtils::fstabBindInfo();
 }
 
 FullTextSearcherPrivate::~FullTextSearcherPrivate()
@@ -86,7 +89,7 @@ void FullTextSearcherPrivate::doIndexTask(const IndexReaderPtr &reader, const In
 
     // filter some folders
     static QRegExp reg(kFilterFolders);
-    if (reg.exactMatch(path) && !path.startsWith("/run/user"))
+    if (bindPathTable.contains(path) || (reg.exactMatch(path) && !path.startsWith("/run/user")))
         return;
 
     // limit file name length and level
@@ -302,15 +305,12 @@ bool FullTextSearcherPrivate::createIndex(const QString &path)
 
 bool FullTextSearcherPrivate::updateIndex(const QString &path)
 {
-    QString tmpPath = path;
-    if (tmpPath.startsWith("/data/home"))
-        tmpPath = tmpPath.remove(0, 5);
-
+    QString bindPath = FileUtils::bindPathTransform(path, false);
     try {
         IndexReaderPtr reader = newIndexReader();
         IndexWriterPtr writer = newIndexWriter();
 
-        doIndexTask(reader, writer, path, kUpdate);
+        doIndexTask(reader, writer, bindPath, kUpdate);
 
         writer->close();
         reader->close();
@@ -332,12 +332,10 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
     qInfo() << "search path: " << path << " keyword: " << keyword;
     notifyTimer.start();
 
-    bool isDelDataPrefix = false;
-    QString searchPath = path;
-    if (path.startsWith("/data/home")) {
-        searchPath = searchPath.remove(0, 5);
-        isDelDataPrefix = true;
-    }
+    bool hasTransform = false;
+    QString searchPath = FileUtils::bindPathTransform(path, false);
+    if (searchPath != path)
+        hasTransform = true;
 
     try {
         IndexWriterPtr writer = newIndexWriter();
@@ -380,8 +378,8 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                     continue;
                 } else {
                     if (!SearchHelper::instance()->isHiddenFile(StringUtils::toUTF8(resultPath).c_str(), hiddenFileHash, searchPath)) {
-                        if (isDelDataPrefix)
-                            resultPath.insert(0, L"/data");
+                        if (hasTransform)
+                            resultPath.replace(0, static_cast<unsigned long>(searchPath.length()), path.toStdWString());
                         QMutexLocker lk(&mutex);
                         allResults.append(QUrl::fromLocalFile(StringUtils::toUTF8(resultPath).c_str()));
                     }

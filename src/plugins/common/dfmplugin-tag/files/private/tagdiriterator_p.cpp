@@ -24,6 +24,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/fileutils.h"
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
@@ -60,7 +61,7 @@ void TagDirIteratorPrivate::loadTagsUrls(const QUrl &url)
             QUrl tagUrl;
             // TODO(liuyangming): handle path in sql
             if (!path.startsWith("/home/")
-                && !path.startsWith("/data/home/")
+                && !path.startsWith(FileUtils::bindPathTransform("/home/", true))
                 && !path.startsWith("/media/"))
                 continue;
 

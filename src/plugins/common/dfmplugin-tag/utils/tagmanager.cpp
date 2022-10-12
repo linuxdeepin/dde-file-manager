@@ -30,6 +30,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QMap>
 #include <QColor>
@@ -361,7 +362,7 @@ bool TagManager::canTagFile(const AbstractFileInfoPointer &fileInfo) const
 
     QString filePath = fileInfo->filePath();
 
-    if (!filePath.startsWith("/home/") && !filePath.startsWith("/data/home/"))
+    if (!filePath.startsWith("/home/") && !filePath.startsWith(FileUtils::bindPathTransform("/home/", true)))
         return false;
 
     return true;

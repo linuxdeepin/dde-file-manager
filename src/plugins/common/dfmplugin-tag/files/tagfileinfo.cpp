@@ -25,6 +25,7 @@
 
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
@@ -54,7 +55,7 @@ bool TagFileInfo::exists() const
     if (d->proxy) {
         // TODO(liuyangming): handle path in sql
         if (!localFilePath().startsWith("/home/")
-            && !localFilePath().startsWith("/data/home/")
+            && !localFilePath().startsWith(FileUtils::bindPathTransform("/home/", true))
             && !localFilePath().startsWith("/media/"))
             return false;
         return d->proxy->exists();

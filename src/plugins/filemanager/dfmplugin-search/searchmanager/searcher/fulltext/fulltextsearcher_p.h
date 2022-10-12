@@ -87,6 +87,7 @@ private:
     QList<QUrl> allResults;
     mutable QMutex mutex;
     static bool isIndexCreating;
+    QMap<QString, QString> bindPathTable;
 
     //计时
     QTime notifyTimer;

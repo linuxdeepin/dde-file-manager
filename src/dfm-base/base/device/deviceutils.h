@@ -61,6 +61,8 @@ public:
     static bool isSamba(const QUrl &url);
     static bool isFtp(const QUrl &url);
 
+    static QMap<QString, QString> fstabBindInfo();
+
 private:
     static QString nameOfSystemDisk(const QVariantMap &datas);
     static QString nameOfOptical(const QVariantMap &datas);

@@ -45,9 +45,9 @@ void TaskCommanderPrivate::working(AbstractSearcher *searcher)
 
 AbstractSearcher *TaskCommanderPrivate::createFileNameSearcher(const QUrl &url, const QString &keyword)
 {
-    bool isPrependData = false;
-    if (AnythingSearcher::isSupported(url, isPrependData))
-        return new AnythingSearcher(url, keyword, isPrependData, q);
+    bool isBindPath = false;
+    if (AnythingSearcher::isSupported(url, isBindPath))
+        return new AnythingSearcher(url, keyword, isBindPath, q);
 
     return new IteratorSearcher(url, keyword, q);
 }

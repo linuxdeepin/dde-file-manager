@@ -25,9 +25,11 @@
 #include "base/application/application.h"
 #include "base/application/settings.h"
 #include "base/standardpaths.h"
+#include "utils/fileutils.h"
 
 #include <QDir>
 #include <QDebug>
+#include <QStandardPaths>
 
 using namespace dfmbase;
 SystemPathUtil *SystemPathUtil::instance()
@@ -148,8 +150,10 @@ void SystemPathUtil::cleanPath(QString *path) const
 {
     Q_ASSERT(path);
     // 这里去掉/data的目的 是让通过数据盘路径进入的用户目录下的Docunment,Vedios等文件也可以被翻译
-    if (path->startsWith("/data")) {
-        path->remove(0, sizeof("/data") - 1);
+    const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    const QString &homeBindPath = FileUtils::bindPathTransform(userHome, true);
+    if (path->startsWith(homeBindPath)) {
+        path->replace(homeBindPath, userHome);
     }
 
     if (path->size() > 1 && path->at(0) == '/' && path->endsWith("/")) {
