@@ -54,9 +54,9 @@ bool LocalFileWatcherPrivate::start()
 {
     if (watcher.isNull())
         return false;
-    started = watcher->start(0);
-    if (started)
-        watcherPath.appendByLock(path);
+    started = watcher->start();
+    if (!started)
+        qWarning() << "watcher start failed, error: " << watcher->lastError().errorMsg();
     return started;
 }
 /*!
@@ -71,8 +71,6 @@ bool LocalFileWatcherPrivate::stop()
     if (watcher.isNull())
         return false;
     started = watcher->stop();
-    if (started)
-        watcherPath.removeOneByLock(path);
     return started;
 }
 

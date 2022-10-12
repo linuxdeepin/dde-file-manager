@@ -29,7 +29,6 @@
 #include <QApplication>
 
 namespace dfmbase {
-DThreadList<QString> AbstractFileWatcherPrivate::watcherPath;
 /*!
  * \class AbstractFileWatcherPrivate 文件监视器私有类
  *
@@ -113,12 +112,8 @@ bool AbstractFileWatcher::startWatcher()
         return true;
 
     QObject::moveToThread(qApp->thread());
-    if (!d->started) {
-        d->start();
-        d->started = true;
-        return true;
-    }
-    return false;
+    d->started = d->start();
+    return d->started;
 }
 /*!
  * \brief stopWatcher 停止文件监视器（在主线程中执行）

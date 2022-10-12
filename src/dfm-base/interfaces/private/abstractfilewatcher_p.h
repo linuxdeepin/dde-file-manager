@@ -49,7 +49,6 @@ protected:
     QAtomicInt cacheInfoConnectSize { 0 };   // Cached FileInfo, number of connections monitored
     QUrl url;   // 监视文件的url
     QString path;   // 监视文件的路径
-    static DThreadList<QString> watcherPath;   // 全局监视文件的监视列表
 };
 }
 
