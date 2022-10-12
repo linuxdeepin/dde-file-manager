@@ -31,6 +31,7 @@ KeyValueLabel::KeyValueLabel(QWidget *parent)
 {
     initUI();
     initPropertyMap();
+    initFont();
 }
 
 KeyValueLabel::~KeyValueLabel()
@@ -66,6 +67,12 @@ void KeyValueLabel::initPropertyMap()
     propertyMap.insert(kRightAlignment, -1);
     propertyMap.insert(kRightWordWrap, -1);
     propertyMap.insert(kRowHeight, -1);
+}
+
+void KeyValueLabel::initFont()
+{
+    setLeftFontSizeWeight(DFontSizeManager::T9);
+    setRightFontSizeWeight(DFontSizeManager::T9);
 }
 
 /*!

@@ -74,20 +74,17 @@ void ComputerPropertyDialog::iniUI()
     basicInfo->setAlignment(Qt::AlignLeft);
 
     computerName = new KeyValueLabel(this);
-    computerName->setLeftValue(tr("PC Name"));
-    computerName->setRightFontSizeWeight(DFontSizeManager::T9);
-    computerEdition = new KeyValueLabel(this);
-    computerEdition->setLeftValue(tr("Edition"));
-    computerEdition->setRightFontSizeWeight(DFontSizeManager::T9);
+    computerName->setLeftValue(tr("Computer name"));
     computerVersionNum = new KeyValueLabel(this);
     computerVersionNum->setLeftValue(tr("Version"));
-    computerVersionNum->setRightFontSizeWeight(DFontSizeManager::T9);
+    computerEdition = new KeyValueLabel(this);
+    computerEdition->setLeftValue(tr("Edition"));
+    computerOSBuild = new KeyValueLabel(this);
+    computerOSBuild->setLeftValue(tr("OS build"));
     computerType = new KeyValueLabel(this);
     computerType->setLeftValue(tr("Type"));
-    computerType->setRightFontSizeWeight(DFontSizeManager::T9);
     computerCpu = new KeyValueLabel(this);
     computerCpu->setLeftValue(tr("Processor"), Qt::ElideNone, Qt::AlignLeft | Qt::AlignVCenter);
-    computerCpu->setRightFontSizeWeight(DFontSizeManager::T9);
     computerMemory = new KeyValueLabel(this);
     computerMemory->setLeftValue(tr("Memory"));
     computerMemory->setRightFontSizeWeight(DFontSizeManager::T9);
@@ -98,8 +95,9 @@ void ComputerPropertyDialog::iniUI()
     vlayout->setSpacing(8);
     vlayout->addWidget(basicInfo);
     vlayout->addWidget(computerName);
-    vlayout->addWidget(computerEdition);
     vlayout->addWidget(computerVersionNum);
+    vlayout->addWidget(computerEdition);
+    vlayout->addWidget(computerOSBuild);
     vlayout->addWidget(computerType);
     vlayout->addWidget(computerCpu);
     vlayout->addWidget(computerMemory);
@@ -123,6 +121,7 @@ void ComputerPropertyDialog::iniUI()
 void ComputerPropertyDialog::iniThread()
 {
     thread = new ComputerInfoThread();
+    qRegisterMetaType<QMap<ComputerInfoItem, QString>>("QMap<ComputerInfoItem, QString>");
     connect(thread, &ComputerInfoThread::sigSendComputerInfo, this, &ComputerPropertyDialog::computerProcess);
 }
 
@@ -130,18 +129,27 @@ void ComputerPropertyDialog::iniThread()
  * \brief                   接收线程发来的获取到计算机的信息，并对信息进行设置到相应控件中
  * \param computerInfo      接收到的计算机信息
  */
-void ComputerPropertyDialog::computerProcess(QStringList computerInfo)
+void ComputerPropertyDialog::computerProcess(QMap<ComputerInfoItem, QString> computerInfo)
 {
-    computerName->setRightValue(computerInfo[0]);
-    computerEdition->setRightValue(computerInfo[1]);
-    computerVersionNum->setRightValue(computerInfo[2]);
-    computerType->setRightValue(computerInfo[3]);
-    computerCpu->setRightValue(computerInfo[4]);
-    computerCpu->setRightWordWrap(true);
-    QFontMetrics fontMetrics(computerCpu->font());
-    QRect boundingRect = fontMetrics.boundingRect(computerInfo[4]);
-    computerCpu->setRowMinimumHeight(boundingRect.height() - boundingRect.y());
-    computerMemory->setRightValue(computerInfo[5].arg(tr("Available")));
+    if (computerInfo.contains(ComputerInfoItem::kName))
+        computerName->setRightValue(computerInfo[ComputerInfoItem::kName]);
+    if (computerInfo.contains(ComputerInfoItem::kVersion))
+        computerVersionNum->setRightValue(computerInfo[ComputerInfoItem::kVersion]);
+    if (computerInfo.contains(ComputerInfoItem::kEdition))
+        computerEdition->setRightValue(computerInfo[ComputerInfoItem::kEdition]);
+    if (computerInfo.contains(ComputerInfoItem::kOSBuild))
+        computerOSBuild->setRightValue(computerInfo[ComputerInfoItem::kOSBuild]);
+    if (computerInfo.contains(ComputerInfoItem::kType))
+        computerType->setRightValue(computerInfo[ComputerInfoItem::kType]);
+    if (computerInfo.contains(ComputerInfoItem::kCpu)) {
+        computerCpu->setRightValue(computerInfo[ComputerInfoItem::kCpu]);
+        computerCpu->setRightWordWrap(true);
+        QFontMetrics fontMetrics(computerCpu->font());
+        QRect boundingRect = fontMetrics.boundingRect(computerInfo[ComputerInfoItem::kCpu]);
+        computerCpu->setRowMinimumHeight(boundingRect.height() - boundingRect.y());
+    }
+    if (computerInfo.contains(ComputerInfoItem::kMemory))
+        computerMemory->setRightValue(computerInfo[ComputerInfoItem::kMemory]);
 }
 
 void ComputerPropertyDialog::showEvent(QShowEvent *event)
@@ -221,57 +229,100 @@ void ComputerInfoThread::run()
  */
 void ComputerInfoThread::computerProcess()
 {
-    QString edition;
-    QString version;
-    QString memoryInstallStr;
-    QString memoryStr;
-    QString processor;
-    QString systemType;
-    qint64 tempMemory;
+    computerData.insert(ComputerInfoItem::kName, computerName());
+    computerData.insert(ComputerInfoItem::kVersion, versionNum());
+    computerData.insert(ComputerInfoItem::kEdition, edition());
+    computerData.insert(ComputerInfoItem::kOSBuild, osBuild());
+    computerData.insert(ComputerInfoItem::kType, systemType());
+    computerData.insert(ComputerInfoItem::kCpu, cpuInfo());
+    computerData.insert(ComputerInfoItem::kMemory, memoryInfo());
+    emit sigSendComputerInfo(computerData);
+}
 
-    qint64 memorys = UniversalUtils::computerMemory();
-    if (memorys != -1)
-        memoryInstallStr = formatCap(static_cast<qulonglong>(memorys), 1024, 0);
+QString ComputerInfoThread::computerName() const
+{
+    return DSysInfo::computerName();
+}
 
-    UniversalUtils::computerInformation(processor, systemType, edition, version);
+QString ComputerInfoThread::versionNum() const
+{
+    return DSysInfo::majorVersion();
+}
 
-    // 如果dbus没有，则从dtk读数据
-    if (DSysInfo::isDeepin()) {
-        //! 获取系统版本名
-        if (edition.isEmpty())
-            edition = DSysInfo::uosEditionName();
-        //! 获取系统版本号
-        if (version.isEmpty())
-            version = DSysInfo::majorVersion();
-        //! 获取实际可用内存总量
-        tempMemory = DSysInfo::memoryTotalSize();
-        if (tempMemory >= 0)
-            memoryStr = formatCap(static_cast<qulonglong>(tempMemory));
-        // 如果dbus中没有获得，则从dtk获取安装的内存总量
-        if (memoryInstallStr.isEmpty()) {
-            tempMemory = DSysInfo::memoryInstalledSize();
-            if (tempMemory >= 0)
-                memoryInstallStr = formatCap(static_cast<qulonglong>(tempMemory), 1024, 0);
-        }
-        // 如果dbus中没有获得，则从dtk获取cpu信息
-        if (processor.isEmpty())
-            processor = QString("%1 x %2").arg(DSysInfo::cpuModelName()).arg(QThread::idealThreadCount());
+QString ComputerInfoThread::edition() const
+{
+    if (DSysInfo::uosType() == DSysInfo::UosServer || DSysInfo::uosEditionType() == DSysInfo::UosEuler) {
+        return QString("%1%2").arg(DSysInfo::minorVersion()).arg(DSysInfo::uosEditionName());
+    } else if (DSysInfo::isDeepin) {
+        return QString("%1(%2)").arg(DSysInfo::uosEditionName()).arg(DSysInfo::minorVersion());
+    } else {
+        return QString("%1 %2").arg(DSysInfo::productVersion()).arg(DSysInfo::productTypeString());
     }
-    // 通过qt获得
-    if (systemType.isEmpty())
-        systemType = QString::number(QSysInfo::WordSize) + tr("Bit");
+}
 
-    computerData.append(DSysInfo::computerName());
-    if (!edition.isEmpty())
-        computerData.append(edition);
-    if (!version.isEmpty())
-        computerData.append(version);
-    if (!systemType.isEmpty())
-        computerData.append(systemType);
-    if (!processor.isEmpty())
-        computerData.append(processor);
-    if (!memoryInstallStr.isEmpty() && !memoryStr.isEmpty())
-        computerData.append(memoryInstallStr + "(" + memoryStr + ' ' + QString("%1") + ")");
-    if (computerData.size() > 1)
-        emit sigSendComputerInfo(computerData);
+QString ComputerInfoThread::osBuild() const
+{
+    return DSysInfo::buildVersion();
+}
+
+QString ComputerInfoThread::systemType() const
+{
+    return QString::number(QSysInfo::WordSize) + tr("Bit");
+}
+
+QString ComputerInfoThread::cpuInfo() const
+{
+    if (DSysInfo::cpuModelName().contains("Hz")) {
+        return DSysInfo::cpuModelName();
+    } else {
+        QDBusInterface interface("com.deepin.daemon.SystemInfo",
+                                 "/com/deepin/daemon/SystemInfo",
+                                 "org.freedesktop.DBus.Properties",
+                                 QDBusConnection::sessionBus());
+        interface.setTimeout(1000);
+        if (!interface.isValid()) {
+            qWarning() << "Dbus com.deepin.daemon.SystemInfo is not valid!";
+            return "";
+        }
+        qInfo() << "Start call Dbus com.deepin.daemon.SystemInfo CPUMaxMHz";
+        QDBusMessage reply = interface.call("Get", "com.deepin.daemon.SystemInfo", "CPUMaxMHz");
+        qInfo() << "End call Dbus com.deepin.daemon.SystemInfo CPUMaxMHz";
+        QList<QVariant> outArgs = reply.arguments();
+        double cpuMaxMhz = outArgs.at(0).value<QDBusVariant>().variant().toDouble();
+
+        if (DSysInfo::cpuModelName().isEmpty()) {
+            qInfo() << "Start call Dbus com.deepin.daemon.SystemInfo Processor";
+            QDBusMessage replyCpuInfo = interface.call("Get", "com.deepin.daemon.SystemInfo", "Processor");
+            qInfo() << "End call Dbus com.deepin.daemon.SystemInfo Processor";
+            QList<QVariant> outArgsCpuInfo = replyCpuInfo.arguments();
+            QString processor = outArgsCpuInfo.at(0).value<QDBusVariant>().variant().toString();
+            return QString("%1 @ %2GHz").arg(processor).arg(cpuMaxMhz / 1000);
+        } else {
+            return QString("%1 @ %2GHz").arg(DSysInfo::cpuModelName()).arg(cpuMaxMhz / 1000);
+        }
+    }
+}
+
+QString ComputerInfoThread::memoryInfo() const
+{
+    quint64 memoryAvailableSize = static_cast<quint64>(DSysInfo::memoryTotalSize());
+    quint64 memoryInstalledSize;
+    QDBusInterface interface("com.deepin.system.SystemInfo",
+                             "/com/deepin/system/SystemInfo",
+                             "com.deepin.system.SystemInfo",
+                             QDBusConnection::systemBus());
+    interface.setTimeout(1000);
+    if (interface.isValid()) {
+        qInfo() << "Start call com.deepin.system.SystemInfo MemorySize";
+        memoryInstalledSize = interface.property("MemorySize").toULongLong();
+        qInfo() << "End call Dbus com.deepin.system.SystemInfo MemorySize";
+        qInfo() << "Get memoryInstalledSize from dbus!";
+    } else {
+        memoryInstalledSize = static_cast<quint64>(DSysInfo::memoryInstalledSize());
+        qInfo() << "Get memoryInstalledSize from dtk!";
+    }
+    return QString("%1 (%2 %3)")
+            .arg(formatCap(memoryInstalledSize, 1024, 0))
+            .arg(formatCap(memoryAvailableSize))
+            .arg(tr("Available"));
 }

@@ -48,12 +48,19 @@ protected:
 
 private:
     void computerProcess();
+    QString computerName() const;
+    QString versionNum() const;
+    QString edition() const;
+    QString osBuild() const;
+    QString systemType() const;
+    QString cpuInfo() const;
+    QString memoryInfo() const;
 
 signals:
-    void sigSendComputerInfo(QStringList computerInfo);
+    void sigSendComputerInfo(QMap<ComputerInfoItem, QString> computerInfo);
 
 private:
-    QStringList computerData {};
+    QMap<ComputerInfoItem, QString> computerData {};
     bool threadStop { false };
 };
 
@@ -71,7 +78,7 @@ private:
 signals:
 
 public slots:
-    void computerProcess(QStringList computerInfo);
+    void computerProcess(QMap<ComputerInfoItem, QString> computerInfo);
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -82,8 +89,9 @@ private:
     DTK_WIDGET_NAMESPACE::DLabel *computerIcon { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *basicInfo { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *computerName { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *computerEdition { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *computerVersionNum { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *computerEdition { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *computerOSBuild { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *computerType { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *computerCpu { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *computerMemory { nullptr };

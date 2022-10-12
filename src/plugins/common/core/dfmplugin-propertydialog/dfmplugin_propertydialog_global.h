@@ -69,6 +69,16 @@ enum BasicExpandType : int {
 };
 Q_ENUM_NS(BasicExpandType)
 
+enum class ComputerInfoItem : uint8_t {
+    kName,
+    kVersion,
+    kEdition,
+    kOSBuild,
+    kType,
+    kCpu,
+    kMemory
+};
+
 using BasicExpandMap = QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>>;
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
