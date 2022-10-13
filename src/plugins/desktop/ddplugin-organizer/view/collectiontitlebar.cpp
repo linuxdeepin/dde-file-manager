@@ -36,8 +36,7 @@ using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
 
 CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, CollectionTitleBar *qq)
-    : q(qq)
-    , id(uuid)
+    : q(qq), id(uuid)
 {
     nameLabel = new DLabel(q);
     nameLabel->setWordWrap(false);
@@ -74,7 +73,7 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
     nameWidget->setCurrentWidget(nameLabel);
 
     menuBtn = new DPushButton(q);
-    menuBtn->setIcon(QIcon(":/images/more.svg")); // using DDciIcon in future
+    menuBtn->setIcon(QIcon(":/images/more.svg"));   // using DDciIcon in future
     menuBtn->setFixedSize(kMenuBtnWidth, kMenuBtnHeight);
     menuBtn->setFlat(true);
 
@@ -89,7 +88,7 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
     connect(menuBtn, &DPushButton::clicked, this, &CollectionTitleBarPrivate::showMenu);
 
     menu = new DMenu(q);
-    connect(menu, &DMenu::aboutToHide, this, [=] () {
+    connect(menu, &DMenu::aboutToHide, this, [=]() {
         if (needHidden) {
             needHidden = false;
             q->setVisible(false);
@@ -99,7 +98,6 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
 
 CollectionTitleBarPrivate::~CollectionTitleBarPrivate()
 {
-
 }
 
 void CollectionTitleBarPrivate::modifyTitleName()
@@ -140,31 +138,31 @@ void CollectionTitleBarPrivate::showMenu()
     QAction *action = nullptr;
     if (adjustable) {
         action = new QAction(menu);
-        action->setText(tr("Size"));
+        action->setText(tr("Collection size"));
         menu->addAction(action);
 
         DMenu *subMenu = new DMenu(menu);
         action->setMenu(subMenu);
 
         action = new QAction(subMenu);
-        action->setText(tr("Large"));
+        action->setText(tr("Large area"));
         action->setCheckable(true);
         if (CollectionFrameSize::kLarge == this->size)
             action->setChecked(true);
         subMenu->addAction(action);
 
-        connect(action, &QAction::triggered, this, [=] () {
+        connect(action, &QAction::triggered, this, [=]() {
             emit q->sigRequestAdjustSizeMode(CollectionFrameSize::kLarge);
             action->setChecked(true);
         });
 
         action = new QAction(subMenu);
-        action->setText(tr("Small"));
+        action->setText(tr("Small area"));
         action->setCheckable(true);
         if (CollectionFrameSize::kSmall == this->size)
             action->setChecked(true);
         subMenu->addAction(action);
-        connect(action, &QAction::triggered, this, [=] () {
+        connect(action, &QAction::triggered, this, [=]() {
             emit q->sigRequestAdjustSizeMode(CollectionFrameSize::kSmall);
             action->setChecked(true);
         });
@@ -199,19 +197,17 @@ void CollectionTitleBarPrivate::sendRequestClose()
 }
 
 CollectionTitleBar::CollectionTitleBar(const QString &uuid, QWidget *parent)
-    : DBlurEffectWidget(parent)
-    , d(new CollectionTitleBarPrivate(uuid, this))
+    : DBlurEffectWidget(parent), d(new CollectionTitleBarPrivate(uuid, this))
 {
     setObjectName("titleBar");
     setBlendMode(DBlurEffectWidget::InWindowBlend);
-    setMaskColor(QColor(0, 31, 119, static_cast<int>(0.2*255)));
+    setMaskColor(QColor(0, 31, 119, static_cast<int>(0.2 * 255)));
 
     d->nameWidget->installEventFilter(this);
 }
 
 CollectionTitleBar::~CollectionTitleBar()
 {
-
 }
 
 bool CollectionTitleBar::setTitleBarVisible(const bool &visible)
