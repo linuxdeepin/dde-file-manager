@@ -50,6 +50,10 @@ DragDropOper::DragDropOper(CanvasView *parent)
 
 bool DragDropOper::enter(QDragEnterEvent *event)
 {
+    // Filter the event that cannot be dragged
+    if (checkProhibitPaths(event))
+        return true;
+
     // set target dir as desktop.
     m_target = view->model()->rootUrl();
     if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -252,6 +256,20 @@ bool DragDropOper::checkXdndDirectSave(QDragEnterEvent *event) const
     if (event->mimeData()->hasFormat("XdndDirectSave0")) {
         event->setDropAction(Qt::CopyAction);
         event->acceptProposedAction();
+        return true;
+    }
+
+    return false;
+}
+
+bool DragDropOper::checkProhibitPaths(QDragEnterEvent *event) const
+{
+    auto urlsForDragEvent = event->mimeData()->urls();
+
+    // Filter the event that cannot be dragged
+    if (urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(urlsForDragEvent)) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
         return true;
     }
 

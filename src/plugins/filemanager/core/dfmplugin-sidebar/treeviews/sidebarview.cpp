@@ -32,6 +32,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -206,9 +207,16 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
 
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
-    d->previousRowCount = model()->rowCount();
     d->urlsForDragEvent = event->mimeData()->urls();
 
+    // Filter the event that cannot be dragged
+    if (d->urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(d->urlsForDragEvent)) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return;
+    }
+
+    d->previousRowCount = model()->rowCount();
     if (isAccepteDragEvent(event))
         return;
 

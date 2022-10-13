@@ -59,6 +59,7 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QScreen>
+#include <QStandardPaths>
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -279,6 +280,38 @@ QString FileUtils::preprocessingFileName(QString name)
         return name;
 
     return name.remove(QRegularExpression(value));
+}
+
+bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
+{
+    // prohibit Paths
+    const static QStringList usrProhibitPaths {
+        QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(),
+        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(), true),
+
+        QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first(),
+        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first(), true),
+
+        QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(),
+        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(), true),
+
+        QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first(),
+        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first(), true),
+
+        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(), true),
+
+        QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first(),
+        FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first(), true)
+    };
+    for (const auto &url : urls) {
+        // usr Prohibit Paths
+
+        if (!url.isEmpty() && usrProhibitPaths.contains(url.path())) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool FileUtils::isDesktopFile(const QUrl &url)

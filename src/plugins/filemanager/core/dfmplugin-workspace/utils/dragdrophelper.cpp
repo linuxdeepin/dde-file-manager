@@ -51,14 +51,18 @@ DragDropHelper::DragDropHelper(FileView *parent)
 bool DragDropHelper::dragEnter(QDragEnterEvent *event)
 {
     currentHoverIndexUrl = QUrl();
-
     const QMimeData *data = event->mimeData();
+    currentDragUrls = data->urls();
+
+    // Filter the event that cannot be dragged
+    if (checkProhibitPaths(event, currentDragUrls))
+        return true;
+
     if (handleDFileDrag(data, view->rootUrl())) {
         event->acceptProposedAction();
         return true;
     }
 
-    currentDragUrls = data->urls();
     for (const QUrl &url : currentDragUrls) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
         if (!info || !info->canMoveOrCopy()) {
@@ -154,7 +158,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             } else if ((event->source() != view) && !WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
                 view->setViewSelectState(true);
                 event->accept();
-            } else if (WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()){
+            } else if (WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
                 view->setViewSelectState(true);
                 event->accept();
             } else if (hoverFileInfo->isDir() || FileUtils::isDesktopFile(hoverFileInfo->url())) {
@@ -251,7 +255,7 @@ bool DragDropHelper::drop(QDropEvent *event)
 
             view->selectionModel()->clear();
             if (event->isAccepted())
-                return true; // TODO (xust) this is a temp workaround.
+                return true;   // TODO (xust) this is a temp workaround.
         }
     }
 
@@ -358,6 +362,18 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
     //        return view->model()->rootItem()->fileInfo();
     //    }
     //    return nullptr;
+}
+
+bool DragDropHelper::checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl> &urls) const
+{
+    // Filter the event that cannot be dragged
+    if (urls.isEmpty() || FileUtils::isContainProhibitPath(urls)) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return true;
+    }
+
+    return false;
 }
 
 bool DragDropHelper::isSameUser(const QMimeData *data)

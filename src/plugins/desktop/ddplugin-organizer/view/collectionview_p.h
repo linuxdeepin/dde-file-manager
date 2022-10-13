@@ -66,6 +66,7 @@ public:
 
     bool checkClientMimeData(QDragEnterEvent *event) const;
     bool checkXdndDirectSave(QDragEnterEvent *event) const;
+    bool checkProhibitPaths(QDragEnterEvent *event) const;
     void preproccessDropEvent(QDropEvent *event, const QUrl &targetUrl) const;
     void handleMoveMimeData(QDropEvent *event, const QUrl &url);
     bool drop(QDropEvent *event);

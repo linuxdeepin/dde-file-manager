@@ -66,7 +66,7 @@ bool DaemonPlugin::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag DaemonPlugin::stop()
+void DaemonPlugin::stop()
 {
     if (library) {
         library->stop();
@@ -74,5 +74,4 @@ dpf::Plugin::ShutdownFlag DaemonPlugin::stop()
     }
 
     library = nullptr;
-    return kSync;
 }

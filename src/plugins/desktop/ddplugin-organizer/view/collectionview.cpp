@@ -430,6 +430,20 @@ bool CollectionViewPrivate::checkXdndDirectSave(QDragEnterEvent *event) const
     return false;
 }
 
+bool CollectionViewPrivate::checkProhibitPaths(QDragEnterEvent *event) const
+{
+    auto urlsForDragEvent = event->mimeData()->urls();
+
+    // Filter the event that cannot be dragged
+    if (urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(urlsForDragEvent)) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return true;
+    }
+
+    return false;
+}
+
 void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &targetUrl) const
 {
     if (!event || event->mimeData()->urls().isEmpty())
@@ -1963,6 +1977,10 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
 
 void CollectionView::dragEnterEvent(QDragEnterEvent *event)
 {
+    // Filter the event that cannot be dragged
+    if (d->checkProhibitPaths(event))
+        return;
+
     d->dropTargetUrl = model()->fileUrl(model()->rootIndex());
 
     if (d->checkClientMimeData(event))

@@ -27,8 +27,12 @@
 #include "plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebaritem.h"
 
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <gtest/gtest.h>
+
+#include <QMimeData>
+#include <QDropEvent>
 
 DFMBASE_USE_NAMESPACE
 DPSIDEBAR_USE_NAMESPACE
@@ -83,8 +87,6 @@ protected:
     }
     SideBarModel *model = nullptr;
     SideBarView *view = nullptr;
-
-private:
     stub_ext::StubExt stub;
 };
 
@@ -95,4 +97,39 @@ TEST_F(UT_SidebarView, FindItemIndex)
 
     QModelIndex index2 = view->findItemIndex(QUrl("test/url4"));
     EXPECT_TRUE(index2.row() == 1);
+}
+
+TEST_F(UT_SidebarView, testDragEnterEvent)
+{
+    bool isCall { false };
+    stub.set_lamda(&QDropEvent::setDropAction, []() {
+        return;
+    });
+
+    stub.set_lamda(&QDropEvent::ignore, [&]() {
+        isCall = true;
+        return;
+    });
+
+    QDragEnterEvent event(QPoint(10, 10), Qt::IgnoreAction, nullptr, Qt::LeftButton, Qt::NoModifier);
+
+    // action1
+    stub.set_lamda(&QMimeData::urls, []() -> QList<QUrl> {
+        return {};
+    });
+    view->dragEnterEvent(&event);
+    EXPECT_TRUE(isCall);
+
+    // action2
+    isCall = false;
+    stub.set_lamda(&QMimeData::urls, []() -> QList<QUrl> {
+        return { QUrl("/home/uos") };
+    });
+
+    stub.set_lamda(&FileUtils::isContainProhibitPath, []() -> bool {
+        return true;
+    });
+
+    view->dragEnterEvent(&event);
+    EXPECT_TRUE(isCall);
 }

@@ -36,6 +36,7 @@
 #include <QMenu>
 #include <QItemSelection>
 #include <QItemSelectionRange>
+#include <QMimeData>
 
 using namespace testing;
 using namespace dfmbase;
@@ -415,3 +416,98 @@ TEST_F(CollectionViewTest, findIndex)
     EXPECT_EQ(view.d->findIndex("u", true, QModelIndex(), false, false), idx1);
     EXPECT_EQ(view.d->findIndex("u", true, idx1, false, true), idx2);
 }
+
+TEST_F(CollectionViewTest, dragEnterEvent) {
+    TestProvider test;
+    QUrl url1("file:///usr");
+    QUrl url2("file:///un");
+
+    stub.set_lamda(VADDR(TestProvider, items), [url1,url2]() {
+        return QList<QUrl>{url1, url2};
+    });
+
+    CollectionView view("dd", &test);
+    CollectionModel model;
+    model.d->fileList = {url1, url2};
+    model.d->fileMap.insert(url1, nullptr);
+    model.d->fileMap.insert(url2, nullptr);
+
+    view.setModel(&model);
+    bool isCallfileUrl { false };
+    QDragEnterEvent event(QPoint(10, 10), Qt::IgnoreAction, nullptr, Qt::LeftButton, Qt::NoModifier);
+
+    stub.set_lamda(&QMimeData::urls, []() -> QList<QUrl> {
+                       return {};
+                   });
+
+    // action1
+    stub.set_lamda(&CollectionViewPrivate::checkProhibitPaths, []() -> bool{
+        return true;
+    });
+
+    stub.set_lamda(&CollectionView::model, [&]() -> CollectionModel* {
+        return &model;
+    });
+
+    stub.set_lamda(&CollectionModel::fileUrl, [&]() -> QUrl {
+        isCallfileUrl = true;
+        return QUrl();
+    });
+
+    stub.set_lamda(&CollectionModel::rootIndex, []() -> QModelIndex {
+        return QModelIndex();
+    });
+
+    view.dragEnterEvent(&event);
+    EXPECT_TRUE(!isCallfileUrl);
+
+    // action2
+    isCallfileUrl = false;
+    stub.reset(&CollectionViewPrivate::checkProhibitPaths);
+    stub.set_lamda(&CollectionViewPrivate::checkProhibitPaths, []() -> bool{
+        return false;
+    });
+
+    stub.set_lamda(&CollectionViewPrivate::checkClientMimeData, []() -> bool{
+        return true;
+    });
+
+    bool isCallCheckXdndDirectSave { false };
+    stub.set_lamda(&CollectionViewPrivate::checkXdndDirectSave, [&]() -> bool{
+        isCallCheckXdndDirectSave = true;
+        return false;
+    });
+
+    view.dragEnterEvent(&event);
+    EXPECT_TRUE(isCallfileUrl);
+    EXPECT_TRUE(!isCallCheckXdndDirectSave);
+
+
+    // action3
+    isCallfileUrl = false;
+    stub.reset(&CollectionViewPrivate::checkClientMimeData);
+    stub.reset(&CollectionViewPrivate::checkProhibitPaths);
+    stub.set_lamda(&CollectionViewPrivate::checkProhibitPaths, [&]() -> bool{
+        return false;
+    });
+    stub.set_lamda(&CollectionViewPrivate::checkClientMimeData, [&]() -> bool{
+        return false;
+    });
+
+    stub.set_lamda(&CollectionViewPrivate::checkXdndDirectSave, [&]() -> bool{
+        return false;
+    });
+
+    bool isCall { false };
+    typedef void (*func)(CollectionViewPrivate*,QDropEvent *event, const QUrl &targetFileUrl);
+    auto testFunc = (func)(&CollectionViewPrivate::preproccessDropEvent);
+    stub.set_lamda(testFunc, [&]() {
+        isCall = true;
+        return;
+    });
+
+    view.dragEnterEvent(&event);
+    EXPECT_TRUE(isCallfileUrl);
+    EXPECT_TRUE(isCall);
+}
+

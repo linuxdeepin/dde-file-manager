@@ -49,6 +49,7 @@ public:
     static bool isGvfsFile(const QUrl &url);
     static bool isMtpFile(const QUrl &url);
     static QString preprocessingFileName(QString name);
+    static bool isContainProhibitPath(const QList<QUrl> &urls);
 
     //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
     static bool isDesktopFile(const QUrl &url);
