@@ -58,6 +58,12 @@ Files: src/*.ui src/*.qss src/*.js src/*/config.ini
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
 
+#qobjecthelper.cpp
+Files: src/utils/qobjecthelper.cpp
+Copyright: 2009 Till Adam <adam@kde.org>
+Copyright: 2009 Flavio Castelli <flavio@castelli.name>
+License: LGPL-2.1-or-later
+
 # tests
 Files: tests/*
 Copyright: UnionTech Software Technology Co., Ltd.
