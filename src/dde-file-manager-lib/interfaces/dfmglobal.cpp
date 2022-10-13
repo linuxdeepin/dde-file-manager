@@ -46,6 +46,7 @@
 #include "utils/rlog/datas/searchreportdata.h"
 #include "utils/rlog/datas/sidebarreportdata.h"
 #include "utils/rlog/datas/filemenureportdata.h"
+#include "utils/rlog/datas/appstartupreportdata.h"
 
 #include <DArrowRectangle>
 
@@ -586,7 +587,8 @@ void DFMGlobal::initRlogManager()
         new SidebarReportData,
         new SearchReportData,
         new VaultReportData,
-        new FileMenuReportData
+        new FileMenuReportData,
+        new AppStartupReportData
     };
 
     std::for_each(datas.cbegin(), datas.cend(), [](ReportDataInterface *dat) { rlog->registerLogData(dat->type(), dat); });

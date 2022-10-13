@@ -26,6 +26,7 @@
 #include "dfmapplication.h"
 #include "dfmstandardpaths.h"
 #include "dialogs/dialogmanager.h"
+#include "utils/rlog/rlog.h"
 
 using namespace testing;
 namespace  {
@@ -124,4 +125,12 @@ TEST_F(FileManagerAppTest, test_openWithDialog_empty)
     stu.set_lamda(ADDR(DialogManager, showPropertyDialog), [&judge](){judge = true;return;});
     FileManagerApp::instance()->openWithDialog(QStringList());
     EXPECT_FALSE(judge);
+}
+
+TEST_F(FileManagerAppTest, test_lazyRunTask)
+{
+    stub_ext::StubExt stu;
+    stu.set_lamda(ADDR(FileManagerApp, initService), [](){return;});
+    stu.set_lamda(ADDR(RLog, commit), [](){return;});
+    EXPECT_NO_FATAL_FAILURE(FileManagerApp::instance()->lazyRunTask());
 }
