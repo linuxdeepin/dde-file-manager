@@ -1644,10 +1644,6 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         }
 
         status = MOUNT_SUCCESS;
-
-        QVariantMap args;
-        args.insert("result",true);
-        rlog->commit("Smb",args);
     }
 
     AskingPasswordHash.remove(op);
