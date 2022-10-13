@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "computeritemwatcher.h"
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
@@ -384,8 +384,8 @@ int ComputerItemWatcher::getGroupId(const QString &groupName)
 void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
 {
     int insertAt = 0;
+    bool foundGroup = false;
     for (; insertAt < initedDatas.count(); insertAt++) {
-        bool foundGroup = false;
         const auto &item = initedDatas.at(insertAt);
         if (item.groupId != in.groupId) {
             if (foundGroup)
@@ -543,6 +543,14 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     if (!info->exists()) return;
 
+    if (info->suffix() == SuffixInfo::kProtocol) {
+        QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
+        if (id.startsWith(Global::Scheme::kSmb)) {
+            StashMountsUtils::stashMount(info->url(), info->displayName());
+            removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
+        }
+    }
+
     ComputerItemData data;
     data.url = devUrl;
     data.shape = shape;
@@ -552,14 +560,6 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     Q_EMIT itemAdded(data);
 
     cacheItem(data);
-
-    if (info->suffix() == SuffixInfo::kProtocol) {
-        QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
-        if (id.startsWith(Global::Scheme::kSmb)) {
-            StashMountsUtils::stashMount(info->url(), info->displayName());
-            removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
-        }
-    }
 
     if (needSidebarItem)
         addSidebarItem(info);

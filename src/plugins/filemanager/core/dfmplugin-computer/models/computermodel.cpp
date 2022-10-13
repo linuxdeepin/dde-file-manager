@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "computermodel.h"
 #include "views/computerview.h"
 #include "utils/computerutils.h"
@@ -293,10 +293,8 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
                     break;
 
                 int next = i + 1;
-                if (next >= items.count())
-                    break;
-                const auto &nextItem = items.at(next);
-                if (nextItem.groupId != data.groupId) {
+                if (next >= items.count()   // when search at end OR search at end of the group, append item to last item of the group.
+                    || items.at(next).groupId != data.groupId) {
                     i = next;
                     break;
                 }
@@ -313,6 +311,10 @@ void ComputerModel::onItemRemoved(const QUrl &url)
 {
     int pos = findItem(url);
     if (pos > 0) {
+        if (view->selectedUrlList().contains(url))
+            //        view->clearSelection(); // NOTE: this do not work, might be a bug in QT
+            view->setCurrentIndex(QModelIndex());   // NOTE: and this works good.
+
         beginRemoveRows(QModelIndex(), pos, pos);
         items.removeAt(pos);
         endRemoveRows();
