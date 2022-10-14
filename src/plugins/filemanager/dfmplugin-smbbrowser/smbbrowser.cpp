@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "smbbrowser.h"
 #include "events/smbbrowsereventcaller.h"
@@ -112,7 +112,9 @@ void SmbBrowser::onWindowOpened(quint64 winId)
     if (window->sideBar())
         addNeighborToSidebar();
     else
-        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addNeighborToSidebar(); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::sideBarInstallFinished,
+                this, [this] { addNeighborToSidebar(); }, Qt::DirectConnection);
 }
 
 void SmbBrowser::addNeighborToSidebar()
@@ -155,11 +157,12 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
         } else if ((ok || err == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) && after) {
             after();
         } else {
-            DialogManager::instance()->showErrorDialog(tr("Mount device error"), "");
+            DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
             qDebug() << DeviceUtils::errMessage(err);
         }
-    }/*,
-                                       10000*/);
+    } /*,
+                                        10000*/
+    );
 }
 
 QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node)

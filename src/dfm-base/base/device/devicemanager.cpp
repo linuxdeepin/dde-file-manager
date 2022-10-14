@@ -556,6 +556,7 @@ void DeviceManager::unmountProtocolDevAsync(const QString &id, const QVariantMap
  */
 void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType1 cb, int timeout)
 {
+    //    Q_ASSERT(qApp->thread() == QThread::currentThread());
     Q_ASSERT_X(!address.isEmpty(), __FUNCTION__, "address is emtpy");
     QUrl u(address);
     if (!u.isValid()) {
@@ -570,12 +571,10 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     QString port = defaultPort.value(u.scheme(), "21");
 
     using namespace std::placeholders;
-    auto func = std::bind(DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice, _1, _2, _3,
-                          address);
+    auto func = std::bind(DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
 
     auto wrappedCb = [=](bool ok, DeviceError err, const QString &msg) {
-        if (cb)
-            cb(ok, err, msg);
+        if (cb) cb(ok, err, msg);
         QApplication::restoreOverrideCursor();
     };
 
@@ -583,8 +582,8 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
         QApplication::restoreOverrideCursor();
         if (ok) {
-            DProtocolDevice::mountNetworkDevice(
-                    address, func, DeviceManagerPrivate::askForUserChoice, wrappedCb, timeout);
+            DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice,
+                                                wrappedCb, timeout);
         } else {
             wrappedCb(false, DeviceError::kUserErrorTimedOut, "");
             qDebug() << "cannot access network " << host << ":" << port;

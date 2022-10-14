@@ -116,7 +116,11 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     }
 
     const QModelIndex &index = rootIndex(url);
-    fetchMore(index);
+
+    if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme()))
+        Q_EMIT traverPrehandle(url, index);
+    else
+        fetchMore(index);
 
     return index;
 }
@@ -248,12 +252,7 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
         return;
     }
 
-    const QUrl &url = rootUrl(parent);
-    if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme())) {
-        Q_EMIT traverPrehandle(url, parent);
-    } else {
-        traversRootDir(parent);
-    }
+    traversRootDir(parent);
 }
 
 bool FileViewModel::canFetchMore(const QModelIndex &parent) const
