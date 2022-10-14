@@ -215,3 +215,25 @@ TEST(CollectionItemDelegate, iconLevelRange)
     EXPECT_EQ(CollectionItemDelegate::minimumIconLevel(), 0);
     EXPECT_EQ(CollectionItemDelegate::maximumIconLevel(), 4);
 }
+
+
+TEST(CollectionItemDelegatePrivate, needExpend)
+{
+    CollectionView view(QString("testuuid"), nullptr);
+    CollectionItemDelegate obj(&view);
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(&CollectionItemDelegate::textPaintRect, [](){
+        return QRect(100, 100, 100, 200);
+    });
+
+    QRect out;
+    QRect in(10, 10, 100, 100);
+    const QRect need(10, 10, 100, 200);
+    EXPECT_TRUE(obj.d->needExpend({}, {}, in, &out));
+    EXPECT_EQ(out, need);
+
+    in = QRect(10, 10, 100, 300);
+    EXPECT_FALSE(obj.d->needExpend({}, {}, in, &out));
+    EXPECT_EQ(out, need);
+}

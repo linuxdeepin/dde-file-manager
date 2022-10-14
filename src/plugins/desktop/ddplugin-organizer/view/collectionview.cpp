@@ -1601,7 +1601,7 @@ void CollectionView::paintEvent(QPaintEvent *event)
             painter.fillRect(rect, color);
 
             auto itemSize = rect.marginsRemoved(d->cellMargins);
-            painter.setPen(QPen(Qt::blue, 1, Qt::DashLine));
+            painter.setPen(QPen(Qt::yellow, 1, Qt::DotLine));
             painter.drawRect(itemSize);
 
             painter.setPen(QPen(Qt::red, 2));

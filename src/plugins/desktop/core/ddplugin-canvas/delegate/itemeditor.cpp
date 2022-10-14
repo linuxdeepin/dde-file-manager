@@ -24,6 +24,7 @@
 #include "dfm-base/utils/fileutils.h"
 
 #include <DArrowRectangle>
+#include <DStyle>
 
 #include <QApplication>
 #include <QVBoxLayout>
@@ -80,6 +81,8 @@ void ItemEditor::init()
     setContentsMargins(0, 0, 0, 0);
     textEditor = createEditor();
     textEditor->setParent(this);
+    textEditor->installEventFilter(textEditor); // for draw
+
     connect(textEditor, &RenameEdit::textChanged, this, &ItemEditor::textChanged, Qt::UniqueConnection);
     QVBoxLayout *lay = new QVBoxLayout(this);
     lay->setMargin(0);
@@ -103,8 +106,21 @@ void ItemEditor::updateGeometry()
     if (textEditor->isReadOnly()) {
         textEditor->setFixedHeight(textHeight);
     } else {
-        textHeight = qMin(fontMetrics().height() * 3 + CanvasItemDelegate::kTextPadding * 2, textHeight);
-        textEditor->setFixedHeight(textHeight);
+        // maxheight subtracts the starting position of edit
+        // Note: textEditor ->pos(). y() cannot be used directly,
+        // because it is a variable rather than a fixed height value
+        auto maxTextHeight = maxHeight - layout()->contentsMargins().top();
+        if (maxTextHeight <= 0) {
+            textEditor->setFixedHeight(qMin(fontMetrics().height() * 3 + CanvasItemDelegate::kTextPadding * 2,
+                                            textHeight));
+        } else {
+            int minHeight = fontMetrics().height() * 1 + CanvasItemDelegate::kTextPadding * 2;
+            // insufficient free space, forced display of one line
+            if (maxTextHeight < minHeight)
+                textEditor->setFixedHeight(minHeight);
+            else
+                textEditor->setFixedHeight(qMin(maxTextHeight, textHeight));
+        }
     }
 
     // make layout to adjust height.
@@ -159,12 +175,6 @@ void ItemEditor::setText(const QString &text)
 {
     textEditor->setPlainText(text);
     textEditor->setAlignment(Qt::AlignHCenter);
-    updateGeometry();
-}
-
-void ItemEditor::setItemSizeHint(QSize size)
-{
-    itemSizeHint = size;
     updateGeometry();
 }
 
@@ -282,6 +292,11 @@ void ItemEditor::textChanged()
         showAlertMessage(tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
 }
 
+RenameEdit::RenameEdit(QWidget *parent) : DTextEdit(parent)
+{
+    adjustStyle();
+}
+
 void RenameEdit::undo()
 {
     // make signal textChanged to be invalid to push stack.
@@ -329,6 +344,42 @@ QString RenameEdit::stackAdvance()
     stackCurrentIndex = qMin(textStack.count() - 1, stackCurrentIndex + 1);
     const QString &text = stackCurrent();
     return text;
+}
+
+void RenameEdit::adjustStyle()
+{
+    // Set margins for text and edit boxes
+    document()->setDocumentMargin(CanvasItemDelegate::kTextPadding);
+
+    // In DTextEdit, FrameRadius will be set to viewportMargins, which will reduce the available width of text
+    // Modify FrameRadius to 0
+    DTK_WIDGET_NAMESPACE::DStyle::setFrameRadius(this, 0);
+}
+
+bool RenameEdit::eventFilter(QObject *obj, QEvent *e)
+{
+    if (e->type() == QEvent::Paint && obj == this) {
+        // Get the original radius value
+        const int oldFrameRadius = DStyle::pixelMetric(style(), DStyle::PM_FrameRadius, nullptr, this);
+
+        // ths basic value which should be a fixed value written as 8 in dtk
+        const int frameRadius = DStyle::pixelMetric(style(), DStyle::PM_FrameRadius);
+
+        // Set frameRadius to draw radius rect as background
+        DStyle::setFrameRadius(this, frameRadius);
+
+        QPainter p(this);
+        p.setRenderHints(QPainter::Antialiasing);
+
+        QStyleOptionFrame panel;
+        initStyleOption(&panel);
+        style()->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, &p, this);
+
+        DStyle::setFrameRadius(this, oldFrameRadius);
+        return true;
+    }
+
+    return DTextEdit::eventFilter(obj, e);
 }
 
 void RenameEdit::pushStatck(const QString &item)
@@ -420,4 +471,5 @@ void RenameEdit::showEvent(QShowEvent *e)
     if (!isActiveWindow())
         activateWindow();
 }
+
 

@@ -40,6 +40,8 @@ class RenameEdit: public DTK_WIDGET_NAMESPACE::DTextEdit
 {
     Q_OBJECT
     friend class ItemEditor;
+public:
+    explicit RenameEdit(QWidget *parent = nullptr);
 public slots:
     void undo();
     void redo();
@@ -48,8 +50,9 @@ protected:
     QString stackCurrent() const;
     QString stackBack();
     QString stackAdvance();
+    void adjustStyle();
 protected:
-    using DTextEdit::DTextEdit;
+    bool eventFilter(QObject *, QEvent *) override;
     void contextMenuEvent(QContextMenuEvent *e) override;
     void focusOutEvent(QFocusEvent *e) override;
     void keyPressEvent(QKeyEvent *e) override;
@@ -69,9 +72,10 @@ public:
     void setBaseGeometry(const QRect &base, const QSize &itemSize, const QMargins &margin);
     QString text() const;
     void setText(const QString &text);
-    void setItemSizeHint(QSize size);
+    inline void setMaxHeight(int h) { maxHeight = h; }
     void select(const QString &part);
     void setOpacity(qreal opacity);
+    inline RenameEdit *editor () const {return textEditor;}
     inline void setMaximumLength(int l) {
         if (l > 0)
             maxTextLength = l;
@@ -94,6 +98,7 @@ private slots:
 private:
     void init();
 protected:
+    int maxHeight = -1;
     int maxTextLength = INT_MAX;
     RenameEdit *textEditor = nullptr;
     QSize itemSizeHint;

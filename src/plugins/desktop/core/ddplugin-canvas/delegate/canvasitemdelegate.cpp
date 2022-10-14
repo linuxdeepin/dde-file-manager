@@ -95,34 +95,13 @@ bool CanvasItemDelegatePrivate::needExpend(const QStyleOptionViewItem &option, c
     // calc that showing text require how large area.
     QRect calcNeedRect = rText;
     calcNeedRect.setBottom(INT_MAX);
-    QRect paintRect = q->textPaintRect(option, index, calcNeedRect, false);
+    auto needHeight = q->textPaintRect(option, index, calcNeedRect, false).height();
+    // expanded rect is in text rect and adds its height.
+    calcNeedRect.setHeight(needHeight);
+    if (needText)
+        *needText = calcNeedRect;
 
-    // the text rect cannot show all the text, need to expand.
-    if (paintRect.height() > rText.height()) {
-        if (needText) {
-            // When expanding, the width of the text area needs to be expanded to the whole grid
-            QRect newTextRect = calcNeedRect;
-
-            // restore to grid size by adding kTextPadding that minsed in q->labelRect()
-            newTextRect.moveLeft(calcNeedRect.left() - q->kTextPadding);
-            newTextRect.setWidth(calcNeedRect.width() + 2 * q->kTextPadding);
-
-            // add left and right margins to restore width to view::visualRect's one.
-            auto margins = CanvasViewPrivate::gridMarginsHelper(q->parent());
-            margins.setTop(0);
-            margins.setBottom(0);
-            newTextRect = newTextRect.marginsAdded(margins);
-
-            // the height is INT_MAX.
-            // using this rect to call textPaintRect to get right height.
-            *needText = newTextRect;   // output text rect.
-        }
-        return true;
-    } else {
-        if (needText)
-            *needText = paintRect;   // output text rect that is really used to draw.
-        return false;
-    }
+    return calcNeedRect.height() > rText.height();
 }
 
 CanvasItemDelegate::CanvasItemDelegate(QAbstractItemView *parentPtr)
@@ -203,20 +182,24 @@ void CanvasItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptio
         return;
 
     // option.rect is view->visualRect;
-    auto geo = option.rect;
-    auto margins = QMargins(0, CanvasViewPrivate::gridMarginsHelper(parent()).top(), 0, 0);
+    // geo is equal parent()->itemRect();
+    auto geo = option.rect.marginsRemoved(CanvasViewPrivate::gridMarginsHelper(parent()));
+    auto margins = QMargins(0, 0, 0, 0);
     {
+        // get text rect
         auto gridTop = geo;
-        gridTop.setTop(margins.top());   //remove top magrin to adjust visualRect to itemRect.
         auto icon = iconRect(gridTop);
         auto label = labelRect(gridTop, icon);
         auto text = d->availableTextRect(label);
-        margins.setTop(text.top());   // get text rect top
-    }
-    // grid top + icon height +kIconSpacing + kTextPadding is the text begin pos.
-    //margins.setTop(margins.top() + parent()->iconSize().height() + kIconSpacing + kTextPadding);
-    itemEditor->setBaseGeometry(geo, d->itemSizeHint, margins);
 
+        // get editor begin pos that is y of text rect minus kTextPadding.
+        margins.setTop(text.top() - geo.top() - CanvasItemDelegate::kTextPadding);
+    }
+    // icon height + kIconSpacing is the editor begin pos.
+    // as margins.setTop(parent()->iconSize().height() + kIconSpacing);
+    // the max height is from the text editor top to canvas view bottom.
+    itemEditor->setMaxHeight(parent()->height() - geo.y());
+    itemEditor->setBaseGeometry(geo, d->itemSizeHint, margins);
     return;
 }
 

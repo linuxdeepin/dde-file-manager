@@ -36,3 +36,24 @@ TEST(CanvasItemDelegate, iconLevelRange)
     EXPECT_EQ(obj.minimumIconLevel(), 0);
     EXPECT_EQ(obj.maximumIconLevel(), 4);
 }
+
+TEST(CanvasItemDelegatePrivate, needExpend)
+{
+    CanvasView view;
+    CanvasItemDelegate obj(&view);
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(&CanvasItemDelegate::textPaintRect, [](){
+        return QRect(100, 100, 100, 200);
+    });
+
+    QRect out;
+    QRect in(10, 10, 100, 100);
+    const QRect need(10, 10, 100, 200);
+    EXPECT_TRUE(obj.d->needExpend({}, {}, in, &out));
+    EXPECT_EQ(out, need);
+
+    in = QRect(10, 10, 100, 300);
+    EXPECT_FALSE(obj.d->needExpend({}, {}, in, &out));
+    EXPECT_EQ(out, need);
+}

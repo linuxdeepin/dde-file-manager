@@ -40,6 +40,7 @@
 
 #include <QPainter>
 #include <QAbstractTextDocumentLayout>
+#include <QScrollBar>
 
 #include <private/qtextengine_p.h>
 
@@ -61,10 +62,10 @@ using namespace ddplugin_organizer;
 
 const int CollectionItemDelegate::kTextPadding = 2;
 const int CollectionItemDelegate::kIconSpacing = 5;
+const int CollectionItemDelegate::kIconTopSpacing = 4;
 const int CollectionItemDelegate::kIconBackRadius = 18;
 const int CollectionItemDelegate::kIconRectRadius = 4;
 
-static constexpr int kIconTopSpacing = 4;
 
 CollectionItemDelegatePrivate::CollectionItemDelegatePrivate(CollectionItemDelegate *qq)
     : q(qq)
@@ -98,34 +99,13 @@ bool CollectionItemDelegatePrivate::needExpend(const QStyleOptionViewItem &optio
     // calc that showing text require how large area.
     QRect calcNeedRect = rText;
     calcNeedRect.setBottom(INT_MAX);
-    QRect paintRect = q->textPaintRect(option, index, calcNeedRect, false);
+    auto needHeight = q->textPaintRect(option, index, calcNeedRect, false).height();
+    // expanded rect is in text rect and adds its height.
+    calcNeedRect.setHeight(needHeight);
+    if (needText)
+        *needText = calcNeedRect;
 
-    // the text rect cannot show all the text, need to expand.
-    if (paintRect.height() > rText.height()) {
-        if (needText) {
-            // When expanding, the width of the text area needs to be expanded to the whole grid
-            QRect newTextRect = calcNeedRect;
-
-            // restore to grid size by adding kTextPadding that minsed in q->labelRect()
-            newTextRect.moveLeft(calcNeedRect.left() - q->kTextPadding);
-            newTextRect.setWidth(calcNeedRect.width() + 2 * q->kTextPadding);
-
-            // add left and right margins to restore width to view::visualRect's one.
-            auto margins = q->parent()->cellMargins();
-            margins.setTop(0);
-            margins.setBottom(0);
-            newTextRect = newTextRect.marginsAdded(margins);
-
-            // the height is INT_MAX.
-            // using this rect to call textPaintRect to get right height.
-            *needText = newTextRect;   // output text rect.
-        }
-        return true;
-    } else {
-        if (needText)
-            *needText = paintRect;   // output text rect that is really used to draw.
-        return false;
-    }
+    return calcNeedRect.height() > rText.height();
 }
 
 const QList<int> CollectionItemDelegatePrivate::kIconSizes = {32, 48, 64, 96, 128};
@@ -214,19 +194,27 @@ void CollectionItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleO
     if (!itemEditor)
         return;
 
-    // option.rect is view->visualRect;
-    auto geo = option.rect;
-    auto margins = QMargins(0, (parent()->cellMargins()).top(), 0, 0);
+    // geo is equal parent()->itemRect();
+    auto geo = option.rect.marginsRemoved(parent()->cellMargins());
+    auto margins = QMargins(0, 0, 0, 0);
     {
         auto gridTop = geo;
-        gridTop.setTop(margins.top());   //remove top magrin to adjust visualRect to itemRect.
         auto icon = iconRect(gridTop);
         auto label = labelRect(gridTop, icon);
         auto text = d->availableTextRect(label);
-        margins.setTop(text.top());   // get text rect top
+
+        // get editor begin pos that is y of text rect minus kTextPadding.
+        margins.setTop(text.top() - geo.top() - kTextPadding);
     }
-    // grid top + icon height +kIconSpacing + kTextPadding is the text begin pos.
-    //margins.setTop(margins.top() + parent()->iconSize().height() + kIconSpacing + kTextPadding);
+    // icon height + kIconSpacing is the editor begin pos.
+    // as margins.setTop(parent()->iconSize().height() + kIconSpacing);
+    // the max height is from the text editor top to canvas view bottom.
+    {
+        auto view = parent();
+        const int avalHeight = view->verticalScrollBar()->maximum() + view->height();
+        int offset = view->verticalScrollBar()->value();
+        itemEditor->setMaxHeight(avalHeight - offset - geo.y());
+    }
     itemEditor->setBaseGeometry(geo, d->itemSizeHint, margins);
 
     return;

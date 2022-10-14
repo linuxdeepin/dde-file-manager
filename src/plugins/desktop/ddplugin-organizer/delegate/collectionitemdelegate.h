@@ -89,6 +89,7 @@ public:
     static const int kIconSpacing;
     static const int kIconBackRadius;
     static const int kIconRectRadius;
+    static const int kIconTopSpacing;
 
 private:
     CollectionItemDelegatePrivate *const d = nullptr;
