@@ -72,7 +72,7 @@ public:
     static void stashCurrentMounts();
     static QString getDisplayNameByConnUrl(const QString &url);
     static QString normalizeConnUrl(const QString &url);
-    static QStringList stashedSmbDevices();
+    static QStringList stashedSmbDevices(bool onlySmbSepration = false);
     static void removeStashedSmbDevice(const QString &url);
     static void insertStashedSmbDevice(const QString &url);//smb://x.x.x.x
 };

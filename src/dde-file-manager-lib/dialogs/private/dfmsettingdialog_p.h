@@ -108,6 +108,7 @@ private:
         {"advance.mount.auto_mount_and_open", DFMApplication::GA_AutoMountAndOpen},
         {"advance.mount.mtp_show_bottom_info", DFMApplication::GA_MTPShowBottomInfo},
         {"advance.mount.always_show_offline_remote_connection", DFMApplication::GA_AlwaysShowOfflineRemoteConnections},
+        {"advance.mount.merge_the_entries_of_samba_shared_folders", DFMApplication::GA_MergeTheEntriesOfSambaSharedFolders},
         {"advance.dialog.default_chooser_dialog", DFMApplication::GA_OverrideFileChooserDialog},
         {"advance.dialog.delete_confirmation_dialog", DFMApplication::GA_ShowDeleteConfirmDialog},
         {"advance.other.hide_system_partition", DFMApplication::GA_HiddenSystemPartition},

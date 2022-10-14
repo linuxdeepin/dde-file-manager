@@ -17,6 +17,7 @@
 #include "utils.h"
 #include "utils/grouppolicy.h"
 #include "app/define.h"
+#include "shutil/smbintegrationswitcher.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -308,16 +309,17 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
                 continue;
             }
 
-            /*smb挂载项聚合功能中，这里不再对缓存的挂载目录创建DFMRootFileInfo对象（请保留此部分注释）
-            QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
-            path.append(QString(".%1").arg(SUFFIX_STASHED_REMOTE));
-            path.prepend(DFMROOT_ROOT);
-            qDebug() << "get stashed remote connection: " << path;
+            //非smb挂载项聚合模式中，对缓存的挂载目录创建DFMRootFileInfo对象
+            if(!smbIntegrationSwitcher->isIntegrationMode()){
+                QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
+                path.append(QString(".%1").arg(SUFFIX_STASHED_REMOTE));
+                path.prepend(DFMROOT_ROOT);
+                qDebug() << "get stashed remote connection: " << path;
 
-            auto stashedMountInfo = new DFMRootFileInfo(DUrl::fromPercentEncoding(path.toUtf8()));
-            DAbstractFileInfoPointer fp(stashedMountInfo);
-            ret.push_back(fp);
-            */
+                auto stashedMountInfo = new DFMRootFileInfo(DUrl::fromPercentEncoding(path.toUtf8()));
+                DAbstractFileInfoPointer fp(stashedMountInfo);
+                ret.push_back(fp);
+            }
         }
     }
 
