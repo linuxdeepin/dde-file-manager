@@ -11,6 +11,8 @@
 class ReportDataInterface
 {
 public:
+    ReportDataInterface() = default;
+    virtual ~ReportDataInterface() = default;
     virtual QString type() const = 0;
     virtual QJsonObject prepareData(const QVariantMap &args) const = 0;
 };

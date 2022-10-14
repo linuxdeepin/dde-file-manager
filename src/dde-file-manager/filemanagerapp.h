@@ -32,7 +32,7 @@ public:
 private:
     void initApp();
     void initView();
-    void lazyRunInitServiceTask();
+    void lazyRunTask();
     void initSysPathWatcher();
     void initConnect();
 

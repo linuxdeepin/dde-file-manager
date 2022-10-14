@@ -30,6 +30,7 @@
 #include "interfaces/dfileservices.h"
 #include "shutil/fileutils.h"
 #include "utils/utils.h"
+#include "utils/rlog/rlog.h"
 #include "app/filesignalmanager.h"
 
 #include "tag/tagmanager.h"
@@ -48,7 +49,7 @@ FileManagerApp::FileManagerApp(QObject *parent) : QObject(parent)
 {
     initApp();
     initView();
-    lazyRunInitServiceTask();
+    lazyRunTask();
     initSysPathWatcher();
     initConnect();
 }
@@ -159,9 +160,16 @@ void FileManagerApp::initTranslation()
 
 }
 
-void FileManagerApp::lazyRunInitServiceTask()
+void FileManagerApp::lazyRunTask()
 {
     QTimer::singleShot(1500, initService);
+
+    // report app startup event
+    QTimer::singleShot(500, this, [=](){
+        QVariantMap data;
+        data.insert("type", true);
+        rlog->commit("AppStartup", data);
+    });
 }
 
 void FileManagerApp::initSysPathWatcher()

@@ -17,6 +17,8 @@
 
 #include "dialogs/dialogmanager.h"
 
+#include "utils/rlog/rlog.h"
+
 #include "qobjecthelper.h"
 
 #include "singleton.h"
@@ -82,6 +84,11 @@ void WindowManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
     connect(qApp, &QApplication::aboutToQuit, this, [ = ]() {
+        // report quit
+        QVariantMap data;
+        data.insert("type", false);
+        rlog->commit("AppStartup", data);
+
         fileSignalManager->requestCloseListen();
         DFMGlobal::setAppQuiting();
         qInfo() << "app quiting !";
