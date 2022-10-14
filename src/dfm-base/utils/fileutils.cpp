@@ -411,7 +411,7 @@ bool FileUtils::isLowSpeedDevice(const QUrl &url)
 
 bool FileUtils::isLocalDevice(const QUrl &url)
 {
-    return !DFMIO::DFMUtils::fileUnmountable(url.toLocalFile());
+    return !DFMIO::DFMUtils::fileIsRemovable(url.toLocalFile());
 }
 
 bool FileUtils::isCdRomDevice(const QUrl &url)
