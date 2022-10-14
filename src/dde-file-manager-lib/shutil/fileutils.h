@@ -168,6 +168,8 @@ public:
     static QList<QStringList> bindPathInfo(const QString &grepData);
 
     static QList<QStringList> catFstabFileInfo(const QString &mountPoint);
+    // access icon name by gio
+    static QString iconNameFromGio(const QUrl &url);
 };
 
 #endif // FILEUTILS_H

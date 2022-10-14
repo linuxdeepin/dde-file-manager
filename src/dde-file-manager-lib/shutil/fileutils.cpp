@@ -2293,6 +2293,21 @@ QList<QStringList> FileUtils::catFstabFileInfo(const QString &grepData)
     return listMountInfo;
 }
 
+QString FileUtils::iconNameFromGio(const QUrl &url)
+{
+    g_autoptr(GFile) gfile = g_file_new_for_uri(url.toString().toStdString().c_str());
+    g_autoptr(GFileInfo) gfileInfo = g_file_query_info(gfile, "standard::icon", G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
+    if (!gfileInfo)
+        return QString();
+    g_autoptr(GObject) icon = g_file_info_get_attribute_object(gfileInfo, "standard::icon");
+    if (!icon)
+        return QString();
+    auto names = g_themed_icon_get_names(G_THEMED_ICON(icon));
+    if (names)
+        return QString::fromLocal8Bit(names[0]);
+    return QString();
+}
+
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {
