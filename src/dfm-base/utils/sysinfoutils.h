@@ -34,6 +34,7 @@ class SysInfoUtils
 
 public:
     static QString getUser();
+    static QString getHostName();
     static int getUserId();
 
     static bool isRootUser();

@@ -53,8 +53,12 @@ public:
     void startBurnISOImage(const QString &dev, const QUrl &imageUrl, const Config &conf);
     void startBurnUDFFiles(const QString &dev, const QUrl &stagingUrl, const Config &conf);
 
+    void startAuditLogForCopyFromDisc(const QList<QUrl> &srcList, const QList<QUrl> &destList);
+    void startAuditLogForBurnFiles(const QVariantMap &info, const QUrl &stagingUrl, bool result);
+
 private:
     void initConnect(AbstractBurnJob *job);
+    void deleteStagingDir(const QUrl &url);
 
 private slots:
     void showOpticalJobCompletionDialog(const QString &msg, const QString &icon);

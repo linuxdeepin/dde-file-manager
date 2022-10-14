@@ -22,8 +22,11 @@
 */
 #include "burnjobmanager.h"
 #include "utils/burnjob.h"
+#include "utils/auditlogjob.h"
 
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/decorator/decoratorfileoperator.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
 #include <QVBoxLayout>
 #include <QTextEdit>
@@ -88,6 +91,25 @@ void BurnJobManager::startBurnUDFFiles(const QString &dev, const QUrl &stagingUr
     job->start();
 }
 
+void BurnJobManager::startAuditLogForCopyFromDisc(const QList<QUrl> &srcList, const QList<QUrl> &destList)
+{
+    Q_ASSERT(srcList.size() == destList.size());
+    AbstractAuditLogJob *job = new CopyFromDiscAuditLog(srcList, destList);
+    connect(job, &AbstractAuditLogJob::finished, job, &QObject::deleteLater);
+    job->start();
+}
+
+void BurnJobManager::startAuditLogForBurnFiles(const QVariantMap &info, const QUrl &stagingUrl, bool result)
+{
+    AbstractAuditLogJob *job = new BurnFilesAuditLogJob(info, stagingUrl, result);
+    connect(job, &AbstractAuditLogJob::finished, this, [this, job, stagingUrl, result]() {
+        if (result)
+            this->deleteStagingDir(stagingUrl);
+        job->deleteLater();
+    });
+    job->start();
+}
+
 void BurnJobManager::initConnect(AbstractBurnJob *job)
 {
     Q_ASSERT(job);
@@ -95,6 +117,34 @@ void BurnJobManager::initConnect(AbstractBurnJob *job)
     connect(job, &AbstractBurnJob::requestCompletionDialog, this, &BurnJobManager::showOpticalJobCompletionDialog);
     connect(job, &AbstractBurnJob::requestFailureDialog, this, &BurnJobManager::showOpticalJobFailureDialog);
     connect(job, &AbstractBurnJob::requestErrorMessageDialog, DialogManagerInstance, &DialogManager::showErrorDialog);
+    connect(job, &AbstractBurnJob::burnFinished, this, [this, job](int type, bool result) {
+        startAuditLogForBurnFiles(job->currentDeviceInfo(),
+                                  (type == AbstractBurnJob::JobType::kOpticalImageBurn) ? job->property(AbstractBurnJob::PropertyType::kImageUrl).toUrl()
+                                                                                        : job->property(AbstractBurnJob::PropertyType::KStagingUrl).toUrl(),
+                                  result);
+    });
+}
+
+void BurnJobManager::deleteStagingDir(const QUrl &url)
+{
+    // we cannot delete image file
+    if (!DecoratorFileInfo(url).isDir()) {
+        qInfo() << "Don't delelete img url: " << url;
+        return;
+    }
+
+    QString path { url.toLocalFile() };
+    static QRegularExpression reg("_dev_sr[0-9]*");
+    QRegularExpressionMatch match;
+    if (!path.contains(reg, &match)) {
+        qWarning() << "Cannot delete dir (not staging dir)" << path;
+        return;
+    }
+
+    if (!DecoratorFileOperator(url).deleteFile())
+        qWarning() << "Delete " << url << "failed!";
+    else
+        qInfo() << "Delete cache folder: " << url << "success";
 }
 
 void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)

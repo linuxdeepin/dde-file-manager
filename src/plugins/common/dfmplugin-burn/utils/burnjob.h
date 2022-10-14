@@ -64,6 +64,8 @@ public:
     explicit AbstractBurnJob(const QString &dev, const JobHandlePointer handler);
     virtual ~AbstractBurnJob() override {}
 
+    QVariantMap currentDeviceInfo() const;
+    QVariant property(PropertyType type) const;
     void setProperty(PropertyType type, const QVariant &val);
     void addTask();
 
@@ -79,12 +81,12 @@ protected:
     DFMBURN::DOpticalDiscManager *createManager(int fd);
     QByteArray updatedInSubProcess(DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message);
     void comfort();
-    void deleteStagingFiles();
 
 signals:
     void requestErrorMessageDialog(const QString &title, const QString &message);
     void requestFailureDialog(int type, const QString &err, const QStringList &details);
     void requestCompletionDialog(const QString &msg, const QString &icon);
+    void burnFinished(int type, bool reuslt);
 
 public slots:
     void onJobUpdated(DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message);
@@ -92,8 +94,10 @@ public slots:
 protected:
     QString curDev;
     QString curDevId;
+    QVariantMap curDeviceInfo;
     JobHandlePointer jobHandlePtr {};
     ProperyMap curProperty;
+    JobType firstJobType;
     JobType curJobType;
     int lastProgress {};
     int curPhase {};
@@ -155,7 +159,7 @@ protected:
     virtual void work() override;
 };
 
-}
+}   // namespace dfmplugin_burn
 Q_DECLARE_METATYPE(DFMBURN::BurnOptions)
 
 #endif   // BURNJOB_H

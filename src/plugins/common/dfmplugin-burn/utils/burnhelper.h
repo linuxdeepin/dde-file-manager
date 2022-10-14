@@ -49,7 +49,9 @@ public:
     static QString burnFilePath(const QUrl &url);
     static QList<QVariantMap> discDataGroup();
     static void updateBurningStateToPersistence(const QString &id, const QString &dev, bool working);
+    static void mapStagingFilesPath(const QList<QUrl> &srcList, const QList<QUrl> &targetList);
     static bool isBurnEnabled();
+    static bool burnIsOnLocalStaging(const QUrl &url);
 };
 
 }

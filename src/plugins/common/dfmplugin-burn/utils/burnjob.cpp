@@ -31,7 +31,6 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/utils/decorator/decoratorfileoperator.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/dialogmanager.h"
 
@@ -66,6 +65,16 @@ AbstractBurnJob::AbstractBurnJob(const QString &dev, const JobHandlePointer hand
             });
 
     connect(BurnSignalManager::instance(), &BurnSignalManager::activeTaskDialog, this, &AbstractBurnJob::addTask);
+}
+
+QVariantMap AbstractBurnJob::currentDeviceInfo() const
+{
+    return curDeviceInfo;
+}
+
+QVariant AbstractBurnJob::property(AbstractBurnJob::PropertyType type) const
+{
+    return curProperty[type];
 }
 
 void AbstractBurnJob::setProperty(AbstractBurnJob::PropertyType type, const QVariant &val)
@@ -156,6 +165,7 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
             emit requestCompletionDialog(tr("Burn process completed"), "dialog-ok");
     }
 
+    emit burnFinished(firstJobType, jobSuccess);
     DeviceManager::instance()->ejectBlockDev(curDevId);
 }
 
@@ -182,7 +192,8 @@ void AbstractBurnJob::run()
 
 bool AbstractBurnJob::readyToWork()
 {
-    QVariantMap &&map = DevProxyMng->queryBlockInfo(curDevId);
+    curDeviceInfo = DevProxyMng->queryBlockInfo(curDevId);
+    auto &&map { curDeviceInfo };
     if (map.isEmpty()) {
         qWarning() << "Device info is empty";
         return false;
@@ -294,15 +305,6 @@ void AbstractBurnJob::comfort()
     lastStatus = tmp;
 }
 
-void AbstractBurnJob::deleteStagingFiles()
-{
-    QUrl url { curProperty[PropertyType::KStagingUrl].toUrl() };
-    if (!DecoratorFileOperator(url).deleteFile())
-        qWarning() << "Delete " << url << "failed!";
-    else
-        qInfo() << "Delete cache folder: " << url << "success";
-}
-
 void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString &speed, const QStringList &message)
 {
     lastStatus = status;
@@ -364,7 +366,7 @@ void EraseJob::work()
     qInfo() << "Start erase device: " << curDev;
 
     // TODO(zhangs): check unmount
-    curJobType = JobType::kOpticalBlank;
+    firstJobType = curJobType = JobType::kOpticalBlank;
     if (!readyToWork())
         return;
 
@@ -415,13 +417,11 @@ void BurnISOFilesJob::writeFunc(int progressFd, int checkFd)
 void BurnISOFilesJob::work()
 {
     qInfo() << "Start burn ISO files: " << curDev;
-    curJobType = JobType::kOpticalBurn;
+    firstJobType = curJobType = JobType::kOpticalBurn;
     if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
-    if (jobSuccess)
-        deleteStagingFiles();
     qInfo() << "End burn ISO files: " << curDev;
 }
 
@@ -454,7 +454,7 @@ void BurnISOImageJob::writeFunc(int progressFd, int checkFd)
 void BurnISOImageJob::work()
 {
     qInfo() << "Start burn ISO image: " << curDev;
-    curJobType = JobType::kOpticalImageBurn;
+    firstJobType = curJobType = JobType::kOpticalImageBurn;
     if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
@@ -486,12 +486,10 @@ void BurnUDFFilesJob::writeFunc(int progressFd, int checkFd)
 void BurnUDFFilesJob::work()
 {
     qInfo() << "Start burn UDF files: " << curDev;
-    curJobType = JobType::kOpticalBurn;
+    firstJobType = curJobType = JobType::kOpticalBurn;
     if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
-    if (jobSuccess)
-        deleteStagingFiles();
     qInfo() << "End burn UDF files: " << curDev;
 }

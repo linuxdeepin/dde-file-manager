@@ -109,6 +109,34 @@ QString DeviceUtils::convertSuitableDisplayName(const QVariantHash &devInfo)
     return convertSuitableDisplayName(map);
 }
 
+QString DeviceUtils::formatOpticalMediaType(const QString &media)
+{
+    static std::initializer_list<std::pair<QString, QString>> opticalmediakeys {
+        { "optical", "Optical" },
+        { "optical_cd", "CD-ROM" },
+        { "optical_cd_r", "CD-R" },
+        { "optical_cd_rw", "CD-RW" },
+        { "optical_dvd", "DVD-ROM" },
+        { "optical_dvd_r", "DVD-R" },
+        { "optical_dvd_rw", "DVD-RW" },
+        { "optical_dvd_ram", "DVD-RAM" },
+        { "optical_dvd_plus_r", "DVD+R" },
+        { "optical_dvd_plus_rw", "DVD+RW" },
+        { "optical_dvd_plus_r_dl", "DVD+R/DL" },
+        { "optical_dvd_plus_rw_dl", "DVD+RW/DL" },
+        { "optical_bd", "BD-ROM" },
+        { "optical_bd_r", "BD-R" },
+        { "optical_bd_re", "BD-RE" },
+        { "optical_hddvd", "HD DVD-ROM" },
+        { "optical_hddvd_r", "HD DVD-R" },
+        { "optical_hddvd_rw", "HD DVD-RW" },
+        { "optical_mo", "MO" }
+    };
+    static QMap<QString, QString> opticalmediamap(opticalmediakeys);
+
+    return opticalmediamap.value(media);
+}
+
 bool DeviceUtils::isAutoMountEnable()
 {
     return Application::genericAttribute(Application::GenericAttribute::kAutoMount).toBool();

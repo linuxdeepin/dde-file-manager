@@ -53,6 +53,7 @@ public:
     static QString errMessage(DFMMOUNT::DeviceError err);
     static QString convertSuitableDisplayName(const QVariantMap &devInfo);
     static QString convertSuitableDisplayName(const QVariantHash &devInfo);
+    static QString formatOpticalMediaType(const QString &media);
     static bool isAutoMountEnable();
     static bool isAutoMountAndOpenEnable();
     static bool isWorkingOpticalDiscDev(const QString &dev);

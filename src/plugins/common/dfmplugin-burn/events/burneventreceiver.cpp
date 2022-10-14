@@ -129,12 +129,21 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
 void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
 {
     Q_UNUSED(errMsg)
+    Q_UNUSED(ok)
+
+    if (srcUrls.isEmpty())
+        return;
 
     int index = 0;
-    if (ok && srcUrls.size() == destUrls.size()) {
+    QList<QUrl> discUrls;
+
+    // change files permission (from disc to native)
+    if (srcUrls.size() == destUrls.size()) {
         for (auto &&url : srcUrls) {
             if (DevProxyMng->isFileFromOptical(url.toLocalFile())) {
                 QUrl destUrl { destUrls.at(index) };
+                discUrls.append(destUrl);
+
                 qInfo() << "Add write permission for " << destUrl;
                 auto permissions = (QFileInfo(destUrl.toLocalFile()).permissions() | QFileDevice::WriteUser | QFileDevice::WriteUser
                                     | QFileDevice::ReadGroup | QFileDevice::WriteGroup | QFileDevice::ReadOther);
@@ -143,6 +152,14 @@ void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const 
             ++index;
         }
     }
+
+    // write audit log (from disc to native)
+    if (!discUrls.isEmpty() && discUrls.size() == srcUrls.size())
+        BurnJobManager::instance()->startAuditLogForCopyFromDisc(srcUrls, discUrls);
+
+    // staging map (from native to disc)
+    if (!destUrls.isEmpty() && BurnHelper::burnIsOnLocalStaging(destUrls.at(0)))
+        BurnHelper::mapStagingFilesPath(srcUrls, destUrls);
 }
 
 void BurnEventReceiver::handleMountImage(const QUrl &isoUrl)

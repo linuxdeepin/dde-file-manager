@@ -32,6 +32,7 @@
 
 #include <DDialog>
 #include <QObject>
+#include <QDebug>
 #include <QCoreApplication>
 #include <QPushButton>
 #include <QStandardPaths>
@@ -205,8 +206,49 @@ void BurnHelper::updateBurningStateToPersistence(const QString &id, const QStrin
     Application::dataPersistence()->sync();
 }
 
+void BurnHelper::mapStagingFilesPath(const QList<QUrl> &srcList, const QList<QUrl> &targetList)
+{
+    if (!srcList.isEmpty() && (srcList.size() != targetList.size())) {
+        qWarning() << "Src url size != targt url size";
+        return;
+    }
+
+    QString firsDestPath { targetList[0].toLocalFile() };
+    static QRegularExpression reg("_dev_sr[0-9]*");
+    QRegularExpressionMatch match;
+    if (!firsDestPath.contains(reg, &match)) {
+        qWarning() << "Cannot map _dev_sr[0-9]";
+        return;
+    }
+    QString dev { match.captured().replace("_", "/") };
+    if (dev.isEmpty()) {
+        qWarning() << "Empty dev";
+        return;
+    }
+
+    QVariantMap map { Application::dataPersistence()->value("StagingMap", dev).toMap() };
+    for (int i = 0; i != srcList.size(); ++i)
+        map[targetList.at(i).toLocalFile()] = srcList.at(i).path();
+
+    Application::dataPersistence()->setValue("StagingMap", dev, map);
+    Application::dataPersistence()->sync();
+}
+
 bool BurnHelper::isBurnEnabled()
 {
     const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.burn", "burnEnable");
     return ret.isValid() ? ret.toBool() : true;
+}
+
+bool BurnHelper::burnIsOnLocalStaging(const QUrl &url)
+{
+    if (!url.path().contains("/.cache/deepin/discburn/_dev_"))
+        return false;
+
+    static QRegularExpression reg("/_dev_sr[0-9]*/");
+    QRegularExpressionMatch match = reg.match(url.path());
+    if (match.hasMatch())
+        return true;
+
+    return false;
 }

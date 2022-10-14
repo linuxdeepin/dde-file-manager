@@ -214,6 +214,7 @@ int main(int argc, char *argv[])
 
     // open as root
     if (CommandParser::instance().isSet("r")) {
+        qInfo() << "Open as admin";
         a.openAsAdmin();
         return 0;
     }
@@ -237,6 +238,7 @@ int main(int argc, char *argv[])
         signal(SIGTERM, handleSIGTERM);
         signal(SIGPIPE, handleSIGPIPE);
     } else {
+        qInfo() << "new client";
         a.handleNewClient(uniqueKey);
         return 0;
     }

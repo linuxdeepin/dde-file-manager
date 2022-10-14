@@ -715,8 +715,10 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     fileNewName = formatFileName(fileNewName);
     // 创建文件的名称
     QUrl newTargetUrl = toInfo->url();
-    const QString &newTargetPath = newTargetUrl.path() + QDir::separator() + fileNewName;
-    newTargetUrl.setPath(newTargetPath);
+    const QString &newTargetPath = newTargetUrl.path();
+    const QString &newPath = newTargetPath.endsWith("/") ? newTargetPath + fileNewName
+                                                  : newTargetPath + QDir::separator() + fileNewName;
+    newTargetUrl.setPath(newPath);
 
     newTargetInfo.reset();
     newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl);
@@ -1065,7 +1067,6 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     if (!doCheckFile(fromInfo, toInfo, fromInfo->fileName(), newTargetInfo, skip))
         return result;
 
-    bool oldExist = DecoratorFile(newTargetInfo->url()).exists();
     if (fromInfo->isSymLink()) {
         result = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (result)
@@ -1078,7 +1079,7 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
         result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
     }
 
-    if (targetInfo == toInfo && !oldExist) {
+    if (targetInfo == toInfo) {
         completeSourceFiles.append(fromInfo->url());
         precompleteTargetFileInfo.append(newTargetInfo);
     }
