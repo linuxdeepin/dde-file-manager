@@ -64,11 +64,8 @@ EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
     emptyTrashLayout->addWidget(emptyTrashButton, 0, Qt::AlignRight);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    DHorizontalLine *emptyTrashSplitLine = new DHorizontalLine;
     mainLayout->addLayout(emptyTrashLayout);
-    mainLayout->addWidget(emptyTrashSplitLine);
-    mainLayout->setSpacing(8);
-    mainLayout->setContentsMargins(0, 8, 0, 0);
+    mainLayout->setContentsMargins(10, 8, 10, 8);
 
     this->setLayout(mainLayout);
 }
