@@ -120,6 +120,9 @@ void MountAskPasswordDialog::initUI()
     addButtons(buttonTexts);
     setSpacing(10);
     setDefaultButton(1);
+    QTimer::singleShot(0,this,[this](){
+        this->moveToCenter(); // 因networkmanager.cpp中while循环中局部事件循环的存在，导致对话框不能移到中央，这里采用QTimer触发
+    });
 }
 
 void MountAskPasswordDialog::initConnect()
