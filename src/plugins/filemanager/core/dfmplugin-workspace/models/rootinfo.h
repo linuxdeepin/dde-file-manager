@@ -44,7 +44,7 @@ class RootInfo : public QObject
     };
 
 public:
-    explicit RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w, const TraversalThreadPointer &t);
+    explicit RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w);
 
     void init();
 

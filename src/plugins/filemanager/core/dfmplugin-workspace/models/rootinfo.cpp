@@ -29,13 +29,12 @@
 using namespace dfmbase;
 using namespace dfmplugin_workspace;
 
-RootInfo::RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w, const TraversalThreadPointer &t)
+RootInfo::RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w)
     : rowIndex(i),
       canFetchMore(false),
       needTraversal(true),
       url(u),
       watcher(w),
-      traversal(t),
       data(new FileItemData(u))
 {
 }

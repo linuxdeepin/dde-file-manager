@@ -40,10 +40,7 @@ RootInfo *FileDataHelper::setRoot(const QUrl &rootUrl)
         info->clearChildren();
 
         const AbstractFileWatcherPointer &watcher = setWatcher(rootUrl);
-        const TraversalThreadPointer &traversal = setTraversalThread(rootUrl);
-
         info->watcher = watcher;
-        info->traversal = traversal;
 
         info->init();
 
@@ -118,9 +115,12 @@ int FileDataHelper::filesCount(const int rootIndex)
 void FileDataHelper::doTravers(const int rootIndex)
 {
     auto info = findRootInfo(rootIndex);
-    if (info && info->needTraversal && !info->traversal.isNull()) {
+
+    if (info && info->needTraversal) {
         info->canFetchMore = false;
         info->needTraversal = false;
+
+        info->traversal = setTraversalThread(info);
 
         if (!info->fileCache.isNull()) {
             info->fileCache->stop();
@@ -130,7 +130,6 @@ void FileDataHelper::doTravers(const int rootIndex)
 
         info->fileCache.reset(new FileDataCacheThread(info));
 
-        info->traversal->disconnect();
         connect(info->traversal.data(), &TraversalDirThread::updateChild,
                 info->fileCache.data(), &FileDataCacheThread::onHandleAddFile,
                 Qt::QueuedConnection);
@@ -193,11 +192,10 @@ FileViewModel *FileDataHelper::model() const
 RootInfo *FileDataHelper::createRootInfo(const QUrl &url)
 {
     const AbstractFileWatcherPointer &watcher = setWatcher(url);
-    const TraversalThreadPointer &traversal = setTraversalThread(url);
 
     int index = rootInfoMap.count();
 
-    RootInfo *info = new RootInfo(index, url, watcher, traversal);
+    RootInfo *info = new RootInfo(index, url, watcher);
 
     return info;
 }
@@ -232,11 +230,11 @@ AbstractFileWatcherPointer FileDataHelper::setWatcher(const QUrl &url)
     return watcher;
 }
 
-TraversalThreadPointer FileDataHelper::setTraversalThread(const QUrl &url)
+TraversalThreadPointer FileDataHelper::setTraversalThread(RootInfo *info)
 {
-    if (rootInfoMap.count(url) && !rootInfoMap[url]->traversal.isNull()) {
-        rootInfoMap[url]->needTraversal = true;
-        const TraversalThreadPointer &traversal = rootInfoMap[url]->traversal;
+    if (!info->traversal.isNull()) {
+        info->needTraversal = true;
+        const TraversalThreadPointer &traversal = info->traversal;
 
         traversal->disconnect();
         traversal->stopAndDeleteLater();
@@ -244,7 +242,7 @@ TraversalThreadPointer FileDataHelper::setTraversalThread(const QUrl &url)
     }
 
     TraversalThreadPointer traversal(new TraversalDirThread(
-            url, QStringList(),
+            info->url, QStringList(),
             QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
             QDirIterator::FollowSymlinks));
 
