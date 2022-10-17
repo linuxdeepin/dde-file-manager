@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef TITLEBAR_H
 #define TITLEBAR_H
 
@@ -47,6 +47,8 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Spinner_Stop)
     DPF_EVENT_REG_SLOT(slot_FilterButton_Show)
     DPF_EVENT_REG_SLOT(slot_NewWindowAndTab_SetEnable);
+    DPF_EVENT_REG_SLOT(slot_Navigator_Forward);
+    DPF_EVENT_REG_SLOT(slot_Navigator_Backward);
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_Crumb_Seprate)

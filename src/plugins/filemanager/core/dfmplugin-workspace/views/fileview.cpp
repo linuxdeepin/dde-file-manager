@@ -40,13 +40,12 @@
 #include "utils/fileoperatorhelper.h"
 #include "utils/filemodelmanager.h"
 #include "events/workspaceeventsequence.h"
-#include "views/private/delegatecommon.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
-#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -81,6 +80,8 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     initializeDelegate();
     initializeStatusBar();
     initializeConnect();
+
+    viewport()->installEventFilter(this);
 }
 
 FileView::~FileView()
@@ -166,7 +167,7 @@ bool FileView::setRootUrl(const QUrl &url)
     clearSelection();
     selectionModel()->clear();
 
-    //Todo(yanghao&lzj):!url.isSearchFile()
+    // Todo(yanghao&lzj):!url.isSearchFile()
     setFocus();
 
     const QUrl &fileUrl = parseSelectedUrl(url);
@@ -1259,7 +1260,7 @@ QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Q
 
             if (lastRow) {
                 // call later
-                //QTimer::singleShot(0, this, [this, index, d] {//this index unused,改成如下
+                // QTimer::singleShot(0, this, [this, index, d] {//this index unused,改成如下
                 QTimer::singleShot(0, this, [this] {
                     // scroll to end
                     verticalScrollBar()->setValue(verticalScrollBar()->maximum());
@@ -1318,6 +1319,20 @@ bool FileView::event(QEvent *e)
 bool FileView::eventFilter(QObject *obj, QEvent *event)
 {
     switch (event->type()) {
+    case QEvent::MouseButtonRelease: {
+        QWidget *viewport = qobject_cast<QWidget *>(obj);
+        quint64 winId = dfmbase::FileManagerWindowsManager::instance().findWindowId(viewport);
+        auto e = static_cast<QMouseEvent *>(event);
+        if (!e)
+            break;
+        if (e->button() == Qt::BackButton) {
+            dpfSlotChannel->push("dfmplugin_titlebar", "slot_Navigator_Backward", winId);
+            return true;
+        } else if (e->button() == Qt::ForwardButton) {
+            dpfSlotChannel->push("dfmplugin_titlebar", "slot_Navigator_Forward", winId);
+            return true;
+        }
+    } break;
     case QEvent::Move:
         if (obj != horizontalScrollBar()->parentWidget())
             return DListView::eventFilter(obj, event);
@@ -1353,10 +1368,10 @@ void FileView::paintEvent(QPaintEvent *event)
     if (d->isShowViewSelectBox) {
         QPainter painter(viewport());
         QColor color = palette().color(QPalette::Active, QPalette::Highlight);
-        color.setAlphaF(255 * 0.4); // 40% transparency
+        color.setAlphaF(255 * 0.4);   // 40% transparency
         QPen pen(color, kSelectBoxLineWidth);
         painter.setPen(pen);
-        painter.drawRect(QRectF(kSelectBoxLineWidth/2, kSelectBoxLineWidth/2, viewport()->size().width() - kSelectBoxLineWidth, viewport()->size().height() - kSelectBoxLineWidth));
+        painter.drawRect(QRectF(kSelectBoxLineWidth / 2, kSelectBoxLineWidth / 2, viewport()->size().width() - kSelectBoxLineWidth, viewport()->size().height() - kSelectBoxLineWidth));
     }
 }
 

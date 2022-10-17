@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "titlebareventreceiver.h"
 #include "views/titlebarwidget.h"
 #include "views/navwidget.h"
@@ -91,7 +91,7 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
         OptionButtonManager::instance()->setOptBtnVisibleState(scheme, static_cast<OptionButtonManager::OptBtnVisibleState>(state));
 
     CrumbManager::instance()->registerCrumbCreator(scheme, [=]() {
-        CrumbInterface *interface { new CrumbInterface };
+        CrumbInterface *interface = new CrumbInterface();
         interface->setSupportedScheme(scheme);
         interface->setKeepAddressBar(keepAddressBar);
         return interface;
@@ -136,6 +136,22 @@ void TitleBarEventReceiver::handleViewModeChanged(quint64 windowId, int mode)
 void TitleBarEventReceiver::handleSetNewWindowAndTabEnable(bool enable)
 {
     TitleBarHelper::newWindowAndTabEnabled = enable;
+}
+
+void TitleBarEventReceiver::handleWindowForward(quint64 windowId)
+{
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return;
+    w->navWidget()->forward();
+}
+
+void TitleBarEventReceiver::handleWindowBackward(quint64 windowId)
+{
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return;
+    w->navWidget()->back();
 }
 
 TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)

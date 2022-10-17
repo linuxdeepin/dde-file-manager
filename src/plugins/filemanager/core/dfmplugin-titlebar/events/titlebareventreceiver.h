@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef TITLEBAREVENTRECEIVER_H
 #define TITLEBAREVENTRECEIVER_H
 
@@ -54,6 +54,8 @@ public slots:
     void handleViewModeChanged(quint64 windowId, int mode);
 
     void handleSetNewWindowAndTabEnable(bool enable);
+    void handleWindowForward(quint64 windowId);
+    void handleWindowBackward(quint64 windowId);
 
 private:
     explicit TitleBarEventReceiver(QObject *parent = nullptr);

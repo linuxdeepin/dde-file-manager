@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "titlebar.h"
 #include "utils/titlebarhelper.h"
 #include "utils/crumbinterface.h"
@@ -123,4 +123,8 @@ void TitleBar::bindEvents()
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleShowFilterButton);
     dpfSlotChannel->connect(curSpace, "slot_NewWindowAndTab_SetEnable",
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleSetNewWindowAndTabEnable);
+    dpfSlotChannel->connect(curSpace, "slot_Navigator_Backward",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleWindowBackward);
+    dpfSlotChannel->connect(curSpace, "slot_Navigator_Forward",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleWindowForward);
 }

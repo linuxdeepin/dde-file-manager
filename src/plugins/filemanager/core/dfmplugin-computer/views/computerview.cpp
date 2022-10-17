@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "computerview.h"
 #include "private/computerview_p.h"
 #include "models/computermodel.h"
@@ -98,8 +98,17 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
         const auto &idx = this->indexAt(me->pos());
         if (me->button() == Qt::MouseButton::LeftButton && (!idx.isValid() || !(idx.flags() & Qt::ItemFlag::ItemIsEnabled))) {
             this->selectionModel()->clearSelection();
+            return false;
         }
-        return false;
+
+        quint64 winId = FileManagerWindowsManager::instance().findWindowId(this->viewport());
+        if (me->button() == Qt::BackButton) {
+            dpfSlotChannel->push("dfmplugin_titlebar", "slot_Navigator_Backward", winId);
+            return true;
+        } else if (me->button() == Qt::ForwardButton) {
+            dpfSlotChannel->push("dfmplugin_titlebar", "slot_Navigator_Forward", winId);
+            return true;
+        }
     } else if (event->type() == QEvent::KeyPress && watched == this) {
         auto ke = static_cast<QKeyEvent *>(event);
         if (ke->modifiers() == Qt::Modifier::ALT) {
