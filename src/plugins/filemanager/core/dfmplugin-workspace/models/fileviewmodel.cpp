@@ -145,7 +145,8 @@ AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
     if (!index.isValid() || index.row() < 0)
         return nullptr;
 
-    if (!index.parent().isValid()) {
+    const QModelIndex &parentIndex = index.parent();
+    if (!parentIndex.isValid()) {
         RootInfo *info = fileDataHelper->findRootInfo(index.row());
 
         if (info && info->data)
@@ -154,8 +155,28 @@ AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
         return nullptr;
     }
 
-    const QModelIndex &parentIndex = index.parent();
     const FileItemData *data = fileDataHelper->findFileItemData(parentIndex.row(), index.row());
+    if (data)
+        return data->fileInfo();
+
+    return nullptr;
+}
+
+AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &parent, const QModelIndex &index) const
+{
+    if (!index.isValid() || index.row() < 0)
+        return nullptr;
+
+    if (!parent.isValid()) {
+        RootInfo *info = fileDataHelper->findRootInfo(index.row());
+
+        if (info && info->data)
+            return info->data->fileInfo();
+
+        return nullptr;
+    }
+
+    const FileItemData *data = fileDataHelper->findFileItemData(parent.row(), index.row());
     if (data)
         return data->fileInfo();
 
@@ -205,11 +226,12 @@ int FileViewModel::columnCount(const QModelIndex &parent) const
 
 QVariant FileViewModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.parent().isValid()) {
+    const QModelIndex &parentIndex = index.parent();
+    if (!parentIndex.isValid()) {
         RootInfo *info = fileDataHelper->findRootInfo(index.row());
         if (info) {
             QVariant data;
-            if (WorkspaceEventSequence::instance()->doFetchCustomRoleData(rootUrl(index), info->url, static_cast<ItemRoles>(role), &data))
+            if (WorkspaceEventSequence::instance()->doFetchCustomRoleData(info->url, info->url, static_cast<ItemRoles>(role), &data))
                 return data;
             return info->data->data(role);
         }
@@ -217,11 +239,11 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    FileItemData *itemData = fileDataHelper->findFileItemData(index.parent().row(), index.row());
+    FileItemData *itemData = fileDataHelper->findFileItemData(parentIndex.row(), index.row());
 
     if (itemData && itemData->fileInfo()) {
         QVariant data;
-        if (WorkspaceEventSequence::instance()->doFetchCustomRoleData(rootUrl(index), itemData->fileInfo()->url(), static_cast<ItemRoles>(role), &data))
+        if (WorkspaceEventSequence::instance()->doFetchCustomRoleData(rootUrl(parentIndex), itemData->fileInfo()->url(), static_cast<ItemRoles>(role), &data))
             return data;
         return itemData->data(role);
     }

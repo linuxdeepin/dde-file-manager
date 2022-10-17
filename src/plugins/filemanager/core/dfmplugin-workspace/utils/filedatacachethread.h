@@ -61,6 +61,9 @@ public Q_SLOTS:
     void onHandleAddFile(const QUrl url);
     void onHandleTraversalFinished();
 
+Q_SIGNALS:
+    void requestSetIdle();
+
 private:
     void run() override;
 

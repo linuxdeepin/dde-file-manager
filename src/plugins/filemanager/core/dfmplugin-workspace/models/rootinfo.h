@@ -46,6 +46,8 @@ class RootInfo : public QObject
 public:
     explicit RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w, const TraversalThreadPointer &t);
 
+    void init();
+
     QList<QUrl> getChildrenUrls() const;
     void clearChildren();
     void startWatcher();
@@ -78,7 +80,6 @@ public:
     int rowIndex;
     bool canFetchMore;
     bool needTraversal;
-    bool needInsertRootIndex;
     QUrl url;
     AbstractFileWatcherPointer watcher;
     TraversalThreadPointer traversal;

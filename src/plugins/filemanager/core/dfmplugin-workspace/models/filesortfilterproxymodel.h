@@ -47,6 +47,7 @@ public:
     Qt::DropActions supportedDropActions() const override;
 
     QModelIndex setRootUrl(const QUrl &url);
+    QUrl currentRootUrl() const;
 
     void clear();
     void update();

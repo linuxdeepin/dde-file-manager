@@ -73,6 +73,7 @@ public:
     void update(const QUrl &rootUrl);
 
     AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
+    AbstractFileInfoPointer fileInfo(const QModelIndex &parent, const QModelIndex &index) const;
     QList<QUrl> getChildrenUrls(const QUrl &rootUrl) const;
 
     QModelIndex findIndex(const QUrl &url) const;

@@ -39,8 +39,6 @@ FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
 {
     setDynamicSortFilter(true);
     resetFilter();
-
-    connect(viewModel(), &FileViewModel::childrenUpdated, this, &FileSortFilterProxyModel::onChildrenUpdate);
 }
 
 FileSortFilterProxyModel::~FileSortFilterProxyModel()
@@ -103,10 +101,16 @@ Qt::DropActions FileSortFilterProxyModel::supportedDropActions() const
 QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
     rootUrl = url;
+
     const QModelIndex &rootIndex = viewModel()->setRootUrl(url);
     resetFilter();
 
     return mapFromSource(rootIndex);
+}
+
+QUrl FileSortFilterProxyModel::currentRootUrl() const
+{
+    return rootUrl;
 }
 
 void FileSortFilterProxyModel::clear()
@@ -292,13 +296,20 @@ void FileSortFilterProxyModel::onStateChanged(const QUrl &url, ModelState state)
 
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    if (!left.isValid() || !left.parent().isValid())
+    if (!left.isValid())
         return false;
-    if (!right.isValid() || !right.parent().isValid())
+    if (!right.isValid())
         return false;
 
-    const AbstractFileInfoPointer &leftInfo = viewModel()->fileInfo(left);
-    const AbstractFileInfoPointer &rightInfo = viewModel()->fileInfo(right);
+    const QModelIndex &leftParent = left.parent();
+    if (!leftParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), leftParent)->url(), rootUrl))
+        return false;
+    const QModelIndex &rightParent = right.parent();
+    if (!rightParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), rightParent)->url(), rootUrl))
+        return false;
+
+    const AbstractFileInfoPointer &leftInfo = viewModel()->fileInfo(leftParent, left);
+    const AbstractFileInfoPointer &rightInfo = viewModel()->fileInfo(rightParent, right);
 
     if (!leftInfo)
         return false;
@@ -340,6 +351,7 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
     default:
         return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder()) == (sortOrder() == Qt::AscendingOrder);
     }
+    return false;
 }
 
 bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const

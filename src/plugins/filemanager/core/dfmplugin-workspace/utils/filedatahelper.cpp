@@ -45,9 +45,7 @@ RootInfo *FileDataHelper::setRoot(const QUrl &rootUrl)
         info->watcher = watcher;
         info->traversal = traversal;
 
-        info->startWatcher();
-
-        info->canFetchMore = true;
+        info->init();
 
         return info;
     }
@@ -55,8 +53,7 @@ RootInfo *FileDataHelper::setRoot(const QUrl &rootUrl)
     RootInfo *info = createRootInfo(rootUrl);
     rootInfoMap[rootUrl] = info;
 
-    info->startWatcher();
-    info->canFetchMore = true;
+    info->init();
 
     return rootInfoMap[rootUrl];
 }
@@ -140,7 +137,7 @@ void FileDataHelper::doTravers(const int rootIndex)
         connect(info->traversal.data(), &QThread::finished,
                 info->fileCache.data(), &FileDataCacheThread::onHandleTraversalFinished,
                 Qt::QueuedConnection);
-        connect(info->fileCache.data(), &FileDataCacheThread::finished,
+        connect(info->fileCache.data(), &FileDataCacheThread::requestSetIdle,
                 this, [this, info] {
                     this->model()->stateChanged(info->url, ModelState::kIdle);
                 },
@@ -229,7 +226,7 @@ AbstractFileWatcherPointer FileDataHelper::setWatcher(const QUrl &url)
 
     const AbstractFileWatcherPointer &watcher = WatcherFactory::create<AbstractFileWatcher>(url);
     if (watcher.isNull()) {
-        qDebug() << "Create watcher failed! url = " << url;
+        qWarning() << "Create watcher failed! url = " << url;
     }
 
     return watcher;

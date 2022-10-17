@@ -96,6 +96,9 @@ void FileDataCacheThread::onHandleTraversalFinished()
 {
     isTraversalFinished = true;
     QApplication::restoreOverrideCursor();
+
+    if (!isRunning())
+        Q_EMIT requestSetIdle();
 }
 
 void FileDataCacheThread::run()
@@ -122,6 +125,8 @@ void FileDataCacheThread::run()
 
     if (needInsertList.count() > 0)
         addChildren(needInsertList);
+
+    Q_EMIT requestSetIdle();
 }
 
 void FileDataCacheThread::addChildren(const QList<QUrl> &urls)

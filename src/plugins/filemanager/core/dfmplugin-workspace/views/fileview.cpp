@@ -177,6 +177,7 @@ bool FileView::setRootUrl(const QUrl &url)
 
     loadViewState(fileUrl);
     delayUpdateStatusBar();
+    updateContentLabel();
     setDefaultViewMode();
 
     resetSelectionModes();
@@ -188,12 +189,18 @@ bool FileView::setRootUrl(const QUrl &url)
 
 QUrl FileView::rootUrl() const
 {
-    return model()->data(rootIndex(), ItemRoles::kItemUrlRole).toUrl();
+    return model()->currentRootUrl();
 }
 
 AbstractBaseView::ViewState FileView::viewState() const
 {
-    // TODO(liuyangming): return model state
+    switch (model()->currentState()) {
+    case ModelState::kIdle:
+        return AbstractBaseView::ViewState::kViewIdle;
+    case ModelState::kBusy:
+        return AbstractBaseView::ViewState::kViewBusy;
+    }
+
     return AbstractBaseView::viewState();
 }
 
@@ -842,7 +849,6 @@ void FileView::onRowCountChanged()
 
 void FileView::onModelReseted()
 {
-    qInfo() << "call onModelReseted";
     updateModelActiveIndex();
 }
 
@@ -1640,7 +1646,6 @@ void FileView::doSort()
 
 void FileView::onModelStateChanged()
 {
-    qInfo() << "call onModelStateChanged";
     updateContentLabel();
     updateLoadingIndicator();
     updateSelectedUrl();

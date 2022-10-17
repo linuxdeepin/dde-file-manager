@@ -33,12 +33,18 @@ RootInfo::RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w, co
     : rowIndex(i),
       canFetchMore(false),
       needTraversal(true),
-      needInsertRootIndex(true),
       url(u),
       watcher(w),
       traversal(t),
       data(new FileItemData(u))
 {
+}
+
+void RootInfo::init()
+{
+    startWatcher();
+
+    canFetchMore = true;
 }
 
 QList<QUrl> RootInfo::getChildrenUrls() const
