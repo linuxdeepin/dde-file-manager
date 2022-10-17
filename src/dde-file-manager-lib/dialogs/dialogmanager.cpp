@@ -936,10 +936,8 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
             dialog->expandGroup().at(1)->setAnimationDuration(0);
             dialog->expandGroup().at(0)->setExpand(false);
             dialog->expandGroup().at(1)->setExpand(true);
-            QTimer::singleShot(0, this, [=]() {
-                dialog->expandGroup().at(0)->setAnimationDuration(250);
-                dialog->expandGroup().at(1)->setAnimationDuration(250);
-            });
+            dialog->expandGroup().at(0)->setAnimationDuration(250);
+            dialog->expandGroup().at(1)->setAnimationDuration(250);
         }
     }
 }
