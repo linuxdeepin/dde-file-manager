@@ -1436,7 +1436,7 @@ void DFileView::updateModelActiveIndex()
         if (fileInfo) {
             fileInfo->makeToActive();
 
-            if (!fileInfo->exists()) {
+            if (!fileInfo->exists() && fileInfo->filePath().isEmpty()) {
                 m_isRemovingCase = true;
                 model()->removeRow(i, rootIndex());
             } else if (fileWatcher) {
