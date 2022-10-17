@@ -83,20 +83,6 @@ void RootInfo::refreshChildren()
         fileCache->refreshChildren();
 }
 
-void RootInfo::newFileAdded(const QUrl &url)
-{
-    // TODO(liuyangming): do select new file
-    //    if (WorkspaceHelper::kSelectionAndRenameFile.contains(windowId)) {
-    //        if (WorkspaceHelper::kSelectionAndRenameFile[windowId].first == UrlRoute::urlParent(fileUrl)) {
-    //            WorkspaceHelper::kSelectionAndRenameFile[windowId] = qMakePair(QUrl(), QUrl());
-
-    //            QTimer::singleShot(100, this, [=] {
-    //                emit selectAndEditFile(fileUrl);
-    //            });
-    //        }
-    //    }
-}
-
 int RootInfo::childIndex(const QUrl &url) const
 {
     if (fileCache)
@@ -174,7 +160,7 @@ void RootInfo::doWatcherEvent()
 
         if (event.second == kAddFile) {
             fileCache->addChildren({ fileUrl });
-            newFileAdded(fileUrl);
+            Q_EMIT selectAndEditFile(url, fileUrl);
         } else {
             fileCache->removeChildren({ fileUrl });
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", fileUrl);

@@ -30,6 +30,8 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
+#include <QTimer>
+
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -291,6 +293,22 @@ void FileSortFilterProxyModel::onStateChanged(const QUrl &url, ModelState state)
 
         this->state = state;
         Q_EMIT stateChanged();
+    }
+}
+
+void FileSortFilterProxyModel::onSelectAndEditFile(const QUrl &rootUrl, const QUrl &url)
+{
+    if (UniversalUtils::urlEquals(rootUrl, this->rootUrl)) {
+        quint64 winId = WorkspaceHelper::instance()->windowId(dynamic_cast<QWidget *>(parent()));
+        if (WorkspaceHelper::kSelectionAndRenameFile.contains(winId)) {
+            if (WorkspaceHelper::kSelectionAndRenameFile[winId].first == rootUrl) {
+                WorkspaceHelper::kSelectionAndRenameFile[winId] = qMakePair(QUrl(), QUrl());
+
+                QTimer::singleShot(100, this, [=] {
+                    emit selectAndEditFile(url);
+                });
+            }
+        }
     }
 }
 

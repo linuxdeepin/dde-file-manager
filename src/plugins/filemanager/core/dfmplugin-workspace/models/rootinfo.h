@@ -52,7 +52,6 @@ public:
     void clearChildren();
     void startWatcher();
     void refreshChildren();
-    void newFileAdded(const QUrl &url);
 
     int childIndex(const QUrl &url) const;
     int childrenCount();
@@ -63,6 +62,7 @@ Q_SIGNALS:
     void remove(int rootIndex, int firstIndex, int count);
     void removeFinish();
     void childrenUpdate(const QUrl &url);
+    void selectAndEditFile(const QUrl &rootUrl, const QUrl url);
 
 public Q_SLOTS:
     void doFileDeleted(const QUrl &url);

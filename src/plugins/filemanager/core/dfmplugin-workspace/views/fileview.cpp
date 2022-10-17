@@ -1448,10 +1448,10 @@ void FileView::initializeConnect()
 
     connect(model(), &FileSortFilterProxyModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
     connect(model(), &FileSortFilterProxyModel::stateChanged, this, &FileView::onModelStateChanged);
+    connect(model(), &FileSortFilterProxyModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
     connect(sourceModel(), &FileViewModel::dataChanged, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
-    connect(sourceModel(), &FileViewModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);

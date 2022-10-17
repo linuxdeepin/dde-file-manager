@@ -96,8 +96,8 @@ public Q_SLOTS:
 Q_SIGNALS:
     void stateChanged(const QUrl &url, ModelState state);
     void childrenUpdated(const QUrl &url);
+    void selectAndEditFile(const QUrl &rootUrl, const QUrl &url);
     void updateFiles();
-    void selectAndEditFile(const QUrl &url);
     void traverPrehandle(const QUrl &url, const QModelIndex &index);
 
 private:

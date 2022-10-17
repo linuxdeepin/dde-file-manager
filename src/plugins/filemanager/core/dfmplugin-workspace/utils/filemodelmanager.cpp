@@ -40,6 +40,7 @@ FileSortFilterProxyModel *FileModelManager::createProxyModel(QAbstractItemView *
     connect(sourceDataModel, &FileViewModel::traverPrehandle, proxyModel, &FileSortFilterProxyModel::onTraverPrehandle);
     connect(sourceDataModel, &FileViewModel::stateChanged, proxyModel, &FileSortFilterProxyModel::onStateChanged);
     connect(sourceDataModel, &FileViewModel::childrenUpdated, proxyModel, &FileSortFilterProxyModel::onChildrenUpdate);
+    connect(sourceDataModel, &FileViewModel::selectAndEditFile, proxyModel, &FileSortFilterProxyModel::onSelectAndEditFile);
 
     return proxyModel;
 }

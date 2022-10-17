@@ -80,14 +80,17 @@ public:
     void setActive(const QModelIndex &index, bool enable = true);
 
     ModelState currentState() const;
+
 Q_SIGNALS:
     void modelChildrenUpdated();
     void stateChanged();
+    void selectAndEditFile(const QUrl &url);
 
 public Q_SLOTS:
     void onChildrenUpdate(const QUrl &url);
     void onTraverPrehandle(const QUrl &url, const QModelIndex &index);
     void onStateChanged(const QUrl &url, ModelState state);
+    void onSelectAndEditFile(const QUrl &rootUrl, const QUrl &url);
 
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
