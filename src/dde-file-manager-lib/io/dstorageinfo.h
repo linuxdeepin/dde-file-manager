@@ -73,7 +73,7 @@ inline bool operator==(const DStorageInfo &first, const DStorageInfo &second)
     if (first.d_ptr == second.d_ptr)
         return true;
 
-    return first.device() == second.device() && first.rootPath() == second.rootPath();
+    return first.device() == second.device();
 }
 
 inline bool operator!=(const DStorageInfo &first, const DStorageInfo &second)
