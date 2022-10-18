@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "systempathutil.h"
 
 #include "base/application/application.h"
@@ -61,14 +61,15 @@ QString SystemPathUtil::systemPathDisplayName(QString key) const
 
 QString SystemPathUtil::systemPathDisplayNameByPath(QString path)
 {
-    if (isSystemPath(path)) {
-        QStringList &&keys = systemPathsMap.keys();
-        auto ret = std::find_if(keys.cbegin(), keys.cend(), [this, path](const QString &key) {
-            return (systemPathsMap.value(key) == path);
-        });
-        if (ret != keys.cend())
-            return systemPathDisplayName(*ret);
-    }
+    // shorten the path from /persistent/* (if it is) to /*
+    // to make sure the $HOME/* can be translated correctly
+    cleanPath(&path);
+    QStringList &&keys = systemPathsMap.keys();
+    auto ret = std::find_if(keys.cbegin(), keys.cend(), [this, path](const QString &key) {
+        return (systemPathsMap.value(key) == path);
+    });
+    if (ret != keys.cend())
+        return systemPathDisplayName(*ret);
     return QString();
 }
 
