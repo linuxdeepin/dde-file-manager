@@ -3621,9 +3621,14 @@
         <translation>可用空间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="114"/>
-        <source>item</source>
-        <translation>项目</translation>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="115"/>
+        <source>%1 items</source>
+        <translation>%1 项</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="115"/>
+        <source>%1 item</source>
+        <translation>%1 项</translation>
     </message>
 </context>
 <context>
@@ -4158,6 +4163,17 @@
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="288"/>
         <source>Unknown</source>
         <translation>未知</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="334"/>
+        <source>%1 items</source>
+        <translation>%1 项</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="261"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="334"/>
+        <source>%1 item</source>
+        <translation>%1 项</translation>
     </message>
 </context>
 <context>

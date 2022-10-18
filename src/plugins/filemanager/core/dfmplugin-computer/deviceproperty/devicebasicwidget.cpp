@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "devicebasicwidget.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
@@ -65,7 +65,7 @@ void DeviceBasicWidget::initUI()
     freeSize = new KeyValueLabel(this);
     freeSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     freeSize->setLeftValue(tr("Free space"));
-    //1602914
+    // 1602914
     QGridLayout *glayout = new QGridLayout;
     glayout->setContentsMargins(15, 15, 5, 10);
     glayout->setSpacing(16);
@@ -111,5 +111,7 @@ void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
 void DeviceBasicWidget::slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount)
 {
     Q_UNUSED(size)
-    fileCount->setRightValue(QString::number(filesCount + directoryCount) + tr("item"), Qt::ElideNone, Qt::AlignVCenter, false);
+    int cnt = filesCount + directoryCount;
+    QString txt = cnt > 1 ? tr("%1 items") : tr("%1 item");
+    fileCount->setRightValue(txt.arg(cnt), Qt::ElideNone, Qt::AlignVCenter, false);
 }

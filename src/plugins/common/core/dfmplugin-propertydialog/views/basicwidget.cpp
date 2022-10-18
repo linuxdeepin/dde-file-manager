@@ -258,7 +258,7 @@ void BasicWidget::basicFill(const QUrl &url)
             fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
             if (fileCount && fileCount->RightValue().isEmpty()) {
                 fileCount->setVisible(true);
-                fileCount->setRightValue(QString::number(0), Qt::ElideNone, Qt::AlignVCenter, true);
+                fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
                 fileCalculationUtils->start(QList<QUrl>() << localUrl);
                 connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
             }
@@ -331,7 +331,8 @@ void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int di
     fileSize->setRightValue(FileUtils::formatSize(size));
 
     fCount = filesCount + (directoryCount > 1 ? directoryCount - 1 : 0);
-    fileCount->setRightValue(QString::number(fCount));
+    QString txt = fCount > 1 ? tr("%1 items") : tr("%1 item");
+    fileCount->setRightValue(txt.arg(fCount));
 }
 
 void BasicWidget::slotFileHide(int state)
