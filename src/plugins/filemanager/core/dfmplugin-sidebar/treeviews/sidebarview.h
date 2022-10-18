@@ -73,9 +73,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void requestRemoveItem();
-
-private:
-    QUrl sidebarUrl;
 };
 
 }

@@ -32,6 +32,7 @@
 DPSIDEBAR_BEGIN_NAMESPACE
 
 class SideBarView;
+class SideBarItem;
 class SideBarViewPrivate : public QObject
 {
     Q_OBJECT
@@ -41,11 +42,13 @@ class SideBarViewPrivate : public QObject
     QPoint dropPos;
     QModelIndex previous;
     QModelIndex current;
+    SideBarItem *currentItem { nullptr };
     QList<QUrl> urlsForDragEvent;
     qint64 lastOpTime;   //上次操作的时间（ms）
     QUrl draggedUrl;
     QString draggedGroup;
     QVariantMap groupExpandState;
+    QUrl sidebarUrl;
 
     explicit SideBarViewPrivate(SideBarView *qq);
     bool fetchDragEventUrlsFromSharedMemory();

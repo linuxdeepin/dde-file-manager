@@ -33,6 +33,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -207,13 +208,14 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
 
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
-    d->urlsForDragEvent = event->mimeData()->urls();
-
-    // Filter the event that cannot be dragged
-    if (d->urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(d->urlsForDragEvent)) {
-        event->setDropAction(Qt::IgnoreAction);
-        event->ignore();
-        return;
+    if (event->source() != this) {
+        d->urlsForDragEvent = event->mimeData()->urls();
+        // Filter the event that cannot be dragged
+        if (d->urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(d->urlsForDragEvent)) {
+            event->setDropAction(Qt::IgnoreAction);
+            event->ignore();
+            return;
+        }
     }
 
     d->previousRowCount = model()->rowCount();
@@ -416,9 +418,16 @@ void SideBarView::saveStateWhenClose()
 
 void SideBarView::setCurrentUrl(const QUrl &url)
 {
-    sidebarUrl = url;
+    d->sidebarUrl = url;
+    bool isEqualCurrentUrl = false;
+    QUrl currentUrl;
+    if (d->currentItem) {
+        currentUrl = d->currentItem->index().data(SideBarItem::kItemUrlRole).toUrl();
+        if (UniversalUtils::urlEquals(currentUrl, url))
+            isEqualCurrentUrl = true;
+    }
 
-    const QModelIndex &index = findItemIndex(url);
+    const QModelIndex &index = isEqualCurrentUrl ? d->currentItem->index() : findItemIndex(url);
     if (!index.isValid()) {
         this->clearSelection();
         return;
@@ -427,6 +436,7 @@ void SideBarView::setCurrentUrl(const QUrl &url)
     if (!sidebarModel)
         return;
     SideBarItem *currentItem = sidebarModel->itemFromIndex(index);
+    d->currentItem = currentItem;
     if (currentItem && currentItem->parent()) {
         SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(currentItem->parent());
         //If the current item's group is not expanded, do not set current index, otherwise
@@ -440,7 +450,7 @@ void SideBarView::setCurrentUrl(const QUrl &url)
 
 QUrl SideBarView::currentUrl() const
 {
-    return sidebarUrl;
+    return d->sidebarUrl;
 }
 
 QModelIndex SideBarView::findItemIndex(const QUrl &url) const
@@ -480,7 +490,6 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     Q_UNUSED(data)
     // Got a copy of urls so whatever data was changed, it won't affact the following code.
     QList<QUrl> urls = d->urlsForDragEvent;
-
     if (urls.empty()) {
         return Qt::IgnoreAction;
     }
@@ -638,8 +647,6 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
 
     SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
     if (groupItem) {
-        groupItem->setExpanded(expand);
-
         const QVariantMap &gMap = SideBarHelper::groupExpandRules();
         if (d->groupExpandState.isEmpty() && !gMap.isEmpty())
             d->groupExpandState = gMap;
@@ -648,7 +655,7 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
             d->groupExpandState[groupItem->group()] = expand;
 
         if (expand)
-            setCurrentUrl(sidebarUrl);   //To make sure, when expand the group item, the current item is highlighted.
+            setCurrentUrl(d->sidebarUrl);   //To make sure, when expand the group item, the current item is highlighted.
     }
     update(index);
 }
