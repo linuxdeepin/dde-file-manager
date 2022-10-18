@@ -1001,6 +1001,7 @@ void DFileManagerWindow::switchToView(DFMBaseView *view)
     D_D(DFileManagerWindow);
 
     if (d->currentView == view) {
+        d->currentView->widget()->setFocus(Qt::FocusReason::OtherFocusReason);
         return;
     }
 
