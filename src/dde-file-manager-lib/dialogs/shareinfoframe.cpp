@@ -84,7 +84,10 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission"));
     permissionLabel->setFixedWidth(labelWidth);
     m_permissoComBox = new QComboBox(this);
-    m_permissoComBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    QPalette peMenuBg;
+    QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
+    peMenuBg.setColor(QPalette::Window, color);
+    m_permissoComBox->setPalette(peMenuBg);
     m_permissoComBox->setFixedWidth(fieldWidth);
     QStringList permissions;
     permissions << tr("Read and write") << tr("Read only");
@@ -93,7 +96,7 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel *anonymityLabel = new SectionKeyLabel(tr("Anonymous"));
     anonymityLabel->setFixedWidth(labelWidth);
     m_anonymityCombox = new QComboBox(this);
-    m_anonymityCombox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    m_anonymityCombox->setPalette(peMenuBg);
     m_anonymityCombox->setFixedWidth(fieldWidth);
     QStringList anonymityChoices;
     anonymityChoices << tr("Not allow") << tr("Allow");
