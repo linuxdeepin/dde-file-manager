@@ -2124,7 +2124,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="76"/>
         <source>Apps</source>
-        <translation>应用</translation>
+        <translation>应用程序</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="77"/>
@@ -2162,7 +2162,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="38"/>
         <source>Apps</source>
-        <translation>应用</translation>
+        <translation>应用程序</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="39"/>

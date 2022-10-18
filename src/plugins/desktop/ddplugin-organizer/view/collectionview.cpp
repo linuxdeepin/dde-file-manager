@@ -1692,11 +1692,12 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
     d->pressedAlreadySelected = selectionModel()->isSelected(index);
     d->pressedIndex = index;
 
-
     QAbstractItemView::mousePressEvent(event);
     if (leftButtonPressed && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
         // reselect index(maybe the user wants to drag and copy by Ctrl)
         selectionModel()->select(d->pressedIndex, QItemSelectionModel::Select);
+    } else if (!index.isValid() && Qt::ControlModifier != d->pressedModifiers) { //pressed on blank space.
+        setCurrentIndex(QModelIndex());
     }
 
     QPoint viewPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
