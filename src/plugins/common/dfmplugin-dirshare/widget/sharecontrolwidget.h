@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef SHARECONTROLWIDGET_H
 #define SHARECONTROLWIDGET_H
 
@@ -62,6 +62,7 @@ private:
     QLineEdit *shareNameEditor { nullptr };
     QComboBox *sharePermissionSelector { nullptr };
     QComboBox *shareAnonymousSelector { nullptr };
+    QTimer *timer { nullptr };
 
     QUrl url;
     AbstractFileInfoPointer info { nullptr };

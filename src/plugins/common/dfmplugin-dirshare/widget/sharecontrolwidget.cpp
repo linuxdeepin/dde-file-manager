@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "sharecontrolwidget.h"
 #include "utils/usersharehelper.h"
 
@@ -127,6 +127,9 @@ void ShareControlWidget::setupUi()
     sharePermissionSelector->addItems(permissions);
     QStringList anonymousSelections { tr("Not allow"), tr("Allow") };
     shareAnonymousSelector->addItems(anonymousSelections);
+
+    timer = new QTimer(this);
+    timer->setInterval(500);
 }
 
 void ShareControlWidget::init()
@@ -165,6 +168,8 @@ void ShareControlWidget::initConnection()
     connect(shareSwitcher, &QCheckBox::clicked, this, [this](bool checked) {
         sharePermissionSelector->setEnabled(checked);
         shareAnonymousSelector->setEnabled(checked);
+        shareSwitcher->setEnabled(false);
+        timer->start();
         if (checked)
             this->shareFolder();
         else
@@ -180,6 +185,9 @@ void ShareControlWidget::initConnection()
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_RemoveShareFailed", this, &ShareControlWidget::updateWidgetStatus);
 
     connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &ShareControlWidget::updateFile);
+
+    // the timer is used to control the frequency of switcher action.
+    connect(timer, &QTimer::timeout, this, [this] { shareSwitcher->setEnabled(true); });
 }
 
 bool ShareControlWidget::validateShareName()
@@ -229,7 +237,6 @@ bool ShareControlWidget::validateShareName()
 void ShareControlWidget::updateShare()
 {
     shareFolder();
-    shareSwitcher->setEnabled(true);
 }
 
 void ShareControlWidget::shareFolder()
@@ -243,8 +250,6 @@ void ShareControlWidget::shareFolder()
         shareAnonymousSelector->setEnabled(false);
         return;
     }
-
-    shareSwitcher->setEnabled(false);
 
     bool writable = sharePermissionSelector->currentIndex() == 0;
     bool anonymous = shareAnonymousSelector->currentIndex() == 1;
@@ -283,7 +288,6 @@ void ShareControlWidget::shareFolder()
     bool success = UserShareHelperInstance->share(info);
     if (!success) {
         shareSwitcher->setChecked(false);
-        shareSwitcher->setEnabled(true);
         sharePermissionSelector->setEnabled(false);
         shareAnonymousSelector->setEnabled(false);
     }
@@ -296,7 +300,6 @@ void ShareControlWidget::unshareFolder()
 
 void ShareControlWidget::updateWidgetStatus(const QString &filePath)
 {
-    shareSwitcher->setEnabled(true);
     if (filePath != url.path())
         return;
 
