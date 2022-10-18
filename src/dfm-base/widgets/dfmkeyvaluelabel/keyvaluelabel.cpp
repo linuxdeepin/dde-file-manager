@@ -58,12 +58,12 @@ void KeyValueLabel::initPropertyMap()
 {
     propertyMap.insert(kLeftValue, -1);
     propertyMap.insert(kLeftElideMode, -1);
-    propertyMap.insert(kLeftTip, -1);
+    propertyMap.insert(kLeftTipVisible, false);
     propertyMap.insert(kLeftAlignment, -1);
     propertyMap.insert(kLeftWordWrap, -1);
     propertyMap.insert(kRightValue, -1);
     propertyMap.insert(kRightElideMode, -1);
-    propertyMap.insert(kRightTip, -1);
+    propertyMap.insert(kRightTipVisible, false);
     propertyMap.insert(kRightAlignment, -1);
     propertyMap.insert(kRightWordWrap, -1);
     propertyMap.insert(kRowHeight, -1);
@@ -96,7 +96,7 @@ void KeyValueLabel::setLeftValue(QString value, Qt::TextElideMode elideMode, Qt:
         leftValueLabel->setToolTip(value);
     propertyMap[kLeftValue] = QVariant::fromValue(value);
     propertyMap[kLeftElideMode] = QVariant::fromValue(elideMode);
-    propertyMap[kLeftTip] = QVariant::fromValue(toolTipVisibility);
+    propertyMap[kLeftTipVisible] = QVariant::fromValue(toolTipVisibility);
     propertyMap[kLeftAlignment] = QVariant::fromValue(aligment);
     propertyMap[kLeftFontWidth] = QVariant::fromValue(fontW);
 }
@@ -123,7 +123,7 @@ void KeyValueLabel::setRightValue(QString value, Qt::TextElideMode elideMode, Qt
 
     propertyMap[kRightValue] = QVariant::fromValue(value);
     propertyMap[kRightElideMode] = QVariant::fromValue(elideMode);
-    propertyMap[kRightTip] = QVariant::fromValue(toolTipVisibility);
+    propertyMap[kRightTipVisible] = QVariant::fromValue(toolTipVisibility);
     propertyMap[kRightAlignment] = QVariant::fromValue(aligment);
     propertyMap[kRightFontWidth] = QVariant::fromValue(fontW);
 }
@@ -211,11 +211,11 @@ void KeyValueLabel::paintEvent(QPaintEvent *evt)
     Qt::TextElideMode fontWeight = propertyMap.value(kLeftElideMode).value<Qt::TextElideMode>();
     Qt::Alignment alignment = propertyMap.value(kLeftAlignment).value<Qt::Alignment>();
     int fontW = propertyMap.value(kLeftFontWidth).toInt();
-    setLeftValue(propertyMap.value(kLeftValue).toString(), fontWeight, alignment, propertyMap.value(kLeftTip).toBool(), fontW);
+    setLeftValue(propertyMap.value(kLeftValue).toString(), fontWeight, alignment, propertyMap.value(kLeftTipVisible).toBool(), fontW);
     fontW = propertyMap.value(kRightFontWidth).toInt();
     fontWeight = static_cast<Qt::TextElideMode>(propertyMap.value(kRightElideMode).toInt());
     alignment = propertyMap.value(kRightAlignment).value<Qt::Alignment>();
-    setRightValue(propertyMap.value(kRightValue).toString(), fontWeight, alignment, propertyMap.value(kRightTip).toBool(), fontW);
+    setRightValue(propertyMap.value(kRightValue).toString(), fontWeight, alignment, propertyMap.value(kRightTipVisible).toBool(), fontW);
     if (propertyMap.value(kRowHeight).toInt() > -1) {
         QFontMetrics fontMetrics(font());
         QRect boundingRect = fontMetrics.boundingRect(propertyMap.value(kLeftValue).toString());
