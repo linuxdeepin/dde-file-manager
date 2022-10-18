@@ -61,6 +61,9 @@ bool DoMoveToTrashFilesWorker::doWork()
     if (!AbstractWorker::doWork())
         return false;
 
+    // check progress notify type
+    determineCountProcessType();
+
     doMoveToTrash();
 
     endWork();
@@ -76,7 +79,7 @@ bool DoMoveToTrashFilesWorker::statisticsFilesSize()
     sourceFilesCount = sourceUrls.size();
     targetUrl = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath).endsWith("/") ? StandardPaths::location(StandardPaths::kTrashFilesPath) : StandardPaths::location(StandardPaths::kTrashFilesPath) + "/");
     trashLocalDir = QString("%1/.local/share/Trash").arg(QDir::homePath());
-    targetStorageInfo.reset(new StorageInfo(trashLocalDir));
+    trashStorageInfo.reset(new StorageInfo(trashLocalDir));
 
     targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
 
@@ -303,7 +306,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
         return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, targetPathInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
     }
     // 检查磁盘空间是否不足
-    if (!checkDiskSpaceAvailable(sourceUrl, parentUrl, targetStorageInfo, &result))
+    if (!checkDiskSpaceAvailable(sourceUrl, parentUrl, trashStorageInfo, &result))
         return result;
 
     // 拷贝并删除文件
@@ -443,5 +446,5 @@ void DoMoveToTrashFilesWorker::isInSameDisk(const AbstractFileInfoPointer &fileI
     const QStorageInfo &sourceStorage = fileInfo->isSymLink() ? QStorageInfo(fileInfo->absolutePath())
                                                               : QStorageInfo(fileInfo->absoluteFilePath());
 
-    isSameDisk = sourceStorage.device() == targetStorageInfo->device();
+    isSameDisk = sourceStorage.device() == trashStorageInfo->device();
 }

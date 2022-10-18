@@ -25,6 +25,8 @@
 #include "base/schemefactory.h"
 #include "interfaces/abstractdiriterator.h"
 
+#include "dfm-base/utils/universalutils.h"
+
 #include <dfm-io/dfmio_utils.h>
 
 #include <QMutex>
@@ -160,7 +162,8 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
     if (info->isFile()) {
         do {
             // ###(zccrs): skip the file,os file
-            if (info->url() == QUrl::fromLocalFile("/proc/kcore") || info->url() == QUrl::fromLocalFile("/dev/core")) {
+            if (UniversalUtils::urlEquals(info->url(), QUrl::fromLocalFile("/proc/kcore"))
+                || UniversalUtils::urlEquals(info->url(), QUrl::fromLocalFile("/dev/core"))) {
                 break;
             }
             //skip os file Shortcut
@@ -206,14 +209,16 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
         totalProgressSize += FileUtils::getMemoryPageSize();
         if (info->isSymLink()) {
             if (!followLink) {
-                ++filesCount;
+                ++directoryCount;
                 return;
             }
 
-            info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->symLinkTarget()));
+            do {
+                info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->symLinkTarget()));
+            } while (info && info->isSymLink());
 
-            if (info->isSymLink()) {
-                ++filesCount;
+            if (!info) {
+                ++directoryCount;
                 return;
             }
         }
