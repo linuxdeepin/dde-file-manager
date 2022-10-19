@@ -49,8 +49,8 @@ DWIDGET_USE_NAMESPACE
 
 static constexpr int kRadius = 8;
 static constexpr int kItemMargin = 10;
-static constexpr int kItemIconSize= 18;
-static constexpr int kEjectIconSize= 16;
+static constexpr int kItemIconSize = 18;
+static constexpr int kEjectIconSize = 16;
 
 namespace GlobalPrivate {
 const static char *const kRegPattern { "^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<>|%&]*" };
@@ -133,13 +133,18 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     qreal iconDy = (itemRect.height() - iconSize.height()) / 2 + 1;
     if (item) {
         if (!separatorItem) {
-            painter->drawPixmap(itemRect.topLeft() + QPointF(iconDx, iconDy), item->icon().pixmap(iconSize));
+            QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
+            QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
+            QIcon::Mode iconMode = selected ? QIcon::Mode::Selected : QIcon::Mode::Normal;
+            item->icon().paint(painter, QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), Qt::AlignCenter, iconMode);
             SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
             if (sidebarItem) {
                 ItemInfo info = sidebarItem->itemInfo();
                 if (info.isEjectable) {
-                    painter->drawPixmap(itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2),
-                                        QIcon::fromTheme("media-eject-symbolic").pixmap(ejectIconSize));
+                    QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
+                    QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
+                    QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
+                    ejectIcon.paint(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignVCenter, iconMode);
                     isEjectable = true;
                 }
             }

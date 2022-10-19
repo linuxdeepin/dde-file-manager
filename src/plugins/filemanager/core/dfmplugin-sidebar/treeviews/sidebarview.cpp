@@ -418,16 +418,10 @@ void SideBarView::saveStateWhenClose()
 
 void SideBarView::setCurrentUrl(const QUrl &url)
 {
+    //TODO(zuangshu): have reset the following code to previous commit because the crash issue.
     d->sidebarUrl = url;
-    bool isEqualCurrentUrl = false;
-    QUrl currentUrl;
-    if (d->currentItem) {
-        currentUrl = d->currentItem->index().data(SideBarItem::kItemUrlRole).toUrl();
-        if (UniversalUtils::urlEquals(currentUrl, url))
-            isEqualCurrentUrl = true;
-    }
 
-    const QModelIndex &index = isEqualCurrentUrl ? d->currentItem->index() : findItemIndex(url);
+    const QModelIndex &index = findItemIndex(url);
     if (!index.isValid()) {
         this->clearSelection();
         return;
@@ -436,7 +430,6 @@ void SideBarView::setCurrentUrl(const QUrl &url)
     if (!sidebarModel)
         return;
     SideBarItem *currentItem = sidebarModel->itemFromIndex(index);
-    d->currentItem = currentItem;
     if (currentItem && currentItem->parent()) {
         SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(currentItem->parent());
         //If the current item's group is not expanded, do not set current index, otherwise
