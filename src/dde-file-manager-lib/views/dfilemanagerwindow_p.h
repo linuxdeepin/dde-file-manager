@@ -86,8 +86,6 @@ public:
     QPoint windowPoint;
     //是否需要关闭
     QAtomicInteger<bool> m_isNeedClosed = false;
-    // 记录那个view的AdvanceSearchBar打开了
-    QList<DFMBaseView *> isAdvanceSearchView;
 
     DFileManagerWindow *q_ptr{ nullptr };
 
