@@ -115,7 +115,7 @@ public:
     bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
     bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
     bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
-    bool doThreadPoolCopyFile();
+    void doThreadPoolCopyFile();
 
 private:
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);

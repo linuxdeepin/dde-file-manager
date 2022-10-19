@@ -39,6 +39,7 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
 {
     friend class LocalFileInfo;
     LocalFileInfo *const q;
+    QPointer<LocalFileInfo> that;
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
 
     QAtomicInteger<quint64> inode { 0 };   // 文件的inode，唯一表示符

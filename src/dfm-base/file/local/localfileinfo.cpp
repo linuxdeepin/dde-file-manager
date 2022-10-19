@@ -558,8 +558,13 @@ bool LocalFileInfo::canRename() const
 
 bool LocalFileInfo::canTag() const
 {
-    // todo lanxs
-    return true;
+    const QString &filePath = this->filePath();
+
+    const QString &compressPath = QDir::homePath() + "/.avfs/";
+    if (filePath.startsWith(compressPath))
+        return false;
+
+    return !SystemPathUtil::instance()->isSystemPath(filePath);
 }
 /*!
  * \brief isReadable 获取文件是否可读
@@ -574,8 +579,8 @@ bool LocalFileInfo::canTag() const
  */
 bool LocalFileInfo::isReadable() const
 {
-    // todo lanxs
-    // check file isprivate
+    if(isPrivate())
+        return false;
 
     bool isReadable = false;
 
@@ -1845,7 +1850,7 @@ QIcon LocalFileInfoPrivate::thumbIcon()
         // and before thumb thread finish, return default icon.
         if (!loadingThumbnail) {
             loadingThumbnail = true;
-            QPointer<LocalFileInfo> that(q);
+            that = q;
 
             if (!getIconTimer) {
                 QTimer *t = new QTimer;
@@ -1854,7 +1859,7 @@ QIcon LocalFileInfoPrivate::thumbIcon()
                 getIconTimer->setSingleShot(true);
                 getIconTimer->moveToThread(qApp->thread());
 
-                QObject::connect(getIconTimer, &QTimer::timeout, that, [=] {
+                QObject::connect(getIconTimer, &QTimer::timeout, t, [=] {
                     DThumbnailProvider::instance()->appendToProduceQueue(url, DThumbnailProvider::kLarge, [=](const QString &path) {
                         if (that)
                             onRequestThumbFinished(path);

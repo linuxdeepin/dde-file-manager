@@ -857,7 +857,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromI
 
         if (!threadPool)
             threadPool.reset(new QThreadPool);
-        QtConcurrent::run(threadPool.data(), this, static_cast<bool (FileOperateBaseWorker::*)()>(&FileOperateBaseWorker::doThreadPoolCopyFile));
+        QtConcurrent::run(threadPool.data(), this, static_cast<void (FileOperateBaseWorker::*)()>(&FileOperateBaseWorker::doThreadPoolCopyFile));
         return true;
     }
 
@@ -947,10 +947,10 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
     return true;
 }
 
-bool FileOperateBaseWorker::doThreadPoolCopyFile()
+void FileOperateBaseWorker::doThreadPoolCopyFile()
 {
     if (!stateCheck())
-        return false;
+        return;
 
     QSharedPointer<SmallFileThreadCopyInfo> threadInfo(nullptr);
     {
@@ -962,14 +962,14 @@ bool FileOperateBaseWorker::doThreadPoolCopyFile()
             smallFileThreadCopyInfoQueue.reset(new QQueue<QSharedPointer<SmallFileThreadCopyInfo>>);
 
         if (smallFileThreadCopyInfoQueue->count() <= 0) {
-            return false;
+            return;
         }
         threadInfo = smallFileThreadCopyInfoQueue->dequeue();
     }
     if (!threadInfo) {
         setStat(AbstractJobHandler::JobState::kStopState);
         qWarning() << " the threadInfo is nullptr, some error here! ";
-        return false;
+        return;
     }
     const QString &targetUrl = threadInfo->toInfo->url().toString();
     FileUtils::cacheCopyingFileUrl(targetUrl);
@@ -979,7 +979,6 @@ bool FileOperateBaseWorker::doThreadPoolCopyFile()
         setStat(AbstractJobHandler::JobState::kStopState);
     FileUtils::removeCopyingFileUrl(targetUrl);
     FileOperationsUtils::removeUsingName(threadInfo->toInfo->fileName());
-    return ok || skip;
 }
 
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)
@@ -1097,10 +1096,10 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
     // 创建文件的divice
     QSharedPointer<DFile> fromDevice { nullptr }, toDevice { nullptr };
     if (!createFileDevices(fromInfo, toInfo, fromDevice, toDevice, skip))
-        return skip ? *skip : false;
+        return false;
     // 打开文件并创建
     if (!openFiles(fromInfo, toInfo, fromDevice, toDevice, skip))
-        return skip ? *skip : false;
+        return false;
     // 源文件大小如果为0
     if (fromInfo->size() <= 0) {
         // 对文件加权
@@ -1111,7 +1110,7 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
     }
     // resize target file
     if (jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyResizeDestinationFile) && !resizeTargetFile(fromInfo, toInfo, toDevice, skip))
-        return skip ? *skip : false;
+        return false;
     // 循环读取和写入文件，拷贝
     qint64 blockSize = fromInfo->size() > kMaxBufferLength ? kMaxBufferLength : fromInfo->size();
     char *data = new char[blockSize + 1];
@@ -1122,13 +1121,13 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
         if (!doReadFile(fromInfo, toInfo, fromDevice, data, blockSize, sizeRead, skip)) {
             delete[] data;
             data = nullptr;
-            return skip ? *skip : false;
+            return false;
         }
 
         if (!doWriteFile(fromInfo, toInfo, toDevice, data, sizeRead, skip)) {
             delete[] data;
             data = nullptr;
-            return skip ? *skip : false;
+            return false;
         }
 
         if (Q_LIKELY(jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyIntegrityChecking))) {
@@ -1155,7 +1154,7 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
 
     if (skip && *skip)
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->url());
-    return skip ? *skip : false;
+    return false;
 }
 
 bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
