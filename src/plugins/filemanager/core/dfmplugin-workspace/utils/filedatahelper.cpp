@@ -179,7 +179,7 @@ void FileDataHelper::setFileActive(const int rootIndex, const int childIndex, bo
     RootInfo *info = findRootInfo(rootIndex);
     if (info) {
         FileItemData *data = info->fileCache->getChild(childIndex);
-        if (info->watcher && data->fileInfo())
+        if (data && data->fileInfo() && info->watcher)
             info->watcher->setEnabledSubfileWatcher(data->fileInfo()->url(), active);
     }
 }

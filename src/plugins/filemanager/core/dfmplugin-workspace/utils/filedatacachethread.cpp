@@ -177,9 +177,14 @@ void FileDataCacheThread::removeChildren(const QList<QUrl> &urls)
     }
 }
 
-FileItemData *FileDataCacheThread::getChild(int rowIndex) const
+FileItemData *FileDataCacheThread::getChild(int rowIndex)
 {
-    return chilrenDataMap[childrenUrlList.at(rowIndex)];
+    if (rowIndex >= 0 && rowIndex < childrenCount()) {
+        QReadLocker lk(&childrenLock);
+        return chilrenDataMap[childrenUrlList.at(rowIndex)];
+    }
+
+    return nullptr;
 }
 
 void FileDataCacheThread::clearChildren()

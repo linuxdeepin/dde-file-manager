@@ -52,7 +52,7 @@ public:
     void addChildren(const QList<QUrl> &urls);
     void removeChildren(const QList<QUrl> &urls);
 
-    FileItemData *getChild(int rowIndex) const;
+    FileItemData *getChild(int rowIndex);
 
     void clearChildren();
     void refreshChildren();

@@ -25,6 +25,9 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dfm_event_defines.h"
+
+#include <dfm-framework/dpf.h>
 
 using namespace dfmplugin_optical;
 DFMBASE_USE_NAMESPACE
@@ -86,6 +89,23 @@ bool OpticalEventReceiver::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMa
                 break;
             }
             curUrl = fileInfo->parentUrl();
+        }
+        return true;
+    }
+
+    return false;
+}
+
+bool OpticalEventReceiver::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl)
+{
+    if (toUrl.scheme() == Global::Scheme::kBurn) {
+        QString &&path { OpticalHelper::burnFilePath(toUrl) };
+        if (path.isEmpty() || path == "/") {
+            dpfSignalDispatcher->publish(GlobalEventType::kCopy,
+                                         0,
+                                         fromUrls,
+                                         toUrl,
+                                         AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
         return true;
     }

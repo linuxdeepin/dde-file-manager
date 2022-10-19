@@ -170,6 +170,8 @@ void Optical::bindEvents()
                             &OpticalEventReceiver::handleCheckDragDropAction);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDragMove", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleCheckDragDropAction);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", &OpticalEventReceiver::instance(),
+                            &OpticalEventReceiver::handleDropFiles);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
 }
 
