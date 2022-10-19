@@ -396,6 +396,15 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setFlat(true);
         m_searchButtonAsbState = true;
+        if (DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window())) {
+            if (dfmWindow->isViewShowAdvanceSearchBar()) {
+                m_searchButton->setDown(true);
+                dfmWindow->toggleAdvanceSearchBar(true, false, false);
+            }
+        }
+        else {
+            qCritical() << "window() is null or faile to cast to DFileManagerWindow.";
+        }
     } else {
         m_searchButton->setHidden(false);
         m_searchButton->style()->unpolish(m_searchButton);
@@ -404,7 +413,7 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->setDown(false);
         m_searchButtonAsbState = false;
         if (DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window())) {
-            dfmWindow->toggleAdvanceSearchBar(false);
+            dfmWindow->toggleAdvanceSearchBar(false, false, false);
         }
         else {
             qCritical() << "window() is null or faile to cast to DFileManagerWindow.";
