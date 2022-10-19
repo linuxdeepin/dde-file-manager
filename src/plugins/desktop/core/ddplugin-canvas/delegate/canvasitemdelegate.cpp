@@ -59,7 +59,7 @@ using namespace ddplugin_canvas;
 #define EDITOR_SHOW_SUFFIX "_d_whether_show_suffix"
 
 const int CanvasItemDelegate::kTextPadding = 4;
-const int CanvasItemDelegate::kIconSpacing = 5;
+const int CanvasItemDelegate::kIconSpacing = 2;
 const int CanvasItemDelegate::kIconBackRadius = 18;
 const int CanvasItemDelegate::kIconRectRadius = 4;
 
@@ -649,9 +649,10 @@ QRect CanvasItemDelegate::textPaintRect(const QStyleOptionViewItem &option, cons
 
 void CanvasItemDelegate::updateItemSizeHint() const
 {
+    d->textLineHeight = parent()->fontMetrics().height();
     int width = parent()->iconSize().width() * 17 / 10;
-    int height = parent()->iconSize().height()
-            + 10 + 2 * d->textLineHeight;
+    int height = parent()->iconSize().height() +
+            kIconSpacing + kTextPadding + 2 * d->textLineHeight + kTextPadding;
     d->itemSizeHint = QSize(width, height);
 }
 

@@ -61,7 +61,7 @@ using namespace ddplugin_organizer;
 #define EDITOR_SHOW_SUFFIX "_d_whether_show_suffix"
 
 const int CollectionItemDelegate::kTextPadding = 2;
-const int CollectionItemDelegate::kIconSpacing = 5;
+const int CollectionItemDelegate::kIconSpacing = 2;
 const int CollectionItemDelegate::kIconTopSpacing = 4;
 const int CollectionItemDelegate::kIconBackRadius = 18;
 const int CollectionItemDelegate::kIconRectRadius = 4;
@@ -675,9 +675,11 @@ QRect CollectionItemDelegate::textPaintRect(const QStyleOptionViewItem &option, 
 
 void CollectionItemDelegate::updateItemSizeHint() const
 {
+    d->textLineHeight = parent()->fontMetrics().height();
     // old style
     int width = parent()->iconSize().width() * 17 / 10;
-    int height = parent()->iconSize().height() + 10 + 2 * d->textLineHeight;
+    int height = kIconTopSpacing + parent()->iconSize().height()
+            + kIconSpacing + kTextPadding + 2 * d->textLineHeight + kTextPadding;
 
     // new style
 //    int textFontWidth = parent()->fontMetrics().width("中");

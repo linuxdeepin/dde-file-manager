@@ -37,6 +37,35 @@ TEST(CanvasItemDelegate, iconLevelRange)
     EXPECT_EQ(obj.maximumIconLevel(), 4);
 }
 
+TEST(CanvasItemDelegate, updateItemSizeHint)
+{
+    CanvasView view;
+    CanvasItemDelegate obj(&view);
+
+    stub_ext::StubExt stub;
+    int height = 20;
+    stub.set_lamda(&QFontMetrics::height, [&height](){
+        return height;
+    });
+
+    QSize icon = QSize(50, 50);
+    stub.set_lamda(&CanvasView::iconSize, [&icon](){
+        return icon;
+    });
+
+    obj.updateItemSizeHint();
+    EXPECT_EQ(obj.d->textLineHeight, height);
+    EXPECT_EQ(obj.d->itemSizeHint.width(), icon.width() * 17 / 10);
+    EXPECT_EQ(obj.d->itemSizeHint.height(), icon.height() + 10 + 2 * height);
+
+    height = 30;
+    icon = QSize(60, 60);
+    obj.updateItemSizeHint();
+    EXPECT_EQ(obj.d->textLineHeight, height);
+    EXPECT_EQ(obj.d->itemSizeHint.width(), icon.width() * 17 / 10);
+    EXPECT_EQ(obj.d->itemSizeHint.height(), icon.height() + 10 + 2 * height);
+}
+
 TEST(CanvasItemDelegatePrivate, needExpend)
 {
     CanvasView view;
@@ -57,3 +86,4 @@ TEST(CanvasItemDelegatePrivate, needExpend)
     EXPECT_FALSE(obj.d->needExpend({}, {}, in, &out));
     EXPECT_EQ(out, need);
 }
+

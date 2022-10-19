@@ -53,23 +53,30 @@ public:
 
 TEST_F(CollectionItemDelegateTest, updateItemSizeHint) {
 
-    stub.set_lamda(ADDR(CollectionViewPrivate, initUI), [] () {
-        return ;
-    });
-
     CollectionView view(QString("testuuid"), nullptr);
-    CollectionItemDelegate delegate(&view);
+    CollectionItemDelegate obj(&view);
 
-    QSize testSize(100, 100);
-    stub.set_lamda(ADDR(QAbstractItemView, iconSize), [&]() {
-        return testSize;
+    int height = 20;
+    stub.set_lamda(&QFontMetrics::height, [&height](){
+        return height;
     });
 
-    delegate.d->textLineHeight = 0;
+    QSize icon = QSize(50, 50);
+    stub.set_lamda(&CollectionView::iconSize, [&icon](){
+        return icon;
+    });
 
-    delegate.updateItemSizeHint();
+    obj.updateItemSizeHint();
+    EXPECT_EQ(obj.d->textLineHeight, height);
+    EXPECT_EQ(obj.d->itemSizeHint.width(), icon.width() * 17 / 10);
+    EXPECT_EQ(obj.d->itemSizeHint.height(), icon.height() + 10 + 2 * height);
 
-    EXPECT_EQ(delegate.d->itemSizeHint, QSize(170, 110));
+    height = 30;
+    icon = QSize(60, 60);
+    obj.updateItemSizeHint();
+    EXPECT_EQ(obj.d->textLineHeight, height);
+    EXPECT_EQ(obj.d->itemSizeHint.width(), icon.width() * 17 / 10);
+    EXPECT_EQ(obj.d->itemSizeHint.height(), icon.height() + 10 + 2 * height);
 }
 
 TEST_F(CollectionItemDelegateTest, paintEmblems)
@@ -215,7 +222,6 @@ TEST(CollectionItemDelegate, iconLevelRange)
     EXPECT_EQ(CollectionItemDelegate::minimumIconLevel(), 0);
     EXPECT_EQ(CollectionItemDelegate::maximumIconLevel(), 4);
 }
-
 
 TEST(CollectionItemDelegatePrivate, needExpend)
 {
