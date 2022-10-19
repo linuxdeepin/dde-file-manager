@@ -83,7 +83,7 @@ public:
     void requestToSelectUrls();
     bool isAdvanceSearchBarVisible();
     void updateAdvanceSearchBarValue(const FileFilter *filter);
-    void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
+    void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true, bool clicked = true);
     void showFilterButton();
     //获取能否析构
     bool getCanDestruct() const;
@@ -93,6 +93,8 @@ public:
      * @return
      */
     void clearActions();
+    //获取当前的view的AdvanceSearchBar是否可以显示
+    bool isViewShowAdvanceSearchBar() const;
 
 signals:
     void aboutToClose();
