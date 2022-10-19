@@ -31,6 +31,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/networkutils.h"
+#include "dfm-base/utils/windowutils.h"
 #include "dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h"
 
 #include <QDebug>
@@ -777,7 +778,18 @@ void DeviceManagerPrivate::mountAllBlockDev()
 MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,
                                                                        const QString &domainDefault, const QString &uri)
 {
-    MountAskPasswordDialog dlg;
+    // NOTE: in both x11 and wayland, if dialog's parent is setted  , the dialog.exec blocks all
+    // visiable windows, which means you cannot do operations in an idle file manager window
+    // when a dialog is exec-ed, which is not expected actually.
+    // but in wayland, if the dialog is an orphan, it's modaled but the layer can be switched,
+    // which means when the dialog is lower than the main window(main window shadows the dialog)
+    // then the whole application blocked, you cannot move or switch its' layer but can only
+    // kill the process.
+    // so only in wayland, give parent to dialog to AVOID this.
+    // "dialogs' layer can be switched when exec in wayland" is a known BUG, says that there is no
+    // concept of dialogs in wayland, but only the 'popup' menu.
+    QWidget *parent = WindowUtils::isWayLand() ? qApp->activeWindow() : nullptr;
+    MountAskPasswordDialog dlg(parent);
     dlg.setTitle(message);
     dlg.setDomain(domainDefault);
     dlg.setUser(userDefault);

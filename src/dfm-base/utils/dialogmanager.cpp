@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "dialogmanager.h"
 
 #include "dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h"
@@ -32,8 +32,10 @@
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/windowutils.h"
 
 #include <QDir>
+#include <QApplication>
 
 using namespace dfmbase;
 
@@ -280,7 +282,18 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window)
  */
 QString DialogManager::askPasswordForLockedDevice()
 {
-    MountSecretDiskAskPasswordDialog dialog(tr("Need password to unlock device"));
+    // NOTE: in both x11 and wayland, if dialog's parent is setted  , the dialog.exec blocks all
+    // visiable windows, which means you cannot do operations in an idle file manager window
+    // when a dialog is exec-ed, which is not expected actually.
+    // but in wayland, if the dialog is an orphan, it's modaled but the layer can be switched,
+    // which means when the dialog is lower than the main window(main window shadows the dialog)
+    // then the whole application blocked, you cannot move or switch its' layer but can only
+    // kill the process.
+    // so only in wayland, give parent to dialog to AVOID this.
+    // "dialogs' layer can be switched when exec in wayland" is a known BUG, says that there is no
+    // concept of dialogs in wayland, but only the 'popup' menu.
+    QWidget *parent = WindowUtils::isWayLand() ? qApp->activeWindow() : nullptr;
+    MountSecretDiskAskPasswordDialog dialog(tr("Need password to unlock device"), parent);
     return dialog.exec() == QDialog::Accepted ? dialog.getUerInputedPassword() : "";
 }
 
@@ -369,12 +382,12 @@ int DialogManager::showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, c
     bool isLocalFile = urlList.first().isLocalFile();
     if (showEmptyBtText) {
         buttonTexts[1] = tr("Empty");
-        //const AbstractFileInfoPointer &fileInfo =InfoFactory::create<AbstractFileInfo>(urlList.first());//todo(zhuangshu)：add new function: filesCount()
+        // const AbstractFileInfoPointer &fileInfo =InfoFactory::create<AbstractFileInfo>(urlList.first());//todo(zhuangshu)：add new function: filesCount()
         QString filePath = urlList.first().path();
         QDir dir(filePath);
         QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
                                               | QDir::NoDotAndDotDot | QDir::Hidden);
-        int fCount = entryList.count();   //todo(zhuangshu)：add new function: filesCount()
+        int fCount = entryList.count();   // todo(zhuangshu)：add new function: filesCount()
         if (fCount == 1) {
             title = ClearTrash.arg(fCount);
         } else {
