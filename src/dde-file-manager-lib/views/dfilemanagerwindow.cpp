@@ -689,11 +689,6 @@ void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainSt
 
     DFMBaseView *view = tab->fileView();
 
-    d->isAdvanceSearchView.removeAll(view);
-    if (d->advanceSearchBar && d->isAdvanceSearchBarVisible()) {
-        d->advanceSearchBar->resetForm(true);
-    }
-
     d->viewStackLayout->removeWidget(view->widget());
     view->deleteLater();
 
@@ -1726,20 +1721,11 @@ void DFileManagerWindow::updateAdvanceSearchBarValue(const FileFilter *filter)
         d->advanceSearchBar->updateFilterValue(filter);
 }
 
-void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm, bool clicked)
+void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
 {
     Q_D(DFileManagerWindow);
 
     if (!d->currentView) return;
-
-    if (clicked) {
-        if (visible) {
-            d->isAdvanceSearchView.append(d->currentView);
-        }
-        else {
-            d->isAdvanceSearchView.removeAll(d->currentView);
-        }
-    }
 
     if (d->isAdvanceSearchBarVisible() != visible) {
         d->setAdvanceSearchBarVisible(visible);
@@ -1772,12 +1758,5 @@ void DFileManagerWindow::clearActions()
 {
     if (fileMenuManger)
         fileMenuManger->clearActions();
-}
-
-bool DFileManagerWindow::isViewShowAdvanceSearchBar() const
-{
-    Q_D(const DFileManagerWindow);
-
-    return d->isAdvanceSearchView.contains(d->currentView);
 }
 
