@@ -36,6 +36,7 @@
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 
 #include <KCodecs>
@@ -361,10 +362,21 @@ bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
 
 bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2)
 {
+    if (UniversalUtils::urlEquals(url1, url2))
+        return true;
+
+    auto info1 = InfoFactory::create<AbstractFileInfo>(url1);
+    auto info2 = InfoFactory::create<AbstractFileInfo>(url2);
+    if (!info1 || !info2)
+        return false;
+
     struct stat statFromInfo;
     struct stat statToInfo;
-    int fromStat = stat(url1.toString().toLocal8Bit().data(), &statFromInfo);
-    int toStat = stat(url2.toString().toLocal8Bit().data(), &statToInfo);
+
+    const QString &path1 = info1->absoluteFilePath();
+    const QString &path2 = info2->absoluteFilePath();
+    int fromStat = stat(path1.toLocal8Bit().data(), &statFromInfo);
+    int toStat = stat(path2.toLocal8Bit().data(), &statToInfo);
     if (0 == fromStat && 0 == toStat) {
         // 通过inode判断是否是同一个文件
         if (statFromInfo.st_ino == statToInfo.st_ino

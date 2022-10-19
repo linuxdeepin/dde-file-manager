@@ -83,7 +83,7 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
 
     errorThreadIdQueueMutex.lock();
 
-    if (urlFrom == urlTo) {
+    if (FileUtils::isSameFile(urlFrom, urlTo)) {
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
         errorThreadIdQueueMutex.unlock();
         return currentAction;
@@ -717,7 +717,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     QUrl newTargetUrl = toInfo->url();
     const QString &newTargetPath = newTargetUrl.path();
     const QString &newPath = newTargetPath.endsWith("/") ? newTargetPath + fileNewName
-                                                  : newTargetPath + QDir::separator() + fileNewName;
+                                                         : newTargetPath + QDir::separator() + fileNewName;
     newTargetUrl.setPath(newPath);
 
     newTargetInfo.reset();
