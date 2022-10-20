@@ -62,6 +62,7 @@ private:
     QUrl fileUrl;
     QList<QUrl> childrens;
     QUrl currentFileUrl;
+    quint64 winId;
     QString taskId;
     QMutex mutex;
     std::once_flag onceFlag;

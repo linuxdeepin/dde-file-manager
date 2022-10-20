@@ -29,6 +29,8 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 
+#include <QUuid>
+
 namespace dfmplugin_search {
 
 SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, SearchDirIterator *qq)
@@ -47,7 +49,7 @@ void SearchDirIteratorPrivate::initConnect()
 {
     connect(q, &SearchDirIterator::sigSearch, this, &SearchDirIteratorPrivate::doSearch);
     connect(q, &SearchDirIterator::sigStopSearch, this, [this]() {
-        SearchEventCaller::sendStopSpinner(taskId.toULongLong());
+        SearchEventCaller::sendStopSpinner(winId);
     });
 
     connect(SearchManager::instance(), &SearchManager::matched, this, &SearchDirIteratorPrivate::onMatched);
@@ -64,7 +66,7 @@ void SearchDirIteratorPrivate::doSearch()
     connect(searchRootWatcher.data(), &LocalFileWatcher::fileDeleted, this, [=](const QUrl &url) {
         if (UniversalUtils::urlEquals(targetUrl, url)) {
             SearchManager::instance()->stop(taskId);
-            SearchEventCaller::sendChangeCurrentUrl(taskId.toULongLong(), QUrl("computer:///"));
+            SearchEventCaller::sendChangeCurrentUrl(winId, QUrl("computer:///"));
         }
     });
 
@@ -76,8 +78,9 @@ void SearchDirIteratorPrivate::doSearch()
         targetUrl = QUrl::fromLocalFile(redirectedPath);
     }
 
-    taskId = SearchHelper::searchTaskId(fileUrl);
-    SearchEventCaller::sendStartSpinner(taskId.toULongLong());
+    winId = SearchHelper::searchWinId(fileUrl).toULongLong();
+    taskId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    SearchEventCaller::sendStartSpinner(winId);
     SearchManager::instance()->search(taskId, targetUrl, SearchHelper::searchKeyword(fileUrl));
 }
 
@@ -90,7 +93,7 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
         lk.unlock();
 
         std::call_once(onceFlag, [this]() {
-            SearchEventCaller::sendShowAdvanceSearchButton(taskId.toULongLong(), true);
+            SearchEventCaller::sendShowAdvanceSearchButton(winId, true);
         });
     }
 }

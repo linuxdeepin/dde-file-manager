@@ -76,13 +76,13 @@ TEST(SearchHelperTest, ut_searchKeyword)
     EXPECT_EQ(keyword, "test");
 }
 
-TEST(SearchHelperTest, ut_searchTaskId)
+TEST(SearchHelperTest, ut_searchWinId)
 {
     QUrl searchUrl = SearchHelper::rootUrl();
-    searchUrl = SearchHelper::setSearchTaskId(searchUrl, "123");
+    searchUrl = SearchHelper::setSearchWinId(searchUrl, "123");
 
-    QString taskId = SearchHelper::searchTaskId(searchUrl);
-    EXPECT_EQ(taskId, "123");
+    QString winId = SearchHelper::searchWinId(searchUrl);
+    EXPECT_EQ(winId, "123");
 }
 
 TEST(SearchHelperTest, ut_fromSearchFile_1)
@@ -106,8 +106,8 @@ TEST(SearchHelperTest, ut_fromSearchFile_2)
     QString keyword = SearchHelper::searchKeyword(url);
     EXPECT_EQ(keyword, "test");
 
-    QString taskId = SearchHelper::searchTaskId(url);
-    EXPECT_EQ(taskId, "123");
+    QString winId = SearchHelper::searchWinId(url);
+    EXPECT_EQ(winId, "123");
 }
 
 TEST(SearchHelperTest, ut_showTopWidget)

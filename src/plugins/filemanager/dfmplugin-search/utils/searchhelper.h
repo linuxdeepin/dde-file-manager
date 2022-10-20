@@ -48,14 +48,14 @@ public:
     static bool isSearchFile(const QUrl &url);
     static QUrl searchTargetUrl(const QUrl &searchUrl);
     static QString searchKeyword(const QUrl &searchUrl);
-    static QString searchTaskId(const QUrl &searchUrl);
+    static QString searchWinId(const QUrl &searchUrl);
 
     static QUrl setSearchKeyword(const QUrl &searchUrl, const QString &keyword);
     static QUrl setSearchTargetUrl(const QUrl &searchUrl, const QUrl &targetUrl);
-    static QUrl setSearchTaskId(const QUrl &searchUrl, const QString &taskId);
+    static QUrl setSearchWinId(const QUrl &searchUrl, const QString &winId);
 
     static QUrl fromSearchFile(const QString &filePath);
-    static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId);
+    static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &winId);
     static bool showTopWidget(QWidget *w, const QUrl &url);
 
     bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);

@@ -73,10 +73,10 @@ QString SearchHelper::searchKeyword(const QUrl &searchUrl)
     return query.queryItemValue("keyword", QUrl::FullyDecoded);
 }
 
-QString SearchHelper::searchTaskId(const QUrl &searchUrl)
+QString SearchHelper::searchWinId(const QUrl &searchUrl)
 {
     QUrlQuery query(searchUrl.query());
-    return query.queryItemValue("taskId", QUrl::FullyDecoded);
+    return query.queryItemValue("winId", QUrl::FullyDecoded);
 }
 
 QUrl SearchHelper::setSearchKeyword(const QUrl &searchUrl, const QString &keyword)
@@ -101,12 +101,12 @@ QUrl SearchHelper::setSearchTargetUrl(const QUrl &searchUrl, const QUrl &targetU
     return url;
 }
 
-QUrl SearchHelper::setSearchTaskId(const QUrl &searchUrl, const QString &taskId)
+QUrl SearchHelper::setSearchWinId(const QUrl &searchUrl, const QString &winId)
 {
     QUrl url(searchUrl);
     QUrlQuery query(url.query());
-    query.removeQueryItem("taskId");
-    query.addQueryItem("taskId", taskId);
+    query.removeQueryItem("winId");
+    query.addQueryItem("winId", winId);
     url.setQuery(query);
 
     return url;
@@ -121,14 +121,14 @@ QUrl SearchHelper::fromSearchFile(const QString &filePath)
     return url;
 }
 
-QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId)
+QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &winId)
 {
     QUrl url = rootUrl();
     QUrlQuery query;
 
     query.addQueryItem("url", parseDecodedComponent(targetUrl.toString()));
     query.addQueryItem("keyword", parseDecodedComponent(keyword));
-    query.addQueryItem("taskId", taskId);
+    query.addQueryItem("winId", winId);
     url.setQuery(query);
 
     return url;
