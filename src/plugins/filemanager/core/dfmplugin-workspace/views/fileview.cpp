@@ -1650,6 +1650,9 @@ void FileView::onModelStateChanged()
     updateLoadingIndicator();
     updateSelectedUrl();
 
+    if (model()->currentState() == ModelState::kIdle)
+        doSort();
+
     if (d->headerView) {
         d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->currentState() == ModelState::kBusy);
     }

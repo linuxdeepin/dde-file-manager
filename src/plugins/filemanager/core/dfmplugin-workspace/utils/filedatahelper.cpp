@@ -38,6 +38,7 @@ RootInfo *FileDataHelper::setRoot(const QUrl &rootUrl)
 
         RootInfo *info = rootInfoMap[rootUrl];
         info->clearChildren();
+        info->needTraversal = true;
 
         const AbstractFileWatcherPointer &watcher = setWatcher(rootUrl);
         info->watcher = watcher;
@@ -233,7 +234,6 @@ AbstractFileWatcherPointer FileDataHelper::setWatcher(const QUrl &url)
 TraversalThreadPointer FileDataHelper::setTraversalThread(RootInfo *info)
 {
     if (!info->traversal.isNull()) {
-        info->needTraversal = true;
         const TraversalThreadPointer &traversal = info->traversal;
 
         traversal->disconnect();
