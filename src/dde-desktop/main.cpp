@@ -158,6 +158,7 @@ int main(int argc, char *argv[])
     app.setApplicationDisplayName(app.translate("DesktopMain", "Desktop"));
     app.setApplicationVersion(DApplication::buildVersion((GIT_VERSION)));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    app.setProductIcon(QIcon::fromTheme("deepin-toggle-desktop"));
 
     const QString logFormat = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
     DFMLogManager::setLogFormat(logFormat);
