@@ -295,6 +295,7 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(ScreenPointer 
     bwp->setAccessableInfo(screen->name());
     bwp->setProperty("isPreview", m_preview);
     bwp->setProperty("myScreen", screen->name()); // assert screen->name is unique
+    bwp->setWindowIcon(QIcon::fromTheme("deepin-toggle-desktop"));
     //bwp->createWinId();   //不创建，4k下有bug
     //bwp->windowHandle()->handle()->setGeometry(screen->handleGeometry()); //不能设置，设置了widget的geometry会被乱改//分辨率原始大小
     bwp->setGeometry(screen->geometry()); //经过缩放的区域
