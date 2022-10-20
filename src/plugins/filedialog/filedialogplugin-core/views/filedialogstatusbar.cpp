@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "filedialogstatusbar.h"
 
 #include "dfm-base/mimetype/dmimedatabase.h"
@@ -178,6 +178,22 @@ void FileDialogStatusBar::beginAddCustomWidget()
 void FileDialogStatusBar::endAddCustomWidget()
 {
     updateLayout();
+}
+
+void FileDialogStatusBar::changeFileNameEditText(const QString &fileName)
+{
+    if (!fileNameEdit)
+        return;
+
+    QMimeDatabase db;
+    QString newFileName;
+    QString suffix = db.suffixForFileName(fileNameEdit->text());
+    if (!suffix.isEmpty())
+        newFileName = fileName + "." + suffix;
+    else
+        newFileName = fileName;
+
+    fileNameEdit->setText(newFileName);
 }
 
 void FileDialogStatusBar::onWindowTitleChanged(const QString &title)

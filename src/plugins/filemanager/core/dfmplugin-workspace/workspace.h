@@ -45,6 +45,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_View_SelectionChanged)
     DPF_EVENT_REG_SIGNAL(signal_View_RenameStartEdit)
     DPF_EVENT_REG_SIGNAL(signal_View_RenameEndEdit)
+    DPF_EVENT_REG_SIGNAL(signal_View_ItemClicked)
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_RegisterFileView)

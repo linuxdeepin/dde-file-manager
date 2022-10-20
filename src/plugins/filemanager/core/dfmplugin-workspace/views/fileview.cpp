@@ -396,6 +396,15 @@ void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 void FileView::onClicked(const QModelIndex &index)
 {
     openIndexByClicked(ClickedAction::kClicked, index);
+
+    QUrl url { "" };
+    const AbstractFileInfoPointer &info = model()->itemFileInfo(index);
+    if (info)
+        url = info->url();
+    QVariantMap data;
+    data.insert("displayName", model()->data(index));
+    data.insert("url", url);
+    WorkspaceEventCaller::sendViewItemClicked(data);
 }
 
 void FileView::onDoubleClicked(const QModelIndex &index)

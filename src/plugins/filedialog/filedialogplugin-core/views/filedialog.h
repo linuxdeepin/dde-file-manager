@@ -129,6 +129,7 @@ private Q_SLOTS:
     void handleEnterPressed();
     void handleUrlChanged(const QUrl &url);
     void onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
+    void onViewItemClicked(const QVariantMap &data);
     void handleRenameStartAcceptBtn(const quint64 windowID, const QUrl &url);
     void handleRenameEndAcceptBtn(const quint64 windowID, const QUrl &url);
 

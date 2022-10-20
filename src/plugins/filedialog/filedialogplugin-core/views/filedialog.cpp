@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "filedialog.h"
 #include "filedialog_p.h"
 #include "events/coreeventscaller.h"
@@ -194,7 +194,8 @@ void FileDialog::cd(const QUrl &url)
     if (window->workSpace())
         handleUrlChanged(url);
     else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [this, url] { handleUrlChanged(url); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::workspaceInstallFinished, this, [this, url] { handleUrlChanged(url); }, Qt::DirectConnection);
 }
 
 bool FileDialog::saveClosedSate() const
@@ -850,6 +851,31 @@ void FileDialog::onViewSelectionChanged(const quint64 windowID, const QItemSelec
     }
 }
 
+void FileDialog::onViewItemClicked(const QVariantMap &data)
+{
+    if (!statusBar() || (acceptMode() != QFileDialog::AcceptSave))
+        return;
+
+    if (!data.contains("displayName") || !data.contains("url"))
+        return;
+
+    QString displayName = data["displayName"].toString();
+    QUrl url = data["url"].toUrl();
+    if (!url.isValid() || url.isEmpty() || displayName.isEmpty())
+        return;
+
+    const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    if (fileInfo && !fileInfo->isDir()) {
+        QMimeDatabase db;
+        // TODO(gongheng): Encapsulate get true suffix interface to fileinfo like QMimeDatabase::suffix.
+        int suffixLength = db.suffixForFileName(displayName).count();
+        if (suffixLength != 0)
+            suffixLength++;   // decimal point
+        QString displayNameWithoutSuffix = displayName.mid(0, displayName.count() - suffixLength);
+        statusBar()->changeFileNameEditText(displayNameWithoutSuffix);
+    }
+}
+
 void FileDialog::handleRenameStartAcceptBtn(const quint64 windowID, const QUrl &url)
 {
     Q_UNUSED(url)
@@ -1030,6 +1056,8 @@ void FileDialog::updateViewState()
     // TODO(liuyangming): currentChanged
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_SelectionChanged", this,
                                    &FileDialog::onViewSelectionChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_ItemClicked", this,
+                                   &FileDialog::onViewItemClicked);
 
     if (!d->nameFilters.isEmpty())
         setNameFilters(d->nameFilters);

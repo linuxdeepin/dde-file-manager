@@ -109,3 +109,9 @@ bool WorkspaceEventCaller::sendRenameEndEdit(const quint64 &winId, const QUrl &u
     bool ret = dpfSignalDispatcher->publish(kEventNS, "signal_View_RenameEndEdit", winId, url);
     return ret;
 }
+
+bool WorkspaceEventCaller::sendViewItemClicked(const QVariantMap &data)
+{
+    bool ret = dpfSignalDispatcher->publish(kEventNS, "signal_View_ItemClicked", data);
+    return ret;
+}

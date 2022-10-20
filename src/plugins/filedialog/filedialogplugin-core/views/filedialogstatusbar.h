@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef FILEDIALOGSTATUSBAR_H
 #define FILEDIALOGSTATUSBAR_H
 
@@ -66,6 +66,8 @@ public:
     QVariantMap allComboBoxsValue() const;
     void beginAddCustomWidget();
     void endAddCustomWidget();
+
+    void changeFileNameEditText(const QString &fileName);
 
 private slots:
     void onWindowTitleChanged(const QString &title);
