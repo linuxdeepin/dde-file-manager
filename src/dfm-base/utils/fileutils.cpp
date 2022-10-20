@@ -1158,8 +1158,8 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
         return QString();
     }
 
-    const QString &copyText = QCoreApplication::translate("DoCopyFilesWorker", "copy",
-                                                          "Extra name added to new file name when used for file name.");
+    const QString &copySuffix = QObject::tr(" (copy)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
+    const QString &copySuffix2 = QObject::tr(" (copy %1)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
 
     AbstractFileInfoPointer targetFileInfo { nullptr };
     QString fileBaseName = fromInfo->completeBaseName();
@@ -1177,7 +1177,8 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     QString newFileName;
     QUrl newUrl;
     do {
-        newFileName = number > 0 ? QString("%1(%2 %3)").arg(fileBaseName, copyText).arg(number) : QString("%1(%2)").arg(fileBaseName, copyText);
+        auto nameSuffix = number > 0 ? copySuffix2.arg(number) : copySuffix;
+        newFileName = QString("%1%2").arg(fileBaseName, nameSuffix);
 
         if (!suffix.isEmpty()) {
             newFileName.append('.').append(suffix);
