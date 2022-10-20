@@ -55,6 +55,8 @@ void DTagEdit::setDefaultCrumbs(const QStringList &list)
 void DTagEdit::onFocusOut()
 {
     if (m_flagForShown.load(std::memory_order_acquire)) {
+        if (!m_crumbEdit->toPlainText().isEmpty() && m_crumbEdit->textCursor().position() > m_crumbEdit->crumbList().length())
+            m_crumbEdit->appendCrumb(m_crumbEdit->toPlainText());
         this->processTags();
         this->close();
     }
