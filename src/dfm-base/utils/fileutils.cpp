@@ -285,7 +285,7 @@ QString FileUtils::preprocessingFileName(QString name)
 bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
 {
     // prohibit Paths
-    const static QStringList usrProhibitPaths {
+    const QStringList kUsrProhibitPaths {
         QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(),
         FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(), true),
 
@@ -304,10 +304,11 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
         QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first(),
         FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first(), true)
     };
+
     for (const auto &url : urls) {
         // usr Prohibit Paths
 
-        if (!url.isEmpty() && usrProhibitPaths.contains(url.path())) {
+        if (!url.isEmpty() && kUsrProhibitPaths.contains(url.path())) {
             return true;
         }
     }
