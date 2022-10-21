@@ -87,6 +87,7 @@ public:
     virtual QRect visualRect(const QModelIndex &index) const override;
     void setIconSize(const QSize &size);
     int horizontalOffset() const override;
+    int verticalOffset() const override;
 
     FileViewModel *sourceModel() const;
 

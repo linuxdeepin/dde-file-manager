@@ -122,6 +122,12 @@ int IconItemEditor::maxCharSize() const
     return d->maxCharSize;
 }
 
+void IconItemEditor::setMaxHeight(int h)
+{
+    Q_D(IconItemEditor);
+    d->maxHeight = h;
+}
+
 QSize IconItemEditor::sizeHint() const
 {
     Q_D(const IconItemEditor);
@@ -283,7 +289,13 @@ void IconItemEditor::updateEditorGeometry()
             d->edit->setFixedHeight(textHeight);
         }
     } else {
-        d->edit->setFixedHeight(qMin(fontMetrics().height() * 3 + kIconModeTextPadding * 2, textHeight));
+        int maxTextHeight = d->maxHeight - (contentsMargins().top() + d->icon->height() + kIconModeIconSpacing);
+        if (maxTextHeight < 0) {
+            d->edit->setFixedHeight(qMin(fontMetrics().height() * 3 + kIconModeTextPadding * 2, textHeight));
+        } else {
+            int minHeight = fontMetrics().height() * 1 + kIconModeTextPadding * 2;
+            d->edit->setFixedHeight(qMax(qMin(maxTextHeight, textHeight), minHeight));
+        }
     }
 }
 

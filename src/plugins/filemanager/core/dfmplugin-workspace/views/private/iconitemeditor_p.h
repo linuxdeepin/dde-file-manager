@@ -48,6 +48,7 @@ public:
     QStack<QString> editTextStack;
     QGraphicsOpacityEffect *opacityEffect { nullptr };
     int maxCharSize { INT_MAX };
+    int maxHeight = -1;
 
     DArrowRectangle *tooltip { nullptr };
     QString validText;

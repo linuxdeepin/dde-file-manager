@@ -1078,6 +1078,11 @@ int FileView::horizontalOffset() const
     return d->horizontalOffset;
 }
 
+int FileView::verticalOffset() const
+{
+    return DListView::verticalOffset();
+}
+
 FileViewModel *FileView::sourceModel() const
 {
     if (model())

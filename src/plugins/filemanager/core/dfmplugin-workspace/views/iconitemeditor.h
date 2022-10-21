@@ -58,6 +58,8 @@ public:
     void setMaxCharSize(int maxSize);
     int maxCharSize() const;
 
+    void setMaxHeight(int h);
+
     QSize sizeHint() const override;
     QLabel *getIconLabel() const;
     QTextEdit *getTextEdit() const;

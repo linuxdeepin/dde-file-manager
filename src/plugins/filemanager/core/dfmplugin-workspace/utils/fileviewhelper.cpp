@@ -261,6 +261,16 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
     return true;
 }
 
+QSize FileViewHelper::viewContentSize() const
+{
+    return parent()->contentsSize();
+}
+
+int FileViewHelper::verticalOffset() const
+{
+    return parent()->verticalOffset();
+}
+
 int FileViewHelper::caculateListItemIndex(const QSize &itemSize, const QPoint &pos)
 {
     if (pos.y() % (itemSize.height() + kListViewSpacing * 2) < kListViewSpacing)
