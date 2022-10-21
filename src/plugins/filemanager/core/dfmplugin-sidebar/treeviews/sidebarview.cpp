@@ -640,6 +640,7 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
 
     SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
     if (groupItem) {
+        groupItem->setExpanded(expand);
         const QVariantMap &gMap = SideBarHelper::groupExpandRules();
         if (d->groupExpandState.isEmpty() && !gMap.isEmpty())
             d->groupExpandState = gMap;
