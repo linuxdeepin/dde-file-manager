@@ -328,11 +328,11 @@ int BasicWidget::getFileCount()
 void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount)
 {
     fSize = size;
-    fileSize->setRightValue(FileUtils::formatSize(size));
+    fileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignVCenter, true);
 
     fCount = filesCount + (directoryCount > 1 ? directoryCount - 1 : 0);
     QString txt = fCount > 1 ? tr("%1 items") : tr("%1 item");
-    fileCount->setRightValue(txt.arg(fCount));
+    fileCount->setRightValue(txt.arg(fCount), Qt::ElideNone, Qt::AlignVCenter, true);
 }
 
 void BasicWidget::slotFileHide(int state)
