@@ -600,7 +600,7 @@ bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringLi
         QUrl fileUrl(fileUrls[0]);
         if (isSmbUnmountedFile(fileUrl)) {
             newFileUrls.clear();
-            newFileUrls << smbFileUrl(fileUrls[0]).toLocalFile();
+            newFileUrls << smbFileUrl(fileUrls[0]).toString();
         }
     }
 
@@ -693,7 +693,7 @@ QUrl LocalFileHandler::smbFileUrl(const QString &filePath)
     QUrl newUrl;
     newUrl.setScheme(Global::Scheme::kSmb);
     newUrl.setHost(host);
-    newUrl.setPath("/" + path.mid(0, path.lastIndexOf("/")));
+    newUrl.setPath("/" + path);
     return newUrl;
 }
 
@@ -960,7 +960,7 @@ bool LocalFileHandler::doOpenFiles(const QList<QUrl> &urls, const QString &deskt
 
     QString mimeType;
     if (Q_UNLIKELY(!filePath.contains("#")) && fileInfo && fileInfo->size() == 0 && fileInfo->exists()) {
-        mimeType = fileInfo->fileMimeType().name();
+        mimeType = fileInfo->mimeTypeName();
     } else {
         mimeType = getFileMimetype(filePath);
     }
