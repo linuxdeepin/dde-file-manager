@@ -33,7 +33,7 @@ static constexpr char kCfgAppId[] { "org.deepin.dde.file-manager" };
 using namespace dfmbase;
 DCORE_USE_NAMESPACE
 
-#define DCONFIG_SUPPORTED (DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 29, 0))
+#define DCONFIG_SUPPORTED (DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 30, 0))
 
 DConfigManager::DConfigManager(QObject *parent)
     : QObject(parent), d(new DConfigManagerPrivate(this))
