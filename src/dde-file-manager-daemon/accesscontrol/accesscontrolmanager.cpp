@@ -26,7 +26,7 @@
 #include "dfilesystemwatcher.h"
 
 #include "app/policykithelper.h"
-#include "dbusservice/dbusadaptor/accesscontrol_adaptor.h"
+#include "dbusadaptor/accesscontrol_adaptor.h"
 
 #define KEY_INVOKER     "invoker"
 #define KEY_TYPE        "type"

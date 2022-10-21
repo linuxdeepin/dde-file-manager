@@ -42,8 +42,8 @@ HEADERS += \
 RESOURCES += \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin/dde-music-preview-plugin.qrc
 
-#include(../../../../3rdparty/googletest/gtest_dependency.pri)
-include(../../../../3rdparty/cpp-stub/stub.pri)
+#include(../../../../3rdpart/googletest/gtest_dependency.pri)
+include(../../../../3rdpart/cpp-stub/stub.pri)
 include(tests/test.pri)
 
 unix {

@@ -5,3 +5,5 @@ HEADERS += \
 SOURCES += \
     $$PWD/shareinfo.cpp \
     $$PWD/usersharemanager.cpp
+
+INCLUDEPATH += $$PWD/../../../3rdpart/dbusservice

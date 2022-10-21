@@ -12,7 +12,7 @@ include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
 include($$PWD/../grandsearchdaemon/grandsearchdaemon.pri)
 
 # 集成测试标签
-include($$PWD/../../3rdparty/accessibility/accessibility-suite.pri)
+include($$PWD/../../3rdpart/accessibility/accessibility-suite.pri)
 #无热区设置
 #include($$PWD/../dde-zone/dde-zone.pri)
 DEFINES += DISABLE_ZONE
@@ -42,7 +42,8 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib\
                $$PWD/../utils \
                $$PWD/../dde-file-manager-lib/interfaces \
                $$PWD/../dde-file-manager-lib/interfaces/plugins \
-               $$PWD/../dde-file-manager-lib/io
+               $$PWD/../dde-file-manager-lib/io \
+               $$PWD/../../3rdpart/dbusservice
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager

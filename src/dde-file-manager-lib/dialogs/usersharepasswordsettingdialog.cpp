@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "usersharepasswordsettingdialog.h"
-#include "../dbusinterface/usershare_interface.h"
+#include "dbusinterface/usershare_interface.h"
 #include "../app/define.h"
 #include "singleton.h"
 #include "usershare/usersharemanager.h"

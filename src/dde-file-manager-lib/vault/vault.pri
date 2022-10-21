@@ -1,6 +1,6 @@
 DEFINES += HAVE_CONFIG_H
 
-3rd_srcdir = $$PWD/../../../3rdparty
+3rd_srcdir = $$PWD/../../../3rdpart
 
 SOURCES += \
     $$3rd_srcdir/qrencode/bitstream.c \

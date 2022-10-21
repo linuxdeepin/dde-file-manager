@@ -142,7 +142,6 @@ HEADERS += \
     $$PWD/shutil/dsqlitehandle.h \
     $$PWD/shutil/danythingmonitorfilter.h \
     $$PWD/controllers/tagmanagerdaemoncontroller.h \
-    $$PWD/controllers/interface/tagmanagerdaemon_interface.h \
     $$PWD/interfaces/dfmsettings.h \
     $$PWD/interfaces/dfmcrumbbar.h \
     $$PWD/interfaces/dfmcrumbinterface.h \
@@ -390,7 +389,6 @@ SOURCES += \
     $$PWD/shutil/dsqlitehandle.cpp \
     $$PWD/shutil/danythingmonitorfilter.cpp \
     $$PWD/controllers/tagmanagerdaemoncontroller.cpp \
-    $$PWD/controllers/interface/tagmanagerdaemon_interface.cpp \
     $$PWD/interfaces/dfmsettings.cpp \
     $$PWD/interfaces/dfmcrumbbar.cpp \
     $$PWD/interfaces/dfmcrumbinterface.cpp \
@@ -497,4 +495,6 @@ CONFIG(ENABLE_ANYTHING) {
     SOURCES += $$PWD/shutil/danythingmonitor.cpp
 }
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD \
+               $$PWD/../../3rdpart/dbusservice \
+               $$PWD/../../3rdpart/utils

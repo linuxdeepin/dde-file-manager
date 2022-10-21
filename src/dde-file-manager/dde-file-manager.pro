@@ -49,7 +49,7 @@ CONFIG(debug, debug|release) {
 }
 
 # 集成测试标签
-include($$PWD/../../3rdparty/accessibility/accessibility-suite.pri)
+include($$PWD/../../3rdpart/accessibility/accessibility-suite.pri)
 
 SOURCES += \
     main.cpp \
@@ -61,7 +61,8 @@ SOURCES += \
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
                $$PWD/../utils \
-               $$PWD/../dde-file-manager-lib/interfaces
+               $$PWD/../dde-file-manager-lib/interfaces \
+               $$PWD/../../3rdpart/dbusservice
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
