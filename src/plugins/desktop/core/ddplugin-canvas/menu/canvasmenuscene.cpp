@@ -295,8 +295,13 @@ bool CanvasMenuScene::triggered(QAction *action)
 
         // Display Settings
         if (actionId == ActionID::kDisplaySettings) {
+#ifdef COMPILE_ON_V23
+            QDBusInterface interface("org.deepin.dde.ControlCenter1", "/org/deepin/dde/ControlCenter1", "org.deepin.dde.ControlCenter1");
+            interface.asyncCall("ShowPage", QVariant::fromValue(QString("display")));
+#else
             QDBusInterface interface("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter", "com.deepin.dde.ControlCenter");
             interface.asyncCall("ShowModule", QVariant::fromValue(QString("display")));
+#endif
             return true;
         }
 

@@ -12,11 +12,21 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(DtkCMake REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX /usr)
+endif()
+
+#Indentify the version
+if (${DEEPIN_OS_VERSION} MATCHES "23")
+    add_definitions(-DCOMPILE_ON_V23)
+    message("COMPILE ON v23")
+else()
+    add_definitions(-DCOMPILE_ON_V20)
+    message("COMPILE ON v20")
 endif()
 
 include(GNUInstallDirs)
