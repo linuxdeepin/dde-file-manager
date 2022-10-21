@@ -28,6 +28,10 @@ isEmpty(DDE_FILE_MANAGER_LIB_DIR){
     DDE_FILE_MANAGER_LIB_DIR = $$PWD/../../src/dde-file-manager-lib
 }
 
+isEmpty(DDE_3RD_DBUSSERVER_DIR) {
+    DDE_3RD_DBUSSERVER_DIR = $$PWD/../../3rdpart/dbusservice
+}
+
 isEmpty(DDE_FILE_MANAGER_DIR){
     DDE_FILE_MANAGER_DIR = $$PWD/../../src
 }
@@ -42,7 +46,8 @@ else:unix: LIBS += -L$$OUT_PWD/../../src/dde-file-manager-lib -ldde-file-manager
 INCLUDEPATH += $$DDE_FILE_MANAGER_LIB_DIR \
                $$DDE_FILE_MANAGER_LIB_DIR/interfaces \
                $$DDE_FILE_MANAGER_LIB_DIR/shutil \
-               $$PWD/../../src/utils
+               $$PWD/../../src/utils \
+               $$DDE_3RD_DBUSSERVER_DIR
 
 unix{
       PKG_CONFIG = pkg-config
@@ -74,7 +79,7 @@ HEADERS += \
     $$DDE_FILE_MANAGER_LIB_DIR/tag/tagmanager.h \
     $$DDE_FILE_MANAGER_LIB_DIR/shutil/danythingmonitorfilter.h \
     $$DDE_FILE_MANAGER_LIB_DIR/controllers/tagmanagerdaemoncontroller.h \
-    $$DDE_FILE_MANAGER_LIB_DIR/controllers/interface/tagmanagerdaemon_interface.h \
+    $$DDE_3RD_DBUSSERVER_DIR/dbusinterface/tagmanagerdaemon_interface.h \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/durl.h \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmstandardpaths.h \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmapplication.h \
@@ -86,7 +91,7 @@ SOURCES += \
     $$DDE_FILE_MANAGER_LIB_DIR/tag/tagmanager.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/shutil/danythingmonitorfilter.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/controllers/tagmanagerdaemoncontroller.cpp \
-    $$DDE_FILE_MANAGER_LIB_DIR/controllers/interface/tagmanagerdaemon_interface.cpp \
+    $$DDE_3RD_DBUSSERVER_DIR/dbusinterface/tagmanagerdaemon_interface.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/durl.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmstandardpaths.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmapplication.cpp \
@@ -96,7 +101,7 @@ QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 include(../../src/common/common.pri)
-#include(../../3rdparty/googletest/gtest_dependency.pri)
+#include(../../3rdpart/googletest/gtest_dependency.pri)
 include(tests/test.pri)
 
 unix {

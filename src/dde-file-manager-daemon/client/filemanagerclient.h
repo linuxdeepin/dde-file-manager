@@ -7,7 +7,7 @@
 
 #include <QObject>
 
-#include "dbusservice/dbusinterface/fileoperation_interface.h"
+#include "dbusinterface/fileoperation_interface.h"
 
 class FileManagerClient : public QObject
 {

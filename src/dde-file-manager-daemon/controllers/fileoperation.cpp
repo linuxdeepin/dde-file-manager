@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileoperation.h"
-#include "dbusservice/dbusadaptor/fileoperation_adaptor.h"
+#include "dbusadaptor/fileoperation_adaptor.h"
 
 #include "fileoperationjob/copyjob.h"
 #include "fileoperationjob/movejob.h"

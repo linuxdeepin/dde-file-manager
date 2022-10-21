@@ -9,7 +9,7 @@
 
 
 #include "tag/tagutil.h"
-#include "./interface/tagmanagerdaemon_interface.h"
+#include "dbusinterface/tagmanagerdaemon_interface.h"
 
 #include <QObject>
 #include <QVariantMap>

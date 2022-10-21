@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vault/vaultclock.h"
-#include "dbusservice/dbusadaptor/vault_adaptor.h"
+#include "dbusadaptor/vault_adaptor.h"
 #include <QDBusConnection>
 #include <QDBusPendingCall>
 #include <QDBusVariant>

@@ -1,12 +1,14 @@
 include(../../common/common.pri)
 
+3RDPART_DIR = $$PWD/../../../3rdparty
+
 HEADERS += \
     $$PWD/maincontroller/task/taskcommander.h \
     $$PWD/maincontroller/task/taskcommander_p.h \
     $$PWD/maincontroller/maincontroller.h \
     $$PWD/private/searchservice_p.h \
-    $$PWD/searcher/fulltext/chineseanalyzer.h \
-    $$PWD/searcher/fulltext/chinesetokenizer.h \
+    $$3RDPART_DIR/fulltext/chineseanalyzer.h \
+    $$3RDPART_DIR/fulltext/chinesetokenizer.h \
     $$PWD/searcher/fulltext/fulltextsearcher.h \
     $$PWD/searcher/fulltext/fulltextsearcher_p.h \
     $$PWD/searcher/iterator/iteratorsearcher.h \
@@ -15,24 +17,24 @@ HEADERS += \
     $$PWD/searchservice.h \
     $$PWD/searcher/fsearch/fssearcher.h \
 #    -----------fsearch source---------------
-    $$PWD/../../../3rdparty/fsearch/query.h \
-    $$PWD/../../../3rdparty/fsearch/array.h \
-    $$PWD/../../../3rdparty/fsearch/btree.h \
-    $$PWD/../../../3rdparty/fsearch/database_search.h \
-    $$PWD/../../../3rdparty/fsearch/database.h \
-    $$PWD/../../../3rdparty/fsearch/fsearch_config.h \
-    $$PWD/../../../3rdparty/fsearch/fsearch_limits.h \
-    $$PWD/../../../3rdparty/fsearch/fsearch_thread_pool.h \
-    $$PWD/../../../3rdparty/fsearch/fsearch.h \
-    $$PWD/../../../3rdparty/fsearch/string_utils.h \
-    $$PWD/../../../3rdparty/fsearch/utf8.h
+    $$3RDPART_DIR/fsearch/query.h \
+    $$3RDPART_DIR/fsearch/array.h \
+    $$3RDPART_DIR/fsearch/btree.h \
+    $$3RDPART_DIR/fsearch/database_search.h \
+    $$3RDPART_DIR/fsearch/database.h \
+    $$3RDPART_DIR/fsearch/fsearch_config.h \
+    $$3RDPART_DIR/fsearch/fsearch_limits.h \
+    $$3RDPART_DIR/fsearch/fsearch_thread_pool.h \
+    $$3RDPART_DIR/fsearch/fsearch.h \
+    $$3RDPART_DIR/fsearch/string_utils.h \
+    $$3RDPART_DIR/fsearch/utf8.h
 #    -----------fsearch source---------------
 
 SOURCES += \
     $$PWD/maincontroller/task/taskcommander.cpp \
     $$PWD/maincontroller/maincontroller.cpp \
-    $$PWD/searcher/fulltext/chineseanalyzer.cpp \
-    $$PWD/searcher/fulltext/chinesetokenizer.cpp \
+    $$3RDPART_DIR/fulltext/chineseanalyzer.cpp \
+    $$3RDPART_DIR/fulltext/chinesetokenizer.cpp \
     $$PWD/searcher/fulltext/fulltextsearcher.cpp \
     $$PWD/searcher/iterator/iteratorsearcher.cpp \
     $$PWD/searcher/abstractsearcher.cpp \
@@ -40,15 +42,15 @@ SOURCES += \
     $$PWD/searchservice.cpp \
     $$PWD/searcher/fsearch/fssearcher.cpp \
 #    -----------fsearch source---------------
-    $$PWD/../../../3rdparty/fsearch/array.c \
-    $$PWD/../../../3rdparty/fsearch/btree.c \
-    $$PWD/../../../3rdparty/fsearch/database_search.c \
-    $$PWD/../../../3rdparty/fsearch/database.c \
-    $$PWD/../../../3rdparty/fsearch/fsearch_config.c \
-    $$PWD/../../../3rdparty/fsearch/fsearch_thread_pool.c \
-    $$PWD/../../../3rdparty/fsearch/fsearch.c \
-    $$PWD/../../../3rdparty/fsearch/query.c \
-    $$PWD/../../../3rdparty/fsearch/string_utils.c
+    $$3RDPART_DIR/fsearch/array.c \
+    $$3RDPART_DIR/fsearch/btree.c \
+    $$3RDPART_DIR/fsearch/database_search.c \
+    $$3RDPART_DIR/fsearch/database.c \
+    $$3RDPART_DIR/fsearch/fsearch_config.c \
+    $$3RDPART_DIR/fsearch/fsearch_thread_pool.c \
+    $$3RDPART_DIR/fsearch/fsearch.c \
+    $$3RDPART_DIR/fsearch/query.c \
+    $$3RDPART_DIR/fsearch/string_utils.c
 #    -----------fsearch source---------------
 
 CONFIG(ENABLE_ANYTHING) {
