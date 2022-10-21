@@ -80,6 +80,11 @@ bool RecentFileInfo::isWritable() const
     return permissions().testFlag(QFile::Permission::WriteUser);
 }
 
+bool RecentFileInfo::canRename() const
+{
+    return false;
+}
+
 QString RecentFileInfo::fileName() const
 {
     if (d->proxy)

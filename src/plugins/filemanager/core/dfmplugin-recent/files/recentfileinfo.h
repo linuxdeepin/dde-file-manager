@@ -42,6 +42,7 @@ public:
     virtual QFile::Permissions permissions() const override;
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
+    virtual bool canRename() const;
 
     QString fileName() const override;
     bool canRedirectionFileUrl() const override;
