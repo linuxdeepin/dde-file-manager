@@ -45,6 +45,7 @@ public:
     QString systemPathIconName(QString key) const;
     QString systemPathIconNameByPath(QString path);
     bool isSystemPath(QString path) const;
+    bool checkContainsSystemPath(const QList<QUrl> &urlList);
 
 private:
     explicit SystemPathUtil(QObject *parent = nullptr);

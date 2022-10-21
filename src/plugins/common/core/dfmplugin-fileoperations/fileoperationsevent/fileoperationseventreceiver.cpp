@@ -37,6 +37,7 @@
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/properties.h"
+#include "dfm-base/utils/systempathutil.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -301,6 +302,11 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
     if (sources.isEmpty())
         return nullptr;
 
+    if (SystemPathUtil::instance()->checkContainsSystemPath(sources)) {
+        DialogManagerInstance->showDeleteSystemPathWarnDialog(windowId);
+        return nullptr;
+    }
+
     const QUrl &sourceFirst = sources.first();
 
     if (!sourceFirst.isLocalFile()) {
@@ -404,6 +410,11 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
 {
     if (sources.isEmpty())
         return nullptr;
+
+    if (SystemPathUtil::instance()->checkContainsSystemPath(sources)) {
+        DialogManagerInstance->showDeleteSystemPathWarnDialog(windowId);
+        return nullptr;
+    }
 
     if (!sources.first().isLocalFile()) {
         // hook events

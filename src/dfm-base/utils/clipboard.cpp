@@ -23,6 +23,7 @@
 #include "base/urlroute.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/systempathutil.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -124,6 +125,9 @@ ClipBoard *ClipBoard::instance()
 void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::ClipboardAction action, QMimeData *mimeData)
 {
     if (action == kUnknownAction)
+        return;
+
+    if (action == ClipBoard::kCutAction && SystemPathUtil::instance()->checkContainsSystemPath(list))
         return;
 
     if (!mimeData)

@@ -33,6 +33,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/windowutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QDir>
 #include <QApplication>
@@ -544,6 +545,15 @@ int DialogManager::showAskIfAddExcutableFlagAndRunDialog()
     d.setIcon(warningIcon);
     int code = d.exec();
     return code;
+}
+
+void DialogManager::showDeleteSystemPathWarnDialog(quint64 winId)
+{
+    DDialog d(FMWindowsIns.findWindowById(winId));
+    d.setTitle(tr("The selected files contain system file/directory, and it cannot be deleted"));
+    d.setIcon(warningIcon);
+    d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
+    d.exec();
 }
 
 DialogManager::DialogManager(QObject *parent)

@@ -25,6 +25,7 @@
 #include "base/application/application.h"
 #include "base/application/settings.h"
 #include "base/standardpaths.h"
+#include "base/schemefactory.h"
 #include "utils/fileutils.h"
 
 #include <QDir>
@@ -100,6 +101,17 @@ bool SystemPathUtil::isSystemPath(QString path) const
     cleanPath(&path);
 
     return systemPathsSet.contains(path);
+}
+
+bool SystemPathUtil::checkContainsSystemPath(const QList<QUrl> &urlList)
+{
+    for (const auto &url : urlList) {
+        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info && isSystemPath(info->absoluteFilePath()))
+            return true;
+    }
+
+    return false;
 }
 
 SystemPathUtil::SystemPathUtil(QObject *parent)

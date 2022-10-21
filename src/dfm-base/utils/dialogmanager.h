@@ -93,6 +93,7 @@ public:
     // link file not exist
     DFMBASE_NAMESPACE::GlobalEventType showBreakSymlinkDialog(const QString &targetName, const QUrl &linkfile);
     int showAskIfAddExcutableFlagAndRunDialog();
+    void showDeleteSystemPathWarnDialog(quint64 winId);
 
 private:
     explicit DialogManager(QObject *parent = nullptr);
