@@ -7,7 +7,7 @@
 
 #include "views/dfilemanagerwindow.h"
 
-#include "controllers/interface/tagmanagerdaemon_interface.h"
+#include "dbusinterface/tagmanagerdaemon_interface.h"
 
 DFM_USE_NAMESPACE
 

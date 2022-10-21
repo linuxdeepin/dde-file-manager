@@ -18,7 +18,7 @@
 #include <pwd.h>
 
 #include "shareinfo.h"
-#include "../dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
+#include "dbusinterface/usershare_interface.h"
 
 #include "dfilewatchermanager.h"
 #include "dabstractfileinfo.h"

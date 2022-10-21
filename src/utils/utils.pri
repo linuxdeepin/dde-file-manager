@@ -1,8 +1,9 @@
+3RD_UTILS = $$PWD/../../3rdparty/utils
+
 HEADERS += \
     $$PWD/utils.h \
     $$PWD/xutil.h \
     $$PWD/debugobejct.h \
-    $$PWD/qobjecthelper.h \
     $$PWD/singleton.h \
     $$PWD/cryptoutils.h \
     $$PWD/desktopinfo.h \
@@ -16,13 +17,13 @@ HEADERS += \
     $$PWD/rlog/datas/searchreportdata.h \
     $$PWD/rlog/datas/sidebarreportdata.h \
     $$PWD/rlog/datas/filemenureportdata.h \
-    $$PWD/rlog/datas/appstartupreportdata.h
+    $$PWD/rlog/datas/appstartupreportdata.h \
+    $$3RD_UTILS/qobjecthelper.h
 
 SOURCES += \
     $$PWD/utils.cpp \
     $$PWD/xutil.cpp \
     $$PWD/debugobejct.cpp \
-    $$PWD/qobjecthelper.cpp \
     $$PWD/cryptoutils.cpp \
     $$PWD/desktopinfo.cpp \
     $$PWD/grouppolicy.cpp \
@@ -34,4 +35,5 @@ SOURCES += \
     $$PWD/rlog/datas/searchreportdata.cpp \
     $$PWD/rlog/datas/sidebarreportdata.cpp \
     $$PWD/rlog/datas/filemenureportdata.cpp \
-    $$PWD/rlog/datas/appstartupreportdata.cpp
+    $$PWD/rlog/datas/appstartupreportdata.cpp \
+    $$3RD_UTILS/qobjecthelper.cpp

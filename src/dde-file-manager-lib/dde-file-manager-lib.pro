@@ -81,7 +81,8 @@ include(extensionimpl/extensionimpl.pri)
 
 include(searchservice/searchservice.pri)
 TR_EXCLUDE += /usr/include/boost/ \
-          $$PWD/searchservice/*
+              $$PWD/searchservice/* \
+              $$PWD/../../3rdparty/fulltext/*
 
 isEqual(ARCH, sw_64){
     DEFINES += SW_LABEL

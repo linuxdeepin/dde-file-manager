@@ -147,9 +147,9 @@ QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 # resolve .gcda merge issue.
 system(find $$OUT_PWD -name "*.gcda" -print0 | xargs -0 rm -f)
 
-#include($$PRJ_FOLDER/3rdparty/googletest/gtest_dependency.pri)
-include($$PRJ_FOLDER/3rdparty/cpp-stub/stub.pri)
-INCLUDEPATH += $$PRJ_FOLDER/3rdparty/stubext
+#include($$PRJ_FOLDER/3rdpart/googletest/gtest_dependency.pri)
+include($$PRJ_FOLDER/3rdpart/cpp-stub/stub.pri)
+INCLUDEPATH += $$PRJ_FOLDER/3rdpart/stubext
 LIBS += -lgcov
 
 unix {

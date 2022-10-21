@@ -61,7 +61,8 @@ SOURCES += \
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
                $$PWD/../utils \
-               $$PWD/../dde-file-manager-lib/interfaces
+               $$PWD/../dde-file-manager-lib/interfaces \
+               $$PWD/../../3rdparty/dbusservice
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"

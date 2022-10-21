@@ -16,5 +16,6 @@ SOURCES += \
     $$PWD/dbusfiledialoghandle.cpp \
     $$PWD/dbusfiledialogmanager.cpp
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD \
+               $$PWD/../../../../3rdparty/dbusservice
 DEFINES += PRO_FILE_PWD=\\\"$$_PRO_FILE_PWD_\\\"
