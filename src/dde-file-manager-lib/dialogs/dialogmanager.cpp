@@ -486,7 +486,7 @@ std::pair<bool, bool> DialogManager::showRenameNameDotBeginDialog()
     d.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
     auto checkBox = new QCheckBox(tr("Don't ask again"));
     d.insertContent(0, checkBox);
-    d.addButton(tr("Hide"), true, DDialog::ButtonWarning);
+    d.addButton(tr("Hide"), true, DDialog::ButtonRecommend);
     d.addButton(tr("Cancel"));
 
     d.setDefaultButton(1);
