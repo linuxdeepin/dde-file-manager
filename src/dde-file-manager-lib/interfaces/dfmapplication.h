@@ -51,6 +51,7 @@ public:
         GA_AutoMountAndOpen, // 自动挂载并打开硬盘设备
         GA_MTPShowBottomInfo, // mtp 挂载时显示底部数据统计
         GA_AlwaysShowOfflineRemoteConnections, // 始终显示离线的远程挂载（目前只包括 smb 挂载常驻）
+        GA_MergeTheEntriesOfSambaSharedFolders, // 合并显示Samba共享目录入口
         GA_OverrideFileChooserDialog, // 将DDE文件管理器作为应用选择文件时的对话框
         GA_ShowedHiddenOnSearch, // 搜索时显示隐藏文件
         GA_ShowedHiddenFiles, // 显示隐藏文件

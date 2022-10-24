@@ -263,7 +263,8 @@ HEADERS += \
     $$PWD/diskpwdmanager/changeresultwidget.h \
     $$PWD/diskpwdmanager/pwdconfirmwidget.h \
     $$PWD/diskpwdmanager/diskpwdchangedialog.h \
-    $$PWD/diskpwdmanager/globaldefine.h
+    $$PWD/diskpwdmanager/globaldefine.h \
+    $$PWD/shutil/smbintegrationswitcher.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -488,7 +489,8 @@ SOURCES += \
     $$PWD/diskpwdmanager/progresswidget.cpp \
     $$PWD/diskpwdmanager/changeresultwidget.cpp \
     $$PWD/diskpwdmanager/pwdconfirmwidget.cpp \
-    $$PWD/diskpwdmanager/diskpwdchangedialog.cpp
+    $$PWD/diskpwdmanager/diskpwdchangedialog.cpp \
+    $$PWD/shutil/smbintegrationswitcher.cpp
 
 CONFIG(ENABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h

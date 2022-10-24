@@ -8,8 +8,10 @@
 #include <sys/stat.h>
 #include <QLineEdit>
 
+#include "app/define.h"
 #include "models/computermodel.h"
 #include "shutil/fileutils.h"
+#include "shutil/smbintegrationswitcher.h"
 #include "computerviewitemdelegate.h"
 #include "dfmapplication.h"
 
@@ -147,7 +149,7 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     ComputerModelItemData* itemData = static_cast<ComputerModelItemData *>(index.internalPointer());
     QString smbHost;
     bool isSmbHost = false;
-    if(itemData && FileUtils::isSmbRelatedUrl(itemData->url,smbHost)){
+    if(smbIntegrationSwitcher->isIntegrationMode() && itemData && FileUtils::isSmbRelatedUrl(itemData->url,smbHost)){
         text = smbHost;//SMB设备只显示host
         isSmbHost = true;
     }

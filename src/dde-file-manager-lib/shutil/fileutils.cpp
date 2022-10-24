@@ -5,6 +5,7 @@
 #include "gvfs/gvfsmountmanager.h"
 
 #include "fileutils.h"
+#include "smbintegrationswitcher.h"
 
 #include "views/windowmanager.h"
 
@@ -1986,6 +1987,9 @@ bool FileUtils::isSmbPath(const QString &localPath)
  */
 bool FileUtils::isSmbShareFolder(const DUrl &url)
 {
+    if(!smbIntegrationSwitcher->isIntegrationMode())
+        return false;
+
     DUrl temUrl = url;
     if(url.scheme() == DFMROOT_SCHEME){
         QString urlString = url.toString();
@@ -1993,10 +1997,10 @@ bool FileUtils::isSmbShareFolder(const DUrl &url)
         temUrl = DUrl(urlString);
     }
     QString path = temUrl.path();
-    if(path.endsWith('/') || path.endsWith('\\')){
+    if(path.endsWith('/') || path.endsWith('\\'))
         path.chop(1);
-    }
-    bool result = temUrl.scheme() == SMB_SCHEME && !path.isEmpty() && path.startsWith('/') && path.count("/") == 1;
+
+    bool result = temUrl.scheme() == SMB_SCHEME && path.startsWith('/') && path.count("/") == 1;
     return result;
 }
 
@@ -2042,11 +2046,14 @@ bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
 
 /**
  * @brief FileUtils::isSmbHostOnly 判断url格式是否为smb://host或者smb://domain格式
+ * 该函数仅在smb聚合模式下使用，所以非smb聚合模式则直接返回false。
  * @param url
  * @return
  */
 bool FileUtils::isSmbHostOnly(const DUrl &url)
 {
+    if(!smbIntegrationSwitcher->isIntegrationMode())
+        return false;
     if(url.scheme() != SMB_SCHEME)
         return false;
     QString urlString = url.toString();
