@@ -113,7 +113,7 @@ private:
      * @param msg                obex 返回的错误信息
      * @return                   可读性处理后的字符串
      */
-    QString humanizedStrOfObexErrMsg(const QString &msg);
+    static QString humanizedStrOfObexErrMsg(const QString &msg);
     void setNextButtonEnable(bool enable);
 
 private Q_SLOTS:
