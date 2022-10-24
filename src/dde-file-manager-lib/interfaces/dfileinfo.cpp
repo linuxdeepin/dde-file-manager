@@ -1070,6 +1070,12 @@ QString DFileInfo::iconName() const
     if (systemPathManager->isSystemPath(absoluteFilePath()))
         return systemPathManager->getSystemPathIconNameByPath(absoluteFilePath());
 
+    // use gio func to access iconname
+    const QUrl &url = fileUrl();
+    const QString &name = FileUtils::iconNameFromGio(url);
+    if (!name.isEmpty())
+        return name;
+
     return DAbstractFileInfo::iconName();
 }
 
