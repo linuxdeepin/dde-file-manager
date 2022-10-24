@@ -27,7 +27,6 @@
 #include <QPalette>
 #include <QSvgWidget>
 #include <QUuid>
-#include <QTimer>
 
 #define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
 #define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
@@ -136,8 +135,6 @@ QString BluetoothTransDialog::humanizedStrOfObexErrMsg(const QString &msg)
         return tr("File sending request timed out");
     } else if (msg.contains("0x53")) {
         return tr("The service is busy and unable to process the request");
-    } else if (msg.contains("device not connected")) {
-        return TXT_ERROR_REASON;
     } else { // ...TO BE CONTINUE
         return msg;
     }
@@ -325,9 +322,8 @@ void BluetoothTransDialog::initConn()
             m_stack->setCurrentIndex(SelectDevicePage);
         else
             m_stack->setCurrentIndex(NoneDevicePage);
-        QTimer::singleShot(150, this, [=]{
-            dialogManager->showErrorDialog(TITLE_BT_TRANS_FAIL, humanizedStrOfObexErrMsg(errMsg));
-        });
+
+        dialogManager->showErrorDialog(TITLE_BT_TRANS_FAIL, humanizedStrOfObexErrMsg(errMsg));
     });
 }
 
