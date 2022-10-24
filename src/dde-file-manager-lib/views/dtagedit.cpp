@@ -16,7 +16,6 @@
 #include <QObject>
 #include <QKeyEvent>
 #include <QApplication>
-#include <QTextList>
 
 DTagEdit::DTagEdit(QWidget *const parent)
     : DArrowRectangle{ DArrowRectangle::ArrowTop,  parent }
@@ -56,8 +55,8 @@ void DTagEdit::setDefaultCrumbs(const QStringList &list)
 void DTagEdit::onFocusOut()
 {
     if (m_flagForShown.load(std::memory_order_acquire)) {
-        if (!m_crumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter).isEmpty())
-            m_crumbEdit->appendCrumb(m_crumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter));
+        if (!m_crumbEdit->toPlainText().isEmpty() && m_crumbEdit->textCursor().position() > m_crumbEdit->crumbList().length())
+            m_crumbEdit->appendCrumb(m_crumbEdit->toPlainText());
         this->processTags();
         this->close();
     }
@@ -143,29 +142,6 @@ void DTagEdit::initializeConnect()
             processTags();
         }
     });
-
-    QObject::connect(m_crumbEdit, &QTextEdit::textChanged, this, [=]{
-        QString srcTcxt =  m_crumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter);
-        QRegExp rx("[\\\\/\':\\*\\?\"<>|%&]");
-        if (!srcTcxt.isEmpty() && srcTcxt.contains(rx)) {
-            QList<QString> tagList{ m_crumbEdit->crumbList() };
-            m_crumbEdit->textCursor().document()->setPlainText(srcTcxt.remove(rx));
-
-            QMap<QString, QColor> tagsColors {tagsColor(tagList)};
-            m_crumbEdit->setProperty("updateCrumbsColor", true);
-            for (auto it = tagsColors.begin(); it != tagsColors.end(); ++it) {
-                DCrumbTextFormat format = m_crumbEdit->makeTextFormat();
-                format.setText(it.key());
-
-                format.setBackground(QBrush(it.value()));
-                format.setBackgroundRadius(5);
-
-                m_crumbEdit->insertCrumb(format, 0);
-            }
-            m_crumbEdit->setProperty("updateCrumbsColor", false);
-        }
-    });
-
 }
 
 void DTagEdit::processTags()
