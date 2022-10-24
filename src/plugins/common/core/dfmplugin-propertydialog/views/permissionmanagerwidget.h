@@ -42,7 +42,7 @@ class PermissionManagerWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
     Q_OBJECT
 public:
     explicit PermissionManagerWidget(QWidget *parent = nullptr);
-    ~PermissionManagerWidget();
+    ~PermissionManagerWidget() override;
 
 public:
     void selectFileUrl(const QUrl &url);

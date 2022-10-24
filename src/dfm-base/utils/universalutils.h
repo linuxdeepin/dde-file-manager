@@ -34,7 +34,6 @@ namespace dfmbase {
 class UniversalUtils
 {
 public:
-    static int registerEventType() noexcept;
     static bool inMainThread();
     static void notifyMessage(const QString &msg);
     static void notifyMessage(const QString &title, const QString &msg);

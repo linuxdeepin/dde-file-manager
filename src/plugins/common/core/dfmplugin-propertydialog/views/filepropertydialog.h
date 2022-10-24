@@ -47,40 +47,28 @@ public:
     explicit FilePropertyDialog(QWidget *parent = nullptr);
     virtual ~FilePropertyDialog() override;
 
-private:
-    void initInfoUI();
-
-    void createHeadUI(const QUrl &url);
-
-    void createBasicWidget(const QUrl &url);
-
-    void createPermissionManagerWidget(const QUrl &url);
-
-    void viewControlFilter(const QUrl &url);
-
-    int contentHeight();
-
 public:
     void selectFileUrl(const QUrl &url);
-
+    void filterControlView();
     qint64 getFileSize();
-
     int getFileCount();
 
 public slots:
-
     void processHeight(int height);
-
     void insertExtendedControl(int index, QWidget *widget);
-
     void addExtendedControl(QWidget *widget);
-
     void closeDialog();
-
     void onSelectUrlRenamed(const QUrl &url);
 
 signals:
     void closed(const QUrl url);
+
+private:
+    void initInfoUI();
+    void createHeadUI(const QUrl &url);
+    void createBasicWidget(const QUrl &url);
+    void createPermissionManagerWidget(const QUrl &url);
+    int contentHeight();
 
 protected:
     virtual void mousePressEvent(QMouseEvent *event) override;

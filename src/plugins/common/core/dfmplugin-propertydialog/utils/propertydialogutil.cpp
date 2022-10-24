@@ -78,6 +78,7 @@ void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls)
             if (!filePropertyDialogs.contains(url)) {
                 FilePropertyDialog *dialog = new FilePropertyDialog();
                 dialog->selectFileUrl(url);
+                dialog->filterControlView();
                 filePropertyDialogs.insert(url, dialog);
                 createControlView(url);
                 connect(dialog, &FilePropertyDialog::closed, this, &PropertyDialogUtil::closeFilePropertyDialog);

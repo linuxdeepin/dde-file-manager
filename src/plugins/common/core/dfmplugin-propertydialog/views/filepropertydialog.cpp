@@ -72,7 +72,7 @@ void FilePropertyDialog::initInfoUI()
 
     QFrame *mainWidget = new QFrame(this);
     QVBoxLayout *scrollWidgetLayout = new QVBoxLayout;
-    scrollWidgetLayout->setContentsMargins(10, 0, 10, 20);
+    scrollWidgetLayout->setContentsMargins(10, 0, 10, 30);
     scrollWidgetLayout->setSpacing(kArrowExpandSpacing);
     scrollWidgetLayout->addStretch();
     mainWidget->setLayout(scrollWidgetLayout);
@@ -119,22 +119,22 @@ void FilePropertyDialog::createPermissionManagerWidget(const QUrl &url)
 {
     permissionManagerWidget = new PermissionManagerWidget(this);
     permissionManagerWidget->selectFileUrl(url);
-    addExtendedControl(permissionManagerWidget);
+    insertExtendedControl(INT_MAX, permissionManagerWidget);
 }
 
-void FilePropertyDialog::viewControlFilter(const QUrl &url)
+void FilePropertyDialog::filterControlView()
 {
-    PropertyFilterType controlFilter = PropertyDialogManager::instance().basicFiledFiltes(url);
+    PropertyFilterType controlFilter = PropertyDialogManager::instance().basicFiledFiltes(currentFileUrl);
     if ((controlFilter & PropertyFilterType::kIconTitle) < 1) {
-        createHeadUI(url);
+        createHeadUI(currentFileUrl);
     }
 
     if ((controlFilter & PropertyFilterType::kBasisInfo) < 1) {
-        createBasicWidget(url);
+        createBasicWidget(currentFileUrl);
     }
 
     if ((controlFilter & PropertyFilterType::kPermission) < 1) {
-        createPermissionManagerWidget(url);
+        createPermissionManagerWidget(currentFileUrl);
     }
 }
 
@@ -160,7 +160,6 @@ int FilePropertyDialog::contentHeight()
 void FilePropertyDialog::selectFileUrl(const QUrl &url)
 {
     currentFileUrl = url;
-    viewControlFilter(url);
 }
 
 qint64 FilePropertyDialog::getFileSize()

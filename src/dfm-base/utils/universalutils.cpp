@@ -105,16 +105,6 @@ bool UniversalUtils::isLogined()
 }
 
 /*!
- * \brief register EventType
- * \return -1 if all available values are already taken or the
- *  program is shutting down.
- */
-Q_DECL_DEPRECATED int UniversalUtils::registerEventType() noexcept
-{
-    return DPF_NAMESPACE::genCustomEventId();
-}
-
-/*!
  * \brief UniversalUtils::inMainThread
  * \return true if in main thread
  */
