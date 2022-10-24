@@ -468,7 +468,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup.at(0)->setContent(m_basicInfoFrame);
 
-        if (fileInfo->isDir()) {
+        if (fileInfo->isDir() && !FileUtils::isArchiveByMimetype(fileInfo->mimeTypeName())) {
             if (fileInfo->canShare()) {
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
                 m_expandGroup.at(1)->setContent(m_shareinfoFrame);
@@ -1224,7 +1224,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
 
-    if (info->isDir()) {
+    if (info->isDir() && !FileUtils::isArchiveByMimetype(info->mimeTypeName())) {
         SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
         layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
