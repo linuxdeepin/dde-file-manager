@@ -23,7 +23,7 @@
  * (so no more than logFilesLimit recent log files exist in the directory at any moment).
  * \sa setDatePattern(DatePattern), setLogFilesLimit(int)
  */
-class CUTELOGGERSHARED_EXPORT FilterAppender : public DTK_CORE_NAMESPACE::FileAppender
+class LIBDTKCORESHARED_EXPORT FilterAppender : public DTK_CORE_NAMESPACE::FileAppender
 {
 public:
     /*!
