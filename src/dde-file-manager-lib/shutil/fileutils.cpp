@@ -2300,11 +2300,6 @@ QList<QStringList> FileUtils::catFstabFileInfo(const QString &grepData)
     return listMountInfo;
 }
 
-bool FileUtils::isArchiveByMimetype(const QString &mimetype)
-{
-    return mimeTypeDisplayManager->supportArchiveMimetypes().contains(mimetype);
-}
-
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {
