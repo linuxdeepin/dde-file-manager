@@ -999,8 +999,9 @@ bool LocalFileHandler::doOpenFiles(const QList<QUrl> &urls, const QString &deskt
     }
 
     QStringList appArgs;
-    for (const QUrl &url : transUrls)
-        appArgs << QUrl::fromPercentEncoding(url.toString().toLocal8Bit());
+    for (const QUrl &url : transUrls) {
+        appArgs << url.toString();
+    }
 
     bool result = launchApp(defaultDesktopFile, appArgs);
     if (result) {
