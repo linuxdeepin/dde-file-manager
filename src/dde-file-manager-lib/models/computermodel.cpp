@@ -23,7 +23,6 @@
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
-#include "shutil/smbintegrationswitcher.h"
 #include "vault/vaulthelper.h"
 #include "computermodel.h"
 #include "utils.h"
@@ -63,7 +62,6 @@ ComputerModel::ComputerModel(QObject *parent)
                     addItem(chi->fileUrl());
                 } else {
                     //跳过smb挂载或缓存项，后面单独创建聚合项
-                if(smbIntegrationSwitcher->isIntegrationMode()){
                     QString smbIp;
                     FileUtils::isSmbRelatedUrl(chi->fileUrl(),smbIp);
                     if (!smbIp.isEmpty()){
@@ -74,7 +72,6 @@ ComputerModel::ComputerModel(QObject *parent)
                             continue;
                         }
                     }
-                }
 
                     addRootItem(chi);
                     if (chi->fileUrl().path().contains("sr"))
@@ -83,12 +80,10 @@ ComputerModel::ComputerModel(QObject *parent)
             }
 
             //最后添加smb聚合设备
-            if (smbIntegrationSwitcher->isIntegrationMode()) {
-                QStringList m_smbDevices = RemoteMountsStashManager::stashedSmbDevices();
-                foreach(const QString &smbDevice, m_smbDevices){
-                    DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(smbDevice));
-                    addRootItem(fi);
-                }
+            QStringList m_smbDevices = RemoteMountsStashManager::stashedSmbDevices();
+            foreach(const QString &smbDevice, m_smbDevices){
+                DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(smbDevice));
+                addRootItem(fi);
             }
 
             if (!m_isQueryRootFileFinshed) {
@@ -179,21 +174,20 @@ ComputerModel::ComputerModel(QObject *parent)
         m_watcher = DRootFileManager::instance()->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this, addComputerItem](const DUrl &url) {
-            if(smbIntegrationSwitcher->isIntegrationMode()){
-                QString smbIp;
-                FileUtils::isSmbRelatedUrl(url,smbIp);
-                if (!smbIp.isEmpty()){
-                    DUrl smbDevice(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
-                    if(isSmbItemExisted(smbDevice))//smb device is already added
-                        return;
-                    else{
-                        //DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(url));//如果url的scheme是smb，则使用的是NetworkController::createFileInfo
-                        //addRootItem(fi);
-                        addComputerItem(smbDevice);
-                        return;
-                    }
+            QString smbIp;
+            FileUtils::isSmbRelatedUrl(url,smbIp);
+            if (!smbIp.isEmpty()){
+                DUrl smbDevice(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
+                if(isSmbItemExisted(smbDevice))//smb device is already added
+                    return;
+                else{
+                    //DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(url));//如果url的scheme是smb，则使用的是NetworkController::createFileInfo
+                    //addRootItem(fi);
+                    addComputerItem(smbDevice);
+                    return;
                 }
             }
+
             addComputerItem(url);
             if (url.path().contains("sr"))
                 emit opticalChanged();
@@ -723,7 +717,7 @@ void ComputerModel::onOpticalChanged()
 bool ComputerModel::isSmbItemExisted(const DUrl &smbDevice)
 {
     int index = findItem(smbDevice);
-    return index >=0 && smbIntegrationSwitcher->isIntegrationMode();
+    return index >=0;
 }
 
 void ComputerModel::getRootFile()
@@ -823,10 +817,8 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
         data.widget = w;
     } else {
         //这里不用去创建fileinfo，已经缓存了rootfileinfo //get root file info cache
-        bool condition = smbIntegrationSwitcher->isIntegrationMode() ?
-                    url.toString().startsWith(QString("%1://").arg(SMB_SCHEME)) :
-                    url.toString().endsWith(SUFFIX_GVFSMP);
-        if (condition)
+//        if (url.toString().endsWith(SUFFIX_GVFSMP))
+        if (url.toString().startsWith("smb://"))
         {
             const DAbstractFileInfoPointer &info = DRootFileManager::getFileInfo(url);
             if (info) {

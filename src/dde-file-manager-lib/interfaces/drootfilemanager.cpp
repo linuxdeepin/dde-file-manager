@@ -24,7 +24,6 @@
 #include "plugins/schemepluginmanager.h"
 #include "utils/grouppolicy.h"
 #include "controllers/dfmrootcontroller.h"
-#include "shutil/smbintegrationswitcher.h"
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
@@ -140,11 +139,12 @@ void DRootFileManager::changeRootFile(const DUrl &fileurl, const bool bcreate)
             }
         }
     } else {
+        qDebug() << "  remove   " << d_ptr->rootfilelist;
         bool isRemoded = false;
         if (d_ptr->rootfilelist.contains(fileurl)) {
             isRemoded = d_ptr->rootfilelist.remove(fileurl)>=1;
         }
-        if(smbIntegrationSwitcher->isIntegrationMode() && !isRemoded){//当配置成smb常驻时，d_ptr->rootfilelist中保存的是：dfmroot:///smb://host/share_folder.remote
+        if(!isRemoded){//当配置成smb常驻时，d_ptr->rootfilelist中保存的是：dfmroot:///smb://host/share_folder.remote
             QString path = QUrl::fromPercentEncoding(fileurl.path().toUtf8());
             if (path.contains(QString(".%1").arg(SUFFIX_GVFSMP)) && path.contains("gvfs/smb-share:server=") && path.contains(",share=")) {
                 QString host = path.section("server=",-1).section(",",0,0);
@@ -292,7 +292,7 @@ bool DRootFileManager::isRootFileContainSmb(const DUrl &smburl)
     DUrl temUrl = smburl;
     if(smburl.scheme() == "smb")
         temUrl = DUrl(QString("%1%2").arg(DFMROOT_ROOT).arg(smburl.toString()));
-    const QString &smburlPath = smbIntegrationSwitcher->isIntegrationMode() ? temUrl.path() : smburl.path();
+    const QString &smburlPath = temUrl.path();//smburl.path();
     if(!FileUtils::isSmbPath(smburlPath))
         return false;
 
