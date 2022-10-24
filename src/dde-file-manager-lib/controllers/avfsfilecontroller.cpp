@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "avfsfilecontroller.h"
-#include "../app/filesignalmanager.h"
-#include "../app/define.h"
-#include "singleton.h"
+#include "app/filesignalmanager.h"
+#include "app/define.h"
+#include "utils/singleton.h"
 #include "interfaces/dfileinfo.h"
 #include "dfmstandardpaths.h"
 #include <QStandardPaths>
