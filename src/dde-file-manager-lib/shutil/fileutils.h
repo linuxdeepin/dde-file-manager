@@ -168,6 +168,7 @@ public:
     static QList<QStringList> bindPathInfo(const QString &grepData);
 
     static QList<QStringList> catFstabFileInfo(const QString &mountPoint);
+    static bool isArchiveByMimetype(const QString &mimetype);
 };
 
 #endif // FILEUTILS_H
