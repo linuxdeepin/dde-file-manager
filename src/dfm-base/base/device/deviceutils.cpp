@@ -30,6 +30,7 @@
 #include <QVector>
 #include <QDebug>
 #include <QRegularExpressionMatch>
+#include <QMutex>
 
 #include <libmount.h>
 #include <fstab.h>
@@ -196,10 +197,12 @@ bool DeviceUtils::isFtp(const QUrl &url)
 
 QMap<QString, QString> DeviceUtils::fstabBindInfo()
 {
+    static QMutex mutex;
     static QMap<QString, QString> table;
     struct stat statInfo;
     int result = stat("/etc/fstab", &statInfo);
 
+    QMutexLocker locker(&mutex);
     if (0 == result) {
         static quint32 lastModify = 0;
         if (lastModify != statInfo.st_mtime) {

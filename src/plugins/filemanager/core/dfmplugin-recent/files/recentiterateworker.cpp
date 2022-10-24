@@ -25,6 +25,7 @@
 #include "files/recentfileinfo.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QDir>
 #include <QXmlStreamReader>
@@ -61,9 +62,10 @@ void RecentIterateWorker::doWork()
 
             if (!location.isEmpty()) {
                 QUrl url = QUrl(location.toString());
-                QFileInfo info(url.toLocalFile());
-                if (info.exists() && info.isFile()) {
-                    QUrl recentUrl = url;
+                auto info = InfoFactory::create<AbstractFileInfo>(url);
+                if (info && info->exists() && info->isFile()) {
+                    const auto &bindPath = FileUtils::bindPathTransform(info->absoluteFilePath(), false);
+                    QUrl recentUrl = QUrl::fromLocalFile(bindPath);
                     recentUrl.setScheme(RecentManager::scheme());
                     qint64 readTimeSecs = QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch();
                     urlList.append(recentUrl);
