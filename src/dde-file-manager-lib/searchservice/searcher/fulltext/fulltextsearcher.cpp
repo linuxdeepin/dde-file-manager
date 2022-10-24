@@ -296,7 +296,7 @@ bool FullTextSearcherPrivate::updateIndex(const QString &path)
         IndexReaderPtr reader = newIndexReader();
         IndexWriterPtr writer = newIndexWriter();
 
-        doIndexTask(reader, writer, path, kUpdate);
+        doIndexTask(reader, writer, tmpPath, kUpdate);
 
         writer->close();
         reader->close();
