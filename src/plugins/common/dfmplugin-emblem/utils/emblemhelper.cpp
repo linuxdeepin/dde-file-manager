@@ -22,6 +22,7 @@
 #include "emblemhelper.h"
 
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/event/event.h>
@@ -65,7 +66,7 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
     QMap<int, QIcon> emblemsMap;
 
     // use AbstractFileInfo to access emblems, avoid query again
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->url());
+    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->url(), false);
     QStringList emblemData = fileInfo->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
 
     if (emblemData.isEmpty())
@@ -130,13 +131,13 @@ bool EmblemHelper::parseEmblemString(QIcon &emblem, QString &pos, const QString 
         if (imgPath.startsWith("~/"))
             imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 
-        DecoratorFileInfo fileInfo(imgPath);
-
-        if (fileInfo.exists()) {
-            if (fileInfo.size() > 102400)   // size small than 100kb
+        DecoratorFile dfile(imgPath);
+        if (dfile.exists()) {
+            if (dfile.size() > 102400)   // size small than 100kb
                 return false;
 
-            QString suffix = fileInfo.completeSuffix();
+            auto info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(imgPath));
+            const QString &suffix = info->completeSuffix();
             // check support type
             if (suffix != "svg" && suffix != "png" && suffix != "gif" && suffix != "bmp" && suffix != "jpg")
                 return false;

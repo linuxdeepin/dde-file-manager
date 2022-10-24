@@ -79,14 +79,7 @@ QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
     }
 
     emblemList.append(extendEmblems);
-
-    QMap<int, QIcon> gioEmblemsMap;
-    if (info->emblemsInited()) {
-        gioEmblemsMap = info->emblems();
-    } else {
-        gioEmblemsMap = helper->getGioEmblems(info);
-        info->setEmblems(gioEmblemsMap);
-    }
+    const auto &gioEmblemsMap = helper->getGioEmblems(info);
 
     QMap<int, QIcon>::const_iterator iter = gioEmblemsMap.begin();
     while (iter != gioEmblemsMap.end()) {
