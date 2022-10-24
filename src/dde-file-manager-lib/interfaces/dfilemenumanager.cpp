@@ -21,7 +21,6 @@
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
 #include "shutil/danythingmonitorfilter.h"
-#include "shutil/smbintegrationswitcher.h"
 #include "controllers/pathmanager.h"
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
@@ -214,28 +213,28 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     DUrlList redirectedUrlList;
     if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
-        bool isMounted = false;
-        if (FileUtils::isSmbShareFolder(currentUrl)) {
+        bool isSmbSharedDir = FileUtils::isSmbShareFolder(currentUrl);
+        if (isSmbSharedDir) {
+            bool isMounted = false;
             for (auto gvfsmp : DGioVolumeManager::getMounts()) {//遍历当前挂载
                 auto rootFile = gvfsmp->getRootFile();
                 if (!rootFile)
                     continue;
 
                 bool isSmb = FileUtils::isSmbPath(rootFile->path());
-                if(!isSmb)
-                    continue;
-                DUrl mountUrl;
-                QString shareName = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kShareName);
-                QString shareHost = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kServer);
-                QString name = currentUrl.path().toLower();//共享文件夹名称转小写
-                QString host = currentUrl.host();
-                if(name.startsWith("/"))
-                    name = name.mid(1);
-                if(name == shareName && host == shareHost){
-                    isMounted =  true;
-                    break;
+                if(isSmb){
+                    DUrl mountUrl;
+                    QString shareName = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kShareName);
+                    QString shareHost = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kServer);
+                    QString name = currentUrl.path().toLower();//共享文件夹名称转小写
+                    QString host = currentUrl.host();
+                    if(name.startsWith("/"))
+                        name = name.mid(1);
+                    if(name == shareName && host == shareHost){
+                        isMounted =  true;
+                        break;
+                    }
                 }
-
             }
             if (isMounted) {//Menu show unmount item
                 actions << MenuAction::Unmount;

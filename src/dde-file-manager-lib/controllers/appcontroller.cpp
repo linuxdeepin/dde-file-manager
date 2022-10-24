@@ -72,8 +72,7 @@
 #include "tag/tagutil.h"
 #include "tag/tagmanager.h"
 #include "shutil/shortcut.h"
-#include "shutil/smbintegrationswitcher.h"
-
+//#include "views/dbookmarkitem.h"
 #include "models/desktopfileinfo.h"
 #include "models/dfmrootfileinfo.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
@@ -98,7 +97,7 @@ using iterator = typename QList<Ty>::iterator;
 template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
-static const char *empty_recent_file =
+const char *empty_recent_file =
     R"|(<?xml version="1.0" encoding="UTF-8"?>
         <xbel version="1.0"
         xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
@@ -221,7 +220,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
         }
     }else{
         QString ip;
-        if (smbIntegrationSwitcher->isIntegrationMode() && FileUtils::isSmbRelatedUrl(fileUrl,ip)) {
+        if(FileUtils::isSmbRelatedUrl(fileUrl,ip)){
             QWidget *p = WindowManager::getWindowById(event->windowId());
             if (p) {
                 DUrl url;
@@ -801,7 +800,7 @@ void AppController::doActionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event
         }
     }else if (fileUrl.scheme() == SMB_SCHEME && FileUtils::isSmbShareFolder(fileUrl)) {///处理对smb设备根目录下共享文件夹的卸载操作 - start
         //todo(zhuangshu):对于相同的远端共享目录，采用不同的参数去挂载，会在/run/user/1000/gvfs/下面生成多个映射目录，
-        //而此处只能卸载其中的一个(除非用户选择卸载所有)，所以此处需要考虑把gvfs目录下面该IP的所有远端共享目录都卸载，
+        //而此处只能卸载其中的一个(除非用户选择卸载所有)，所以此处需要考虑把gvfs目录下面的所有远端共享目录都卸载，
         //而且不能仅通过ip和username判断，因为用域名也可以挂载
         QString path = fileUrl.path();
         path = path.startsWith('/') ? path.mid(1) : path;
@@ -1181,7 +1180,6 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
 void AppController::actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     auto path = event->url().path(); // something like "/smb://host/shared-folder.remote"
-    path = RemoteMountsStashManager::normalizeConnUrl(path);
     doRemoveStashedMount(path);
 }
 
@@ -1219,7 +1217,7 @@ void AppController::doRemoveStashedMount(const QString &path)
 void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
     DUrlList urlList = event->urlList();
-    DUrlList smbUnmountlist;//保存需要卸载的smb挂载url
+    DUrlList list;//保存需要卸载的smb挂载url
     if(urlList.count() <= 0){
         qInfo()<<"When unmount all, the urlList is empty.";
         return;
@@ -1240,13 +1238,13 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
             continue;
 
         if (r->fileUrl().toString().endsWith(QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted(r->fileUrl())){
-            smbUnmountlist << r->fileUrl();
+            list << r->fileUrl();
         }
     }
     //设置批量移除smb挂载标志，用途：最后一个卸载后才刷新、跳转到计算机界面
     deviceListener->setBatchedRemovingSmbMount(true);
     //若侧边栏有SMB挂载子项，但并没有已挂载的SMB文件夹
-    for (DUrl url : smbUnmountlist) {
+    foreach (DUrl url, list) {
         QString smbLocalPath = QString("/run/user/%1/gvfs").arg(getuid())+QUrl::fromPercentEncoding(url.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
         QString smbUser = FileUtils::smbAttribute(smbLocalPath,FileUtils::SmbAttribute::kUser);
         QString smbDomain = FileUtils::smbAttribute(smbLocalPath,FileUtils::SmbAttribute::kDomain);
@@ -1269,13 +1267,16 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
         unmountPath.chop(1);
         doRemoveStashedMount(unmountPath);//这里需要移除缓存
     }
-    //如果smbUnmountlist.isEmpty()，则下面需从侧边栏移除SMB聚合子项
-    if (smbUnmountlist.isEmpty()) {
+    //如果list.isEmpty()，则下面需主动从侧边栏移除SMB挂载子项
+    DFileManagerWindow* managerWindow = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(event->windowId()));
+    if (managerWindow && list.isEmpty()) {
         QTimer::singleShot(125, [=]() {
-            //若smbUnmountlist为空，则没有执行上述代码的smb目录卸载操作，这里需主动跳转到计算机页面，
-            //对应场景：用户只是在地址栏输入了smb://x.x.x.x，但是没有做目录挂载操作；
+        //如果前面没有smb目录卸载操作，在这里主动跳转到计算机页面;（场景：用户只是在地址栏输入了smb host，但是没有做目录挂载操作）
+        //反之则在侧边栏的fileDeleted中槽函数中触发界面跳转
+        //如果上述没有发生挂载目录的卸载操作，则不会触发卸载通知，因此在这里主动移除smb挂载聚合项
             RemoteMountsStashManager::removeStashedSmbDevice(eventUrl.toString());
             emit rootFileManager->rootFileWather()->fileDeleted(eventUrl);//多个打开的窗口同步移除smb挂载聚合项
+            managerWindow->getLeftSideBar()->jumpToItem(DUrl(COMPUTER_ROOT));
             emit DFMApplication::instance()->reloadComputerModel();//刷新计算机界面上的smb聚合设备
         });
     }
@@ -1292,6 +1293,7 @@ void AppController::actionForgetAllSmbPassword(const QSharedPointer<DFMUrlListBa
     //1、取消记住密码
     foreach (DUrl url, urlList) {
         if(FileUtils::isSmbRelatedUrl(url,smbIp)){
+//            DUrl temUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
             secretManager->clearPassworkBySmbHost(url);
             break;
         }

@@ -20,7 +20,6 @@ DISOMasterNS::DISOMaster *getDISOMaster(bool doContruct = false);
 QMutex *getOpticalDriveMutex();
 
 #define rlog RLog::instance()
-#define smbIntegrationSwitcher SmbIntegrationSwitcher::instance()
 #define bluetoothManager BluetoothManager::instance()
 #define searchHistoryManager  Singleton<SearchHistroyManager>::instance()
 #define bookmarkManager  Singleton<BookMarkManager>::instance()

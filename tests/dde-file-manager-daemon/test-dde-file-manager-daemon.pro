@@ -17,7 +17,7 @@ TARGET = test-dde-file-manager-daemon
 CONFIG   += console
 CONFIG   -= app_bundle
 
-PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 udisks2-qt5 libcryptsetup
+PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 udisks2-qt5
 CONFIG(release, release|debug) {
     PKGCONFIG += dtkwidget
 } else {

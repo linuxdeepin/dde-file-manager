@@ -16,7 +16,6 @@
 
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
-#include "shutil/smbintegrationswitcher.h"
 #include "../controllers/searchhistroymanager.h"
 #include "utils/utils.h"
 
@@ -199,11 +198,13 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             }
         }
         qDebug() << error->message;
-        const QString &mountUrl = event->fileUrl().toString();
+        QString test = event->fileUrl().toString();
         MountStatus status = gvfsMountManager->mount_sync(*event);
-        if(smbIntegrationSwitcher->isIntegrationMode() && status == MountStatus::MOUNT_SUCCESS){
-            if (FileUtils::isSmbShareFolder(DUrl(mountUrl)))
-                RemoteMountsStashManager::insertStashedSmbDevice("smb://"+DUrl(mountUrl).host());//挂载成功后，添加smb聚合设备到配置文件中
+        if(status == MountStatus::MOUNT_SUCCESS){
+            bool re = FileUtils::isSmbShareFolder(DUrl(test));
+            if(re){
+                RemoteMountsStashManager::insertStashedSmbDevice("smb://"+DUrl(test).host());//挂载成功后，添加smb聚合设备到配置中
+            }
         }
         g_clear_error(&error);
         if(status == MOUNT_SUCCESS){

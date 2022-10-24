@@ -16,8 +16,6 @@
 #include "utils.h"
 #include "searchservice/searchservice.h"
 #include "rlog/rlog.h"
-#include "shutil/smbintegrationswitcher.h"
-#include "app/define.h"
 #include "rlog/datas/searchreportdata.h"
 
 #include <QCoreApplication>
@@ -101,21 +99,13 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             gsGlobal->sync();   // cause later invocations may update the config file, so sync the config before.
             //smb挂载聚合功能实现后，这里无需刷新计算机界面以及调用stashCurrentMounts();
             //因为现在smb挂载项是否常驻的区别在于：最后一个挂载项移除之后，是否移除smb聚合项
-            if (!smbIntegrationSwitcher->isIntegrationMode()) {
-                if (value.toBool()) // stash all mounted remote connections
-                    RemoteMountsStashManager::stashCurrentMounts();
-                else // remove all stashed remote connections
-                    RemoteMountsStashManager::clearRemoteMounts();
-
-                Q_EMIT self->reloadComputerModel();
+            if (value.toBool()) {   // stash all mounted remote connections
+                //RemoteMountsStashManager::stashCurrentMounts();
+            } else {   // remove all stashed remote connections
+                RemoteMountsStashManager::clearRemoteMounts();
             }
+            //Q_EMIT self->reloadComputerModel();
             break;
-        case DFMApplication::GA_MergeTheEntriesOfSambaSharedFolders: {
-            // 响应用户手动设置smb聚合/分离模式
-            smbIntegrationSwitcher->switchIntegrationMode(value.toBool());
-            Q_EMIT smbIntegrationSwitcher->smbIntegrationModeChanged(value.toBool());
-            Q_EMIT self->reloadComputerModel();
-        } break;
         case DFMApplication::GA_HideLoopPartitions:
             Q_EMIT self->reloadComputerModel();
             break;
