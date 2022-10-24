@@ -236,7 +236,7 @@ void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
 bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (index.isValid()) {
-        if (event->type() == QEvent::MouseButtonRelease) {
+        if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease || event->type() == QEvent::MouseButtonDblClick) {
             QMouseEvent *e = static_cast<QMouseEvent *>(event);
             if (e->button() == Qt::LeftButton) {
                 QStandardItem *item = qobject_cast<const SideBarModel *>(model)->itemFromIndex(index);
@@ -250,14 +250,14 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                 QRect expandBtRect(option.rect.width() - 40, option.rect.topRight().y() + 4, 24, 24);
                 QRect ejectBtRect(option.rect.bottomRight() + QPoint(-28, -26), option.rect.bottomRight() + QPoint(-kItemMargin, -kItemMargin));
                 QPoint pos = e->pos();
-                if (separatorItem && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
+                if (event->type() != QEvent::MouseButtonRelease && separatorItem && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
                     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
                     if (sidebarView)
                         Q_EMIT changeExpandState(index, !sidebarView->isExpanded(index));
 
                     event->accept();
                     return true;
-                } else if (ejectable && ejectBtRect.contains(pos)) {   //The eject icon is pressed.
+                } else if (event->type() == QEvent::MouseButtonRelease && ejectable && ejectBtRect.contains(pos)) {   //The eject icon is pressed.
                     if (sidebarItem) {
                         QUrl url = sidebarItem->itemInfo().url;
                         SideBarEventCaller::sendEject(url);
