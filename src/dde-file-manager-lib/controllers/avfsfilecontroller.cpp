@@ -3,9 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "avfsfilecontroller.h"
-#include "../app/filesignalmanager.h"
-#include "../app/define.h"
-#include "singleton.h"
 #include "interfaces/dfileinfo.h"
 #include "dfmstandardpaths.h"
 #include <QStandardPaths>
@@ -165,10 +162,3 @@ QString AVFSFileController::findArchFileRootPath(const DUrl &url)
     return QString();
 }
 
-DUrlList AVFSFileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const
-{
-    DFMUrlListBaseEvent noPermissionEvent(nullptr, event->urlList());
-    noPermissionEvent.setWindowId(static_cast<quint64>(static_cast<int>(event->windowId())));
-    emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
-    return DUrlList();
-}
