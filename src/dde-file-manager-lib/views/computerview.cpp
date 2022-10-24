@@ -177,24 +177,6 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
                 return;
             }
         }
-        //!点击计算机页面中的SMB设备时，如果是SMB设备，则进入smb://<host>目录
-        //! dfmroot:///smb://<host>/<share_folder>.remote
-        //! dfmroot:///smb://xxxxxxxxxxxxxxxxxx.gvfsmp
-        QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
-        localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
-        bool isGvfsFile = FileUtils::isGvfsMountFile(localFilePath);
-        if(isGvfsFile || FileUtils::isSmbShareFolder(url)){
-            QString smbIp;
-            bool re = FileUtils::isSmbRelatedUrl(url,smbIp);
-            if (re) {
-                QWidget *p = WindowManager::getWindowById(window()->internalWinId());
-                if (p) {
-                    DUrl temUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
-                    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, temUrl, p);
-                    return;
-                }
-            }
-        }
         // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
         if (url.path().endsWith(SUFFIX_STASHED_REMOTE)) {
             DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
@@ -204,7 +186,25 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
                 return;
             }
         }
-
+        //!点击计算机页面中的SMB设备时，如果是SMB设备，则进入smb://<host>目录
+        //! dfmroot:///smb://<host>/<share_folder>.remote
+        //! dfmroot:///smb://xxxxxxxxxxxxxxxxxx.gvfsmp
+        QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
+        localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
+        bool isGvfsFile = FileUtils::isGvfsMountFile(localFilePath);
+        if (isGvfsFile) {
+            QString smbIp;
+            bool re = FileUtils::isSmbRelatedUrl(url, smbIp);
+            if (re) {
+                QWidget *p = WindowManager::getWindowById(window()->internalWinId());
+                if (p) {
+                    //localFilePath like: /run/user/1000/gvfs/smb-share:server=x.x.x.x,share=share_dir.gvfsmp
+                    DUrl temUrl = FileUtils::durlFromLocalPath(localFilePath.remove(".gvfsmp"));
+                    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, temUrl, p);
+                    return;
+                }
+            }
+        }
         //判断网络文件是否可以到达
         // fix bug 63803 这里是鼠标事件进入后，checkGvfsMountfileBusy需要很长时间，所以鼠标事件没有结束
         // 切换到其他界面，就析构了自己，当这个checkGvfsMountfileBusy退出，qt处理鼠标事件就崩溃了。

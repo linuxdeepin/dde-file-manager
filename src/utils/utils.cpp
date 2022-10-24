@@ -12,7 +12,6 @@
 #include <dgiomount.h>
 #include <dgiofile.h>
 #include "utils.h"
-#include "utils.h"
 #include "dmimedatabase.h"
 #include "interfaces/dfmglobal.h"
 #include "app/define.h"
@@ -20,12 +19,13 @@
 #include "dfmsettings.h"
 
 #include "shutil/fileutils.h"
+#include "shutil/smbintegrationswitcher.h"
 
 DFM_USE_NAMESPACE
 
-#define REMOTE_MOUNTS     "RemoteMounts" //缓存的smb常驻项数据
-#define STASHED_SMB_DEVICES     "StashedSmbDevices" //smb聚合项组
-#define SMB_INTEGRATIONS     "SmbIntegrations" //smb聚合项数据列表
+static constexpr const char *kRemoteMounts {"RemoteMounts"}; //缓存的smb常驻项数据
+static constexpr const char *kStashedSmbDevices = "StashedSmbDevices"; //smb聚合项组
+static constexpr const char *kSmbIntegrations = "SmbIntegrations"; //smb聚合项数据列表
 
 QString getThumbnailsPath(){
     QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).at(0);
@@ -314,33 +314,24 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
     }
 
     // stash to local config file
-    if(protocol == SMB_SCHEME && !host.isEmpty()){
-        QString newSmbDevice = QString("%1://%2").arg(protocol).arg(host);
-        QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(STASHED_SMB_DEVICES, SMB_INTEGRATIONS).toList();
-        if(!stashedSmbDevices.contains(QVariant::fromValue(newSmbDevice))) {
-            stashedSmbDevices.append(newSmbDevice);
-            DFMApplication::genericSetting()->setValue(STASHED_SMB_DEVICES,SMB_INTEGRATIONS, stashedSmbDevices);
-        }
-    }
-
-    /* 实现smb挂载侧边栏聚合后，这里不再读取RemoteMounts字段及插入常驻挂载（请保留此部分注释，未来做聚合和非聚合之间的切换时作参考）
-    if (obj.contains(REMOTE_MOUNTS)) {
-        QJsonValue remoteMounts = obj.value(REMOTE_MOUNTS);
-        if (remoteMounts.isObject()) {
-            remoteMountsObj = remoteMounts.toObject();
-            if (remoteMountsObj.keys().contains(key)) {
-                emit DFMApplication::instance()->reloadComputerModel();
-                return;
+    if (protocol == SMB_SCHEME && !host.isEmpty()){
+        if(smbIntegrationSwitcher->isIntegrationMode()){ // smb聚合模式：写入配置`StashedSmbDevices`字段
+            QString newSmbDevice = QString("%1://%2").arg(protocol).arg(host);
+            QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(kStashedSmbDevices, kSmbIntegrations).toList();
+            if(!stashedSmbDevices.contains(QVariant::fromValue(newSmbDevice))) {
+                stashedSmbDevices.append(newSmbDevice);
+                DFMApplication::genericSetting()->setValue(kStashedSmbDevices, kSmbIntegrations, stashedSmbDevices);
             }
+        } else { // smb分离模式：写入配置`RemoteMounts`字段
+            QVariantMap newMount;
+            newMount.insert(REMOTE_HOST, host);
+            newMount.insert(REMOTE_SHARE, share);
+            newMount.insert(REMOTE_PROTOCOL, protocol);
+            newMount.insert(REMOTE_DISPLAYNAME, displayName);
+            DFMApplication::genericSetting()->setValue(kRemoteMounts,key, newMount);
+            emit DFMApplication::instance()->reloadComputerModel();
         }
     }
-    newMount.insert(REMOTE_HOST, host);
-    newMount.insert(REMOTE_SHARE, share);
-    newMount.insert(REMOTE_PROTOCOL, protocol);
-    newMount.insert(REMOTE_DISPLAYNAME, displayName);
-    remoteMountsObj.insert(key, newMount);//smb挂载聚合后，无需写.remote缓存路径
-    obj.insert(REMOTE_MOUNTS, remoteMountsObj);
-    */
 }
 
 QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
@@ -363,7 +354,7 @@ QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
     }
 
     QJsonObject obj = config.object();
-    QJsonValue remoteMounts = obj.value(REMOTE_MOUNTS);
+    QJsonValue remoteMounts = obj.value(kRemoteMounts);
     if (remoteMounts.isObject()) {
         QJsonObject mountsObj = remoteMounts.toObject();
         const QStringList &itemKeys = mountsObj.keys();
@@ -392,19 +383,19 @@ QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
  */
 void RemoteMountsStashManager::removeRemoteMountItem(const QString &key)
 {
-    QSet<QString> set = DFMApplication::genericSetting()->keys(REMOTE_MOUNTS);
+    if (smbIntegrationSwitcher->isIntegrationMode())
+        return ; //smb聚合模式不去删除smb分离模式的常驻缓存(`RemoteMounts`)
+    QSet<QString> set = DFMApplication::genericSetting()->keys(kRemoteMounts);
     if(set.contains(key)) {
-       DFMApplication::genericSetting()->remove(REMOTE_MOUNTS,key);
+       DFMApplication::genericSetting()->remove(kRemoteMounts,key);
        qInfo()<<"Stashed smb url : "<<key<<" removed from RemoteMounts";
     }
 }
 
 void RemoteMountsStashManager::clearRemoteMounts()
 {
-    //1.当用户手动从设置菜单中取消勾选`sambar共享端常驻显示挂载入口`复选框时,会调用此函数将配置文件中`RemoteMounts`字段缓存的常驻入口清空；
-    //2.实现smb聚合功能后，新增`StashedSmbDevices`字段记录聚合的ip地址；
-
-    DFMApplication::genericSetting()->removeGroup(REMOTE_MOUNTS);
+    //当用户手动从设置菜单中取消勾选`sambar共享端常驻显示挂载入口`复选框时,会调用此函数将配置文件中`RemoteMounts`字段缓存的常驻入口清空；
+    DFMApplication::genericSetting()->removeGroup(kRemoteMounts);
 }
 
 void RemoteMountsStashManager::stashCurrentMounts()
@@ -459,39 +450,53 @@ QString RemoteMountsStashManager::normalizeConnUrl(const QString &url)
     return path;
 }
 
-/*!
- * \brief RemoteMountsStashManager::stashedSmbDevices 获取当前缓存的smb聚合设备列表
- * \return
+/**
+ * @brief RemoteMountsStashManager::stashedSmbDevices
+ * 该函数默认返回配置文件中`RemoteMounts`和`StashedSmbDevices`字段信息中的smb://x.x.x.x并去重
+ * @param onlySmbSepration
+ * 该参数值为true时，该函数只返回`RemoteMounts`字段信息中解析出的smb://x.x.x.x并去重
+ * @return
+ * 返回smb://x.x.x.x列表信息(或smb://domain)
  */
-QStringList RemoteMountsStashManager::stashedSmbDevices()
+QStringList RemoteMountsStashManager::stashedSmbDevices(bool onlySmbSepration)
 {
-    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(STASHED_SMB_DEVICES, SMB_INTEGRATIONS).toList();
-
-    QStringList smbHostList;
-    foreach (const QVariant& var, stashedSmbDevices)
-        smbHostList << var.toString();
-
-    ///为了和SMB挂载项聚合功能实现前的配置兼容，这里也要读出原有缓存的smb常驻信息并提取smb://x.x.x.x在此函数中一起返回
-    QSet<QString> keys = DFMApplication::genericSetting()->keys(REMOTE_MOUNTS);
-    foreach (const QString &key, keys) {
-        QVariantMap stashedSmbData = DFMApplication::genericSetting()->value(REMOTE_MOUNTS, key).toMap();
-        QString protocol = stashedSmbData.value("protocol").toString();
-        if(protocol == SMB_SCHEME) {
-            QString server = QString("%1://%2").arg(protocol).arg(stashedSmbData.value("host").toString());
-            smbHostList << server;
-
-            if (!smbHostList.contains(server)) {
-                smbHostList.append(server);//用户升级到smb聚合版本后，smbHostList为空，将REMOTE_MOUNTS中的ip添加到STASHED_SMB_DEVICES中
+    QStringList smbDeviceList;
+    auto getRemoteMounts = [&](QStringList &list){
+        // 从配置文件`RemoteMounts`字段中解析smb://x.x.x.x字段添加到smbDeviceList中
+        QSet<QString> keys = DFMApplication::genericSetting()->keys(kRemoteMounts);
+        for (const QString &key : keys) {
+            QVariantMap stashedSmbData = DFMApplication::genericSetting()->value(kRemoteMounts, key).toMap();
+            QString protocol = stashedSmbData.value("protocol").toString();
+            if(protocol == SMB_SCHEME) {
+                QString server = QString("%1://%2").arg(protocol).arg(stashedSmbData.value("host").toString());
+                list.append(server);
             }
         }
+        list.removeDuplicates();
+    };
+
+    if (onlySmbSepration) {
+        getRemoteMounts(smbDeviceList);
+        return smbDeviceList;
     }
 
-    smbHostList.removeDuplicates();
+    // `StashedSmbDevices`字段是旧版文管升级为有smb聚合功能版本的新增字段,下面做首次运行的数据兼容处理
+    if (!DFMApplication::genericSetting()->groups().contains(kStashedSmbDevices)) { // 若配置中没有`StashedSmbDevices`字段
+        getRemoteMounts(smbDeviceList);
+        // 仅在首次迁移`RemoteMounts`字段中的smb设备到`StashedSmbDevices`字段中
+        DFMApplication::genericSetting()->setValue(kStashedSmbDevices, kSmbIntegrations, smbDeviceList);
+        smbDeviceList.removeDuplicates();
+        return smbDeviceList;
+    }
 
-    DFMApplication::genericSetting()->setValue(STASHED_SMB_DEVICES,SMB_INTEGRATIONS, QVariant::fromValue<QStringList>(smbHostList));
+    // 读取smb聚合设备
+    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(kStashedSmbDevices, kSmbIntegrations).toList();
+    for (const QVariant& var : stashedSmbDevices)
+        smbDeviceList << var.toString();
 
-    qDebug()<<"smbHostList = "<<smbHostList;
-    return smbHostList;
+    smbDeviceList.removeDuplicates();
+
+    return smbDeviceList;
 }
 
 /**
@@ -501,13 +506,13 @@ QStringList RemoteMountsStashManager::stashedSmbDevices()
  */
 void RemoteMountsStashManager::removeStashedSmbDevice(const QString &url)
 {
-    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(STASHED_SMB_DEVICES, SMB_INTEGRATIONS).toList();
+    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(kStashedSmbDevices, kSmbIntegrations).toList();
     if (stashedSmbDevices.isEmpty() || !stashedSmbDevices.contains(QVariant::fromValue(url)))
         return;
 
     if (stashedSmbDevices.contains(QVariant::fromValue(url))) {
         stashedSmbDevices.removeOne(QVariant::fromValue(url));
-        DFMApplication::genericSetting()->setValue(STASHED_SMB_DEVICES,SMB_INTEGRATIONS, stashedSmbDevices);
+        DFMApplication::genericSetting()->setValue(kStashedSmbDevices, kSmbIntegrations, stashedSmbDevices);
     }
 }
 
@@ -518,10 +523,10 @@ void RemoteMountsStashManager::removeStashedSmbDevice(const QString &url)
  */
 void RemoteMountsStashManager::insertStashedSmbDevice(const QString &url)
 {
-    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(STASHED_SMB_DEVICES, SMB_INTEGRATIONS).toList();
+    QVariantList stashedSmbDevices = DFMApplication::genericSetting()->value(kStashedSmbDevices, kSmbIntegrations).toList();
     if (stashedSmbDevices.contains(QVariant::fromValue(url)))
         return;
 
     stashedSmbDevices.append(url);
-    DFMApplication::genericSetting()->setValue(STASHED_SMB_DEVICES,SMB_INTEGRATIONS, stashedSmbDevices);
+    DFMApplication::genericSetting()->setValue(kStashedSmbDevices, kSmbIntegrations, stashedSmbDevices);
 }
