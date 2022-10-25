@@ -40,6 +40,7 @@ public:
 
 private slots:
     void onFileDeleted(const QUrl &url);
+    void onMountPointDeleted(const QString &id);
     void onFileAttributeChanged(const QUrl &url);
     void onFileRename(const QUrl &fromUrl, const QUrl &toUrl);
     void onSubfileCreated(const QUrl &url);

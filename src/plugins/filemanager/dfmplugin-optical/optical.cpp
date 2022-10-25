@@ -68,12 +68,6 @@ void Optical::initialize()
             },
             Qt::DirectConnection);
 
-    connect(
-            DevProxyMng, &DeviceProxyManager::blockDevUnmounted,
-            this, [this](const QString &id) {
-                onDeviceChanged(id, true);
-            },
-            Qt::DirectConnection);
     // for blank disc
     connect(
             DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this,
@@ -175,13 +169,11 @@ void Optical::bindEvents()
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
 }
 
-void Optical::onDeviceChanged(const QString &id, bool isUnmount)
+void Optical::onDeviceChanged(const QString &id)
 {
-    if (id.contains(QRegularExpression("sr[0-9]*$"))) {
-        const QString &&volTag { id.mid(id.lastIndexOf("/") + 1) };
-        QUrl url { QString("burn:///dev/%1/disc_files/").arg(volTag) };
-        if (isUnmount)
-            emit OpticalSignalManager::instance()->discUnmounted(url);
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", url);
+    const auto &discUrl { OpticalHelper::transDiscRootById(id) };
+    if (discUrl.isValid()) {
+        emit OpticalSignalManager::instance()->discUnmounted(discUrl);
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", discUrl);
     }
 }

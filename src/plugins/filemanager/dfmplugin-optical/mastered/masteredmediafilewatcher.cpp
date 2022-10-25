@@ -23,6 +23,7 @@
 #include "masteredmediafilewatcher.h"
 #include "masteredmediafilewatcher_p.h"
 #include "utils/opticalhelper.h"
+#include "utils/opticalsignalmanager.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
@@ -78,7 +79,18 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
     QString id { DeviceUtils::getBlockDeviceId(devFile) };
     auto &&map = DevProxyMng->queryBlockInfo(id);
     dptr->curMnt = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
-    dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(dptr->curMnt, false);
+    QUrl mntUrl { QUrl::fromLocalFile(dptr->curMnt) };
+    dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(mntUrl, false);
+    connect(dptr->proxyOnDisk.data(), &AbstractFileWatcher::fileDeleted, this, [this, mntUrl, id](const QUrl &url) {
+        if (UniversalUtils::urlEquals(mntUrl, url))
+            onMountPointDeleted(id);
+    });
+    // pull out empty disc!
+    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, [this, map](const QString &id) {
+        bool isBlank { map[DeviceProperty::kOpticalBlank].toBool() };
+        if (isBlank)
+            onMountPointDeleted(id);
+    });
 }
 
 void MasteredMediaFileWatcher::onFileDeleted(const QUrl &url)
@@ -86,6 +98,15 @@ void MasteredMediaFileWatcher::onFileDeleted(const QUrl &url)
     if (!UniversalUtils::urlEquals(url, dptr->proxyStaging->url())) {
         QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
         emit fileDeleted(realUrl);
+    }
+}
+
+void MasteredMediaFileWatcher::onMountPointDeleted(const QString &id)
+{
+    const auto &discUrl { OpticalHelper::transDiscRootById(id) };
+    if (discUrl.isValid()) {
+        emit OpticalSignalManager::instance()->discUnmounted(discUrl);
+        emit fileDeleted(discUrl);
     }
 }
 

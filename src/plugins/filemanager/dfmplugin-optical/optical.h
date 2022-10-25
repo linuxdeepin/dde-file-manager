@@ -49,7 +49,7 @@ private:
     void bindEvents();
 
 private slots:
-    void onDeviceChanged(const QString &id, bool isUnmount = false);
+    void onDeviceChanged(const QString &id);
 };
 
 }

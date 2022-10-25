@@ -180,6 +180,14 @@ QUrl OpticalHelper::tansToLocalFile(const QUrl &in)
     return url;
 }
 
+QUrl OpticalHelper::transDiscRootById(const QString &id)
+{
+    if (!id.contains(QRegularExpression("sr[0-9]*$")))
+        return {};
+    const QString &&volTag { id.mid(id.lastIndexOf("/") + 1) };
+    return QUrl(QString("burn:///dev/%1/disc_files/").arg(volTag));
+}
+
 bool OpticalHelper::isSupportedUDFVersion(const QString &version)
 {
     static const QStringList &&supported = {

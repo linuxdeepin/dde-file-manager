@@ -56,6 +56,7 @@ public:
     static bool burnIsOnStaging(const QUrl &url);
     static QUrl tansToBurnFile(const QUrl &in);
     static QUrl tansToLocalFile(const QUrl &in);
+    static QUrl transDiscRootById(const QString &id);
     static bool isSupportedUDFVersion(const QString &version);
     static bool isSupportedUDFMedium(int type);
     static void createStagingFolder(const QString &path);
