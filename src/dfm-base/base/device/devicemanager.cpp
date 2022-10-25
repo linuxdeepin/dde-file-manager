@@ -140,11 +140,17 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
     }
 
     if (dev->optical()) {
+        if (d->isMountingOptical) {
+            qWarning() << "Currently mounting a disc!";
+            return;
+        }
         QFutureWatcher<void> *fw { new QFutureWatcher<void>() };
         connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
+            d->isMountingOptical = false;
             dev->mountAsync(opts, cb);
             delete fw;
         });
+        d->isMountingOptical = true;
         fw->setFuture(QtConcurrent::run(d->watcher, &DeviceWatcher::queryOpticalDevUsage, id));
     } else {
         QString errMsg;
@@ -634,7 +640,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                                    // 'device busy' error.
+                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -721,7 +727,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() { }
+DeviceManager::~DeviceManager() {}
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
