@@ -245,6 +245,11 @@ private:
                        const RenameTypes type,
                        QMap<QUrl, QUrl> &successUrls, QString &errorMsg,
                        const QVariant custom = QVariant(), DFMBASE_NAMESPACE::Global::OperatorCallback callback = nullptr);
+    bool doRenameDesktopFile(const quint64 windowId,
+                             const QUrl oldUrl,
+                             const QUrl newUrl,
+                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+
     JobHandlePointer doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
     JobHandlePointer doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources,

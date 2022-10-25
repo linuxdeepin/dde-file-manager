@@ -35,6 +35,8 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/utils/properties.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -245,6 +247,52 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
     return ok;
 }
 
+bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const dfmbase::AbstractJobHandler::JobFlags flags)
+{
+    const QString &desktopPath = oldUrl.toLocalFile();
+    Properties desktop(desktopPath, "Desktop Entry");
+    static const QString kLocale = QLocale::system().name();
+    static const QString kLocaleNameTemplate = QString("Name[%1]");
+
+    auto localeName = kLocaleNameTemplate.arg(kLocale);
+
+    QString key;   // to find the present displaying Name
+    if (desktop.contains(localeName)) {
+        key = localeName;
+    } else {
+        auto splittedLocale = kLocale.trimmed().split("_");
+        if (splittedLocale.isEmpty()) {
+            key = "Name";
+        } else {
+            localeName = kLocaleNameTemplate.arg(splittedLocale.first());
+            key = desktop.contains(localeName) ? localeName : "Name";
+        }
+    }
+
+    AbstractFileInfoPointer newFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+    AbstractFileInfoPointer oldFileInfo = InfoFactory::create<AbstractFileInfo>(oldUrl);
+    const QString &newName = newFileInfo->fileDisplayName();
+    const QString &oldName = oldFileInfo->fileDisplayName();
+    if (newName == oldName)
+        return true;
+
+    desktop.set(key, newFileInfo->fileDisplayName());
+    desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
+    if (desktop.save(desktopPath, "Desktop Entry")) {
+        QMap<QUrl, QUrl> renamed { { oldUrl, newUrl } };
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                     windowId, renamed, true, "");
+
+        if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)) {
+            const QString path = QFileInfo(desktopPath).absoluteDir().absoluteFilePath(oldName);
+            saveFileOperation({ oldUrl }, { QUrl::fromLocalFile(path) }, GlobalEventType::kRenameFile);
+        }
+        return true;
+    }
+
+    return false;
+}
+
 JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
@@ -364,7 +412,7 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
         }
     }
 
-    //Delete local file with shift+delete, show a confirm dialog.
+    // Delete local file with shift+delete, show a confirm dialog.
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)) {
         if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
             return nullptr;
@@ -382,7 +430,7 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
     const bool isFileAlreadyInTrash = (deleteNoticeType == AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);   //检查用户是否从回收站内部删除文件
     //在此处理从回收站内部选择文件的删除操作(若不在这里处理，会进入到handleOperationCleanTrash()中，导致弹框提示无法区分"Delete"和"Empty"按钮的显示)
     if (!sources.isEmpty()) {
-        //Show clear trash dialog
+        // Show clear trash dialog
         if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources, !isFileAlreadyInTrash) != QDialog::Accepted)
             return nullptr;
     }
@@ -762,6 +810,10 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     Q_UNUSED(windowId);
     bool ok = false;
     QString error;
+
+    if (FileUtils::isDesktopFile(oldUrl) && !DecoratorFileInfo(oldUrl).isSymLink())
+        return doRenameDesktopFile(windowId, oldUrl, newUrl, flags);
+
     if (!oldUrl.isLocalFile()) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags)) {
             QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
