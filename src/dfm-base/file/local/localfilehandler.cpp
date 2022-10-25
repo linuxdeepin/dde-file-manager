@@ -243,6 +243,9 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     const QByteArray &sourceFile = url.toLocalFile().toLocal8Bit();
     const QByteArray &targetFile = newUrl.toLocalFile().toLocal8Bit();
 
+    if (DecoratorFile(targetFile).exists())
+        return false;   // TODO(xust/lanxuesong): user interaction?
+
     if (::rename(sourceFile.constData(), targetFile.constData()) == 0) {
         FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
         FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
@@ -659,7 +662,7 @@ bool LocalFileHandler::isFileManagerSelf(const QString &desktopFile)
 {
     /*
      *  return true if exec field contains dde-file-manager/file-manager.sh of dde-file-manager desktopFile
-    */
+     */
     DesktopFile d(desktopFile);
     return d.desktopExec().contains("dde-file-manager") || d.desktopExec().contains("file-manager.sh");
 }

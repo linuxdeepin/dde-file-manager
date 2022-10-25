@@ -242,7 +242,7 @@ bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QL
     }
     if (!ok) {
         errorMsg = fileHandler.errorString();
-        DialogManagerInstance->showErrorDialog("Rename file error: %1", errorMsg);
+        DialogManagerInstance->showErrorDialog("Rename file error", errorMsg);
     }
     return ok;
 }

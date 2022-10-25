@@ -463,7 +463,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
 
     QMap<QUrl, QUrl> result;
 
-    for (auto url : originUrls) {
+    for (const auto &url : originUrls) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 
         if (!info)
@@ -472,8 +472,15 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         bool isDesktopApp = info->mimeTypeName().contains(Global::Mime::kTypeAppDesktop);
 
         ///###: symlink is also processed here.
-        QString fileBaseName = isDesktopApp ? info->fileDisplayName() : info->baseName();
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+        QString fileBaseName;
+        if (isDesktopApp) {
+            fileBaseName = info->fileDisplayName();
+        } else {
+            fileBaseName = info->fileName();
+            fileBaseName.chop(suffix.length());
+        }
+
         fileBaseName.replace(pair.first, pair.second);
 
         if (fileBaseName.trimmed().isEmpty()) {
