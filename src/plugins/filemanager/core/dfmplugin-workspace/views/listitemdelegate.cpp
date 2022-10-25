@@ -205,6 +205,10 @@ bool ListItemDelegate::eventFilter(QObject *object, QEvent *event)
             }
             return true;
         }
+        if (e->key() == Qt::Key_Tab) {   // no item switch when tab triggered while rename an item. same behavious as icondelegate
+            this->commitDataAndCloseActiveEditor();
+            return true;
+        }
     }
     return QStyledItemDelegate::eventFilter(object, event);
 }
@@ -566,8 +570,8 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
 
         painter->drawText(rect, static_cast<int>(Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt())), fileName);
     } else {
-        //Todo(yanghao&liuyangming)???
-        //        drawNotStringData(option, textLineHeight, rect, data, drawBackground, painter, 0);
+        // Todo(yanghao&liuyangming)???
+        //         drawNotStringData(option, textLineHeight, rect, data, drawBackground, painter, 0);
     }
 }
 

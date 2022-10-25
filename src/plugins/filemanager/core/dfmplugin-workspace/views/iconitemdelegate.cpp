@@ -595,16 +595,15 @@ QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     connect(editor, &IconItemEditor::inputFocusOut, this, &IconItemDelegate::editorFinished);
 
     connect(editor, &IconItemEditor::destroyed, this, [this, d] {
-        Q_UNUSED(this)
         QWidget *editor = this->parent()->indexWidget(d->editingIndex);
         if (!editor || editor == sender()) {
             d->editingIndex = QModelIndex();
         }
     });
 
-    //设置字体居中
-    //注: 此处经过查阅发现FileItem中editUndo中没有相关设置
-    //触发撤销将不会产生字体对其,这里稍微提及,方便以后更改
+    // 设置字体居中
+    // NOTE: 此处经过查阅发现FileItem中editUndo中没有相关设置
+    // 触发撤销将不会产生字体对其,这里稍微提及,方便以后更改
     editor->getTextEdit()->setAlignment(Qt::AlignHCenter);
     editor->getTextEdit()->document()->setTextWidth(d->itemSizeHint.width());
     editor->setOpacity(this->parent()->isTransparent(index) ? 0.3 : 1);
@@ -658,7 +657,7 @@ void IconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     QLabel *icon = item->getIconLabel();
 
     if (iconSize.height() != icon->size().height()) {
-        double iconTopOffset = (opt.rect.height() - iconSize.height()) / 3.0;   //update edit pos
+        double iconTopOffset = (opt.rect.height() - iconSize.height()) / 3.0;   // update edit pos
         icon->setFixedHeight(iconSize.height() + static_cast<int>(std::ceil(iconTopOffset)));
     }
 }
