@@ -652,11 +652,14 @@ void DFileViewHelper::handleMenu(QMenu *menu)
 
     tag_widget->setCheckedColorList(colors);
 
-    connect(tag_widget, &DTagActionWidget::hoverColorChanged, menu, [tag_widget](const QColor & color) {
+    connect(tag_widget, &DTagActionWidget::hoverColorChanged, menu, [tag_widget, colors](const QColor & color) {
         if (color.isValid()) {
             const QString &tag_name = TagManager::instance()->getTagNameThroughColor(color);
 
-            tag_widget->setToolTipText(tr("Add tag \"%1\"").arg(tag_name));
+            if (colors.contains(color))
+                tag_widget->setToolTipText(tr("Remove tag \"%1\"").arg(tag_name));
+            else
+                tag_widget->setToolTipText(tr("Add tag \"%1\"").arg(tag_name));
         } else {
             tag_widget->clearToolTipText();
         }
