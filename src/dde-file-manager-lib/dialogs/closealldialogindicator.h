@@ -8,11 +8,11 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include <dabstractdialog.h>
+#include <DBlurEffectWidget>
 
 DWIDGET_USE_NAMESPACE
 
-class CloseAllDialogIndicator : public DAbstractDialog
+class CloseAllDialogIndicator : public DBlurEffectWidget
 {
     Q_OBJECT
 public:

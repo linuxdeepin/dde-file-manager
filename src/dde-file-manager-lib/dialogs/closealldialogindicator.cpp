@@ -12,7 +12,7 @@
 #include "shutil/fileutils.h"
 #include "accessibility/ac-lib-file-manager.h"
 
-CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : DAbstractDialog(parent)
+CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : DBlurEffectWidget(parent)
 {
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::NoFocus);
@@ -66,7 +66,7 @@ void CloseAllDialogIndicator::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape){
         return;
     }
-    QDialog::keyPressEvent(event);
+    DBlurEffectWidget::keyPressEvent(event);
 }
 
 void CloseAllDialogIndicator::showEvent(QShowEvent *event)
@@ -93,6 +93,6 @@ void CloseAllDialogIndicator::showEvent(QShowEvent *event)
 
     move((geometryWidth - width()) / 2, geometryHeight - height());
 
-    return DAbstractDialog::showEvent(event);
+    return DBlurEffectWidget::showEvent(event);
 }
 
