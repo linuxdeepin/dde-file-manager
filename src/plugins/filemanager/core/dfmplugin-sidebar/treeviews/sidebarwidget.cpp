@@ -32,6 +32,7 @@
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QApplication>
 #include <QVBoxLayout>
@@ -96,7 +97,6 @@ int SideBarWidget::addItem(SideBarItem *item)
 
 bool SideBarWidget::insertItem(const int index, SideBarItem *item)
 {
-    qInfo() << "item = " << item->url();
     Q_ASSERT(qApp->thread() == QThread::currentThread());
 
     bool r { kSidebarModelIns->insertRow(index, item) };
@@ -173,8 +173,11 @@ void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
         return;
     }
     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
-    if (item && item->parent())
+    if (item && item->parent()) {
         sidebarView->setRowHidden(item->row(), item->parent()->index(), !visible);
+        if (!visible && UniversalUtils::urlEquals(url, currentUrl()))   // If the selected item be hiden.
+            SideBarEventCaller::sendItemActived(SideBarHelper::windowId(this), QUrl("computer:///"));
+    }
 
     sidebarView->updateSeparatorVisibleState();
 }
@@ -239,6 +242,8 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::kItemUrlRole)) };
     SideBarManager::instance()->runCd(item, SideBarHelper::windowId(this));
+    sidebarView->update(sidebarView->previousIndex());
+    sidebarView->update(sidebarView->currentIndex());
 }
 
 void SideBarWidget::customContextMenuCall(const QPoint &pos)
@@ -261,6 +266,11 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
 
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::kItemUrlRole)) };
     SideBarManager::instance()->runRename(item, SideBarHelper::windowId(this), newName);
+}
+
+void SideBarWidget::onItemRemoved()
+{
+    SideBarEventCaller::sendItemActived(SideBarHelper::windowId(this), sidebarView->currentUrl());
 }
 
 void SideBarWidget::initializeUi()
@@ -358,4 +368,6 @@ void SideBarWidget::initConnect()
     connect(kSidebarModelIns.data(), &SideBarModel::rowsInserted, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsRemoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsMoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
+    connect(kSidebarModelIns.data(), &SideBarModel::rowsAboutToBeRemoved, sidebarView, &SideBarView::onItemAboutToBeRemoved);
+    connect(kSidebarModelIns.data(), &SideBarModel::rowsRemoved, this, &SideBarWidget::onItemRemoved);
 }

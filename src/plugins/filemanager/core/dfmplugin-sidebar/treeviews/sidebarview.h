@@ -52,6 +52,8 @@ public:
     QUrl currentUrl() const;
     QModelIndex findItemIndex(const QUrl &url) const;
     QVariantMap groupExpandState() const;
+    bool isDraggingUrlSelected();
+    QModelIndex previousIndex() const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -70,6 +72,7 @@ private:
 public Q_SLOTS:
     void updateSeparatorVisibleState();
     void onChangeExpandState(const QModelIndex &index, bool expand);
+    void onItemAboutToBeRemoved(const QModelIndex &parent, int start, int end);
 
 Q_SIGNALS:
     void requestRemoveItem();

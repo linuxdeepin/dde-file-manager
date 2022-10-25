@@ -42,7 +42,6 @@ class SideBarViewPrivate : public QObject
     QPoint dropPos;
     QModelIndex previous;
     QModelIndex current;
-    SideBarItem *currentItem { nullptr };
     QList<QUrl> urlsForDragEvent;
     qint64 lastOpTime;   //上次操作的时间（ms）
     QUrl draggedUrl;
@@ -53,7 +52,7 @@ class SideBarViewPrivate : public QObject
     explicit SideBarViewPrivate(SideBarView *qq);
     bool fetchDragEventUrlsFromSharedMemory();
     bool checkOpTime();   //检查当前操作与上次操作的时间间隔
-    void currentChanged(const QModelIndex &previous);
+    void currentChanged(const QModelIndex &curIndex);
     void highlightAfterDraggedToSort();
     void notifyOrderChanged();
 };

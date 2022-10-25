@@ -48,6 +48,11 @@ public:
                               const QModelIndex &index) const override;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
+private:
+    void drawIcon(QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const;
+    void drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const;
+    void drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const;
+
 Q_SIGNALS:
     void rename(const QModelIndex &index, QString newName) const;
     void changeExpandState(const QModelIndex &index, bool expand);

@@ -66,6 +66,7 @@ private Q_SLOTS:
     void onItemActived(const QModelIndex &index);
     void customContextMenuCall(const QPoint &pos);
     void onItemRenamed(const QModelIndex &index, const QString &newName);
+    void onItemRemoved();
 
 private:
     void initializeUi();

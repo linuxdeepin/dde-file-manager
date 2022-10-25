@@ -27,6 +27,7 @@
 #include "events/sidebareventcaller.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
@@ -82,78 +83,71 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     painter->setRenderHint(QPainter::Antialiasing);
 
     DPalette palette(DPaletteHelper::instance()->palette(option.widget));
-    auto baseColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
 
     auto widgetColor = option.widget->palette().base().color();
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
         widgetColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
 
     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+    if (!item)
+        return DStyledItemDelegate::paint(painter, option, index);
     SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
     QRect itemRect = opt.rect;
     QPoint dx = QPoint(kItemMargin, 0);
     QPoint dw = QPoint(-12, 0);
     bool selected = opt.state.testFlag(QStyle::State_Selected);
     QRect r(itemRect.topLeft() + dx, itemRect.bottomRight() + dw);
-    if (selected) {   //Draw selected background
+
+    SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
+    bool keepDrawingHighlighted = false;
+    bool isDraggingItemNotHighlighted = selected && sidebarView->isDraggingUrlSelected()
+            && !UniversalUtils::urlEquals(index.data(SideBarItem::kItemUrlRole).toUrl(), sidebarView->currentUrl());
+
+    if (sidebarView->isDraggingUrlSelected()
+        && UniversalUtils::urlEquals(index.data(SideBarItem::kItemUrlRole).toUrl(), sidebarView->currentUrl())) {
+        // If the dragging and moving source item is not the current highlighted one,
+        // the highlighted one must be keep its state.
+        keepDrawingHighlighted = true;
+    }
+
+    if (selected || keepDrawingHighlighted) {   //Draw selected background
         QPalette::ColorGroup colorGroup = QPalette::Normal;
         QColor bgColor = option.palette.color(colorGroup, QPalette::Highlight);
+
+        if (isDraggingItemNotHighlighted) {
+            auto baseColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+            if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
+                bgColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
+            else
+                bgColor = baseColor.lighter();
+        }
+
         painter->setBrush(bgColor);
         painter->setPen(Qt::NoPen);
         painter->drawRoundedRect(r, kRadius, kRadius);
     } else if (opt.state.testFlag(QStyle::State_MouseOver)) {   //Draw mouse over background
-        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-            baseColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
-        else
-            baseColor = baseColor.lighter();
-
-        painter->setBrush(baseColor);
-        painter->setPen(Qt::NoPen);
-        painter->drawRoundedRect(r, kRadius, kRadius);
-        if (separatorItem) {   //Draw expand icon
-            QSize expandIconSize(12, 12);
-            QColor c(Qt::lightGray);
-            painter->setBrush(c);
-            painter->setPen(Qt::NoPen);
-            QPoint tl = r.topRight() + QPoint(-26, kItemMargin);
-            QPoint br = r.topRight() + QPoint(0 - kItemMargin, 27);
-            QRect gRect(tl, br);
-            painter->drawRoundedRect(gRect, kRadius, kRadius);
-            QPixmap pixmap = QIcon::fromTheme(separatorItem->isExpanded() ? "go-up" : "go-down").pixmap(expandIconSize);
-            painter->drawPixmap(gRect.topRight() + QPointF(-14, 3), pixmap);
-        }
+        drawMouseHoverBackground(painter, palette, r, widgetColor);
+        if (separatorItem)
+            drawMouseHoverExpandButton(painter, r, separatorItem->isExpanded());
     }
 
-    QFontMetrics metricsLabel(option.widget->font());
     //Draw item icon
-    bool isEjectable = false;
     QSize iconSize(kItemIconSize, kItemIconSize);
     QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
-    qreal iconDx = 2 * kItemMargin;
-    qreal iconDy = (itemRect.height() - iconSize.height()) / 2 + 1;
-    if (item) {
-        if (!separatorItem) {
-            QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
-            QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
-            QIcon::Mode iconMode = selected ? QIcon::Mode::Selected : QIcon::Mode::Normal;
-            item->icon().paint(painter, QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), Qt::AlignCenter, iconMode);
-            SideBarItem *sidebarItem = dynamic_cast<SideBarItem *>(item);
-            if (sidebarItem) {
-                ItemInfo info = sidebarItem->itemInfo();
-                if (info.isEjectable) {
-                    QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
-                    QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
-                    QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
-                    ejectIcon.paint(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignVCenter, iconMode);
-                    isEjectable = true;
-                }
-            }
-        }
+    QIcon::Mode iconMode = (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted)) ? QIcon::Mode::Selected : QIcon::Mode::Normal;
+    bool isEjectable = false;
+    SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
+    if (sidebarItem) {
+        ItemInfo info = sidebarItem->itemInfo();
+        isEjectable = info.isEjectable;
+        QIcon icon = item->icon();
+        drawIcon(painter, icon, itemRect, iconMode, isEjectable);
     }
 
     //Draw item text
+    QFontMetrics metricsLabel(option.widget->font());
     painter->setPen(separatorItem ? Qt::gray : qApp->palette().color(QPalette::ColorRole::Text));
-    if (selected)
+    if (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted))
         painter->setPen("#ffffff");
 
     QString text = index.data().toString();
@@ -275,4 +269,48 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
     }
 
     return QStyledItemDelegate::editorEvent(event, model, option, index);
+}
+
+void SideBarItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const
+{
+    QSize iconSize(kItemIconSize, kItemIconSize);
+    QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
+    qreal iconDx = 2 * kItemMargin;
+    qreal iconDy = (itemRect.height() - iconSize.height()) / 2 + 1;
+    QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
+    QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
+    icon.paint(painter, QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), Qt::AlignCenter, iconMode);
+    if (isEjectable) {
+        QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
+        QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
+        QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
+        ejectIcon.paint(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignVCenter, iconMode);
+    }
+}
+
+void SideBarItemDelegate::drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const
+{
+    auto mouseHoverColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
+        mouseHoverColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
+    else
+        mouseHoverColor = mouseHoverColor.lighter();
+
+    painter->setBrush(mouseHoverColor);
+    painter->setPen(Qt::NoPen);
+    painter->drawRoundedRect(r, kRadius, kRadius);
+}
+
+void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const
+{
+    QSize expandIconSize(12, 12);
+    QColor c(Qt::lightGray);
+    painter->setBrush(c);
+    painter->setPen(Qt::NoPen);
+    QPoint tl = r.topRight() + QPoint(-26, kItemMargin);
+    QPoint br = r.topRight() + QPoint(0 - kItemMargin, 27);
+    QRect gRect(tl, br);
+    painter->drawRoundedRect(gRect, kRadius, kRadius);
+    QPixmap pixmap = QIcon::fromTheme(isExpanded ? "go-up" : "go-down").pixmap(expandIconSize);
+    painter->drawPixmap(gRect.topRight() + QPointF(-14, 3), pixmap);
 }

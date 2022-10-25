@@ -34,6 +34,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
+#include "events/sidebareventcaller.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -47,6 +48,8 @@
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
 #include <QStyledItemDelegate>
+#include <QDrag>
+#include <QTextLayout>
 
 #include <unistd.h>
 
@@ -58,10 +61,17 @@ SideBarViewPrivate::SideBarViewPrivate(SideBarView *qq)
 {
 }
 
-void SideBarViewPrivate::currentChanged(const QModelIndex &previous)
+void SideBarViewPrivate::currentChanged(const QModelIndex &curIndex)
 {
-    current = q->currentIndex();
-    this->previous = previous;
+    SideBarModel *mod = q->model();
+    Q_ASSERT(mod);
+    SideBarItem *item = mod->itemFromIndex(curIndex);
+    if (dynamic_cast<SideBarItemSeparator *>(item))
+        return;
+
+    this->previous = current;
+    current = curIndex;
+    sidebarUrl = curIndex.data(SideBarItem::kItemUrlRole).toUrl();
 }
 
 void SideBarViewPrivate::highlightAfterDraggedToSort()
@@ -84,7 +94,6 @@ void SideBarViewPrivate::notifyOrderChanged()
     QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
         quint64 winId = FMWindowsIns.findWindowId(q);
         dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_Sidebar_Sorted", winId, draggedGroup);
-        SideBarHelper::updateSideBarSelection(winId);
         draggedGroup = "";
     });
 }
@@ -245,7 +254,6 @@ void SideBarView::dropEvent(QDropEvent *event)
 {
     if (d->draggedUrl.isValid()) {   // select the dragged item when dropped.
         d->notifyOrderChanged();   // notify to update the persistence data
-        d->highlightAfterDraggedToSort();
     }
 
     d->dropPos = event->pos();
@@ -418,13 +426,18 @@ void SideBarView::saveStateWhenClose()
 
 void SideBarView::setCurrentUrl(const QUrl &url)
 {
-    //TODO(zuangshu): have reset the following code to previous commit because the crash issue.
     d->sidebarUrl = url;
+    bool urlNotChanged = UniversalUtils::urlEquals(d->current.data(SideBarItem::kItemUrlRole).toUrl(), url);
+    const QModelIndex &index = urlNotChanged ? d->current : findItemIndex(url);
 
-    const QModelIndex &index = findItemIndex(url);
     if (!index.isValid()) {
-        this->clearSelection();
-        return;
+        const QModelIndex &checkIndex = findItemIndex(url);
+        if (checkIndex.isValid()) {
+            d->current = checkIndex;
+        } else {
+            this->clearSelection();
+            return;
+        }
     }
     SideBarModel *sidebarModel = dynamic_cast<SideBarModel *>(model());
     if (!sidebarModel)
@@ -476,6 +489,16 @@ QModelIndex SideBarView::findItemIndex(const QUrl &url) const
 QVariantMap SideBarView::groupExpandState() const
 {
     return d->groupExpandState;
+}
+
+bool SideBarView::isDraggingUrlSelected()
+{
+    return !d->draggedUrl.isEmpty();
+}
+
+QModelIndex SideBarView::previousIndex() const
+{
+    return d->previous;
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const
@@ -652,6 +675,22 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
             setCurrentUrl(d->sidebarUrl);   //To make sure, when expand the group item, the current item is highlighted.
     }
     update(index);
+}
+
+void SideBarView::onItemAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+{
+    Q_UNUSED(end)
+    if (isDraggingUrlSelected())
+        return;
+
+    if (!parent.isValid())
+        return;
+    const SideBarItem *item = model()->itemFromIndex(parent.child(start, 0));
+    if (!item)
+        return;
+    const QUrl &aboutToRemoveUrl = item->url();
+    if (UniversalUtils::urlEquals(currentUrl(), aboutToRemoveUrl))   // If the selected item be removed
+        d->sidebarUrl = QUrl("computer:///");
 }
 
 bool SideBarViewPrivate::fetchDragEventUrlsFromSharedMemory()

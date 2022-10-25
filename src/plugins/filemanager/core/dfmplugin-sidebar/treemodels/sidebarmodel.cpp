@@ -152,7 +152,7 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
     SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(item);
     if (groupItem) {   //top item
         QStandardItemModel::insertRow(row + 1, item);   //insert the top item
-        return rowCount() - 1;
+        return true;
     } else {   //sub item
         int count = this->rowCount();
         for (int i = 0; i < count; i++) {
@@ -203,7 +203,8 @@ int SideBarModel::appendRow(SideBarItem *item)
                 continue;
             SideBarItem *groupItem = this->itemFromIndex(i);
             bool itemInserted = false;
-            for (int row = 0; row < groupItem->rowCount(); row++) {
+            int row = 0;
+            for (; row < groupItem->rowCount(); row++) {
                 QStandardItem *childItem = groupItem->child(row);
                 auto tmpItem = dynamic_cast<SideBarItem *>(childItem);
                 if (!tmpItem)
@@ -221,14 +222,16 @@ int SideBarModel::appendRow(SideBarItem *item)
             if (!itemInserted)
                 groupItem->appendRow(item);
 
-            return groupItem->row() - 1;
+            return row;   // The position after sorted
         }
     }
     if (groupOther && !topItem) {   //If can not find out the parent item, just append it to Group_Other
         groupOther->appendRow(item);
-        return groupOther->row() - 1;
+        qInfo() << "Item added to groupOther";
+        return groupOther->rowCount() - 1;
     }
     QStandardItemModel::appendRow(item);
+    qInfo() << "Item added to the end of sidebar.";
     return rowCount() - 1;
 }
 
