@@ -1060,7 +1060,7 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
     int badPipefd[2];
     if (pipe(badPipefd) < 0)
         return;
-    double globalBad;
+    double globalBad = 0;
 /////////////////////////////
 
     m_isOpticalJob = true;
@@ -1304,7 +1304,7 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
     int badPipefd[2];
     if (pipe(badPipefd) < 0)
         return;
-    double globalBad;
+    double globalBad = 0;
 /////////////////////////////
 
     m_isOpticalJob = true;

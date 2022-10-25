@@ -459,7 +459,8 @@ db_search (DatabaseSearch *search, FsearchQuery *q)
 {
     assert (search != NULL);
     assert (search->entries != NULL);
-    if (search->num_entries == 0) {
+    const uint32_t num_threads = MIN(fsearch_thread_pool_get_num_threads (search->pool), search->num_entries);
+    if (search->num_entries == 0 || 0 == num_threads ) {
         DatabaseSearchResult *result_ctx = calloc (1, sizeof (DatabaseSearchResult));
         result_ctx->results = 0;
         result_ctx->num_folders = 0;
@@ -469,7 +470,6 @@ db_search (DatabaseSearch *search, FsearchQuery *q)
 
     search_query_t **queries = build_queries (search, q);
 
-    const uint32_t num_threads = MIN(fsearch_thread_pool_get_num_threads (search->pool), search->num_entries);
     const uint32_t num_items_per_thread = MAX(search->num_entries / num_threads, 1);
 
     search_thread_context_t *thread_data[num_threads];

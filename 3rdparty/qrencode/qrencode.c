@@ -162,7 +162,7 @@ __STATIC QRRawCode *QRraw_new(QRinput *input)
 __STATIC unsigned char QRraw_getCode(QRRawCode *raw)
 {
 	int col, row;
-	unsigned char ret;
+	unsigned char ret = '\0';
 
 	if(raw->count < raw->dataLength) {
 		row = raw->count % raw->blocks;
@@ -259,7 +259,7 @@ __STATIC MQRRawCode *MQRraw_new(QRinput *input)
  */
 __STATIC unsigned char MQRraw_getCode(MQRRawCode *raw)
 {
-	unsigned char ret;
+	unsigned char ret = '\0';
 
 	if(raw->count < raw->dataLength) {
 		ret = raw->datacode[raw->count];
@@ -464,7 +464,7 @@ __STATIC QRcode *QRcode_encodeMask(QRinput *input, int mask)
 {
 	int width, version;
 	QRRawCode *raw;
-	unsigned char *frame, *masked, *p, code, bit;
+	unsigned char *frame = NULL, *masked = NULL, *p = NULL, code = '\0', bit = '\0';
 	FrameFiller *filler;
 	int i, j;
 	QRcode *qrcode = NULL;
@@ -548,7 +548,7 @@ __STATIC QRcode *QRcode_encodeMaskMQR(QRinput *input, int mask)
 {
 	int width, version;
 	MQRRawCode *raw;
-	unsigned char *frame, *masked, *p, code, bit;
+	unsigned char *frame  = NULL, *masked  = NULL, *p = NULL, code = '\0', bit = '\0';
 	FrameFiller *filler;
 	int i, j;
 	QRcode *qrcode = NULL;

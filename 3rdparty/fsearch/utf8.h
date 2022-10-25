@@ -38,6 +38,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -679,12 +680,13 @@ void *utf8rchr(const void *src, int chr)
     // we've created a 2 utf8 codepoint string in c that is
     // the utf8 character asked for by chr, and a null
     // terminating byte
-
     while ('\0' != *s) {
         size_t offset = 0;
 
         while (s[offset] == c[offset]) {
             offset++;
+            if (*(s + offset + 1) == '\0' || offset > strlen(c))
+                return (void *)match;
         }
 
         if ('\0' == c[offset]) {

@@ -85,7 +85,7 @@ static void QRinput_List_freeEntry(QRinput_List *entry)
 
 static QRinput_List *QRinput_List_dup(QRinput_List *entry)
 {
-	QRinput_List *n;
+	QRinput_List *n = NULL;
 
 	n = (QRinput_List *)malloc(sizeof(QRinput_List));
 	if(n == NULL) return NULL;
