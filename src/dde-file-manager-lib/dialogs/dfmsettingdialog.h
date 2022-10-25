@@ -24,9 +24,11 @@ public:
 
     static QPair<QWidget*, QWidget*> createAutoMountCheckBox(QObject* opt);
     static QPair<QWidget *, QWidget *> createAutoMountOpenCheckBox(QObject* opt);
+    static QPair<QWidget *, QWidget *> createCheckBoxWithMessage(QObject* opt);
 
     static QPointer<QCheckBox> AutoMountCheckBox;
     static QPointer<QCheckBox> AutoMountOpenCheckBox;
+    static QPointer<QCheckBox> MergeSmbCheckBox;
 
 private:
     QPointer<DSettings> m_settings;

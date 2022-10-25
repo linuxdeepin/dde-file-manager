@@ -11,6 +11,7 @@
 #include "dfmsettings.h"
 #include "private/dfmsettingdialog_p.h"
 #include "grouppolicy.h"
+#include "settingscontrols/checkboxwithmessage.h"
 
 #include <QCheckBox>
 #include <QFrame>
@@ -249,12 +250,14 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
 
 QPointer<QCheckBox> DFMSettingDialog::AutoMountCheckBox = nullptr;
 QPointer<QCheckBox> DFMSettingDialog::AutoMountOpenCheckBox = nullptr;
+QPointer<QCheckBox> DFMSettingDialog::MergeSmbCheckBox = nullptr;
 
 DFMSettingDialog::DFMSettingDialog(QWidget *parent):
     DSettingsDialog(parent)
 {
     widgetFactory()->registerWidget("mountCheckBox", &DFMSettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &DFMSettingDialog::createAutoMountOpenCheckBox);
+    widgetFactory()->registerWidget("checkBoxWithMessage", &DFMSettingDialog::createCheckBoxWithMessage);
 
 #ifdef DISABLE_COMPRESS_PREIVEW
     //load temlate
@@ -361,4 +364,36 @@ QPair<QWidget *, QWidget *> DFMSettingDialog::createAutoMountOpenCheckBox(QObjec
     });
 
     return qMakePair(openCheckBox, nullptr);
+}
+
+QPair<QWidget *, QWidget *> DFMSettingDialog::createCheckBoxWithMessage(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    const QString &text = option->data("text").toString();
+    const QString &message = option->data("message").toString();
+
+    CheckBoxWithMessage *checkBoxWithMsg = new CheckBoxWithMessage;
+    checkBoxWithMsg->setText(text);
+    checkBoxWithMsg->setMessage(message);
+
+    DFMSettingDialog::MergeSmbCheckBox = checkBoxWithMsg->checkBox();
+
+    checkBoxWithMsg->checkBox()->setChecked(option->value().toBool());
+
+    QObject::connect(checkBoxWithMsg->checkBox(),
+                     &QCheckBox::stateChanged,
+                     option,
+    [ = ](int state) {
+        if (state == 0) {
+            option->setValue(false);
+        } else if (state == 2) {
+            option->setValue(true);
+        }
+    });
+
+    QObject::connect(option, &DSettingsOption::valueChanged, checkBoxWithMsg->checkBox(), [ = ](QVariant value) {
+        checkBoxWithMsg->checkBox()->setChecked(value.toBool());
+    });
+
+    return qMakePair(checkBoxWithMsg, nullptr);
 }
