@@ -23,6 +23,8 @@
 #include "utils/tagmanager.h"
 #include "utils/taghelper.h"
 
+#include "dfm-base/utils/windowutils.h"
+
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
@@ -36,7 +38,11 @@ TagEditor::TagEditor(QWidget *const parent)
 
     installEventFilter(this);
 
-    setWindowFlags(Qt::Tool);
+    // NOTE: in wayland you must specify the window flags manually
+    if (dfmbase::WindowUtils::isWayLand())
+        setWindowFlags(windowFlags() | Qt::Tool | Qt::FramelessWindowHint);
+    else
+        setWindowFlags(Qt::Tool);
 }
 
 void TagEditor::setFocusOutSelfClosing(bool value) noexcept
