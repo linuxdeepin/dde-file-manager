@@ -4,22 +4,22 @@
 <context>
     <name>MusicMessageView</name>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="42"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="49"/>
         <source>Artist:</source>
         <translation>歌手:</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="48"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="61"/>
         <source>Album:</source>
         <translation>专辑:</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="136"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="133"/>
         <source>unknown artist</source>
         <translation>未知歌手</translation>
     </message>
     <message>
-        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="140"/>
+        <location filename="../pluginPreview/dde-music-preview-plugin/musicmessageview.cpp" line="137"/>
         <source>unknown album</source>
         <translation>未知专辑</translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>PdfWidget</name>
     <message>
-        <location filename="../pluginPreview/dde-pdf-preview-plugin/pdfwidget.cpp" line="162"/>
+        <location filename="../pluginPreview/dde-pdf-preview-plugin/pdfwidget.cpp" line="163"/>
         <source>Cannot preview this file!</source>
         <translation>不能预览这个文件!</translation>
     </message>

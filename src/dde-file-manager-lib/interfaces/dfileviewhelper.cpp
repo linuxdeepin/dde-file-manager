@@ -50,8 +50,7 @@ class MenuActionEventHandler : public DFMAbstractEventHandler
 {
 public:
     explicit MenuActionEventHandler(DFileViewHelper *helper)
-        : DFMAbstractEventHandler(false)
-        , viewHelper(helper)
+        : DFMAbstractEventHandler(false), viewHelper(helper)
     {
     }
 
@@ -116,8 +115,7 @@ class DFileViewHelperPrivate
 {
 public:
     explicit DFileViewHelperPrivate(DFileViewHelper *qq)
-        : menuEventHandler(new MenuActionEventHandler(qq))
-        , q_ptr(qq)
+        : menuEventHandler(new MenuActionEventHandler(qq)), q_ptr(qq)
     {
         DFMEventDispatcher::instance()->installEventFilter(menuEventHandler);
     }
@@ -161,13 +159,12 @@ void DFileViewHelperPrivate::init()
 
     // init connects
     QObject::connect(&keyboardSearchTimer, &QTimer::timeout,
-    q, [this] {
-        keyboardSearchKeys.clear();
-    });
+                     q, [this] {
+                         keyboardSearchKeys.clear();
+                     });
     QObject::connect(qApp, &DApplication::iconThemeChanged, q->parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     QObject::connect(DFMGlobal::instance(), &DFMGlobal::clipboardDataChanged, q, [q] {
-        if (q->itemDelegate())
-        {
+        if (q->itemDelegate()) {
             for (const QModelIndex &index : q->itemDelegate()->hasWidgetIndexs()) {
                 QWidget *item = q->indexWidget(index);
 
@@ -187,19 +184,19 @@ void DFileViewHelperPrivate::init()
     copy_action->setShortcut(QKeySequence::Copy);
 
     QObject::connect(copy_action, &QAction::triggered,
-    q, [q] {
-        // fix bug 62872
-        // 与右键菜单保持一致，如果选中项只有一个且选中项不可读，则复制操作无效
-        if (q->selectedUrls().size() == 1) {
-            const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(nullptr, q->selectedUrls().first());
-            if (!fileInfo || !fileInfo->isReadable())
-                return;
-        }
-        DUrlList selectedUrls = q->selectedUrls();
-        qInfo() << " ctrl C writeFilesToClipboard and selectedUrls = " << selectedUrls
-                << " currentUrl = " << q->currentUrl();
-        fileService->writeFilesToClipboard(q, DFMGlobal::CopyAction, selectedUrls);
-    });
+                     q, [q] {
+                         // fix bug 62872
+                         // 与右键菜单保持一致，如果选中项只有一个且选中项不可读，则复制操作无效
+                         if (q->selectedUrls().size() == 1) {
+                             const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(nullptr, q->selectedUrls().first());
+                             if (!fileInfo || !fileInfo->isReadable())
+                                 return;
+                         }
+                         DUrlList selectedUrls = q->selectedUrls();
+                         qInfo() << " ctrl C writeFilesToClipboard and selectedUrls = " << selectedUrls
+                                 << " currentUrl = " << q->currentUrl();
+                         fileService->writeFilesToClipboard(q, DFMGlobal::CopyAction, selectedUrls);
+                     });
 
     QAction *cut_action = new QAction(q->parent());
 
@@ -207,51 +204,51 @@ void DFileViewHelperPrivate::init()
     cut_action->setShortcut(QKeySequence::Cut);
 
     QObject::connect(cut_action, &QAction::triggered,
-    q, [q] {
-        // 只支持回收站根目录下的文件执行剪切
-        const DAbstractFileInfoPointer &rootInfo = fileService->createFileInfo(q, q->currentUrl());
-        if (!rootInfo || !rootInfo->isWritable()) {
-            qInfo() << "Read only folders do not support Ctrl + X operations！folders = " << q->currentUrl();
-            return;
-        }
+                     q, [q] {
+                         // 只支持回收站根目录下的文件执行剪切
+                         const DAbstractFileInfoPointer &rootInfo = fileService->createFileInfo(q, q->currentUrl());
+                         if (!rootInfo || !rootInfo->isWritable()) {
+                             qInfo() << "Read only folders do not support Ctrl + X operations！folders = " << q->currentUrl();
+                             return;
+                         }
 
-        if (!q->selectedUrls().isEmpty()) {
-            DUrl url = q->selectedUrls().first();
-            if (url.isTrashFile() && url.parentUrl() != DUrl::fromTrashFile("/"))
-                return;
-        }
-        DUrlList selectedUrls = q->selectedUrls();
-        qInfo() << " ctrl X writeFilesToClipboard and selectedUrls = " << selectedUrls
-                << " currentUrl = " << q->currentUrl();
+                         if (!q->selectedUrls().isEmpty()) {
+                             DUrl url = q->selectedUrls().first();
+                             if (url.isTrashFile() && url.parentUrl() != DUrl::fromTrashFile("/"))
+                                 return;
+                         }
+                         DUrlList selectedUrls = q->selectedUrls();
+                         qInfo() << " ctrl X writeFilesToClipboard and selectedUrls = " << selectedUrls
+                                 << " currentUrl = " << q->currentUrl();
 
-        // 用户库目录以及主目录禁止剪切
-        for (const DUrl &url : selectedUrls) {
-            if(FileUtils::isContainProhibitPath(url))
-                return;
-        }
+                         // 用户库目录以及主目录禁止剪切
+                         for (const DUrl &url : selectedUrls) {
+                             if (FileUtils::isContainProhibitPath(url))
+                                 return;
+                         }
 
-        fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, selectedUrls);
-    });
+                         fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, selectedUrls);
+                     });
 
     QAction *paste_action = new QAction(q->parent());
 
     paste_action->setShortcut(QKeySequence::Paste);
 
     QObject::connect(paste_action, &QAction::triggered,
-    q, [q] {
-        qInfo() << " ctrl V pasteFileByClipboard and currentUrl = " << q->currentUrl();
-        fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
-    });
+                     q, [q] {
+                         qInfo() << " ctrl V pasteFileByClipboard and currentUrl = " << q->currentUrl();
+                         fileService->pasteFileByClipboard(q->parent(), q->currentUrl());
+                     });
 
     QAction *revocation_action = new QAction(q->parent());
 
     revocation_action->setShortcut(QKeySequence::Undo);
 
     QObject::connect(revocation_action, &QAction::triggered,
-    q, [q] {
-        qInfo() << " ctrl Z recovert operation !";
-        DFMEventDispatcher::instance()->processEvent<DFMRevocationEvent>(q);
-    });
+                     q, [q] {
+                         qInfo() << " ctrl Z recovert operation !";
+                         DFMEventDispatcher::instance()->processEvent<DFMRevocationEvent>(q);
+                     });
 
     q->parent()->addAction(copy_action);
     q->parent()->addAction(cut_action);
@@ -297,7 +294,7 @@ QModelIndex DFileViewHelperPrivate::findIndex(const QByteArray &keys, bool match
         const QString &pinyin_name = q->parent()->model()->data(index, DFileSystemModel::FilePinyinName).toString();
 
         if (matchStart ? pinyin_name.startsWith(keys, Qt::CaseInsensitive)
-                : pinyin_name.contains(keys, Qt::CaseInsensitive)) {
+                       : pinyin_name.contains(keys, Qt::CaseInsensitive)) {
             return index;
         }
     }
@@ -360,8 +357,7 @@ QList<QIcon> DFileViewHelperPrivate::getAdditionalIconByPlugins(const DAbstractF
 }
 
 DFileViewHelper::DFileViewHelper(QAbstractItemView *parent)
-    : QObject(parent)
-    , d_ptr(new DFileViewHelperPrivate(this))
+    : QObject(parent), d_ptr(new DFileViewHelperPrivate(this))
 {
     Q_ASSERT(parent);
 
@@ -370,7 +366,6 @@ DFileViewHelper::DFileViewHelper(QAbstractItemView *parent)
 
 DFileViewHelper::~DFileViewHelper()
 {
-
 }
 
 QAbstractItemView *DFileViewHelper::parent() const
@@ -579,11 +574,11 @@ void DFileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModel
 
     QPalette appPalette = QGuiApplication::palette();
 
-    auto setcolor1 = [](QPalette & p1, QPalette & p2, QPalette::ColorRole role) {
+    auto setcolor1 = [](QPalette &p1, QPalette &p2, QPalette::ColorRole role) {
         p1.setColor(role, p2.color(role));
     };
 
-    auto setcolor2 = [](QPalette & p1, QPalette & p2, QPalette::ColorGroup group, QPalette::ColorRole role) {
+    auto setcolor2 = [](QPalette &p1, QPalette &p2, QPalette::ColorGroup group, QPalette::ColorRole role) {
         p1.setColor(group, role, p2.color(group, role));
     };
 
@@ -619,7 +614,6 @@ void DFileViewHelper::handleMenu(QMenu *menu)
     if (Q_UNLIKELY(!file_menu))
         return;
 
-
     QAction *tag_action = file_menu->actionAt("Add color tags");
 
     if (!tag_action)
@@ -652,11 +646,14 @@ void DFileViewHelper::handleMenu(QMenu *menu)
 
     tag_widget->setCheckedColorList(colors);
 
-    connect(tag_widget, &DTagActionWidget::hoverColorChanged, menu, [tag_widget](const QColor & color) {
+    connect(tag_widget, &DTagActionWidget::hoverColorChanged, menu, [tag_widget, colors](const QColor &color) {
         if (color.isValid()) {
             const QString &tag_name = TagManager::instance()->getTagNameThroughColor(color);
 
-            tag_widget->setToolTipText(tr("Add tag \"%1\"").arg(tag_name));
+            if (colors.contains(color))
+                tag_widget->setToolTipText(tr("Remove tag \"%1\"").arg(tag_name));
+            else
+                tag_widget->setToolTipText(tr("Add tag \"%1\"").arg(tag_name));
         } else {
             tag_widget->clearToolTipText();
         }
@@ -716,10 +713,10 @@ void DFileViewHelper::keyboardSearch(char key)
     const QModelIndex &current_index = parent()->currentIndex();
 
     QModelIndex index = d->findIndex(d->keyboardSearchKeys, true, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
-//    if (!index.isValid()) {
-//        // 使用 QString::contains 模式再次匹配
-//        index = d->findIndex(d->keyboardSearchKeys, false, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
-//    }
+    //    if (!index.isValid()) {
+    //        // 使用 QString::contains 模式再次匹配
+    //        index = d->findIndex(d->keyboardSearchKeys, false, current_index.row(), reverse_order, !d->keyboardSearchTimer.isActive());
+    //    }
 
     if (index.isValid()) {
         parent()->setCurrentIndex(index);
@@ -752,14 +749,14 @@ bool DFileViewHelper::isEmptyArea(const QPoint &pos) const
         option.rect = rect;
 
         const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
-        auto ret = std::any_of(geometry_list.begin(), geometry_list.end(), [pos](const QRect & rect) {
+        auto ret = std::any_of(geometry_list.begin(), geometry_list.end(), [pos](const QRect &rect) {
             return rect.contains(pos);
         });
         if (ret)
             return false;
     }
 
-    return index.isValid();//true;
+    return index.isValid();   //true;
 }
 
 void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
@@ -956,10 +953,10 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
         return;
     }
 
-    QString suffix_str_as_var{ editor->property("_d_whether_show_suffix").toString() };
+    QString suffix_str_as_var { editor->property("_d_whether_show_suffix").toString() };
 
     if (!suffix_str_as_var.isEmpty()) {
-        new_file_name += QString{"."};
+        new_file_name += QString { "." };
         new_file_name += suffix_str_as_var;
     } else if (DFMApplication::genericObtuselySetting()->value("FileName", "non-allowableEmptyCharactersOfEnd").toBool()) {
         //保留文件名称中的空格符号
@@ -995,7 +992,8 @@ void DFileViewHelper::handleCommitData(QWidget *editor) const
     // 此时又会尝试销毁编辑控件，导致应用程序崩溃
     TIMER_SINGLESHOT(0, {
         fileService->renameFile(this, old_url, new_url);
-    }, old_url, new_url, this)
+    },
+                     old_url, new_url, this)
 }
 
 #include "moc_dfileviewhelper.cpp"

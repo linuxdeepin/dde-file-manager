@@ -151,13 +151,13 @@
         <translation>同时设置</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1093"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1094"/>
         <source>Custom Screensaver</source>
         <translation>自定义屏保</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1094"/>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1096"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1095"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1097"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>设置屏保</translation>

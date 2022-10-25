@@ -151,13 +151,13 @@
         <translation>Both</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1093"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1094"/>
         <source>Custom Screensaver</source>
         <translation>Custom Screensaver</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1094"/>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1096"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1095"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1097"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Apply</translation>
