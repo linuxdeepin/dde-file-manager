@@ -679,13 +679,22 @@ void *utf8rchr(const void *src, int chr)
     // we've created a 2 utf8 codepoint string in c that is
     // the utf8 character asked for by chr, and a null
     // terminating byte
+    size_t len = sizeof(s)/sizeof(char);
+
+    if ( len > sizeof(c)/sizeof(char)) {
+        len = sizeof(c)/sizeof(char);
+    }
+
 
     while ('\0' != *s) {
         size_t offset = 0;
 
-        while (s[offset] == c[offset]) {
+        while (offset < len && s[offset] == c[offset]) {
             offset++;
         }
+
+        if (offset == len)
+            return (void *)match;
 
         if ('\0' == c[offset]) {
             // we found a matching utf8 code point

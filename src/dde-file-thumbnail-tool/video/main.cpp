@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 
         printf("%s", base64_data);
         fflush(stdout);
+        free(stdout);
     } catch (std::logic_error &e) {
         std::cerr << e.what();
         return -1;

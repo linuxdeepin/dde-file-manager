@@ -127,9 +127,9 @@ static BitStream *BitStream_newFromBytes(int size, unsigned char *data)
 
 int BitStream_append(BitStream *bstream, BitStream *arg)
 {
-	unsigned char *data;
+    unsigned char *data = NULL;
 
-	if(arg == NULL) {
+    if(arg == NULL || bstream == NULL) {
 		return -1;
 	}
 	if(arg->length == 0) {

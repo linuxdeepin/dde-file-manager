@@ -301,7 +301,7 @@ void free_rs_cache(void)
 void encode_rs_char(RS *rs, const data_t *data, data_t *parity)
 {
   int i, j;
-  data_t feedback;
+  data_t feedback = NULL;
 
   memset(parity,0,NROOTS*sizeof(data_t));
 
