@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "closealldialog.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
@@ -33,7 +33,7 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 CloseAllDialog::CloseAllDialog(QWidget *parent)
-    : DAbstractDialog(parent)
+    : DBlurEffectWidget(parent)
 {
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::NoFocus);
@@ -86,7 +86,7 @@ void CloseAllDialog::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         return;
     }
-    QDialog::keyPressEvent(event);
+    DBlurEffectWidget::keyPressEvent(event);
 }
 
 void CloseAllDialog::showEvent(QShowEvent *event)
@@ -101,5 +101,5 @@ void CloseAllDialog::showEvent(QShowEvent *event)
     move((geometryWidth - width()) / 2, geometryHeight - height());
 
     setTotalMessage(0, 0);
-    return DAbstractDialog::showEvent(event);
+    return DBlurEffectWidget::showEvent(event);
 }

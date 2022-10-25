@@ -17,13 +17,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef CLOSEALLDIALOG_H
 #define CLOSEALLDIALOG_H
 
-#include "dfmplugin_propertydialog_global.h"
-
-#include <DAbstractDialog>
+#include <DBlurEffectWidget>
 
 #include <QPushButton>
 
@@ -32,7 +30,7 @@ class DLabel;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_propertydialog {
-class CloseAllDialog : public DTK_WIDGET_NAMESPACE::DAbstractDialog
+class CloseAllDialog : public DTK_WIDGET_NAMESPACE::DBlurEffectWidget
 {
     Q_OBJECT
 public:
