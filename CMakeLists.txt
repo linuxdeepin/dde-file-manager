@@ -75,10 +75,10 @@ if(NOT DEFINED DFM_PLUGIN_FILEMANAGER_EDGE_DIR)
     set(DFM_PLUGIN_FILEMANAGER_EDGE_DIR ${DFM_PLUGIN_DIR}/filemanager-edge)
 endif()
 
-# translate
-if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(BUILD_TESTING ON)
+else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
-
     # generate qm
     execute_process(COMMAND bash "translate_generation.sh"
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src)
@@ -92,9 +92,8 @@ add_subdirectory(src/dfm-framework)
 add_subdirectory(src/plugins)
 add_subdirectory(src/external)
 
-option(ENABLE_UNIT_TESTS "Enable unit tests" ON)
-message(STATUS "Enable testing: ${ENABLE_UNIT_TESTS}")
-if(ENABLE_UNIT_TESTS)
+message(STATUS "Enable testing: ${BUILD_TESTING}")
+if(BUILD_TESTING)
     enable_testing()
     add_subdirectory(tests)
 endif()

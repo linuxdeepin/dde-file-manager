@@ -4,13 +4,9 @@ project(dfmplugin-utils)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-FILE(GLOB UTILS_FILES
+FILE(GLOB_RECURSE UTILS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
@@ -33,6 +29,7 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
+    DFM::extension
     Qt5::Svg
     ${DtkWidget_LIBRARIES}
 )

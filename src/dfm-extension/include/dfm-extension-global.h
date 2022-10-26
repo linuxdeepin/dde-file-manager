@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,23 +20,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "virtualopenwithplugin.h"
-#include "openwith/openwithhelper.h"
+#ifndef DDEFILEMANAGEREXTENSION_GLOBAL_H
+#define DDEFILEMANAGEREXTENSION_GLOBAL_H
 
-using namespace dfmplugin_utils;
+#define DFMEXT dfmext
+#define BEGEN_DFMEXT_NAMESPACE namespace DFMEXT {
+#define USING_DFMEXT_NAMESPACE using namespace DFMEXT;
+#define END_DFMEXT_NAMESPACE }
 
-using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
-Q_DECLARE_METATYPE(CustomViewExtensionView)
+#define DFM_FAKE_VIRTUAL
+#define DFM_FAKE_OVERRIDE
 
-void VirtualOpenWithPlugin::initialize()
-{
-    eventReceiver->initEventConnect();
-}
+/*
+   Some classes do not permit copies to be made of an object. These
+   classes contains a private copy constructor and assignment
+   operator to disable copying (the compiler gives an error message).
+*/
+#define DFM_DISABLE_COPY(Class)    \
+    Class(const Class &) = delete; \
+    Class &operator=(const Class &) = delete;
 
-bool VirtualOpenWithPlugin::start()
-{
-    CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
-
-    return true;
-}
+#endif   // DDEFILEMANAGEREXTENSION_GLOBAL_H

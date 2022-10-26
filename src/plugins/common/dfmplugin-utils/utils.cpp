@@ -25,6 +25,7 @@
 #include "openwith/virtualopenwithplugin.h"
 #include "appendcompress/virtualappendcompressplugin.h"
 #include "bluetooth/virtualbluetoothplugin.h"
+#include "extensionimpl/virtualextensionimplplugin.h"
 
 using namespace dfmplugin_utils;
 
@@ -32,6 +33,7 @@ static constexpr char kAppendcompress[] { "dfmplugin-appendcompress" };
 static constexpr char kBluetooth[] { "dfmplugin-bluetooth" };
 static constexpr char kGlobal[] { "dfmplugin-global" };
 static constexpr char kOpenWith[] { "dfmplugin-openwith" };
+static constexpr char kExtensionImpl[] { "dfmplugin-extensionimpl" };
 
 QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 {
@@ -54,6 +56,11 @@ QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 
     if (pluginName == kOpenWith) {
         QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualOpenWithPlugin };
+        return pugin;
+    }
+
+    if (pluginName == kExtensionImpl) {
+        QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualExtensionImplPlugin };
         return pugin;
     }
 

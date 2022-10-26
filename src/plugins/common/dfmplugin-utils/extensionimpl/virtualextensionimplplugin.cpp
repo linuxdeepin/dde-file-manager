@@ -20,23 +20,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "virtualopenwithplugin.h"
-#include "openwith/openwithhelper.h"
+#include "virtualextensionimplplugin.h"
 
-using namespace dfmplugin_utils;
+namespace dfmplugin_utils {
 
-using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
-Q_DECLARE_METATYPE(CustomViewExtensionView)
-
-void VirtualOpenWithPlugin::initialize()
+void VirtualExtensionImplPlugin::initialize()
 {
-    eventReceiver->initEventConnect();
 }
 
-bool VirtualOpenWithPlugin::start()
+bool VirtualExtensionImplPlugin::start()
 {
-    CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
-
     return true;
 }
+
+}   // namespace dfmplugin_utils

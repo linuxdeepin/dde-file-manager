@@ -256,7 +256,6 @@ target_compile_definitions(
 
 add_library(DFM::base ALIAS ${PROJECT_NAME})
 
-
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../
@@ -282,8 +281,6 @@ install(DIRECTORY
     PATTERN "private" EXCLUDE
     PATTERN "resources" EXCLUDE  
 )
-
-
 
 set(AssetsPath ../../assets)
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager)

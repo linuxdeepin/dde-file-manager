@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,23 +20,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "virtualopenwithplugin.h"
-#include "openwith/openwithhelper.h"
+#ifndef DFMEXTENSION_H
+#define DFMEXTENSION_H
 
-using namespace dfmplugin_utils;
+#include "menu/dfmextmenuplugin.h"
+#include "emblemicon/dfmextemblemiconplugin.h"
 
-using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
-Q_DECLARE_METATYPE(CustomViewExtensionView)
+BEGEN_DFMEXT_NAMESPACE
 
-void VirtualOpenWithPlugin::initialize()
-{
-    eventReceiver->initEventConnect();
-}
+extern "C" void dfm_extension_initiliaze();
+extern "C" void dfm_extension_shutdown();
+// TODO(zhangs): [[deprecated]]
+extern "C" DFMExtMenuPlugin *dfm_extension_menu();
+extern "C" DFMExtEmblemIconPlugin *dfm_extension_emblem();
 
-bool VirtualOpenWithPlugin::start()
-{
-    CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
+END_DFMEXT_NAMESPACE
 
-    return true;
-}
+#endif   // DFMEXTENSION_H

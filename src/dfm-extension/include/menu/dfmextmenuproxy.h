@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,23 +20,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "virtualopenwithplugin.h"
-#include "openwith/openwithhelper.h"
+#ifndef DFMEXTMENUPROXY_H
+#define DFMEXTMENUPROXY_H
 
-using namespace dfmplugin_utils;
+#include "dfm-extension-global.h"
 
-using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
-Q_DECLARE_METATYPE(CustomViewExtensionView)
+#include <string>
+#include <functional>
 
-void VirtualOpenWithPlugin::initialize()
+BEGEN_DFMEXT_NAMESPACE
+
+class DFMExtMenu;
+class DFMExtAction;
+class DFMExtMenuProxyPrivate;
+class DFMExtMenuProxy
 {
-    eventReceiver->initEventConnect();
-}
+public:
+    explicit DFMExtMenuProxy(DFMExtMenuProxyPrivate *d_ptr);
+    ~DFMExtMenuProxy();
 
-bool VirtualOpenWithPlugin::start()
-{
-    CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
+    DFMExtMenu *createMenu();
+    bool deleteMenu(DFMExtMenu *menu);
 
-    return true;
-}
+    DFMExtAction *createAction();
+    bool deleteAction(DFMExtAction *action);
+
+private:
+    DFMExtMenuProxyPrivate *d;
+};
+
+END_DFMEXT_NAMESPACE
+
+#endif   // DFMEXTMENUPROXY_H

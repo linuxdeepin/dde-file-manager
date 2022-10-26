@@ -88,7 +88,10 @@ Description: deepin desktop-environment - filemanager edge plugins module
 
 Package: dde-file-manager-common-plugins
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: 
+ ${shlibs:Depends}, 
+ ${misc:Depends},
+ libdfm-extension( =${binary:Version})
 Description: deepin desktop-environment - filemanager common edge plugins module
  Deepin Desktop Environment (DDE) - filemanager common edge plugins module.
 
@@ -109,6 +112,19 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: plugin of dde-dock
  Disk mount plugin of dde-dock which is created by dde-file-manager
+
+Package: libdfm-extension
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: extension library of dde-file-manager
+ Extension library of dde-file-manager which is provided for third parties
+
+Package: libdfm-extension-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension( =${binary:Version})
+Description: Development package for libdfm-extension
+ This package contains the header files and pkgconfig
+ of libdfm-extension
 
 Package: dde-file-manager-dev
 Architecture: any
