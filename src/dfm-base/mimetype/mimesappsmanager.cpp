@@ -438,12 +438,17 @@ QStringList MimesAppsManager::getrecommendedAppsFromMimeWhiteList(const QUrl &ur
 
 QStringList MimesAppsManager::getApplicationsFolders()
 {
-    static const QStringList desktopFolders { QString("/usr/share/applications/"),
-                                              QString("/usr/local/share/applications/"),
-                                              QString("/usr/share/gnome/applications/"),
-                                              QString("/var/lib/flatpak/exports/share/applications"),
-                                              QDir::homePath() + QString("/.local/share/flatpak/exports/share/applications"),
-                                              QDir::homePath() + QString("/.local/share/applications") };
+    QStringList desktopFolders;
+    desktopFolders << QString("/usr/share/applications")
+                   << QString("/usr/local/share/applications")
+                   << QString("/usr/share/gnome/applications");
+    // env for XDG_DATA_DIRS
+    for (const QString &path : QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation)) {
+      if (desktopFolders.contains(path))
+          continue;
+      desktopFolders.append(path);
+    }
+
     return desktopFolders;
 }
 
