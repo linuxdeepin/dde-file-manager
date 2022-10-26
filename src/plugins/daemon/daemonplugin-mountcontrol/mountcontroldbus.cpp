@@ -46,10 +46,10 @@ DAEMONPMOUNTCONTROL_USE_NAMESPACE
 MountControlDBus::MountControlDBus(QObject *parent)
     : QObject(parent), QDBusContext(), d(new MountControlDBusPrivate(this))
 {
-    // NOTE!!! A PROBLEM cannot be resolved in short time.
+    // NOTE: A PROBLEM cannot be resolved in short time.
     // if samba is mounted via CIFS and network disconnected between server and client
     // any invokation on the mounted samba file will be blocked forever.
-    //    QDBusConnection::systemBus().registerObject(kMountControlObjPath, this);
+    QDBusConnection::systemBus().registerObject(kMountControlObjPath, this);
 }
 
 MountControlDBus::~MountControlDBus() { }
