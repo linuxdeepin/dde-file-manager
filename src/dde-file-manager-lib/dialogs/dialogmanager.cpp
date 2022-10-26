@@ -897,6 +897,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                 if (m_propertyDialogs.contains(url)) {
                     dialog = m_propertyDialogs.value(url);
                     dialog->raise();
+                    dialog->activateWindow();
                 } else {
                     dialog = new PropertyDialog(event, url);
                     dialog->setWindowFlags(dialog->windowFlags() & ~ Qt::FramelessWindowHint);
@@ -909,6 +910,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                         dialog->move(pos);
                     }
                     dialog->show();
+                    dialog->activateWindow();
 
                     connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
                     //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
