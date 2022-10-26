@@ -37,6 +37,7 @@
 #include <QItemSelection>
 #include <QItemSelectionRange>
 #include <QMimeData>
+#include <QScrollBar>
 
 using namespace testing;
 using namespace dfmbase;
@@ -511,3 +512,11 @@ TEST_F(CollectionViewTest, dragEnterEvent) {
     EXPECT_TRUE(isCall);
 }
 
+TEST_F(CollectionViewPrivateTest, updateVerticalBarRange)
+{
+    TestProvider test;
+    CollectionView view("dd", &test);
+    view.d->updateVerticalBarRange();
+
+    EXPECT_EQ(view.verticalScrollBar()->pageStep(), view.viewport()->height());
+}

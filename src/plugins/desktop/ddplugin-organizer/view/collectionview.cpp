@@ -161,7 +161,9 @@ void CollectionViewPrivate::updateVerticalBarRange()
 
     int height = dataRow * cellHeight + viewMargins.top() + viewMargins.bottom() - q->viewport()->height();
 
-    q->verticalScrollBar()->setRange(0, height);
+    q->verticalScrollBar()->setRange(0, qMax(0, height));
+    q->verticalScrollBar()->setPageStep(q->viewport()->height());
+    q->verticalScrollBar()->setSingleStep(1);
     qDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
 }
 
