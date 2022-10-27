@@ -104,6 +104,7 @@ QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
     rootUrl = url;
 
+    workStoped = false;
     const QModelIndex &rootIndex = viewModel()->setRootUrl(url);
     resetFilter();
 
@@ -250,6 +251,7 @@ void FileSortFilterProxyModel::setReadOnly(const bool readOnly)
 
 void FileSortFilterProxyModel::stopWork()
 {
+    workStoped = true;
     viewModel()->stopTraversWork(rootUrl);
 }
 
@@ -292,6 +294,10 @@ void FileSortFilterProxyModel::onStateChanged(const QUrl &url, ModelState state)
             return;
 
         this->state = state;
+
+        if (workStoped)
+            return;
+
         Q_EMIT stateChanged();
     }
 }

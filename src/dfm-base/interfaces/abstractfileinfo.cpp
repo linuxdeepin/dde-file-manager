@@ -1050,7 +1050,7 @@ bool dfmbase::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<QUrl> *anc
             ancestors->append(parentUrl);
         }
 
-        if (UniversalUtils::urlEquals(parentUrl, url) || FileUtils::isSameFile(parentUrl, url)) {
+        if (UniversalUtils::urlEquals(parentUrl, url)) {
             return true;
         }
 

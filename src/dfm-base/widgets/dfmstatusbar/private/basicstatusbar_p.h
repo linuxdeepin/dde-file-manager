@@ -52,6 +52,7 @@ public:
 
     void calcFolderContains(const QList<QUrl> &folderList);
     void initJobConnection();
+    void discardCurrentJob();
 
     QString onlyOneItemCounted;
     QString counted;
@@ -74,8 +75,10 @@ public:
     QHBoxLayout *layout = nullptr;
     QLabel *tip = nullptr;
 
-    FileStatisticsJob *fileStatisticsJog = nullptr;
+
+    QSharedPointer<FileStatisticsJob> fileStatisticsJog;
     bool isJobDisconnect = true;
+    QList<QSharedPointer<FileStatisticsJob>> waitDeleteJobList {};
 };
 
 }

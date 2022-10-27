@@ -100,12 +100,7 @@ void BasicStatusBar::itemSelected(const QList<AbstractFileInfo *> &infoList)
 
 void BasicStatusBar::itemCounted(const int count)
 {
-    if (d->fileStatisticsJog && d->fileStatisticsJog->isRunning()) {
-        if (d->fileStatisticsJog->disconnect())
-            d->isJobDisconnect = true;
-        d->fileStatisticsJog->stop();
-        d->fileStatisticsJog->wait();
-    }
+    d->discardCurrentJob();
 
     d->tip->setText(d->counted.arg(QString::number(count)));
 }

@@ -114,6 +114,7 @@ private:
     bool readOnly = false;
 
     ModelState state = ModelState::kIdle;
+    bool workStoped = false;
 };
 
 }

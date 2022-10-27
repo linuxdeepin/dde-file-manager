@@ -41,8 +41,12 @@ void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url, int widgetFilter)
 {
-    removeControls();
     detailSpaceUrl = url;
+
+    if (!isVisible())
+        return;
+
+    removeControls();
     detailView->setUrl(url, widgetFilter);
 }
 

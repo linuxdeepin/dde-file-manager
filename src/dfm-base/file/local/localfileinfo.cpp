@@ -630,9 +630,6 @@ bool LocalFileInfo::isWritable() const
         if (d->dfmFileInfo)
             isWritable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, &success).toBool();
 
-        if (!success)
-            isWritable = QFileInfo(d->url.path()).isWritable();
-
         d->attributes.insert(DFileInfo::AttributeID::kAccessCanWrite, isWritable);
     } else {
         isWritable = d->attributes.value(DFileInfo::AttributeID::kAccessCanWrite).toBool();

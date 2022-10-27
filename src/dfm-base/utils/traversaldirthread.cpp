@@ -57,7 +57,10 @@ void TraversalDirThread::stop()
     stopFlag = true;
     if (dirIterator)
         dirIterator->close();
-    wait();
+
+    // wait after the iterator really initialized
+    if (iteratorValid)
+        wait();
 }
 
 void TraversalDirThread::quit()
@@ -89,7 +92,13 @@ void TraversalDirThread::run()
 
     dirIterator->cacheBlockIOAttribute();
 
+    if (stopFlag)
+        return;
+
     while (dirIterator->hasNext()) {
+        // dirIterator init finish
+        iteratorValid = true;
+
         if (stopFlag)
             break;
 

@@ -70,13 +70,10 @@ void BasicStatusBarPrivate::initLayout()
 
 void BasicStatusBarPrivate::calcFolderContains(const QList<QUrl> &folderList)
 {
-    if (!fileStatisticsJog) {
-        fileStatisticsJog = new FileStatisticsJob(this);
-        fileStatisticsJog->setFileHints(FileStatisticsJob::kExcludeSourceFile | FileStatisticsJob::kSingleDepth);
-    } else if (fileStatisticsJog->isRunning()) {
-        fileStatisticsJog->stop();
-        fileStatisticsJog->wait();
-    }
+    discardCurrentJob();
+
+    fileStatisticsJog.reset( new FileStatisticsJob());
+    fileStatisticsJog->setFileHints(FileStatisticsJob::kExcludeSourceFile | FileStatisticsJob::kSingleDepth);
 
     if (isJobDisconnect) {
         isJobDisconnect = false;
@@ -103,9 +100,30 @@ void BasicStatusBarPrivate::initJobConnection()
         }
     };
 
-    connect(fileStatisticsJog, &FileStatisticsJob::finished, this, [this]() {
-        folderContains = fileStatisticsJog->filesCount() + fileStatisticsJog->directorysCount();
+    auto currentJob = fileStatisticsJog;
+    connect(currentJob.data(), &FileStatisticsJob::finished, this, [currentJob, this]() {
+        folderContains = currentJob->filesCount() + currentJob->directorysCount();
         q->updateStatusMessage();
     });
-    connect(fileStatisticsJog, &FileStatisticsJob::dataNotify, this, onFoundFile);
+    connect(currentJob.data(), &FileStatisticsJob::dataNotify, this, onFoundFile);
+}
+
+void BasicStatusBarPrivate::discardCurrentJob()
+{
+    if (!fileStatisticsJog)
+        return;
+
+    fileStatisticsJog->disconnect();
+    isJobDisconnect = true;
+
+    if (fileStatisticsJog->isRunning()) {
+        auto waitDeletePointer = fileStatisticsJog;
+        connect(waitDeletePointer.data(), &FileStatisticsJob::finished, this, [waitDeletePointer]{
+            waitDeletePointer->deleteLater();
+        });
+        fileStatisticsJog->stop();
+        waitDeleteJobList.append(fileStatisticsJog);
+    }
+
+    fileStatisticsJog = nullptr;
 }
