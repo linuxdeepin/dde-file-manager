@@ -94,6 +94,8 @@ private:
 
     void updateTitle();
 
+    void updateDialog();
+
     DUrlList m_fileList;
     DUrlList m_entryUrlList;
 
@@ -104,6 +106,7 @@ private:
     bool m_playingVideo = false;
     bool m_firstEnterSwitchToPage = false;
     int m_currentPageIndex = -1;
+    QAtomicInteger<bool> m_isSwitch = false;
     DFMFilePreview *m_preview = nullptr;
 
 };
