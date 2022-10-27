@@ -1120,7 +1120,7 @@ void FileView::startDrag(Qt::DropActions supportedActions)
 {
     QModelIndexList indexes = d->selectedDraggableIndexes();
     if (!indexes.isEmpty()) {
-        if (indexes.count() == 1) {
+        if (currentViewMode() == Global::ViewMode::kIconMode && indexes.count() == 1) {
             DListView::startDrag(supportedActions);
             return;
         }
@@ -1129,7 +1129,7 @@ void FileView::startDrag(Qt::DropActions supportedActions)
         if (!data)
             return;
 
-        QPixmap pixmap = d->viewDrawHelper->renderDragPixmap(indexes);
+        QPixmap pixmap = d->viewDrawHelper->renderDragPixmap(currentViewMode(), indexes);
         QDrag *drag = new QDrag(this);
         drag->setPixmap(pixmap);
         drag->setMimeData(data);
