@@ -440,7 +440,7 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
         if (fetch_networks(url, e)) {
             bool re = FileUtils::isSmbHostOnly(e->fileUrl());
             if(re){
-                RemoteMountsStashManager::insertStashedSmbDevice(QString("%://").arg(SMB_SCHEME)+e->fileUrl().host()); //当进行smb地址访问时，添加smb聚合设备到配置中
+                RemoteMountsStashManager::insertStashedSmbDevice(QString("%1://").arg(SMB_SCHEME)+e->fileUrl().host()); //当进行smb地址访问时，添加smb聚合设备到配置中
                 addSmbServerToHistory(e->fileUrl()); //通知侧边栏和计算机界面显示smb挂载聚合项
                 emit addSmbMountIntegration(e->fileUrl());
             }
