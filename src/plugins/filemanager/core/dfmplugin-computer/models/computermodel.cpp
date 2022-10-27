@@ -278,30 +278,28 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     if (pos > 0)   // update the item
         onItemUpdated(data.url);
     else {
-        if (shape != ComputerItemData::kSplitterItem && data.info->order() >= EntryFileInfo::kOrderCustom) {
-            beginInsertRows(QModelIndex(), items.count() - 1, items.count() - 1);
-            items.append(data);
-            endInsertRows();
+        if (shape == ComputerItemData::kSplitterItem) {
+            addGroup(data);
         } else {
-            int i = 0;
-            for (; i < items.count(); i++) {
-                const auto &item = items.at(i);
+            int row = 0;
+            for (; row < items.count(); row++) {
+                const auto &item = items.at(row);
                 if (item.groupId != data.groupId)
                     continue;
 
                 if (ComputerItemWatcher::typeCompare(data, item))
                     break;
 
-                int next = i + 1;
+                int next = row + 1;
                 if (next >= items.count()   // when search at end OR search at end of the group, append item to last item of the group.
                     || items.at(next).groupId != data.groupId) {
-                    i = next;
+                    row = next;
                     break;
                 }
             }
 
-            beginInsertRows(QModelIndex(), i, i);
-            items.insert(i, data);
+            beginInsertRows(QModelIndex(), row, row);
+            items.insert(row, data);
             endInsertRows();
         }
     }
@@ -318,13 +316,7 @@ void ComputerModel::onItemRemoved(const QUrl &url)
         beginRemoveRows(QModelIndex(), pos, pos);
         items.removeAt(pos);
         endRemoveRows();
-        if (items.last().shape == ComputerItemData::kSplitterItem) {
-            pos = items.count() - 1;
-            beginRemoveRows(QModelIndex(), pos, pos);
-            items.removeAt(pos);
-            endRemoveRows();
-            qDebug() << "remove last orphan group";
-        }
+        removeOrphanGroup();
     } else {
         qDebug() << "target item not found" << url;
     }
@@ -424,6 +416,64 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
             { "Property_Key_Editable", true }
         };
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
+    }
+}
+
+/*!
+ * \brief ComputerModel::addGroup some preset group should be inserted in fixed position.
+ * \param data
+ */
+void ComputerModel::addGroup(const ComputerItemData &data)
+{
+    if (data.shape != ComputerItemData::kSplitterItem)
+        return;
+
+    const QString &name = data.itemName;
+    if (name == ComputerItemWatcher::userDirGroup()) {   // insert at 0
+        beginInsertRows(QModelIndex(), 0, 0);
+        items.insert(0, data);
+        endInsertRows();
+    } else if (name == ComputerItemWatcher::diskGroup()) {   // insert after last userdir item
+        int userDirId = ComputerItemWatcherInstance->getGroupId(ComputerItemWatcher::userDirGroup());
+        int insertAt { 0 };
+        for (int i = 0; i < items.count(); i++) {
+            if (items.at(i).groupId != userDirId)
+                break;
+            else
+                insertAt = i + 1;
+        }
+        beginInsertRows(QModelIndex(), insertAt, insertAt);
+        items.insert(insertAt, data);
+        endInsertRows();
+    } else {   // append it, maybe someday vault will take the 3rd position.
+        beginInsertRows(QModelIndex(), items.count(), items.count());
+        items.append(data);
+        endInsertRows();
+    }
+}
+
+void ComputerModel::removeOrphanGroup()
+{
+    QList<int> aboutToRemovedGroup;
+    bool foundGroup { false };
+    int i = 0;
+    for (; i < items.count(); i++) {
+        if (items.at(i).shape == ComputerItemData::kSplitterItem) {
+            if (foundGroup)
+                aboutToRemovedGroup.append(i - 1);
+            foundGroup = true;
+        } else {
+            foundGroup = false;
+        }
+    }
+    if (foundGroup)
+        aboutToRemovedGroup.append(i - 1);
+
+    for (int i = aboutToRemovedGroup.count() - 1; i >= 0; i--) {
+        int removeAt { aboutToRemovedGroup.at(i) };
+        beginRemoveRows(QModelIndex(), removeAt, removeAt);
+        items.removeAt(removeAt);
+        endRemoveRows();
     }
 }
 

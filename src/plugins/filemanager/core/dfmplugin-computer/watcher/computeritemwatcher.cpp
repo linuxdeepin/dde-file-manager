@@ -526,15 +526,20 @@ int ComputerItemWatcher::addGroup(const QString &name)
     auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [name](const ComputerItemData &item) {
         return item.shape == ComputerItemData::kSplitterItem && item.itemName == name;
     });
-    if (ret != initedDatas.cend())
-        return initedDatas.at(ret - initedDatas.cbegin()).groupId;
-
     ComputerItemData data;
-    data.shape = ComputerItemData::kSplitterItem;
-    data.itemName = name;
-    data.groupId = getGroupId(name);
+    if (ret != initedDatas.cend()) {
+        const auto &inited = initedDatas[ret - initedDatas.cbegin()];
+        data.shape = inited.shape;
+        data.itemName = inited.itemName;
+        data.groupId = inited.groupId;
+    } else {
+        data.shape = ComputerItemData::kSplitterItem;
+        data.itemName = name;
+        data.groupId = getGroupId(name);
+        cacheItem(data);
+    }
+
     Q_EMIT itemAdded(data);
-    cacheItem(data);
     return data.groupId;
 }
 
@@ -579,7 +584,7 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
             if (var.variant().toBool())
                 removeDevice(url);
             else
-                onDeviceAdded(url, getGroupId(diskGroup()));
+                addDevice(diskGroup(), url, ComputerItemData::kLargeItem);
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
             if (propertyName == DeviceProperty::kOptical)

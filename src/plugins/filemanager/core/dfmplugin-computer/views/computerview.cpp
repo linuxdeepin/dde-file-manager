@@ -294,7 +294,7 @@ void ComputerView::hideSystemPartitions(bool hide)
         if (!item.url.path().endsWith(SuffixInfo::kBlock))
             continue;
 
-        // TODO(xust) Disk group should be hidden when no disk is visiable.
+        // FIXME(xust) Disk group should be hidden when no disk is visiable.
         bool removable = item.info && item.info->extraProperty(DeviceProperty::kRemovable).toBool();
         bool isLoop = item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool();
         if (!removable && !isLoop)
@@ -315,7 +315,7 @@ void ComputerView::hideLoopPartitions(bool hide)
         if (!item.url.path().endsWith(SuffixInfo::kBlock))
             continue;
 
-        // TODO(xust) Disk group should be hidden when no disk is visiable.
+        // FIXME(xust) Disk group should be hidden when no disk is visiable.
         bool isLoop = item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool();
         if (isLoop)
             this->setRowHidden(i, hide);

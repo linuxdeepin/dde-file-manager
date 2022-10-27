@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef COMPUTERMODEL_H
 #define COMPUTERMODEL_H
 
@@ -88,6 +88,9 @@ protected Q_SLOTS:
     void updateItemInfo(int pos);
     void onItemSizeChanged(const QUrl &url, qlonglong total, qlonglong free);
     void onItemPropertyChanged(const QUrl &url, const QString &key, const QVariant &val);
+
+    void addGroup(const ComputerItemData &data);
+    void removeOrphanGroup();
 
 private:
     ComputerView *view { nullptr };

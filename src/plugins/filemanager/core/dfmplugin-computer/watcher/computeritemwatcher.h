@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef COMPUTERITEMWATCHER_H
 #define COMPUTERITEMWATCHER_H
 
@@ -65,6 +65,10 @@ public:
     void removeSidebarItem(const QUrl &url);
 
     void insertUrlMapper(const QString &devId, const QUrl &mntUrl);
+
+    static QString userDirGroup();
+    static QString diskGroup();
+    int getGroupId(const QString &groupName);
 
 public Q_SLOTS:
     void startQueryItems();
@@ -117,9 +121,6 @@ private:
     int addGroup(const QString &name);
     ComputerItemData getGroup(GroupType type);
 
-    static QString userDirGroup();
-    static QString diskGroup();
-    int getGroupId(const QString &groupName);
     void cacheItem(const ComputerItemData &in);
 
 private:
