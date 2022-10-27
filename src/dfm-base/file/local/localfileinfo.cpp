@@ -109,6 +109,19 @@ bool LocalFileInfo::operator!=(const LocalFileInfo &fileinfo) const
     return !(operator==(fileinfo));
 }
 
+bool LocalFileInfo::initQuerier()
+{
+    if (d->dfmFileInfo)
+        return d->dfmFileInfo->initQuerier();
+    return false;
+}
+
+void LocalFileInfo::initQuerierAsync(int ioPriority, AbstractFileInfo::initQuerierAsyncCallback func, void *userData)
+{
+    if (d->dfmFileInfo)
+        d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
+}
+
 /*!
  * \brief setFile 设置文件的File，跟新当前的fileinfo
  *
@@ -579,7 +592,7 @@ bool LocalFileInfo::canTag() const
  */
 bool LocalFileInfo::isReadable() const
 {
-    if(isPrivate())
+    if (isPrivate())
         return false;
 
     bool isReadable = false;

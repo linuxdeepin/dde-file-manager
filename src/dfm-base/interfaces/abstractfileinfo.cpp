@@ -104,6 +104,18 @@ bool AbstractFileInfo::operator!=(const AbstractFileInfo &fileinfo) const
     return !(operator==(fileinfo));
 }
 
+bool dfmbase::AbstractFileInfo::initQuerier()
+{
+    CALL_PROXY(initQuerier());
+
+    return false;
+}
+
+void dfmbase::AbstractFileInfo::initQuerierAsync(int ioPriority, dfmbase::AbstractFileInfo::initQuerierAsyncCallback func, void *userData)
+{
+    CALL_PROXY(initQuerierAsync(ioPriority, func, userData));
+}
+
 /*!
  * \brief setFile 设置文件的File，跟新当前的fileinfo
  *

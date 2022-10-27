@@ -107,6 +107,8 @@ public:
         kCustomType = 0x100
     };
 
+    using initQuerierAsyncCallback = std::function<void(bool, void *)>;
+
 public:
     explicit AbstractFileInfo() = delete;
     virtual ~AbstractFileInfo();
@@ -114,6 +116,8 @@ public:
     virtual bool operator==(const AbstractFileInfo &fileinfo) const;
     virtual bool operator!=(const AbstractFileInfo &fileinfo) const;
 
+    virtual bool initQuerier();
+    virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr);
     virtual void setFile(const QUrl &url);
     virtual bool exists() const;
     virtual void refresh();

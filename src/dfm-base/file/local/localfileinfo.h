@@ -52,6 +52,8 @@ public:
     virtual bool operator==(const LocalFileInfo &fileinfo) const;
     virtual bool operator!=(const LocalFileInfo &fileinfo) const;
 
+    virtual bool initQuerier() override;
+    virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr) override;
     virtual void setFile(const QUrl &url) override;
     virtual bool exists() const override;
     virtual void refresh() override;

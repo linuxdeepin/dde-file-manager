@@ -31,6 +31,8 @@
 #include <dfm-io/core/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
 
+#include <functional>
+
 USING_IO_NAMESPACE
 using namespace dfmbase;
 
@@ -50,6 +52,69 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringL
         qWarning("Failed dfm-io use factory create enumerator");
         abort();
     }
+}
+
+LocalDirIteratorPrivate::~LocalDirIteratorPrivate()
+{
+}
+
+void LocalDirIteratorPrivate::initQuerierAsyncCallback(bool succ, void *data)
+{
+    if (!succ) {
+        if (data) {
+            InitQuerierAsyncOp *op = static_cast<InitQuerierAsyncOp *>(data);
+            if (op) {
+                op->me = nullptr;
+                delete op;
+            }
+        }
+
+        return;
+    }
+
+    if (!data)
+        return;
+
+    InitQuerierAsyncOp *op = static_cast<InitQuerierAsyncOp *>(data);
+    if (op) {
+        if (!op->me) {
+            delete op;
+            return;
+        }
+
+        const QUrl &url = op->url;
+        auto fileinfo = op->me->dfmioDirIterator->fileInfo();
+        QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(url, fileinfo));
+        auto infoTrans = InfoFactory::transfromInfo<AbstractFileInfo>(url.scheme(), info);
+
+        const QString &fileName = fileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
+        bool isHidden = false;
+        if (fileName.startsWith(".")) {
+            isHidden = true;
+        } else {
+            isHidden = hideFileList.contains(fileName);
+        }
+        infoTrans->cacheAttribute(DFileInfo::AttributeID::kStandardIsHidden, isHidden);
+        infoTrans->setIsLocalDevice(isLocalDevice);
+        infoTrans->setIsCdRomDevice(isCdRomDevice);
+
+        InfoCache::instance().cacheInfo(url, infoTrans);
+
+        op->me = nullptr;
+        delete op;
+    }
+}
+
+void LocalDirIteratorPrivate::cacheAttribute(const QUrl &url)
+{
+    auto dfileInfo = dfmioDirIterator->fileInfo();
+
+    InitQuerierAsyncOp *op = new InitQuerierAsyncOp;
+    op->me = this;
+    op->url = url;
+
+    auto func = std::bind(&LocalDirIteratorPrivate::initQuerierAsyncCallback, this, std::placeholders::_1, std::placeholders::_2);
+    dfileInfo->initQuerierAsync(0, func, op);
 }
 
 /*!
@@ -78,6 +143,7 @@ QUrl LocalDirIterator::next()
     if (d->dfmioDirIterator) {
         d->currentUrl = d->dfmioDirIterator->next();
     }
+
     return d->currentUrl;
 }
 /*!
@@ -94,25 +160,9 @@ bool LocalDirIterator::hasNext() const
             const bool needCache = !InfoCache::instance().cacheDisable(urlNext.scheme());
             if (needCache) {
                 AbstractFileInfoPointer infoCache = InfoCache::instance().getCacheInfo(urlNext);
-                if (!infoCache) {
+                if (!infoCache)
                     // cache info
-                    auto dfileInfo = d->dfmioDirIterator->fileInfo();
-                    QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(urlNext, dfileInfo));
-                    auto infoTrans = InfoFactory::transfromInfo<AbstractFileInfo>(urlNext.scheme(), info);
-
-                    const QString &fileName = dfileInfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
-                    bool isHidden = false;
-                    if (fileName.startsWith(".")) {
-                        isHidden = true;
-                    } else {
-                        isHidden = d->hideFileList.contains(fileName);
-                    }
-                    infoTrans->cacheAttribute(DFileInfo::AttributeID::kStandardIsHidden, isHidden);
-                    infoTrans->setIsLocalDevice(d->isLocalDevice);
-                    infoTrans->setIsCdRomDevice(d->isCdRomDevice);
-
-                    InfoCache::instance().cacheInfo(urlNext, infoTrans);
-                }
+                    d->cacheAttribute(urlNext);
             }
         }
 

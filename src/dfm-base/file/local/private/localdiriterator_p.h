@@ -26,6 +26,7 @@
 #include "base/urlroute.h"
 
 #include <QDirIterator>
+#include <QPointer>
 #include <QDebug>
 
 #include <dfm-io/core/denumerator.h>
@@ -36,17 +37,27 @@
 USING_IO_NAMESPACE
 namespace dfmbase {
 class LocalDirIterator;
-class LocalDirIteratorPrivate
+class LocalDirIteratorPrivate : public QObject
 {
     friend class LocalDirIterator;
     class LocalDirIterator *const q;
 
 public:
+    struct InitQuerierAsyncOp
+    {
+        QPointer<LocalDirIteratorPrivate> me;
+        QUrl url;
+    };
+
     explicit LocalDirIteratorPrivate(const QUrl &url,
                                      const QStringList &nameFilters,
                                      QDir::Filters filters,
                                      QDirIterator::IteratorFlags flags,
                                      LocalDirIterator *q);
+    virtual ~LocalDirIteratorPrivate() override;
+
+    void initQuerierAsyncCallback(bool succ, void *data);
+    void cacheAttribute(const QUrl &url);
 
 private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr;   // dfmio的文件迭代器
