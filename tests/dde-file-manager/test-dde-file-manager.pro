@@ -46,7 +46,7 @@ CONFIG(debug, debug|release) {
 INCLUDEPATH += $$PWD/../../src/dde-file-manager-lib $$PWD/.. \
                $$PWD/../../src/utils \
                $$PWD/../../src/dde-file-manager-lib/interfaces \
-               $$PWD/../../3rdpart/dbusservice
+               $$PWD/../../3rdparty/dbusservice
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
@@ -77,8 +77,8 @@ SOURCES += \
 QMAKE_CXXFLAGS += -g -Wall -fprofile-arcs -ftest-coverage -O0
 QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
-#include(../../3rdpart/googletest/gtest_dependency.pri)
-include(../../3rdpart/cpp-stub/stub.pri)
+#include(../../3rdparty/googletest/gtest_dependency.pri)
+include(../../3rdparty/cpp-stub/stub.pri)
 include(test.pri)
 
 unix {

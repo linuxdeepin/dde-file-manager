@@ -7,8 +7,8 @@
 #include($$PWD/../vendor/vendor.pri)
 
 INCLUDEPATH +=  $$PWD \
-                $$PWD/../../3rdpart/cpp-stub \
-                $$PWD/../../3rdpart/stub-ext
+                $$PWD/../../3rdparty/cpp-stub \
+                $$PWD/../../3rdparty/stub-ext
 
 
 SOURCES += \

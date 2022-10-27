@@ -25,7 +25,7 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib\
                 $$PWD/../utils\
                 $$PWD/view \
                 $$PWD \
-                $$PWD/../../3rdpart/dbusservice
+                $$PWD/../../3rdparty/dbusservice
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
