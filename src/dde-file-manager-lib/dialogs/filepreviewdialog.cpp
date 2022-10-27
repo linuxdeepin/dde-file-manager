@@ -249,7 +249,9 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
 
 FilePreviewDialog::~FilePreviewDialog()
 {
+    m_isSwitch = false;
     emit signalCloseEvent();
+
     if (m_preview) {
         m_preview->deleteLater();
         m_preview = nullptr;
@@ -296,6 +298,7 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
 
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
+    m_isSwitch = false;
     emit signalCloseEvent();
     if (m_preview) {
         m_preview->contentWidget()->hide();
@@ -442,6 +445,12 @@ static QString generalKey(const QString &key)
 
 void FilePreviewDialog::switchToPage(int index)
 {
+    if (m_isSwitch) {
+        return;
+    } else {
+        m_isSwitch = true;
+    }
+
     if (m_preview) {
         m_preview->stop();
     }
@@ -454,6 +463,8 @@ void FilePreviewDialog::switchToPage(int index)
 
     if (!info) {
         m_fileList.removeAt(index);
+
+        m_isSwitch = false;
 
         if (m_fileList.isEmpty())
             return;
@@ -474,16 +485,8 @@ void FilePreviewDialog::switchToPage(int index)
 
         if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key) || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
-                m_preview->contentWidget()->updateGeometry();
-                updateTitle();
-                this->setFocus();
-                m_preview->contentWidget()->adjustSize();
-                int newPerviewWidth = m_preview->contentWidget()->size().width();
-                int newPerviewHeight = m_preview->contentWidget()->size().height();
-                resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
-
-                playCurrentPreviewFile();
-                moveToCenter();
+                updateDialog();
+                m_isSwitch = false;
                 return;
             }
         }
@@ -511,6 +514,7 @@ void FilePreviewDialog::switchToPage(int index)
         if (qobject_cast<UnknowFilePreview *>(m_preview)) {
             m_preview->setFileUrl(m_fileList.at(index));
             m_statusBar->openButton()->setFocus();
+            m_isSwitch = false;
             return;
         } else {
             preview = new UnknowFilePreview(this);
@@ -518,6 +522,11 @@ void FilePreviewDialog::switchToPage(int index)
             preview->setFileUrl(m_fileList.at(index));
         }
     }
+
+    bool isUpdateDialog = true;
+    if (m_preview && preview && m_preview->metaObject()->className() == QStringLiteral("VideoPreview") &&
+            preview->metaObject()->className() != QStringLiteral("VideoPreview"))
+        isUpdateDialog = false;
 
     if (m_preview)
         disconnect(m_preview, &DFMFilePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
@@ -540,20 +549,16 @@ void FilePreviewDialog::switchToPage(int index)
     m_separator->setVisible(preview->showStatusBarSeparator());
     m_preview = preview;
 
+    if (m_preview && isUpdateDialog)
+        updateDialog();
+
     QTimer::singleShot(0, this, [this] {
         if (m_preview && m_statusBar) {
-            updateTitle();
-            playCurrentPreviewFile();
-            this->setFocus();
-            this->adjustSize();
-            m_preview->contentWidget()->adjustSize();
-            int newPerviewWidth = m_preview->contentWidget()->size().width();
-            int newPerviewHeight = m_preview->contentWidget()->size().height();
-            resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
-
-            moveToCenter();
+            updateDialog();
         }
     });
+
+    m_isSwitch = false;
 }
 
 void FilePreviewDialog::setEntryUrlList(const DUrlList &entryUrlList)
@@ -649,6 +654,19 @@ void FilePreviewDialog::updateTitle()
     }
     m_statusBar->title()->setText(elidedText);
     m_statusBar->title()->setHidden(m_statusBar->title()->text().isEmpty());
+}
+
+void FilePreviewDialog::updateDialog()
+{
+    updateTitle();
+    playCurrentPreviewFile();
+    this->setFocus();
+    this->adjustSize();
+    m_preview->contentWidget()->adjustSize();
+    int newPerviewWidth = m_preview->contentWidget()->size().width();
+    int newPerviewHeight = m_preview->contentWidget()->size().height();
+    resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
+    moveToCenter();
 }
 
 DFM_END_NAMESPACE
