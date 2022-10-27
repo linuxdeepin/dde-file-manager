@@ -12,8 +12,8 @@ BEGEN_DFMEXT_NAMESPACE
 
 extern "C" void dfm_extension_initiliaze();
 extern "C" void dfm_extension_shutdown();
-extern "C" DFMExtMenuPlugin *dfm_extesion_menu();
-extern "C" DFMExtEmblemIconPlugin *dfm_extesion_emblem();
+extern "C" DFMExtMenuPlugin *dfm_extension_menu();
+extern "C" DFMExtEmblemIconPlugin *dfm_extension_emblem();
 
 END_DFMEXT_NAMESPACE
 
