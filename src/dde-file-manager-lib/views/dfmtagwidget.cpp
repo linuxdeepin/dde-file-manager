@@ -160,12 +160,16 @@ void DFMTagWidget::initConnection()
         return;
 
     QObject::connect(d->m_tagCrumbEdit, &DCrumbEdit::crumbListChanged, d->m_tagCrumbEdit, [ = ]() {
-        if (!d->m_tagCrumbEdit->isEditing() && !d->m_tagCrumbEdit->property("LoadFileTags").toBool()) {
-            bool ret = DFileService::instance()->makeTagsOfFiles(nullptr, {d->m_url}, d->m_tagCrumbEdit->crumbList());
+        if (!d->m_tagCrumbEdit->property("updateCrumbsColor").toBool()) {
+            updateCrumbsColor(tagsColor(d->m_tagCrumbEdit->crumbList()));
 
-            if (!ret) {
-                loadTags(d->m_url);
-                return;
+            if (!d->m_tagCrumbEdit->isEditing() && !d->m_tagCrumbEdit->property("LoadFileTags").toBool()) {
+                bool ret = DFileService::instance()->makeTagsOfFiles(nullptr, {d->m_url}, d->m_tagCrumbEdit->crumbList());
+
+                if (!ret) {
+                    loadTags(d->m_url);
+                    return;
+                }
             }
         }
     });
@@ -196,6 +200,55 @@ void DFMTagWidget::initConnection()
         DFileService::instance()->makeTagsOfFiles(nullptr, urlList, newTagNames);
         loadTags(d->m_url);
     });
+}
+
+void DFMTagWidget::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)
+{
+    Q_D(DFMTagWidget);
+
+    if (tagsColor.isEmpty())
+        return;
+
+    d->m_tagCrumbEdit->setProperty("updateCrumbsColor", true);
+    d->m_tagCrumbEdit->clear();
+
+    for (auto it = tagsColor.begin(); it != tagsColor.end(); ++it) {
+        DCrumbTextFormat format = d->m_tagCrumbEdit->makeTextFormat();
+        format.setText(it.key());
+
+        format.setBackground(QBrush(it.value()));
+        format.setBackgroundRadius(5);
+
+        d->m_tagCrumbEdit->insertCrumb(format, 0);
+    }
+
+    d->m_tagCrumbEdit->setProperty("updateCrumbsColor", false);
+}
+
+QMap<QString, QColor> DFMTagWidget::tagsColor(const QStringList &tagList)
+{
+    const auto &allTags = TagManager::instance()->getAllTags();
+    QMap<QString, QColor> tagsMap;
+
+    for (const auto &tag : tagList) {
+        const auto &tagMap = TagManager::instance()->getTagColor({ tag });
+        if (tagMap.isEmpty()) {
+            QColor tagColor;
+            if (allTags.contains(tag)) {
+                tagColor = allTags[tag];
+            } else {
+                const auto &colorName = TagManager::instance()->randomColor();
+                tagColor = TagManager::instance()->getColorByColorName(colorName);
+                TagManager::instance()->registerTagColor(tag, colorName);
+            }
+
+            tagsMap[tag] = tagColor;
+        } else {
+            tagsMap.unite(tagMap);
+        }
+    }
+
+    return tagsMap;
 }
 
 void DFMTagWidget::loadTags(const DUrl &durl)
