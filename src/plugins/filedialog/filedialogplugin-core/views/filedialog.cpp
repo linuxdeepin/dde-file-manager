@@ -179,7 +179,8 @@ FileDialog::~FileDialog()
                                      &FileDialog::onViewSelectionChanged);
     dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
     dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_RenameStartEdit", this, &FileDialog::handleRenameEndAcceptBtn);
-
+    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_ItemClicked", this,
+                                     &FileDialog::onViewItemClicked);
     dpfSignalDispatcher->removeGlobalEventFilter(this);
 }
 
