@@ -64,7 +64,7 @@ void TrashPropertyDialog::initUI()
     QFrame *infoFrame = new QFrame;
     infoFrame->setMaximumHeight(48);
     QHBoxLayout *infoLayout = new QHBoxLayout;
-    infoLayout->setContentsMargins(10, 10, 10, 0);
+    infoLayout->setContentsMargins(10, 10, 10, 10);
     infoLayout->addWidget(fileCountAndFileSize);
     infoFrame->setLayout(infoLayout);
 
