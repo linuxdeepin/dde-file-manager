@@ -8,11 +8,12 @@
 #include <QLabel>
 #include <QPushButton>
 
-#include <DBlurEffectWidget>
+#include <DAbstractDialog>
+#include <DCommandLinkButton>
 
 DWIDGET_USE_NAMESPACE
 
-class CloseAllDialogIndicator : public DBlurEffectWidget
+class CloseAllDialogIndicator : public DAbstractDialog
 {
     Q_OBJECT
 public:
@@ -29,13 +30,13 @@ public slots:
     void setTotalMessage(qint64 size, int count);
 
 protected:
-//    void showEvent(QShowEvent* event);
+    //    void showEvent(QShowEvent* event);
     void keyPressEvent(QKeyEvent *event) override;
     void showEvent(QShowEvent *event) override;
 
 private:
     QLabel *m_messageLabel;
-    QPushButton *m_closeButton;
+    DCommandLinkButton *m_closeButton;
 };
 
-#endif // CLOSEALLDIALOGINDICATOR_H
+#endif   // CLOSEALLDIALOGINDICATOR_H
