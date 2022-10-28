@@ -78,6 +78,7 @@ public:
 
     QModelIndex findIndex(const QUrl &url) const;
 
+    void doFetchMore(const QModelIndex &rootIndex);
     void traversRootDir(const QModelIndex &rootIndex);
     void stopTraversWork(const QUrl &rootUrl);
 

@@ -143,6 +143,14 @@ QModelIndex FileViewModel::findIndex(const QUrl &url) const
     return index(indexPair.second, 0, parentIndex);
 }
 
+void FileViewModel::doFetchMore(const QModelIndex &rootIndex)
+{
+    auto rootInfo = fileDataHelper->findRootInfo(rootIndex.row());
+    rootInfo->needTraversal = true;
+
+    traversRootDir(rootIndex);
+}
+
 AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 {
     if (!index.isValid() || index.row() < 0)

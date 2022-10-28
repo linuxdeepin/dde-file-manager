@@ -279,7 +279,7 @@ void FileSortFilterProxyModel::onTraverPrehandle(const QUrl &url, const QModelIn
             QPointer<FileViewModel> guard(viewModel());
             prehandler(winId, url, [guard, index]() {
                 if (guard)
-                    guard->fetchMore(index);
+                    guard->doFetchMore(index);
             });
         }
     }

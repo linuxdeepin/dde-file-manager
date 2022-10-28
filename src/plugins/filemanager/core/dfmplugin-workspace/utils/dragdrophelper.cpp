@@ -152,10 +152,10 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         if (!handleDFileDrag(event->mimeData(), hoverFileInfo->url())) {
             currentHoverIndexUrl = toUrl;
             bool b = (event->source() == view);
-            if ((event->source() == view) && !WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
+            if (b && !WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
                 view->setViewSelectState(false);
                 event->ignore();
-            } else if ((event->source() != view) && !WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
+            } else if (!b && !WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
                 view->setViewSelectState(true);
                 event->accept();
             } else if (WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
