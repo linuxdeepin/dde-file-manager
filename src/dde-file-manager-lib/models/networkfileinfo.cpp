@@ -11,6 +11,7 @@
 #include "controllers/pathmanager.h"
 
 #include "views/dfileview.h"
+#include "shutil/fileutils.h"
 
 #include <QIcon>
 
@@ -94,11 +95,20 @@ DUrl NetworkFileInfo::parentUrl() const
 
 QString NetworkFileInfo::fileDisplayName() const
 {
-
     if (systemPathManager->isSystemPath(fileUrl().toString()))
         return systemPathManager->getSystemPathDisplayNameByPath(fileUrl().toString());
 
-    return m_networkNode.displayName();
+    const QString &name = m_networkNode.displayName();
+    if(!name.isEmpty())
+        return name;
+
+    if(fileUrl().isValid()) {
+        const QString &host = fileUrl().host();
+        if(!host.isEmpty())
+            return host;
+    }
+
+    return QString();
 }
 
 //QString NetworkFileInfo::mimeTypeName(QMimeDatabase::MatchMode mode) const
