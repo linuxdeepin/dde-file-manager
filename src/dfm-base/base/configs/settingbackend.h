@@ -51,6 +51,7 @@ public:
     void addSettingAccessor(const QString &key, GetOptFunc get, SaveOptFunc set);
     void addSettingAccessor(Application::ApplicationAttribute attr, SaveOptFunc set);
     void addSettingAccessor(Application::GenericAttribute attr, SaveOptFunc set);
+    void addToSerialDataKey(const QString &key);
 
 protected:
     void doSetOption(const QString &key, const QVariant &value);

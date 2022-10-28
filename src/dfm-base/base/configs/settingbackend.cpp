@@ -138,10 +138,16 @@ void SettingBackend::addSettingAccessor(Application::GenericAttribute attr, Save
     addSettingAccessor(uiKey, nullptr, set);
 }
 
+void SettingBackend::addToSerialDataKey(const QString &key)
+{
+    d->serialDataKey.insert(key);
+}
+
 void SettingBackend::doSetOption(const QString &key, const QVariant &value)
 {
     QSignalBlocker blocker(this);
-    Q_UNUSED(blocker)
+    if (d->serialDataKey.contains(key))
+        blocker.unblock();
 
     d->saveAsAppAttr(key, value);
     d->saveAsGenAttr(key, value);
