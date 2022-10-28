@@ -48,6 +48,8 @@ DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
+inline constexpr int kMaxColumnCount { 10 };
+
 FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel(parent),
       fileDataHelper(new FileDataHelper(this))
@@ -216,13 +218,13 @@ int FileViewModel::rowCount(const QModelIndex &parent) const
 int FileViewModel::columnCount(const QModelIndex &parent) const
 {
     if (!parent.isValid())
-        return 1;
+        return kMaxColumnCount;
 
     const RootInfo *info = fileDataHelper->findRootInfo(parent.row());
     if (info)
         return getColumnRoles(info->url).count();
 
-    return 1;
+    return 0;
 }
 
 QVariant FileViewModel::data(const QModelIndex &index, int role) const

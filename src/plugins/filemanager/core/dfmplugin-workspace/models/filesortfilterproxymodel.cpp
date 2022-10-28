@@ -39,7 +39,7 @@ using namespace dfmplugin_workspace;
 FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    setDynamicSortFilter(true);
+    setDynamicSortFilter(false);
     resetFilter();
 }
 
