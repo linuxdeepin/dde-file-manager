@@ -107,9 +107,9 @@ QVariantMap BookmarkData::serialize()
 }
 
 using namespace BookmarkCallBack;
+using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPBOOKMARK_USE_NAMESPACE
 
 BookMarkManager *BookMarkManager::instance()
 {
@@ -167,7 +167,7 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             bookmarkData.url = url;
             QString temPath = url.path();
             QUrl temUrl = url;
-            temUrl.setPath(QUrl::fromPercentEncoding(temPath.toUtf8()));   //Convert to readable character.
+            temUrl.setPath(QUrl::fromPercentEncoding(temPath.toUtf8()));   // Convert to readable character.
             QString temName;
             int pos = temUrl.path().lastIndexOf('/') + 1;
             temName = temUrl.path().right(temUrl.path().length() - pos);
@@ -225,13 +225,13 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
         bookmarkIcon = QIcon::fromTheme(iconName);
         displayName = SystemPathUtil::instance()->systemPathDisplayName(bookmarkName);
         Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled };
-        if (DefaultItemManager::instance()->pluginItemData().contains(bookmarkName)) {   //It's a plugin item
+        if (DefaultItemManager::instance()->pluginItemData().contains(bookmarkName)) {   // It's a plugin item
             const QVariantMap &bookmarkMap = DefaultItemManager::instance()->pluginItemData().value(bookmarkName);
             bool isPluginItemAdded = bookmarkMap.contains("Property_Key_PluginItemData");
-            if (!isPluginItemAdded)   //Plugin would be responsible for adding item to side bar.
+            if (!isPluginItemAdded)   // Plugin would be responsible for adding item to side bar.
                 return;
 
-            map = bookmarkMap.value("Property_Key_PluginItemData").toMap();   //Add plugin by cache data
+            map = bookmarkMap.value("Property_Key_PluginItemData").toMap();   // Add plugin by cache data
             bookmarkUrl = bookmarkMap.value("Property_Key_Url").toString();
         } else {
             const QString &path { SystemPathUtil::instance()->systemPath(bookmarkName) };
@@ -274,7 +274,7 @@ BookMarkManager::BookMarkManager(QObject *parent)
 
 void BookMarkManager::initData()
 {
-    //Init default item to quick access group
+    // Init default item to quick access group
     QList<BookmarkData> defItemInitOrder = DefaultItemManager::instance()->defaultItemInitOrder();
     int index = 0;
     foreach (const BookmarkData &data, defItemInitOrder) {
@@ -284,7 +284,7 @@ void BookMarkManager::initData()
         sortedUrls << data.url;
     }
 
-    //Init old version dfm bookmark item to quick access group.
+    // Init old version dfm bookmark item to quick access group.
     if (!bookmarkDataMap.isEmpty()) {
         QMapIterator<QUrl, BookmarkData> it(bookmarkDataMap);
         while (it.hasNext()) {
@@ -306,7 +306,7 @@ void BookMarkManager::update(const QVariant &value)
 
     initData();
     addQuickAccessDataFromConfig(value.toList());
-    //Add items to sidebar according to `sortedUrls`
+    // Add items to sidebar according to `sortedUrls`
     for (const QUrl &url : sortedUrls) {
         const BookmarkData &data = quickAccessDataMap[url];
         addBookMarkItem(data.url, data.name, data.isDefaultItem);
@@ -361,7 +361,6 @@ int BookMarkManager::showRemoveBookMarkDialog(quint64 winId)
     }
     DDialog dialog(window);
     dialog.setTitle(tr("Sorry, unable to locate your bookmark directory, remove it?"));
-    dialog.setMessage(" ");
     QStringList buttonTexts;
     buttonTexts.append(tr("Cancel", "button"));
     buttonTexts.append(tr("Remove", "button"));
@@ -433,10 +432,10 @@ void BookMarkManager::bookmarkDataToQuickAccess()
         bookmarkData.resetData(bookMarkMap);
         if (DefaultItemManager::instance()->isDefaultUrl(bookmarkData)) {
             qInfo() << "Bookmark item has a default url, it's maybe a dirty data and ignore it.";
-            continue;   //If find default item url in bookmark, it's a dirty data and ignore it.
+            continue;   // If find default item url in bookmark, it's a dirty data and ignore it.
         }
         bookmarkData.isDefaultItem = false;
-        bookmarkData.index = i;   //Give a init index and it would be synced from quick access.
+        bookmarkData.index = i;   // Give a init index and it would be synced from quick access.
         bookmarkDataMap[bookmarkData.url] = bookmarkData;
     }
 }
@@ -462,11 +461,11 @@ void BookMarkManager::addQuickAccessDataFromConfig(const QVariantList &dataList)
                 int index = quickAccessDataMap[bookmarkData.url].index;
                 bookmarkData.index = index >= 0 ? index : -1;
             }
-            sortedUrls.removeOne(bookmarkData.url);   //For updating the order
+            sortedUrls.removeOne(bookmarkData.url);   // For updating the order
         } else {
             bookmarkData.isDefaultItem = false;
             if (!bookmarkDataMap.isEmpty() && bookmarkDataMap.contains(bookmarkData.url))
-                sortedUrls.removeOne(bookmarkData.url);   //For updating the order
+                sortedUrls.removeOne(bookmarkData.url);   // For updating the order
         }
 
         quickAccessDataMap[bookmarkData.url] = bookmarkData;
@@ -490,7 +489,7 @@ bool BookMarkManager::isItemDuplicated(const BookmarkData &data)
 
 void BookMarkManager::onFileEdited(const QString &group, const QString &key, const QVariant &value)
 {
-    if (group != kConfigGroupQuickAccess || key != kConfigKeyName)   //Only care about quick access group !!!
+    if (group != kConfigGroupQuickAccess || key != kConfigKeyName)   // Only care about quick access group !!!
         return;
 
     update(value);
