@@ -74,7 +74,8 @@ void IteratorSearcher::doSearch()
             return;
 
         const auto &url = searchPathList.takeAt(0);
-        auto iterator = DFileService::instance()->createDirIterator(nullptr, url, {}, QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
+        const auto &filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+        auto iterator = DFileService::instance()->createDirIterator(nullptr, url, {}, filters);
         if (!iterator)
             continue;
 
