@@ -84,13 +84,8 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
             if (info->isDir())
                 BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         } else {
-            DeviceManager::instance()->mountNetworkDeviceAsync(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
-                if (!ok && err != dfmmount::DeviceError::kGIOErrorAlreadyMounted) {
-                    DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
-                } else {
-                    BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
-                }
-            });
+            auto callback = std::bind(handleNetworkMountResult, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, url, windowId);
+            DeviceManager::instance()->mountNetworkDeviceAsync(bookmarkMap[url].deviceUrl, callback);
         }
         return;
     }
@@ -126,4 +121,29 @@ void bookMarkActionClickedCallBack(bool isNormal, const QUrl &currentUrl, const 
         BookMarkManager::instance()->removeBookMark(url);
     else
         BookMarkManager::instance()->addBookMark(selected);
+}
+
+void BookmarkCallBack::handleNetworkMountResult(bool ok, dfmmount::DeviceError err, const QString &mpt, const QUrl &target, quint64 winId)
+{
+    if (!ok && err != dfmmount::DeviceError::kGIOErrorAlreadyMounted) {
+        DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
+    } else {
+        auto filePath = target.path();
+        QUrl result = target;
+        if (!filePath.startsWith(mpt)) {
+            QStringList paths = filePath.split("/", QString::SkipEmptyParts);
+            if (filePath.startsWith("/run/user")) {   // remove first 5 path just leave the share dir. /run/user/1000/gvfs/smbxxxxx/share
+                paths = paths.mid(5);
+                result = QUrl::fromLocalFile(mpt + "/" + paths.join("/"));
+            } else if (filePath.startsWith("/root/.gvfs")   // remove first 3 path. /root/.gvfs/smbxxxxxxx/share
+                       || filePath.startsWith("/media/")) {   // /media/$USER/smbmounts/share
+                paths = paths.mid(3);
+                result = QUrl::fromLocalFile(mpt + "/" + paths.join("/"));
+            } else {
+                qDebug() << "unknown mount method, cannot redirect path";
+                result = QUrl::fromLocalFile(mpt);
+            }
+        }
+        BookMarkEventCaller::sendOpenBookMarkInWindow(winId, result);
+    }
 }
