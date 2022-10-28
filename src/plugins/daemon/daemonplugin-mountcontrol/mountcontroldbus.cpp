@@ -103,7 +103,7 @@ QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
             return mntPath;
         } else {
             // if params contains 'timeout', remove and retry.
-            if (params.value(MountOpts::kTimeout, 0).toInt() != 0) {
+            if (params.contains(MountOpts::kTimeout)) {
                 params.remove(MountOpts::kTimeout);
                 qInfo() << "mount: remove timeout param and remount...";
                 continue;

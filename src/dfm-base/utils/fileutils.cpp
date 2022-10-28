@@ -266,7 +266,7 @@ bool FileUtils::isMtpFile(const QUrl &url)
         return false;
 
     const QString &path = url.toLocalFile();
-    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^root/.gvfs/mtp:host)" };
+    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^/root/.gvfs/mtp:host)" };
     QRegularExpression re { gvfsMatch };
     QRegularExpressionMatch match { re.match(path) };
     return match.hasMatch();

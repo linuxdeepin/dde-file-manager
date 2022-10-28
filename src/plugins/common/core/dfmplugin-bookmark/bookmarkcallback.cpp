@@ -79,14 +79,13 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
     if (bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSmb)
         || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kFtp)
         || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSFtp)) {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url, false);
         if (info && info->exists()) {
             if (info->isDir())
                 BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         } else {
             DeviceManager::instance()->mountNetworkDeviceAsync(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
-                Q_UNUSED(mntPath)
-                if (!ok) {
+                if (!ok && err != dfmmount::DeviceError::kGIOErrorAlreadyMounted) {
                     DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
                 } else {
                     BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
