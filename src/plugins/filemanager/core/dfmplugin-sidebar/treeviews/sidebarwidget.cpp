@@ -33,6 +33,8 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <QApplication>
 #include <QVBoxLayout>
@@ -286,7 +288,9 @@ void SideBarWidget::initializeUi()
     sidebarView->setFrameShape(QFrame::Shape::NoFrame);
     sidebarView->setAutoFillBackground(true);
 
-    setMaximumWidth(200);
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
+    int splitState = state.value("sidebar", 200).toInt();
+    setMaximumWidth(splitState);
     setFocusProxy(sidebarView);
 }
 
