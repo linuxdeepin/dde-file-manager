@@ -21,16 +21,16 @@
 #ifndef CLOSEALLDIALOG_H
 #define CLOSEALLDIALOG_H
 
-#include <DBlurEffectWidget>
-
+#include <DAbstractDialog>
 #include <QPushButton>
 
 DWIDGET_BEGIN_NAMESPACE
 class DLabel;
+class DCommandLinkButton;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_propertydialog {
-class CloseAllDialog : public DTK_WIDGET_NAMESPACE::DBlurEffectWidget
+class CloseAllDialog : public DTK_WIDGET_NAMESPACE::DAbstractDialog
 {
     Q_OBJECT
 public:
@@ -52,7 +52,7 @@ protected:
 
 private:
     DTK_WIDGET_NAMESPACE::DLabel *messageLabel { nullptr };
-    QPushButton *closeButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DCommandLinkButton *closeButton { nullptr };
 };
 }
 #endif   // CLOSEALLDIALOG_H

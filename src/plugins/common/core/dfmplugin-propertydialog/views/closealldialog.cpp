@@ -23,19 +23,21 @@
 #include "dfm-base/utils/universalutils.h"
 
 #include <DLabel>
+#include <DCommandLinkButton>
 
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QFontMetrics>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 CloseAllDialog::CloseAllDialog(QWidget *parent)
-    : DBlurEffectWidget(parent)
+    : DAbstractDialog(parent)
 {
-    setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(windowFlags() /*| Qt::FramelessWindowHint*/ | Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::NoFocus);
     //    AC_SET_OBJECT_NAME(this, AC_CLOSE_ALL_DLG_INDICATOR);
     //    AC_SET_ACCESSIBLE_NAME(this, AC_CLOSE_ALL_DLG_INDICATOR);
@@ -50,24 +52,33 @@ CloseAllDialog::~CloseAllDialog()
 
 void CloseAllDialog::initUI()
 {
-    setFixedSize(400, 50);
-
     messageLabel = new DLabel(this);
+    auto font = messageLabel->font();
+    font.setPixelSize(12);
+    messageLabel->setFont(font);
     //    AC_SET_OBJECT_NAME(messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
     //    AC_SET_ACCESSIBLE_NAME(messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
 
-    closeButton = new QPushButton(tr("Close all"), this);
+    closeButton = new DCommandLinkButton(tr("Close all"), this);
+    font = closeButton->font();
+    font.setPixelSize(14);
+    closeButton->setFont(font);
     //    AC_SET_OBJECT_NAME(closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
     //    AC_SET_ACCESSIBLE_NAME(closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addWidget(messageLabel, Qt::AlignCenter);
-    mainLayout->addSpacing(50);
     mainLayout->addWidget(closeButton, Qt::AlignRight);
-    mainLayout->setContentsMargins(25, 5, 25, 5);
+    mainLayout->addSpacing(0);
+    mainLayout->setContentsMargins(15, 8, 12, 11);
     setLayout(mainLayout);
 
     setTotalMessage(0, 0);
+
+    setFixedSize(297, 36);
+
+    //    messageLabel->setStyleSheet("border: 1px solid black;");
+    //    closeButton->setStyleSheet("border: 1px solid red;");
 }
 
 void CloseAllDialog::initConnect()
@@ -78,7 +89,12 @@ void CloseAllDialog::initConnect()
 void CloseAllDialog::setTotalMessage(qint64 size, int count)
 {
     QString message = tr("Total size: %1, %2 files").arg(FileUtils::formatSize(size), QString::number(count));
+    QFontMetrics fm(messageLabel->fontMetrics());
+    int txtWidth = fm.width(message);
+    int charWidth = fm.width(message[0]);
     messageLabel->setText(message);
+    if (txtWidth > messageLabel->width() - charWidth)   // consider the inner spacing of text label
+        setFixedWidth(this->width() + charWidth);
 }
 
 void CloseAllDialog::keyPressEvent(QKeyEvent *event)
@@ -86,7 +102,7 @@ void CloseAllDialog::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         return;
     }
-    DBlurEffectWidget::keyPressEvent(event);
+    DAbstractDialog::keyPressEvent(event);
 }
 
 void CloseAllDialog::showEvent(QShowEvent *event)
@@ -101,5 +117,5 @@ void CloseAllDialog::showEvent(QShowEvent *event)
     move((geometryWidth - width()) / 2, geometryHeight - height());
 
     setTotalMessage(0, 0);
-    return DBlurEffectWidget::showEvent(event);
+    return DAbstractDialog::showEvent(event);
 }
