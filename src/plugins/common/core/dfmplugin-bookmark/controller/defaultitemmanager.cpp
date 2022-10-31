@@ -50,7 +50,8 @@ void DefaultItemManager::initDefaultItems()
 {
     d->defaultItemInitOrder.clear();
     static QStringList defOrder = { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
-
+    d->defaultPluginItem << "Trash"
+                         << "Recent";
     for (int i = 0; i < defOrder.count(); i++) {
         const QString &nameKey = defOrder.at(i);
         const QString &displayName = SystemPathUtil::instance()->systemPathDisplayName(nameKey);
@@ -134,6 +135,11 @@ bool DefaultItemManager::isDefaultItem(const BookmarkData &data)
 bool DefaultItemManager::isDefaultUrl(const BookmarkData &data)
 {
     return DefaultItemManager::instance()->defaultItemUrls().values().contains(data.url);
+}
+
+bool DefaultItemManager::isDefaultPluginItem(const QString &name)
+{
+    return d->defaultPluginItem.contains(name);
 }
 
 BookmarkData DefaultItemManager::pluginItemDataToBookmark(const QVariantMap &data)

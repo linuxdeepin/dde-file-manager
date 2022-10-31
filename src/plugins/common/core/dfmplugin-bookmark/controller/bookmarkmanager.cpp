@@ -463,6 +463,13 @@ void BookMarkManager::addQuickAccessDataFromConfig(const QVariantList &dataList)
             }
             sortedUrls.removeOne(bookmarkData.url);   // For updating the order
         } else {
+            if (DefaultItemManager::instance()->isDefaultPluginItem(bookmarkData.name)
+                && !DefaultItemManager::instance()->pluginItemData().keys().contains(bookmarkData.name)) {
+                // It's a default plugin item, but there is no its pushed data (e.g. trash plugin is not loaded in file dialog)
+                sortedUrls.removeOne(bookmarkData.url);
+                continue;
+            }
+
             bookmarkData.isDefaultItem = false;
             if (!bookmarkDataMap.isEmpty() && bookmarkDataMap.contains(bookmarkData.url))
                 sortedUrls.removeOne(bookmarkData.url);   // For updating the order

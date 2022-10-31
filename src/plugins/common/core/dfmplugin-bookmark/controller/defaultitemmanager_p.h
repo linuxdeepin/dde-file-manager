@@ -40,6 +40,7 @@ class DefaultItemManagerPrivate : public QObject
     QMap<QString, QUrl> defaultItemUrls;
     QList<BookmarkData> defaultItemInitOrder;
     QMap<QString, QVariantMap> pluginItemData;
+    QStringList defaultPluginItem;
 };
 
 DPBOOKMARK_END_NAMESPACE

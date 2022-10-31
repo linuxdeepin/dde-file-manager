@@ -45,6 +45,7 @@ public:
     QMap<QString, QVariantMap> pluginItemData();
     bool isDefaultItem(const BookmarkData &data);
     bool isDefaultUrl(const BookmarkData &data);
+    bool isDefaultPluginItem(const QString &name);
     BookmarkData pluginItemDataToBookmark(const QVariantMap &data);
 
 private:
