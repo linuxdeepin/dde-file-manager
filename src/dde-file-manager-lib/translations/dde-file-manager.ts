@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -233,12 +231,12 @@
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="39"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="40"/>
         <source>Close all</source>
         <translation>Close all</translation>
     </message>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="60"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="69"/>
         <source>Total size: %1, %2 files</source>
         <translation>Total size: %1, %2 files</translation>
     </message>
@@ -1490,7 +1488,7 @@
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="660"/>
         <source>Remove tag &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove tag &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileviewhelper.cpp" line="662"/>
@@ -2595,47 +2593,47 @@
         <location filename="../configure/global-setting-template-pro.js" line="275"/>
         <location filename="../configure/global-setting-template.js" line="274"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Merge the entries of Samba shared folders</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="287"/>
         <location filename="../configure/global-setting-template-pro.js" line="287"/>
-        <location filename="../configure/global-setting-template.js" line="286"/>
+        <location filename="../configure/global-setting-template.js" line="287"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>Use the file chooser dialog of File Manager</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="293"/>
         <location filename="../configure/global-setting-template-pro.js" line="293"/>
-        <location filename="../configure/global-setting-template.js" line="292"/>
+        <location filename="../configure/global-setting-template.js" line="293"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>Ask for my confirmation when deleting files</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="301"/>
         <location filename="../configure/global-setting-template-pro.js" line="301"/>
-        <location filename="../configure/global-setting-template.js" line="300"/>
+        <location filename="../configure/global-setting-template.js" line="301"/>
         <source>Other</source>
         <translation>Other</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="305"/>
         <location filename="../configure/global-setting-template-pro.js" line="305"/>
-        <location filename="../configure/global-setting-template.js" line="304"/>
+        <location filename="../configure/global-setting-template.js" line="305"/>
         <source>Hide built-in disks</source>
         <translation>Hide built-in disks</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="311"/>
         <location filename="../configure/global-setting-template-pro.js" line="311"/>
-        <location filename="../configure/global-setting-template.js" line="317"/>
+        <location filename="../configure/global-setting-template.js" line="318"/>
         <source>Hide loop partitions</source>
         <translation>Hide loop partitions</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="324"/>
         <location filename="../configure/global-setting-template-pro.js" line="324"/>
-        <location filename="../configure/global-setting-template.js" line="323"/>
+        <location filename="../configure/global-setting-template.js" line="324"/>
         <source>Show file system on disk icon</source>
         <translation>Show file system on disk icon</translation>
     </message>
@@ -2718,7 +2716,7 @@
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="283"/>
         <location filename="../configure/global-setting-template-pro.js" line="283"/>
-        <location filename="../configure/global-setting-template.js" line="282"/>
+        <location filename="../configure/global-setting-template.js" line="283"/>
         <source>Dialog</source>
         <translation>Dialog</translation>
     </message>
@@ -2726,6 +2724,11 @@
         <location filename="../configure/global-setting-template.js" line="208"/>
         <source>Compressed file preview</source>
         <translation>Compressed file preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template.js" line="275"/>
+        <source>Switching the entry display may lead to failed mounting</source>
+        <translation>Switching the entry display may lead to failed mounting</translation>
     </message>
 </context>
 <context>
@@ -3217,7 +3220,7 @@
         <translation>Hide this file</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1701"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1703"/>
         <source>Allow to execute as program</source>
         <translation>Allow to execute as program</translation>
     </message>
@@ -3332,41 +3335,41 @@
         <translation>Time locked</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1594"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1596"/>
         <source>Access denied</source>
         <translation>Access denied</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1595"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1607"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1609"/>
         <source>Executable</source>
         <translation>Executable</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1596"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
         <source>Write only</source>
         <translation>Write only</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1601"/>
         <source>Read only</source>
         <translation>Read only</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1601"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1602"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1603"/>
         <source>Read-write</source>
         <translation>Read-write</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1697"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1699"/>
         <source>Others</source>
         <translation>Others</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1695"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1697"/>
         <source>Owner</source>
         <translation>Owner</translation>
     </message>
@@ -3386,7 +3389,7 @@
         <translation>File system</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1696"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1698"/>
         <source>Group</source>
         <translation>Group</translation>
     </message>
@@ -3746,12 +3749,12 @@
         <translation>Refresh</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="298"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="301"/>
         <source>Auto mount</source>
         <translation>Auto mount</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="336"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="339"/>
         <source>Open after auto mount</source>
         <translation>Open after auto mount</translation>
     </message>
