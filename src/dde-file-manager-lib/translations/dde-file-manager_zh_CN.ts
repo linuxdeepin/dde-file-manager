@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>AppController</name>
     <message>
@@ -233,12 +231,12 @@
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="39"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="40"/>
         <source>Close all</source>
         <translation>关闭全部</translation>
     </message>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="60"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="69"/>
         <source>Total size: %1, %2 files</source>
         <translation>总容量 %1，总文件数量 %2个</translation>
     </message>
@@ -2595,47 +2593,47 @@
         <location filename="../configure/global-setting-template-pro.js" line="275"/>
         <location filename="../configure/global-setting-template.js" line="274"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation type="unfinished"></translation>
+        <translation>合并显示Samba共享目录入口</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="287"/>
         <location filename="../configure/global-setting-template-pro.js" line="287"/>
-        <location filename="../configure/global-setting-template.js" line="286"/>
+        <location filename="../configure/global-setting-template.js" line="287"/>
         <source>Use the file chooser dialog of File Manager</source>
         <translation>使用文件管理器的文件选择对话框</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="293"/>
         <location filename="../configure/global-setting-template-pro.js" line="293"/>
-        <location filename="../configure/global-setting-template.js" line="292"/>
+        <location filename="../configure/global-setting-template.js" line="293"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>开启普通删除提示</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="301"/>
         <location filename="../configure/global-setting-template-pro.js" line="301"/>
-        <location filename="../configure/global-setting-template.js" line="300"/>
+        <location filename="../configure/global-setting-template.js" line="301"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="305"/>
         <location filename="../configure/global-setting-template-pro.js" line="305"/>
-        <location filename="../configure/global-setting-template.js" line="304"/>
+        <location filename="../configure/global-setting-template.js" line="305"/>
         <source>Hide built-in disks</source>
         <translation>隐藏内置磁盘</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="311"/>
         <location filename="../configure/global-setting-template-pro.js" line="311"/>
-        <location filename="../configure/global-setting-template.js" line="317"/>
+        <location filename="../configure/global-setting-template.js" line="318"/>
         <source>Hide loop partitions</source>
         <translation>隐藏回环分区</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="324"/>
         <location filename="../configure/global-setting-template-pro.js" line="324"/>
-        <location filename="../configure/global-setting-template.js" line="323"/>
+        <location filename="../configure/global-setting-template.js" line="324"/>
         <source>Show file system on disk icon</source>
         <translation>在磁盘图标上显示文件系统标签</translation>
     </message>
@@ -2718,7 +2716,7 @@
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="283"/>
         <location filename="../configure/global-setting-template-pro.js" line="283"/>
-        <location filename="../configure/global-setting-template.js" line="282"/>
+        <location filename="../configure/global-setting-template.js" line="283"/>
         <source>Dialog</source>
         <translation>对话框</translation>
     </message>
@@ -2726,6 +2724,11 @@
         <location filename="../configure/global-setting-template.js" line="208"/>
         <source>Compressed file preview</source>
         <translation>压缩文件预览</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template.js" line="275"/>
+        <source>Switching the entry display may lead to failed mounting</source>
+        <translation>切换入口显示模式可能会导致挂载状态失效</translation>
     </message>
 </context>
 <context>
@@ -3217,7 +3220,7 @@
         <translation>隐藏此文件</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1701"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1703"/>
         <source>Allow to execute as program</source>
         <translation>允许以程序执行</translation>
     </message>
@@ -3332,41 +3335,41 @@
         <translation>上锁时间</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1594"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1596"/>
         <source>Access denied</source>
         <translation>不可读不可写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1595"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1607"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1609"/>
         <source>Executable</source>
         <translation>可执行</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1596"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
         <source>Write only</source>
         <translation>可写不可读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1601"/>
         <source>Read only</source>
         <translation>只读</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1601"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1602"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1603"/>
         <source>Read-write</source>
         <translation>读写</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1697"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1699"/>
         <source>Others</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1695"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1697"/>
         <source>Owner</source>
         <translation>所有者</translation>
     </message>
@@ -3386,7 +3389,7 @@
         <translation>文件系统</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1696"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1698"/>
         <source>Group</source>
         <translation>群组</translation>
     </message>
@@ -3746,12 +3749,12 @@
         <translation>刷新</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="298"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="301"/>
         <source>Auto mount</source>
         <translation>自动挂载</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="336"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="339"/>
         <source>Open after auto mount</source>
         <translation>自动挂载后打开</translation>
     </message>
