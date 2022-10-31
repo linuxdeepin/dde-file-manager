@@ -48,6 +48,8 @@ static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknownAction;
 static constexpr char kUserIdKey[] = "userId";
 static constexpr char kRemoteCopyKey[] = "uos/remote-copy";
 static constexpr char kGnomeCopyKey[] = "x-special/gnome-copied-files";
+static constexpr char kRemoteAssistanceCopyKey[] = "uos/remote-copied-files";
+
 
 void onClipboardDataChanged()
 {
@@ -66,6 +68,12 @@ void onClipboardDataChanged()
         qInfo() << "clipboard use other !";
         clipboardAction = ClipBoard::kRemoteAction;
         remoteCurrentCount++;
+        return;
+    }
+    // 远程协助功能
+    if (mimeData->hasFormat(kRemoteAssistanceCopyKey)) {
+        qInfo() << "Remote copy: set remote copy action";
+        clipboardAction = ClipBoard::kRemoteCopiedAction;
         return;
     }
     const QByteArray &data = mimeData->data(kGnomeCopyKey);
@@ -197,6 +205,28 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
         mimeData->setData(GlobalData::kUserIdKey, userId);
     }
 
+    qApp->clipboard()->setMimeData(mimeData);
+}
+/*!
+ * \brief ClipBoard::setCurUrlToClipboardForRemote Set Remote Assistance target urls
+ * \param curUrl
+ */
+void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
+{
+    if (curUrl.isEmpty())
+        return;
+    QByteArray localPath;
+    if (curUrl.isLocalFile()) {
+        localPath = curUrl.toString().toLocal8Bit();
+    } else {
+        qInfo() << "Remote Assistance copy: current url not local file";
+        return;
+    }
+
+    if (localPath.isEmpty())
+        return;
+    QMimeData *mimeData = new QMimeData();
+    mimeData->setData(GlobalData::kRemoteAssistanceCopyKey, localPath);
     qApp->clipboard()->setMimeData(mimeData);
 }
 /*!

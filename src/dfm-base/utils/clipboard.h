@@ -38,6 +38,7 @@ public:
         kCopyAction,
         kDeleteAction,
         kRemoteAction,
+        kRemoteCopiedAction,
         kUnknownAction = 255
     };
 
@@ -47,6 +48,7 @@ public:
 
     static void clearClipboard();
     static void setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::ClipboardAction action, QMimeData *mimeData = nullptr);
+    static void setCurUrlToClipboardForRemote(const QUrl &curUrl);
     static void setDataToClipboard(QMimeData *mimeData);
     static bool supportCut();
 

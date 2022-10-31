@@ -193,6 +193,9 @@ bool ClipBoardMenuScene::triggered(QAction *action)
 
             // clear clipboard after cutting files from clipboard
             ClipBoard::instance()->clearClipboard();
+        }  else if (action == ClipBoard::kRemoteCopiedAction) { // 远程协助
+            qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+            ClipBoard::setCurUrlToClipboardForRemote(d->currentDir);
         } else {
             qWarning() << "clipboard action:" << action << "    urls:" << selectedUrlsTemp;
         }
