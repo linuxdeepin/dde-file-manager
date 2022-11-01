@@ -1033,7 +1033,7 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
         index = FileViewHelper::caculateIconItemIndex(this, itemSize, actualPos);
     }
 
-    if (index == -1)
+    if (index == -1 || index >= model()->rowCount(rootIndex()))
         return rootIndex();
 
     return model()->index(index, 0, rootIndex());
