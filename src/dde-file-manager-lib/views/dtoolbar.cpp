@@ -176,7 +176,7 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar->setFrameShape(QFrame::NoFrame);
     m_contollerToolBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_contollerToolBarContentLayout = new QHBoxLayout(m_contollerToolBar);
-    m_contollerToolBarContentLayout->setContentsMargins(14, 1, 14, 1);
+    m_contollerToolBarContentLayout->setContentsMargins(14, 0, 14, 0);
     m_contollerToolBarContentLayout->setSpacing(20);
 }
 

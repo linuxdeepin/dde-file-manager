@@ -924,6 +924,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
         m_multiFilesPropertyDialog->show();
         m_multiFilesPropertyDialog->moveToCenter();
         m_multiFilesPropertyDialog->raise();
+        m_multiFilesPropertyDialog->activateWindow();
     }
 }
 
@@ -933,6 +934,7 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
     showPropertyDialog(event);
     if (m_propertyDialogs.contains(url)) {
         PropertyDialog *dialog = m_propertyDialogs.value(url);
+        dialog->activateWindow();
         if (dialog->expandGroup().count() > 1) {
             dialog->expandGroup().at(0)->setAnimationDuration(0);
             dialog->expandGroup().at(1)->setAnimationDuration(0);
@@ -957,10 +959,13 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
     QPoint pos = getPerportyPos(m_trashDialog->size().width(), m_trashDialog->size().height(), 1, 0);
     m_trashDialog->move(pos);
     m_trashDialog->show();
+    m_trashDialog->activateWindow();
 
     TIMER_SINGLESHOT(100, {
-        if (m_trashDialog)
+        if (m_trashDialog) {
             m_trashDialog->raise();
+            m_trashDialog->activateWindow();
+        }
     }, this)
 }
 
@@ -970,15 +975,18 @@ void DialogManager::showComputerPropertyDialog()
         m_computerDialog->updateComputerInfo();
         m_computerDialog->show();
         m_computerDialog->raise();
+        m_computerDialog->activateWindow();
         return;
     }
     m_computerDialog = new ComputerPropertyDialog;
     QPoint pos = getPerportyPos(m_computerDialog->size().width(), m_computerDialog->size().height(), 1, 0);
     m_computerDialog->show();
     m_computerDialog->move(pos);
+    m_computerDialog->activateWindow();
 
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
+        m_computerDialog->activateWindow();
     },
     this)
 }
@@ -989,6 +997,7 @@ void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
     if (w) {
         PropertyDialog *dialog = new PropertyDialog(event, event.fileUrl());
         dialog->show();
+        dialog->activateWindow();
     }
 }
 
