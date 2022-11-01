@@ -2,49 +2,49 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="502"/>
+        <location filename="../controllers/appcontroller.cpp" line="503"/>
         <source>New Folder</source>
         <translation>Новая Папка</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="604"/>
+        <location filename="../controllers/appcontroller.cpp" line="605"/>
         <source>Mounting device error</source>
         <translation>Ошибка подключения устройства</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="659"/>
+        <location filename="../controllers/appcontroller.cpp" line="660"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>Образ диска был поврежден и не может быть смонтирован, пожалуйста, сначала удалите диск</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="701"/>
+        <location filename="../controllers/appcontroller.cpp" line="702"/>
         <source>Mount error: unsupported image format</source>
         <translation>Ошибка монтирования: не поддерживаемый формат образа</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="845"/>
-        <location filename="../controllers/appcontroller.cpp" line="885"/>
+        <location filename="../controllers/appcontroller.cpp" line="846"/>
+        <location filename="../controllers/appcontroller.cpp" line="886"/>
         <source>The device was not safely removed</source>
         <translation>Устройство не было безопасно извлечено</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="845"/>
-        <location filename="../controllers/appcontroller.cpp" line="885"/>
+        <location filename="../controllers/appcontroller.cpp" line="846"/>
+        <location filename="../controllers/appcontroller.cpp" line="886"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>В следующий раз сначала нажмите &quot;Безопасное извлечение&quot;, а затем отключите устройство</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="855"/>
+        <location filename="../controllers/appcontroller.cpp" line="856"/>
         <source>The device was not ejected</source>
         <translation>Устройство не было извлечено</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="855"/>
+        <location filename="../controllers/appcontroller.cpp" line="856"/>
         <source>Disk is busy, cannot eject now</source>
         <translation> Диск занят и не может быть извлечён сейчас</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="866"/>
+        <location filename="../controllers/appcontroller.cpp" line="867"/>
         <source>Authentication timed out</source>
         <translation>Истекло время аутентификации</translation>
     </message>
@@ -52,117 +52,117 @@
 <context>
     <name>BluetoothTransDialog</name>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="31"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
         <source>Bluetooth File Transfer</source>
         <translation>Передача файлов по Bluetooth</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="32"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
         <source>File Transfer Successful</source>
         <translation>Передача файла прошла успешно</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="33"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="34"/>
         <source>File Transfer Failed</source>
         <translation>Ошибка передачи файла</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="35"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
         <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation>Отправка файлов на &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="36"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
         <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
         <translation>Не удалось отправить файлы на &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="37"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
         <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
         <translation>Отправка файлов на &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; прошла успешно</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="38"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
         <source>Select a Bluetooth device to receive files</source>
         <translation>Выберите устройство Bluetooth для приема файлов</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="39"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
         <source>Cannot find the connected Bluetooth device</source>
         <translation>Не удается найти подключенное устройство Bluetooth</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="40"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
         <source>Waiting to be received...</source>
         <translation>Ожидание получения...</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="41"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
         <source>Go to Bluetooth Settings</source>
         <translation>Перейти в настройки Bluetooth</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="42"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
         <source>%1/%2 Sent</source>
         <translation>Отправлено %1/%2</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="43"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
         <source>Error: the Bluetooth device is disconnected</source>
         <translation>Ошибка: устройство Bluetooth отключено</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="44"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
         <source>Unable to send the file more than 2 GB</source>
         <translation>Невозможно отправить файл размером превышающий 2 ГБ</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="45"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="46"/>
         <source>Unable to send 0 KB files</source>
         <translation>Невозможно отправить файлы размером 0 КБ</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="46"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="47"/>
         <source>File doesn&apos;t exist</source>
         <translation>Файл не существует</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="48"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="49"/>
         <source>Next</source>
         <comment>button</comment>
         <translation>Следующий</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="49"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="50"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="50"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="51"/>
         <source>Done</source>
         <comment>button</comment>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="51"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="52"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>Повторить</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="52"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="53"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oк</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="135"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="136"/>
         <source>File sending request timed out</source>
         <translation>Время ожидания запроса на отправку файла истекло</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="137"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="138"/>
         <source>The service is busy and unable to process the request</source>
         <translation>Сервис занят и не может обработать запрос</translation>
     </message>
@@ -231,12 +231,12 @@
 <context>
     <name>CloseAllDialogIndicator</name>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="39"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="40"/>
         <source>Close all</source>
         <translation>Закрыть все</translation>
     </message>
     <message>
-        <location filename="../dialogs/closealldialogindicator.cpp" line="60"/>
+        <location filename="../dialogs/closealldialogindicator.cpp" line="69"/>
         <source>Total size: %1, %2 files</source>
         <translation>Общий размер %1,  %2 файлов</translation>
     </message>
@@ -244,27 +244,27 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="520"/>
+        <location filename="../models/computermodel.cpp" line="526"/>
         <source>Double click to open it</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="871"/>
+        <location filename="../models/computermodel.cpp" line="879"/>
         <source>My Directories</source>
         <translation>Мои Каталоги</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="874"/>
+        <location filename="../models/computermodel.cpp" line="882"/>
         <source>Disks</source>
         <translation>Диски</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="877"/>
+        <location filename="../models/computermodel.cpp" line="885"/>
         <source>File Vault</source>
         <translation>Файловое хранилище</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="880"/>
+        <location filename="../models/computermodel.cpp" line="888"/>
         <source>Quick Access</source>
         <translation>Быстрый доступ</translation>
     </message>
@@ -766,53 +766,53 @@
 <context>
     <name>DFMVaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="40"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="39"/>
         <source>Set Vault Password</source>
         <translation>Установить пароль хранилища</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="48"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="47"/>
         <source>Encryption method</source>
         <translation>Тип шифрования</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="53"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Key encryption</source>
         <translation>Шифрование ключа</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="53"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Transparent encryption</source>
         <translation>Прозрачное шифрование</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="64"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="63"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="69"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="180"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="68"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="192"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 символов, содержит A-Z, a-z, 0-9 и символы</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="82"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="81"/>
         <source>Repeat password</source>
         <translation>Повторите пароль</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="87"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="86"/>
         <source>Input the password again</source>
         <translation>Введите пароль еще раз</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="99"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="98"/>
         <source>Password hint</source>
         <translation>Подсказка пароля</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="104"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="103"/>
         <source>Optional</source>
         <translation>Необязательный</translation>
     </message>
@@ -822,13 +822,13 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="115"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="117"/>
         <source>Next</source>
         <translation>Следующий</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="203"/>
-        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="219"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="215"/>
+        <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="231"/>
         <source>Passwords do not match</source>
         <translation>Пароли не совпадают</translation>
     </message>
@@ -1359,43 +1359,43 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1162"/>
-        <location filename="../views/dfiledialog.cpp" line="1459"/>
+        <location filename="../views/dfiledialog.cpp" line="1163"/>
+        <location filename="../views/dfiledialog.cpp" line="1460"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1276"/>
+        <location filename="../views/dfiledialog.cpp" line="1277"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
         <translation>Этот файл будет скрыт, если имя файла начинается с &apos;.&apos;. Хотите его скрыть?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1277"/>
+        <location filename="../views/dfiledialog.cpp" line="1278"/>
         <source>Hide</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1278"/>
-        <location filename="../views/dfiledialog.cpp" line="1324"/>
+        <location filename="../views/dfiledialog.cpp" line="1279"/>
+        <location filename="../views/dfiledialog.cpp" line="1325"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1322"/>
+        <location filename="../views/dfiledialog.cpp" line="1323"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 существует, хотите заменить?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1325"/>
+        <location filename="../views/dfiledialog.cpp" line="1326"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Заменить</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1456"/>
+        <location filename="../views/dfiledialog.cpp" line="1457"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Открыть</translation>
@@ -1404,12 +1404,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1279"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1285"/>
         <source>Trash</source>
         <translation>Корзина</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1288"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1294"/>
         <source>Empty</source>
         <translation>Очистить</translation>
     </message>
@@ -1445,7 +1445,7 @@
         <translation>Время создания</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1582"/>
         <source>Last access</source>
         <translation>Последний доступ</translation>
@@ -1485,7 +1485,12 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="659"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="660"/>
+        <source>Remove tag &quot;%1&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="662"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Добавить метку &quot;%1&quot;</translation>
     </message>
@@ -1538,17 +1543,17 @@
         <translation>%1 выбрана папка</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="155"/>
+        <location filename="../views/dstatusbar.cpp" line="154"/>
         <source>Filter</source>
         <translation>Фильтр</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="169"/>
+        <location filename="../views/dstatusbar.cpp" line="168"/>
         <source>Save as:</source>
         <translation>Сохранить как:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="650"/>
+        <location filename="../views/dstatusbar.cpp" line="649"/>
         <source>Loading...</source>
         <translation>Загрузка....</translation>
     </message>
@@ -1715,9 +1720,9 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="384"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1291"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1306"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1316"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1289"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1304"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1314"/>
         <source>Operation failed!</source>
         <translation>Не удалось выполнить операцию!</translation>
     </message>
@@ -1852,74 +1857,74 @@
         <translation>К сожалению, не удалось найти каталог закладок, удалить его? </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1010"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1008"/>
         <source>Name: </source>
         <translation>Имя:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1036"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1034"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1, этот ярлык относится к измененному или перемещенному объекту</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1040"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1038"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Вы хотите удалить этот ярлык?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1169"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Не удалось, размер файла должен быть меньше 4 Гб.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1196"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1194"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Выбранные файлы содержат системный файл/каталог и не могут быть удалены</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1232"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1230"/>
         <source>Unable to find the original file</source>
         <translation>Не удалось найти исходный файл</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1307"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1343"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1305"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1341"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>У вас нет разрешения на использование файла/папки!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1318"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1316"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>Не удалось восстановить %1 файл, исходный файл не существует</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1360"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1358"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Извините, но у вас нет разрешения на использование следующих %1 файла(ов)!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1501"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1499"/>
         <source>Unable to access %1</source>
         <translation>Невозможно получить доступ к %1</translation>
     </message>
     <message>
-        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="724"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1584"/>
+        <location filename="../bluetooth/bluetoothtransdialog.cpp" line="728"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1582"/>
         <source>Sending files now, please try later</source>
         <translation>Отправка файлов, пожалуйста попробуйте позже</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1633"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1631"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Чтобы получить доступ к устройству, вы должны сначала отформатировать диск. Вы уверены, что хотите отформатировать его сейчас?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1648"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1646"/>
         <source>Scanning the device, stop it?</source>
         <translation>Сканирование устройства, остановить его?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1705"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1703"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Папка общего доступа не может быть названа после текущего имени пользователя</translation>
     </message>
@@ -1959,15 +1964,15 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="387"/>
         <location filename="../dialogs/dialogmanager.cpp" line="655"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1158"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1171"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1180"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1198"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1298"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1309"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1323"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1389"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1707"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1169"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1196"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1296"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1307"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1321"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1387"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1705"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oк</translation>
@@ -1981,10 +1986,10 @@
         <location filename="../dialogs/dialogmanager.cpp" line="750"/>
         <location filename="../dialogs/dialogmanager.cpp" line="824"/>
         <location filename="../dialogs/dialogmanager.cpp" line="841"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1012"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1042"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1631"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1646"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1010"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1040"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1629"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1644"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Отмена</translation>
@@ -2015,10 +2020,9 @@
         <location filename="../dialogs/dialogmanager.cpp" line="514"/>
         <location filename="../dialogs/dialogmanager.cpp" line="530"/>
         <location filename="../dialogs/dialogmanager.cpp" line="644"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1400"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
-        <location filename="../dialogs/dialogmanager.h" line="140"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1041"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1398"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1502"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Подтвердить</translation>
@@ -2054,49 +2058,49 @@
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1009"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1007"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Диск занят, не могу отмонтировать сейчас</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1013"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1011"/>
         <source>Force unmount</source>
         <comment>button</comment>
         <translation>Отмонтировать принудительно</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1157"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1155"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Невозможно скопировать. Недостаточно свободного места на целевом диске</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
         <source>Failed to create symlink, cause:</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1293"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1291"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Не удалось восстановить %1 файл, целевая папка доступна только для чтения</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1295"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1293"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Не удалось восстановить %1 файлы, целевая папка доступна только для чтения</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1320"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1318"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>Не удалось восстановить %1 файла(ов), исходные файлы не существуют</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1632"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1630"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Форматировать</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1647"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1645"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Стоп</translation>
@@ -2142,43 +2146,43 @@
 <context>
     <name>FileDialogStatusBar</name>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="32"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="41"/>
         <source>File Name</source>
         <translation>Имя Файла</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="33"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="42"/>
         <source>Format</source>
         <translation>Форматировать</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="80"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="93"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="80"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="93"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="88"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="101"/>
         <source>Save File</source>
         <comment>button</comment>
         <translation>Сохранить Файл</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="88"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="101"/>
         <source>Open File</source>
         <comment>button</comment>
         <translation>Открыть Файл</translation>
     </message>
     <message>
-        <location filename="../views/filedialogstatusbar.cpp" line="55"/>
-        <location filename="../views/filedialogstatusbar.cpp" line="57"/>
-        <location filename="../views/filedialogstatusbar.cpp" line="58"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="65"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="67"/>
+        <location filename="../views/filedialogstatusbar.cpp" line="68"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Отмена</translation>
@@ -2584,44 +2588,51 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="281"/>
-        <location filename="../configure/global-setting-template-pro.js" line="281"/>
-        <location filename="../configure/global-setting-template.js" line="280"/>
-        <source>Use the file chooser dialog of File Manager</source>
-        <translation>Использовать диалог выбора файлов в Диспетчере Файлов</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="275"/>
+        <location filename="../configure/global-setting-template-pro.js" line="275"/>
+        <location filename="../configure/global-setting-template.js" line="274"/>
+        <source>Merge the entries of Samba shared folders</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="287"/>
         <location filename="../configure/global-setting-template-pro.js" line="287"/>
-        <location filename="../configure/global-setting-template.js" line="286"/>
+        <location filename="../configure/global-setting-template.js" line="287"/>
+        <source>Use the file chooser dialog of File Manager</source>
+        <translation>Использовать диалог выбора файлов в Диспетчере Файлов</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="293"/>
+        <location filename="../configure/global-setting-template-pro.js" line="293"/>
+        <location filename="../configure/global-setting-template.js" line="293"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>Запрашивать подтверждение при удалении файлов</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="295"/>
-        <location filename="../configure/global-setting-template-pro.js" line="295"/>
-        <location filename="../configure/global-setting-template.js" line="294"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="301"/>
+        <location filename="../configure/global-setting-template-pro.js" line="301"/>
+        <location filename="../configure/global-setting-template.js" line="301"/>
         <source>Other</source>
         <translation>Другое</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="299"/>
-        <location filename="../configure/global-setting-template-pro.js" line="299"/>
-        <location filename="../configure/global-setting-template.js" line="298"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="305"/>
+        <location filename="../configure/global-setting-template-pro.js" line="305"/>
+        <location filename="../configure/global-setting-template.js" line="305"/>
         <source>Hide built-in disks</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="305"/>
-        <location filename="../configure/global-setting-template-pro.js" line="305"/>
-        <location filename="../configure/global-setting-template.js" line="311"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="311"/>
+        <location filename="../configure/global-setting-template-pro.js" line="311"/>
+        <location filename="../configure/global-setting-template.js" line="318"/>
         <source>Hide loop partitions</source>
         <translation>Скрыть loop-разделы</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="318"/>
-        <location filename="../configure/global-setting-template-pro.js" line="318"/>
-        <location filename="../configure/global-setting-template.js" line="317"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="324"/>
+        <location filename="../configure/global-setting-template-pro.js" line="324"/>
+        <location filename="../configure/global-setting-template.js" line="324"/>
         <source>Show file system on disk icon</source>
         <translation>Показать файловую систему на значке диска</translation>
     </message>
@@ -2702,9 +2713,9 @@
         <translation>Открывать после авто-подключения</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="277"/>
-        <location filename="../configure/global-setting-template-pro.js" line="277"/>
-        <location filename="../configure/global-setting-template.js" line="276"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="283"/>
+        <location filename="../configure/global-setting-template-pro.js" line="283"/>
+        <location filename="../configure/global-setting-template.js" line="283"/>
         <source>Dialog</source>
         <translation>Диалог</translation>
     </message>
@@ -2713,44 +2724,49 @@
         <source>Compressed file preview</source>
         <translation>Предварительный просмотр сжатого файла</translation>
     </message>
+    <message>
+        <location filename="../configure/global-setting-template.js" line="275"/>
+        <source>Switching the entry display may lead to failed mounting</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="813"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="817"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>Не удается подтвердить подлинность %1.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="814"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="818"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Это происходит при первом вашем входе в систему.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="815"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="819"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Идентификация, отправленная удаленным компьютером</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="817"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="821"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Если вы хотите быть абсолютно уверены в безопасности действия и его продолжения, обратитесь к системному администратору.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="873"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="877"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1603"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1605"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1612"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1617"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="881"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1607"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1609"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1616"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1621"/>
         <source>Mounting device error</source>
         <translation>Ошибка подключения устройства</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="873"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1600"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1610"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1612"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="877"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1604"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1614"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1616"/>
         <source>Wrong username or password</source>
         <translation>Неверное имя пользователя или пароль</translation>
     </message>
@@ -3203,7 +3219,7 @@
         <translation>Скрыть этот файл</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1701"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1703"/>
         <source>Allow to execute as program</source>
         <translation>Разрешить выполнение в качестве программы</translation>
     </message>
@@ -3272,7 +3288,7 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1186"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="214"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="220"/>
         <source>Size</source>
@@ -3287,7 +3303,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1187"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="311"/>
         <source>Type</source>
         <translation>Тип</translation>
@@ -3296,7 +3312,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="154"/>
         <location filename="../dialogs/propertydialog.cpp" line="1190"/>
         <location filename="../dialogs/propertydialog.cpp" line="1211"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="343"/>
         <source>Time modified</source>
         <translation>Время изменения</translation>
@@ -3318,41 +3334,41 @@
         <translation>Время заблокировано</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1594"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1596"/>
         <source>Access denied</source>
         <translation>Доступ закрыт</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1595"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1607"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1609"/>
         <source>Executable</source>
         <translation>Исполняемый</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1596"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1597"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
         <source>Write only</source>
         <translation>Только запись</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1598"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1599"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1601"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1600"/>
-        <location filename="../dialogs/propertydialog.cpp" line="1601"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1602"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1603"/>
         <source>Read-write</source>
         <translation>Чтение-запись</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1697"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1699"/>
         <source>Others</source>
         <translation>Другие</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1695"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1697"/>
         <source>Owner</source>
         <translation>Владелец</translation>
     </message>
@@ -3372,58 +3388,58 @@
         <translation>Файловая система</translation>
     </message>
     <message>
-        <location filename="../dialogs/propertydialog.cpp" line="1696"/>
+        <location filename="../dialogs/propertydialog.cpp" line="1698"/>
         <source>Group</source>
         <translation>Группа</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="928"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="929"/>
         <source>Lock</source>
         <translation>Заблокировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="929"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="930"/>
         <source>Auto lock</source>
         <translation>Автоматическая блокировка</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="930"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="931"/>
         <source>Never</source>
         <translation>Никогда</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="931"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="932"/>
         <source>5 minutes</source>
         <translation>5 минут</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="932"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="933"/>
         <source>10 minutes</source>
         <translation>10 минут</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="933"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="934"/>
         <source>20 minutes</source>
         <translation>20 минут</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="934"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="935"/>
         <source>Delete File Vault</source>
         <translation>Удалить хранилище файлов</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="935"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="936"/>
         <source>Unlock</source>
         <translation>Разблокировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="936"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="937"/>
         <source>Unlock by key</source>
         <translation>Разблокировка ключом</translation>
     </message>
@@ -3458,8 +3474,8 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="71"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="70"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="51"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="599"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="39"/>
         <source>Open in new window</source>
@@ -3469,288 +3485,288 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="75"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="74"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="55"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="603"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="43"/>
         <source>Open in new tab</source>
         <translation>Открыть в новой вкладке</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>Open with</source>
         <translation>Открыть с помощью</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <location filename="../plugins/dfmadditionalmenu.cpp" line="359"/>
         <source>Compress</source>
         <translation>Сжать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Extract</source>
         <translation>Извлечь</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
         <source>Extract here</source>
         <translation>Извлечь сюда</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <source>Cut</source>
         <translation>Вырезать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="81"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="61"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="920"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="921"/>
         <source>Rename</source>
         <translation>Переименовать</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="88"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="960"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="961"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>Create link</source>
         <translation>Создать ссылку</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Send to desktop</source>
         <translation>Отправить на рабочий стол</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
         <source>Send to</source>
         <translation>Отправить в</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
         <source>Bluetooth</source>
         <translation>Bluetooth</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>Add to bookmark</source>
         <translation>Добавить в закладки</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="94"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="103"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="49"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
         <source>New folder</source>
         <translation>Новая папка</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
         <source>New window</source>
         <translation>Новое окно</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
         <source>Select all</source>
         <translation>Выбрать все</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="81"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
         <source>Clear recent history</source>
         <translation>Очистить недавнюю историю</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1289"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1295"/>
         <source>Empty Trash</source>
         <translation>Очистить корзину</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>Display as</source>
         <translation>Отобразить как</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
         <source>Sort by</source>
         <translation>Сортировать по</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
         <source>New document</source>
         <translation>Новый документ</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1188"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
         <source>Time created</source>
         <translation>Время создания</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1191"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="361"/>
         <source>Source path</source>
         <translation>Путь к источнику</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
         <source>Share folder</source>
         <translation>Общедоступная папка</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
         <source>Cancel sharing</source>
         <translation>Отменить общий доступ</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="909"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="910"/>
         <source>Connect to Server</source>
         <translation>Соединиться с Сервером</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="910"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
         <source>Set share password</source>
         <translation>Установить пароль общего доступа</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="913"/>
         <source>Format</source>
         <translation>Форматировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="916"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="917"/>
         <source>Tag information</source>
         <translation>Информация о метках</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Open as administrator</source>
         <translation>Открыть в качестве администратора</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
         <source>Select default program</source>
         <translation>Выбрать программу по умолчанию</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <source>Open file location</source>
         <translation>Открыть местоположение файла</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
         <source>Remove bookmark</source>
         <translation>Удалить закладку</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="918"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="919"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <source>Office Text</source>
         <translation>Офисный</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
         <source>Spreadsheets</source>
         <translation>Таблица</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
         <source>Plain Text</source>
         <translation>Обычный</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>Open in terminal</source>
         <translation>Открыть в терминале</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
         <source>Restore</source>
         <translation>Восстановить</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
         <source>Restore all</source>
         <translation>Восстановить все</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="963"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="964"/>
         <source>Clear saved password and unmount</source>
         <translation>Очистить сохраненный пароль и отмонтировать</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="909"/>
         <source>File Vault</source>
         <translation>Файловое Хранилище</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
         <source>Change disk password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="925"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="926"/>
         <source>Add to disc</source>
         <translation>Добавить на диск</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="962"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="963"/>
         <source>Refresh</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="298"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="301"/>
         <source>Auto mount</source>
         <translation>Авто-подключение</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="336"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="339"/>
         <source>Open after auto mount</source>
         <translation>Открыть после авто-монтирования</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="922"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
         <source>Mount</source>
         <translation>Подключить</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="35"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="961"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="962"/>
         <source>Unmount</source>
         <translation>Отключить</translation>
     </message>
@@ -3808,48 +3824,48 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="353"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
         <source>Eject</source>
         <translation>Извлечь</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
         <source>Safely Remove</source>
         <translation>Безопасное Извлечение</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="199"/>
         <source>Name</source>
         <translation>Имя</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
         <source>Icon</source>
         <translation>Значок</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
         <source>List</source>
         <translation>Список</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
         <source>Extend</source>
         <translation>Расширить</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
         <source>Set as wallpaper</source>
         <translation>Сделать фоном рабочего стола</translation>
     </message>
@@ -3929,12 +3945,12 @@
         <translation>Создать символическую ссылку</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
         <source>Path</source>
         <translation>Путь</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
         <location filename="../models/trashfileinfo.cpp" line="306"/>
         <location filename="../models/trashfileinfo.cpp" line="314"/>
         <source>Time deleted</source>
@@ -3946,24 +3962,24 @@
         <translation>Загрузка...</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="858"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="856"/>
         <source>File has been moved or deleted</source>
         <translation>Файл был перемещен или удален</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="864"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="862"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>У вас нет прав для просмотра файлов </translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="860"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="873"/>
-        <location filename="../interfaces/dfileinfo.cpp" line="879"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="858"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="871"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="877"/>
         <source>You do not have permission to access this folder</source>
         <translation>У вас нет разрешения на доступ к этой папке</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileinfo.cpp" line="884"/>
+        <location filename="../interfaces/dfileinfo.cpp" line="882"/>
         <location filename="../models/masteredmediafileinfo.cpp" line="262"/>
         <location filename="../models/recentfileinfo.cpp" line="245"/>
         <location filename="../models/trashfileinfo.cpp" line="347"/>
@@ -3988,23 +4004,23 @@
         <translation>Исходный Путь</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="548"/>
+        <location filename="../controllers/appcontroller.cpp" line="549"/>
         <source>Document</source>
         <translation>Документ</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="557"/>
+        <location filename="../controllers/appcontroller.cpp" line="558"/>
         <source>Spreadsheet</source>
         <translation>Таблица</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="566"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
+        <location filename="../controllers/appcontroller.cpp" line="567"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
         <source>Presentation</source>
         <translation>Презентация</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="573"/>
+        <location filename="../controllers/appcontroller.cpp" line="574"/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
@@ -4179,7 +4195,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1672"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1670"/>
         <source>Rename %1 Files</source>
         <translation>Переименовать %1 Файлов</translation>
     </message>
@@ -4256,7 +4272,7 @@
         <translation>Серый</translation>
     </message>
     <message>
-        <location filename="../views/dtagedit.cpp" line="96"/>
+        <location filename="../views/dtagedit.cpp" line="99"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
         <translation>Введите информацию для метки, например, работа, семья. Для разделения двух меток используется запятая.</translation>
     </message>
@@ -4266,7 +4282,7 @@
         <translation>Закладки</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="913"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="914"/>
         <source>Erase</source>
         <translation>Очистить</translation>
     </message>
@@ -4291,8 +4307,8 @@
         <translation>Файлы обрабатываются</translation>
     </message>
     <message>
-        <location filename="../shutil/fileutils.cpp" line="665"/>
-        <location filename="../../utils/utils.cpp" line="531"/>
+        <location filename="../shutil/fileutils.cpp" line="666"/>
+        <location filename="../../utils/utils.cpp" line="435"/>
         <source>Unknown</source>
         <translation>Неизвестно</translation>
     </message>
@@ -4343,7 +4359,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1542"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1548"/>
         <location filename="../../usershare/usersharemanager.cpp" line="547"/>
         <source>Failed to start Samba services</source>
         <translation>Не удалось запустить службы Samba</translation>
@@ -4419,12 +4435,12 @@
         <translation>Открыть общий доступ</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="90"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
         <source>Read and write</source>
         <translation>Чтение и запись</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="90"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
     </message>
@@ -4439,94 +4455,94 @@
         <translation>Разрешения</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="93"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="96"/>
         <source>Anonymous</source>
         <translation>Анонимный</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="99"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="102"/>
         <source>Not allow</source>
         <translation>Не разрешено</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="99"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="102"/>
         <source>Allow</source>
         <translation>Разрешено</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="102"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="105"/>
         <source>Network path</source>
         <translation>Сетевой путь</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="135"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="138"/>
         <source>Username</source>
         <translation>Имя пользователя</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="147"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="150"/>
         <source>Share password</source>
         <translation>Пароль общего ресурса</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="168"/>
-        <location filename="../dialogs/shareinfoframe.cpp" line="533"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="171"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="536"/>
         <source>None</source>
         <translation>Ничего</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="212"/>
-        <location filename="../dialogs/shareinfoframe.cpp" line="234"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="215"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="237"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="257"/>
-        <location filename="../dialogs/shareinfoframe.cpp" line="534"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="260"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="537"/>
         <source>Change password</source>
         <translation>Изменить пароль</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="257"/>
-        <location filename="../dialogs/shareinfoframe.cpp" line="534"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="260"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="537"/>
         <source>Set password</source>
         <translation>Задать пароль</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="290"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="293"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="589"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="592"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Имя общего ресурса не должно состоять из двух точек (..) или одной точки (.)</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="605"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="608"/>
         <source>The share name is used by another user.</source>
         <translation>Имя общего ресурса используется другим пользователем.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="606"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="609"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oк</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="609"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="612"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="610"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="613"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Заменить</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="608"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="611"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Имя общего ресурса уже существует. Хотите заменить  папку общего доступа?</translation>
     </message>
@@ -4953,14 +4969,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1786"/>
+        <location filename="../controllers/appcontroller.cpp" line="1784"/>
         <location filename="../../fileoperations/filejob.cpp" line="774"/>
         <location filename="../../fileoperations/filejob.cpp" line="1040"/>
         <source>The device was not safely unmounted</source>
         <translation>Устройство не было безопасно извлечено</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1793"/>
+        <location filename="../controllers/appcontroller.cpp" line="1791"/>
         <source>The device was not safely removed</source>
         <translation>Устройство не было безопасно извлечено</translation>
     </message>

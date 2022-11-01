@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "usersharemanager.h"
-#include "dbusservice/dbusadaptor/usershare_adaptor.h"
+#include "dbusadaptor/usershare_adaptor.h"
 #include <QDBusConnection>
 #include <QDBusVariant>
 #include <QProcess>

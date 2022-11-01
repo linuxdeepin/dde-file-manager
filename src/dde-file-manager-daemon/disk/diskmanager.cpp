@@ -4,7 +4,7 @@
 
 #include "diskmanager.h"
 #include "app/policykithelper.h"
-#include "dbusservice/dbusadaptor/disk_adaptor.h"
+#include "dbusadaptor/disk_adaptor.h"
 
 #include <QDBusConnection>
 #include <QSettings>

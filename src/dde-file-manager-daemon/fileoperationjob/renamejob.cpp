@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "renamejob.h"
-#include "dbusservice/dbusadaptor/renamejob_adaptor.h"
+#include "dbusadaptor/renamejob_adaptor.h"
 #include <QDBusConnection>
 #include <QDebug>
 

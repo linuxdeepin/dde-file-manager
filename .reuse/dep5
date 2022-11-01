@@ -28,16 +28,6 @@ Files: *.pro *.pri *.qrc .tx/*
 Copyright: None
 License: CC0-1.0
 
-# DBus interface
-Files: src/*/dbusinterface/* src/*/dbusadaptor/*
-Copyright: 2016 The Qt Company Ltd.
-License: CC0-1.0
-
-# fulltext search
-Files: src/*/fulltext/chinese*
-Copyright: 2009-2014 Alan Wright
-License: LGPL-3.0-or-later
-
 # README & DOCS
 Files: README.md README.zh_CN.md CHANGELOG.md docs/*
 Copyright: UnionTech Software Technology Co., Ltd.
@@ -58,12 +48,6 @@ Files: src/*.ui src/*.qss src/*.js src/*/config.ini
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
 
-#qobjecthelper.cpp
-Files: src/utils/qobjecthelper.cpp
-Copyright: 2009 Till Adam <adam@kde.org>
-Copyright: 2009 Flavio Castelli <flavio@castelli.name>
-License: LGPL-2.1-or-later
-
 # tests
 Files: tests/*
 Copyright: UnionTech Software Technology Co., Ltd.
@@ -73,6 +57,22 @@ License: GPL-3.0-or-later
 Files: assets/*
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
+
+# DBus interface
+Files: 3rdparty/dbusservice/*
+Copyright: 2016 The Qt Company Ltd.
+License: CC0-1.0
+
+# fulltext
+Files: 3rdparty/fulltext/*
+Copyright: 2009-2014 Alan Wright
+License: LGPL-3.0-or-later
+
+#qobjecthelper.cpp
+Files: 3rdparty/utils/qobjecthelper.cpp
+Copyright: 2009 Till Adam <adam@kde.org>
+Copyright: 2009 Flavio Castelli <flavio@castelli.name>
+License: LGPL-2.1-or-later
 
 # cpp-stub
 Files: 3rdparty/cpp-stub/*

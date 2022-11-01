@@ -272,7 +272,8 @@
                         {
                             "key": "merge_the_entries_of_samba_shared_folders",
                             "text": qsTranslate("GenerateSettingTranslate", "Merge the entries of Samba shared folders"),
-                            "type": "checkbox",
+                            "message": qsTranslate("GenerateSettingTranslate", "Switching the entry display may lead to failed mounting"),
+                            "type": "checkBoxWithMessage",
                             "default": true
                         }
                     ]

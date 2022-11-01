@@ -5,7 +5,7 @@
 #include "filemanagerclient.h"
 #include "app/global.h"
 #include "dbusservice/dbustype/dbusinforet.h"
-#include "dbusservice/dbusinterface/renamejob_interface.h"
+#include "dbusinterface/renamejob_interface.h"
 #include <QDBusConnection>
 #include <QDebug>
 

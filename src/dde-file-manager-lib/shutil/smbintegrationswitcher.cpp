@@ -95,11 +95,9 @@ SmbIntegrationSwitcher::SmbIntegrationSwitcher(QObject *parent)
     // 如果没有smb聚合开关配置，则默认设置为smb聚合模式，否则以用户手动设置后为准。
     bool hasSmbInteConfig = DFMApplication::genericSetting()->keys(kGenericAttribute).contains(kMergeTheEntriesOfSambaSharedFolders);
     if (hasSmbInteConfig) {
+        qInfo()<<"hasSmbInteConfig = "<<hasSmbInteConfig;
         smbIntegrationMode = DFMApplication::genericAttribute(DFMApplication::GA_MergeTheEntriesOfSambaSharedFolders).toBool();
-    } else {
-        QTimer::singleShot(0,this,[&](){
-            qInfo()<<"Set `MergeTheEntriesOfSambaSharedFolders` field to `true` for the first time.";
-            DFMApplication::setGenericAttribute(DFMApplication::GA_MergeTheEntriesOfSambaSharedFolders, true);
-        });
+    }else {
+        DFMApplication::genericSetting()->setValueNoNotify(kGenericAttribute,kMergeTheEntriesOfSambaSharedFolders,true);
     }
 }

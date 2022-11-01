@@ -1569,13 +1569,15 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QFrame *widget = new QFrame;
     QFormLayout *layout = new QFormLayout;
 
+    QPalette peMenuBg;
+    QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
+    peMenuBg.setColor(QPalette::Window, color);
     QComboBox *ownerBox = new QComboBox;
+    ownerBox->setPalette(peMenuBg);
     QComboBox *groupBox = new QComboBox;
+    groupBox->setPalette(peMenuBg);
     QComboBox *otherBox = new QComboBox;
-
-    ownerBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    groupBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    otherBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    otherBox->setPalette(peMenuBg);
 
     DUrl parentUrl = info->parentUrl();
     DStorageInfo storageInfo(parentUrl.toLocalFile());

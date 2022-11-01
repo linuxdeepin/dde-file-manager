@@ -142,7 +142,6 @@ HEADERS += \
     $$PWD/shutil/dsqlitehandle.h \
     $$PWD/shutil/danythingmonitorfilter.h \
     $$PWD/controllers/tagmanagerdaemoncontroller.h \
-    $$PWD/controllers/interface/tagmanagerdaemon_interface.h \
     $$PWD/interfaces/dfmsettings.h \
     $$PWD/interfaces/dfmcrumbbar.h \
     $$PWD/interfaces/dfmcrumbinterface.h \
@@ -264,7 +263,8 @@ HEADERS += \
     $$PWD/diskpwdmanager/pwdconfirmwidget.h \
     $$PWD/diskpwdmanager/diskpwdchangedialog.h \
     $$PWD/diskpwdmanager/globaldefine.h \
-    $$PWD/shutil/smbintegrationswitcher.h
+    $$PWD/shutil/smbintegrationswitcher.h \
+    $$PWD/dialogs/settingscontrols/checkboxwithmessage.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -390,7 +390,6 @@ SOURCES += \
     $$PWD/shutil/dsqlitehandle.cpp \
     $$PWD/shutil/danythingmonitorfilter.cpp \
     $$PWD/controllers/tagmanagerdaemoncontroller.cpp \
-    $$PWD/controllers/interface/tagmanagerdaemon_interface.cpp \
     $$PWD/interfaces/dfmsettings.cpp \
     $$PWD/interfaces/dfmcrumbbar.cpp \
     $$PWD/interfaces/dfmcrumbinterface.cpp \
@@ -490,11 +489,14 @@ SOURCES += \
     $$PWD/diskpwdmanager/changeresultwidget.cpp \
     $$PWD/diskpwdmanager/pwdconfirmwidget.cpp \
     $$PWD/diskpwdmanager/diskpwdchangedialog.cpp \
-    $$PWD/shutil/smbintegrationswitcher.cpp
+    $$PWD/shutil/smbintegrationswitcher.cpp \
+    $$PWD/dialogs/settingscontrols/checkboxwithmessage.cpp
 
 CONFIG(ENABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h
     SOURCES += $$PWD/shutil/danythingmonitor.cpp
 }
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD \
+               $$PWD/../../3rdparty/dbusservice \
+               $$PWD/../../3rdparty/utils

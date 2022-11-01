@@ -34,6 +34,8 @@ public:
 protected:
     void initUi();
     void initConnection();
+    void updateCrumbsColor(const QMap<QString, QColor> &tagsColor);
+    QMap<QString, QColor> tagsColor(const QStringList &tagList);
 private:
     QScopedPointer<DFMTagWidgetPrivate> d_private;
     Q_DECLARE_PRIVATE_D(d_private, DFMTagWidget)

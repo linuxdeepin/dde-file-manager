@@ -14,7 +14,7 @@
 #include "testhelper.h"
 #include "dialogs/dialogmanager.h"
 #include "dialogs/shareinfoframe.h"
-#include "../dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
+#include "dbusinterface/usershare_interface.h"
 #include "ddialog.h"
 #include "dabstractfilewatcher.h"
 #define private public

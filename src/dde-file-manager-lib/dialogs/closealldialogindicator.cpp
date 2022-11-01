@@ -12,9 +12,10 @@
 #include "shutil/fileutils.h"
 #include "accessibility/ac-lib-file-manager.h"
 
-CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : DAbstractDialog(parent)
+CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent)
+    : DAbstractDialog(parent)
 {
-    setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(windowFlags() /*| Qt::FramelessWindowHint*/ | Qt::WindowStaysOnTopHint);
     setFocusPolicy(Qt::NoFocus);
     AC_SET_OBJECT_NAME(this, AC_CLOSE_ALL_DLG_INDICATOR);
     AC_SET_ACCESSIBLE_NAME(this, AC_CLOSE_ALL_DLG_INDICATOR);
@@ -25,29 +26,37 @@ CloseAllDialogIndicator::CloseAllDialogIndicator(QWidget *parent) : DAbstractDia
 
 CloseAllDialogIndicator::~CloseAllDialogIndicator()
 {
-
 }
 
 void CloseAllDialogIndicator::initUI()
 {
-    resize(QSize(400, 50));
-
     m_messageLabel = new QLabel(this);
-    AC_SET_OBJECT_NAME(m_messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
-    AC_SET_ACCESSIBLE_NAME(m_messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
+    auto font = m_messageLabel->font();
+    font.setPixelSize(12);
+    m_messageLabel->setFont(font);
+    //    AC_SET_OBJECT_NAME(m_messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
+    //    AC_SET_ACCESSIBLE_NAME(m_messageLabel, AC_CLOSE_ALL_DLG_INDICATOR_MSG_LABEL);
 
-    m_closeButton = new QPushButton(tr("Close all"), this);
-    AC_SET_OBJECT_NAME(m_closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
-    AC_SET_ACCESSIBLE_NAME(m_closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
+    m_closeButton = new DCommandLinkButton(tr("Close all"), this);
+    font = m_closeButton->font();
+    font.setPixelSize(14);
+    m_closeButton->setFont(font);
+    //    AC_SET_OBJECT_NAME(m_closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
+    //    AC_SET_ACCESSIBLE_NAME(m_closeButton, AC_CLOSE_ALL_DLG_INDICATOR_CLOSE_BUTTON);
 
-    QHBoxLayout* mainLayout = new QHBoxLayout;
+    QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addWidget(m_messageLabel, Qt::AlignCenter);
-    mainLayout->addSpacing(50);
     mainLayout->addWidget(m_closeButton, Qt::AlignRight);
-    mainLayout->setContentsMargins(25, 5, 25, 5);
+    mainLayout->addSpacing(0);
+    mainLayout->setContentsMargins(15, 8, 12, 11);
     setLayout(mainLayout);
 
     setTotalMessage(0, 0);
+
+    setFixedSize(297, 36);
+
+    //    messageLabel->setStyleSheet("border: 1px solid black;");
+    //    closeButton->setStyleSheet("border: 1px solid red;");
 }
 
 void CloseAllDialogIndicator::initConnect()
@@ -58,15 +67,20 @@ void CloseAllDialogIndicator::initConnect()
 void CloseAllDialogIndicator::setTotalMessage(qint64 size, int count)
 {
     QString message = tr("Total size: %1, %2 files").arg(FileUtils::formatSize(size), QString::number(count));
+    QFontMetrics fm(m_messageLabel->fontMetrics());
+    int txtWidth = fm.width(message);
+    int charWidth = fm.width(message[0]);
     m_messageLabel->setText(message);
+    if (txtWidth > m_messageLabel->width() - charWidth)   // consider the inner spacing of text label
+        setFixedWidth(this->width() + charWidth);
 }
 
 void CloseAllDialogIndicator::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape){
+    if (event->key() == Qt::Key_Escape) {
         return;
     }
-    QDialog::keyPressEvent(event);
+    DAbstractDialog::keyPressEvent(event);
 }
 
 void CloseAllDialogIndicator::showEvent(QShowEvent *event)
@@ -80,8 +94,7 @@ void CloseAllDialogIndicator::showEvent(QShowEvent *event)
                                    QDBusConnection::sessionBus(), this);
 
     int dockHeight = 0;
-    if(deepin_dockInfo.isValid())
-    {
+    if (deepin_dockInfo.isValid()) {
         QVariant temp = deepin_dockInfo.property("WindowSizeEfficient");
         dockHeight = temp.toInt();
     }
@@ -95,4 +108,3 @@ void CloseAllDialogIndicator::showEvent(QShowEvent *event)
 
     return DAbstractDialog::showEvent(event);
 }
-

@@ -45,7 +45,8 @@ CONFIG(debug, debug|release) {
 
 INCLUDEPATH += $$PWD/../../src/dde-file-manager-lib $$PWD/.. \
                $$PWD/../../src/utils \
-               $$PWD/../../src/dde-file-manager-lib/interfaces
+               $$PWD/../../src/dde-file-manager-lib/interfaces \
+               $$PWD/../../3rdparty/dbusservice
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"

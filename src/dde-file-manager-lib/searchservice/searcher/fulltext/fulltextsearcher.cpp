@@ -4,7 +4,7 @@
 
 #include "fulltextsearcher.h"
 #include "fulltextsearcher_p.h"
-#include "chineseanalyzer.h"
+#include "fulltext/chineseanalyzer.h"
 #include "utils/searchhelper.h"
 #include "durl.h"
 #include "dfmapplication.h"
@@ -296,7 +296,7 @@ bool FullTextSearcherPrivate::updateIndex(const QString &path)
         IndexReaderPtr reader = newIndexReader();
         IndexWriterPtr writer = newIndexWriter();
 
-        doIndexTask(reader, writer, path, kUpdate);
+        doIndexTask(reader, writer, tmpPath, kUpdate);
 
         writer->close();
         reader->close();
