@@ -29,6 +29,7 @@ public:
     bool writeFilesToClipboard(const QSharedPointer<DFMWriteUrlsToClipboardEvent> &event) const override;
 
     bool openInTerminal(const QSharedPointer<DFMOpenInTerminalEvent> &event) const override;
+    bool deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const override;
     DUrlList moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> &event) const override;
 
     static DUrl realUrl(const DUrl &url);

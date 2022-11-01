@@ -172,3 +172,12 @@ DUrlList AVFSFileController::moveToTrash(const QSharedPointer<DFMMoveToTrashEven
     emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
     return DUrlList();
 }
+
+
+bool AVFSFileController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
+{
+    DFMUrlListBaseEvent noPermissionEvent(nullptr, event->urlList());
+    noPermissionEvent.setWindowId(static_cast<quint64>(static_cast<int>(event->windowId())));
+    emit fileSignalManager->requestShowNoPermissionDialog(noPermissionEvent);
+    return true;
+}
