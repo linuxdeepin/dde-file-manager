@@ -160,6 +160,16 @@ QString TypeClassifier::classify(const QUrl &url) const
         return QString(); // must return null string to represent the file is not existed.
 
     QString key;
+    //Classify whether it is a symlink according to the symlink's target
+    if (itemInfo->isSymLink()) {
+        QUrl fileUrl = itemInfo->redirectedFileUrl();
+        itemInfo = InfoFactory::create<LocalFileInfo>(fileUrl);
+        if (itemInfo->isSymLink()) {
+            key = kTypeKeyOth;
+            return key;
+        }
+    }
+
     if (itemInfo->isDir()) {
         key = kTypeKeyFld;
     } else {
