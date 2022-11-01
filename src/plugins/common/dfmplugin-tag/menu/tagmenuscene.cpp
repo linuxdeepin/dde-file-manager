@@ -87,8 +87,7 @@ bool TagMenuScene::create(QMenu *parent)
         return false;
 
     for (const QUrl &url : d->selectFiles) {
-        auto info = InfoFactory::create<AbstractFileInfo>(url, true);
-        if (!TagManager::instance()->canTagFile(info))
+        if (!TagManager::instance()->canTagFile(url))
             return false;
     }
 
@@ -124,7 +123,7 @@ bool TagMenuScene::triggered(QAction *action)
 
     if (d->onDesktop) {
         QPoint pos(0, 0);
-        if (d->onCollection) { // get rect from collection
+        if (d->onCollection) {   // get rect from collection
             const QString id = TagEventCaller::getCollectionViewId(d->focusFile.toString(), &pos);
             if (id.isEmpty()) {
                 qCritical() << "can not find file on collection" << d->focusFile;
@@ -139,7 +138,7 @@ bool TagMenuScene::triggered(QAction *action)
             } else {
                 qWarning() << "can not get collection view, id:" << id;
             }
-        } else {         // get rect from desktop
+        } else {   // get rect from desktop
             int viewIndex = TagEventCaller::getDesktopViewIndex(d->focusFile.toString(), &pos);
             if (viewIndex < 0) {
                 qCritical() << "can not find file on canvas" << d->focusFile << viewIndex;

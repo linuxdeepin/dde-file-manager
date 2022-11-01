@@ -173,11 +173,6 @@ bool MasteredMediaFileInfo::canHidden() const
     return false;
 }
 
-bool MasteredMediaFileInfo::canTag() const
-{
-    return false;
-}
-
 QString MasteredMediaFileInfo::emptyDirectoryTip() const
 {
     return QObject::tr("Folder is empty");

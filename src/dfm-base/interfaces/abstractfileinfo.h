@@ -172,7 +172,6 @@ public:
     virtual bool canMoveOrCopy() const;
     virtual bool canDrop();
     virtual bool canDrag();
-    virtual bool canTag() const;
     virtual bool canDragCompress() const;
     virtual bool canFetch() const;
     virtual bool canHidden() const;

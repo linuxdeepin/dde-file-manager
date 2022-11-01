@@ -34,7 +34,6 @@ class TagEventReceiver : public QObject
     Q_OBJECT
 public:
     static TagEventReceiver *instance();
-    void initConnect();
 
 public slots:
     void handleFileCutResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);

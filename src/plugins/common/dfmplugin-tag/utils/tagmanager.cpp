@@ -25,12 +25,15 @@
 #include "events/tageventcaller.h"
 #include "widgets/tagcolorlistwidget.h"
 #include "files/tagfileinfo.h"
+#include "utils/anythingmonitorfilter.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/file/local/desktopfileinfo.h"
 
 #include <QMap>
 #include <QColor>
@@ -355,23 +358,43 @@ void TagManager::deleteFiles(const QList<QUrl> &urls)
         deleteTags(tagNames);
 }
 
-bool TagManager::canTagFile(const AbstractFileInfoPointer &fileInfo) const
+bool TagManager::canTagFile(const QUrl &url) const
 {
-    if (!fileInfo || !fileInfo->canTag())
-        return false;
+    if (url.scheme() == Global::Scheme::kFile) {
+        auto &&fileInfo { InfoFactory::create<AbstractFileInfo>(url) };
+        if (!fileInfo)
+            return false;
 
-    QString filePath = fileInfo->filePath();
+        if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->parentUrl().toLocalFile()))
+            return false;
 
-    if (!filePath.startsWith("/home/") && !filePath.startsWith(FileUtils::bindPathTransform("/home/", true)))
-        return false;
+        const QString filePath { fileInfo->filePath() };
+        const QString &compressPath { QDir::homePath() + "/.avfs/" };
+        if (filePath.startsWith(compressPath))
+            return false;
 
-    return true;
+        const QString &parentPath { fileInfo->parentUrl().path() };
+        if (parentPath == "/home" || parentPath == FileUtils::bindPathTransform("/home", true))
+            return false;
+
+        if (FileUtils::isDesktopFile(url)) {
+            auto desktopInfo { dynamic_cast<DesktopFileInfo *>(fileInfo.data()) };
+            if (desktopInfo)
+                return desktopInfo->canTag();
+        }
+
+        return !SystemPathUtil::instance()->isSystemPath(filePath);
+    }
+
+    if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTag", url))
+        return true;
+
+    return false;
 }
 
 bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
-    auto fileInfo = InfoCache::instance().getCacheInfo(url);
-    if (!canTagFile(fileInfo))
+    if (!canTagFile(url))
         return false;
 
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
@@ -394,8 +417,7 @@ bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painte
 
 bool TagManager::paintIconTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
-    auto fileInfo = InfoCache::instance().getCacheInfo(url);
-    if (!canTagFile(fileInfo))
+    if (!canTagFile(url))
         return false;
 
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
@@ -428,8 +450,7 @@ bool TagManager::pasteHandle(quint64 winId, const QUrl &to)
         auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
         QList<QUrl> canTagFiles;
         for (const auto &url : sourceUrls) {
-            const auto &info = InfoFactory::create<AbstractFileInfo>(url);
-            if (canTagFile(info))
+            if (canTagFile(url))
                 canTagFiles << url;
         }
 
@@ -449,8 +470,7 @@ bool TagManager::fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl)
     if (toUrl.scheme() == scheme()) {
         QList<QUrl> canTagFiles;
         for (const auto &url : fromUrls) {
-            const auto &info = InfoFactory::create<AbstractFileInfo>(url);
-            if (canTagFile(info))
+            if (canTagFile(url))
                 canTagFiles << url;
         }
 

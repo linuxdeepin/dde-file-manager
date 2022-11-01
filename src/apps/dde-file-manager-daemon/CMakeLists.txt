@@ -40,7 +40,7 @@ install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 # systembusconf
 install(FILES dbusservice/com.deepin.filemanager.daemon.conf
-    DESTINATION /etc/dbus-1/system.d)
+    DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/dbus-1/system.d)
 
 # services
 install(FILES dbusservice/com.deepin.filemanager.daemon.service

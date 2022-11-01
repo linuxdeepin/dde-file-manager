@@ -100,11 +100,6 @@ TEST_F(UT_ShareFileInfo, IsWritable)
     EXPECT_TRUE(info->isWritable());
 }
 
-TEST_F(UT_ShareFileInfo, CanTag)
-{
-    EXPECT_FALSE(info->canTag());
-}
-
 TEST_F(UT_ShareFileInfo, Refresh)
 {
     stub_ext::StubExt stub;

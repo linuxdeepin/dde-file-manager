@@ -94,8 +94,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt5::Concurrent
 )
 
-set(CMAKE_INSTALL_PREFIX "/usr")
-
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/dde-dock/plugins/system-trays)
 
 # schemas

@@ -148,11 +148,6 @@ bool VaultFileInfo::isRoot() const
     return bRootDir;
 }
 
-bool VaultFileInfo::canTag() const
-{
-    return false;
-}
-
 bool VaultFileInfo::canDrop()
 {
     if (VaultHelper::instance()->state(PathManager::vaultLockPath()) != VaultState::kUnlocked) {

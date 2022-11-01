@@ -48,6 +48,7 @@ Q_DECLARE_METATYPE(QRectF *)
 Q_DECLARE_METATYPE(QList<QVariantMap> *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(CustomViewExtensionView)
+Q_DECLARE_METATYPE(QByteArray *)
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
@@ -67,7 +68,6 @@ void Tag::initialize()
 
     bindEvents();
     followEvents();
-    TagEventReceiver::instance()->initConnect();
 }
 
 bool Tag::start()
@@ -117,8 +117,7 @@ void Tag::onAllPluginsInitialized()
 
 QWidget *Tag::createTagWidget(const QUrl &url)
 {
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
-    if (!TagManager::instance()->canTagFile(info))
+    if (!TagManager::instance()->canTagFile(url))
         return nullptr;
 
     return new TagWidget(url);
@@ -196,6 +195,13 @@ void Tag::onMenuSceneAdded(const QString &scene)
 
 void Tag::bindEvents()
 {
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileCutResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileRemoveResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileRemoveResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, TagEventReceiver::instance(), &TagEventReceiver::handleFileRenameResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRestoreFromTrashResult, TagEventReceiver::instance(), &TagEventReceiver::handleRestoreFromTrashResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, TagEventReceiver::instance(), &TagEventReceiver::handleWindowUrlChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted", TagEventReceiver::instance(), &TagEventReceiver::handleSidebarOrderChanged);
+
+    dpfSlotChannel->connect("dfmplugin_tag", "slot_GetTags", TagEventReceiver::instance(), &TagEventReceiver::handleGetTags);
 }

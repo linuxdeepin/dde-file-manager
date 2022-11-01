@@ -71,7 +71,7 @@ public:
     void deleteTags(const QList<QString> &tags);
     void deleteFiles(const QList<QUrl> &urls);
 
-    bool canTagFile(const AbstractFileInfoPointer &fileInfo) const;
+    bool canTagFile(const QUrl &url) const;
     bool paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool paintIconTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool pasteHandle(quint64 winId, const QUrl &to);

@@ -51,7 +51,6 @@ public:
     void refresh() override;
     bool canDragCompress() const override;
     bool canHidden() const override;
-    bool canTag() const override;
     QString emptyDirectoryTip() const override;
     virtual Qt::DropActions supportedDropActions() override;
 

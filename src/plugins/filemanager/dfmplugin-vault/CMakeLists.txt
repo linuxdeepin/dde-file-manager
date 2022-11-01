@@ -41,8 +41,8 @@ target_link_libraries(${PROJECT_NAME}
     ${openssl_LIBRARIES}
 )
 
-set(PREFIX "/usr")
-install(FILES polkit/com.deepin.filemanager.vault.policy DESTINATION ${PREFIX}/share/polkit-1/actions)
+install(FILES polkit/com.deepin.filemanager.vault.policy
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 
 #install library file
 install(TARGETS

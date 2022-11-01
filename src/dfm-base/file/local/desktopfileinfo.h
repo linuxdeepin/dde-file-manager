@@ -36,6 +36,9 @@ class DesktopFileInfo : public LocalFileInfo
 {
 public:
     explicit DesktopFileInfo(const QUrl &fileUrl);
+    bool canTag() const;
+
+public:
     virtual ~DesktopFileInfo() override;
 
     QString desktopName() const;
@@ -61,7 +64,6 @@ public:
     Qt::DropActions supportedDragActions() const override;
 
     bool canDrop() override;
-    bool canTag() const override;
     bool canMoveOrCopy() const override;
 
     static QMap<QString, QVariant> desktopFileInfo(const QUrl &fileUrl);

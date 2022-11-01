@@ -75,6 +75,14 @@ if(NOT DEFINED DFM_PLUGIN_FILEMANAGER_EDGE_DIR)
     set(DFM_PLUGIN_FILEMANAGER_EDGE_DIR ${DFM_PLUGIN_DIR}/filemanager-edge)
 endif()
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
+message("Build type:"${CMAKE_BUILD_TYPE})
+
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     set(BUILD_TESTING ON)
 else()

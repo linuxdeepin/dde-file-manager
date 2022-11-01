@@ -37,6 +37,9 @@ class Tag : public dpf::Plugin
     // slot events
     DPF_EVENT_REG_SLOT(slot_GetTags)
 
+    // hook events
+    DPF_EVENT_REG_HOOK(hook_CanTag)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

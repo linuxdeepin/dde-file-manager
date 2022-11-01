@@ -95,11 +95,6 @@ bool dfmplugin_myshares::ShareFileInfo::isWritable() const
     return true;
 }
 
-bool dfmplugin_myshares::ShareFileInfo::canTag() const
-{
-    return false;
-}
-
 void dfmplugin_myshares::ShareFileInfo::refresh()
 {
     auto d = dynamic_cast<ShareFileInfoPrivate *>(dptr.data());

@@ -569,16 +569,6 @@ bool LocalFileInfo::canRename() const
     return canRename;
 }
 
-bool LocalFileInfo::canTag() const
-{
-    const QString &filePath = this->filePath();
-
-    const QString &compressPath = QDir::homePath() + "/.avfs/";
-    if (filePath.startsWith(compressPath))
-        return false;
-
-    return !SystemPathUtil::instance()->isSystemPath(filePath);
-}
 /*!
  * \brief isReadable 获取文件是否可读
  *

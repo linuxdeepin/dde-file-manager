@@ -1028,12 +1028,6 @@ bool dfmbase::AbstractFileInfo::canDrag()
     return true;
 }
 
-bool AbstractFileInfo::canTag() const
-{
-    CALL_PROXY(canTag());
-
-    return false;
-}
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::parentUrl
  * \return

@@ -45,17 +45,6 @@ TagEventReceiver *TagEventReceiver::instance()
     return &ins;
 }
 
-void TagEventReceiver::initConnect()
-{
-    dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult, this, &TagEventReceiver::handleFileCutResult);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, this, &TagEventReceiver::handleFileRemoveResult);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, this, &TagEventReceiver::handleFileRemoveResult);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, this, &TagEventReceiver::handleFileRenameResult);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kRestoreFromTrashResult, this, &TagEventReceiver::handleRestoreFromTrashResult);
-
-    dpfSlotChannel->connect("dfmplugin_tag", "slot_GetTags", this, &TagEventReceiver::handleGetTags);
-}
-
 void TagEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
 {
     Q_UNUSED(errMsg)
@@ -69,9 +58,8 @@ void TagEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QLi
             TagManager::instance()->removeTagsOfFiles(tags, { url });
 
             const QUrl &newUrl = destUrls.at(srcUrls.indexOf(url));
-            auto info = InfoFactory::create<AbstractFileInfo>(newUrl);
 
-            if (TagManager::instance()->canTagFile(info))
+            if (TagManager::instance()->canTagFile(newUrl))
                 TagManager::instance()->addTagsForFiles(tags, { newUrl });
         }
     }

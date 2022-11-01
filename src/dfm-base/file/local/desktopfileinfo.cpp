@@ -262,7 +262,7 @@ bool DesktopFileInfo::canTag() const
     if (d->deepinID == "dde-file-manager" && d->exec.contains(" -O "))
         return false;
 
-    return LocalFileInfo::canTag();
+    return true;
 }
 
 bool DesktopFileInfo::canMoveOrCopy() const
