@@ -24,6 +24,7 @@
 #include "ddplugin_canvas_global.h"
 
 #include <QFrame>
+#include <QMap>
 
 class QHBoxLayout;
 class QLabel;
@@ -40,37 +41,46 @@ public slots:
     void refresh();
     void updatePosition();
 protected slots:
-    void stateChanged(int);
+    void stateChanged(int state, int prop);
 protected:
     struct ConfigInfo
     {
-        bool maskAlwaysOn = true;
+        bool valid = false;
         QString maskLogoUri;
-        int maskLogoWidth = 128;
-        int maskLogoHeight = 48;
+        int maskLogoWidth = 232;
+        int maskLogoHeight = 46;
         int maskTextWidth = 100;
         int maskTextHeight = 30;
         int maskWidth = maskLogoWidth + maskTextWidth;
-        int maskHeight = 48;
+        int maskHeight = 46;
         int maskLogoTextSpacing = 0;
-        int xRightBottom = 50;
+        int xRightBottom = 60;
         int yRightBottom = 98;
     };
-    static ConfigInfo parseJson(QJsonObject *);
+    QMap<QString, ConfigInfo> parseJson(QJsonObject *);
     static QPixmap maskPixmap(const QString &uri, const QSize &size, qreal pixelRatio);
 protected:
     static bool showLicenseState();
     static void addWidget(QHBoxLayout *layout, QWidget *wid, const QString &align);
+    static bool usingCn();
     void loadConfig();
-    void update(const ConfigInfo &);
+    void update(const ConfigInfo &, bool normal);
     void setTextAlign(const QString &maskTextAlign);
 private:
+    ConfigInfo defaultCfg(QJsonObject *);
+    ConfigInfo govCfg(QJsonObject *, bool cn);
+    ConfigInfo entCfg(QJsonObject *, bool cn);
+private:
     QString configFile;
-    ConfigInfo currentConfig;
+    QMap<QString, ConfigInfo> configInfos;
     QLabel *logoLabel = nullptr;
     QLabel *textLabel = nullptr;
+    bool maskAlwaysOn = true;
+    int curState = -1;
+    int curProperty = -1;
+    QSize curMaskSize = QSize(0, 0);
+    QPoint curRightBottom = QPoint(0, 0);
 };
 
 }
-
 #endif // WATERMASKFRAME_H

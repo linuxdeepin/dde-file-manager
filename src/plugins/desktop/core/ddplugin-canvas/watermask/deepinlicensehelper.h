@@ -44,21 +44,18 @@ public:
         TrialAuthorized,
         TrialExpired
     };
-public:
     static DeepinLicenseHelper *instance();
     void init();
     void delayGetState();
 signals:
-    void licenseStateChanged(int);
-
-public slots:
+    void postLicenseState(int state, int prop);
 
 protected:
     explicit DeepinLicenseHelper(QObject *parent = nullptr);
     ~DeepinLicenseHelper();
 
 private slots:
-    void requetLicenseState();
+    void requestLicenseState();
     void initFinshed(void *interface);
 
 private:
@@ -72,5 +69,4 @@ private:
 };
 
 }
-
 #endif // DEEPINLICENSEHELPER_H

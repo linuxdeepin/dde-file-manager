@@ -41,7 +41,7 @@ DeepinLicenseHelper::DeepinLicenseHelper(QObject *parent) : QObject(parent)
     reqTimer.setInterval(500);
     reqTimer.setSingleShot(true);
 
-    connect(&reqTimer, &QTimer::timeout, this, &DeepinLicenseHelper::requetLicenseState);
+    connect(&reqTimer, &QTimer::timeout, this, &DeepinLicenseHelper::requestLicenseState);
 }
 
 DeepinLicenseHelper::~DeepinLicenseHelper()
@@ -63,7 +63,7 @@ void DeepinLicenseHelper::delayGetState()
     reqTimer.start();
 }
 
-void DeepinLicenseHelper::requetLicenseState()
+void DeepinLicenseHelper::requestLicenseState()
 {
     if (work.isRunning() || !licenseInterface) {
         qWarning() << "requetLicenseState: interface is invalid.";
@@ -79,11 +79,11 @@ void DeepinLicenseHelper::initFinshed(void *interface)
     Q_ASSERT(!licenseInterface);
     licenseInterface = static_cast<ComDeepinLicenseInterface *>(interface);
     connect(licenseInterface, &ComDeepinLicenseInterface::LicenseStateChange,
-                     this, &DeepinLicenseHelper::requetLicenseState);
+                     this, &DeepinLicenseHelper::requestLicenseState);
     work.waitForFinished();
     qInfo() << "interface inited";
 
-    requetLicenseState();
+    requestLicenseState();
 }
 
 void DeepinLicenseHelper::createInterface()
@@ -93,8 +93,10 @@ void DeepinLicenseHelper::createInterface()
             "com.deepin.license",
             "/com/deepin/license/Info",
             QDBusConnection::systemBus());
+
     licenseInterface->moveToThread(qApp->thread());
-    qInfo() << "create /com/deepin/license/Info org.freedesktop.DBus.Properties...";
+    qInfo() << "create /com/deepin/license/Info ...";
+
     QMetaObject::invokeMethod(DeepinLicenseHelper::instance(), "initFinshed", Q_ARG(void *, licenseInterface));
 }
 
@@ -104,6 +106,22 @@ void DeepinLicenseHelper::getLicenseState(DeepinLicenseHelper *self)
     Q_ASSERT(self->licenseInterface);
     qInfo() << "get active state from com.deepin.license.Info";
     int state = self->licenseInterface->AuthorizationState();
-    qInfo() << "Get AuthorizationState" << state;
-    emit self->licenseStateChanged(state);
+    int prop = -1;
+    {
+        // 不直接使用AuthorizationProperty接口，需要通过QVariant是否有效判断接口是否存在
+        QVariant varProp = self->licenseInterface->property("AuthorizationProperty");
+        if (!varProp.isValid()) {
+            qInfo() << "no such property: AuthorizationProperty in license.";
+        } else {
+            bool ok = false;
+            prop = varProp.toInt(&ok);
+            if (!ok) {
+                qWarning() << "invalid value of AuthorizationProperty" << varProp;
+                prop = 0;
+            }
+        }
+    }
+
+    qInfo() << "Get AuthorizationState" << state << prop;
+    emit self->postLicenseState(state, prop);
 }
