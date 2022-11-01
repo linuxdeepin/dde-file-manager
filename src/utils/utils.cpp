@@ -336,44 +336,17 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
 
 QList<QVariantMap> RemoteMountsStashManager::remoteMounts()
 {
-    DFMApplication::syncGenericAttribute();
-
     QList<QVariantMap> ret;
-    QFile configFile(CONFIG_PATH);
-    if (!configFile.open(QIODevice::ReadOnly)) {
-        return ret;
-    }
-    QByteArray data = configFile.readAll();
-    configFile.close();
+    const QSet<QString> &keys = DFMApplication::genericSetting()->keys(kRemoteMounts);
+    QSetIterator<QString> it(keys);
 
-    QJsonParseError err;
-    QJsonDocument config = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError) {
-        qWarning() << "config file is not valid json file: " << err.errorString();
-        return ret;
+    while (it.hasNext()) {
+        const QString &key = it.next();
+        QVariantMap item = DFMApplication::genericSetting()->value(kRemoteMounts, key).toMap();
+        item.insert("key", key);
+        ret << item;
     }
 
-    QJsonObject obj = config.object();
-    QJsonValue remoteMounts = obj.value(kRemoteMounts);
-    if (remoteMounts.isObject()) {
-        QJsonObject mountsObj = remoteMounts.toObject();
-        const QStringList &itemKeys = mountsObj.keys();
-        for (const auto &itemKey: itemKeys) {
-            QJsonValue mountItem = mountsObj.value(itemKey);
-            if (!mountItem.isObject())
-                continue;
-
-            QVariantMap item;
-            item.insert("key", itemKey);
-            QJsonObject itemObj = mountItem.toObject();
-            const QStringList &mountObjKeys = itemObj.keys();
-            for (const auto &mountObjKey: mountObjKeys) {
-                const QVariant &value = itemObj.value(mountObjKey).toVariant();
-                item.insert(mountObjKey, value);
-            }
-            ret << item;
-        }
-    }
     return ret;
 }
 /**
