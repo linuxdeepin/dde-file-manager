@@ -63,15 +63,28 @@ void PropertyEventReceiver::bindEvents()
                             this, &PropertyEventReceiver::handleBasicFiledFilterRemove);
 }
 
-void PropertyEventReceiver::handleShowPropertyDialog(const QList<QUrl> &urls)
+void PropertyEventReceiver::handleShowPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
 {
     PropertyDialogUtil *fileDialogManager = PropertyDialogUtil::instance();
-    fileDialogManager->showPropertyDialog(urls);
+
+    QVariantHash showViewOption;
+    if (!option.isEmpty()) {   // Need adjust the registered initOption.
+        const QString &name = option.value(kOption_Key_Name).toString();   // The `name` was registed when registered view creator.
+        showViewOption = PropertyDialogManager::instance().getCreatorOptionByName(name);   // get the registered initial option
+        const QStringList &initialOptKeys = showViewOption.keys();
+        const QStringList &inputOptKeys = option.keys();
+        for (const QString &key : inputOptKeys) {
+            if (initialOptKeys.contains(key)) {
+                showViewOption.insert(key, option.value(key));   // update the default option by the input option
+            }
+        }
+    }
+    fileDialogManager->showPropertyDialog(urls, showViewOption);   // Show the property dialog with updated option
 }
 
-bool PropertyEventReceiver::handleViewExtensionRegister(CustomViewExtensionView view, int index)
+bool PropertyEventReceiver::handleViewExtensionRegister(CustomViewExtensionView view, const QString &name, int index)
 {
-    return PropertyDialogManager::instance().registerExtensionView(view, index);
+    return PropertyDialogManager::instance().registerExtensionView(view, name, index);
 }
 
 void PropertyEventReceiver::handleViewExtensionUnregister(int index)

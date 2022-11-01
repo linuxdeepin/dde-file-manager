@@ -117,6 +117,23 @@ bool ShareControlDBus::CreateShareLinkFile()
     return ret;
 }
 
+bool ShareControlDBus::IsUserSharePasswordSet(const QString &username)
+{
+    QProcess p;
+    p.start("pdbedit -L");
+    auto ret = p.waitForFinished();
+    QStringList resultLines = QString::fromUtf8(p.readAllStandardOutput()).split('\n');
+    bool isPasswordSet = false;
+    foreach (const QString &line, resultLines) {
+        if (line.startsWith(username + ":")) {
+            isPasswordSet = true;
+            break;
+        }
+    }
+
+    return ret && isPasswordSet;
+}
+
 bool ShareControlDBus::checkAuthentication()
 {
     bool ret = false;

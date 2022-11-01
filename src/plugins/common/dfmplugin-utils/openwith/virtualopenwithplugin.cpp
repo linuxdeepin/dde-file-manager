@@ -36,7 +36,7 @@ void VirtualOpenWithPlugin::initialize()
 bool VirtualOpenWithPlugin::start()
 {
     CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "Virtual", 2);
 
     return true;
 }

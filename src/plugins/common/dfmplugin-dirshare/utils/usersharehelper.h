@@ -53,6 +53,7 @@ public:
     static bool canShare(AbstractFileInfoPointer info);
 
     bool share(const QVariantMap &info);
+    bool isUserSharePasswordSet(const QString &username);
     void setSambaPasswd(const QString &userName, const QString &passwd);
     void removeShareByPath(const QString &path);
     ShareInfoList shareInfos();
@@ -65,12 +66,16 @@ public:
 
     bool isSambaServiceRunning();
     void startSambaServiceAsync(StartSambaFinished onFinished);
+    QString sharedIP() const;
+    bool handleRestoreViewCreationState();
+    bool shareDrawerExpand();
 
 Q_SIGNALS:
     void shareCountChanged(int count);
     void shareAdded(const QString &path);
     void shareRemoved(const QString &path);
     void shareRemoveFailed(const QString &path);
+    void sambaPasswordSet(bool success);
 
 protected Q_SLOTS:
     void readShareInfos(bool sendSignal = true);
@@ -111,10 +116,12 @@ private:
     QMap<QString, QStringList> sharePathToShareName {};
 
     ShareWatcherManager *watcherManager { nullptr };
+    bool initExpandState { false };
 };
 }
 
 Q_DECLARE_METATYPE(DPDIRSHARE_NAMESPACE::StartSambaFinished)
+Q_DECLARE_METATYPE(bool *)
 
 #define UserShareHelperInstance DPDIRSHARE_NAMESPACE::UserShareHelper::instance()
 

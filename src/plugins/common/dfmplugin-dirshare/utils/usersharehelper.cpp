@@ -27,6 +27,7 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QDBusInterface>
 #include <QDBusConnection>
@@ -39,6 +40,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <QtConcurrent>
+#include <QNetworkInterface>
 
 #include <pwd.h>
 #include <unistd.h>
@@ -50,6 +52,7 @@ static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
 static constexpr char kInterfacePath[] { "/com/deepin/filemanager/daemon/UserShareManager" };
 static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon.UserShareManager" };
 
+static constexpr char kFuncIsPasswordSet[] { "IsUserSharePasswordSet" };
 static constexpr char kFuncSetPasswd[] { "SetUserSharePassword" };
 static constexpr char kFuncCloseShare[] { "CloseSmbShareByShareName" };
 static constexpr char kFuncCreateShareLinkFile[] { "CreateShareLinkFile" };
@@ -146,7 +149,11 @@ bool UserShareHelper::share(const ShareInfo &info)
 
 void UserShareHelper::setSambaPasswd(const QString &userName, const QString &passwd)
 {
-    userShareInter->asyncCall(DaemonServiceIFace::kFuncSetPasswd, userName, passwd);
+    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncSetPasswd, userName, passwd);
+    bool result = reply.isValid() && reply.error().message().isEmpty();
+    qDebug() << "Samba password set result :" << result << ",error msg:" << reply.error().message();
+
+    Q_EMIT sambaPasswordSet(result);
 }
 
 void UserShareHelper::removeShareByPath(const QString &path)
@@ -224,6 +231,44 @@ void UserShareHelper::startSambaServiceAsync(StartSambaFinished onFinished)
     watcher->setFuture(QtConcurrent::run([this] { return startSmbService(); }));
 }
 
+QString UserShareHelper::sharedIP() const
+{
+    QString selfIp;
+    QStringList validIpList;
+    foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces()) {
+        if (!netInterface.isValid())
+            continue;
+        QNetworkInterface::InterfaceFlags flags = netInterface.flags();
+        if (!(flags.testFlag(QNetworkInterface::IsRunning) && !flags.testFlag(QNetworkInterface::IsLoopBack)))
+            continue;
+        QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
+        foreach (QNetworkAddressEntry entry, entryList) {
+            if (!entry.ip().toString().isEmpty() && entry.ip().toString() != "0.0.0.0" && entry.ip().toIPv4Address()) {
+                validIpList << entry.ip().toString();
+            }
+        }
+    }
+    // If multiple IPs are got, just take the first one.
+    // There is not a list control on the UI for the IP.
+    // TODO(zhuangshu):discuss this issue with product manager, or reference the code of dde-network-core plugin.
+    if (validIpList.count() > 0)
+        selfIp = validIpList.first();
+
+    return selfIp;
+}
+
+bool UserShareHelper::handleRestoreViewCreationState()
+{
+    initExpandState = false;
+
+    return false;
+}
+
+bool UserShareHelper::shareDrawerExpand()
+{
+    return initExpandState;
+}
+
 UserShareHelper::~UserShareHelper()
 {
 }
@@ -245,6 +290,15 @@ bool UserShareHelper::canShare(AbstractFileInfoPointer info)
         return false;
 
     return true;
+}
+
+bool UserShareHelper::isUserSharePasswordSet(const QString &username)
+{
+    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncIsPasswordSet, username);
+    bool result = reply.isValid() ? reply.value() : false;
+    qDebug() << "isSharePasswordSet result: " << result << ", error: " << reply.error();
+
+    return result;
 }
 
 void UserShareHelper::readShareInfos(bool sendSignal)

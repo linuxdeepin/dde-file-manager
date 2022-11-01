@@ -22,6 +22,8 @@
 #include "views/multifilepropertydialog.h"
 #include "propertydialogmanager.h"
 
+#include <DArrowLineDrawer>
+
 #include <QApplication>
 #include <QScreen>
 #include <QTimer>
@@ -50,7 +52,7 @@ PropertyDialogUtil::~PropertyDialogUtil()
     }
 }
 
-void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls)
+void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
 {
     for (const QUrl &url : urls) {
         QWidget *widget = createCustomizeView(url);
@@ -63,13 +65,13 @@ void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls)
             pt.setY(pt.y() - widget->height() / 2);
             widget->move(pt);
         } else {
-            showFilePropertyDialog(urls);
+            showFilePropertyDialog(urls, option);
             break;
         }
     }
 }
 
-void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls)
+void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
 {
     int count = urls.count();
     if (count < kMaxPropertyDialogNumber) {
@@ -80,7 +82,11 @@ void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls)
                 dialog->selectFileUrl(url);
                 dialog->filterControlView();
                 filePropertyDialogs.insert(url, dialog);
-                createControlView(url);
+                if (!option.isEmpty()) {   // The expand state of basic widget mybe ajusted.
+                    bool expand = option.value(kOption_Key_BasicInfoExpand).toBool();
+                    dialog->setBasicInfoExpand(expand);
+                }
+                createControlView(url, option);
                 connect(dialog, &FilePropertyDialog::closed, this, &PropertyDialogUtil::closeFilePropertyDialog);
                 if (1 == count) {
                     QPoint pos = getPropertyPos(dialog->size().width(), dialog->height());
@@ -164,9 +170,9 @@ void PropertyDialogUtil::closeAllFilePropertyDialog()
     closeAllDialog->close();
 }
 
-void PropertyDialogUtil::createControlView(const QUrl &url)
+void PropertyDialogUtil::createControlView(const QUrl &url, const QVariantHash &option)
 {
-    QMap<int, QWidget *> controlView = createView(url);
+    QMap<int, QWidget *> controlView = createView(url, option);
     int count = controlView.keys().count();
     for (int i = 0; i < count; ++i) {
         QWidget *view = controlView.value(controlView.keys()[i]);
@@ -197,9 +203,9 @@ PropertyDialogUtil *PropertyDialogUtil::instance()
     return &propertyManager;
 }
 
-QMap<int, QWidget *> PropertyDialogUtil::createView(const QUrl &url)
+QMap<int, QWidget *> PropertyDialogUtil::createView(const QUrl &url, const QVariantHash &option)
 {
-    return PropertyDialogManager::instance().createExtensionView(url);
+    return PropertyDialogManager::instance().createExtensionView(url, option);
 }
 
 QWidget *PropertyDialogUtil::createCustomizeView(const QUrl &url)

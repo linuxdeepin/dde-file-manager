@@ -40,9 +40,9 @@ public:
 
 public slots:
 
-    void showPropertyDialog(const QList<QUrl> &urls);
+    void showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option = QVariantHash());
 
-    void showFilePropertyDialog(const QList<QUrl> &urls);
+    void showFilePropertyDialog(const QList<QUrl> &urls, const QVariantHash &option = QVariantHash());
 
     void insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget);
 
@@ -52,7 +52,7 @@ public slots:
 
     void closeAllFilePropertyDialog();
 
-    void createControlView(const QUrl &url);
+    void createControlView(const QUrl &url, const QVariantHash &option = QVariantHash());
 
     void updateCloseIndicator();
 
@@ -64,7 +64,8 @@ private:
      * \note: ***Used only by the createView property dialog plugin.***
      * \brief Used to create extended control objects.
      */
-    QMap<int, QWidget *> createView(const QUrl &url);
+    //    QMap<int, QWidget *> createView(const QUrl &url);
+    QMap<int, QWidget *> createView(const QUrl &url, const QVariantHash &option = QVariantHash());
 
     QWidget *createCustomizeView(const QUrl &url);
 

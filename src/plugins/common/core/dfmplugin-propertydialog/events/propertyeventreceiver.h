@@ -37,8 +37,8 @@ public:
     static PropertyEventReceiver *instance();
     void bindEvents();
 
-    void handleShowPropertyDialog(const QList<QUrl> &urls);
-    bool handleViewExtensionRegister(CustomViewExtensionView view, int index);
+    void handleShowPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option);
+    bool handleViewExtensionRegister(CustomViewExtensionView view, const QString &name, int index);
     void handleViewExtensionUnregister(int index);
     bool handleCustomViewRegister(CustomViewExtensionView view, const QString &scheme);
     void handleCustomViewUnregister(const QString &scheme);

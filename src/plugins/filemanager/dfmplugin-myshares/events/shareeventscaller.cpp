@@ -66,7 +66,7 @@ void ShareEventsCaller::sendCancelSharing(const QUrl &url)
 
 void ShareEventsCaller::sendShowProperty(const QList<QUrl> &urls)
 {
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 
 void ShareEventsCaller::sendSwitchDisplayMode(quint64 winId, Global::ViewMode mode)

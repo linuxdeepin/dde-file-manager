@@ -39,14 +39,14 @@ static constexpr char const kCollectionKey[] = "CollectionKey";
 static constexpr char const kDropFilesIndex[] = "DropFilesIndex";
 static constexpr char const kViewObject[] = "ViewObject";
 
-
-class FileOperatorGlobal : public FileOperator {};
+class FileOperatorGlobal : public FileOperator
+{
+};
 Q_GLOBAL_STATIC(FileOperatorGlobal, fileOperatorGlobal)
 
 FileOperatorPrivate::FileOperatorPrivate(FileOperator *qq)
     : q(qq)
 {
-
 }
 
 void FileOperatorPrivate::callBackTouchFile(const QUrl &target, const QVariantMap &customData)
@@ -97,7 +97,7 @@ QList<QUrl> FileOperatorPrivate::getSelectedUrls(const CollectionView *view) con
     auto indexs = view->selectedIndexes();
     QList<QUrl> urls;
     for (auto index : indexs) {
-        urls <<  view->model()->fileUrl(index);
+        urls << view->model()->fileUrl(index);
     }
 
     return urls;
@@ -113,15 +113,13 @@ void FileOperatorPrivate::filterDesktopFile(QList<QUrl> &urls)
 }
 
 FileOperator::FileOperator(QObject *parent)
-    : QObject(parent)
-    , d(new FileOperatorPrivate(this))
+    : QObject(parent), d(new FileOperatorPrivate(this))
 {
     d->callBack = std::bind(&FileOperator::callBackFunction, this, std::placeholders::_1);
 }
 
 FileOperator::~FileOperator()
 {
-
 }
 
 FileOperator *FileOperator::instance()
@@ -168,10 +166,10 @@ void FileOperator::pasteFiles(const CollectionView *view)
 
         // clear clipboard after cutting files from clipboard
         ClipBoard::instance()->clearClipboard();
-    } else if (action == ClipBoard::kRemoteCopiedAction) { // 远程协助
-            qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
-            ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
-            return;
+    } else if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
+        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+        ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
+        return;
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << urls;
     }
@@ -274,7 +272,7 @@ void FileOperator::showFilesProperty(const CollectionView *view)
     if (urls.isEmpty())
         return;
 
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 
 void FileOperator::dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index)
@@ -387,4 +385,3 @@ void FileOperator::callBackFunction(const Global::CallbackArgus args)
         break;
     }
 }
-

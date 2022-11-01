@@ -127,4 +127,6 @@ void TitleBar::bindEvents()
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleWindowBackward);
     dpfSlotChannel->connect(curSpace, "slot_Navigator_Forward",
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleWindowForward);
+    dpfSlotChannel->connect(curSpace, "slot_SharePasswordSettingsDialog_Show",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleShowSharePasswordSettingsDialog);
 }

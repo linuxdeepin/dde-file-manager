@@ -119,7 +119,7 @@ void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
 
 void ComputerEventCaller::sendShowPropertyDialog(const QList<QUrl> &urls)
 {
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 
 void ComputerEventCaller::sendErase(const QString &dev)

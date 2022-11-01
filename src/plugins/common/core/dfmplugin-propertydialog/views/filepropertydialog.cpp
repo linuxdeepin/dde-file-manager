@@ -177,6 +177,12 @@ int FilePropertyDialog::getFileCount()
     return 1;
 }
 
+void FilePropertyDialog::setBasicInfoExpand(bool expand)
+{
+    if (basicWidget)
+        basicWidget->setExpand(expand);
+}
+
 void FilePropertyDialog::processHeight(int height)
 {
     QRect rect = geometry();

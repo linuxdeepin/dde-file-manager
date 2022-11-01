@@ -34,6 +34,7 @@
 
 DWIDGET_BEGIN_NAMESPACE
 class DLabel;
+class DArrowLineDrawer;
 DWIDGET_END_NAMESPACE
 
 namespace dfmplugin_propertydialog {
@@ -52,6 +53,7 @@ public:
     void filterControlView();
     qint64 getFileSize();
     int getFileCount();
+    void setBasicInfoExpand(bool expand);
 
 public slots:
     void processHeight(int height);

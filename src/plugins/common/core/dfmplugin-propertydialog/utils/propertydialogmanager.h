@@ -35,10 +35,9 @@ class PropertyDialogManager : public QObject
 public:
     static PropertyDialogManager &instance();
 
-    bool registerExtensionView(CustomViewExtensionView view, int index = -1);
+    bool registerExtensionView(CustomViewExtensionView viewCreator, const QString &name, int index = -1);
     void unregisterExtensionView(int index);
-    QMap<int, QWidget *> createExtensionView(const QUrl &url);
-
+    QMap<int, QWidget *> createExtensionView(const QUrl &url, const QVariantHash &option = QVariantHash());
     bool registerCustomView(CustomViewExtensionView view, const QString &scheme);
     void unregisterCustomView(const QString &scheme);
     QWidget *createCustomView(const QUrl &url);
@@ -53,15 +52,18 @@ public:
 
     void addComputerPropertyDialog();
 
+    QVariantHash getCreatorOptionByName(const QString &name) const;
+
 private:
     explicit PropertyDialogManager(QObject *parent = nullptr);
 
 private:
-    QMultiHash<int, CustomViewExtensionView> constructList {};
+    QMultiHash<int, QVariantHash> creatorOptions {};
     QHash<QString, CustomViewExtensionView> viewCreateFunctionHash {};
     QHash<QString, BasicViewFieldFunc> basicViewFieldFuncHash {};
     QList<QString> propertyPathList {};
     QHash<QString, PropertyFilterType> filePropertyFilterHash {};
+    bool basicInfoExpandState { true };
 };
 
 }

@@ -184,7 +184,7 @@ void CommandParser::showPropertyDialog()
     if (urlList.isEmpty())
         return;
 
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urlList);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urlList, QVariantHash());
 }
 
 void CommandParser::openWithDialog()

@@ -14,5 +14,9 @@
     <method name="CreateShareLinkFile">
       <arg type="b" direction="out"/>
     </method>
+    <method name="IsUserSharePasswordSet">
+      <arg type="b" direction="out"/>
+      <arg name="username" type="s" direction="in"/>
+    </method>
   </interface>
 </node>

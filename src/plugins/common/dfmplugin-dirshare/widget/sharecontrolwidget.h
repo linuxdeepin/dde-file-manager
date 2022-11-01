@@ -30,10 +30,16 @@
 
 #include <DArrowLineDrawer>
 #include <QUrl>
+#include <QPointer>
 
 class QCheckBox;
 class QLineEdit;
 class QComboBox;
+class QLabel;
+class QTextBrowser;
+class QPushButton;
+class QFormLayout;
+class QGridLayout;
 
 namespace dfmplugin_dirshare {
 
@@ -43,9 +49,14 @@ class ShareControlWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 public:
     explicit ShareControlWidget(const QUrl &url, QWidget *parent = nullptr);
     virtual ~ShareControlWidget() override;
+    static void setOption(QWidget *w, const QVariantHash &option);
 
 protected:
     void setupUi();
+    void setupNetworkPath();
+    void setupUserName();
+    void setupSharePassword();
+    void setupShareNotes(QGridLayout *gridLayout);
     void init();
     void initConnection();
     bool validateShareName();
@@ -56,19 +67,40 @@ protected Q_SLOTS:
     void unshareFolder();
     void updateWidgetStatus(const QString &filePath);
     void updateFile(const QUrl &oldOne, const QUrl &newOne);
+    void onSambaPasswordSet(bool result);
 
 private:
+    void showMoreInfo(bool showMore);
+
+private:
+    QFormLayout *mainLay { nullptr };
     QCheckBox *shareSwitcher { nullptr };
     QLineEdit *shareNameEditor { nullptr };
     QComboBox *sharePermissionSelector { nullptr };
     QComboBox *shareAnonymousSelector { nullptr };
+
+    // network area
+    QLabel *netScheme { nullptr };
+    QLabel *networkAddrLabel { nullptr };
+    QLabel *userNamelineLabel { nullptr };
+    QLineEdit *sharePasswordlineEditor { nullptr };
+    QTextBrowser *m_shareNotes { nullptr };
+    QPushButton *splitLineGray { nullptr };
+    QPushButton *copyNetAddr { nullptr };
+    QPushButton *copyUserNameBt { nullptr };
+    QPushButton *setPasswordBt { nullptr };
+    bool isSharePasswordSet { false };
+    QTimer *refreshIp { nullptr };
+
+    //QTimer *m_jobTimer;
+    QString selfIp;
+
     QTimer *timer { nullptr };
 
     QUrl url;
     AbstractFileInfoPointer info { nullptr };
     AbstractFileWatcherPointer watcher { nullptr };
 };
-
 }
 
 #endif   // SHARECONTROLWIDGET_H

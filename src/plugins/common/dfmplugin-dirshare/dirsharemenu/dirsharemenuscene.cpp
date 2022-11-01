@@ -27,6 +27,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_menu_defines.h"
+#include "widget/sharecontrolwidget.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -34,6 +35,7 @@
 #include <QMenu>
 
 using namespace dfmplugin_dirshare;
+using ViewIntiCallback = std::function<void(QWidget *w, const QVariantHash &opt)>;
 
 DirShareMenuScenePrivate::DirShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
@@ -43,7 +45,15 @@ DirShareMenuScenePrivate::DirShareMenuScenePrivate(dfmbase::AbstractMenuScene *q
 void DirShareMenuScenePrivate::addShare(const QUrl &url)
 {
     QList<QUrl> urls { url };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
+    QVariantHash option;
+    option.insert("Option_Key_Name", "DirShare");
+    option.insert("Option_Key_ExtendViewExpand", true);
+    option.insert("Option_Key_BasicInfoExpand", false);
+
+    ViewIntiCallback initFun = { ShareControlWidget::setOption };
+    option.insert("Option_Key_ViewInitCalback", QVariant::fromValue(initFun));
+
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, option);
 }
 
 DirShareMenuScene::DirShareMenuScene(QObject *parent)
@@ -157,3 +167,5 @@ AbstractMenuScene *DirShareMenuCreator::create()
 {
     return new DirShareMenuScene();
 }
+
+Q_DECLARE_METATYPE(ViewIntiCallback);

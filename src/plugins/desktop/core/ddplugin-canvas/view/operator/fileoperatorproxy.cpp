@@ -292,7 +292,7 @@ void FileOperatorProxy::deleteFiles(const CanvasView *view)
 
 void FileOperatorProxy::showFilesProperty(const CanvasView *view)
 {
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", view->selectionModel()->selectedUrls());
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", view->selectionModel()->selectedUrls(), QVariantHash());
 }
 
 void FileOperatorProxy::sendFilesToBluetooth(const CanvasView *view)

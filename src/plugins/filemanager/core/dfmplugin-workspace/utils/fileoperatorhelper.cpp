@@ -271,7 +271,7 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
     QList<QUrl> urls = view->selectedUrlList();
     if (urls.isEmpty())
         urls.append(view->rootUrl());
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 
 void FileOperatorHelper::sendBluetoothFiles(const FileView *view)

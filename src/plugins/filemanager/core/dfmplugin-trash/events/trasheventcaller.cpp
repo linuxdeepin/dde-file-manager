@@ -52,7 +52,7 @@ void TrashEventCaller::sendEmptyTrash(const quint64 windowID, const QList<QUrl> 
 
 void TrashEventCaller::sendTrashPropertyDialog(const QUrl &url)
 {
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", QList<QUrl>() << url);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", QList<QUrl>() << url, QVariantHash());
 }
 
 void TrashEventCaller::sendShowEmptyTrash(quint64 winId, bool visible)

@@ -50,7 +50,7 @@ bool DirShare::start()
     bindScene("WorkspaceMenu");
 
     CustomViewExtensionView func { DirShare::createShareControlWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "DirShare", 2);
 
     bindEvents();
     return true;

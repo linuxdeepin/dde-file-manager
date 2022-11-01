@@ -74,7 +74,7 @@ bool Tag::start()
 {
     CustomViewExtensionView func { Tag::createTagWidget };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func, -1);
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 0);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "Tag", 0);
 
     QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",

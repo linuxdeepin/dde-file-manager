@@ -38,32 +38,67 @@ PropertyDialogManager &PropertyDialogManager::instance()
     return ins;
 }
 
-bool PropertyDialogManager::registerExtensionView(CustomViewExtensionView view, int index)
+bool PropertyDialogManager::registerExtensionView(CustomViewExtensionView viewCreator, const QString &name, int index)
 {
-    if (constructList.keys().contains(index) && index != -1) {
+    qInfo() << "Model " << name << " register to property dialog, index at " << index;
+    if (creatorOptions.keys().contains(index) && index != -1) {
         qInfo() << "The current index has registered the associated construction class";
         return false;
     }
 
-    constructList.insert(index, view);
+    // 1. Different models have different `viewCreator`, `name` and `index`;
+    // 2. Here give basic widget a initial expand state : true;
+    // 3. The initial expand state of added view is false;
+    // 4. When the external model(plugin) call the `slot_PropertyDialog_Show`, it can transfers a option value to
+    // adjust the field value of initOption, for example, to set a function pointer ViewIntiCallback to update the UI.
+    ViewIntiCallback viewInitiCb { nullptr };
+    QVariantHash initOption = {
+        { kOption_Key_Name, name },
+        { kOption_Key_CreatorCalback, QVariant::fromValue(viewCreator) },
+        { kOption_Key_ViewIndex, index },
+        { kOption_Key_BasicInfoExpand, true },
+        { kOption_Key_ExtendViewExpand, false },
+        { kOption_Key_ViewInitCalback, QVariant::fromValue(viewInitiCb) }
+    };
+    // Store a initial option, it would be updated in `kOption_Key_ViewInitCalback` if needed.
+    creatorOptions.insert(index, initOption);
     return true;
 }
 
 void PropertyDialogManager::unregisterExtensionView(int index)
 {
-    constructList.remove(index);
+    creatorOptions.remove(index);
 }
 
-QMap<int, QWidget *> PropertyDialogManager::createExtensionView(const QUrl &url)
+QMap<int, QWidget *> PropertyDialogManager::createExtensionView(const QUrl &url, const QVariantHash &option)
 {
     QMap<int, QWidget *> temp {};
-    auto keys { constructList.keys() };
+    auto keys { creatorOptions.keys() };
     for (int index : keys) {
-        auto &&values { constructList.values(index) };
-        for (CustomViewExtensionView func : values) {
-            QWidget *g = func(url);
-            if (g != nullptr)
+        auto &&values { creatorOptions.values(index) };
+        for (const QVariantHash &data : values) {
+            QVariantHash showViewOption;
+            ViewIntiCallback viewInitCallback = nullptr;
+
+            if (option.isEmpty()) {
+                showViewOption = data;
+            } else {
+                if (option.value(kOption_Key_Name).toString() == data.value(kOption_Key_Name).toString()) {
+                    showViewOption = option;
+                    viewInitCallback = qvariant_cast<ViewIntiCallback>(option.value(kOption_Key_ViewInitCalback));
+                } else {
+                    showViewOption = data;
+                }
+            }
+
+            CustomViewExtensionView creatorCallback = showViewOption.value(kOption_Key_CreatorCalback).value<CustomViewExtensionView>();
+            QWidget *g = creatorCallback(url);
+            if (g != nullptr) {
+                if (viewInitCallback)
+                    viewInitCallback(g, showViewOption);
+
                 temp.insert(index, g);
+            }
         }
     }
 
@@ -177,4 +212,19 @@ PropertyFilterType PropertyDialogManager::basicFiledFiltes(const QUrl &url)
 void PropertyDialogManager::addComputerPropertyDialog()
 {
     registerCustomView(ComputerPropertyHelper::createComputerProperty, ComputerPropertyHelper::scheme());
+}
+
+QVariantHash PropertyDialogManager::getCreatorOptionByName(const QString &name) const
+{
+    auto keys { creatorOptions.keys() };
+    for (int index : keys) {
+        auto &&values { creatorOptions.values(index) };
+        for (const QVariantHash &data : values) {
+            if (data.value(kOption_Key_Name).toString() == name) {
+                return data;
+            }
+        }
+    }
+
+    return QVariantHash();
 }

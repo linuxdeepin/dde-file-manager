@@ -40,7 +40,7 @@ void BookMarkEventCaller::sendShowBookMarkPropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 
 void BookMarkEventCaller::sendOpenBookMarkInWindow(quint64 windowId, const QUrl &url)

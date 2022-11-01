@@ -158,7 +158,7 @@ bool PropertyMenuScene::triggered(QAction *action)
 
     QString id = d->predicateAction.key(action);
     if (id == PropertyActionId::kProperty) {
-        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", d->selectFiles);
+        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", d->selectFiles, QVariantHash());
     }
 
     return AbstractMenuScene::triggered(action);

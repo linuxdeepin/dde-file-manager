@@ -44,7 +44,7 @@ void VaultEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 
 void VaultEventCaller::sendVaultProperty(const QUrl &url)
 {
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", QList<QUrl>() << url);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", QList<QUrl>() << url, QVariantHash());
 }
 
 void VaultEventCaller::sendBookMarkDisabled(const QString scheme)
