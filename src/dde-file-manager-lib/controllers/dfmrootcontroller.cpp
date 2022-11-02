@@ -62,48 +62,24 @@ private:
 
 static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice> blk, QSharedPointer<DDiskDevice> drv)
 {
-    bool isOptical = drv->mediaCompatibility().join(",").contains("optical");
-    if (!blk->hasFileSystem() && blk->size() < 1024 && !isOptical) {   // a super block is at least 1024 bytes, a full filesystem always have a superblock.
-        qWarning() << "block device is ignored cause it's size is less than 1024" << blkPath;
-        return true;
-    }
-
-    // 过滤snap产生的loop设备
-    if(blk->isLoopDevice()){ // loop devices' display status only determind by GA_HideLoopPartitions property.
-        if (DFMApplication::genericAttribute(DFMApplication::GA_HideLoopPartitions).toBool()) {
-            qDebug()  << "block device is ignored by loop device:"  << blkPath;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    // the ignore controls everything.
     if (blk->hintIgnore()) {
-        qWarning()  << "block device is ignored by hintIgnore:"  << blkPath;
+        qInfo() << "Ignored by HintIgnore: " << blkPath;
         return true;
     }
 
-    if (!blk->hasFileSystem() && !isOptical && !blk->isEncrypted()) {
-        if (!drv->removable()){ // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-            qWarning()  << "block device is ignored by wrong removeable set for system disk:"  << blkPath;
-            return true;
-        }
-    }
+    // optical drive is always visiable even no medium in.
+    if (drv->mediaCompatibility().join(",").contains("optical"))
+        return false;
 
-    if (blk->cryptoBackingDevice().length() > 1) {
-        qWarning()  << "block device is ignored by crypted back device:"  << blkPath;
-        return true;
-    }
+    // encrypted shell device is always visiable.
+    if (blk->isEncrypted())
+        return false;
 
-    // 是否是设备根节点，设备根节点无须记录
-    if(blk->hasPartitionTable()){ // 替换 FileUtils::deviceShouldBeIgnore
-        qDebug()  << "block device is ignored by parent node:"  << blkPath;
-        return true;
-    }
-
-    if(blk->hasPartition()){
-        QSharedPointer<DBlockPartition> partition(DDiskManager::createBlockPartition(blkPath));
-        if(!partition.isNull()){
+    // some types of partition should be hide.
+    if (blk->hasPartition()) {
+        QScopedPointer<DBlockPartition> partition(DDiskManager::createBlockPartition(blkPath));
+        if (partition) {
             DBlockPartition::Type type = partition->eType();
             switch (type) {
             //Extended partition with CHS addressing. It must reside within the first physical 8 GB of disk, else use 0Fh instead (see 0Fh, 85h, C5h, D5h)
@@ -112,16 +88,49 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
             case DBlockPartition::DRDOS_sec_extend:
             case DBlockPartition::Multiuser_DOS_extend:
             case DBlockPartition::Extended:{
-                    qWarning()  << "block device is ignored by partion type:"  << partition->type() <<","<< blkPath;
-                    return true;
-                }
+                qInfo() << "Ignored by Partition type: " << blkPath << "Type: " << type;
+                return true;
+            }
             default:
                 break;
             }
         }
     }
+
+    // a block which have a filesystem interface ought to be shown but there are some exceptions
+    if (blk->hasFileSystem()) {
+        if (blk->isLoopDevice()) {
+            bool hideLoop = DFMApplication::genericAttribute(DFMApplication::GA_HideLoopPartitions).toBool();
+            qInfo() << "Ignored depends on HideLoop: " << blkPath << hideLoop;
+            return hideLoop;
+        }
+
+        // the clearText device is proxied by it's shell device
+        if (blk->cryptoBackingDevice().length() > 1) {
+            qInfo() << "Ignored by ClearTextDevice, proxied by it's crypto backing device: " << blkPath;
+            return true;
+        }
+    } else {
+        if (blk->hasPartitionTable()) {
+            qInfo() << "Ignored by HasPartitionTable: " << blkPath;
+            return true;
+        }
+
+        if (!drv->removable()) {
+            qInfo() << "Ignored by Unremovable internal disk: " << blkPath;
+            return true;
+        }
+
+        // avoid 0B partitions shown
+        if (blk->size() < 1024) {
+            qInfo() << "Ignored by Size < 1024: " << blkPath;
+            return true;
+        }
+    }
+
     return false;
 }
+
 
 DFMRootController::DFMRootController(QObject *parent) : DAbstractFileController(parent)
 {
