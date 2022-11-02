@@ -66,7 +66,7 @@ QVariant FileItemData::data(int role) const
 
     switch (role) {
     case kItemFileLastModifiedRole:
-        return info->lastModified().toString(FileUtils::dateTimeFormat());
+        return info->lastModified().isValid() ? info->lastModified().toString(FileUtils::dateTimeFormat()) : "-";
     case kItemIconRole:
         return info->fileIcon();
     case kItemFileSizeRole:

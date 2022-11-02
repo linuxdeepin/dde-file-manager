@@ -72,6 +72,7 @@ public:
     virtual QDir absoluteDir() const override;
     virtual QUrl url() const override;
     virtual bool canRename() const override;
+    virtual bool canHidden() const override;
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
     virtual bool isExecutable() const override;

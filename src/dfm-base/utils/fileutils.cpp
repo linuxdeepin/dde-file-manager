@@ -272,6 +272,18 @@ bool FileUtils::isMtpFile(const QUrl &url)
     return match.hasMatch();
 }
 
+bool FileUtils::isGphotoFile(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    const QString &path = url.toLocalFile();
+    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/gphoto2:host|^/root/.gvfs/gphoto2:host)" };
+    QRegularExpression re { gvfsMatch };
+    QRegularExpressionMatch match { re.match(path) };
+    return match.hasMatch();
+}
+
 QString FileUtils::preprocessingFileName(QString name)
 {
     // eg: [\\:*\"?<>|\r\n]
@@ -1107,8 +1119,7 @@ bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::Sort
 
 QString FileUtils::dateTimeFormat()
 {
-    static QString format = "yyyy/MM/dd HH:mm:ss";
-    return format;
+    return "yyyy/MM/dd HH:mm:ss";
 }
 
 bool FileUtils::setBackGround(const QString &pictureFilePath)

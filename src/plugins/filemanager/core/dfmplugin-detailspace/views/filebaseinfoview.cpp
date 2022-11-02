@@ -199,12 +199,14 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     if (fileName && fileName->RightValue().isEmpty())
         fileName->setRightValue(info->fileName(), Qt::ElideMiddle, Qt::AlignLeft, true);
 
-    if (fileInterviewTime && fileInterviewTime->RightValue().isEmpty())
-        fileInterviewTime->setRightValue(info->lastRead().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideMiddle, Qt::AlignLeft, true, 150);
-
-    if (fileChangeTime && fileChangeTime->RightValue().isEmpty())
-        fileChangeTime->setRightValue(info->lastModified().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideMiddle, Qt::AlignLeft, true, 150);
-
+    if (fileInterviewTime && fileInterviewTime->RightValue().isEmpty()) {
+        info->lastRead().isValid() ? fileInterviewTime->setRightValue(info->lastRead().toString(FileUtils::dateTimeFormat()), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
+                                   : fileInterviewTime->setVisible(false);
+    }
+    if (fileChangeTime && fileChangeTime->RightValue().isEmpty()) {
+        info->lastModified().isValid() ? fileChangeTime->setRightValue(info->lastModified().toString(FileUtils::dateTimeFormat()), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
+                                       : fileChangeTime->setVisible(false);
+    }
     if (fileSize && fileSize->RightValue().isEmpty()) {
         fileSize->setVisible(true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignLeft, true);

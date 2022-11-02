@@ -227,23 +227,6 @@ bool StorageInfo::isLocalDevice() const
 {
     return device().startsWith("/dev/");
 }
-/*!
- * \brief StorageInfo::isLowSpeedDevice device is low speed device
- * \return
- */
-bool StorageInfo::isLowSpeedDevice() const
-{
-    const QString &device = this->device();
-
-    return device.startsWith("mtp://")
-            || device.startsWith("gphoto://")
-            || device.startsWith("gphoto2://")
-            || device.startsWith("smb-share://")
-            || device.startsWith("smb://")
-            || device.startsWith("ftp://")
-            || device.startsWith("sftp://")
-            || device.startsWith("afc://");
-}
 
 bool StorageInfo::isValid() const
 {

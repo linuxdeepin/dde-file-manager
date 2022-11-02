@@ -569,6 +569,13 @@ bool LocalFileInfo::canRename() const
     return canRename;
 }
 
+bool LocalFileInfo::canHidden() const
+{
+    if (FileUtils::isGphotoFile(d->url))
+        return false;
+    return true;
+}
+
 /*!
  * \brief isReadable 获取文件是否可读
  *

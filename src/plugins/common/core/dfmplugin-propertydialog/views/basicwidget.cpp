@@ -211,7 +211,6 @@ void BasicWidget::basicFill(const QUrl &url)
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
-
     if (!info->canHidden())
         hideFile->setEnabled(false);
 
@@ -234,12 +233,18 @@ void BasicWidget::basicFill(const QUrl &url)
         }
     }
 
-    if (fileCreated && fileCreated->RightValue().isEmpty())
-        fileCreated->setRightValue(info->birthTime().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
-    if (fileAccessed && fileAccessed->RightValue().isEmpty())
-        fileAccessed->setRightValue(info->lastRead().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
-    if (fileModified && fileModified->RightValue().isEmpty())
-        fileModified->setRightValue(info->lastModified().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
+    if (fileCreated && fileCreated->RightValue().isEmpty()) {
+        info->birthTime().isValid() ? fileCreated->setRightValue(info->birthTime().toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
+                                    : fileCreated->setVisible(false);
+    }
+    if (fileAccessed && fileAccessed->RightValue().isEmpty()) {
+        info->lastRead().isValid() ? fileAccessed->setRightValue(info->lastRead().toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
+                                   : fileAccessed->setVisible(false);
+    }
+    if (fileModified && fileModified->RightValue().isEmpty()) {
+        info->lastModified().isValid() ? fileModified->setRightValue(info->lastModified().toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
+                                       : fileModified->setVisible(false);
+    }
     if (fileSize && fileSize->RightValue().isEmpty()) {
         fSize = info->size();
         fCount = 1;
@@ -341,6 +346,7 @@ void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int di
 
 void BasicWidget::slotFileHide(int state)
 {
+    Q_UNUSED(state)
     quint64 winIDs = QApplication::activeWindow()->winId();
     PropertyEventCall::sendFileHide(winIDs, { currentUrl });
 }

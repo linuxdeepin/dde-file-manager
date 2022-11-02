@@ -48,6 +48,7 @@ public:
     static int supportedMaxLength(const QString &fileSystem);
     static bool isGvfsFile(const QUrl &url);
     static bool isMtpFile(const QUrl &url);
+    static bool isGphotoFile(const QUrl &url);
     static QString preprocessingFileName(QString name);
     static bool isContainProhibitPath(const QList<QUrl> &urls);
 

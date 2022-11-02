@@ -119,6 +119,7 @@ void FilePropertyDialog::createPermissionManagerWidget(const QUrl &url)
 {
     permissionManagerWidget = new PermissionManagerWidget(this);
     permissionManagerWidget->selectFileUrl(url);
+
     insertExtendedControl(INT_MAX, permissionManagerWidget);
 }
 

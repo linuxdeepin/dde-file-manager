@@ -101,7 +101,6 @@ public:
 
     bool isReadOnly() const;
     bool isLocalDevice() const;
-    bool isLowSpeedDevice() const;
 
     bool isValid() const;
     void refresh();
