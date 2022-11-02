@@ -63,13 +63,14 @@ protected:
 private:
 
     void renderBorder(QImage &img);
+    QPixmap renderRadius(const QImage &img,int radius);
     void emptyBorder(QImage &img);
 
     void loadPageAsync(const int &index);
     void loadThumbAsync(const int &index);
     void initEmptyPages();
 
-    void resizeCurrentPage();
+    int resizeCurrentPage();
 
     QSharedPointer<PdfWidgetPrivate> d_ptr;
     QFuture<void> threadPage;
