@@ -83,9 +83,11 @@ bool BookmarkMenuScene::create(QMenu *parent)
     if (!d->showBookMarkMenu)
         return AbstractMenuScene::create(parent);
 
-    auto info = InfoFactory::create<AbstractFileInfo>(d->focusFile);
-    if ((info && !info->isDir()) || d->isSystemPathIncluded)
-        return AbstractMenuScene::create(parent);
+    for (const auto &file : d->selectFiles) {
+        auto info = InfoFactory::create<AbstractFileInfo>(file);
+        if ((info && !info->isDir()) || d->isSystemPathIncluded)
+            return AbstractMenuScene::create(parent);
+    }
 
     auto action = parent->addAction(d->predicateName[BookmarkActionId::kActAddBookmarkKey]);
     action->setText(d->predicateName.value(BookmarkActionId::kActAddBookmarkKey));
