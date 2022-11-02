@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef COMPUTERVIEW_H
 #define COMPUTERVIEW_H
 
@@ -64,6 +64,8 @@ public:
 
     void hideSystemPartitions(bool hide);
     void hideLoopPartitions(bool hide);
+    void handleDiskSplitterVisiable();
+    void handleNativePartitionVisiable();
 
 protected:
     // QWidget interface

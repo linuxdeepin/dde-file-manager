@@ -131,8 +131,7 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::restoreOverrideCursor();
-    hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
-    hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
+    handleNativePartitionVisiable();
     DListView::showEvent(event);
 }
 
@@ -279,6 +278,7 @@ void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
             }
         }
     }
+    handleDiskSplitterVisiable();
 }
 
 void ComputerView::hideSystemPartitions(bool hide)
@@ -294,12 +294,12 @@ void ComputerView::hideSystemPartitions(bool hide)
         if (!item.url.path().endsWith(SuffixInfo::kBlock))
             continue;
 
-        // FIXME(xust) Disk group should be hidden when no disk is visiable.
         bool removable = item.info && item.info->extraProperty(DeviceProperty::kRemovable).toBool();
         bool isLoop = item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool();
         if (!removable && !isLoop)
             this->setRowHidden(i, hide);
     }
+    handleDiskSplitterVisiable();
 }
 
 void ComputerView::hideLoopPartitions(bool hide)
@@ -315,11 +315,49 @@ void ComputerView::hideLoopPartitions(bool hide)
         if (!item.url.path().endsWith(SuffixInfo::kBlock))
             continue;
 
-        // FIXME(xust) Disk group should be hidden when no disk is visiable.
         bool isLoop = item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool();
         if (isLoop)
             this->setRowHidden(i, hide);
     }
+    handleDiskSplitterVisiable();
+}
+
+void ComputerView::handleDiskSplitterVisiable()
+{
+    auto model = this->computerModel();
+    if (!model) {
+        qCritical() << "model is released somewhere! " << __FUNCTION__;
+        return;
+    }
+
+    int diskSplitterRow = -1;
+    bool traversingDisks = false;
+    bool splitterHide = true;
+    for (int i = 0; i < model->items.count(); i++) {
+        const auto &item = model->items.at(i);
+        if (item.groupId != ComputerItemWatcherInstance->getGroupId(ComputerItemWatcher::diskGroup())) {
+            if (traversingDisks)
+                break;
+            continue;
+        }
+
+        traversingDisks = true;
+        if (item.shape == ComputerItemData::kSplitterItem) {
+            diskSplitterRow = i;
+        } else {
+            if (!isRowHidden(i)) {
+                splitterHide = false;
+                break;
+            }
+        }
+    }
+    setRowHidden(diskSplitterRow, splitterHide);
+}
+
+void ComputerView::handleNativePartitionVisiable()
+{
+    hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
+    hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
 }
 
 void ComputerView::cdTo(const QModelIndex &index)

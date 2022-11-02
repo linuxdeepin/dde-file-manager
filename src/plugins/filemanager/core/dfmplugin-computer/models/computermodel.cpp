@@ -251,10 +251,7 @@ void ComputerModel::initConnect()
         this->beginResetModel();
         items = datas;
         this->endResetModel();
-        QTimer::singleShot(0, this, [this]() {
-            view->hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
-            view->hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
-        });
+        QTimer::singleShot(0, this, [this]() { view->handleNativePartitionVisiable(); });
     });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
@@ -275,9 +272,9 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     }
 
     pos = findItem(data.url);
-    if (pos > 0)   // update the item
+    if (pos > 0) {   // update the item
         onItemUpdated(data.url);
-    else {
+    } else {
         if (shape == ComputerItemData::kSplitterItem) {
             addGroup(data);
         } else {
@@ -303,6 +300,12 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
             endInsertRows();
         }
     }
+
+    // for filter the native disks hided by main setting panel
+    // and when disk-manager/partition-editor opened and closed,
+    // the itemRemoved/Added signals are emitted
+    // and these newcomming items should be filtered
+    view->handleNativePartitionVisiable();
 }
 
 void ComputerModel::onItemRemoved(const QUrl &url)
@@ -320,6 +323,8 @@ void ComputerModel::onItemRemoved(const QUrl &url)
     } else {
         qDebug() << "target item not found" << url;
     }
+
+    view->handleNativePartitionVisiable();
 }
 
 void ComputerModel::onItemUpdated(const QUrl &url)
