@@ -22,7 +22,7 @@
 #include <QPainter>
 #include <QPen>
 #include <QTimer>
-#include <QPushButton>
+#include <QBitmap>
 
 #include "pdfwidget_p.h"
 
@@ -38,9 +38,6 @@ PdfWidget::PdfWidget(const QString &file, QWidget *parent) :
     d->thumbWorkTimer = new QTimer(this);
     d->thumbWorkTimer->setSingleShot(true);
     d->thumbWorkTimer->setInterval(100);
-
-    d->thumbButtonGroup = new QButtonGroup(this);
-
 
     initDoc(file);
     initUI();
@@ -108,8 +105,15 @@ void PdfWidget::initUI()
                                         "border-right: 1px solid rgba(0, 0, 0, 0.1);"
                                       "}"
                                       "QListWidget::item{"
-                                        "border: none;"
+                                        "border-radius: 4px;"
+                                        "border: 2px solid rgba(0, 0, 0, 0.2);"
+                                      "}"
+                                      "QListWidget::item:selected{"
+                                        "border-radius: 4px;"
+                                        "border: 2px solid #2ca7f8;"
                                       "}");
+    d->thumbListWidget->setSelectionBehavior(QAbstractItemView::SelectItems);
+    d->thumbListWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
     d->thumbListWidget->setSpacing(18);
 
@@ -147,6 +151,9 @@ void PdfWidget::initConnections()
 
     connect(d->thumbScrollBar, &QScrollBar::valueChanged, this, &PdfWidget::onThumbScrollBarValueChanged);
     connect(d->pageScrollBar, &QScrollBar::valueChanged, this, &PdfWidget::onPageScrollBarvalueChanged);
+    connect(d->thumbListWidget, &QListWidget::itemClicked, this, [=](QListWidgetItem *item){
+        d->pageListWidget->setCurrentRow(d->thumbListWidget->row(item));
+    });
 
     connect(d->pageWorkTimer, &QTimer::timeout, this, &PdfWidget::startLoadCurrentPages);
     connect(d->thumbWorkTimer, &QTimer::timeout, this, &PdfWidget::startLoadCurrentThumbs);
@@ -189,32 +196,22 @@ void PdfWidget::onThumbAdded(int index, QImage img)
     QWidget* w = d->thumbListWidget->itemWidget(item);
 
     if(!w){
-        QPushButton* bnt = new QPushButton(this);
-        d->thumbButtonGroup->addButton(bnt);
-        bnt->setIcon(QIcon(QPixmap::fromImage(img)));
-        bnt->setFixedSize(img.size());
-        bnt->setIconSize(QSize(img.width() - 4, img.height()));
-        bnt->setCheckable(true);
-        bnt->setStyleSheet("QPushButton{"
-                            "border: 1px solid rgba(0, 0, 0, 0.2);"
-                           "}"
-                           "QPushButton:checked{"
-                            "border: 2px solid #2ca7f8;"
-                           "}");
-
+        QFrame *itemWidget = new QFrame(this);
+        QSize itemSize(img.size().width() + 4, img.height() + 4);
+        itemWidget->setFixedSize(itemSize);
+        QLabel *label = new QLabel(itemWidget);
+        label->setPixmap(renderRadius(img, 2));
+        label->setMargin(0);
+        label->setFixedSize(QSize(img.size().width(), img.size().height()));
+        QLayout *widgetLayout = new QHBoxLayout(itemWidget);
+        widgetLayout->setContentsMargins(0,0,4,4);
+        widgetLayout->addWidget(label);
+        itemWidget->setLayout(widgetLayout);
+        d->thumbListWidget->setItemWidget(item, itemWidget);
+        item->setSizeHint(itemSize);
         if(index == 0){
-            bnt->setChecked(true);
+            item->setSelected(true);
         }
-
-        connect(bnt, &QPushButton::clicked, [=]{
-            bnt->setChecked(true);
-            int row = d->thumbListWidget->row(item);
-            d->pageListWidget->setCurrentRow(row);
-
-        });
-
-        d->thumbListWidget->setItemWidget(item, bnt);
-        item->setSizeHint(img.size());
     }
 
     if(d->thumbScrollBar->maximum() == 0){
@@ -277,27 +274,14 @@ void PdfWidget::onPageScrollBarvalueChanged(const int &val)
     d->pageWorkTimer->stop();
     d->pageWorkTimer->start();
 
-    resizeCurrentPage();
-
-    QListWidgetItem* item = d->pageListWidget->itemAt(d->pageListWidget->width() /2 , 20);
-    if(!item) {
-        return;
-    }
-
-    int row = d->pageListWidget->row(item);
+    int row = resizeCurrentPage();
     d->thumbListWidget->setCurrentRow(row);
     QListWidgetItem* thumbItem = d->thumbListWidget->item(row);
     if(!thumbItem){
         return;
     }
 
-    QWidget* w = d->thumbListWidget->itemWidget(thumbItem);
-    if(!w){
-        return;
-    }
-
-    QPushButton* bnt = qobject_cast<QPushButton*>(w);
-    bnt->setChecked(true);
+    thumbItem->setSelected(true);
 }
 
 void PdfWidget::startLoadCurrentPages()
@@ -374,6 +358,19 @@ void PdfWidget::renderBorder(QImage &img)
     painter.drawRect(0, 0, img.width() - 1, img.height() -1);
 }
 
+QPixmap PdfWidget::renderRadius(const QImage &img, int radius)
+{
+    QBitmap mask(QSize(img.size().width(), img.size().height()));
+    QPainter painter(&mask);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.fillRect(mask.rect(), Qt::white);
+    painter.setBrush(Qt::black);
+    painter.drawRoundedRect(mask.rect(), radius,radius);
+    QPixmap image = QPixmap::fromImage(img);
+    image.setMask(mask);
+    return image;
+}
+
 void PdfWidget::emptyBorder(QImage &img)
 {
     QColor color(255, 255, 255);
@@ -437,14 +434,14 @@ void PdfWidget::initEmptyPages()
     }
 }
 
-void PdfWidget::resizeCurrentPage()
+int PdfWidget::resizeCurrentPage()
 {
     Q_D(PdfWidget);
 
     QListWidgetItem* currentItem = d->pageListWidget->itemAt(d->pageListWidget->width() / 2, d->pageListWidget->height() / 2);
 
     if(!currentItem)
-        return;
+        return 0;
 
     int currentRow = d->pageListWidget->row(currentItem);
     int index = currentRow - DISPLAT_PAGE_NUM/2;
@@ -492,6 +489,8 @@ void PdfWidget::resizeCurrentPage()
             continue;
         }
     }
+
+    return currentRow;
 }
 
 PdfInitWorker::PdfInitWorker(QSharedPointer<poppler::document> doc, QObject *parent):
@@ -638,5 +637,5 @@ DListWidget::DListWidget(QWidget *parent):
 
 void DListWidget::mouseMoveEvent(QMouseEvent *e)
 {
-    QWidget::mouseMoveEvent(e);
+    QListWidget::mouseMoveEvent(e);
 }

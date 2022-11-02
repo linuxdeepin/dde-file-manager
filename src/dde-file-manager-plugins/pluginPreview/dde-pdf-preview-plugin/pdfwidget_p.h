@@ -20,7 +20,6 @@ public:
     QHBoxLayout* mainLayout = nullptr;
     QScrollBar* thumbScrollBar = nullptr;
     QScrollBar* pageScrollBar = nullptr;
-    QButtonGroup* thumbButtonGroup = nullptr;
 
     QTimer* pageWorkTimer = nullptr;
     QTimer* thumbWorkTimer = nullptr;
