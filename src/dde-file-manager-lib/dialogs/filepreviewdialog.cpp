@@ -125,6 +125,10 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     m_nameLabel->setObjectName("NameLabel");
     m_nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_nameLabel->setWordWrap(true);
+    QFont bold(m_nameLabel->font());
+    bold.setWeight(70);
+    bold.setPointSize(14);
+    m_nameLabel->setFont(bold);
     m_sizeLabel = new QLabel(m_contentWidget);
     m_sizeLabel->setObjectName("SizeLabel");
     m_sizeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
