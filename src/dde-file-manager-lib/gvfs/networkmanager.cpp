@@ -352,7 +352,7 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     addSmbServerToHistory(neturl);
     bool result = true;
 
-    if (FileUtils::isSmbHostOnly(neturl) && nodeList.isEmpty()) {
+    if (smbIntegrationSwitcher->isIntegrationMode() && FileUtils::isSmbHostOnly(neturl) && nodeList.isEmpty()) {
         result = false;//此处如果neturl为smb://x.x.x.x格式 且 没有获取到共享目录，则为远端断网超时，作失败处理
         qDebug() << "request NetworkNodeList failed, maybe the remove device disconnect network.";
     }

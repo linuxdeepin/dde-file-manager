@@ -373,11 +373,14 @@ void DFMSideBar::rootFileResult()
                 QString smbIp;
                 FileUtils::isSmbRelatedUrl(r->fileUrl(),smbIp);
                 if (!smbIp.isEmpty()){
-                    if (r->fileUrl().toString().endsWith( QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted( r->fileUrl() ))
+                    if (r->fileUrl().toString().endsWith( QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted( r->fileUrl() )){
+                        devitems.removeOne(r->fileUrl());
                         filist.removeOne(r);
+                    }
 
-                    if (r->fileUrl().toString().endsWith( QString(".%1").arg(SUFFIX_STASHED_REMOTE)))
+                    if (r->fileUrl().toString().endsWith( QString(".%1").arg(SUFFIX_STASHED_REMOTE))){
                         filist.removeOne(r);
+                    }
                 }
         }
     }
@@ -434,7 +437,6 @@ void DFMSideBar::rootFileResult()
                 }
             }
     }
-
 }
 
 /**
@@ -683,6 +685,8 @@ void DFMSideBar::initConnection()
         DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
         if (window) {
             connect(networkManager,&NetworkManager::addSmbMountIntegration,this,[&](const DUrl& url){
+                if(!smbIntegrationSwitcher->isIntegrationMode())
+                    return;
                 if (url.scheme() != SMB_SCHEME)
                     return;
                 QString smbIp = url.host();
@@ -711,6 +715,9 @@ void DFMSideBar::initConnection()
                         this->removeItem(r->fileUrl(), groupName(Device));
                     else // 切换到smb分离模式，从缓存移除已经存在的分离挂载项(否则无法添加item)
                         devitems.removeOne(r->fileUrl());
+                } else if (r->fileUrl().toString().endsWith(QString(".%1").arg(SUFFIX_STASHED_REMOTE))){
+                    if (switchToIntegration)  // 切换到smb聚合模式，从侧边栏移除常驻的分离项
+                        this->removeItem(r->fileUrl(), groupName(Device));
                 }
             }
         }
@@ -911,11 +918,16 @@ void DFMSideBar::initDeviceConnection()
     DRootFileManager::instance()->startQuryRootFile();
 
     DAbstractFileWatcher *devicesWatcher = rootFileManager->rootFileWather();
-    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &url) {
+    connect(devicesWatcher, &DAbstractFileWatcher::subfileCreated, this, [this](const DUrl &temUrl) {
+        DUrl url = temUrl;
+
         QString smbIp;
         bool needAddSmbItem = FileUtils::isSmbRelatedUrl(url, smbIp);
-        if (needAddSmbItem && isSmbItemExisted(DUrl("smb://"+smbIp))){//已经添加了
+        if (needAddSmbItem && isSmbItemExisted(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp))){//已经添加了
             return;
+        }
+        if (smbIntegrationSwitcher->isIntegrationMode()){ // fix bug:#168885
+            url = DUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
         }
 
         auto fi = fileService->createFileInfo(nullptr, url);
@@ -1234,6 +1246,7 @@ void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &grou
         return;
     }
     item->setGroupName(groupName);
+    qInfo()<<"11 item url = "<<item->url();
     m_sidebarModel->insertRow(index, item);
 }
 
@@ -1246,6 +1259,7 @@ void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &grou
  */
 void DFMSideBar::appendItem(DFMSideBarItem *item, const QString &groupName)
 {
+    qInfo()<<"22 item url = "<<item->url();
     item->setGroupName(groupName);
     m_sidebarModel->appendRow(item);
 }

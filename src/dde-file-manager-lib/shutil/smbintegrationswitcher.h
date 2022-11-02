@@ -14,6 +14,9 @@ public:
     static SmbIntegrationSwitcher *instance();
     void switchIntegrationMode(bool value);
     bool isIntegrationMode();
+    bool isSwitching();
+    void switchComplate();
+
 protected:
     explicit SmbIntegrationSwitcher(QObject *parent = nullptr);
 
@@ -22,6 +25,7 @@ signals:
 public slots:
 private:
     bool smbIntegrationMode;
+    bool isModeSwitching;
 };
 
 #endif // SMBINTEGRATIONSWITCHER_H
