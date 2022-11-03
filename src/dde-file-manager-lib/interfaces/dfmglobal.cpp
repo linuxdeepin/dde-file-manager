@@ -254,7 +254,7 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
                          DFileIconProvider::globalProvider()->icon(info->toQFileInfo());
             DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
             if (list.size() == 1 && fileType == DAbstractFileInfo::FileType::Images) {
-                QIcon thumb(DThumbnailProvider::instance()->thumbnailFilePath(info->toQFileInfo(), DThumbnailProvider::Large));
+                QIcon thumb(DThumbnailProvider::instance()->thumbnailPixmap(info->toQFileInfo(), DThumbnailProvider::Large));
                 if (thumb.isNull()) {
                     //qWarning() << "thumbnail file faild " << fileInfo->absoluteFilePath();
                 } else {
