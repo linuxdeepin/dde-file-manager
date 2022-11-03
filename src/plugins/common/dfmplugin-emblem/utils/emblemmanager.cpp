@@ -25,6 +25,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QPainter>
 
@@ -79,6 +80,10 @@ QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
     }
 
     emblemList.append(extendEmblems);
+
+    if (FileUtils::isGvfsFile(url))
+        return emblemList;
+
     const auto &gioEmblemsMap = helper->getGioEmblems(info);
 
     QMap<int, QIcon>::const_iterator iter = gioEmblemsMap.begin();

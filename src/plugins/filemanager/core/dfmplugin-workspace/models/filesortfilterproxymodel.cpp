@@ -277,11 +277,14 @@ void FileSortFilterProxyModel::onTraverPrehandle(const QUrl &url, const QModelIn
     if (UniversalUtils::urlEquals(url, rootUrl)) {
         auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
         if (prehandler) {
+            isPrehandling = true;
             quint64 winId = FileManagerWindowsManager::instance().findWindowId(dynamic_cast<FileView *>(parent()));
             QPointer<FileViewModel> guard(viewModel());
-            prehandler(winId, url, [guard, index]() {
+            prehandler(winId, url, [guard, index, this]() {
                 if (guard)
                     guard->doFetchMore(index);
+
+                this->isPrehandling = false;
             });
         }
     }
@@ -290,7 +293,7 @@ void FileSortFilterProxyModel::onTraverPrehandle(const QUrl &url, const QModelIn
 void FileSortFilterProxyModel::onStateChanged(const QUrl &url, ModelState state)
 {
     if (UniversalUtils::urlEquals(url, rootUrl)) {
-        if (state == this->state)
+        if (state == this->state || isPrehandling)
             return;
 
         this->state = state;

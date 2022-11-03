@@ -96,9 +96,6 @@ void FileDataCacheThread::onHandleTraversalFinished()
 {
     isTraversalFinished = true;
     QApplication::restoreOverrideCursor();
-
-    if (!isRunning())
-        Q_EMIT requestSetIdle();
 }
 
 void FileDataCacheThread::run()

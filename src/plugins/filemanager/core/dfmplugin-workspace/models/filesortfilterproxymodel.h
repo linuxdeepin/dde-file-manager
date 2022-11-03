@@ -112,6 +112,7 @@ private:
     mutable QMap<QUrl, bool> nameFiltersMatchResultMap;
 
     bool readOnly = false;
+    bool isPrehandling = false;
 
     ModelState state = ModelState::kIdle;
     bool workStoped = false;

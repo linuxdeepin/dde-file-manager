@@ -852,6 +852,8 @@ void FileView::onRowCountChanged()
 {
     if (model()->currentState() == ModelState::kIdle) {
         delayUpdateStatusBar();
+        updateContentLabel();
+        doSort();
         updateModelActiveIndex();
     }
 }
@@ -1514,7 +1516,7 @@ void FileView::updateLoadingIndicator()
     if (state == ModelState::kBusy) {
         QString tip;
 
-        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex()); /* sourceModel()->rootItem()->fileInfo();*/
+        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex());
         if (fileInfo)
             tip = fileInfo->loadingTip();
 
@@ -1531,14 +1533,14 @@ void FileView::updateContentLabel()
 {
     d->initContentLabel();
     if (model()->currentState() == ModelState::kBusy
-        /*|| model()->canFetchMore(model()->rootIndex())*/) {
+        || model()->canFetchMore(rootIndex())) {
         d->contentLabel->setText(QString());
         return;
     }
 
     if (count() <= 0) {
         // set custom empty tips
-        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex()); /* sourceModel()->rootItem()->fileInfo();*/
+        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex());
         if (fileInfo) {
             d->contentLabel->setText(fileInfo->emptyDirectoryTip());
             d->contentLabel->adjustSize();
