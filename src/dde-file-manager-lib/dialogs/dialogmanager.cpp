@@ -494,33 +494,17 @@ int DialogManager::showRenameNameDotBeginDialog()
 
 int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
 {
-    // 获取父对话框字体特性
-    DDialog d(WindowManager::getWindowById(event.windowId()));
-    QFontMetrics fm(d.font());
-    d.setTitle(tr("The file name must not contain two dots (..)"));
-    QStringList buttonTexts;
-    buttonTexts.append(tr("Confirm","button"));
-    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
-    d.setDefaultButton(0);
-    // 设置对话框icon
-    d.setIcon(m_dialogWarningIcon);
-    int code = d.exec();
-    return code;
+    return execCommonMessageDialog(event, tr("The file name must not contain two dots (..)"));
 }
 
 void DialogManager::showRenameBusyErrDialog(const DFMEvent &event)
 {
-    // 获取父对话框字体特性
-    DDialog d(WindowManager::getWindowById(event.windowId()));
-    QFontMetrics fm(d.font());
-    d.setTitle(tr("Device or resource busy"));
-    QStringList buttonTexts;
-    buttonTexts.append(tr("Confirm","button"));
-    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
-    d.setDefaultButton(0);
-    // 设置对话框icon
-    d.setIcon(m_dialogWarningIcon);
-    d.exec();
+    execCommonMessageDialog(event, tr("Device or resource busy"));
+}
+
+void DialogManager::showFormatDeviceBusyErrDialog(const DFMEvent &event)
+{
+    execCommonMessageDialog(event, tr("The device is busy and cannot be formatted now"));
 }
 
 int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event)
@@ -1644,6 +1628,21 @@ int DialogManager::showStopScanningDialog()
     dlg.addButton(tr("Stop","button"), true, DDialog::ButtonWarning); // 终止
     dlg.setTitle(tr("Scanning the device, stop it?")); // 正在扫描当前设备，是否终止扫描？
     return dlg.exec();
+}
+
+int DialogManager::execCommonMessageDialog(const DFMEvent &event, const QString &message)
+{
+    // 获取父对话框字体特性
+    DDialog d(WindowManager::getWindowById(event.windowId()));
+    QFontMetrics fm(d.font());
+    d.setTitle(message);
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Confirm","button"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    // 设置对话框icon
+    d.setIcon(m_dialogWarningIcon);
+    return d.exec();
 }
 
 bool DialogManager::DUrlListCompare(DUrlList urls)

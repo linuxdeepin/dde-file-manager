@@ -1129,6 +1129,19 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
     }
 
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(info->extraProperties()["udisksblk"].toString()));
+    if (!blkdev)
+        return;
+
+    if (blkdev->mountPoints().count() > 0) {
+        // do unmount before format.
+        blkdev->unmount({});
+        if (blkdev->lastError().type() != QDBusError::NoError) {
+            qInfo() << "unmount before format failed: " << blkdev->lastError() << blkdev->lastError().message();
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showFormatDeviceBusyErrDialog, *event.data());
+            return;
+        }
+    }
+
     QString devicePath = blkdev->device();
 
     QString cmd = "dde-device-formatter";

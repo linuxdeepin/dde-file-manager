@@ -89,6 +89,7 @@ public slots:
     // 重命名文件时，如果文件名为..，则弹出警告对话框
     int showRenameNameDotDotErrorDialog(const DFMEvent &event);
     void showRenameBusyErrDialog(const DFMEvent &event);
+    void showFormatDeviceBusyErrDialog(const DFMEvent &event);
     int showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event);
     int showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event);
     void showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details);
@@ -142,6 +143,7 @@ public slots:
 
     void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
     int showStopScanningDialog();              // 显示设备正在被扫描的提示
+    int execCommonMessageDialog(const DFMEvent &event, const QString &message);
 
     /**
     * DUrlListCompare 用于判断传入url列表是否与m_urlList一样
