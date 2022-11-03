@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "stubext.h"
 #include "stubmenueventinterface.h"
@@ -44,7 +44,6 @@ protected:
     {
         stub.set_lamda(&ComputerItemWatcher::initAppWatcher, [] { __DBG_STUB_INVOKE__ });
         stub.set_lamda(&ComputerItemWatcher::initConn, [] { __DBG_STUB_INVOKE__ });
-        stub.set_lamda(&ComputerItemWatcher::initConfSync, [] { __DBG_STUB_INVOKE__ });
     }
     virtual void TearDown() override { stub.clear(); }
 

@@ -76,7 +76,6 @@ ComputerItemWatcher::ComputerItemWatcher(QObject *parent)
 {
     initAppWatcher();
     initConn();
-    initConfSync();
 }
 
 ComputerItemWatcher::~ComputerItemWatcher()
@@ -163,19 +162,6 @@ void ComputerItemWatcher::initAppWatcher()
     extensionUrl.setPath(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath));
     appEntryWatcher.reset(new LocalFileWatcher(extensionUrl, this));
     appEntryWatcher->startWatcher();
-}
-
-void ComputerItemWatcher::initConfSync()
-{
-    auto ins { ConfigSynchronizer::instance() };
-    SyncPair pair {
-        { SettingType::kGenAttr, Application::GenericAttribute::kHiddenSystemPartition },
-        { kDefaultCfgPath, kKeyHideDisk },
-        &ComputerUtils::diskHideDCfgSaver,
-        &ComputerUtils::diskHideToAppSet,
-        &ComputerUtils::isEqualDiskHideConfig
-    };
-    ins->watchChange(pair);
 }
 
 ComputerDataList ComputerItemWatcher::getUserDirItems()
@@ -379,6 +365,15 @@ int ComputerItemWatcher::getGroupId(const QString &groupName)
     int id = ComputerUtils::getUniqueInteger();
     groupIds.insert(groupName, id);
     return id;
+}
+
+QList<QUrl> ComputerItemWatcher::disksHiddenByDConf()
+{
+    const auto &&currHiddenDisks = DConfigManager::instance()->value(kDefaultCfgPath, kKeyHideDisk).toStringList().toSet();
+    const auto &&allSystemUUIDs = ComputerUtils::allSystemUUIDs().toSet();
+    const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allSystemUUIDs);   // setA ∩ setB
+    const auto &&devUrls = ComputerUtils::systemBlkDevUrlByUUIDs(needToBeHidden.toList());
+    return devUrls;
 }
 
 void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
@@ -633,13 +628,8 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
 
 void ComputerItemWatcher::onDConfigChanged(const QString &cfg, const QString &cfgKey)
 {
-    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath) {
-        const auto &&currHiddenDisks = DConfigManager::instance()->value(cfg, cfgKey).toStringList().toSet();
-        const auto &&allSystemUUIDs = ComputerUtils::allSystemUUIDs().toSet();
-        const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allSystemUUIDs);   // setA ∩ setB
-        const auto &&devUrls = ComputerUtils::systemBlkDevUrlByUUIDs(needToBeHidden.toList());
-        Q_EMIT hideDisks(devUrls);
-    }
+    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath)
+        Q_EMIT hideDisks(disksHiddenByDConf());
 }
 
 void ComputerItemWatcher::onBlockDeviceAdded(const QString &id)

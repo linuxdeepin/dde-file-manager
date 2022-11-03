@@ -131,7 +131,7 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::restoreOverrideCursor();
-    handleNativePartitionVisiable();
+    handlePartitionsVisiable();
     DListView::showEvent(event);
 }
 
@@ -188,10 +188,10 @@ void ComputerView::initConnect()
         this->update(computerModel()->index(row, 0));
     });
 
-    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideNativeDisks, this, [this](bool hide) { this->hideSystemPartitions(hide); });
-    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideLoopPartitions, this, [this](bool hide) { this->hideLoopPartitions(hide); });
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideNativeDisks, this, &ComputerView::handlePartitionsVisiable);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideLoopPartitions, this, &ComputerView::handlePartitionsVisiable);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
-    //    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideDisks, this, &ComputerView::hideSpecificDisks);
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideDisks, this, &ComputerView::hideSpecificDisks);
 
     connectShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
         if (info)
@@ -259,6 +259,9 @@ void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
 
 void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
 {
+    hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
+    hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
+
     auto model = this->computerModel();
     if (!model) {
         qCritical() << "model is released somewhere! " << __FUNCTION__;
@@ -267,18 +270,9 @@ void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
 
     for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
         auto item = model->items.at(i);
-        if (hiddenDisks.contains(item.url)) {
+        if (hiddenDisks.contains(item.url))
             this->setRowHidden(i, true);
-        } else {
-            QList<EntryFileInfo::EntryOrder> supportedToHide { EntryFileInfo::kOrderSysDiskRoot,
-                                                               EntryFileInfo::kOrderSysDiskData,
-                                                               EntryFileInfo::kOrderSysDisks };
-            if (item.info && supportedToHide.contains(item.info->order())) {
-                this->setRowHidden(i, false);
-            }
-        }
     }
-    handleDiskSplitterVisiable();
 }
 
 void ComputerView::hideSystemPartitions(bool hide)
@@ -354,10 +348,13 @@ void ComputerView::handleDiskSplitterVisiable()
     setRowHidden(diskSplitterRow, splitterHide);
 }
 
-void ComputerView::handleNativePartitionVisiable()
+void ComputerView::handlePartitionsVisiable()
 {
     hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
     hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
+
+    // handle items hidden by DConfig.
+    hideSpecificDisks(ComputerItemWatcher::disksHiddenByDConf());
 }
 
 void ComputerView::cdTo(const QModelIndex &index)

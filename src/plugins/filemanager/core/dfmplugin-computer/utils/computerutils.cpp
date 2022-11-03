@@ -291,13 +291,9 @@ void ComputerUtils::setCursorState(bool busy)
 
 QStringList ComputerUtils::allSystemUUIDs()
 {
-    const auto &systemDisks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kSystem);
-    const auto &loopDisks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kLoop);
-    QStringList systemDiskNoLoop;
-    std::for_each(systemDisks.cbegin(), systemDisks.cend(), [&](const QString &disk) {
-        if (!loopDisks.contains(disk))
-            systemDiskNoLoop << disk;
-    });
+    const auto &systemDisks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kSystem).toSet();
+    const auto &loopDisks = DevProxyMng->getAllBlockIds(GlobalServerDefines::DeviceQueryOption::kLoop).toSet();
+    auto systemDiskNoLoop = systemDisks - loopDisks;
 
     QSet<QString> uuids;
     std::for_each(systemDiskNoLoop.cbegin(), systemDiskNoLoop.cend(), [&](const QString &devId) {
@@ -316,44 +312,6 @@ QList<QUrl> ComputerUtils::systemBlkDevUrlByUUIDs(const QStringList &uuids)
     for (const auto &id : devIds)
         ret << makeBlockDevUrl(id);
     return ret;
-}
-
-void ComputerUtils::diskHideDCfgSaver(const QVariant &var)
-{
-    auto systemUUIDs = allSystemUUIDs().toSet();
-
-    auto currentHiddenDisks = DConfigManager::instance()->value(kDefaultCfgPath, kKeyHideDisk).toStringList().toSet();
-    if (var.toBool())
-        currentHiddenDisks += systemUUIDs;
-    else
-        currentHiddenDisks -= systemUUIDs;
-
-    QVariant dvar = QVariant::fromValue<QStringList>(currentHiddenDisks.toList());
-    DConfigManager::instance()->setValue(kDefaultCfgPath, kKeyHideDisk, dvar);
-}
-
-void ComputerUtils::diskHideToAppSet(const QString &cfgPath, const QString &cfgKey, const QVariant &var)
-{
-    auto systemUUIDs = allSystemUUIDs().toSet();
-    const auto &&hiddenDisks = var.toStringList().toSet();
-
-    bool allSystemDisksHidden = (hiddenDisks + systemUUIDs == hiddenDisks);
-    Application::instance()->setGenericAttribute(Application::GenericAttribute::kHiddenSystemPartition, allSystemDisksHidden);
-}
-
-bool ComputerUtils::isEqualDiskHideConfig(const QVariant &varDConf, const QVariant &varAppSet)
-{
-    const auto &&systemUUIDs = allSystemUUIDs();
-    const auto &&currHiddenDisks = varDConf.toStringList().toSet();
-    if (varAppSet.toBool()) {
-        return std::all_of(systemUUIDs.cbegin(), systemUUIDs.cend(), [=](const QString &uuid) {
-            return currHiddenDisks.contains(uuid);
-        });
-    } else {
-        return std::all_of(systemUUIDs.cbegin(), systemUUIDs.cend(), [=](const QString &uuid) {
-            return !currHiddenDisks.contains(uuid);
-        });
-    }
 }
 
 QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)

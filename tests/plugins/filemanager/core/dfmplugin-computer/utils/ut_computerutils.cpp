@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "stubext.h"
 
@@ -40,7 +40,7 @@ DFMBASE_USE_NAMESPACE
 class UT_ComputerUtils : public testing::Test
 {
 protected:
-    virtual void SetUp() override {}
+    virtual void SetUp() override { }
     virtual void TearDown() override { stub.clear(); }
     static void SetUpTestCase()
     {
@@ -276,27 +276,4 @@ TEST_F(UT_ComputerUtils, SystemBlkDevUrlByUUIDs)
     stub.set_lamda(&DeviceProxyManager::getAllBlockIdsByUUID, [] { __DBG_STUB_INVOKE__
                 return QStringList{"/org/freedesktop/UDisks2/block_devices/sda1", "/org/freedesktop/UDisks2/block_devices/sda2"}; });
     EXPECT_TRUE(ComputerUtils::systemBlkDevUrlByUUIDs({}).count() >= 0);
-}
-
-TEST_F(UT_ComputerUtils, DiskHideDConfSaver)
-{
-    stub.set_lamda(ComputerUtils::allSystemUUIDs, [] { __DBG_STUB_INVOKE__ return QStringList { "uuid1", "uuid2" }; });
-    stub.set_lamda(&DConfigManager::value, [] { __DBG_STUB_INVOKE__ return QStringList { "uuid1", "uuid2" }; });
-    stub.set_lamda(&DConfigManager::setValue, [] { __DBG_STUB_INVOKE__ });
-    EXPECT_NO_FATAL_FAILURE(ComputerUtils::diskHideDCfgSaver(true));
-    EXPECT_NO_FATAL_FAILURE(ComputerUtils::diskHideDCfgSaver(false));
-}
-
-TEST_F(UT_ComputerUtils, DiskHideToAppSet)
-{
-    stub.set_lamda(ComputerUtils::allSystemUUIDs, [] { __DBG_STUB_INVOKE__ return QStringList { "uuid1", "uuid2" }; });
-    stub.set_lamda(&Application::setGenericAttribute, [] { __DBG_STUB_INVOKE__ });
-    EXPECT_NO_FATAL_FAILURE(ComputerUtils::diskHideToAppSet("test", "test", QStringList { "hide1", "hide2" }));
-}
-
-TEST_F(UT_ComputerUtils, IsEqualDiskHideConfig)
-{
-    stub.set_lamda(ComputerUtils::allSystemUUIDs, [] { __DBG_STUB_INVOKE__ return QStringList { "uuid1", "uuid2" }; });
-    EXPECT_TRUE(ComputerUtils::isEqualDiskHideConfig(QStringList { "uuid1", "uuid2" }, true));
-    EXPECT_TRUE(ComputerUtils::isEqualDiskHideConfig(QStringList { "uuid3", "uuid4" }, false));
 }

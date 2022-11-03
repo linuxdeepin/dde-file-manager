@@ -62,10 +62,8 @@ public:
     // QObject interface
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
-    void hideSystemPartitions(bool hide);
-    void hideLoopPartitions(bool hide);
-    void handleDiskSplitterVisiable();
-    void handleNativePartitionVisiable();
+public Q_SLOTS:
+    void handlePartitionsVisiable();
 
 protected:
     // QWidget interface
@@ -85,6 +83,9 @@ private Q_SLOTS:
     void onMenuRequest(const QPoint &pos);
     void onRenameRequest(quint64 winId, const QUrl &url);
     void hideSpecificDisks(const QList<QUrl> &hiddenDisks);
+    void hideSystemPartitions(bool hide);
+    void hideLoopPartitions(bool hide);
+    void handleDiskSplitterVisiable();
 
 Q_SIGNALS:
     void enterPressed(const QModelIndex &index);

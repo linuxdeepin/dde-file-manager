@@ -70,6 +70,8 @@ public:
     static QString diskGroup();
     int getGroupId(const QString &groupName);
 
+    static QList<QUrl> disksHiddenByDConf();
+
 public Q_SLOTS:
     void startQueryItems();
 
@@ -110,7 +112,6 @@ private:
     void initConn();
     void initDeviceConn();
     void initAppWatcher();
-    void initConfSync();
 
     ComputerDataList getUserDirItems();
     ComputerDataList getBlockDeviceItems(bool &hasNewItem);

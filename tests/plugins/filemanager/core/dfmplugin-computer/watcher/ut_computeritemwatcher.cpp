@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "stubext.h"
 
@@ -41,7 +41,7 @@ DPCOMPUTER_USE_NAMESPACE
 class UT_ComputerItemWatcher : public testing::Test
 {
 protected:
-    virtual void SetUp() override {}
+    virtual void SetUp() override { }
     virtual void TearDown() override { stub.clear(); }
 
 private:
@@ -261,20 +261,14 @@ TEST_F(UT_ComputerItemWatcher, InitAppWatcher)
     EXPECT_NO_FATAL_FAILURE(ins->initAppWatcher());
 }
 
-TEST_F(UT_ComputerItemWatcher, InitConfSync)
-{
-    stub.set_lamda(&ConfigSynchronizer::watchChange, [] { __DBG_STUB_INVOKE__ return true; });
-    EXPECT_NO_FATAL_FAILURE(ins->initConfSync());
-}
-
-TEST_F(UT_ComputerItemWatcher, GetUserDirItems) {}
-TEST_F(UT_ComputerItemWatcher, GetBlockDeviceItems) {}
-TEST_F(UT_ComputerItemWatcher, GetProtocolDeviceItems) {}
-TEST_F(UT_ComputerItemWatcher, GetStashedProtocolItems) {}
-TEST_F(UT_ComputerItemWatcher, GetAppEntryItems) {}
-TEST_F(UT_ComputerItemWatcher, AddGroup) {}
-TEST_F(UT_ComputerItemWatcher, GetGroup) {}
-TEST_F(UT_ComputerItemWatcher, UserDirGroup) {}
-TEST_F(UT_ComputerItemWatcher, DiskGroup) {}
-TEST_F(UT_ComputerItemWatcher, GetGroupId) {}
-TEST_F(UT_ComputerItemWatcher, CacheItem) {}
+TEST_F(UT_ComputerItemWatcher, GetUserDirItems) { }
+TEST_F(UT_ComputerItemWatcher, GetBlockDeviceItems) { }
+TEST_F(UT_ComputerItemWatcher, GetProtocolDeviceItems) { }
+TEST_F(UT_ComputerItemWatcher, GetStashedProtocolItems) { }
+TEST_F(UT_ComputerItemWatcher, GetAppEntryItems) { }
+TEST_F(UT_ComputerItemWatcher, AddGroup) { }
+TEST_F(UT_ComputerItemWatcher, GetGroup) { }
+TEST_F(UT_ComputerItemWatcher, UserDirGroup) { }
+TEST_F(UT_ComputerItemWatcher, DiskGroup) { }
+TEST_F(UT_ComputerItemWatcher, GetGroupId) { }
+TEST_F(UT_ComputerItemWatcher, CacheItem) { }

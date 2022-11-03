@@ -251,7 +251,7 @@ void ComputerModel::initConnect()
         this->beginResetModel();
         items = datas;
         this->endResetModel();
-        QTimer::singleShot(0, this, [this]() { view->handleNativePartitionVisiable(); });
+        QTimer::singleShot(0, this, [this]() { view->handlePartitionsVisiable(); });
     });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
@@ -305,7 +305,7 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     // and when disk-manager/partition-editor opened and closed,
     // the itemRemoved/Added signals are emitted
     // and these newcomming items should be filtered
-    view->handleNativePartitionVisiable();
+    view->handlePartitionsVisiable();
 }
 
 void ComputerModel::onItemRemoved(const QUrl &url)
@@ -324,7 +324,7 @@ void ComputerModel::onItemRemoved(const QUrl &url)
         qDebug() << "target item not found" << url;
     }
 
-    view->handleNativePartitionVisiable();
+    view->handlePartitionsVisiable();
 }
 
 void ComputerModel::onItemUpdated(const QUrl &url)
