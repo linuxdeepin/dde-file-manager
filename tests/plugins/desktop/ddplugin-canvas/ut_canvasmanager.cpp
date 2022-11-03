@@ -23,6 +23,7 @@
 #include "private/canvasmanager_p.h"
 #include "displayconfig.h"
 #include "grid/canvasgrid.h"
+#include "view/canvasview_p.h"
 
 #include "stubext.h"
 
@@ -43,6 +44,26 @@ TEST(CanvasManager, autoArrange)
 
     ret = true;
     EXPECT_EQ(ret, obj.autoArrange());
+}
+
+TEST(CanvasManager, refresh)
+{
+    CanvasManager obj;
+    CanvasViewPointer vp(new CanvasView());
+    obj.d->viewMap.insert("test", vp);
+
+    stub_ext::StubExt stub;
+    bool silent = false;
+    stub.set_lamda(&CanvasView::refresh,[&silent](CanvasView *self, bool s){
+        silent = s;
+    });
+
+    obj.refresh(true);
+    EXPECT_TRUE(silent);
+
+    silent = true;
+    obj.refresh(false);
+    EXPECT_FALSE(false);
 }
 
 TEST(CanvasManager, setAutoArrange)

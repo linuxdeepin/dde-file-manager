@@ -35,6 +35,8 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
+private:
+    void registerDBus();
 
 private:
     CanvasManager *proxy = nullptr;

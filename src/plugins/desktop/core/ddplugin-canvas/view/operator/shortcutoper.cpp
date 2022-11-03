@@ -108,7 +108,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
                 previewFiles();
             return true;
         case Qt::Key_F5:
-            view->refresh();
+            view->refresh(false);
             return true;
         case Qt::Key_Delete:
             FileOperatorProxyIns->moveToTrash(view);

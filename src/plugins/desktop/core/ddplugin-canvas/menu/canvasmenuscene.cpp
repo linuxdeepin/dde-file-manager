@@ -307,7 +307,7 @@ bool CanvasMenuScene::triggered(QAction *action)
 
         // refresh
         if (actionId == ActionID::kRefresh) {
-            d->view->refresh();
+            d->view->refresh(false);
             return true;
         }
 

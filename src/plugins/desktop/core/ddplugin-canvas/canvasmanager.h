@@ -36,6 +36,7 @@ class CanvasManager : public QObject
 {
     Q_OBJECT
     friend class CanvasManagerPrivate;
+    friend class CanvasDBusInterface;
 public:
     explicit CanvasManager(QObject *parent = nullptr);
     ~CanvasManager();
@@ -58,6 +59,7 @@ public slots:
     void onWallperSetting(CanvasView *);
     void onChangeIconLevel(bool increase);
     void onTrashStateChanged();
+    void refresh(bool silent);
 protected slots:
     void reloadItem();
 signals:

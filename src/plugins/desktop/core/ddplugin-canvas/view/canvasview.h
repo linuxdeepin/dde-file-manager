@@ -79,10 +79,11 @@ public:
     CanvasSelectionModel *selectionModel() const;
     void setGeometry(const QRect &rect);
     void updateGrid();
+    bool showGrid(bool v) const;
 public Q_SLOTS:
     void reset() override;
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
-    void refresh();
+    void refresh(bool silent);
     void selectAll() override;
 
 protected:

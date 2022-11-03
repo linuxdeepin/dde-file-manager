@@ -11,6 +11,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(SRCS
     main.cpp
+    desktopdbusinterface.cpp
+    desktopdbusinterface.h
 )
 
 find_package(PkgConfig REQUIRED)

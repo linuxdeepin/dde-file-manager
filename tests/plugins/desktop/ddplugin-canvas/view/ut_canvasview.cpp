@@ -47,3 +47,25 @@ public:
     CanvasView *view;
     CanvasProxyModel *model;
 };
+
+TEST_F(CanvasViewTest, refresh)
+{
+    bool refresh = false;
+    stub.set_lamda(&CanvasProxyModel::refresh,[&refresh](){
+        refresh = true;
+    });
+    bool filcker = false;
+    stub.set_lamda((void (CanvasView::*)())&CanvasView::repaint,[&filcker](CanvasView *self){
+        filcker = self->d->flicker;
+    });
+
+    view->refresh(true);
+    EXPECT_TRUE(refresh);
+    EXPECT_FALSE(filcker);
+
+    refresh = false;
+    filcker = false;
+    view->refresh(false);
+    EXPECT_TRUE(refresh);
+    EXPECT_TRUE(filcker);
+}

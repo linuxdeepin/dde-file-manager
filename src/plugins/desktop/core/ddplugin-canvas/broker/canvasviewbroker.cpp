@@ -120,7 +120,7 @@ QSize CanvasViewBroker::gridSize(int idx)
 void CanvasViewBroker::refresh(int idx)
 {
     if (auto view = getView(idx))
-        view->refresh();
+        view->refresh(true);
 }
 
 void CanvasViewBroker::update(int idx)

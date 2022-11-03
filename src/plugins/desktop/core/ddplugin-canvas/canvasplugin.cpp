@@ -21,8 +21,11 @@
 #include "canvasplugin.h"
 #include "canvasmanager.h"
 #include "utils/fileutil.h"
+#include "canvasdbusinterface.h"
 
 #include <dfm-base/utils/clipboard.h>
+
+#include <QDBusConnection>
 
 using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
@@ -41,6 +44,9 @@ bool CanvasPlugin::start()
 
     proxy = new CanvasManager();
     proxy->init();
+
+    registerDBus();
+
     return true;
 }
 
@@ -48,4 +54,17 @@ void CanvasPlugin::stop()
 {
     delete proxy;
     proxy = nullptr;
+}
+
+void CanvasPlugin::registerDBus()
+{
+    Q_ASSERT(proxy);
+    auto ifs = new CanvasDBusInterface(proxy);
+
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
+    if (!conn.registerObject("/com/deepin/dde/desktop/canvas", "com.deepin.dde.desktop.canvas", ifs, registerOptions)) {
+        qCritical() << "com.deepin.dde.desktop.canvas register object failed" << conn.lastError();
+        delete ifs;
+    }
 }

@@ -253,8 +253,9 @@ void CanvasView::keyboardSearch(const QString &search)
 void CanvasView::setSelectionModel(QItemSelectionModel *selectionModel)
 {
     QItemSelectionModel *oldSelectionModel = QAbstractItemView::selectionModel();
-    oldSelectionModel->deleteLater();
     QAbstractItemView::setSelectionModel(selectionModel);
+    if (oldSelectionModel)
+        oldSelectionModel->deleteLater();
 }
 
 QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
@@ -456,15 +457,22 @@ void CanvasView::updateGrid()
     update();
 }
 
-void CanvasView::refresh()
+bool CanvasView::showGrid(bool v) const
+{
+    d->showGrid = v;
+}
+
+void CanvasView::refresh(bool silent)
 {
     model()->refresh(rootIndex(), true);
 
-    // flicker
-    d->flicker = true;
-    repaint();
-    update();
-    d->flicker = false;
+     // flicker
+    if (!silent) {
+        d->flicker = true;
+        repaint();
+        update();
+        d->flicker = false;
+    }
 }
 
 void CanvasView::reset()

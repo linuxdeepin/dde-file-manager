@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "desktopdbusinterface.h"
+
 #include "config.h"   //cmake
 
 #include <DApplication>
@@ -37,9 +39,11 @@
 
 #include <iostream>
 #include <algorithm>
+#include <unistd.h>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+using namespace dde_desktop;
 
 #ifdef DFM_ORGANIZATION_NAME
 #    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
@@ -125,10 +129,6 @@ static void initLog()
     dpfLogManager->registerFileAppender();
 }
 
-constexpr char kDesktopServiceName[] { "com.deepin.dde.desktop" };
-constexpr char kDesktopServicePath[] { "/com/deepin/dde/desktop" };
-constexpr char kDesktopServiceInterface[] { "com.deepin.dde.desktop" };
-
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
@@ -147,7 +147,8 @@ int main(int argc, char *argv[])
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
 
-    // Notify dde-desktop start up
+    qInfo() << "start desktop " << a.applicationVersion() << "pid" << getpid() << "parent id" << getppid()
+            << "argments" << a.arguments();
     // if (!fileDialogOnly)
     if (true) {
         QDBusConnection conn = QDBusConnection::sessionBus();
@@ -157,12 +158,14 @@ int main(int argc, char *argv[])
             exit(0x0002);
         }
 
-        //        auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
-        //        if (!conn.registerObject(DesktopServicePath, Desktop::instance(), registerOptions)) {
-        //            qCritical() << "registerObject Failed" << conn.lastError();
-        //            exit(0x0003);
-        //        }
+        DesktopDBusInterface *interface = new DesktopDBusInterface(&a);
+        auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
+        if (!conn.registerObject(kDesktopServicePath, kDesktopServiceInterface, interface, registerOptions)) {
+            qCritical() << "registerObject Failed" << conn.lastError();
+            exit(0x0003);
+        }
 
+        // Notify dde-desktop start up
         registerDDESession();
     }
 

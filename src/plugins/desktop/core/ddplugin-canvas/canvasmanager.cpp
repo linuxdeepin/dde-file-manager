@@ -612,3 +612,10 @@ void CanvasManager::onTrashStateChanged()
 {
     d->sourceModel->update();
 }
+
+void CanvasManager::refresh(bool silent)
+{
+    for (auto it = d->viewMap.begin(); it != d->viewMap.end(); ++it) {
+        it.value()->refresh(silent);
+    };
+}
