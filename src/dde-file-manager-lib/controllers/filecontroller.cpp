@@ -1555,22 +1555,10 @@ bool FileController::doHiddenFileRemind(const QString &name, bool *checkRule /*=
 
     if(checkRule)
         *checkRule = true;
-    const QVariant &oper = DFMApplication::instance()->genericAttribute(DFMApplication::GA_RenameHideFileOperate);
-    if(oper.isValid()) {
-        const int &value = oper.toInt();
-        if(1 == value)
-            return true;
-        else if (2 == value)
-            return false;
-    }
 
     // show dialog
     auto result = dialogManager->showRenameNameDotBeginDialog();
-    const bool noAsk = result.first;
-    const bool hide = result.second;
-    if(noAsk)
-        DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_RenameHideFileOperate, hide ? 1 : 2);
-    return hide;
+    return result == 0;
 }
 
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,
