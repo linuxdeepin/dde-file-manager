@@ -100,6 +100,7 @@ private:
     void initTabBar();
     void initViewLayout();
     void handleCtrlN();
+    void handleCtrlT();
     void initCustomTopWidgets(const QUrl &url);
 
     QUrl workspaceUrl;

@@ -295,7 +295,7 @@ void WorkspaceWidget::keyPressEvent(QKeyEvent *event)
             handleCtrlN();
             return;
         case Qt::Key_T:
-            openNewTab(tabBar->currentTab()->getCurrentUrl());
+            handleCtrlT();
             return;
         default:
             break;
@@ -303,6 +303,23 @@ void WorkspaceWidget::keyPressEvent(QKeyEvent *event)
         break;
     }
     AbstractFrame::keyPressEvent(event);
+}
+
+void WorkspaceWidget::handleCtrlT()
+{
+    // If a directory is selected, open NewTab through the URL of the selected directory
+    auto view = tabBar->currentTab()->getCurrentView();
+    if(view){
+        const QList<QUrl> &urls = view->selectedUrlList();
+        if (urls.count() == 1) {
+            const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(urls.at(0));
+            if (fileInfoPtr && fileInfoPtr->isDir()){
+                openNewTab(urls.at(0));
+                return;
+            }
+        }
+    }
+    openNewTab(tabBar->currentTab()->getCurrentUrl());
 }
 
 void WorkspaceWidget::showEvent(QShowEvent *event)
