@@ -80,7 +80,7 @@ Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
 
 Qt::DropActions FileSortFilterProxyModel::supportedDragActions() const
 {
-    const QModelIndex &rootIndex = viewModel()->findIndex(rootUrl);
+    const QModelIndex &rootIndex = viewModel()->findRootIndex(rootUrl);
     const AbstractFileInfoPointer info = viewModel()->fileInfo(rootIndex);
 
     if (info)
@@ -91,7 +91,7 @@ Qt::DropActions FileSortFilterProxyModel::supportedDragActions() const
 
 Qt::DropActions FileSortFilterProxyModel::supportedDropActions() const
 {
-    const QModelIndex &rootIndex = viewModel()->findIndex(rootUrl);
+    const QModelIndex &rootIndex = viewModel()->findRootIndex(rootUrl);
     const AbstractFileInfoPointer info = viewModel()->fileInfo(rootIndex);
 
     if (info)
@@ -134,7 +134,7 @@ AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex
 
 QModelIndex FileSortFilterProxyModel::getIndexByUrl(const QUrl &url) const
 {
-    const QModelIndex &sourceIndex = viewModel()->findIndex(url);
+    const QModelIndex &sourceIndex = viewModel()->findChildIndex(url);
     const QModelIndex &proxyIndex = mapFromSource(sourceIndex);
 
     if (proxyIndex.isValid())

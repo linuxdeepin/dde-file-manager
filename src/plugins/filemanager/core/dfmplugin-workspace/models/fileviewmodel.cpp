@@ -131,17 +131,23 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     return index;
 }
 
-QModelIndex FileViewModel::findIndex(const QUrl &url) const
+QModelIndex FileViewModel::findRootIndex(const QUrl &url) const
 {
-    auto indexPair = fileDataHelper->getIndexByUrl(url);
+    RootInfo *info = fileDataHelper->findRootInfo(url);
+    if (info)
+        return index(info->rowIndex, 0, QModelIndex());
 
-    if (indexPair.first < 0)
+    return QModelIndex();
+}
+
+QModelIndex FileViewModel::findChildIndex(const QUrl &url) const
+{
+    auto indexPair = fileDataHelper->getChildIndexByUrl(url);
+
+    if (indexPair.first < 0 || indexPair.second < 0)
         return QModelIndex();
 
     const QModelIndex &parentIndex = index(indexPair.first, 0, QModelIndex());
-
-    if (indexPair.second < 0)
-        return parentIndex;
 
     return index(indexPair.second, 0, parentIndex);
 }
@@ -213,7 +219,7 @@ QModelIndex FileViewModel::parent(const QModelIndex &child) const
 
     if (childData && childData->parentData()
         && childData->parentData()->fileInfo()) {
-        return findIndex(childData->parentData()->fileInfo()->url());
+        return findRootIndex(childData->parentData()->fileInfo()->url());
     }
 
     return QModelIndex();
@@ -277,7 +283,7 @@ void FileViewModel::update(const QUrl &rootUrl)
 
     RootInfo *info = fileDataHelper->findRootInfo(rootUrl);
     if (info) {
-        const QModelIndex &parentIndex = findIndex(rootUrl);
+        const QModelIndex &parentIndex = findRootIndex(rootUrl);
         emit dataChanged(index(0, 0, parentIndex), index(info->childrenCount(), 0, parentIndex));
     }
 }
@@ -474,7 +480,7 @@ void FileViewModel::onFilesUpdated()
 
 void FileViewModel::onFileUpdated(const QUrl &url)
 {
-    const QModelIndex &index = findIndex(url);
+    const QModelIndex &index = findChildIndex(url);
     if (index.isValid()) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
         if (info)
