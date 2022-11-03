@@ -157,6 +157,15 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
     if (curName == destName)
         return true;
 
+    if (blk->mountPoints().count() > 0) {
+        // do unmount before rename
+        blk->unmount({});
+        if (blk->lastError().type() != QDBusError::NoError) {
+            qInfo() << "unmount before rename failed: " << blk->lastError() << blk->lastError().message();
+            return false;
+        }
+    }
+
     blk->setLabel(destName, {});
     if (blk->lastError().type() != QDBusError::NoError) {
         qDebug() << blk->lastError() << blk->lastError().name();

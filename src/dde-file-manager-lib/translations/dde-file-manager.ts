@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -1721,9 +1723,9 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="384"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1289"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1304"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1314"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1284"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1299"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1309"/>
         <source>Operation failed!</source>
         <translation>Operation failed!</translation>
     </message>
@@ -1778,154 +1780,159 @@
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="509"/>
         <source>The file name must not contain two dots (..)</source>
         <translation>The file name must not contain two dots (..)</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="514"/>
         <source>Device or resource busy</source>
         <translation>Device or resource busy</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="540"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="519"/>
+        <source>The device is busy and cannot be formatted now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="524"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>Are you sure you want to erase all data on the disc?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="568"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="552"/>
         <source>How do you want to use this disc?</source>
         <translation>How do you want to use this disc?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="601"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="585"/>
         <source>Disc erase failed</source>
         <translation>Disc erase failed</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="605"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="589"/>
         <source>Burn process failed</source>
         <translation>Burn process failed</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="597"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="629"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
         <source>Show details</source>
         <translation>Show details</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="633"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="617"/>
         <source>Hide details</source>
         <translation>Hide details</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="634"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="618"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="743"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="727"/>
         <source>Permanently delete %1?</source>
         <translation>Permanently delete %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="744"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="728"/>
         <source>Permanently delete %1 items?</source>
         <translation>Permanently delete %1 items?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="762"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="746"/>
         <source>Empty</source>
         <translation>Empty</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="807"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="791"/>
         <source>Do you want to delete %1?</source>
         <translation>Do you want to delete %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="808"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="792"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Do you want to delete the selected %1 items?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="838"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="822"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Sorry, unable to locate your bookmark directory, remove it?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1008"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1003"/>
         <source>Name: </source>
         <translation>Name: </translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1034"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1029"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 that this shortcut refers to has been changed or moved</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1038"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1033"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Do you want to delete this shortcut？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1162"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Failed, file size must be less than 4GB.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1194"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>The selected files contain system file/directory, and it cannot be deleted</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1230"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1225"/>
         <source>Unable to find the original file</source>
         <translation>Unable to find the original file</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1305"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1341"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1300"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1336"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>You do not have permission to operate file/folder!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1316"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1311"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>Failed to restore %1 file, the source file does not exist</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1358"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1353"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1499"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1494"/>
         <source>Unable to access %1</source>
         <translation>Unable to access %1</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="728"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1582"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1577"/>
         <source>Sending files now, please try later</source>
         <translation>Sending files now, please try later</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1631"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1626"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>To access the device, you must format the disk first. Are you sure you want to format it now?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1646"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1641"/>
         <source>Scanning the device, stop it?</source>
         <translation>Scanning the device, stop it?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1703"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1713"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Share folder can&apos;t be named after the current username</translation>
     </message>
@@ -1935,45 +1942,45 @@
         <translation>Do you want to run %1?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="573"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="557"/>
         <source>Burn image</source>
         <comment>button</comment>
         <translation>Burn image</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="574"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="558"/>
         <source>Burn files</source>
         <comment>button</comment>
         <translation>Burn files</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="741"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="725"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Are you sure you want to empty %1 item?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="742"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="726"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Are you sure you want to empty %1 items?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="786"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="539"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="770"/>
         <source>This action cannot be undone</source>
         <translation>This action cannot be undone</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="387"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="655"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1169"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1196"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1296"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1307"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1321"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1387"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1705"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="639"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1151"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1164"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1173"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1191"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1291"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1302"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1316"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1382"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1715"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -1982,15 +1989,15 @@
         <location filename="../dialogs/dialogmanager.cpp" line="417"/>
         <location filename="../dialogs/dialogmanager.cpp" line="443"/>
         <location filename="../dialogs/dialogmanager.cpp" line="459"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="545"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="572"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="750"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="824"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="841"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1010"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1040"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1629"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1644"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="529"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="556"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="734"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="808"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="825"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1005"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1035"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1624"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1639"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel</translation>
@@ -2018,90 +2025,89 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="474"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="514"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1041"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1398"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="628"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1036"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1393"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1497"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1652"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="546"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
         <source>Erase</source>
         <comment>button</comment>
         <translation>Erase</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="608"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="592"/>
         <source>Data verification failed</source>
         <translation>Data verification failed</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="627"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>Show details</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="751"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="825"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="735"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="809"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Delete</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="842"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="826"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1007"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1002"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Disk is busy, cannot unmount now</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1011"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1006"/>
         <source>Force unmount</source>
         <comment>button</comment>
         <translation>Force unmount</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1155"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1150"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Unable to copy. Not enough free space on the target disk.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1171"/>
         <source>Failed to create symlink, cause:</source>
         <translation>Failed to create symlink, cause:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1291"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1286"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Failed to restore %1 file, the target folder is read-only</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1293"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1288"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Failed to restore %1 files, the target folder is read-only</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1318"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1313"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>Failed to restore %1 files, the source files do not exist</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1630"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1625"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1645"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1640"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Stop</translation>
@@ -2280,455 +2286,6 @@
         <location filename="../../fileoperations/filejob.h" line="289"/>
         <source>Device disconnected</source>
         <translation>Device disconnected</translation>
-    </message>
-</context>
-<context>
-    <name>GenerateSettingTranslate</name>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="5"/>
-        <location filename="../configure/global-setting-template-pro.js" line="5"/>
-        <location filename="../configure/global-setting-template.js" line="5"/>
-        <source>Basic</source>
-        <translation>Basic</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="9"/>
-        <location filename="../configure/global-setting-template-pro.js" line="9"/>
-        <location filename="../configure/global-setting-template.js" line="9"/>
-        <source>Open behavior</source>
-        <translation>Open behavior</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="14"/>
-        <location filename="../configure/global-setting-template-pro.js" line="14"/>
-        <location filename="../configure/global-setting-template.js" line="14"/>
-        <source>Always open folder in new window</source>
-        <translation>Always open folder in new window</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="19"/>
-        <location filename="../configure/global-setting-template-pro.js" line="19"/>
-        <location filename="../configure/global-setting-template.js" line="19"/>
-        <source>Open file:</source>
-        <translation>Open file:</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="22"/>
-        <location filename="../configure/global-setting-template-pro.js" line="22"/>
-        <location filename="../configure/global-setting-template.js" line="22"/>
-        <source>Click</source>
-        <translation>Click</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="23"/>
-        <location filename="../configure/global-setting-template-pro.js" line="23"/>
-        <location filename="../configure/global-setting-template.js" line="23"/>
-        <source>Double click</source>
-        <translation>Double click</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="31"/>
-        <location filename="../configure/global-setting-template-pro.js" line="31"/>
-        <location filename="../configure/global-setting-template.js" line="31"/>
-        <source>New window and tab</source>
-        <translation>New window and tab</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="35"/>
-        <location filename="../configure/global-setting-template-pro.js" line="35"/>
-        <location filename="../configure/global-setting-template.js" line="35"/>
-        <source>Open from default window:</source>
-        <translation>Open from default window:</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="39"/>
-        <location filename="../configure/global-setting-template-fedora.js" line="68"/>
-        <location filename="../configure/global-setting-template-pro.js" line="39"/>
-        <location filename="../configure/global-setting-template-pro.js" line="68"/>
-        <location filename="../configure/global-setting-template.js" line="39"/>
-        <location filename="../configure/global-setting-template.js" line="68"/>
-        <source>Computer</source>
-        <translation>Computer</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="40"/>
-        <location filename="../configure/global-setting-template-fedora.js" line="69"/>
-        <location filename="../configure/global-setting-template-pro.js" line="40"/>
-        <location filename="../configure/global-setting-template-pro.js" line="69"/>
-        <location filename="../configure/global-setting-template.js" line="40"/>
-        <location filename="../configure/global-setting-template.js" line="69"/>
-        <source>Home</source>
-        <translation>Home</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="41"/>
-        <location filename="../configure/global-setting-template-fedora.js" line="70"/>
-        <location filename="../configure/global-setting-template-pro.js" line="41"/>
-        <location filename="../configure/global-setting-template-pro.js" line="70"/>
-        <location filename="../configure/global-setting-template.js" line="41"/>
-        <location filename="../configure/global-setting-template.js" line="70"/>
-        <source>Desktop</source>
-        <translation>Desktop</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="42"/>
-        <location filename="../configure/global-setting-template-fedora.js" line="71"/>
-        <location filename="../configure/global-setting-template-pro.js" line="42"/>
-        <location filename="../configure/global-setting-template-pro.js" line="71"/>
-        <location filename="../configure/global-setting-template.js" line="42"/>
-        <location filename="../configure/global-setting-template.js" line="71"/>
-        <source>Videos</source>
-        <translation>Videos</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="43"/>
-        <location filename="../configure/global-setting-template-fedora.js" line="72"/>
-        <location filename="../configure/global-setting-template-pro.js" line="43"/>
-        <location filename="../configure/global-setting-template-pro.js" line="72"/>
-        <location filename="../configure/global-setting-template.js" line="43"/>
-        <location filename="../configure/global-setting-template.js" line="72"/>
-        <source>Music</source>
-        <translation>Music</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="44"/>
-        <location filename="../configure/global-setting-template-fedora.js" line="73"/>
-        <location filename="../configure/global-setting-template-pro.js" line="44"/>
-        <location filename="../configure/global-setting-template-pro.js" line="73"/>
-        <location filename="../configure/global-setting-template.js" line="44"/>
-        <location filename="../configure/global-setting-template.js" line="73"/>
-        <source>Pictures</source>
-        <translation>Pictures</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="45"/>
-        <location filename="../configure/global-setting-template-fedora.js" line="74"/>
-        <location filename="../configure/global-setting-template-pro.js" line="45"/>
-        <location filename="../configure/global-setting-template-pro.js" line="74"/>
-        <location filename="../configure/global-setting-template.js" line="45"/>
-        <location filename="../configure/global-setting-template.js" line="74"/>
-        <source>Documents</source>
-        <translation>Documents</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="46"/>
-        <location filename="../configure/global-setting-template-fedora.js" line="75"/>
-        <location filename="../configure/global-setting-template-pro.js" line="46"/>
-        <location filename="../configure/global-setting-template-pro.js" line="75"/>
-        <location filename="../configure/global-setting-template.js" line="46"/>
-        <location filename="../configure/global-setting-template.js" line="75"/>
-        <source>Downloads</source>
-        <translation>Downloads</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="63"/>
-        <location filename="../configure/global-setting-template-pro.js" line="63"/>
-        <location filename="../configure/global-setting-template.js" line="63"/>
-        <source>Open in new tab:</source>
-        <translation>Open in new tab:</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="67"/>
-        <location filename="../configure/global-setting-template-pro.js" line="67"/>
-        <location filename="../configure/global-setting-template.js" line="67"/>
-        <source>Current Directory</source>
-        <translation>Current Directory</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="95"/>
-        <location filename="../configure/global-setting-template-pro.js" line="95"/>
-        <location filename="../configure/global-setting-template.js" line="95"/>
-        <source>View</source>
-        <translation>View</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="99"/>
-        <location filename="../configure/global-setting-template-pro.js" line="99"/>
-        <location filename="../configure/global-setting-template.js" line="99"/>
-        <source>Default size:</source>
-        <translation>Default size:</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="102"/>
-        <location filename="../configure/global-setting-template-pro.js" line="102"/>
-        <location filename="../configure/global-setting-template.js" line="102"/>
-        <source>Extra small</source>
-        <translation>Extra small</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="103"/>
-        <location filename="../configure/global-setting-template-pro.js" line="103"/>
-        <location filename="../configure/global-setting-template.js" line="103"/>
-        <source>Small</source>
-        <translation>Small</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="104"/>
-        <location filename="../configure/global-setting-template-pro.js" line="104"/>
-        <location filename="../configure/global-setting-template.js" line="104"/>
-        <source>Medium</source>
-        <translation>Medium</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="105"/>
-        <location filename="../configure/global-setting-template-pro.js" line="105"/>
-        <location filename="../configure/global-setting-template.js" line="105"/>
-        <source>Large</source>
-        <translation>Large</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="106"/>
-        <location filename="../configure/global-setting-template-pro.js" line="106"/>
-        <location filename="../configure/global-setting-template.js" line="106"/>
-        <source>Extra large</source>
-        <translation>Extra large</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="112"/>
-        <location filename="../configure/global-setting-template-pro.js" line="112"/>
-        <location filename="../configure/global-setting-template.js" line="112"/>
-        <source>Default view:</source>
-        <translation>Default view:</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="116"/>
-        <location filename="../configure/global-setting-template-pro.js" line="116"/>
-        <location filename="../configure/global-setting-template.js" line="116"/>
-        <source>Icon</source>
-        <translation>Icon</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="117"/>
-        <location filename="../configure/global-setting-template-pro.js" line="117"/>
-        <location filename="../configure/global-setting-template.js" line="117"/>
-        <source>List</source>
-        <translation>List</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="127"/>
-        <location filename="../configure/global-setting-template-pro.js" line="127"/>
-        <location filename="../configure/global-setting-template.js" line="127"/>
-        <source>Mix sorting of files and folders</source>
-        <translation>Mix sorting of files and folders</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="135"/>
-        <location filename="../configure/global-setting-template-pro.js" line="135"/>
-        <location filename="../configure/global-setting-template.js" line="135"/>
-        <source>Hidden files</source>
-        <translation>Hidden files</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="139"/>
-        <location filename="../configure/global-setting-template-pro.js" line="139"/>
-        <location filename="../configure/global-setting-template.js" line="139"/>
-        <source>Show hidden files</source>
-        <translation>Show hidden files</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="145"/>
-        <location filename="../configure/global-setting-template-pro.js" line="145"/>
-        <location filename="../configure/global-setting-template.js" line="145"/>
-        <source>Show file extensions</source>
-        <translation>Show file extensions</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="162"/>
-        <location filename="../configure/global-setting-template-pro.js" line="163"/>
-        <location filename="../configure/global-setting-template.js" line="163"/>
-        <source>Advanced</source>
-        <translation>Advanced</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="166"/>
-        <location filename="../configure/global-setting-template-pro.js" line="167"/>
-        <location filename="../configure/global-setting-template.js" line="167"/>
-        <source>Index</source>
-        <translation>Index</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="170"/>
-        <location filename="../configure/global-setting-template-pro.js" line="171"/>
-        <location filename="../configure/global-setting-template.js" line="171"/>
-        <source>Auto index internal disk</source>
-        <translation>Auto index internal disk</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="176"/>
-        <location filename="../configure/global-setting-template-pro.js" line="177"/>
-        <location filename="../configure/global-setting-template.js" line="177"/>
-        <source>Index external storage device after connected to computer</source>
-        <translation>Index external storage device after connected to computer</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="182"/>
-        <location filename="../configure/global-setting-template-pro.js" line="183"/>
-        <location filename="../configure/global-setting-template.js" line="183"/>
-        <source>Full-Text search</source>
-        <translation>Full-Text search</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="239"/>
-        <location filename="../configure/global-setting-template-pro.js" line="239"/>
-        <location filename="../configure/global-setting-template.js" line="238"/>
-        <source>Music preview</source>
-        <translation>Music preview</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="263"/>
-        <location filename="../configure/global-setting-template-pro.js" line="263"/>
-        <location filename="../configure/global-setting-template.js" line="262"/>
-        <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation>Show item counts and sizes in the path of mounted MTP devices</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="269"/>
-        <location filename="../configure/global-setting-template-pro.js" line="269"/>
-        <location filename="../configure/global-setting-template.js" line="268"/>
-        <source>Keep showing the mounted Samba shares</source>
-        <translation>Keep showing the mounted Samba shares</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="275"/>
-        <location filename="../configure/global-setting-template-pro.js" line="275"/>
-        <location filename="../configure/global-setting-template.js" line="274"/>
-        <source>Merge the entries of Samba shared folders</source>
-        <translation>Merge the entries of Samba shared folders</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="287"/>
-        <location filename="../configure/global-setting-template-pro.js" line="287"/>
-        <location filename="../configure/global-setting-template.js" line="287"/>
-        <source>Use the file chooser dialog of File Manager</source>
-        <translation>Use the file chooser dialog of File Manager</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="293"/>
-        <location filename="../configure/global-setting-template-pro.js" line="293"/>
-        <location filename="../configure/global-setting-template.js" line="293"/>
-        <source>Ask for my confirmation when deleting files</source>
-        <translation>Ask for my confirmation when deleting files</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="301"/>
-        <location filename="../configure/global-setting-template-pro.js" line="301"/>
-        <location filename="../configure/global-setting-template.js" line="301"/>
-        <source>Other</source>
-        <translation>Other</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="305"/>
-        <location filename="../configure/global-setting-template-pro.js" line="305"/>
-        <location filename="../configure/global-setting-template.js" line="305"/>
-        <source>Hide built-in disks</source>
-        <translation>Hide built-in disks</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="311"/>
-        <location filename="../configure/global-setting-template-pro.js" line="311"/>
-        <location filename="../configure/global-setting-template.js" line="318"/>
-        <source>Hide loop partitions</source>
-        <translation>Hide loop partitions</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="324"/>
-        <location filename="../configure/global-setting-template-pro.js" line="324"/>
-        <location filename="../configure/global-setting-template.js" line="324"/>
-        <source>Show file system on disk icon</source>
-        <translation>Show file system on disk icon</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="194"/>
-        <location filename="../configure/global-setting-template-pro.js" line="195"/>
-        <location filename="../configure/global-setting-template.js" line="195"/>
-        <source>Show hidden files in search results</source>
-        <translation>Show hidden files in search results</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="151"/>
-        <location filename="../configure/global-setting-template-pro.js" line="151"/>
-        <location filename="../configure/global-setting-template.js" line="151"/>
-        <source>Display recent file entry in left panel</source>
-        <translation>Display recent file entry in left panel</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="203"/>
-        <location filename="../configure/global-setting-template-pro.js" line="204"/>
-        <location filename="../configure/global-setting-template.js" line="204"/>
-        <source>Preview</source>
-        <translation>Preview</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="207"/>
-        <location filename="../configure/global-setting-template-pro.js" line="208"/>
-        <source>Compress file preview</source>
-        <translation>Compress file preview</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="214"/>
-        <location filename="../configure/global-setting-template-pro.js" line="215"/>
-        <location filename="../configure/global-setting-template.js" line="214"/>
-        <source>Text preview</source>
-        <translation>Text preview</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="220"/>
-        <location filename="../configure/global-setting-template-pro.js" line="221"/>
-        <location filename="../configure/global-setting-template.js" line="220"/>
-        <source>Document preview</source>
-        <translation>Document preview</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="226"/>
-        <location filename="../configure/global-setting-template-pro.js" line="227"/>
-        <location filename="../configure/global-setting-template.js" line="226"/>
-        <source>Image preview</source>
-        <translation>Image preview</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="232"/>
-        <location filename="../configure/global-setting-template-pro.js" line="233"/>
-        <location filename="../configure/global-setting-template.js" line="232"/>
-        <source>Video preview</source>
-        <translation>Video preview</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="247"/>
-        <location filename="../configure/global-setting-template-pro.js" line="247"/>
-        <location filename="../configure/global-setting-template.js" line="246"/>
-        <source>Mount</source>
-        <translation>Mount</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="251"/>
-        <location filename="../configure/global-setting-template-pro.js" line="251"/>
-        <location filename="../configure/global-setting-template.js" line="250"/>
-        <source>Auto mount</source>
-        <translation>Auto mount</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="257"/>
-        <location filename="../configure/global-setting-template-pro.js" line="257"/>
-        <location filename="../configure/global-setting-template.js" line="256"/>
-        <source>Open after auto mount</source>
-        <translation>Open after auto mount</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="283"/>
-        <location filename="../configure/global-setting-template-pro.js" line="283"/>
-        <location filename="../configure/global-setting-template.js" line="283"/>
-        <source>Dialog</source>
-        <translation>Dialog</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template.js" line="208"/>
-        <source>Compressed file preview</source>
-        <translation>Compressed file preview</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template.js" line="275"/>
-        <source>Switching the entry display may lead to failed mounting</source>
-        <translation>Switching the entry display may lead to failed mounting</translation>
     </message>
 </context>
 <context>
@@ -4173,30 +3730,30 @@
         <translation>Tips: Sort by selected file order</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="667"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="711"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="651"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="695"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="668"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation>View Image File</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="687"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="671"/>
         <source>Image successfully created</source>
         <translation>Image successfully created</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="721"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="705"/>
         <source>Image creation failed</source>
         <translation>Image creation failed</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1670"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1680"/>
         <source>Rename %1 Files</source>
         <translation>Rename %1 Files</translation>
     </message>
@@ -4309,7 +3866,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="666"/>
-        <location filename="../../utils/utils.cpp" line="435"/>
+        <location filename="../../utils/utils.cpp" line="408"/>
         <source>Unknown</source>
         <translation>Unknown</translation>
     </message>
@@ -4970,14 +4527,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1784"/>
+        <location filename="../controllers/appcontroller.cpp" line="1797"/>
         <location filename="../../fileoperations/filejob.cpp" line="774"/>
         <location filename="../../fileoperations/filejob.cpp" line="1040"/>
         <source>The device was not safely unmounted</source>
         <translation>The device was not safely unmounted</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1791"/>
+        <location filename="../controllers/appcontroller.cpp" line="1804"/>
         <source>The device was not safely removed</source>
         <translation>The device was not safely removed</translation>
     </message>
