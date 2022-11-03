@@ -598,6 +598,10 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
             if (isNotSmbRemoved && DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
                 emit DFMApplication::instance()->reloadComputerModel();//smb聚合模式下，其它ftp挂载需要reloadComputerModel()
         } else {
+            if(smbIntegrationSwitcher->isSwitching()){
+                qInfo()<<"Now is smb integration switching...";
+                return; // 卸载smb挂载本不耗时，但reloadComputerModel非常耗时，切换完成后再reloadComputerModel。
+            }
             if (DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
                 emit DFMApplication::instance()->reloadComputerModel();
         }

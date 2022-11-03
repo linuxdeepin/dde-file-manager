@@ -23,6 +23,7 @@
 #include <QCoreApplication>
 #include <QMetaEnum>
 #include <QtConcurrent>
+#include <QTimer>
 
 DFM_BEGIN_NAMESPACE
 
@@ -102,19 +103,23 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             //smb挂载聚合功能实现后，这里无需刷新计算机界面以及调用stashCurrentMounts();
             //因为现在smb挂载项是否常驻的区别在于：最后一个挂载项移除之后，是否移除smb聚合项
             if (!smbIntegrationSwitcher->isIntegrationMode()) {
-                if (value.toBool()) // stash all mounted remote connections
+                if (value.toBool()) {// stash all mounted remote connections
                     RemoteMountsStashManager::stashCurrentMounts();
-                else // remove all stashed remote connections
+                }
+                else {// remove all stashed remote connections
                     RemoteMountsStashManager::clearRemoteMounts();
-
-                Q_EMIT self->reloadComputerModel();
+                    Q_EMIT DFMApplication::instance()->reloadComputerModel();
+                }
             }
             break;
         case DFMApplication::GA_MergeTheEntriesOfSambaSharedFolders: {
             // 响应用户手动设置smb聚合/分离模式
             smbIntegrationSwitcher->switchIntegrationMode(value.toBool());
             Q_EMIT smbIntegrationSwitcher->smbIntegrationModeChanged(value.toBool());
-            Q_EMIT self->reloadComputerModel();
+            QTimer::singleShot(150,[=]() {
+                smbIntegrationSwitcher->switchComplate();
+                Q_EMIT self->reloadComputerModel(); // reload computer model must be done after all above aperations.
+            });
         } break;
         case DFMApplication::GA_HideLoopPartitions:
             Q_EMIT self->reloadComputerModel();

@@ -2046,14 +2046,12 @@ bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
 
 /**
  * @brief FileUtils::isSmbHostOnly 判断url格式是否为smb://host或者smb://domain格式
- * 该函数仅在smb聚合模式下使用，所以非smb聚合模式则直接返回false。
+ *
  * @param url
  * @return
  */
 bool FileUtils::isSmbHostOnly(const DUrl &url)
 {
-    if(!smbIntegrationSwitcher->isIntegrationMode())
-        return false;
     if(url.scheme() != SMB_SCHEME)
         return false;
     QString urlString = url.toString();

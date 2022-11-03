@@ -620,8 +620,10 @@ bool DFMRootFileWatcherPrivate::start()
         qDebug() << path;
         url.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
         QString uri = mnt->getRootFile()->uri();
+      if (smbIntegrationSwitcher->isIntegrationMode()) {
         wpar->setProperty("isBathUnmuntSmb",deviceListener->isBatchedRemovingSmbMount());
         wpar->setProperty("remainUnmuntSmb",deviceListener->getCountOfMountedSmb(DUrl(uri).host()));
+      }
         Q_EMIT wpar->fileDeleted(url);
         emit fileSignalManager->requestRemoveRecentFile(path);
         qDebug() << uri << "mount removed";
