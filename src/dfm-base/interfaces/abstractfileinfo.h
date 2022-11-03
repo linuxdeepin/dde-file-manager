@@ -154,6 +154,7 @@ public:
     virtual QUrl getUrlByChildFileName(const QString &fileName) const;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const;
     virtual QUrl redirectedFileUrl() const;
+    virtual QUrl originalUrl() const;
     virtual QUrl parentUrl() const;
     virtual bool isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors = nullptr) const;
     virtual bool isReadable() const;
@@ -188,6 +189,7 @@ public:
     virtual QDateTime lastModified() const;
     virtual QDateTime lastRead() const;
     virtual QDateTime fileTime(QFile::FileTime time) const;
+    virtual QDateTime deletionTime() const;
     virtual QIcon fileIcon();
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     virtual QVariantHash extraProperties() const;

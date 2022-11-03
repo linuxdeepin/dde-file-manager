@@ -23,7 +23,10 @@
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfilewatcher.h"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -38,19 +41,16 @@ DFMBASE_USE_NAMESPACE
 TrashCoreEventSender::TrashCoreEventSender(QObject *parent)
     : QObject(parent)
 {
-    isEmpty = TrashCoreHelper::isEmpty();
+    isEmpty = FileUtils::trashIsEmpty();
     initTrashWatcher();
 }
 
 void TrashCoreEventSender::initTrashWatcher()
 {
-    QUrl trashFilesUrl;
-    trashFilesUrl.setScheme(Global::Scheme::kFile);
-    trashFilesUrl.setPath(StandardPaths::location(StandardPaths::kTrashFilesPath));
+    trashFileWatcher.reset(new LocalFileWatcher(FileUtils::trashRootUrl(), this));
 
-    trashFileWatcher = new LocalFileWatcher(trashFilesUrl, this);
-    connect(trashFileWatcher, &LocalFileWatcher::subfileCreated, this, &TrashCoreEventSender::sendTrashStateChangedAdd);
-    connect(trashFileWatcher, &LocalFileWatcher::fileDeleted, this, &TrashCoreEventSender::sendTrashStateChangedDel);
+    connect(trashFileWatcher.data(), &AbstractFileWatcher::subfileCreated, this, &TrashCoreEventSender::sendTrashStateChangedAdd);
+    connect(trashFileWatcher.data(), &AbstractFileWatcher::fileDeleted, this, &TrashCoreEventSender::sendTrashStateChangedDel);
     trashFileWatcher->startWatcher();
 }
 
@@ -62,7 +62,7 @@ TrashCoreEventSender *TrashCoreEventSender::instance()
 
 void TrashCoreEventSender::sendTrashStateChangedDel()
 {
-    bool empty = TrashCoreHelper::isEmpty();
+    bool empty = FileUtils::trashIsEmpty();
     if (empty == isEmpty)
         return;
 

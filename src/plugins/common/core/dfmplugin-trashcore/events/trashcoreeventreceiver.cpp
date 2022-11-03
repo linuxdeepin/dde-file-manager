@@ -48,8 +48,5 @@ TrashCoreEventReceiver *TrashCoreEventReceiver::instance()
 
 void TrashCoreEventReceiver::handleEmptyTrash(const quint64 windowId)
 {
-    QUrl url = TrashCoreHelper::toLocalFile(TrashCoreHelper::rootUrl());
-    QList<QUrl> urls;
-    urls.append(std::move(url));
-    dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash, windowId, urls, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash, windowId, QList<QUrl>(), AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
 }

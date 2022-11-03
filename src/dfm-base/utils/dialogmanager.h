@@ -81,7 +81,8 @@ public:
     int showRunExcutableScriptDialog(const QUrl &url);
     int showRunExcutableFileDialog(const QUrl &url);
 
-    int showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, const bool showEmptyBtText = false);
+    int showDeleteFilesDialog(const QList<QUrl> &urlList);
+    int showClearTrashDialog(const quint64 &count);
     int showNormalDeleteConfirmDialog(const QList<QUrl> &urls);
 
     void showRestoreFailedDialog(const QList<QUrl> &urlList);

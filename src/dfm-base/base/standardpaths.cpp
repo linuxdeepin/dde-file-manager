@@ -45,13 +45,11 @@ namespace dfmbase {
 QString StandardPaths::location(StandardPaths::StandardLocation type)
 {
     switch (type) {
-    case kTrashPath:
+    case kTrashLocalPath:
         return QDir::homePath() + "/.local/share/Trash";
-    case kTrashExpungedPath:
-        return QDir::homePath() + "/.local/share/Trash/expunged";
-    case kTrashFilesPath:
+    case kTrashLocalFilesPath:
         return QDir::homePath() + "/.local/share/Trash/files";
-    case kTrashInfosPath:
+    case kTrashLocalInfoPath:
         return QDir::homePath() + "/.local/share/Trash/info";
     case kApplicationConfigPath:
         return QDir::homePath() + "/.config";
@@ -171,13 +169,7 @@ QString StandardPaths::location(const QString &dirName)
         { "music", location(kMusicPath) },
         { "pictures", location(kPicturesPath) },
         { "documents", location(kDocumentsPath) },
-        { "downloads", location(kDownloadsPath) },
-        { "trash", location(kTrashFilesPath) },
-        { "thumbnail", location(kThumbnailPath) },
-        { "thumbnailFail", location(kThumbnailFailPath) },
-        { "thumbnailLarge", location(kThumbnailLargePath) },
-        { "thumbnailNormal", location(kThumbnailNormalPath) },
-        { "thumbnailSmall", location(kThumbnailSmallPath) }
+        { "downloads", location(kDownloadsPath) }
     };
 
     return pathConvert.value(dirName, "");
@@ -206,7 +198,7 @@ QString StandardPaths::iconName(StandardPaths::StandardLocation type)
         return "folder-documents";
     case kDownloadsPath:
         return "folder-downloads";
-    case kTrashPath:
+    case kTrashLocalPath:
         return "user-trash";
     case kRecentPath:
         return "document-open-recent";
@@ -238,7 +230,7 @@ QString StandardPaths::displayName(StandardPaths::StandardLocation type)
         return QObject::tr("Documents");
     case kDownloadsPath:
         return QObject::tr("Downloads");
-    case kTrashPath:
+    case kTrashLocalPath:
         return QObject::tr("Trash");
     case kRecentPath:
         return QObject::tr("Recent");

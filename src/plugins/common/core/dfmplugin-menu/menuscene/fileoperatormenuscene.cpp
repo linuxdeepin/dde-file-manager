@@ -166,8 +166,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
     if (FileUtils::isTrashDesktopFile(d->focusFile)) {
         if (auto clearTrash = d->predicateAction.value(ActionID::kEmptyTrash)) {
-            auto trashUrl = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath));
-            auto info = InfoFactory::create<AbstractFileInfo>(trashUrl);
+            auto info = InfoFactory::create<AbstractFileInfo>(FileUtils::trashRootUrl());
             if (info->countChildFile() <= 0)
                 clearTrash->setDisabled(true);
         }
@@ -275,11 +274,10 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // clear trash
     if (actionId == ActionID::kEmptyTrash) {
-        QList<QUrl> trashUrls { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath)) };
         dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
                                      d->windowId,
-                                     trashUrls,
-                                     AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
+                                     QList<QUrl>(),
+                                     AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
         return true;
     }
 

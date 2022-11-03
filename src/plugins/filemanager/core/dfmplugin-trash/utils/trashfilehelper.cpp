@@ -76,38 +76,32 @@ bool TrashFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources
 
 bool TrashFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
+    Q_UNUSED(flags)
+
     if (sources.isEmpty())
         return false;
     if (sources.first().scheme() != scheme())
         return false;
 
-    Q_UNUSED(flags)
-    QList<QUrl> redirectedFileUrls;
-    for (QUrl url : sources) {
-        redirectedFileUrls << TrashHelper::toLocalFile(url);
-    }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCleanTrash,
                                  windowId,
-                                 redirectedFileUrls,
+                                 sources,
                                  DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
     return true;
 }
 
 bool TrashFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
+    Q_UNUSED(flags)
+
     if (sources.isEmpty())
         return false;
     if (sources.first().scheme() != scheme())
         return false;
 
-    Q_UNUSED(flags)
-    QList<QUrl> redirectedFileUrls;
-    for (QUrl url : sources) {
-        redirectedFileUrls << TrashHelper::toLocalFile(url);
-    }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCleanTrash,
                                  windowId,
-                                 redirectedFileUrls,
+                                 sources,
                                  DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
     return true;
 }
@@ -122,7 +116,7 @@ bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
     bool isOpenFile = false;
     QList<QUrl> redirectedFileUrls;
     for (const QUrl &url : urls) {
-        QUrl redirectedFileUrl = TrashHelper::toLocalFile(url);
+        QUrl redirectedFileUrl = TrashHelper::trashFileToTargetUrl(url);
         QFileInfo fileInfo(redirectedFileUrl.path());
         if (fileInfo.isFile()) {
             isOpenFile = true;
@@ -149,7 +143,7 @@ bool TrashFileHelper::writeUrlsToClipboard(const quint64 windowId, const DFMBASE
 
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : urls) {
-        redirectedFileUrls << TrashHelper::toLocalFile(url);
+        redirectedFileUrls << TrashHelper::trashFileToTargetUrl(url);
     }
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);

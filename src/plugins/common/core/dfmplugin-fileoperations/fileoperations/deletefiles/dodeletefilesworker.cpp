@@ -88,8 +88,8 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         const QUrl &url = *it;
         emitCurrentTaskNotify(url, QUrl());
         do {
-            if (!handler->deleteFile(url)) {
-                action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
+            if (!localFileHandler->deleteFile(url)) {
+                action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, localFileHandler->errorString());
             }
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -152,8 +152,8 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
-        if (!handler->deleteFile(url)) {
-            action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
+        if (!localFileHandler->deleteFile(url)) {
+            action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, localFileHandler->errorString());
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 

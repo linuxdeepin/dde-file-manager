@@ -1394,8 +1394,8 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
     }
     locker.unlock();
 
-    QString absoluteFilePath = filePath();
-    if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath)) && isSymLink()) {
+    const QUrl &fileUrl = url();
+    if (FileUtils::isTrashFile(fileUrl) && isSymLink()) {
         d->fileType = MimeDatabase::FileType::kRegularFile;
         fileType = FileType(d->fileType);
         return fileType;
@@ -1403,6 +1403,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
 
     // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
     // In addition we want to follow symlinks.
+    const QString &absoluteFilePath = filePath();
     const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
@@ -1500,7 +1501,32 @@ QString LocalFileInfo::fileDisplayName() const
         if (!displayName.isEmpty())
             return displayName;
     }
-    return LocalFileInfo::fileName();
+
+    QString fileDisplayName;
+
+    QReadLocker locker(&d->lock);
+    if (d->attributes.count(DFileInfo::AttributeID::kStandardDisplayName) == 0) {
+        locker.unlock();
+
+        QWriteLocker locker(&d->lock);
+        bool success = false;
+        if (d->dfmFileInfo) {
+            fileDisplayName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName, &success).toString();
+
+            // trans "/" to "smb-share:server=xxx,share=xxx"
+            if (fileDisplayName == R"(/)" && FileUtils::isGvfsFile(d->url)) {
+                fileDisplayName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kIdFilesystem, &success).toString();
+            }
+        }
+        if (!success)
+            return QString();
+
+        d->attributes.insert(DFileInfo::AttributeID::kStandardDisplayName, fileDisplayName);
+    } else {
+        fileDisplayName = d->attributes.value(DFileInfo::AttributeID::kStandardDisplayName).toString();
+    }
+
+    return fileDisplayName;
 }
 
 /*!

@@ -44,7 +44,6 @@ class FileOperations : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Operation_DeleteFile)
     DPF_EVENT_REG_HOOK(hook_Operation_MoveToTrash)
     DPF_EVENT_REG_HOOK(hook_Operation_RestoreFromTrash)
-    DPF_EVENT_REG_HOOK(hook_Operation_CleanTrash)
     DPF_EVENT_REG_HOOK(hook_Operation_OpenFileInPlugin)
     DPF_EVENT_REG_HOOK(hook_Operation_OpenFileByApp)
     DPF_EVENT_REG_HOOK(hook_Operation_OpenInTerminal)

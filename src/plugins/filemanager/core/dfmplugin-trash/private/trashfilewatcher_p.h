@@ -44,6 +44,7 @@ public:
 
     AbstractFileWatcherPointer proxy;
     QMap<QUrl, AbstractFileWatcherPointer> urlToWatcherMap;
+    QSharedPointer<DWatcher> watcher { nullptr };
 };
 
 }

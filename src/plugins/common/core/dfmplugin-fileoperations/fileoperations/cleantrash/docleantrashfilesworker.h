@@ -57,6 +57,9 @@ protected:
                                                            const QString &errorMsg = QString());
 
 private:
+    bool deleteFile(const QUrl &url);
+
+private:
     QAtomicInteger<qint64> cleanTrashFilesCount { 0 };
     QString trashInfoPath;
     QString trashFilePath;

@@ -233,8 +233,8 @@ bool AbstractWorker::initArgs()
 {
     sourceFilesTotalSize = 0;
     setStat(AbstractJobHandler::JobState::kRunningState);
-    if (!handler)
-        handler.reset(new LocalFileHandler);
+    if (!localFileHandler)
+        localFileHandler.reset(new LocalFileHandler);
     completeSourceFiles.clear();
     completeTargetFiles.clear();
     completeCustomInfos.clear();

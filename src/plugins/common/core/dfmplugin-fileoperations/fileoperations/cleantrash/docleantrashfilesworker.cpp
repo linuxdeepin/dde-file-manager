@@ -23,6 +23,10 @@
 #include "docleantrashfilesworker.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 #include "dfm-io/core/denumerator.h"
 #include "dfm-io/core/diofactory.h"
@@ -67,23 +71,24 @@ bool DoCleanTrashFilesWorker::statisticsFilesSize()
         return false;
     }
 
-    QString path = sourceUrls.first().path();
-    if (path.endsWith("/"))
-        path.chop(1);
-
-    if (sourceUrls.count() == 1 && path == StandardPaths::location(StandardPaths::kTrashFilesPath))
-        FileOperationsUtils::getDirFiles(sourceUrls.first(), allFilesList);
+    if (sourceUrls.size() == 1) {
+        const QUrl &urlSource = sourceUrls[0];
+        if (UniversalUtils::urlEquals(urlSource, FileUtils::trashRootUrl())) {
+            DecoratorFileEnumerator enumerator(urlSource);
+            if (!enumerator.isValid())
+                return false;
+            while (enumerator.hasNext()) {
+                allFilesList.append(enumerator.next());
+            }
+        }
+    }
 
     return true;
 }
 
 bool DoCleanTrashFilesWorker::initArgs()
 {
-    AbstractWorker::initArgs();
-    trashInfoPath = StandardPaths::location(StandardPaths::kTrashInfosPath);
-    trashInfoPath = trashInfoPath.endsWith("/") ? trashInfoPath : trashInfoPath + "/";
-    trashFilePath = StandardPaths::location(StandardPaths::kTrashFilesPath);
-    return true;
+    return AbstractWorker::initArgs();
 }
 
 /*!
@@ -95,12 +100,12 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
     QList<QUrl>::iterator it = sourceUrls.begin();
     QList<QUrl>::iterator itend = sourceUrls.end();
     if (!allFilesList.isEmpty()) {
-        qDebug() << "sourceUrls has children, use allFilesList replace sourceUrls"
-                 << " sourceUrls: " << sourceUrls;
+        qInfo() << "sourceUrls has children, use allFilesList replace sourceUrls"
+                << " sourceUrls: " << sourceUrls;
         if (allFilesList.size() > 20)
-            qDebug() << "allFilesList size > 20, ignore allFilesList print";
+            qInfo() << "allFilesList size > 20, ignore allFilesList print";
         else
-            qDebug() << "allFilesList: " << allFilesList;
+            qInfo() << "allFilesList: " << allFilesList;
 
         it = allFilesList.begin();
         itend = allFilesList.end();
@@ -111,7 +116,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
         const QUrl &url = *it;
         emitCurrentTaskNotify(url, QUrl());
 
-        if (!url.path().startsWith(trashFilePath)) {
+        if (url.scheme() != Global::Scheme::kTrash) {
             // pause and emit error msg
             AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kIsNotTrashFileError);
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
@@ -131,10 +136,10 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
                 continue;
             }
         }
-        fileInfo->refresh();
 
         if (!clearTrashFile(fileInfo))
             return false;
+
         cleanTrashFilesCount++;
         completeTargetFiles.append(fileInfo->url());
         ++it;
@@ -151,30 +156,13 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
 bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &trashInfo)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    QString location(trashInfoPath + trashInfo->fileName() + ".trashinfo");
     bool resultFile = false;
-    bool resultInfo = false;
     do {
-        if (!resultFile) {
-            const QUrl &fileUrl = trashInfo->url();
-
-            bool ret = false;
-            if (trashInfo->isFile() || trashInfo->isSymLink()) {
-                ret = deleteFile(fileUrl, QUrl(), &resultFile, true);
-            } else {
-                // dir
-                ret = deleteDir(fileUrl, QUrl(), &resultFile, true);
-            }
-            if (!ret)
-                return false;
-        }
-        if (!resultInfo)
-            resultInfo = handler->deleteFile(QUrl::fromLocalFile(location));
+        const QUrl &fileUrl = trashInfo->url();
+        resultFile = deleteFile(fileUrl);
 
         if (!resultFile)
-            action = doHandleErrorAndWait(trashInfo->url(), AbstractJobHandler::JobErrorType::kDeleteTrashFileError, handler->errorString());
-        if (!resultInfo)
-            qWarning() << "delete trash info failed";
+            action = doHandleErrorAndWait(fileUrl, AbstractJobHandler::JobErrorType::kDeleteTrashFileError, localFileHandler->errorString());
 
     } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -200,4 +188,9 @@ AbstractJobHandler::SupportAction DoCleanTrashFilesWorker::doHandleErrorAndWait(
     handlingErrorQMutex.unlock();
 
     return currentAction;
+}
+
+bool DoCleanTrashFilesWorker::deleteFile(const QUrl &url)
+{
+    return localFileHandler->deleteFile(url);
 }

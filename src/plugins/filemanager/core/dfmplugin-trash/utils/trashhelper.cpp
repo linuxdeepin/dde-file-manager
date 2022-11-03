@@ -21,7 +21,6 @@
  */
 
 #include "trashhelper.h"
-#include "trashfileinfo.h"
 #include "trashfilewatcher.h"
 #include "events/trasheventcaller.h"
 #include "views/emptyTrashWidget.h"
@@ -35,6 +34,7 @@
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -49,6 +49,8 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
+
+#include <unistd.h>
 
 using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
@@ -89,8 +91,7 @@ void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, co
     menu->addSeparator();
 
     auto emptyTrashAct = menu->addAction(QObject::tr("Empty Trash"), [windowId, url]() {
-        QUrl localUrl = TrashHelper::toLocalFile(url);
-        TrashEventCaller::sendEmptyTrash(windowId, { localUrl });
+        TrashEventCaller::sendEmptyTrash(windowId, {});
     });
     emptyTrashAct->setDisabled(TrashHelper::isEmpty());
 
@@ -106,12 +107,10 @@ void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, co
 QFrame *TrashHelper::createEmptyTrashTopWidget()
 {
     EmptyTrashWidget *emptyTrashWidget = new EmptyTrashWidget;
-    QObject::connect(emptyTrashWidget, &EmptyTrashWidget::emptyTrash,
-
-                     TrashHelper::instance(), [emptyTrashWidget] {
-                         auto windId = TrashHelper::instance()->windowId(emptyTrashWidget);
-                         TrashHelper::emptyTrash(windId);
-                     });
+    QObject::connect(emptyTrashWidget, &EmptyTrashWidget::emptyTrash, TrashHelper::instance(), [emptyTrashWidget] {
+        auto windId = TrashHelper::instance()->windowId(emptyTrashWidget);
+        TrashHelper::emptyTrash(windId);
+    });
     return emptyTrashWidget;
 }
 
@@ -119,7 +118,7 @@ bool TrashHelper::showTopWidget(QWidget *w, const QUrl &url)
 {
     Q_UNUSED(w)
 
-    auto rootUrl = TrashHelper::fromTrashFile("/");
+    auto rootUrl = TrashHelper::rootUrl();
     if (UniversalUtils::urlEquals(url, rootUrl) && !TrashHelper::isEmpty()) {
         return true;
     } else {
@@ -127,41 +126,55 @@ bool TrashHelper::showTopWidget(QWidget *w, const QUrl &url)
     }
 }
 
-QUrl TrashHelper::fromTrashFile(const QString &filePath)
+QUrl TrashHelper::transToTrashFile(const QString &filePath)
 {
     QUrl url;
-
     url.setScheme(TrashHelper::scheme());
     url.setPath(filePath);
-
     return url;
 }
 
-QUrl TrashHelper::fromLocalFile(const QUrl &url)
+QUrl TrashHelper::trashFileToTargetUrl(const QUrl &url)
 {
-    if (url.scheme() == Global::Scheme::kFile && url.path().startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath))) {
-        return TrashHelper::fromTrashFile(url.path().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
-    }
-    return url;
+    auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    if (fileInfo)
+        return fileInfo->redirectedFileUrl();
+
+    return QUrl();
 }
 
-QUrl TrashHelper::toLocalFile(const QUrl &url)
+bool TrashHelper::isTrashFile(const QUrl &url)
 {
-    return QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path());
+    if (url.scheme() == TrashHelper::scheme())
+        return true;
+    if (url.path().startsWith(StandardPaths::location(StandardPaths::kTrashLocalFilesPath)))
+        return true;
+
+    const QString &rule = QString("/.Trash-%1/(files|info)/").arg(getuid());
+    QRegularExpression reg(rule);
+    QRegularExpressionMatch matcher = reg.match(url.toString());
+    return matcher.hasMatch();
+}
+
+bool TrashHelper::isTrashRootFile(const QUrl &url)
+{
+    if (UniversalUtils::urlEquals(url, TrashHelper::rootUrl()))
+        return true;
+    if (url.path().endsWith(StandardPaths::location(StandardPaths::kTrashLocalFilesPath)))
+        return true;
+
+    const QString &rule = QString("/.Trash-%1/(files|info)$").arg(getuid());
+    QRegularExpression reg(rule);
+    QRegularExpressionMatch matcher = reg.match(url.toString());
+    return matcher.hasMatch();
 }
 
 bool TrashHelper::isEmpty()
 {
-    QDir dir(StandardPaths::location(StandardPaths::kTrashFilesPath));
-
-    if (!dir.exists())
+    DecoratorFileEnumerator enumerator(rootUrl());
+    if (!enumerator.isValid())
         return true;
-
-    dir.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
-
-    QDirIterator iterator(dir);
-
-    return !iterator.hasNext();
+    return !enumerator.hasNext();
 }
 
 void TrashHelper::emptyTrash(const quint64 windowId)
@@ -177,14 +190,15 @@ TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
     {
         // source path
         BasicExpand expand;
-        const QString &sourcePath = info->redirectedFileUrl().path();
+        const QString &sourcePath = info->originalUrl().path();
         expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
         map["kFieldInsert"] = expand;
     }
     {
         // trans trash path
         BasicExpand expand;
-        expand.insert("kFilePosition", qMakePair(QObject::tr("Location"), TrashHelper::toLocalFile(url).path()));
+        const QString &targetPath = info->redirectedFileUrl().path();
+        expand.insert("kFilePosition", qMakePair(QObject::tr("Location"), targetPath));
         map["kFieldReplace"] = expand;
     }
 
@@ -193,15 +207,9 @@ TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
 
 JobHandlePointer TrashHelper::restoreFromTrashHandle(const quint64 windowId, const QList<QUrl> urls, const AbstractJobHandler::JobFlags flags)
 {
-    QList<QUrl> urlsLocal;
-    for (const auto &url : urls) {
-        if (url.scheme() == TrashHelper::scheme())
-            urlsLocal.append(TrashHelper::toLocalFile(url));
-    }
-
     dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrash,
                                  windowId,
-                                 urlsLocal,
+                                 urls,
                                  flags, nullptr);
     return {};
 }
@@ -215,19 +223,17 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     if (!action)
         return false;
 
-    QUrl urlFrom = urls.first();
-    QUrl urlToTemp = urlTo;
-    // restore url to trash
-    urlFrom = fromLocalFile(urlFrom);
-    urlToTemp = fromLocalFile(urlTo);
+    const bool fromIsTrash = isTrashFile(urls.first());
+    const bool toIsTrash = isTrashFile(urlTo);
+    const bool toIsTrashRoot = isTrashRootFile(urlTo);
 
-    if (urlFrom.scheme() == Global::Scheme::kTrash && urlToTemp.scheme() == Global::Scheme::kTrash) {
+    if (fromIsTrash && toIsTrash) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (urlToTemp.scheme() == Global::Scheme::kTrash && !UniversalUtils::urlEquals(urlToTemp, TrashHelper::rootUrl())) {
+    } else if (toIsTrash && !toIsTrashRoot) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (urlFrom.scheme() == Global::Scheme::kTrash || urlToTemp.scheme() == Global::Scheme::kTrash) {
+    } else if (fromIsTrash || toIsTrash) {
         *action = Qt::MoveAction;
         return true;
     }
@@ -236,7 +242,7 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
 
 bool TrashHelper::detailViewIcon(const QUrl &url, QString *iconName)
 {
-    if (url == rootUrl()) {
+    if (UniversalUtils::urlEquals(url, rootUrl())) {
         *iconName = SystemPathUtil::instance()->systemPathIconName("Trash");
         if (!iconName->isEmpty())
             return true;
@@ -285,17 +291,17 @@ bool TrashHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const Glo
         return false;
 
     if (role == kItemFileOriginalPath) {
-        QSharedPointer<TrashFileInfo> info = InfoFactory::create<TrashFileInfo>(url);
+        QSharedPointer<AbstractFileInfo> info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
-            data->setValue(info->redirectedFileUrl().path());
+            data->setValue(info->originalUrl().path());
             return true;
         }
     }
 
     if (role == kItemFileDeletionDate) {
-        QSharedPointer<TrashFileInfo> info = InfoFactory::create<TrashFileInfo>(url);
+        QSharedPointer<AbstractFileInfo> info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
-            data->setValue(info->fileTime(QFileDevice::FileAccessTime).toString(FileUtils::dateTimeFormat()));
+            data->setValue(info->deletionTime().toString(FileUtils::dateTimeFormat()));
             return true;
         }
     }
@@ -309,10 +315,13 @@ bool TrashHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
         return false;
     for (const QUrl &url : origins) {
         if (url.scheme() != TrashHelper::scheme())
-            return false;
-        (*urls).push_back(toLocalFile(url));
+            continue;
+        if (UniversalUtils::urlEquals(url, FileUtils::trashRootUrl()))
+            continue;
+        (*urls).push_back(trashFileToTargetUrl(url));
     }
-    return true;
+
+    return !(*urls).isEmpty();
 }
 
 void TrashHelper::onTrashStateChanged()

@@ -446,14 +446,31 @@ bool FileUtils::isCdRomDevice(const QUrl &url)
 
 bool FileUtils::trashIsEmpty()
 {
-    const QString &path = StandardPaths::location(StandardPaths::kTrashFilesPath);
-    DecoratorFile file(path);
-    if (!file.exists())
+    DecoratorFileEnumerator enumerator(trashRootUrl());
+    if (!enumerator.isValid())
+        return true;
+    return !enumerator.hasNext();
+}
+
+QUrl FileUtils::trashRootUrl()
+{
+    QUrl url;
+    url.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kTrash);
+    url.setPath("/");
+    return url;
+}
+
+bool FileUtils::isTrashFile(const QUrl &url)
+{
+    if (url.scheme() == DFMBASE_NAMESPACE::Global::Scheme::kTrash)
+        return true;
+    if (url.path().startsWith(StandardPaths::location(StandardPaths::kTrashLocalFilesPath)))
         return true;
 
-    DecoratorFileEnumerator enumerator(path, QStringList(),
-                                       DFMIO::DEnumerator::DirFilter::kAllEntries | DFMIO::DEnumerator::DirFilter::kHidden | DFMIO::DEnumerator::DirFilter::kSystem | DFMIO::DEnumerator::DirFilter::kNoDotAndDotDot);
-    return !enumerator.hasNext();
+    const QString &rule = QString("/.Trash-%1/(files|info)/").arg(getuid());
+    QRegularExpression reg(rule);
+    QRegularExpressionMatch matcher = reg.match(url.toString());
+    return matcher.hasMatch();
 }
 
 bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)

@@ -272,12 +272,12 @@ bool FileOperateBaseWorker::openFile(const AbstractFileInfoPointer &fromInfo, co
 void FileOperateBaseWorker::setTargetPermissions(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo)
 {
     // 修改文件修改时间
-    handler->setFileTime(toInfo->url(), fromInfo->lastRead(), fromInfo->lastModified());
+    localFileHandler->setFileTime(toInfo->url(), fromInfo->lastRead(), fromInfo->lastModified());
     QFileDevice::Permissions permissions = fromInfo->permissions();
     QString path = fromInfo->url().path();
     //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
     if (permissions != 0000)
-        handler->setPermissions(toInfo->url(), permissions);
+        localFileHandler->setPermissions(toInfo->url(), permissions);
 }
 
 /*!
@@ -505,10 +505,10 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
         if (force)
-            handler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
-        ret = handler->deleteFile(fromUrl);
+            localFileHandler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
+        ret = localFileHandler->deleteFile(fromUrl);
         if (!ret) {
-            action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
+            action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, localFileHandler->errorString());
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -530,7 +530,7 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bo
 
         if (DecoratorFileInfo(url).isDir()) {
             if (force)
-                handler->setPermissions(url, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
+                localFileHandler->setPermissions(url, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
             succ = deleteDir(url, toUrl, skip, force);
         } else {
             succ = deleteFile(url, toUrl, skip, force);
@@ -691,10 +691,10 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
     AbstractJobHandler::SupportAction actionForlink { AbstractJobHandler::SupportAction::kNoAction };
 
     do {
-        if (handler->createSystemLink(newFromInfo->url(), toInfo->url())) {
+        if (localFileHandler->createSystemLink(newFromInfo->url(), toInfo->url())) {
             return true;
         }
-        actionForlink = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
+        actionForlink = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(localFileHandler->errorString()));
     } while (!isStopped() && actionForlink == AbstractJobHandler::SupportAction::kRetryAction);
     cancelThreadProcessingError();
     setSkipValue(skip, actionForlink);
@@ -885,10 +885,10 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
     QFileDevice::Permissions permissions = fromInfo->permissions();
     if (!DecoratorFile(toInfo->url()).exists()) {
         do {
-            if (handler->mkdir(toInfo->url()))
+            if (localFileHandler->mkdir(toInfo->url()))
                 break;
 
-            action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kMkdirError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
+            action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kMkdirError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(localFileHandler->errorString()));
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
         cancelThreadProcessingError();
         if (AbstractJobHandler::SupportAction::kNoAction != action) {
@@ -910,7 +910,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
     }
 
     if (fromInfo->countChildFile() <= 0) {
-        handler->setPermissions(toInfo->url(), permissions);
+        localFileHandler->setPermissions(toInfo->url(), permissions);
         return true;
     }
     // 遍历源文件，执行一个一个的拷贝
@@ -941,7 +941,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
         dirinfo->permission = permissions;
         dirPermissonList.appendByLock(dirinfo);
     } else {
-        handler->setPermissions(toInfo->url(), permissions);
+        localFileHandler->setPermissions(toInfo->url(), permissions);
     }
 
     return true;
@@ -1154,7 +1154,8 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
 
     if (skip && *skip)
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->url());
-    return false;
+
+    return true;
 }
 
 bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
@@ -1264,7 +1265,7 @@ bool FileOperateBaseWorker::verifyFileIntegrity(const qint64 &blockSize, const u
 void FileOperateBaseWorker::setAllDirPermisson()
 {
     for (auto info : dirPermissonList.list()) {
-        handler->setPermissions(info->target, info->permission);
+        localFileHandler->setPermissions(info->target, info->permission);
     }
 }
 
@@ -1371,8 +1372,6 @@ void FileOperateBaseWorker::determineCountProcessType()
         targetStorageInfo.reset(new StorageInfo(targetUrl.path()));
 
     qDebug("Target block device: \"%s\", Root Path: \"%s\"", targetStorageInfo->device().constData(), qPrintable(targetStorageInfo->rootPath()));
-
-    auto devicePath = DFMIO::DFMUtils::devicePathFromUrl(targetUrl);
 
     if (targetStorageInfo->isLocalDevice()) {
         isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetUrl);

@@ -27,6 +27,8 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/core/diofactory.h>
@@ -65,19 +67,22 @@ bool DoRestoreTrashFilesWorker::doWork()
 bool DoRestoreTrashFilesWorker::statisticsFilesSize()
 {
     sourceFilesCount = sourceUrls.size();
-
     if (sourceUrls.count() == 0) {
         qWarning() << "sources files list is empty!";
         return false;
     }
 
-    QString path = sourceUrls.first().path();
-    if (path.endsWith("/"))
-        path.chop(1);
-
-    if (sourceUrls.count() == 1 && path == StandardPaths::location(StandardPaths::kTrashFilesPath)) {
-        FileOperationsUtils::getDirFiles(sourceUrls.first(), allFilesList);
-        sourceFilesCount = allFilesList.size();
+    if (sourceUrls.size() == 1) {
+        const QUrl &urlSource = sourceUrls[0];
+        if (UniversalUtils::urlEquals(urlSource, FileUtils::trashRootUrl())) {
+            DecoratorFileEnumerator enumerator(urlSource);
+            if (!enumerator.isValid())
+                return false;
+            while (enumerator.hasNext()) {
+                allFilesList.append(enumerator.next());
+            }
+            sourceFilesCount = allFilesList.size();
+        }
     }
 
     return true;
@@ -85,9 +90,6 @@ bool DoRestoreTrashFilesWorker::statisticsFilesSize()
 
 bool DoRestoreTrashFilesWorker::initArgs()
 {
-    trashStorageInfo.reset(new QStorageInfo(StandardPaths::location(StandardPaths::kTrashFilesPath)));
-    trashInfoPath = StandardPaths::location(StandardPaths::kTrashInfosPath);
-    trashInfoPath = trashInfoPath.endsWith("/") ? trashInfoPath : trashInfoPath + "/";
     completeTargetFiles.clear();
     isConvert = jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
     return AbstractWorker::initArgs();
@@ -109,27 +111,21 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             return false;
 
         // 获取回收站文件的原路径
-
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
-                compeleteFilesCount++;
+                completeFilesCount++;
                 continue;
             }
         }
 
-        QUrl restoreFileUrl;
-
-        if (!getRestoreFileUrl(fileInfo, restoreFileUrl, &result)) {
-            if (result) {
-                compeleteFilesCount++;
-                continue;
-            } else {
-                return false;
-            }
+        const QUrl &restoreFileUrl = fileInfo->originalUrl();
+        if (!restoreFileUrl.isValid()) {
+            completeFilesCount++;
+            continue;
         }
 
         const auto &restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl);
@@ -138,7 +134,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
-                compeleteFilesCount++;
+                completeFilesCount++;
                 continue;
             }
         }
@@ -146,217 +142,37 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         AbstractFileInfoPointer targetInfo = nullptr;
         if (!createParentDir(fileInfo, restoreInfo, targetInfo, &result)) {
             if (result) {
-                compeleteFilesCount++;
+                completeFilesCount++;
                 continue;
             } else {
                 return false;
             }
         }
 
+        // read trash info
+        QString trashInfoCache = readTrashInfo(fileInfo->redirectedFileUrl().toString().replace("/files/", "/info/") + ".trashinfo");
+        emitCurrentTaskNotify(url, restoreFileUrl);
+        AbstractFileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
+        if (!doCheckFile(fileInfo, targetInfo, restoreInfo->fileName(), newTargetInfo, &ok))
+            continue;
 
-        QString trashInfoFile(trashInfoPath + fileInfo->fileName() + ".trashinfo");
-        DecoratorFile file(trashInfoFile);
-        QString trashInfoCache;
-        if (file.exists())
-            trashInfoCache = file.readAll();
-
-        if (fileInfo->isSymLink()) {
-            ok = handleSymlinkFile(fileInfo, restoreInfo);
-        } else {
-            ok = handleRestoreTrash(fileInfo, restoreInfo, targetInfo);
-            if (!ok)
-                emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kRestoreFailed, { url });
-        }
-
-        if (!ok) {
-            return false;
-        }
-        fileInfo->refresh();
-
-        // save info
-        {
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        bool trashSucc = fileHandler.moveFile(url, newTargetInfo->url(), DFMIO::DFile::CopyFlag::kOverwrite);
+        if (trashSucc) {
+            completeFilesCount++;
             if (!completeSourceFiles.contains(url)) {
                 completeSourceFiles.append(url);
                 completeCustomInfos.append(trashInfoCache);
             }
             if (!completeTargetFiles.contains(restoreInfo->url()))
                 completeTargetFiles.append(restoreInfo->url());
+            continue;
         }
-    }
-
-    return true;
-}
-/*!
- * \brief DoRestoreTrashFilesWorker::getRestoreFileUrl Get the original URL of the restored file
- * at the rediscovery station
- * \param trashFileInfo Information about files in the recycle bin
- * \param restoreUrl Output parameter: the original URL restored by the recycle bin
- * \param result Output parameters: execution results
- * \return Is it successful
- */
-bool DoRestoreTrashFilesWorker::getRestoreFileUrl(const AbstractFileInfoPointer &trashFileInfo,
-                                                  QUrl &restoreUrl, bool *result)
-{
-    restoreUrl.clear();
-    const QString &fileBaseName = trashFileInfo->fileName();
-
-    QString location(trashInfoPath + fileBaseName + ".trashinfo");
-    if (QFile::exists(location)) {
-        QSettings setting(location, QSettings::NativeFormat);
-
-        setting.beginGroup("Trash Info");
-        setting.setIniCodec("utf-8");
-
-        QString originalFilePath = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray());
-
-        restoreUrl = QUrl::fromLocalFile(originalFilePath);
-    }
-
-    if (!restoreUrl.isValid()) {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(trashFileInfo->url(), restoreUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
-        if (result)
-            *result = action == AbstractJobHandler::SupportAction::kSkipAction;
         return false;
     }
 
     return true;
-}
-/*!
- * \brief DoRestoreTrashFilesWorker::handleSymlinkFile Process linked file recycle bin restore
- * \param trashInfo File information in Recycle Bin
- * \param restoreInfo the file information restored at the originating station
- * \return Is the execution successful
- */
-bool DoRestoreTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo)
-{
-    //如果文件存在，弹出窗口提示，替换还是跳过。跳过也会清理掉当前的trashinfo和源文件
-    const QUrl &fromUrl = trashInfo->url();
-    const QUrl &toUrl = restoreInfo->url();
-
-    emitCurrentTaskNotify(fromUrl, toUrl);
-
-    QDir parentDir(UrlRoute::urlParent(toUrl).path());
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-
-    if (DecoratorFile(toUrl).exists()) {
-        action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
-    } else {
-        do {
-            QFile targetfile(trashInfo->symLinkTarget());
-            if (!targetfile.link(restoreInfo->filePath()))
-                // pause and emit error msg
-                action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kSymlinkError, targetfile.errorString());
-        } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-    }
-
-    // clear tashfileinfo
-    return clearTrashFile(fromUrl, toUrl, trashInfo) && (action == AbstractJobHandler::SupportAction::kNoAction || action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kReplaceAction);
-}
-/*!
- * \brief DoRestoreTrashFilesWorker::handleRestoreTrash Process file recycle bin restore
- * \param trashInfo File information in Recycle Bin
- * \param restoreInfo the file information restored at the originating station
- * \return Is the execution successful
- */
-bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, const AbstractFileInfoPointer &targetInfo)
-{
-    //执行dorename，失败执行拷贝，再执行清理掉当前的trashinfo和源文件
-    const QUrl &fromUrl = trashInfo->url();
-    QUrl toUrl = restoreInfo->url();
-    emitCurrentTaskNotify(fromUrl, toUrl);
-    compeleteFilesCount++;
-
-    bool ok = false;
-    AbstractFileInfoPointer newTargetInfo(nullptr);
-    if (!doCheckFile(trashInfo, targetInfo, restoreInfo->fileName(), newTargetInfo, &ok))
-        return ok;
-
-    toUrl = newTargetInfo->url();
-
-    if (handler->renameFile(fromUrl, toUrl))
-        return clearTrashFile(fromUrl, toUrl, trashInfo, true);
-
-    return false;
-}
-/*!
- * \brief DoRestoreTrashFilesWorker::clearTrashFile
- * \param fromUrl URL of the source file
- * \param toUrl Destination URL
- * \param trashInfo File information in Recycle Bin
- * \return Is the execution successful
- */
-bool DoRestoreTrashFilesWorker::clearTrashFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &trashInfo, const bool isSourceDel)
-{
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    QString location(trashInfoPath + trashInfo->fileName() + ".trashinfo");
-    bool resultFile = isSourceDel;
-    bool resultInfo = false;
-    do {
-        if (!resultFile)
-            resultFile = handler->deleteFile(trashInfo->url());
-        if (!resultInfo)
-            resultInfo = handler->deleteFile(QUrl::fromLocalFile(location));
-        if (!resultInfo || !resultFile)
-            action = doHandleErrorAndWait(fromUrl, toUrl,
-                                          AbstractJobHandler::JobErrorType::kDeleteTrashFileError, handler->errorString());
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-
-    return action == AbstractJobHandler::SupportAction::kNoAction || AbstractJobHandler::SupportAction::kSkipAction == action;
-}
-/*!
- * \brief DoRestoreTrashFilesWorker::checkDiskSpaceAvailable Check if there is free space
- * on the disk where the target file is located
- * \param fromUrl URL of the source file
- * \param toUrl Destination URL
- * \param result Output parameters: operation results
- * \return Is there any extra space
- */
-bool DoRestoreTrashFilesWorker::checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *result)
-{
-
-    QSharedPointer<StorageInfo> restoreStorage(new StorageInfo(toUrl.path()));
-    return FileOperateBaseWorker::checkDiskSpaceAvailable(fromUrl, toUrl, restoreStorage, result);
-}
-/*!
- * \brief DoRestoreTrashFilesWorker::doCopyAndClearTrashFile Copy and clean recycle bin files
- * \param trashInfo File information in Recycle Bin
- * \param restoreInfo the file information restored at the originating station
- * \return Is the execution successful
- */
-bool DoRestoreTrashFilesWorker::doCopyAndClearTrashFile(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo)
-{
-    bool result = false;
-    // 判断目标文件是否存在，跳过，和替换操作
-    const QUrl &trashUrl = trashInfo->url();
-    const QUrl &restoreUrl = restoreInfo->url();
-    emitCurrentTaskNotify(trashUrl, restoreUrl);
-
-    if (DecoratorFile(restoreUrl).exists()) {
-        AbstractJobHandler::SupportAction actionForExist { AbstractJobHandler::SupportAction::kNoAction };
-        if (trashInfo->isFile()) {
-            actionForExist = doHandleErrorAndWait(trashUrl, restoreUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
-        } else {
-            actionForExist = doHandleErrorAndWait(trashUrl, restoreUrl, AbstractJobHandler::JobErrorType::kDirectoryExistsError);
-        }
-
-        if (actionForExist == AbstractJobHandler::SupportAction::kSkipAction) {
-            compeleteFilesCount++;
-            return true;
-        }
-    }
-
-    if (trashInfo->isFile()) {
-        if (!doCopyFilePractically(trashInfo, restoreInfo, &result))
-            return result;
-    } else {
-        if (!checkAndCopyDir(trashInfo, restoreInfo, &result))
-            return result;
-    }
-
-    compeleteFilesCount++;
-
-    return clearTrashFile(trashUrl, restoreUrl, trashInfo, false);
 }
 
 bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
@@ -389,4 +205,10 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
     }
 
     return true;
+}
+
+QString DoRestoreTrashFilesWorker::readTrashInfo(const QUrl &url)
+{
+    DecoratorFile file(url);
+    return file.readAll();
 }

@@ -45,20 +45,33 @@ TrashFileWatcherPrivate::TrashFileWatcherPrivate(const QUrl &fileUrl, TrashFileW
 
 bool TrashFileWatcherPrivate::start()
 {
-    return proxy && proxy->startWatcher();
+    if (watcher.isNull())
+        return false;
+    started = watcher->start();
+    if (!started)
+        qWarning() << "watcher start failed, error: " << watcher->lastError().errorMsg();
+    return started;
 }
 
 bool TrashFileWatcherPrivate::stop()
 {
-    return proxy && proxy->stopWatcher();
+    if (watcher.isNull())
+        return false;
+    started = watcher->stop();
+    return started;
 }
 
 void TrashFileWatcherPrivate::initFileWatcher()
 {
-    const QUrl &watchUrl = QUrl::fromLocalFile(TrashHelper::toLocalFile(path).path());
+    const QUrl &trashUrl = url;
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(trashUrl.scheme(), static_cast<QUrl>(trashUrl));
+    if (!factory) {
+        qWarning("create factory failed.");
+        abort();
+    }
 
-    proxy = WatcherFactory::create<AbstractFileWatcher>(watchUrl);
-    if (!proxy) {
+    watcher = factory->createWatcher();
+    if (!watcher) {
         qWarning("watcher create failed.");
         abort();
     }
@@ -66,9 +79,10 @@ void TrashFileWatcherPrivate::initFileWatcher()
 
 void TrashFileWatcherPrivate::initConnect()
 {
-    connect(proxy.data(), &AbstractFileWatcher::fileDeleted, static_cast<TrashFileWatcher *>(q), &TrashFileWatcher::onFileDeleted);
-    connect(proxy.data(), &AbstractFileWatcher::fileAttributeChanged, static_cast<TrashFileWatcher *>(q), &TrashFileWatcher::onFileAttributeChanged);
-    connect(proxy.data(), &AbstractFileWatcher::subfileCreated, static_cast<TrashFileWatcher *>(q), &TrashFileWatcher::onSubfileCreated);
+    connect(watcher.data(), &DWatcher::fileChanged, q, &AbstractFileWatcher::fileAttributeChanged);
+    connect(watcher.data(), &DWatcher::fileDeleted, q, &AbstractFileWatcher::fileDeleted);
+    connect(watcher.data(), &DWatcher::fileAdded, q, &AbstractFileWatcher::subfileCreated);
+    connect(watcher.data(), &DWatcher::fileRenamed, q, &AbstractFileWatcher::fileRename);
 }
 
 TrashFileWatcher::TrashFileWatcher(const QUrl &url, QObject *parent)
@@ -81,25 +95,6 @@ TrashFileWatcher::TrashFileWatcher(const QUrl &url, QObject *parent)
 
 TrashFileWatcher::~TrashFileWatcher()
 {
-}
-
-void TrashFileWatcher::onFileDeleted(const QUrl &url)
-{
-    QUrl newUrl = TrashHelper::fromLocalFile(url);
-
-    emit fileDeleted(newUrl);
-}
-
-void TrashFileWatcher::onFileAttributeChanged(const QUrl &url)
-{
-    QUrl newUrl = TrashHelper::fromLocalFile(url);
-    emit fileAttributeChanged(newUrl);
-}
-
-void TrashFileWatcher::onSubfileCreated(const QUrl &url)
-{
-    QUrl newUrl = TrashHelper::fromLocalFile(url);
-    emit subfileCreated(newUrl);
 }
 
 }

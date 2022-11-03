@@ -887,6 +887,13 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
         return QDateTime();
     }
 }
+
+QDateTime dfmbase::AbstractFileInfo::deletionTime() const
+{
+    CALL_PROXY(deletionTime());
+
+    return QDateTime();
+}
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::countChildFile 获取目录下有多少个文件（只有下一级）
  * \return 返回文件数量
@@ -974,6 +981,18 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl() const
 QUrl DFMBASE_NAMESPACE::AbstractFileInfo::redirectedFileUrl() const
 {
     CALL_PROXY(redirectedFileUrl());
+
+    return url();
+}
+
+/*!
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::originalUrl original file
+ * if file is trash, return original path
+ * \return QUrl
+ */
+QUrl dfmbase::AbstractFileInfo::originalUrl() const
+{
+    CALL_PROXY(originalUrl());
 
     return url();
 }

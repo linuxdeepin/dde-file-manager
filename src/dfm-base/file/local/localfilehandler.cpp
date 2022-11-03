@@ -546,26 +546,86 @@ bool LocalFileHandler::setPermissionsRecursive(const QUrl &url, QFileDevice::Per
 
     return false;
 }
+
+bool LocalFileHandler::moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag /*= DFMIO::DFile::CopyFlag::kNone*/)
+{
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourceUrl.scheme(), static_cast<QUrl>(sourceUrl));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << sourceUrl;
+        return false;
+    }
+    QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
+    if (!dOperator) {
+        qWarning() << "create file operator failed, url: " << sourceUrl;
+        return false;
+    }
+
+    bool success = dOperator->moveFile(destUrl, flag);
+    if (!success) {
+        qWarning() << "move file failed, source url: " << sourceUrl << " destUrl: " << destUrl;
+
+        setError(dOperator->lastError());
+
+        return false;
+    }
+
+    return true;
+}
+
+bool LocalFileHandler::trashFile(const QUrl &url)
+{
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << url;
+        return false;
+    }
+    QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
+    if (!dOperator) {
+        qWarning() << "create file operator failed, url: " << url;
+        return false;
+    }
+
+    bool success = dOperator->trashFile();
+    if (!success) {
+        qWarning() << "trash file failed, url: " << url;
+
+        setError(dOperator->lastError());
+
+        return false;
+    }
+
+    return true;
+}
 /*!
  * \brief LocalFileHandler::deleteFile 删除文件使用系统c库
  * \param file 文件的url
  * \return bool 删除文件是否失败
  */
-bool LocalFileHandler::deleteFile(const QUrl &file)
+bool LocalFileHandler::deleteFile(const QUrl &url)
 {
-    int ret = 0;
-    if ((ret = ::remove(file.toLocalFile().toLocal8Bit())) == 0) {
-        FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, file);
-        qDebug() << "delete file success: " << file;
-        return true;
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << url;
+        return false;
     }
-    int sysErrno = errno;
-    qDebug() << "try delete file, but failed url: " << file << " ret: " << ret << sysErrno << strerror(sysErrno);
-    if (sysErrno == EROFS || sysErrno == EACCES)
-        setError(DFMIOError(DFM_IO_ERROR_PERMISSION_DENIED));
-    else
-        setError(DFMIOError(DFM_IO_ERROR_NOT_SUPPORTED));
-    return false;
+    QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
+    if (!dOperator) {
+        qWarning() << "create file operator failed, url: " << url;
+        return false;
+    }
+
+    bool success = dOperator->deleteFile();
+    if (!success) {
+        qWarning() << "delete file failed, url: " << url;
+
+        setError(dOperator->lastError());
+
+        return false;
+    }
+    FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
+    qInfo() << "delete file success: " << url;
+
+    return true;
 }
 /*!
  * \brief LocalFileHandler::setFileTime 设置文件的读取和最后修改时间

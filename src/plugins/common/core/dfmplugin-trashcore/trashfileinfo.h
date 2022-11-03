@@ -21,10 +21,10 @@
 #ifndef TRASHFILEINFO_H
 #define TRASHFILEINFO_H
 
-#include "dfmplugin_trash_global.h"
+#include "dfmplugin_trashcore_global.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-namespace dfmplugin_trash {
+namespace dfmplugin_trashcore {
 
 class TrashFileInfoPrivate;
 class TrashFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
@@ -39,8 +39,6 @@ public:
     virtual void refresh() override;
     virtual QString fileName() const override;
     virtual QString fileDisplayName() const override;
-    virtual QString baseName() const override;
-    virtual QString completeBaseName() const override;
     virtual bool exists() const override;
     virtual bool canRename() const override;
     virtual bool isReadable() const override;
@@ -48,15 +46,25 @@ public:
     virtual bool isDir() const override;
     virtual bool canDrop() override;
     virtual bool canHidden() const override;
+    virtual bool isHidden() const override;
+    virtual QUrl originalUrl() const override;
     virtual QUrl redirectedFileUrl() const override;
     virtual QFile::Permissions permissions() const override;
-    virtual bool isHidden() const override;
+    virtual QIcon fileIcon() override;
+    virtual QDateTime lastRead() const override;
+    virtual QDateTime lastModified() const override;
+    virtual qint64 size() const override;
+    virtual bool isSymLink() const override;
+    virtual QString symLinkTarget() const override;
+    virtual QString mimeTypeName() override;
+    virtual int countChildFile() const override;
+
+    virtual QDateTime deletionTime() const override;
 
 private:
     TrashFileInfoPrivate *d;
 };
 
-using TrashFileInfoPointer = QSharedPointer<TrashFileInfo>;
 }
 
 #endif   // TRASHFILEINFO_H

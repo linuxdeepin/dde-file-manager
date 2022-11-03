@@ -160,7 +160,7 @@ public:
     QSharedPointer<UpdateProgressTimer> updateProgressTimer { nullptr };   // update progress timer
 
     JobHandlePointer handle { nullptr };   // handle
-    QSharedPointer<LocalFileHandler> handler { nullptr };   // file base operations handler
+    QSharedPointer<LocalFileHandler> localFileHandler { nullptr };   // file base operations handler
 
     AbstractJobHandler::JobType jobType { AbstractJobHandler::JobType::kUnknow };   // current task type
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // job flag

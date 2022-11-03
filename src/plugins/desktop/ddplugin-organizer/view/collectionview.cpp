@@ -56,11 +56,7 @@ static constexpr int kIconOffset = 10;
 static constexpr int kIconSelectMargin = 3;
 
 CollectionViewPrivate::CollectionViewPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionView *qq, QObject *parent)
-    : QObject(parent)
-    , q(qq)
-    , id(uuid)
-    , provider(dataProvider)
-    , menuProxy(new CollectionViewMenu(qq))
+    : QObject(parent), q(qq), id(uuid), provider(dataProvider), menuProxy(new CollectionViewMenu(qq))
 {
     touchDragTimer.setSingleShot(true);
     touchDragTimer.setTimerType(Qt::PreciseTimer);
@@ -71,7 +67,6 @@ CollectionViewPrivate::CollectionViewPrivate(const QString &uuid, CollectionData
 
 CollectionViewPrivate::~CollectionViewPrivate()
 {
-
 }
 
 void CollectionViewPrivate::initUI()
@@ -101,7 +96,7 @@ void CollectionViewPrivate::initConnect()
     searchTimer = new QTimer(this);
     searchTimer->setSingleShot(true);
     searchTimer->setInterval(200);
-    connect(searchTimer, &QTimer::timeout, this, [this](){
+    connect(searchTimer, &QTimer::timeout, this, [this]() {
         searchKeys.clear();
     });
 }
@@ -191,10 +186,7 @@ int CollectionViewPrivate::verticalScrollToValue(const QModelIndex &index, const
 QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
 {
     QItemSelection selection;
-    const QRect actualRect(qMin(rect.left(), rect.right())
-                           , qMin(rect.top(), rect.bottom())
-                           , abs(rect.width())
-                           , abs(rect.height()));
+    const QRect actualRect(qMin(rect.left(), rect.right()), qMin(rect.top(), rect.bottom()), abs(rect.width()), abs(rect.height()));
     const QPoint offset(q->horizontalOffset(), q->verticalOffset());
     const QPoint iconOffset(kIconOffset, kIconOffset);
 
@@ -205,9 +197,9 @@ QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
 
         // least 3 pixels
         if (actualRect.left() > realItemRect.right() - kIconSelectMargin
-                || actualRect.top() > realItemRect.bottom() - kIconSelectMargin
-                || actualRect.right() < realItemRect.left() + kIconSelectMargin
-                || actualRect.bottom() < realItemRect.top() + kIconSelectMargin)
+            || actualRect.top() > realItemRect.bottom() - kIconSelectMargin
+            || actualRect.right() < realItemRect.left() + kIconSelectMargin
+            || actualRect.bottom() < realItemRect.top() + kIconSelectMargin)
             continue;
 
         if (!selection.contains(index)) {
@@ -324,9 +316,9 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
     indexs.removeAll(foucs);
 
     static const int iconWidth = 128;
-    static const int iconMargin = 30;    // add margin for showing ratoted item.
+    static const int iconMargin = 30;   // add margin for showing ratoted item.
     static const int maxIconCount = 4;   // max painting item number.
-    static const int maxTextCount = 99;  // max text number.
+    static const int maxTextCount = 99;   // max text number.
     static const qreal rotateBase = 10.0;
     static const qreal opacityBase = 0.1;
     static const int rectSzie = iconWidth + iconMargin * 2;
@@ -349,7 +341,7 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
 
     QPainter painter(&pixmap);
     // paint items except focus
-    for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0 ; --i) {
+    for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0; --i) {
         painter.save();
 
         //opacity 50% 40% 30% 20%
@@ -377,7 +369,8 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
         painter.save();
         painter.setOpacity(0.8);
         topIconSize = q->itemDelegate()->paintDragIcon(&painter, option, foucs);
-        painter.restore();;
+        painter.restore();
+        ;
     }
 
     // paint text
@@ -385,10 +378,10 @@ QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
         int length = 0;
         QString text;
         if (indexCount > maxTextCount) {
-            length = 28; //there are three characters showed.
+            length = 28;   //there are three characters showed.
             text = QString::number(maxTextCount).append("+");
         } else {
-            length = 24; // one or two characters
+            length = 24;   // one or two characters
             text = QString::number(indexCount);
         }
 
@@ -459,7 +452,7 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     }
 
     QString errString;
-    auto itemInfo =  InfoFactory::create<LocalFileInfo>(targetUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<LocalFileInfo>(targetUrl, true, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qWarning() << "create LocalFileInfo error: " << errString << targetUrl;
         return;
@@ -481,8 +474,8 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
 
     // is from or to trash
     {
-        bool isFromTrash = from.toLocalFile().startsWith(StandardPaths::location(StandardPaths::kTrashPath));
-        bool isToTrash = false; // there is no trash dir on desktop
+        bool isFromTrash = FileUtils::isTrashFile(from);
+        bool isToTrash = false;   // there is no trash dir on desktop
 
         if (Q_UNLIKELY(isFromTrash && isToTrash)) {
             event->setDropAction(Qt::IgnoreAction);
@@ -499,7 +492,7 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     // todo,from vault???
 
     if (!itemInfo->supportedDropActions().testFlag(event->dropAction())) {
-        QList<Qt::DropAction> actions{Qt::CopyAction, Qt::MoveAction, Qt::LinkAction};
+        QList<Qt::DropAction> actions { Qt::CopyAction, Qt::MoveAction, Qt::LinkAction };
         for (auto action : actions) {
             if (event->possibleActions().testFlag(action) && itemInfo->supportedDropActions().testFlag(action)) {
                 event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
@@ -633,10 +626,10 @@ void CollectionViewPrivate::clearClipBoard()
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     if (!urls.isEmpty()) {
         QString errString;
-        auto itemInfo =  InfoFactory::create<LocalFileInfo>(urls.first(), true, &errString);
+        auto itemInfo = InfoFactory::create<LocalFileInfo>(urls.first(), true, &errString);
         if (Q_UNLIKELY(!itemInfo)) {
             qInfo() << "create LocalFileInfo error: " << errString << urls.first();
-            return ;
+            return;
         }
         auto homePath = q->model()->rootUrl().toLocalFile();
         if (itemInfo && (itemInfo->absolutePath() == homePath))
@@ -695,7 +688,7 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
         if (index.isValid()) {
             QUrl targetItem = q->model()->fileUrl(index);
             QString errString;
-            auto itemInfo =  InfoFactory::create<LocalFileInfo>(targetItem, true, &errString);
+            auto itemInfo = InfoFactory::create<LocalFileInfo>(targetItem, true, &errString);
             if (Q_UNLIKELY(!itemInfo)) {
                 qWarning() << "create LocalFileInfo error: " << errString << targetItem;
                 return false;
@@ -704,8 +697,8 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
                 auto sourceUrls = event->mimeData()->urls();
                 for (const QUrl &url : sourceUrls) {
                     if ((DesktopAppUrl::computerDesktopFileUrl() == url)
-                         || (DesktopAppUrl::trashDesktopFileUrl() == url)
-                         || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
+                        || (DesktopAppUrl::trashDesktopFileUrl() == url)
+                        || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
                         event->setDropAction(Qt::IgnoreAction);
                         return true;
                     }
@@ -824,7 +817,7 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
     }
 
     QString errString;
-    auto itemInfo =  InfoFactory::create<LocalFileInfo>(firstUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<LocalFileInfo>(firstUrl, true, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qWarning() << "create LocalFileInfo error: " << errString << firstUrl;
         return false;
@@ -906,7 +899,7 @@ bool CollectionViewPrivate::continuousSelection(QEvent *event, QPersistentModelI
             q->setFocus();
         QItemSelectionModel::SelectionFlags command = q->selectionCommand(newCurrent, event);
         if (command != QItemSelectionModel::NoUpdate
-             || q->style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, nullptr, q)) {
+            || q->style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, nullptr, q)) {
             // note that we don't check if the new current index is enabled because moveCursor() makes sure it is
             if (command & QItemSelectionModel::Current) {
                 q->selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
@@ -1122,8 +1115,7 @@ void CollectionViewPrivate::onIconSizeChanged(const int level)
 }
 
 CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent)
-    : QAbstractItemView(parent)
-    , d(new CollectionViewPrivate(uuid, dataProvider, this))
+    : QAbstractItemView(parent), d(new CollectionViewPrivate(uuid, dataProvider, this))
 {
 #ifdef QT_DEBUG
     d->showGrid = true;
@@ -1132,7 +1124,6 @@ CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *data
 
 CollectionView::~CollectionView()
 {
-
 }
 
 void CollectionView::setCanvasModelShell(CanvasModelShell *sh)
@@ -1247,7 +1238,7 @@ void CollectionView::setModel(QAbstractItemModel *model)
 
     //! when selection changed, we need to update all view.
     //! otherwise the expanded text will partly remain.
-    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, (void (QWidget::*)())&QWidget::update);
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, (void (QWidget::*)()) & QWidget::update);
 }
 
 void CollectionView::reset()
@@ -1373,8 +1364,8 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
     }
 
     switch (cursorAction) {
-    case MovePrevious :
-    case MoveLeft : {
+    case MovePrevious:
+    case MoveLeft: {
 
         if (node > 0) {
             --node;
@@ -1382,10 +1373,9 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
             // first index
             return current;
         }
-    }
-        break;
-    case MoveNext :
-    case MoveRight : {
+    } break;
+    case MoveNext:
+    case MoveRight: {
 
         if (node < d->provider->items(d->id).count() - 1) {
             ++node;
@@ -1393,9 +1383,8 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
             // last index
             return current;
         }
-    }
-        break;
-    case MoveUp : {
+    } break;
+    case MoveUp: {
 
         if (node >= d->columnCount) {
             // not first row
@@ -1404,9 +1393,8 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
             // first row
             return current;
         }
-    }
-        break;
-    case MoveDown : {
+    } break;
+    case MoveDown: {
 
         if (node < d->provider->items(d->id).count() - d->columnCount) {
             node += d->columnCount;
@@ -1422,25 +1410,21 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
                 return current;
             }
         }
-    }
-        break;
-    case MoveHome : {
+    } break;
+    case MoveHome: {
         node = 0;
-    }
-        break;
-    case MoveEnd : {
+    } break;
+    case MoveEnd: {
         node = d->provider->items(d->id).count() - 1;
-    }
-        break;
-    case MovePageUp : {
+    } break;
+    case MovePageUp: {
         auto &&pos = d->nodeToPos(node);
         pos.setX(pos.x() - d->rowCount);
         if (pos.x() < 0)
             pos.setX(0);
         node = d->posToNode(pos);
-    }
-        break;
-    case MovePageDown : {
+    } break;
+    case MovePageDown: {
         int pageFileCount = d->rowCount * d->columnCount;
         if (node + pageFileCount < d->provider->items(d->id).count()) {
             // The following file more than one page,turn the page
@@ -1458,8 +1442,7 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
                 return current;
             }
         }
-    }
-        break;
+    } break;
     }
 
     auto &&afterUrl = d->provider->items(d->id).at(node);
@@ -1588,7 +1571,7 @@ void CollectionView::paintEvent(QPaintEvent *event)
 
     if (d->showGrid) {
         painter.save();
-        for (auto node = startNode ; node <= endNode; ++node) {
+        for (auto node = startNode; node <= endNode; ++node) {
             auto pos = d->nodeToPos(node);
             auto point = d->posToPoint(pos);
 
@@ -1619,7 +1602,7 @@ void CollectionView::paintEvent(QPaintEvent *event)
         // the expand item need to draw at last. otherwise other item will overlap the expeand text.
         itemDelegate()->mayExpand(&expandItem);
 
-        for (auto node = startNode ; node <= endNode ; ++node) {
+        for (auto node = startNode; node <= endNode; ++node) {
             if (node >= d->provider->items(d->id).count())
                 break;
 
@@ -1698,7 +1681,7 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
     if (leftButtonPressed && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
         // reselect index(maybe the user wants to drag and copy by Ctrl)
         selectionModel()->select(d->pressedIndex, QItemSelectionModel::Select);
-    } else if (!index.isValid() && Qt::ControlModifier != d->pressedModifiers) { //pressed on blank space.
+    } else if (!index.isValid() && Qt::ControlModifier != d->pressedModifiers) {   //pressed on blank space.
         setCurrentIndex(QModelIndex());
     }
 
@@ -1721,7 +1704,7 @@ void CollectionView::mouseReleaseEvent(QMouseEvent *event)
     }
 
     if (d->pressedIndex.isValid() && d->pressedIndex == indexAt(event->pos())
-            && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
+        && d->pressedAlreadySelected && Qt::ControlModifier == d->pressedModifiers) {
         // not drag and copy by Ctrl,so deselect index
         selectionModel()->select(d->pressedIndex, QItemSelectionModel::Deselect);
     }
@@ -1813,7 +1796,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
         default:
             break;
         }
-    Q_FALLTHROUGH();
+        Q_FALLTHROUGH();
     case Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Return:
@@ -1874,10 +1857,10 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             newCurrent = moveCursor(MovePageDown, event->modifiers());
             break;
         case Qt::Key_Tab:
-                newCurrent = moveCursor(MoveNext, event->modifiers());
+            newCurrent = moveCursor(MoveNext, event->modifiers());
             break;
         case Qt::Key_Backtab:
-                newCurrent = moveCursor(MovePrevious, event->modifiers());
+            newCurrent = moveCursor(MovePrevious, event->modifiers());
             break;
         }
 
@@ -1885,8 +1868,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
             event->accept();
             return;
         }
-    }
-        break;
+    } break;
     case Qt::ControlModifier: {
         switch (event->key()) {
         case Qt::Key_A:
@@ -1910,8 +1892,7 @@ void CollectionView::keyPressEvent(QKeyEvent *event)
         default:
             break;
         }
-    }
-        break;
+    } break;
     default:
         break;
     }
@@ -2005,8 +1986,8 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
     if (hoverIndex.isValid()) {
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
             bool canDrop = !fileInfo->canDrop()
-                           || (fileInfo->isDir() && !fileInfo->isWritable())
-                           || !fileInfo->supportedDropActions().testFlag(event->dropAction());
+                    || (fileInfo->isDir() && !fileInfo->isWritable())
+                    || !fileInfo->supportedDropActions().testFlag(event->dropAction());
             if (!canDrop) {
                 d->handleMoveMimeData(event, currentUrl);
                 return;

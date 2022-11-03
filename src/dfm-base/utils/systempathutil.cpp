@@ -183,7 +183,6 @@ void SystemPathUtil::loadSystemPaths()
     systemPathsMap["Pictures"] = StandardPaths::location(StandardPaths::kPicturesPath);
     systemPathsMap["Documents"] = StandardPaths::location(StandardPaths::kDocumentsPath);
     systemPathsMap["Downloads"] = StandardPaths::location(StandardPaths::kDownloadsPath);
-    systemPathsMap["Trash"] = StandardPaths::location(StandardPaths::kTrashFilesPath);
     systemPathsMap["System Disk"] = StandardPaths::location(StandardPaths::kDiskPath);
 
     systemPathsSet.reserve(systemPathsMap.size());
@@ -191,8 +190,7 @@ void SystemPathUtil::loadSystemPaths()
     for (const QString &key : systemPathsMap.keys()) {
         const QString &path = systemPathsMap.value(key);
 
-        if (key != "Trash")
-            systemPathsSet << path;
+        systemPathsSet << path;
 
         if (xdgDirs.contains(key))
             mkPath(path);

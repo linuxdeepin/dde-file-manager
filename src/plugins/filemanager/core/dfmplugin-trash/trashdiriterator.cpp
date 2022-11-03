@@ -20,19 +20,27 @@
  */
 
 #include "trashdiriterator.h"
-#include "trashfileinfo.h"
 #include "utils/trashhelper.h"
 #include "private/trashdiriterator_p.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trash;
 
-TrashDirIteratorPrivate::TrashDirIteratorPrivate(TrashDirIterator *qq)
+TrashDirIteratorPrivate::TrashDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
+                                                 DFMIO::DEnumerator::DirFilters filters, DFMIO::DEnumerator::IteratorFlags flags,
+                                                 TrashDirIterator *qq)
     : q(qq)
 {
+    DecoratorFileEnumerator enumerator(url, nameFilters, filters, flags);
+
+    dEnumerator = enumerator.enumeratorPtr();
+    if (!dEnumerator) {
+        qWarning("Failed dfm-io use factory create enumerator");
+    }
 }
 
 TrashDirIteratorPrivate::~TrashDirIteratorPrivate()
@@ -44,41 +52,50 @@ TrashDirIterator::TrashDirIterator(const QUrl &url,
                                    QDir::Filters filters,
                                    QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags),
-      d(new TrashDirIteratorPrivate(this))
+      d(new TrashDirIteratorPrivate(url, nameFilters, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
+                                    static_cast<DFMIO::DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags)), this))
 {
-    QString path = StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path();
-    d->iterator = new QDirIterator(path, nameFilters, filters, flags);
 }
 
 TrashDirIterator::~TrashDirIterator()
 {
-    if (d->iterator) {
-        delete d->iterator;
-    }
-
-    // Todo(yanghao):hiddenFiles
 }
 
 QUrl TrashDirIterator::next()
 {
-    // Todo(yanghao): cache
-    return TrashHelper::fromLocalFile(QUrl::fromLocalFile(d->iterator->next()));
+    if (d->dEnumerator)
+        d->currentUrl = d->dEnumerator->next();
+
+    return d->currentUrl;
 }
 
 bool TrashDirIterator::hasNext() const
 {
-    // Todo(yanghao):hiddenFiles
-    return d->iterator->hasNext();
+    if (d->dEnumerator)
+        return d->dEnumerator->hasNext();
+
+    return false;
 }
 
 QString TrashDirIterator::fileName() const
 {
-    return d->iterator->fileName();
+    QString path = fileUrl().path();
+    if (path.isEmpty())
+        return QString();
+
+    path = path.replace(QRegExp("/*/"), "/");
+    if (path == "/")
+        return QString();
+
+    if (path.endsWith("/"))
+        path = path.left(path.size() - 1);
+    QStringList pathList = path.split("/");
+    return pathList.last();
 }
 
 QUrl TrashDirIterator::fileUrl() const
 {
-    return TrashHelper::fromLocalFile(QUrl::fromLocalFile(d->iterator->filePath()));
+    return UrlRoute::pathToReal(d->currentUrl.path());
 }
 
 const AbstractFileInfoPointer TrashDirIterator::fileInfo() const

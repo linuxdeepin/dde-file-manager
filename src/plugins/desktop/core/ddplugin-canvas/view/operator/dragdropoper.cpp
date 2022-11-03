@@ -202,7 +202,7 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
 
         // is from or to trash or is to trash
         {
-            bool isFromTrash = from.toLocalFile().startsWith(StandardPaths::location(StandardPaths::kTrashPath));
+            bool isFromTrash = FileUtils::isTrashFile(from);
             bool isToTrash = false;   // there is no  trash dir on desktop.
 
             if (isFromTrash && isToTrash) {

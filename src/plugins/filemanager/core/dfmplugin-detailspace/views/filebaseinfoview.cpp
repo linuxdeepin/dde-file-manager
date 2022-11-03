@@ -197,7 +197,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
         return;
 
     if (fileName && fileName->RightValue().isEmpty())
-        fileName->setRightValue(info->fileName(), Qt::ElideMiddle, Qt::AlignLeft, true);
+        fileName->setRightValue(info->fileDisplayName(), Qt::ElideMiddle, Qt::AlignLeft, true);
 
     if (fileInterviewTime && fileInterviewTime->RightValue().isEmpty()) {
         info->lastRead().isValid() ? fileInterviewTime->setRightValue(info->lastRead().toString(FileUtils::dateTimeFormat()), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
@@ -227,6 +227,10 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
     if (localinfo && localinfo->isSymLink()) {
         const QUrl &targetUrl = QUrl::fromLocalFile(localinfo->symLinkTarget());
+        localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
+    }
+    if (localinfo && FileUtils::isTrashFile(localUrl) && !UniversalUtils::urlEquals(localUrl, FileUtils::trashRootUrl())) {
+        const QUrl &targetUrl = localinfo->redirectedFileUrl();
         localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     }
 

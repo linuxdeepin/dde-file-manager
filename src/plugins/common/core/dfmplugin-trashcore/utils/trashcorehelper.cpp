@@ -34,52 +34,18 @@
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trashcore;
 
-bool TrashCoreHelper::isEmpty()
-{
-    QDir dir(StandardPaths::location(StandardPaths::kTrashFilesPath));
-
-    if (!dir.exists())
-        return true;
-
-    dir.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
-
-    QDirIterator iterator(dir);
-
-    return !iterator.hasNext();
-}
-
 QUrl TrashCoreHelper::rootUrl()
 {
     QUrl url;
-    url.setScheme(Global::Scheme::kTrash);
+    url.setScheme(scheme());
     url.setPath("/");
     return url;
-}
-
-QUrl TrashCoreHelper::toLocalFile(const QUrl &url)
-{
-    return QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path());
-}
-
-QUrl TrashCoreHelper::fromTrashFile(const QString &filePath)
-{
-    QUrl url;
-
-    url.setScheme(TrashCoreHelper::scheme());
-    url.setPath(filePath);
-
-    return url;
-}
-
-QString TrashCoreHelper::scheme()
-{
-    return Global::Scheme::kTrash;
 }
 
 QWidget *TrashCoreHelper::createTrashPropertyDialog(const QUrl &url)
 {
     static TrashPropertyDialog *trashPropertyDialog = nullptr;
-    if (UniversalUtils::urlEquals(url, rootUrl()) || FileUtils::isTrashDesktopFile(url)) {
+    if (UniversalUtils::urlEquals(url, FileUtils::trashRootUrl()) || FileUtils::isTrashDesktopFile(url)) {
         if (!trashPropertyDialog) {
             trashPropertyDialog = new TrashPropertyDialog();
             return trashPropertyDialog;

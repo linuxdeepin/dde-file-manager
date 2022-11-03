@@ -34,6 +34,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QDir>
 #include <QApplication>
@@ -361,14 +362,11 @@ int DialogManager::showRunExcutableFileDialog(const QUrl &url)
     return code;
 }
 
-int DialogManager::showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, const bool showEmptyBtText)
+int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList)
 {
     if (urlList.isEmpty())
         return QDialog::Rejected;
 
-    static QString ClearTrash = tr("Are you sure you want to empty %1 item?");
-    static QString ClearTrashMutliple = tr("Are you sure you want to empty %1 items?");
-    static QString DeleteFileName = tr("Permanently delete %1?");
     static QString DeleteFileItems = tr("Permanently delete %1 items?");
 
     const int maxFileNameWidth = NAME_MAX;
@@ -381,20 +379,7 @@ int DialogManager::showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, c
     QString fileName;
     QIcon icon(QIcon::fromTheme(kUserTrashFullOpened));
     bool isLocalFile = urlList.first().isLocalFile();
-    if (showEmptyBtText) {
-        buttonTexts[1] = tr("Empty");
-        // const AbstractFileInfoPointer &fileInfo =InfoFactory::create<AbstractFileInfo>(urlList.first());//todo(zhuangshu)：add new function: filesCount()
-        QString filePath = urlList.first().path();
-        QDir dir(filePath);
-        QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
-                                              | QDir::NoDotAndDotDot | QDir::Hidden);
-        int fCount = entryList.count();   // todo(zhuangshu)：add new function: filesCount()
-        if (fCount == 1) {
-            title = ClearTrash.arg(fCount);
-        } else {
-            title = ClearTrashMutliple.arg(fCount);
-        }
-    } else if (isLocalFile) {
+    if (isLocalFile) {
         if (urlList.size() == 1) {
             LocalFileInfo f(urlList.first());
             fileName = f.fileDisplayName();
@@ -412,7 +397,44 @@ int DialogManager::showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, c
 
     QFontMetrics fm(d.font());
     if (!fileName.isEmpty()) {
+        static QString DeleteFileName = tr("Permanently delete %1?");
         title = DeleteFileName.arg(fm.elidedText(fileName, Qt::ElideMiddle, maxFileNameWidth));
+    }
+
+    d.setIcon(icon);
+    d.setTitle(title);
+    d.setMessage(tr("This action cannot be undone"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.moveToCenter();
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showClearTrashDialog(const quint64 &count)
+{
+    static QString ClearTrash = tr("Are you sure you want to empty %1 item?");
+    static QString ClearTrashMutliple = tr("Are you sure you want to empty %1 items?");
+
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Cancel", "button"));
+    buttonTexts.append(tr("Delete", "button"));
+
+    QString title;
+    QIcon icon(QIcon::fromTheme(kUserTrashFullOpened));
+
+    buttonTexts[1] = tr("Empty");
+
+    if (count == 1)
+        title = ClearTrash.arg(count);
+    else
+        title = ClearTrashMutliple.arg(count);
+
+    DDialog d;
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
     }
 
     d.setIcon(icon);
@@ -525,7 +547,7 @@ DFMBASE_NAMESPACE::GlobalEventType DialogManager::showBreakSymlinkDialog(const Q
     if (code == 1) {
         QList<QUrl> urls;
         urls << linkfile;
-        if (Q_UNLIKELY(linkfile.toLocalFile().startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath)))) {
+        if (Q_UNLIKELY(FileUtils::isTrashFile(linkfile))) {
             return DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles;
         } else {
             return DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash;

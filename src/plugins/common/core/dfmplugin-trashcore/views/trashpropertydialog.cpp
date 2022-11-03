@@ -23,6 +23,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 #include <DHorizontalLine>
 
@@ -30,16 +31,13 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trashcore;
 TrashPropertyDialog::TrashPropertyDialog(QWidget *parent)
-    : DDialog(parent),
-      fileCalculationUtils(new FileStatisticsJob())
+    : DDialog(parent)
 {
     initUI();
 }
 
 TrashPropertyDialog::~TrashPropertyDialog()
 {
-    fileCalculationUtils->stop();
-    fileCalculationUtils->deleteLater();
 }
 
 void TrashPropertyDialog::initUI()
@@ -47,10 +45,8 @@ void TrashPropertyDialog::initUI()
     setFixedWidth(320);
     setTitle(tr("Trash"));
 
-    QString path = StandardPaths::location(StandardPaths::kTrashFilesPath);
-    QUrl url(QUrl::fromLocalFile(path));
-
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    const QUrl &trashRootUrl = FileUtils::trashRootUrl();
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(trashRootUrl);
 
     trashIconLabel = new DLabel(this);
     trashIconLabel->setFixedSize(160, 160);
@@ -81,10 +77,6 @@ void TrashPropertyDialog::initUI()
     contenFrame->setLayout(mainLayout);
 
     addContent(contenFrame);
-
-    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &TrashPropertyDialog::slotTrashDirSizeChange);
-    fileCalculationUtils->setFileHints(FileStatisticsJob::FileHint::kExcludeSourceFile | FileStatisticsJob::FileHint::kSingleDepth);
-    fileCalculationUtils->start(QList<QUrl>() << url);
 }
 
 void TrashPropertyDialog::updateLeftInfo(const int &count)
@@ -95,26 +87,43 @@ void TrashPropertyDialog::updateLeftInfo(const int &count)
     } else {
         trashIcon = QIcon::fromTheme("user-trash");
     }
-    if(trashIconLabel)
+    if (trashIconLabel)
         trashIconLabel->setPixmap(trashIcon.pixmap(trashIconLabel->size()));
 
     QString itemStr = tr("item");
     if (count > 1)
         itemStr = tr("items");
-    if(fileCountAndFileSize)
+    if (fileCountAndFileSize)
         fileCountAndFileSize->setLeftValue(QString(tr("Contains %1 %2")).arg(QString::number(count), itemStr), Qt::ElideMiddle, Qt::AlignLeft, true);
 }
 
-void TrashPropertyDialog::slotTrashDirSizeChange(qint64 size, int filesCount, int directoryCount)
+void TrashPropertyDialog::calculateSize()
 {
-    updateLeftInfo(filesCount + directoryCount);
+    qint64 size = 0;
+    int count = 0;
+    DecoratorFileEnumerator enumerator(FileUtils::trashRootUrl());
+    if (!enumerator.isValid())
+        return;
+    while (enumerator.hasNext()) {
+        const QUrl &urlNext = enumerator.next();
+        ++count;
+        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(urlNext);
+        if (!fileInfo)
+            continue;
+        size += fileInfo->size();
+    }
+
+    updateUI(size, count);
+}
+
+void TrashPropertyDialog::updateUI(qint64 size, int count)
+{
+    updateLeftInfo(count);
     fileCountAndFileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignHCenter);
 }
 
 void TrashPropertyDialog::showEvent(QShowEvent *event)
 {
-    QString path = StandardPaths::location(StandardPaths::kTrashFilesPath);
-    QUrl url(QUrl::fromLocalFile(path));
-    fileCalculationUtils->start(QList<QUrl>() << url);
+    calculateSize();
     DDialog::showEvent(event);
 }

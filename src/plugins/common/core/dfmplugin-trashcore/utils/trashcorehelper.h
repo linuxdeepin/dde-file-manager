@@ -24,18 +24,26 @@
 
 #include "dfmplugin_trashcore_global.h"
 
+#include "dfm-base/dfm_global_defines.h"
+
 #include <QObject>
+#include <QIcon>
 
 namespace dfmplugin_trashcore {
 
 class TrashCoreHelper
 {
 public:
-    static bool isEmpty();
+    inline static QString scheme()
+    {
+        return DFMBASE_NAMESPACE::Global::Scheme::kTrash;
+    }
+
+    inline static QIcon icon()
+    {
+        return QIcon::fromTheme("user-trash-symbolic");
+    }
     static QUrl rootUrl();
-    static QUrl toLocalFile(const QUrl &url);
-    static QUrl fromTrashFile(const QString &filePath);
-    static QString scheme();
     static QWidget *createTrashPropertyDialog(const QUrl &url);
 };
 

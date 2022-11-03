@@ -67,9 +67,10 @@ public:
     static void contenxtMenuHandle(const quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static QFrame *createEmptyTrashTopWidget();
     static bool showTopWidget(QWidget *w, const QUrl &url);
-    static QUrl fromTrashFile(const QString &filePath);
-    static QUrl fromLocalFile(const QUrl &url);
-    static QUrl toLocalFile(const QUrl &url);
+    static QUrl transToTrashFile(const QString &filePath);
+    static QUrl trashFileToTargetUrl(const QUrl &url);
+    static bool isTrashFile(const QUrl &url);
+    static bool isTrashRootFile(const QUrl &url);
     static bool isEmpty();
     static void emptyTrash(const quint64 windowId = 0);
     static ExpandFieldMap propetyExtensionFunc(const QUrl &url);

@@ -25,6 +25,9 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/core/diofactory.h>
@@ -77,12 +80,7 @@ bool DoMoveToTrashFilesWorker::doWork()
 bool DoMoveToTrashFilesWorker::statisticsFilesSize()
 {
     sourceFilesCount = sourceUrls.size();
-    targetUrl = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath).endsWith("/") ? StandardPaths::location(StandardPaths::kTrashFilesPath) : StandardPaths::location(StandardPaths::kTrashFilesPath) + "/");
-    trashLocalDir = QString("%1/.local/share/Trash").arg(QDir::homePath());
-    trashStorageInfo.reset(new StorageInfo(trashLocalDir));
-
-    targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
-
+    targetUrl = FileUtils::trashRootUrl();
     return true;
 }
 /*!
@@ -91,17 +89,15 @@ bool DoMoveToTrashFilesWorker::statisticsFilesSize()
  */
 bool DoMoveToTrashFilesWorker::doMoveToTrash()
 {
-    if (!checkTrashDirIsReady())
-        return false;
-
     bool result = false;
     // 总大小使用源文件个数
     for (const auto &url : sourceUrls) {
         if (!stateCheck())
             return false;
 
-        if (url.path().startsWith(targetUrl.path())) {
+        if (FileUtils::isTrashFile(url)) {
             completeFilesCount++;
+            completeSourceFiles.append(url);
             continue;
         }
 
@@ -109,9 +105,9 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
         if (!isCanMoveToTrash(url, &result)) {
             if (result) {
                 completeFilesCount++;
+                completeSourceFiles.append(url);
                 continue;
             }
-
             return false;
         }
 
@@ -126,46 +122,28 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             }
         }
 
-        isInSameDisk(fileInfo);
+        emitCurrentTaskNotify(url, targetUrl);
 
-        bool ok = false;
+        QByteArray tagData;
+        auto tags = dpfSlotChannel->push("dfmplugin_tag", "slot_GetTags", QUrl::fromUserInput(url.path())).toStringList();
+        if (!tags.isEmpty())
+            tagData.append("TagNameList=").append(tags.join(',')).append('\n');
 
-        if (fileInfo->isSymLink()) {
-            ok = handleSymlinkFile(fileInfo);
-        } else {
-            ok = handleMoveToTrash(fileInfo);
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        bool trashSucc = fileHandler.trashFile(url);
+        if (trashSucc) {
+            // update tag info to trash info
+            writeTagInfo(url, tagData);
+
+            completeFilesCount++;
+            completeSourceFiles.append(url);
+            continue;
         }
-
-        if (!ok)
-            return false;
-        fileInfo->refresh();
+        return false;
     }
     return true;
 }
-/*!
- * \brief DoMoveToTrashFilesWorker::checkTrashDirIsReady check trash dir is exit or ready
- * \return
- */
-bool DoMoveToTrashFilesWorker::checkTrashDirIsReady()
-{
-    QDir trashDir;
 
-    if (!trashDir.mkpath(StandardPaths::location(StandardPaths::kTrashFilesPath))) {
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
-        qWarning() << " mk " << StandardPaths::location(StandardPaths::kTrashInfosPath) << "failed!";
-
-        return false;
-    }
-
-    if (!trashDir.mkpath(StandardPaths::location(StandardPaths::kTrashInfosPath))) {
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
-        qWarning() << " mk " << StandardPaths::location(StandardPaths::kTrashInfosPath) << "failed!";
-
-        return false;
-    }
-
-    return true;
-}
 /*!
  * \brief DoMoveToTrashFilesWorker::isCanMoveToTrash loop to check the source file can move to trash
  * \param url the source file url
@@ -194,257 +172,34 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
 
     return true;
 }
-/*!
- * \brief DoMoveToTrashFilesWorker::handleSymlinkFile Process linked files, move to the recycle bin,
- * create new linked files, and delete source linked files
- * \param File information of link file
- * \return Process successed
- */
-bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &fileInfo)
+
+bool DoMoveToTrashFilesWorker::writeTagInfo(const QUrl &url, const QByteArray &data)
 {
-    if (!stateCheck())
+    DecoratorFileEnumerator enumerator(FileUtils::trashRootUrl());
+    if (!enumerator.isValid())
         return false;
 
-    const QUrl &fromUrl = fileInfo->url();
+    QUrl targetInfo;
+    while (enumerator.hasNext()) {
+        const QUrl &urlNext = enumerator.next();
+        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(urlNext);
+        if (!fileInfo)
+            continue;
+        const QUrl &originUrl = fileInfo->originalUrl();
+        if (UniversalUtils::urlEquals(url, originUrl)) {
+            const QUrl &fileTargetUrl = fileInfo->redirectedFileUrl();
+            QString urlTemp = fileTargetUrl.toString() + ".trashinfo";
+            urlTemp.replace("/files/", "/info/");
+            targetInfo = urlTemp;
 
-    QFileInfo fromInfo(fromUrl.path());
-    QString srcFileName = fromInfo.fileName();
-    QString srcPath = fileInfo->path();
-    QString targetPath;
-
-    emitCurrentTaskNotify(fileInfo->url(), targetUrl);
-
-    bool result = false;
-    if (!writeTrashInfo(fileInfo, targetPath, &result)) {
-        return result;
-    }
-    QFile targetFile(fileInfo->symLinkTarget());
-
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-
-    do {
-        if (!targetFile.link(targetPath))
-            // pause and emit error msg
-            action = doHandleErrorAndWait(fromUrl, targetUrl, AbstractJobHandler::JobErrorType::kSymlinkError);
-
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        return action == AbstractJobHandler::SupportAction::kSkipAction;
-    }
-
-    completeSourceFiles.append(fileInfo->url());
-    completeSourceFiles.append(QUrl::fromLocalFile(targetPath));
-
-    handler->deleteFile(fileInfo->url());
-
-    return true;
-}
-/*!
- * \brief DoMoveToTrashFilesWorker::handleMoveToTrash Processing ordinary files and moving them to the recycle bin
- * \param fileInfo File information of source file
- * \return Is the process successful
- */
-bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &fileInfo)
-{
-    QString targetPath;
-    bool result = false;
-    if (!writeTrashInfo(fileInfo, targetPath, &result)) {
-        return result;
-    }
-
-    const QUrl &sourceUrl = fileInfo->url();
-    const QUrl &toUrl = QUrl::fromLocalFile(targetPath);
-
-    emitCurrentTaskNotify(fileInfo->url(), toUrl);
-
-    // in old dde-file-manager there has not this logic
-    // todo lanxs, confirm this code
-    /*if (checkFileOutOfLimit(fileInfo)) {
-        qWarning() << "move to trash big file, use delete way, url: " << sourceUrl;
-
-        // todo lanxs, need tips dialog
-        completeFilesCount++;
-        // ToDo::大于1G，执行彻底删除代码
-        if (fileInfo->isFile() || fileInfo->isSymLink())
-            return deleteFile(sourceUrl, QUrl(), &result);
-        else
-            return deleteDir(sourceUrl, QUrl(), &result);
-    }*/
-
-    // ToDo::判断是否同盘，是就直接rename
-    if (isSameDisk == 1) {
-        qDebug() << "move to trash is on same disk, from url: " << fileInfo->url() << " to url: " << toUrl;
-        AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-
-        do {
-            if (!handler->renameFile(fileInfo->url(), QUrl::fromLocalFile(targetPath))) {
-                action = doHandleErrorAndWait(sourceUrl, QUrl::fromLocalFile(targetPath), AbstractJobHandler::JobErrorType::kRenameError, handler->errorString());
-            }
-        } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-
-        completeFilesCount++;
-
-        if (action == AbstractJobHandler::SupportAction::kNoAction) {
-            completeSourceFiles.append(fileInfo->url());
-            completeTargetFiles.append(QUrl::fromLocalFile(targetPath));
+            completeTargetFiles.append(urlNext);
         }
-
-        if (action == AbstractJobHandler::SupportAction::kSkipAction
-            || action == AbstractJobHandler::SupportAction::kNoAction
-            || action == AbstractJobHandler::SupportAction::kCancelAction)
-            return true;
     }
 
-    const QUrl &parentUrl = DFMUtils::directParentUrl(toUrl);
-    if (!parentUrl.isValid())
-        return false;
-
-    const auto &targetPathInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
-    if (!targetPathInfo) {
-        // pause and emit error msg
-        return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, targetPathInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
+    if (!data.isEmpty()) {
+        DecoratorFile file(targetInfo);
+        const qint64 &size = file.writeAll(data, DFMIO::DFile::OpenFlag::kAppend);
+        return size > 0;
     }
-    // 检查磁盘空间是否不足
-    if (!checkDiskSpaceAvailable(sourceUrl, parentUrl, trashStorageInfo, &result))
-        return result;
-
-    // 拷贝并删除文件
-    qDebug() << "rename failed, use copy and delete way, from url :" << fileInfo->url() << " to url: " << targetPathInfo->url();
-
-    AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(toUrl);
-    if (!toInfo)
-        return false;
-    return copyAndDeleteFile(fileInfo, targetPathInfo, toInfo, &result);
-}
-/*!
- * \brief DoMoveToTrashFilesWorker::checkFileOutOfLimit Check whether the file size exceeds the limit value
- * \param fileInfo File information of source file
- * \return Have you manipulated the limit value
- */
-bool DoMoveToTrashFilesWorker::checkFileOutOfLimit(const AbstractFileInfoPointer &fileInfo)
-{
-    return FileOperationsUtils::isFilesSizeOutLimit(fileInfo->url(), 1024 * 1024 * 1024);
-}
-
-bool DoMoveToTrashFilesWorker::writeTrashInfo(const AbstractFileInfoPointer &fileInfo, QString &targetPath, bool *result)
-{
-    if (!stateCheck())
-        return false;
-
-    QString path = targetUrl.path();
-    QString baseName = getNotExistsTrashFileName(fileInfo->fileName());
-    QString newName = path + baseName;
-    QString delTime = QDateTime::currentDateTime().toString(Qt::ISODate);
-
-    qDebug() << " writeTrashInfo " << fileInfo->url();
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-
-    do {
-        if (!doWriteTrashInfo(baseName, fileInfo->filePath(), delTime))
-            // pause and emit error msg
-            action = doHandleErrorAndWait(fileInfo->url(), targetUrl, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
-
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        *result = action == AbstractJobHandler::SupportAction::kSkipAction;
-        return false;
-    }
-
-    targetPath = newName;
-
-    return true;
-}
-/*!
- * \brief DoMoveToTrashFilesWorker::getNotExistsTrashFileName Gets the name of a nonexistent recycle bin file
- * \param fileName the name of source file
- * \return the name of a nonexistent recycle bin file
- */
-QString DoMoveToTrashFilesWorker::getNotExistsTrashFileName(const QString &fileName)
-{
-    QByteArray name = fileName.toUtf8();
-
-    int index = name.lastIndexOf('/');
-
-    if (index >= 0)
-        name = name.mid(index + 1);
-
-    index = name.lastIndexOf('.');
-    QByteArray suffix;
-
-    if (index >= 0)
-        suffix = name.mid(index);
-
-    if (suffix.size() > 200)
-        suffix = suffix.left(200);
-
-    name.chop(suffix.size());
-    name = name.left(200 - suffix.size());
-
-    QString trashpath = StandardPaths::location(StandardPaths::kTrashFilesPath) + "/";
-
-    while (true) {
-        QFileInfo info(trashpath + name + suffix);
-        // QFile::exists ==> If the file is a symlink that points to a non-existing file, false is returned.
-        if (!info.isSymLink() && !info.exists()) {
-            break;
-        }
-
-        name = QCryptographicHash::hash(name, QCryptographicHash::Md5).toHex();
-    }
-
-    return QString::fromUtf8(name + suffix);
-}
-/*!
- * \brief DoMoveToTrashFilesWorker::doWriteTrashInfo Write information about files moved to the recycle bin
- * \param fileBaseName the base Name of the file moved to the recycle bin
- * \param path The path to the recycle bin file
- * \param time Time the file was moved to the recycle bin
- * \return Whether the write is complete
- */
-bool DoMoveToTrashFilesWorker::doWriteTrashInfo(const QString &fileBaseName, const QString &path, const QString &time)
-{
-    QFile metadata(trashLocalDir + "/info/" + fileBaseName + ".trashinfo");
-
-    if (!metadata.open(QIODevice::WriteOnly)) {
-        qDebug() << metadata.fileName() << "file open error:" << metadata.errorString();
-
-        return false;
-    }
-
-    QByteArray data;
-
-    data.append("[Trash Info]\n");
-    data.append("Path=").append(path.toUtf8().toPercentEncoding("/")).append("\n");
-    data.append("DeletionDate=").append(time).append("\n");
-
-    // save the file tag info
-    auto tags = dpfSlotChannel->push("dfmplugin_tag", "slot_GetTags", QUrl::fromUserInput(path)).toStringList();
-    if (!tags.isEmpty())
-        data.append("TagNameList=").append(tags.join(',')).append('\n');
-
-    qint64 size = metadata.write(data);
-    metadata.close();
-
-    if (size < 0) {
-        qDebug() << "write file " << metadata.fileName() << "error:" << metadata.errorString();
-    }
-
-    return size > 0;
-}
-/*!
- * \brief DoMoveToTrashFilesWorker::getIsInSameDisk Check that the
- * source file and the recycle bin directory are on the same disk
- * \param fileInfo File information of source file
- */
-void DoMoveToTrashFilesWorker::isInSameDisk(const AbstractFileInfoPointer &fileInfo)
-{
-    if (isSameDisk > -1)
-        return;
-
-    const QStorageInfo &sourceStorage = fileInfo->isSymLink() ? QStorageInfo(fileInfo->absolutePath())
-                                                              : QStorageInfo(fileInfo->absoluteFilePath());
-
-    isSameDisk = sourceStorage.device() == trashStorageInfo->device();
+    return false;
 }

@@ -25,6 +25,8 @@
 #include "dfmplugin_trash_global.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
+#include <dfm-io/core/denumerator.h>
+
 #include <QDirIterator>
 
 namespace dfmplugin_trash {
@@ -36,12 +38,15 @@ class TrashDirIteratorPrivate
     friend class TrashDirIterator;
 
 public:
-    explicit TrashDirIteratorPrivate(TrashDirIterator *qq);
+    TrashDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
+                            DFMIO::DEnumerator::DirFilters filters, DFMIO::DEnumerator::IteratorFlags flags,
+                            TrashDirIterator *qq);
     ~TrashDirIteratorPrivate();
 
 private:
-    QDirIterator *iterator { nullptr };
     TrashDirIterator *q { nullptr };
+    QSharedPointer<DFMIO::DEnumerator> dEnumerator = nullptr;
+    QUrl currentUrl;
 };
 
 }

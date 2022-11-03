@@ -30,6 +30,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <dfm-io/error/error.h>
+#include <dfm-io/core/dfile.h>
 
 #include <QString>
 #include <QFileDevice>
@@ -60,6 +61,8 @@ public:
     virtual bool createSystemLink(const QUrl &sourcfile, const QUrl &link);
     virtual bool setPermissions(const QUrl &url, QFileDevice::Permissions permissions);
     virtual bool setPermissionsRecursive(const QUrl &url, QFileDevice::Permissions permissions);
+    virtual bool moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
+    virtual bool trashFile(const QUrl &url);
     virtual bool deleteFile(const QUrl &file);
     virtual bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
 

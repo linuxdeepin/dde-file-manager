@@ -91,8 +91,7 @@ LocalFileWatcher::LocalFileWatcher(const QUrl &url, QObject *parent)
  */
 void LocalFileWatcherPrivate::initFileWatcher()
 {
-    QUrl watchUrl = QUrl::fromLocalFile(path);
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(watchUrl.scheme(), static_cast<QUrl>(watchUrl));
+    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
     if (!factory) {
         qWarning("create factory failed.");
         abort();

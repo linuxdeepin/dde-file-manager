@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "trash.h"
-#include "trashfileinfo.h"
 #include "trashdiriterator.h"
 #include "trashfilewatcher.h"
 #include "utils/trashhelper.h"
@@ -51,8 +50,6 @@ using namespace dfmplugin_trash;
 
 void Trash::initialize()
 {
-    UrlRoute::regScheme(TrashHelper::scheme(), "/", TrashHelper::icon(), true, tr("Trash"));
-    InfoFactory::regClass<TrashFileInfo>(TrashHelper::scheme());
     WatcherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
 

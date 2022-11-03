@@ -36,6 +36,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/properties.h"
 #include "dfm-base/utils/systempathutil.h"
 
@@ -329,18 +330,12 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
     if (urlsCanTrash.isEmpty())
         return nullptr;
 
-    JobHandlePointer handle = nullptr;
-    if (FileUtils::isGvfsFile(sourceFirst) || DFMIO::DFMUtils::fileIsRemovable(sourceFirst)) {
-        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(urlsCanTrash) != QDialog::Accepted)
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
+        if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
             return nullptr;
-        handle = copyMoveJob->deletes(urlsCanTrash, flags);
-    } else {
-        if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
-            if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
-                return nullptr;
-        }
-        handle = copyMoveJob->moveToTrash(urlsCanTrash, flags);
     }
+    JobHandlePointer handle = copyMoveJob->moveToTrash(urlsCanTrash, flags);
+
     if (handleCallback)
         handleCallback(handle);
     return handle;
@@ -425,7 +420,7 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
 
     // Delete local file with shift+delete, show a confirm dialog.
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)) {
-        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
+        if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
             return nullptr;
     }
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
@@ -437,24 +432,24 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
 
 JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, OperatorHandleCallback handleCallback)
 {
-    //清空回收站操作弹框提示（这里只会显示Emtpy按钮）
-    const bool isFileAlreadyInTrash = (deleteNoticeType == AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);   //检查用户是否从回收站内部删除文件
-    //在此处理从回收站内部选择文件的删除操作(若不在这里处理，会进入到handleOperationCleanTrash()中，导致弹框提示无法区分"Delete"和"Empty"按钮的显示)
+    Q_UNUSED(windowId)
+    Q_UNUSED(deleteNoticeType)
+
     if (!sources.isEmpty()) {
+        // Show delete files dialog
+        if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
+            return nullptr;
+    } else {
         // Show clear trash dialog
-        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources, !isFileAlreadyInTrash) != QDialog::Accepted)
-            return nullptr;
+        DecoratorFileEnumerator enumerator(QUrl("trash:"));
+        if (DialogManagerInstance->showClearTrashDialog(enumerator.fileCount()) != QDialog::Accepted) return nullptr;
     }
 
-    if (sources.isEmpty())
-        return nullptr;
+    QList<QUrl> urls = std::move(sources);
+    if (urls.isEmpty())
+        urls.push_back(FileUtils::trashRootUrl());
 
-    if (!sources.first().isLocalFile()) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CleanTrash", windowId, sources)) {
-            return nullptr;
-        }
-    }
-    JobHandlePointer handle = copyMoveJob->cleanTrash(sources);
+    JobHandlePointer handle = copyMoveJob->cleanTrash(urls);
     if (handleCallback)
         handleCallback(handle);
     return handle;

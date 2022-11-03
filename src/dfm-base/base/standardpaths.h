@@ -34,10 +34,9 @@ class StandardPaths
 {
 public:
     enum StandardLocation {
-        kTrashPath,   // 回收站路径
-        kTrashExpungedPath,   // 回收站中文件源文件地址的位置
-        kTrashFilesPath,   // 回收站文件存放地址
-        kTrashInfosPath,   // 回收站文件信息路径
+        kTrashLocalPath,   // 回收站路径
+        kTrashLocalFilesPath,   // 回收站文件存放地址
+        kTrashLocalInfoPath,   // 回收站文件信息路径
         kTranslationPath,   // 翻译文件所在路径
         kTemplatesPath,   // 临时文件所在路径
         kMimeTypePath,   // mimetype文件的路径

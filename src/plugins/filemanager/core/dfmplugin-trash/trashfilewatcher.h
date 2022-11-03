@@ -37,11 +37,6 @@ public:
     explicit TrashFileWatcher(const QUrl &url, QObject *parent = nullptr);
     ~TrashFileWatcher() override;
 
-private slots:
-    void onFileDeleted(const QUrl &url);
-    void onFileAttributeChanged(const QUrl &url);
-    void onSubfileCreated(const QUrl &url);
-
 private:
     TrashFileWatcher() = delete;
     TrashFileWatcherPrivate *dptr;

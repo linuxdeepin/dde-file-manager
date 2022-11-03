@@ -20,9 +20,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "trashcore.h"
+#include "trashfileinfo.h"
 #include "utils/trashcorehelper.h"
 #include "events/trashcoreeventreceiver.h"
 #include "events/trashcoreeventsender.h"
+
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
@@ -32,6 +36,9 @@ using namespace dfmplugin_trashcore;
 void TrashCore::initialize()
 {
     TrashCoreEventSender::instance();
+
+    DFMBASE_NAMESPACE::UrlRoute::regScheme(TrashCoreHelper::scheme(), "/", TrashCoreHelper::icon(), true, tr("Trash"));
+    DFMBASE_NAMESPACE::InfoFactory::regClass<TrashFileInfo>(TrashCoreHelper::scheme());
 }
 
 bool TrashCore::start()

@@ -250,10 +250,10 @@ bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
 
 bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)
 {
-    if (handler) {
+    if (localFileHandler) {
         const QUrl &sourceUrl = sourceInfo->url();
         const QUrl &targetUrl = targetInfo->url();
-        return handler->renameFile(sourceUrl, targetUrl);
+        return localFileHandler->renameFile(sourceUrl, targetUrl);
     }
     return false;
 }

@@ -52,15 +52,10 @@ protected:
 
 protected:
     bool doMoveToTrash();
-    bool checkTrashDirIsReady();
     bool isCanMoveToTrash(const QUrl &url, bool *result);
-    bool handleSymlinkFile(const AbstractFileInfoPointer &fileInfo);
-    bool handleMoveToTrash(const AbstractFileInfoPointer &fileInfo);
-    bool checkFileOutOfLimit(const AbstractFileInfoPointer &fileInfo);
-    bool writeTrashInfo(const AbstractFileInfoPointer &fileInfo, QString &targetPath, bool *result);
-    QString getNotExistsTrashFileName(const QString &fileName);
-    bool doWriteTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
-    void isInSameDisk(const AbstractFileInfoPointer &fileInfo);
+
+private:
+    bool writeTagInfo(const QUrl &url, const QByteArray &data);
 
 private:
     AbstractFileInfoPointer targetFileInfo { nullptr };   // target file information

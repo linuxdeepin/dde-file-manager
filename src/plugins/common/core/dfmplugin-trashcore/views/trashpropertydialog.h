@@ -39,11 +39,9 @@ public:
 
 private:
     void initUI();
-
     void updateLeftInfo(const int &count);
-
-public slots:
-    void slotTrashDirSizeChange(qint64 size, int filesCount, int directoryCount);
+    void calculateSize();
+    void updateUI(qint64 size, int count);
 
 protected:
     virtual void showEvent(QShowEvent *event) override;
@@ -52,7 +50,6 @@ private:
     DTK_WIDGET_NAMESPACE::DLabel *trashNameLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *trashIconLabel { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileCountAndFileSize { nullptr };
-    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
 }
 #endif   // TRASHPROPERTYDIALOG_H

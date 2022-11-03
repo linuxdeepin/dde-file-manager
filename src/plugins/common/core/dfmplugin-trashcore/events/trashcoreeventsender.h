@@ -25,9 +25,10 @@
 #include "dfm_base_global.h"
 
 #include <QObject>
+#include <QSharedPointer>
 
 namespace dfmbase {
-class LocalFileWatcher;
+class AbstractFileWatcher;
 }
 
 namespace dfmplugin_trashcore {
@@ -49,7 +50,7 @@ private:
     void initTrashWatcher();
 
 private:
-    DFMBASE_NAMESPACE::LocalFileWatcher *trashFileWatcher = nullptr;
+    QSharedPointer<DFMBASE_NAMESPACE::AbstractFileWatcher> trashFileWatcher = nullptr;
     bool isEmpty { false };
 };
 
