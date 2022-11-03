@@ -85,7 +85,7 @@ public slots:
     int showRunExcutableFileDialog(const DUrl &url, quint64 winId);
     int showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint64 winId);
     int showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event);
-    std::pair<bool, bool> showRenameNameDotBeginDialog();
+    int showRenameNameDotBeginDialog();
     // 重命名文件时，如果文件名为..，则弹出警告对话框
     int showRenameNameDotDotErrorDialog(const DFMEvent &event);
     void showRenameBusyErrDialog(const DFMEvent &event);
