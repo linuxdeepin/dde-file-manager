@@ -640,7 +640,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                    // 'device busy' error.
+                                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -727,7 +727,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() {}
+DeviceManager::~DeviceManager() { }
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -796,7 +796,14 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     // concept of dialogs in wayland, but only the 'popup' menu.
     QWidget *parent = WindowUtils::isWayLand() ? qApp->activeWindow() : nullptr;
     MountAskPasswordDialog dlg(parent);
-    dlg.setTitle(message);
+
+    // daemon mount return plain text which should be replaced with translated text.
+    QString msg(message);
+    static const QString kCustomMessagePrefix = "need authorization to access";
+    if (msg.startsWith(kCustomMessagePrefix))
+        msg.replace(kCustomMessagePrefix, QObject::tr("need authorization to access"));
+
+    dlg.setTitle(msg);
     dlg.setDomain(domainDefault);
     dlg.setUser(userDefault);
 
