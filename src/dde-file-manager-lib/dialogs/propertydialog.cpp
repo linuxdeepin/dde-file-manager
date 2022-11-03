@@ -979,7 +979,7 @@ void PropertyDialog::raise()
     emit raised();
 }
 
-void PropertyDialog::hideEvent(QHideEvent *event)
+void PropertyDialog::closeEvent(QCloseEvent *event)
 {
     if (m_xani) {
         m_xani->stop();
@@ -992,11 +992,11 @@ void PropertyDialog::hideEvent(QHideEvent *event)
     if (m_aniLabel)
         delete  m_aniLabel;
     emit aboutToClosed(m_url);
-    DDialog::hideEvent(event);
     emit closed(m_url);
     if (m_sizeWorker) {
         m_sizeWorker->stop();
     }
+    DDialog::closeEvent(event);
 }
 
 void PropertyDialog::resizeEvent(QResizeEvent *event)
