@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef BLOCKENTRYFILEENTITY_H
 #define BLOCKENTRYFILEENTITY_H
 
@@ -29,8 +29,15 @@
 
 namespace dfmplugin_computer {
 
+namespace WinVolTagKeys {
+inline constexpr char kWinUUID[] { "winUUID" };
+inline constexpr char kWinLabel[] { "winLabel" };
+inline constexpr char kWinDrive[] { "winDrive" };
+}   // namespace WinVolTagKeys
+
 class BlockEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
+    Q_OBJECT
 public:
     explicit BlockEntryFileEntity(const QUrl &url);
 
@@ -53,6 +60,10 @@ public:
 private:
     QVariant getProperty(const char *const key) const;
     bool showSizeAndProgress() const;
+    QUrl mountPoint() const;
+    void loadDiskInfo();
+    void loadWindowsVoltag();
+    void resetWindowsVolTag();
 };
 
 }

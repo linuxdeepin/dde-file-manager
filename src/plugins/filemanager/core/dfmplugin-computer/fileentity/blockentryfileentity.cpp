@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "blockentryfileentity.h"
 #include "utils/computerdatastruct.h"
 #include "utils/computerutils.h"
@@ -28,15 +28,18 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/base/urlroute.h"
 
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonParseError>
+#include <QTimer>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_computer;
@@ -65,11 +68,21 @@ BlockEntryFileEntity::BlockEntryFileEntity(const QUrl &url)
         abort();
     }
 
-    refresh();
+    auto refreshInfo = [this](const QString &id) {
+        if (id == ComputerUtils::getBlockDevIdByUrl(entryUrl))
+            refresh();
+    };
+
+    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, refreshInfo);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, refreshInfo);
+
+    loadDiskInfo();
 }
 
 QString BlockEntryFileEntity::displayName() const
 {
+    if (datas.contains(WinVolTagKeys::kWinLabel))
+        return datas.value(WinVolTagKeys::kWinLabel).toString();
     return DeviceUtils::convertSuitableDisplayName(datas);
 }
 
@@ -186,37 +199,12 @@ quint64 BlockEntryFileEntity::sizeUsage() const
 
 void BlockEntryFileEntity::refresh()
 {
-    auto id = QString(DeviceId::kBlockDeviceIdPrefix)
-            + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
-
-    datas = UniversalUtils::convertFromQMap(DevProxyMng->queryBlockInfo(id));
-    auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
-    if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
-        auto clearBlkData = DevProxyMng->queryBlockInfo(clearBlkId);
-        datas.insert(BlockAdditionalProperty::kClearBlockProperty, clearBlkData);
-    }
+    loadDiskInfo();
 }
 
 QUrl BlockEntryFileEntity::targetUrl() const
 {
-    auto mptList = getProperty(DeviceProperty::kMountPoints).toStringList();
-    QUrl target;
-    if (mptList.isEmpty())
-        return target;
-
-    // when enter DataDisk, enter Home directory.
-    for (const auto &mpt : mptList) {
-        if (mpt != QDir::rootPath()) {
-            const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-            const QString &homeBindPath = FileUtils::bindPathTransform(userHome, true);
-            if (userHome != homeBindPath && homeBindPath.startsWith(mpt))
-                return QUrl::fromLocalFile(homeBindPath);
-        }
-    }
-
-    target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
-    target.setPath(mptList.first());
-    return target;
+    return mountPoint();
 }
 
 bool BlockEntryFileEntity::isAccessable() const
@@ -261,4 +249,90 @@ bool BlockEntryFileEntity::showSizeAndProgress() const
     }
 
     return true;
+}
+
+QUrl BlockEntryFileEntity::mountPoint() const
+{
+    auto mptList = getProperty(DeviceProperty::kMountPoints).toStringList();
+    QUrl target;
+    if (mptList.isEmpty())
+        return target;
+
+    // when enter DataDisk, enter Home directory.
+    for (const auto &mpt : mptList) {
+        if (mpt != QDir::rootPath()) {
+            const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+            const QString &homeBindPath = FileUtils::bindPathTransform(userHome, true);
+            if (userHome != homeBindPath && homeBindPath.startsWith(mpt))
+                return QUrl::fromLocalFile(homeBindPath);
+        }
+    }
+
+    target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
+    target.setPath(mptList.first());
+    return target;
+}
+
+void BlockEntryFileEntity::loadDiskInfo()
+{
+    auto id = QString(DeviceId::kBlockDeviceIdPrefix)
+            + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
+
+    datas = UniversalUtils::convertFromQMap(DevProxyMng->queryBlockInfo(id));
+    auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
+    if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
+        auto clearBlkData = DevProxyMng->queryBlockInfo(clearBlkId);
+        datas.insert(BlockAdditionalProperty::kClearBlockProperty, clearBlkData);
+    }
+
+    if (mountPoint().isValid())
+        loadWindowsVoltag();
+    else
+        resetWindowsVolTag();
+}
+
+void BlockEntryFileEntity::loadWindowsVoltag()
+{
+    static const QString &kWinVolInfoConfig = "/UOSICON/diskinfo.json";
+    static const QString &kDiskInfoKey = "DISKINFO";
+    static const QString &kUUIDKey = "uuid";
+    static const QString &kDriveKey = "drive";
+    static const QString &kLabelKey = "label";
+
+    QUrl cfgUrl = QUrl::fromLocalFile(mountPoint().path() + kWinVolInfoConfig);
+
+    DecoratorFile f(cfgUrl);
+    if (!f.exists())
+        return;
+
+    QJsonParseError err;
+    auto doc = QJsonDocument::fromJson(f.readAll(), &err);
+    if (doc.isNull() || err.error != QJsonParseError::NoError) {
+        qDebug() << "Cannot parse file: " << cfgUrl << err.errorString() << err.error;
+        return;
+    }
+
+    if (doc.isObject()) {
+        auto obj = doc.object();
+        if (obj.contains(kDiskInfoKey) && obj.value(kDiskInfoKey).isArray()) {
+            auto arr = obj.value(kDiskInfoKey).toArray();
+            for (int i = 0; i < arr.size(); ++i) {
+                auto itemObj = arr[i].toObject();
+
+                if (itemObj.contains(kUUIDKey))
+                    datas.insert(WinVolTagKeys::kWinUUID, itemObj.value(kUUIDKey).toString());
+                if (itemObj.contains(kDriveKey))
+                    datas.insert(WinVolTagKeys::kWinDrive, itemObj.value(kDriveKey).toString());
+                if (itemObj.contains(kLabelKey))
+                    datas.insert(WinVolTagKeys::kWinLabel, itemObj.value(kLabelKey).toString());
+            }
+        }
+    }
+}
+
+void BlockEntryFileEntity::resetWindowsVolTag()
+{
+    datas.remove(WinVolTagKeys::kWinUUID);
+    datas.remove(WinVolTagKeys::kWinDrive);
+    datas.remove(WinVolTagKeys::kWinLabel);
 }
