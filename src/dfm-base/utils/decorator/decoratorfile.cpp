@@ -108,7 +108,7 @@ qint64 DecoratorFile::writeAll(const QByteArray &byteArray, DFMIO::DFile::OpenFl
             if (!ok)
                 return -1;
         }
-        qint64 ret = d->dfile->write(byteArray);
+        qint64 ret = d->dfile->write(byteArray.data(), byteArray.length());
         d->dfile->close();
 
         return ret;
