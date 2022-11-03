@@ -437,7 +437,7 @@ QIcon DGvfsFileInfo::fileIcon() const
     if (d->needThumbnail || d->hasThumbnail > 0) {
         d->needThumbnail = true;
 
-        const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));
+        const QIcon icon(DThumbnailProvider::instance()->thumbnailPixmap(d->fileInfo, DThumbnailProvider::Large));
 
         if (!icon.isNull()) {
             QPixmap pixmap = icon.pixmap(DThumbnailProvider::Large, DThumbnailProvider::Large);

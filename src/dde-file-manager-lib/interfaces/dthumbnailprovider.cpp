@@ -216,7 +216,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     return false;
 }
 
-QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) const
+QPixmap DThumbnailProvider::thumbnailPixmap(const QFileInfo &info, Size size) const
 {
     Q_D(const DThumbnailProvider);
 
@@ -241,14 +241,14 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
     QString thumbnail = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
 
     if (!QFile::exists(thumbnail)) {
-        return QString();
+        return QPixmap();
     }
 
     QImageReader ir(thumbnail, QByteArray(FORMAT).mid(1));
     if (!ir.canRead()) {
         QFile::remove(thumbnail);
         emit thumbnailChanged(absoluteFilePath, QString());
-        return QString();
+        return QPixmap();
     }
     ir.setAutoDetectImageFormat(false);
 
@@ -259,10 +259,10 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
 
         emit thumbnailChanged(absoluteFilePath, QString());
 
-        return QString();
+        return QPixmap();
     }
 
-    return thumbnail;
+    return QPixmap::fromImage(image);
 }
 
 static QString generalKey(const QString &key)
@@ -310,15 +310,15 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     // the file is in fail path
     QString thumbnail = DFMStandardPaths::location(DFMStandardPaths::ThumbnailFailPath) + QDir::separator() + thumbnailName;
 
-//    if (QFile::exists(thumbnail)) {
-//        QImage image(thumbnail);
+    //    if (QFile::exists(thumbnail)) {
+    //        QImage image(thumbnail);
 
-//        if (image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
-//            QFile::remove(thumbnail);
-//        } else {
-//            return QString();
-//        }
-//    }// end
+    //        if (image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
+    //            QFile::remove(thumbnail);
+    //        } else {
+    //            return QString();
+    //        }
+    //    }// end
 
     QMimeType mime = d->mimeDatabase.mimeTypeForFile(info);
     QScopedPointer<QImage> image(new QImage());
@@ -379,8 +379,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             }
         }
     } else if (mime.name().startsWith("image/")) {
-//        mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
-//        QImageReader reader(absoluteFilePath, mime.preferredSuffix().toLatin1());
+        //        mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
+        //        QImageReader reader(absoluteFilePath, mime.preferredSuffix().toLatin1());
 
         //! fix bug#49451 因为使用mime.preferredSuffix(),会导致后续image.save崩溃，具体原因还需进一步跟进
         //! QImageReader构造时不传format参数，让其自行判断
@@ -551,103 +551,102 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         }else{//若调用库函数getMovieCover提取缩略图失败，下面走旧逻辑
             thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
             d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
-        if (d->errorString.isEmpty()) {
-            emit createThumbnailFinished(absoluteFilePath, thumbnail);
-            emit thumbnailChanged(absoluteFilePath, thumbnail);
+            if (d->errorString.isEmpty()) {
+                emit createThumbnailFinished(absoluteFilePath, thumbnail);
+                emit thumbnailChanged(absoluteFilePath, thumbnail);
+                return thumbnail;
+            } else { // fallback to thumbnail tool
+                if (d->keyToThumbnailTool.isEmpty()) {
+                    d->keyToThumbnailTool["Initialized"] = QString();
 
-            return thumbnail;
-        } else { // fallback to thumbnail tool
-            if (d->keyToThumbnailTool.isEmpty()) {
-                d->keyToThumbnailTool["Initialized"] = QString();
+                    for (const QString &path : QString(TOOLDIR).split(":")) {
+                        const QString &thumbnail_tool_path = path + QDir::separator() + "/thumbnail";
+                        QDirIterator dir(thumbnail_tool_path, {"*.json"}, QDir::NoDotAndDotDot | QDir::Files);
 
-                for (const QString &path : QString(TOOLDIR).split(":")) {
-                    const QString &thumbnail_tool_path = path + QDir::separator() + "/thumbnail";
-                    QDirIterator dir(thumbnail_tool_path, {"*.json"}, QDir::NoDotAndDotDot | QDir::Files);
+                        while (dir.hasNext()) {
+                            const QString &file_path = dir.next();
+                            const QFileInfo &file_info = dir.fileInfo();
 
-                    while (dir.hasNext()) {
-                        const QString &file_path = dir.next();
-                        const QFileInfo &file_info = dir.fileInfo();
+                            QFile file(file_path);
 
-                        QFile file(file_path);
-
-                        if (!file.open(QFile::ReadOnly)) {
-                            continue;
-                        }
-
-                        const QJsonDocument document = QJsonDocument::fromJson(file.readAll());
-                        file.close();
-
-                        const QStringList keys = document.object().toVariantMap().value("Keys").toStringList();
-                        const QString &tool_file_path = file_info.absoluteDir().filePath(file_info.baseName());
-
-                        if (!QFile::exists(tool_file_path)) {
-                            continue;
-                        }
-
-                        for (const QString &key : keys) {
-                            if (d->keyToThumbnailTool.contains(key))
+                            if (!file.open(QFile::ReadOnly)) {
                                 continue;
+                            }
 
-                            d->keyToThumbnailTool[key] = tool_file_path;
+                            const QJsonDocument document = QJsonDocument::fromJson(file.readAll());
+                            file.close();
+
+                            const QStringList keys = document.object().toVariantMap().value("Keys").toStringList();
+                            const QString &tool_file_path = file_info.absoluteDir().filePath(file_info.baseName());
+
+                            if (!QFile::exists(tool_file_path)) {
+                                continue;
+                            }
+
+                            for (const QString &key : keys) {
+                                if (d->keyToThumbnailTool.contains(key))
+                                    continue;
+
+                                d->keyToThumbnailTool[key] = tool_file_path;
+                            }
                         }
                     }
                 }
-            }
 
-            QString mime_name = mime.name();
-            QString tool = d->keyToThumbnailTool.value(mime_name);
+                QString mime_name = mime.name();
+                QString tool = d->keyToThumbnailTool.value(mime_name);
 
-            if (tool.isEmpty()) {
-                mime_name = generalKey(mime_name);
-                tool = d->keyToThumbnailTool.value(mime_name);
-            }
-
-            if (tool.isEmpty()) {
-                return thumbnail;
-            }
-
-            QProcess process;
-            process.start(tool, {QString::number(size), absoluteFilePath}, QIODevice::ReadOnly);
-
-            if (!process.waitForFinished()) {
-                d->errorString = process.errorString();
-
-                goto _return;
-            }
-
-            if (process.exitCode() != 0) {
-                const QString &error = process.readAllStandardError();
-
-                if (error.isEmpty()) {
-                    d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
-                } else {
-                    d->errorString = error;
+                if (tool.isEmpty()) {
+                    mime_name = generalKey(mime_name);
+                    tool = d->keyToThumbnailTool.value(mime_name);
                 }
 
-                goto _return;
-            }
+                if (tool.isEmpty()) {
+                    return thumbnail;
+                }
 
-            const QByteArray output = process.readAllStandardOutput();
-            const QByteArray png_data = QByteArray::fromBase64(output);
-            Q_ASSERT(!png_data.isEmpty());
+                QProcess process;
+                process.start(tool, {QString::number(size), absoluteFilePath}, QIODevice::ReadOnly);
 
-            if (image->loadFromData(png_data, "png")) {
-                d->errorString.clear();
-            } else {
-                //过滤video tool的其他输出信息
-                QString processResult(output);
-                processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
-                const QByteArray pngData = QByteArray::fromBase64(processResult.toUtf8());
-                Q_ASSERT(!pngData.isEmpty());
-                if (image->loadFromData(pngData, "png")) {
+                if (!process.waitForFinished()) {
+                    d->errorString = process.errorString();
+
+                    goto _return;
+                }
+
+                if (process.exitCode() != 0) {
+                    const QString &error = process.readAllStandardError();
+
+                    if (error.isEmpty()) {
+                        d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
+                    } else {
+                        d->errorString = error;
+                    }
+
+                    goto _return;
+                }
+
+                const QByteArray output = process.readAllStandardOutput();
+                const QByteArray png_data = QByteArray::fromBase64(output);
+                Q_ASSERT(!png_data.isEmpty());
+
+                if (image->loadFromData(png_data, "png")) {
                     d->errorString.clear();
                 } else {
-                    d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
+                    //过滤video tool的其他输出信息
+                    QString processResult(output);
+                    processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
+                    const QByteArray pngData = QByteArray::fromBase64(processResult.toUtf8());
+                    Q_ASSERT(!pngData.isEmpty());
+                    if (image->loadFromData(pngData, "png")) {
+                        d->errorString.clear();
+                    } else {
+                        d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
+                    }
                 }
             }
         }
-     }
-   }
+    }
 
 _return:
     // successful
@@ -664,7 +663,8 @@ _return:
     // create path
     QFileInfo(thumbnail).absoluteDir().mkpath(".");
 
-    if (!image->save(thumbnail, Q_NULLPTR, 80)) {
+    *image = image->scaled(size, size, Qt::KeepAspectRatio);
+    if (!image->save(thumbnail, Q_NULLPTR, 50)) {
         d->errorString = QStringLiteral("Can not save image to ") + thumbnail;
     }
 

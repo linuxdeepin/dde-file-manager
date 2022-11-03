@@ -36,7 +36,7 @@ public:
     bool hasThumbnail(const QFileInfo &info) const;
     bool hasThumbnail(const QMimeType &mimeType) const;
 
-    QString thumbnailFilePath(const QFileInfo &info, Size size) const;
+    QPixmap thumbnailPixmap(const QFileInfo &info, Size size) const;
 
     typedef std::function<void(const QString &)> CallBack;
     QString createThumbnail(const QFileInfo &info, Size size);
