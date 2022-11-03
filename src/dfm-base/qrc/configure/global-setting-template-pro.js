@@ -121,6 +121,12 @@
                                 ]
                             },
                             "default": 1
+                        },
+                        {
+                            "key": "mixed_sort",
+                            "text": "Mix sorting of files and folders",
+                            "type": "checkbox",
+                            "default": false
                         }
                     ]
                 },

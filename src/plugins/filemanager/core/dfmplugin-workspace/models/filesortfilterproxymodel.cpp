@@ -344,12 +344,14 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
         return false;
 
     // The folder is fixed in the front position
-    if (leftInfo->isDir()) {
-        if (!rightInfo->isDir())
-            return sortOrder() == Qt::AscendingOrder;
-    } else {
-        if (rightInfo->isDir())
-            return sortOrder() == Qt::DescendingOrder;
+    if (!Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool()) {
+        if (leftInfo->isDir()) {
+            if (!rightInfo->isDir())
+                return sortOrder() == Qt::AscendingOrder;
+        } else {
+            if (rightInfo->isDir())
+                return sortOrder() == Qt::DescendingOrder;
+        }
     }
 
     QVariant leftData = viewModel()->data(left, sortRole());

@@ -51,6 +51,7 @@ void global_setting_template_fedora_trans()
     auto base_default_view_icon_sizeText2 = QObject::tr("Medium");
     auto base_default_view_icon_sizeText3 = QObject::tr("Large");
     auto base_default_view_icon_sizeText4 = QObject::tr("Extra large");
+    auto base_default_view_mixed_sortText = QObject::tr("Mix sorting of files and folders");
     auto base_default_view_view_modeName = QObject::tr("Default view:");
     auto base_hidden_files_show_hiddenText = QObject::tr("Show hidden files");
     auto base_hidden_files_show_suffixText = QObject::tr("Show file extensions");

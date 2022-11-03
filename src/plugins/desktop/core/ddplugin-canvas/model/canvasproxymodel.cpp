@@ -24,6 +24,7 @@
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/base/application/application.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -279,12 +280,14 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     DFMLocalFileInfoPointer rightInfo = q->fileInfo(rightIdx);
 
     // The folder is fixed in the front position
-    if (leftInfo->isDir()) {
-        if (!rightInfo->isDir())
-            return true;
-    } else {
-        if (rightInfo->isDir())
-            return false;
+    if (!Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool()) {
+        if (leftInfo->isDir()) {
+            if (!rightInfo->isDir())
+                return true;
+        } else {
+            if (rightInfo->isDir())
+                return false;
+        }
     }
 
     QVariant leftData = q->data(leftIdx, fileSortRole);

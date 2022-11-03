@@ -47,7 +47,8 @@ public:
         kOpenFileMode,   // Click/double-click [0/1]
         kUrlOfNewWindow,   // default path to new window
         kUrlOfNewTab,   // default path to new tabs
-        kThemeName
+        kThemeName,
+        kFileAndDirMixedSort  // Mixed sorting of ordinary files and directories
     };
 
     Q_ENUM(ApplicationAttribute)

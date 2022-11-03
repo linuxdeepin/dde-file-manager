@@ -780,6 +780,18 @@ void FileView::onSelectionChanged(const QItemSelection &selected, const QItemSel
     WorkspaceEventCaller::sendViewSelectionChanged(winId, selected, deselected);
 }
 
+void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
+{
+    Q_UNUSED(value);
+    switch (aa) {
+    case Application::kFileAndDirMixedSort:
+        doSort();
+        break;
+    default:
+        break;
+    }
+}
+
 bool FileView::isIconViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kIconMode;
@@ -1489,6 +1501,7 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, [this] { this->update(); });
+    connect(Application::instance(), &Application::appAttributeChanged,this, &FileView::onAppAttributeChanged);
 }
 
 void FileView::updateStatusBar()
