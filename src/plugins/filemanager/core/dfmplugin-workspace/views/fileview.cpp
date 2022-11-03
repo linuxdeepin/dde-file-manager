@@ -119,9 +119,9 @@ void FileView::setViewMode(Global::ViewMode mode)
         setOrientation(QListView::TopToBottom, false);
         setSpacing(kListViewSpacing);
 
+        d->initListModeView();
         if (model())
             setMinimumWidth(model()->columnCount() * GlobalPrivate::kListViewMinimumWidth);
-        d->initListModeView();
 
         if (d->allowedAdjustColumnSize) {
             horizontalScrollBar()->parentWidget()->installEventFilter(this);
