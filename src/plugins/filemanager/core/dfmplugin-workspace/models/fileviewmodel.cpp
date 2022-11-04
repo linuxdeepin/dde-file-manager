@@ -102,10 +102,11 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         return QModelIndex();
 
     int rootRow = fileDataHelper->preSetRoot(url);
+    RootInfo *root = nullptr;
     if (rowCount() <= rootRow) {
         // insert root index
         beginInsertRows(QModelIndex(), rootRow, rootRow);
-        RootInfo *root = fileDataHelper->setRoot(url);
+        root = fileDataHelper->setRoot(url);
         endInsertRows();
 
         connect(root, &RootInfo::insert, this, &FileViewModel::onInsert, Qt::QueuedConnection);
@@ -115,15 +116,17 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         connect(root, &RootInfo::childrenUpdate, this, &FileViewModel::childrenUpdated, Qt::QueuedConnection);
         connect(root, &RootInfo::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
     } else {
-        fileDataHelper->setRoot(url);
+        root = fileDataHelper->setRoot(url);
     }
 
     const QModelIndex &index = rootIndex(url);
 
-    if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme()))
+    if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme())) {
         Q_EMIT traverPrehandle(url, index);
-    else
+    } else {
+        root->canFetchMore = true;
         fetchMore(index);
+    }
 
     return index;
 }
@@ -146,9 +149,10 @@ QModelIndex FileViewModel::findIndex(const QUrl &url) const
 void FileViewModel::doFetchMore(const QModelIndex &rootIndex)
 {
     auto rootInfo = fileDataHelper->findRootInfo(rootIndex.row());
+    rootInfo->canFetchMore = true;
     rootInfo->needTraversal = true;
 
-    traversRootDir(rootIndex);
+    fetchMore(rootIndex);
 }
 
 AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const

@@ -39,13 +39,6 @@ RootInfo::RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w)
 {
 }
 
-void RootInfo::init()
-{
-    startWatcher();
-
-    canFetchMore = true;
-}
-
 QList<QUrl> RootInfo::getChildrenUrls() const
 {
     if (fileCache) {

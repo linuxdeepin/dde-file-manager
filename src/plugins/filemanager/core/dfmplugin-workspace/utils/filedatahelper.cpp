@@ -42,8 +42,7 @@ RootInfo *FileDataHelper::setRoot(const QUrl &rootUrl)
 
         const AbstractFileWatcherPointer &watcher = setWatcher(rootUrl);
         info->watcher = watcher;
-
-        info->init();
+        info->startWatcher();
 
         return info;
     }
@@ -51,7 +50,7 @@ RootInfo *FileDataHelper::setRoot(const QUrl &rootUrl)
     RootInfo *info = createRootInfo(rootUrl);
     rootInfoMap[rootUrl] = info;
 
-    info->init();
+    info->startWatcher();
 
     return rootInfoMap[rootUrl];
 }
