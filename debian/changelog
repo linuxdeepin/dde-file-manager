@@ -1,3 +1,10 @@
+dde-file-manager (5.8.0) unstable; urgency=low
+
+  * create baseline 5.8.0
+  *
+
+ -- new baseline <lvwujun@uniontech.com>  Fri, 04 Oct 2022 11:50:18 +0800
+
 dde-file-manager (5.6.6) UNRELEASED; urgency=low
 
   * Autobuild Tag 5.6.6
