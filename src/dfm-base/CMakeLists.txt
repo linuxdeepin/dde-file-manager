@@ -19,7 +19,7 @@ endif()
 
 # signals and slots keyword is disable, use Q_SIGNALS and Q_SLOTS instead
 add_compile_definitions(QT_NO_SIGNALS_SLOTS_KEYWORDS)
-
+add_compile_definitions(THUMBNAIL_TOOL_DIR="${DFM_THUMBNAIL_TOOL}")
 # qrc
 set(QRC_FILE
     qrc/skin/skin.qrc

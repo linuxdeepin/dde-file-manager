@@ -145,6 +145,7 @@ inline constexpr char kTypeImagePng[] { "image/png" };
 inline constexpr char kTypeImagePipeg[] { "image/pipeg" };
 inline constexpr char kTypeImageVDjvu[] { "image/vnd.djvu" };
 inline constexpr char kTypeImageSvgXml[] { "image/svg+xml" };
+inline constexpr char kTypeAudioFlac[] { "audio/flac" };
 
 inline constexpr char kMimeDataUserIDKey[] { "userid_for_drag" };
 }   // namespace Mime

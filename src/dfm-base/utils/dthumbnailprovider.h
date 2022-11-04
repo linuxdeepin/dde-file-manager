@@ -62,12 +62,23 @@ public:
     void appendToProduceQueue(const QUrl &url, Size size, CallBack callback = nullptr);
 
     QString errorString() const;
-
     qint64 sizeLimit(const QMimeType &mimeType) const;
 
 Q_SIGNALS:
     void createThumbnailFinished(const QString &sourceFilePath, const QString &thumbnailPath) const;
     void createThumbnailFailed(const QString &sourceFilePath) const;
+
+private:
+    void createAudioThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image);
+    bool createImageVDjvuThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image, const QString &thumbnailName, QString &thumbnail);
+    void createImageThumbnail(const QUrl &url, const QMimeType &mime, const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image);
+    void createTextThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image);
+    void createPdfThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image);
+    bool createDefaultThumbnail(const QMimeType &mime, const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image, QString &thumbnail);
+    bool createThumnailByMovieLib(const QString &filePath, QScopedPointer<QImage> &image);
+    void initThumnailTool();
+    bool createThumnailByDtkTools(const QMimeType &mime, DThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image);
+    bool createThumnailByTools(const QMimeType &mime, DThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image);
 
 protected:
     explicit DThumbnailProvider(QObject *parent = nullptr);

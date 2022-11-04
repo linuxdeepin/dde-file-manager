@@ -50,6 +50,7 @@ public:
     static QStringList supportArchiveMimetypes();
     static QStringList supportVideoMimeTypes();
     static MimeTypeDisplayManager *instance();
+    static QStringList supportAudioMimeTypes();
 
 private:
     static MimeTypeDisplayManager *self;

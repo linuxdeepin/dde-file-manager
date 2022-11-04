@@ -82,30 +82,34 @@ public:
     qint64 defaultSizeLimit = 1024 * 1024 * 20;
     QHash<QMimeType, qint64> sizeLimitHash;
     DMimeDatabase mimeDatabase;
-
+    QLibrary *libMovieViewer = nullptr;
+    QHash<QString, QString> keyToThumbnailTool;
+    QWaitCondition waitCondition;
+    QMutex mutex;
     static QSet<QString> hasThumbnailMimeHash;
 
     struct ProduceInfo
     {
         QUrl url;
-        DThumbnailProvider::Size size;
         DThumbnailProvider::CallBack callback = nullptr;
+        DThumbnailProvider::Size size;
     };
 
     QQueue<ProduceInfo> produceQueue;
     QQueue<QString> produceAbsoluteFilePathQueue;
 
     bool running = true;
-
-    QWaitCondition waitCondition;
-    QMutex mutex;
-
-    QHash<QString, QString> keyToThumbnailTool;
 };
 
 class DFileThumbnailProviderPrivate : public DThumbnailProvider
 {
+public:
+    ~DFileThumbnailProviderPrivate();
 };
+
+DFileThumbnailProviderPrivate::~DFileThumbnailProviderPrivate()
+{
+}
 
 }
 
@@ -137,6 +141,8 @@ void DThumbnailProviderPrivate::init()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImageJpeg), 1024 * 1024 * 30);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImagePng), 1024 * 1024 * 30);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeImagePipeg), 1024 * 1024 * 30);
+    // High file limit size only for FLAC files.
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAudioFlac), INT64_MAX);
 }
 
 QString DThumbnailProviderPrivate::sizeToFilePath(DThumbnailProvider::Size size) const
@@ -194,6 +200,10 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     if (mime.startsWith("image") && !Application::instance()->genericAttribute(Application::kPreviewImage).toBool())
         return false;
 
+    if ((mime.startsWith("audio") || DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportAudioMimeTypes().contains(mime))
+        && !Application::instance()->genericAttribute(Application::kPreviewVideo).toBool())
+        return false;
+
     if ((mime.startsWith("video")
          || DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportVideoMimeTypes().contains(mime))
         && !Application::instance()->genericAttribute(Application::kPreviewVideo).toBool())
@@ -212,7 +222,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     if (DThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
         return true;
 
-    if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("video/"))) {
+    if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("audio/") || mime.startsWith("video/"))) {
         DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return true;
@@ -245,6 +255,11 @@ int DThumbnailProvider::hasThumbnailFast(const QString &mime) const
         && !Application::instance()->genericAttribute(Application::kPreviewVideo).toBool())
         return 0;
 
+    if ((mime.startsWith("audio")
+         || DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportAudioMimeTypes().contains(mime))
+        && !Application::instance()->genericAttribute(Application::kPreviewVideo).toBool())
+        return 0;
+
     if (mime == DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain && !Application::instance()->genericAttribute(Application::kPreviewTextFile).toBool())
         return 0;
 
@@ -257,7 +272,7 @@ int DThumbnailProvider::hasThumbnailFast(const QString &mime) const
     if (DThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
         return 1;
 
-    if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("video/"))) {
+    if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("audio/") || mime.startsWith("video/"))) {
         DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return 1;
@@ -308,7 +323,7 @@ QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) co
     const QImage image = ir.read();
 
     const qulonglong fileModify = fileInfo->attribute(DFMIO::DFileInfo::AttributeID::kTimeModified).toULongLong();
-    if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)fileModify) {
+    if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
         DecoratorFileOperator(thumbnail).deleteFile();
 
         return QString();
@@ -371,205 +386,21 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
 
     //! 新增djvu格式文件缩略图预览
     if (mime.name().contains(DFMGLOBAL_NAMESPACE::Mime::kTypeImageVDjvu)) {
-        thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(QFileInfo(filePath), (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
-        d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
-
-        if (d->errorString.isEmpty()) {
-            emit createThumbnailFinished(filePath, thumbnail);
-
+        if (createImageVDjvuThumbnail(filePath, size, image, thumbnailName, thumbnail))
             return thumbnail;
-        } else {
-            QString readerBinary = QStandardPaths::findExecutable("deepin-reader");
-            if (readerBinary.isEmpty())
-                return thumbnail;
-            //! 使用子进程来调用deepin-reader程序生成djvu格式文件缩略图
-            QProcess process;
-            QStringList arguments;
-            //! 生成缩略图缓存地址
-            QString saveImage = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
-            arguments << "--thumbnail"
-                      << "-f" << filePath << "-t" << saveImage;
-            process.start(readerBinary, arguments);
-
-            if (!process.waitForFinished()) {
-                d->errorString = process.errorString();
-
-                goto _return;
-            }
-
-            if (process.exitCode() != 0) {
-                const QString &error = process.readAllStandardError();
-
-                if (error.isEmpty()) {
-                    d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(readerBinary);
-                } else {
-                    d->errorString = error;
-                }
-
-                goto _return;
-            }
-
-            auto dfile = DFMBASE_NAMESPACE::DecoratorFile(saveImage).filePtr();
-            if (dfile && dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
-                QByteArray output = dfile->readAll();
-                Q_ASSERT(!output.isEmpty());
-
-                if (image->loadFromData(output, "png")) {
-                    d->errorString.clear();
-                }
-                dfile->close();
-            }
-        }
     } else if (mime.name().startsWith("image/")) {
-        //! fix bug#49451 因为使用mime.preferredSuffix(),会导致后续image.save崩溃，具体原因还需进一步跟进
-        //! QImageReader构造时不传format参数，让其自行判断
-        //! fix bug #53200 QImageReader构造时不传format参数，会造成没有读取不了真实的文件 类型比如将png图标后缀修改为jpg，读取的类型不对
-
-        QString mimeType = d->mimeDatabase.mimeTypeForFile(url, QMimeDatabase::MatchContent).name();
-        QString suffix = mimeType.replace("image/", "");
-
-        QImageReader reader(filePath, suffix.toLatin1());
-        if (!reader.canRead()) {
-            d->errorString = reader.errorString();
-            goto _return;
-        }
-
-        const QSize &imageSize = reader.size();
-
-        //fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
-        //这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
-        if (!imageSize.isValid()) {
-            d->errorString = "Fail to read image file attribute data:" + fileInfo->absoluteFilePath();
-            goto _return;
-        }
-
-        if (imageSize.width() > size || imageSize.height() > size || mime.name() == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
-            reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
-        }
-
-        reader.setAutoTransform(true);
-
-        if (!reader.read(image.data())) {
-            d->errorString = reader.errorString();
-            goto _return;
-        }
-
-        if (image->width() > size || image->height() > size) {
-            image->operator=(image->scaled(size, size, Qt::KeepAspectRatio));
-        }
+        createImageThumbnail(url, mime, filePath, size, image);
     } else if (mime.name() == DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain) {
-        //FIXME(zccrs): This should be done using the image plugin?
-        auto dfile = DFMBASE_NAMESPACE::DecoratorFile(filePath).filePtr();
-        if (!dfile || !dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
-            d->errorString = dfile->lastError().errorMsg();
-            goto _return;
-        }
-        AbstractFileInfoPointer fileinfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(filePath));
-        if (!fileinfo)
-            goto _return;
-
-        QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->fileName()) };
-
-        QFont font;
-        font.setPixelSize(12);
-
-        QPen pen;
-        pen.setColor(Qt::black);
-
-        *image = QImage(0.70707070 * size, size, QImage::Format_ARGB32_Premultiplied);
-        image->fill(Qt::white);
-
-        QPainter painter(image.data());
-        painter.setFont(font);
-        painter.setPen(pen);
-
-        QTextOption option;
-
-        option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-        painter.drawText(image->rect(), text, option);
+        createTextThumbnail(filePath, size, image);
     } else if (mimeTypeList.contains(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPdf)) {
-        //FIXME(zccrs): This should be done using the image plugin?
-        QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));
-
-        if (!doc || doc->is_locked()) {
-            d->errorString = QStringLiteral("Cannot read this pdf file: ") + filePath;
-            goto _return;
-        }
-
-        if (doc->pages() < 1) {
-            d->errorString = QStringLiteral("This stream is invalid");
-            goto _return;
-        }
-
-        QScopedPointer<const poppler::page> page(doc->create_page(0));
-
-        if (!page) {
-            d->errorString = QStringLiteral("Cannot get this page at index 0");
-            goto _return;
-        }
-
-        poppler::page_renderer pr;
-        pr.set_render_hint(poppler::page_renderer::antialiasing, true);
-        pr.set_render_hint(poppler::page_renderer::text_antialiasing, true);
-
-        poppler::image imageData = pr.render_page(page.data(), 72, 72, -1, -1, -1, size);
-
-        if (!imageData.is_valid()) {
-            d->errorString = QStringLiteral("Render error");
-            goto _return;
-        }
-
-        poppler::image::format_enum format = imageData.format();
-        QImage img;
-
-        switch (format) {
-        case poppler::image::format_invalid:
-            d->errorString = QStringLiteral("Image format is invalid");
-            goto _return;
-        case poppler::image::format_mono:
-            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_Mono);
-            break;
-        case poppler::image::format_rgb24:
-            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_ARGB6666_Premultiplied);
-            break;
-        case poppler::image::format_argb32:
-            img = QImage((uchar *)imageData.data(), imageData.width(), imageData.height(), QImage::Format_ARGB32);
-            break;
-        default:
-            break;
-        }
-
-        if (img.isNull()) {
-            d->errorString = QStringLiteral("Render error");
-            goto _return;
-        }
-
-        *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        createPdfThumbnail(filePath, size, image);
+    } else if (mime.name().startsWith("audio/")) {
+        createAudioThumbnail(filePath, size, image);
     } else {
-        thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(QFileInfo(filePath), (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
-        d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
-
-        if (d->errorString.isEmpty()) {
-            emit createThumbnailFinished(filePath, thumbnail);
-
+        if (createDefaultThumbnail(mime, filePath, size, image, thumbnail))
             return thumbnail;
-        } else {   // fallback to thumbnail tool
-            DFMBASE_NAMESPACE::DVideoThumbnailProvider videoProvider;
-
-            QString mimeName = mime.name();
-            bool useVideo = videoProvider.hasKey(mimeName);
-            if (!useVideo) {
-                mimeName = generalKey(mimeName);
-                useVideo = videoProvider.hasKey(mimeName);
-            }
-            if (useVideo) {
-                *image = videoProvider.createThumbnail(QString::number(size), filePath);
-                d->errorString.clear();
-            }
-        }
     }
 
-_return:
     // successful
     if (d->errorString.isEmpty()) {
         thumbnail = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
@@ -599,6 +430,388 @@ _return:
     emit createThumbnailFailed(filePath);
 
     return QString();
+}
+
+void DThumbnailProvider::createAudioThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image)
+{
+    QProcess ffmpeg;
+    ffmpeg.start("ffmpeg", QStringList() << "-nostats"
+                                         << "-loglevel"
+                                         << "0"
+                                         << "-i" << QDir::toNativeSeparators(filePath) << "-an"
+                                         << "-vf"
+                                         << "scale='min(" + QString::number(size) + ",iw)':-1"
+                                         << "-f"
+                                         << "image2pipe"
+                                         << "-fs"
+                                         << "9000"
+                                         << "-",
+                 QIODevice::ReadOnly);
+
+    if (!ffmpeg.waitForFinished()) {
+        d->errorString = ffmpeg.errorString();
+        return;
+    }
+
+    const QByteArray &output = ffmpeg.readAllStandardOutput();
+
+    if (image->loadFromData(output)) {
+        d->errorString.clear();
+    } else {
+        d->errorString = QString("load image failed from the ffmpeg application");
+    }
+}
+
+bool DThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image,
+                                                   const QString &thumbnailName, QString &thumbnail)
+{
+    thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(QFileInfo(filePath),
+                                                                                   static_cast<DTK_GUI_NAMESPACE::DThumbnailProvider::Size>(size));
+    d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
+
+    if (d->errorString.isEmpty()) {
+        emit createThumbnailFinished(filePath, thumbnail);
+
+        return true;
+    } else {
+        const QString &readerBinary = QStandardPaths::findExecutable("deepin-reader");
+        if (readerBinary.isEmpty())
+            return true;
+        //! 使用子进程来调用deepin-reader程序生成djvu格式文件缩略图
+        QProcess process;
+        QStringList arguments;
+        //! 生成缩略图缓存地址
+        const QString &saveImage = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
+        arguments << "--thumbnail"
+                  << "-f" << filePath << "-t" << saveImage;
+        process.start(readerBinary, arguments);
+
+        if (!process.waitForFinished()) {
+            d->errorString = process.errorString();
+
+            return false;
+        }
+
+        if (process.exitCode() != 0) {
+            const QString &error = process.readAllStandardError();
+
+            if (error.isEmpty()) {
+                d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(readerBinary);
+            } else {
+                d->errorString = error;
+            }
+
+            return false;
+        }
+
+        auto dfile = DFMBASE_NAMESPACE::DecoratorFile(saveImage).filePtr();
+        if (dfile && dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
+            const QByteArray &output = dfile->readAll();
+            Q_ASSERT(!output.isEmpty());
+
+            if (image->loadFromData(output, "png")) {
+                d->errorString.clear();
+            }
+            dfile->close();
+        }
+    }
+    return false;
+}
+
+void DThumbnailProvider::createImageThumbnail(const QUrl &url, const QMimeType &mime, const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image)
+{
+    //! fix bug#49451 因为使用mime.preferredSuffix(),会导致后续image.save崩溃，具体原因还需进一步跟进
+    //! QImageReader构造时不传format参数，让其自行判断
+    //! fix bug #53200 QImageReader构造时不传format参数，会造成没有读取不了真实的文件 类型比如将png图标后缀修改为jpg，读取的类型不对
+
+    QString mimeType = d->mimeDatabase.mimeTypeForFile(url, QMimeDatabase::MatchContent).name();
+    QString suffix = mimeType.replace("image/", "");
+
+    QImageReader reader(filePath, suffix.toLatin1());
+    if (!reader.canRead()) {
+        d->errorString = reader.errorString();
+        return;
+    }
+
+    const QSize &imageSize = reader.size();
+
+    //fix 读取损坏icns文件（可能任意损坏的image类文件也有此情况）在arm平台上会导致递归循环的问题
+    //这里先对损坏文件（imagesize无效）做处理，不再尝试读取其image数据
+    if (!imageSize.isValid()) {
+        d->errorString = "Fail to read image file attribute data:" + filePath;
+        return;
+    }
+
+    if (imageSize.width() > size || imageSize.height() > size || mime.name() == DFMGLOBAL_NAMESPACE::Mime::kTypeImageSvgXml) {
+        reader.setScaledSize(reader.size().scaled(size, size, Qt::KeepAspectRatio));
+    }
+
+    reader.setAutoTransform(true);
+
+    if (!reader.read(image.data())) {
+        d->errorString = reader.errorString();
+        return;
+    }
+
+    if (image->width() > size || image->height() > size) {
+        image->operator=(image->scaled(size, size, Qt::KeepAspectRatio));
+    }
+}
+
+void DThumbnailProvider::createTextThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image)
+{
+    //FIXME(zccrs): This should be done using the image plugin?
+    auto dfile = DFMBASE_NAMESPACE::DecoratorFile(filePath).filePtr();
+    if (!dfile || !dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
+        d->errorString = dfile->lastError().errorMsg();
+        return;
+    }
+    AbstractFileInfoPointer fileinfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(filePath));
+    if (!fileinfo)
+        return;
+
+    QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->fileName()) };
+
+    QFont font;
+    font.setPixelSize(12);
+
+    QPen pen;
+    pen.setColor(Qt::black);
+
+    *image = QImage(static_cast<int>(0.70707070 * size), size, QImage::Format_ARGB32_Premultiplied);
+    image->fill(Qt::white);
+
+    QPainter painter(image.data());
+    painter.setFont(font);
+    painter.setPen(pen);
+
+    QTextOption option;
+
+    option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    painter.drawText(image->rect(), text, option);
+}
+
+void DThumbnailProvider::createPdfThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image)
+{
+    //FIXME(zccrs): This should be done using the image plugin?
+    QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));
+
+    if (!doc || doc->is_locked()) {
+        d->errorString = QStringLiteral("Cannot read this pdf file: ") + filePath;
+        return;
+    }
+
+    if (doc->pages() < 1) {
+        d->errorString = QStringLiteral("This stream is invalid");
+        return;
+    }
+
+    QScopedPointer<const poppler::page> page(doc->create_page(0));
+
+    if (!page) {
+        d->errorString = QStringLiteral("Cannot get this page at index 0");
+        return;
+    }
+
+    poppler::page_renderer pr;
+    pr.set_render_hint(poppler::page_renderer::antialiasing, true);
+    pr.set_render_hint(poppler::page_renderer::text_antialiasing, true);
+
+    poppler::image imageData = pr.render_page(page.data(), 72, 72, -1, -1, -1, size);
+
+    if (!imageData.is_valid()) {
+        d->errorString = QStringLiteral("Render error");
+        return;
+    }
+
+    poppler::image::format_enum format = imageData.format();
+    QImage img;
+
+    switch (format) {
+    case poppler::image::format_invalid:
+        d->errorString = QStringLiteral("Image format is invalid");
+        return;
+    case poppler::image::format_mono:
+        img = QImage(reinterpret_cast<uchar *>(imageData.data()), imageData.width(), imageData.height(), QImage::Format_Mono);
+        break;
+    case poppler::image::format_rgb24:
+        img = QImage(reinterpret_cast<uchar *>(imageData.data()), imageData.width(), imageData.height(), QImage::Format_ARGB6666_Premultiplied);
+        break;
+    case poppler::image::format_argb32:
+        img = QImage(reinterpret_cast<uchar *>(imageData.data()), imageData.width(), imageData.height(), QImage::Format_ARGB32);
+        break;
+    default:
+        break;
+    }
+
+    if (img.isNull()) {
+        d->errorString = QStringLiteral("Render error");
+        return;
+    }
+
+    *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+}
+
+bool DThumbnailProvider::createDefaultThumbnail(const QMimeType &mime, const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image, QString &thumbnail)
+{
+    if (createThumnailByMovieLib(filePath, image))
+        return false;
+
+    thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(QFileInfo(filePath), static_cast<DTK_GUI_NAMESPACE::DThumbnailProvider::Size>(size));
+    d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
+
+    if (d->errorString.isEmpty()) {
+        emit createThumbnailFinished(filePath, thumbnail);
+
+        return true;
+    }
+
+    if (!createThumnailByDtkTools(mime, size, filePath, image))
+        return createThumnailByTools(mime, size, filePath, image);
+
+    return false;
+}
+
+bool DThumbnailProvider::createThumnailByMovieLib(const QString &filePath, QScopedPointer<QImage> &image)
+{
+    //获取缩略图生成库函数getMovieCover的指针
+    if (!d->libMovieViewer || !d->libMovieViewer->isLoaded()) {
+        d->libMovieViewer = new QLibrary("libimageviewer.so");
+        d->libMovieViewer->load();
+    }
+    if (d->libMovieViewer && d->libMovieViewer->isLoaded()) {
+        typedef void (*getMovieCover)(const QUrl &url, const QString &savePath, QImage *imageRet);
+        getMovieCover func = reinterpret_cast<void (*)(const QUrl &, const QString &, QImage *)>(d->libMovieViewer->resolve("getMovieCover"));
+        if (func) {   //存在导出函数getMovieCover
+            auto url = QUrl::fromLocalFile(filePath);
+            QImage img;
+            func(url, filePath, &img);   //调用getMovieCover生成缩略图
+            if (!img.isNull()) {
+                *image = img;
+                d->errorString.clear();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void DThumbnailProvider::initThumnailTool()
+{
+#ifdef THUMBNAIL_TOOL_DIR
+    if (d->keyToThumbnailTool.isEmpty()) {
+        d->keyToThumbnailTool["Initialized"] = QString();
+
+        for (const QString &path : QString(THUMBNAIL_TOOL_DIR).split(":")) {
+            const QString &thumbnailToolPath = path + QDir::separator() + "/thumbnail";
+            QDirIterator dir(thumbnailToolPath, { "*.json" }, QDir::NoDotAndDotDot | QDir::Files);
+
+            while (dir.hasNext()) {
+                const QString &file_path = dir.next();
+                const QFileInfo &file_info = dir.fileInfo();
+
+                QFile file(file_path);
+
+                if (!file.open(QFile::ReadOnly)) {
+                    continue;
+                }
+
+                const QJsonDocument document = QJsonDocument::fromJson(file.readAll());
+                file.close();
+
+                const QStringList keys = document.object().toVariantMap().value("Keys").toStringList();
+                const QString &tool_file_path = file_info.absoluteDir().filePath(file_info.baseName());
+
+                if (!QFile::exists(tool_file_path)) {
+                    continue;
+                }
+
+                for (const QString &key : keys) {
+                    if (d->keyToThumbnailTool.contains(key))
+                        continue;
+
+                    d->keyToThumbnailTool[key] = tool_file_path;
+                }
+            }
+        }
+    }
+#endif
+}
+
+bool DThumbnailProvider::createThumnailByDtkTools(const QMimeType &mime, DThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image)
+{
+    DFMBASE_NAMESPACE::DVideoThumbnailProvider videoProvider;
+
+    QString mimeName = mime.name();
+    bool useVideo = videoProvider.hasKey(mimeName);
+    if (!useVideo) {
+        mimeName = generalKey(mimeName);
+        useVideo = videoProvider.hasKey(mimeName);
+    }
+    if (useVideo) {
+        *image = videoProvider.createThumbnail(QString::number(size), filePath);
+        d->errorString.clear();
+        return true;
+    }
+
+    return false;
+}
+
+bool DThumbnailProvider::createThumnailByTools(const QMimeType &mime, DThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image)
+{
+    initThumnailTool();
+    QString mimeName = mime.name();
+    QString tool = d->keyToThumbnailTool.value(mimeName);
+
+    if (tool.isEmpty()) {
+        mimeName = generalKey(mimeName);
+        tool = d->keyToThumbnailTool.value(mimeName);
+    }
+
+    if (tool.isEmpty()) {
+        return true;
+    }
+
+    QProcess process;
+    process.start(tool, { QString::number(size), filePath }, QIODevice::ReadOnly);
+
+    if (!process.waitForFinished()) {
+        d->errorString = process.errorString();
+
+        return false;
+    }
+
+    if (process.exitCode() != 0) {
+        const QString &error = process.readAllStandardError();
+
+        if (error.isEmpty()) {
+            d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
+        } else {
+            d->errorString = error;
+        }
+
+        return false;
+    }
+
+    const QByteArray output = process.readAllStandardOutput();
+    const QByteArray pngData = QByteArray::fromBase64(output);
+    Q_ASSERT(!pngData.isEmpty());
+
+    if (image->loadFromData(pngData, "png")) {
+        d->errorString.clear();
+    } else {
+        // 过滤video tool的其他输出信息
+        QString processResult(output);
+        processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
+        const QByteArray pngData = QByteArray::fromBase64(processResult.toUtf8());
+        Q_ASSERT(!pngData.isEmpty());
+        if (image->loadFromData(pngData, "png")) {
+            d->errorString.clear();
+        } else {
+            d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
+        }
+    }
+    return false;
 }
 
 void DThumbnailProvider::appendToProduceQueue(const QUrl &url, DThumbnailProvider::Size size, DThumbnailProvider::CallBack callback)
@@ -646,6 +859,11 @@ DThumbnailProvider::~DThumbnailProvider()
     d->running = false;
     d->waitCondition.wakeAll();
     wait();
+    if (d->libMovieViewer && d->libMovieViewer->isLoaded()) {
+        d->libMovieViewer->unload();
+        delete d->libMovieViewer;
+        d->libMovieViewer = nullptr;
+    }
 }
 
 void DThumbnailProvider::run()

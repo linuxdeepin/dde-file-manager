@@ -75,6 +75,11 @@ if(NOT DEFINED DFM_PLUGIN_FILEMANAGER_EDGE_DIR)
     set(DFM_PLUGIN_FILEMANAGER_EDGE_DIR ${DFM_PLUGIN_DIR}/filemanager-edge)
 endif()
 
+# dde-file-thumbnail-tool
+if(NOT DEFINED DFM_THUMBNAIL_TOOL)
+    set(DFM_THUMBNAIL_TOOL ${LIB_INSTALL_DIR}/dde-file-manager/tools)
+endif()
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING
       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."

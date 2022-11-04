@@ -178,3 +178,8 @@ MimeTypeDisplayManager *MimeTypeDisplayManager::instance()
         self = new MimeTypeDisplayManager();
     return self;
 }
+
+QStringList MimeTypeDisplayManager::supportAudioMimeTypes()
+{
+    return AudioMimeTypes;
+}
