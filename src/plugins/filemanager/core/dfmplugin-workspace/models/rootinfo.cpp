@@ -37,6 +37,7 @@ RootInfo::RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w)
       watcher(w),
       data(new FileItemData(u))
 {
+    hiddenFileUrl = QUrl::fromLocalFile(this->url.path() + "/.hidden");
 }
 
 QList<QUrl> RootInfo::getChildrenUrls() const
@@ -121,6 +122,9 @@ void RootInfo::doFileUpdated(const QUrl &url)
     AbstractFileInfoPointer info = InfoCache::instance().getCacheInfo(url);
     if (info)
         info->refresh();
+
+    if (UniversalUtils::urlEquals(hiddenFileUrl, url))
+        Q_EMIT reloadView();
 }
 
 void RootInfo::doWatcherEvent()

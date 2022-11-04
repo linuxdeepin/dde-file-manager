@@ -772,6 +772,11 @@ void FileView::updateView()
     viewport()->update();
 }
 
+void FileView::reloadView()
+{
+    model()->setFilters(model()->getFilters());
+}
+
 void FileView::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     delayUpdateStatusBar();
@@ -1483,6 +1488,7 @@ void FileView::initializeConnect()
     connect(sourceModel(), &FileViewModel::dataChanged, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
+    connect(sourceModel(), &FileViewModel::reloadView, this, &FileView::reloadView);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);

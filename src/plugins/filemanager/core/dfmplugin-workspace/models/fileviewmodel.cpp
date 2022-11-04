@@ -115,6 +115,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         connect(root, &RootInfo::removeFinish, this, &FileViewModel::onRemoveFinish, Qt::QueuedConnection);
         connect(root, &RootInfo::childrenUpdate, this, &FileViewModel::childrenUpdated, Qt::QueuedConnection);
         connect(root, &RootInfo::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
+        connect(root, &RootInfo::reloadView, this, &FileViewModel::reloadView, Qt::QueuedConnection);
     } else {
         root = fileDataHelper->setRoot(url);
     }

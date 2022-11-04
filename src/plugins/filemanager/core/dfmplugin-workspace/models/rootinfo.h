@@ -61,6 +61,7 @@ Q_SIGNALS:
     void removeFinish();
     void childrenUpdate(const QUrl &url);
     void selectAndEditFile(const QUrl &rootUrl, const QUrl url);
+    void reloadView();
 
 public Q_SLOTS:
     void doFileDeleted(const QUrl &url);
@@ -79,6 +80,7 @@ public:
     bool canFetchMore;
     bool needTraversal;
     QUrl url;
+    QUrl hiddenFileUrl;
     AbstractFileWatcherPointer watcher;
     TraversalThreadPointer traversal;
     CacheThreadPointer fileCache;

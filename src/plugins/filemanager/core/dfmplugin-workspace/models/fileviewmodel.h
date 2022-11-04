@@ -101,6 +101,7 @@ Q_SIGNALS:
     void selectAndEditFile(const QUrl &rootUrl, const QUrl &url);
     void updateFiles();
     void traverPrehandle(const QUrl &url, const QModelIndex &index);
+    void reloadView();
 
 private:
     FileDataHelper *fileDataHelper;
