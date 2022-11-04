@@ -73,6 +73,9 @@ QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
 
     emblemList = helper->getSystemEmblems(info);
 
+    if (FileUtils::isGvfsFile(url))
+        return emblemList;
+
     QList<QIcon> extendEmblems {};
     if (EmblemEventSequence::instance()->doFetchExtendEmblems(url, &extendEmblems)) {
         emblemList.append(extendEmblems);
@@ -80,9 +83,6 @@ QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
     }
 
     emblemList.append(extendEmblems);
-
-    if (FileUtils::isGvfsFile(url))
-        return emblemList;
 
     const auto &gioEmblemsMap = helper->getGioEmblems(info);
 

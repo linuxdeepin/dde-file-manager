@@ -62,7 +62,8 @@ int FileSelectionModel::selectedCount() const
     if (d->currentCommand != QItemSelectionModel::SelectionFlags(Current | Rows | ClearAndSelect))
         return selectedIndexes().count();
 
-    return d->lastSelectedIndex.isValid() ? (d->lastSelectedIndex.row() - d->firstSelectedIndex.row() + 1) : 0;
+    bool selectionValid = d->firstSelectedIndex.isValid() && d->lastSelectedIndex.isValid();
+    return selectionValid ? (d->lastSelectedIndex.row() - d->firstSelectedIndex.row() + 1) : 0;
 }
 
 QModelIndexList FileSelectionModel::selectedIndexes() const
