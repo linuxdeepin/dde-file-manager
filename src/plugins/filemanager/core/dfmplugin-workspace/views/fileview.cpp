@@ -112,6 +112,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         setSpacing(kIconViewSpacing);
 
         d->initIconModeView();
+        setMinimumWidth(0);
         break;
     case Global::ViewMode::kListMode:
         setUniformItemSizes(true);
