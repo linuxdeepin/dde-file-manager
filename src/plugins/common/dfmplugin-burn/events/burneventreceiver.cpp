@@ -22,6 +22,7 @@
 */
 #include "burneventreceiver.h"
 #include "dialogs/burnoptdialog.h"
+#include "dialogs/dumpisooptdialog.h"
 #include "utils/burnhelper.h"
 #include "utils/burnjobmanager.h"
 #include "events/burneventcaller.h"
@@ -71,6 +72,12 @@ void BurnEventReceiver::handleShowBurnDlg(const QString &dev, bool isSupportedUD
     dlg->setDefaultVolName(defaultDiscName);
     dlg->setUDFSupported(isSupportedUDF, disableISOOpts);
     dlg->setWriteSpeedInfo(speed);
+    dlg->exec();
+}
+
+void BurnEventReceiver::handleShowDumpISODlg(const QString &devId)
+{
+    QScopedPointer<DumpISOOptDialog> dlg { new DumpISOOptDialog(devId) };
     dlg->exec();
 }
 

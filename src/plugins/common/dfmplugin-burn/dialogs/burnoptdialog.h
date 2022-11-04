@@ -81,6 +81,6 @@ private:
     QCheckBox *ejectCheckbox { nullptr };
 };
 
-}
+}   // namespace dfmplugin_burn
 
 #endif   // BURNOPTDIALOG_H

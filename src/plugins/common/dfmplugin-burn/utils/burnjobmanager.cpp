@@ -27,9 +27,11 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QVBoxLayout>
 #include <QTextEdit>
+#include <QLabel>
 
 using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
@@ -46,7 +48,7 @@ void BurnJobManager::startEraseDisc(const QString &dev)
     DialogManagerInstance->addTask(jobHandler);
 
     AbstractBurnJob *job = new EraseJob(dev, jobHandler);
-    initConnect(job);
+    initBurnJobConnect(job);
     job->start();
 }
 
@@ -56,7 +58,7 @@ void BurnJobManager::startBurnISOFiles(const QString &dev, const QUrl &stagingUr
     DialogManagerInstance->addTask(jobHandler);
 
     AbstractBurnJob *job = new BurnISOFilesJob(dev, jobHandler);
-    initConnect(job);
+    initBurnJobConnect(job);
     job->setProperty(AbstractBurnJob::PropertyType::KStagingUrl, stagingUrl);
     job->setProperty(AbstractBurnJob::PropertyType::kSpeeds, conf.speeds);
     job->setProperty(AbstractBurnJob::PropertyType::kVolumeName, conf.volName);
@@ -70,7 +72,7 @@ void BurnJobManager::startBurnISOImage(const QString &dev, const QUrl &imageUrl,
     DialogManagerInstance->addTask(jobHandler);
 
     AbstractBurnJob *job = new BurnISOImageJob(dev, jobHandler);
-    initConnect(job);
+    initBurnJobConnect(job);
     job->setProperty(AbstractBurnJob::PropertyType::kImageUrl, imageUrl);
     job->setProperty(AbstractBurnJob::PropertyType::kSpeeds, conf.speeds);
     job->setProperty(AbstractBurnJob::PropertyType::kBurnOpts, QVariant::fromValue(conf.opts));
@@ -83,11 +85,22 @@ void BurnJobManager::startBurnUDFFiles(const QString &dev, const QUrl &stagingUr
     DialogManagerInstance->addTask(jobHandler);
 
     AbstractBurnJob *job = new BurnUDFFilesJob(dev, jobHandler);
-    initConnect(job);
+    initBurnJobConnect(job);
     job->setProperty(AbstractBurnJob::PropertyType::KStagingUrl, stagingUrl);
     job->setProperty(AbstractBurnJob::PropertyType::kSpeeds, conf.speeds);
     job->setProperty(AbstractBurnJob::PropertyType::kVolumeName, conf.volName);
     job->setProperty(AbstractBurnJob::PropertyType::kBurnOpts, QVariant::fromValue(conf.opts));
+    job->start();
+}
+
+void BurnJobManager::startDumpISOImage(const QString &dev, const QUrl &imageUrl)
+{
+    JobHandlePointer jobHandler { new AbstractJobHandler };
+    DialogManagerInstance->addTask(jobHandler);
+
+    DumpISOImageJob *job = new DumpISOImageJob(dev, jobHandler);
+    initDumpJobConnect(job);
+    job->setProperty(AbstractBurnJob::PropertyType::kImageUrl, imageUrl);
     job->start();
 }
 
@@ -110,7 +123,7 @@ void BurnJobManager::startAuditLogForBurnFiles(const QVariantMap &info, const QU
     job->start();
 }
 
-void BurnJobManager::initConnect(AbstractBurnJob *job)
+void BurnJobManager::initBurnJobConnect(AbstractBurnJob *job)
 {
     Q_ASSERT(job);
     connect(job, &AbstractBurnJob::finished, job, &QObject::deleteLater);
@@ -123,6 +136,14 @@ void BurnJobManager::initConnect(AbstractBurnJob *job)
                                                                                         : job->property(AbstractBurnJob::PropertyType::KStagingUrl).toUrl(),
                                   result);
     });
+}
+
+void BurnJobManager::initDumpJobConnect(DumpISOImageJob *job)
+{
+    Q_ASSERT(job);
+    connect(job, &AbstractBurnJob::finished, job, &QObject::deleteLater);
+    connect(job, &DumpISOImageJob::requestOpticalDumpISOSuccessDialog, this, &BurnJobManager::showOpticalDumpISOSuccessDialog);
+    connect(job, &DumpISOImageJob::requestOpticalDumpISOFailedDialog, this, &BurnJobManager::showOpticalDumpISOFailedDialog);
 }
 
 void BurnJobManager::deleteStagingDir(const QUrl &url)
@@ -175,8 +196,8 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
         failureType = tr("Data verification failed");
         break;
     }
-    QString failure_str = QString(tr("%1: %2")).arg(failureType).arg(err);
-    d.setTitle(failure_str);
+    QString failureStr = QString(tr("%1: %2")).arg(failureType).arg(err);
+    d.setTitle(failureStr);
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());
     QTextEdit *te = new QTextEdit();
@@ -184,7 +205,7 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
     te->setReadOnly(true);
     te->hide();
     detailsw->layout()->addWidget(te);
-    connect(&d, &DDialog::buttonClicked, this, [failure_str, te, &d](int idx, const QString &) {
+    connect(&d, &DDialog::buttonClicked, this, [failureStr, te, &d](int idx, const QString &) {
         if (idx == 1) {
             d.done(idx);
             return;
@@ -192,7 +213,7 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
         if (te->isVisible()) {
             te->hide();
             d.getButton(0)->setText(tr("Show details"));
-            d.setTitle(failure_str);
+            d.setTitle(failureStr);
         } else {
             te->show();
             d.getButton(0)->setText(tr("Hide details"));
@@ -209,6 +230,84 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
     d.addButton(tr("Confirm", "button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(1);
     d.getButton(1)->setFocus();
+    d.exec();
+}
+
+void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
+{
+    DDialog d;
+    d.setFixedSize(400, 242);
+    d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
+    d.addButton(QObject::tr("Close", "button"));
+    d.addButton(QObject::tr("View Image File", "button"), true, DDialog::ButtonType::ButtonRecommend);
+    connect(&d, &DDialog::buttonClicked, this, [imageUrl](int index, const QString &text) {
+        qInfo() << "button clicked" << text;
+        if (index == 1) {
+            const auto &fileInfo { InfoFactory::create<AbstractFileInfo>(imageUrl) };
+            QUrl parentUrl { fileInfo->parentUrl() };
+            parentUrl.setQuery("selectUrl=" + imageUrl.toString());
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
+        }
+    });
+
+    QFrame *contentFrame { new QFrame };
+    QVBoxLayout *mainLayout { new QVBoxLayout };
+    mainLayout->setMargin(0);
+    contentFrame->setLayout(mainLayout);
+    d.addContent(contentFrame);
+
+    // add textlabel
+    QLabel *textLabel { new QLabel };
+    textLabel->setText(QObject::tr("Image successfully created"));
+    textLabel->setAlignment(Qt::AlignHCenter);
+    QFont font { textLabel->font() };
+    font.setPixelSize(14);
+    font.setWeight(QFont::Medium);
+    font.setFamily("SourceHanSansSC");
+    textLabel->setFont(font);
+    mainLayout->addWidget(textLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    // add icon label
+    QLabel *iconLabel { new QLabel };
+    iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(96, 96));
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    d.moveToCenter();
+    d.exec();
+}
+
+void BurnJobManager::showOpticalDumpISOFailedDialog()
+{
+    DDialog d;
+    d.setFixedSize(400, 242);
+    d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
+    d.addButton(QObject::tr("Close", "button"));
+
+    QFrame *contentFrame { new QFrame };
+    QVBoxLayout *mainLayout { new QVBoxLayout };
+    mainLayout->setMargin(0);
+    contentFrame->setLayout(mainLayout);
+    d.addContent(contentFrame);
+
+    // add textlabel
+    QLabel *textLabel { new QLabel };
+    textLabel->setText(QObject::tr("Image creation failed"));
+    textLabel->setAlignment(Qt::AlignHCenter);
+    QFont font { textLabel->font() };
+    font.setPixelSize(14);
+    font.setWeight(QFont::Medium);
+    font.setFamily("SourceHanSansSC");
+    textLabel->setFont(font);
+    mainLayout->addWidget(textLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    // add icon label
+    QLabel *iconLabel { new QLabel };
+    iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(96, 96));
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    d.moveToCenter();
     d.exec();
 }
 

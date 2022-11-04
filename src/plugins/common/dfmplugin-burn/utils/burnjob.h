@@ -41,7 +41,8 @@ public:
         kOpticalBurn,
         kOpticalBlank,
         kOpticalImageBurn,
-        kOpticalCheck
+        kOpticalCheck,
+        kOpticalImageDump
     };
 
     enum PropertyType {
@@ -71,8 +72,10 @@ public:
 
 protected:
     virtual void updateMessage(JobInfoPointer ptr);
+    virtual void updateSpeed(JobInfoPointer ptr, DFMBURN::JobStatus status, const QString &speed);
     virtual void readFunc(int progressFd, int checkFd);
     virtual void writeFunc(int progressFd, int checkFd);
+    virtual void finishFunc(bool verify, bool verifyRet);
     virtual void work() = 0;
 
     void run() override;
@@ -159,6 +162,25 @@ protected:
     virtual void work() override;
 };
 
+class DumpISOImageJob : public AbstractBurnJob
+{
+    Q_OBJECT
+
+public:
+    explicit DumpISOImageJob(const QString &dev, const JobHandlePointer handler);
+    virtual ~DumpISOImageJob() override {}
+
+signals:
+    void requestOpticalDumpISOSuccessDialog(const QUrl &imageUrl);
+    void requestOpticalDumpISOFailedDialog();
+
+protected:
+    virtual void updateMessage(JobInfoPointer ptr) override;
+    virtual void updateSpeed(JobInfoPointer ptr, DFMBURN::JobStatus status, const QString &speed) override;
+    virtual void writeFunc(int progressFd, int checkFd) override;
+    virtual void finishFunc(bool verify, bool verifyRet) override;
+    virtual void work() override;
+};
 }   // namespace dfmplugin_burn
 Q_DECLARE_METATYPE(DFMBURN::BurnOptions)
 

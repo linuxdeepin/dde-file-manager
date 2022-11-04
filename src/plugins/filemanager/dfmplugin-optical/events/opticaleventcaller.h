@@ -36,6 +36,7 @@ class OpticalEventCaller
 
 public:
     static void sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent);
+    static void sendOpenDumpISODlg(const QString &devId);
 };
 
 }

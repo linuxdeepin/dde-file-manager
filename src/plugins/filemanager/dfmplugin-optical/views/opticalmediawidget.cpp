@@ -62,13 +62,13 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     devId = { DeviceUtils::getBlockDeviceId(dev) };
     auto &&map = DevProxyMng->queryBlockInfo(devId);
     QString &&mnt = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
-    bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
+    isBlank = { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
 
     // for dvd+rw/dvd-rw disc, erase operation only overwrite some blocks which used to present filesystem,
     // so the blank field is still false even if it can be write datas from the beginning,
     auto mediaType { static_cast<MediaType>(map[DeviceProperty::kOpticalMediaType].toUInt()) };
     if (mediaType == MediaType::kDVD_PLUS_RW || mediaType == MediaType::kDVD_RW)
-        blank |= map[DeviceProperty::kSizeTotal].toULongLong() == map[DeviceProperty::kSizeFree].toULongLong();
+        isBlank |= map[DeviceProperty::kSizeTotal].toULongLong() == map[DeviceProperty::kSizeFree].toULongLong();
 
     curDev = qvariant_cast<QString>(map[DeviceProperty::kDevice]);
     if (curDev.isEmpty()) {
@@ -76,14 +76,14 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
         return false;
     }
 
-    if (mnt.isEmpty() && !blank) {
+    if (mnt.isEmpty() && !isBlank) {
         handleErrorMount();
         return false;
     }
 
     // Acquire blank disc info
     curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
-    if (!retry && blank && curAvial == 0) {
+    if (!retry && isBlank && curAvial == 0) {
         DevMngIns->mountBlockDevAsync(devId, {}, [this, url](bool, DFMMOUNT::DeviceError, const QString &) {
             this->updateDiscInfo(url, true);
         });
@@ -97,7 +97,7 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
 
     auto type = static_cast<MediaType>(map[DeviceProperty::kOpticalMediaType].toInt());
     curMediaType = int(type);
-    const static QMap<MediaType, QString> rtypemap = {
+    const static QMap<MediaType, QString> kDiscTypeMap = {
         { MediaType::kCD_ROM, "CD-ROM" },
         { MediaType::kCD_R, "CD-R" },
         { MediaType::kCD_RW, "CD-RW" },
@@ -112,7 +112,7 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
         { MediaType::kBD_R, "BD-R" },
         { MediaType::kBD_RE, "BD-RE" }
     };
-    curMediaTypeStr = rtypemap[type];
+    curMediaTypeStr = kDiscTypeMap[type];
 
     updateUi();
     return true;
@@ -125,8 +125,10 @@ void OpticalMediaWidget::initializeUi()
     layout->addWidget(lbMediatype = new QLabel("<Media Type>"));
     layout->addWidget(lbAvailable = new QLabel("<Space Available>"));
     layout->addWidget(lbUDFSupport = new QLabel(tr("It does not support burning UDF discs")));
+    layout->addWidget(pbDump = new DPushButton());
     layout->addWidget(pbBurn = new DPushButton());
     layout->addWidget(iconCaution = new QSvgWidget());
+    pbDump->setText(QObject::tr("Save as Image File"));
     pbBurn->setText(QObject::tr("Burn"));
     lbUDFSupport->setVisible(false);
     iconCaution->setVisible(false);
@@ -142,6 +144,7 @@ void OpticalMediaWidget::initializeUi()
 void OpticalMediaWidget::initConnect()
 {
     connect(pbBurn, &QPushButton::clicked, this, &OpticalMediaWidget::onBurnButtonClicked);
+    connect(pbDump, &QPushButton::clicked, this, &OpticalMediaWidget::onDumpButtonClicked);
     connect(statisticWorker, &FileStatisticsJob::finished, this, &OpticalMediaWidget::onStagingFileStatisticsFinished);
     connect(OpticalSignalManager::instance(), &OpticalSignalManager::discUnmounted, this, &OpticalMediaWidget::onDiscUnmounted);
 }
@@ -171,11 +174,14 @@ void OpticalMediaWidget::updateUi()
     if (curAvial == 0) {
         lbUDFSupport->setVisible(false);
         iconCaution->setVisible(false);
-    }
-
-    if (!OpticalHelper::isBurnEnabled()) {
         pbBurn->setEnabled(false);
     }
+
+    if (isBlank)
+        pbDump->setEnabled(false);
+
+    if (!OpticalHelper::isBurnEnabled())
+        pbBurn->setEnabled(false);
 }
 
 void OpticalMediaWidget::handleErrorMount()
@@ -265,6 +271,11 @@ void OpticalMediaWidget::onBurnButtonClicked()
     }
 
     statisticWorker->start({ urlOfStage });
+}
+
+void OpticalMediaWidget::onDumpButtonClicked()
+{
+    OpticalEventCaller::sendOpenDumpISODlg(devId);
 }
 
 void OpticalMediaWidget::onStagingFileStatisticsFinished()

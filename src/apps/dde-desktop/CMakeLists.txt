@@ -48,4 +48,3 @@ install(FILES data/com.deepin.dde.desktop.service DESTINATION share/dbus-1/servi
 install(FILES data/applications/dde-computer.desktop DESTINATION share/applications/)
 install(FILES data/applications/dde-trash.desktop DESTINATION share/applications/)
 
-# TODO(zhangs): translation

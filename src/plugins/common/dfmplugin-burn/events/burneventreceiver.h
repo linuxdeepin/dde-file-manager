@@ -39,6 +39,7 @@ public:
 
 public slots:
     void handleShowBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent);
+    void handleShowDumpISODlg(const QString &devId);
     void handleErase(const QString &dev);
     void handlePasteTo(const QList<QUrl> &urls, const QUrl &dest, bool isCopy);
     void handleCopyFilesResult(const QList<QUrl> &srcUrls,

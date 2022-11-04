@@ -31,5 +31,10 @@ DFMBASE_USE_NAMESPACE
 
 void OpticalEventCaller::sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)
 {
-    dpfSlotChannel->push("dfmplugin_burn", "slot_ShowBurnDialog", dev, isSupportedUDF, parent);
+    dpfSlotChannel->push("dfmplugin_burn", "slot_BurnDialog_Show", dev, isSupportedUDF, parent);
+}
+
+void OpticalEventCaller::sendOpenDumpISODlg(const QString &devId)
+{
+    dpfSlotChannel->push("dfmplugin_burn", "slot_DumpISODialog_Show", devId);
 }

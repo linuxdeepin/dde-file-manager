@@ -97,14 +97,23 @@ void AbstractBurnJob::updateMessage(JobInfoPointer ptr)
 {
     Q_ASSERT(ptr);
     if (curJobType != JobType::kOpticalBlank) {
-        QString msg1 = tr("Burning disc %1, please wait...").arg(curDev);
-        QString msg2 = tr("Writing data...");
-        ptr->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, msg1);
+        const QString &msgSource { tr("Burning disc %1, please wait...").arg(curDev) };
+        QString msgTarget { tr("Writing data...") };
+        ptr->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, msgSource);
         if (curJobType == JobType::kOpticalCheck)
-            msg2 = tr("Verifying data...");
-        ptr->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, msg2);
+            msgTarget = tr("Verifying data...");
+        ptr->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, msgTarget);
         emit jobHandlePtr->currentTaskNotify(ptr);
     }
+}
+
+void AbstractBurnJob::updateSpeed(JobInfoPointer ptr, JobStatus status, const QString &speed)
+{
+    if (status == JobStatus::kRunning)
+        ptr->insert(AbstractJobHandler::NotifyInfoKey::kSpeedKey, speed);
+    else
+        ptr->insert(AbstractJobHandler::NotifyInfoKey::kSpeedKey, "");
+    emit jobHandlePtr->speedUpdatedNotify(ptr);
 }
 
 void AbstractBurnJob::readFunc(int progressFd, int checkFd)
@@ -151,15 +160,26 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
     bool checkRet { !(check && (bad > (2 + 1e-6))) };
 
     // show result dialog
+    finishFunc(check, checkRet);
+}
+
+void AbstractBurnJob::writeFunc(int progressFd, int checkFd)
+{
+    Q_UNUSED(progressFd)
+    Q_UNUSED(checkFd)
+}
+
+void AbstractBurnJob::finishFunc(bool verify, bool verifyRet)
+{
     if (lastStatus == JobStatus::kFailed) {
         jobSuccess = false;
-        if (check && checkRet)
+        if (verify && verifyRet)
             emit requestCompletionDialog(tr("Data verification successful."), "dialog-ok");
         else
             emit requestFailureDialog(static_cast<int>(curJobType), lastError, lastSrcMessages);
     } else {
         jobSuccess = true;
-        if (check)
+        if (verify)
             emit requestCompletionDialog(tr("Data verification successful."), "dialog-ok");
         else
             emit requestCompletionDialog(tr("Burn process completed"), "dialog-ok");
@@ -167,12 +187,6 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
 
     emit burnFinished(firstJobType, jobSuccess);
     DeviceManager::instance()->ejectBlockDev(curDevId);
-}
-
-void AbstractBurnJob::writeFunc(int progressFd, int checkFd)
-{
-    Q_UNUSED(progressFd)
-    Q_UNUSED(checkFd)
 }
 
 void AbstractBurnJob::run()
@@ -337,13 +351,8 @@ void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString
 
     // update message
     updateMessage(info);
-
     // update speed
-    if (status == JobStatus::kRunning)
-        info->insert(AbstractJobHandler::NotifyInfoKey::kSpeedKey, speed);
-    else
-        info->insert(AbstractJobHandler::NotifyInfoKey::kSpeedKey, "");
-    emit jobHandlePtr->speedUpdatedNotify(info);
+    updateSpeed(info, status, speed);
 }
 
 EraseJob::EraseJob(const QString &dev, const JobHandlePointer handler)
@@ -355,7 +364,7 @@ void EraseJob::updateMessage(JobInfoPointer ptr)
 {
     Q_ASSERT(ptr);
     if (curJobType == JobType::kOpticalBlank) {
-        QString msg = tr("Erasing disc %1, please wait...").arg(curDev);
+        const QString &msg { tr("Erasing disc %1, please wait...").arg(curDev) };
         ptr->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, msg);
         emit jobHandlePtr->currentTaskNotify(ptr);
     }
@@ -492,4 +501,69 @@ void BurnUDFFilesJob::work()
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
     qInfo() << "End burn UDF files: " << curDev;
+}
+
+DumpISOImageJob::DumpISOImageJob(const QString &dev, const JobHandlePointer handler)
+    : AbstractBurnJob(dev, handler)
+
+{
+}
+
+void DumpISOImageJob::updateMessage(JobInfoPointer ptr)
+{
+    Q_ASSERT(ptr);
+    if (curJobType == JobType::kOpticalImageDump) {
+        const auto &url { curProperty[PropertyType::kImageUrl].toUrl() };
+        const QString &imagePath { url.toLocalFile() };
+        const QString &msgSource { tr("Creating an ISO image") };
+        const QString &msgTarget { tr("to %1").arg(imagePath) };
+        ptr->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, msgSource);
+        ptr->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, msgTarget);
+        emit jobHandlePtr->currentTaskNotify(ptr);
+    }
+}
+
+void DumpISOImageJob::updateSpeed(JobInfoPointer ptr, JobStatus status, const QString &speed)
+{
+    Q_UNUSED(status)
+    Q_UNUSED(speed)
+    ptr->insert(AbstractJobHandler::NotifyInfoKey::kSpeedKey, "");
+    emit jobHandlePtr->speedUpdatedNotify(ptr);
+}
+
+void DumpISOImageJob::writeFunc(int progressFd, int checkFd)
+{
+    Q_UNUSED(checkFd)
+    const auto &url { curProperty[PropertyType::kImageUrl].toUrl() };
+    const QString &imagePath { url.toLocalFile() };
+    auto manager = createManager(progressFd);
+    curPhase = kWriteData;
+    bool isSuccess { manager->dumpISO(imagePath) };
+    qInfo() << "Dump ISO ret: " << isSuccess << manager->lastError() << imagePath;
+}
+
+void DumpISOImageJob::finishFunc(bool verify, bool verifyRet)
+{
+    Q_UNUSED(verify)
+    Q_UNUSED(verifyRet)
+
+    if (lastStatus == JobStatus::kFailed) {
+        jobSuccess = false;
+        emit requestOpticalDumpISOFailedDialog();
+    } else {
+        jobSuccess = true;
+        const auto &url { curProperty[PropertyType::kImageUrl].toUrl() };
+        emit requestOpticalDumpISOSuccessDialog(url);
+    }
+}
+
+void DumpISOImageJob::work()
+{
+    qInfo() << "Start dump ISO image: " << curDev;
+    firstJobType = curJobType = JobType::kOpticalImageDump;
+    if (!readyToWork())
+        return;
+    onJobUpdated(JobStatus::kIdle, 0, {}, {});
+    workingInSubProcess();
+    qInfo() << "End dump ISO image: " << curDev;
 }

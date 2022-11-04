@@ -20,43 +20,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BURN_H
-#define BURN_H
+
+#ifndef DUMPISOOPTDIALOG_H
+#define DUMPISOOPTDIALOG_H
 
 #include "dfmplugin_burn_global.h"
 
-#include <dfm-framework/dpf.h>
+#include <DDialog>
+#include <DFileChooserEdit>
+#include <QPushButton>
 
 namespace dfmplugin_burn {
 
-class Burn : public DPF_NAMESPACE::Plugin
+class DumpISOOptDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
-
-    DPF_EVENT_NAMESPACE(DPBURN_NAMESPACE)
-    DPF_EVENT_REG_SLOT(slot_BurnDialog_Show)
-    DPF_EVENT_REG_SLOT(slot_DumpISODialog_Show)
-    DPF_EVENT_REG_SLOT(slot_Erase)
-    DPF_EVENT_REG_SLOT(slot_PasteTo)
-    DPF_EVENT_REG_SLOT(slot_MountImage)
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-
-private slots:
-    void bindScene(const QString &parentScene);
-    void bindSceneOnAdded(const QString &newScene);
-    void bindEvents();
-    bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
-    void onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value);
+    explicit DumpISOOptDialog(const QString &devId, QWidget *parent = nullptr);
+    ~DumpISOOptDialog();
 
 private:
-    QSet<QString> waitToBind;
-    bool eventSubscribed { false };
+    void initliazeUi();
+    void initConnect();
+    void initData();
+
+private Q_SLOTS:
+    void onButtonClicked(int index, const QString &text);
+    void onFileChoosed(const QString &fileName);
+    void onPathChanged(const QString &path);
+
+private:
+    QString curDevId;
+    QString curDev;
+    QString curDiscName;
+    QAbstractButton *createImgBtn { nullptr };
+    QWidget *contentWidget { nullptr };
+    QLabel *saveAsImgLabel { nullptr };
+    QLabel *commentLabel { nullptr };
+    QLabel *savePathLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DFileChooserEdit *fileChooser { nullptr };
+    QAbstractButton *filedialogBtn { nullptr };
 };
 
-}
+}   // namespace dfmplugin_burn
 
-#endif   // BURN_H
+#endif   // DUMPISOOPTDIALOG_H
