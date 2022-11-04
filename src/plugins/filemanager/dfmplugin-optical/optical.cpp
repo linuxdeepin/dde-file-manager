@@ -109,7 +109,7 @@ void Optical::addOpticalCrumbToTitleBar()
 
 void Optical::addFileOperations()
 {
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", OpticalFileHelper::instance(), &OpticalFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", OpticalFileHelper::instance(), &OpticalFileHelper::cutFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", OpticalFileHelper::instance(), &OpticalFileHelper::copyFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);

@@ -538,6 +538,58 @@ QUrl LocalFileInfo::url() const
     return d->url;
 }
 
+bool LocalFileInfo::canDelete() const
+{
+    if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
+        return false;
+
+    bool canDelete = false;
+
+    QReadLocker locker(&d->lock);
+    if (d->attributes.count(DFileInfo::AttributeID::kAccessCanDelete) == 0) {
+        locker.unlock();
+
+        canDelete = SysInfoUtils::isRootUser();
+
+        QWriteLocker locker(&d->lock);
+        if (!canDelete) {
+            if (d->dfmFileInfo)
+                canDelete = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr).toBool();
+        }
+
+        d->attributes.insert(DFileInfo::AttributeID::kAccessCanDelete, canDelete);
+    } else {
+        canDelete = d->attributes.value(DFileInfo::AttributeID::kAccessCanDelete).toBool();
+    }
+
+    return canDelete;
+}
+
+bool LocalFileInfo::canTrash() const
+{
+    if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
+        return false;
+
+    bool canTrash = false;
+
+    QReadLocker locker(&d->lock);
+    if (d->attributes.count(DFileInfo::AttributeID::kAccessCanTrash) == 0) {
+        locker.unlock();
+
+        QWriteLocker locker(&d->lock);
+        if (!canTrash) {
+            if (d->dfmFileInfo)
+                canTrash = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr).toBool();
+        }
+
+        d->attributes.insert(DFileInfo::AttributeID::kAccessCanTrash, canTrash);
+    } else {
+        canTrash = d->attributes.value(DFileInfo::AttributeID::kAccessCanTrash).toBool();
+    }
+
+    return canTrash;
+}
+
 bool LocalFileInfo::canRename() const
 {
     if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))

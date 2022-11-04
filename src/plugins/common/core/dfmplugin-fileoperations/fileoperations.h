@@ -40,7 +40,9 @@ class FileOperations : public dpf::Plugin
 
     // hook events -- file operation
     DPF_EVENT_REG_HOOK(hook_Operation_CopyFile)
-    DPF_EVENT_REG_HOOK(hook_Operation_CutFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_CopyFromFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_CutToFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_CutFromFile)
     DPF_EVENT_REG_HOOK(hook_Operation_DeleteFile)
     DPF_EVENT_REG_HOOK(hook_Operation_MoveToTrash)
     DPF_EVENT_REG_HOOK(hook_Operation_RestoreFromTrash)

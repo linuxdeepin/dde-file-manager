@@ -129,6 +129,19 @@ JobHandlePointer FileCopyMoveJob::copy(const QList<QUrl> &sources, const QUrl &t
 
     return jobHandle;
 }
+
+JobHandlePointer FileCopyMoveJob::copyFromTrash(const QList<QUrl> &sources, const QUrl &target, const AbstractJobHandler::JobFlags &flags)
+{
+    if (!getOperationsAndDialogService()) {
+        qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
+        return nullptr;
+    }
+
+    JobHandlePointer jobHandle = operationsService->copyFromTrash(sources, target, flags);
+    initArguments(jobHandle);
+
+    return jobHandle;
+}
 /*!
  * \brief FileCopyMoveJob::moveToTrash 移动文件到回收站
  *  一个移动到回收站的任务的源文件都是在同一目录下，所以源文件都是在同一个设备上。移动到回收站只能是不可移除设备
@@ -155,7 +168,7 @@ JobHandlePointer FileCopyMoveJob::moveToTrash(const QList<QUrl> &sources,
  * \param sources 需要还原的文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileCopyMoveJob::restoreFromTrash(const QList<QUrl> &sources,
+JobHandlePointer FileCopyMoveJob::restoreFromTrash(const QList<QUrl> &sources, const QUrl &target,
                                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!getOperationsAndDialogService()) {
@@ -163,7 +176,7 @@ JobHandlePointer FileCopyMoveJob::restoreFromTrash(const QList<QUrl> &sources,
         return nullptr;
     }
 
-    JobHandlePointer jobHandle = operationsService->restoreFromTrash(sources, flags);
+    JobHandlePointer jobHandle = operationsService->restoreFromTrash(sources, target, flags);
     initArguments(jobHandle);
 
     return jobHandle;

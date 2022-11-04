@@ -175,7 +175,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     d->focusFileInfo->refresh();
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
-        if (!d->focusFileInfo->canRename() || (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink()))
+        if (!d->focusFileInfo->canDelete() || (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink()))
             delAction->setDisabled(true);
     }
 

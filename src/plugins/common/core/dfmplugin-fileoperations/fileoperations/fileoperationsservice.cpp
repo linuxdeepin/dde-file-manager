@@ -26,6 +26,7 @@
 #include "deletefiles/deletefiles.h"
 #include "trashfiles/movetotrashfiles.h"
 #include "trashfiles/restoretrashfiles.h"
+#include "trashfiles/copyfromtrashfiles.h"
 #include "cleantrash/cleantrashfiles.h"
 
 #include <QUrl>
@@ -62,6 +63,14 @@ JobHandlePointer FileOperationsService::copy(const QList<QUrl> &sources, const Q
     task->setJobArgs(jobHandler, sources, target, flags);
     return jobHandler;
 }
+
+JobHandlePointer FileOperationsService::copyFromTrash(const QList<QUrl> &sources, const QUrl &target, const AbstractJobHandler::JobFlags &flags)
+{
+    JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
+    CopyFromTrashTrashFiles *task = new CopyFromTrashTrashFiles();
+    task->setJobArgs(jobHandler, sources, target, flags);
+    return jobHandler;
+}
 /*!
  * \brief FileOperationsService::moveToTrash 移动文件到回收站
  *  一个移动到回收站的任务的源文件都是在同一目录下，所以源文件都是在同一个设备上。移动到回收站只能是不可移除设备
@@ -83,12 +92,12 @@ JobHandlePointer FileOperationsService::moveToTrash(const QList<QUrl> &sources,
  * \param sources 需要还原的文件
  * \return JobHandlePointer 任务控制器
  */
-JobHandlePointer FileOperationsService::restoreFromTrash(const QList<QUrl> &sources,
+JobHandlePointer FileOperationsService::restoreFromTrash(const QList<QUrl> &sources, const QUrl &target,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     RestoreTrashFiles *task = new RestoreTrashFiles();
-    task->setJobArgs(jobHandler, sources, QUrl(), flags);
+    task->setJobArgs(jobHandler, sources, target, flags);
     return jobHandler;
 }
 /*!

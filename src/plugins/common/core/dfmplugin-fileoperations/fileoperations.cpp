@@ -22,6 +22,7 @@
  */
 #include "fileoperations.h"
 #include "fileoperationsevent/fileoperationseventreceiver.h"
+#include "fileoperationsevent/trashfileeventreceiver.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -58,25 +59,36 @@ void FileOperations::initEventHandle()
                                                                                      const QUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
                                                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&FileOperationsEventReceiver::handleOperationCut));
     dpfSignalDispatcher->subscribe(GlobalEventType::kRestoreFromTrash,
-                                   FileOperationsEventReceiver::instance(),
-                                   static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
-                                                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
-                                                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&FileOperationsEventReceiver::handleOperationRestoreFromTrash));
+                                   TrashFileEventReceiver::instance(),
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>, const QUrl,
+                                                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+                                                                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&TrashFileEventReceiver::handleOperationRestoreFromTrash));
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCopyFromTrash,
+                                   TrashFileEventReceiver::instance(),
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>, const QUrl,
+                                                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+                                                                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&TrashFileEventReceiver::handleOperationCopyFromTrash));
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCopyFromTrash,
+                                   TrashFileEventReceiver::instance(),
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>, const QUrl,
+                                                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+                                                                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
+                                                                                OperatorCallback)>(&TrashFileEventReceiver::handleOperationCopyFromTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrash,
-                                   FileOperationsEventReceiver::instance(),
-                                   static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
-                                                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
-                                                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&FileOperationsEventReceiver::handleOperationMoveToTrash));
+                                   TrashFileEventReceiver::instance(),
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>,
+                                                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+                                                                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&TrashFileEventReceiver::handleOperationMoveToTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFiles,
                                    FileOperationsEventReceiver::instance(),
                                    static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
                                                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
                                                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&FileOperationsEventReceiver::handleOperationDeletes));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCleanTrash,
-                                   FileOperationsEventReceiver::instance(),
-                                   static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
-                                                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType,
-                                                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&FileOperationsEventReceiver::handleOperationCleanTrash));
+                                   TrashFileEventReceiver::instance(),
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>,
+                                                                                const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType,
+                                                                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback)>(&TrashFileEventReceiver::handleOperationCleanTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopy,
                                    FileOperationsEventReceiver::instance(),
                                    static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
@@ -90,17 +102,17 @@ void FileOperations::initEventHandle()
                                                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
                                                                                      OperatorCallback)>(&FileOperationsEventReceiver::handleOperationCut));
     dpfSignalDispatcher->subscribe(GlobalEventType::kRestoreFromTrash,
-                                   FileOperationsEventReceiver::instance(),
-                                   static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
-                                                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
-                                                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
-                                                                                     OperatorCallback)>(&FileOperationsEventReceiver::handleOperationRestoreFromTrash));
+                                   TrashFileEventReceiver::instance(),
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>, const QUrl,
+                                                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+                                                                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
+                                                                                OperatorCallback)>(&TrashFileEventReceiver::handleOperationRestoreFromTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrash,
-                                   FileOperationsEventReceiver::instance(),
-                                   static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
-                                                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
-                                                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
-                                                                                     OperatorCallback)>(&FileOperationsEventReceiver::handleOperationMoveToTrash));
+                                   TrashFileEventReceiver::instance(),
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>,
+                                                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
+                                                                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
+                                                                                OperatorCallback)>(&TrashFileEventReceiver::handleOperationMoveToTrash));
     dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFiles,
                                    FileOperationsEventReceiver::instance(),
                                    static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
@@ -108,10 +120,10 @@ void FileOperations::initEventHandle()
                                                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
                                                                                      OperatorCallback)>(&FileOperationsEventReceiver::handleOperationDeletes));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCleanTrash,
-                                   FileOperationsEventReceiver::instance(),
-                                   static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
-                                                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
-                                                                                     OperatorCallback)>(&FileOperationsEventReceiver::handleOperationCleanTrash));
+                                   TrashFileEventReceiver::instance(),
+                                   static_cast<void (TrashFileEventReceiver::*)(const quint64, const QList<QUrl>,
+                                                                                DFMGLOBAL_NAMESPACE::OperatorHandleCallback, const QVariant,
+                                                                                OperatorCallback)>(&TrashFileEventReceiver::handleOperationCleanTrash));
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kOpenFiles,
                                    FileOperationsEventReceiver::instance(),

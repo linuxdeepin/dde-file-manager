@@ -44,12 +44,14 @@ void TrashCore::initialize()
 bool TrashCore::start()
 {
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPTRASHCORE_NAMESPACE), "slot_TrashCore_EmptyTrash",
-                            TrashCoreEventReceiver::instance(),
-                            &TrashCoreEventReceiver::handleEmptyTrash);
+                            TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::handleEmptyTrash);
 
     CustomViewExtensionView func { TrashCoreHelper::createTrashPropertyDialog };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
                          func, TrashCoreHelper::scheme());
+
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFromFile",
+                            TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::cutFileFromTrash);
 
     return true;
 }

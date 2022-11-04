@@ -1159,6 +1159,18 @@ bool dfmbase::AbstractFileInfo::isPrivate() const
     return false;
 }
 
+bool dfmbase::AbstractFileInfo::canDelete() const
+{
+    CALL_PROXY(canDelete());
+    return false;
+}
+
+bool dfmbase::AbstractFileInfo::canTrash() const
+{
+    CALL_PROXY(canTrash());
+    return false;
+}
+
 QString DFMBASE_NAMESPACE::AbstractFileInfo::emptyDirectoryTip() const
 {
     return QObject::tr("Folder is empty");

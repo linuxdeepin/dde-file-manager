@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperationseventreceiver.h"
+#include "trashfileeventreceiver.h"
 #include "fileoperations/filecopymovejob.h"
 #include "fileoperationsevent/fileoperationseventhandler.h"
 
@@ -169,10 +170,10 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
         handleOperationDeletes(windowId, sources, AbstractJobHandler::JobFlag::kRevocation, handle);
         break;
     case kMoveToTrash:
-        handleOperationMoveToTrash(windowId, sources, AbstractJobHandler::JobFlag::kRevocation, handle);
+        TrashFileEventReceiver::instance()->handleOperationMoveToTrash(windowId, sources, AbstractJobHandler::JobFlag::kRevocation, handle);
         break;
     case kRestoreFromTrash:
-        handleOperationRestoreFromTrash(windowId, sources, AbstractJobHandler::JobFlag::kRevocation, handle);
+        TrashFileEventReceiver::instance()->handleOperationRestoreFromTrash(windowId, sources, QUrl(), AbstractJobHandler::JobFlag::kRevocation, handle);
         break;
     case kRenameFile:
         if (targets.isEmpty())
@@ -321,7 +322,7 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
     auto it = urlsCanTrash.begin();
     while (it != urlsCanTrash.end()) {
         auto info = InfoFactory::create<AbstractFileInfo>(*it);
-        if (!info || !info->canRename() || (!info->isWritable() && !info->isFile() && !info->isSymLink()))
+        if (!info || !info->canTrash())
             it = urlsCanTrash.erase(it);
         else
             ++it;
@@ -341,12 +342,15 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
     return handle;
 }
 
-JobHandlePointer FileOperationsEventReceiver::doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
+JobHandlePointer FileOperationsEventReceiver::doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
+                                                                 const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
 {
+    Q_UNUSED(windowId)
+
     if (sources.isEmpty())
         return nullptr;
 
-    JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
+    JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, target, flags);
     if (handleCallback)
         handleCallback(handle);
     return handle;
@@ -370,6 +374,12 @@ JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId,
             return nullptr;
         }
     }
+    const QUrl &urlFrom = sources.first();
+    if (!urlFrom.isLocalFile()) {
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CopyFromFile", windowId, sourcesTrans, target, flags)) {
+            return nullptr;
+        }
+    }
 
     JobHandlePointer handle = copyMoveJob->copy(sourcesTrans, target, flags);
     if (callbaskHandle)
@@ -389,7 +399,13 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
         sourcesTrans = urls;
 
     if (!target.isLocalFile()) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CutFile", windowId, sourcesTrans, target, flags)) {
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CutToFile", windowId, sourcesTrans, target, flags)) {
+            return nullptr;
+        }
+    }
+    const QUrl &urlFrom = sources.first();
+    if (!urlFrom.isLocalFile()) {
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CutFromFile", windowId, sourcesTrans, target, flags)) {
             return nullptr;
         }
     }
@@ -569,20 +585,6 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCutType, handle);
 }
 
-void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
-{
-    auto handle = doMoveToTrash(windowId, sources, flags, handleCallback);
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kMoveToTrashType, handle);
-}
-
-void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                                  DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
-{
-    auto handle = doRestoreFromTrash(windowId, sources, flags, handleCallback);
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kRestoreType, handle);
-}
-
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
@@ -590,13 +592,6 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
 {
     auto handle = doDeleteFile(windowId, sources, flags, handleCallback);
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteTpye, handle);
-}
-
-void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
-{
-    auto handle = doCleanTrash(windowId, sources, deleteNoticeType, handleCallback);
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
 }
 
 void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
@@ -629,7 +624,7 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
                                                      DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     JobHandlePointer handle = doCutFile(windowId, sources, target, flags, handleCallback);
-    if (callback) {
+    if (callback && handle) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
@@ -638,43 +633,6 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
     }
 
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCutType, handle);
-}
-
-void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId,
-                                                             const QList<QUrl> sources,
-                                                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
-                                                             const QVariant custom,
-                                                             DFMBASE_NAMESPACE::Global::OperatorCallback callback)
-{
-
-    JobHandlePointer handle = doMoveToTrash(windowId, sources, flags, handleCallback);
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kMoveToTrashType, handle);
-}
-
-void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId,
-                                                                  const QList<QUrl> sources,
-                                                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                                  DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
-                                                                  const QVariant custom,
-                                                                  DFMBASE_NAMESPACE::Global::OperatorCallback callback)
-{
-    JobHandlePointer handle = doRestoreFromTrash(windowId, sources, flags, handleCallback);
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kRestoreType, handle);
 }
 
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
@@ -693,21 +651,6 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
         callback(args);
     }
     FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteTpye, handle);
-}
-
-void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources,
-                                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
-                                                            const QVariant custom, OperatorCallback callback)
-{
-    JobHandlePointer handle = doCleanTrash(windowId, sources, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, handleCallback);
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kCleanTrashType, handle);
 }
 
 bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId, const QList<QUrl> urls)

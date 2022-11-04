@@ -24,6 +24,7 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -49,4 +50,20 @@ TrashCoreEventReceiver *TrashCoreEventReceiver::instance()
 void TrashCoreEventReceiver::handleEmptyTrash(const quint64 windowId)
 {
     dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash, windowId, QList<QUrl>(), AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
+}
+
+bool TrashCoreEventReceiver::cutFileFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    Q_UNUSED(windowId)
+    Q_UNUSED(flags)
+
+    if (sources.isEmpty())
+        return true;
+
+    const QUrl &urlSource = sources.first();
+    if (urlSource.scheme() != DFMBASE_NAMESPACE::Global::Scheme::kTrash)
+        return false;
+
+    return dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrash, windowId,
+                                        sources, target, flags, nullptr);
 }

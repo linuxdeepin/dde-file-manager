@@ -24,7 +24,10 @@
 
 #include "dfmplugin_trashcore_global.h"
 
+#include "dfm-base/interfaces/abstractjobhandler.h"
+
 #include <QObject>
+#include <QUrl>
 
 namespace dfmplugin_trashcore {
 
@@ -38,6 +41,8 @@ public:
 
 public slots:
     void handleEmptyTrash(const quint64 windowId = 0);
+    bool cutFileFromTrash(const quint64 windowId, const QList<QUrl> sources,
+                          const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
 private:
     explicit TrashCoreEventReceiver(QObject *parent = nullptr);

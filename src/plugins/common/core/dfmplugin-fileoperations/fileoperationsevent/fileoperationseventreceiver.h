@@ -76,28 +76,6 @@ public slots:
                             const QVariant custom,
                             DFMBASE_NAMESPACE::Global::OperatorCallback callback);
 
-    void handleOperationMoveToTrash(const quint64 windowId,
-                                    const QList<QUrl> sources,
-                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
-    void handleOperationMoveToTrash(const quint64 windowId,
-                                    const QList<QUrl> sources,
-                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
-                                    const QVariant custom,
-                                    DFMBASE_NAMESPACE::Global::OperatorCallback callback);
-
-    void handleOperationRestoreFromTrash(const quint64 windowId,
-                                         const QList<QUrl> sources,
-                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                         DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
-    void handleOperationRestoreFromTrash(const quint64 windowId,
-                                         const QList<QUrl> sources,
-                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                         DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
-                                         const QVariant custom,
-                                         DFMBASE_NAMESPACE::Global::OperatorCallback callback);
-
     void handleOperationDeletes(const quint64 windowId,
                                 const QList<QUrl> sources,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
@@ -108,16 +86,6 @@ public slots:
                                 DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
                                 const QVariant custom,
                                 DFMBASE_NAMESPACE::Global::OperatorCallback callback);
-
-    void handleOperationCleanTrash(const quint64 windowId,
-                                   const QList<QUrl> sources,
-                                   const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
-    void handleOperationCleanTrash(const quint64 windowId,
-                                   const QList<QUrl> sources,
-                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle,
-                                   const QVariant custom,
-                                   DFMBASE_NAMESPACE::Global::OperatorCallback callback);
 
     bool handleOperationOpenFiles(const quint64 windowId,
                                   const QList<QUrl> urls);
@@ -252,7 +220,7 @@ private:
 
     JobHandlePointer doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
-    JobHandlePointer doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources,
+    JobHandlePointer doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
     JobHandlePointer doCopyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback callbaskHandle);

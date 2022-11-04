@@ -140,7 +140,7 @@ QUrl TrashHelper::trashFileToTargetUrl(const QUrl &url)
     if (fileInfo)
         return fileInfo->redirectedFileUrl();
 
-    return QUrl();
+    return url;
 }
 
 bool TrashHelper::isTrashFile(const QUrl &url)
@@ -210,6 +210,7 @@ JobHandlePointer TrashHelper::restoreFromTrashHandle(const quint64 windowId, con
     dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrash,
                                  windowId,
                                  urls,
+                                 QUrl(),
                                  flags, nullptr);
     return {};
 }

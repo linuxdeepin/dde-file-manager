@@ -168,6 +168,8 @@ public:
     virtual bool isBundle() const;
     virtual bool isDragCompressFileFormat() const;
     virtual bool isPrivate() const;
+    virtual bool canDelete() const;
+    virtual bool canTrash() const;
     virtual bool canRename() const;
     virtual bool canRedirectionFileUrl() const;
     virtual bool canMoveOrCopy() const;

@@ -1508,7 +1508,7 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, [this] { this->update(); });
-    connect(Application::instance(), &Application::appAttributeChanged,this, &FileView::onAppAttributeChanged);
+    connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
 }
 
 void FileView::updateStatusBar()

@@ -23,6 +23,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 #include <dfm-framework/event/event.h>
 #include <dfm-io/dfmio_utils.h>
@@ -71,6 +72,20 @@ bool TrashFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash,
                                  windowId,
                                  sources, flags, nullptr);
+    return true;
+}
+
+bool TrashFileHelper::copyFromFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const dfmbase::AbstractJobHandler::JobFlags flags)
+{
+    if (sources.isEmpty())
+        return false;
+
+    const QUrl &fromUrl = sources.first();
+    if (fromUrl.scheme() != scheme())
+        return false;
+
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopyFromTrash, windowId,
+                                 sources, target, flags, nullptr);
     return true;
 }
 

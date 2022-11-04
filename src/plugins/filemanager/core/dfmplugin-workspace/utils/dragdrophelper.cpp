@@ -30,6 +30,7 @@
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -152,13 +153,13 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         if (!handleDFileDrag(event->mimeData(), hoverFileInfo->url())) {
             currentHoverIndexUrl = toUrl;
             bool b = (event->source() == view);
-            if (b && !WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
+            if (b && !WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
                 view->setViewSelectState(false);
                 event->ignore();
-            } else if (!b && !WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
+            } else if (!b && !WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
                 view->setViewSelectState(true);
                 event->accept();
-            } else if (WindowUtils::keyCtrlIsPressed() && toUrl == view->rootUrl()) {
+            } else if (WindowUtils::keyCtrlIsPressed() && UniversalUtils::urlEquals(toUrl, view->rootUrl())) {
                 view->setViewSelectState(true);
                 event->accept();
             } else if (hoverFileInfo->isDir() || FileUtils::isDesktopFile(hoverFileInfo->url())) {
@@ -379,8 +380,9 @@ bool DragDropHelper::checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl
 bool DragDropHelper::isSameUser(const QMimeData *data)
 {
     if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey)) {
-        QString userID = data->data(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey);
-        return userID == QString::number(SysInfoUtils::getUserId());
+        const QString &userID = data->data(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey);
+        const QString &sysID = QString::number(SysInfoUtils::getUserId());
+        return userID == sysID;
     }
 
     return false;

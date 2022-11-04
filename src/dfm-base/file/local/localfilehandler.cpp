@@ -572,6 +572,31 @@ bool LocalFileHandler::moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMI
     return true;
 }
 
+bool LocalFileHandler::copyFile(const QUrl &sourceUrl, const QUrl &destUrl, dfmio::DFile::CopyFlag flag)
+{
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourceUrl.scheme(), static_cast<QUrl>(sourceUrl));
+    if (!factory) {
+        qWarning() << "create factory failed, url: " << sourceUrl;
+        return false;
+    }
+    QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
+    if (!dOperator) {
+        qWarning() << "create file operator failed, url: " << sourceUrl;
+        return false;
+    }
+
+    bool success = dOperator->copyFile(destUrl, flag);
+    if (!success) {
+        qWarning() << "copy file failed, source url: " << sourceUrl << " destUrl: " << destUrl;
+
+        setError(dOperator->lastError());
+
+        return false;
+    }
+
+    return true;
+}
+
 bool LocalFileHandler::trashFile(const QUrl &url)
 {
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));

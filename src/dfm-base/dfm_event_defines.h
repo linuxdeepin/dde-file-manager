@@ -57,6 +57,7 @@ enum GlobalEventType : DPF_NAMESPACE::EventType {
     kCreateSymlink,
     kSetPermission,
     kCopy,
+    kCopyFromTrash,
     kDeleteFiles,
     kMoveToTrash,
     kRestoreFromTrash,

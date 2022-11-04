@@ -73,15 +73,14 @@ bool Trash::start()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TrashHelper::instance(), &TrashHelper::urlsToLocal);
 
     // hook events, file operation
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", TrashFileHelper::instance(), &TrashFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", TrashFileHelper::instance(), &TrashFileHelper::cutFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", TrashFileHelper::instance(), &TrashFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFromFile", TrashFileHelper::instance(), &TrashFileHelper::copyFromFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", TrashFileHelper::instance(), &TrashFileHelper::moveToTrash);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", TrashFileHelper::instance(), &TrashFileHelper::deleteFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TrashFileHelper::instance(), &TrashFileHelper::openFileInPlugin);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", TrashFileHelper::instance(), &TrashFileHelper::writeUrlsToClipboard);
 
     return true;
 }
@@ -165,7 +164,7 @@ void Trash::onAllPluginsInitialized()
     QVariantMap bookmarkMap {
         { "Property_Key_NameKey", nameKey },
         { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Url", QUrl("trash:/") },
+        { "Property_Key_Url", TrashHelper::rootUrl() },
         { "Property_Key_Index", -1 },
         { "Property_Key_IsDefaultItem", true }
     };

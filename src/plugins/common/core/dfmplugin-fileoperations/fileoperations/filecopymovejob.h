@@ -45,9 +45,11 @@ public:
 
     JobHandlePointer copy(const QList<QUrl> &sources, const QUrl &target,
                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+    JobHandlePointer copyFromTrash(const QList<QUrl> &sources, const QUrl &target,
+                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer moveToTrash(const QList<QUrl> &sources,
                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
-    JobHandlePointer restoreFromTrash(const QList<QUrl> &sources,
+    JobHandlePointer restoreFromTrash(const QList<QUrl> &sources, const QUrl &target,
                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer deletes(const QList<QUrl> &sources,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
