@@ -331,7 +331,7 @@ QString DFMRootFileInfo::iconName() const
                 return "media-optical";
             }
             if (static_cast<ItemType>(fileType()) == ItemType::UDisksRemovable) {
-                return QString("drive-removable-media") + (d->encrypted ? "-encrypted" : "");
+                return QString("drive-removable-media") + (d->encrypted ? "-encrypted" : "-usb");
             }
             if (d->mps.contains(QByteArray("/\0", 2))) {
                 return "drive-harddisk-root";
