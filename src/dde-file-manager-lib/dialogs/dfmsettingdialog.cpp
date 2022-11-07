@@ -372,8 +372,8 @@ QPair<QWidget *, QWidget *> DFMSettingDialog::createCheckBoxWithMessage(QObject 
     const QString &message = option->data("message").toString();
 
     CheckBoxWithMessage *checkBoxWithMsg = new CheckBoxWithMessage;
-    checkBoxWithMsg->setText(text);
-    checkBoxWithMsg->setMessage(message);
+    checkBoxWithMsg->setText(qApp->translate("GenerateSettingTranslate", text.toStdString().c_str()));
+    checkBoxWithMsg->setMessage(qApp->translate("GenerateSettingTranslate", message.toStdString().c_str()));
 
     DFMSettingDialog::MergeSmbCheckBox = checkBoxWithMsg->checkBox();
 

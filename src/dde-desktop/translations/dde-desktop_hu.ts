@@ -151,7 +151,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1094"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Egyedi Képernyővédő</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1095"/>

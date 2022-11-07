@@ -4,7 +4,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3474"/>
         <source>Icon size</source>
-        <translation>Tamanho do ícone</translation>
+        <translation>Tamanho dos ícones</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3483"/>
@@ -19,7 +19,7 @@
     <message>
         <location filename="../view/canvasgridview.cpp" line="3534"/>
         <source>Corner Settings</source>
-        <translation>Definições de cantos</translation>
+        <translation>Definições dos cantos</translation>
     </message>
     <message>
         <location filename="../view/canvasgridview.cpp" line="3543"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="834"/>
         <source>Wait:</source>
-        <translation>Aguarde:</translation>
+        <translation>Aguardar:</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="867"/>
@@ -119,7 +119,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="879"/>
         <source>Screensaver</source>
-        <translation>Protector de ecrã</translation>
+        <translation>Protetor de ecrã</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="944"/>
@@ -151,7 +151,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1094"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Protetor de ecrã personalizado</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1095"/>

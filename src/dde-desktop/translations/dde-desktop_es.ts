@@ -151,7 +151,7 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1094"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>Salvapantallas personalizado</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1095"/>
