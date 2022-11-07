@@ -22,29 +22,29 @@
         <translation>Erreur de montage : format d&apos;image non pris en charge</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="846"/>
-        <location filename="../controllers/appcontroller.cpp" line="886"/>
+        <location filename="../controllers/appcontroller.cpp" line="844"/>
+        <location filename="../controllers/appcontroller.cpp" line="884"/>
         <source>The device was not safely removed</source>
         <translation>Le périphérique n&apos;a pas été retiré en toute sécurité</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="846"/>
-        <location filename="../controllers/appcontroller.cpp" line="886"/>
+        <location filename="../controllers/appcontroller.cpp" line="844"/>
+        <location filename="../controllers/appcontroller.cpp" line="884"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Cliquer sur &quot;Supprimer en toute sécurité&quot; et ensuite déconnecter-le </translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="856"/>
+        <location filename="../controllers/appcontroller.cpp" line="854"/>
         <source>The device was not ejected</source>
         <translation>Le périphérique n&apos;a pas été éjecté</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="856"/>
+        <location filename="../controllers/appcontroller.cpp" line="854"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>Le disque est occupé, impossible de l&apos;éjecter maintenant</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="867"/>
+        <location filename="../controllers/appcontroller.cpp" line="865"/>
         <source>Authentication timed out</source>
         <translation>L&apos;authentification a expiré</translation>
     </message>
@@ -1721,9 +1721,9 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="384"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1289"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1304"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1314"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1272"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1287"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1297"/>
         <source>Operation failed!</source>
         <translation>L&apos;opération a échoué !</translation>
     </message>
@@ -1764,168 +1764,168 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="487"/>
-        <source>Don&apos;t ask again</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="489"/>
         <source>Hide</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="490"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="488"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="497"/>
         <source>The file name must not contain two dots (..)</source>
         <translation>Le nom du fichier ne doit pas contenir deux points (..)</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="528"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="502"/>
         <source>Device or resource busy</source>
         <translation>Périphérique ou ressource occupé</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="540"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="507"/>
+        <source>The device is busy and cannot be formatted now</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="512"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>Voulez-vous vraiment effacer toutes les données du disque ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="568"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="540"/>
         <source>How do you want to use this disc?</source>
         <translation>Comment voulez-vous utiliser ce disque ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="601"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="573"/>
         <source>Disc erase failed</source>
         <translation>L&apos;effacement du disque a échoué</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="605"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="577"/>
         <source>Burn process failed</source>
         <translation>Échec du processus de gravure</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="613"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="585"/>
         <source>%1: %2</source>
         <translation>%1 : %2</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="629"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="601"/>
         <source>Show details</source>
         <translation>Afficher les détails</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="633"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="605"/>
         <source>Hide details</source>
         <translation>Masquer les détails</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="634"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="606"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="743"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="715"/>
         <source>Permanently delete %1?</source>
         <translation>Supprimer définitivement %1 ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="744"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="716"/>
         <source>Permanently delete %1 items?</source>
         <translation>Supprimer définitivement %1 éléments ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="762"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="734"/>
         <source>Empty</source>
         <translation>Vide</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="807"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="779"/>
         <source>Do you want to delete %1?</source>
         <translation>Voulez-vous supprimer %1 ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="808"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="780"/>
         <source>Do you want to delete the selected %1 items?</source>
         <translation>Voulez-vous supprimer les %1 éléments sélectionnés ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="838"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="810"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Désolé, impossible de localiser votre répertoire de signets, le supprimer?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1008"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="991"/>
         <source>Name: </source>
         <translation>Nom :</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1034"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1017"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1 auquel ce raccourci fait référence a été modifié ou déplacé</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1038"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1021"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Voulez-vous supprimer ce raccourci ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1150"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Échec, la taille du fichier doit être inférieure à 4 Go.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1194"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1177"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>Les fichiers sélectionnés contiennent un fichier/répertoire système et ne peuvent pas être supprimés</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1230"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1213"/>
         <source>Unable to find the original file</source>
         <translation>Impossible de trouver le fichier d&apos;origine</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1305"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1341"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1288"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1324"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Vous n&apos;êtes pas autorisé à opérer un fichier/dossier !</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1316"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1299"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>Échec de la restauration du fichier %1, le fichier source n&apos;existe pas</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1358"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1341"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Désolé, vous n&apos;êtes pas autorisé à opérer sur les %1 fichier/dossier(s) suivants !</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1499"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1482"/>
         <source>Unable to access %1</source>
         <translation>Impossible d&apos;accéder à %1</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="728"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1582"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1565"/>
         <source>Sending files now, please try later</source>
         <translation>Envoi de fichiers en cours, veuillez réessayer plus tard</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1631"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1614"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Pour accéder au périphérique, vous devez d&apos;abord formater le disque. Voulez-vous vraiment le formater maintenant ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1646"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1629"/>
         <source>Scanning the device, stop it?</source>
         <translation>Scanner l&apos;appareil, l&apos;arrêter ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1703"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1701"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Le dossier de partage ne peut pas être nommé d&apos;après le nom d&apos;utilisateur actuel </translation>
     </message>
@@ -1935,45 +1935,45 @@
         <translation>Voulez-vous exécuter %1 ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="573"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="545"/>
         <source>Burn image</source>
         <comment>button</comment>
         <translation>Graver l&apos;image</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="574"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="546"/>
         <source>Burn files</source>
         <comment>button</comment>
         <translation>Graver les fichiers</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="741"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="713"/>
         <source>Are you sure you want to empty %1 item?</source>
         <translation>Voulez-vous vraiment vider %1 élément ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="742"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="714"/>
         <source>Are you sure you want to empty %1 items?</source>
         <translation>Voulez-vous vraiment vider %1 éléments ?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="555"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="786"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="527"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="758"/>
         <source>This action cannot be undone</source>
         <translation>Cette action ne peut pas être annulée</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="387"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="655"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1156"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1169"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1196"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1296"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1307"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1321"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1387"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1705"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="627"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1139"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1152"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1161"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1179"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1279"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1290"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1304"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1370"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1703"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -1982,15 +1982,15 @@
         <location filename="../dialogs/dialogmanager.cpp" line="417"/>
         <location filename="../dialogs/dialogmanager.cpp" line="443"/>
         <location filename="../dialogs/dialogmanager.cpp" line="459"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="545"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="572"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="750"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="824"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="841"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1010"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1040"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1629"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1644"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="517"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="544"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="722"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="796"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="813"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="993"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1023"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1612"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1627"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Annuler</translation>
@@ -2018,90 +2018,89 @@
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="474"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="514"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="530"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="644"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1041"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1398"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="616"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1024"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1381"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1485"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1640"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmer</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="546"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <source>Erase</source>
         <comment>button</comment>
         <translation>Effacer</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="608"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="580"/>
         <source>Data verification failed</source>
         <translation>La vérification des données a échoué</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="643"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="615"/>
         <source>Show details</source>
         <comment>button</comment>
         <translation>Afficher les détails</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="751"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="825"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="723"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="797"/>
         <source>Delete</source>
         <comment>button</comment>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="842"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="814"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1007"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="990"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Le disque est occupé, et ne peut donc pas être démonté maintenant</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1011"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="994"/>
         <source>Force unmount</source>
         <comment>button</comment>
         <translation>Forcer le démontage</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1155"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1138"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Impossible de copier. Espace libre insuffisant sur le disque cible.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1159"/>
         <source>Failed to create symlink, cause:</source>
         <translation>Échec de la création du lien symbolique, cause  :</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1291"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1274"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Impossible de restaurer le fichier %1, le dossier cible est en lecture seule</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1293"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1276"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Impossible de restaurer les fichiers %1, le dossier cible est en lecture seule</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1318"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1301"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>Échec de la restauration des fichiers %1, les fichiers source n&apos;existent pas</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1630"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1613"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formater</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1645"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1628"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Arrêter</translation>
@@ -2734,76 +2733,76 @@
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="817"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="821"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>Impossible de vérifier l&apos;identité de %1.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="818"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="822"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Cela se produit lorsque vous vous connectez à un ordinateur pour la première fois.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="819"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="823"/>
         <source>The identity sent by the remote computer is</source>
         <translation>L&apos;identité envoyée par l&apos;ordinateur distant est</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="821"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="825"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Si vous voulez être absolument sûr de pouvoir continuer en toute sécurité, contactez l&apos;administrateur système.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="877"/>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="881"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1607"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1609"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1616"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1621"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="885"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1611"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1613"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1620"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1625"/>
         <source>Mounting device error</source>
         <translation>Erreur de montage de l&apos;appareil</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="877"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1604"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1614"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1616"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="881"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1608"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1618"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1620"/>
         <source>Wrong username or password</source>
         <translation>Nom d&apos;utilisateur ou mot de passe incorrect</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1860"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1871"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1898"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="2017"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="2041"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1864"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1875"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1902"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2021"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2045"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmer</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1866"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="2038"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1870"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2042"/>
         <source>Cannot find the mounted device</source>
         <translation>Impossible de trouver le périphérique monté</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1778"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1782"/>
         <source>No key available to unlock device</source>
         <translation>Aucune clé disponible pour déverrouiller l&apos;appareil</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1857"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1861"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>Le disque est monté par l&apos;utilisateur &quot;% 1&quot;, vous ne pouvez pas le démonter.</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1895"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1899"/>
         <source>Cannot unmount the device</source>
         <translation>Impossible de démonter l&apos;appareil</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="2013"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2017"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>Impossible d&apos;éjecter le périphérique &quot;%1&quot;</translation>
     </message>
@@ -3451,23 +3450,23 @@
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="193"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="197"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="217"/>
         <source>Size: %1</source>
         <translation>Taille : %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="194"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="198"/>
         <source>Type: %1</source>
         <translation>Type : %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="206"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="210"/>
         <source>Size: 0</source>
         <translation>Taille : 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="216"/>
         <source>Items: %1</source>
         <translation>Éléments : %1</translation>
     </message>
@@ -3749,12 +3748,12 @@
         <translation>Rafraîchir</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="301"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="300"/>
         <source>Auto mount</source>
         <translation>Montage automatique</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="339"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="338"/>
         <source>Open after auto mount</source>
         <translation>Ouvrir après le montage automatique</translation>
     </message>
@@ -4173,30 +4172,30 @@
         <translation>Conseils : trier par ordre de fichier sélectionné</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="667"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="711"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="639"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="683"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="668"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="640"/>
         <source>View Image File</source>
         <comment>button</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="687"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="659"/>
         <source>Image successfully created</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="721"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="693"/>
         <source>Image creation failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1670"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1668"/>
         <source>Rename %1 Files</source>
         <translation>Renommer %1 fichiers</translation>
     </message>
@@ -4309,7 +4308,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="666"/>
-        <location filename="../../utils/utils.cpp" line="435"/>
+        <location filename="../../utils/utils.cpp" line="408"/>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
@@ -4970,14 +4969,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1784"/>
+        <location filename="../controllers/appcontroller.cpp" line="1804"/>
         <location filename="../../fileoperations/filejob.cpp" line="774"/>
         <location filename="../../fileoperations/filejob.cpp" line="1040"/>
         <source>The device was not safely unmounted</source>
         <translation>Le périphérique n&apos;a pas été démonté en toute sécurité</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1791"/>
+        <location filename="../controllers/appcontroller.cpp" line="1811"/>
         <source>The device was not safely removed</source>
         <translation>Le périphérique n&apos;a pas été retiré en toute sécurité</translation>
     </message>
