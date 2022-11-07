@@ -1203,7 +1203,8 @@ void FileView::keyboardSearch(const QString &search)
 void FileView::contextMenuEvent(QContextMenuEvent *event)
 {
     const QModelIndex &index = indexAt(event->pos());
-
+    if (isPersistentEditorOpen(currentIndex()))
+        closePersistentEditor(currentIndex());
     if (d->fileViewHelper->isEmptyArea(event->pos())) {
         BaseItemDelegate *de = itemDelegate();
         if (de)
