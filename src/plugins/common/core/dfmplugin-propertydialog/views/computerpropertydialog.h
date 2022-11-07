@@ -36,6 +36,16 @@ class ComputerInfoThread : public QThread
 {
     Q_OBJECT
 public:
+    enum ActiceState {
+        kInactivated = 0,
+        kActivated
+    };
+    enum AuthorizedInfo {
+        kUnauthorized = 0,
+        kGovernment,
+        kEnterprise
+    };
+
     explicit ComputerInfoThread(QObject *parent = nullptr);
     virtual ~ComputerInfoThread() override;
 

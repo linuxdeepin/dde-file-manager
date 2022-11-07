@@ -251,10 +251,42 @@ QString ComputerInfoThread::versionNum() const
 
 QString ComputerInfoThread::edition() const
 {
-    if (DSysInfo::uosType() == DSysInfo::UosServer || DSysInfo::uosEditionType() == DSysInfo::UosEuler) {
-        return QString("%1%2").arg(DSysInfo::minorVersion()).arg(DSysInfo::uosEditionName());
-    } else if (DSysInfo::isDeepin) {
-        return QString("%1(%2)").arg(DSysInfo::uosEditionName()).arg(DSysInfo::minorVersion());
+    if (DSysInfo::isDeepin()) {
+        if (DSysInfo::uosType() == DSysInfo::UosServer) {
+            return QString("%1%2").arg(DSysInfo::minorVersion()).arg(DSysInfo::uosEditionName());
+        } else {
+            QString defaultEdition = QString("%1(%2)").arg(DSysInfo::uosEditionName()).arg(DSysInfo::minorVersion());
+            if (DSysInfo::UosEdition::UosProfessional == DSysInfo::uosEditionType()) {
+                QDBusInterface deepinLicenseInfo("com.deepin.license",
+                                                 "/com/deepin/license/Info",
+                                                 "com.deepin.license.Info",
+                                                 QDBusConnection::systemBus());
+                deepinLicenseInfo.setTimeout(1000);
+                if (!deepinLicenseInfo.isValid()) {
+                    qWarning() << "Dbus com.deepin.license is not valid!";
+                    return defaultEdition;
+                }
+                qInfo() << "Start call Dbus com.deepin.license AuthorizationState";
+                int activeInfo = deepinLicenseInfo.property("AuthorizationState").toInt();
+                qInfo() << "End call Dbus com.deepin.license AuthorizationState";
+                if (kActivated == activeInfo) {
+                    qInfo() << "Start call Dbus com.deepin.license AuthorizationProperty";
+                    uint authorizedInfo = deepinLicenseInfo.property("AuthorizationProperty").toUInt();
+                    qInfo() << "End call Dbus com.deepin.license AuthorizationProperty";
+                    if (kGovernment == authorizedInfo) {
+                        return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Government").arg(DSysInfo::minorVersion()));
+                    } else if (kEnterprise == authorizedInfo) {
+                        return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Enterprise")).arg(DSysInfo::minorVersion());
+                    } else {
+                        return defaultEdition;
+                    }
+                } else {
+                    return defaultEdition;
+                }
+            } else {
+                return defaultEdition;
+            }
+        }
     } else {
         return QString("%1 %2").arg(DSysInfo::productVersion()).arg(DSysInfo::productTypeString());
     }
