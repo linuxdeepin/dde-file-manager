@@ -392,7 +392,7 @@ void DGvfsFileInfo::refreshCachesByStat()
         return;
     }
     d->cacheCanWrite  = access(d->fileInfo.absoluteFilePath().toStdString().c_str(), W_OK) == 0 ? 1 : 0;
-    d->cacheIsSymLink = S_ISLNK(statinfo.st_mode);
+    d->cacheIsSymLink = d->fileInfo.isSymLink();
     d->cacheFileSize = statinfo.st_size;
     d->inode = statinfo.st_ino;
     d->ownerid = static_cast<int>(statinfo.st_uid);
