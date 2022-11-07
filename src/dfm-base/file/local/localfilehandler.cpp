@@ -339,7 +339,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
                 return false;
             }
             const_cast<QUrl &>(fileUrl) = fileInfoLink->redirectedFileUrl();
-            if (!fileInfoLink->exists() && !isSmbUnmountedFile(fileUrl)) {
+            if (!DecoratorFile(fileInfoLink->absoluteFilePath()).exists() && !isSmbUnmountedFile(fileUrl)) {
                 lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->fileName(), fileInfo->url());
                 return lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
             }
