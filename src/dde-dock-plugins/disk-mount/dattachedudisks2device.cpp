@@ -119,7 +119,7 @@ QString DAttachedUdisks2Device::iconName()
     QString iconName = QStringLiteral("drive-harddisk");
 
     if (isRemovable) {
-        iconName = QStringLiteral("drive-removable-media-usb");
+        iconName = QStringLiteral("drive-removable-media") + (blockDevice()->isEncrypted() ? "-encrypted" : "-usb");;
     }
 
     if (isDvd) {
