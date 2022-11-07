@@ -27,7 +27,7 @@
 <context>
     <name>PdfWidget</name>
     <message>
-        <location filename="../pluginPreview/dde-pdf-preview-plugin/pdfwidget.cpp" line="163"/>
+        <location filename="../pluginPreview/dde-pdf-preview-plugin/pdfwidget.cpp" line="170"/>
         <source>Cannot preview this file!</source>
         <translation type="unfinished"></translation>
     </message>
