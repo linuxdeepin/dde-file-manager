@@ -10,6 +10,12 @@
     </signal>
     <signal name="AccessVaultPolicyNotify">
     </signal>
+    <signal name="DiskPasswordChecked">
+      <arg name="code" type="i" direction="out"/>
+    </signal>
+    <signal name="DiskPasswordChanged">
+      <arg name="code" type="i" direction="out"/>
+    </signal>
     <method name="SetAccessPolicy">
       <arg type="s" direction="out"/>
       <arg name="policy" type="a{sv}" direction="in"/>
@@ -32,6 +38,10 @@
     <method name="FileManagerReply">
       <arg type="s" direction="out"/>
       <arg name="policystate" type="i" direction="in"/>
+    </method>
+    <method name="ChangeDiskPassword">
+      <arg name="oldPwd" type="s" direction="in"/>
+      <arg name="newPwd" type="s" direction="in"/>
     </method>
   </interface>
 </node>

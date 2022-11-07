@@ -22,6 +22,9 @@
 */
 #include "accesscontroldbus.h"
 #include "utils.h"
+#include "polkit/policykithelper.h"
+
+#include "dfm-base/base/device/deviceutils.h"
 
 #include <QDebug>
 #include <QDBusConnection>
@@ -35,6 +38,7 @@
 
 #include <sys/mount.h>
 
+DFMBASE_USE_NAMESPACE
 DAEMONPAC_USE_NAMESPACE
 
 /*!
@@ -208,6 +212,63 @@ QString AccessControlDBus::FileManagerReply(int policystate)
     map.insert(kPolicyState, policystate);
     SetVaultAccessPolicy(map);
     return "OK";
+}
+
+void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString &newPwd)
+{
+    if (!checkAuthentication("com.deepin.filemanager.daemon.AccessControlManager.DiskPwd")) {
+        qDebug() << "Check authentication failed";
+        emit DiskPasswordChecked(kAuthenticationFailed);
+        return;
+    }
+
+    const auto &devList = DeviceUtils::encryptedDisks();
+    if (devList.isEmpty()) {
+        emit DiskPasswordChecked(kNoError);
+        QTimer::singleShot(500, [this] { emit DiskPasswordChanged(kAccessDiskFailed); });
+        return;
+    }
+
+    const QByteArray &tmpOldPwd = oldPwd.toLocal8Bit();
+    const QByteArray &tmpNewPwd = newPwd.toLocal8Bit();
+
+    int ret = kNoError;
+    QStringList successList;
+    for (int i = 0; i < devList.size(); ++i) {
+        struct crypt_device *cd = nullptr;
+        ret = Utils::checkDiskPassword(cd, tmpOldPwd.data(), devList[i].toLocal8Bit().data());
+
+        if (ret == kPasswordWrong && i == 0) {
+            emit DiskPasswordChecked(kPasswordWrong);
+            return;
+        } else if (ret == kPasswordWrong) {
+            ret = kPasswordInconsistent;
+            break;
+        } else if (ret == kNoError) {
+            if (i == 0)
+                emit DiskPasswordChecked(kNoError);
+
+            ret = Utils::changeDiskPassword(cd, tmpOldPwd.data(), tmpNewPwd.data());
+        } else {
+            break;
+        }
+
+        if (ret != kNoError)
+            break;
+
+        successList << devList[i];
+    }
+
+    // restore password
+    if (ret != kNoError && !successList.isEmpty()) {
+        for (const auto &device : successList) {
+            struct crypt_device *cd = nullptr;
+            Utils::checkDiskPassword(cd, tmpNewPwd.data(), device.toLocal8Bit().data());
+            Utils::changeDiskPassword(cd, tmpNewPwd.data(), tmpOldPwd.data());
+        }
+    }
+
+    emit DiskPasswordChanged(ret);
 }
 
 void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
@@ -413,4 +474,23 @@ void AccessControlDBus::changeMountedProtocol(int mode, const QString &device)
 {
     Q_UNUSED(mode)
     Q_UNUSED(device)
+}
+
+bool AccessControlDBus::checkAuthentication(const QString &id)
+{
+    bool ret = false;
+    qint64 pid = 0;
+    QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
+    if (c.isConnected()) {
+        pid = c.interface()->servicePid(message().service()).value();
+    }
+
+    if (pid) {
+        ret = PolicyKitHelper::instance()->checkAuthorization(id, pid);
+    }
+
+    if (!ret) {
+        qInfo() << "Authentication failed !!";
+    }
+    return ret;
 }

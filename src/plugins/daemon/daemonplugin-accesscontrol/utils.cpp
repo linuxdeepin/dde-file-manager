@@ -33,6 +33,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <libcryptsetup.h>
 
 DAEMONPAC_USE_NAMESPACE
 
@@ -270,4 +271,49 @@ void Utils::loadVaultPolicy(VaultPolicyType *vaultPolicies)
     }
 
     qDebug() << "loaded policy: " << *vaultPolicies;
+}
+
+DPCErrorCode Utils::checkDiskPassword(crypt_device *cd, const char *pwd, const char *device)
+{
+    int r = crypt_init(&cd, device);
+    if (r < 0) {
+        qInfo("crypt_init failed,code is:%d", r);
+        return kInitFailed;
+    }
+
+    r = crypt_load(cd, /* crypt context */
+                   CRYPT_LUKS2, /* requested type */
+                   nullptr); /* additional parameters (not used) */
+
+    if (r < 0) {
+        qInfo("crypt_load failed on device %s.\n", crypt_get_device_name(cd));
+        crypt_free(cd);
+        return kDeviceLoadFailed;
+    }
+
+    r = crypt_activate_by_passphrase(cd, nullptr, CRYPT_ANY_SLOT,
+                                     pwd, strlen(pwd), CRYPT_ACTIVATE_ALLOW_UNBOUND_KEY);
+    if (r < 0) {
+        qInfo("crypt_activate_by_passphrase failed on device %s.\n", crypt_get_device_name(cd));
+        crypt_free(cd);
+        return kPasswordWrong;
+    }
+
+    return kNoError;
+}
+
+DPCErrorCode Utils::changeDiskPassword(crypt_device *cd, const char *oldPwd, const char *newPwd)
+{
+    Q_ASSERT(cd);
+
+    int r = crypt_keyslot_change_by_passphrase(cd, CRYPT_ANY_SLOT,
+                                               CRYPT_ANY_SLOT, oldPwd,
+                                               strlen(oldPwd), newPwd, strlen(newPwd));
+    crypt_free(cd);
+    if (r < 0) {
+        qInfo("crypt_keyslot_change_by_passphrase failed,code is:%d", r);
+        return kPasswordChangeFailed;
+    }
+
+    return kNoError;
 }

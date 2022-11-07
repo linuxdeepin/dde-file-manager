@@ -70,6 +70,9 @@ public:
     static QString nameOfDefault(const QString &label, const quint64 &size);
     static QString nameOfSize(const quint64 &size);
 
+    static bool checkDiskEncrypted();
+    static QStringList encryptedDisks();
+
 private:
     static bool hasMatch(const QString &txt, const QString &rex);
 };

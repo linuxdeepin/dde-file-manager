@@ -10,6 +10,7 @@ FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.policy"
     )
 
 
@@ -31,6 +32,21 @@ pkg_search_module(dfm-io
     dfm-io
     IMPORTED_TARGET
 )
+pkg_search_module(crypt
+    REQUIRED
+    libcryptsetup
+    IMPORTED_TARGET
+)
+pkg_check_modules(PolkitAgent
+    REQUIRED
+    polkit-agent-1
+    IMPORTED_TARGET
+)
+pkg_check_modules(PolkitQt5
+    REQUIRED
+    polkit-qt5-1
+    IMPORTED_TARGET
+)
 find_package(Qt5 COMPONENTS
     DBus
     REQUIRED
@@ -40,6 +56,9 @@ target_link_libraries(${PROJECT_NAME}
     DFM::framework
     PkgConfig::dfm-mount
     PkgConfig::dfm-io
+    PkgConfig::crypt
+    PkgConfig::PolkitAgent
+    PkgConfig::PolkitQt5
     Qt5::DBus
     ${DtkWidget_LIBRARIES}
 )
@@ -51,3 +70,6 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_DAEMON_EDGE_DIR}
 )
+
+set(PolicyDir "${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions")
+install(FILES polkit/com.deepin.filemanager.daemon.accesscontrol.policy DESTINATION ${PolicyDir})

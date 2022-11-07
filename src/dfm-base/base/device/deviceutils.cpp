@@ -31,6 +31,7 @@
 #include <QDebug>
 #include <QRegularExpressionMatch>
 #include <QMutex>
+#include <QSettings>
 
 #include <libmount.h>
 #include <fstab.h>
@@ -356,6 +357,48 @@ QString DeviceUtils::nameOfSize(const quint64 &size)
         index++;
     }
     return QString("%1 %2").arg(QString::number(fileSize, 'f', 1)).arg(unit);
+}
+
+bool DeviceUtils::checkDiskEncrypted()
+{
+    static bool isEncrypted = false;
+    static std::once_flag flag;
+
+    std::call_once(flag, [&] {
+#ifdef COMPILE_ON_V23
+    // TODO (liuzhangjian) check disk encrypted on v23
+#elif COMPILE_ON_V20
+        QSettings settings("/etc/deepin/deepin-user-experience", QSettings::IniFormat);
+        isEncrypted = settings.value("FullDiskEncrypt", false).toBool();
+#endif
+    });
+
+    return isEncrypted;
+}
+
+QStringList DeviceUtils::encryptedDisks()
+{
+    static QStringList deviceList;
+    static std::once_flag flag;
+
+    std::call_once(flag, [&] {
+#ifdef COMPILE_ON_V23
+    // TODO (liuzhangjian) get encrypted disks on v23
+#elif COMPILE_ON_V20
+        QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
+        const QString &value = settings.value("DI_CRYPT_INFO", "").toString();
+        if (!value.isEmpty()) {
+            QStringList groupList = value.split(';');
+            for (const auto &group : groupList) {
+                QStringList device = group.split(':');
+                if (!device.isEmpty())
+                    deviceList << device.first();
+            }
+        }
+#endif
+    });
+
+    return deviceList;
 }
 
 bool DeviceUtils::hasMatch(const QString &txt, const QString &rex)

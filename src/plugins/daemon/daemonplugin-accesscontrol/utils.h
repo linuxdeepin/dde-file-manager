@@ -27,6 +27,8 @@
 
 #include <QObject>
 
+struct crypt_device;
+
 DAEMONPAC_BEGIN_NAMESPACE
 
 inline constexpr char kKeyInvoker[] { "invoker" };
@@ -75,6 +77,9 @@ public:
     static void loadDevPolicy(DevPolicyType *devPolicies);
     static void saveVaultPolicy(const QVariantMap &policy);
     static void loadVaultPolicy(VaultPolicyType *vaultPolicies);
+
+    static DPCErrorCode checkDiskPassword(crypt_device *cd, const char *pwd, const char *device);
+    static DPCErrorCode changeDiskPassword(crypt_device *cd, const char *oldPwd, const char *newPwd);
 };
 
 DAEMONPAC_END_NAMESPACE

@@ -20,6 +20,8 @@ FILE(GLOB TITLEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/views/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/dpcwidget/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/dpcwidget/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 find_package(Dtk REQUIRED Widget REQUIRED)

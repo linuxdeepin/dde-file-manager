@@ -24,10 +24,12 @@
 #include "events/titlebareventcaller.h"
 #include "dialogs/connecttoserverdialog.h"
 #include "dialogs/usersharepasswordsettingdialog.h"
+#include "dialogs/diskpasswordchangingdialog.h"
 #include "views/titlebarwidget.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/finallyutil.h"
@@ -39,6 +41,7 @@
 #include <QGSettings>
 #include <QStandardPaths>
 #include <QStorageInfo>
+#include <QSettings>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
@@ -91,6 +94,12 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
     action = new QAction(QObject::tr("Set share password"));
     action->setData(MenuAction::kSetUserSharePassword);
     menu->addAction(action);
+
+    if (DeviceUtils::checkDiskEncrypted()) {
+        action = new QAction(QObject::tr("Change disk password"));
+        action->setData(MenuAction::kChangeDiskPassword);
+        menu->addAction(action);
+    }
 
     action = new QAction(QObject::tr("Settings"));
     action->setData(MenuAction::kSettings);
@@ -278,6 +287,22 @@ void TitleBarHelper::showUserSharePasswordSettingDialog(quint64 windowId)
     });
 }
 
+void TitleBarHelper::showDiskPasswordChangingDialog(quint64 windowId)
+{
+    auto window = FMWindowsIns.findWindowById(windowId);
+    if (!window || window->property("DiskPwdChangingDialogShown").toBool()) {
+        return;
+    }
+
+    DiskPasswordChangingDialog *dialog = new DiskPasswordChangingDialog(window);
+    dialog->show();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    window->setProperty("ChangeDiskPasswordDialog", true);
+    QObject::connect(dialog, &DiskPasswordChangingDialog::closed, [=] {
+        window->setProperty("ChangeDiskPasswordDialog", false);
+    });
+}
+
 QMutex &TitleBarHelper::mutex()
 {
     static QMutex m;
@@ -298,6 +323,9 @@ void TitleBarHelper::handleSettingMenuTriggered(quint64 windowId, int action)
         break;
     case MenuAction::kSetUserSharePassword:
         TitleBarHelper::showUserSharePasswordSettingDialog(windowId);
+        break;
+    case MenuAction::kChangeDiskPassword:
+        TitleBarHelper::showDiskPasswordChangingDialog(windowId);
         break;
     }
 }

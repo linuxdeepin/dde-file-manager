@@ -61,6 +61,7 @@ public slots:
     QVariantList QueryVaultAccessPolicy();
     int QueryVaultAccessPolicyVisible();
     QString FileManagerReply(int policystate);
+    void ChangeDiskPassword(const QString &oldPwd, const QString &newPwd);
 
 private slots:
     void onBlockDevAdded(const QString &deviceId);
@@ -70,6 +71,8 @@ signals:
     void AccessPolicySetFinished(const QVariantMap &policy);
     void DeviceAccessPolicyChanged(const QVariantList &policy);
     void AccessVaultPolicyNotify();
+    void DiskPasswordChecked(int code);
+    void DiskPasswordChanged(int code);
 
 private:
     void initConnect();
@@ -77,6 +80,7 @@ private:
     void changeMountedBlock(int mode, const QString &device = "");
     void changeMountedOptical(int mode, const QString &device = "");
     void changeMountedProtocol(int mode, const QString &device = "");
+    bool checkAuthentication(const QString &id);
 
 private:
     QMap<int, QPair<QString, int>> globalDevPolicies;

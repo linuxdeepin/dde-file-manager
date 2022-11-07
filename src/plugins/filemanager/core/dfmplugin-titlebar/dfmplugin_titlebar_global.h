@@ -53,7 +53,20 @@ enum MenuAction {
     kNewWindow,
     kConnectToServer,
     kSetUserSharePassword,
+    kChangeDiskPassword,
     kSettings
+};
+
+// error code of change disk password
+enum DPCErrorCode {
+    kNoError = 0,
+    kAuthenticationFailed,
+    kInitFailed,
+    kDeviceLoadFailed,
+    kPasswordChangeFailed,
+    kPasswordWrong,
+    kAccessDiskFailed,   // Unable to get the encrypted disk list
+    kPasswordInconsistent   // Passwords of disks are different
 };
 
 using SeprateUrlCallback = std::function<QList<QVariantMap>(const QUrl &)>;

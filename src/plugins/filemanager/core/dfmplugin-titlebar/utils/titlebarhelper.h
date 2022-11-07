@@ -50,6 +50,7 @@ public:
     static void showSettingsDialog(quint64 windowId);
     static void showConnectToServerDialog(quint64 windowId);
     static void showUserSharePasswordSettingDialog(quint64 windowId);
+    static void showDiskPasswordChangingDialog(quint64 windowId);
 
 public:
     static bool newWindowAndTabEnabled;
