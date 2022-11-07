@@ -240,7 +240,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
     d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
     d.addButton(QObject::tr("Close", "button"));
-    d.addButton(QObject::tr("View Image File", "button"), true, DDialog::ButtonType::ButtonRecommend);
+    d.addButton(tr("View Image File", "button"), true, DDialog::ButtonType::ButtonRecommend);
     connect(&d, &DDialog::buttonClicked, this, [imageUrl](int index, const QString &text) {
         qInfo() << "button clicked" << text;
         if (index == 1) {
@@ -259,7 +259,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 
     // add textlabel
     QLabel *textLabel { new QLabel };
-    textLabel->setText(QObject::tr("Image successfully created"));
+    textLabel->setText(tr("Image successfully created"));
     textLabel->setAlignment(Qt::AlignHCenter);
     QFont font { textLabel->font() };
     font.setPixelSize(14);
@@ -293,7 +293,7 @@ void BurnJobManager::showOpticalDumpISOFailedDialog()
 
     // add textlabel
     QLabel *textLabel { new QLabel };
-    textLabel->setText(QObject::tr("Image creation failed"));
+    textLabel->setText(tr("Image creation failed"));
     textLabel->setAlignment(Qt::AlignHCenter);
     QFont font { textLabel->font() };
     font.setPixelSize(14);

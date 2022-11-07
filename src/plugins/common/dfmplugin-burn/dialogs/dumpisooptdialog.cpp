@@ -71,7 +71,7 @@ void DumpISOOptDialog::initliazeUi()
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
     addButton(QObject::tr("Cancel", "button"));
-    int index = addButton(QObject::tr("Create ISO Image", "button"), true, DDialog::ButtonType::ButtonRecommend);
+    int index = addButton(tr("Create ISO Image", "button"), true, DDialog::ButtonType::ButtonRecommend);
     createImgBtn = getButton(index);
     if (createImgBtn)
         createImgBtn->setEnabled(false);
@@ -84,7 +84,7 @@ void DumpISOOptDialog::initliazeUi()
     addContent(contentWidget, Qt::AlignTop);
 
     // comment title label
-    saveAsImgLabel = new QLabel(QObject::tr("Save as Image File"));
+    saveAsImgLabel = new QLabel(tr("Save as Image File"));
     saveAsImgLabel->setFixedSize(308, 20);
     QFont font = saveAsImgLabel->font();
     font.setPixelSize(14);
@@ -95,7 +95,7 @@ void DumpISOOptDialog::initliazeUi()
     contentLay->addWidget(saveAsImgLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
     // comment label
-    commentLabel = new QLabel(QObject::tr("All files in the disc will be packaged and created as an ISO image file."));
+    commentLabel = new QLabel(tr("All files in the disc will be packaged and created as an ISO image file."));
     commentLabel->setWordWrap(true);
     commentLabel->setFixedSize(360, 41);
     font = commentLabel->font();
@@ -106,7 +106,7 @@ void DumpISOOptDialog::initliazeUi()
     contentLay->addWidget(commentLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
     // savepath label
-    savePathLabel = new QLabel(QObject::tr("Save the ISO image here:"));
+    savePathLabel = new QLabel(tr("Save the ISO image here:"));
     font = savePathLabel->font();
     font.setPixelSize(12);
     font.setFamily("SourceHanSansSC");

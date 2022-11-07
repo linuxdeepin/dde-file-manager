@@ -128,8 +128,8 @@ void OpticalMediaWidget::initializeUi()
     layout->addWidget(pbDump = new DPushButton());
     layout->addWidget(pbBurn = new DPushButton());
     layout->addWidget(iconCaution = new QSvgWidget());
-    pbDump->setText(QObject::tr("Save as Image File"));
-    pbBurn->setText(QObject::tr("Burn"));
+    pbDump->setText(tr("Save as Image File"));
+    pbBurn->setText(tr("Burn"));
     lbUDFSupport->setVisible(false);
     iconCaution->setVisible(false);
 
