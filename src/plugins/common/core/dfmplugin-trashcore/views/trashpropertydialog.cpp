@@ -55,7 +55,7 @@ void TrashPropertyDialog::initUI()
     DHorizontalLine *hLine = new DHorizontalLine(this);
     fileCountAndFileSize = new KeyValueLabel(this);
     updateLeftInfo(info->countChildFile());
-    fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignHCenter);
+    fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignRight);
 
     QFrame *infoFrame = new QFrame;
     infoFrame->setMaximumHeight(48);
@@ -119,7 +119,7 @@ void TrashPropertyDialog::calculateSize()
 void TrashPropertyDialog::updateUI(qint64 size, int count)
 {
     updateLeftInfo(count);
-    fileCountAndFileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignHCenter);
+    fileCountAndFileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignRight);
 }
 
 void TrashPropertyDialog::showEvent(QShowEvent *event)
