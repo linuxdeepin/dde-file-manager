@@ -922,11 +922,12 @@ void DFMSideBar::initDeviceConnection()
         DUrl url = temUrl;
 
         QString smbIp;
-        bool needAddSmbItem = FileUtils::isSmbRelatedUrl(url, smbIp);
-        if (needAddSmbItem && isSmbItemExisted(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp))){//已经添加了
+        bool isSmbUrl = FileUtils::isSmbRelatedUrl(url, smbIp);
+        if (isSmbUrl && isSmbItemExisted(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp))){//已经添加了
             return;
         }
-        if (smbIntegrationSwitcher->isIntegrationMode()){ // fix bug:#168885
+        // Smb url with smb-integration mode, change `url` to format smb://x.x.x.x and show ip item in sidebar.
+        if (isSmbUrl && smbIntegrationSwitcher->isIntegrationMode()){ // fix bug:#168885, fix bug:#169979
             url = DUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
         }
 
