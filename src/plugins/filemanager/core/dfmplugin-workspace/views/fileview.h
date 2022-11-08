@@ -222,7 +222,6 @@ private:
     void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
     void openIndex(const QModelIndex &index);
 
-    QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
 
     void updateModelActiveIndex();

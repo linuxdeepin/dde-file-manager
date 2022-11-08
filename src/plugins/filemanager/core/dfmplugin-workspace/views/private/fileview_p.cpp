@@ -35,6 +35,7 @@
 #include "utils/fileviewmenuhelper.h"
 
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <QScrollBar>
@@ -181,4 +182,42 @@ void FileViewPrivate::pureResizeEvent(QResizeEvent *event)
         if (adjustFileNameColumn)
             headerView->doFileNameColumnResize(q->width());
     }
+}
+
+void FileViewPrivate::loadViewMode(const QUrl &url)
+{
+    int defaultViewMode = static_cast<int>(WorkspaceHelper::instance()->findViewMode(url.scheme()));
+    int savedViewMode = fileViewStateValue(url, "viewMode", -1).toInt();
+    int parentViewMode = -1;
+
+    if (savedViewMode == -1
+        && Application::appObtuselySetting()->value("ApplicationAttribute", "UseParentViewMode", false).toBool()) {
+        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        QList<QUrl> parentUrlList {};
+        info->isAncestorsUrl(QUrl(), &parentUrlList);
+
+        for (const QUrl &parentUrl : parentUrlList) {
+            parentViewMode = fileViewStateValue(parentUrl, "viewMode", -1).toInt();
+            break;
+        }
+    }
+
+    if (parentViewMode != -1) {
+        currentViewMode = static_cast<Global::ViewMode>(parentViewMode);
+    } else if (savedViewMode != -1) {
+        currentViewMode = static_cast<Global::ViewMode>(savedViewMode);
+    } else {
+        currentViewMode = static_cast<Global::ViewMode>(defaultViewMode);
+    }
+}
+
+QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)
+{
+    QUrl realUrl = url;
+    // reset root url to make them be same.
+    if (UrlRoute::isRootUrl(url))
+        realUrl = UrlRoute::rootUrl(url.scheme());
+
+    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", realUrl).toMap();
+    return valueMap.value(key, defalutValue);
 }

@@ -102,6 +102,9 @@ class FileViewPrivate
     void initContentLabel();
     void updateHorizontalScrollBarPosition();
     void pureResizeEvent(QResizeEvent *event);
+
+    void loadViewMode(const QUrl &url);
+    QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
 };
 
 }

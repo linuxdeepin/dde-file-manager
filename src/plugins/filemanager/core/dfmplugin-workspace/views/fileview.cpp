@@ -1672,14 +1672,13 @@ QUrl FileView::parseSelectedUrl(const QUrl &url)
 
 void FileView::loadViewState(const QUrl &url)
 {
-    int defaultViewMode = static_cast<int>(WorkspaceHelper::instance()->findViewMode(url.scheme()));
-    d->currentViewMode = static_cast<Global::ViewMode>(fileViewStateValue(url, "viewMode", defaultViewMode).toInt());
+    d->loadViewMode(url);
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
-    d->currentIconSizeLevel = fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
+    d->currentIconSizeLevel = d->fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
 
-    d->currentSortRole = static_cast<ItemRoles>(fileViewStateValue(url, "sortRole", kItemFileDisplayNameRole).toInt());
-    d->currentSortOrder = static_cast<Qt::SortOrder>(fileViewStateValue(url, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
+    d->currentSortRole = static_cast<ItemRoles>(d->fileViewStateValue(url, "sortRole", kItemFileDisplayNameRole).toInt());
+    d->currentSortOrder = static_cast<Qt::SortOrder>(d->fileViewStateValue(url, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
 }
 
 void FileView::doSort()
@@ -1725,17 +1724,6 @@ void FileView::openIndex(const QModelIndex &index)
         return;
 
     FileOperatorHelperIns->openFiles(this, { info->url() });
-}
-
-QVariant FileView::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)
-{
-    QUrl realUrl = url;
-    // reset root url to make them be same.
-    if (UrlRoute::isRootUrl(url))
-        realUrl = UrlRoute::rootUrl(url.scheme());
-
-    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", realUrl).toMap();
-    return valueMap.value(key, defalutValue);
 }
 
 void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)
