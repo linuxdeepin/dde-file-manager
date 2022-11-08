@@ -273,6 +273,8 @@ void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
         if (hiddenDisks.contains(item.url))
             this->setRowHidden(i, true);
     }
+
+    handleDiskSplitterVisiable();
 }
 
 void ComputerView::hideSystemPartitions(bool hide)
