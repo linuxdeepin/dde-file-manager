@@ -300,6 +300,28 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
     return DAbstractDialog::showEvent(event);
 }
 
+void FilePreviewDialog::hideEvent(QHideEvent *event)
+{
+    m_isSwitch = false;
+    emit signalCloseEvent();
+    if (m_preview) {
+        m_preview->contentWidget()->hide();
+        m_preview->stop();
+        disconnect(m_preview, &DFMFilePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
+        m_preview->contentWidget()->setVisible(false);
+        static_cast<QVBoxLayout *>(layout())->removeWidget(m_preview->contentWidget());
+        static_cast<QHBoxLayout *>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
+        if (DFMGlobal::isWayLand()) {
+            m_preview->DoneCurrent();
+        } else {
+            m_preview->deleteLater();
+            m_preview = nullptr;
+        }
+    }
+
+    return DAbstractDialog::hideEvent(event);
+}
+
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
     m_isSwitch = false;
