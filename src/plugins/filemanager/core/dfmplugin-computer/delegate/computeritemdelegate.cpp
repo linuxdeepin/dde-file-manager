@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "computeritemdelegate.h"
 #include "views/computerview.h"
 #include "models/computermodel.h"
@@ -146,12 +146,11 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
         if (!editor)
             return;
 
-        if (text.toUtf8().length() > maxLengthWhenRename) {
-            QSignalBlocker blocker(editor);
-            auto newLabel = text;
+        auto newLabel = text;
+        QSignalBlocker blocker(editor);
+        while (newLabel.toUtf8().length() > maxLengthWhenRename)
             newLabel.chop(1);
-            editor->setText(newLabel);
-        }
+        editor->setText(newLabel);
     });
     connect(editor, &QLineEdit::destroyed, this, [this, editor] {
         if (renameEditor == editor)
