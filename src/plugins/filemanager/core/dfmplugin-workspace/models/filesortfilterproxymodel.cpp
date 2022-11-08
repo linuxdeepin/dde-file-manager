@@ -266,6 +266,11 @@ ModelState FileSortFilterProxyModel::currentState() const
     return state;
 }
 
+void FileSortFilterProxyModel::initMixDirAndFile()
+{
+    isNotMixDirAndFile = !Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
+}
+
 void FileSortFilterProxyModel::onChildrenUpdate(const QUrl &url)
 {
     if (UniversalUtils::urlEquals(url, rootUrl))
@@ -344,7 +349,7 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
         return false;
 
     // The folder is fixed in the front position
-    if (!Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool()) {
+    if (isNotMixDirAndFile) {
         if (leftInfo->isDir()) {
             if (!rightInfo->isDir())
                 return sortOrder() == Qt::AscendingOrder;
@@ -370,17 +375,26 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
     case kItemFileMimeTypeRole:
         return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder()) == (sortOrder() == Qt::AscendingOrder);
     case kItemFileSizeRole:
-        if (leftInfo->isDir()) {
-            int leftCount = qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile();
-            int rightCount = qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile();
-            return leftCount < rightCount;
+        if (isNotMixDirAndFile) {
+            if (leftInfo->isDir()) {
+                int leftCount = qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile();
+                int rightCount = qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile();
+                return leftCount < rightCount;
+            } else {
+                return leftInfo->size() < rightInfo->size();
+            }
         } else {
-            return leftInfo->size() < rightInfo->size();
+            qint64 sizel = leftInfo->isDir() && rightInfo->isDir() ?
+                        qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile() :
+                        leftInfo->isDir() ? 0 : leftInfo->size();
+            qint64 sizer = leftInfo->isDir() && rightInfo->isDir() ?
+                        qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile() :
+                        rightInfo->isDir() ? 0 : rightInfo->size();
+            return sizel <  sizer;
         }
     default:
         return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder()) == (sortOrder() == Qt::AscendingOrder);
     }
-    return false;
 }
 
 bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const

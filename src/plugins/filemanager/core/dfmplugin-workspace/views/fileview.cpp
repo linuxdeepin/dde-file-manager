@@ -227,6 +227,7 @@ QList<QUrl> FileView::selectedUrlList() const
 
 void FileView::refresh()
 {
+    model()->initMixDirAndFile();
     model()->fetchMore(rootIndex());
 }
 
@@ -791,6 +792,7 @@ void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const
     Q_UNUSED(value);
     switch (aa) {
     case Application::kFileAndDirMixedSort:
+        d->currentSortOrder = model()->sortOrder();
         doSort();
         break;
     default:
@@ -869,6 +871,7 @@ DirOpenMode FileView::currentDirOpenMode() const
 void FileView::onRowCountChanged()
 {
     if (model()->currentState() == ModelState::kIdle) {
+        d->currentSortOrder = model()->sortOrder();
         delayUpdateStatusBar();
         updateContentLabel();
         doSort();
@@ -1681,6 +1684,7 @@ void FileView::loadViewState(const QUrl &url)
 
 void FileView::doSort()
 {
+    model()->initMixDirAndFile();
     model()->sort(model()->getColumnByRole(d->currentSortRole), d->currentSortOrder);
 }
 
@@ -1690,8 +1694,10 @@ void FileView::onModelStateChanged()
     updateLoadingIndicator();
     updateSelectedUrl();
 
-    if (model()->currentState() == ModelState::kIdle)
+    if (model()->currentState() == ModelState::kIdle) {
+        d->currentSortOrder = model()->sortOrder();
         doSort();
+    }
 
     if (d->headerView) {
         d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->currentState() == ModelState::kBusy);

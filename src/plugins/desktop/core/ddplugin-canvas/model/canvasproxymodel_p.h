@@ -76,6 +76,7 @@ public:
     Qt::SortOrder fileSortOrder = Qt::AscendingOrder;
     ModelHookInterface *hookIfs = nullptr;
     QList<QSharedPointer<CanvasModelFilter>> modelFilters;
+    bool isNotMixDirAndFile = false;
 private:
     CanvasProxyModel *q;
 };

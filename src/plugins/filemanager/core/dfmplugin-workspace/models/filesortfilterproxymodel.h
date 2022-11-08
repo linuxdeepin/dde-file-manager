@@ -80,6 +80,7 @@ public:
     void setActive(const QModelIndex &index, bool enable = true);
 
     ModelState currentState() const;
+    void initMixDirAndFile();
 
 Q_SIGNALS:
     void modelChildrenUpdated();
@@ -95,6 +96,7 @@ public Q_SLOTS:
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
     virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+
 
 private:
     bool passFileFilters(const AbstractFileInfoPointer &info) const;
@@ -116,6 +118,7 @@ private:
 
     ModelState state = ModelState::kIdle;
     bool workStoped = false;
+    bool isNotMixDirAndFile = false;
 };
 
 }

@@ -44,6 +44,7 @@ CanvasProxyModelPrivate::CanvasProxyModelPrivate(CanvasProxyModel *qq)
 {
     modelFilters << QSharedPointer<CanvasModelFilter>(new HiddenFileFilter(qq));
     modelFilters << QSharedPointer<CanvasModelFilter>(new InnerDesktopAppFilter(qq));
+    isNotMixDirAndFile = !Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
 }
 
 void CanvasProxyModelPrivate::sourceAboutToBeReset()
@@ -280,7 +281,7 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     DFMLocalFileInfoPointer rightInfo = q->fileInfo(rightIdx);
 
     // The folder is fixed in the front position
-    if (!Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool()) {
+    if (isNotMixDirAndFile) {
         if (leftInfo->isDir()) {
             if (!rightInfo->isDir())
                 return true;
@@ -805,6 +806,8 @@ void CanvasProxyModel::update()
 
 void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms)
 {
+    d->isNotMixDirAndFile = !Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
+
     if (parent != rootIndex())
         return;
 
