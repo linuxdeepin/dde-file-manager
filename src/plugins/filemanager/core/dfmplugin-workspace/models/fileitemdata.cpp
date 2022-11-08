@@ -73,17 +73,12 @@ QVariant FileItemData::data(int role) const
         return info->sizeDisplayName();
     case kItemFileMimeTypeRole:
         return info->mimeTypeDisplayName();
-    case kItemColumListRole: {
-        QList<QPair<int, int>> columRoleList;
-        columRoleList << QPair<int, int>(kItemFileDisplayNameRole, 32) << QPair<int, int>(kItemFileLastModifiedRole, 32)
-                      << QPair<int, int>(kItemFileSizeRole, 20) << QPair<int, int>(kItemFileMimeTypeRole, 16);
-
-        return QVariant::fromValue<QList<QPair<int, int>>>(columRoleList);
-    }
     case kItemSizeHintRole:
         return QSize(-1, 26);
     case kItemNameRole:
         return info->fileName();
+    case Qt::DisplayRole:
+    case kItemEditRole:
     case kItemFileDisplayNameRole:
         return info->fileDisplayName();
     case kItemFilePinyinNameRole:
