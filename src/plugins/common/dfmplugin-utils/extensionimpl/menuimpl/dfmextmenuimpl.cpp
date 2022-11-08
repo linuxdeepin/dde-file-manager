@@ -138,7 +138,7 @@ bool DFMExtMenuImplPrivate::insertAction(DFMExtAction *before, DFMExtAction *act
     DFMExtActionImplPrivate *impl_d = dynamic_cast<DFMExtActionImplPrivate *>(impl->d);
     if (menu != nullptr
         && impl != nullptr && impl_d != nullptr
-        && beforeImpl != nullptr && beforeImpl_d != nullptr) {
+        && beforeImpl_d != nullptr) {
 
         QAction *beforeAc = beforeImpl_d->qaction();
 

@@ -21,16 +21,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "virtualextensionimplplugin.h"
+#include "menuimpl/extensionlibmenuscene.h"
+#include "pluginsload/extensionpluginmanager.h"
+
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 namespace dfmplugin_utils {
 
 void VirtualExtensionImplPlugin::initialize()
 {
+    auto manager = &ExtensionPluginManager::instance();   // run in main thread
+    connect(manager, &ExtensionPluginManager::requestInitlaizePlugins, manager, &ExtensionPluginManager::onLoadingPlugins);
 }
 
 bool VirtualExtensionImplPlugin::start()
 {
+    dfmplugin_menu_util::menuSceneRegisterScene(ExtensionLibMenuSceneCreator::name(), new ExtensionLibMenuSceneCreator);
+    bindScene("ExtendMenu");
+
     return true;
+}
+
+void VirtualExtensionImplPlugin::bindScene(const QString &parentScene)
+{
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(ExtensionLibMenuSceneCreator::name(), parentScene);
+    } else {
+        waitToBind << parentScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &VirtualExtensionImplPlugin::bindSceneOnAdded);
+    }
+}
+
+void VirtualExtensionImplPlugin::bindSceneOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &VirtualExtensionImplPlugin::bindSceneOnAdded);
+        bindScene(newScene);
+    }
 }
 
 }   // namespace dfmplugin_utils

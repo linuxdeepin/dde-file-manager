@@ -44,7 +44,7 @@ public:
     Q_SLOT void onActionTriggered(QAction *qaction);
 
 protected:
-    bool interiorEntity = true;   //默认身份文管内部创建
+    bool interiorEntity = true;   // 默认身份文管内部创建
     QMenu *menu = nullptr;
     DFMExtMenuImpl *q = nullptr;
 };

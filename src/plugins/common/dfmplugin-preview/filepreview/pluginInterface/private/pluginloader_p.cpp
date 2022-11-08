@@ -26,7 +26,7 @@
 
 using namespace dfmplugin_filepreview;
 QStringList PreviewPluginLoaderPrivate::pluginPaths;
-constexpr char kPluginPath[] { "/../../plugins/common/dfmplugin-preview/previews" };
+static constexpr char kPluginPath[] { "/../../plugins/common/dfmplugin-preview/previews" };
 PreviewPluginLoaderPrivate::PreviewPluginLoaderPrivate(QObject *parent)
     : QObject(parent)
 {

@@ -30,7 +30,6 @@ BEGEN_DFMEXT_NAMESPACE
 
 extern "C" void dfm_extension_initiliaze();
 extern "C" void dfm_extension_shutdown();
-// TODO(zhangs): [[deprecated]]
 extern "C" DFMExtMenuPlugin *dfm_extension_menu();
 extern "C" DFMExtEmblemIconPlugin *dfm_extension_emblem();
 

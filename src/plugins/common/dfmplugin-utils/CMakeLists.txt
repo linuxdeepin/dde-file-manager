@@ -18,6 +18,8 @@ add_library(${PROJECT_NAME}
     ${UTILS_FILES}
 )
 
+set(EXTENSIONS_LIB_DIR ${DFM_PLUGIN_DIR}/extensions)
+add_definitions(-DEXTENSIONS_PATH=\"${EXTENSIONS_LIB_DIR}\")
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 target_include_directories(${PROJECT_NAME}

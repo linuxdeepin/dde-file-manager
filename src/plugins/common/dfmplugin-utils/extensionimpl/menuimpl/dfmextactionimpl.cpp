@@ -46,7 +46,7 @@ DFMExtActionImplPrivate::~DFMExtActionImplPrivate()
 {
     if (interiorEntity) {   // 文管内部创建的impl采用逆向释放
         return;
-    } else {   //! 非文管创建正向释放
+    } else {   // 非文管创建正向释放
         if (action) {
             delete action;
             action = nullptr;
@@ -139,7 +139,7 @@ void DFMExtActionImplPrivate::setMenu(DFMExtMenu *menu)
     if (action && menuImpl) {
         auto menuImpl_d = dynamic_cast<DFMExtMenuImplPrivate *>(menuImpl->d);
 
-        //文管内部的创建的不能设置
+        // 文管内部的创建的不能设置
         if (menuImpl_d->isInterior())
             return;
 

@@ -27,9 +27,18 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+
+if (NOT VERSION)
+    set(VERSION "1.0.0")
+endif()
+
+if (NOT PROJECT_VERSION_MAJOR)
+    set(PROJECT_VERSION_MAJOR 0)
+endif()
+
 set_target_properties(${BIN_NAME} PROPERTIES
-    VERSION ${CMAKE_PROJECT_VERSION}
-    SOVERSION ${CMAKE_PROJECT_VERSION_MAJOR})
+    VERSION ${VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR})
 
 add_library(DFM::extension ALIAS ${PROJECT_NAME})
 

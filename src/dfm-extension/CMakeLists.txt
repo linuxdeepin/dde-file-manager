@@ -46,5 +46,5 @@ configure_file(misc/${BIN_NAME}Config.cmake.in ${BIN_NAME}Config.cmake @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}Config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${BIN_NAME})
 
 set(ASSERTS_DIR ../../assets)
-set(EXTENSIONS_LIB_PDIR ${DFM_PLUGIN_DIR}/extensions)
-install(FILES ${ASSERTS_DIR}/.readme DESTINATION ${EXTENSIONS_LIB_PDIR})
+set(EXTENSIONS_LIB_DIR ${DFM_PLUGIN_DIR}/extensions)
+install(FILES ${ASSERTS_DIR}/.readme DESTINATION ${EXTENSIONS_LIB_DIR})

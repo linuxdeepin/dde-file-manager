@@ -36,6 +36,14 @@ class VirtualExtensionImplPlugin : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
+
+private slots:
+    void bindScene(const QString &parentScene);
+    void bindSceneOnAdded(const QString &newScene);
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
 }   // namespace dfmplugin_utils

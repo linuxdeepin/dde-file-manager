@@ -119,7 +119,7 @@ bool ExtendMenuScene::create(QMenu *parent)
     qDebug() << "extendCustomMenu " << !d->isEmptyArea << d->currentDir << d->focusFile << "files" << d->selectFiles.size() << "entrys" << rootEntry.size();
 
     if (parent == nullptr || rootEntry.isEmpty())
-        return false;
+        return AbstractMenuScene::create(parent);
 
     DCustomActionBuilder builder;
     //呼出菜单的文件夹
@@ -144,7 +144,7 @@ bool ExtendMenuScene::create(QMenu *parent)
     qDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
 
     if (usedEntrys.isEmpty())
-        return false;
+        return AbstractMenuScene::create(parent);
 
     //开启tooltips
     parent->setToolTipsVisible(true);
