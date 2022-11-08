@@ -502,4 +502,5 @@ void RemoteMountsStashManager::insertStashedSmbDevice(const QString &url)
 
     stashedSmbDevices.append(url);
     DFMApplication::genericSetting()->setValue(kStashedSmbDevices, kSmbIntegrations, stashedSmbDevices);
+    DFMApplication::genericSetting()->sync();
 }
