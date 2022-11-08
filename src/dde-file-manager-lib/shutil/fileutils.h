@@ -169,6 +169,8 @@ public:
 
     static QList<QStringList> catFstabFileInfo(const QString &mountPoint);
     static bool isArchiveByMimetype(const QString &mimetype);
+
+    static int maxLabelLengthOfFileSystem(const QString &fs);
 };
 
 #endif // FILEUTILS_H
