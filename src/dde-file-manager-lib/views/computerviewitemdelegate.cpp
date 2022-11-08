@@ -342,12 +342,12 @@ QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
     connect(le, &QLineEdit::textChanged, this, [le, maxLenInBytes](const QString &txt) {
         if (!le)
             return;
-        if (txt.toUtf8().length() > maxLenInBytes) {
-            const QSignalBlocker blocker(le);
-            QString newLabel = txt;
+
+        auto newLabel = txt;
+        const QSignalBlocker blocker(le);
+        while (newLabel.toUtf8().length() > maxLenInBytes)
             newLabel.chop(1);
-            le->setText(newLabel);
-        }
+        le->setText(newLabel);
     });
 
     connect(le, &QLineEdit::destroyed, this, [this, le] {

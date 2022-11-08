@@ -2303,6 +2303,25 @@ bool FileUtils::isArchiveByMimetype(const QString &mimetype)
     return mimeTypeDisplayManager->supportArchiveMimetypes().contains(mimetype);
 }
 
+int FileUtils::maxLabelLengthOfFileSystem(const QString &fs)
+{
+    const static QMap<QString, int> limits {
+        {"vfat", 11},   // man 8 mkfs.fat
+        {"ext2", 16},   // man 8 mke2fs
+        {"ext3", 16},   // man 8 mke2fs
+        {"ext4", 16},   // man 8 mke2fs
+        {"btrfs", 255}, // https://btrfs.wiki.kernel.org/index.php/Manpage/btrfs-filesystem
+        {"f2fs", 512},  // https://www.kernel.org/doc/Documentation/filesystems/f2fs.txt    https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/tree/mkfs/f2fs_format_main.c
+        {"jfs", 16},    // jfsutils/mkfs/mkfs.c:730
+        {"exfat", 15},  // man 8 mkexfatfs
+        {"nilfs2", 80}, // man 8 mkfs.nilfs2
+        {"ntfs", 32},   // https://docs.microsoft.com/en-us/dotnet/api/system.io.driveinfo.volumelabel?view=netframework-4.8
+        {"reiserfs", 15},// man 8 mkreiserfs said its max length is 16, but after tested, only 15 chars are accepted.
+        {"xfs", 12}     // https://github.com/edward6/reiser4progs/blob/master/include/reiser4/types.h fs_hint_t
+    };
+    return limits.value(fs, 11);
+}
+
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率
 bool FileUtils::isDesktopFile(const QString &filePath)
 {
