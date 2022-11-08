@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "mountaskpassworddialog.h"
+#include "shutil/smbintegrationswitcher.h"
+#include "../app/define.h"
+
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QDebug>

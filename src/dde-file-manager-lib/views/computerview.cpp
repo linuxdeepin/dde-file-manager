@@ -30,6 +30,7 @@
 #include "controllers/vaultcontroller.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "../shutil/fileutils.h"
+#include "../shutil/smbintegrationswitcher.h"
 #include "views/dtoolbar.h"
 #include "drootfilemanager.h"
 #include "utils.h"
@@ -387,7 +388,7 @@ void ComputerView::contextMenu(const QPoint &pos)
         if(scheme == SMB_SCHEME){
             QVector<MenuAction> actionValue;
             actionValue << MenuAction::UnmountAllSmbMount
-                        << MenuAction::ForgetAllSmbPassword;
+                        << (smbIntegrationSwitcher->isIntegrationMode() ? MenuAction::ForgetAllSmbPassword : MenuAction::ForgetPassword);
             menu = DFileMenuManager::genereteMenuByKeys(actionValue, disabled);
         }else{
             menu = DFileMenuManager::genereteMenuByKeys(av, disabled);

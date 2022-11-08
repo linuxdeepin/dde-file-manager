@@ -369,6 +369,7 @@ void RemoteMountsStashManager::clearRemoteMounts()
 {
     //当用户手动从设置菜单中取消勾选`sambar共享端常驻显示挂载入口`复选框时,会调用此函数将配置文件中`RemoteMounts`字段缓存的常驻入口清空；
     DFMApplication::genericSetting()->removeGroup(kRemoteMounts);
+    DFMApplication::genericSetting()->sync();
 }
 
 void RemoteMountsStashManager::stashCurrentMounts()

@@ -417,7 +417,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
             if(scheme == SMB_SCHEME){
                 av.clear();
                 av.append(MenuAction::UnmountAllSmbMount);
-                av.append(MenuAction::ForgetAllSmbPassword);
+                av.append(smbIntegrationSwitcher->isIntegrationMode() ? MenuAction::ForgetAllSmbPassword : MenuAction::ForgetPassword);
                 av.append(MenuAction::OpenDisk);
             }
             return QVariant::fromValue(av);
