@@ -28,9 +28,6 @@
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/fileutils.h"
@@ -117,33 +114,6 @@ bool ShareMenuScene::create(QMenu *parent)
 
 void ShareMenuScene::updateState(QMenu *parent)
 {
-    // remove device self action
-    if (!d->isEmptyArea) {
-        auto actions = parent->actions();
-        bool removed = false;
-        for (auto act : actions) {
-            if (removed)
-                break;
-
-            if (act->isSeparator())
-                continue;
-
-            auto actId = act->property(ActionPropertyKey::kActionID).toString();
-
-            if (actId == "send-to") {
-                auto subMenu = act->menu();
-                for (QAction *action : subMenu->actions()) {
-                    const QUrl &urlData = action->data().toUrl();
-                    if (urlData.isValid() && d->focusFile.toString().startsWith(urlData.toString())) {
-                        subMenu->removeAction(action);
-                        removed = true;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     AbstractMenuScene::updateState(parent);
 }
 
@@ -196,27 +166,6 @@ void ShareMenuScenePrivate::addSubActions(QMenu *subMenu)
             act->setEnabled(false);
         predicateAction[ActionID::kShareToBluetooth] = act;
     }
-
-    using namespace GlobalServerDefines;
-    auto devs = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
-    auto dedupedDevs = devs.toSet();
-    int idx = 0;
-    for (const QString &dev : dedupedDevs) {
-        auto &&data = DevProxyMng->queryBlockInfo(dev);
-        QString label = DeviceUtils::convertSuitableDisplayName(data);
-        QString mpt = data.value(DeviceProperty::kMountPoint).toString();
-        QString devDesc = data.value(DeviceProperty::kDevice).toString();
-
-        if (data.value(DeviceProperty::kOptical).toBool()) {
-            continue;   // this should be added in burn plugin.
-        } else {
-            QAction *act = subMenu->addAction(label);
-            act->setData(QUrl::fromLocalFile(mpt));
-            QString actId = ActionID::kSendToRemovablePrefix + QString::number(idx++);
-            predicateAction.insert(actId, act);
-            act->setProperty(ActionPropertyKey::kActionID, actId);
-        }
-    }
 }
 
 void ShareMenuScenePrivate::handleActionTriggered(QAction *act)
@@ -232,8 +181,5 @@ void ShareMenuScenePrivate::handleActionTriggered(QAction *act)
     QString actId = act->property(ActionPropertyKey::kActionID).toString();
     if (actId == ActionID::kShareToBluetooth) {
         dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", filePaths, "");
-    } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
-        qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
-        dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
     }
 }

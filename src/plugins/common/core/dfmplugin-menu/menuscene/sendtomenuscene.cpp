@@ -27,10 +27,14 @@
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 
 #include <dfm-framework/dpf.h>
 
 #include <QMenu>
+#include <QApplication>
 #include <QFileDialog>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -69,6 +73,7 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
 
     const QVariantHash &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
     d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
@@ -116,11 +121,62 @@ bool SendToMenuScene::create(QMenu *parent)
         d->predicateAction[ActionID::kSendToDesktop] = actionToDesktop;
     }
 
+    if (!d->isFocusOnDDEDesktopFile && !d->isSystemPathIncluded) {
+        // udisk
+        using namespace GlobalServerDefines;
+        auto devs = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
+        auto dedupedDevs = devs.toSet();
+        int idx = 0;
+        for (const QString &dev : dedupedDevs) {
+            auto &&data = DevProxyMng->queryBlockInfo(dev);
+            QString label = DeviceUtils::convertSuitableDisplayName(data);
+            QString mpt = data.value(DeviceProperty::kMountPoint).toString();
+            QString devDesc = data.value(DeviceProperty::kDevice).toString();
+
+            if (data.value(DeviceProperty::kOptical).toBool()) {
+                continue;   // this should be added in burn plugin.
+            } else {
+                QAction *act = menuSendTo->addAction(label);
+                act->setData(QUrl::fromLocalFile(mpt));
+                QString actId = ActionID::kSendToRemovablePrefix + QString::number(idx++);
+                d->predicateAction.insert(actId, act);
+                act->setProperty(ActionPropertyKey::kActionID, actId);
+            }
+        }
+    }
+
     return AbstractMenuScene::create(parent);
 }
 
 void SendToMenuScene::updateState(QMenu *parent)
 {
+    // remove device self action
+    if (!d->isEmptyArea) {
+        auto actions = parent->actions();
+        bool removed = false;
+        for (auto act : actions) {
+            if (removed)
+                break;
+
+            if (act->isSeparator())
+                continue;
+
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
+
+            if (actId == "send-to") {
+                auto subMenu = act->menu();
+                for (QAction *action : subMenu->actions()) {
+                    const QUrl &urlData = action->data().toUrl();
+                    if (urlData.isValid() && d->focusFile.toString().startsWith(urlData.toString())) {
+                        subMenu->removeAction(action);
+                        removed = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     AbstractMenuScene::updateState(parent);
 }
 
@@ -160,6 +216,14 @@ bool SendToMenuScene::triggered(QAction *action)
                 QString linkName = FileUtils::nonExistSymlinkFileName(url);
                 QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
                 dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, d->windowId, url, linkUrl, false, true);
+            }
+            return true;
+        } else {
+            QString actId = action->property(ActionPropertyKey::kActionID).toString();
+            if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
+                qDebug() << "send files to: " << action->data().toUrl() << ", " << d->selectFiles;
+                dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), d->selectFiles, action->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                return true;
             }
         }
 
