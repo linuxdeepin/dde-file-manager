@@ -39,7 +39,17 @@ TEST(DesktopDBusInterface, Refresh)
     QString sifs;
     QString me;
     bool silent = false;
-    stub.set_lamda(&QDBusAbstractInterface::asyncCall, [&srv, &addr, &sifs, &silent, &me](QDBusAbstractInterface *self, const QString &method,
+    stub.set_lamda((QDBusPendingCall (QDBusAbstractInterface::*)(const QString &method,
+                                                                 const QVariant &arg1,
+                                                                 const QVariant &arg2,
+                                                                 const QVariant &arg3,
+                                                                 const QVariant &arg4,
+                                                                 const QVariant &arg5,
+                                                                 const QVariant &arg6,
+                                                                 const QVariant &arg7,
+                                                                 const QVariant &arg8))
+                   &QDBusAbstractInterface::asyncCall,
+                   [&srv, &addr, &sifs, &silent, &me](QDBusAbstractInterface *self, const QString &method,
                                                    const QVariant &arg1,
                                                    const QVariant &arg2,
                                                    const QVariant &arg3,

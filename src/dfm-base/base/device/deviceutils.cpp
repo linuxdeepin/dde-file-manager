@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "deviceutils.h"
 
 #include "dfm-base/base/application/application.h"
@@ -336,14 +336,14 @@ QString DeviceUtils::nameOfSize(const quint64 &size)
     QStringList list;
     qreal fileSize(num);
 
-    list << " B"
-         << " KB"
-         << " MB"
-         << " GB"
-         << " TB";   // should we use KiB since we use 1024 here?
+    list << "B"
+         << "KB"
+         << "MB"
+         << "GB"
+         << "TB";   // should we use KiB since we use 1024 here?
 
     QStringListIterator i(list);
-    QString unit = i.hasNext() ? i.next() : QStringLiteral(" B");
+    QString unit = i.hasNext() ? i.next() : QStringLiteral("B");
 
     int index = 0;
     while (i.hasNext()) {
