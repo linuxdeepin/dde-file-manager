@@ -266,7 +266,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
             }, Qt::DirectConnection);
 
             QObject::connect(mediaInfo, &DFMMediaInfo::Finished, layout, [ = ]() {
-                int frame_height = q->height();
                 QString duration = mediaInfo->Value("Duration", mediaType);
                 if (duration.isEmpty()) {
                     duration = mediaInfo->Value("Duration", DFMMediaInfo::General);
@@ -285,7 +284,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                     QLabel *pixelLabel = new SectionValueLabel;
                     pixelLabel->setText(t.toString("hh:mm:ss"));
                     layout->insertRow(row++, pixelKeyLabel, pixelLabel);
-                    frame_height += 30;
                 }
 
                 bool okw = false, okh = false;
@@ -297,11 +295,6 @@ void DFMFileBasicInfoWidgetPrivate::setUrl(const DUrl &url)
                     QLabel *pixelLabel = new SectionValueLabel;
                     pixelLabel->setText(text);
                     layout->insertRow(row++, pixelKeyLabel, pixelLabel);
-                    frame_height += 30;
-                }
-
-                if (ok || (okw && okh)) {
-                    q->setFixedHeight(frame_height);
                 }
             });
         }
