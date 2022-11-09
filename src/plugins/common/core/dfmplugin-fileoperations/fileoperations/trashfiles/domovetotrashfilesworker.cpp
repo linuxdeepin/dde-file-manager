@@ -136,6 +136,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             writeTagInfo(url, tagData);
 
             completeFilesCount++;
+            emitProgressChangedNotify(completeFilesCount);
             completeSourceFiles.append(url);
             continue;
         }
