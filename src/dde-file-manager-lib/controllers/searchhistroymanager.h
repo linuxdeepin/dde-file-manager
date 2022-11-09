@@ -18,7 +18,7 @@ public:
     void writeIntoSearchHistory(QString keyword);
     bool removeSearchHistory(QString keyword);
 
-    void clearHistory();
+    void clearHistory(const QStringList &schemeFilters);
 };
 
 #endif // SEARCHHISTROYMANAGER_H

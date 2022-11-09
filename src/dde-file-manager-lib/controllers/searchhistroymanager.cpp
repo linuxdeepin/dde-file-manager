@@ -51,10 +51,20 @@ bool SearchHistroyManager::removeSearchHistory(QString keyword)
     return ret;
 }
 
-void SearchHistroyManager::clearHistory()
+void SearchHistroyManager::clearHistory(const QStringList &schemeFilters)
 {
-    QStringList list;
+    if (schemeFilters.isEmpty()) {
+        QStringList list;
+        DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+    } else {
+        QStringList historyList = DFMApplication::appObtuselySetting()->value("Cache", "SearchHistroy").toStringList();
+        for (const QString &data : historyList) {
+            QUrl url(data);
+            if (url.isValid() && schemeFilters.startsWith(url.scheme()))
+                historyList.removeOne(data);
 
-    DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+        }
+        DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", historyList);
+    }
 }
 

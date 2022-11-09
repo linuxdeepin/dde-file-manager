@@ -1247,7 +1247,6 @@ void DFMSideBar::insertItem(int index, DFMSideBarItem *item, const QString &grou
         return;
     }
     item->setGroupName(groupName);
-    qInfo()<<"11 item url = "<<item->url();
     m_sidebarModel->insertRow(index, item);
 }
 
