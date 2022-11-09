@@ -930,6 +930,11 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     m_obj.insert("password", default_password);
     m_obj.insert("GAskPasswordFlags", flags);
     m_obj.insert("passwordSave", passwordSave);//传给对话框的
+    if (!smbIntegrationSwitcher->isIntegrationMode()) { // smb分离模式，清空登录缓存，弹出鉴权对话框
+        while (!m_loginObj.isEmpty()) {
+            m_loginObj.take(m_loginObj.keys().first());
+        }
+    }
     if (m_loginObj.isEmpty() && MountTimerHash.contains(op) && MountEventHash.value(op)) {
         m_loginObj = DThreadUtil::runInMainThread(requestPasswordDialog,
                                                 MountEventHash.value(op)->windowId(),
@@ -945,18 +950,17 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         QString domain = m_loginObj.value("domain").toString();
         QString password = m_loginObj.value("password").toString();
         GPasswordSave passwordsaveFlag =  static_cast<GPasswordSave>(m_loginObj.value("passwordSave").toInt());
-        bool savePasswordChecked = false;
         if(!anonymous){
-            if(m_mountScheme == SMB_SCHEME && passwordsaveFlag != GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY){//没有勾选记住密码
-                passwordsaveFlag = GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION;//G_PASSWORD_SAVE_PERMANENTLY;
-                m_loginObj.insert("passwordSave",passwordsaveFlag);
-            }else {//勾选了记住密码
-                savePasswordChecked = true;
+            if (m_mountScheme == SMB_SCHEME) { // 如果是smb挂载，需要调整记住密码的方式
+                if(passwordsaveFlag != GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY){// 没有勾选记住密码
+                    if (smbIntegrationSwitcher->isIntegrationMode()) {// smb聚合模式，按单次会话记住密码的方式访问smb服务
+                        passwordsaveFlag = GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION;
+                        m_loginObj.insert("passwordSave",int(GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION));
+                    }
+                }
             }
         }
-        m_loginObj.insert("savePasswordChecked",savePasswordChecked);
         SMBLoginObjHash.insert(op,new QJsonObject(m_loginObj));
-
 
         if ((flags & G_ASK_PASSWORD_ANONYMOUS_SUPPORTED) && anonymous) {
             g_mount_operation_set_anonymous(op, TRUE);
@@ -1641,10 +1645,16 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         if (AskingPasswordHash.value(op) && SMBLoginObjHash.value(op)) {
             SMBLoginObjHash.value(op)->insert("id", rootUri.toString());
             int saveType = SMBLoginObjHash.value(op)->value("passwordSave").toInt();
-            if ( saveType == int(GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY) || (m_mountScheme == SMB_SCHEME && saveType == int(GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION))) {
+            if (saveType == int(GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY)) { // 勾选了记住密码(smb、ftp、sftp)
                 SMBLoginObjHash.value(op)->remove("password");
-                emit fileSignalManager->requsetCacheLoginData(*SMBLoginObjHash.value(op));
+                emit fileSignalManager->requsetCacheLoginData(*SMBLoginObjHash.value(op)); // 缓存smb登录数据
+            } else if (m_mountScheme == SMB_SCHEME) {
+                if (saveType == int(GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION)) { // smb聚合模式设置的单次会话记住密码
+                    SMBLoginObjHash.value(op)->remove("password");
+                    emit fileSignalManager->requsetCacheLoginData(*SMBLoginObjHash.value(op));// 缓存smb登录数据
+                }
             }
+
             delete SMBLoginObjHash.value(op);
             SMBLoginObjHash.remove(op);
         } else {
