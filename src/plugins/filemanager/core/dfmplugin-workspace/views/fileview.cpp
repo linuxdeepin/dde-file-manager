@@ -1223,7 +1223,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
                 return;
             }
 
-            d->selectHelper->select({ index });
+            selectionModel()->select(index, QItemSelectionModel::Select);
         }
 
         d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
