@@ -177,8 +177,12 @@ void OpticalMediaWidget::updateUi()
         pbBurn->setEnabled(false);
     }
 
-    if (isBlank)
+    if (isBlank) {
+        qInfo() << "Empty disc, disballe dump iso";
         pbDump->setEnabled(false);
+    } else {
+        pbDump->setEnabled(true);
+    }
 
     if (!OpticalHelper::isBurnEnabled())
         pbBurn->setEnabled(false);
