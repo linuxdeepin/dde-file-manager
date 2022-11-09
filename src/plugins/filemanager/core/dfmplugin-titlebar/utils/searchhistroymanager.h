@@ -42,7 +42,7 @@ public:
     void writeIntoSearchHistory(QString keyword);
     void writeIntoIPHistory(const QString &ipAddr);
     bool removeSearchHistory(QString keyword);
-    void clearHistory();
+    void clearHistory(const QStringList &schemeFilters = QStringList());
 
 private:
     explicit SearchHistroyManager(QObject *parent = nullptr);

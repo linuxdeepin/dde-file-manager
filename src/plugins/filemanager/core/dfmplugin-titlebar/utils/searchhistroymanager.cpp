@@ -122,8 +122,19 @@ bool SearchHistroyManager::removeSearchHistory(QString keyword)
     return ret;
 }
 
-void SearchHistroyManager::clearHistory()
+void SearchHistroyManager::clearHistory(const QStringList &schemeFilters)
 {
-    QStringList list;
-    Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
+    if (schemeFilters.isEmpty()) {
+        QStringList list;
+        Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
+    } else {
+        QStringList historyList = Application::appObtuselySetting()->value(kConfigGroupName, kConfigSearchHistroy).toStringList();
+        for (const QString &data : historyList) {
+            QUrl url(data);
+            if (url.isValid() && schemeFilters.contains(url.scheme() + "://")) {
+                historyList.removeOne(data);
+            }
+        }
+        Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, historyList);
+    }
 }

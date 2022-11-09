@@ -62,5 +62,9 @@
         <file>icons/deepin/builtin/dark/icons/bluetooth_computer_dark.svg</file>
         <file>icons/deepin/builtin/dark/icons/dfm_search_pause_24px.svg</file>
         <file>icons/deepin/builtin/light/icons/dfm_search_pause_24px.svg</file>
+        <file>icons/deepin/builtin/dark/icons/collect_cancel.svg</file>
+        <file>icons/deepin/builtin/dark/icons/collect.svg</file>
+        <file>icons/deepin/builtin/light/icons/collect_cancel.svg</file>
+        <file>icons/deepin/builtin/light/icons/collect.svg</file>
     </qresource>
 </RCC>
