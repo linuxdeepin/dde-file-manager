@@ -310,21 +310,6 @@ bool TrashHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const Glo
     return false;
 }
 
-bool TrashHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
-{
-    if (!urls)
-        return false;
-    for (const QUrl &url : origins) {
-        if (url.scheme() != TrashHelper::scheme())
-            continue;
-        if (UniversalUtils::urlEquals(url, FileUtils::trashRootUrl()))
-            continue;
-        (*urls).push_back(trashFileToTargetUrl(url));
-    }
-
-    return !(*urls).isEmpty();
-}
-
 void TrashHelper::onTrashStateChanged()
 {
     if (isEmpty() == isTrashEmpty)

@@ -323,7 +323,6 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
 
     QList<QUrl> urls = fileUrls;
 
-    QList<QUrl> packUrl;
     QList<QUrl> pathList;
     bool result = false;
 
@@ -363,12 +362,13 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
             continue;
         }
 
-        packUrl << fileUrl;
         QString urlPath = fileUrl.path();
         if (isFileWindowsUrlShortcut(urlPath)) {
             urlPath = getInternetShortcutUrl(urlPath);
+            pathList << QUrl::fromLocalFile(urlPath);
+        } else {
+            pathList << fileUrl;
         }
-        pathList << QUrl::fromLocalFile(urlPath);
     }
 
     if (!pathList.empty()) {
@@ -446,7 +446,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
-        QString mimetype = getFileMimetype(fileUrls.first().path());
+        QString mimetype = getFileMimetype(fileUrls.first());
         for (const QUrl &tmp : fileUrls) {
             QString temFilePath = tmp.path();
             DesktopFile df(desktopFile);
@@ -833,18 +833,16 @@ QString LocalFileHandler::defaultTerminalPath()
     return QStandardPaths::findExecutable("xterm");
 }
 
-QString LocalFileHandler::getFileMimetype(const QString &path)
+QString LocalFileHandler::getFileMimetype(const QUrl &url)
 {
     g_autoptr(GFile) file;
     g_autoptr(GFileInfo) info;
     QString result = QString();
 
-    file = g_file_new_for_path(path.toLocal8Bit().data());
+    file = g_file_new_for_uri(url.toString().toStdString().c_str());
     info = g_file_query_info(file, "standard::content-type", G_FILE_QUERY_INFO_NONE, nullptr, nullptr);
     if (info)
         result = g_file_info_get_content_type(info);
-
-    g_object_unref(file);
 
     return result;
 }
@@ -852,13 +850,13 @@ QString LocalFileHandler::getFileMimetype(const QString &path)
 bool LocalFileHandler::isExecutableScript(const QString &path)
 {
     QString pathValue = path;
-    QString mimetype = getFileMimetype(path);
+    QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
 
     DecoratorFileInfo info(pathValue);
 
     while (info.isSymLink()) {
         pathValue = info.symLinkTarget();
-        mimetype = getFileMimetype(pathValue);
+        mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
 
         info = DecoratorFileInfo(pathValue);
     }
@@ -938,12 +936,12 @@ bool LocalFileHandler::openExcutableFile(const QString &path, int flag)
 bool LocalFileHandler::isFileRunnable(const QString &path)
 {
     QString pathValue = path;
-    QString mimetype = getFileMimetype(path);
+    QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
 
     DecoratorFileInfo info(pathValue);
     while (info.isSymLink()) {
         pathValue = info.symLinkTarget();
-        mimetype = getFileMimetype(pathValue);
+        mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
 
         info = DecoratorFileInfo(pathValue);
     }
@@ -964,12 +962,12 @@ bool LocalFileHandler::isFileRunnable(const QString &path)
 bool LocalFileHandler::shouldAskUserToAddExecutableFlag(const QString &path)
 {
     QString pathValue = path;
-    QString mimetype = getFileMimetype(path);
+    QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
 
     DecoratorFileInfo info(pathValue);
     while (info.isSymLink()) {
         pathValue = info.symLinkTarget();
-        mimetype = getFileMimetype(pathValue);
+        mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
 
         info = DecoratorFileInfo(pathValue);
     }
@@ -1004,7 +1002,7 @@ bool LocalFileHandler::addExecutableFlagAndExecuse(const QString &path, int flag
 
 bool LocalFileHandler::isFileWindowsUrlShortcut(const QString &path)
 {
-    QString mimetype = getFileMimetype(path);
+    QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
     qDebug() << mimetype;
     if (mimetype == "application/x-mswinurl")
         return true;
@@ -1050,7 +1048,7 @@ bool LocalFileHandler::doOpenFiles(const QList<QUrl> &urls, const QString &deskt
     if (Q_UNLIKELY(!filePath.contains("#")) && fileInfo && fileInfo->size() == 0 && fileInfo->exists()) {
         mimeType = fileInfo->mimeTypeName();
     } else {
-        mimeType = getFileMimetype(filePath);
+        mimeType = getFileMimetype(fileUrl);
     }
     QAtomicInteger<bool> isOpenNow = false;
     QString defaultDesktopFile;

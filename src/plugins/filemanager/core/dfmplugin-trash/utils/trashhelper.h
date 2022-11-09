@@ -85,8 +85,6 @@ public:
     bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
 
-    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
-
 private:
     void onTrashStateChanged();
 

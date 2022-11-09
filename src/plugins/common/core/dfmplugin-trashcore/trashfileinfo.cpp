@@ -42,12 +42,54 @@ public:
 
     virtual ~TrashFileInfoPrivate();
 
+    QUrl initTarget();
+
     QSharedPointer<DFileInfo> dFileInfo { nullptr };
+    QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
     QUrl targetUrl;
+    QUrl originalUrl;
+    QUrl trashAncestors;
 };
 
 TrashFileInfoPrivate::~TrashFileInfoPrivate()
 {
+}
+
+QUrl TrashFileInfoPrivate::initTarget()
+{
+    targetUrl = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
+    originalUrl = dFileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toUrl();
+    if (!targetUrl.isValid() && !UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), url)) {
+        QUrl ancestors = url;
+        while (TrashCoreHelper::rootUrl().isParentOf(ancestors)) {
+            QUrl urlPre = ancestors;
+            ancestors = UrlRoute::urlParent(ancestors);
+            if (UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), ancestors)) {
+                ancestors = urlPre;
+                break;
+            }
+        }
+
+        auto factory = produceQSharedIOFactory(ancestors.scheme(), static_cast<QUrl>(ancestors));
+        auto fileinfo = factory->createFileInfo();
+        if (fileinfo->initQuerier()) {
+            const QUrl &ancestorsTargetUrl = fileinfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
+            if (ancestorsTargetUrl.isValid()) {
+                trashAncestors = ancestors;
+
+                QString localRootPath = ancestorsTargetUrl.toString();
+                const QString &fileSuffix = url.path().mid(url.path().indexOf("/", 1));
+                const QUrl &urlReal = localRootPath + fileSuffix;
+
+                targetUrl = urlReal;
+                QString localRootOriginalPath = fileinfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toUrl().toString();
+                originalUrl = localRootOriginalPath + fileSuffix;
+                dAncestorsFileInfo = fileinfo;
+                return urlReal;
+            }
+        }
+    }
+    return targetUrl;
 }
 
 TrashFileInfo::TrashFileInfo(const QUrl &url)
@@ -72,9 +114,9 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
         return;
     }
 
-    d->targetUrl = d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
-    if (d->targetUrl.isValid())
-        setProxy(InfoFactory::create<AbstractFileInfo>(d->targetUrl));
+    const QUrl &urlTarget = d->initTarget();
+    if (urlTarget.isValid())
+        setProxy(InfoFactory::create<AbstractFileInfo>(urlTarget));
     else
         qWarning() << "create proxy failed, target url is invalid, url: " << url;
 }
@@ -88,12 +130,11 @@ QString TrashFileInfo::fileName() const
     if (!d->dFileInfo)
         return QString();
 
-    if (!d->targetUrl.isValid())
-        return QString();
-
-    if (FileUtils::isDesktopFile(d->targetUrl)) {
-        DesktopFileInfo dfi(d->targetUrl);
-        return dfi.fileDisplayName();
+    if (d->targetUrl.isValid()) {
+        if (FileUtils::isDesktopFile(d->targetUrl)) {
+            DesktopFileInfo dfi(d->targetUrl);
+            return dfi.fileDisplayName();
+        }
     }
 
     return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardName).toString();
@@ -107,12 +148,11 @@ QString TrashFileInfo::fileDisplayName() const
     if (!d->dFileInfo)
         return QString();
 
-    if (!d->targetUrl.isValid())
-        return QString();
-
-    if (FileUtils::isDesktopFile(d->targetUrl)) {
-        DesktopFileInfo dfi(d->targetUrl);
-        return dfi.fileDisplayName();
+    if (d->targetUrl.isValid()) {
+        if (FileUtils::isDesktopFile(d->targetUrl)) {
+            DesktopFileInfo dfi(d->targetUrl);
+            return dfi.fileDisplayName();
+        }
     }
 
     return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
@@ -175,12 +215,11 @@ QFile::Permissions TrashFileInfo::permissions() const
 
 QIcon TrashFileInfo::fileIcon()
 {
-    if (!d->targetUrl.isValid())
-        return QIcon();
-
-    if (FileUtils::isDesktopFile(d->targetUrl)) {
-        DesktopFileInfo dfi(d->targetUrl);
-        return dfi.fileIcon();
+    if (d->targetUrl.isValid()) {
+        if (FileUtils::isDesktopFile(d->targetUrl)) {
+            DesktopFileInfo dfi(d->targetUrl);
+            return dfi.fileIcon();
+        }
     }
 
     return AbstractFileInfo::fileIcon();
@@ -286,6 +325,9 @@ bool TrashFileInfo::isReadable() const
     if (!d->dFileInfo)
         return false;
 
+    if (d->targetUrl.isValid())
+        return AbstractFileInfo::isReadable();
+
     bool value = false;
     bool success = false;
     value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, &success).toBool();
@@ -296,6 +338,9 @@ bool TrashFileInfo::isWritable() const
 {
     if (!d->dFileInfo)
         return false;
+
+    if (d->targetUrl.isValid())
+        return AbstractFileInfo::isWritable();
 
     bool value = false;
     bool success = false;
@@ -325,10 +370,7 @@ bool TrashFileInfo::canHidden() const
 
 QUrl TrashFileInfo::originalUrl() const
 {
-    if (!d->dFileInfo)
-        return QUrl();
-
-    return QUrl::fromLocalFile(d->dFileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString());
+    return d->originalUrl;
 }
 
 QUrl TrashFileInfo::redirectedFileUrl() const
@@ -343,6 +385,9 @@ bool TrashFileInfo::isHidden() const
 
 QDateTime TrashFileInfo::deletionTime() const
 {
+    if (d->dAncestorsFileInfo)
+        return QDateTime::fromString(d->dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
+
     if (!d->dFileInfo)
         return QDateTime();
 

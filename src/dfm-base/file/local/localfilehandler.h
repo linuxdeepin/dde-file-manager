@@ -84,7 +84,7 @@ private:
     QUrl smbFileUrl(const QString &filePath);
     QString getFileMimetypeFromGio(const QUrl &url);
     void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
-    QString getFileMimetype(const QString &path);
+    QString getFileMimetype(const QUrl &url);
 
     bool isExecutableScript(const QString &path);
     bool isFileExecutable(const QString &path);
