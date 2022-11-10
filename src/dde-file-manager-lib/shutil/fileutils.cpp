@@ -1220,15 +1220,15 @@ bool FileUtils::isFileManagerSelf(const QString &desktopFile)
 QString FileUtils::defaultTerminalPath()
 {
     const static QString dde_daemon_default_term = QStringLiteral("/usr/lib/deepin-daemon/default-terminal");
-    const static QString debian_x_term_emu = QStringLiteral("/usr/bin/x-terminal-emulator");
+    const static QString debian_x_term_emu = QStandardPaths::findExecutable("x-terminal-emulator");
 
     if (QFileInfo::exists(dde_daemon_default_term)) {
         return dde_daemon_default_term;
-    } else if (QFileInfo::exists(debian_x_term_emu)) {
+    } else if (!debian_x_term_emu.isEmpty()) {
         return debian_x_term_emu;
+    } else {
+	return QStandardPaths::findExecutable("xterm");
     }
-
-    return QStandardPaths::findExecutable("xterm");
 }
 
 bool FileUtils::setBackground(const QString &pictureFilePath)
