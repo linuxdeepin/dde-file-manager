@@ -136,6 +136,7 @@ void SearchFileWatcher::removeWatcher(const DUrl &url)
         return;
     }
 
+    watcher->stopWatcher();
     watcher->deleteLater();
 }
 
@@ -161,9 +162,13 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
 {
     DUrl newFromUrl = fileUrl();
     newFromUrl.setSearchedFileUrl(fromUrl);
-
     DUrl newToUrl = toUrl;
-    if (fileUrl().searchTargetUrl().scheme() == toUrl.scheme() && toUrl.path().startsWith(fileUrl().searchTargetUrl().path())) {
+
+    DUrl targetUrl = fileUrl().searchTargetUrl();
+    if (targetUrl.isComputerFile())
+        targetUrl = DUrl::fromLocalFile("/");
+
+    if (targetUrl.scheme() == toUrl.scheme() && toUrl.path().startsWith(targetUrl.path())) {
         QString keywordPattern = DFMRegularExpression::checkWildcardAndToRegularExpression(fileUrl().searchKeyword());
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, toUrl);
 
@@ -177,8 +182,11 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
             if (toUrl.path().contains("/.local/share/Trash/files", Qt::CaseSensitive)) {
                 return;
             } else {
-                /*fix bug 44187 修改搜索结果名称，文件夹会从搜索结果消失，因为watcher里面增加的是真实路径不是搜索路径*/
-                addWatcher(newToUrl);
+                // Need to remove the watcher of fromUrl first,
+                // otherwise, the watcher of toUrl may fail to listen to it's parent dir,
+                // causing the file to disappear after renamed
+                removeWatcher(fromUrl);
+                addWatcher(toUrl);
             }
         }
     }
