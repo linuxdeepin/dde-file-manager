@@ -55,6 +55,8 @@ void Trash::initialize()
 
     connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Trash::onAllPluginsInitialized);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
+
+    followEvents();
 }
 
 bool Trash::start()
@@ -67,19 +69,6 @@ bool Trash::start()
 
     addCustomTopWidget();
     addFileOperations();
-
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
-    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", TrashHelper::instance(), &TrashHelper::detailViewIcon);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
-
-    // hook events, file operation
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", TrashFileHelper::instance(), &TrashFileHelper::cutFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", TrashFileHelper::instance(), &TrashFileHelper::copyFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFromFile", TrashFileHelper::instance(), &TrashFileHelper::copyFromFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", TrashFileHelper::instance(), &TrashFileHelper::moveToTrash);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", TrashFileHelper::instance(), &TrashFileHelper::deleteFile);
 
     return true;
 }
@@ -153,6 +142,22 @@ void Trash::addCustomTopWidget()
     };
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
+}
+
+void Trash::followEvents()
+{
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", TrashHelper::instance(), &TrashHelper::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
+
+    // hook events, file operation
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", TrashFileHelper::instance(), &TrashFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", TrashFileHelper::instance(), &TrashFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFromFile", TrashFileHelper::instance(), &TrashFileHelper::copyFromFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", TrashFileHelper::instance(), &TrashFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", TrashFileHelper::instance(), &TrashFileHelper::deleteFile);
 }
 
 void Trash::onAllPluginsInitialized()

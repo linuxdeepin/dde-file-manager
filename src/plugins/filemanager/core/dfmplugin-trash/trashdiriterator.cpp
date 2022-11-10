@@ -25,6 +25,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 DFMBASE_USE_NAMESPACE
@@ -35,6 +36,7 @@ TrashDirIteratorPrivate::TrashDirIteratorPrivate(const QUrl &url, const QStringL
                                                  TrashDirIterator *qq)
     : q(qq)
 {
+    fstabMap = DeviceUtils::fstabBindInfo();
     DecoratorFileEnumerator enumerator(url, nameFilters, filters, flags);
 
     dEnumerator = enumerator.enumeratorPtr();
@@ -71,36 +73,48 @@ QUrl TrashDirIterator::next()
 
 bool TrashDirIterator::hasNext() const
 {
+    bool has = false;
     if (d->dEnumerator)
-        return d->dEnumerator->hasNext();
+        has = d->dEnumerator->hasNext();
 
-    return false;
+    if (!has)
+        return has;
+
+    if (d->fstabMap.isEmpty())
+        return has;
+
+    if (d->dEnumerator) {
+        const QUrl &urlNext = d->dEnumerator->next();
+        auto fileinfo = InfoFactory::create<AbstractFileInfo>(urlNext);
+        if (fileinfo) {
+            const QUrl &urlTarget = fileinfo->redirectedFileUrl();
+            for (const QString &key : d->fstabMap.keys()) {
+                if (urlTarget.path().startsWith(key))
+                    return hasNext();
+            }
+        }
+    }
+
+    return has;
 }
 
 QString TrashDirIterator::fileName() const
 {
-    QString path = fileUrl().path();
-    if (path.isEmpty())
-        return QString();
-
-    path = path.replace(QRegExp("/*/"), "/");
-    if (path == "/")
-        return QString();
-
-    if (path.endsWith("/"))
-        path = path.left(path.size() - 1);
-    QStringList pathList = path.split("/");
-    return pathList.last();
+    auto fileinfo = fileInfo();
+    if (fileinfo)
+        return fileinfo->fileDisplayName();
 }
 
 QUrl TrashDirIterator::fileUrl() const
 {
-    return UrlRoute::pathToReal(d->currentUrl.path());
+    auto fileinfo = fileInfo();
+    if (fileinfo)
+        return fileinfo->redirectedFileUrl();
 }
 
 const AbstractFileInfoPointer TrashDirIterator::fileInfo() const
 {
-    return InfoFactory::create<AbstractFileInfo>(fileUrl());
+    return InfoFactory::create<AbstractFileInfo>(d->currentUrl);
 }
 
 QUrl TrashDirIterator::url() const

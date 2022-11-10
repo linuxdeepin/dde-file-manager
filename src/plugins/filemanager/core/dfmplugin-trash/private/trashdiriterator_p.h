@@ -47,6 +47,7 @@ private:
     TrashDirIterator *q { nullptr };
     QSharedPointer<DFMIO::DEnumerator> dEnumerator = nullptr;
     QUrl currentUrl;
+    QMap<QString, QString> fstabMap;
 };
 
 }
