@@ -92,7 +92,7 @@ bool OptionsWindow::initialize()
     Q_ASSERT(!layout());
     Q_ASSERT(!d->mainLayout);
 
-    // mian layout
+    // main layout
     auto mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);

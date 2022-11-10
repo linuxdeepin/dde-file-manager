@@ -29,7 +29,7 @@
 #include <QMouseEvent>
 #include <QApplication>
 
-static constexpr int kTitleBarHeight = 36;
+static constexpr int kTitleBarHeight = 24;
 
 DWIDGET_USE_NAMESPACE
 using namespace ddplugin_organizer;

@@ -35,6 +35,9 @@ MethodComBox::MethodComBox(const QString &title, QWidget *parent)
     comboBox->setParent(this);
     comboBox->setFixedSize(198, 36);
 
+    //Enable the combo box
+    comboBox->setVisible(false);
+
     connect(comboBox, (void (DComboBox::*)(int))&DComboBox::currentIndexChanged, this, &MethodComBox::methodChanged);
 }
 

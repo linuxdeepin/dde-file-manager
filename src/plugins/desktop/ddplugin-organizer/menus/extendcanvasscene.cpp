@@ -56,10 +56,12 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
     tempAction->setChecked(turnOn);
 
     if (turnOn) {
+#ifdef EnableCollectionModeMenu
         tempAction = parent->addAction(predicateName.value(ActionID::kOrganizeBy));
         tempAction->setMenu(organizeBySubActions(parent));
         predicateAction[ActionID::kOrganizeBy] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeBy));
+#endif
 
 #ifdef EnableDisplaySizeMenu
         // display size
@@ -233,10 +235,10 @@ QMenu *ExtendCanvasScenePrivate::organizeBySubActions(QMenu *menu)
 //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByCustom));
 //    tempAction->setCheckable(true);
 
-    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByType));
-    predicateAction[ActionID::kOrganizeByType] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByType));
-    tempAction->setCheckable(true);
+//    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByType));
+//    predicateAction[ActionID::kOrganizeByType] = tempAction;
+//    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByType));
+//    tempAction->setCheckable(true);
 
 //    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeAccessed));
 //    predicateAction[ActionID::kOrganizeByTimeAccessed] = tempAction;

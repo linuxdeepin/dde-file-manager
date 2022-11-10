@@ -56,7 +56,7 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
     nameLineEdit->setFont(nameFont);
 
     QPalette palette(nameLineEdit->palette());
-    palette.setColor(QPalette::WindowText, Qt::black);
+    palette.setColor(QPalette::WindowText, Qt::white);
     nameLabel->setPalette(palette);
 
     palette.setColor(QPalette::Button, Qt::transparent);
@@ -78,7 +78,7 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
     menuBtn->setFlat(true);
 
     mainLayout = new QHBoxLayout(q);
-    mainLayout->setContentsMargins(10, 0, 12, 0);
+    mainLayout->setContentsMargins(8, 3, 8, 3);
     mainLayout->setSpacing(12);
     mainLayout->addWidget(nameWidget);
     mainLayout->addWidget(menuBtn);
