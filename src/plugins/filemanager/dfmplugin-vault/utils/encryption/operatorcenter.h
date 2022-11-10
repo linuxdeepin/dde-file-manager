@@ -45,12 +45,12 @@ public:
     bool createDirAndFile();
 
     /*!
-     * \brief saveSaltAndCiphertext pbkdf2加密密码，并将盐和密文写入密码文件
+     * \brief savePasswordAndPasswordHint Save password, save Password hint to file
      * \param password 密码
      * \param passwordHint 密码提示
      * \return 是否成功
      */
-    bool saveSaltAndCiphertext(const QString &password, const QString &passwordHint);
+    bool savePasswordAndPasswordHint(const QString &password, const QString &passwordHint);
 
     /*!
      * \brief createKey rsa生成密钥对，私钥加密密码，将密文写入文件，将一部分公钥写入文件（另一部分公钥提供给用户）

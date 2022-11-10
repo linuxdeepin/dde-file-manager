@@ -39,6 +39,34 @@ class FileEncryptHandlerPrivate
     Q_DISABLE_COPY(FileEncryptHandlerPrivate)
 
 private:
+    enum VersionIndex {
+        kMajorIndex = 0,
+        kMinorIndex,
+        kHotFixIndex
+    };
+    struct CryfsVersionInfo
+    {
+        int majorVersion { -1 };
+        int minorVersion { -1 };
+        int hotfixVersion { -1 };
+
+        CryfsVersionInfo(int major, int minor, int hotfix)
+            : majorVersion(major), minorVersion(minor), hotfixVersion(hotfix)
+        {
+        }
+        bool isOlderThan(const CryfsVersionInfo &version)
+        {
+            return (majorVersion < version.majorVersion)
+                    || ((majorVersion == version.majorVersion) && ((minorVersion < version.minorVersion) || ((minorVersion == version.minorVersion) && (hotfixVersion < version.hotfixVersion))));
+        }
+
+        bool isVaild()
+        {
+            return (majorVersion > -1) && (minorVersion > -1) && (hotfixVersion > -1);
+        }
+    };
+
+private:
     explicit FileEncryptHandlerPrivate(FileEncryptHandle *qq = nullptr);
     ~FileEncryptHandlerPrivate();
 
@@ -46,6 +74,8 @@ private:
     int runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type, int blockSize);
     int lockVaultProcess(QString unlockFileDir);
     void initEncryptType();
+    void runVaultProcessAndGetOutput(const QStringList &arguments, QString &standardError, QString &standardOutput);
+    CryfsVersionInfo versionString();
 
 private:
     QProcess *process { nullptr };
@@ -54,8 +84,9 @@ private:
     QMap<int, int> activeState;
     QMap<EncryptType, QString> encryptTypeMap;
     FileEncryptHandle *q { nullptr };
+    CryfsVersionInfo cryfsVersion { CryfsVersionInfo(-1, -1, -1) };
 };
 
 DPVAULT_END_NAMESPACE
 
-#endif   //VAULTHANDLE_P_H
+#endif   // VAULTHANDLE_P_H

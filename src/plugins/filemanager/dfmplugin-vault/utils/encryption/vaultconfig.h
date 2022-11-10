@@ -33,8 +33,10 @@ namespace dfmplugin_vault {
 inline constexpr char kConfigNodeName[] { "INFO" };
 inline constexpr char kConfigKeyCipher[] { "pbkgcipher" };
 inline constexpr char kConfigKeyVersion[] { "version" };
+inline constexpr char kConfigKeyUseUserPassWord[] { "use_user_password" };
 inline constexpr char kConfigVaultVersion[] { "new" };
 inline constexpr char kConfigVaultVersion1050[] { "1050" };
+
 class VaultConfig
 {
 public:
@@ -42,6 +44,7 @@ public:
     ~VaultConfig();
     void set(const QString &nodeName, const QString &keyName, QVariant value);
     QVariant get(const QString &nodeName, const QString &keyName);
+    QVariant get(const QString &nodeName, const QString &keyName, const QVariant &defaultValue);
 
 private:
     QString currentFilePath;

@@ -34,11 +34,6 @@ InterfaceActiveVault::~InterfaceActiveVault()
 {
 }
 
-QString InterfaceActiveVault::getPassword()
-{
-    return OperatorCenter::getInstance()->getSaltAndPasswordCipher();
-}
-
 bool InterfaceActiveVault::getPasswordHint(QString &passwordHint)
 {
     return OperatorCenter::getInstance()->getPasswordHint(passwordHint);

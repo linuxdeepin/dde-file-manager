@@ -329,10 +329,20 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
  */
 int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir)
 {
-    QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
+    CryfsVersionInfo version = versionString();
+    QString fusermountBinary;
+    QStringList arguments;
+    qInfo() << QString("Vault: cryfs version is %1.%2.%3").arg(version.majorVersion).arg(version.minorVersion).arg(version.hotfixVersion);
+    if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
+        fusermountBinary = QStandardPaths::findExecutable("cryfs-unmount");
+        arguments << unlockFileDir;
+    } else {
+        fusermountBinary = QStandardPaths::findExecutable("fusermount");
+        arguments << "-zu" << unlockFileDir;
+    }
     if (fusermountBinary.isEmpty()) return static_cast<int>(ErrorCode::kFusermountNotExist);
 
-    process->start(fusermountBinary, { "-zu", unlockFileDir });
+    process->start(fusermountBinary, arguments);
     process->waitForStarted();
     process->waitForFinished();
     process->terminate();
@@ -366,4 +376,51 @@ void FileEncryptHandlerPrivate::initEncryptType()
     encryptTypeMap.insert(EncryptType::MARS_256_CFB, "mars-256-cfb");
     encryptTypeMap.insert(EncryptType::MARS_128_GCM, "mars-128-gcm");
     encryptTypeMap.insert(EncryptType::MARS_128_CFB, "mars-128-cfb");
+}
+
+void FileEncryptHandlerPrivate::runVaultProcessAndGetOutput(const QStringList &arguments, QString &standardError, QString &standardOutput)
+{
+    const QString &cryfsProgram = QStandardPaths::findExecutable("cryfs");
+    if (cryfsProgram.isEmpty()) {
+        qWarning() << "cryfs is not exist!";
+        return;
+    }
+
+    QProcess process;
+    process.setEnvironment({ "CRYFS_FRONTEND=noninteractive", "CRYFS_NO_UPDATE_CHECK=true" });
+    process.start(cryfsProgram, arguments);
+    process.waitForStarted();
+    process.waitForFinished();
+    standardError = QString::fromLocal8Bit(process.readAllStandardError());
+    standardOutput = QString::fromLocal8Bit(process.readAllStandardOutput());
+}
+
+FileEncryptHandlerPrivate::CryfsVersionInfo FileEncryptHandlerPrivate::versionString()
+{
+    if (cryfsVersion.isVaild())
+        return cryfsVersion;
+
+    QString standardError { "" };
+    QString standardOutput { "" };
+
+    runVaultProcessAndGetOutput({ "--version" }, standardError, standardOutput);
+    if (!standardOutput.isEmpty()) {
+        QStringList datas = standardOutput.split('\n', QString::SkipEmptyParts);
+        if (!datas.isEmpty()) {
+            const QString &data = datas.first();
+            QStringList tmpDatas = data.split(' ', QString::SkipEmptyParts);
+            for (int i = 0; i < tmpDatas.size(); ++i) {
+                if (tmpDatas.at(i).contains(QRegExp("^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$"))) {
+                    const QString tmpVersions = tmpDatas.at(i);
+                    QStringList versions = tmpVersions.split('.', QString::SkipEmptyParts);
+                    cryfsVersion.majorVersion = versions.at(kMajorIndex).toInt();
+                    cryfsVersion.minorVersion = versions.at(kMinorIndex).toInt();
+                    cryfsVersion.hotfixVersion = versions.at(kHotFixIndex).toInt();
+                    break;
+                }
+            }
+        }
+    }
+
+    return cryfsVersion;
 }

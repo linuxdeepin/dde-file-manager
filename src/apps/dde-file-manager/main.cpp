@@ -159,7 +159,7 @@ static void handleSIGPIPE(int sig)
 
 static void initEnv()
 {
-    //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
+    // for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
     if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
     }

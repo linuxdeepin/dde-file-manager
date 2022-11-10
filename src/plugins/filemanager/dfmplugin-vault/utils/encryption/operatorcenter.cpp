@@ -262,18 +262,13 @@ bool OperatorCenter::createDirAndFile()
     return true;
 }
 
-bool OperatorCenter::saveSaltAndCiphertext(const QString &password, const QString &passwordHint)
+bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const QString &passwordHint)
 {
-    // 加密密码，并将盐和密文写入密码文件
-    // 随机盐
-    QString strRandomSalt = pbkdf2::createRandomSalt(kRandomSaltLength);
-    // 密文
-    QString strCiphertext = pbkdf2::pbkdf2EncrypyPassword(password, strRandomSalt, kIteration, kPasswordCipherLength);
-    // 组合盐值与密文
-    QString strSaltAndCiphertext = strRandomSalt + strCiphertext;
+    // update vault version
+    VaultConfig config;
+    config.set(kConfigNodeName, kConfigKeyVersion, QVariant(kConfigVaultVersion1050));
 
-    // 保存第二次加密后的密文,并更新保险箱版本信息
-    secondSaveSaltAndCiphertext(strSaltAndCiphertext, strRandomSalt, kConfigVaultVersion1050);
+    strCryfsPassword = password;
 
     // 保存密码提示信息
     QString strPasswordHintFilePath = makeVaultLocalPath(kPasswordHintFileName);
@@ -285,9 +280,6 @@ bool OperatorCenter::saveSaltAndCiphertext(const QString &password, const QStrin
     QTextStream out2(&passwordHintFile);
     out2 << passwordHint;
     passwordHintFile.close();
-
-    // 缓存cryfs密码
-    strCryfsPassword = strSaltAndCiphertext;
 
     return true;
 }
@@ -349,6 +341,13 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
     QString strVersion = config.get(kConfigNodeName, kConfigKeyVersion).toString();
 
     if ((kConfigVaultVersion == strVersion) || (kConfigVaultVersion1050 == strVersion)) {   // 如果是新版本，验证第二次加密的结果
+        VaultConfig config;
+        const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("NoExist")).toString();
+        if (useUserPassword != "NoExist") {
+            cipher = password;
+            return true;
+        }
+
         // 获得本地盐及密文
         QString strSaltAndCipher = config.get(kConfigNodeName, kConfigKeyCipher).toString();
         QString strSalt = strSaltAndCipher.mid(0, kRandomSaltLength);
@@ -364,6 +363,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
             qDebug() << "password error!";
             return false;
         }
+
         cipher = strNewSaltAndCipher;
     } else {   // 如果是旧版本，验证第一次加密的结果
         // 获得本地盐及密文

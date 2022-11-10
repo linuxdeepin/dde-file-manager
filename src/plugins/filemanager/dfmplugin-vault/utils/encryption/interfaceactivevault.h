@@ -36,12 +36,6 @@ public:
     ~InterfaceActiveVault();
 
     /**
-     * @brief getPassword 获取密码
-     * @return
-     */
-    static QString getPassword();
-
-    /**
      * @brief getPasswordHint 获得密码提示信息
      * @param passwordHint 返回密码提示
      * @return 是否成功

@@ -60,7 +60,7 @@ Depends:
  ${misc:Depends},
  libdde-file-manager
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
-Recommends: dde-qt5integration, avfs, samba, deepin-anything-server, cryfs, dde-file-manager-plugins, dde-file-manager-daemon-plugins
+Recommends: dde-qt5integration, avfs, samba, deepin-anything-server, dde-file-manager-plugins, dde-file-manager-daemon-plugins
 Description: File manager front end
  File manager front-end of Deepin OS
 
@@ -82,7 +82,7 @@ Description: deepin desktop-environment - desktop edge plugins module
 
 Package: dde-file-manager-plugins
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, cryfs
 Description: deepin desktop-environment - filemanager edge plugins module
  Deepin Desktop Environment (DDE) - filemanager edge plugins module.
 

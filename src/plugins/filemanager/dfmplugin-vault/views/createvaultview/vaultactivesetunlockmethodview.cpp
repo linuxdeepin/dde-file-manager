@@ -23,6 +23,7 @@
 #include "utils/encryption/operatorcenter.h"
 #include "utils/vaulthelper.h"
 #include "utils/policy/policymanager.h"
+#include "utils/encryption/vaultconfig.h"
 
 #include <DPasswordEdit>
 #include <DLabel>
@@ -232,9 +233,12 @@ void VaultActiveSetUnlockMethodView::slotGenerateEditChanged(const QString &str)
 
 void VaultActiveSetUnlockMethodView::slotNextBtnClicked()
 {
+    VaultConfig config;
+    config.set(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("Yes"));
+
     QString strPassword = passwordEdit->text();
     QString strPasswordHint = tipsEdit->text();
-    if (OperatorCenter::getInstance()->saveSaltAndCiphertext(strPassword, strPasswordHint)
+    if (OperatorCenter::getInstance()->savePasswordAndPasswordHint(strPassword, strPasswordHint)
         && OperatorCenter::getInstance()->createKeyNew(strPassword))
         emit sigAccepted();
 }
