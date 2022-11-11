@@ -60,6 +60,7 @@ class FileViewPrivate
     DAnchors<QLabel> contentLabel { nullptr };
     FileSortFilterProxyModel *proxyModel { nullptr };
     QTimer *updateStatusBarTimer { nullptr };
+    QTimer *updateActiveIndexTimer { nullptr };
     QUrl url;
 
     ShortcutHelper *shortcutHelper { nullptr };

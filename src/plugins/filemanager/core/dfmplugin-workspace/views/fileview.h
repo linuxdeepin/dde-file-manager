@@ -224,6 +224,7 @@ private:
 
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
 
+    void delayUpdateModelActiveIndex();
     void updateModelActiveIndex();
     RandeIndexList visibleIndexes(QRect rect) const;
 

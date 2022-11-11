@@ -26,6 +26,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
 
+#include <QApplication>
+
 using namespace dfmbase;
 using namespace dfmbase::Global;
 using namespace dfmplugin_workspace;
@@ -114,6 +116,8 @@ void FileDataHelper::doTravers(const int rootIndex)
     auto info = findRootInfo(rootIndex);
 
     if (info && info->needTraversal) {
+        model()->stateChanged(info->url, ModelState::kBusy);
+
         info->canFetchMore = false;
         info->needTraversal = false;
 
@@ -145,6 +149,8 @@ void FileDataHelper::doTravers(const int rootIndex)
                 Qt::QueuedConnection);
 
         info->traversal->start();
+    } else {
+        QApplication::restoreOverrideCursor();
     }
 }
 

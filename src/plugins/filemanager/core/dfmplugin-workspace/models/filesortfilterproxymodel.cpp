@@ -39,7 +39,7 @@ using namespace dfmplugin_workspace;
 FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    setDynamicSortFilter(false);
+    setDynamicSortFilter(true);
     resetFilter();
 }
 
@@ -384,13 +384,9 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
                 return leftInfo->size() < rightInfo->size();
             }
         } else {
-            qint64 sizel = leftInfo->isDir() && rightInfo->isDir() ?
-                        qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile() :
-                        leftInfo->isDir() ? 0 : leftInfo->size();
-            qint64 sizer = leftInfo->isDir() && rightInfo->isDir() ?
-                        qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile() :
-                        rightInfo->isDir() ? 0 : rightInfo->size();
-            return sizel <  sizer;
+            qint64 sizel = leftInfo->isDir() && rightInfo->isDir() ? qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile() : leftInfo->isDir() ? 0 : leftInfo->size();
+            qint64 sizer = leftInfo->isDir() && rightInfo->isDir() ? qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile() : rightInfo->isDir() ? 0 : rightInfo->size();
+            return sizel < sizer;
         }
     default:
         return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder()) == (sortOrder() == Qt::AscendingOrder);

@@ -871,11 +871,9 @@ DirOpenMode FileView::currentDirOpenMode() const
 void FileView::onRowCountChanged()
 {
     if (model()->currentState() == ModelState::kIdle) {
-        d->currentSortOrder = model()->sortOrder();
         delayUpdateStatusBar();
         updateContentLabel();
-        doSort();
-        updateModelActiveIndex();
+        delayUpdateModelActiveIndex();
     }
 }
 
@@ -1459,6 +1457,10 @@ void FileView::initializeModel()
 
     FileSelectionModel *selectionModel = new FileSelectionModel(proxyModel, this);
     setSelectionModel(selectionModel);
+
+    d->updateActiveIndexTimer = new QTimer(this);
+    d->updateActiveIndexTimer->setInterval(100);
+    d->updateActiveIndexTimer->setSingleShot(true);
 }
 
 void FileView::initializeDelegate()
@@ -1483,9 +1485,10 @@ void FileView::initializeStatusBar()
 void FileView::initializeConnect()
 {
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
+    connect(d->updateActiveIndexTimer, &QTimer::timeout, this, &FileView::updateModelActiveIndex);
 
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
-    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::updateModelActiveIndex);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::delayUpdateModelActiveIndex);
 
     connect(model(), &FileSortFilterProxyModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
     connect(model(), &FileSortFilterProxyModel::stateChanged, this, &FileView::onModelStateChanged);
@@ -1733,6 +1736,12 @@ void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const 
     map[key] = value;
 
     Application::appObtuselySetting()->setValue("FileViewState", url, map);
+}
+
+void FileView::delayUpdateModelActiveIndex()
+{
+    if (d->updateActiveIndexTimer)
+        d->updateActiveIndexTimer->start();
 }
 
 void FileView::saveViewModeState()

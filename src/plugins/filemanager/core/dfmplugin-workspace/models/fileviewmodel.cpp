@@ -418,10 +418,8 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
 void FileViewModel::traversRootDir(const QModelIndex &rootIndex)
 {
-    if (rootIndex.isValid()) {
-        Q_EMIT stateChanged(rootUrl(rootIndex), ModelState::kBusy);
+    if (rootIndex.isValid())
         fileDataHelper->doTravers(rootIndex.row());
-    }
 }
 
 void FileViewModel::stopTraversWork(const QUrl &rootUrl)
