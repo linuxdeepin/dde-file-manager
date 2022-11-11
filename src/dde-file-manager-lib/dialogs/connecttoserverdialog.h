@@ -26,6 +26,11 @@ class CollectionDelegate;
 class ConnectToServerDialog : public DDialog
 {
     Q_OBJECT
+    enum CollectionIconType {
+        CancelIcon = 0,
+        CollectionIcon
+    };
+
 public:
     explicit ConnectToServerDialog(QWidget *parent = nullptr);
     ~ConnectToServerDialog();
@@ -37,12 +42,16 @@ private slots:
     void collectionOperate();
     void doDeleteCollection(const QString& text, int row = -1);
     void onCompleterActivated(const QString& text);
+    void onCurrentInputChanged(const QString &text);
+    void onCollectionViewClicked(const QModelIndex &index);
 private:
     void initUI();
     void initConnect();
     void onAddButtonClicked();
     void onDelButtonClicked();
     void upateState();
+    QString schemeWithSlash(const QString& scheme) const;
+    QString collectionIcon(CollectionIconType icon, bool light = true) const;
     enum DialogButton {
         CannelButton,
         ConnectButton
@@ -57,6 +66,7 @@ private:
     QLabel *m_collectionLabel = nullptr;
     QLabel *m_centerNotes = nullptr;
     QCompleter *m_completer = nullptr;
+    QStringList m_supportedSchemes;
 };
 
 #endif // CONNECTTOSERVERDIALOG_H

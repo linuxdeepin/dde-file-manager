@@ -33,7 +33,10 @@
 #include <QRegExpValidator>
 #include <QListWidget>
 
-#define Max_HISTORY_ITEM 10
+static constexpr char kConnectServer[] { "ConnectServer" };
+static constexpr char kUrl[] { "URL" };
+static int kMaxHistoryItems = 10;
+
 ConnectToServerDialog::ConnectToServerDialog(QWidget *parent) : DDialog(parent)
 {
     setWindowTitle(tr("Connect to Server"));
@@ -80,7 +83,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
             QDir::setCurrent(currentUrl.toLocalFile());
         }
 
-        DUrl inputUrl = DUrl::fromUserInput(text, false); ///###: here, judge whether the text is a local file path.
+        const DUrl &inputUrl = DUrl::fromUserInput(text, false); ///###: here, judge whether the text is a local file path.
 
         QDir::setCurrent(currentDir);
         if(fileWindow){
@@ -103,9 +106,7 @@ void ConnectToServerDialog::onAddButtonClicked()
 {
     QStringList serverList = static_cast<QStringListModel *>(m_collectionServerView->model())->stringList();
     const QString &text = m_schemeComboBox->currentText() + m_serverComboBox->currentText();
-    if (!m_schemeComboBox->currentText().isEmpty()
-        && !m_serverComboBox->currentText().isEmpty()
-        && !serverList.contains(text)) {
+    if (!text.isEmpty() && !serverList.contains(text)) {
         if(!m_collectionServerView->addItem(text)) {
             qWarning() << "add server failed, server: " << text;
         } else {
@@ -114,15 +115,11 @@ void ConnectToServerDialog::onAddButtonClicked()
                                                                                   0,
                                                                                   m_collectionServerView->currentIndex().parent());
             m_collectionServerView->setCurrentIndex(modelIndex);
-            QStringList dataList;
-            const QList<QVariant> &serverData = DFMApplication::genericSetting()->value("ConnectServer", "URL").toList();
-            for (const QVariant &data : serverData) {
-                dataList << data.toString();
-            }
+            QStringList serverData = DFMApplication::genericSetting()->value(kConnectServer, kUrl).toStringList();
 
-            if (!dataList.contains(text)) {
-                dataList << text;
-                DFMApplication::genericSetting()->setValue("ConnectServer", "URL", dataList);
+            if (!serverData.contains(text)) {
+                serverData << text;
+                DFMApplication::genericSetting()->setValue(kConnectServer, kUrl, serverData);
             }
         }
     }
@@ -138,7 +135,7 @@ void ConnectToServerDialog::onDelButtonClicked()
 void ConnectToServerDialog::upateState()
 {
     //检查是否已经收藏
-    const QList<QVariant> &serverData = DFMApplication::genericSetting()->value("ConnectServer", "URL").toList();
+    const QList<QVariant> &serverData = DFMApplication::genericSetting()->value(kConnectServer, kUrl).toList();
     QStringList dataList;
     for (const QVariant &data : serverData) {
         dataList << data.toString();
@@ -147,16 +144,16 @@ void ConnectToServerDialog::upateState()
     if (dataList.contains(text)) {
         //已经收藏，显示取消收藏
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect_cancel.svg").scaled(16,16)));
+            m_addButton->setIcon(QIcon(QPixmap(collectionIcon(CancelIcon,true)).scaled(16,16)));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect_cancel.svg").scaled(16,16)));
+            m_addButton->setIcon(QIcon(QPixmap(collectionIcon(CancelIcon,false)).scaled(16,16)));
         m_isAddState = false;
         m_addButton->setToolTip(tr("Unfavorite"));
     }else {//没有收藏，显示收藏
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect.svg").scaled(16,16)));
+            m_addButton->setIcon(QIcon(QPixmap(collectionIcon(CollectionIcon,true)).scaled(16,16)));
         else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect.svg").scaled(16,16)));
+            m_addButton->setIcon(QIcon(QPixmap(collectionIcon(CollectionIcon,false)).scaled(16,16)));
         m_isAddState = true;
         m_addButton->setToolTip(tr("Favorite"));
     }
@@ -185,7 +182,7 @@ void ConnectToServerDialog::doDeleteCollection(const QString &text, int row)
         }
     }
     if(removeSuccess) {
-        const QList<QVariant> &serverData = DFMApplication::genericSetting()->value("ConnectServer", "URL").toList();
+        const QList<QVariant> &serverData = DFMApplication::genericSetting()->value(kConnectServer, kUrl).toList();
 
         QStringList dataList;
         for (const QVariant &data : serverData) {
@@ -194,7 +191,7 @@ void ConnectToServerDialog::doDeleteCollection(const QString &text, int row)
 
         if (dataList.contains(text)) {
             dataList.removeOne(text);
-            DFMApplication::genericSetting()->setValue("ConnectServer", "URL", dataList);
+            DFMApplication::genericSetting()->setValue(kConnectServer, kUrl, dataList);
         }
     }
     upateState();
@@ -202,8 +199,68 @@ void ConnectToServerDialog::doDeleteCollection(const QString &text, int row)
 
 void ConnectToServerDialog::onCompleterActivated(const QString &text)
 {
-    QString scheme = text.section("://",0,0);
-    m_schemeComboBox->setCurrentText(scheme + "://");
+    const QString &scheme = QUrl::fromUserInput(text).scheme();
+    if (!scheme.isEmpty())
+        m_schemeComboBox->setCurrentText(schemeWithSlash(scheme));
+}
+
+void ConnectToServerDialog::onCurrentInputChanged(const QString &text)
+{
+    if (text == m_serverComboBox->itemText(m_serverComboBox->count() - 1)) {
+        QSignalBlocker blocker(m_serverComboBox);
+        Q_UNUSED(blocker)
+        m_serverComboBox->clear();
+        m_serverComboBox->addItem(tr("Clear History"));
+        m_serverComboBox->clearEditText();
+        m_serverComboBox->completer()->setModel(new QStringListModel());
+        Singleton<SearchHistroyManager>::instance()->clearHistory(m_supportedSchemes);
+        DFMApplication::appObtuselySetting()->sync();
+    }
+
+    QUrl url = QUrl::fromUserInput(text);
+    const QString &scheme = url.scheme();
+    if (m_supportedSchemes.contains(schemeWithSlash(scheme))) {
+        m_serverComboBox->setEditText(url.toString(QUrl::RemoveScheme).mid(2));
+        m_schemeComboBox->setCurrentText(schemeWithSlash(scheme));
+    }
+
+    upateState();
+}
+
+void ConnectToServerDialog::onCollectionViewClicked(const QModelIndex &index)
+{
+    QString history = index.data().toString();
+    if (history != m_schemeComboBox->currentText() + m_serverComboBox->currentText()) {
+        DUrl histroyUrl(history);
+        m_schemeComboBox->setCurrentText(schemeWithSlash(histroyUrl.scheme()));
+        int checkedIndex = m_serverComboBox->findText(history);
+        if (checkedIndex >= 0)
+            m_serverComboBox->setCurrentIndex(checkedIndex);
+
+        m_serverComboBox->setCurrentText(history);
+
+        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+            m_addButton->setIcon(QIcon(QPixmap(collectionIcon(CancelIcon,true)).scaled(16, 16)));
+        else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
+            m_addButton->setIcon(QIcon(QPixmap(collectionIcon(CancelIcon,false)).scaled(16, 16)));
+        m_isAddState = false;
+        m_addButton->setToolTip(tr("Unfavorite"));
+    }
+    m_collectionServerView->model()->index(index.row(), 0);
+    m_collectionServerView->setCurrentIndex(index);
+}
+
+QString ConnectToServerDialog::schemeWithSlash(const QString &scheme) const
+{
+    return QString("%1://").arg(scheme);
+}
+
+QString ConnectToServerDialog::collectionIcon(CollectionIconType icon, bool light) const
+{
+    if (icon == CollectionIconType::CancelIcon)
+        return QString(":icons/deepin/builtin/%1/icons/collect_cancel.svg").arg(light?"light":"dark");
+    else
+        return QString(":icons/deepin/builtin/%1/icons/collect.svg").arg(light?"light":"dark");
 }
 
 void ConnectToServerDialog::initUI()
@@ -219,6 +276,10 @@ void ConnectToServerDialog::initUI()
     }
 
     setFixedSize(476, 380);
+
+    m_supportedSchemes << schemeWithSlash(SMB_SCHEME)
+                       << schemeWithSlash(FTP_SCHEME)
+                       << schemeWithSlash(SFTP_SCHEME);
 
     QStringList buttonTexts;
     buttonTexts.append(tr("Cancel","button"));
@@ -240,9 +301,9 @@ void ConnectToServerDialog::initUI()
     m_collectionServerView->setItemDelegate(m_delegate);
     m_addButton->setFixedSize(36, 36);
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-        m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect.svg").scaled(16,16)));
+        m_addButton->setIcon(QIcon(QPixmap(collectionIcon(CollectionIcon,true)).scaled(16,16)));
     else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-        m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect.svg").scaled(16,16)));
+        m_addButton->setIcon(QIcon(QPixmap(collectionIcon(CollectionIcon,false)).scaled(16,16)));
 
     m_addButton->setIconSize({36, 36});
 
@@ -264,56 +325,44 @@ void ConnectToServerDialog::initUI()
 
     contentFrame->setLayout(contentLayout);
     addContent(contentFrame);
-    QStringList stringList = Singleton<SearchHistroyManager>::instance()->toStringList();
-    QStringList hostList;
-    foreach (const QString& hisString, stringList) {
-        DUrl testUrl(hisString);
-        QString host = testUrl.host();
-        QString scheme = testUrl.scheme();
-        if(scheme.isEmpty() || host.isEmpty())
-            continue;
-
-        hostList << QString("%1://%2").arg(scheme).arg(host);
+    QStringList historyList = Singleton<SearchHistroyManager>::instance()->toStringList();
+    for (const QString &data : historyList) {
+        QUrl url(data);
+        if (!url.isValid() || !m_supportedSchemes.contains(schemeWithSlash(url.scheme())))
+            historyList.removeOne(data);
     }
-    QString lastOne = hostList.count() > 0 ? hostList.last() : QString();
-    hostList.removeDuplicates();//由于历史记录中有很多设备相同，但是路径不同的记录，这里又只提取了设备，所以这里显示时要去重。
-    QStringList schemeList;
-    schemeList << QString("%1://").arg(SMB_SCHEME);
-    schemeList << QString("%1://").arg(FTP_SCHEME);
-    schemeList << QString("%1://").arg(SFTP_SCHEME);
+    while (historyList.count() > kMaxHistoryItems - 1)   // Max_HISTORY_ITEM - 1 : leave a space for "Clear History"
+        historyList.removeFirst();   // Keep the latest `maxHistoryItems`
 
-    while(hostList.count() > Max_HISTORY_ITEM - 1 )
-        hostList.takeFirst();
-
-    m_completer = new QCompleter(hostList,this);
+    QString recentAccessOne = historyList.count() > 0 ? historyList.last() : QString();
+    historyList.removeDuplicates();
+    m_completer = new QCompleter(historyList,this);
     m_completer->setCaseSensitivity(Qt::CaseInsensitive);
     m_completer->setFilterMode(Qt::MatchContains);
     m_completer->setCompletionMode(QCompleter::PopupCompletion);
-    m_completer->setMaxVisibleItems(Max_HISTORY_ITEM);
+    m_completer->setMaxVisibleItems(kMaxHistoryItems);
 
     m_serverComboBox->setEditable(true);
-    m_serverComboBox->setMaxVisibleItems(Max_HISTORY_ITEM);
+    m_serverComboBox->setMaxVisibleItems(kMaxHistoryItems);
 
-    m_serverComboBox->addItems(hostList);
+    m_serverComboBox->addItems(historyList);
     m_serverComboBox->insertItem(m_serverComboBox->count(), tr("Clear History"));
     m_serverComboBox->setCompleter(m_completer);
     m_serverComboBox->clearEditText();
 
-
-    static QString regExpStr = "(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])";
-    m_serverComboBox->setValidator(new QRegExpValidator(QRegExp(regExpStr),this));
-    m_schemeComboBox->addItems(schemeList);
+    m_schemeComboBox->addItems(m_supportedSchemes);
     m_schemeComboBox->setFixedWidth(100);
 
-
-    if(hostList.count() > 0){
-        QString scheme = lastOne.section("://",0,0);
-        if(!scheme.isEmpty()){
-            int checkedIndex = m_serverComboBox->findText(lastOne);
-            if(checkedIndex >= 0)
+    if (!recentAccessOne.isEmpty()) {   // Recent accessed url must be selected in initial state.
+        QUrl recentAccessUrl(recentAccessOne);
+        const QString &scheme = recentAccessUrl.scheme();
+        if (!scheme.isEmpty()) {
+            int checkedIndex = m_serverComboBox->findText(recentAccessOne);
+            if (checkedIndex >= 0)
                 m_serverComboBox->setCurrentIndex(checkedIndex);
-            m_serverComboBox->setEditText(lastOne.section("//",-1));
-            m_schemeComboBox->setCurrentText(scheme + "://");
+
+            m_serverComboBox->setEditText(recentAccessUrl.toString(QUrl::RemoveScheme).mid(2));
+            m_schemeComboBox->setCurrentText(schemeWithSlash(scheme));
         }
     }
 
@@ -331,15 +380,10 @@ void ConnectToServerDialog::initUI()
     m_collectionServerView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_collectionServerView->setFrameShape(QFrame::Shape::NoFrame);
 
-    QStringList dataList;
-    const QList<QVariant> &serverData = DFMApplication::genericSetting()->value("ConnectServer", "URL").toList();
-    for (const QVariant &data : serverData) {
-        dataList << data.toString();
-    }
-
+    const QStringList &serverData = DFMApplication::genericSetting()->value(kConnectServer, kUrl).toStringList();
     QStringListModel *listModel = new QStringListModel(this);
     m_collectionServerView->setModel(listModel);
-    listModel->setStringList(dataList);
+    listModel->setStringList(serverData);
 
     setContentsMargins(0,0,0,0);
     upateState();
@@ -356,31 +400,10 @@ void ConnectToServerDialog::initUI()
 
 void ConnectToServerDialog::initConnect()
 {
-    //QComboBox clear history
-    connect(m_serverComboBox, &QComboBox::currentTextChanged, this, [=](const QString &string){
-       if (string == m_serverComboBox->itemText(m_serverComboBox->count() - 1)) {
-            QSignalBlocker blocker(m_serverComboBox);
-            Q_UNUSED(blocker)
-            m_serverComboBox->clear();
-            m_serverComboBox->addItem(tr("Clear History"));
-            m_serverComboBox->clearEditText();
-            m_serverComboBox->completer()->setModel(new QStringListModel());
-            Singleton<SearchHistroyManager>::instance()->clearHistory();
-            DFMApplication::appObtuselySetting()->sync();
-        }
+    connect(m_serverComboBox, &QComboBox::currentTextChanged, this, &ConnectToServerDialog::onCurrentInputChanged);
 
-       if(string.contains("://")){
-            QString scheme = string.section("://",0,0);
-            if(!scheme.isEmpty()){
-                m_serverComboBox->setEditText(string.section("//",-1));
-                m_schemeComboBox->setCurrentText(scheme + "://");
-            }
-       }
-
-       upateState();
-    });
-
-    connect(m_completer, SIGNAL(activated(const QString&)),this, SLOT(onCompleterActivated(const QString&)));
+    typedef void (QCompleter::*QCompleTextSignal)(const QString&);
+    connect(m_completer, static_cast<QCompleTextSignal>(&QCompleter::activated), this, &ConnectToServerDialog::onCompleterActivated);
 
     connect(m_schemeComboBox, &QComboBox::currentTextChanged,this,[=](const QString &string){
         Q_UNUSED(string)
@@ -388,23 +411,6 @@ void ConnectToServerDialog::initConnect()
     });
 
     connect(m_addButton, &QPushButton::clicked, this, &ConnectToServerDialog::collectionOperate);
-    connect(m_collectionServerView, &DListView::clicked, this, [=](const QModelIndex &index){
-        QString history = index.data().toString();
-        if ( history!= m_schemeComboBox->currentText() + m_serverComboBox->currentText()) {
-            DUrl histroyUrl(history);
-            m_schemeComboBox->setCurrentText(histroyUrl.scheme()+"://");
-            int checkedIndex = m_serverComboBox->findText(history);
-            if(checkedIndex >= 0)
-                m_serverComboBox->setCurrentIndex(checkedIndex);
-            m_serverComboBox->setCurrentText(histroyUrl.host());
-            if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-                m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect_cancel.svg").scaled(16,16)));
-            else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-                m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect_cancel.svg").scaled(16,16)));
-            m_isAddState = false;
-            m_addButton->setToolTip(tr("Unfavorite"));
-        }
-        m_collectionServerView->model()->index(index.row(),0);
-        m_collectionServerView->setCurrentIndex(index);
-    });
+
+    connect(m_collectionServerView, &DListView::clicked, this, &ConnectToServerDialog::onCollectionViewClicked);
 }

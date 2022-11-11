@@ -219,8 +219,13 @@ void ShareInfoFrame::initUI()
         clipboard->setText(m_netScheme->text() + m_networkAddrLabel->text());
     });
     QHBoxLayout *schemeLayout = new QHBoxLayout;
+    schemeLayout->setSpacing(0);
+    m_netScheme->setContentsMargins(0,0,0,0);
+    m_networkAddrLabel->setContentsMargins(0,0,0,0);
     schemeLayout->addWidget(m_netScheme);
     schemeLayout->addWidget(m_networkAddrLabel);
+    schemeLayout->setStretch(0,0);
+    schemeLayout->setStretch(1,10);
     networkAddrLayout->addItem(schemeLayout);
     networkAddrLayout->addWidget(copyNetAddr);
     networkAddrLayout->setStretch(0, 1);
