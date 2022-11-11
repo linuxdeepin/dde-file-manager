@@ -157,17 +157,16 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
         if (auto sortAndDisplayScene = dfmplugin_menu_util::menuSceneCreateScene(kSortAndDisplayMenuSceneName))
             currentScene.append(sortAndDisplayScene);
     } else {
-        const auto &parentUrl = SearchHelper::searchTargetUrl(d->currentDir);
-        if (Global::Scheme::kFile == parentUrl.scheme()) {
-            if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
-                currentScene.append(workspaceScene);
-        } else {
-            auto parentSceneName = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", parentUrl.scheme()).toString();
+        const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
+        if (targetUrl.scheme() == Global::Scheme::kTrash || targetUrl.scheme() == Global::Scheme::kRecent) {
+            auto parentSceneName = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", targetUrl.scheme()).toString();
             if (auto scene = dfmplugin_menu_util::menuSceneCreateScene(parentSceneName))
                 currentScene.append(scene);
 
-            const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
             tmpParams[MenuParamKey::kCurrentDir] = targetUrl;
+        } else {
+            if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
+                currentScene.append(workspaceScene);
         }
     }
 

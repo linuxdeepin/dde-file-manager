@@ -61,7 +61,7 @@ bool CustomManager::isDisableSearch(const QUrl &url)
         return false;
 
     const auto &property = customInfos[scheme];
-    return property.value(CustomKey::kDisableSearch).toBool();
+    return property.value(CustomKey::kDisableSearch, false).toBool();
 }
 
 QString CustomManager::redirectedPath(const QUrl &url)
@@ -76,7 +76,10 @@ QString CustomManager::redirectedPath(const QUrl &url)
         return "";
 
     const auto &property = customInfos[scheme];
-    QString path = property.value(CustomKey::kRedirectedPath).toString();
+    QString path = property.value(CustomKey::kRedirectedPath, "").toString();
+    if (path.isEmpty())
+        return "";
+
     auto targetPath = url.path();
     if (path.endsWith('/') && !targetPath.isEmpty())
         path = path.left(path.length() - 1);

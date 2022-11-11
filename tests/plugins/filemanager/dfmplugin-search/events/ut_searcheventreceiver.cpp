@@ -52,7 +52,9 @@ TEST(SearchEventReceiverTest, ut_handleSearch)
 TEST(SearchEventReceiverTest, ut_handleStopSearch)
 {
     stub_ext::StubExt st;
-    st.set_lamda(&SearchManager::stop, [] { return; });
+    typedef void (SearchManager::*Stop)(quint64);
+    auto stop = static_cast<Stop>(&SearchManager::stop);
+    st.set_lamda(stop, [] { return; });
 
     EXPECT_NO_FATAL_FAILURE(SearchEventReceiverIns->handleStopSearch(123));
 }

@@ -53,7 +53,7 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
 
 void SearchEventReceiver::handleStopSearch(quint64 winId)
 {
-    SearchManager::instance()->stop(QString::number(winId));
+    SearchManager::instance()->stop(winId);
 }
 
 void SearchEventReceiver::handleShowAdvanceSearchBar(quint64 winId, bool visible)

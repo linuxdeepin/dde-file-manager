@@ -24,6 +24,7 @@
 #include "dfmplugin_search_global.h"
 
 #include <QObject>
+#include <QMap>
 
 namespace dfmplugin_search {
 
@@ -37,9 +38,10 @@ public:
     static SearchManager *instance();
 
     void init();
-    bool search(const QString &taskId, const QUrl &url, const QString &keyword);
+    bool search(quint64 winId, const QString &taskId, const QUrl &url, const QString &keyword);
     QList<QUrl> matchedResults(const QString &taskId);
     void stop(const QString &taskId);
+    void stop(quint64 winId);
 
 signals:
     void matched(const QString &taskId);
@@ -51,6 +53,7 @@ private:
     ~SearchManager();
 
     MainController *mainController = nullptr;
+    QMap<quint64, QString> taskIdMap;
 };
 
 }

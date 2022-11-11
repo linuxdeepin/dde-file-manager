@@ -102,7 +102,9 @@ TEST(SearchDirIteratorTest, ut_close)
 
     it.d->taskId = 123;
     stub_ext::StubExt st;
-    st.set_lamda(&SearchManager::stop, [] {});
+    typedef void (SearchManager::*Stop)(const QString &);
+    auto stop = static_cast<Stop>(&SearchManager::stop);
+    st.set_lamda(stop, [] {});
 
     EXPECT_NO_FATAL_FAILURE(it.close());
 }

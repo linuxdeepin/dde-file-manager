@@ -81,7 +81,7 @@ void SearchDirIteratorPrivate::doSearch()
     winId = SearchHelper::searchWinId(fileUrl).toULongLong();
     taskId = QUuid::createUuid().toString(QUuid::WithoutBraces);
     SearchEventCaller::sendStartSpinner(winId);
-    SearchManager::instance()->search(taskId, targetUrl, SearchHelper::searchKeyword(fileUrl));
+    SearchManager::instance()->search(winId, taskId, targetUrl, SearchHelper::searchKeyword(fileUrl));
 }
 
 void SearchDirIteratorPrivate::onMatched(const QString &id)

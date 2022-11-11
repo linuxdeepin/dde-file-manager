@@ -34,10 +34,12 @@ SearchManager *SearchManager::instance()
     return &instance;
 }
 
-bool SearchManager::search(const QString &taskId, const QUrl &url, const QString &keyword)
+bool SearchManager::search(quint64 winId, const QString &taskId, const QUrl &url, const QString &keyword)
 {
-    if (mainController)
+    if (mainController) {
+        taskIdMap[winId] = taskId;
         return mainController->doSearchTask(taskId, url, keyword);
+    }
 
     return false;
 }
@@ -56,6 +58,12 @@ void SearchManager::stop(const QString &taskId)
         mainController->stop(taskId);
 
     emit searchStoped(taskId);
+}
+
+void SearchManager::stop(quint64 winId)
+{
+    if (taskIdMap.contains(winId))
+        stop(taskIdMap[winId]);
 }
 
 SearchManager::SearchManager(QObject *parent)
