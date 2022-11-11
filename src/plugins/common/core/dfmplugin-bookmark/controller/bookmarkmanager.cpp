@@ -192,6 +192,10 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
 void BookMarkManager::addQuickAccessItemsFromConfig()
 {
     initData();
+    const QVariantList &list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
+    if (list.count() <= 0)
+        sortItemsByOrder(sortedUrls);   //write the default items to config
+
     addQuickAccessDataFromConfig();
 
     // Write `QuickAccess` field in dde-file-manager.json and sync `BookMark` field into it.
