@@ -49,16 +49,15 @@ private:
     void videoExtenInfoReceiver(const QStringList &properties);
     void audioExtenInfoReceiver(const QStringList &properties);
 
-    void imageExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
-    void videoExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
-    void audioExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
-
 signals:
     void sigImageExtenInfo(const QStringList &properties);
     void sigVideoExtenInfo(const QStringList &properties);
     void sigAudioExtenInfo(const QStringList &properties);
 
 public slots:
+    void imageExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+    void videoExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+    void audioExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
     void slotImageExtenInfo(const QStringList &properties);
     void slotVideoExtenInfo(const QStringList &properties);
     void slotAudioExtenInfo(const QStringList &properties);

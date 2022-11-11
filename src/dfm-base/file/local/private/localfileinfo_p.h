@@ -49,8 +49,6 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     QMap<DFileInfo::AttributeExtendID, QVariant> attributesExtend;   // 缓存的fileinfo 扩展信息
     QList<DFileInfo::AttributeExtendID> extendIDs;
 
-    DFMIO::DFileInfo::AttributeExtendFuncCallback attributesExtendCallbackFunc = nullptr;
-
     QMimeType mimeType;
     QMimeDatabase::MatchMode mimeTypeMode;
 
@@ -131,12 +129,9 @@ public:
                 }
             }
 
-            if (attributesExtendCallbackFunc) {
-                attributesExtendCallbackFunc(true, ret);
-            }
+            q->mediaDataFinished(true, ret);
         } else {
-            if (attributesExtendCallbackFunc)
-                attributesExtendCallbackFunc(false, {});
+            q->mediaDataFinished(false, {});
         }
     }
 };

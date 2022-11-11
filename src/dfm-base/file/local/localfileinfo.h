@@ -32,8 +32,9 @@
 namespace dfmbase {
 
 class LocalFileInfoPrivate;
-class LocalFileInfo : public AbstractFileInfo, public QObject
+class LocalFileInfo : public AbstractFileInfo
 {
+    Q_OBJECT
     LocalFileInfoPrivate *d = nullptr;
 
 public:
@@ -133,9 +134,7 @@ public:
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;
 
     // media info
-    virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type,
-                                     QList<DFMIO::DFileInfo::AttributeExtendID> ids,
-                                     DFMIO::DFileInfo::AttributeExtendFuncCallback callback = nullptr) const override;
+    virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
 
     virtual bool notifyAttributeChanged() override;
 

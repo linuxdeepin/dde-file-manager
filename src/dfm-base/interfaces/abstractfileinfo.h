@@ -49,9 +49,9 @@ typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPoin
 
 namespace dfmbase {
 class AbstractFileInfoPrivate;
-class AbstractFileInfo : public QSharedData, public QEnableSharedFromThis<AbstractFileInfo>
+class AbstractFileInfo : public QObject, public QSharedData, public QEnableSharedFromThis<AbstractFileInfo>
 {
-
+    Q_OBJECT
 public:
     /*!
      * \enum FileInfoCacheType 文件缓存的key值
@@ -210,9 +210,7 @@ public:
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type);
 
     // media info
-    virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type,
-                                     QList<DFMIO::DFileInfo::AttributeExtendID> ids,
-                                     DFMIO::DFileInfo::AttributeExtendFuncCallback callback = nullptr) const;
+    virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const;
 
     virtual bool notifyAttributeChanged();
 
@@ -222,6 +220,9 @@ public:
 
     virtual void setIsLocalDevice(const bool isLocalDevice);
     virtual void setIsCdRomDevice(const bool isCdRomDevice);
+
+Q_SIGNALS:
+    void mediaDataFinished(bool, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>);
 
 protected:
     explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);

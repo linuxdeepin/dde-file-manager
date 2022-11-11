@@ -1207,9 +1207,9 @@ QVariant dfmbase::AbstractFileInfo::customAttribute(const char *key, const DFile
     return QVariant();
 }
 
-void dfmbase::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids, DFileInfo::AttributeExtendFuncCallback callback) const
+void dfmbase::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
-    CALL_PROXY(mediaInfoAttributes(type, ids, callback));
+    CALL_PROXY(mediaInfoAttributes(type, ids));
 }
 
 bool dfmbase::AbstractFileInfo::notifyAttributeChanged()

@@ -1780,11 +1780,10 @@ QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileA
     return QVariant();
 }
 
-void LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids, DFileInfo::AttributeExtendFuncCallback callback) const
+void LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
     if (d->dfmFileInfo) {
         d->extendIDs = ids;
-        d->attributesExtendCallbackFunc = callback;
 
         auto it = ids.begin();
         while (it != ids.end()) {
