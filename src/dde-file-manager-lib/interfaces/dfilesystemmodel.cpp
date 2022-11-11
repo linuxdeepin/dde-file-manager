@@ -1485,7 +1485,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
             if (rect.left() <= cursor_pos.x() && rect.right() >= cursor_pos.x()) {
                 const QString &tooltip = data(index, columnActiveRole(i - 1)).toString();
 
-                if (option.fontMetrics.width(tooltip, -1, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt())) > rect.width()) {
+                if (option.fontMetrics.width(tooltip, -1, static_cast<int>(Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()))) > rect.width()) {
                     return tooltip;
                 } else {
                     break;
@@ -3192,7 +3192,8 @@ bool DFileSystemModel::releaseJobController()
             QPointer<DFileSystemModel> me = this;
             d->eventLoop = &eventLoop;
 
-            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+            connect(d->jobController.data(), &JobController::finished, &eventLoop, &QEventLoop::quit);
+            connect(d->jobController.data(), &JobController::destroyed, &eventLoop, &QEventLoop::quit);
 
             d->jobController->stopAndDeleteLater();
 
@@ -3203,14 +3204,6 @@ bool DFileSystemModel::releaseJobController()
             d->eventLoop = Q_NULLPTR;
 
             if (code != 0) {
-                //                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
-                //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
-                //此时d->jobController有可能已经在析构了，不能调用terminate
-                //                    d->jobController->terminate();
-                //                    d->jobController->quit();
-                //                    d->jobController.clear();
-                //                    d->jobController->stopAndDeleteLater();
-                //                }
                 return false;
             }
 
