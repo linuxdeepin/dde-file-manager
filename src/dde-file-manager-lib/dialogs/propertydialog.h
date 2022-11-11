@@ -139,6 +139,7 @@ class PropertyDialog : public DDialog
 
 public:
     explicit PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *parent = nullptr);
+    ~PropertyDialog() override;
 
 public:
     void initUI();
