@@ -773,9 +773,8 @@ DeviceManagerPrivate::DeviceManagerPrivate(DeviceManager *qq)
 
 void DeviceManagerPrivate::mountAllBlockDev()
 {
-    const QStringList &devs { q->getAllBlockDevID(
-            DeviceQueryOption::kRemovable | DeviceQueryOption::kMountable
-            | DeviceQueryOption::kNotIgnored | DeviceQueryOption::kNotMounted) };
+    const QStringList &devs { q->getAllBlockDevID(DeviceQueryOption::kMountable | DeviceQueryOption::kNotIgnored
+                                                  | DeviceQueryOption::kNotMounted) };
     qDebug() << "start to mount block devs: " << devs;
     for (const auto &dev : devs)
         q->mountBlockDevAsync(dev);
