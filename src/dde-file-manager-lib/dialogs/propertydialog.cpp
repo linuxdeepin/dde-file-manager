@@ -515,6 +515,12 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     initConnect();
 }
 
+PropertyDialog::~PropertyDialog()
+{
+    emit aboutToClosed(m_url);
+    emit closed(m_url);
+}
+
 void PropertyDialog::initUI()
 {
     m_icon->setFixedHeight(128);
