@@ -96,6 +96,7 @@ private:
     void updateTitle();
 
     void updateDialog();
+    bool canNextOrPre();
 
     DUrlList m_fileList;
     DUrlList m_entryUrlList;
@@ -107,6 +108,7 @@ private:
     bool m_playingVideo = false;
     bool m_firstEnterSwitchToPage = false;
     int m_currentPageIndex = -1;
+    QAtomicInteger<qint64> keyPressTime = {0};
     QAtomicInteger<bool> m_isSwitch = false;
     DFMFilePreview *m_preview = nullptr;
 

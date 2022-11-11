@@ -356,15 +356,17 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
         if (!e->isAutoRepeat()) {
             switch (e->key()) {
             case Qt::Key_Left:
-            case Qt::Key_Up:
-                if (!e->isAutoRepeat())
+            case Qt::Key_Up:{
+                if (canNextOrPre() && !e->isAutoRepeat())
                     previousPage();
                 break;
+            }
             case Qt::Key_Right:
-            case Qt::Key_Down:
-                if (!e->isAutoRepeat())
+            case Qt::Key_Down: {
+                if (canNextOrPre() && !e->isAutoRepeat())
                     nextPage();
                 break;
+            }
             case Qt::Key_Escape:
             case Qt::Key_Space: {
                 // 视频预览的前一秒禁止再次播放
@@ -694,6 +696,14 @@ void FilePreviewDialog::updateDialog()
     int newPerviewHeight = m_preview->contentWidget()->size().height();
     resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
     moveToCenter();
+}
+
+bool FilePreviewDialog::canNextOrPre()
+{
+    qint64 cur = QDateTime::currentMSecsSinceEpoch();
+    qint64 old = keyPressTime;
+    keyPressTime = cur;
+    return cur - 50 > old;
 }
 
 DFM_END_NAMESPACE
