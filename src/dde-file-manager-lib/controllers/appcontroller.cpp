@@ -1285,6 +1285,11 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
     //如果smbUnmountlist.isEmpty()，则下面需从侧边栏移除SMB聚合子项
     if (smbUnmountlist.isEmpty()) {
         QTimer::singleShot(125,this,[=]() {
+            //如果上述没有卸载的smb目录(用户从侧边栏卸载smbip时，该ip下没有任何挂载)，这里复原批量卸载标志。fix bug:#170475
+            //批量卸载：指用户从侧边栏smb聚合项卸载，在该标志为true时，当前ip最后一个挂载目录被卸载后，无论是否勾选smb常驻，都要从侧边栏移除；
+            //在该标志为false时，表示用户在单个卸载目录，当前ip最后一个挂载目录被卸载后，如果勾选了smb常驻，则不会移除侧边栏聚合项，否则要移除。
+            deviceListener->setBatchedRemovingSmbMount(false);
+
             //若smbUnmountlist为空，则没有执行上述代码的smb目录卸载操作，这里需主动跳转到计算机页面，
             //对应场景：用户只是在地址栏输入了smb://x.x.x.x，但是没有做目录挂载操作；
             if(smbIntegrationSwitcher->isIntegrationMode())
