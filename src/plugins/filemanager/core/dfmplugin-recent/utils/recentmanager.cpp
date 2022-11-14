@@ -260,12 +260,12 @@ RecentManager::~RecentManager()
 void RecentManager::init()
 {
     iteratorWorker->moveToThread(&workerThread);
-    connect(&workerThread, &QThread::finished, iteratorWorker.data(), &QObject::deleteLater);
-    connect(this, &RecentManager::asyncHandleFileChanged, iteratorWorker.data(), &RecentIterateWorker::doWork);
+    connect(&workerThread, &QThread::finished, iteratorWorker, &QObject::deleteLater);
+    connect(this, &RecentManager::asyncHandleFileChanged, iteratorWorker, &RecentIterateWorker::doWork);
 
-    connect(iteratorWorker.data(), &RecentIterateWorker::updateRecentFileInfo, this,
+    connect(iteratorWorker, &RecentIterateWorker::updateRecentFileInfo, this,
             &RecentManager::onUpdateRecentFileInfo, Qt::BlockingQueuedConnection);
-    connect(iteratorWorker.data(), &RecentIterateWorker::deleteExistRecentUrls, this,
+    connect(iteratorWorker, &RecentIterateWorker::deleteExistRecentUrls, this,
             &RecentManager::onDeleteExistRecentUrls, Qt::BlockingQueuedConnection);
 
     workerThread.start();

@@ -29,6 +29,7 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/windowutils.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <DFileDialog>
@@ -182,8 +183,9 @@ void DumpISOOptDialog::onFileChoosed(const QString &fileName)
 void DumpISOOptDialog::onPathChanged(const QString &path)
 {
     const QUrl &url { UrlRoute::fromUserInput(path) };
-    if (url.isEmpty() || !url.isValid() || !url.isLocalFile()) {
-        qWarning() << "Path:" << path << "is invalid";
+    if (url.isEmpty() || !url.isValid()
+        || !url.isLocalFile() || FileUtils::isLowSpeedDevice(url)) {
+        qWarning() << "Path:" << path << "is prohibited";
         createImgBtn->setEnabled(false);
         return;
     }

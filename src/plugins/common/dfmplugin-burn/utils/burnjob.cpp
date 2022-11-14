@@ -547,7 +547,7 @@ void DumpISOImageJob::finishFunc(bool verify, bool verifyRet)
     Q_UNUSED(verify)
     Q_UNUSED(verifyRet)
 
-    if (lastStatus == JobStatus::kFailed) {
+    if (lastStatus == JobStatus::kFailed || lastStatus == JobStatus::kIdle) {
         jobSuccess = false;
         emit requestOpticalDumpISOFailedDialog();
     } else {

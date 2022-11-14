@@ -104,7 +104,7 @@ private slots:
 private:
     QTimer updateRecentTimer;
     QThread workerThread;
-    QScopedPointer<RecentIterateWorker> iteratorWorker { new RecentIterateWorker };
+    RecentIterateWorker *iteratorWorker { new RecentIterateWorker };   // free by QThread::finished
     AbstractFileWatcherPointer watcher;
     QMap<QUrl, AbstractFileInfoPointer> recentNodes;
 };
