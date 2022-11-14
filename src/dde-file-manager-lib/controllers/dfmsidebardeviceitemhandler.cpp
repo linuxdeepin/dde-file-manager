@@ -70,6 +70,11 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     }
     QString displayName = infoPointer->fileDisplayName();
     QString iconName = infoPointer->iconName() + "-symbolic";
+
+    // always show usb icon for removable disks.
+    if (static_cast<DFMRootFileInfo::ItemType>(infoPointer->fileType()) == DFMRootFileInfo::ItemType::UDisksRemovable)
+        iconName = "drive-removable-media-symbolic";
+
     if(url.scheme() == SMB_SCHEME){
         if (displayName.isEmpty()) {
             displayName = url.host();
