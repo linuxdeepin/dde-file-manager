@@ -439,6 +439,8 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     QString iconName { info->fileIcon().name() };
     if (info->fileIcon().name().startsWith("media"))
         iconName = "media-optical-symbolic";
+    else if (info->order() == EntryFileInfo::kOrderRemovableDisks)   // always display as USB icon for removable disks.
+        iconName = "drive-removable-media-symbolic";
     else
         iconName += "-symbolic";
 
