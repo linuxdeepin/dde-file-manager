@@ -942,7 +942,9 @@ void DFMSideBar::initDeviceConnection()
 
         if (this->findItem(url) == -1) {
             auto r = std::upper_bound(devitems.begin(), devitems.end(), url,
-            [](const DUrl & a, const DUrl & b) {
+            [&url](const DUrl & a, const DUrl & b) {
+                if(FileUtils::isSmbHostOnly(url))
+                    return false;
                 DAbstractFileInfoPointer fia = fileService->createFileInfo(nullptr, a);
                 DAbstractFileInfoPointer fib = fileService->createFileInfo(nullptr, b);
                 return DFMRootFileInfo::typeCompare(fia, fib);
