@@ -121,7 +121,7 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
 
     //设备绘制
     QRect nameLabelRect = option.rect;
-    const int iconsize = par->view()->iconSize().width();
+    const int iconsize = 64 /*par->view()->iconSize().width()*/;
 
     const int text_max_width = sizeHint(option,index).width()
             - ICON_LEFT_MARGIN
