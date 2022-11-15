@@ -66,8 +66,14 @@ private:
     QLabel *iconLabel { nullptr };
     QLabel *multiFileLable { nullptr };
     QLabel *basicInfoLabel { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *totalSizeLabel { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *fileCountLabel { nullptr };
+    QLabel *totalSizeLabel { nullptr };
+    QLabel *fileCountLabel { nullptr };
+    QLabel *totalSizeValueLabel { nullptr };
+    QLabel *fileCountValueLabel { nullptr };
+    QLabel *accessTimeLabel { nullptr };
+    QLabel *accessTimeValueLabel { nullptr };
+    QLabel *modifyTimeLable { nullptr };
+    QLabel *modifyTimeValueLable { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
 }
