@@ -19,11 +19,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "devicemanagerdbus.h"
 
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+
+#include <QDBusInterface>
+#include <QDebug>
 
 DFMBASE_USE_NAMESPACE
 
@@ -77,11 +80,8 @@ void DeviceManagerDBus::initConnection()
     connect(DevMngIns, &DeviceManager::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
     connect(DevMngIns, &DeviceManager::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
     connect(DevMngIns, &DeviceManager::blockDevAdded, this, &DeviceManagerDBus::BlockDeviceAdded);
-    connect(DevMngIns, &DeviceManager::blockDevRemoved, this, &DeviceManagerDBus::BlockDeviceRemoved);
     connect(DevMngIns, &DeviceManager::blockDevFsAdded, this, &DeviceManagerDBus::BlockDeviceFilesystemAdded);
     connect(DevMngIns, &DeviceManager::blockDevFsRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
-    connect(DevMngIns, &DeviceManager::blockDevMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
-    connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
     connect(DevMngIns, &DeviceManager::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
     connect(DevMngIns, &DeviceManager::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
     connect(DevMngIns, &DeviceManager::blockDevPropertyChanged, this, [this](const QString &id, const QString &property, const QVariant &val) {
@@ -92,6 +92,27 @@ void DeviceManagerDBus::initConnection()
     connect(DevMngIns, &DeviceManager::protocolDevUnmounted, this, &DeviceManagerDBus::ProtocolDeviceUnmounted);
     connect(DevMngIns, &DeviceManager::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
     connect(DevMngIns, &DeviceManager::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
+
+    auto refreshDesktop = [](const QString &msg) {
+        qDebug() << "refresh desktop start..." << msg;
+        QDBusInterface ifs("com.deepin.dde.desktop",
+                           "/com/deepin/dde/desktop/canvas",
+                           "com.deepin.dde.desktop.canvas");
+        ifs.asyncCall("Refresh", false);
+        qDebug() << "refresh desktop async finished..." << msg;
+    };
+    connect(DevMngIns, &DeviceManager::blockDevMounted, this, [this, refreshDesktop](const QString &id, const QString &mpt) {
+        emit BlockDeviceMounted(id, mpt);
+        refreshDesktop("onBlockDevMounted");
+    });
+    connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, [this, refreshDesktop](const QString &id) {
+        emit BlockDeviceUnmounted(id);
+        refreshDesktop("onBlockDevUnmounted");
+    });
+    connect(DevMngIns, &DeviceManager::blockDevRemoved, this, [this, refreshDesktop](const QString &id) {
+        emit BlockDeviceRemoved(id);
+        refreshDesktop("onBlockDevRemoved");
+    });
 }
 
 /*!
