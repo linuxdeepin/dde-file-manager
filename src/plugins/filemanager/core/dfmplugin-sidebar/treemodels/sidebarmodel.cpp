@@ -164,9 +164,11 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
             SideBarItem *groupItem = this->itemFromIndex(index);
             if (groupItem) {
                 int rows = groupItem->rowCount();
-                if (row >= 0 && row < rows)
+                if (row == 0 || (row > 0 && row < rows))
                     groupItem->insertRow(row, item);
-                else
+                else if (row >= rows)
+                    groupItem->appendRow(item);
+                else if (row == -1)
                     groupItem->insertRow(0, item);
             }
             return true;

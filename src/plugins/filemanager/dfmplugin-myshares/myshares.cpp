@@ -142,7 +142,7 @@ void MyShares::addToSidebar()
         { "Property_Key_VisiableControl", "my_shares" },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
     };
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", ShareUtils::rootUrl(), map);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 1, ShareUtils::rootUrl(), map);
 }
 
 void MyShares::regMyShareToSearch()
