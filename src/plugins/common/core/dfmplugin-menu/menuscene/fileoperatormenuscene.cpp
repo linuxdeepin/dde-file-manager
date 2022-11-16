@@ -38,6 +38,7 @@
 #include <QVariant>
 #include <QSettings>
 #include <QFileDialog>
+#include <QGuiApplication>
 
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
@@ -268,7 +269,11 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // delete
     if (actionId == ActionID::kDelete) {
-        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        if (QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) {
+            dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        } else {
+            dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        }
         return true;
     }
 
