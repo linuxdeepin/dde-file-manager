@@ -42,6 +42,7 @@ EmblemEventRecevier *EmblemEventRecevier::instance()
 
 bool EmblemEventRecevier::handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
 {
+    // TODO(perf) costs when first painting
     int role = kItemIconRole;
     QRectF rect = paintArea;
     return EmblemManager::instance()->paintEmblems(role, url, painter, &rect);

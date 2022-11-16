@@ -62,6 +62,7 @@ public:
     virtual int countChildFile() const override;
 
     virtual QDateTime deletionTime() const override;
+    virtual QVariant customData(int role) const override;
 
 private:
     TrashFileInfoPrivate *d;

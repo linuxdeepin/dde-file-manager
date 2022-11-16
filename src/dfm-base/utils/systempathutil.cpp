@@ -163,7 +163,7 @@ void SystemPathUtil::cleanPath(QString *path) const
 {
     Q_ASSERT(path);
     // 这里去掉/data的目的 是让通过数据盘路径进入的用户目录下的Docunment,Vedios等文件也可以被翻译
-    const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    static const QString &userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     const QString &homeBindPath = FileUtils::bindPathTransform(userHome, true);
     if (path->startsWith(homeBindPath)) {
         path->replace(homeBindPath, userHome);

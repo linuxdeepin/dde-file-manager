@@ -21,6 +21,7 @@
 #include "trashfileinfo.h"
 #include "utils/trashcorehelper.h"
 
+#include "dfm_global_defines.h"
 #include "interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
@@ -392,6 +393,17 @@ QDateTime TrashFileInfo::deletionTime() const
         return QDateTime();
 
     return QDateTime::fromString(d->dFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
+}
+
+QVariant TrashFileInfo::customData(int role) const
+{
+    using namespace dfmbase::Global;
+    if (role == kItemFileOriginalPath)
+        return originalUrl().path();
+    else if (role == kItemFileDeletionDate)
+        return deletionTime().toString(FileUtils::dateTimeFormat());
+    else
+        return QVariant();
 }
 
 }

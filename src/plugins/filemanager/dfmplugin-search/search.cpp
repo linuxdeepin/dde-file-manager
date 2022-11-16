@@ -127,8 +127,6 @@ void Search::bindEvents()
                             SearchHelper::instance(), &SearchHelper::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName",
                             SearchHelper::instance(), &SearchHelper::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData",
-                            SearchHelper::instance(), &SearchHelper::customRoleData);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
                             SearchHelper::instance(), &SearchHelper::blockPaste);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch",

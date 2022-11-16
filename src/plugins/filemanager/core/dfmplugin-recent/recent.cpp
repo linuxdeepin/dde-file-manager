@@ -107,7 +107,8 @@ void Recent::onWindowOpened(quint64 windId)
     if (window->sideBar())
         installToSideBar();
     else
-        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { installToSideBar(); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::sideBarInstallFinished, this, [this] { installToSideBar(); }, Qt::DirectConnection);
 }
 
 void Recent::addRecentItem()
@@ -142,7 +143,6 @@ void Recent::followEvent()
 {
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_CheckTransparent", RecentManager::instance(), &RecentManager::isTransparent);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentManager::instance(), &RecentManager::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);

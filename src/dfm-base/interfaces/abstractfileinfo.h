@@ -20,23 +20,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef ABSTRACTFILEINFO_H
-#    define ABSTRACTFILEINFO_H
+#define ABSTRACTFILEINFO_H
 
 // todo lanxs deal private
-#    define private public
-#    include <QSharedPointer>
-#    undef private
+#define private public
+#include <QSharedPointer>
+#undef private
 
-#    include "dfm-base/base/urlroute.h"
-#    include "dfm-base/dfm_base_global.h"
-#    include "dfm-base/mimetype/mimedatabase.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/mimetype/mimedatabase.h"
 
-#    include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/core/dfileinfo.h>
 
-#    include <QSharedData>
-#    include <QFile>
-#    include <QMimeType>
-#    include <QVariant>
+#include <QSharedData>
+#include <QFile>
+#include <QMimeType>
+#include <QVariant>
 
 class QDir;
 class QDateTime;
@@ -195,6 +195,7 @@ public:
     virtual QIcon fileIcon();
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     virtual QVariantHash extraProperties() const;
+    virtual QVariant customData(int role) const;
     virtual FileType fileType() const;
     virtual Qt::DropActions supportedDragActions() const;
     virtual Qt::DropActions supportedDropActions();

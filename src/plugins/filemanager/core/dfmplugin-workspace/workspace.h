@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef WORKSPACE_H
 #define WORKSPACE_H
 
@@ -106,7 +106,6 @@ class Workspace : public dpf::Plugin
 
     DPF_EVENT_REG_HOOK(hook_Model_FetchCustomColumnRoles)
     DPF_EVENT_REG_HOOK(hook_Model_FetchCustomRoleDisplayName)
-    DPF_EVENT_REG_HOOK(hook_Model_FetchCustomRoleData)
 
 public:
     virtual void initialize() override;

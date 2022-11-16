@@ -47,6 +47,7 @@ public:
     QString fileName() const override;
     bool canRedirectionFileUrl() const override;
     QUrl redirectedFileUrl() const override;
+    virtual QVariant customData(int role) const override;
 
 private:
     RecentFileInfoPrivate *d;

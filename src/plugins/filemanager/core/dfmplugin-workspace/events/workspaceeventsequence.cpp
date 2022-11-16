@@ -74,11 +74,6 @@ bool WorkspaceEventSequence::doFetchCustomRoleDiaplayName(const QUrl &rootUrl, c
     return dpfHookSequence->run(kCurrentEventSpace, "hook_Model_FetchCustomRoleDisplayName", rootUrl, role, displayName);
 }
 
-bool WorkspaceEventSequence::doFetchCustomRoleData(const QUrl &rootUrl, const QUrl &url, const ItemRoles role, QVariant *data)
-{
-    return dpfHookSequence->run(kCurrentEventSpace, "hook_Model_FetchCustomRoleData", rootUrl, url, role, data);
-}
-
 bool WorkspaceEventSequence::doCheckTransparent(const QUrl &url, TransparentStatus *status)
 {
     return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_CheckTransparent", url, status);

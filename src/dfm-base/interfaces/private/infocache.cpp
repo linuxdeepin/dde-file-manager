@@ -54,7 +54,7 @@ Q_GLOBAL_STATIC(InfoCache, _InfoCacheManager)
  *     4.启动一个333ms延迟于前一个计时器的定时器
  *     5.每5分钟遍历待析构队里，移除cacheinfo
  *     6.补充，当文件缓存数量操过100000，移除前面的缓存
-*/
+ */
 
 ReFreshThread::ReFreshThread(QObject *parent)
     : QThread(parent)
@@ -188,9 +188,9 @@ InfoCachePrivate::~InfoCachePrivate()
  */
 void InfoCachePrivate::updateSortByTimeCacheUrlList(const QUrl &url)
 {
-    if (sortByTimeCacheUrl.containsByLock(url))
-        sortByTimeCacheUrl.removeAllByLock(url);
-    sortByTimeCacheUrl.push_backByLock(url);
+    if (sortByTimeCacheUrl.lContains(url))
+        sortByTimeCacheUrl.lRemove(url);
+    sortByTimeCacheUrl.lPushBack(url);
 }
 
 InfoCache::InfoCache(QObject *parent)
@@ -232,6 +232,8 @@ AbstractFileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
 {
     Q_D(InfoCache);
     if (d->fileInfos.contains(url)) {
+        // TODO(liyigang)
+        // TODO(perf) the whole Cache mechanism should be refactored.
         d->updateSortByTimeCacheUrlList(url);
         if (d->needRemoveCacheList.containsByLock(url)) {
             d->removedCacheList.push_backByLock(url);
@@ -271,17 +273,18 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
     }
 
     d->fileInfos.insert(url, info);
+
     d->updateSortByTimeCacheUrlList(url);
     d->refreshThread->updateRefreshTimeByUrl(url);
     //超过缓存总数量时，直接移除缓存，将移除的url加入到已移除队列
-    if (d->sortByTimeCacheUrl.count() > kCacheFileinfoCount) {
-        QUrl removeUrl = d->sortByTimeCacheUrl.first() == nullptr ? QUrl() : *(d->sortByTimeCacheUrl.first());
+    if (d->sortByTimeCacheUrl.lCount() > kCacheFileinfoCount) {
+        QUrl removeUrl = d->sortByTimeCacheUrl.lFirst() /* == nullptr ? QUrl() : *(d->sortByTimeCacheUrl.first())*/;
         removeCacheInfo(removeUrl);
         //已加入到待remove的链表，加入到m_removedCacheList链表
         if (d->needRemoveCacheList.containsByLock(removeUrl))
             d->removedCacheList.push_backByLock(removeUrl);
         //还没加入待remove的链表，加入到m_removedSortByTimeCacheList
-        if (d->sortByTimeCacheUrl.containsByLock(removeUrl))
+        if (d->sortByTimeCacheUrl.lContains(removeUrl))
             d->removedSortByTimeCacheList.push_backByLock(removeUrl);
     }
 }
@@ -384,7 +387,7 @@ void InfoCache::timeNeedRemoveCache()
     // removeUrl 太多 可能导致主线程卡主
     // todo lanxs
     for (const auto &url : removeUrl) {
-        d->sortByTimeCacheUrl.removeAll(url);
+        d->sortByTimeCacheUrl.remove(url);
     }
 
     d->sortByTimeCacheUrl.unlock();

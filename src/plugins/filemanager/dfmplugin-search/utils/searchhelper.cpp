@@ -181,26 +181,6 @@ bool SearchHelper::customRoleDisplayName(const QUrl &rootUrl, const ItemRoles ro
     return false;
 }
 
-bool SearchHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const ItemRoles role, QVariant *data)
-{
-    if (rootUrl.scheme() != scheme())
-        return false;
-
-    const QUrl &targetUrl = searchTargetUrl(rootUrl);
-    if (dpfHookSequence->run("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", targetUrl, url, role, data))
-        return true;
-
-    if (role == kItemFilePathRole) {
-        auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info) {
-            data->setValue(info->fileDisplayPath());
-            return true;
-        }
-    }
-
-    return false;
-}
-
 bool SearchHelper::blockPaste(quint64 winId, const QUrl &to)
 {
     Q_UNUSED(winId)

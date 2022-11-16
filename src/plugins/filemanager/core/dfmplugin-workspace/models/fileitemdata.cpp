@@ -64,7 +64,13 @@ QVariant FileItemData::data(int role) const
     if (info.isNull())
         return QVariant();
 
+    auto val = info->customData(role);
+    if (val.isValid())
+        return val;
+
     switch (role) {
+    case kItemFilePathRole:
+        return info->fileDisplayPath();
     case kItemFileLastModifiedRole:
         return info->lastModified().isValid() ? info->lastModified().toString(FileUtils::dateTimeFormat()) : "-";
     case kItemIconRole:

@@ -80,7 +80,6 @@ public:
 
     bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
     bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
-    bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
     bool detailViewIcon(const QUrl &url, QString *iconName);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);

@@ -164,29 +164,6 @@ TEST(SearchHelperTest, ut_customRoleDisplayName)
     EXPECT_EQ(name, "Path");
 }
 
-TEST(SearchHelperTest, ut_customRoleData)
-{
-    bool ret = SearchHelper::instance()->customRoleData(QUrl::fromLocalFile("/"),
-                                                        QUrl::fromLocalFile("/home"),
-                                                        kItemFilePathRole,
-                                                        nullptr);
-    EXPECT_FALSE(ret);
-
-    stub_ext::StubExt st;
-    typedef bool (EventSequenceManager::*RunFunc)(const QString &, const QString &, QUrl,
-                                                  const QUrl &, const ItemRoles &, QVariant *&);
-    auto runFunc = static_cast<RunFunc>(&EventSequenceManager::run);
-    st.set_lamda(runFunc, [] { return false; });
-
-    QUrl url = SearchHelper::fromSearchFile(QUrl::fromLocalFile("/"), "test", "123");
-    QVariant data;
-    ret = SearchHelper::instance()->customRoleData(url,
-                                                   QUrl::fromLocalFile("/home"),
-                                                   kItemFilePathRole,
-                                                   &data);
-    EXPECT_FALSE(ret);
-}
-
 TEST(SearchHelperTest, ut_blockPaste)
 {
     bool ret = SearchHelper::instance()->blockPaste(123, QUrl::fromLocalFile("/home"));

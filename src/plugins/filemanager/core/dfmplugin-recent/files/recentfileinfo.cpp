@@ -22,8 +22,10 @@
 #include "recentfileinfo.h"
 #include "utils/recentmanager.h"
 
+#include "dfm_global_defines.h"
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_recent {
@@ -106,4 +108,14 @@ QUrl RecentFileInfo::redirectedFileUrl() const
     return d->proxy ? d->proxy->url() : url();
 };
 
+QVariant RecentFileInfo::customData(int role) const
+{
+    using namespace dfmbase::Global;
+    if (role == kItemFilePathRole)
+        return redirectedFileUrl().path();
+    else if (role == kItemFileLastReadRole)
+        return lastRead().toString(FileUtils::dateTimeFormat());
+    else
+        return QVariant();
+}
 }

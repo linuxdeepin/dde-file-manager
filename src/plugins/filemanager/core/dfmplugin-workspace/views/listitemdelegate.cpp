@@ -105,13 +105,6 @@ void ListItemDelegate::paint(QPainter *painter,
 
 QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    const AbstractFileInfoPointer &fileInfo = parent()->fileInfo(index);
-
-    if (!fileInfo) {
-        auto size = BaseItemDelegate::sizeHint(option, index);
-        return QSize(size.width(), qMax(option.fontMetrics.height(), size.height()));
-    }
-
     Q_D(const ListItemDelegate);
 
     // Todo(yanghao): isColumnCompact (fontMetrics.height() * 2 + 10)

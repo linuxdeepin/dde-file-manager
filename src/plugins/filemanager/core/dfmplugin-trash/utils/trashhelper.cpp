@@ -284,32 +284,6 @@ bool TrashHelper::customRoleDisplayName(const QUrl &url, const Global::ItemRoles
     return false;
 }
 
-bool TrashHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const Global::ItemRoles role, QVariant *data)
-{
-    Q_UNUSED(rootUrl)
-
-    if (url.scheme() != scheme())
-        return false;
-
-    if (role == kItemFileOriginalPath) {
-        QSharedPointer<AbstractFileInfo> info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info) {
-            data->setValue(info->originalUrl().path());
-            return true;
-        }
-    }
-
-    if (role == kItemFileDeletionDate) {
-        QSharedPointer<AbstractFileInfo> info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info) {
-            data->setValue(info->deletionTime().toString(FileUtils::dateTimeFormat()));
-            return true;
-        }
-    }
-
-    return false;
-}
-
 void TrashHelper::onTrashStateChanged()
 {
     if (isEmpty() == isTrashEmpty)

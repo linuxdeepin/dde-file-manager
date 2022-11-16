@@ -1290,6 +1290,12 @@ QVariantHash DFMBASE_NAMESPACE::AbstractFileInfo::extraProperties() const
     return QVariantHash();
 }
 
+QVariant dfmbase::AbstractFileInfo::customData(int role) const
+{
+    CALL_PROXY(customData(role));
+    return QVariant();
+}
+
 /*!
  * \class DAbstractFileInfoPrivate 抽象文件信息私有类
  *

@@ -251,26 +251,18 @@ QVariant FileViewModel::data(const QModelIndex &index, int role) const
     const QModelIndex &parentIndex = index.parent();
     if (!parentIndex.isValid()) {
         RootInfo *info = fileDataHelper->findRootInfo(index.row());
-        if (info) {
-            QVariant data;
-            if (WorkspaceEventSequence::instance()->doFetchCustomRoleData(info->url, info->url, static_cast<ItemRoles>(role), &data))
-                return data;
+        if (info)
             return info->data->data(role);
-        }
-
-        return QVariant();
+        else
+            return QVariant();
     }
 
     FileItemData *itemData = fileDataHelper->findFileItemData(parentIndex.row(), index.row());
 
-    if (itemData && itemData->fileInfo()) {
-        QVariant data;
-        if (WorkspaceEventSequence::instance()->doFetchCustomRoleData(rootUrl(parentIndex), itemData->fileInfo()->url(), static_cast<ItemRoles>(role), &data))
-            return data;
+    if (itemData && itemData->fileInfo())
         return itemData->data(role);
-    }
-
-    return QVariant();
+    else
+        return QVariant();
 }
 
 void FileViewModel::clear(const QUrl &rootUrl)

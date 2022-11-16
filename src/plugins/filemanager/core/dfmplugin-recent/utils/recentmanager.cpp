@@ -169,32 +169,6 @@ bool RecentManager::customRoleDisplayName(const QUrl &url, const ItemRoles role,
     return false;
 }
 
-bool RecentManager::customRoleData(const QUrl &rootUrl, const QUrl &url, const ItemRoles role, QVariant *data)
-{
-    Q_UNUSED(rootUrl)
-
-    if (url.scheme() != scheme())
-        return false;
-
-    if (role == kItemFilePathRole) {
-        QSharedPointer<RecentFileInfo> info = InfoFactory::create<RecentFileInfo>(url);
-        if (info) {
-            data->setValue(info->redirectedFileUrl().path());
-            return true;
-        }
-    }
-
-    if (role == kItemFileLastReadRole) {
-        QSharedPointer<RecentFileInfo> info = InfoFactory::create<RecentFileInfo>(url);
-        if (info) {
-            data->setValue(info->lastRead().toString(FileUtils::dateTimeFormat()));
-            return true;
-        }
-    }
-
-    return false;
-}
-
 bool RecentManager::detailViewIcon(const QUrl &url, QString *iconName)
 {
     if (url == rootUrl()) {
@@ -302,7 +276,7 @@ void RecentManager::removeRecent(const QList<QUrl> &urls)
     if (code == 1) {
         QStringList list;
         for (const QUrl &url : urls) {
-            //list << DUrl::fromLocalFile(url.path()).toString();
+            // list << DUrl::fromLocalFile(url.path()).toString();
             //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
             QUrl newUrl = url;
             newUrl.setScheme(Global::Scheme::kFile);
@@ -328,7 +302,7 @@ void RecentManager::onUpdateRecentFileInfo(const QUrl &url, qint64 readTime)
         }
     }
 
-    //ToDo(yanghao):update read time
+    // ToDo(yanghao):update read time
     Q_UNUSED(readTime)
 }
 

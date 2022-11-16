@@ -360,6 +360,7 @@ void TagManager::deleteFiles(const QList<QUrl> &urls)
 
 bool TagManager::canTagFile(const QUrl &url) const
 {
+    // TODO(perf) costs when first painting (while loading files)
     if (url.scheme() == Global::Scheme::kFile) {
         auto &&fileInfo { InfoFactory::create<AbstractFileInfo>(url) };
         if (!fileInfo)

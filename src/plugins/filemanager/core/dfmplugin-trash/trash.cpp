@@ -85,7 +85,8 @@ void Trash::onWindowOpened(quint64 windId)
     if (window->sideBar())
         installToSideBar();
     else
-        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { installToSideBar(); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::sideBarInstallFinished, this, [this] { installToSideBar(); }, Qt::DirectConnection);
 }
 
 void Trash::regTrashCrumbToTitleBar()
@@ -150,7 +151,6 @@ void Trash::followEvents()
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", TrashHelper::instance(), &TrashHelper::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
 
     // hook events, file operation
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", TrashFileHelper::instance(), &TrashFileHelper::cutFile);
