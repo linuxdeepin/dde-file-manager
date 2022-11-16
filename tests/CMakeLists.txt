@@ -62,5 +62,4 @@ add_subdirectory(dfm-extension)
 add_subdirectory(dfm-framework)
 add_subdirectory(external)
 add_subdirectory(plugins)
-
-
+add_subdirectory(tools)

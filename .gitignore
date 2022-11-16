@@ -53,8 +53,6 @@ NUL
 # Documents
 doc/html/*
 
-tools
-
 dde-file-manager-lib/test_shutil/fileutils/fileutil_t1.txt
 
 dde-file-manager-lib/test_shutil/fileutils/fileutil_t2.txt
