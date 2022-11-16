@@ -170,11 +170,12 @@ QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
 }
 
 void SideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-    Q_UNUSED(model);
-    QByteArray n = editor->metaObject()->userProperty().name();
-    if (!n.isEmpty()) {
-        Q_EMIT rename(index, editor->property(n).toString());
+{    
+    QLineEdit *edt = nullptr;
+    if ((edt = dynamic_cast<QLineEdit *>(editor)) && edt->isModified()) {
+        QByteArray n = editor->metaObject()->userProperty().name();
+        if (!n.isEmpty())
+            Q_EMIT rename(index, editor->property(n).toString());
     }
 
     return;
