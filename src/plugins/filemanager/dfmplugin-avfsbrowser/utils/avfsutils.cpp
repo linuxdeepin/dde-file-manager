@@ -39,6 +39,8 @@
 
 using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
+using namespace Mime;
 
 AvfsUtils *AvfsUtils::instance()
 {
@@ -49,7 +51,10 @@ AvfsUtils *AvfsUtils::instance()
 bool AvfsUtils::isSupportedArchives(const QUrl &url)
 {
     auto info = InfoFactory::create<AbstractFileInfo>(url);
-    return info ? supportedArchives().contains(info->mimeTypeName()) : false;
+    if (!info || info->mimeTypeName() == kTypeCdImage)
+        return false;
+
+    return supportedArchives().contains(info->mimeTypeName());
 }
 
 bool AvfsUtils::isSupportedArchives(const QString &path)
