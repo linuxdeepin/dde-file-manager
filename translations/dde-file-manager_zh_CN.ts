@@ -4,12 +4,12 @@
 <context>
     <name>AccessControlDBus</name>
     <message>
-        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="53"/>
+        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="57"/>
         <source>Invalid args</source>
         <translation>无效的参数</translation>
     </message>
     <message>
-        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="54"/>
+        <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="58"/>
         <source>Invalid invoker</source>
         <translation>无效的调用</translation>
     </message>
@@ -211,22 +211,22 @@
         <translation>若想确认继续操作是否安全，请联系系统管理员。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="242"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="243"/>
         <source>System Disk</source>
         <translation>系统盘</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="244"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="245"/>
         <source>Data Disk</source>
         <translation>数据盘</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="283"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="284"/>
         <source>Blank %1 Disc</source>
         <translation>空白%1光盘</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="283"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="284"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="349"/>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="116"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/stashmountsutils.cpp" line="102"/>
@@ -235,17 +235,17 @@
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="294"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="295"/>
         <source>%1 Drive</source>
         <translation>%1 驱动器</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="310"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="311"/>
         <source>%1 Encrypted</source>
         <translation>%1 已加密</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="317"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="318"/>
         <source>%1 Volume</source>
         <translation>%1 卷</translation>
     </message>
@@ -1386,22 +1386,27 @@
         <translation>正在搜索...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="81"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="84"/>
         <source>New window</source>
         <translation>新建窗口</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="90"/>
         <source>Connect to Server</source>
         <translation>连接到服务器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="91"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="94"/>
         <source>Set share password</source>
         <translation>设置共享密码</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="95"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="99"/>
+        <source>Change disk password</source>
+        <translation>修改磁盘密码</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -1648,7 +1653,7 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="286"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation type="unfinished">关 闭</translation>
+        <translation>关 闭</translation>
     </message>
 </context>
 <context>
@@ -2672,7 +2677,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="575"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
-        <translation type="unfinished"></translation>
+        <translation>选择的文件中包含系统目录，不能被删除</translation>
     </message>
 </context>
 <context>
@@ -3501,17 +3506,17 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="243"/>
         <source>View Image File</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>查看镜像文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="262"/>
         <source>Image successfully created</source>
-        <translation type="unfinished"></translation>
+        <translation>镜像创建成功</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="296"/>
         <source>Image creation failed</source>
-        <translation type="unfinished"></translation>
+        <translation>镜像创建失败</translation>
     </message>
 </context>
 <context>
@@ -3562,12 +3567,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="518"/>
         <source>Creating an ISO image</source>
-        <translation type="unfinished"></translation>
+        <translation>正在创建镜像文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="519"/>
         <source>to %1</source>
-        <translation type="unfinished">到%1</translation>
+        <translation>到%1</translation>
     </message>
 </context>
 <context>
@@ -3576,22 +3581,22 @@
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="75"/>
         <source>Create ISO Image</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>创建镜像</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="88"/>
         <source>Save as Image File</source>
-        <translation type="unfinished"></translation>
+        <translation>存为镜像文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="99"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前光盘驱动器内全盘文件，将被打包创建为ISO镜像文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="110"/>
         <source>Save the ISO image here:</source>
-        <translation type="unfinished"></translation>
+        <translation>选择镜像文件存放路径：</translation>
     </message>
 </context>
 <context>
@@ -3852,47 +3857,47 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="187"/>
         <source>Network path:</source>
-        <translation type="unfinished"></translation>
+        <translation>网络路径：</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="196"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="222"/>
         <source>Copy</source>
-        <translation type="unfinished">复制</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="212"/>
         <source>Username:</source>
-        <translation type="unfinished"></translation>
+        <translation>用户名：</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="241"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="528"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="248"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="249"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="529"/>
         <source>Set password</source>
-        <translation type="unfinished"></translation>
+        <translation>设置密码</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="249"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="529"/>
         <source>Change password</source>
-        <translation type="unfinished"></translation>
+        <translation>修改密码</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="261"/>
         <source>Share password:</source>
-        <translation type="unfinished"></translation>
+        <translation>共享密码：</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="274"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
-        <translation type="unfinished"></translation>
+        <translation>此密码将应用到所有共享文件夹，没有共享密码的用户可以访问“允许匿名访问”的共享文件夹。</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="375"/>
@@ -4167,12 +4172,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="131"/>
         <source>Save as Image File</source>
-        <translation type="unfinished"></translation>
+        <translation>存为镜像文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="132"/>
         <source>Burn</source>
-        <translation type="unfinished">刻 录</translation>
+        <translation>刻 录</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="159"/>
@@ -4324,12 +4329,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="277"/>
         <source>For Government</source>
-        <translation type="unfinished"></translation>
+        <translation>政务授权</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="279"/>
         <source>For Enterprise</source>
-        <translation type="unfinished"></translation>
+        <translation>企业授权</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="302"/>
@@ -4393,37 +4398,37 @@
 <context>
     <name>dfmplugin_propertydialog::MultiFilePropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="63"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="64"/>
         <source>Multiple Files</source>
         <translation>多个文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="67"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="68"/>
         <source>Basic info</source>
         <translation>基本信息</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="72"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="73"/>
         <source>Total size</source>
         <translation>总大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
         <source>Number of files</source>
         <translation>文件数量</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="84"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="87"/>
         <source>Time accessed</source>
         <translation>访问时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="90"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="93"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="155"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="159"/>
         <source>%1 file(s), %2 folder(s)</source>
         <translation>%1个文件，%2个文件夹</translation>
     </message>
@@ -4789,7 +4794,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="192"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="400"/>
         <source>Unfavorite</source>
-        <translation type="unfinished"></translation>
+        <translation>取消收藏</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="220"/>
@@ -4805,18 +4810,127 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="233"/>
-        <source>My Favorites:</source>
-        <translation>个人收藏服务器：</translation>
+        <source>My Favorites</source>
+        <translation>我收藏的服务器</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="338"/>
         <source>No favorites yet</source>
-        <translation type="unfinished"></translation>
+        <translation>暂无收藏</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="407"/>
         <source>Favorite</source>
-        <translation type="unfinished"></translation>
+        <translation>取消收藏</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_titlebar::DPCConfirmWidget</name>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="69"/>
+        <source>Change disk password</source>
+        <translation>修改磁盘密码</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
+        <source>Current password:</source>
+        <translation>当前密码：</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
+        <source>New password:</source>
+        <translation>新密码：</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="92"/>
+        <source>Repeat password:</source>
+        <translation>重复密码：</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="105"/>
+        <source>Save</source>
+        <comment>button</comment>
+        <translation>保 存</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="107"/>
+        <source>Cancel</source>
+        <comment>button</comment>
+        <translation>取 消</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="188"/>
+        <source>Passwords do not match</source>
+        <translation>输入密码不一致</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="204"/>
+        <source>New password should differ from the current one</source>
+        <translation>新密码和旧密码不能相同</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="225"/>
+        <source>Password must be no more than 512 characters</source>
+        <translation>密码长度不能超过512个字符</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="239"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="243"/>
+        <source>Password cannot be empty</source>
+        <translation>密码不能为空</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="268"/>
+        <source>Wrong password</source>
+        <translation>密码错误</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_titlebar::DPCProgressWidget</name>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="65"/>
+        <source>Changing disk password...</source>
+        <translation>正在修改磁盘密码，请稍候…</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="73"/>
+        <source>The window cannot be closed during the process</source>
+        <translation>修改过程中无法关闭窗口</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="133"/>
+        <source>Passwords of disks are different</source>
+        <translation>多磁盘密码不一致</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="136"/>
+        <source>Unable to get the encrypted disk list</source>
+        <translation>无法获取加密磁盘列表</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="140"/>
+        <source>Initialization failed</source>
+        <translation>初始化失败</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_titlebar::DPCResultWidget</name>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="45"/>
+        <source>Disk password changed</source>
+        <translation>磁盘密码修改成功</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="48"/>
+        <source>Failed to change the disk password</source>
+        <translation>磁盘密码修改失败</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="74"/>
+        <source>Close</source>
+        <comment>button</comment>
+        <translation>关 闭</translation>
     </message>
 </context>
 <context>
@@ -5349,12 +5463,18 @@
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="215"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="214"/>
+        <source>Password error</source>
+        <translation>密码错误</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="220"/>
         <source>Failed to unlock file vault</source>
         <translation>解锁保险箱失败</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="219"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="216"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="224"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -5447,59 +5567,59 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="49"/>
         <source>Set Vault Password</source>
         <translation>设置解锁方式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="56"/>
         <source>Method</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="58"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="59"/>
         <source>Manual</source>
         <translation>手动</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="70"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="72"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="170"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>至少8位，包含A-Z, a-z, 0-9和符号</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="85"/>
         <source>Repeat password</source>
         <translation>重复密码</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="88"/>
         <source>Input the password again</source>
         <translation>再次输入密码</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="100"/>
         <source>Password hint</source>
         <translation>密码提示</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="103"/>
         <source>Optional</source>
         <translation>选填</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="106"/>
         <source>Next</source>
         <translation>下一步</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="192"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="209"/>
         <source>Passwords do not match</source>
         <translation>输入密码不一致</translation>
     </message>

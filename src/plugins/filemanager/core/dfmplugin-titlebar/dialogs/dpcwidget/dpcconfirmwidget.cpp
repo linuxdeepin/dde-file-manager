@@ -102,9 +102,9 @@ void DPCConfirmWidget::initUI()
     contentLayout->setHorizontalSpacing(10);
     contentLayout->setVerticalSpacing(10);
 
-    saveBtn = new DSuggestButton(tr("Save"), this);
+    saveBtn = new DSuggestButton(tr("Save", "button"), this);
     saveBtn->setAttribute(Qt::WA_NoMousePropagation);
-    cancelBtn = new DPushButton(tr("Cancel"), this);
+    cancelBtn = new DPushButton(tr("Cancel", "button"), this);
     cancelBtn->setAttribute(Qt::WA_NoMousePropagation);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
