@@ -50,6 +50,7 @@ public:
                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     bool deleteFile(const quint64 windowId, const QList<QUrl> sources,
                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
 
 private:
     explicit TrashFileHelper(QObject *parent = nullptr);

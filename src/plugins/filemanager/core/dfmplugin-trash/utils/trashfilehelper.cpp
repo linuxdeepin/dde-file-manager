@@ -24,6 +24,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/file/local/localfilehandler.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/event/event.h>
 #include <dfm-io/dfmio_utils.h>
@@ -119,4 +120,26 @@ bool TrashFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sourc
                                  sources,
                                  DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
     return true;
+}
+
+bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    bool isOpenFile = false;
+    for (const QUrl &url : urls) {
+        auto fileinfo = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::AbstractFileInfo>(url);
+        if (fileinfo && fileinfo->isFile()) {
+            isOpenFile = true;
+            break;
+        }
+    }
+    if (isOpenFile) {
+        const QString &strMsg = QObject::tr("Unable to open items in the trash, please restore it first");
+        DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgWarn, strMsg);
+    }
+    return isOpenFile;
 }
