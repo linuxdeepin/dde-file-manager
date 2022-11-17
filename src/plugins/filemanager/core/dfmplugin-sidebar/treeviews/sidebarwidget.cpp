@@ -287,10 +287,14 @@ void SideBarWidget::initializeUi()
     sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
     sidebarView->setFrameShape(QFrame::Shape::NoFrame);
     sidebarView->setAutoFillBackground(true);
+    setMaximumWidth(200);   // Set the sidebar's maximum width
 
     const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
     int splitState = state.value("sidebar", 200).toInt();
-    setMaximumWidth(splitState);
+    QSize size = this->size();
+    size.setWidth(splitState);
+    resize(size);
+
     setFocusProxy(sidebarView);
 }
 
