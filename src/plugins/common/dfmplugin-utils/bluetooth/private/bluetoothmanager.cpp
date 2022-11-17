@@ -30,9 +30,15 @@
 #include <QDBusInterface>
 #include <QDBusServiceWatcher>
 
-#define BluetoothService "com.deepin.daemon.Bluetooth"
-#define BluetoothPath "/com/deepin/daemon/Bluetooth"
-#define BluetoothInterface "com.deepin.daemon.Bluetooth"
+#ifdef COMPILE_ON_V20
+#    define BluetoothService "com.deepin.daemon.Bluetooth"
+#    define BluetoothPath "/com/deepin/daemon/Bluetooth"
+#    define BluetoothInterface "com.deepin.daemon.Bluetooth"
+#else
+#    define BluetoothService "org.deepin.daemon.Bluetooth1"
+#    define BluetoothPath "/org/deepin/daemon/Bluetooth1"
+#    define BluetoothInterface "org.deepin.daemon.Bluetooth1"
+#endif
 
 #define BluetoothPage "bluetooth"
 #define ControlcenterService "com.deepin.dde.ControlCenter"
@@ -413,12 +419,12 @@ bool BluetoothManager::hasAdapter()
 
 bool BluetoothManager::bluetoothSendEnable()
 {
-    QDBusInterface btIface(BluetoothService, BluetoothPath, BluetoothInterface, QDBusConnection::sessionBus());
-    if (!btIface.isValid()) {
+    Q_D(BluetoothManager);
+    if (!d->bluetoothInter->isValid()) {
         qWarning() << "bluetooth interface is not valid";
         return false;
     }
-    auto canSendFile = btIface.property("CanSendFile");
+    auto canSendFile = d->bluetoothInter->property("CanSendFile");
     if (!canSendFile.isValid()) {
         qWarning() << "bluetooth interface has no 'CanSendFile' property";
         return true;   // if there is no this property, then we do not disable bluetooth transfer.
@@ -495,5 +501,6 @@ bool BluetoothManager::cancelTransfer(const QString &sessionPath)
 bool BluetoothManager::canSendBluetoothRequest()
 {
     Q_D(BluetoothManager);
-    return d->bluetoothInter->property("Transportable").toBool();
+    auto transportable = d->bluetoothInter->property("Transportable");
+    return transportable.isValid() ? transportable.toBool() : true;
 }
