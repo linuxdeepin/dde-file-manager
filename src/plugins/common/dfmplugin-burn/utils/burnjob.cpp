@@ -149,7 +149,8 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
         }
     }
 
-    comfort();
+    if (lastStatus != JobStatus::kIdle)
+        comfort();
 
     // check
     auto opts { qvariant_cast<DFMBURN::BurnOptions>(curProperty[PropertyType::kBurnOpts]) };

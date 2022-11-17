@@ -183,8 +183,8 @@ void DumpISOOptDialog::onFileChoosed(const QString &fileName)
 void DumpISOOptDialog::onPathChanged(const QString &path)
 {
     const QUrl &url { UrlRoute::fromUserInput(path) };
-    if (url.isEmpty() || !url.isValid()
-        || !url.isLocalFile() || FileUtils::isLowSpeedDevice(url)) {
+    if (url.isEmpty() || !url.isValid() || !url.isLocalFile()
+        || FileUtils::isLowSpeedDevice(url) || DeviceUtils::isSamba(url)) {
         qWarning() << "Path:" << path << "is prohibited";
         createImgBtn->setEnabled(false);
         return;

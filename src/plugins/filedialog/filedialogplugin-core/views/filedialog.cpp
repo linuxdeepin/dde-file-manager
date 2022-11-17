@@ -356,7 +356,6 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList("/"));
-        urlSchemeEnable("recent", false);
         // fall through
         [[fallthrough]];
     default:
