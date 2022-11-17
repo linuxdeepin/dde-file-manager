@@ -707,10 +707,10 @@ void DThumbnailProvider::initThumnailTool()
             QDirIterator dir(thumbnailToolPath, { "*.json" }, QDir::NoDotAndDotDot | QDir::Files);
 
             while (dir.hasNext()) {
-                const QString &file_path = dir.next();
-                const QFileInfo &file_info = dir.fileInfo();
+                const QString &filePath = dir.next();
+                const QFileInfo &fileInfo = dir.fileInfo();
 
-                QFile file(file_path);
+                QFile file(filePath);
 
                 if (!file.open(QFile::ReadOnly)) {
                     continue;
@@ -720,9 +720,9 @@ void DThumbnailProvider::initThumnailTool()
                 file.close();
 
                 const QStringList keys = document.object().toVariantMap().value("Keys").toStringList();
-                const QString &tool_file_path = file_info.absoluteDir().filePath(file_info.baseName());
+                const QString &toolFilePath = fileInfo.absoluteDir().filePath(fileInfo.baseName());
 
-                if (!QFile::exists(tool_file_path)) {
+                if (!QFile::exists(toolFilePath)) {
                     continue;
                 }
 
@@ -730,7 +730,7 @@ void DThumbnailProvider::initThumnailTool()
                     if (d->keyToThumbnailTool.contains(key))
                         continue;
 
-                    d->keyToThumbnailTool[key] = tool_file_path;
+                    d->keyToThumbnailTool[key] = toolFilePath;
                 }
             }
         }
