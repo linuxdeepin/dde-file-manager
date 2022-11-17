@@ -230,7 +230,7 @@ void ConnectToServerDialog::initializeUi()
                      << QString("%1://").arg(Scheme::kSFtp);
     schemeComboBox->addItems(supportedSchemes);
     theAddButton = new DIconButton(nullptr);
-    QLabel *collectionLabel = new QLabel(tr("My Favorites:"));
+    QLabel *collectionLabel = new QLabel(tr("My Favorites"));
     collectionServerView = new DListView(contentFrame);
     delegate = new CollectionDelegate(collectionServerView);
     connect(delegate, &CollectionDelegate::removeItemManually, [this](const QString &text, int row) {
@@ -359,6 +359,8 @@ void ConnectToServerDialog::initConnect()
 void ConnectToServerDialog::onAddButtonClicked()
 {
     QStringList serverList = static_cast<QStringListModel *>(collectionServerView->model())->stringList();
+    if (serverComboBox->currentText().trimmed().isEmpty())
+        return;
     const QString &text = schemeComboBox->currentText() + serverComboBox->currentText();
     if (!text.isEmpty() && !serverList.contains(text)) {
         if (!collectionServerView->addItem(text)) {
