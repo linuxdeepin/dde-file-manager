@@ -24,13 +24,21 @@
 
 #include <DSysInfo>
 #include <DFontSizeManager>
+#include <DFrame>
 
 #include <QVBoxLayout>
 #include <QFile>
 #include <QDBusInterface>
-#include <DFrame>
 
 #include <cmath>
+
+#ifdef COMPILE_ON_V20
+#    define SYSTEM_INFO_SERVICE "com.deepin.daemon.SystemInfo"
+#    define SYSTEM_INFO_PATH "/com/deepin/daemon/SystemInfo"
+#else
+#    define SYSTEM_INFO_SERVICE "org.deepin.daemon.SystemInfo1"
+#    define SYSTEM_INFO_PATH "/org/deepin/daemon/SystemInfo1"
+#endif
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -307,25 +315,26 @@ QString ComputerInfoThread::cpuInfo() const
     if (DSysInfo::cpuModelName().contains("Hz")) {
         return DSysInfo::cpuModelName();
     } else {
-        QDBusInterface interface("com.deepin.daemon.SystemInfo",
-                                 "/com/deepin/daemon/SystemInfo",
+        QDBusInterface interface(SYSTEM_INFO_SERVICE,
+                                 SYSTEM_INFO_PATH,
                                  "org.freedesktop.DBus.Properties",
                                  QDBusConnection::sessionBus());
         interface.setTimeout(1000);
         if (!interface.isValid()) {
-            qWarning() << "Dbus com.deepin.daemon.SystemInfo is not valid!";
+            qWarning() << QString("Dbus %1 is not valid!").arg(SYSTEM_INFO_SERVICE);
             return "";
         }
-        qInfo() << "Start call Dbus com.deepin.daemon.SystemInfo CPUMaxMHz";
-        QDBusMessage reply = interface.call("Get", "com.deepin.daemon.SystemInfo", "CPUMaxMHz");
-        qInfo() << "End call Dbus com.deepin.daemon.SystemInfo CPUMaxMHz";
+
+        qInfo() << QString("Start call Dbus %1 CPUMaxMHz").arg(SYSTEM_INFO_SERVICE);
+        QDBusMessage reply = interface.call("Get", SYSTEM_INFO_SERVICE, "CPUMaxMHz");
+        qInfo() << QString("End call Dbus %1 CPUMaxMHz").arg(SYSTEM_INFO_SERVICE);
         QList<QVariant> outArgs = reply.arguments();
         double cpuMaxMhz = outArgs.at(0).value<QDBusVariant>().variant().toDouble();
 
         if (DSysInfo::cpuModelName().isEmpty()) {
-            qInfo() << "Start call Dbus com.deepin.daemon.SystemInfo Processor";
-            QDBusMessage replyCpuInfo = interface.call("Get", "com.deepin.daemon.SystemInfo", "Processor");
-            qInfo() << "End call Dbus com.deepin.daemon.SystemInfo Processor";
+            qInfo() << QString("Start call Dbus %1 Processor").arg(SYSTEM_INFO_SERVICE);
+            QDBusMessage replyCpuInfo = interface.call("Get", SYSTEM_INFO_SERVICE, "Processor");
+            qInfo() << QString("End call Dbus %1 Processor").arg(SYSTEM_INFO_SERVICE);
             QList<QVariant> outArgsCpuInfo = replyCpuInfo.arguments();
             QString processor = outArgsCpuInfo.at(0).value<QDBusVariant>().variant().toString();
             return QString("%1 @ %2GHz").arg(processor).arg(cpuMaxMhz / 1000);
