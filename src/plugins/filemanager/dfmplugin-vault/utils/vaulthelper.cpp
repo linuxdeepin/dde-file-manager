@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "vaulthelper.h"
 #include "vaultdefine.h"
@@ -130,7 +130,11 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
         break;
     case VaultState::kUnderProcess:
     case VaultState::kBroken:
-    case VaultState::kNotAvailable:
+        break;
+    case VaultState::kNotAvailable: {
+        DialogManagerInstance->showErrorDialog(tr("Vault"), tr("Vault not available because cryfs not installed!"));
+    } break;
+    default:
         break;
     }
 }
