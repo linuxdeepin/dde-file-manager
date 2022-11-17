@@ -58,7 +58,7 @@ TrashFileInfoPrivate::~TrashFileInfoPrivate()
 QUrl TrashFileInfoPrivate::initTarget()
 {
     targetUrl = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
-    originalUrl = dFileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toUrl();
+    originalUrl = QUrl::fromUserInput(dFileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString());
     if (!targetUrl.isValid() && !UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), url)) {
         QUrl ancestors = url;
         while (TrashCoreHelper::rootUrl().isParentOf(ancestors)) {
@@ -82,8 +82,8 @@ QUrl TrashFileInfoPrivate::initTarget()
                 const QUrl &urlReal = localRootPath + fileSuffix;
 
                 targetUrl = urlReal;
-                QString localRootOriginalPath = fileinfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toUrl().toString();
-                originalUrl = localRootOriginalPath + fileSuffix;
+                QString localRootOriginalPath = fileinfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString();
+                originalUrl = QUrl::fromUserInput(localRootOriginalPath + fileSuffix);
                 dAncestorsFileInfo = fileinfo;
                 return urlReal;
             }
