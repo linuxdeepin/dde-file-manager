@@ -227,7 +227,7 @@ QUrl LocalDirIterator::url() const
 void LocalDirIterator::cacheBlockIOAttribute()
 {
     const QUrl &rootUrl = this->url();
-    const QUrl &url = rootUrl.toString() + QDir::separator() + ".hidden";
+    const QUrl &url = DFMIO::DFMUtils::buildFilePath(rootUrl.toString().toStdString().c_str(), ".hidden", nullptr);
     d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
 
     d->isLocalDevice = FileUtils::isLocalDevice(rootUrl);

@@ -27,6 +27,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QMetaType>
 #include <QDateTime>
 #include <QVariant>
@@ -930,7 +932,8 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName(const QString &f
         return QUrl();
     }
     QUrl theUrl = url();
-    theUrl.setPath(absoluteFilePath() + QDir::separator() + fileName);
+    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(absoluteFilePath().toStdString().c_str(),
+                                                  fileName.toStdString().c_str(), nullptr));
     return theUrl;
 }
 /*!
@@ -943,8 +946,8 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName(const QString &fil
     CALL_PROXY(getUrlByNewFileName(fileName));
 
     QUrl theUrl = url();
-
-    theUrl.setPath(absolutePath() + QDir::separator() + fileName);
+    const QString &newPath = DFMIO::DFMUtils::buildFilePath(absolutePath().toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
+    theUrl.setPath(newPath);
 
     return theUrl;
 }

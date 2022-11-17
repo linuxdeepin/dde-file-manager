@@ -21,6 +21,8 @@
 #include "thumbnailmanager.h"
 #include "wallpaperlist.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QStandardPaths>
 #include <QApplication>
 #include <QDir>
@@ -30,14 +32,14 @@
 using namespace ddplugin_wallpapersetting;
 
 ThumbnailManager::ThumbnailManager(qreal _scale, QObject *parent)
-    : QObject(parent)
-    , scale(_scale)
+    : QObject(parent), scale(_scale)
 {
     cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     // old dir
     //cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion() + QDir::separator() + QString::number(scale);
     // using `wallpaperthumbnail` dir to replace `applicationVersion(` dir to reduce redundant disk usage
-    cacheDir = cacheDir + QDir::separator() + QString("wallpaperthumbnail") + QDir::separator() + QString::number(scale);
+    cacheDir = DFMIO::DFMUtils::buildFilePath(cacheDir.toStdString().c_str(),
+                                              "wallpaperthumbnail", QString::number(scale).toStdString().c_str(), nullptr);
 
     connect(&futureWatcher, &QFutureWatcher<QPixmap>::finished, this, &ThumbnailManager::onProcessFinished, Qt::QueuedConnection);
 
@@ -99,7 +101,7 @@ bool ThumbnailManager::replace(const QString &key, const QPixmap &pixmap)
 
 QPixmap ThumbnailManager::thumbnailImage(const QString &key, qreal scale)
 {
-    ThumbnailManager * tnm = ThumbnailManager::instance(scale);
+    ThumbnailManager *tnm = ThumbnailManager::instance(scale);
     // key is percent-encoded filepath. see WallpaperItem::setPath and WallpaperItem::thumbnailKey
     const QString realPath = QUrl(QUrl::fromPercentEncoding(key.toUtf8())).toLocalFile();
     const qreal ratio = scale;

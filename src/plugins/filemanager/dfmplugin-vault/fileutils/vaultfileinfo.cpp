@@ -28,6 +28,8 @@
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <DFileIconProvider>
 
 #include <QDateTime>
@@ -192,7 +194,8 @@ QUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
     QUrl theUrl = url();
 
-    theUrl.setPath(absolutePath() + QDir::separator() + fileName);
+    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(absolutePath().toStdString().c_str(),
+                                                  fileName.toStdString().c_str(), nullptr));
 
     theUrl.setHost("");
 

@@ -21,6 +21,8 @@
 #include "pathmanager.h"
 #include "vaultdefine.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 using namespace dfmplugin_vault;
 PathManager::PathManager(QObject *parent)
     : QObject(parent)
@@ -42,8 +44,6 @@ QString PathManager::makeVaultLocalPath(QString path, QString base)
     if (base.isEmpty()) {
         base = kVaultDecryptDirName;
     }
-    if (path.isEmpty())
-        return kVaultBasePath + QDir::separator() + base;
-    else
-        return kVaultBasePath + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
+    DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), base.toStdString().c_str(),
+                                   path.toStdString().c_str(), nullptr);
 }

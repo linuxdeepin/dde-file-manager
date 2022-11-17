@@ -21,6 +21,8 @@
 #include "organizerconfig_p.h"
 #include "organizer_defines.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QStandardPaths>
 #include <QApplication>
 #include <QFileInfo>
@@ -29,7 +31,7 @@
 
 using namespace ddplugin_organizer;
 
-namespace  {
+namespace {
 inline constexpr char kGroupGeneral[] = "";   // "General" is default group in QSetting, so using empty string to access 'General' group.
 inline constexpr char kKeyEnable[] = "Enable";
 inline constexpr char kKeyMode[] = "Mode";
@@ -54,11 +56,11 @@ inline constexpr char kKeySizeMode[] = "SizeMode";
 inline constexpr char kGroupClassifierType[] = "Classifier_Type";
 inline constexpr char kKeyEnabledItems[] = "EnabledItems";
 
-} // namepace
+}   // namepace
 
-OrganizerConfigPrivate::OrganizerConfigPrivate(OrganizerConfig *qq) : q(qq)
+OrganizerConfigPrivate::OrganizerConfigPrivate(OrganizerConfig *qq)
+    : q(qq)
 {
-
 }
 
 OrganizerConfigPrivate::~OrganizerConfigPrivate()
@@ -92,8 +94,7 @@ void OrganizerConfigPrivate::setValue(const QString &group, const QString &key, 
 }
 
 OrganizerConfig::OrganizerConfig(QObject *parent)
-    : QObject(parent)
-    , d(new OrganizerConfigPrivate(this))
+    : QObject(parent), d(new OrganizerConfigPrivate(this))
 {
     // 只能在主线程创建
     Q_ASSERT(qApp->thread() == thread());
@@ -111,7 +112,8 @@ OrganizerConfig::OrganizerConfig(QObject *parent)
     d->syncTimer.setSingleShot(true);
     connect(&d->syncTimer, &QTimer::timeout, this, [this]() {
         d->settings->sync();
-    }, Qt::QueuedConnection);
+    },
+            Qt::QueuedConnection);
 }
 
 bool OrganizerConfig::isEnable() const
@@ -187,7 +189,7 @@ CollectionBaseDataPtr OrganizerConfig::collectionBase(bool custom, const QString
             return t1.toInt() < t2.toInt();
         });
 
-        for (const QString &index: keys) {
+        for (const QString &index : keys) {
             QUrl url = d->settings->value(index).toString();
             if (url.isValid())
                 base->items.append(url);
@@ -222,7 +224,7 @@ void OrganizerConfig::updateCollectionBase(bool custom, const CollectionBaseData
         d->settings->beginGroup(kGroupItems);
 
         int index = 0;
-        for (auto iter = base->items.begin(); iter != base->items.end(); ) {
+        for (auto iter = base->items.begin(); iter != base->items.end();) {
             d->settings->setValue(QString::number(index), iter->toString());
             ++index;
             ++iter;
@@ -252,7 +254,7 @@ void OrganizerConfig::writeCollectionBase(bool custom, const QList<CollectionBas
             d->settings->beginGroup(kGroupItems);
 
             int index = 0;
-            for (auto it = (*iter)->items.begin(); it != (*iter)->items.end(); ) {
+            for (auto it = (*iter)->items.begin(); it != (*iter)->items.end();) {
                 d->settings->setValue(QString::number(index), it->toString());
                 ++index;
                 ++it;
@@ -367,10 +369,10 @@ QString OrganizerConfig::path() const
     Q_ASSERT(!paths.isEmpty());
 
     QString configPath = paths.first();
-    configPath = configPath
-            + QDir::separator() + QApplication::organizationName()
-            + QDir::separator() + QApplication::applicationName()
-            + QDir::separator() + "ddplugin-organizer.conf";
+    configPath = DFMIO::DFMUtils::buildFilePath(configPath.toStdString().c_str(),
+                                                QApplication::organizationName().toStdString().c_str(),
+                                                QApplication::applicationName().toStdString().c_str(),
+                                                "ddplugin-organizer.conf", nullptr);
 
     return configPath;
 }

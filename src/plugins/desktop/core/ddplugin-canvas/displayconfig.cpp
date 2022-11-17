@@ -20,6 +20,8 @@
  */
 #include "displayconfig.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QThread>
 #include <QStandardPaths>
 #include <QtConcurrent>
@@ -32,16 +34,18 @@
 
 using namespace ddplugin_canvas;
 
-class DisplayConfigGlobal : public DisplayConfig{};
+class DisplayConfigGlobal : public DisplayConfig
+{
+};
 Q_GLOBAL_STATIC(DisplayConfigGlobal, displayConfig)
 
-static const char * const kGroupGeneral = "GeneralConfig";
-static const char * const kKeyProfile = "Profile";
-static const char * const kKeySortBy = "SortBy";
-static const char * const kKeySortOrder = "SortOrder";
-static const char * const kKeyAutoAlign = "AutoSort";
-static const char * const kKeyIconLevel = "IconLevel";
-static const char * const kKeyCustomWaterMask = "WaterMaskUseJson";
+static const char *const kGroupGeneral = "GeneralConfig";
+static const char *const kKeyProfile = "Profile";
+static const char *const kKeySortBy = "SortBy";
+static const char *const kKeySortOrder = "SortOrder";
+static const char *const kKeyAutoAlign = "AutoSort";
+static const char *const kKeyIconLevel = "IconLevel";
+static const char *const kKeyCustomWaterMask = "WaterMaskUseJson";
 
 static void compatibilityFuncForDisbaleAutoMerage(QSettings *set)
 {
@@ -60,7 +64,8 @@ DisplayConfig *DisplayConfig::instance()
     return displayConfig;
 }
 
-DisplayConfig::DisplayConfig(QObject *parent) : QObject(parent)
+DisplayConfig::DisplayConfig(QObject *parent)
+    : QObject(parent)
 {
     // 只能在主线程创建
     Q_ASSERT(qApp->thread() == thread());
@@ -88,7 +93,8 @@ DisplayConfig::DisplayConfig(QObject *parent) : QObject(parent)
     connect(syncTimer, &QTimer::timeout, this, [this]() {
         QMutexLocker lk(&mtxLock);
         settings->sync();
-    }, Qt::QueuedConnection);
+    },
+            Qt::QueuedConnection);
 }
 
 DisplayConfig::~DisplayConfig()
@@ -116,7 +122,7 @@ QList<QString> DisplayConfig::profile()
     QMutexLocker lk(&mtxLock);
     settings->beginGroup(kKeyProfile);
     const QStringList &keys = settings->childKeys();
-    for (const QString &key: keys) {
+    for (const QString &key : keys) {
         const QString &value = settings->value(key).toString();
         if (value.isEmpty())
             continue;
@@ -308,10 +314,10 @@ QString DisplayConfig::path() const
     Q_ASSERT(!paths.isEmpty());
 
     QString configPath = paths.first();
-    configPath = configPath
-            + QDir::separator() + QApplication::organizationName()
-            + QDir::separator() + QApplication::applicationName()
-            + QDir::separator() + QApplication::applicationName() + ".conf";
+    configPath = DFMIO::DFMUtils::buildFilePath(configPath.toStdString().c_str(),
+                                                QApplication::organizationName().toStdString().c_str(),
+                                                QApplication::applicationName().toStdString().c_str(),
+                                                QString(QApplication::applicationName() + ".conf").toStdString().c_str(), nullptr);
 
     return configPath;
 }
@@ -365,4 +371,3 @@ QVariant DisplayConfig::value(const QString &group, const QString &key, const QV
 
     return ret;
 }
-

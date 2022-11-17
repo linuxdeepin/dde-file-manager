@@ -1000,7 +1000,7 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon)
             if (fileinfo) {
                 const QString &fileName = fileinfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardName).toString();
                 if (fileName.contains(name)) {
-                    return QIcon(QString(kSharePixmapPath) + QDir::separator() + fileName);
+                    return QIcon(DFMIO::DFMUtils::buildFilePath(kSharePixmapPath, fileName.toStdString().c_str(), nullptr));
                 }
             }
         }

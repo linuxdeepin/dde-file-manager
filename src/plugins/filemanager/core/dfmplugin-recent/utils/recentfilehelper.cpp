@@ -193,7 +193,8 @@ bool RecentFileHelper::linkFile(const quint64 windowId, const QUrl url, const QU
 
         const QString &nameValid = FileUtils::nonExistSymlinkFileName(url, urlParent);
         if (!nameValid.isEmpty())
-            return urlParent.toString() + QDir::separator() + nameValid;
+            return DFMIO::DFMUtils::buildFilePath(urlParent.toString().toStdString().c_str(),
+                                                  nameValid.toStdString().c_str(), nullptr);
 
         return url;
     };

@@ -24,6 +24,8 @@
 #include "utils/operator/pbkdf2.h"
 #include "utils/operator/rsam.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QDir>
 #include <QDebug>
 #include <QPixmap>
@@ -42,10 +44,9 @@ OperatorCenter::OperatorCenter(QObject *parent)
 
 QString OperatorCenter::makeVaultLocalPath(const QString &before, const QString &behind)
 {
-    return kVaultBasePath
-            //            + QDir::separator() + CONFIG_DIR_NAME
-            + (before.isEmpty() ? QString("") : QDir::separator()) + before
-            + (behind.isEmpty() ? QString("") : QDir::separator()) + behind;
+    return DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(),
+                                          before.toStdString().c_str(),
+                                          behind.toStdString().c_str(), nullptr);
 }
 
 bool OperatorCenter::runCmd(const QString &cmd)

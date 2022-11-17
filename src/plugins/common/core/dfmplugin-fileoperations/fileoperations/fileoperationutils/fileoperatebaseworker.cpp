@@ -716,8 +716,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     // 创建文件的名称
     QUrl newTargetUrl = toInfo->url();
     const QString &newTargetPath = newTargetUrl.path();
-    const QString &newPath = newTargetPath.endsWith("/") ? newTargetPath + fileNewName
-                                                         : newTargetPath + QDir::separator() + fileNewName;
+    const QString &newPath = DFMIO::DFMUtils::buildFilePath(newTargetPath.toStdString().c_str(), fileNewName.toStdString().c_str(), nullptr);
     newTargetUrl.setPath(newPath);
 
     newTargetInfo.reset();

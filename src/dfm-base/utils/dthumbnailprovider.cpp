@@ -32,6 +32,8 @@
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <DThumbnailProvider>
 
 #include <QCryptographicHash>
@@ -308,7 +310,7 @@ QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) co
     const qulonglong inode = fileInfo->attribute(DFMIO::DFileInfo::AttributeID::kUnixInode).toULongLong();
 
     const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded) + QString::number(inode)).toLocal8Bit()) + kFormat;
-    QString thumbnail = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
+    QString thumbnail = DFMIO::DFMUtils::buildFilePath(d->sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
     if (!DecoratorFile(thumbnail).exists()) {
         return QString();
     }
@@ -376,7 +378,8 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
     const QString thumbnailName = dataToMd5Hex((fileUrl + QString::number(inode)).toLocal8Bit()) + kFormat;
 
     // the file is in fail path
-    QString thumbnail = StandardPaths::location(StandardPaths::kThumbnailFailPath) + QDir::separator() + thumbnailName;
+    QString thumbnail = DFMIO::DFMUtils::buildFilePath(StandardPaths::location(StandardPaths::kThumbnailFailPath).toStdString().c_str(),
+                                                       thumbnailName.toStdString().c_str(), nullptr);
 
     QMimeType mime = d->mimeDatabase.mimeTypeForFile(url);
     QScopedPointer<QImage> image(new QImage());
@@ -403,7 +406,7 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
 
     // successful
     if (d->errorString.isEmpty()) {
-        thumbnail = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
+        thumbnail = DFMIO::DFMUtils::buildFilePath(d->sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
     } else {
         //fail
         image.reset(new QImage(1, 1, QImage::Format_Mono));
@@ -481,7 +484,8 @@ bool DThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, DThu
         QProcess process;
         QStringList arguments;
         //! 生成缩略图缓存地址
-        const QString &saveImage = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
+        const QString &saveImage = DFMIO::DFMUtils::buildFilePath(d->sizeToFilePath(size).toStdString().c_str(),
+                                                                  thumbnailName.toStdString().c_str(), nullptr);
         arguments << "--thumbnail"
                   << "-f" << filePath << "-t" << saveImage;
         process.start(readerBinary, arguments);
@@ -703,7 +707,7 @@ void DThumbnailProvider::initThumnailTool()
         d->keyToThumbnailTool["Initialized"] = QString();
 
         for (const QString &path : QString(THUMBNAIL_TOOL_DIR).split(":")) {
-            const QString &thumbnailToolPath = path + QDir::separator() + "/thumbnail";
+            const QString &thumbnailToolPath = DFMIO::DFMUtils::buildFilePath(path.toStdString().c_str(), "thumbnail", nullptr);
             QDirIterator dir(thumbnailToolPath, { "*.json" }, QDir::NoDotAndDotDot | QDir::Files);
 
             while (dir.hasNext()) {

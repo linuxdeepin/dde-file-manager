@@ -31,6 +31,7 @@
 #include "dfm-base/utils/universalutils.h"
 
 #include <dfm-io/dfmio_global.h>
+#include <dfm-io/dfmio_utils.h>
 #include <dfm-io/core/diofactory.h>
 
 #include <QUrl>
@@ -104,7 +105,8 @@ bool DoCopyFromTrashFilesWorker::doOperate()
             }
         }
 
-        const QUrl &targetFileUrl = this->targetUrl.toString() + QDir::separator() + fileInfo->fileDisplayName();
+        const QUrl &targetFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
+                                                                   fileInfo->fileDisplayName().toStdString().c_str(), nullptr);
 
         const AbstractFileInfoPointer &targetFileInfo = InfoFactory::create<AbstractFileInfo>(targetFileUrl);
         if (!targetFileInfo) {

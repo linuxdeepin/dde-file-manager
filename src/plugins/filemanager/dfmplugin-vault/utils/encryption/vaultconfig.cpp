@@ -22,6 +22,8 @@
 #include "vaultconfig.h"
 #include "utils/vaultdefine.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QDir>
 #include <QSettings>
 
@@ -31,7 +33,8 @@ VaultConfig::VaultConfig(const QString &filePath)
     : currentFilePath(filePath)
 {
     if (filePath.isEmpty()) {
-        currentFilePath = kVaultBasePath + QDir::separator() + kVaultConfigFileName;
+        currentFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(),
+                                                         kVaultConfigFileName, nullptr);
     }
     pSetting = new QSettings(currentFilePath, QSettings::IniFormat);
 }
