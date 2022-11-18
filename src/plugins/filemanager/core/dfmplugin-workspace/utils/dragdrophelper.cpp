@@ -211,35 +211,33 @@ bool DragDropHelper::drop(QDropEvent *event)
     } else {
         QModelIndex hoverIndex = view->indexAt(event->pos());
 
-        if (event->source() == view && (!hoverIndex.isValid() || view->isSelected(hoverIndex)))
+        if (event->source() == view && (!hoverIndex.isValid() || view->isSelected(hoverIndex)) && !WindowUtils::keyCtrlIsPressed())
             return true;
 
-        //        bool isDropAtRootIndex = false;
         if (!hoverIndex.isValid()) {
             hoverIndex = view->rootIndex();
-            //            isDropAtRootIndex = true;
+        } else {
+            const AbstractFileInfoPointer &fileInfo = view->model()->itemFileInfo(hoverIndex);
+            if (fileInfo) {
+                // NOTE: if item can not drop, the drag item will drop to root dir.
+                if (fileInfo->isFile()
+                    && !FileUtils::isDesktopFile(fileInfo->url())
+                    && !fileInfo->isDragCompressFileFormat())
+                    hoverIndex = view->rootIndex();
+            }
         }
 
         if (!hoverIndex.isValid())
             return true;
 
-        const AbstractFileInfoPointer &fileInfo = view->model()->itemFileInfo(hoverIndex);
-        if (fileInfo) {
-            // NOTE: if item can not drop, the drag item will drop to root dir.
-            if (fileInfo->isFile()
-                && !FileUtils::isDesktopFile(fileInfo->url())
-                && !fileInfo->isDragCompressFileFormat())
-                hoverIndex = view->rootIndex();
-        }
-
-        QUrl toUrl = view->model()->getUrlByIndex(hoverIndex);   // view->sourceModel()->itemFromIndex(isDropAtRootIndex ? hoverIndex : view->model()->mapToSource(hoverIndex))->url();
+        QUrl toUrl = view->model()->getUrlByIndex(hoverIndex);
         QList<QUrl> fromUrls = event->mimeData()->urls();
         if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", fromUrls, toUrl)) {
             return true;
         }
 
         bool supportDropAction = view->model()->supportedDropActions() & event->dropAction();
-        bool dropEnabled = /*isDropAtRootIndex ? true : (*/ view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled /*)*/;
+        bool dropEnabled = view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled;
         if (supportDropAction && dropEnabled) {
             const Qt::DropAction action = view->dragDropMode() == QAbstractItemView::InternalMove
                     ? Qt::MoveAction
@@ -354,15 +352,6 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
         index = view->rootIndex();
 
     return view->model()->itemFileInfo(index);
-
-    //    if (index.isValid()) {
-    //        const FileViewItem *item = view->model()->itemFromIndex(index);
-    //        if (item)
-    //            return view->model()->itemFromIndex(index)->fileInfo();
-    //    } else {
-    //        return view->model()->rootItem()->fileInfo();
-    //    }
-    //    return nullptr;
 }
 
 bool DragDropHelper::checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl> &urls) const

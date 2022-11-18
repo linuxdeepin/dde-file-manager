@@ -974,15 +974,15 @@ void FileView::mousePressEvent(QMouseEvent *event)
                     setDragDropMode(DropOnly);
                 }
             }
-        } else if (WindowUtils::keyCtrlIsPressed() && selectionMode() == QAbstractItemView::SingleSelection) {
-            if (selectionModel()->isSelected(index)) {
+        } else if (WindowUtils::keyCtrlIsPressed() && selectionModel()->isSelected(index)) {
+            d->selectHelper->setSelection(selectionModel()->selection());
+            d->lastMousePressedIndex = index;
 
-                DListView::mousePressEvent(event);
+            DListView::mousePressEvent(event);
 
-                selectionModel()->select(index, QItemSelectionModel::Select);
+            selectionModel()->select(index, QItemSelectionModel::Select);
 
-                return;
-            }
+            return;
         } else if (WindowUtils::keyShiftIsPressed()) {
             if (!selectionModel()->isSelected(index)) {   // 如果该项没有被选择
                 DListView::mousePressEvent(event);   // 选择该项
@@ -991,6 +991,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
         } else {
             d->selectHelper->setSelection(selectionModel()->selection());
         }
+
+        d->lastMousePressedIndex = QModelIndex();
 
         DListView::mousePressEvent(event);
         break;
@@ -1011,7 +1013,15 @@ void FileView::mouseMoveEvent(QMouseEvent *event)
 void FileView::mouseReleaseEvent(QMouseEvent *event)
 {
     d->selectHelper->release();
-    if (!QScroller::hasScroller(this)) return DListView::mouseReleaseEvent(event);
+
+    if (WindowUtils::keyCtrlIsPressed()
+        && d->lastMousePressedIndex.isValid()
+        && d->lastMousePressedIndex == indexAt(event->pos())) {
+        selectionModel()->select(d->lastMousePressedIndex, QItemSelectionModel::Deselect);
+    }
+
+    if (!QScroller::hasScroller(this))
+        return DListView::mouseReleaseEvent(event);
 }
 
 void FileView::dragEnterEvent(QDragEnterEvent *event)
@@ -1063,7 +1073,7 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
     }
 
     if (index == -1 || index >= model()->rowCount(rootIndex()))
-        return rootIndex();
+        return QModelIndex();
 
     return model()->index(index, 0, rootIndex());
 }

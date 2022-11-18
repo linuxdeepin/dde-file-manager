@@ -236,7 +236,7 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
 {
     const QModelIndex &index = parent()->indexAt(pos);
 
-    if (!index.isValid() || index == parent()->rootIndex())
+    if (!index.isValid())
         return true;
 
     if (isSelected(index)) {

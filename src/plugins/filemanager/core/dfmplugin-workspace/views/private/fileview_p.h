@@ -81,6 +81,7 @@ class FileViewPrivate
     bool isAlwaysOpenInCurrentWindow { false };
     // move cursor later selecte index when pressed key shift
     QModelIndex lastCursorIndex;
+    QModelIndex lastMousePressedIndex;
 
     int horizontalOffset { 0 };
     int cachedViewWidth { -1 };
