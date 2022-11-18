@@ -52,6 +52,9 @@ QStringList FilePreviewFactory::keys()
 AbstractBasePreview *FilePreviewFactory::create(const QString &key)
 {
     if (AbstractBasePreview *view = dLoadPlugin<AbstractBasePreview, AbstractFilePreviewPlugin>(loader(), key)) {
+        if (!view)
+            return nullptr;
+
         FilePreviewFactory::previewToLoaderIndex[view] = loader()->indexOf(key);
 
         QObject::connect(view, &AbstractBasePreview::destroyed, view, [view] {
