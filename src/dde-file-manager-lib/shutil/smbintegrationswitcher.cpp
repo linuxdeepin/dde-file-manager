@@ -74,6 +74,7 @@ void SmbIntegrationSwitcher::switchIntegrationMode(bool value)
             // 调用`取消记住密码并卸载`接口，把需要卸载的smbIp卸载掉，再通知侧边栏和计算机界面，将界面刷新为smb分离模式
             QSharedPointer<DFMUrlListBaseEvent> eventPtr = dMakeEventPointer<DFMUrlListBaseEvent>(DFMEvent::UnknowType, Q_NULLPTR, unmountList);
             appController->actionForgetAllSmbPassword(eventPtr);
+            return ;
         }
     }
     DFMApplication::setGenericAttribute(DFMApplication::GA_MergeTheEntriesOfSambaSharedFolders, value);
