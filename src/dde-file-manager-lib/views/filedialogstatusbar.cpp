@@ -17,6 +17,8 @@
 #include <QMimeDatabase>
 #include <QTimer>
 #include <QDebug>
+#include <QListView>
+#include <QScrollBar>
 
 DWIDGET_USE_NAMESPACE
 
@@ -59,7 +61,12 @@ FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     m_fileNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_fileNameEdit->installEventFilter(this);
     m_fileNameEdit->setFixedHeight(35);
+
     m_filtersComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_filtersComboBox->setView(new QListView);
+    QScrollBar *scrollBar = new QScrollBar(m_filtersComboBox);
+    m_filtersComboBox->view()->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    m_filtersComboBox->view()->setHorizontalScrollBar(scrollBar);
 
     m_acceptButton = new DSuggestButton(this);
     m_rejectButton = new QPushButton(tr("Cancel","button"), this);
@@ -262,6 +269,8 @@ void FileDialogStatusBar::showEvent(QShowEvent *event)
     if (m_fileNameEdit->isVisible())
         m_fileNameEdit->setFocus();
 
+    updateComboxWidth();
+
     return QFrame::showEvent(event);
 }
 
@@ -432,4 +441,14 @@ void FileDialogStatusBar::onWindowTitleChanged(const QString &title)
 
     m_titleLabel->setObjectName(title);
     AC_SET_ACCESSIBLE_NAME(m_titleLabel, title);
+}
+
+void FileDialogStatusBar::updateComboxWidth()
+{
+    QListView *listView = qobject_cast<QListView*>(m_filtersComboBox->view());
+    if (listView) {
+        QWidget* parent = qobject_cast<QWidget*>(listView->parent());
+        if (parent)
+            parent->setFixedWidth(m_filtersComboBox->width());
+    }
 }

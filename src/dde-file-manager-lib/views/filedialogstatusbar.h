@@ -61,6 +61,7 @@ private:
 
     void updateLayout();
     void onWindowTitleChanged(const QString &title);
+    void updateComboxWidth();
 
     Mode m_mode = Unknow;
 
