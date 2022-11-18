@@ -148,15 +148,15 @@ void ShareControlWidget::setupUi()
 
     shareNameEditor = new QLineEdit(this);
     shareNameEditor->setFixedWidth(ConstDef::kWidgetFixedWidth);
-    mainLay->addRow(new SectionKeyLabel(tr("Share name:"), this), shareNameEditor);
+    mainLay->addRow(new SectionKeyLabel(tr("Share name"), this), shareNameEditor);
     sharePermissionSelector = new QComboBox(this);
     sharePermissionSelector->setPalette(peMenuBg);
     sharePermissionSelector->setFixedWidth(ConstDef::kWidgetFixedWidth);
-    mainLay->addRow(new SectionKeyLabel(tr("Permission:"), this), sharePermissionSelector);
+    mainLay->addRow(new SectionKeyLabel(tr("Permission"), this), sharePermissionSelector);
     shareAnonymousSelector = new QComboBox(this);
     shareAnonymousSelector->setPalette(peMenuBg);
     shareAnonymousSelector->setFixedWidth(ConstDef::kWidgetFixedWidth);
-    mainLay->addRow(new SectionKeyLabel(tr("Anonymous:"), this), shareAnonymousSelector);
+    mainLay->addRow(new SectionKeyLabel(tr("Anonymous"), this), shareAnonymousSelector);
 
     QValidator *validator = new QRegularExpressionValidator(QRegularExpression(ConstDef::kShareNameRegx), this);
     shareNameEditor->setValidator(validator);
@@ -179,12 +179,13 @@ void ShareControlWidget::setupNetworkPath()
 {
     netScheme = new QLabel("smb://", this);
     networkAddrLabel = new QLabel("127.0.0.1", this);
+    networkAddrLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     QHBoxLayout *hBoxLine1 = new QHBoxLayout(this);
     hBoxLine1->addWidget(netScheme);
     hBoxLine1->addWidget(networkAddrLabel);
     hBoxLine1->setContentsMargins(0, 0, 2, 0);
     networkAddrLabel->setFixedWidth(ConstDef::kWidgetFixedWidth);
-    mainLay->addRow(new SectionKeyLabel(tr("Network path:"), this), hBoxLine1);
+    mainLay->addRow(new SectionKeyLabel(tr("Network path"), this), hBoxLine1);
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
         copyNetAddr = new QPushButton(QIcon(":light/icons/property_bt_copy.svg"), "");
     else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
@@ -196,7 +197,7 @@ void ShareControlWidget::setupNetworkPath()
     copyNetAddr->setToolTip(tr("Copy"));
     QObject::connect(copyNetAddr, &QPushButton::clicked, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(networkAddrLabel->text());
+        clipboard->setText(netScheme->text() + networkAddrLabel->text());
     });
     hBoxLine1->addWidget(copyNetAddr);
 }
@@ -204,12 +205,13 @@ void ShareControlWidget::setupNetworkPath()
 void ShareControlWidget::setupUserName()
 {
     userNamelineLabel = new QLabel(this);
+    userNamelineLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     userNamelineLabel->setText(getpwuid(getuid())->pw_name);
     userNamelineLabel->setFixedWidth(ConstDef::kWidgetFixedWidth);
     QHBoxLayout *hBoxLine2 = new QHBoxLayout(this);
     hBoxLine2->addWidget(userNamelineLabel);
     hBoxLine2->setContentsMargins(0, 0, 2, 0);
-    mainLay->addRow(new SectionKeyLabel(tr("Username:"), this), hBoxLine2);
+    mainLay->addRow(new SectionKeyLabel(tr("Username"), this), hBoxLine2);
 
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
         copyUserNameBt = new QPushButton(QIcon(":light/icons/property_bt_copy.svg"), "");
@@ -235,7 +237,6 @@ void ShareControlWidget::setupSharePassword()
     int defaultFontSize = font.pointSize();
     font.setPointSize(isSharePasswordSet ? 4 : defaultFontSize);
     sharePasswordlineEditor->setFont(font);
-    sharePasswordlineEditor->setFixedWidth(isSharePasswordSet ? ConstDef::kWidgetFixedWidth - 140 : ConstDef::kWidgetFixedWidth - 128);
     sharePasswordlineEditor->setEchoMode(isSharePasswordSet ? QLineEdit::Password : QLineEdit::Normal);
     sharePasswordlineEditor->setAlignment(Qt::AlignJustify | Qt::AlignLeft);
     sharePasswordlineEditor->setText(isSharePasswordSet ? "-----" : tr("None"));
@@ -243,7 +244,7 @@ void ShareControlWidget::setupSharePassword()
     sharePasswordlineEditor->setCursorPosition(0);
     QHBoxLayout *hBoxLine3 = new QHBoxLayout(this);
     hBoxLine3->addWidget(sharePasswordlineEditor);
-    hBoxLine3->setContentsMargins(0, 0, 2, 0);
+    hBoxLine3->setContentsMargins(0, 0, 0, 0);
 
     setPasswordBt = new QPushButton(tr("Set password"));
     setPasswordBt->setText(isSharePasswordSet ? tr("Change password") : tr("Set password"));
@@ -258,7 +259,8 @@ void ShareControlWidget::setupSharePassword()
         dpfSlotChannel->push("dfmplugin_titlebar", "slot_SharePasswordSettingsDialog_Show", FMWindowsIns.windowIdList().first());
     });
     hBoxLine3->addWidget(setPasswordBt);
-    mainLay->addRow(new SectionKeyLabel(tr("Share password:"), this), hBoxLine3);
+    hBoxLine3->setStretch(0, 1);
+    mainLay->addRow(new SectionKeyLabel(tr("Share password"), this), hBoxLine3);
 }
 
 void ShareControlWidget::setupShareNotes(QGridLayout *gridLayout)
