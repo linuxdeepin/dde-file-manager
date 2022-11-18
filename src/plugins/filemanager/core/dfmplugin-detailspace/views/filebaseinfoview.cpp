@@ -247,22 +247,23 @@ void FileBaseInfoView::basicFill(const QUrl &url)
             fileType->setRightValue(tr("Videos"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight << DFileInfo::AttributeExtendID::kExtendMediaDuration;
-            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList);
             connect(localinfo.data(), &AbstractFileInfo::mediaDataFinished, this, &FileBaseInfoView::videoExtenInfo);
+            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList);
         } break;
         case MimeDatabase::FileType::kImages: {
             fileType->setRightValue(tr("Images"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight;
-            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList);
             connect(localinfo.data(), &AbstractFileInfo::mediaDataFinished, this, &FileBaseInfoView::imageExtenInfo);
+            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList);
+
         } break;
         case MimeDatabase::FileType::kAudios: {
             fileType->setRightValue(tr("Audios"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaDuration;
-            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList);
             connect(localinfo.data(), &AbstractFileInfo::mediaDataFinished, this, &FileBaseInfoView::audioExtenInfo);
+            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList);
         } break;
         case MimeDatabase::FileType::kExecutable:
             fileType->setRightValue(tr("Executable"), Qt::ElideNone, Qt::AlignLeft, true);

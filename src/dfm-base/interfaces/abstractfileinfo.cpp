@@ -58,6 +58,7 @@ AbstractFileInfo::AbstractFileInfo(const QUrl &url, DFMBASE_NAMESPACE::AbstractF
     : dptr(d)
 {
     Q_UNUSED(type_id)
+    qRegisterMetaType<QMap<dfmio::DFileInfo::AttributeExtendID, QVariant>>("QMap<dfmio::DFileInfo::AttributeExtendID, QVariant>");
     dptr->url = url;
 }
 

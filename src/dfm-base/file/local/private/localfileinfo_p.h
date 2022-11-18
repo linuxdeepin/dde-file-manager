@@ -117,7 +117,7 @@ public:
             auto it = values.constBegin();
             while (it != values.constEnd()) {
                 const QVariant &value = it.value();
-                if (value.isValid())
+                if (value.isValid() && !value.toString().isEmpty())
                     attributesExtend.insert(it.key(), value);
                 ++it;
             }
