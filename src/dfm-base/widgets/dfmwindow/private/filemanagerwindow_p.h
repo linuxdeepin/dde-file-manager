@@ -55,8 +55,8 @@ public:
 
 protected:
     QUrl currentUrl;
-    static constexpr int kMinimumWindowWidth { 760 };
-    static constexpr int kMinimumWindowHeight { 420 };
+    static constexpr int kMinimumWindowWidth { 680 };
+    static constexpr int kMinimumWindowHeight { 300 };
     static constexpr int kDefaultWindowWidth { 1100 };
     static constexpr int kDefaultWindowHeight { 700 };
     static constexpr int kMinimumLeftWidth { 120 };
