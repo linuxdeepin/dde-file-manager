@@ -22,9 +22,12 @@
 */
 #include "virtualextensionimplplugin.h"
 #include "menuimpl/extensionlibmenuscene.h"
+#include "emblemimpl/extensionemblemmanager.h"
 #include "pluginsload/extensionpluginmanager.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+
+Q_DECLARE_METATYPE(QList<QIcon> *)
 
 namespace dfmplugin_utils {
 
@@ -32,6 +35,9 @@ void VirtualExtensionImplPlugin::initialize()
 {
     auto manager = &ExtensionPluginManager::instance();   // run in main thread
     connect(manager, &ExtensionPluginManager::requestInitlaizePlugins, manager, &ExtensionPluginManager::onLoadingPlugins);
+
+    dpfHookSequence->follow("dfmplugin_emblem", "hook_ExtendEmblems_Fetch",
+                            &ExtensionEmblemManager::instance(), &ExtensionEmblemManager::onFetchCustomEmblems);
 }
 
 bool VirtualExtensionImplPlugin::start()

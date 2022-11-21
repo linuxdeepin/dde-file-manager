@@ -34,8 +34,7 @@ class DFMExtEmblemIconLayout
     friend class DFMExtEmblemIconLayoutPrivate;
 
 public:
-    enum class LocationType : uint8_t
-    {
+    enum class LocationType : uint8_t {
         BottomRight = 0,
         BottomLeft,
         TopLeft,
@@ -44,15 +43,15 @@ public:
     };
 
     explicit DFMExtEmblemIconLayout(LocationType type,
-                           const std::string &path,
-                           int x = 0, int y = 0);
+                                    const std::string &path,
+                                    int x = 0, int y = 0);
     ~DFMExtEmblemIconLayout();
     DFMExtEmblemIconLayout(const DFMExtEmblemIconLayout &emblem);
     DFMExtEmblemIconLayout &operator=(const DFMExtEmblemIconLayout &emblem);
     LocationType locationType() const;
     std::string iconPath() const;
-    int x() const;
-    int y() const;
+    [[deprecated]] int x() const;
+    [[deprecated]] int y() const;
 
 private:
     DFMExtEmblemIconLayoutPrivate *d { nullptr };
@@ -60,4 +59,4 @@ private:
 
 END_DFMEXT_NAMESPACE
 
-#endif // DFMEXTEMBLEMICONLAYOUT_H
+#endif   // DFMEXTEMBLEMICONLAYOUT_H

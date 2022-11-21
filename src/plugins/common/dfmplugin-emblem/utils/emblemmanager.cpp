@@ -76,16 +76,8 @@ QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
     if (FileUtils::isGvfsFile(url))
         return emblemList;
 
-    QList<QIcon> extendEmblems {};
-    if (EmblemEventSequence::instance()->doFetchExtendEmblems(url, &extendEmblems)) {
-        emblemList.append(extendEmblems);
-        return emblemList;
-    }
-
-    emblemList.append(extendEmblems);
-
+    // add gio emblem icons
     const auto &gioEmblemsMap = helper->getGioEmblems(info);
-
     QMap<int, QIcon>::const_iterator iter = gioEmblemsMap.begin();
     while (iter != gioEmblemsMap.end()) {
         if (iter.key() == emblemList.count()) {
@@ -105,7 +97,11 @@ QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
         ++iter;
     }
 
+    // add custom emblem icons
     EmblemEventSequence::instance()->doFetchCustomEmblems(url, &emblemList);
+
+    // add extension lib emblem icons
+    EmblemEventSequence::instance()->doFetchExtendEmblems(url, &emblemList);
 
     return emblemList;
 }

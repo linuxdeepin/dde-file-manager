@@ -29,8 +29,14 @@ public:
         kInitialized
     };
 
+    enum ExtensionType {
+        kMenu,
+        kEmblemIcon
+    };
+
     static ExtensionPluginManager &instance();
     InitState currentState() const;
+    bool exists(ExtensionType type) const;
     QList<QSharedPointer<DFMEXT::DFMExtMenuPlugin>> menuPlugins() const;
     QList<QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin>> emblemPlugins() const;
     DFMEXT::DFMExtMenuProxy *pluginMenuProxy() const;

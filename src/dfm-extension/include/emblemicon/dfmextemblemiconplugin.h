@@ -44,10 +44,10 @@ public:
 
     // Note: If the corner mark set by emblemIcons conflicts with the corner mark position set by locationEmblemIcons,
     // the conflict position will only display the corner mark set by locationEmblemIcons
-    DFM_FAKE_VIRTUAL IconsType emblemIcons(const std::string &fileUrl) const;
-    void registerEmblemIcons(const EmblemIcons &func);
+    DFM_FAKE_VIRTUAL IconsType emblemIcons(const std::string &filePath) const;
+    DFM_FAKE_VIRTUAL DFMExtEmblem locationEmblemIcons(const std::string &filePath, int systemIconCount) const;
 
-    DFM_FAKE_VIRTUAL DFMExtEmblem locationEmblemIcons(const std::string &fileUrl, int systemIconCount) const;
+    void registerEmblemIcons(const EmblemIcons &func);
     void registerLocationEmblemIcons(const LocationEmblemIcons &func);
 
 private:

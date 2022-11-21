@@ -43,10 +43,10 @@ DFMExtEmblemIconPlugin::~DFMExtEmblemIconPlugin()
     delete d;
 }
 
-DFMExtEmblemIconPlugin::IconsType DFMExtEmblemIconPlugin::emblemIcons(const std::string &fileUrl) const
+DFMExtEmblemIconPlugin::IconsType DFMExtEmblemIconPlugin::emblemIcons(const std::string &filePath) const
 {
     if (d->emblemIcons) {
-        return d->emblemIcons(fileUrl);
+        return d->emblemIcons(filePath);
     } else {
         IconsType icon;
         return icon;
@@ -59,10 +59,10 @@ void DFMExtEmblemIconPlugin::registerEmblemIcons(const EmblemIcons &func)
         d->emblemIcons = func;
 }
 
-DFMExtEmblem DFMExtEmblemIconPlugin::locationEmblemIcons(const std::string &fileUrl, int systemIconCount) const
+DFMExtEmblem DFMExtEmblemIconPlugin::locationEmblemIcons(const std::string &filePath, int systemIconCount) const
 {
     if (d->locationEmblemIcons) {
-        return d->locationEmblemIcons(fileUrl, systemIconCount);
+        return d->locationEmblemIcons(filePath, systemIconCount);
     } else {
         DFMExtEmblem icon;
         return icon;

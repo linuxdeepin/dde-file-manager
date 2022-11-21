@@ -20,6 +20,8 @@ void ExtensionPluginInitWorker::doWork(const QStringList &paths)
     std::for_each(paths.cbegin(), paths.cend(), [this](const QString &path) {
         qInfo() << "Start scan: " << path;
         QDirIterator itera(path, { "*.so" }, QDir::Files | QDir::NoSymLinks);
+        if (!itera.hasNext())
+            qWarning() << "Cannot find extension lib at: " << path;
         while (itera.hasNext()) {
             itera.next();
             ExtPluginLoaderPointer ptr { new ExtensionPluginLoader(itera.filePath()) };
@@ -128,6 +130,20 @@ ExtensionPluginManager::InitState ExtensionPluginManager::currentState() const
     Q_D(const ExtensionPluginManager);
 
     return d->curState;
+}
+
+bool ExtensionPluginManager::exists(ExtensionPluginManager::ExtensionType type) const
+{
+    Q_D(const ExtensionPluginManager);
+
+    switch (type) {
+    case ExtensionType::kMenu:
+        return !d->menuMap.isEmpty();
+    case ExtensionType::kEmblemIcon:
+        return !d->emblemMap.isEmpty();
+    }
+
+    return false;
 }
 
 QList<QSharedPointer<dfmext::DFMExtMenuPlugin>> ExtensionPluginManager::menuPlugins() const
