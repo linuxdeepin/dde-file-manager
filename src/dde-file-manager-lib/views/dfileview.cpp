@@ -1010,8 +1010,10 @@ void DFileView::onRowCountChanged()
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
-    // 左键按下则不响应滚轮事件，解决87504Bug，完善框选未定义行为
-    if (event->buttons().testFlag(Qt::LeftButton)) {
+    // 1. 文管界面左键按下则不响应滚轮事件，解决87504Bug，完善框选未定义行为
+    // 2. 文件选择框界面左键与Ctrl同时按下则不响应滚轮事件，解决bug163975
+    if ((event->buttons().testFlag(Qt::LeftButton) && !g_isFileDialogMode)
+            || (event->buttons().testFlag(Qt::LeftButton) && g_isFileDialogMode && DFMGlobal::keyCtrlIsPressed())) {
         return;
     }
 
