@@ -49,9 +49,13 @@ public:
     static QString displayName(const QUrl &url);
     static void removeStashedMount(const QUrl &url);
     static void stashMount(const QUrl &protocolUrl, const QString &displayName);
+    static QVariantHash makeStashedSmbDataById(const QString &id);
+    static void stashSmbMount(const QVariantHash &newMount);   // for compatible issue
+    static QUrl makeStashedSmbMountUrl(const QVariantHash &stashedData);   // for compatible issue
     static void clearStashedMounts();
     static bool isStashedDevExist(const QUrl &stashedUrl);
     static void stashMountedMounts();
+    static QString gvfsMountPath();
 
 private:
     static QJsonDocument cfgDocument();

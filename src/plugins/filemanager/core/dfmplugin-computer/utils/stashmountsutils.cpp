@@ -27,7 +27,9 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QFile>
@@ -161,6 +163,53 @@ void StashMountsUtils::stashMount(const QUrl &protocolUrl, const QString &displa
     cfgSettings()->setValue(StashedMountsKeys::kJsonGroup, id, displayName);
 }
 
+void StashMountsUtils::stashSmbMount(const QVariantHash &newMount)
+{
+    if (!isStashMountsEnabled()) {
+        qDebug() << "stash mounts is disabled";
+        return;
+    }
+
+    const QString &key = QString("%1/smb-share:server=%2,share=%3")
+                                 .arg(gvfsMountPath())
+                                 .arg(newMount.value(StashedMountsKeys::kHostKey).toString())
+                                 .arg(newMount.value(StashedMountsKeys::kShareKey).toString());
+
+    cfgSettings()->setValue(StashedMountsKeys::kJsonGroup, key, newMount);
+}
+
+QUrl StashMountsUtils::makeStashedSmbMountUrl(const QVariantHash &stashedData)
+{
+    const QString &host = stashedData.value(StashedMountsKeys::kHostKey).toString();
+    const QString &shareName = stashedData.value(StashedMountsKeys::kShareKey).toString();
+    QUrl url;
+    url.setScheme(Global::Scheme::kSmb);
+    url.setHost(host);
+    url.setPath("/" + shareName + "/");
+    const QString &key = url.toString();
+    const QUrl &stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(key);
+
+    return stashedUrl;
+}
+
+QVariantHash StashMountsUtils::makeStashedSmbDataById(const QString &id)
+{
+    const QUrl &url = QUrl::fromPercentEncoding(id.toUtf8());
+    const QString &path = url.path();
+    int pos = path.lastIndexOf("/");
+    const QString &displayName = path.mid(pos + 1);
+    const QString &host = displayName.section("on", 1, 1).trimmed();
+    const QString &shareName = displayName.section("on", 0, 0).trimmed();
+
+    QVariantHash newMount;
+    newMount.insert(StashedMountsKeys::kHostKey, host);
+    newMount.insert(StashedMountsKeys::kShareKey, shareName);
+    newMount.insert(StashedMountsKeys::kProtocolKey, Global::Scheme::kSmb);
+    newMount.insert(StashedMountsKeys::kNameKey, displayName);
+
+    return newMount;
+}
+
 void StashMountsUtils::clearStashedMounts()
 {
     cfgSettings()->removeGroup(StashedMountsKeys::kJsonGroup);
@@ -182,8 +231,18 @@ void StashMountsUtils::stashMountedMounts()
             if (!displayName.isEmpty()) {
                 cfgSettings()->setValue(StashedMountsKeys::kJsonGroup, id, displayName);
             }
+        } else if (DeviceUtils::isSamba(QUrl(id))) {
+            const QVariantHash &newMount = makeStashedSmbDataById(id);
+            StashMountsUtils::stashSmbMount(newMount);
         }
     }
+}
+
+QString StashMountsUtils::gvfsMountPath()
+{
+    return SysInfoUtils::isRootUser()
+            ? QString("/root/.gvfs")
+            : QString("/run/user/%1/gvfs").arg(SysInfoUtils::getUserId());
 }
 
 QJsonDocument StashMountsUtils::cfgDocument()

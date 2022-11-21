@@ -33,9 +33,11 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
@@ -262,11 +264,22 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, 
 
     const QMap<QString, QString> &&stashedMounts = StashMountsUtils::stashedMounts();
     for (auto iter = stashedMounts.cbegin(); iter != stashedMounts.cend(); ++iter) {
-        QUrl protocolUrl = ComputerUtils::makeProtocolDevUrl(iter.key());
+        QUrl protocolUrl;
+        if (iter.key().startsWith(Global::Scheme::kSmb)) {
+            protocolUrl.setScheme(Global::Scheme::kFile);
+            const QString &path = QString("/media/%1/smbmounts/%2")
+                                          .arg(SysInfoUtils::getUser())
+                                          .arg(QString(QUrl::toPercentEncoding(iter.value())));
+            protocolUrl.setPath(path);
+            protocolUrl = ComputerUtils::makeProtocolDevUrl(protocolUrl.toString());
+        } else {
+            protocolUrl = ComputerUtils::makeProtocolDevUrl(iter.key());
+        }
+
         if (hasProtocolDev(protocolUrl, ret) || hasProtocolDev(protocolUrl, protocolDevs))
             continue;
 
-        QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(iter.key());
+        const QUrl &stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(iter.key());
         DFMEntryFileInfoPointer info(new EntryFileInfo(stashedUrl));
         if (!info->exists())
             continue;
@@ -664,6 +677,13 @@ void ComputerItemWatcher::onUpdateBlockItem(const QString &id)
 void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QString &mntPath)
 {
     auto url = ComputerUtils::makeProtocolDevUrl(id);
+
+    if (DeviceUtils::isSamba(QUrl(id))) {
+        const QVariantHash &newMount = StashMountsUtils::makeStashedSmbDataById(id);
+        const QUrl &stashedUrl = StashMountsUtils::makeStashedSmbMountUrl(newMount);
+        removeDevice(stashedUrl);   // Before adding mounted smb item, removing its stashed item firstly.
+    }
+
     this->onDeviceAdded(url, getGroupId(diskGroup()));
 }
 
@@ -671,8 +691,18 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
 {
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     removeDevice(devUrl);
-    if (id.startsWith(Global::Scheme::kSmb) && StashMountsUtils::isStashMountsEnabled())
-        onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
+    if (StashMountsUtils::isStashMountsEnabled()) {   // After removing smb device, adding stashed smb item to sidebar and computer view
+        QUrl stashedUrl;
+        if (id.startsWith(Global::Scheme::kSmb)) {
+            stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(id);
+        } else if (DeviceUtils::isSamba(QUrl(id))) {
+            const QVariantHash &newMount = StashMountsUtils::makeStashedSmbDataById(id);
+            StashMountsUtils::stashSmbMount(newMount);
+            stashedUrl = StashMountsUtils::makeStashedSmbMountUrl(newMount);
+        }
+
+        onDeviceAdded(stashedUrl, getGroupId(diskGroup()));
+    }
 
     routeMapper.remove(ComputerUtils::makeProtocolDevUrl(id));
 }
