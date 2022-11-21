@@ -44,6 +44,6 @@ QString PathManager::makeVaultLocalPath(QString path, QString base)
     if (base.isEmpty()) {
         base = kVaultDecryptDirName;
     }
-    DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), base.toStdString().c_str(),
-                                   path.toStdString().c_str(), nullptr);
+    return DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), base.toStdString().c_str(),
+                                          path.toStdString().c_str(), nullptr);
 }

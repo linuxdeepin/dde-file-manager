@@ -265,6 +265,10 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
     if (cryfsBinary.isEmpty()) return static_cast<int>(ErrorCode::kCryfsNotExist);
 
     QStringList arguments;
+    CryfsVersionInfo version = versionString();
+    if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
+        arguments << QString("--allow-replaced-filesystem");
+    }
     arguments << lockBaseDir << unlockFileDir;
 
     process->setEnvironment({ "CRYFS_FRONTEND=noninteractive" });
@@ -300,6 +304,10 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
     if (cryfsBinary.isEmpty()) return static_cast<int>(ErrorCode::kCryfsNotExist);
 
     QStringList arguments;
+    CryfsVersionInfo version = versionString();
+    if (version.isVaild() && !version.isOlderThan(CryfsVersionInfo(0, 10, 0))) {
+        arguments << QString("--allow-replaced-filesystem");
+    }
     arguments << QString("--cipher") << encryptTypeMap.value(type) << QString("--blocksize") << QString::number(blockSize) << lockBaseDir << unlockFileDir;
 
     qInfo() << arguments;
