@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
 
         if (CommandLineManager::instance()->isSet("d")) {
             fileManagerApp;
-            app.setQuitOnLastWindowClosed(false);
+            app.setQuitOnLastWindowClosed(true);
         } else {
             CommandLineManager::instance()->processCommand();
         }
