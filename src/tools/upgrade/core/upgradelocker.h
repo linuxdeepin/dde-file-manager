@@ -22,6 +22,7 @@
 #define UPGRADELOCKER_H
 
 #include <QString>
+#include <QSharedMemory>
 
 namespace dfm_upgrade {
 
@@ -30,11 +31,9 @@ class UpgradeLocker
 public:
     explicit UpgradeLocker();
     ~UpgradeLocker();
-    bool isLock() const;
-    bool lock();
-    void unlock();
-    static QString lockFile();
+    bool isLock();
 protected:
+    QSharedMemory sharedMemory;
 };
 
 }
