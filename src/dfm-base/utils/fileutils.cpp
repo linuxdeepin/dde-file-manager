@@ -445,10 +445,11 @@ bool FileUtils::isCdRomDevice(const QUrl &url)
 
 bool FileUtils::trashIsEmpty()
 {
-    DecoratorFileEnumerator enumerator(trashRootUrl());
-    if (!enumerator.isValid())
-        return true;
-    return !enumerator.hasNext();
+    auto info = InfoFactory::create<AbstractFileInfo>(trashRootUrl());
+    if (info) {
+        return info->countChildFile() == 0;
+    }
+    return true;
 }
 
 QUrl FileUtils::trashRootUrl()

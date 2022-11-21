@@ -313,6 +313,11 @@ QString TrashFileInfo::mimeTypeName()
 
 int TrashFileInfo::countChildFile() const
 {
+    if (UniversalUtils::urlEquals(url(), TrashCoreHelper::rootUrl())) {
+        if (d->dFileInfo)
+            return d->dFileInfo->attribute(DFMIO::DFileInfo::AttributeID::kTrashItemCount).toInt();
+    }
+
     if (isDir()) {
         DecoratorFileEnumerator enumerator(url());
         return int(enumerator.fileCount());
@@ -351,9 +356,8 @@ bool TrashFileInfo::isWritable() const
 
 bool TrashFileInfo::isDir() const
 {
-    if (url() == TrashCoreHelper::rootUrl()) {
+    if (UniversalUtils::urlEquals(url(), TrashCoreHelper::rootUrl()))
         return true;
-    }
 
     return AbstractFileInfo::isDir();
 }
