@@ -76,17 +76,9 @@ void Tab::setCurrentUrl(const QUrl &url)
 {
     d->url = url;
 
-    QString fileName = "";
-    if (UrlRoute::isRootUrl(url))
-        fileName = UrlRoute::rootDisplayName(url.scheme());
-
-    if (fileName.isEmpty()) {
-        auto info = InfoFactory::create<AbstractFileInfo>(url, false);
-        if (info)
-            fileName = info->fileName();
-        else
-            fileName = url.fileName();
-    }
+    QString fileName = UrlRoute::isRootUrl(url)
+            ? UrlRoute::rootDisplayName(url.scheme())
+            : url.fileName();
 
     setTabText(fileName);
 }
@@ -179,7 +171,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     QPen pen = painter->pen();
     pen.setWidth(1);
 
-    //draw text
+    // draw text
     QFont font;
     font.setPixelSize(12);
 
@@ -196,7 +188,7 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
     DPalette pal = DApplicationHelper::instance()->palette(widget);
     QColor color;
 
-    //draw backgound
+    // draw backgound
     if (isChecked()) {
         color = pal.color(QPalette::Active, QPalette::Base);
         color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, 0, 0, 0, +51);
@@ -360,14 +352,14 @@ QPixmap Tab::toPixmap(bool drawBorder) const
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
 
-    //draw text
+    // draw text
     QFont font;
     font.setPixelSize(12);
     painter.setFont(font);
     QFontMetrics fm(font);
     QString str = fm.elidedText(d->tabText, Qt::ElideRight, 300 - 10);
 
-    //draw backgound
+    // draw backgound
     color.setNamedColor("#FFFFFF");
     painter.fillRect(boundingRect(), color);
     color.setNamedColor("#303030");

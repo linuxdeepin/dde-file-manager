@@ -602,11 +602,6 @@ bool LocalFileInfo::canRename() const
         locker.unlock();
 
         canRename = SysInfoUtils::isRootUser();
-        if (!canRename) {
-            int result = access(this->absolutePath().toLocal8Bit().data(), W_OK);
-            canRename = result == 0;
-        }
-
         QWriteLocker locker(&d->lock);
         if (!canRename) {
             if (d->dfmFileInfo)
@@ -655,8 +650,6 @@ bool LocalFileInfo::isReadable() const
         if (d->dfmFileInfo) {
             isReadable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, &success).toBool();
         }
-        if (!success)
-            isReadable = QFileInfo(d->url.path()).isReadable();
 
         d->attributes.insert(DFileInfo::AttributeID::kAccessCanRead, isReadable);
     } else {

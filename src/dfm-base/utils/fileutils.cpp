@@ -1110,7 +1110,7 @@ bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::Sort
             return false;
 
         // Matches strings beginning with letters, numbers, and Chinese
-        QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
+        static const QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
         return !regExp.exactMatch(text);
     };
 
