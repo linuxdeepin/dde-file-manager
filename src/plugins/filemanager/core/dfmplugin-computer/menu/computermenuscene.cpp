@@ -173,7 +173,7 @@ void ComputerMenuScene::updateState(QMenu *parent)
             keeped << kUnmount;
 
         auto id = d->info->extraProperty(DeviceProperty::kId).toString();
-        if (id.contains(QRegularExpression("^smb|^ftp|^sftp|^dav")))
+        if (id.contains(QRegularExpression("^smb|^ftp|^sftp|^dav")) || DeviceUtils::isSamba(QUrl(id)))
             keeped << kLogoutAndForget;
     } break;
 

@@ -519,8 +519,25 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
 void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
 {
     // 1. forget passwd
-    QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
-    RemotePasswdManagerInstance->clearPasswd(id);
+    const QString &id = ComputerUtils::getProtocolDevIdByUrl(info->url());
+    QString uri;
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb))
+        uri = id;
+    else if (DeviceUtils::isSamba(id)) {
+        const QUrl &url = QUrl::fromPercentEncoding(id.toUtf8());
+        const QString &path = url.path();
+        int pos = path.lastIndexOf("/");
+        const QString &displayName = path.mid(pos + 1);
+        const QString &host = displayName.section("on", 1, 1).trimmed();
+        const QString &shareName = displayName.section("on", 0, 0).trimmed();
+        QUrl temUrl;
+        temUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kSmb);
+        temUrl.setHost(host);
+        temUrl.setPath("/"+shareName+"/");
+        uri = temUrl.toString();
+    }
+
+    RemotePasswdManagerInstance->clearPasswd(uri);
 
     // 2. unmount
     actUnmount(info);
