@@ -60,15 +60,17 @@ void SearchDirIteratorPrivate::initConnect()
 void SearchDirIteratorPrivate::doSearch()
 {
     auto targetUrl = SearchHelper::searchTargetUrl(fileUrl);
-    DFMBASE_USE_NAMESPACE
-    searchRootWatcher.reset(new LocalFileWatcher(targetUrl));
-    searchRootWatcher->startWatcher();
-    connect(searchRootWatcher.data(), &LocalFileWatcher::fileDeleted, this, [=](const QUrl &url) {
-        if (UniversalUtils::urlEquals(targetUrl, url)) {
-            SearchManager::instance()->stop(taskId);
-            SearchEventCaller::sendChangeCurrentUrl(winId, QUrl("computer:///"));
-        }
-    });
+    if (targetUrl.isLocalFile()) {
+        DFMBASE_USE_NAMESPACE
+        searchRootWatcher.reset(new LocalFileWatcher(targetUrl));
+        searchRootWatcher->startWatcher();
+        connect(searchRootWatcher.data(), &LocalFileWatcher::fileDeleted, this, [=](const QUrl &url) {
+            if (UniversalUtils::urlEquals(targetUrl, url)) {
+                SearchManager::instance()->stop(taskId);
+                SearchEventCaller::sendChangeCurrentUrl(winId, QUrl("computer:///"));
+            }
+        });
+    }
 
     bool isDisable = CustomManager::instance()->isDisableSearch(targetUrl);
     if (isDisable) return;
