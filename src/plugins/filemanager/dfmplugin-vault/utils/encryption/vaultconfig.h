@@ -37,6 +37,8 @@ inline constexpr char kConfigKeyUseUserPassWord[] { "use_user_password" };
 inline constexpr char kConfigVaultVersion[] { "new" };
 inline constexpr char kConfigVaultVersion1050[] { "1050" };
 
+inline constexpr char kConfigKeyNotExist[] { "NoExist" };
+
 class VaultConfig
 {
 public:

@@ -22,6 +22,7 @@
 #include "vaultmenuscene_p.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 
@@ -69,11 +70,13 @@ QStringList VaultMenuScenePrivate::normalMenuActionRule()
         "separator-line",
         "open-in-new-window",
         "open-in-new-tab",
+        "stage-file-to-burning",
         "cut",
         "copy",
         "rename",
         "delete",
         "separator-line",
+        "send-to",
         "property"
     };
 
@@ -86,12 +89,26 @@ void VaultMenuScenePrivate::filterMenuAction(QMenu *menu, const QStringList &act
     if (actionlist.isEmpty())
         return;
 
-    //QList<QAction *> removeActions;
     for (auto act : actionlist) {
         if (act->isSeparator())
             continue;
         QVariant actionId = act->property(ActionPropertyKey::kActionID);
         QString actionStr = actionId.toString();
+        if (actionStr == dfmplugin_menu::ActionID::kSendTo) {
+            auto subMenu = act->menu();
+            if (subMenu) {
+                int invisibleNum { 0 };
+                for (QAction *action : subMenu->actions()) {
+                    const QString &actionID = action->property(ActionPropertyKey::kActionID).toString();
+                    if (actionID == dfmplugin_menu::ActionID::kSendToDesktop || actionID == dfmplugin_menu::ActionID::kCreateSymlink) {
+                        action->setVisible(false);
+                        invisibleNum++;
+                    }
+                }
+                if (invisibleNum == subMenu->actions().count())
+                    act->setVisible(false);
+            }
+        }
         if (!actions.contains(actionStr)) {
             act->setVisible(false);
         }

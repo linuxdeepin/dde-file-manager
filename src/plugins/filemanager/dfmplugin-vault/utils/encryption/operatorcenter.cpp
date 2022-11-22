@@ -267,11 +267,11 @@ bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const 
 {
     // encrypt password，write salt and cihper to file
     // random salt
-    QString strRandomSalt = pbkdf2::createRandomSalt(kRandomSaltLength);
+    const QString &strRandomSalt = pbkdf2::createRandomSalt(kRandomSaltLength);
     // cipher
-    QString strCiphertext = pbkdf2::pbkdf2EncrypyPassword(password, strRandomSalt, kIteration, kPasswordCipherLength);
+    const QString &strCiphertext = pbkdf2::pbkdf2EncrypyPassword(password, strRandomSalt, kIteration, kPasswordCipherLength);
     // salt and cipher
-    QString strSaltAndCiphertext = strRandomSalt + strCiphertext;
+    const QString &strSaltAndCiphertext = strRandomSalt + strCiphertext;
     // save the second encrypt cipher, and update version
     secondSaveSaltAndCiphertext(strSaltAndCiphertext, strRandomSalt, kConfigVaultVersion1050);
 
@@ -287,8 +287,8 @@ bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const 
     passwordHintFile.close();
 
     VaultConfig config;
-    const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("NoExist")).toString();
-    if (useUserPassword != "NoExist") {
+    const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant(kConfigKeyNotExist)).toString();
+    if (useUserPassword != kConfigKeyNotExist) {
         strCryfsPassword = password;
     } else {
         strCryfsPassword = strSaltAndCiphertext;
@@ -371,8 +371,8 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
         }
 
         VaultConfig config;
-        const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("NoExist")).toString();
-        if (useUserPassword != "NoExist") {
+        const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant(kConfigKeyNotExist)).toString();
+        if (useUserPassword != kConfigKeyNotExist) {
             cipher = password;
         } else {
             cipher = strNewSaltAndCipher;
