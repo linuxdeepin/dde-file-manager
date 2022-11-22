@@ -161,7 +161,8 @@ QString TrashFileInfo::fileDisplayName() const
 
 bool TrashFileInfo::exists() const
 {
-    return AbstractFileInfo::exists() || url() == TrashCoreHelper::rootUrl();
+    return AbstractFileInfo::exists()
+            || FileUtils::isTrashRootFile(url());
 }
 
 bool TrashFileInfo::canDelete() const
@@ -172,7 +173,7 @@ bool TrashFileInfo::canDelete() const
     bool value = false;
     bool success = false;
     value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, &success).toBool();
-    return value && success;
+    return value;
 }
 
 bool TrashFileInfo::canTrash() const
@@ -183,7 +184,7 @@ bool TrashFileInfo::canTrash() const
     bool value = false;
     bool success = false;
     value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, &success).toBool();
-    return value && success;
+    return value;
 }
 
 void TrashFileInfo::refresh()
@@ -199,7 +200,7 @@ bool TrashFileInfo::canRename() const
     bool value = false;
     bool success = false;
     value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, &success).toBool();
-    return value && success;
+    return value;
 }
 
 QFile::Permissions TrashFileInfo::permissions() const
@@ -259,7 +260,7 @@ qint64 TrashFileInfo::size() const
 
     qint64 size = 0;
     const QUrl &fileUrl = url();
-    if (fileUrl == FileUtils::trashRootUrl()) {
+    if (FileUtils::isTrashRootFile(fileUrl)) {
         DecoratorFileEnumerator enumerator(fileUrl);
         if (!enumerator.isValid())
             return qint64();
@@ -313,7 +314,7 @@ QString TrashFileInfo::mimeTypeName()
 
 int TrashFileInfo::countChildFile() const
 {
-    if (UniversalUtils::urlEquals(url(), TrashCoreHelper::rootUrl())) {
+    if (FileUtils::isTrashRootFile(url())) {
         if (d->dFileInfo)
             return d->dFileInfo->attribute(DFMIO::DFileInfo::AttributeID::kTrashItemCount).toInt();
     }
@@ -337,7 +338,7 @@ bool TrashFileInfo::isReadable() const
     bool value = false;
     bool success = false;
     value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, &success).toBool();
-    return value && success;
+    return value;
 }
 
 bool TrashFileInfo::isWritable() const
@@ -351,12 +352,12 @@ bool TrashFileInfo::isWritable() const
     bool value = false;
     bool success = false;
     value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, &success).toBool();
-    return value && success;
+    return value;
 }
 
 bool TrashFileInfo::isDir() const
 {
-    if (UniversalUtils::urlEquals(url(), TrashCoreHelper::rootUrl()))
+    if (FileUtils::isTrashRootFile(url()))
         return true;
 
     return AbstractFileInfo::isDir();
@@ -364,8 +365,7 @@ bool TrashFileInfo::isDir() const
 
 bool TrashFileInfo::canDrop()
 {
-    const QUrl &fileUrl = url();
-    return UniversalUtils::urlEquals(fileUrl, TrashCoreHelper::rootUrl());
+    return FileUtils::isTrashRootFile(url());
 }
 
 bool TrashFileInfo::canHidden() const

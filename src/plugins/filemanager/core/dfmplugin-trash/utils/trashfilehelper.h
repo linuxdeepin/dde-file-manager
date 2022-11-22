@@ -51,6 +51,7 @@ public:
     bool deleteFile(const quint64 windowId, const QList<QUrl> sources,
                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
+    bool blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
 
 private:
     explicit TrashFileHelper(QObject *parent = nullptr);

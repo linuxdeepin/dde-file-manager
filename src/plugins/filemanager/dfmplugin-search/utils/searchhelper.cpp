@@ -181,9 +181,10 @@ bool SearchHelper::customRoleDisplayName(const QUrl &rootUrl, const ItemRoles ro
     return false;
 }
 
-bool SearchHelper::blockPaste(quint64 winId, const QUrl &to)
+bool SearchHelper::blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to)
 {
     Q_UNUSED(winId)
+    Q_UNUSED(fromUrls)
 
     if (to.scheme() == SearchHelper::scheme()) {
         qDebug() << "The search root directory does not support paste!";

@@ -439,9 +439,10 @@ bool TagManager::paintIconTagsHandle(int role, const QUrl &url, QPainter *painte
     return false;
 }
 
-bool TagManager::pasteHandle(quint64 winId, const QUrl &to)
+bool TagManager::pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to)
 {
     Q_UNUSED(winId)
+    Q_UNUSED(fromUrls)
 
     if (to.scheme() == scheme()) {
         auto action = ClipBoard::instance()->clipboardAction();

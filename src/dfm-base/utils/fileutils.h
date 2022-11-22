@@ -65,6 +65,7 @@ public:
     static bool trashIsEmpty();
     static QUrl trashRootUrl();
     static bool isTrashFile(const QUrl &url);
+    static bool isTrashRootFile(const QUrl &url);
     static bool isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);

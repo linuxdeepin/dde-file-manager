@@ -35,7 +35,7 @@ class ShareEventHelper : public QObject
 {
 public:
     static ShareEventHelper *instance();
-    bool blockPaste(quint64 winId, const QUrl &to);
+    bool blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
     bool blockDelete(quint64 winId, const QList<QUrl> &urls);
     bool blockMoveToTrash(quint64 winId, const QList<QUrl> &urls);
     bool hookSendOpenWindow(const QList<QUrl> &urls);

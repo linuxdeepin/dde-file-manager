@@ -36,8 +36,10 @@ ShareEventHelper *dfmplugin_myshares::ShareEventHelper::instance()
     return &ins;
 }
 
-bool ShareEventHelper::blockPaste(quint64, const QUrl &to)
+bool ShareEventHelper::blockPaste(quint64, const QList<QUrl> &fromUrls, const QUrl &to)
 {
+    Q_UNUSED(fromUrls)
+
     if (to.scheme() == ShareUtils::scheme()) {
         qDebug() << "paste event is blocked, trying to paste to MyShares";
         return true;

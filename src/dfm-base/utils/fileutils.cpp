@@ -473,6 +473,11 @@ bool FileUtils::isTrashFile(const QUrl &url)
     return matcher.hasMatch();
 }
 
+bool FileUtils::isTrashRootFile(const QUrl &url)
+{
+    return UniversalUtils::urlEquals(url, trashRootUrl());
+}
+
 bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)
 {
     QUrl url = urlCompare;

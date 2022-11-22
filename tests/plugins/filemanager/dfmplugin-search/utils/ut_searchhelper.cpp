@@ -166,11 +166,11 @@ TEST(SearchHelperTest, ut_customRoleDisplayName)
 
 TEST(SearchHelperTest, ut_blockPaste)
 {
-    bool ret = SearchHelper::instance()->blockPaste(123, QUrl::fromLocalFile("/home"));
+    bool ret = SearchHelper::instance()->blockPaste(123, {}, QUrl::fromLocalFile("/home"));
     EXPECT_FALSE(ret);
 
     QUrl url = SearchHelper::fromSearchFile(QUrl::fromLocalFile("/"), "test", "123");
-    ret = SearchHelper::instance()->blockPaste(123, url);
+    ret = SearchHelper::instance()->blockPaste(123, {}, url);
     EXPECT_TRUE(ret);
 }
 

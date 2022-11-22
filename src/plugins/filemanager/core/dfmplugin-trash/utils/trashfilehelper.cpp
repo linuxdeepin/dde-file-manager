@@ -143,3 +143,16 @@ bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
     }
     return isOpenFile;
 }
+
+bool TrashFileHelper::blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to)
+{
+    Q_UNUSED(winId)
+    if (fromUrls.isEmpty())
+        return false;
+
+    if (fromUrls.first().scheme() == scheme() && to.scheme() == scheme()) {
+        qDebug() << "The trash directory does not support paste!";
+        return true;
+    }
+    return false;
+}

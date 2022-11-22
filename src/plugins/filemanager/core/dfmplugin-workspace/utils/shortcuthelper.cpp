@@ -236,7 +236,8 @@ void ShortcutHelper::cutFiles()
 void ShortcutHelper::pasteFiles()
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PasteFiles", windowId, view->rootUrl()))
+    auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PasteFiles", windowId, sourceUrls, view->rootUrl()))
         return;
 
     FileOperatorHelperIns->pasteFiles(view);

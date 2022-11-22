@@ -41,8 +41,8 @@ using namespace dfmplugin_myshares;
 
 TEST_F(UT_ShareEventHelper, BlockPaste)
 {
-    EXPECT_TRUE(ShareEventHelper::instance()->blockPaste(0, QUrl("usershare:///hello")));
-    EXPECT_FALSE(ShareEventHelper::instance()->blockPaste(0, QUrl("file:///world")));
+    EXPECT_TRUE(ShareEventHelper::instance()->blockPaste(0, {}, QUrl("usershare:///hello")));
+    EXPECT_FALSE(ShareEventHelper::instance()->blockPaste(0, {}, QUrl("file:///world")));
 }
 
 TEST_F(UT_ShareEventHelper, BlockDelete)

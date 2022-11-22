@@ -62,7 +62,7 @@ public:
     bool customRoleDisplayName(const QUrl &rootUrl, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
 
     // disable paste
-    bool blockPaste(quint64 winId, const QUrl &to);
+    bool blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
 
     bool searchIconName(const QUrl &url, QString *iconName);
 
