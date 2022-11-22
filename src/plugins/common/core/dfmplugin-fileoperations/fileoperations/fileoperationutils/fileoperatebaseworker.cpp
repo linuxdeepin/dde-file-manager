@@ -844,19 +844,14 @@ bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromI
         QSharedPointer<SmallFileThreadCopyInfo> threadInfo(new SmallFileThreadCopyInfo);
         threadInfo->fromInfo = fromInfo;
         threadInfo->toInfo = toInfo;
-        if (!smallFileThreadCopyInfoQueue)
-            smallFileThreadCopyInfoQueue.reset(new QQueue<QSharedPointer<SmallFileThreadCopyInfo>>);
 
-        {
-            if (!smallFileThreadCopyInfoQueueMutex)
-                smallFileThreadCopyInfoQueueMutex.reset(new QMutex);
-            QMutexLocker lk(smallFileThreadCopyInfoQueueMutex.data());
-            smallFileThreadCopyInfoQueue->enqueue(threadInfo);
-        }
+        smallFileThreadCopyInfoVector.append(threadInfo);
 
         if (!threadPool)
             threadPool.reset(new QThreadPool);
-        QtConcurrent::run(threadPool.data(), this, static_cast<void (FileOperateBaseWorker::*)()>(&FileOperateBaseWorker::doThreadPoolCopyFile));
+        threadInfoVectorSize++;
+        int threadIndex = threadInfoVectorSize.load() - 1;
+        QtConcurrent::run(threadPool.data(), this, static_cast<void (FileOperateBaseWorker::*)(const int)>(&FileOperateBaseWorker::doThreadPoolCopyFile), threadIndex);
         return true;
     }
 
@@ -946,25 +941,16 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
     return true;
 }
 
-void FileOperateBaseWorker::doThreadPoolCopyFile()
+void FileOperateBaseWorker::doThreadPoolCopyFile(const int index)
 {
     if (!stateCheck())
         return;
-
-    QSharedPointer<SmallFileThreadCopyInfo> threadInfo(nullptr);
-    {
-        if (!smallFileThreadCopyInfoQueueMutex)
-            smallFileThreadCopyInfoQueueMutex.reset(new QMutex);
-
-        QMutexLocker lk(smallFileThreadCopyInfoQueueMutex.data());
-        if (!smallFileThreadCopyInfoQueue)
-            smallFileThreadCopyInfoQueue.reset(new QQueue<QSharedPointer<SmallFileThreadCopyInfo>>);
-
-        if (smallFileThreadCopyInfoQueue->count() <= 0) {
-            return;
-        }
-        threadInfo = smallFileThreadCopyInfoQueue->dequeue();
+    if (index >= threadInfoVectorSize) {
+        qCritical() << "current index out of thread Info vector size ! index : " << index << " thread info size : " << threadInfoVectorSize;
+        return;
     }
+
+    QSharedPointer<SmallFileThreadCopyInfo> threadInfo = smallFileThreadCopyInfoVector[index];
     if (!threadInfo) {
         setStat(AbstractJobHandler::JobState::kStopState);
         qWarning() << " the threadInfo is nullptr, some error here! ";
@@ -1112,7 +1098,7 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
         return false;
     // 循环读取和写入文件，拷贝
     qint64 blockSize = fromInfo->size() > kMaxBufferLength ? kMaxBufferLength : fromInfo->size();
-    char *data = new char[blockSize + 1];
+    char *data = new char[static_cast<uint>(blockSize + 1)];
     uLong sourceCheckSum = adler32(0L, nullptr, 0);
     qint64 sizeRead = 0;
 
@@ -1215,7 +1201,7 @@ bool FileOperateBaseWorker::verifyFileIntegrity(const qint64 &blockSize, const u
 {
     if (!jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyIntegrityChecking))
         return true;
-    char *data = new char[blockSize + 1];
+    char *data = new char[static_cast<uint>(blockSize + 1)];
     QTime t;
     ulong targetCheckSum = adler32(0L, nullptr, 0);
     Q_FOREVER {

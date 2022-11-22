@@ -84,13 +84,8 @@ bool DoCopyFilesWorker::doWork()
 void DoCopyFilesWorker::stop()
 {
     // clean muilt thread copy file info queue
-    if (smallFileThreadCopyInfoQueue) {
-        if (!smallFileThreadCopyInfoQueueMutex)
-            smallFileThreadCopyInfoQueueMutex.reset(new QMutex);
-
-        QMutexLocker lk(smallFileThreadCopyInfoQueueMutex.data());
-        smallFileThreadCopyInfoQueue.clear();
-    }
+    smallFileThreadCopyInfoVector.clear();
+    threadInfoVectorSize = 0;
 
     AbstractWorker::stop();
 }
@@ -209,13 +204,6 @@ bool DoCopyFilesWorker::copyFiles()
 void DoCopyFilesWorker::setStat(const AbstractJobHandler::JobState &stat)
 {
     AbstractWorker::setStat(stat);
-
-    if (isStopped() && smallFileThreadCopyInfoQueue) {
-        if (smallFileThreadCopyInfoQueueMutex)
-            smallFileThreadCopyInfoQueueMutex.reset(new QMutex);
-        QMutexLocker lk(smallFileThreadCopyInfoQueueMutex.data());
-        smallFileThreadCopyInfoQueue.clear();
-    }
 }
 
 /*!

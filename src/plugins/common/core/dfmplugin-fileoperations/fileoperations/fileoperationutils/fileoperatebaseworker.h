@@ -115,7 +115,7 @@ public:
     bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
     bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
     bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
-    void doThreadPoolCopyFile();
+    void doThreadPoolCopyFile(const int index);
 
 private:
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
@@ -144,8 +144,9 @@ protected:
     std::atomic_bool needSyncEveryRW { false };
     std::atomic_bool isFsTypeVfat { false };
 
-    QSharedPointer<QQueue<QSharedPointer<SmallFileThreadCopyInfo>>> smallFileThreadCopyInfoQueue;   // copy small file thread information Queue
-    QSharedPointer<QMutex> smallFileThreadCopyInfoQueueMutex { nullptr };   // copy small file thread information Queue's mutex
+    std::atomic_int threadInfoVectorSize { 0 };
+
+    QVector<QSharedPointer<SmallFileThreadCopyInfo>> smallFileThreadCopyInfoVector;   // copy small file thread information Queue
     QSharedPointer<QThreadPool> threadPool { nullptr };   // copy small file thread pool
 };
 DPFILEOPERATIONS_END_NAMESPACE

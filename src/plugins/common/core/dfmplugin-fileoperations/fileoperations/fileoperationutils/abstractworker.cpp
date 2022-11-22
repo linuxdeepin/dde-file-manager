@@ -260,7 +260,7 @@ void AbstractWorker::endWork()
 
     emit finishedNotify(info);
 
-    qDebug() << "\n=========================nwork end, job: " << jobType << " sources: " << sourceUrls << " target: " << targetUrl << " time elapsed: " << timeElapsed.elapsed() << "\n";
+    qInfo() << "\n work end, job: " << jobType << "\n sources: " << sourceUrls << "\n target: " << targetUrl << "\n time elapsed: " << timeElapsed.elapsed() << "\n";
 }
 /*!
  * \brief AbstractWorker::emitStateChangedNotify send state changed signal
