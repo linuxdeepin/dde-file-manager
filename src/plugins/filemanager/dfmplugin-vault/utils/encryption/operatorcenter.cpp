@@ -265,11 +265,15 @@ bool OperatorCenter::createDirAndFile()
 
 bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const QString &passwordHint)
 {
-    // update vault version
-    VaultConfig config;
-    config.set(kConfigNodeName, kConfigKeyVersion, QVariant(kConfigVaultVersion1050));
-
-    strCryfsPassword = password;
+    // encrypt password，write salt and cihper to file
+    // random salt
+    QString strRandomSalt = pbkdf2::createRandomSalt(kRandomSaltLength);
+    // cipher
+    QString strCiphertext = pbkdf2::pbkdf2EncrypyPassword(password, strRandomSalt, kIteration, kPasswordCipherLength);
+    // salt and cipher
+    QString strSaltAndCiphertext = strRandomSalt + strCiphertext;
+    // save the second encrypt cipher, and update version
+    secondSaveSaltAndCiphertext(strSaltAndCiphertext, strRandomSalt, kConfigVaultVersion1050);
 
     // 保存密码提示信息
     QString strPasswordHintFilePath = makeVaultLocalPath(kPasswordHintFileName);
@@ -281,6 +285,14 @@ bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const 
     QTextStream out2(&passwordHintFile);
     out2 << passwordHint;
     passwordHintFile.close();
+
+    VaultConfig config;
+    const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("NoExist")).toString();
+    if (useUserPassword != "NoExist") {
+        strCryfsPassword = password;
+    } else {
+        strCryfsPassword = strSaltAndCiphertext;
+    }
 
     return true;
 }
@@ -342,13 +354,6 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
     QString strVersion = config.get(kConfigNodeName, kConfigKeyVersion).toString();
 
     if ((kConfigVaultVersion == strVersion) || (kConfigVaultVersion1050 == strVersion)) {   // 如果是新版本，验证第二次加密的结果
-        VaultConfig config;
-        const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("NoExist")).toString();
-        if (useUserPassword != "NoExist") {
-            cipher = password;
-            return true;
-        }
-
         // 获得本地盐及密文
         QString strSaltAndCipher = config.get(kConfigNodeName, kConfigKeyCipher).toString();
         QString strSalt = strSaltAndCipher.mid(0, kRandomSaltLength);
@@ -365,7 +370,13 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
             return false;
         }
 
-        cipher = strNewSaltAndCipher;
+        VaultConfig config;
+        const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("NoExist")).toString();
+        if (useUserPassword != "NoExist") {
+            cipher = password;
+        } else {
+            cipher = strNewSaltAndCipher;
+        }
     } else {   // 如果是旧版本，验证第一次加密的结果
         // 获得本地盐及密文
         QString strfilePath = makeVaultLocalPath(kPasswordFileName);
