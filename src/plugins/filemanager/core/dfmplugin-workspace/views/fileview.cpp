@@ -121,11 +121,6 @@ void FileView::setViewMode(Global::ViewMode mode)
         setSpacing(kListViewSpacing);
 
         d->initListModeView();
-        if (model()) {
-            int minimunWidth = model()->columnCount() * GlobalPrivate::kListViewMinimumWidth;
-            int parentWidth = parentWidget()->width();
-            setMinimumWidth(minimunWidth >= parentWidth - 200 ? parentWidth : minimunWidth);   // 200 is the sidebar's maximum width
-        }
         if (d->allowedAdjustColumnSize) {
             horizontalScrollBar()->parentWidget()->installEventFilter(this);
 
@@ -923,12 +918,6 @@ bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tri
 
 void FileView::resizeEvent(QResizeEvent *event)
 {
-    if (model()) {
-        int minimunWidth = model()->columnCount() * GlobalPrivate::kListViewMinimumWidth;
-        int parentWidth = parentWidget()->width();
-        setMinimumWidth(minimunWidth >= parentWidth - 200 ? parentWidth : minimunWidth);   // 200 is the sidebar's maximum width
-    }
-
     DListView::resizeEvent(event);
 
     updateHorizontalOffset();
