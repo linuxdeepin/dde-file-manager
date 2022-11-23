@@ -528,6 +528,19 @@ void DialogManager::showRenameBusyErrDialog()
     d.exec();
 }
 
+int DialogManager::showRenameNameDotBeginDialog()
+{
+    DDialog d;
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
+    d.addButton(tr("Hide"), true, DDialog::ButtonWarning);
+    d.addButton(tr("Cancel"));
+
+    d.setDefaultButton(0);
+    d.setIcon(warningIcon);
+    return d.exec();
+}
+
 DFMBASE_NAMESPACE::GlobalEventType DialogManager::showBreakSymlinkDialog(const QString &targetName, const QUrl &linkfile)
 {
     DDialog d;

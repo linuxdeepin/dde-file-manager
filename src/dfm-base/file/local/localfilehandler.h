@@ -42,68 +42,40 @@ namespace dfmbase {
 
 class DesktopFile;
 
+class LocalFileHandlerPrivate;
 class LocalFileHandler
 {
 public:
     LocalFileHandler();
-    virtual ~LocalFileHandler();
-    virtual bool touchFile(const QUrl &url);
-    virtual bool mkdir(const QUrl &dir);
-    virtual bool rmdir(const QUrl &url);
-    virtual bool renameFile(const QUrl &url, const QUrl &newUrl);
-    virtual bool renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair, QMap<QUrl, QUrl> &successUrls);
-    virtual bool renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair, QMap<QUrl, QUrl> &successUrls);
-    virtual bool renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair, QMap<QUrl, QUrl> &successUrls);
-    virtual bool openFile(const QUrl &file);
-    virtual bool openFiles(const QList<QUrl> &files);
-    virtual bool openFileByApp(const QUrl &file, const QString &appDesktop);
-    virtual bool openFilesByApp(const QList<QUrl> &files, const QString &appDesktop);
-    virtual bool createSystemLink(const QUrl &sourcfile, const QUrl &link);
-    virtual bool setPermissions(const QUrl &url, QFileDevice::Permissions permissions);
-    virtual bool setPermissionsRecursive(const QUrl &url, QFileDevice::Permissions permissions);
-    virtual bool moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
-    virtual bool copyFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
-    virtual bool trashFile(const QUrl &url);
-    virtual bool deleteFile(const QUrl &file);
-    virtual bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
+    ~LocalFileHandler();
 
-    QString defaultTerminalPath();
-    QString errorString();
-    DFMIOErrorCode errorCode();
-    DFMBASE_NAMESPACE::GlobalEventType lastEventType();
+    bool touchFile(const QUrl &url);
+    bool mkdir(const QUrl &dir);
+    bool rmdir(const QUrl &url);
+    bool renameFile(const QUrl &url, const QUrl &newUrl, const bool needCheck = true);
+    bool openFile(const QUrl &file);
+    bool openFiles(const QList<QUrl> &files);
+    bool openFileByApp(const QUrl &file, const QString &appDesktop);
+    bool openFilesByApp(const QList<QUrl> &files, const QString &appDesktop);
+    bool createSystemLink(const QUrl &sourcfile, const QUrl &link);
+    bool setPermissions(const QUrl &url, QFileDevice::Permissions permissions);
+    bool setPermissionsRecursive(const QUrl &url, QFileDevice::Permissions permissions);
+    bool moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
+    bool copyFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
+    bool trashFile(const QUrl &url);
+    bool deleteFile(const QUrl &file);
+    bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
 
     bool renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls);
+    bool doHiddenFileRemind(const QString &name, bool *checkRule = nullptr);
+
+    QString defaultTerminalPath();
+    GlobalEventType lastEventType();
+    QString errorString();
+    DFMIOErrorCode errorCode();
 
 private:
-    bool launchApp(const QString &desktopFile, const QStringList &filePaths = {});
-    bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths = {});
-    bool launchAppByGio(const QString &desktopFile, const QStringList &filePaths = {});
-
-    bool isFileManagerSelf(const QString &desktopFile);
-    bool isSmbUnmountedFile(const QUrl &url);
-    QUrl smbFileUrl(const QString &filePath);
-    QString getFileMimetypeFromGio(const QUrl &url);
-    void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
-    QString getFileMimetype(const QUrl &url);
-
-    bool isExecutableScript(const QString &path);
-    bool isFileExecutable(const QString &path);
-    bool openExcutableScriptFile(const QString &path, int flag);
-    bool openExcutableFile(const QString &path, int flag);
-    bool isFileRunnable(const QString &path);
-    bool shouldAskUserToAddExecutableFlag(const QString &path);
-    bool addExecutableFlagAndExecuse(const QString &path, int flag);
-    bool isFileWindowsUrlShortcut(const QString &path);
-    QString getInternetShortcutUrl(const QString &path);
-
-    bool doOpenFile(const QUrl &url, const QString &desktopFile = QString());
-    bool doOpenFiles(const QList<QUrl> &urls, const QString &desktopFile = QString());
-
-private:
-    void setError(DFMIOError error);
-
-    DFMIOError lastError;
-    DFMBASE_NAMESPACE::GlobalEventType lastEvent = DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
+    QScopedPointer<LocalFileHandlerPrivate> d;
 };
 
 }

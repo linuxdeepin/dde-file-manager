@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "localfilehandler.h"
+#include "localfilehandler_p.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
@@ -35,6 +36,7 @@
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/base/application/application.h"
 #include "utils/universalutils.h"
 #include "dfm_event_defines.h"
 
@@ -72,9 +74,8 @@ extern "C" {
 using namespace dfmbase;
 
 LocalFileHandler::LocalFileHandler()
+    : d(new LocalFileHandlerPrivate(this))
 {
-    // TODO(lanxs)
-    // 注册暂时放在这里
     dfmio::dfmio_init();
 }
 
@@ -101,7 +102,7 @@ bool LocalFileHandler::touchFile(const QUrl &url)
     if (!success) {
         qWarning() << "touch file failed, url: " << url;
 
-        setError(oper->lastError());
+        d->setError(oper->lastError());
 
         return false;
     }
@@ -157,7 +158,7 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
     if (!success) {
         qWarning() << "make directory failed, url: " << dir;
 
-        setError(oper->lastError());
+        d->setError(oper->lastError());
 
         return false;
     }
@@ -192,7 +193,7 @@ bool LocalFileHandler::rmdir(const QUrl &url)
     if (!success) {
         qWarning() << "trash file failed, url: " << url;
 
-        setError(oper->lastError());
+        d->setError(oper->lastError());
 
         return false;
     }
@@ -207,13 +208,22 @@ bool LocalFileHandler::rmdir(const QUrl &url)
  * \param newUrl 新文件的url
  * \return bool 重命名文件是否成功
  */
-bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
+bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const bool needCheck)
 {
     if (!url.isLocalFile() || !newUrl.isLocalFile())
         return false;
 
     if (url.scheme() != newUrl.scheme())
         return false;
+
+    {   // check hidden name
+        if (needCheck) {
+            auto toFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+            const QString &newName = toFileInfo->fileName();
+            if (!doHiddenFileRemind(newName))
+                return true;
+        }
+    }
 
     // check device, use set displayname if device is mtp
     if (Q_UNLIKELY(FileUtils::isMtpFile(newUrl))) {
@@ -271,7 +281,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     if (!success) {
         qWarning() << "rename file failed, url: " << url;
 
-        setError(oper->lastError());
+        d->setError(oper->lastError());
 
         return false;
     }
@@ -283,24 +293,6 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
 
     return true;
-}
-
-bool LocalFileHandler::renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair, QMap<QUrl, QUrl> &successUrls)
-{
-    QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchReplaceText(urls, pair);
-    return renameFilesBatch(needDealUrls, successUrls);
-}
-
-bool LocalFileHandler::renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair, QMap<QUrl, QUrl> &successUrls)
-{
-    QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchAddText(urls, pair);
-    return renameFilesBatch(needDealUrls, successUrls);
-}
-
-bool LocalFileHandler::renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair, QMap<QUrl, QUrl> &successUrls)
-{
-    QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
-    return renameFilesBatch(needDealUrls, successUrls);
 }
 /*!
  * \brief LocalFileHandler::openFile 打开文件
@@ -338,33 +330,33 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
                 return false;
             }
             const_cast<QUrl &>(fileUrl) = fileInfoLink->redirectedFileUrl();
-            if (!DecoratorFile(fileInfoLink->absoluteFilePath()).exists() && !isSmbUnmountedFile(fileUrl)) {
-                lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->fileName(), fileInfo->url());
-                return lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
+            if (!DecoratorFile(fileInfoLink->absoluteFilePath()).exists() && !d->isSmbUnmountedFile(fileUrl)) {
+                d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->fileName(), fileInfo->url());
+                return d->lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
             }
         }
 
-        if (isExecutableScript(fileUrl.path())) {
+        if (d->isExecutableScript(fileUrl.path())) {
             int code = DialogManagerInstance->showRunExcutableScriptDialog(fileUrl);
-            result = openExcutableScriptFile(fileUrl.path(), code) || result;
+            result = d->openExcutableScriptFile(fileUrl.path(), code) || result;
             continue;
         }
 
-        if (isFileRunnable(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
+        if (d->isFileRunnable(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
             int code = DialogManagerInstance->showRunExcutableFileDialog(fileUrl);
-            result = openExcutableFile(fileUrl.path(), code) || result;
+            result = d->openExcutableFile(fileUrl.path(), code) || result;
             continue;
         }
 
-        if (shouldAskUserToAddExecutableFlag(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
+        if (d->shouldAskUserToAddExecutableFlag(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
             int code = DialogManagerInstance->showAskIfAddExcutableFlagAndRunDialog();
-            result = addExecutableFlagAndExecuse(fileUrl.path(), code) || result;
+            result = d->addExecutableFlagAndExecuse(fileUrl.path(), code) || result;
             continue;
         }
 
         QString urlPath = fileUrl.path();
-        if (isFileWindowsUrlShortcut(urlPath)) {
-            urlPath = getInternetShortcutUrl(urlPath);
+        if (d->isFileWindowsUrlShortcut(urlPath)) {
+            urlPath = d->getInternetShortcutUrl(urlPath);
             pathList << QUrl::fromLocalFile(urlPath);
         } else {
             pathList << fileUrl;
@@ -378,7 +370,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
         } else {
             result = FileUtils::openFiles(pathList);
         }*/
-        result = doOpenFiles(pathList);
+        result = d->doOpenFiles(pathList);
     } else {
         return true;
     }
@@ -437,7 +429,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         qDebug() << termPath << args;
         ok = QProcess::startDetached(termPath, args);
     } else {
-        ok = launchApp(desktopFile, filePathsStr);
+        ok = d->launchApp(desktopFile, filePathsStr);
     }
     g_object_unref(appInfo);
 
@@ -446,11 +438,11 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
-        QString mimetype = getFileMimetype(fileUrls.first());
+        QString mimetype = d->getFileMimetype(fileUrls.first());
         for (const QUrl &tmp : fileUrls) {
             QString temFilePath = tmp.path();
             DesktopFile df(desktopFile);
-            addRecentFile(temFilePath, df, mimetype);
+            d->addRecentFile(temFilePath, df, mimetype);
         }
     }
 
@@ -481,7 +473,7 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link
     if (!success) {
         qWarning() << "create link failed, url: " << sourcefile << " link url: " << link;
 
-        setError(oper->lastError());
+        d->setError(oper->lastError());
 
         return false;
     }
@@ -513,7 +505,7 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
     if (!success) {
         qWarning() << "set permissions failed, url: " << url;
 
-        setError(dfile->lastError());
+        d->setError(dfile->lastError());
 
         return false;
     }
@@ -564,7 +556,7 @@ bool LocalFileHandler::moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMI
     if (!success) {
         qWarning() << "move file failed, source url: " << sourceUrl << " destUrl: " << destUrl;
 
-        setError(dOperator->lastError());
+        d->setError(dOperator->lastError());
 
         return false;
     }
@@ -589,7 +581,7 @@ bool LocalFileHandler::copyFile(const QUrl &sourceUrl, const QUrl &destUrl, dfmi
     if (!success) {
         qWarning() << "copy file failed, source url: " << sourceUrl << " destUrl: " << destUrl;
 
-        setError(dOperator->lastError());
+        d->setError(dOperator->lastError());
 
         return false;
     }
@@ -614,7 +606,7 @@ bool LocalFileHandler::trashFile(const QUrl &url)
     if (!success) {
         qWarning() << "trash file failed, url: " << url;
 
-        setError(dOperator->lastError());
+        d->setError(dOperator->lastError());
 
         return false;
     }
@@ -643,7 +635,7 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
     if (!success) {
         qWarning() << "delete file failed, url: " << url;
 
-        setError(dOperator->lastError());
+        d->setError(dOperator->lastError());
 
         return false;
     }
@@ -668,18 +660,18 @@ bool LocalFileHandler::setFileTime(const QUrl &url, const QDateTime &accessDateT
         return true;
     }
 
-    setError(DFMIOError(DFM_IO_ERROR_NOT_SUPPORTED));
+    d->setError(DFMIOError(DFM_IO_ERROR_NOT_SUPPORTED));
 
     return false;
 }
 
-bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringList &fileUrls)
+bool LocalFileHandlerPrivate::launchApp(const QString &desktopFilePath, const QStringList &fileUrls)
 {
     QStringList newFileUrls(fileUrls);
 
     if (isFileManagerSelf(desktopFilePath) && fileUrls.count() > 1) {
         for (const QString &url : fileUrls) {
-            openFile(url);
+            q->openFile(url);
         }
         return true;
     }
@@ -701,14 +693,14 @@ bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringLi
     return ok;
 }
 
-bool LocalFileHandler::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
+bool LocalFileHandlerPrivate::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
     if (UniversalUtils::checkLaunchAppInterface())
         return UniversalUtils::launchAppByDBus(desktopFile, filePaths);
     return false;
 }
 
-bool LocalFileHandler::launchAppByGio(const QString &desktopFilePath, const QStringList &fileUrls)
+bool LocalFileHandlerPrivate::launchAppByGio(const QString &desktopFilePath, const QStringList &fileUrls)
 {
     qDebug() << "launchApp by gio:" << desktopFilePath << fileUrls;
 
@@ -743,7 +735,7 @@ bool LocalFileHandler::launchAppByGio(const QString &desktopFilePath, const QStr
     return ok;
 }
 
-bool LocalFileHandler::isFileManagerSelf(const QString &desktopFile)
+bool LocalFileHandlerPrivate::isFileManagerSelf(const QString &desktopFile)
 {
     /*
      *  return true if exec field contains dde-file-manager/file-manager.sh of dde-file-manager desktopFile
@@ -752,7 +744,7 @@ bool LocalFileHandler::isFileManagerSelf(const QString &desktopFile)
     return d.desktopExec().contains("dde-file-manager") || d.desktopExec().contains("file-manager.sh");
 }
 
-bool LocalFileHandler::isSmbUnmountedFile(const QUrl &url)
+bool LocalFileHandlerPrivate::isSmbUnmountedFile(const QUrl &url)
 {
     return url.path().startsWith("/run/user/")
             && url.path().contains("/gvfs/smb-share:server=");
@@ -762,7 +754,7 @@ bool LocalFileHandler::isSmbUnmountedFile(const QUrl &url)
             && DFileService::instance()->checkGvfsMountfileBusy(url, false);*/
 }
 
-QUrl LocalFileHandler::smbFileUrl(const QString &filePath)
+QUrl LocalFileHandlerPrivate::smbFileUrl(const QString &filePath)
 {
     static QRegularExpression regExp("file:///run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<path>.*)",
                                      QRegularExpression::DotMatchesEverythingOption
@@ -785,7 +777,7 @@ QUrl LocalFileHandler::smbFileUrl(const QString &filePath)
     return newUrl;
 }
 
-QString LocalFileHandler::getFileMimetypeFromGio(const QUrl &url)
+QString LocalFileHandlerPrivate::getFileMimetypeFromGio(const QUrl &url)
 {
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
     if (!factory) {
@@ -806,7 +798,7 @@ QString LocalFileHandler::getFileMimetypeFromGio(const QUrl &url)
     return QString();
 }
 
-void LocalFileHandler::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
+void LocalFileHandlerPrivate::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
 {
     if (filePath.isEmpty()) {
         return;
@@ -833,7 +825,7 @@ QString LocalFileHandler::defaultTerminalPath()
     return QStandardPaths::findExecutable("xterm");
 }
 
-QString LocalFileHandler::getFileMimetype(const QUrl &url)
+QString LocalFileHandlerPrivate::getFileMimetype(const QUrl &url)
 {
     g_autoptr(GFile) file;
     g_autoptr(GFileInfo) info;
@@ -847,7 +839,7 @@ QString LocalFileHandler::getFileMimetype(const QUrl &url)
     return result;
 }
 
-bool LocalFileHandler::isExecutableScript(const QString &path)
+bool LocalFileHandlerPrivate::isExecutableScript(const QString &path)
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
@@ -870,7 +862,7 @@ bool LocalFileHandler::isExecutableScript(const QString &path)
     return false;
 }
 
-bool LocalFileHandler::isFileExecutable(const QString &path)
+bool LocalFileHandlerPrivate::isFileExecutable(const QString &path)
 {
     DecoratorFileInfo fileInfo(path);
 
@@ -885,7 +877,7 @@ bool LocalFileHandler::isFileExecutable(const QString &path)
     return (permissions & DFMIO::DFile::Permission::kReadUser) && isExeUser;
 }
 
-bool LocalFileHandler::openExcutableScriptFile(const QString &path, int flag)
+bool LocalFileHandlerPrivate::openExcutableScriptFile(const QString &path, int flag)
 {
     bool result = false;
     switch (flag) {
@@ -898,7 +890,7 @@ bool LocalFileHandler::openExcutableScriptFile(const QString &path, int flag)
     case 2: {
         QStringList args;
         args << "-e" << path;
-        result = UniversalUtils::runCommand(defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
+        result = UniversalUtils::runCommand(q->defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     }
     case 3:
@@ -911,7 +903,7 @@ bool LocalFileHandler::openExcutableScriptFile(const QString &path, int flag)
     return result;
 }
 
-bool LocalFileHandler::openExcutableFile(const QString &path, int flag)
+bool LocalFileHandlerPrivate::openExcutableFile(const QString &path, int flag)
 {
     bool result = false;
     switch (flag) {
@@ -920,7 +912,7 @@ bool LocalFileHandler::openExcutableFile(const QString &path, int flag)
     case 1: {
         QStringList args;
         args << "-e" << path;
-        result = UniversalUtils::runCommand(defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
+        result = UniversalUtils::runCommand(q->defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     }
     case 2:
@@ -933,7 +925,7 @@ bool LocalFileHandler::openExcutableFile(const QString &path, int flag)
     return result;
 }
 
-bool LocalFileHandler::isFileRunnable(const QString &path)
+bool LocalFileHandlerPrivate::isFileRunnable(const QString &path)
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
@@ -959,7 +951,7 @@ bool LocalFileHandler::isFileRunnable(const QString &path)
     return false;
 }
 
-bool LocalFileHandler::shouldAskUserToAddExecutableFlag(const QString &path)
+bool LocalFileHandlerPrivate::shouldAskUserToAddExecutableFlag(const QString &path)
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
@@ -982,7 +974,7 @@ bool LocalFileHandler::shouldAskUserToAddExecutableFlag(const QString &path)
     return false;
 }
 
-bool LocalFileHandler::addExecutableFlagAndExecuse(const QString &path, int flag)
+bool LocalFileHandlerPrivate::addExecutableFlagAndExecuse(const QString &path, int flag)
 {
     bool result = false;
     DecoratorFile file(path);
@@ -1000,7 +992,7 @@ bool LocalFileHandler::addExecutableFlagAndExecuse(const QString &path, int flag
     return result;
 }
 
-bool LocalFileHandler::isFileWindowsUrlShortcut(const QString &path)
+bool LocalFileHandlerPrivate::isFileWindowsUrlShortcut(const QString &path)
 {
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
     qDebug() << mimetype;
@@ -1009,7 +1001,7 @@ bool LocalFileHandler::isFileWindowsUrlShortcut(const QString &path)
     return false;
 }
 
-QString LocalFileHandler::getInternetShortcutUrl(const QString &path)
+QString LocalFileHandlerPrivate::getInternetShortcutUrl(const QString &path)
 {
     QSettings settings(path, QSettings::IniFormat);
     settings.beginGroup("InternetShortcut");
@@ -1018,12 +1010,12 @@ QString LocalFileHandler::getInternetShortcutUrl(const QString &path)
     return url;
 }
 
-bool LocalFileHandler::doOpenFile(const QUrl &url, const QString &desktopFile /*= QString()*/)
+bool LocalFileHandlerPrivate::doOpenFile(const QUrl &url, const QString &desktopFile /*= QString()*/)
 {
     return doOpenFiles({ url }, desktopFile);
 }
 
-bool LocalFileHandler::doOpenFiles(const QList<QUrl> &urls, const QString &desktopFile /*= QString()*/)
+bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString &desktopFile /*= QString()*/)
 {
     bool ret = false;
 
@@ -1133,6 +1125,7 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
     QMap<QUrl, QUrl>::const_iterator beg = urls.constBegin();
     QMap<QUrl, QUrl>::const_iterator end = urls.constEnd();
 
+    bool check = false;
     for (; beg != end; ++beg) {
         QUrl currentName { beg.key() };
         QUrl expectedName { beg.value() };
@@ -1141,13 +1134,36 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
             continue;
         }
 
+        auto fileinfo = InfoFactory::create<AbstractFileInfo>(expectedName);
+
+        if (!check) {
+            bool checkPass = doHiddenFileRemind(fileinfo->fileName(), &check);
+            if (!checkPass)
+                return true;
+        }
+
         ///###: just cache files that rename successfully.
-        if (renameFile(currentName, expectedName)) {
+        if (renameFile(currentName, expectedName, false)) {
             successUrls[currentName] = expectedName;
         }
     }
 
     return successUrls.size() == urls.size();
+}
+
+bool LocalFileHandler::doHiddenFileRemind(const QString &name, bool *checkRule)
+{
+    if (!name.startsWith("."))
+        return true;
+    if (Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool())
+        return true;
+
+    if (checkRule)
+        *checkRule = true;
+
+    // show dialog
+    auto result = DialogManagerInstance->showRenameNameDotBeginDialog();
+    return result == 0;
 }
 /*!
  * \brief LocalFileHandler::errorString 获取错误信息
@@ -1155,23 +1171,28 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
  */
 QString LocalFileHandler::errorString()
 {
-    return lastError.errorMsg();
+    return d->lastError.errorMsg();
 }
 
 DFMIOErrorCode LocalFileHandler::errorCode()
 {
-    return lastError.code();
+    return d->lastError.code();
 }
 
 GlobalEventType LocalFileHandler::lastEventType()
 {
-    return lastEvent;
+    return d->lastEvent;
 }
 /*!
  * \brief LocalFileHandler::setError 设置当前的错误信息
  * \param error 错误信息
  */
-void LocalFileHandler::setError(DFMIOError error)
+void LocalFileHandlerPrivate::setError(DFMIOError error)
 {
     lastError = error;
+}
+
+LocalFileHandlerPrivate::LocalFileHandlerPrivate(LocalFileHandler *handler)
+    : q(handler)
+{
 }

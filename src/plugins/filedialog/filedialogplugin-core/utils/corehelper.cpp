@@ -85,14 +85,11 @@ bool CoreHelper::askHiddenFile(QWidget *parent)
     DDialog dialog(parent);
 
     dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-    dialog.setTitle(QObject::tr("This file will be hidden if the file name starts with a dot (.). Do you want to hide it?"));
+    dialog.setTitle(QObject::tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
+    dialog.addButton(QObject::tr("Hide", "button"), false, DDialog::ButtonWarning);
     dialog.addButton(QObject::tr("Cancel", "button"), true);
-    dialog.addButton(QObject::tr("Confirm", "button"), false, DDialog::ButtonWarning);
 
-    if (dialog.exec() != DDialog::Accepted)
-        return true;
-
-    return false;
+    return dialog.exec() != 0;
 }
 
 /*!
