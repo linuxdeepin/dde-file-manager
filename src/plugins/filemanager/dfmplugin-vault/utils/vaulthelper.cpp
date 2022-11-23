@@ -80,10 +80,13 @@ QUrl VaultHelper::sourceRootUrl()
 
 QUrl VaultHelper::pathToVaultVirtualUrl(const QString &path)
 {
-    QString localPath = instance()->sourceRootUrl().path();
+    const QString &localPath = instance()->sourceRootUrl().path();
     if (path.contains(localPath)) {
         QString virtualPath = path;
-        virtualPath = virtualPath.replace(0, localPath.length(), "");
+        if (localPath == path)
+            virtualPath = virtualPath.replace(0, localPath.length(), "/");
+        else
+            virtualPath = virtualPath.replace(0, localPath.length(), "");
         QUrl virtualUrl;
         virtualUrl.setPath(virtualPath);
         virtualUrl.setScheme(scheme());

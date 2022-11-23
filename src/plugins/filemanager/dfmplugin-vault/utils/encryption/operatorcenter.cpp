@@ -276,7 +276,7 @@ bool OperatorCenter::savePasswordAndPasswordHint(const QString &password, const 
     secondSaveSaltAndCiphertext(strSaltAndCiphertext, strRandomSalt, kConfigVaultVersion1050);
 
     // 保存密码提示信息
-    QString strPasswordHintFilePath = makeVaultLocalPath(kPasswordHintFileName);
+    const QString &strPasswordHintFilePath = makeVaultLocalPath(kPasswordHintFileName);
     QFile passwordHintFile(strPasswordHintFilePath);
     if (!passwordHintFile.open(QIODevice::Text | QIODevice::WriteOnly | QIODevice::Truncate)) {
         qDebug() << "write password hint failure";
