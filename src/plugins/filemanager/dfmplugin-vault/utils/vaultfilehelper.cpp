@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vaultfilehelper.h"
+#include "vaulthelper.h"
+
 #include "events/vaulteventcaller.h"
 
 #include "dfm-base/utils/fileutils.h"
@@ -204,8 +206,7 @@ bool VaultFileHelper::renameFilesAddText(const quint64 windowId, const QList<QUr
 QList<QUrl> VaultFileHelper::transUrlsToLocal(const QList<QUrl> &urls)
 {
     QList<QUrl> urlsTrans {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urls, &urlsTrans);
-    if (ok && !urlsTrans.isEmpty())
+    if (VaultHelper::instance()->urlsToLocal(urls, &urlsTrans))
         return urlsTrans;
 
     return urls;
