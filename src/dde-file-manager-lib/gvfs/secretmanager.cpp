@@ -231,7 +231,7 @@ bool SecretManager::userCheckedRememberPassword(const DUrl &smbDevice)
     for (auto key : m_smbLoginObjs.keys()){
         if (key.startsWith(temSmbDevice.toString())) {
             QJsonObject smbObj = m_smbLoginObjs.value(key).toObject();
-            savePasswordChecked = smbObj.value("passwordsaveFlag").toInt() == 2; // 用户勾选过记住密码
+            savePasswordChecked = smbObj.value("passwordSave").toInt() == 2; // 用户勾选过记住密码
             if(savePasswordChecked)
                 break;
         }
