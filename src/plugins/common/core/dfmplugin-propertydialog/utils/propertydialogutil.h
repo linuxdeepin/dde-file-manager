@@ -35,25 +35,19 @@ class PropertyDialogUtil : public QObject
     Q_OBJECT
 public:
     explicit PropertyDialogUtil(QObject *parent = nullptr);
-
     virtual ~PropertyDialogUtil() override;
 
 public slots:
-
     void showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option = QVariantHash());
-
     void showFilePropertyDialog(const QList<QUrl> &urls, const QVariantHash &option = QVariantHash());
-
+    void showCustomDialog(const QList<QUrl> &urls);
     void insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget);
-
     void addExtendedControlFileProperty(const QUrl &url, QWidget *widget);
-
-    void closeFilePropertyDialog(const QUrl url);
-
+    void closeFilePropertyDialog(const QUrl &url);
+    void closeCustomPropertyDialog(const QUrl &url);
     void closeAllFilePropertyDialog();
-
+    void closeAllPropertyDialog();
     void createControlView(const QUrl &url, const QVariantHash &option = QVariantHash());
-
     void updateCloseIndicator();
 
 public:
@@ -75,6 +69,7 @@ private:
 
 private:
     QMap<QUrl, FilePropertyDialog *> filePropertyDialogs;
+    QMap<QUrl, QWidget *> customPropertyDialogs;
     CloseAllDialog *closeAllDialog { nullptr };
     QTimer *closeIndicatorTimer { nullptr };
 

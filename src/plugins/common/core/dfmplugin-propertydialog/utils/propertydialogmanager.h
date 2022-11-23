@@ -39,6 +39,7 @@ public:
     void unregisterExtensionView(int index);
     QMap<int, QWidget *> createExtensionView(const QUrl &url, const QVariantHash &option = QVariantHash());
     bool registerCustomView(CustomViewExtensionView view, const QString &scheme);
+    bool hasRegisteredCustomView(const QString &scheme);
     void unregisterCustomView(const QString &scheme);
     QWidget *createCustomView(const QUrl &url);
 

@@ -22,6 +22,8 @@
 #include "views/multifilepropertydialog.h"
 #include "propertydialogmanager.h"
 
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
 #include <DArrowLineDrawer>
 
 #include <QApplication>
@@ -40,12 +42,14 @@ PropertyDialogUtil::PropertyDialogUtil(QObject *parent)
     closeAllDialog = new CloseAllDialog;
     closeAllDialog->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
     connect(closeAllDialog, &CloseAllDialog::allClosed, this, &PropertyDialogUtil::closeAllFilePropertyDialog);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::lastWindowClosed, this, &PropertyDialogUtil::closeAllPropertyDialog);
     connect(closeIndicatorTimer, &QTimer::timeout, this, &PropertyDialogUtil::updateCloseIndicator);
 }
 
 PropertyDialogUtil::~PropertyDialogUtil()
 {
     filePropertyDialogs.clear();
+    customPropertyDialogs.clear();
 
     if (closeAllDialog) {
         closeAllDialog->deleteLater();
@@ -54,20 +58,13 @@ PropertyDialogUtil::~PropertyDialogUtil()
 
 void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
 {
-    for (const QUrl &url : urls) {
-        QWidget *widget = createCustomizeView(url);
-        if (widget) {
-            widget->show();
-            widget->activateWindow();
-            QRect qr = qApp->primaryScreen()->geometry();
-            QPoint pt = qr.center();
-            pt.setX(pt.x() - widget->width() / 2);
-            pt.setY(pt.y() - widget->height() / 2);
-            widget->move(pt);
-        } else {
-            showFilePropertyDialog(urls, option);
-            break;
-        }
+    if (urls.isEmpty())
+        return;
+
+    if (PropertyDialogManager::instance().hasRegisteredCustomView(urls.first().scheme())) {
+        showCustomDialog(urls);
+    } else {
+        showFilePropertyDialog(urls, option);
     }
 }
 
@@ -115,6 +112,32 @@ void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls, const Q
     }
 }
 
+void PropertyDialogUtil::showCustomDialog(const QList<QUrl> &urls)
+{
+    for (const QUrl &url : urls) {
+        if (customPropertyDialogs.contains(url)) {
+            customPropertyDialogs[url]->show();
+            customPropertyDialogs[url]->activateWindow();
+        } else {
+            QWidget *widget = createCustomizeView(url);
+            if (widget) {
+                customPropertyDialogs.insert(url, widget);
+                connect(widget, &QWidget::destroyed, this, [this, url]{
+                    closeCustomPropertyDialog(url);
+                });
+
+                widget->show();
+                widget->activateWindow();
+                QRect qr = qApp->primaryScreen()->geometry();
+                QPoint pt = qr.center();
+                pt.setX(pt.x() - widget->width() / 2);
+                pt.setY(pt.y() - widget->height() / 2);
+                widget->move(pt);
+            }
+        }
+    }
+}
+
 /*!
  * \brief           Normal view control extension
  * \param index     Subscript to be inserted
@@ -150,7 +173,7 @@ void PropertyDialogUtil::addExtendedControlFileProperty(const QUrl &url, QWidget
     }
 }
 
-void PropertyDialogUtil::closeFilePropertyDialog(const QUrl url)
+void PropertyDialogUtil::closeFilePropertyDialog(const QUrl &url)
 {
     if (filePropertyDialogs.contains(url)) {
         filePropertyDialogs.remove(url);
@@ -158,6 +181,12 @@ void PropertyDialogUtil::closeFilePropertyDialog(const QUrl url)
 
     if (filePropertyDialogs.isEmpty())
         closeAllDialog->close();
+}
+
+void PropertyDialogUtil::closeCustomPropertyDialog(const QUrl &url)
+{
+    if (customPropertyDialogs.contains(url))
+        customPropertyDialogs.remove(url);
 }
 
 void PropertyDialogUtil::closeAllFilePropertyDialog()
@@ -168,6 +197,14 @@ void PropertyDialogUtil::closeAllFilePropertyDialog()
     }
     closeIndicatorTimer->stop();
     closeAllDialog->close();
+}
+
+void PropertyDialogUtil::closeAllPropertyDialog()
+{
+    closeAllFilePropertyDialog();
+
+    for (auto w : customPropertyDialogs.values())
+        w->close();
 }
 
 void PropertyDialogUtil::createControlView(const QUrl &url, const QVariantHash &option)
