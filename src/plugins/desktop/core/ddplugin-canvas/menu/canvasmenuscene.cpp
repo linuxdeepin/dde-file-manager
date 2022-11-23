@@ -50,6 +50,7 @@ using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
 DPMENU_USE_NAMESPACE
 
+static const char *const kDConfigHiddenMenuSceneName = "DConfigMenuFilter";
 static const char *const kCanvasBaseSortMenuSceneName = "CanvasBaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
@@ -211,6 +212,9 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
         if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName))
             currentScene.append(extendScene);
     }
+
+    if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName))
+        currentScene.append(dconfigFilterScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);
@@ -450,13 +454,14 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRefresh));
     }
 
-    //todo update text when screensaver is disbale.
+    // todo update text when screensaver is disbale.
     tempAction = parent->addAction(d->predicateName.value(ActionID::kWallpaperSettings));
     d->predicateAction[ActionID::kWallpaperSettings] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kWallpaperSettings));
 }
 
-void CanvasMenuScene::normalMenu(QMenu *parent) {
+void CanvasMenuScene::normalMenu(QMenu *parent)
+{
     Q_UNUSED(parent)
 }
 

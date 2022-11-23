@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "avfsmenuscene.h"
 #include "private/avfsmenuscene_p.h"
 #include "utils/avfsutils.h"
@@ -120,6 +120,7 @@ bool AvfsMenuScene::create(QMenu *parent)
 
 void AvfsMenuScene::updateState(QMenu *parent)
 {
+    AbstractMenuScene::updateState(parent);
 }
 
 bool AvfsMenuScene::triggered(QAction *action)

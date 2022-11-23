@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "computermenuscene.h"
 #include "private/computermenuscene_p.h"
 #include "utils/computerdatastruct.h"
@@ -29,6 +29,8 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/dfm_menu_defines.h"
+
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <QMenu>
 #include <QRegularExpression>
@@ -66,6 +68,12 @@ bool ComputerMenuScene::initialize(const QVariantHash &params)
         return false;
 
     d->info.reset(new EntryFileInfo(d->selectFiles.first()));
+
+    auto subScenes = subscene();
+    if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter")) {
+        subScenes << filterScene;
+        setSubscene(subScenes);
+    }
 
     return AbstractMenuScene::initialize(params);
 }

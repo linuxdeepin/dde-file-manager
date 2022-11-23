@@ -27,6 +27,7 @@
 #include "menuscene/sharemenuscene.h"
 #include "menuscene/menuutils.h"
 #include "menuscene/sendtomenuscene.h"
+#include "menuscene/dconfighiddenmenuscene.h"
 #include "extendmenuscene/extendmenuscene.h"
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 #include "oemmenuscene/oemmenuscene.h"
@@ -92,6 +93,7 @@ bool MenuHandle::init()
     registerScene(ExtendMenuCreator::name(), new ExtendMenuCreator);
     registerScene(OemMenuCreator::name(), new OemMenuCreator);
     registerScene(SendToMenuCreator::name(), new SendToMenuCreator);
+    registerScene(DConfigHiddenMenuCreator::name(), new DConfigHiddenMenuCreator);
 
     return true;
 }

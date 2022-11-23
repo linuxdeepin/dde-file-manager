@@ -41,6 +41,7 @@ DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
+static const char *const kDConfigHiddenMenuSceneName = "DConfigMenuFilter";
 static const char *const kBaseSortMenuSceneName = "BaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
@@ -138,6 +139,9 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
                 currentScene.append(extendScene);
         }
     }
+
+    if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName))
+        currentScene.append(dconfigFilterScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);
