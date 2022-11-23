@@ -65,6 +65,14 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#ifdef COMPILE_ON_V23
+#   define APPEARANCE_SERVICE "org.deepin.daemon.Appearance1"
+#   define APPEARANCE_PATH "/org/deepin/daemon/Appearance1"
+#else
+#   define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
+#   define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
+#endif
+
 namespace dfmbase {
 
 static constexpr char kDDETrashId[] { "dde-trash" };
@@ -1146,8 +1154,8 @@ QString FileUtils::dateTimeFormat()
 
 bool FileUtils::setBackGround(const QString &pictureFilePath)
 {
-    QDBusMessage msgIntrospect = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance",
-                                                                "/com/deepin/daemon/Appearance",
+    QDBusMessage msgIntrospect = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
+                                                                APPEARANCE_PATH,
                                                                 "org.freedesktop.DBus.Introspectable",
                                                                 "Introspect");
     QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(msgIntrospect);
@@ -1157,9 +1165,9 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
         QString value = reply.value();
 
         if (value.contains("SetMonitorBackground")) {
-            QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance",
-                                                              "/com/deepin/daemon/Appearance",
-                                                              "com.deepin.daemon.Appearance",
+            QDBusMessage msg = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
+                                                              APPEARANCE_PATH,
+                                                              APPEARANCE_SERVICE,
                                                               "SetMonitorBackground");
             if (WindowUtils::isWayLand()) {
                 QDBusInterface interface("com.deepin.daemon.Display",
@@ -1177,9 +1185,9 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
         }
     }
 
-    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance",
-                                                      "/com/deepin/daemon/Appearance",
-                                                      "com.deepin.daemon.Appearance",
+    QDBusMessage msg = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
+                                                      APPEARANCE_PATH,
+                                                      APPEARANCE_SERVICE,
                                                       "Set");
     msg.setArguments({ "Background", pictureFilePath });
     QDBusConnection::sessionBus().asyncCall(msg);

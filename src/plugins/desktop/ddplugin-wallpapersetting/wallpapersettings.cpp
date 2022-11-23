@@ -36,6 +36,14 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
+#ifdef COMPILE_ON_V23
+#   define APPEARANCE_SERVICE "org.deepin.daemon.Appearance1"
+#   define APPEARANCE_PATH "/org/deepin/daemon/Appearance1"
+#else
+#   define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
+#   define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
+#endif
+
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace ddplugin_wallpapersetting;
@@ -82,12 +90,12 @@ WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
     regionMonitor = new DRegionMonitor(q);
     connect(regionMonitor, &DRegionMonitor::buttonPress, this, &WallpaperSettingsPrivate::onMousePressed);
 
-    qInfo() << "create com.deepin.daemon.Appearance.";
-    appearanceIfs = new AppearanceIfs("com.deepin.daemon.Appearance",
-                                      "/com/deepin/daemon/Appearance",
+    qInfo() << QString("create %1.").arg(APPEARANCE_SERVICE);
+    appearanceIfs = new AppearanceIfs(APPEARANCE_SERVICE,
+                                      APPEARANCE_PATH,
                                       QDBusConnection::sessionBus(), q);
     appearanceIfs->setTimeout(5000);
-    qInfo() << "end com.deepin.daemon.Appearance.";
+    qInfo() << QString("end %1.").arg(APPEARANCE_SERVICE);
 
     qInfo() << "create com.deepin.daemon.ScreenSaver.";
     screenSaverIfs = new ScreenSaverIfs("com.deepin.ScreenSaver",

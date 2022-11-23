@@ -35,6 +35,14 @@
 #include <QFile>
 #include <QProcess>
 
+#ifdef COMPILE_ON_V23
+#   define MANAGER_SERVICE "org.desktopspec.ApplicationManager"
+#   define MANAGER_PATH "org/desktopspec/ApplicationManager"
+#else
+#   define MANAGER_SERVICE "com.deepin.SessionManager"
+#   define MANAGER_PATH "/com/deepin/StartManager"
+#endif
+
 namespace dfmbase {
 
 /*!
@@ -214,8 +222,8 @@ bool UniversalUtils::checkLaunchAppInterface()
     static bool initStatus = true;
     static std::once_flag flag;
     std::call_once(flag, []() {
-        QDBusInterface introspect("com.deepin.SessionManager",
-                                  "/com/deepin/StartManager",
+        QDBusInterface introspect(MANAGER_SERVICE,
+                                  MANAGER_PATH,
                                   "org.freedesktop.DBus.Introspectable",
                                   QDBusConnection::sessionBus());
         introspect.setTimeout(1000);
@@ -227,11 +235,11 @@ bool UniversalUtils::checkLaunchAppInterface()
                 if (xmlCode.contains("LaunchApp")) {
                     initStatus = true;
                 } else {
-                    qWarning() << "com.deepin.SessionManager : StartManager doesn't have LaunchApp interface.";
+                    qWarning() << QString("%1 : doesn't have LaunchApp interface.").arg(MANAGER_SERVICE);
                     initStatus = false;
                 }
             } else {
-                qWarning() << "com.deepin.SessionManager Introspect error" << xmlCode;
+                qWarning() << QString("%1 Introspect error").arg(MANAGER_SERVICE) << xmlCode;
                 initStatus = false;
             }
         } else {
@@ -243,9 +251,9 @@ bool UniversalUtils::checkLaunchAppInterface()
 
 bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-    QDBusInterface systemInfo("com.deepin.SessionManager",
-                              "/com/deepin/StartManager",
-                              "com.deepin.StartManager",
+    QDBusInterface systemInfo(MANAGER_SERVICE,
+                              MANAGER_PATH,
+                              MANAGER_SERVICE,
                               QDBusConnection::sessionBus());
 
     QList<QVariant> argumentList;
@@ -258,9 +266,9 @@ bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, con
 {
     if (checkLaunchAppInterface()) {
         qDebug() << "launch cmd by dbus:" << cmd << args;
-        QDBusInterface systemInfo("com.deepin.SessionManager",
-                                  "/com/deepin/StartManager",
-                                  "com.deepin.StartManager",
+        QDBusInterface systemInfo(MANAGER_SERVICE,
+                                  MANAGER_PATH,
+                                  MANAGER_SERVICE,
                                   QDBusConnection::sessionBus());
 
         QList<QVariant> argumentList;
