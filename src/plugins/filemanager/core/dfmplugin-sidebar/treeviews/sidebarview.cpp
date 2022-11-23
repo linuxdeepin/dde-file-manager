@@ -524,6 +524,9 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
 
     for (const QUrl &url : urls) {
         auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        if (!fileInfo)
+            return Qt::IgnoreAction;
+
         if (!fileInfo->isReadable()) {
             return Qt::IgnoreAction;
         }
