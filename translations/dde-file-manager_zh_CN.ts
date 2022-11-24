@@ -137,14 +137,13 @@
         <translation>禁止访问</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="1731"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="1724"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="127"/>
         <source>You do not have permission to access this folder</source>
         <translation>您没有权限访问该文件夹</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="132"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="90"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -163,8 +162,8 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="79"/>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="345"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="345"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="89"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="124"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="90"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="121"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="57"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="266"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="118"/>
@@ -405,17 +404,17 @@
         <translation>%1 项</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="337"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="329"/>
         <source>Unable to find the original file</source>
         <translation>无法找到链接目标文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="1729"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="1722"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移动或删除</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="1734"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="1727"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>您没有权限遍历子文件</translation>
     </message>
@@ -479,18 +478,18 @@
         <translation>备份文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="720"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="725"/>
         <source>Shortcut</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1196"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1201"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>（副本）</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1197"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1202"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>（副本 %1）</translation>
@@ -513,7 +512,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="25"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="527"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="528"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="31"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="84"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="146"/>
@@ -521,13 +520,13 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="85"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="96"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="228"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="231"/>
         <source>Open in new window</source>
         <translation>在新窗口打开</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="28"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="531"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="532"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="35"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="88"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="150"/>
@@ -540,7 +539,7 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="35"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="540"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="541"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="47"/>
         <source>Rename</source>
         <translation>重命名</translation>
@@ -555,7 +554,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="59"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="157"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="100"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="269"/>
         <source>Properties</source>
         <translation>属性</translation>
     </message>
@@ -1213,7 +1212,7 @@
         <translation>灰色</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="544"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="545"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="67"/>
         <source>Remove</source>
         <translation>移除</translation>
@@ -1228,16 +1227,22 @@
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="88"/>
-        <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
-        <translation>文件名以“.”开始将会隐藏此文件，请确认是否继续?</translation>
+        <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
+        <translation>文件名以“.”开始将会隐藏此文件，请确认是否隐藏?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="122"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="89"/>
+        <source>Hide</source>
+        <comment>button</comment>
+        <translation>隐 藏</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="119"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>“%1”已存在，您是否要替换？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="125"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="122"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>替 换</translation>
@@ -1264,7 +1269,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="75"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="226"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="229"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
@@ -1437,47 +1442,47 @@
         <translation>我的保险箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="220"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="223"/>
         <source>Create Vault</source>
         <translation>创建保险箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="223"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="226"/>
         <source>Unlock</source>
         <translation>解锁</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="235"/>
         <source>Lock</source>
         <translation>立即上锁</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="235"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="238"/>
         <source>Auto lock</source>
         <translation>自动上锁</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="237"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="240"/>
         <source>Never</source>
         <translation>从不</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="243"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="246"/>
         <source>5 minutes</source>
         <translation>5分钟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="251"/>
         <source>10 minutes</source>
         <translation>10分钟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="256"/>
         <source>20 minutes</source>
         <translation>20分钟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="264"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="267"/>
         <source>Delete File Vault</source>
         <translation>删除保险箱</translation>
     </message>
@@ -2419,7 +2424,7 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="74"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="510"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="524"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="541"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="554"/>
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="72"/>
         <source>Confirm</source>
         <comment>button</comment>
@@ -2509,7 +2514,7 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="235"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="245"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="500"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="590"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -2537,8 +2542,8 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="375"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="422"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="479"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="540"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="564"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="553"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
@@ -2567,7 +2572,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="327"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="357"/>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="565"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="578"/>
         <source>Run</source>
         <comment>button</comment>
         <translation>运 行</translation>
@@ -2665,22 +2670,37 @@
         <translation>设备或资源繁忙</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="534"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="535"/>
+        <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
+        <translation>文件名以“.”开始将会隐藏此文件，请确认是否隐藏?</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
+        <source>Hide</source>
+        <translation>隐 藏</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
+        <source>Cancel</source>
+        <translation>取 消</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="547"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>此快捷方式所指向的“%1”已被更改或移动</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="538"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="551"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>是否删除此快捷方式?</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="563"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="576"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
         <translation>此文件没有可执行权限，是否添加权限并运行？</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="575"/>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="588"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>选择的文件中包含系统目录，不能被删除</translation>
     </message>
@@ -5668,12 +5688,12 @@
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="138"/>
         <source>Vault</source>
         <translation>保险箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="135"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="138"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation type="unfinished"></translation>
     </message>
