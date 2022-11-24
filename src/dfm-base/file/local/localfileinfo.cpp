@@ -1574,6 +1574,11 @@ QString LocalFileInfo::fileDisplayName() const
     return fileDisplayName;
 }
 
+QString LocalFileInfo::fileCopyName() const
+{
+    return LocalFileInfo::fileDisplayName();
+}
+
 /*!
  * \brief toQFileInfo 获取他的QFileInfo实例对象
  *

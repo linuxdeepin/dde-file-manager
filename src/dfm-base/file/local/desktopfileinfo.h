@@ -50,6 +50,7 @@ public:
     QIcon fileIcon() override;
     virtual QString fileName() const override;
     QString fileDisplayName() const override;
+    QString fileCopyName() const override;
     QString fileNameOfRename() const override;
     QString baseNameOfRename() const override;
     QString suffixOfRename() const override;

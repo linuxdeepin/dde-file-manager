@@ -205,6 +205,11 @@ QString DesktopFileInfo::fileDisplayName() const
     return desktopName();
 }
 
+QString DesktopFileInfo::fileCopyName() const
+{
+    return DesktopFileInfo::fileName();
+}
+
 QString DesktopFileInfo::fileNameOfRename() const
 {
     return fileDisplayName();

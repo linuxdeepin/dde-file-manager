@@ -159,6 +159,11 @@ QString TrashFileInfo::fileDisplayName() const
     return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
 }
 
+QString TrashFileInfo::fileCopyName() const
+{
+    return TrashFileInfo::fileDisplayName();
+}
+
 bool TrashFileInfo::exists() const
 {
     return AbstractFileInfo::exists()

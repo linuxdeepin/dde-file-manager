@@ -52,6 +52,11 @@ QString ShareFileInfo::fileDisplayName() const
     return fileName();
 }
 
+QString ShareFileInfo::fileCopyName() const
+{
+    return ShareFileInfo::fileDisplayName();
+}
+
 QString ShareFileInfo::fileName() const
 {
     auto d = dynamic_cast<ShareFileInfoPrivate *>(dptr.data());

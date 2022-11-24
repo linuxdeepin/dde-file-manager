@@ -62,6 +62,7 @@ public:
     virtual QIcon fileIcon() override;
     QString iconName() override;
     virtual QString fileDisplayName() const override;
+    virtual QString fileCopyName() const override;
     virtual QString fileDisplayPath() const override;
 };
 }

@@ -101,6 +101,11 @@ QString MasteredMediaFileInfo::fileDisplayName() const
     return dptr->proxy->fileDisplayName();
 }
 
+QString MasteredMediaFileInfo::fileCopyName() const
+{
+    return MasteredMediaFileInfo::fileDisplayName();
+}
+
 QVariantHash MasteredMediaFileInfo::extraProperties() const
 {
     QVariantHash ret;

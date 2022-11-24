@@ -749,6 +749,13 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayName() const
     return QString();
 }
 
+QString dfmbase::AbstractFileInfo::fileCopyName() const
+{
+    CALL_PROXY(fileCopyName());
+
+    return QString();
+}
+
 /*!
  * \brief fileDisplayPinyinName 文件的拼音名称，一般为文件的显示名称转为拼音
  *

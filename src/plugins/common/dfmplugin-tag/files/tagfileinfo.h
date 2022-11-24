@@ -46,6 +46,7 @@ public:
 
     QString fileName() const override;
     QString fileDisplayName() const override;
+    QString fileCopyName() const override;
     FileType fileType() const override;
     QIcon fileIcon() override;
 

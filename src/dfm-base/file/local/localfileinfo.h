@@ -118,6 +118,7 @@ public:
     virtual int countChildFile() const override;
     virtual QString sizeFormat() const override;
     virtual QString fileDisplayName() const override;
+    virtual QString fileCopyName() const override;
     virtual QFileInfo toQFileInfo() const;
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
     virtual QString mimeTypeName() override;

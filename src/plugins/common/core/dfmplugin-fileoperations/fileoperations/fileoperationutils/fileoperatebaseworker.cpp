@@ -1062,7 +1062,7 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
 {
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool result = false;
-    if (!doCheckFile(fromInfo, toInfo, fromInfo->fileDisplayName(), newTargetInfo, skip))
+    if (!doCheckFile(fromInfo, toInfo, fromInfo->fileCopyName(), newTargetInfo, skip))
         return result;
 
     if (fromInfo->isSymLink()) {

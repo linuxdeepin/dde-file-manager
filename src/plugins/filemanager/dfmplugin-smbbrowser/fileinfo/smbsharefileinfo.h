@@ -37,6 +37,7 @@ public:
 
     virtual QString fileName() const override;
     virtual QString fileDisplayName() const override;
+    virtual QString fileCopyName() const override;
     virtual QIcon fileIcon() override;
     virtual bool isDir() const override;
     virtual bool isReadable() const override;

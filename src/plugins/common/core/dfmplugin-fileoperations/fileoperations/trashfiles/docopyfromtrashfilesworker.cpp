@@ -134,7 +134,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
 
         AbstractFileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
-        if (!doCheckFile(fileInfo, targetInfo, targetFileInfo->fileName(), newTargetInfo, &ok))
+        if (!doCheckFile(fileInfo, targetInfo, targetFileInfo->fileCopyName(), newTargetInfo, &ok))
             continue;
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;

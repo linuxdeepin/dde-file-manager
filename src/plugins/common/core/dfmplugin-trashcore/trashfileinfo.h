@@ -39,6 +39,7 @@ public:
     virtual void refresh() override;
     virtual QString fileName() const override;
     virtual QString fileDisplayName() const override;
+    virtual QString fileCopyName() const override;
     virtual bool exists() const override;
     virtual bool canDelete() const override;
     virtual bool canTrash() const override;

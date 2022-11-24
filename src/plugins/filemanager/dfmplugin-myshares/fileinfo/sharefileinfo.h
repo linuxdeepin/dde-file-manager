@@ -38,6 +38,7 @@ public:
 public:
     virtual QUrl redirectedFileUrl() const override;
     virtual QString fileDisplayName() const override;
+    virtual QString fileCopyName() const override;
     virtual QString fileName() const override;
     virtual bool isDir() const override;
     virtual bool canRename() const override;

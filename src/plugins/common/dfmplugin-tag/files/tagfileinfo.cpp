@@ -109,6 +109,11 @@ QString TagFileInfo::fileDisplayName() const
     return fileName();
 }
 
+QString TagFileInfo::fileCopyName() const
+{
+    return TagFileInfo::fileDisplayName();
+}
+
 AbstractFileInfo::FileType TagFileInfo::fileType() const
 {
     if (d->proxy)

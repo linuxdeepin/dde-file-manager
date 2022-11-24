@@ -250,6 +250,11 @@ QString VaultFileInfo::fileDisplayName() const
     return dptr->proxy->fileDisplayName();
 }
 
+QString VaultFileInfo::fileCopyName() const
+{
+    return VaultFileInfo::fileDisplayName();
+}
+
 QString VaultFileInfo::fileDisplayPath() const
 {
     QUrl currentUrl = url();
