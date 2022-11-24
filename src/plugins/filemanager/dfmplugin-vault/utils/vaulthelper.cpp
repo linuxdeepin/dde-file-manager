@@ -408,6 +408,15 @@ void VaultHelper::recordTime(const QString &group, const QString &key)
     setting.setValue(group, key, QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 }
 
+bool VaultHelper::isVaultFile(const QUrl &url)
+{
+    if (url.scheme() == VaultHelper::instance()->scheme()
+        || url.path().startsWith(PathManager::makeVaultLocalPath(QString(""), kVaultDecryptDirName)))
+        return true;
+
+    return false;
+}
+
 bool VaultHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
 {
     if (!urls)

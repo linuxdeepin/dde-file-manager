@@ -9,6 +9,7 @@
 #include <dfm-framework/dpf.h>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -31,6 +32,8 @@ void VaultEventReceiver::connectEvent()
 
     dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
+    dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DragMoveData",
+                            VaultEventReceiver::instance(), &VaultEventReceiver::handleSideBarItemDragMoveData);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -97,4 +100,19 @@ void VaultEventReceiver::handleCurrentUrlChanged(const quint64 &winId, const QUr
         VaultHelper::instance()->appendWinID(winId);
     else
         VaultHelper::instance()->removeWinID(winId);
+}
+
+bool VaultEventReceiver::handleSideBarItemDragMoveData(const QList<QUrl> &urls, const QUrl &url, Qt::DropAction *action)
+{
+    // TODO(gongheng): Can think of a better way
+    if (url.scheme() != "tag" || urls.isEmpty())
+        return false;
+
+    const QUrl &fromUrl = urls.first();
+    if (VaultHelper::isVaultFile(fromUrl)) {
+        *action = Qt::IgnoreAction;
+        return true;
+    }
+
+    return false;
 }

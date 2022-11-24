@@ -351,7 +351,7 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
 {
     // 获得版本信息
     VaultConfig config;
-    QString strVersion = config.get(kConfigNodeName, kConfigKeyVersion).toString();
+    const QString &strVersion = config.get(kConfigNodeName, kConfigKeyVersion).toString();
 
     if ((kConfigVaultVersion == strVersion) || (kConfigVaultVersion1050 == strVersion)) {   // 如果是新版本，验证第二次加密的结果
         // 获得本地盐及密文
@@ -370,7 +370,6 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
             return false;
         }
 
-        VaultConfig config;
         const QString &useUserPassword = config.get(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant(kConfigKeyNotExist)).toString();
         if (useUserPassword != kConfigKeyNotExist) {
             cipher = password;

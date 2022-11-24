@@ -21,6 +21,7 @@ public slots:
     void computerOpenItem(quint64 winId, const QUrl &url);
     bool handleNotAllowedAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     void handleCurrentUrlChanged(const quint64 &winId, const QUrl &url);
+    bool handleSideBarItemDragMoveData(const QList<QUrl> &urls, const QUrl &url, Qt::DropAction *action);
 };
 }
 #endif   // VAULTEVENTRECEIVER_H

@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef VAULTHELPER_H
 #define VAULTHELPER_H
@@ -85,6 +85,7 @@ public:
     static VaultHelper *instance();
 
     static void recordTime(const QString &group, const QString &key);
+    static bool isVaultFile(const QUrl &url);
 
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 

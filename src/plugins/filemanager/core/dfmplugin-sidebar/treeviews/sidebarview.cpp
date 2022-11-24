@@ -53,6 +53,8 @@
 
 #include <unistd.h>
 
+Q_DECLARE_METATYPE(Qt::DropAction *)
+
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -77,9 +79,9 @@ void SideBarViewPrivate::currentChanged(const QModelIndex &curIndex)
 void SideBarViewPrivate::highlightAfterDraggedToSort()
 {
     QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
-        QModelIndex ret = q->model()->findRowByUrl(draggedUrl);   //ret is the sub item of group item
+        QModelIndex ret = q->model()->findRowByUrl(draggedUrl);   // ret is the sub item of group item
         if (ret.row() >= 0) {
-            //The top item do not support any drop event currently.
+            // The top item do not support any drop event currently.
             q->setCurrentIndex(q->model()->index(ret.row(), 0, ret.parent()));
         }
         draggedUrl = QUrl {};
@@ -181,7 +183,7 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
     d->draggedGroup = item ? item->group() : "";
 
     if (event->button() == Qt::RightButton) {
-        //fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
+        // fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
         event->accept();
         return;
     }
@@ -192,19 +194,19 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
 void SideBarView::mouseMoveEvent(QMouseEvent *event)
 {
     DTreeView::mouseMoveEvent(event);
-    //The following code is from the history code and must be commented, otherwise if operate computer by VPN,
-    //the bookmark or tag items can not response mouse click event.
+    // The following code is from the history code and must be commented, otherwise if operate computer by VPN,
+    // the bookmark or tag items can not response mouse click event.
     //#if QT_CONFIG(draganddrop)
-    //    if (state() == DraggingState) {
-    //        startDrag(Qt::MoveAction);
-    //        setState(NoState);   // the startDrag will return when the dnd operation is done
-    //        stopAutoScroll();
-    //        QPoint pt = mapFromGlobal(QCursor::pos());
-    //        QRect rc = geometry();
-    //        if (!rc.contains(pt)) {
-    //            Q_EMIT requestRemoveItem();   // model()->removeRow(currentIndex().row());
-    //        }
-    //    }
+    //     if (state() == DraggingState) {
+    //         startDrag(Qt::MoveAction);
+    //         setState(NoState);   // the startDrag will return when the dnd operation is done
+    //         stopAutoScroll();
+    //         QPoint pt = mapFromGlobal(QCursor::pos());
+    //         QRect rc = geometry();
+    //         if (!rc.contains(pt)) {
+    //             Q_EMIT requestRemoveItem();   // model()->removeRow(currentIndex().row());
+    //         }
+    //     }
     //#endif   // QT_CONFIG(draganddrop)
 }
 
@@ -241,6 +243,19 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 
 void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 {
+    SideBarItem *item = itemAt(event->pos());
+    const QList<QUrl> &urls = event->mimeData()->urls();
+    if (item && !urls.isEmpty()) {
+        Qt::DropAction action { Qt::CopyAction };
+        if (dpfHookSequence->run("dfmplugin_sidebar", "hook_Item_DragMoveData", urls, item->url(), &action)) {
+            if (action == Qt::IgnoreAction) {
+                event->setDropAction(action);
+                event->ignore();
+                return;
+            }
+        }
+    }
+
     if (isAccepteDragEvent(event))
         return;
 
@@ -271,10 +286,10 @@ void SideBarView::dropEvent(QDropEvent *event)
     qDebug() << "target item: " << item->group() << "|" << item->text() << "|" << item->url();
     qDebug() << "item->itemInfo().finalUrl: " << item->itemInfo().finalUrl;
 
-    //wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
-    //QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
+    // wayland环境下QCursor::pos()在此场景中不能获取正确的光标当前位置，代替方案为直接使用QDropEvent::pos()
+    // QDropEvent::pos() 实际上就是drop发生时光标在该widget坐标系中的position (mapFromGlobal(QCursor::pos()))
     //但rc本来就是由event->pos()计算item得出的Rect，这样判断似乎就没有意义了（虽然原来的逻辑感觉也没什么意义）
-    QPoint pt = event->pos();   //mapFromGlobal(QCursor::pos());
+    QPoint pt = event->pos();   // mapFromGlobal(QCursor::pos());
     QRect rc = visualRect(indexAt(event->pos()));
     if (!rc.contains(pt)) {
         qDebug() << "mouse not in my area";
@@ -325,7 +340,7 @@ void SideBarView::dropEvent(QDropEvent *event)
     }
 
     if (isActionDone) {
-        //fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
+        // fix bug 24478,在drop事件完成时，设置当前窗口为激活窗口，crtl+z就能找到正确的回退
         QWidget *parentPtr = parentWidget();
         QWidget *curWindow = nullptr;
         while (parentPtr) {
@@ -445,8 +460,8 @@ void SideBarView::setCurrentUrl(const QUrl &url)
     SideBarItem *currentItem = sidebarModel->itemFromIndex(index);
     if (currentItem && currentItem->parent()) {
         SideBarItemSeparator *groupItem = dynamic_cast<SideBarItemSeparator *>(currentItem->parent());
-        //If the current item's group is not expanded, do not set current index, otherwise
-        //the unexpanded group would be expaned again.
+        // If the current item's group is not expanded, do not set current index, otherwise
+        // the unexpanded group would be expaned again.
         if (groupItem && !groupItem->isExpanded())
             return;
     }
@@ -600,7 +615,7 @@ void SideBarView::updateSeparatorVisibleState()
                 if (view) {
                     lastWindowGroupState = view->groupExpandState();
                     if (!lastWindowGroupState.isEmpty())
-                        d->groupExpandState = lastWindowGroupState;   //synchronize the sidebar group expanding state from the previous actived window
+                        d->groupExpandState = lastWindowGroupState;   // synchronize the sidebar group expanding state from the previous actived window
                 }
             }
         }
@@ -612,7 +627,7 @@ void SideBarView::updateSeparatorVisibleState()
     if (!sidebarModel)
         return;
     for (int i = 0; i < sidebarModel->rowCount(); i++) {
-        SideBarItem *item = sidebarModel->itemFromIndex(i);   //top item
+        SideBarItem *item = sidebarModel->itemFromIndex(i);   // top item
         if (item)
             allItemsInvisiable = false;
         if (item->group() != lastGroupName) {
@@ -638,10 +653,10 @@ void SideBarView::updateSeparatorVisibleState()
                         break;
                     }
                 }
-                if (allChildIsHiden || childCount <= 0)   //The top item dont have child item or they are hiden
+                if (allChildIsHiden || childCount <= 0)   // The top item dont have child item or they are hiden
                     this->setRowHidden(i, QModelIndex(), true);
-                else   //sub item
-                    this->setRowHidden(i, QModelIndex(), false);   //The other top be shown include its children
+                else   // sub item
+                    this->setRowHidden(i, QModelIndex(), false);   // The other top be shown include its children
 
                 lastGroupName = item->group();
             }
@@ -675,7 +690,7 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
             d->groupExpandState[groupItem->group()] = expand;
 
         if (expand)
-            setCurrentUrl(d->sidebarUrl);   //To make sure, when expand the group item, the current item is highlighted.
+            setCurrentUrl(d->sidebarUrl);   // To make sure, when expand the group item, the current item is highlighted.
     }
     update(index);
 }
