@@ -34,6 +34,7 @@ void VaultEventReceiver::connectEvent()
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DragMoveData",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleSideBarItemDragMoveData);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", this, &VaultEventReceiver::handleShortCutPasteFiles);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -113,6 +114,19 @@ bool VaultEventReceiver::handleSideBarItemDragMoveData(const QList<QUrl> &urls, 
         *action = Qt::IgnoreAction;
         return true;
     }
+    return false;
+}
 
+bool VaultEventReceiver::handleShortCutPasteFiles(const quint64 &winId, const QList<QUrl> &fromUrls, const QUrl &to)
+{
+    if (fromUrls.isEmpty())
+        return false;
+
+    if (VaultHelper::isVaultFile(fromUrls.first()) && to.scheme() == "trash") {
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles,
+                                     winId,
+                                     fromUrls, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        return true;
+    }
     return false;
 }
