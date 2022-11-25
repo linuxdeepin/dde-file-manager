@@ -124,18 +124,11 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         emitCurrentTaskNotify(url, targetUrl);
 
-        QByteArray tagData;
-        auto tags = dpfSlotChannel->push("dfmplugin_tag", "slot_GetTags", QUrl::fromUserInput(url.path())).toStringList();
-        if (!tags.isEmpty())
-            tagData.append("TagNameList=").append(tags.join(',')).append('\n');
-
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
         bool trashSucc = fileHandler.trashFile(url);
         if (trashSucc) {
-            // update tag info to trash info
-            writeTagInfo(url, tagData);
-
             completeFilesCount++;
+            completeTargetFiles.append(url);
             emitProgressChangedNotify(completeFilesCount);
             completeSourceFiles.append(url);
             continue;
@@ -172,35 +165,4 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     }
 
     return true;
-}
-
-bool DoMoveToTrashFilesWorker::writeTagInfo(const QUrl &url, const QByteArray &data)
-{
-    DecoratorFileEnumerator enumerator(FileUtils::trashRootUrl());
-    if (!enumerator.isValid())
-        return false;
-
-    QUrl targetInfo;
-    while (enumerator.hasNext()) {
-        const QUrl &urlNext = enumerator.next();
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(urlNext);
-        if (!fileInfo)
-            continue;
-        const QUrl &originUrl = fileInfo->originalUrl();
-        if (UniversalUtils::urlEquals(url, originUrl)) {
-            const QUrl &fileTargetUrl = fileInfo->redirectedFileUrl();
-            QString urlTemp = fileTargetUrl.toString() + ".trashinfo";
-            urlTemp.replace("/files/", "/info/");
-            targetInfo = urlTemp;
-
-            completeTargetFiles.append(urlNext);
-        }
-    }
-
-    if (!data.isEmpty()) {
-        DecoratorFile file(targetInfo);
-        const qint64 &size = file.writeAll(data, DFMIO::DFile::OpenFlag::kAppend);
-        return size > 0;
-    }
-    return false;
 }

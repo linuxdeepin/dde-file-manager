@@ -113,33 +113,12 @@ void TagEventReceiver::handleRestoreFromTrashResult(const QList<QUrl> &srcUrls, 
     Q_UNUSED(errMsg)
     Q_UNUSED(srcUrls)
     Q_UNUSED(destUrls)
+    Q_UNUSED(customInfos)
+
+    // TODO(zhangs): save or restore taginfo
 
     if (!ok)
         return;
-
-    for (const auto &info : customInfos) {
-        QString infoStr = info.toString();
-        if (!infoStr.contains("TagNameList"))
-            continue;
-
-        QTemporaryFile file;
-        if (file.open()) {
-            file.write(info.toByteArray());
-            file.close();
-
-            QSettings setting(file.fileName(), QSettings::NativeFormat);
-            setting.beginGroup("Trash Info");
-            setting.setIniCodec("utf-8");
-
-            const auto tagNameList = setting.value("TagNameList").toStringList();
-            if (!tagNameList.isEmpty()) {
-                const auto &path = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray());
-                TagManager::instance()->addTagsForFiles(tagNameList, { QUrl::fromLocalFile(path) });
-            }
-
-            setting.endGroup();
-        }
-    }
 }
 
 QStringList TagEventReceiver::handleGetTags(const QUrl &url)
