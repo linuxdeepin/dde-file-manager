@@ -42,7 +42,7 @@ class AbstractFileInfoPrivate
 
 public:
     QUrl url;   // 文件的url
-    explicit AbstractFileInfoPrivate(AbstractFileInfo *qq);
+    explicit AbstractFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq);
     virtual ~AbstractFileInfoPrivate();
 
     AbstractFileInfo *const q;   // DAbstractFileInfo实例对象

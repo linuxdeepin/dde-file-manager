@@ -629,10 +629,10 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     }
     // 特殊文件判断
     switch (fromInfo->fileType()) {
-    case AbstractFileInfo::kCharDevice:
-    case AbstractFileInfo::kBlockDevice:
-    case AbstractFileInfo::kFIFOFile:
-    case AbstractFileInfo::kSocketFile: {
+    case AbstractFileInfo::FileType::kCharDevice:
+    case AbstractFileInfo::FileType::kBlockDevice:
+    case AbstractFileInfo::FileType::kFIFOFile:
+    case AbstractFileInfo::FileType::kSocketFile: {
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kSpecialFileError);
         cancelThreadProcessingError();
         setSkipValue(skip, action);

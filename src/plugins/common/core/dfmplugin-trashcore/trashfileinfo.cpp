@@ -36,8 +36,8 @@ namespace dfmplugin_trashcore {
 class TrashFileInfoPrivate : public AbstractFileInfoPrivate
 {
 public:
-    explicit TrashFileInfoPrivate(AbstractFileInfo *qq)
-        : AbstractFileInfoPrivate(qq)
+    explicit TrashFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
+        : AbstractFileInfoPrivate(url, qq)
     {
     }
 
@@ -94,10 +94,9 @@ QUrl TrashFileInfoPrivate::initTarget()
 }
 
 TrashFileInfo::TrashFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new TrashFileInfoPrivate(this))
+    : AbstractFileInfo(url), d(new TrashFileInfoPrivate(url, this))
 {
-    d = static_cast<TrashFileInfoPrivate *>(dptr.data());
-
+    dptr.reset(d);
     QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
     if (!factory) {
         qWarning() << "dfm-io create factory failed, url: " << url;

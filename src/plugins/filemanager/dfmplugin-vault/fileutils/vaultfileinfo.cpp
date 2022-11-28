@@ -20,13 +20,13 @@
  */
 #include "vaultfileinfo.h"
 #include "utils/vaultdefine.h"
-#include "private/vaultfileinfoprivate.h"
 #include "utils/vaulthelper.h"
 #include "utils/pathmanager.h"
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -43,7 +43,7 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_vault {
 VaultFileInfo::VaultFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new VaultFileInfoPrivate(this))
+    : AbstractFileInfo(url)
 {
     QUrl tempUrl = VaultHelper::vaultToLocalUrl(url);
     setProxy(InfoFactory::create<AbstractFileInfo>(tempUrl));

@@ -36,22 +36,8 @@ namespace dfmplugin_optical {
 
 using namespace GlobalServerDefines;
 
-class MasteredMediaFileInfoPrivate : public AbstractFileInfoPrivate
-{
-public:
-    explicit MasteredMediaFileInfoPrivate(AbstractFileInfo *qq)
-        : AbstractFileInfoPrivate(qq)
-    {
-    }
-
-    virtual ~MasteredMediaFileInfoPrivate();
-};
-MasteredMediaFileInfoPrivate::~MasteredMediaFileInfoPrivate()
-{
-}
-
 MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new MasteredMediaFileInfoPrivate(this))
+    : AbstractFileInfo(url)
 {
     backupInfo(url);
 }

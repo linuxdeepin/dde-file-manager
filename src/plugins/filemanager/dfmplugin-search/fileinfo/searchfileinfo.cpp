@@ -19,24 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "searchfileinfo.h"
-#include "searchfileinfo_p.h"
 #include "utils/searchhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
 
 namespace dfmplugin_search {
 
-SearchFileInfoPrivate::SearchFileInfoPrivate(AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(qq)
-{
-}
-
-SearchFileInfoPrivate::~SearchFileInfoPrivate()
-{
-}
-
 SearchFileInfo::SearchFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new SearchFileInfoPrivate(this))
+    : AbstractFileInfo(url)
 {
 }
 

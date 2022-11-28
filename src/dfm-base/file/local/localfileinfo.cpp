@@ -59,16 +59,16 @@ static constexpr uint16_t kRequestThumbnailDealy { 500 };
 namespace dfmbase {
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new LocalFileInfoPrivate(this))
+    : AbstractFileInfo(url), d(new LocalFileInfoPrivate(url, this))
 {
-    d = static_cast<LocalFileInfoPrivate *>(dptr.data());
+    dptr.reset(d);
     init(url);
 }
 
 LocalFileInfo::LocalFileInfo(const QUrl &url, QSharedPointer<DFileInfo> dfileInfo)
-    : AbstractFileInfo(url, new LocalFileInfoPrivate(this))
+    : AbstractFileInfo(url), d(new LocalFileInfoPrivate(url, this))
 {
-    d = static_cast<LocalFileInfoPrivate *>(dptr.data());
+    dptr.reset(d);
     init(url, dfileInfo);
 }
 
@@ -1372,7 +1372,7 @@ QDateTime LocalFileInfo::fileTime(QFileDevice::FileTime time) const
  */
 bool LocalFileInfo::isBlockDev() const
 {
-    return fileType() == kBlockDevice;
+    return fileType() == FileType::kBlockDevice;
 }
 /*!
  * \brief mountPath 获取挂载路径
@@ -1393,7 +1393,7 @@ QString LocalFileInfo::mountPath() const
  */
 bool LocalFileInfo::isCharDev() const
 {
-    return fileType() == kCharDevice;
+    return fileType() == FileType::kCharDevice;
 }
 /*!
  * \brief isFifo 获取当前是否为管道文件
@@ -1402,7 +1402,7 @@ bool LocalFileInfo::isCharDev() const
  */
 bool LocalFileInfo::isFifo() const
 {
-    return fileType() == kFIFOFile;
+    return fileType() == FileType::kFIFOFile;
 }
 /*!
  * \brief isSocket 获取当前是否为套接字文件
@@ -1411,7 +1411,7 @@ bool LocalFileInfo::isFifo() const
  */
 bool LocalFileInfo::isSocket() const
 {
-    return fileType() == kSocketFile;
+    return fileType() == FileType::kSocketFile;
 }
 /*!
  * \brief isRegular 获取当前是否是常规文件(与isFile一致)
@@ -1420,7 +1420,7 @@ bool LocalFileInfo::isSocket() const
  */
 bool LocalFileInfo::isRegular() const
 {
-    return fileType() == kRegularFile;
+    return fileType() == FileType::kRegularFile;
 }
 
 /*!
@@ -1932,7 +1932,7 @@ QIcon LocalFileInfoPrivate::thumbIcon()
         // and before thumb thread finish, return default icon.
         if (!loadingThumbnail) {
             loadingThumbnail = true;
-            that = q;
+            QPointer<AbstractFileInfo> that(q);
 
             if (!getIconTimer) {
                 QTimer *t = new QTimer;

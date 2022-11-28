@@ -31,8 +31,9 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_myshares;
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new ShareFileInfoPrivate(url, this))
+    : AbstractFileInfo(url)
 {
+    dptr.reset(new ShareFileInfoPrivate(url, this));
     QString path = url.path();
     setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path)));
 }
@@ -74,9 +75,8 @@ bool ShareFileInfo::canRename() const
 }
 
 ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(qq)
+    : AbstractFileInfoPrivate(url, qq)
 {
-    this->url = url;
     refresh();
 }
 

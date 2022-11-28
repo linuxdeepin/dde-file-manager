@@ -42,15 +42,12 @@ public:
     virtual QFile::Permissions permissions() const override;
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
-    virtual bool canRename() const;
+    virtual bool canRename() const override;
 
     QString fileName() const override;
     bool canRedirectionFileUrl() const override;
     QUrl redirectedFileUrl() const override;
     virtual QVariant customData(int role) const override;
-
-private:
-    RecentFileInfoPrivate *d;
 };
 
 using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;

@@ -34,7 +34,7 @@ class EntryFileInfoPrivate : public AbstractFileInfoPrivate
     QScopedPointer<AbstractEntryFileEntity> entity { nullptr };
 
 public:
-    explicit EntryFileInfoPrivate(EntryFileInfo *qq);
+    explicit EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq);
     void init();
     virtual ~EntryFileInfoPrivate() override;
 };

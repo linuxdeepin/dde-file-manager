@@ -27,8 +27,6 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 namespace dfmplugin_tag {
-
-class TagFileInfoPrivate;
 class TagFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
     Q_GADGET
@@ -52,9 +50,6 @@ public:
 
     QString localFilePath() const;
     QString tagName() const;
-
-private:
-    TagFileInfoPrivate *d;
 };
 
 using TagFileInfoPointer = QSharedPointer<TagFileInfo>;

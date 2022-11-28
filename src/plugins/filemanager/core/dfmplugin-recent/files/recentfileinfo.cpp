@@ -30,25 +30,9 @@
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_recent {
 
-class RecentFileInfoPrivate : public AbstractFileInfoPrivate
-{
-public:
-    explicit RecentFileInfoPrivate(AbstractFileInfo *qq)
-        : AbstractFileInfoPrivate(qq)
-    {
-    }
-
-    virtual ~RecentFileInfoPrivate();
-};
-
-RecentFileInfoPrivate::~RecentFileInfoPrivate()
-{
-}
-
 RecentFileInfo::RecentFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new RecentFileInfoPrivate(this))
+    : AbstractFileInfo(url)
 {
-    d = static_cast<RecentFileInfoPrivate *>(dptr.data());
     if (url.path() != "/") {
         setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(url.path())));
     }
@@ -89,8 +73,8 @@ bool RecentFileInfo::canRename() const
 
 QString RecentFileInfo::fileName() const
 {
-    if (d->proxy)
-        return d->proxy->fileName();
+    if (dptr->proxy)
+        return dptr->proxy->fileName();
 
     if (UrlRoute::isRootUrl(url()))
         return QObject::tr("Recent");
@@ -100,12 +84,12 @@ QString RecentFileInfo::fileName() const
 
 bool RecentFileInfo::canRedirectionFileUrl() const
 {
-    return d->proxy;
+    return dptr->proxy;
 }
 
 QUrl RecentFileInfo::redirectedFileUrl() const
 {
-    return d->proxy ? d->proxy->url() : url();
+    return dptr->proxy ? dptr->proxy->url() : url();
 };
 
 QVariant RecentFileInfo::customData(int role) const

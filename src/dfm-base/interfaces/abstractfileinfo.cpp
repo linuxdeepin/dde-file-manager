@@ -56,12 +56,11 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPoin
  *
  * \param QUrl & 文件的URL
  */
-AbstractFileInfo::AbstractFileInfo(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfoPrivate *d)
-    : dptr(d)
+AbstractFileInfo::AbstractFileInfo(const QUrl &url)
+    : dptr(new AbstractFileInfoPrivate(url, this))
 {
     Q_UNUSED(type_id)
     qRegisterMetaType<QMap<dfmio::DFileInfo::AttributeExtendID, QVariant>>("QMap<dfmio::DFileInfo::AttributeExtendID, QVariant>");
-    dptr->url = url;
 }
 
 void DFMBASE_NAMESPACE::AbstractFileInfo::setProxy(const AbstractFileInfoPointer &proxy)
@@ -923,7 +922,7 @@ AbstractFileInfo::FileType DFMBASE_NAMESPACE::AbstractFileInfo::fileType() const
 {
     CALL_PROXY(fileType());
 
-    return kUnknown;
+    return FileType::kUnknown;
 }
 
 /*!
@@ -973,7 +972,7 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName()
 {
     CALL_PROXY(fileTypeDisplayName());
 
-    return QString::number(MimeTypeDisplayManager::instance()->displayNameToEnum(fileMimeType().name())).append(suffix());
+    return QString::number(static_cast<int>(MimeTypeDisplayManager::instance()->displayNameToEnum(fileMimeType().name()))).append(suffix());
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl Can I redirect files
@@ -1312,8 +1311,8 @@ QVariant dfmbase::AbstractFileInfo::customData(int role) const
  *
  * \brief 主要存储文件信息的成员变量和数据
  */
-AbstractFileInfoPrivate::AbstractFileInfoPrivate(AbstractFileInfo *qq)
-    : q(qq)
+AbstractFileInfoPrivate::AbstractFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
+    : url(url), q(qq)
 {
 }
 

@@ -377,11 +377,6 @@ void InfoCache::timeNeedRemoveCache()
             continue;
         }
         //插入待移除队列并移除时间排序的url
-        if (info.d->strongref == 2) {
-            d->needRemoveCacheList.push_backByLock(url);
-            removeUrl << url;
-            continue;
-        }
     }
 
     // removeUrl 太多 可能导致主线程卡主

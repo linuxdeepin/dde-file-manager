@@ -20,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "tagfileinfo.h"
-#include "private/tagfileinfo_p.h"
 #include "utils/tagmanager.h"
 
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
@@ -31,9 +30,8 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagFileInfo::TagFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new TagFileInfoPrivate(this))
+    : AbstractFileInfo(url)
 {
-    d = static_cast<TagFileInfoPrivate *>(dptr.data());
     if (!localFilePath().isEmpty())
         setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(localFilePath())));
 }
@@ -44,21 +42,21 @@ TagFileInfo::~TagFileInfo()
 
 bool TagFileInfo::isDir() const
 {
-    if (d->proxy)
-        return d->proxy->isDir();
+    if (dptr->proxy)
+        return dptr->proxy->isDir();
 
     return true;
 }
 
 bool TagFileInfo::exists() const
 {
-    if (d->proxy) {
+    if (dptr->proxy) {
         // TODO(liuyangming): handle path in sql
         if (!localFilePath().startsWith("/home/")
             && !localFilePath().startsWith(FileUtils::bindPathTransform("/home/", true))
             && !localFilePath().startsWith("/media/"))
             return false;
-        return d->proxy->exists();
+        return dptr->proxy->exists();
     }
 
     QUrl rootUrl;
@@ -73,8 +71,8 @@ bool TagFileInfo::exists() const
 
 QFileDevice::Permissions TagFileInfo::permissions() const
 {
-    if (d->proxy)
-        return d->proxy->permissions();
+    if (dptr->proxy)
+        return dptr->proxy->permissions();
 
     return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
             | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
@@ -82,24 +80,24 @@ QFileDevice::Permissions TagFileInfo::permissions() const
 
 bool TagFileInfo::isReadable() const
 {
-    if (d->proxy)
-        return d->proxy->isReadable();
+    if (dptr->proxy)
+        return dptr->proxy->isReadable();
 
     return true;
 }
 
 bool TagFileInfo::isWritable() const
 {
-    if (d->proxy)
-        return d->proxy->isWritable();
+    if (dptr->proxy)
+        return dptr->proxy->isWritable();
 
     return true;
 }
 
 QString TagFileInfo::fileName() const
 {
-    if (d->proxy)
-        return d->proxy->fileName();
+    if (dptr->proxy)
+        return dptr->proxy->fileName();
 
     return tagName();
 }
@@ -116,16 +114,16 @@ QString TagFileInfo::fileCopyName() const
 
 AbstractFileInfo::FileType TagFileInfo::fileType() const
 {
-    if (d->proxy)
-        return d->proxy->fileType();
+    if (dptr->proxy)
+        return dptr->proxy->fileType();
 
     return FileType::kDirectory;
 }
 
 QIcon TagFileInfo::fileIcon()
 {
-    if (d->proxy)
-        return d->proxy->fileIcon();
+    if (dptr->proxy)
+        return dptr->proxy->fileIcon();
 
     return QIcon::fromTheme("folder");
 }

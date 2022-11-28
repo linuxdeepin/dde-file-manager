@@ -28,8 +28,9 @@ using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 
 SmbShareFileInfo::SmbShareFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new SmbShareFileInfoPrivate(url, this))
+    : AbstractFileInfo(url)
 {
+    dptr.reset(new SmbShareFileInfoPrivate(url, this));
 }
 
 SmbShareFileInfo::~SmbShareFileInfo()
@@ -74,7 +75,7 @@ bool SmbShareFileInfo::isWritable() const
 }
 
 SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
-    : AbstractFileInfoPrivate(qq)
+    : AbstractFileInfoPrivate(url, qq)
 {
     {
         QMutexLocker locker(&SmbBrowserUtils::mutex);
@@ -82,7 +83,6 @@ SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileIn
         qDebug() << "smb share url: " << url
                  << "\nnode info: " << node;
     }
-    this->url = url;
 }
 
 SmbShareFileInfoPrivate::~SmbShareFileInfoPrivate()

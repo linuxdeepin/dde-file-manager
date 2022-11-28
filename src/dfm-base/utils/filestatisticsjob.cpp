@@ -173,22 +173,22 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
 
             const AbstractFileInfo::FileType type = info->fileType();
 
-            if (type == AbstractFileInfo::kCharDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipCharDeviceFile)) {
+            if (type == AbstractFileInfo::FileType::kCharDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipCharDeviceFile)) {
                 break;
             }
 
-            if (type == AbstractFileInfo::kBlockDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipBlockDeviceFile)) {
+            if (type == AbstractFileInfo::FileType::kBlockDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipBlockDeviceFile)) {
                 break;
             }
 
-            if (type == AbstractFileInfo::kFIFOFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipFIFOFile)) {
+            if (type == AbstractFileInfo::FileType::kFIFOFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipFIFOFile)) {
                 break;
             }
 
-            if (type == AbstractFileInfo::kSocketFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipSocketFile)) {
+            if (type == AbstractFileInfo::FileType::kSocketFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipSocketFile)) {
                 break;
             }
-            if (type == AbstractFileInfo::kUnknown) {
+            if (type == AbstractFileInfo::FileType::kUnknown) {
                 break;
             }
 

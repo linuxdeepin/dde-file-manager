@@ -33,9 +33,7 @@ class AvfsFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
 public:
     explicit AvfsFileInfo(const QUrl &url);
-    virtual ~AvfsFileInfo();
-
-    virtual QUrl url() const override;
+    virtual ~AvfsFileInfo() override;
 };
 
 }

@@ -31,8 +31,8 @@
 
 namespace dfmbase {
 
-EntryFileInfoPrivate::EntryFileInfoPrivate(EntryFileInfo *qq)
-    : AbstractFileInfoPrivate(qq)
+EntryFileInfoPrivate::EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq)
+    : AbstractFileInfoPrivate(url, qq)
 {
 }
 
@@ -51,9 +51,9 @@ EntryFileInfoPrivate::~EntryFileInfoPrivate()
  * \brief this is a proxy class for file info, the real info is in private class and should be registered by suffix
  */
 EntryFileInfo::EntryFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new EntryFileInfoPrivate(this))
+    : AbstractFileInfo(url), d(new EntryFileInfoPrivate(url, this))
 {
-    d = static_cast<EntryFileInfoPrivate *>(dptr.data());
+    dptr.reset(d);
     d->init();
     Q_ASSERT_X(url.scheme() == Global::Scheme::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
 }
