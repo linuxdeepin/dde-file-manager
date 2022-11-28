@@ -79,6 +79,7 @@ public:
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(fileUrl);
         info->refresh();
         DFMBASE_NAMESPACE::DecoratorFileInfo decorator(fileUrl);
+        // TODO(gongheng): why return false in vault
         decorator.notifyAttributeChanged();
     }
 
