@@ -20,7 +20,6 @@
 */
 #include "tagdirmenuscene.h"
 #include "private/tagdirmenuscene_p.h"
-#include "utils/tagmanager.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 

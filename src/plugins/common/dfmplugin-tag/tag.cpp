@@ -29,6 +29,8 @@
 #include "widgets/tagwidget.h"
 #include "menu/tagmenuscene.h"
 #include "menu/tagdirmenuscene.h"
+#include "dbus/tagdbus.h"
+#include "dbus/dbus_adaptor/tagdbus_adaptor.h"
 #include "events/tageventreceiver.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
@@ -41,6 +43,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QRectF>
+#include <QDBusConnection>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 
@@ -113,6 +116,8 @@ void Tag::onAllPluginsInitialized()
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", TagManager::scheme(), TagDirMenuCreator::name());
     dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
+
+    initDbus();
 }
 
 QWidget *Tag::createTagWidget(const QUrl &url)
@@ -125,8 +130,8 @@ QWidget *Tag::createTagWidget(const QUrl &url)
 
 void Tag::installToSideBar()
 {
-    QMap<QString, QColor> tagsMap = TagManager::instance()->getAllTags();
-    auto tagNames = tagsMap.keys();
+    auto tagsMap = TagManager::instance()->getAllTags();
+    auto tagNames = TagHelper::instance()->displayTagNameConversion(tagsMap.keys());
     auto orders = Application::genericSetting()->value(kSidebarOrder, kTagOrderKey).toStringList();
     for (const auto &item : orders) {
         QUrl u(item);
@@ -136,9 +141,8 @@ void Tag::installToSideBar()
         auto query = u.query().split("=", Qt::SkipEmptyParts);
 #endif
         if (query.count() == 2 && tagNames.contains(query[1])) {
-            auto &&url { TagHelper::instance()->makeTagUrlByTagName(query[1]) };
             auto &&map { TagHelper::instance()->createSidebarItemInfo(query[1]) };
-            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, map);
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", u, map);
             tagNames.removeAll(query[1]);
         }
     }
@@ -208,4 +212,45 @@ void Tag::bindEvents()
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted", TagEventReceiver::instance(), &TagEventReceiver::handleSidebarOrderChanged);
 
     dpfSlotChannel->connect("dfmplugin_tag", "slot_GetTags", TagEventReceiver::instance(), &TagEventReceiver::handleGetTags);
+}
+
+void Tag::initServiceDBusInterfaces(QDBusConnection *connection)
+{
+    static std::once_flag flag;
+    std::call_once(flag, [&connection, this]() {
+        // add our D-Bus interface and connect to D-Bus
+        if (!connection->registerService("org.deepin.filemanager.tag")) {
+            qWarning("Cannot register the \"org.deepin.filemanager.tag\" service.\n");
+            return;
+        }
+
+        qInfo() << "Init DBus DeviceManager start";
+
+        // register object
+        tagDBus.reset(new TagDBus);
+        Q_UNUSED(new TagDBusAdaptor(tagDBus.data()));
+        if (!connection->registerObject("/org/deepin/filemanager/Tag",
+                                        tagDBus.data())) {
+            qWarning("Cannot register the \"/org/deepin/filemanager/Tag\" object.\n");
+            tagDBus.reset(nullptr);
+        }
+
+        qInfo() << "Init DBus DeviceManager end";
+    });
+}
+
+void Tag::initDbus()
+{
+    static QDBusConnection connection = QDBusConnection::sessionBus();
+    if (!connection.isConnected()) {
+        qWarning("Cannot connect to the D-Bus session bus.\n"
+                 "Please check your system settings and try again.\n");
+        return;
+    }
+
+    qInfo() << "Start register DBus interfaces";
+
+    QTimer::singleShot(1000, [this]() {
+        initServiceDBusInterfaces(&connection);
+    });
 }

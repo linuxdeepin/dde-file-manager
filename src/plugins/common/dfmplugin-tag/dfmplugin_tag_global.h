@@ -33,19 +33,20 @@
 DPTAG_BEGIN_NAMESPACE
 
 enum class TagActionType : uint8_t {
-    kMakeFilesTags = 1,
-    kGetFilesThroughTag,
+    kGetAllTags = 1,
     kGetTagsThroughFile,
+    kGetSameTagsOfDiffFiles,
+    kGetFilesThroughTag,
+    kGetTagsColor,
+    kAddTags,
+    kMakeFilesTags,
+    kMakeFilesTagThroughColor,
     kRemoveTagsOfFiles,
     kDeleteTags,
-    kChangeTagName,
     kDeleteFiles,
-    kMakeFilesTagThroughColor,
-    kChangeFilesName,
-    kGetAllTags,
-    kBeforeMakeFilesTags,
-    kGetTagsColor,
-    kChangeTagColor
+    kChangeTagColor,
+    kChangeTagName,
+    kChangeFilesName
 };
 
 namespace TagActionId {

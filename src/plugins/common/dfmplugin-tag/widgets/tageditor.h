@@ -64,7 +64,6 @@ private:
     void initializeConnect();
 
     void processTags();
-    QMap<QString, QColor> preTag(const QStringList &tagList);
     void updateCrumbsColor(const QMap<QString, QColor> &tagsColor);
 
     void onPressESC() noexcept;

@@ -6,5 +6,6 @@ set(DESKTOP_PLUGIN_DIR "${PROJECT_SOURCE_PATH}/plugins/common")
 add_subdirectory(dfmplugin-burn)
 add_subdirectory(dfmplugin-preview)
 add_subdirectory(dfmplugin-bookmark)
+add_subdirectory(dfmplugin-tag)
 
 add_subdirectory(core/dfmplugin-propertydialog)

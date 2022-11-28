@@ -1,24 +1,7 @@
-/*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
- *
- * Author:     liuyangming<liuyangming@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "taghelper.h"
 #include "tagmanager.h"
 #include "widgets/tageditor.h"
@@ -45,6 +28,14 @@ TagHelper *TagHelper::instance()
 {
     static TagHelper ins;
     return &ins;
+}
+
+QUrl TagHelper::rootUrl()
+{
+    QUrl rootUrl;
+    rootUrl.setScheme(scheme());
+    rootUrl.setPath("/");
+    return rootUrl;
 }
 
 QList<QColor> TagHelper::defualtColors() const
@@ -100,6 +91,18 @@ QString TagHelper::qureyColorNameByColor(const QColor &color) const
     return QString();
 }
 
+QString TagHelper::qureyDisplayNameByColorName(const QString &colorName) const
+{
+    auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [colorName](const TagColorDefine &define) {
+        return define.colorName == colorName;
+    });
+
+    if (ret != colorDefines.cend())
+        return ret->displayName;
+
+    return QString();
+}
+
 QString TagHelper::qureyIconNameByColorName(const QString &colorName) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [colorName](const TagColorDefine &define) {
@@ -148,6 +151,38 @@ QString TagHelper::qureyColorNameByDisplayName(const QString &name) const
     return QString();
 }
 
+QStringList TagHelper::displayTagNameConversion(const QStringList &dbTags) const
+{
+    QStringList defaultColorNames;
+    for (const TagColorDefine &define : colorDefines) {
+        defaultColorNames << define.colorName;
+    }
+
+    QStringList displayNames;
+    for (const auto &tag : dbTags)
+        if (defaultColorNames.contains(tag))
+            displayNames << qureyDisplayNameByColorName(tag);
+        else
+            displayNames << tag;
+    return displayNames;
+}
+
+QStringList TagHelper::dbTagNameConversion(const QStringList &tags) const
+{
+    QStringList defaultDisplayNames;
+    for (const TagColorDefine &define : colorDefines) {
+        defaultDisplayNames << define.displayName;
+    }
+
+    QStringList dbTagNames;
+    for (const auto &tag : tags)
+        if (defaultDisplayNames.contains(tag))
+            dbTagNames << qureyColorNameByDisplayName(tag);
+        else
+            dbTagNames << tag;
+    return dbTagNames;
+}
+
 QString TagHelper::getTagNameFromUrl(const QUrl &url) const
 {
     if (url.scheme() == TagManager::scheme())
@@ -180,7 +215,7 @@ QString TagHelper::getColorNameByTag(const QString &tagName) const
 bool TagHelper::isDefualtTag(const QString &tagName) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [tagName](const TagColorDefine &define) {
-        return define.displayName == tagName;
+        return define.colorName == tagName;
     });
 
     return ret != colorDefines.cend();
@@ -238,7 +273,7 @@ void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, co
     editor->setAttribute(Qt::WA_DeleteOnClose);
     editor->setFocusOutSelfClosing(true);
 
-    QList<QString> sameTagsInDiffFiles = TagManager::instance()->getTagsByUrls(fileList);
+    const QList<QString> &sameTagsInDiffFiles = TagManager::instance()->getTagsByUrls(fileList, true).toStringList();
     editor->setDefaultCrumbs(sameTagsInDiffFiles);
 
     int showPosX = static_cast<int>(iconRect.center().x());

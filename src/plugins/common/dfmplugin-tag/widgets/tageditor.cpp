@@ -154,34 +154,8 @@ void TagEditor::processTags()
     QList<QString> tags = crumbEdit->crumbList();
     QList<QUrl> tempFiles = files;
 
-    updateCrumbsColor(preTag(tags));
+    updateCrumbsColor(TagManager::instance()->assignColorToTags(tags));
     TagManager::instance()->setTagsForFiles(tags, tempFiles);
-}
-
-QMap<QString, QColor> TagEditor::preTag(const QStringList &tagList)
-{
-    const auto &allTags = TagManager::instance()->getAllTags();
-    QMap<QString, QColor> tagsMap;
-
-    for (const auto &tag : tagList) {
-        const auto &tagMap = TagManager::instance()->getTagsColor({ tag });
-        if (tagMap.isEmpty()) {
-            QColor tagColor;
-            if (allTags.contains(tag)) {
-                tagColor = allTags[tag];
-            } else {
-                const auto &colorName = TagHelper::instance()->getColorNameByTag(tag);
-                tagColor = TagHelper::instance()->qureyColorByColorName(colorName);
-                TagManager::instance()->registerTagColor(tag, colorName);
-            }
-
-            tagsMap[tag] = tagColor;
-        } else {
-            tagsMap.unite(tagMap);
-        }
-    }
-
-    return tagsMap;
 }
 
 void TagEditor::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)

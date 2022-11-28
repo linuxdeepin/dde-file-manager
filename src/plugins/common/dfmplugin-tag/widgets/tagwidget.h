@@ -60,6 +60,7 @@ public slots:
 
 protected:
     void initConnection();
+    void updateCrumbsColor(const QMap<QString, QColor> &tagsColor);
 
     QSharedPointer<TagWidgetPrivate> d;
 };

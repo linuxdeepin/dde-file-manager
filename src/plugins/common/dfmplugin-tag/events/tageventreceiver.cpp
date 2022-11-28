@@ -53,7 +53,11 @@ void TagEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QLi
         return;
 
     for (const QUrl &url : srcUrls) {
-        QStringList tags = TagManager::instance()->getTagsByUrls({ url });
+        const auto &rec = TagManager::instance()->getTagsByUrls({ url }).toMap();
+        if (rec.isEmpty())
+            continue;
+
+        QStringList tags = rec.first().toStringList();
         if (!tags.isEmpty()) {
             TagManager::instance()->removeTagsOfFiles(tags, { url });
 
@@ -73,7 +77,11 @@ void TagEventReceiver::handleFileRemoveResult(const QList<QUrl> &srcUrls, bool o
         return;
 
     for (const QUrl &url : srcUrls) {
-        QStringList tags = TagManager::instance()->getTagsByUrls({ url });
+        const auto &rec = TagManager::instance()->getTagsByUrls({ url }).toMap();
+        if (rec.isEmpty())
+            continue;
+
+        QStringList tags = rec.first().toStringList();
         if (!tags.isEmpty()) {
             TagManager::instance()->removeTagsOfFiles(tags, { url });
         }
@@ -90,7 +98,11 @@ void TagEventReceiver::handleFileRenameResult(quint64 winId, const QMap<QUrl, QU
 
     auto iter = renamedUrls.constBegin();
     for (; iter != renamedUrls.constEnd(); ++iter) {
-        QStringList tags = TagManager::instance()->getTagsByUrls({ iter.key() });
+        const auto &rec = TagManager::instance()->getTagsByUrls({ iter.key() }).toMap();
+        if (rec.isEmpty())
+            continue;
+
+        QStringList tags = rec.first().toStringList();
         if (!tags.isEmpty()) {
             TagManager::instance()->removeTagsOfFiles(tags, { iter.key() });
             TagManager::instance()->addTagsForFiles(tags, { iter.value() });
@@ -123,7 +135,11 @@ void TagEventReceiver::handleRestoreFromTrashResult(const QList<QUrl> &srcUrls, 
 
 QStringList TagEventReceiver::handleGetTags(const QUrl &url)
 {
-    return TagManager::instance()->getTagsByUrls({ url });
+    const auto &rec = TagManager::instance()->getTagsByUrls({ url }).toMap();
+    if (rec.isEmpty())
+        return {};
+
+    return rec.first().toStringList();
 }
 
 void TagEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group)

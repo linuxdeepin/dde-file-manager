@@ -51,30 +51,12 @@ void TagWidget::loadTags(const QUrl &url)
     if (!d->crumbEdit || !d->colorListWidget || !shouldShow(url))
         return;
 
-    const QStringList tagNameList = TagManager::instance()->getTagsByUrls({ url });
+    const QStringList tagNameList = TagManager::instance()->getTagsByUrls({ url.toString() }, true).toStringList();
     QMap<QString, QColor> tagsMap = TagManager::instance()->getTagsColor(tagNameList);
-
-    if (d->url == url && tagNameList.length() == d->currentTagWithColorMap.count()) {
-        bool needRefreshEdit = false;
-
-        for (const QString &tag : tagNameList) {
-            QString colorName = TagHelper::instance()->qureyColorNameByDisplayName(tag);
-
-            if (!d->currentTagWithColorMap.contains(tag) || d->currentTagWithColorMap.value(tag) != colorName) {
-                needRefreshEdit = true;
-                break;
-            }
-        }
-
-        if (!needRefreshEdit)
-            return;
-    }
-
     QList<QColor> selectColors;
-
     d->crumbEdit->setProperty("LoadFileTags", true);
     d->crumbEdit->clear();
-    d->currentTagWithColorMap.clear();
+
     for (auto it = tagsMap.begin(); it != tagsMap.end(); ++it) {
         // defualt tag need show checked
         if (TagHelper::instance()->isDefualtTag(it.key()))
@@ -87,7 +69,6 @@ void TagWidget::loadTags(const QUrl &url)
         format.setBackgroundRadius(5);
 
         d->crumbEdit->insertCrumb(format, 0);
-        d->currentTagWithColorMap.insert(it.key(), TagHelper::instance()->qureyColorNameByColor(it.value()));
     }
     d->crumbEdit->setProperty("LoadFileTags", false);
 
@@ -103,12 +84,15 @@ bool TagWidget::shouldShow(const QUrl &url)
 
 void TagWidget::onCrumbListChanged()
 {
-    if (!d->crumbEdit->isEditing() && !d->crumbEdit->property("LoadFileTags").toBool()) {
-        bool ret = TagManager::instance()->setTagsForFiles(d->crumbEdit->crumbList(), { d->url });
+    if (!d->crumbEdit->property("updateCrumbsColor").toBool()) {
+        updateCrumbsColor(TagManager::instance()->assignColorToTags((d->crumbEdit->crumbList())));
+        if (!d->crumbEdit->isEditing() && !d->crumbEdit->property("LoadFileTags").toBool()) {
+            bool ret = TagManager::instance()->setTagsForFiles(d->crumbEdit->crumbList(), { d->url });
 
-        if (!ret) {
-            loadTags(d->url);
-            return;
+            if (!ret) {
+                loadTags(d->url);
+                return;
+            }
         }
     }
 }
@@ -117,14 +101,14 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
 {
     Q_UNUSED(color)
 
-    const QStringList tagNameList = TagManager::instance()->getTagsByUrls({ d->url });
+    const QStringList tagNameList = TagManager::instance()->getTagsByUrls({ d->url }, false).toMap().first().toStringList();
     QMap<QString, QColor> nameColors = TagManager::instance()->getTagsColor(tagNameList);
     QList<QUrl> urlList { d->url };
     QList<QColor> checkedColors = d->colorListWidget->checkedColorList();
 
     QStringList newTagNames;
     for (const QColor &color : checkedColors) {
-        QString tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
+        QString tagName = TagHelper::instance()->qureyColorNameByColor(color);
         if (tagName.isEmpty())
             continue;
 
@@ -156,4 +140,25 @@ void TagWidget::initConnection()
 
     connect(TagManager::instance(), &TagManager::filesTagged, this, &TagWidget::onTagChanged);
     connect(TagManager::instance(), &TagManager::filesUntagged, this, &TagWidget::onTagChanged);
+}
+
+void TagWidget::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)
+{
+    if (tagsColor.isEmpty())
+        return;
+
+    d->crumbEdit->setProperty("updateCrumbsColor", true);
+    d->crumbEdit->clear();
+
+    for (auto it = tagsColor.begin(); it != tagsColor.end(); ++it) {
+        DCrumbTextFormat format = d->crumbEdit->makeTextFormat();
+        format.setText(it.key());
+
+        format.setBackground(QBrush(it.value()));
+        format.setBackgroundRadius(5);
+
+        d->crumbEdit->insertCrumb(format, 0);
+    }
+
+    d->crumbEdit->setProperty("updateCrumbsColor", false);
 }

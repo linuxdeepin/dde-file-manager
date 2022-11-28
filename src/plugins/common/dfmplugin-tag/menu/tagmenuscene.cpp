@@ -109,7 +109,6 @@ void TagMenuScene::updateState(QMenu *parent)
     // sort
     parent->removeAction(d->predicateAction[TagActionId::kActTagAddKey]);
     parent->insertAction(d->predicateAction[TagActionId::kActTagColorListKey], d->predicateAction[TagActionId::kActTagAddKey]);
-
     AbstractMenuScene::updateState(parent);
 }
 
@@ -191,18 +190,16 @@ void TagMenuScene::onHoverChanged(const QColor &color)
 
 void TagMenuScene::onColorClicked(const QColor &color)
 {
-    Q_UNUSED(color)
-
     TagColorListWidget *tagWidget = getMenuListWidget();
-
     if (tagWidget) {
         QList<QColor> colors = tagWidget->checkedColorList();
-        QStringList tags = {};
-        for (const QColor &color : colors) {
-            tags.append(TagHelper::instance()->qureyDisplayNameByColor(color));
+        if (colors.contains(color)) {
+            //add checked tag
+            TagManager::instance()->addTagsForFiles({ TagHelper::instance()->qureyColorNameByColor(color) }, d->selectFiles);
+        } else {
+            // delete checked tag
+            TagManager::instance()->removeTagsOfFiles({ TagHelper::instance()->qureyColorNameByColor(color) }, d->selectFiles);
         }
-
-        TagManager::instance()->setTagsForFiles(tags, d->selectFiles);
     }
 }
 
@@ -236,14 +233,14 @@ QAction *TagMenuScene::createColorListAction() const
 
     action->setDefaultWidget(colorListWidget);
 
-    QStringList tags = TagManager::instance()->getTagsByUrls(d->selectFiles);
+    QStringList tags = TagManager::instance()->getTagsByUrls(d->selectFiles, true).toStringList();
     QList<QColor> colors;
 
     for (const QString &tag : tags) {
         if (!TagHelper::instance()->isDefualtTag(tag))
             continue;
 
-        const QColor &color = TagHelper::instance()->qureyColorByDisplayName(tag);
+        const QColor &color = TagHelper::instance()->qureyColorByColorName(tag);
 
         if (Q_LIKELY(color.isValid()))
             colors << color;

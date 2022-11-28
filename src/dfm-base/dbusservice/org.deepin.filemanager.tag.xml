@@ -1,0 +1,42 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="local.TagDBus">
+    <method name="Insert">
+      <arg type="b" direction="out"/>
+      <arg name="type" type="y" direction="in"/>
+      <arg name="value" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="Insert">
+      <arg type="b" direction="out"/>
+      <arg name="type" type="y" direction="in"/>
+    </method>
+    <method name="Delete">
+      <arg type="b" direction="out"/>
+      <arg name="type" type="y" direction="in"/>
+      <arg name="value" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="Delete">
+      <arg type="b" direction="out"/>
+      <arg name="type" type="y" direction="in"/>
+    </method>
+    <method name="Update">
+      <arg type="b" direction="out"/>
+      <arg name="type" type="y" direction="in"/>
+      <arg name="value" type="a{sv}" direction="in"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+    </method>
+    <method name="Update">
+      <arg type="b" direction="out"/>
+      <arg name="type" type="y" direction="in"/>
+    </method>
+    <method name="CanTagFile">
+      <arg type="b" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+    </method>
+    <method name="LastError">
+      <arg type="s" direction="out"/>
+    </method>
+  </interface>
+</node>
