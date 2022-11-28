@@ -42,8 +42,11 @@ void AbstractJob::setJobArgs(const JobHandlePointer handle, const QList<QUrl> &s
         qWarning() << "JobHandlePointer is a nullptr, setJobArgs failed!";
         return;
     }
-    connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractJob::operateCopy);
+    connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractJob::operateAation);
     connect(this, &AbstractJob::requestShowTipsDialog, handle.get(), &AbstractJobHandler::requestShowTipsDialog);
+    // 连接worker中的所有错误信号，转发给jobhandler
+    connect(doWorker.data(), &AbstractWorker::errorNotify, this, &AbstractJob::handleError, Qt::QueuedConnection);
+    connect(this, &AbstractJob::errorNotify, handle.get(), &AbstractJobHandler::onError);
     doWorker->setWorkArgs(handle, sources, target, flags);
 }
 
@@ -60,13 +63,16 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
 {
     if (this->doWorker) {
         this->doWorker->moveToThread(&thread);
-        connect(this, &AbstractJob::startWork, doWorker, &AbstractWorker::doWork);
         connect(doWorker, &AbstractWorker::finishedNotify, this, &AbstractJob::deleteLater);
         connect(doWorker, &AbstractWorker::requestShowTipsDialog, this, &AbstractJob::requestShowTipsDialog);
+        connect(doWorker, &AbstractWorker::retryErrSuccess, this, &AbstractJob::handleRetryErrorSuccess, Qt::QueuedConnection);
         connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
             thread.quit();
+            while (!this->doWorker->isStopped()) {
+            }
             thread.wait();
         });
+        start();
     }
 }
 
@@ -74,14 +80,71 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
  * \brief operateCopy 处理handle上的用户操作
  * \param actions 操作类型
  */
-void AbstractJob::operateCopy(AbstractJobHandler::SupportActions actions)
+void AbstractJob::operateAation(AbstractJobHandler::SupportActions actions)
 {
     if (actions.testFlag(AbstractJobHandler::SupportAction::kStartAction)) {
-        start();
-        emit startWork();
+        emit doWorker->startWork();
     } else {
-        if (doWorker)
+        // 处理当前的错误
+        if (errorQueue.size() > 0) {
+            auto isRetry = actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction);
+            auto error = errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
+            auto id = errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt();
+            if (!isRetry)
+                errorQueue.dequeue();
+            doWorker->doOperateWork(actions, error, id);
+            // not retry,dealing next error
+            if (!isRetry && errorQueue.size() > 0) {
+                emit errorNotify(errorQueue.head());
+            } else {
+                //start all thread
+                doWorker->resumeAllThread();
+            }
+
+        } else {
             doWorker->doOperateWork(actions);
+        }
+        if (actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction) || actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction))
+            errorQueue.clear();
+    }
+}
+
+void AbstractJob::handleError(const JobInfoPointer jobInfo)
+{
+    doWorker->pauseAllThread();
+    // retry error
+    if (errorQueue.size() > 0
+        && errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt()
+                == jobInfo->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt()) {
+
+        if (errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>()
+            != jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>())
+            errorQueue.push_front(jobInfo);
+
+        emit errorNotify(jobInfo);
+        return;
+    }
+    // new error
+    errorQueue.enqueue(jobInfo);
+    if (errorQueue.size() > 1)
+        return;
+    // 进行错误处理
+    emit errorNotify(jobInfo);
+}
+
+void AbstractJob::handleRetryErrorSuccess(const quint64 Id)
+{
+    // retry error dealing success and dealing next error
+    if (errorQueue.size() < 0 || errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt() != Id) {
+        if (errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt() != Id)
+            qCritical() << "error current error thread id = " << Id << " error Queue error id = " << errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer);
+        return;
+    }
+    errorQueue.dequeue();
+    if (errorQueue.size() > 0) {
+        emit errorNotify(errorQueue.head());
+    } else {
+        doWorker->resumeAllThread();
     }
 }
 

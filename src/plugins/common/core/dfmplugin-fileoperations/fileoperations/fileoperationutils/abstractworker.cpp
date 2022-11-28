@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "abstractworker.h"
+#include "workerdata.h"
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -53,48 +54,50 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer handle, const QList<QUrl
         qWarning() << "JobHandlePointer is a nullptr, setWorkArgs failed!";
         return;
     }
+    connect(this, &AbstractWorker::startWork, this, &AbstractWorker::doWork);
+    workData.reset(new WorkerData);
     this->handle = handle;
     initHandleConnects(handle);
     this->sourceUrls = sources;
     this->targetUrl = target;
     isConvert = flags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
-    jobFlags = flags;
+    workData->jobFlags = flags;
 }
 
 /*!
  * \brief doOperateWork 处理用户的操作 不在拷贝线程执行的函数，协同类直接调用
  * \param actions 当前操作
  */
-void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
+void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, AbstractJobHandler::JobErrorType error, const quint64 id)
 {
-    if (actions.testFlag(AbstractJobHandler::SupportAction::kStopAction)) {
-        stop();
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction)) {
-        pause();
-    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kResumAction)) {
+    if (actions.testFlag(AbstractJobHandler::SupportAction::kStopAction))
+        return stopAllThread();
+    if (actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction))
+        return pauseAllThread();
+    if (actions.testFlag(AbstractJobHandler::SupportAction::kResumAction))
+        return resumeAllThread();
+
+    getAction(actions);
+
+    if (actions.testFlag(AbstractJobHandler::SupportAction::kRememberAction) && error != AbstractJobHandler::JobErrorType::kNoError)
+        workData->errorOfAction.insert(error, currentAction);
+
+    // dealing error thread
+    if (workData->signalThread) {
         resume();
-    } else {
-        if (actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction)) {
-            currentAction = AbstractJobHandler::SupportAction::kCancelAction;
-        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kCoexistAction)) {
-            currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
-        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction)) {
-            currentAction = AbstractJobHandler::SupportAction::kSkipAction;
-        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kMergeAction)) {
-            currentAction = AbstractJobHandler::SupportAction::kMergeAction;
-        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kReplaceAction)) {
-            currentAction = AbstractJobHandler::SupportAction::kReplaceAction;
-        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction)) {
-            currentAction = AbstractJobHandler::SupportAction::kRetryAction;
-        } else if (actions.testFlag(AbstractJobHandler::SupportAction::kEnforceAction)) {
-            currentAction = AbstractJobHandler::SupportAction::kEnforceAction;
-        } else {
-            currentAction = AbstractJobHandler::SupportAction::kNoAction;
+        if (copyFileWorker)
+            copyFileWorker->operateAction(currentAction);
+        return;
+    }
+
+    if (id == quintptr(this)) {
+        return resume();
+    }
+
+    for (auto worker : threadCopy) {
+        if (id == quintptr(worker->worker.data())) {
+            worker->worker->operateAction(currentAction);
         }
-
-        rememberSelect.store(actions.testFlag(AbstractJobHandler::SupportAction::kRememberAction));
-
-        handlingErrorCondition.wakeAll();
     }
 }
 
@@ -106,17 +109,6 @@ void AbstractWorker::stop()
     setStat(AbstractJobHandler::JobState::kStopState);
     if (statisticsFilesSizeJob)
         statisticsFilesSizeJob->stop();
-    // clean error info queue
-    {
-        QMutexLocker lk(&errorThreadIdQueueMutex);
-        errorThreadIdQueue.clear();
-    }
-
-    waitCondition.wakeAll();
-
-    handlingErrorCondition.wakeAll();
-
-    errorCondition.wakeAll();
 
     if (updateProgressTimer)
         updateProgressTimer->stopTimer();
@@ -143,8 +135,28 @@ void AbstractWorker::resume()
     setStat(AbstractJobHandler::JobState::kRunningState);
 
     waitCondition.wakeAll();
+}
 
-    errorCondition.wakeAll();
+void AbstractWorker::getAction(AbstractJobHandler::SupportActions actions)
+{
+    if (actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction)) {
+        currentAction = AbstractJobHandler::SupportAction::kCancelAction;
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kCoexistAction)) {
+        currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction)) {
+        currentAction = AbstractJobHandler::SupportAction::kSkipAction;
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kMergeAction)) {
+        currentAction = AbstractJobHandler::SupportAction::kMergeAction;
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kReplaceAction)) {
+        currentAction = AbstractJobHandler::SupportAction::kReplaceAction;
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction)) {
+        currentAction = AbstractJobHandler::SupportAction::kRetryAction;
+        retry = workData->signalThread ? false : true;
+    } else if (actions.testFlag(AbstractJobHandler::SupportAction::kEnforceAction)) {
+        currentAction = AbstractJobHandler::SupportAction::kEnforceAction;
+    } else {
+        currentAction = AbstractJobHandler::SupportAction::kNoAction;
+    }
 }
 /*!
  * \brief AbstractWorker::startCountProccess start update proccess timer
@@ -187,7 +199,7 @@ bool AbstractWorker::statisticsFilesSize()
 
         allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
-        dirSize = fileSizeInfo->dirSize;
+        workData->dirSize = fileSizeInfo->dirSize;
         sourceFilesCount = fileSizeInfo->fileCount;
     } else {
         statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
@@ -203,9 +215,7 @@ bool AbstractWorker::statisticsFilesSize()
  */
 bool AbstractWorker::workerWait()
 {
-    QMutex lock;
-    waitCondition.wait(&lock);
-    lock.unlock();
+    waitCondition.wait(&mutex);
 
     return currentState == AbstractJobHandler::JobState::kRunningState;
 }
@@ -255,6 +265,12 @@ void AbstractWorker::endWork()
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey, QVariant::fromValue(completeTargetFiles));
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteCustomInfosKey, QVariant::fromValue(completeCustomInfos));
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
+
+    for (auto const &thread : threadCopy) {
+        thread->worker->stop();
+        thread->thread->quit();
+        thread->thread->wait();
+    }
 
     saveOperations();
 
@@ -318,7 +334,7 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
  * \param error task error type
  * \param errorMsg task error message
  */
-void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
+void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const quint64 id, const QString &errorMsg)
 {
     JobInfoPointer info = createCopyJobInfo(from, to);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
@@ -326,6 +342,8 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey, QVariant::fromValue(errorMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey, QVariant::fromValue(supportActions(error)));
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
+    quint64 emitId = id == 0 ? quintptr(this) : id;
+    info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, QVariant::fromValue(emitId));
     emit errorNotify(info);
 
     qDebug() << "work error, job: " << jobType << " job error: " << error << " url from: " << from << " url to: " << to
@@ -427,6 +445,44 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));
     return info;
 }
+
+void AbstractWorker::resumeAllThread()
+{
+    resume();
+    if (copyFileWorker)
+        copyFileWorker->resume();
+    for (auto worker : threadCopy) {
+        worker->worker->resume();
+    }
+}
+
+void AbstractWorker::pauseAllThread()
+{
+    pause();
+    if (copyFileWorker)
+        copyFileWorker->pause();
+    for (auto worker : threadCopy) {
+        worker->worker->pause();
+    }
+}
+
+void AbstractWorker::stopAllThread()
+{
+    stop();
+    if (copyFileWorker)
+        copyFileWorker->stop();
+    for (auto worker : threadCopy) {
+        worker->thread->quit();
+        worker->worker->stop();
+    }
+}
+
+void AbstractWorker::checkRetry()
+{
+    if (workData->signalThread || !retry)
+        return;
+    emit retryErrSuccess(quintptr(this));
+}
 /*!
  * \brief AbstractWorker::doWork task Thread execution
  * \return
@@ -481,7 +537,7 @@ void AbstractWorker::onStatisticsFilesSizeFinish()
     statisticsFilesSizeJob->stop();
     const SizeInfoPointer &sizeInfo = statisticsFilesSizeJob->getFileSizeInfo();
     sourceFilesTotalSize = statisticsFilesSizeJob->totalProgressSize();
-    dirSize = sizeInfo->dirSize;
+    workData->dirSize = sizeInfo->dirSize;
     sourceFilesCount = sizeInfo->fileCount;
 }
 
@@ -503,7 +559,7 @@ AbstractWorker::AbstractWorker(QObject *parent)
 QString AbstractWorker::formatFileName(const QString &fileName)
 {
     // 获取目标文件的文件系统，是vfat格式是否要特殊处理，以前的文管处理的
-    if (jobFlags.testFlag(AbstractJobHandler::JobFlag::kDontFormatFileName)) {
+    if (workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kDontFormatFileName)) {
         return fileName;
     }
 
@@ -571,13 +627,9 @@ void AbstractWorker::initHandleConnects(const JobHandlePointer handle)
         qWarning() << "JobHandlePointer is a nullptr,so connects failed!";
         return;
     }
-
-    connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractWorker::doOperateWork, Qt::QueuedConnection);
-
     connect(this, &AbstractWorker::progressChangedNotify, handle.get(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);
     connect(this, &AbstractWorker::stateChangedNotify, handle.get(), &AbstractJobHandler::onStateChanged, Qt::QueuedConnection);
     connect(this, &AbstractWorker::currentTaskNotify, handle.get(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
     connect(this, &AbstractWorker::finishedNotify, handle.get(), &AbstractJobHandler::onFinished, Qt::QueuedConnection);
-    connect(this, &AbstractWorker::errorNotify, handle.get(), &AbstractJobHandler::onError, Qt::QueuedConnection);
     connect(this, &AbstractWorker::speedUpdatedNotify, handle.get(), &AbstractJobHandler::onSpeedUpdated, Qt::QueuedConnection);
 }

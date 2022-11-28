@@ -54,65 +54,65 @@ public:
     Q_ENUM(JobFlag)
     Q_DECLARE_FLAGS(JobFlags, JobFlag)
     enum class JobState : uint8_t {
-        kStartState,   // 开始状态
-        kRunningState,   // 运行状态
-        kPauseState,   // 暂停状态
-        kStopState,   // 停止状态
+        kStartState = 0,   // 开始状态
+        kRunningState = 1,   // 运行状态
+        kPauseState = 2,   // 暂停状态
+        kStopState = 3,   // 停止状态
         kUnknowState = 255
     };
     Q_ENUM(JobState)
     enum class StatisticState : uint8_t {
-        kNoState,   // 无状态
-        kRunningState,   // 运行状态
-        kStopState,   // 停止状态
+        kNoState = 0,   // 无状态
+        kRunningState = 1,   // 运行状态
+        kStopState = 2,   // 停止状态
     };
     Q_ENUM(StatisticState)
     enum class JobErrorType : uint8_t {
-        kNoError,   // 没有错误
-        kNoSourceError,   // 没有源文件
-        kCancelError,   // 退出错误
-        kPermissionError,   // 权限错误
-        kSpecialFileError,   // 特殊文件错误
-        kFileExistsError,   // 文件已存在
-        kDirectoryExistsError,   // 目录已存在
-        kOpenError,   // 打开文件错误
-        kReadError,   // 读取文件错误
-        kWriteError,   // 写入文件错误
-        kSymlinkError,   // 创建链接文件错误
-        kMkdirError,   // 创建目录错误
-        kResizeError,   // 调整文件大小错误
-        kRemoveError,   // 移除错误
-        kRenameError,   // 重命名错误
-        kSymlinkToGvfsError,   // 连接gvfs文件错误
-        kUnknowUrlError,   // 未知的url
-        kNonexistenceError,   // 不存在错误
-        kIntegrityCheckingError,   // 检查文件类型错误
-        kFileSizeTooBigError,   // 文件太大
-        kNotEnoughSpaceError,   // 没有剩余空间进行拷贝
-        kTargetReadOnlyError,   // 目标目录是只读
-        kTargetIsSelfError,   // 目标是自己
-        kNotSupportedError,   // 不支持的操作
-        kPermissionDeniedError,   // 权限错误
-        kSeekError,   // 文件移动错误
-        kProrogramError,   // 程序错误
-        kDfmIoError,   // 程序错误
-        kDeleteFileError,   // 删除文件错误
-        kMakeStandardTrashError,   // 回收站目录错误
-        kGetRestorePathError,   // 获取回收站文件信息失败
-        kDeleteTrashFileError,   // 删除回收站文件错误
-        kIsNotTrashFileError,   // 不是回收站文件
-        kCreateParentDirError,   // 创建父目录失败
-        kUnknowError,   // 未知错误
+        kNoError = 0,   // 没有错误
+        kNoSourceError = 1,   // 没有源文件
+        kCancelError = 2,   // 退出错误
+        kPermissionError = 3,   // 权限错误
+        kSpecialFileError = 4,   // 特殊文件错误
+        kFileExistsError = 5,   // 文件已存在
+        kDirectoryExistsError = 6,   // 目录已存在
+        kOpenError = 7,   // 打开文件错误
+        kReadError = 8,   // 读取文件错误
+        kWriteError = 9,   // 写入文件错误
+        kSymlinkError = 10,   // 创建链接文件错误
+        kMkdirError = 11,   // 创建目录错误
+        kResizeError = 12,   // 调整文件大小错误
+        kRemoveError = 13,   // 移除错误
+        kRenameError = 14,   // 重命名错误
+        kSymlinkToGvfsError = 15,   // 连接gvfs文件错误
+        kUnknowUrlError = 16,   // 未知的url
+        kNonexistenceError = 17,   // 不存在错误
+        kIntegrityCheckingError = 18,   // 检查文件类型错误
+        kFileSizeTooBigError = 19,   // 文件太大
+        kNotEnoughSpaceError = 20,   // 没有剩余空间进行拷贝
+        kTargetReadOnlyError = 21,   // 目标目录是只读
+        kTargetIsSelfError = 22,   // 目标是自己
+        kNotSupportedError = 23,   // 不支持的操作
+        kPermissionDeniedError = 24,   // 权限错误
+        kSeekError = 25,   // 文件移动错误
+        kProrogramError = 26,   // 程序错误
+        kDfmIoError = 27,   // 程序错误
+        kDeleteFileError = 28,   // 删除文件错误
+        kMakeStandardTrashError = 29,   // 回收站目录错误
+        kGetRestorePathError = 30,   // 获取回收站文件信息失败
+        kDeleteTrashFileError = 31,   // 删除回收站文件错误
+        kIsNotTrashFileError = 32,   // 不是回收站文件
+        kCreateParentDirError = 33,   // 创建父目录失败
+        kUnknowError = 255,   // 未知错误
     };
     Q_ENUM(JobErrorType)
     enum class JobType : uint8_t {
-        kCopyType,   // 拷贝任务
-        kCutType,   // 剪切任务
-        kDeleteTpye,   // 删除任务
-        kMoveToTrashType,   //移动到回收站
-        kRestoreType,   // 从回收站还原
-        kCleanTrashType,   // 清理回收站
-        kUnknow
+        kCopyType = 0,   // 拷贝任务
+        kCutType = 1,   // 剪切任务
+        kDeleteTpye = 2,   // 删除任务
+        kMoveToTrashType = 3,   //移动到回收站
+        kRestoreType = 4,   // 从回收站还原
+        kCleanTrashType = 5,   // 清理回收站
+        kUnknow = 255,
     };
     Q_ENUM(JobType)
     enum class SupportAction {
@@ -133,39 +133,40 @@ public:
     Q_ENUM(SupportAction)
     Q_DECLARE_FLAGS(SupportActions, SupportAction)
     enum NotifyInfoKey : uint8_t {
-        kJobtypeKey,
-        kCurrentProgressKey,
-        kTotalSizeKey,
-        kStatisticStateKey,
-        kJobStateKey,
-        kJobStateHideKey,
-        kSourceUrlKey,
-        kTargetUrlKey,
-        kErrorTypeKey,
-        kSourceMsgKey,
-        kTargetMsgKey,
-        kErrorMsgKey,
-        kActionsKey,
-        kSpeedKey,
-        kRemindTimeKey,
-        kCompleteFilesKey,
-        kCompleteTargetFilesKey,
-        kCompleteCustomInfosKey,
-        kJobHandlePointer,
+        kJobtypeKey = 0,
+        kCurrentProgressKey = 1,
+        kTotalSizeKey = 2,
+        kStatisticStateKey = 3,
+        kJobStateKey = 4,
+        kJobStateHideKey = 5,
+        kSourceUrlKey = 6,
+        kTargetUrlKey = 7,
+        kErrorTypeKey = 8,
+        kSourceMsgKey = 9,
+        kTargetMsgKey = 10,
+        kErrorMsgKey = 11,
+        kActionsKey = 12,
+        kSpeedKey = 13,
+        kRemindTimeKey = 14,
+        kCompleteFilesKey = 15,
+        kCompleteTargetFilesKey = 16,
+        kCompleteCustomInfosKey = 17,
+        kJobHandlePointer = 18,
+        kWorkerPointer = 19,
     };
     Q_ENUM(NotifyInfoKey)
     enum class NotifyType : uint8_t {
-        kNotifyProccessChangedKey,
-        kNotifyStateChangedKey,
-        kNotifyCurrentTaskKey,
-        kNotifyFinishedKey,
-        kNotifySpeedUpdatedTaskKey,
-        kNotifyErrorTaskKey,
+        kNotifyProccessChangedKey = 0,
+        kNotifyStateChangedKey = 1,
+        kNotifyCurrentTaskKey = 2,
+        kNotifyFinishedKey = 3,
+        kNotifySpeedUpdatedTaskKey = 4,
+        kNotifyErrorTaskKey = 5,
     };
     Q_ENUM(NotifyType)
     enum FileNameAddFlag : uint8_t {
-        kPrefix,
-        kSuffix
+        kPrefix = 0,
+        kSuffix = 1,
     };
     Q_ENUM(FileNameAddFlag)
 

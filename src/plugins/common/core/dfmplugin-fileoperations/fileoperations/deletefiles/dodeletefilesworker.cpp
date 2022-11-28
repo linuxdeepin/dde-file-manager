@@ -230,11 +230,9 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
 AbstractJobHandler::SupportAction DoDeleteFilesWorker::doHandleErrorAndWait(const QUrl &from, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
 {
     setStat(AbstractJobHandler::JobState::kPauseState);
-    emitErrorNotify(from, QUrl(), error, errorMsg);
+    emitErrorNotify(from, QUrl(), error, 0, errorMsg);
 
-    handlingErrorQMutex.lock();
-    handlingErrorCondition.wait(&handlingErrorQMutex);
-    handlingErrorQMutex.unlock();
+    waitCondition.wait(&mutex);
 
     return currentAction;
 }

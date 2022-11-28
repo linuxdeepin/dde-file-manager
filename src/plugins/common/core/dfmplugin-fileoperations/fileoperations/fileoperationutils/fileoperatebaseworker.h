@@ -28,18 +28,17 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/utils/threadcontainer.hpp"
 
-#include <dfm-io/core/dfile.h>
-
 #include <QTime>
-#include <QThreadPool>
 
 class QObject;
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 class StorageInfo;
-
-class FileOperateBaseWorker : public AbstractWorker
+class DoCopyFileWorker;
+using StoragePointer = QSharedPointer<StorageInfo>;
+class FileOperateBaseWorker : public AbstractWorker, public QEnableSharedFromThis<AbstractFileInfo>
 {
+
 public:
     explicit FileOperateBaseWorker(QObject *parent = nullptr);
     virtual ~FileOperateBaseWorker() override;
@@ -49,6 +48,9 @@ public:
         QFileDevice::Permissions permission;
         QUrl target;
     };
+
+    using DirPermsissonPointer = QSharedPointer<DirSetPermissonInfo>;
+    using DirPermissonList = DThreadList<DirPermsissonPointer>;
 
     struct SmallFileThreadCopyInfo
     {
@@ -64,38 +66,13 @@ public:
                         bool *skip, bool isCountSize = false);
     bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl,
                                  QSharedPointer<StorageInfo> targetStorageInfo, bool *skip);
-    bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
-    bool createFileDevices(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                           QSharedPointer<DFMIO::DFile> &fromeFile, QSharedPointer<DFMIO::DFile> &toFile,
-                           bool *skip);
-    bool createFileDevice(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                          const AbstractFileInfoPointer &needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
-                          bool *skip);
-    bool openFiles(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                   const QSharedPointer<DFMIO::DFile> &fromeFile, const QSharedPointer<DFMIO::DFile> &toFile,
-                   bool *skip);
-    bool openFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                  const QSharedPointer<DFMIO::DFile> &file, const DFMIO::DFile::OpenFlags &flags,
-                  bool *skip);
-    bool resizeTargetFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                          const QSharedPointer<DFMIO::DFile> &file, bool *skip);
-    bool doReadFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                    const QSharedPointer<DFMIO::DFile> &fromDevice,
-                    char *data, const qint64 &blockSize, qint64 &readSize, bool *skip);
-    bool doWriteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                     const QSharedPointer<DFMIO::DFile> &toDevice,
-                     const char *data, const qint64 &readSize, bool *skip);
     void setTargetPermissions(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
-    bool verifyFileIntegrity(const qint64 &blockSize, const ulong &sourceCheckSum,
-                             const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                             QSharedPointer<DFMIO::DFile> &toFile);
     void setAllDirPermisson();
     void determineCountProcessType();
     qint64 getWriteDataSize();
     qint64 getTidWriteSize();
     qint64 getSectorsWritten();
     void readAheadSourceFile(const AbstractFileInfoPointer &fileInfo);
-    void cancelThreadProcessingError();
     void syncFilesToDevice();
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
                                                            const AbstractJobHandler::JobErrorType &error, const QString &errorMsg = QString());
@@ -115,41 +92,39 @@ public:
     bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
     bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
     bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
-    void doThreadPoolCopyFile(const int index);
 
 private:
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
+    void initThreadCopy();
+    void initSignalCopyWorker();
+    bool createNewTargetInfo(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+                             AbstractFileInfoPointer &newTargetInfo, const QUrl &fileNewUrl,
+                             bool *skip, bool isCountSize = false);
+    QUrl createNewTargetUrl(const AbstractFileInfoPointer &toInfo, QString &fileNewName);
+
+protected Q_SLOTS:
+    void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
+                         const quint64 id, const QString &errorMsg = QString()) override;
+    virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to) override;
 
 private:
     QVariant checkLinkAndSameUrl(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
     QVariant doActionReplace(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
     QVariant doActionMerge(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
 
-    bool checkRememberAction(const QUrl &url);
-
 protected:
     QTime time;   // time eslape
     AbstractFileInfoPointer targetInfo { nullptr };   // target file infor pointer
-
-    QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
-    QAtomicInteger<qint64> skipWritSize { 0 };   // 跳过的文件大小
-    QAtomicInteger<qint64> zeroOrlinkOrDirWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory
-    QAtomicInteger<qint64> blockRenameWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory
+    StoragePointer targetStorageInfo { nullptr };   // target file's device infor
     CountWriteSizeType countWriteType { CountWriteSizeType::kTidType };   // get write size type
-    QAtomicInteger<qint64> currentWriteSize { 0 };   // 当前写入文件的大小
     long copyTid = { -1 };   // 使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
     qint64 targetDeviceStartSectorsWritten { 0 };   // 记录任务开始时目标磁盘设备已写入扇区数
     QString targetSysDevPath;   // /sys/dev/block/x:x
     qint16 targetLogSecionSize { 512 };   // 目标设备逻辑扇区大小
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
-    DThreadList<QSharedPointer<DirSetPermissonInfo>> dirPermissonList;   // dir set Permisson list
-    std::atomic_bool needSyncEveryRW { false };
-    std::atomic_bool isFsTypeVfat { false };
+    DirPermissonList dirPermissonList;   // dir set Permisson list
 
     std::atomic_int threadInfoVectorSize { 0 };
-
-    QVector<QSharedPointer<SmallFileThreadCopyInfo>> smallFileThreadCopyInfoVector;   // copy small file thread information Queue
-    QSharedPointer<QThreadPool> threadPool { nullptr };   // copy small file thread pool
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

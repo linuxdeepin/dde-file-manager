@@ -180,11 +180,8 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
 AbstractJobHandler::SupportAction DoCleanTrashFilesWorker::doHandleErrorAndWait(const QUrl &from, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
 {
     setStat(AbstractJobHandler::JobState::kPauseState);
-    emitErrorNotify(from, QUrl(), error, errorMsg);
-
-    handlingErrorQMutex.lock();
-    handlingErrorCondition.wait(&handlingErrorQMutex);
-    handlingErrorQMutex.unlock();
+    emitErrorNotify(from, QUrl(), error, 0, errorMsg);
+    waitCondition.wait(&mutex);
 
     return currentAction;
 }

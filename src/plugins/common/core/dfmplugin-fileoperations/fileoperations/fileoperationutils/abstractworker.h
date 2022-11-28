@@ -25,6 +25,8 @@
 
 #include "dfmplugin_fileoperations_global.h"
 #include "fileoperationsutils.h"
+#include "workerdata.h"
+#include "docopyfileworker.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/file/local/localfilehandler.h"
@@ -43,13 +45,19 @@ DPFILEOPERATIONS_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 class UpdateProgressTimer;
-
 class AbstractWorker : public QObject
 {
     friend class AbstractJob;
     Q_OBJECT
     virtual void setWorkArgs(const JobHandlePointer handle, const QList<QUrl> &sourceUrls, const QUrl &targetUrl = QUrl(),
                              const AbstractJobHandler::JobFlags &flags = AbstractJobHandler::JobFlag::kNoHint);
+
+protected:
+    struct CopyFileThread
+    {
+        QSharedPointer<QThread> thread { nullptr };
+        QSharedPointer<DoCopyFileWorker> worker { nullptr };
+    };
 
 public:
     enum class CountWriteSizeType : quint8 {
@@ -90,18 +98,7 @@ signals:
      * \brief finishedNotify 任务完成
      */
     void finishedNotify(const JobInfoPointer jobInfo);
-    /*!
-     * \brief errorNotify 错误信息，此信号都可能是异步连接，所以所有参数都没有使用引用
-     * \param info 这个Varint信息map
-     * 在我们自己提供的fileoperations服务中，这个VarintMap里面会存在kJobtypeKey任务类型，类型JobType）、source（源文件url，类型：QUrl）
-     * 、target（源文件url，类型：QUrl）、errorType（错误类型，类型：JobErrorType）、sourceMsg（源文件url拼接的显示字符串，
-     * 类型：QString）、targetMsg（目标文件url拼接的显示字符串，类型：QString）、kErrorMsgKey（错误信息字符串，类型：QString）、
-     * kActionsKey（支持的操作，类型：SupportActions）
-     * 在我们自己提供的dailog服务中，这个VarintMap必须有存在sourceMsg（显示任务的左第一个label的显示，类型：QString）、
-     * targetMsg（显示任务的左第二个label的显示，类型：QString）、kErrorMsgKey（显示任务的左第三个label的显示，类型：QString）、
-     * kActionsKey（支持的操作，用来显示那些按钮，类型：SupportActions）
-     */
-    void errorNotify(const JobInfoPointer jobInfo);
+
     /*!
      * \brief speedUpdatedNotify 速度更新信号，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
@@ -115,14 +112,15 @@ signals:
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
 signals:   // update proccess timer use
     void startUpdateProgressTimer();
+    void startWork();
+    void errorNotify(const JobInfoPointer jobInfo);
+    void retryErrSuccess(const quint64 id);
 
 public:
-    virtual void doOperateWork(AbstractJobHandler::SupportActions actions);
+    void doOperateWork(AbstractJobHandler::SupportActions actions, AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError, const quint64 id = 0);
 
 protected:
     virtual void stop();
-    virtual void pause();
-    virtual void resume();
     virtual void startCountProccess();
     virtual bool statisticsFilesSize();
     virtual bool stateCheck();
@@ -134,10 +132,8 @@ protected:
     virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to);
     virtual void emitProgressChangedNotify(const qint64 &writSize);
     virtual void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
-                                 const QString &errorMsg = QString());
+                                 const quint64 id = 0, const QString &errorMsg = QString());
     virtual AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error);
-    bool isStopped();
-    JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to);
 
 protected slots:
     virtual bool doWork();
@@ -150,6 +146,15 @@ protected:
     explicit AbstractWorker(QObject *parent = nullptr);
     QString formatFileName(const QString &fileName);
     void saveOperations();
+    bool isStopped();
+    JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to);
+    void resumeAllThread();
+    void pauseAllThread();
+    void stopAllThread();
+    void checkRetry();
+    void pause();
+    void resume();
+    void getAction(AbstractJobHandler::SupportActions actions);
 
 public:
     virtual ~AbstractWorker();
@@ -163,20 +168,17 @@ public:
     QSharedPointer<LocalFileHandler> localFileHandler { nullptr };   // file base operations handler
 
     AbstractJobHandler::JobType jobType { AbstractJobHandler::JobType::kUnknow };   // current task type
-    AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // job flag
     AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // current action
-    std::atomic_bool rememberSelect { false };
+
     std::atomic_bool stopWork { false };
     AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
 
     QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // total size of all source files
     QAtomicInteger<qint64> sourceFilesCount { 0 };   // source files count
-    quint16 dirSize { 0 };   // size of dir
 
     QList<QUrl> sourceUrls;   // source urls
     QUrl targetUrl;   // target dir url
     QList<QUrl> allFilesList;   // all files(contains children)
-    QQueue<Qt::HANDLE> errorThreadIdQueue;   // Thread queue for processing errors
     QList<QUrl> completeSourceFiles;   // List of all copied files
     QList<QUrl> completeTargetFiles;   // List of all complete target files
     QVariantList completeCustomInfos;
@@ -184,14 +186,14 @@ public:
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
     bool isConvert { false };   // is convert operation
+    QSharedPointer<WorkerData> workData { nullptr };
+    QSharedPointer<DoCopyFileWorker> copyFileWorker { nullptr };
     QTime timeElapsed;
 
-    QWaitCondition handlingErrorCondition;
-    QMutex handlingErrorQMutex;
     QWaitCondition waitCondition;
-    QWaitCondition errorCondition;   //  Condition variables that block other bad threads
-    QMutex errorThreadIdQueueMutex;   // Condition variables that block other bad threads mutex
-    QMutex cacheCopyingMutex;
+    QMutex mutex;
+    QVector<QSharedPointer<CopyFileThread>> threadCopy;
+    std::atomic_bool retry { false };
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

@@ -23,6 +23,7 @@
 #include "fileoperatebaseworker.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "fileoperations/copyfiles/storageinfo.h"
+#include "workerdata.h"
 
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/base/schemefactory.h"
@@ -30,7 +31,7 @@
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 #include <dfm-io/core/diofactory.h>
 #include <dfm-io/dfmio_register.h>
@@ -48,7 +49,6 @@
 #include <syscall.h>
 #include <sys/stat.h>
 
-static const quint32 kMaxBufferLength { 1024 * 1024 * 1 };
 constexpr uint32_t kBigFileSize { 300 * 1024 * 1024 };
 
 DPFILEOPERATIONS_USE_NAMESPACE
@@ -75,52 +75,25 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
                                                                               const AbstractJobHandler::JobErrorType &error,
                                                                               const QString &errorMsg)
 {
-    // 判断是否有线程在处理错误,1.无，当前线程加入到处理队列，阻塞其他线程的错误处理，发送错误信号，阻塞自己。收到错误处理，恢复自己。
-    // 判读是否有retry操作,当前错误处理线程就切换（错误处理线程不出队列），继续处理，外部判读处理完成就切换处理线程
-    // 当前处理线程为队列的第一个对象
-    if (checkRememberAction(urlFrom)) {
+    if (workData->errorOfAction.contains(error)) {
+        currentAction = workData->errorOfAction.value(error);
         return currentAction;
     }
-
-    errorThreadIdQueueMutex.lock();
 
     if (FileUtils::isSameFile(urlFrom, urlTo)) {
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
-        errorThreadIdQueueMutex.unlock();
         return currentAction;
     }
-    errorThreadIdQueueMutex.unlock();
 
     setStat(AbstractJobHandler::JobState::kPauseState);
 
-    errorThreadIdQueueMutex.lock();
-    errorThreadIdQueue.clear();
-    errorThreadIdQueue.enqueue(QThread::currentThreadId());
-
-    // 阻塞其他线程 当前不是停止状态，并且当前线程不是处理错误线程
-    while (!isStopped() && errorThreadIdQueue.first() != QThread::currentThreadId()) {
-        errorThreadIdQueueMutex.unlock();
-        QMutex lock;
-        errorCondition.wait(&lock);
-        lock.unlock();
-        errorThreadIdQueueMutex.lock();
-    }
-
-    errorThreadIdQueueMutex.unlock();
-    if (isStopped())
-        return AbstractJobHandler::SupportAction::kCancelAction;
-
     // 发送错误处理 阻塞自己
     const QString &errorMsgAll = errorMsg.isEmpty() ? AbstractJobHandler::errorToString(error) : (AbstractJobHandler::errorToString(error) + ": " + errorMsg);
-    emitErrorNotify(urlFrom, urlTo, error, errorMsgAll);
-    QMutex lock;
-    handlingErrorCondition.wait(&lock);
-    lock.unlock();
+    emitErrorNotify(urlFrom, urlTo, error, quintptr(this), errorMsgAll);
+    pause();
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
 
-    if (currentAction == AbstractJobHandler::SupportAction::kSkipAction)
-        setStat(AbstractJobHandler::JobState::kRunningState);
     return currentAction;
 }
 
@@ -135,134 +108,6 @@ void FileOperateBaseWorker::emitSpeedUpdatedNotify(const qint64 &writSize)
 
     emit stateChangedNotify(info);
     emit speedUpdatedNotify(info);
-}
-
-/*!
- * \brief FileOperateBaseWorker::createFileDevice Device to create the file
- * \param fromUrl URL of the source file
- * \param toUrl Destination URL
- * \param needOpenInfo file information
- * \param file fromeFile Output parameter: file device
- * \param result result result Output parameter: whether skip
- * \return Is the device of the file created successfully
- */
-bool FileOperateBaseWorker::createFileDevice(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                                             const AbstractFileInfoPointer &needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
-                                             bool *skip)
-{
-    file.reset();
-    QUrl url = needOpenInfo->urlOf(UrlInfoType::kUrl);
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    QSharedPointer<DIOFactory> factory { nullptr };
-    do {
-        factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-        if (!factory) {
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDfmIoError, QObject::tr("create dfm io factory failed!"));
-        }
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-    cancelThreadProcessingError();
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        setSkipValue(skip, action);
-        if (skip && *skip)
-            skipWritSize += fromInfo->size() <= 0 ? dirSize : fromInfo->size();
-
-        return false;
-    }
-
-    do {
-        file = factory->createFile();
-        if (!file) {
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDfmIoError, QObject::tr("create dfm io dfile failed!"));
-        }
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-
-    cancelThreadProcessingError();
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        setSkipValue(skip, action);
-        if (skip && *skip)
-            skipWritSize += fromInfo->size() <= 0 ? dirSize : fromInfo->size();
-
-        return false;
-    }
-
-    return true;
-}
-
-/*!
- * \brief FileOperateBaseWorker::createFileDevices Device for creating source and directory files
- * \param fromInfo File information of source file
- * \param toInfo File information of target file
- * \param fromeFile Output parameter: device of source file
- * \param toFile Output parameter: device of target file
- * \param result result Output parameter: whether skip
- * \return Whether the device of source file and target file is created successfully
- */
-bool FileOperateBaseWorker::createFileDevices(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                                              QSharedPointer<DFile> &fromeFile, QSharedPointer<DFile> &toFile, bool *skip)
-{
-    if (!createFileDevice(fromInfo, toInfo, fromInfo, fromeFile, skip))
-        return false;
-    if (!createFileDevice(fromInfo, toInfo, toInfo, toFile, skip))
-        return false;
-    return true;
-}
-
-/*!
- * \brief FileOperateBaseWorker::openFiles Open source and destination files
- * \param fromInfo File information of source file
- * \param toInfo File information of target file
- * \param fromeFile device of source file
- * \param toFile device of target file
- * \param result result Output parameter: whether skip
- * \return Open source and target files successfully
- */
-bool FileOperateBaseWorker::openFiles(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                                      const QSharedPointer<DFMIO::DFile> &fromeFile, const QSharedPointer<DFMIO::DFile> &toFile,
-                                      bool *skip)
-{
-    if (fromInfo->size() > 0 && !openFile(fromInfo, toInfo, fromeFile, DFile::OpenFlag::kReadOnly, skip)) {
-        return false;
-    }
-
-    if (!openFile(fromInfo, toInfo, toFile, DFile::OpenFlag::kWriteOnly | DFile::OpenFlag::kTruncate, skip)) {
-        return false;
-    }
-
-    return true;
-}
-
-/*!
- * \brief FileOperateBaseWorker::openFile
- * \param fromUrl URL of the source file
- * \param toUrl Destination URL
- * \param fileInfo file information
- * \param file file deivce
- * \param flags Flag for opening file
- * \param result result Output parameter: whether skip
- * \return wether open the file successfully
- */
-bool FileOperateBaseWorker::openFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                                     const QSharedPointer<DFMIO::DFile> &file, const DFMIO::DFile::OpenFlags &flags,
-                                     bool *skip)
-{
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    do {
-        if (!file->open(flags)) {
-            auto lastError = file->lastError();
-            qWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl) << " url to: " << toInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << flags << " error code: " << lastError.code() << " error msg: " << lastError.errorMsg();
-
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kOpenError, lastError.errorMsg());
-        }
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-    cancelThreadProcessingError();
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        setSkipValue(skip, action);
-        if (skip && *skip)
-            skipWritSize += fromInfo->size() <= 0 ? dirSize : fromInfo->size();
-
-        return false;
-    }
-    return true;
 }
 
 /*!
@@ -281,165 +126,6 @@ void FileOperateBaseWorker::setTargetPermissions(const AbstractFileInfoPointer &
     //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
     if (permissions != 0000)
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
-}
-
-/*!
- * \brief FileOperateBaseWorker::doReadFile  Read file contents
- * \param fromUrl URL of the source file
- * \param toUrl Destination URL
- * \param fileInfo file information
- * \param fromDevice file device
- * \param data Data buffer
- * \param blockSize Data buffer size
- * \param readSize Read size
- * \param result result Output parameter: whether skip
- * \return Read successfully
- */
-bool FileOperateBaseWorker::doReadFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                                       const QSharedPointer<DFile> &fromDevice,
-                                       char *data, const qint64 &blockSize,
-                                       qint64 &readSize, bool *skip)
-{
-    readSize = 0;
-    qint64 currentPos = fromDevice->pos();
-    AbstractJobHandler::SupportAction actionForRead = AbstractJobHandler::SupportAction::kNoAction;
-
-    if (Q_UNLIKELY(!stateCheck())) {
-        return false;
-    }
-    do {
-        readSize = fromDevice->read(data, blockSize);
-        if (Q_UNLIKELY(!stateCheck())) {
-            return false;
-        }
-
-        if (Q_UNLIKELY(readSize <= 0)) {
-
-            const qint64 fromFilePos = fromDevice->pos();
-            const qint64 fromFileInfoSize = fromInfo->size();
-            if (readSize == 0 && fromFilePos == fromFileInfoSize) {
-                return true;
-            }
-
-            qWarning() << "read size <=0, size: " << readSize << " from file pos: " << fromFilePos << " from file info size: " << fromFileInfoSize;
-
-            const bool fromInfoExist = DecoratorFile(fromInfo->urlOf(UrlInfoType::kUrl)).exists();
-            AbstractJobHandler::JobErrorType errortype = fromInfoExist ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
-            QString errorstr = fromInfoExist ? QString(QObject::tr("Failed to read the file, cause: %1")).arg("to something!") : QString();
-
-            actionForRead = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), errortype, errorstr);
-
-            if (actionForRead == AbstractJobHandler::SupportAction::kRetryAction) {
-                if (!fromDevice->seek(currentPos)) {
-                    AbstractJobHandler::SupportAction actionForReadSeek = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
-                                                                                               toInfo->urlOf(UrlInfoType::kUrl),
-                                                                                               AbstractJobHandler::JobErrorType::kSeekError);
-                    setSkipValue(skip, actionForReadSeek);
-                    if (skip && *skip)
-                        skipWritSize += fromInfo->size() - currentPos;
-
-                    cancelThreadProcessingError();
-                    return false;
-                }
-            }
-        }
-    } while (!isStopped() && actionForRead == AbstractJobHandler::SupportAction::kRetryAction);
-
-    cancelThreadProcessingError();
-
-    if (actionForRead != AbstractJobHandler::SupportAction::kNoAction) {
-        setSkipValue(skip, actionForRead);
-        return false;
-    }
-
-    return true;
-}
-
-/*!
- * \brief FileOperateBaseWorker::doWriteFile  Write file contents
- * \param fromUrl URL of the source file
- * \param toUrl Destination URL
- * \param fileInfo file information
- * \param fromDevice file device
- * \param data Data buffer
- * \param blockSize Data buffer size
- * \param readSize Write size
- * \param result result Output parameter: whether skip
- * \return Write successfully
- */
-bool FileOperateBaseWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                                        const QSharedPointer<DFile> &toDevice,
-                                        const char *data, const qint64 &readSize, bool *skip)
-{
-    qint64 currentPos = toDevice->pos();
-    AbstractJobHandler::SupportAction actionForWrite { AbstractJobHandler::SupportAction::kNoAction };
-    qint64 sizeWrite = 0;
-    qint64 surplusSize = readSize;
-
-    do {
-        bool writeFinishedOnce = true;
-        const char *surplusData = data;
-        do {
-            if (!writeFinishedOnce)
-                qDebug() << "write not finished once, current write size: " << sizeWrite << " remain size: " << surplusSize - sizeWrite << " read size: " << readSize;
-            surplusData += sizeWrite;
-            surplusSize -= sizeWrite;
-            sizeWrite = toDevice->write(surplusData, surplusSize);
-            if (sizeWrite > 0)
-                currentWriteSize += sizeWrite;
-            if (Q_UNLIKELY(!stateCheck()))
-                return false;
-            writeFinishedOnce = false;
-        } while (sizeWrite > 0 && sizeWrite < surplusSize);
-
-        // 表示全部数据写入完成
-        if (sizeWrite >= 0)
-            break;
-        if (sizeWrite == -1 && toDevice->lastError().code() == DFMIOErrorCode::DFM_IO_ERROR_NONE) {
-            qWarning() << "write failed, but no error, maybe write empty";
-            break;
-        }
-
-        QString errorStr = QString(QObject::tr("Failed to write the file, cause: %1")).arg(toDevice->lastError().errorMsg());
-
-        actionForWrite = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kWriteError, errorStr);
-        if (actionForWrite == AbstractJobHandler::SupportAction::kRetryAction) {
-            setStat(AbstractJobHandler::JobState::kRunningState);
-            if (!toDevice->seek(currentPos)) {
-                AbstractJobHandler::SupportAction actionForWriteSeek = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
-                                                                                            AbstractJobHandler::JobErrorType::kSeekError);
-                setSkipValue(skip, actionForWriteSeek);
-                if (skip && *skip)
-                    skipWritSize += fromInfo->size() - (currentPos + readSize - surplusSize);
-
-                cancelThreadProcessingError();
-                return false;
-            }
-        }
-    } while (!isStopped() && actionForWrite == AbstractJobHandler::SupportAction::kRetryAction);
-
-    cancelThreadProcessingError();
-
-    if (actionForWrite != AbstractJobHandler::SupportAction::kNoAction) {
-        setSkipValue(skip, actionForWrite);
-        if (skip && *skip)
-            skipWritSize += fromInfo->size() - (currentPos + readSize - surplusSize);
-
-        return false;
-    }
-
-    if (needSyncEveryRW && sizeWrite > 0) {
-        if (isFsTypeVfat) {
-            // FAT and VFAT file systems ignore the "sync" option
-            toDevice->close();
-            if (!openFile(fromInfo, toInfo, toDevice, DFile::OpenFlag::kWriteOnly | DFile::OpenFlag::kAppend, skip)) {
-                return false;
-            }
-        } else {
-            toDevice->flush();
-        }
-    }
-    return true;
 }
 
 /*!
@@ -483,7 +169,7 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
-    cancelThreadProcessingError();
+    checkRetry();
 
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
         setSkipValue(skip, action);
@@ -562,7 +248,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
     bool oldExist = DecoratorFile(toInfo->urlOf(UrlInfoType::kUrl)).exists();
 
     if (fromInfo->isAttributes(OptInfoType::kIsSymLink)) {
-        ok = createSystemLink(fromInfo, toInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
+        ok = createSystemLink(fromInfo, toInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (ok)
             ok = deleteFile(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), skip);
     } else if (fromInfo->isAttributes(OptInfoType::kIsDir)) {
@@ -573,7 +259,8 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
         const QUrl &url = toInfo->urlOf(UrlInfoType::kUrl);
 
         FileUtils::cacheCopyingFileUrl(url);
-        ok = doCopyFilePractically(fromInfo, toInfo, skip);
+        initSignalCopyWorker();
+        ok = copyFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
         if (ok)
             ok = deleteFile(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), skip);
         FileUtils::removeCopyingFileUrl(url);
@@ -601,38 +288,38 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
 {
     // 检查源文件的文件信息
     if (!fromInfo) {
+        qCritical() << " check file from file info is  nullpter !!!!!!!";
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(QUrl(), toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError);
-        cancelThreadProcessingError();
         setSkipValue(skip, action);
         return false;
     }
     // 检查源文件是否存在
     if (!DecoratorFile(fromInfo->urlOf(UrlInfoType::kUrl)).exists()) {
+        qCritical() << " check file from file is  not exists !!!!!!!";
         AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl), errortype);
-        cancelThreadProcessingError();
 
         setSkipValue(skip, action);
         return false;
     }
     // 检查目标文件的文件信息
     if (!toInfo) {
+        qCritical() << " check file to file perant info is  nullpter !!!!!!!";
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
-        cancelThreadProcessingError();
         setSkipValue(skip, action);
         return false;
     }
     // 检查目标文件是否存在
     if (!DecoratorFile(toInfo->urlOf(UrlInfoType::kUrl)).exists()) {
+        qCritical() << " check file to file perant file is  not exists !!!!!!!";
         AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), errortype);
-        cancelThreadProcessingError();
         setSkipValue(skip, action);
         return false;
     }
@@ -643,10 +330,9 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     case AbstractFileInfo::FileType::kFIFOFile:
     case AbstractFileInfo::FileType::kSocketFile: {
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kSpecialFileError);
-        cancelThreadProcessingError();
         setSkipValue(skip, action);
         if (skip && *skip)
-            skipWritSize += fromInfo->size() <= 0 ? dirSize : fromInfo->size();
+            workData->skipWriteSize += fromInfo->size() <= 0 ? workData->dirSize : fromInfo->size();
 
         return false;
     }
@@ -705,7 +391,7 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
         }
         actionForlink = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(localFileHandler->errorString()));
     } while (!isStopped() && actionForlink == AbstractJobHandler::SupportAction::kRetryAction);
-    cancelThreadProcessingError();
+    checkRetry();
     setSkipValue(skip, actionForlink);
     return false;
 }
@@ -721,154 +407,94 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
 bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                                            AbstractFileInfoPointer &newTargetInfo, QString &fileNewName, bool *skip, bool isCountSize)
 {
-    fileNewName = formatFileName(fileNewName);
-    // 创建文件的名称
-    QUrl newTargetUrl = toInfo->urlOf(UrlInfoType::kUrl);
-    const QString &newTargetPath = newTargetUrl.path();
-    const QString &newPath = DFMIO::DFMUtils::buildFilePath(newTargetPath.toStdString().c_str(), fileNewName.toStdString().c_str(), nullptr);
-    newTargetUrl.setPath(newPath);
+    auto newTargetUrl = createNewTargetUrl(toInfo, fileNewName);
+    if (createNewTargetInfo(fromInfo, toInfo, newTargetInfo, newTargetUrl, skip, isCountSize))
+        return true;
+    if (!workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->urlOf(UrlInfoType::kUrl), newTargetUrl)) {
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kTargetIsSelfError);
+        if (AbstractJobHandler::SupportAction::kSkipAction == action) {
+            setSkipValue(skip, action);
+            if (skip && *skip)
+                workData->skipWriteSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? workData->dirSize : fromInfo->size();
+            return false;
+        }
 
-    QString error;
-    newTargetInfo.reset();
-    const QString &suffix = fromInfo->nameOf(NameInfoType::kSuffix);
-    const QString &mimeTypeName = fromInfo->nameOf(NameInfoType::kMimeTypeName);
-    if (Q_UNLIKELY(suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop && mimeTypeName == "application/x-desktop")) {
-        newTargetInfo.reset(new DFMBASE_NAMESPACE::DesktopFileInfo(newTargetUrl));
-        InfoCacheController::instance().cacheFileInfo(newTargetUrl, newTargetInfo);
-    } else {
-        newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl, false, &error);
+        if (action != AbstractJobHandler::SupportAction::kEnforceAction) {
+            setSkipValue(skip, action);
+            if (skip && *skip)
+
+                workData->skipWriteSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? workData->dirSize : fromInfo->size();
+            return false;
+        }
+    };
+
+    bool newTargetIsFile = newTargetInfo->isAttributes(OptInfoType::kIsFile) || newTargetInfo->isAttributes(OptInfoType::kIsSymLink);
+    AbstractJobHandler::JobErrorType errortype = newTargetIsFile ? AbstractJobHandler::JobErrorType::kFileExistsError
+                                                                 : AbstractJobHandler::JobErrorType::kDirectoryExistsError;
+    AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), newTargetInfo->urlOf(UrlInfoType::kUrl), errortype);
+    switch (action) {
+    case AbstractJobHandler::SupportAction::kReplaceAction: {
+        const QVariant &var = doActionReplace(fromInfo, newTargetInfo, isCountSize);
+        if (var.isValid()) {
+            return var.toBool();
+        }
+        break;
     }
-
-    if (!newTargetInfo || !error.isEmpty()) {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError, error);
-        cancelThreadProcessingError();
+    case AbstractJobHandler::SupportAction::kMergeAction: {
+        const QVariant &var = doActionMerge(fromInfo, newTargetInfo, isCountSize);
+        if (var.isValid()) {
+            return var.toBool();
+        }
+        break;
+    }
+    case AbstractJobHandler::SupportAction::kSkipAction: {
+        workData->skipWriteSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? workData->dirSize : fromInfo->size();
         setSkipValue(skip, action);
-        if (skip && *skip)
-            skipWritSize += (isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0)) ? dirSize : fromInfo->size();
-
         return false;
     }
-
-    if (DecoratorFile(newTargetInfo->urlOf(UrlInfoType::kUrl)).exists()) {
-        if (!jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->urlOf(UrlInfoType::kUrl), newTargetUrl)) {
-            AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kTargetIsSelfError);
-            cancelThreadProcessingError();
-            if (AbstractJobHandler::SupportAction::kSkipAction == action) {
-                setSkipValue(skip, action);
-                if (skip && *skip)
-                    skipWritSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
-
-                return false;
-            }
-
-            if (action != AbstractJobHandler::SupportAction::kEnforceAction) {
-                setSkipValue(skip, action);
-                if (skip && *skip)
-                    skipWritSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
-
-                return false;
-            }
-        };
-        bool newTargetIsFile = newTargetInfo->isAttributes(OptInfoType::kIsFile) || newTargetInfo->isAttributes(OptInfoType::kIsSymLink);
-        AbstractJobHandler::JobErrorType errortype = newTargetIsFile ? AbstractJobHandler::JobErrorType::kFileExistsError
-                                                                     : AbstractJobHandler::JobErrorType::kDirectoryExistsError;
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), newTargetInfo->urlOf(UrlInfoType::kUrl), errortype);
-        switch (action) {
-        case AbstractJobHandler::SupportAction::kReplaceAction: {
-            const QVariant &var = doActionReplace(fromInfo, newTargetInfo, isCountSize);
-            if (var.isValid()) {
-                cancelThreadProcessingError();
-                return var.toBool();
-            }
-            break;
-        }
-        case AbstractJobHandler::SupportAction::kMergeAction: {
-            const QVariant &var = doActionMerge(fromInfo, newTargetInfo, isCountSize);
-            if (var.isValid()) {
-                cancelThreadProcessingError();
-                return var.toBool();
-            }
-            break;
-        }
-        case AbstractJobHandler::SupportAction::kSkipAction: {
-            skipWritSize += isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
-            cancelThreadProcessingError();
-            setSkipValue(skip, action);
+    case AbstractJobHandler::SupportAction::kCoexistAction: {
+        fileNewName = FileUtils::nonExistFileName(newTargetInfo, toInfo);
+        if (fileNewName.isEmpty()) {
             return false;
         }
-        case AbstractJobHandler::SupportAction::kCoexistAction: {
-            auto nameCheckFunc = [](const QString &name) -> bool {
-                return FileOperationsUtils::fileNameUsing.contains(name);
-            };
-            fileNewName = FileUtils::nonExistFileName(newTargetInfo, toInfo, nameCheckFunc);
-            if (fileNewName.isEmpty()) {
-                cancelThreadProcessingError();
-                return false;
-            }
-            FileOperationsUtils::addUsingName(fileNewName);
-
-            bool ok = doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, skip);
-            cancelThreadProcessingError();
-            return ok;
-        }
-        case AbstractJobHandler::SupportAction::kCancelAction: {
-            stopWork.store(true);
-            cancelThreadProcessingError();
-            return false;
-        }
-        default:
-            cancelThreadProcessingError();
-            return false;
-        }
-        cancelThreadProcessingError();
-        return true;
+        auto newTargetUrl = createNewTargetUrl(toInfo, fileNewName);
+        return createNewTargetInfo(fromInfo, toInfo, newTargetInfo, newTargetUrl, skip, isCountSize);
     }
-
-    cancelThreadProcessingError();
+    case AbstractJobHandler::SupportAction::kCancelAction: {
+        stopWork.store(true);
+        return false;
+    }
+    default:
+        return false;
+    }
     return true;
 }
 
 bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip)
 {
-
     if (!checkDiskSpaceAvailable(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), targetStorageInfo, skip)) {
         if (skip && *skip)
-            skipWritSize += fromInfo->size();
+            workData->skipWriteSize += fromInfo->size();
         return false;
     }
-
-    if (isSourceFileLocal && isTargetFileLocal && fromInfo->size() < kBigFileSize) {
+    checkRetry();
+    if (isSourceFileLocal && isTargetFileLocal && !workData->signalThread) {
         qDebug() << "use pool copy, url from: " << fromInfo->urlOf(UrlInfoType::kUrl) << " url to: " << toInfo->urlOf(UrlInfoType::kUrl);
-
         if (!stateCheck())
             return false;
 
-        QSharedPointer<SmallFileThreadCopyInfo> threadInfo(new SmallFileThreadCopyInfo);
-        threadInfo->fromInfo = fromInfo;
-        threadInfo->toInfo = toInfo;
+        emit threadCopy[threadInfoVectorSize % FileUtils::getCpuProcessCount()]->worker->copyFile(fromInfo, toInfo, nullptr);
 
-        smallFileThreadCopyInfoVector.append(threadInfo);
-
-        if (!threadPool)
-            threadPool.reset(new QThreadPool);
         threadInfoVectorSize++;
-        int threadIndex = threadInfoVectorSize.load() - 1;
-        QtConcurrent::run(threadPool.data(), this, static_cast<void (FileOperateBaseWorker::*)(const int)>(&FileOperateBaseWorker::doThreadPoolCopyFile), threadIndex);
+
         return true;
     }
-
-    if (threadPool) {
-        while (threadPool->activeThreadCount() > 0) {
-            QThread::msleep(100);
-        }
-    }
-
+    initSignalCopyWorker();
     const QString &targetUrl = toInfo->urlOf(UrlInfoType::kUrl).toString();
-    FileUtils::cacheCopyingFileUrl(targetUrl);
-    bool ok = doCopyFilePractically(fromInfo, toInfo, skip);
-    FileUtils::removeCopyingFileUrl(targetUrl);
 
-    FileOperationsUtils::removeUsingName(toInfo->nameOf(NameInfoType::kFileName));
+    FileUtils::cacheCopyingFileUrl(targetUrl);
+    bool ok = copyFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
+    FileUtils::removeCopyingFileUrl(targetUrl);
 
     return ok;
 }
@@ -886,17 +512,20 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kMkdirError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(localFileHandler->errorString()));
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-        cancelThreadProcessingError();
+
+        checkRetry();
         if (AbstractJobHandler::SupportAction::kNoAction != action) {
             // skip write size += all file size in sources dir
+            // todo liyigang
+            // if from dir is not null,skip write size count error
             setSkipValue(skip, action);
             if (skip && *skip)
-                skipWritSize += dirSize;
+                workData->skipWriteSize += workData->dirSize;
 
             return false;
         }
 
-        if (jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf)) {
+        if (workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf)) {
             QSharedPointer<DirSetPermissonInfo> dirinfo(new DirSetPermissonInfo);
             dirinfo->target = toInfo->urlOf(UrlInfoType::kUrl);
             dirinfo->permission = permissions;
@@ -913,8 +542,8 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
     QString error;
     const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(fromInfo->urlOf(UrlInfoType::kUrl), &error);
     if (!iterator) {
-        doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError, QString(QObject::tr("create dir's iterator failed, case : %1")).arg(error));
-        cancelThreadProcessingError();
+        qCritical() << "create dir's iterator failed, case : " << error;
+        doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
 
@@ -932,7 +561,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
         }
     }
     if (isTargetFileLocal && isSourceFileLocal) {
-        QSharedPointer<DirSetPermissonInfo> dirinfo(new DirSetPermissonInfo);
+        DirPermsissonPointer dirinfo(new DirSetPermissonInfo);
         dirinfo->target = toInfo->urlOf(UrlInfoType::kUrl);
         dirinfo->permission = permissions;
         dirPermissonList.appendByLock(dirinfo);
@@ -943,35 +572,79 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
     return true;
 }
 
-void FileOperateBaseWorker::doThreadPoolCopyFile(const int index)
-{
-    if (!stateCheck())
-        return;
-    if (index >= threadInfoVectorSize) {
-        qCritical() << "current index out of thread Info vector size ! index : " << index << " thread info size : " << threadInfoVectorSize;
-        return;
-    }
-
-    QSharedPointer<SmallFileThreadCopyInfo> threadInfo = smallFileThreadCopyInfoVector[index];
-    if (!threadInfo) {
-        setStat(AbstractJobHandler::JobState::kStopState);
-        qWarning() << " the threadInfo is nullptr, some error here! ";
-        return;
-    }
-    const QString &targetUrl = threadInfo->toInfo->urlOf(UrlInfoType::kUrl).toString();
-    FileUtils::cacheCopyingFileUrl(targetUrl);
-    bool skip = false;
-    bool ok = doCopyFilePractically(threadInfo->fromInfo, threadInfo->toInfo, &skip);
-    if (!ok && !skip)
-        setStat(AbstractJobHandler::JobState::kStopState);
-    FileUtils::removeCopyingFileUrl(targetUrl);
-    FileOperationsUtils::removeUsingName(threadInfo->toInfo->nameOf(NameInfoType::kFileName));
-}
-
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)
 {
     if (skip)
         *skip = action == AbstractJobHandler::SupportAction::kSkipAction;
+}
+
+void FileOperateBaseWorker::initThreadCopy()
+{
+    for (int i = 0; i < FileUtils::getCpuProcessCount(); i++) {
+        QSharedPointer<CopyFileThread> copy(new CopyFileThread);
+        // todo init new
+        copy->worker.reset(new DoCopyFileWorker(workData));
+        copy->thread.reset(new QThread);
+        copy->worker->moveToThread(copy->thread.data());
+        connect(copy->worker.data(), &DoCopyFileWorker::errorNotify, this, &FileOperateBaseWorker::emitErrorNotify, Qt::DirectConnection);
+        connect(copy->worker.data(), &DoCopyFileWorker::currentTask, this, &FileOperateBaseWorker::emitCurrentTaskNotify, Qt::DirectConnection);
+        connect(copy->worker.data(), &DoCopyFileWorker::retryErrSuccess, this, &FileOperateBaseWorker::retryErrSuccess, Qt::DirectConnection);
+        copy->thread->start();
+        threadCopy.append(copy);
+    }
+}
+
+void FileOperateBaseWorker::initSignalCopyWorker()
+{
+    if (!copyFileWorker) {
+        copyFileWorker.reset(new DoCopyFileWorker(workData));
+        connect(copyFileWorker.data(), &DoCopyFileWorker::errorNotify, this, &FileOperateBaseWorker::emitErrorNotify);
+        connect(copyFileWorker.data(), &DoCopyFileWorker::currentTask, this, &FileOperateBaseWorker::emitCurrentTaskNotify);
+    }
+}
+
+QUrl FileOperateBaseWorker::createNewTargetUrl(const AbstractFileInfoPointer &toInfo, QString &fileNewName)
+{
+    fileNewName = formatFileName(fileNewName);
+    // 创建文件的名称
+    QUrl newTargetUrl = toInfo->urlOf(UrlInfoType::kUrl);
+    const QString &newTargetPath = newTargetUrl.path();
+    const QString &newPath = DFMIO::DFMUtils::buildFilePath(newTargetPath.toStdString().c_str(), fileNewName.toStdString().c_str(), nullptr);
+    newTargetUrl.setPath(newPath);
+    return newTargetUrl;
+}
+
+bool FileOperateBaseWorker::createNewTargetInfo(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo, const QUrl &fileNewUrl, bool *skip, bool isCountSize)
+{
+
+    newTargetInfo.reset();
+
+    QString error;
+    newTargetInfo = InfoFactory::create<AbstractFileInfo>(fileNewUrl, false, &error);
+
+    if (!newTargetInfo || !error.isEmpty()) {
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError, error);
+        setSkipValue(skip, action);
+        if (skip && *skip)
+            workData->skipWriteSize += (isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0)) ? workData->dirSize : fromInfo->size();
+
+        return false;
+    }
+
+    if (!DecoratorFile(newTargetInfo->urlOf(UrlInfoType::kUrl)).exists())
+        return true;
+
+    return false;
+}
+
+void FileOperateBaseWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const quint64 id, const QString &errorMsg)
+{
+    AbstractWorker::emitErrorNotify(from, to, error, id, errorMsg);
+}
+
+void FileOperateBaseWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
+{
+    AbstractWorker::emitCurrentTaskNotify(from, to);
 }
 
 QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize)
@@ -984,8 +657,7 @@ QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const AbstractFileInfoPointe
 
     const QUrl &newTargetUrl = newTargetInfo->urlOf(UrlInfoType::kUrl);
     if (newTargetUrl == fromInfo->urlOf(UrlInfoType::kUrl)) {
-        skipWritSize += (isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0)) ? dirSize : fromInfo->size();
-        cancelThreadProcessingError();
+        workData->skipWriteSize += (isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0)) ? workData->dirSize : fromInfo->size();
         return true;
     }
 
@@ -1004,7 +676,6 @@ QVariant FileOperateBaseWorker::doActionReplace(const AbstractFileInfoPointer &f
     if (fromIsFile == newTargetIsFile) {
         return QVariant();
     } else {
-        cancelThreadProcessingError();
         return false;
     }
 }
@@ -1020,30 +691,8 @@ QVariant FileOperateBaseWorker::doActionMerge(const AbstractFileInfoPointer &fro
     } else if (fromIsFile && newTargetIsFile) {
         return checkLinkAndSameUrl(fromInfo, newTargetInfo, isCountSize);
     } else {
-        cancelThreadProcessingError();
         return false;
     }
-}
-
-bool FileOperateBaseWorker::checkRememberAction(const QUrl &url)
-{
-    if (!rememberSelect.load())
-        return false;
-
-    auto info = InfoFactory::create<AbstractFileInfo>(url);
-    if (!info)
-        return false;
-
-    if (info->isAttributes(OptInfoType::kIsDir) && currentAction == AbstractJobHandler::SupportAction::kReplaceAction)
-        return false;
-
-    if (info->isAttributes(OptInfoType::kIsFile) && currentAction == AbstractJobHandler::SupportAction::kMergeAction)
-        return false;
-
-    if (currentAction != AbstractJobHandler::SupportAction::kNoAction)
-        return true;
-
-    return false;
 }
 
 bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip)
@@ -1055,13 +704,13 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
         return result;
 
     if (fromInfo->isAttributes(OptInfoType::kIsSymLink)) {
-        result = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
+        result = createSystemLink(fromInfo, newTargetInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (result)
-            zeroOrlinkOrDirWriteSize += newTargetInfo->size() > 0 ? newTargetInfo->size() : FileUtils::getMemoryPageSize();
+            workData->zeroOrlinkOrDirWriteSize += (newTargetInfo->size() > 0 ? newTargetInfo->size() : FileUtils::getMemoryPageSize());
     } else if (fromInfo->isAttributes(OptInfoType::kIsDir)) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, skip);
         if (result || skip)
-            zeroOrlinkOrDirWriteSize += dirSize;
+            workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
     } else {
         result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
     }
@@ -1072,78 +721,6 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     }
 
     return result;
-}
-
-bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip)
-{
-    // 实现真实文件拷贝
-    // do not check the args
-    emitCurrentTaskNotify(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));
-    //预先读取
-    readAheadSourceFile(fromInfo);
-    // 创建文件的divice
-    QSharedPointer<DFile> fromDevice { nullptr }, toDevice { nullptr };
-    if (!createFileDevices(fromInfo, toInfo, fromDevice, toDevice, skip))
-        return false;
-    // 打开文件并创建
-    if (!openFiles(fromInfo, toInfo, fromDevice, toDevice, skip))
-        return false;
-    // 源文件大小如果为0
-    if (fromInfo->size() <= 0) {
-        // 对文件加权
-        setTargetPermissions(fromInfo, toInfo);
-        zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
-        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->urlOf(UrlInfoType::kUrl));
-        return true;
-    }
-    // resize target file
-    if (jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyResizeDestinationFile) && !resizeTargetFile(fromInfo, toInfo, toDevice, skip))
-        return false;
-    // 循环读取和写入文件，拷贝
-    qint64 blockSize = fromInfo->size() > kMaxBufferLength ? kMaxBufferLength : fromInfo->size();
-    char *data = new char[static_cast<uint>(blockSize + 1)];
-    uLong sourceCheckSum = adler32(0L, nullptr, 0);
-    qint64 sizeRead = 0;
-
-    do {
-        if (!doReadFile(fromInfo, toInfo, fromDevice, data, blockSize, sizeRead, skip)) {
-            delete[] data;
-            data = nullptr;
-            return false;
-        }
-
-        if (!doWriteFile(fromInfo, toInfo, toDevice, data, sizeRead, skip)) {
-            delete[] data;
-            data = nullptr;
-            return false;
-        }
-
-        if (Q_LIKELY(jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyIntegrityChecking))) {
-            sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
-        }
-
-        toInfo->refresh(DFMIO::DFileInfo::AttributeID::kStandardSize, toDevice->size());
-
-    } while (fromDevice->pos() != fromInfo->size());
-
-    delete[] data;
-    data = nullptr;
-
-    // 对文件加权
-    setTargetPermissions(fromInfo, toInfo);
-    if (Q_UNLIKELY(!stateCheck())) {
-        return false;
-    }
-
-    // 校验文件完整性
-    if (skip)
-        *skip = verifyFileIntegrity(blockSize, sourceCheckSum, fromInfo, toInfo, toDevice);
-    toInfo->refresh();
-
-    if (skip && *skip)
-        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->urlOf(UrlInfoType::kUrl));
-
-    return true;
 }
 
 bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
@@ -1180,76 +757,6 @@ bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
     return true;
 }
 
-bool FileOperateBaseWorker::resizeTargetFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, const QSharedPointer<DFile> &file, bool *skip)
-{
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    do {
-        if (!file->write(QByteArray())) {
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kResizeError, QObject::tr("resize file failed!"));
-        }
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-    cancelThreadProcessingError();
-    if (action != AbstractJobHandler::SupportAction::kNoAction) {
-        setSkipValue(skip, action);
-        if (skip && *skip)
-            skipWritSize += fromInfo->size() <= 0 ? dirSize : fromInfo->size();
-
-        return false;
-    }
-    return true;
-}
-
-bool FileOperateBaseWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong &sourceCheckSum,
-                                                const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, QSharedPointer<DFile> &toDevice)
-{
-    if (!jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyIntegrityChecking))
-        return true;
-    char *data = new char[static_cast<uint>(blockSize + 1)];
-    QTime t;
-    ulong targetCheckSum = adler32(0L, nullptr, 0);
-    Q_FOREVER {
-        qint64 size = toDevice->read(data, blockSize);
-
-        if (Q_UNLIKELY(size <= 0)) {
-            if (size == 0 && toInfo->size() == toDevice->pos()) {
-                break;
-            }
-
-            QString errorstr = QObject::tr("File integrity was damaged, cause: %1").arg("some error occ!");
-            AbstractJobHandler::SupportAction actionForCheckRead = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kIntegrityCheckingError, errorstr);
-            if (!isStopped() && AbstractJobHandler::SupportAction::kRetryAction == actionForCheckRead) {
-                continue;
-            } else {
-                cancelThreadProcessingError();
-                return actionForCheckRead == AbstractJobHandler::SupportAction::kSkipAction;
-            }
-        }
-
-        cancelThreadProcessingError();
-
-        targetCheckSum = adler32(targetCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(size));
-
-        if (Q_UNLIKELY(!stateCheck())) {
-            delete[] data;
-            data = nullptr;
-            return false;
-        }
-    }
-    delete[] data;
-
-    qDebug("Time spent of integrity check of the file: %d", t.elapsed());
-
-    if (sourceCheckSum != targetCheckSum) {
-        qWarning("Failed on file integrity checking, source file: 0x%lx, target file: 0x%lx", sourceCheckSum, targetCheckSum);
-        QString errorstr = QObject::tr("File integrity was damaged, cause: %1").arg("some error occ!");
-        AbstractJobHandler::SupportAction actionForCheck = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kIntegrityCheckingError, errorstr);
-        cancelThreadProcessingError();
-        return actionForCheck == AbstractJobHandler::SupportAction::kSkipAction;
-    }
-
-    return true;
-}
-
 void FileOperateBaseWorker::setAllDirPermisson()
 {
     for (auto info : dirPermissonList.list()) {
@@ -1257,22 +764,6 @@ void FileOperateBaseWorker::setAllDirPermisson()
     }
 }
 
-void FileOperateBaseWorker::cancelThreadProcessingError()
-{
-    // 当前错误线程处理结束
-    if (errorThreadIdQueue.isEmpty())
-        return;
-
-    QMutexLocker lk(&errorThreadIdQueueMutex);
-
-    errorThreadIdQueue.removeOne(QThread::currentThreadId());
-    if (errorThreadIdQueue.count() <= 0)
-        resume();
-    else
-        qWarning() << "errorThreadIdQueue count error, count: " << errorThreadIdQueue.count();
-
-    errorCondition.wakeAll();
-}
 qint64 FileOperateBaseWorker::getWriteDataSize()
 {
     qint64 writeSize = 0;
@@ -1280,20 +771,20 @@ qint64 FileOperateBaseWorker::getWriteDataSize()
     if (CountWriteSizeType::kTidType == countWriteType) {
         writeSize = getTidWriteSize();
 
-        if (writeSize > currentWriteSize && currentWriteSize > 0) {
-            writeSize = currentWriteSize;
+        if (writeSize > workData->currentWriteSize && workData->currentWriteSize > 0) {
+            writeSize = workData->currentWriteSize;
         }
         if (writeSize <= 0)
-            writeSize = currentWriteSize;
+            writeSize = workData->currentWriteSize;
     } else if (CountWriteSizeType::kCustomizeType == countWriteType) {
-        writeSize = currentWriteSize;
+        writeSize = workData->currentWriteSize;
     } else if (CountWriteSizeType::kWriteBlockType == countWriteType) {
-        qint64 currentSectorsWritten = getSectorsWritten() + blockRenameWriteSize;
+        qint64 currentSectorsWritten = getSectorsWritten() + workData->blockRenameWriteSize;
         if (currentSectorsWritten > targetDeviceStartSectorsWritten)
             writeSize = (currentSectorsWritten - targetDeviceStartSectorsWritten) * targetLogSecionSize;
     }
 
-    writeSize += (skipWritSize + zeroOrlinkOrDirWriteSize);
+    writeSize += (workData->skipWriteSize + workData->zeroOrlinkOrDirWriteSize);
 
     return writeSize;
 }
@@ -1408,8 +899,13 @@ void FileOperateBaseWorker::determineCountProcessType()
         }
         qDebug("targetIsRemovable = %d", bool(targetIsRemovable));
     }
-    if (isSourceFileLocal && isTargetFileLocal)
+    if (isSourceFileLocal && isTargetFileLocal) {
         countWriteType = CountWriteSizeType::kCustomizeType;
+        workData->signalThread = sourceFilesCount > 1 && FileUtils::getCpuProcessCount() > 4
+                ? false
+                : true;
+        workData->signalThread = true;
+    }
 
     if (DeviceUtils::isSamba(targetUrl) || DeviceUtils::isFtp(targetUrl))
         countWriteType = CountWriteSizeType::kCustomizeType;

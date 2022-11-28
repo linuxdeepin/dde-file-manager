@@ -84,10 +84,9 @@ bool DoCopyFilesWorker::doWork()
 void DoCopyFilesWorker::stop()
 {
     // clean muilt thread copy file info queue
-    smallFileThreadCopyInfoVector.clear();
     threadInfoVectorSize = 0;
 
-    AbstractWorker::stop();
+    FileOperateBaseWorker::stop();
 }
 
 bool DoCopyFilesWorker::initArgs()
@@ -98,36 +97,36 @@ bool DoCopyFilesWorker::initArgs()
 
     if (sourceUrls.count() <= 0) {
         // pause and emit error msg
+        qCritical() << "sorce file count = 0!!!";
         doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
-        cancelThreadProcessingError();
         return false;
     }
     if (!targetUrl.isValid()) {
         // pause and emit error msg
+        qCritical() << "target url is Valid !!!";
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
-        cancelThreadProcessingError();
         return false;
     }
     targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     if (!targetInfo) {
         // pause and emit error msg
+        qCritical() << "create target info error, url = " << targetUrl;
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
-        cancelThreadProcessingError();
         return false;
     }
 
     if (!DecoratorFile(targetUrl).exists()) {
         // pause and emit error msg
+        qCritical() << "target dir is not exists, url = " << targetUrl;
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError);
-        cancelThreadProcessingError();
         return false;
     }
 
-    needSyncEveryRW = FileUtils::isGvfsFile(targetUrl);
-    if (!needSyncEveryRW) {
+    workData->needSyncEveryRW = FileUtils::isGvfsFile(targetUrl);
+    if (!workData->needSyncEveryRW) {
         const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(targetUrl);
-        isFsTypeVfat = fsType.contains("vfat");
-        needSyncEveryRW = fsType == "cifs" || fsType == "vfat";
+        workData->isFsTypeVfat = fsType.contains("vfat");
+        workData->needSyncEveryRW = fsType == "cifs" || fsType == "vfat";
     }
 
     return true;
@@ -135,13 +134,6 @@ bool DoCopyFilesWorker::initArgs()
 
 void DoCopyFilesWorker::endWork()
 {
-    // wait for thread pool over
-    if (threadPool) {
-        while (threadPool->activeThreadCount() > 0) {
-            QThread::msleep(100);
-        }
-    }
-
     // deal target files
     for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
         const QUrl &url = info->urlOf(UrlInfoType::kUrl);
@@ -155,7 +147,7 @@ void DoCopyFilesWorker::endWork()
     // set dirs permissions
     setAllDirPermisson();
 
-    AbstractWorker::endWork();
+    FileOperateBaseWorker::endWork();
 }
 
 bool DoCopyFilesWorker::copyFiles()
@@ -167,9 +159,9 @@ bool DoCopyFilesWorker::copyFiles()
         AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo || !targetInfo) {
             // pause and emit error msg
+            qCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (fileInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
             const AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
             if (AbstractJobHandler::SupportAction::kSkipAction != action) {
-                cancelThreadProcessingError();
                 return false;
             } else {
                 continue;
@@ -188,10 +180,11 @@ bool DoCopyFilesWorker::copyFiles()
 
         bool skip = false;
         if (!doCopyFile(fileInfo, targetInfo, &skip)) {
-            if (skip)
+            if (skip) {
                 continue;
-            else
+            } else {
                 return false;
+            }
         }
     }
     return true;

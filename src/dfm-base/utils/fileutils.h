@@ -77,6 +77,7 @@ public:
     static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString {});
 
     static quint16 getMemoryPageSize();
+    static qint32 getCpuProcessCount();
     // icon
     static QIcon searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
     static QIcon searchGenericIcon(const QString &category, const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
@@ -91,7 +92,7 @@ public:
 
     static QString dateTimeFormat();
     static bool setBackGround(const QString &pictureFilePath);
-    static QString nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir, std::function<bool(const QString &)> functionCheck = nullptr);
+    static QString nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir);
 
     // If toDevice is true, convert the path to the device name
     // otherwise convert the path to the mount point name

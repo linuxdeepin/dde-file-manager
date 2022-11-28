@@ -981,6 +981,12 @@ quint16 FileUtils::getMemoryPageSize()
     return memoryPageSize > 0 ? memoryPageSize : kDefaultMemoryPageSize;
 }
 
+qint32 FileUtils::getCpuProcessCount()
+{
+    static const int cpuProcessCount = static_cast<int>(sysconf(_SC_NPROCESSORS_CONF));
+    return cpuProcessCount;
+}
+
 QIcon FileUtils::searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon)
 {
     // Resulting icon
@@ -1204,7 +1210,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
     return true;
 }
 
-QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir, std::function<bool(const QString &)> functionCheck)
+QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir)
 {
     if (!targetDir || !DecoratorFile(targetDir->urlOf(UrlInfoType::kUrl)).exists()) {
         return QString();
@@ -1217,7 +1223,6 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     const QString &copySuffix = QObject::tr(" (copy)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
     const QString &copySuffix2 = QObject::tr(" (copy %1)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
 
-    AbstractFileInfoPointer targetFileInfo { nullptr };
     QString fileBaseName = fromInfo->nameOf(NameInfoType::kCompleteBaseName);
     QString suffix = fromInfo->nameOf(NameInfoType::kSuffix);
     QString fileName = fromInfo->nameOf(NameInfoType::kFileName);
@@ -1231,7 +1236,9 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
 
     int number = 0;
     QString newFileName;
-    QUrl newUrl;
+
+    QUrl newUrl = targetDir->urlOf(UrlInfoType::kUrl);
+
     do {
         auto nameSuffix = number > 0 ? copySuffix2.arg(number) : copySuffix;
         newFileName = QString("%1%2").arg(fileBaseName, nameSuffix);
@@ -1243,8 +1250,7 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
         ++number;
         newUrl = targetDir->urlOf(UrlInfoType::kUrl);
         newUrl.setPath(newUrl.path() + "/" + newFileName);
-        targetFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-    } while ((targetFileInfo && DecoratorFile(newUrl).exists()) || (functionCheck ? functionCheck(newFileName) : false));
+    } while (DecoratorFile(newUrl).exists());
 
     return newFileName;
 }

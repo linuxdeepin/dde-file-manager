@@ -92,7 +92,7 @@ bool DoRestoreTrashFilesWorker::statisticsFilesSize()
 bool DoRestoreTrashFilesWorker::initArgs()
 {
     completeTargetFiles.clear();
-    isConvert = jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
+    isConvert = workData->jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
     return AbstractWorker::initArgs();
 }
 /*!

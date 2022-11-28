@@ -188,15 +188,3 @@ void FileOperationsUtils::getDirFiles(const QUrl &url, QList<QUrl> &files)
         }
     }
 }
-
-void FileOperationsUtils::addUsingName(const QString &name)
-{
-    QMutexLocker locker(&mutex);
-    fileNameUsing.insert(name);
-}
-
-void FileOperationsUtils::removeUsingName(const QString &name)
-{
-    QMutexLocker locker(&mutex);
-    fileNameUsing.remove(name);
-}

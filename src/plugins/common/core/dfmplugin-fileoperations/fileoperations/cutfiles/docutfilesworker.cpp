@@ -173,18 +173,18 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     bool ok = false;
     AbstractFileInfoPointer toInfo = nullptr;
     if (doRenameFile(fromInfo, targetPathInfo, toInfo, &ok) || ok) {
-        currentWriteSize += fromInfo->size();
+        workData->currentWriteSize += fromInfo->size();
         if (fromInfo->isAttributes(OptInfoType::kIsFile)) {
-            currentWriteSize += (fromInfo->size() > 0 ? fromInfo->size() : FileUtils::getMemoryPageSize());
+            workData->currentWriteSize += (fromInfo->size() > 0 ? fromInfo->size() : FileUtils::getMemoryPageSize());
             if (fromInfo->size() <= 0)
-                zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
+                workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         } else {
             // count size
             SizeInfoPointer sizeInfo(new FileUtils::FilesSizeInfo);
             FileOperationsUtils::statisticFilesSize(fromInfo->urlOf(UrlInfoType::kUrl), sizeInfo);
-            blockRenameWriteSize += sizeInfo->totalSize;
+            workData->blockRenameWriteSize += sizeInfo->totalSize;
             if (sizeInfo->totalSize <= 0)
-                zeroOrlinkOrDirWriteSize += dirSize;
+                workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
         }
         return true;
     }
@@ -200,14 +200,14 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     // check space
     if (!checkDiskSpaceAvailable(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), targetStorageInfo, &result)) {
         if (result)
-            skipWritSize += fromInfo->size();
+            workData->skipWriteSize += fromInfo->size();
         return result;
     }
 
     if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, &result))
         return result;
 
-    currentWriteSize += fromInfo->size();
+    workData->currentWriteSize += fromInfo->size();
     return true;
 }
 
