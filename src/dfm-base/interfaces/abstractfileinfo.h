@@ -368,6 +368,10 @@ protected:
     explicit AbstractFileInfo(const QUrl &url);
     void setProxy(const AbstractFileInfoPointer &proxy);
     QSharedPointer<AbstractFileInfoPrivate> dptr;
+
+private:
+    bool hasProxy();
+    friend class InfoCache;
 };
 }
 

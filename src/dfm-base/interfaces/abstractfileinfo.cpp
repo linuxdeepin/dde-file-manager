@@ -68,6 +68,11 @@ void DFMBASE_NAMESPACE::AbstractFileInfo::setProxy(const AbstractFileInfoPointer
     dptr->proxy = proxy;
 }
 
+bool dfmbase::AbstractFileInfo::hasProxy()
+{
+    return dptr->proxy != nullptr;
+}
+
 AbstractFileInfo::~AbstractFileInfo()
 {
 }

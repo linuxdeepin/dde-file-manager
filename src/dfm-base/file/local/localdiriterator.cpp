@@ -98,7 +98,7 @@ void LocalDirIteratorPrivate::initQuerierAsyncCallback(bool succ, void *data)
         infoTrans->setExtendedAttributes(AbstractFileInfo::FileExtendedInfoType::kFileLocalDevice, isLocalDevice);
         infoTrans->setExtendedAttributes(AbstractFileInfo::FileExtendedInfoType::kFileCdRomDevice, isCdRomDevice);
 
-        InfoCache::instance().cacheInfo(url, infoTrans);
+        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
 
         op->me = nullptr;
         delete op;
@@ -157,9 +157,9 @@ bool LocalDirIterator::hasNext() const
         bool has = d->dfmioDirIterator->hasNext();
         if (has) {
             const QUrl &urlNext = d->dfmioDirIterator->next();
-            const bool needCache = !InfoCache::instance().cacheDisable(urlNext.scheme());
+            const bool needCache = !InfoCacheController::instance().cacheDisable(urlNext.scheme());
             if (needCache) {
-                AbstractFileInfoPointer infoCache = InfoCache::instance().getCacheInfo(urlNext);
+                AbstractFileInfoPointer infoCache = InfoCacheController::instance().getCacheInfo(urlNext);
                 if (!infoCache)
                     // cache info
                     d->cacheAttribute(urlNext);

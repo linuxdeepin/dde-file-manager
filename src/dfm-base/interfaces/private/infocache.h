@@ -34,52 +34,93 @@
 
 namespace dfmbase {
 class InfoCachePrivate;
-// 异步刷新线程
-class ReFreshThread : public QThread
+class InfoCache;
+
+// 异步缓存和移除
+class Worker : public QObject
 {
     Q_OBJECT
-public:
-    explicit ReFreshThread(QObject *parent = nullptr);
-    void refreshFileInfoByUrl(const QUrl &url);
-    void updateRefreshTimeByUrl(const QUrl &url);
-    void stopRefresh();
-    void removeRefreshByUrl(const QUrl &url);
+    friend class InfoCacheController;
 
-protected:
-    void run() override;
+public:
+    ~Worker();
+Q_SIGNALS:
+    void workerCacheInfo(const QUrl url, const AbstractFileInfoPointer info);
+    void workerRemoveCaches(const QList<QUrl> urls);
+    void workerUpdateInfoTime(const QUrl url);
+    void workerDealRemoveInfo();
+    void workerRemoveInfosTime(const QList<QUrl> urls);
+    void workerDisconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos);
+public Q_SLOTS:
+    void cacheInfo(const QUrl url, const AbstractFileInfoPointer info);
+    void removeCaches(const QList<QUrl> urls);
+    void updateInfoTime(const QUrl url);
+    void dealRemoveInfo();
+    void removeInfosTime(const QList<QUrl> urls);
+    void disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos);
 
 private:
-    DThreadMap<QUrl, qint64> needRefreshMap;   // 待更新链表
-    DThreadMap<QUrl, qint64> refreshMap;   // 刷新时间
-    DThreadList<QUrl> removedCacheList;   // 已被removecache的url
-    QTime time;   // 计时器
-    QAtomicInteger<bool> bStop = false;   // 停止标志
+    explicit Worker(QObject *parent = nullptr);
 };
 
-class InfoFactory;
 class InfoCachePrivate;
 class InfoCache : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), InfoCache)
     QScopedPointer<InfoCachePrivate> d;
-    friend InfoFactory;
-    friend ReFreshThread;
+    friend class InfoCacheController;
 
 public:
-    explicit InfoCache(QObject *parent = nullptr);
     virtual ~InfoCache();
-    static InfoCache &instance();
-    AbstractFileInfoPointer getCacheInfo(const QUrl &url);
-    void cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info);
-    void removeCacheInfo(const QUrl &url);
+
+Q_SIGNALS:
+    void cacheRemoveCaches(const QList<QUrl> &key);
+    void cacheDisconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos);
+    void cacheUpdateInfoTime(const QUrl url);
+    void cacheRemoveInfosTime(const QList<QUrl> urls);
+
+private:
+    explicit InfoCache(QObject *parent = nullptr);
     bool cacheDisable(const QString &scheme);
-    void setCacheDisbale(const QString &scheme, bool disbale = true);
+    void setCacheDisbale(const QString &scheme, bool disable = true);
+    AbstractFileInfoPointer getCacheInfo(const QUrl &url);
+    void stop();
 
 private Q_SLOTS:
-    void refreshFileInfo(const QUrl &url);
-    void timeNeedRemoveCache();
+    void fileAttributeChanged(const QUrl url);
+    void removeCache(const QUrl url);
+    void cacheInfo(const QUrl url, const AbstractFileInfoPointer info);
+    void disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos);
+    void removeCaches(const QList<QUrl> urls);
+    void updateSortTimeWorker(const QUrl url);
     void timeRemoveCache();
+    void removeInfosTimeWorker(const QList<QUrl> urls);
+    void refreshFileInfo(const QUrl &url);
+};
+
+class InfoCacheController : public QObject
+{
+    Q_OBJECT
+    QSharedPointer<QThread> thread { nullptr };
+    QSharedPointer<Worker> worker { nullptr };
+    QSharedPointer<InfoCache> cache { nullptr };
+    QSharedPointer<QTimer> removeTimer { nullptr };   // 移除缓存的
+public:
+    virtual ~InfoCacheController();
+    static InfoCacheController &instance();
+    bool cacheDisable(const QString &scheme);
+    void setCacheDisbale(const QString &scheme, bool disable = true);
+    AbstractFileInfoPointer getCacheInfo(const QUrl &url);
+Q_SIGNALS:
+    void cacheFileInfo(const QUrl url, const AbstractFileInfoPointer info);
+
+private:
+    explicit InfoCacheController(QObject *parent = nullptr);
+    void init();
+
+private:
+    static InfoCacheController *cacheController;
 };
 }
 

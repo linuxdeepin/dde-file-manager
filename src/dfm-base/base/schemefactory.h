@@ -196,7 +196,7 @@ public:
     static bool regClass(const QString &scheme, RegOpts opts = RegOpts::kNoOpt, QString *errorString = nullptr)
     {
         if (opts & RegOpts::kNoCache)
-            InfoCache::instance().setCacheDisbale(scheme);
+            InfoCacheController::instance().setCacheDisbale(scheme);
         return instance().SchemeFactory<AbstractFileInfo>::regClass<CT>(scheme, errorString);
     }
 
@@ -222,13 +222,13 @@ public:
     template<class T>
     static QSharedPointer<T> create(const QUrl &url, const bool cache = true, QString *errorString = nullptr)
     {
-        if (Q_UNLIKELY(!cache) || InfoCache::instance().cacheDisable(url.scheme()))
+        if (Q_UNLIKELY(!cache) || InfoCacheController::instance().cacheDisable(url.scheme()))
             return qSharedPointerDynamicCast<T>(instance().SchemeFactory<AbstractFileInfo>::create(url, errorString));
 
-        QSharedPointer<AbstractFileInfo> info = InfoCache::instance().getCacheInfo(url);
+        QSharedPointer<AbstractFileInfo> info = InfoCacheController::instance().getCacheInfo(url);
         if (!info) {
             info = instance().SchemeFactory<AbstractFileInfo>::create(url, errorString);
-            InfoCache::instance().cacheInfo(url, info);
+            emit InfoCacheController::instance().cacheFileInfo(url, info);
         }
         return qSharedPointerDynamicCast<T>(info);
     }

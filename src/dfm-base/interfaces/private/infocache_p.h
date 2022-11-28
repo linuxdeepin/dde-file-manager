@@ -24,107 +24,38 @@
 
 #include "infocache.h"
 
+#include <QReadWriteLock>
 #include <QMutex>
 #include <QTimer>
 #include <QMap>
 
 namespace dfmbase {
-
-class TimeSortedUrlList
-{
-    QMap<QString, QUrl> forSort;
-    QMap<QUrl, QString> forQuery;
-    QMutex mutex;
-
-public:
-    inline int count()
-    {
-        return forSort.count();
-    }
-    inline QList<QUrl> list()
-    {
-        return forSort.values();
-    }
-    inline bool contains(const QUrl &url)
-    {
-        return forQuery.contains(url);
-    }
-    inline void remove(const QUrl &url)
-    {
-        if (forQuery.contains(url)) {
-            auto key = forQuery.value(url);
-            forQuery.remove(url);
-            forSort.remove(key);
-        }
-    }
-    inline QUrl first()
-    {
-        return forSort.count() > 0 ? forSort.first() : QUrl();
-    }
-    inline void pushBack(const QUrl &url)
-    {
-        if (!forQuery.contains(url)) {
-            QString key = QString("%1_%2").arg(QDateTime::currentDateTime().toMSecsSinceEpoch()).arg(url.toString());
-            forSort.insert(key, url);
-            forQuery.insert(url, key);
-        } else {
-            remove(url);
-            pushBack(url);
-        }
-    }
-
-    inline void lock() { mutex.lock(); }
-    inline void unlock() { mutex.unlock(); }
-    inline int lCount()
-    {
-        QMutexLocker locker(&mutex);
-        return count();
-    }
-    inline QList<QUrl> lList()
-    {
-        QMutexLocker locker(&mutex);
-        return list();
-    }
-    inline bool lContains(const QUrl &url)
-    {
-        QMutexLocker lk(&mutex);
-        return contains(url);
-    }
-    inline void lRemove(const QUrl &url)
-    {
-        QMutexLocker lk(&mutex);
-        remove(url);
-    }
-    inline QUrl lFirst()
-    {
-        QMutexLocker lk(&mutex);
-        return first();
-    }
-    inline void lPushBack(const QUrl &url)
-    {
-        QMutexLocker lk(&mutex);
-        pushBack(url);
-    }
+enum CacheInfoStatus : uint8_t {
+    kCacheMain = 0,   // 1.正常状态 插入(同时插入主和副缓存hash)， 读取主缓存hash， 删除主缓存hash
+    kCacheCopy,
 };
-
 class InfoCachePrivate
 {
     friend class InfoCache;
+    friend class Worker;
     InfoCache *const q;
-    DThreadMap<QUrl, AbstractFileInfoPointer> fileInfos;   // 缓存fileifno的Map
-    DThreadList<QUrl> needRemoveCacheList;   // 待移除的fileinfo的urllist
-    DThreadList<QUrl> removedCacheList;   // 已被removecache的url
-    DThreadList<QUrl> removedSortByTimeCacheList;   // 已被SortByTimeCache的url
-    QSharedPointer<ReFreshThread> refreshThread { nullptr };   // 刷新线程
-    TimeSortedUrlList sortByTimeCacheUrl;   // 按时间排序的缓存fileinfo的文件url
-    QTimer needRemoveTimer;   // 需要加入待移除缓存的计时器
-    QTimer removeTimer;   // 移除缓存的
     DThreadList<QString> disableCahceSchemes;
+
+    QAtomicInt status { kCacheMain };   // 当前状态缓存的状态
+    QHash<QUrl, AbstractFileInfoPointer> mainCache;   // 主信息缓存
+    QHash<QUrl, AbstractFileInfoPointer> copyCache;   // 副信息缓存
+    QReadWriteLock mianLock;
+    QReadWriteLock copyLock;
+
+    // 时间排序url,利用map的有序性，来处理时间到了要移除的url
+    QMap<QUrl, QString> urlTimeSortMap;
+    QMap<QString, QUrl> timeToUrlMap;
+
+    std::atomic_bool cacheWorkerStoped { false };
 
 public:
     explicit InfoCachePrivate(InfoCache *qq);
     virtual ~InfoCachePrivate();
-    void updateSortByTimeCacheUrlList(const QUrl &url);
 };
 }
 

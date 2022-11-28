@@ -106,7 +106,7 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
 {
     doFileDeleted(fromUrl);
 
-    AbstractFileInfoPointer info = InfoCache::instance().getCacheInfo(toUrl);
+    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);
     if (info)
         info->refresh();
 
@@ -122,7 +122,7 @@ void RootInfo::dofileCreated(const QUrl &url)
 
 void RootInfo::doFileUpdated(const QUrl &url)
 {
-    AbstractFileInfoPointer info = InfoCache::instance().getCacheInfo(url);
+    AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(url);
     if (info)
         info->refresh();
 
