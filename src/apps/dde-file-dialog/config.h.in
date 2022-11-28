@@ -46,6 +46,12 @@
 #    warning "cmake unseting definition DFM_PLUGIN_FILEMANAGER_EDGE_DIR"
 #endif
 
+#ifndef DFM_TOOLS_DIR
+#    define DFM_TOOLS_DIR "${DFM_TOOLS_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_TOOLS_DIR"
+#endif
+
 #ifndef DFM_THUMBNAIL_TOOL
 #    define DFM_THUMBNAIL_TOOL "${DFM_THUMBNAIL_TOOL}"
 #elif

@@ -34,7 +34,7 @@ using namespace dfm_upgrade;
 class TestUpgradeUnit : public UpgradeUnit
 {
 public:
-    QString name() {return "";}
+    QString name() {return "test";}
     bool initialize(const QMap<QString, QString> &args){
         f1 = true;
         return !args.isEmpty();
@@ -44,7 +44,6 @@ public:
     bool f1 = false;
     bool f2 = false;
     bool f3 = false;
-
 };
 
 TEST(UpgradeFactory, previous)
@@ -81,14 +80,8 @@ TEST(UpgradeFactory, doUpgrade)
     stub_ext::StubExt stub;
     auto unit = new TestUpgradeUnit;
     QSharedPointer<UpgradeUnit> pUnit(unit);
-    stub.set_lamda(&createUnits, [pUnit](){
-        return QList<QSharedPointer<UpgradeUnit>> {
-            pUnit
-        };
-    });
-
     UpgradeFactory fac;
-    fac.previous({{"test","0"}});
+    fac.units = QList<QSharedPointer<UpgradeUnit>> { pUnit };
 
     fac.doUpgrade();
     EXPECT_TRUE(unit->f2);
@@ -99,14 +92,9 @@ TEST(UpgradeFactory, completed)
     stub_ext::StubExt stub;
     auto unit = new TestUpgradeUnit;
     QSharedPointer<UpgradeUnit> pUnit(unit);
-    stub.set_lamda(&createUnits, [pUnit](){
-        return QList<QSharedPointer<UpgradeUnit>> {
-            pUnit
-        };
-    });
 
     UpgradeFactory fac;
-    fac.previous({{"test","0"}});
+    fac.units = QList<QSharedPointer<UpgradeUnit>> { pUnit };
 
     fac.completed();
     EXPECT_TRUE(unit->f3);

@@ -31,10 +31,10 @@ class HeaderUnit : public UpgradeUnit
 {
 public:
     HeaderUnit();
-    QString name();
-    bool initialize(const QMap<QString, QString> &args);
-    bool upgrade();
-    void completed();
+    QString name() override;
+    bool initialize(const QMap<QString, QString> &args) override;
+    bool upgrade() override;
+    void completed() override;
 protected:
     QTime time;
 };

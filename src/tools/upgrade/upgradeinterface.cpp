@@ -21,16 +21,15 @@
 #include "upgradeinterface.h"
 #include "core/upgradelocker.h"
 #include "core/upgradefactory.h"
+#include "dialog/processdialog.h"
 
 #include "builtininterface.h"
 
 #include <QDebug>
 #include <QCoreApplication>
 
-#include <unistd.h>
-
 using namespace dfm_upgrade;
-int dfm_doUpgrade(const QMap<QString, QString> &args)
+int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
 {
     Q_ASSERT(qApp);
 
@@ -44,13 +43,23 @@ int dfm_doUpgrade(const QMap<QString, QString> &args)
     // check lock
     UpgradeLocker locker;
     if (locker.isLock()) {
-        qInfo() << "there are process in upgrading.";
-        return 1;
+        qWarning() << "there is a process in upgrading.";
+        return -1;
     }
 
     // check the flag file again.
+    if (!isNeedUpgrade()) {
+        qCritical() << "flag file has been removed.";
+        return -1;
+    }
 
     // show dialog
+    ProcessDialog dlg;
+    dlg.initialize(isDesktop);
+    if (!dlg.execDialog()) {
+        qInfo() << "break by user";
+        return -1;
+    }
 
     // do upgrade
     UpgradeFactory factor;
@@ -58,7 +67,11 @@ int dfm_doUpgrade(const QMap<QString, QString> &args)
     factor.doUpgrade();
     factor.completed();
 
-    // create flag file
+    // remove flag file
+    QFile::remove(upgradeConfigDir() + "/" + kUpgradeFlag);
 
+    // datas have been upgraded.
+    qInfo() << "the upgrader has done.";
+    dlg.restart();
     return 0;
 }

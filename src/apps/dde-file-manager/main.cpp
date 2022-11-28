@@ -25,12 +25,15 @@
 #include "singleapplication.h"
 #include "commandparser.h"
 
+#include "tools/upgrade/builtininterface.h"
+
 #include "dfm-base/utils/sysinfoutils.h"
 
 #include <dfm-framework/dpf.h>
 
 #include <DApplicationSettings>
 #include <DSysInfo>
+
 #include <QIcon>
 #include <QDir>
 #include <QTextCodec>
@@ -178,6 +181,39 @@ static void initLog()
     dpfLogManager->registerFileAppender();
 }
 
+static void checkUpgrade(SingleApplication *app)
+{
+    if (!dfm_upgrade::isNeedUpgrade())
+        return;
+
+    qInfo() << "try to upgrade in file manager";
+    QMap<QString, QString> args;
+    args.insert("version", app->applicationVersion());
+    args.insert(dfm_upgrade::kArgFileManger, "dde-file-manager");
+
+    QString lib;
+    GetUpgradeLibraryPath(lib);
+
+    int ret = dfm_upgrade::tryUpgrade(lib, args);
+    if (ret < 0) {
+        qWarning() << "something error, exit current process." << app->applicationPid();
+        _Exit(-1);
+    } else if (ret == 0) {
+        // restart self
+        app->closeServer();
+
+        auto odlArgs = app->arguments();
+        // remove first
+        if (!odlArgs.isEmpty())
+            odlArgs.pop_front();
+        qInfo() << "restart self " << app->applicationFilePath() << odlArgs;
+        QProcess::startDetached(app->applicationFilePath(), odlArgs);
+        _Exit(-1);
+    }
+
+    return;
+}
+
 int main(int argc, char *argv[])
 {
     initEnv();
@@ -231,6 +267,10 @@ int main(int argc, char *argv[])
         isSingleInstance = a.setSingleInstance(uniqueKey);
 
     if (isSingleInstance) {
+
+        // check upgrade
+        checkUpgrade(&a);
+
         if (!pluginsLoad()) {
             qCritical() << "Load pugin failed!";
             abort();

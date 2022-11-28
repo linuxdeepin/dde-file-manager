@@ -18,25 +18,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef UPGRADEFACTORY_H
-#define UPGRADEFACTORY_H
+#ifndef PROCESSDIALOG_H
+#define PROCESSDIALOG_H
 
-#include <QObject>
+#include <DDialog>
 
-namespace dfm_upgrade {
-class UpgradeUnit;
-class UpgradeFactory
+class ProcessDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
+    Q_OBJECT
 public:
-    UpgradeFactory();
-    void previous(const QMap<QString, QString> &args);
-    void doUpgrade();
-    void completed();
-    bool isChanged() const;
+    explicit ProcessDialog(QWidget *parent = nullptr);
+    void initialize(bool desktop);
+    bool execDialog();
+    void restart();
+protected:
+    QList<int> queryProcess(const QString &exec);
+    void killAll(const QList<int> &pids);
 private:
-    QList<QSharedPointer<UpgradeUnit>> units;
+    QString targetExe(const QString &proc);
+    int targetUid(const QString &proc);
+private:
+    int accept = -1;
+    bool onDesktop = false;
+    bool killed = false;
 };
 
-}
-
-#endif // UPGRADEFACTORY_H
+#endif // PROCESSDIALOG_H

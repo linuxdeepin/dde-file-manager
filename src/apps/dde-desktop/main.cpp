@@ -22,11 +22,11 @@
 #include "desktopdbusinterface.h"
 
 #include "config.h"   //cmake
+#include "tools/upgrade/builtininterface.h"
 
 #include <DApplication>
 #include <DMainWindow>
 
-#include <QApplication>
 #include <QMainWindow>
 #include <QWidget>
 #include <QDir>
@@ -34,6 +34,7 @@
 #include <QFile>
 #include <QtGlobal>
 #include <QDBusInterface>
+#include <QProcess>
 
 #include <dfm-framework/dpf.h>
 
@@ -129,6 +130,38 @@ static void initLog()
     dpfLogManager->registerFileAppender();
 }
 
+static void checkUpgrade(DApplication *app)
+{
+    if (!dfm_upgrade::isNeedUpgrade())
+        return;
+
+    qInfo() << "try to upgrade in desktop";
+    QMap<QString, QString> args;
+    args.insert("version", app->applicationVersion());
+    args.insert(dfm_upgrade::kArgDesktop, "dde-desktop");
+
+    QString lib;
+    GetUpgradeLibraryPath(lib);
+
+    int ret = dfm_upgrade::tryUpgrade(lib, args);
+    if (ret < 0) {
+        qWarning() << "something error, exit current process." << app->applicationPid();
+        _Exit(-1);
+    } else if (ret == 0) {
+        auto args = app->arguments();
+        // remove first
+        if (!args.isEmpty())
+            args.pop_front();
+
+        QDBusConnection::sessionBus().unregisterService(kDesktopServiceName);
+        qInfo() << "restart self " << app->applicationFilePath() << args;
+        QProcess::startDetached(app->applicationFilePath(), args);
+        _Exit(-1);
+    }
+
+    return;
+}
+
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
@@ -149,6 +182,7 @@ int main(int argc, char *argv[])
 
     qInfo() << "start desktop " << a.applicationVersion() << "pid" << getpid() << "parent id" << getppid()
             << "argments" << a.arguments();
+
     // if (!fileDialogOnly)
     if (true) {
         QDBusConnection conn = QDBusConnection::sessionBus();
@@ -168,6 +202,8 @@ int main(int argc, char *argv[])
         // Notify dde-desktop start up
         registerDDESession();
     }
+
+    checkUpgrade(&a);
 
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";

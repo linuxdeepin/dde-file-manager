@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#dfm-upgrade
+
+function createUpgradeFlag(){
+echo "File manager is ready to upgratde configuration."
+homeDir="/home"
+for user in `ls $homeDir`
+do
+    userDir="$homeDir/$user"
+    if [ -d $userDir ]
+    then
+        cfgDir="$userDir/.config/deepin/dde-file-manager"
+        if [ -d $cfgDir ]
+        then
+            echo "create flag in $cfgDir"
+            touch "$cfgDir/dfm-upgraded.lock"
+        else
+            echo "$cfgDir is not existed, ignore it."
+        fi
+    fi
+done
+}
+
+createUpgradeFlag
+#end dfm-upgrade

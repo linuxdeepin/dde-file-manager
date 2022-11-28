@@ -23,12 +23,28 @@
 
 #include <QFile>
 #include <QStandardPaths>
+#include <QLibrary>
+#include <QDir>
+#include <QDebug>
+
+#include <unistd.h>
 
 namespace dfm_upgrade {
+
+#define GetUpgradeLibraryPath(path) {\
+    QString libPath(qApp->applicationDirPath() + "/../../tools/libdfm-upgrade.so"); \
+    if (!QFile::exists(libPath)) { \
+        libPath = QString(DFM_TOOLS_DIR) + "/libdfm-upgrade.so"; \
+        qInfo() << QString("library does not exist, use : %1").arg(libPath); \
+    }\
+    path = libPath; \
+}
 
 inline constexpr char kUpgradeFlag[] = "dfm-upgraded.lock";
 inline constexpr char kArgDesktop[] = "Desktop";
 inline constexpr char kArgFileManger[] = "FileManager";
+
+typedef  int (*UpgradeFunc)(const QMap<QString, QString> &);
 
 inline QString upgradeConfigDir() {
     return QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first() + "/deepin/dde-file-manager";
@@ -38,9 +54,25 @@ inline bool isNeedUpgrade() {
     return QFile::exists(upgradeConfigDir() + "/" + kUpgradeFlag);
 }
 
-inline bool tryUpgrade(const QMap<QString , QString> &args) {
+inline int tryUpgrade(const QString &libPath, const QMap<QString , QString> &args)
+{
     // load library
-    return true;
+    QLibrary lib(libPath);
+    if (!lib.load()) {
+        qCritical() << "fail to load upgrade library:" << lib.errorString();
+        return 1;
+    }
+
+    auto func = reinterpret_cast<UpgradeFunc>(lib.resolve("dfm_tools_upgrade_doUpgrade"));
+    if (!func) {
+        qCritical() << "no upgrade function in :" << lib.fileName();
+        return 1;
+    }
+
+    int ret = func(args);
+    lib.unload();
+
+    return ret;
 }
 
 }

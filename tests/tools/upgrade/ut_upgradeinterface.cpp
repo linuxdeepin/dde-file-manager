@@ -22,6 +22,8 @@
 #include "upgradeinterface.h"
 #include "core/upgradelocker.h"
 #include "core/upgradefactory.h"
+#include "dialog/processdialog.h"
+#include "units/unitlist.h"
 
 #include "builtininterface.h"
 
@@ -29,14 +31,39 @@
 
 #include <gtest/gtest.h>
 
+using namespace testing;
 using namespace dfm_upgrade;
 
-TEST(DoUpgrade, empty_args)
+class DoUpgradeTest : public Test
 {
-    EXPECT_EQ(-1, dfm_doUpgrade({}));
+public:
+    void SetUp() override {
+        system("touch /var/tmp/dfm-upgraded.lock");
+        stub.set_lamda(&upgradeConfigDir, [](){
+            return QString("/var/tmp");
+        });
+
+        stub.set_lamda(&createUnits, [](){
+            return QList<QSharedPointer<UpgradeUnit>>();
+        });
+
+    }
+    void TearDown() override {
+        system("rm /var/tmp/dfm-upgraded.lock");
+        stub.clear();
+    }
+
+    stub_ext::StubExt stub;
+};
+
+
+TEST_F(DoUpgradeTest, empty_args)
+{
+    EXPECT_EQ(-1, dfm_tools_upgrade_doUpgrade({}));
+    EXPECT_TRUE(QFile::exists("/var/tmp/dfm-upgraded.lock"));
 }
 
-TEST(DoUpgrade, locked)
+TEST_F(DoUpgradeTest, locked)
 {
     stub_ext::StubExt stub;
     stub.set_lamda(&UpgradeLocker::isLock, [](){
@@ -45,6 +72,58 @@ TEST(DoUpgrade, locked)
 
     QMap<QString, QString> args;
     args.insert(kArgDesktop, "6.0.0");
-    EXPECT_EQ(1, dfm_doUpgrade(args));
+    EXPECT_EQ(-1, dfm_tools_upgrade_doUpgrade(args));
+    EXPECT_TRUE(QFile::exists("/var/tmp/dfm-upgraded.lock"));
 }
 
+TEST_F(DoUpgradeTest, noneed)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&UpgradeLocker::isLock, [](){
+        return false;
+    });
+
+    stub.set_lamda(&isNeedUpgrade, [](){
+        return false;
+    });
+
+    QMap<QString, QString> args;
+    args.insert(kArgDesktop, "6.0.0");
+    EXPECT_EQ(-1, dfm_tools_upgrade_doUpgrade(args));
+    EXPECT_TRUE(QFile::exists("/var/tmp/dfm-upgraded.lock"));
+}
+
+
+TEST_F(DoUpgradeTest, reject)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&UpgradeLocker::isLock, [](){
+        return false;
+    });
+
+    stub.set_lamda(&ProcessDialog::execDialog, [](){
+        return false;
+    });
+
+    QMap<QString, QString> args;
+    args.insert(kArgDesktop, "6.0.0");
+    EXPECT_EQ(-1, dfm_tools_upgrade_doUpgrade(args));
+    EXPECT_TRUE(QFile::exists("/var/tmp/dfm-upgraded.lock"));
+}
+
+TEST_F(DoUpgradeTest, accept)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&UpgradeLocker::isLock, [](){
+        return false;
+    });
+
+    stub.set_lamda(&ProcessDialog::execDialog, [](){
+        return true;
+    });
+
+    QMap<QString, QString> args;
+    args.insert(kArgDesktop, "6.0.0");
+    EXPECT_EQ(0, dfm_tools_upgrade_doUpgrade(args));
+    EXPECT_FALSE(QFile::exists("/var/tmp/dfm-upgraded.lock"));
+}

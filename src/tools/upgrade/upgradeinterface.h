@@ -25,7 +25,7 @@
 
 extern "C" {
 
-int dfm_doUpgrade(const QMap<QString, QString> &args);
+int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args);
 
 }
 
