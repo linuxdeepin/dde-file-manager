@@ -379,6 +379,7 @@ void VaultHelper::openWidWindow(quint64 winID, const QUrl &url)
 void VaultHelper::newOpenWindow()
 {
     openNewWindow(rootUrl());
+    recordTime(kjsonGroupName, kjsonKeyInterviewItme);
 }
 
 void VaultHelper::slotlockVault(int state)
