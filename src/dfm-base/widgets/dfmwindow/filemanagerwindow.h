@@ -60,6 +60,7 @@ public:
 
 protected:
     void showEvent(QShowEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
@@ -68,6 +69,7 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
 
 Q_SIGNALS:
+    void aboutOpen();
     void aboutToClose();
     void positionChanged(const QPoint &pos);
     void currentUrlChanged(const QUrl &url);

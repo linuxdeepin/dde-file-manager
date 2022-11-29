@@ -54,6 +54,8 @@ public:
     void setSplitterPosition(int pos);
 
 protected:
+    std::once_flag openFlag;
+
     QUrl currentUrl;
     static constexpr int kMinimumWindowWidth { 680 };
     static constexpr int kMinimumWindowHeight { 300 };

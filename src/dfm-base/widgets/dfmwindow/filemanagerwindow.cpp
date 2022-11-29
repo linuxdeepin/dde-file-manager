@@ -285,6 +285,15 @@ void FileManagerWindow::showEvent(QShowEvent *event)
     d->setSplitterPosition(splitterPos);
 }
 
+void FileManagerWindow::paintEvent(QPaintEvent *event)
+{
+    DMainWindow::paintEvent(event);
+
+    std::call_once(d->openFlag, [this]() {
+        emit aboutOpen();
+    });
+}
+
 void FileManagerWindow::closeEvent(QCloseEvent *event)
 {
     // NOTE(zhangs): bug 59239

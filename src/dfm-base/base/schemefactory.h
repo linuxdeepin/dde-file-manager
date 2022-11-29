@@ -34,6 +34,7 @@
 
 #include <dfmio_register.h>
 
+#include <QCoreApplication>
 #include <QSharedPointer>
 #include <QDirIterator>
 #include <QListView>
@@ -303,7 +304,10 @@ public:
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(url);
         if (watcher.isNull()) {
             watcher = instance().SchemeFactory<AbstractFileWatcher>::create(url, errorString);
-            WatcherCache::instance().cacheWatcher(url, watcher);
+            if (watcher) {
+                watcher->moveToThread(qApp->thread());
+                WatcherCache::instance().cacheWatcher(url, watcher);
+            }
         }
         return qSharedPointerDynamicCast<T>(watcher);
     }

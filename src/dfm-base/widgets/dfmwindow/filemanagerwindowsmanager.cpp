@@ -242,6 +242,12 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         d->onWindowClosed(window);
     });
 
+    connect(window, &FileManagerWindow::aboutOpen, this, [this, window]() {
+        auto &&id { window->internalWinId() };
+        qInfo() << "Window showed" << id;
+        emit windowOpened(id);
+    });
+
     connect(window, &FileManagerWindow::reqShowHotkeyHelp, this, [this, window]() {
         d->onShowHotkeyHelp(window);
     });
@@ -294,9 +300,6 @@ void FileManagerWindowsManager::showWindow(FileManagerWindowsManager::FMWindow *
 
     window->show();
     qApp->setActiveWindow(window);
-    auto &&id { window->internalWinId() };
-    qInfo() << "Window showed" << id;
-    emit windowOpened(id);
 }
 
 /*!
