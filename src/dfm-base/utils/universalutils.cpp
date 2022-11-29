@@ -36,11 +36,13 @@
 #include <QProcess>
 
 #ifdef COMPILE_ON_V23
-#   define MANAGER_SERVICE "org.desktopspec.ApplicationManager"
-#   define MANAGER_PATH "org/desktopspec/ApplicationManager"
+#   define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager"
+#   define APP_MANAGER_PATH "org/desktopspec/ApplicationManager"
+#   define APP_MANAGER_INTERFACE "org.desktopspec.ApplicationManager"
 #else
-#   define MANAGER_SERVICE "com.deepin.SessionManager"
-#   define MANAGER_PATH "/com/deepin/StartManager"
+#   define APP_MANAGER_SERVICE "com.deepin.SessionManager"
+#   define APP_MANAGER_PATH "/com/deepin/StartManager"
+#   define APP_MANAGER_INTERFACE "com.deepin.StartManager"
 #endif
 
 namespace dfmbase {
@@ -222,8 +224,8 @@ bool UniversalUtils::checkLaunchAppInterface()
     static bool initStatus = true;
     static std::once_flag flag;
     std::call_once(flag, []() {
-        QDBusInterface introspect(MANAGER_SERVICE,
-                                  MANAGER_PATH,
+        QDBusInterface introspect(APP_MANAGER_SERVICE,
+                                  APP_MANAGER_PATH,
                                   "org.freedesktop.DBus.Introspectable",
                                   QDBusConnection::sessionBus());
         introspect.setTimeout(1000);
@@ -231,15 +233,15 @@ bool UniversalUtils::checkLaunchAppInterface()
         reply.waitForFinished();
         if (reply.isFinished() && reply.isValid() && !reply.isError()) {
             QString xmlCode = reply.argumentAt(0).toString();
-            if (xmlCode.contains("com.deepin.StartManager")) {
+            if (xmlCode.contains(APP_MANAGER_INTERFACE)) {
                 if (xmlCode.contains("LaunchApp")) {
                     initStatus = true;
                 } else {
-                    qWarning() << QString("%1 : doesn't have LaunchApp interface.").arg(MANAGER_SERVICE);
+                    qWarning() << QString("%1 : doesn't have LaunchApp interface.").arg(APP_MANAGER_SERVICE);
                     initStatus = false;
                 }
             } else {
-                qWarning() << QString("%1 Introspect error").arg(MANAGER_SERVICE) << xmlCode;
+                qWarning() << QString("%1 : Introspect error").arg(APP_MANAGER_SERVICE) << xmlCode;
                 initStatus = false;
             }
         } else {
@@ -251,9 +253,9 @@ bool UniversalUtils::checkLaunchAppInterface()
 
 bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-    QDBusInterface systemInfo(MANAGER_SERVICE,
-                              MANAGER_PATH,
-                              MANAGER_SERVICE,
+    QDBusInterface systemInfo(APP_MANAGER_SERVICE,
+                              APP_MANAGER_PATH,
+                              APP_MANAGER_INTERFACE,
                               QDBusConnection::sessionBus());
 
     QList<QVariant> argumentList;
@@ -266,9 +268,9 @@ bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, con
 {
     if (checkLaunchAppInterface()) {
         qDebug() << "launch cmd by dbus:" << cmd << args;
-        QDBusInterface systemInfo(MANAGER_SERVICE,
-                                  MANAGER_PATH,
-                                  MANAGER_SERVICE,
+        QDBusInterface systemInfo(APP_MANAGER_SERVICE,
+                                  APP_MANAGER_PATH,
+                                  APP_MANAGER_INTERFACE,
                                   QDBusConnection::sessionBus());
 
         QList<QVariant> argumentList;
