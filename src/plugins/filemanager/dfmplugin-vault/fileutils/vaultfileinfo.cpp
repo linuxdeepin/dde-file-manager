@@ -142,7 +142,7 @@ bool VaultFileInfo::isSymLink() const
 bool VaultFileInfo::isRoot() const
 {
     bool bRootDir = false;
-    QString localFilePath = kVaultBasePath;
+    QString localFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), kVaultDecryptDirName, nullptr);
     QString path = filePath();
     if (localFilePath == path || localFilePath + "/" == path || localFilePath == path + "/") {
         bRootDir = true;
@@ -209,6 +209,9 @@ QUrl VaultFileInfo::redirectedFileUrl() const
 
 QIcon VaultFileInfo::fileIcon()
 {
+    if (isRoot())
+        return QIcon::fromTheme(iconName());
+
     if (!dptr->proxy)
         AbstractFileInfo::fileIcon();
     return dptr->proxy->fileIcon();
