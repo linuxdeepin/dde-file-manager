@@ -26,13 +26,23 @@
 #include <DStackedWidget>
 #include <DLineEdit>
 #include <DLabel>
-#include <DPushButton>
+#include <DIconButton>
 #include <DMenu>
 
 #include <QHBoxLayout>
 #include <QAtomicInteger>
 
 namespace ddplugin_organizer {
+
+class OptionButton : public Dtk::Widget::DIconButton
+{
+    Q_OBJECT
+public:
+    OptionButton(QWidget *parent = nullptr);
+protected:
+    void paintEvent(QPaintEvent *event) override;
+    void initStyleOption(Dtk::Widget::DStyleOptionButton *option) const override;
+};
 
 class CollectionTitleBarPrivate : public QObject
 {
@@ -56,7 +66,7 @@ public:
     Dtk::Widget::DLabel *nameLabel = nullptr;
     Dtk::Widget::DLineEdit *nameLineEdit = nullptr;
     Dtk::Widget::DStackedWidget *nameWidget = nullptr;
-    Dtk::Widget::DPushButton *menuBtn = nullptr;
+    OptionButton *menuBtn = nullptr;
     Dtk::Widget::DMenu *menu = nullptr;
 
     QAtomicInteger<bool> needHidden = false;

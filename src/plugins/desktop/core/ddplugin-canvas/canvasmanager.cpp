@@ -610,7 +610,15 @@ void CanvasManager::onChangeIconLevel(bool increase)
 
 void CanvasManager::onTrashStateChanged()
 {
-    d->sourceModel->update();
+    // update trash file
+    QUrl trash = d->sourceModel->rootUrl().toString() + "/dde-trash.desktop";
+    auto idx = d->sourceModel->index(trash);
+    if (idx.isValid()) {
+        if (auto file = d->sourceModel->fileInfo(idx)) {
+            file->refresh();
+            emit d->sourceModel->dataChanged(idx, idx);
+        }
+    }
 }
 
 void CanvasManager::refresh(bool silent)

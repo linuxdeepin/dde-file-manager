@@ -27,10 +27,11 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QPalette>
+#include <QPaintEvent>
 
 static constexpr int kNameMaxLength = 255;
-static constexpr int kMenuBtnWidth = 18;
-static constexpr int kMenuBtnHeight = 18;
+static constexpr int kMenuBtnWidth = 20;
+static constexpr int kMenuBtnHeight = 20;
 
 using namespace ddplugin_organizer;
 DWIDGET_USE_NAMESPACE
@@ -72,20 +73,18 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, Collec
     nameWidget->addWidget(nameLineEdit);
     nameWidget->setCurrentWidget(nameLabel);
 
-    menuBtn = new DPushButton(q);
-    menuBtn->setIcon(QIcon(":/images/more.svg"));   // using DDciIcon in future
+    menuBtn = new OptionButton(q);
     menuBtn->setFixedSize(kMenuBtnWidth, kMenuBtnHeight);
-    menuBtn->setFlat(true);
 
     mainLayout = new QHBoxLayout(q);
-    mainLayout->setContentsMargins(8, 3, 8, 3);
+    mainLayout->setContentsMargins(8, 2, 8, 2);
     mainLayout->setSpacing(12);
     mainLayout->addWidget(nameWidget);
     mainLayout->addWidget(menuBtn);
     q->setLayout(mainLayout);
 
     connect(nameLineEdit, &DLineEdit::editingFinished, this, &CollectionTitleBarPrivate::titleNameModified);
-    connect(menuBtn, &DPushButton::clicked, this, &CollectionTitleBarPrivate::showMenu);
+    connect(menuBtn, &OptionButton::clicked, this, &CollectionTitleBarPrivate::showMenu);
 
     menu = new DMenu(q);
     connect(menu, &DMenu::aboutToHide, this, [=]() {
@@ -291,4 +290,57 @@ bool CollectionTitleBar::eventFilter(QObject *obj, QEvent *event)
     }
 
     return DBlurEffectWidget::eventFilter(obj, event);
+}
+
+OptionButton::OptionButton(QWidget *parent) : DIconButton (parent)
+{
+    DStyle::setFrameRadius(this, 4);
+
+    // the icon is in resources/images.qrc and is loaded by dtk
+    setIcon(QIcon::fromTheme("ddp_organizer_morebtn"));
+    setIconSize(QSize(16, 16));
+
+    // draw background by self.
+    setFlat(true);
+
+    auto pa = palette();
+    pa.setColor(QPalette::ButtonText, Qt::white); // icon is white
+    setPalette(pa);
+}
+
+void OptionButton::paintEvent(QPaintEvent *event)
+{
+    DStylePainter p(this);
+    DStyleOptionButton opt;
+    initStyleOption(&opt);
+
+    QColor background(QColor::Invalid);
+    // draw backgtound on mouse over or on pressed.
+    if (opt.state.testFlag(QStyle::State_MouseOver)) {
+        if (opt.state.testFlag(QStyle::State_Sunken))
+            background = QColor(0, 0, 0, 255 * 0.15);
+        else
+            background = QColor(0, 0, 0, 255 * 0.1);
+    }
+
+    if (background.isValid()) {
+        int radius = DStyle::pixelMetric(style(), DStyle::PM_FrameRadius, nullptr, this);
+        p.save();
+        p.setRenderHint(QPainter::Antialiasing);
+        p.setBrush(background);
+        p.setPen(Qt::NoPen);
+        p.drawRoundedRect(QRect(QPoint(0,0), size()), radius, radius);
+        p.restore();
+    }
+
+    p.drawControl(DStyle::CE_IconButton, opt);
+    event->accept();
+}
+
+void OptionButton::initStyleOption(DStyleOptionButton *option) const
+{
+    DIconButton::initStyleOption(option);
+    // let the color of icon to like normal state on mouse hover.
+    // if do not set it, the color will change to gray on hover state.
+    option->features |= QStyleOptionButton::ButtonFeature(DStyleOptionButton::TitleBarButton);
 }

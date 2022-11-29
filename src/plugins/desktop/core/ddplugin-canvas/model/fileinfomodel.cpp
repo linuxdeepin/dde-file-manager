@@ -453,13 +453,11 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         targetFileUrl = itemInfo->symLinkTarget();
     }
 
-    // todo(wcl) Compress
-
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, 0, urlList, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
-        //todo(wcl)
+        // nothing to do.
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
         dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList { targetFileUrl.toLocalFile() });

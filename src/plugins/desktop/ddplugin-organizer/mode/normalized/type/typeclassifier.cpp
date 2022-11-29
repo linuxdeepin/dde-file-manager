@@ -98,7 +98,7 @@ TypeClassifier::TypeClassifier(QObject *parent)
 
     // get enable items
     d->categories = CfgPresenter->enabledTypeCategories();
-    qInfo() << "enabled categories" << d->categories.operator Int();
+    qInfo() << "enabled categories" << ItemCategories::Int(d->categories);
 }
 
 TypeClassifier::~TypeClassifier()

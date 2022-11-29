@@ -60,8 +60,8 @@ CollectionWidget::CollectionWidget(const QString &uuid, ddplugin_organizer::Coll
     , d(new CollectionWidgetPrivate(uuid, dataProvider, this))
 {
     setBlendMode(DBlurEffectWidget::InWindowBlend);
-    setMaskColor(QColor(0, 34, 109, static_cast<int>(0.2*255)));
-    setMaskAlpha(static_cast<int>(0.2*255));
+    setMaskColor(QColor(0, 47, 255, static_cast<int>(0.1 * 255)));
+    setMaskAlpha(static_cast<int>(0.1 * 255));
 
     d->view = new CollectionView(uuid, dataProvider, this);
     d->view->viewport()->installEventFilter(this);

@@ -20,15 +20,16 @@ pkg_check_modules(DtkGui REQUIRED dtkgui )
 pkg_check_modules(DtkWidget REQUIRED dtkwidget )
 
 # 指定资源文件
-set(QRCS
-    images.qrc
+set(QRC_FILE
+    resources/images.qrc
 )
+qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 
 add_library(${PROJECT_NAME}
     SHARED
     ${CORE_FILES}
     ${EXT_FILES}
-    ${QRCS}
+    ${QRC_RESOURCES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)

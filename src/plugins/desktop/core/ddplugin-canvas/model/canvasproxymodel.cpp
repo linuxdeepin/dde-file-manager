@@ -750,6 +750,7 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         FileOperatorProxyIns->dropToTrash(urlList);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
+        // nothing to do.
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
         FileOperatorProxyIns->dropToApp(urlList, targetFileUrl.toLocalFile());

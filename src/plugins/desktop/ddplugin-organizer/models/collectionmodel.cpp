@@ -562,6 +562,7 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
         FileOperatorIns->dropToTrash(urlList);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
+        // nothing to do.
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
         FileOperatorIns->dropToApp(urlList, targetFileUrl.toLocalFile());

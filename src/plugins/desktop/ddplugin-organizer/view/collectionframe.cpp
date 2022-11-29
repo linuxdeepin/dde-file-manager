@@ -21,6 +21,7 @@
 #include "collectionframe_p.h"
 
 #include <DMenu>
+#include <DGuiApplicationHelper>
 
 #include <QMouseEvent>
 #include <QAbstractItemView>
@@ -29,7 +30,7 @@
 
 static constexpr int kStretchWidth = 10;
 static constexpr int kStretchHeight = 10;
-static constexpr int kWidgetRoundRadius = 18;
+static constexpr int kWidgetRoundRadius = 8;
 
 DWIDGET_USE_NAMESPACE
 using namespace ddplugin_organizer;
@@ -433,8 +434,11 @@ void CollectionFrame::resizeEvent(QResizeEvent *event)
 
 void CollectionFrame::paintEvent(QPaintEvent *event)
 {
-    event->ignore();
-    // disable paint,because transparent background color can affect the blurring effect of child widget(view)
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing);
+    bool isDark = Dtk::Gui::DGuiApplicationHelper::instance()->themeType() == Dtk::Gui::DGuiApplicationHelper::DarkType;
+    p.fillRect(QRect(QPoint(0,0), size()), isDark ? QColor(41, 41, 41, 89) : QColor(126, 126, 126, 64));
+    event->accept();
 }
 
 void CollectionFrame::focusOutEvent(QFocusEvent *event)
@@ -454,4 +458,3 @@ void CollectionFrame::initUi()
     this->setLayout(d->mainLayout);
     setContentsMargins(0, 0, 0, 0);
 }
-

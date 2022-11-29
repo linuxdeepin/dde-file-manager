@@ -491,7 +491,6 @@ bool DragDropOper::dropMimeData(QDropEvent *event) const
             } else {
                 event->acceptProposedAction();
             }
-            // todo(zy) FileSignalManager::requestSelectFile to selected the droped item.
         }
         return true;
     }

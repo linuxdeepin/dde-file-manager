@@ -61,7 +61,6 @@ void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHin
 {
     Q_UNUSED(index)
     Q_UNUSED(hint);
-    // todo:
 }
 
 QModelIndex CanvasView::indexAt(const QPoint &point) const
