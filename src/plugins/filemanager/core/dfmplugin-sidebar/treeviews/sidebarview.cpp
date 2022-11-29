@@ -552,7 +552,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     }
 
     Qt::DropAction action = Qt::IgnoreAction;
-    const Qt::DropActions support_actions = itemInfo->supportedDropActions() & actions;
+    const Qt::DropActions support_actions = itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop) & actions;
 
     if (support_actions.testFlag(Qt::CopyAction)) {
         action = Qt::CopyAction;

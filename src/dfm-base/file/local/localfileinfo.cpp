@@ -492,40 +492,6 @@ QString LocalFileInfo::canonicalPath() const
     return filePath();
 }
 /*!
- * \brief dir 获取文件的父母目录的QDir
- *
- * Returns the path of the object's parent directory as a QDir object.
- *
- * url = file:///tmp/archive.tar.gz
- *
- * dirpath = /tmp
- *
- * \param
- *
- * \return QDir 父母目录的QDir实例对象
- */
-QDir LocalFileInfo::dir() const
-{
-    return QDir(path());
-}
-/*!
- * \brief absoluteDir 获取文件的父母目录的QDir
- *
- * Returns the file's absolute path as a QDir object.
- *
- * url = file:///tmp/archive.tar.gz
- *
- * absolute path = /tmp
- *
- * \param
- *
- * \return QDir 父母目录的QDir实例对象
- */
-QDir LocalFileInfo::absoluteDir() const
-{
-    return dir();
-}
-/*!
  * \brief url 获取文件的url，这里的url是转换后的
  *
  * \param
@@ -1721,18 +1687,20 @@ QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDat
     return d->mimeType;
 }
 
-QString LocalFileInfo::emptyDirectoryTip() const
+QString LocalFileInfo::viewTip(const ViewType type) const
 {
-    if (!exists()) {
-        return QObject::tr("File has been moved or deleted");
-    } else if (!isReadable()) {
-        return QObject::tr("You do not have permission to access this folder");
-    } else if (isDir()) {
-        if (!isExecutable())
-            return QObject::tr("You do not have permission to traverse files in it");
+    if (type == ViewType::kEmptyDir) {
+        if (!exists()) {
+            return QObject::tr("File has been moved or deleted");
+        } else if (!isReadable()) {
+            return QObject::tr("You do not have permission to access this folder");
+        } else if (isDir()) {
+            if (!isExecutable())
+                return QObject::tr("You do not have permission to traverse files in it");
+        }
     }
 
-    return AbstractFileInfo::emptyDirectoryTip();
+    return AbstractFileInfo::viewTip(type);
 }
 
 bool LocalFileInfo::canDragCompress() const
@@ -1749,25 +1717,6 @@ bool LocalFileInfo::isDragCompressFileFormat() const
     return name.endsWith(".zip")
             || (name.endsWith(".7z")
                 && !name.endsWith(".tar.7z"));
-}
-
-void LocalFileInfo::setEmblems(const QMap<int, QIcon> &maps)
-{
-    QWriteLocker locker(&d->lock);
-    d->enableEmblems = 1;
-    d->gioEmblemsMap = maps;
-}
-
-QMap<int, QIcon> LocalFileInfo::emblems() const
-{
-    QReadLocker locker(&d->lock);
-    return d->gioEmblemsMap;
-}
-
-bool LocalFileInfo::emblemsInited() const
-{
-    QReadLocker locker(&d->lock);
-    return d->enableEmblems != -1;
 }
 
 QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
@@ -1807,31 +1756,22 @@ bool LocalFileInfo::notifyAttributeChanged()
     return false;
 }
 
-void LocalFileInfo::cacheAttribute(const DFileInfo::AttributeID id, const QVariant &value)
-{
-    if (!value.isValid())
-        return;
-
-    QWriteLocker locker(&d->lock);
-    d->attributes.insert(id, value);
-}
-
-QVariant LocalFileInfo::attribute(const DFileInfo::AttributeID id)
-{
-    QReadLocker locker(&d->lock);
-    return d->dfmFileInfo->attribute(id);
-}
-
-void LocalFileInfo::setIsLocalDevice(const bool isLocalDevice)
+void LocalFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value)
 {
     QWriteLocker locker(&d->lock);
-    d->isLocalDevice = isLocalDevice;
-}
-
-void LocalFileInfo::setIsCdRomDevice(const bool isCdRomDevice)
-{
-    QWriteLocker locker(&d->lock);
-    d->isCdRomDevice = isCdRomDevice;
+    switch (key) {
+    case FileExtendedInfoType::kFileLocalDevice:
+        d->isLocalDevice = value;
+        break;
+    case FileExtendedInfoType::kFileCdRomDevice:
+        d->isCdRomDevice = value;
+        break;
+    case FileExtendedInfoType::kFileIsHid:
+        d->attributes.insert(DFileInfo::AttributeID::kStandardIsHidden, value);
+        break;
+    default:
+        break;
+    }
 }
 
 QString LocalFileInfo::mimeTypeName()

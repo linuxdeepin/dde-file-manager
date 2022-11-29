@@ -107,7 +107,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
     QUrl curUrl = hoverIndex.isValid() ? view->model()->fileUrl(hoverIndex) : view->model()->rootUrl();
     if (hoverIndex.isValid()) {
         if (auto fileInfo = view->model()->fileInfo(hoverIndex)) {
-            bool canDrop = !fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) || !fileInfo->supportedDropActions().testFlag(event->dropAction());
+            bool canDrop = !fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) || !fileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
                 handleMoveMimeData(event, curUrl);
 
@@ -219,14 +219,14 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
 
         // todo is from vault
 
-        if (!itemInfo->supportedDropActions().testFlag(event->dropAction())) {
+        if (!itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
 
             actions.reserve(3);
             actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
 
             for (Qt::DropAction action : actions) {
-                if (event->possibleActions().testFlag(action) && itemInfo->supportedDropActions().testFlag(action)) {
+                if (event->possibleActions().testFlag(action) && itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(action)) {
                     event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
                     break;
                 }

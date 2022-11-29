@@ -69,8 +69,6 @@ public:
     virtual QString path() const override;
     virtual QString absolutePath() const override;
     virtual QString canonicalPath() const override;
-    virtual QDir dir() const override;
-    virtual QDir absoluteDir() const override;
     virtual QUrl url() const override;
     virtual bool canDelete() const override;
     virtual bool canTrash() const override;
@@ -123,15 +121,12 @@ public:
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
     virtual QString mimeTypeName() override;
 
-    virtual QString emptyDirectoryTip() const override;
+    virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
 
     virtual bool canDragCompress() const override;
     virtual bool isDragCompressFileFormat() const override;
 
     // emblems
-    virtual void setEmblems(const QMap<int, QIcon> &maps) override;
-    virtual QMap<int, QIcon> emblems() const override;
-    virtual bool emblemsInited() const override;
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;
 
     // media info
@@ -140,11 +135,7 @@ public:
     virtual bool notifyAttributeChanged() override;
 
     // cache attribute
-    virtual void cacheAttribute(const DFMIO::DFileInfo::AttributeID id, const QVariant &value) override;
-    virtual QVariant attribute(const DFMIO::DFileInfo::AttributeID id) override;
-
-    virtual void setIsLocalDevice(const bool isLocalDevice) override;
-    virtual void setIsCdRomDevice(const bool isCdRomDevice) override;
+    virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
 
 private:
     void init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo = nullptr);

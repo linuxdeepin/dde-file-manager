@@ -106,14 +106,14 @@ bool AbstractFileInfo::operator!=(const AbstractFileInfo &fileinfo) const
     return !(operator==(fileinfo));
 }
 
-bool dfmbase::AbstractFileInfo::initQuerier()
+bool DFMBASE_NAMESPACE::AbstractFileInfo::initQuerier()
 {
     CALL_PROXY(initQuerier());
 
     return false;
 }
 
-void dfmbase::AbstractFileInfo::initQuerierAsync(int ioPriority, dfmbase::AbstractFileInfo::initQuerierAsyncCallback func, void *userData)
+void DFMBASE_NAMESPACE::AbstractFileInfo::initQuerierAsync(int ioPriority, DFMBASE_NAMESPACE::AbstractFileInfo::initQuerierAsyncCallback func, void *userData)
 {
     CALL_PROXY(initQuerierAsync(ioPriority, func, userData));
 }
@@ -154,7 +154,7 @@ void AbstractFileInfo::refresh()
     CALL_PROXY(refresh());
 }
 
-void dfmbase::AbstractFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
+void DFMBASE_NAMESPACE::AbstractFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
 {
     CALL_PROXY(refresh(id, value));
 }
@@ -367,44 +367,6 @@ QString AbstractFileInfo::canonicalPath() const
     CALL_PROXY(canonicalPath());
 
     return filePath();
-}
-/*!
- * \brief dir 获取文件的父母目录的QDir
- *
- * Returns the path of the object's parent directory as a QDir object.
- *
- * url = file:///tmp/archive.tar.gz
- *
- * dirpath = /tmp
- *
- * \param
- *
- * \return QDir 父母目录的QDir实例对象
- */
-QDir AbstractFileInfo::dir() const
-{
-    CALL_PROXY(dir());
-
-    return QDir(path());
-}
-/*!
- * \brief absoluteDir 获取文件的父母目录的QDir
- *
- * Returns the file's absolute path as a QDir object.
- *
- * url = file:///tmp/archive.tar.gz
- *
- * absolute path = /tmp
- *
- * \param
- *
- * \return QDir 父母目录的QDir实例对象
- */
-QDir AbstractFileInfo::absoluteDir() const
-{
-    CALL_PROXY(absoluteDir());
-
-    return dir();
 }
 /*!
  * \brief url 获取文件的url
@@ -748,7 +710,7 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayName() const
     return QString();
 }
 
-QString dfmbase::AbstractFileInfo::fileCopyName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::fileCopyName() const
 {
     CALL_PROXY(fileCopyName());
 
@@ -897,7 +859,7 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
     }
 }
 
-QDateTime dfmbase::AbstractFileInfo::deletionTime() const
+QDateTime DFMBASE_NAMESPACE::AbstractFileInfo::deletionTime() const
 {
     CALL_PROXY(deletionTime());
 
@@ -1000,7 +962,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::redirectedFileUrl() const
  * if file is trash, return original path
  * \return QUrl
  */
-QUrl dfmbase::AbstractFileInfo::originalUrl() const
+QUrl DFMBASE_NAMESPACE::AbstractFileInfo::originalUrl() const
 {
     CALL_PROXY(originalUrl());
 
@@ -1051,7 +1013,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     return info->canDrop();
 }
 
-bool dfmbase::AbstractFileInfo::canDrag()
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrag()
 {
     CALL_PROXY(canDrag());
     return true;
@@ -1068,7 +1030,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::parentUrl() const
     return UrlRoute::urlParent(url());
 }
 
-bool dfmbase::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors) const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors) const
 {
     CALL_PROXY(isAncestorsUrl(url, ancestors));
 
@@ -1101,32 +1063,28 @@ bool dfmbase::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<QUrl> *anc
     return false;
 }
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::supportedDragActions
- * \return
- */
-Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedDragActions() const
+  * \brief view进入当前目录的提示信息，固定字符串处理，不实现异步
+  * \param SupportType
+  */
+Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedAttributes(const AbstractFileInfo::SupportType type) const
 {
-    CALL_PROXY(supportedDragActions());
+    CALL_PROXY(supportedAttributes(type));
 
-    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
-}
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::supportedDropActions
- * \return
- */
-Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedDropActions()
-{
-    CALL_PROXY(supportedDropActions());
-
-    if (isWritable()) {
+    switch (type) {
+    case SupportType::kDrag:
         return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
-    }
+    case SupportType::kDrop:
+        if (isWritable()) {
+            return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+        }
 
-    if (canDrop()) {
-        return Qt::CopyAction | Qt::MoveAction;
+        if (const_cast<AbstractFileInfo *>(this)->canDrop()) {
+            return Qt::CopyAction | Qt::MoveAction;
+        }
+        return Qt::IgnoreAction;
+    default:
+        return Qt::IgnoreAction;
     }
-
-    return Qt::IgnoreAction;
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress
@@ -1139,14 +1097,14 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress() const
     return false;
 }
 
-bool dfmbase::AbstractFileInfo::canFetch() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canFetch() const
 {
     CALL_PROXY(canFetch());
 
     return isDir() && !isPrivate();
 }
 
-bool dfmbase::AbstractFileInfo::canHidden() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canHidden() const
 {
     CALL_PROXY(canHidden());
     return true;
@@ -1162,93 +1120,66 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat() const
     return false;
 }
 
-bool dfmbase::AbstractFileInfo::isPrivate() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::isPrivate() const
 {
     CALL_PROXY(isPrivate());
 
     return false;
 }
 
-bool dfmbase::AbstractFileInfo::canDelete() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canDelete() const
 {
     CALL_PROXY(canDelete());
     return false;
 }
 
-bool dfmbase::AbstractFileInfo::canTrash() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canTrash() const
 {
     CALL_PROXY(canTrash());
     return false;
 }
-
-QString DFMBASE_NAMESPACE::AbstractFileInfo::emptyDirectoryTip() const
+/*!
+ * \brief view进入当前目录的提示信息，固定字符串处理，不实现异步
+ * \param ViewType
+ */
+QString DFMBASE_NAMESPACE::AbstractFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
 {
-    return QObject::tr("Folder is empty");
+    switch (type) {
+    case ViewType::kEmptyDir:
+        return QObject::tr("Folder is empty");
+    case ViewType::kLoading:
+        return QObject::tr("Loading...");
+    default:
+        return QString();
+    }
 }
 
-QString DFMBASE_NAMESPACE::AbstractFileInfo::loadingTip() const
-{
-    return QObject::tr("Loading...");
-}
-
-void dfmbase::AbstractFileInfo::setEmblems(const QMap<int, QIcon> &maps)
-{
-    CALL_PROXY(setEmblems(maps));
-}
-
-QMap<int, QIcon> dfmbase::AbstractFileInfo::emblems() const
-{
-    CALL_PROXY(emblems());
-
-    return {};
-}
-
-bool dfmbase::AbstractFileInfo::emblemsInited() const
-{
-    CALL_PROXY(emblemsInited());
-
-    return false;
-}
-
-QVariant dfmbase::AbstractFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
+QVariant DFMBASE_NAMESPACE::AbstractFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
 {
     CALL_PROXY(customAttribute(key, type));
 
     return QVariant();
 }
 
-void dfmbase::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
+void DFMBASE_NAMESPACE::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
     CALL_PROXY(mediaInfoAttributes(type, ids));
 }
 
-bool dfmbase::AbstractFileInfo::notifyAttributeChanged()
+bool DFMBASE_NAMESPACE::AbstractFileInfo::notifyAttributeChanged()
 {
     CALL_PROXY(notifyAttributeChanged());
 
     return false;
 }
-
-void dfmbase::AbstractFileInfo::setIsLocalDevice(const bool isLocalDevice)
+/*!
+  * \brief setExtendedAttributes 设置文件的扩展属性
+  * \param AbstractFileInfo::FileExtendedInfoType 扩展属性key \param QVariant 属性
+  * return
+  */
+void DFMBASE_NAMESPACE::AbstractFileInfo::setExtendedAttributes(const AbstractFileInfo::FileExtendedInfoType &key, const QVariant &value)
 {
-    CALL_PROXY(setIsLocalDevice(isLocalDevice));
-}
-
-void dfmbase::AbstractFileInfo::setIsCdRomDevice(const bool isCdRomDevice)
-{
-    CALL_PROXY(setIsCdRomDevice(isCdRomDevice));
-}
-
-void dfmbase::AbstractFileInfo::cacheAttribute(const DFileInfo::AttributeID id, const QVariant &value)
-{
-    CALL_PROXY(cacheAttribute(id, value));
-}
-
-QVariant dfmbase::AbstractFileInfo::attribute(const DFileInfo::AttributeID id)
-{
-    CALL_PROXY(attribute(id));
-
-    return QVariant();
+    CALL_PROXY(setExtendedAttributes(key, value));
 }
 
 QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeName()
@@ -1300,7 +1231,7 @@ QVariantHash DFMBASE_NAMESPACE::AbstractFileInfo::extraProperties() const
     return QVariantHash();
 }
 
-QVariant dfmbase::AbstractFileInfo::customData(int role) const
+QVariant DFMBASE_NAMESPACE::AbstractFileInfo::customData(int role) const
 {
     CALL_PROXY(customData(role));
     return QVariant();

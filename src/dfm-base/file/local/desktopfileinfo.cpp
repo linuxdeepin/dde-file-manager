@@ -240,14 +240,13 @@ QString DesktopFileInfo::genericIconName()
 {
     return QStringLiteral("application-default-icon");
 }
-
-Qt::DropActions DesktopFileInfo::supportedDragActions() const
+Qt::DropActions DesktopFileInfo::supportedAttributes(const SupportType type) const
 {
-    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer") {
+    if (type == SupportType::kDrag && (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")) {
         return Qt::IgnoreAction;
     }
 
-    return LocalFileInfo::supportedDragActions();
+    return LocalFileInfo::supportedAttributes(type);
 }
 
 bool DesktopFileInfo::canDrop()

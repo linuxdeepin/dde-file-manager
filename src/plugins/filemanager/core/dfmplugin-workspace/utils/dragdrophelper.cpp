@@ -136,7 +136,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         }
 
         if (!hoverFileInfo->canDrop()
-            || !hoverFileInfo->supportedDropActions().testFlag(event->dropAction())
+            || !hoverFileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction())
             || (hoverFileInfo->isDir() && !hoverFileInfo->isWritable())) {
             // NOTE: if item can not drop, the drag item will drop to root dir.
             currentHoverIndexUrl = view->rootUrl();
@@ -330,13 +330,13 @@ void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
         if (event->possibleActions().testFlag(defaultAction))
             event->setDropAction(checkAction(defaultAction, sameUser));
 
-        if (!info->supportedDropActions().testFlag(event->dropAction())) {
+        if (!info->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
             actions.reserve(3);
             actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
 
             for (Qt::DropAction action : actions) {
-                if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
+                if (event->possibleActions().testFlag(action) && info->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(action)) {
                     event->setDropAction(checkAction(action, sameUser));
                     break;
                 }

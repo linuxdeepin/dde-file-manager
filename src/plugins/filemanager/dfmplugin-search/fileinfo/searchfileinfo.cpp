@@ -90,14 +90,16 @@ QString SearchFileInfo::fileName() const
     return AbstractFileInfo::fileName();
 }
 
-QString SearchFileInfo::emptyDirectoryTip() const
+QString SearchFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
 {
-    return QObject::tr("No results");
-}
-
-QString SearchFileInfo::loadingTip() const
-{
-    return QObject::tr("Searching...");
+    switch (type) {
+    case ViewType::kEmptyDir:
+        return QObject::tr("No results");
+    case ViewType::kLoading:
+        return QObject::tr("Searching...");
+    default:
+        return QString();
+    }
 }
 
 }

@@ -1552,7 +1552,7 @@ void FileView::updateLoadingIndicator()
 
         const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex());
         if (fileInfo)
-            tip = fileInfo->loadingTip();
+            tip = fileInfo->viewTip(AbstractFileInfo::ViewType::kLoading);
 
         d->statusBar->showLoadingIncator(tip);
     }
@@ -1576,7 +1576,7 @@ void FileView::updateContentLabel()
         // set custom empty tips
         const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex());
         if (fileInfo) {
-            d->contentLabel->setText(fileInfo->emptyDirectoryTip());
+            d->contentLabel->setText(fileInfo->viewTip(AbstractFileInfo::ViewType::kEmptyDir));
             d->contentLabel->adjustSize();
             return;
         }

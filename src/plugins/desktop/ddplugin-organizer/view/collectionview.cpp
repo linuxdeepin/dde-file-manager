@@ -491,10 +491,10 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
 
     // todo,from vault???
 
-    if (!itemInfo->supportedDropActions().testFlag(event->dropAction())) {
+    if (!itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction())) {
         QList<Qt::DropAction> actions { Qt::CopyAction, Qt::MoveAction, Qt::LinkAction };
         for (auto action : actions) {
-            if (event->possibleActions().testFlag(action) && itemInfo->supportedDropActions().testFlag(action)) {
+            if (event->possibleActions().testFlag(action) && itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(action)) {
                 event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
                 break;
             }
@@ -1987,7 +1987,7 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
             bool canDrop = !fileInfo->canDrop()
                     || (fileInfo->isDir() && !fileInfo->isWritable())
-                    || !fileInfo->supportedDropActions().testFlag(event->dropAction());
+                    || !fileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
                 d->handleMoveMimeData(event, currentUrl);
                 return;

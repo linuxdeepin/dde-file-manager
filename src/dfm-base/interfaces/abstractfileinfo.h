@@ -161,6 +161,8 @@ public:
         kOwnerId = 5,   // 文件的拥有者的id
         kGroupId = 6,   // 文件的组id
         kFileIsHid = 7,   // 是否是隐藏文件
+        kFileLocalDevice = 8,   // 文件是本地文件
+        kFileCdRomDevice = 9,   // 文件是光驱
         kCustomerStartExtended = 50,   // 其他用户使用
         kUnknowExtendedInfo = 255,
     };
@@ -297,8 +299,6 @@ public:
     virtual QString mimeTypeDisplayName();
     virtual QString fileTypeDisplayName();
     virtual QString mimeTypeName();
-    virtual QDir dir() const;
-    virtual QDir absoluteDir() const;
     virtual QUrl url() const;
     virtual QUrl getUrlByChildFileName(const QString &fileName) const;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const;
@@ -346,17 +346,12 @@ public:
     virtual QVariantHash extraProperties() const;
     virtual QVariant customData(int role) const;
     virtual FileType fileType() const;
-    virtual Qt::DropActions supportedDragActions() const;
-    virtual Qt::DropActions supportedDropActions();
+    virtual Qt::DropActions supportedAttributes(const SupportType type = SupportType::kDrag) const;
 
     // property for view
-    virtual QString emptyDirectoryTip() const;
-    virtual QString loadingTip() const;
+    virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const;
 
     // emblems
-    virtual void setEmblems(const QMap<int, QIcon> &maps);
-    virtual QMap<int, QIcon> emblems() const;
-    virtual bool emblemsInited() const;
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type);
 
     // media info
@@ -364,12 +359,7 @@ public:
 
     virtual bool notifyAttributeChanged();
 
-    // cache attribute
-    virtual void cacheAttribute(const DFMIO::DFileInfo::AttributeID id, const QVariant &value);
-    virtual QVariant attribute(const DFMIO::DFileInfo::AttributeID id);
-
-    virtual void setIsLocalDevice(const bool isLocalDevice);
-    virtual void setIsCdRomDevice(const bool isCdRomDevice);
+    virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value);
 
 Q_SIGNALS:
     void mediaDataFinished(bool, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>);

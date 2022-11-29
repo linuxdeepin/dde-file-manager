@@ -44,8 +44,7 @@ public:
     virtual QString fileName() const override;
 
     // property for view
-    virtual QString emptyDirectoryTip() const override;
-    virtual QString loadingTip() const override;
+    virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
 };
 
 using SearchFileInfoPointer = QSharedPointer<SearchFileInfo>;

@@ -64,11 +64,11 @@ TEST(SearchFileInfoTest, ut_size)
 TEST(SearchFileInfoTest, ut_emptyDirectoryTip)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_EQ("No results", info.emptyDirectoryTip());
+    EXPECT_EQ("No results", info.viewTip(AbstractFileInfo::ViewType::kEmptyDir));
 }
 
 TEST(SearchFileInfoTest, ut_loadingTip)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_EQ("Searching...", info.loadingTip());
+    EXPECT_EQ("Searching...", info.viewTip(AbstractFileInfo::ViewType::kLoading));
 }

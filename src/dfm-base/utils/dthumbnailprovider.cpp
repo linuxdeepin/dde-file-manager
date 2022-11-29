@@ -307,7 +307,7 @@ QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) co
         || absolutePath == StandardPaths::location(StandardPaths::kThumbnailFailPath)) {
         return absoluteFilePath;
     }
-    const qulonglong inode = fileInfo->attribute(DFMIO::DFileInfo::AttributeID::kUnixInode).toULongLong();
+    const qulonglong inode = fileInfo->inode();
 
     const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded) + QString::number(inode)).toLocal8Bit()) + kFormat;
     QString thumbnail = DFMIO::DFMUtils::buildFilePath(d->sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
@@ -324,7 +324,7 @@ QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) co
 
     const QImage image = ir.read();
 
-    const qulonglong fileModify = fileInfo->attribute(DFMIO::DFileInfo::AttributeID::kTimeModified).toULongLong();
+    const qint64 fileModify = fileInfo->lastModified().toMSecsSinceEpoch();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
         DecoratorFileOperator(thumbnail).deleteFile();
 
@@ -413,7 +413,7 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
     }
 
     image->setText(QT_STRINGIFY(Thumb::URL), fileUrl);
-    const qulonglong fileModify = fileInfo->attribute(DFMIO::DFileInfo::AttributeID::kTimeModified).toULongLong();
+    const qint64 fileModify = fileInfo->lastModified().toMSecsSinceEpoch();
     image->setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
 
     // create path

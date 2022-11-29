@@ -50,8 +50,8 @@ public:
     void refresh() override;
     bool canDragCompress() const override;
     bool canHidden() const override;
-    QString emptyDirectoryTip() const override;
-    virtual Qt::DropActions supportedDropActions() override;
+    Qt::DropActions supportedAttributes(const SupportType type = SupportType::kDrag) const override;
+    QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
 
 private:
     void backupInfo(const QUrl &url);

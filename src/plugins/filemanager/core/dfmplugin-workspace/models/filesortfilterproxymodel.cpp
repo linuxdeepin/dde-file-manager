@@ -84,7 +84,7 @@ Qt::DropActions FileSortFilterProxyModel::supportedDragActions() const
     const AbstractFileInfoPointer info = viewModel()->fileInfo(rootIndex);
 
     if (info)
-        return info->supportedDragActions();
+        return info->supportedAttributes(AbstractFileInfo::SupportType::kDrag);
 
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
@@ -95,7 +95,7 @@ Qt::DropActions FileSortFilterProxyModel::supportedDropActions() const
     const AbstractFileInfoPointer info = viewModel()->fileInfo(rootIndex);
 
     if (info)
-        return info->supportedDropActions();
+        return info->supportedAttributes(AbstractFileInfo::SupportType::kDrop);
 
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }

@@ -164,16 +164,19 @@ bool MasteredMediaFileInfo::canHidden() const
     return false;
 }
 
-QString MasteredMediaFileInfo::emptyDirectoryTip() const
+Qt::DropActions MasteredMediaFileInfo::supportedAttributes(const AbstractFileInfo::SupportType type) const
 {
-    return QObject::tr("Folder is empty");
+    if (type == SupportType::kDrop)
+        if (!OpticalHelper::isBurnEnabled())
+            return Qt::IgnoreAction;
+    return AbstractFileInfo::supportedAttributes(type);
 }
 
-Qt::DropActions MasteredMediaFileInfo::supportedDropActions()
+QString MasteredMediaFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
 {
-    if (!OpticalHelper::isBurnEnabled())
-        return Qt::IgnoreAction;
-    return AbstractFileInfo::supportedDropActions();
+    if (type == ViewType::kEmptyDir)
+        return QObject::tr("Folder is empty");
+    return AbstractFileInfo::viewTip(type);
 }
 
 void MasteredMediaFileInfo::backupInfo(const QUrl &url)
