@@ -169,6 +169,8 @@ void VaultActiveFinishedView::slotEncryptVault()
     } else {
         // 切换到保险箱主页面
         VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
+        VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
+        VaultHelper::recordTime(kjsonGroupName, kjsonKeyLockTime);
         emit sigAccepted();
     }
 }
