@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "stashmountsutils.h"
 #include "utils/computerutils.h"
 
@@ -28,6 +28,8 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/base/configs/configsynchronizer.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -243,6 +245,30 @@ QString StashMountsUtils::gvfsMountPath()
     return SysInfoUtils::isRootUser()
             ? QString("/root/.gvfs")
             : QString("/run/user/%1/gvfs").arg(SysInfoUtils::getUserId());
+}
+
+void StashMountsUtils::bindStashEnableConf()
+{
+    static constexpr char kConfName[] { "org.deepin.dde.file-manager" };
+    static constexpr char kKeyName[] { "dfm.samba.permanent" };
+    SyncPair pair {
+        { SettingType::kGenAttr, Application::kAlwaysShowOfflineRemoteConnections },
+        { kConfName, kKeyName },
+        saveStashEnableToConf,
+        syncConfToAppSet
+    };
+    ConfigSynchronizer::instance()->watchChange(pair);
+}
+
+void StashMountsUtils::saveStashEnableToConf(const QVariant &var)
+{
+    DConfigManager::instance()->setValue(DConfigInfos::kConfName, DConfigInfos::kKeyName, var);
+}
+
+void StashMountsUtils::syncConfToAppSet(const QString &config, const QString &key, const QVariant &var)
+{
+    if (config == DConfigInfos::kConfName && key == DConfigInfos::kKeyName)
+        Application::instance()->setGenericAttribute(Application::kAlwaysShowOfflineRemoteConnections, var.toBool());
 }
 
 QJsonDocument StashMountsUtils::cfgDocument()

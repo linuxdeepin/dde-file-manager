@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef STASHMOUNTSMANAGER_H
 #define STASHMOUNTSMANAGER_H
 
@@ -39,6 +39,11 @@ extern const char *const kProtocolKey;
 extern const char *const kShareKey;
 }   // namespace StashedMountsKeys
 
+namespace DConfigInfos {
+inline constexpr char kConfName[] { "org.deepin.dde.file-manager" };
+inline constexpr char kKeyName[] { "dfm.samba.permanent" };
+}   // namespace DConfigInfos
+
 class StashMountsUtils
 {
 public:
@@ -56,6 +61,10 @@ public:
     static bool isStashedDevExist(const QUrl &stashedUrl);
     static void stashMountedMounts();
     static QString gvfsMountPath();
+
+    static void bindStashEnableConf();
+    static void saveStashEnableToConf(const QVariant &var);
+    static void syncConfToAppSet(const QString &, const QString &, const QVariant &);
 
 private:
     static QJsonDocument cfgDocument();

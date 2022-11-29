@@ -19,9 +19,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "computer.h"
 #include "utils/computerutils.h"
+#include "utils/stashmountsutils.h"
 #include "views/computerviewcontainer.h"
 #include "fileentity/entryfileentities.h"
 #include "events/computereventreceiver.h"
@@ -79,6 +80,7 @@ bool Computer::start()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", ComputerUtils::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", ComputerUtils::scheme(), ComputerMenuCreator::name());
 
+    StashMountsUtils::bindStashEnableConf();
     return true;
 }
 
@@ -96,17 +98,20 @@ void Computer::onWindowOpened(quint64 winId)
     if (window->workSpace())
         ComputerItemWatcherInstance->startQueryItems();
     else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
 
     if (window->sideBar())
         addComputerToSidebar();
     else
-        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
 
     if (window->titleBar())
         regComputerToSearch();
     else
-        connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regComputerToSearch(); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regComputerToSearch(); }, Qt::DirectConnection);
 
     CustomViewExtensionView func { ComputerUtils::devicePropertyDialog };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",

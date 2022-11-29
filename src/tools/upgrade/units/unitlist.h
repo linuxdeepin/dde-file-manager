@@ -25,7 +25,7 @@
 
 // units
 #include "headerunit.h"
-
+#include "dconfigupgradeunit.h".h "
 
 // units end
 
@@ -33,16 +33,18 @@
 #include <QSharedPointer>
 
 #define RegUnit(unit) \
-        QSharedPointer<UpgradeUnit>(new unit)
+    QSharedPointer<UpgradeUnit>(new unit)
 
 namespace dfm_upgrade {
 
-inline QList<QSharedPointer<UpgradeUnit>> createUnits() {
+inline QList<QSharedPointer<UpgradeUnit>> createUnits()
+{
     return QList<QSharedPointer<UpgradeUnit>> {
-        RegUnit(dfm_upgrade::HeaderUnit)
+        RegUnit(dfm_upgrade::HeaderUnit),
+        RegUnit(dfm_upgrade::DConfigUpgradeUnit)
     };
 }
 
 }
 
-#endif // UNITLIST_H
+#endif   // UNITLIST_H

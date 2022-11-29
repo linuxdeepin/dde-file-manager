@@ -2,18 +2,18 @@
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
-#ifndef DCONFIGMENUHIDDENUNIT_H
-#define DCONFIGMENUHIDDENUNIT_H
+#ifndef DCONFIGUPGRADEUNIT_H
+#define DCONFIGUPGRADEUNIT_H
 
 #include "core/upgradeunit.h"
 
 #include <QList>
 
 namespace dfm_upgrade {
-class DConfigMenuHiddenUnit : public UpgradeUnit
+class DConfigUpgradeUnit : public UpgradeUnit
 {
 public:
-    DConfigMenuHiddenUnit();
+    DConfigUpgradeUnit();
 
     virtual QString name() override;
     virtual bool initialize(const QMap<QString, QString> &args) override;
@@ -21,7 +21,9 @@ public:
 
 private:
     static const QMap<QString, QString> &mappedActions();
+    bool upgradeMenuConfigs();
+    bool upgradeSmbConfigs();
 };
 }
 
-#endif   // DCONFIGMENUHIDDENUNIT_H
+#endif   // DCONFIGUPGRADEUNIT_H
