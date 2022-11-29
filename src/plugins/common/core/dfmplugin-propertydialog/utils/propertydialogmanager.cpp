@@ -116,11 +116,6 @@ bool PropertyDialogManager::registerCustomView(CustomViewExtensionView view, con
     return true;
 }
 
-bool PropertyDialogManager::hasRegisteredCustomView(const QString &scheme)
-{
-    return viewCreateFunctionHash.contains(scheme);
-}
-
 void PropertyDialogManager::unregisterCustomView(const QString &scheme)
 {
     viewCreateFunctionHash.remove(scheme);

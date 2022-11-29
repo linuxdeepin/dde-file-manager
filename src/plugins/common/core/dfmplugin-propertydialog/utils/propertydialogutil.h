@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef PROPERTYDIALOGUTIL_H
 #define PROPERTYDIALOGUTIL_H
 
@@ -40,7 +40,7 @@ public:
 public slots:
     void showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option = QVariantHash());
     void showFilePropertyDialog(const QList<QUrl> &urls, const QVariantHash &option = QVariantHash());
-    void showCustomDialog(const QList<QUrl> &urls);
+    bool showCustomDialog(const QUrl &url);
     void insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget);
     void addExtendedControlFileProperty(const QUrl &url, QWidget *widget);
     void closeFilePropertyDialog(const QUrl &url);

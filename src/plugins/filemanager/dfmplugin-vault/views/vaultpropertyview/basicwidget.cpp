@@ -168,10 +168,10 @@ int BasicWidget::getFileCount()
 
 void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount)
 {
-    fSize += size;
+    fSize = size;
     fileSize->setRightValue(FileUtils::formatSize(size));
 
-    fCount += filesCount + directoryCount;
+    fCount = filesCount + (directoryCount > 1 ? directoryCount - 1 : 0);
     fileCount->setRightValue(QString::number(fCount));
 }
 

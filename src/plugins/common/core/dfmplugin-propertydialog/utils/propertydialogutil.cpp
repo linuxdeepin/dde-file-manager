@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "propertydialogutil.h"
 #include "views/multifilepropertydialog.h"
 #include "propertydialogmanager.h"
@@ -58,13 +58,11 @@ PropertyDialogUtil::~PropertyDialogUtil()
 
 void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
 {
-    if (urls.isEmpty())
-        return;
-
-    if (PropertyDialogManager::instance().hasRegisteredCustomView(urls.first().scheme())) {
-        showCustomDialog(urls);
-    } else {
-        showFilePropertyDialog(urls, option);
+    for (const QUrl &url : urls) {
+        if (!showCustomDialog(url)) {
+            showFilePropertyDialog(urls, option);
+            break;
+        }
     }
 }
 
@@ -112,30 +110,32 @@ void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls, const Q
     }
 }
 
-void PropertyDialogUtil::showCustomDialog(const QList<QUrl> &urls)
+bool PropertyDialogUtil::showCustomDialog(const QUrl &url)
 {
-    for (const QUrl &url : urls) {
-        if (customPropertyDialogs.contains(url)) {
-            customPropertyDialogs[url]->show();
-            customPropertyDialogs[url]->activateWindow();
-        } else {
-            QWidget *widget = createCustomizeView(url);
-            if (widget) {
-                customPropertyDialogs.insert(url, widget);
-                connect(widget, &QWidget::destroyed, this, [this, url]{
-                    closeCustomPropertyDialog(url);
-                });
+    if (customPropertyDialogs.contains(url)) {
+        customPropertyDialogs[url]->show();
+        customPropertyDialogs[url]->activateWindow();
+        return true;
+    } else {
+        QWidget *widget = createCustomizeView(url);
+        if (widget) {
+            customPropertyDialogs.insert(url, widget);
+            connect(widget, &QWidget::destroyed, this, [this, url] {
+                closeCustomPropertyDialog(url);
+            });
 
-                widget->show();
-                widget->activateWindow();
-                QRect qr = qApp->primaryScreen()->geometry();
-                QPoint pt = qr.center();
-                pt.setX(pt.x() - widget->width() / 2);
-                pt.setY(pt.y() - widget->height() / 2);
-                widget->move(pt);
-            }
+            widget->show();
+            widget->activateWindow();
+            QRect qr = qApp->primaryScreen()->geometry();
+            QPoint pt = qr.center();
+            pt.setX(pt.x() - widget->width() / 2);
+            pt.setY(pt.y() - widget->height() / 2);
+            widget->move(pt);
+            return true;
         }
     }
+
+    return false;
 }
 
 /*!
