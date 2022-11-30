@@ -65,7 +65,7 @@ InfoCache::~InfoCache()
 void InfoCache::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos)
 {
     for (const auto &info : infos) {
-        if (info->hasProxy())
+        if (!info || info->hasProxy())
             continue;
         // 断开信号连接
         auto url = UrlRoute::urlParent(info->url());
@@ -74,7 +74,8 @@ void InfoCache::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> info
         if (watcher) {
             watcher->reduceCacheInfoConnectSize();
             if (watcher->getCacheInfoConnectSize() <= 0) {
-                disconnect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &InfoCache::removeCache);
+                disconnect(watcher.data(), &AbstractFileWatcher::fileDeleted, this,
+                           &InfoCache::removeCache);
                 disconnect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this,
                            &InfoCache::refreshFileInfo);
                 disconnect(watcher.data(), &AbstractFileWatcher::fileRename, this,
@@ -210,13 +211,16 @@ void InfoCache::removeCaches(const QList<QUrl> urls)
     {
         QWriteLocker wlk(&d->mianLock);
         for (const auto &url : urls) {
-            infos.insert(url, d->mainCache.take(url));
+            auto info = d->mainCache.take(url);
+            if (info)
+                infos.insert(url, d->mainCache.take(url));
         }
     }
     if (d->cacheWorkerStoped)
         return;
     // 断开监视器监视
-    emit cacheDisconnectWatcher(infos);
+    if (infos.size() > 0)
+        emit cacheDisconnectWatcher(infos);
     // 移除时间队列
     emit cacheRemoveInfosTime(urls);
 

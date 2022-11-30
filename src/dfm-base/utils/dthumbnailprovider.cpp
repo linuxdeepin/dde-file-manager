@@ -307,9 +307,8 @@ QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) co
         || absolutePath == StandardPaths::location(StandardPaths::kThumbnailFailPath)) {
         return absoluteFilePath;
     }
-    const qulonglong inode = fileInfo->inode();
 
-    const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded) + QString::number(inode)).toLocal8Bit()) + kFormat;
+    const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded)).toLocal8Bit()) + kFormat;
     QString thumbnail = DFMIO::DFMUtils::buildFilePath(d->sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
     if (!DecoratorFile(thumbnail).exists()) {
         return QString();
@@ -324,7 +323,7 @@ QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) co
 
     const QImage image = ir.read();
 
-    const qint64 fileModify = fileInfo->lastModified().toMSecsSinceEpoch();
+    const qint64 fileModify = fileInfo->lastModified().toSecsSinceEpoch();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
         DecoratorFileOperator(thumbnail).deleteFile();
 
@@ -368,14 +367,7 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
     }
 
     const QString fileUrl = QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded);
-
-    struct stat st;
-    ulong inode = 0;
-    QByteArray pathArray = filePath.toUtf8();
-    std::string pathStd = pathArray.toStdString();
-    if (stat(pathStd.c_str(), &st) == 0)
-        inode = st.st_ino;
-    const QString thumbnailName = dataToMd5Hex((fileUrl + QString::number(inode)).toLocal8Bit()) + kFormat;
+    const QString thumbnailName = dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
 
     // the file is in fail path
     QString thumbnail = DFMIO::DFMUtils::buildFilePath(StandardPaths::location(StandardPaths::kThumbnailFailPath).toStdString().c_str(),
@@ -413,7 +405,7 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
     }
 
     image->setText(QT_STRINGIFY(Thumb::URL), fileUrl);
-    const qint64 fileModify = fileInfo->lastModified().toMSecsSinceEpoch();
+    const qint64 fileModify = fileInfo->lastModified().toSecsSinceEpoch();
     image->setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
 
     // create path
