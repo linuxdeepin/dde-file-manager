@@ -40,8 +40,8 @@ void VaultEventReceiver::connectEvent()
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DragMoveData",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleSideBarItemDragMoveData);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", this, &VaultEventReceiver::handleShortCutPasteFiles);
-
     dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &VaultEventReceiver::changeUrlEventFilter);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Url_FetchPathtoVirtual", this, &VaultEventReceiver::handlePathtoVirtual);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -177,4 +177,16 @@ bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
         }
     }
     return false;
+}
+
+bool VaultEventReceiver::handlePathtoVirtual(const QList<QUrl> files, QList<QUrl> *virtualFiles)
+{
+    if (files.isEmpty())
+        return false;
+    for (const QUrl &url : files) {
+        if (!VaultHelper::isVaultFile(url))
+            return false;
+        *virtualFiles << VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
+    }
+    return true;
 }

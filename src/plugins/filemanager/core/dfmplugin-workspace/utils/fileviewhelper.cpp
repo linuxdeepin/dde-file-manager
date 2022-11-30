@@ -352,6 +352,12 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
 
 void FileViewHelper::selectFiles(const QList<QUrl> &files)
 {
+    QList<QUrl> vitualFiles;
+    bool ok = dpfHookSequence->run("dfmplugin_workspace", "hook_Url_FetchPathtoVirtual", files, &vitualFiles);
+    if (ok && !vitualFiles.isEmpty()) {
+        parent()->selectFiles(vitualFiles);
+        return;
+    }
     if (files.count() > 0 && UniversalUtils::urlEquals(UrlRoute::urlParent(files.first()), parent()->rootUrl()))
         parent()->selectFiles(files);
 }

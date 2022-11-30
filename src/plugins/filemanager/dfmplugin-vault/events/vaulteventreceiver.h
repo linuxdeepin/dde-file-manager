@@ -25,6 +25,7 @@ public slots:
     bool handleShortCutPasteFiles(const quint64 &winId, const QList<QUrl> &fromUrls, const QUrl &to);
     void handleHideFilesResult(const quint64 &winId, const QList<QUrl> &urls, bool ok);
     bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
+    bool handlePathtoVirtual(const QList<QUrl> files, QList<QUrl> *virtualFiles);
 };
 }
 #endif   // VAULTEVENTRECEIVER_H

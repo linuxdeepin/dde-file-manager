@@ -108,6 +108,8 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Model_FetchCustomColumnRoles)
     DPF_EVENT_REG_HOOK(hook_Model_FetchCustomRoleDisplayName)
 
+    DPF_EVENT_REG_HOOK(hook_Url_FetchPathtoVirtual)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
