@@ -41,6 +41,7 @@ DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
+static const char *const kActionIconMenuSceneName = "ActionIconManager";
 static const char *const kDConfigHiddenMenuSceneName = "DConfigMenuFilter";
 static const char *const kBaseSortMenuSceneName = "BaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
@@ -142,6 +143,9 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
 
     if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName))
         currentScene.append(dconfigFilterScene);
+
+    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName))
+        currentScene.append(actionIconManagerScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

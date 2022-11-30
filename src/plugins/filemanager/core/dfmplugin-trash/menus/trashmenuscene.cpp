@@ -35,6 +35,7 @@
 
 #include <QMenu>
 
+static const char *const kActionIconMenuSceneName = "ActionIconManager";
 static constexpr char kClipBoardMenuSceneName[] = "ClipBoardMenu";
 static constexpr char kFileOperatorMenuSceneName[] = "FileOperatorMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
@@ -107,6 +108,9 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
         if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kPropertyMenuSceneName))
             currentScene.append(workspaceScene);
     }
+
+    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName))
+        currentScene.append(actionIconManagerScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

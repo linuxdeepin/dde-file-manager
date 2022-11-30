@@ -25,6 +25,7 @@
 #include "events/shareeventscaller.h"
 
 #include "dfm-base/dfm_menu_defines.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -51,6 +52,13 @@ bool MyShareMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
+
+    QList<AbstractMenuScene *> currentScene;
+    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene("ActionIconManager"))
+        currentScene << actionIconManagerScene;
+
+    currentScene << subScene;
+    setSubscene(currentScene);
     AbstractMenuScene::initialize(params);
 
     return true;

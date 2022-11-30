@@ -50,6 +50,7 @@ using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
 DPMENU_USE_NAMESPACE
 
+static const char *const kActionIconMenuSceneName = "ActionIconManager";
 static const char *const kDConfigHiddenMenuSceneName = "DConfigMenuFilter";
 static const char *const kCanvasBaseSortMenuSceneName = "CanvasBaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
@@ -215,6 +216,9 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
 
     if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName))
         currentScene.append(dconfigFilterScene);
+
+    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName))
+        currentScene.append(actionIconManagerScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

@@ -70,11 +70,13 @@ bool ComputerMenuScene::initialize(const QVariantHash &params)
     d->info.reset(new EntryFileInfo(d->selectFiles.first()));
 
     auto subScenes = subscene();
-    if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter")) {
+    if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter"))
         subScenes << filterScene;
-        setSubscene(subScenes);
-    }
 
+    if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene("ActionIconManager"))
+        subScenes << actionIconManagerScene;
+
+    setSubscene(subScenes);
     return AbstractMenuScene::initialize(params);
 }
 
