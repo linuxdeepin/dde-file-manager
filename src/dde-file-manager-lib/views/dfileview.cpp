@@ -3724,6 +3724,10 @@ void DFileView::onModelStateChanged(int state)
         if (d->headerView) {
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
         }
+
+        if (rootUrl().scheme() == FILE_SCHEME)
+            d->statusBar->preSetContainsCount(rootUrl());
+
     } else if (state == DFileSystemModel::Idle) {
         d->statusBar->setLoadingIncatorVisible(state == DFileSystemModel::Busy);
 

@@ -96,6 +96,8 @@ public:
     // 计算目录和文件的个数及大小
     QVariantList calcFolderAndFile(const DUrlList &urllist);
 
+    void preSetContainsCount(const DUrl &url);
+
 signals:
     void modeChanged();
 
@@ -152,6 +154,7 @@ private:
     QLabel *m_lineEditLabel = Q_NULLPTR;
     QLabel *m_comboBoxLabel = Q_NULLPTR;
     DFileStatisticsJob *m_fileStatisticsJob = nullptr;
+    DFileStatisticsJob *m_preSetJob = nullptr;
     bool m_isjobDisconnect = true;
 
     Mode m_mode = Normal;
