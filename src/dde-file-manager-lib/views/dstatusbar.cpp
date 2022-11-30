@@ -295,6 +295,44 @@ QVariantList DStatusBar::calcFolderAndFile(const DUrlList &urllist)
     return QVariantList{folderCount, folderContains, fileCount, fileSize};
 }
 
+void DStatusBar::preSetContainsCount(const DUrl &url)
+{
+    if (m_preSetJob && m_preSetJob->isRunning()) {
+        m_preSetJob->disconnect();
+        m_preSetJob->stop();
+        m_preSetJob->wait();
+    }
+
+    if (m_fileStatisticsJob && m_fileStatisticsJob->isRunning()) {
+        m_fileStatisticsJob->stop();
+        m_fileStatisticsJob->wait();
+    }
+
+    m_preSetJob = new DFileStatisticsJob(this);
+    m_preSetJob->setFileHints(DFileStatisticsJob::ExcludeSourceFile | DFileStatisticsJob::SingleDepth);
+
+    m_fileCount = 0;
+    auto onFoundFile = [this] {
+        if (!sender())
+            return;
+
+        ++m_fileCount;
+        m_label->setText(m_counted.arg(QString::number(m_fileCount)));
+    };
+
+    connect(m_preSetJob, &DFileStatisticsJob::finished, this,
+    [this] {
+        m_fileCount = m_preSetJob->filesCount() + m_preSetJob->directorysCount();
+
+        m_loadingIndicator->hide();
+        m_label->setText(m_counted.arg(QString::number(m_fileCount)));
+    });
+    connect(m_preSetJob, &DFileStatisticsJob::fileFound, this, onFoundFile);
+    connect(m_preSetJob, &DFileStatisticsJob::directoryFound, this, onFoundFile);
+
+    m_preSetJob->start({url});
+}
+
 void DStatusBar::initJobConnection()
 {
     if (!m_fileStatisticsJob) {
@@ -645,11 +683,8 @@ void DStatusBar::setLoadingIncatorVisible(bool visible, const QString &tipText)
     if (!m_label)
         return;
 
-    if (visible) {
+    if (visible)
         m_label->setText(tipText.isEmpty() ? tr("Loading...") : tipText);
-    } else {
-        m_label->setText(QString());
-    }
 }
 
 bool DStatusBar::eventFilter(QObject *watched, QEvent *event)
