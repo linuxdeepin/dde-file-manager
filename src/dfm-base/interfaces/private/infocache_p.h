@@ -37,7 +37,7 @@ enum CacheInfoStatus : uint8_t {
 class InfoCachePrivate
 {
     friend class InfoCache;
-    friend class Worker;
+    friend class CacheWorker;
     InfoCache *const q;
     DThreadList<QString> disableCahceSchemes;
 

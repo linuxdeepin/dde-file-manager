@@ -35,7 +35,6 @@ static constexpr int kRotationTrainingTime = (60 * 1000);
 static constexpr int kCacheRemoveTime = (60 * (60 * 1000));
 
 namespace dfmbase {
-InfoCacheController *InfoCacheController::cacheController = nullptr;
 InfoCachePrivate::InfoCachePrivate(InfoCache *qq)
     : q(qq)
 {
@@ -49,6 +48,12 @@ InfoCachePrivate::~InfoCachePrivate()
 InfoCache::InfoCache(QObject *parent)
     : QObject(parent), d(new InfoCachePrivate(this))
 {
+}
+
+InfoCache &InfoCache::instance()
+{
+    static InfoCache cache;
+    return cache;
 }
 
 InfoCache::~InfoCache()
@@ -318,103 +323,94 @@ void InfoCache::fileAttributeChanged(const QUrl url)
     refreshFileInfo(url);
 }
 
-Worker::Worker(QObject *parent)
+CacheWorker::CacheWorker(QObject *parent)
     : QObject(parent)
 {
 }
 
-Worker::~Worker()
+CacheWorker::~CacheWorker()
 {
 }
 
-void Worker::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
+void CacheWorker::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    emit workerCacheInfo(url, info);
+    InfoCache::instance().cacheInfo(url, info);
 }
 
-void Worker::removeCaches(const QList<QUrl> urls)
+void CacheWorker::removeCaches(const QList<QUrl> urls)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    emit workerRemoveCaches(urls);
+    InfoCache::instance().removeCaches(urls);
 }
 
-void Worker::updateInfoTime(const QUrl url)
+void CacheWorker::updateInfoTime(const QUrl url)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    emit workerUpdateInfoTime(url);
+    InfoCache::instance().updateSortTimeWorker(url);
 }
 
-void Worker::dealRemoveInfo()
+void CacheWorker::dealRemoveInfo()
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    emit workerDealRemoveInfo();
+    InfoCache::instance().timeRemoveCache();
 }
 
-void Worker::removeInfosTime(const QList<QUrl> urls)
+void CacheWorker::removeInfosTime(const QList<QUrl> urls)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    emit workerRemoveInfosTime(urls);
+    InfoCache::instance().removeInfosTimeWorker(urls);
 }
 
-void Worker::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos)
+void CacheWorker::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    emit workerDisconnectWatcher(infos);
+    InfoCache::instance().disconnectWatcher(infos);
 }
 
 InfoCacheController::~InfoCacheController()
 {
     removeTimer->stop();
     thread->quit();
-    cache->stop();
+    InfoCache::instance().stop();
     thread->wait();
 }
 
 InfoCacheController &InfoCacheController::instance()
 {
-    if (!cacheController) {
-        cacheController = new InfoCacheController();
-        cacheController->moveToThread(qApp->thread());
-    }
-    return *cacheController;
+    static InfoCacheController cacheController;
+    return cacheController;
 }
 
 bool InfoCacheController::cacheDisable(const QString &scheme)
 {
-    return cache->cacheDisable(scheme);
+    return InfoCache::instance().cacheDisable(scheme);
 }
 
 void InfoCacheController::setCacheDisbale(const QString &scheme, bool disable)
 {
-    return cache->setCacheDisbale(scheme, disable);
+    return InfoCache::instance().setCacheDisbale(scheme, disable);
 }
 
 AbstractFileInfoPointer InfoCacheController::getCacheInfo(const QUrl &url)
 {
-    return cache->getCacheInfo(url);
+    return InfoCache::instance().getCacheInfo(url);
 }
 
 InfoCacheController::InfoCacheController(QObject *parent)
-    : QObject(parent), thread(new QThread), worker(new Worker), cache(new InfoCache), removeTimer(new QTimer)
+    : QObject(parent), thread(new QThread), worker(new CacheWorker), removeTimer(new QTimer)
 {
     init();
 }
 
 void InfoCacheController::init()
 {
-    cache->moveToThread(qApp->thread());
     removeTimer->moveToThread(qApp->thread());
-    connect(removeTimer.data(), &QTimer::timeout, worker.data(), &Worker::dealRemoveInfo, Qt::QueuedConnection);
-    connect(this, &InfoCacheController::cacheFileInfo, worker.data(), &Worker::cacheInfo, Qt::QueuedConnection);
-    connect(cache.data(), &InfoCache::cacheRemoveCaches, worker.data(), &Worker::removeCaches, Qt::QueuedConnection);
-    connect(cache.data(), &InfoCache::cacheRemoveInfosTime, worker.data(), &Worker::removeInfosTime, Qt::QueuedConnection);
-    connect(cache.data(), &InfoCache::cacheDisconnectWatcher, worker.data(), &Worker::disconnectWatcher, Qt::QueuedConnection);
-    connect(worker.data(), &Worker::workerCacheInfo, cache.data(), &InfoCache::cacheInfo, Qt::DirectConnection);
-    connect(worker.data(), &Worker::workerRemoveCaches, cache.data(), &InfoCache::removeCaches, Qt::DirectConnection);
-    connect(worker.data(), &Worker::workerUpdateInfoTime, cache.data(), &InfoCache::updateSortTimeWorker, Qt::DirectConnection);
-    connect(worker.data(), &Worker::workerRemoveInfosTime, cache.data(), &InfoCache::removeInfosTimeWorker, Qt::DirectConnection);
-    connect(worker.data(), &Worker::workerDisconnectWatcher, cache.data(), &InfoCache::disconnectWatcher, Qt::DirectConnection);
+    connect(removeTimer.data(), &QTimer::timeout, worker.data(), &CacheWorker::dealRemoveInfo, Qt::QueuedConnection);
+    connect(this, &InfoCacheController::cacheFileInfo, worker.data(), &CacheWorker::cacheInfo, Qt::QueuedConnection);
+    connect(&InfoCache::instance(), &InfoCache::cacheRemoveCaches, worker.data(), &CacheWorker::removeCaches, Qt::QueuedConnection);
+    connect(&InfoCache::instance(), &InfoCache::cacheRemoveInfosTime, worker.data(), &CacheWorker::removeInfosTime, Qt::QueuedConnection);
+    connect(&InfoCache::instance(), &InfoCache::cacheDisconnectWatcher, worker.data(), &CacheWorker::disconnectWatcher, Qt::QueuedConnection);
 
     worker->moveToThread(thread.data());
     thread->start();
