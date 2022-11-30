@@ -185,13 +185,13 @@ void OpenWithMenuScene::updateState(QMenu *parent)
             }
 
             // if the suffix is the same, it can be opened with the same application
-            if (info->suffix() != d->focusFileInfo->suffix()) {
+            if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) != d->focusFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix)) {
 
-                QStringList mimeTypeList { info->mimeTypeName() };
+                QStringList mimeTypeList { info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName) };
                 QUrl parentUrl = info->parentUrl();
                 auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
                 if (!info.isNull()) {
-                    mimeTypeList << parentInfo->mimeTypeName();
+                    mimeTypeList << parentInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);
                 }
 
                 bool matched = false;

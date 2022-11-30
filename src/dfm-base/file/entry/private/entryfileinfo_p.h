@@ -36,6 +36,7 @@ class EntryFileInfoPrivate : public AbstractFileInfoPrivate
 public:
     explicit EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq);
     void init();
+    QString suffix() const;
     virtual ~EntryFileInfoPrivate() override;
 };
 

@@ -566,7 +566,7 @@ void DThumbnailProvider::createTextThumbnail(const QString &filePath, DThumbnail
     if (!fileinfo)
         return;
 
-    QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->fileName()) };
+    QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName)) };
 
     QFont font;
     font.setPixelSize(12);

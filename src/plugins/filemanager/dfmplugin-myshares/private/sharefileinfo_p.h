@@ -41,6 +41,7 @@ public:
 
 private:
     ShareInfo info;
+    QString fileName() const;
 };
 
 }

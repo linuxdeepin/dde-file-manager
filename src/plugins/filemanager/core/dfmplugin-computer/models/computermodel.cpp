@@ -134,7 +134,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->url;
 
     case kSuffixRole:
-        return item->info ? item->info->suffix() : "";
+        return item->info ? item->info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) : "";
 
     case kProgressVisiableRole:
         return item->info ? item->info->showProgress() : false;

@@ -44,10 +44,14 @@ public:
     virtual bool isWritable() const override;
     virtual bool canRename() const override;
 
-    QString fileName() const override;
+    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
+
     bool canRedirectionFileUrl() const override;
     QUrl redirectedFileUrl() const override;
     virtual QVariant customData(int role) const override;
+
+private:
+    RecentFileInfoPrivate *const d;
 };
 
 using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;

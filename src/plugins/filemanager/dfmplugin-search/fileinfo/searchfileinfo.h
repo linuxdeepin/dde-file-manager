@@ -41,7 +41,7 @@ public:
     virtual bool isWritable() const override;
     virtual bool isDir() const override;
     virtual qint64 size() const override;
-    virtual QString fileName() const override;
+    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
 
     // property for view
     virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;

@@ -24,8 +24,6 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/utils/dthumbnailprovider.h"
 #include "dfm-base/utils/sysinfoutils.h"
@@ -121,20 +119,6 @@ void LocalFileInfo::initQuerierAsync(int ioPriority, AbstractFileInfo::initQueri
     if (d->dfmFileInfo)
         d->dfmFileInfo->initQuerierAsync(ioPriority, func, userData);
 }
-
-/*!
- * \brief setFile 设置文件的File，跟新当前的fileinfo
- *
- * \param const QSharedPointer<DFMIO::DFileInfo> &file 新文件的dfm-io的fileinfo
- *
- * \return
- */
-void LocalFileInfo::setFile(const QUrl &url)
-{
-    QWriteLocker locker(&d->lock);
-    d->url = url;
-    init(url);
-}
 /*!
  * \brief exists 文件是否存在
  *
@@ -182,6 +166,32 @@ void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
     if (value.isValid())
         d->dfmFileInfo->setAttribute(id, value);
     d->attributes.remove(id);
+}
+
+QString LocalFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+{
+    switch (type) {
+    case FileNameInfoType::kFileName:
+        return d->fileName();
+    case FileNameInfoType::kBaseName:
+        return d->baseName();
+    case FileNameInfoType::kCompleteBaseName:
+        return d->completeBaseName();
+    case FileNameInfoType::kSuffix:
+        return d->suffix();
+    case FileNameInfoType::kCompleteSuffix:
+        return const_cast<LocalFileInfoPrivate *>(d)->completeSuffix();
+    case FileNameInfoType::kFileCopyName:
+        return LocalFileInfo::fileDisplayName();
+    case FileNameInfoType::kIconName:
+        return const_cast<LocalFileInfoPrivate *>(d)->iconName();
+    case FileNameInfoType::kGenericIconName:
+        return const_cast<LocalFileInfo *>(this)->fileMimeType().genericIconName();
+    case FileNameInfoType::kMimeTypeName:
+        return const_cast<LocalFileInfoPrivate *>(d)->mimeTypeName();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -232,181 +242,6 @@ QString LocalFileInfo::filePath() const
 QString LocalFileInfo::absoluteFilePath() const
 {
     return filePath();
-}
-/*!
- * \brief fileName 文件名称，全名称
- *
- * url = file:///tmp/archive.tar.gz
- *
- * fileName = archive.tar.gz
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::fileName() const
-{
-    QString fileName;
-
-    QReadLocker locker(&d->lock);
-    if (d->attributes.count(DFileInfo::AttributeID::kStandardName) == 0) {
-        locker.unlock();
-
-        QWriteLocker locker(&d->lock);
-        bool success = false;
-        if (d->dfmFileInfo) {
-            fileName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardName, &success).toString();
-
-            // trans "/" to "smb-share:server=xxx,share=xxx"
-            if (fileName == R"(/)" && FileUtils::isGvfsFile(d->url)) {
-                fileName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kIdFilesystem, &success).toString();
-            }
-        }
-        if (!success)
-            fileName = QFileInfo(d->url.path()).fileName();
-
-        d->attributes.insert(DFileInfo::AttributeID::kStandardName, fileName);
-    } else {
-        fileName = d->attributes.value(DFileInfo::AttributeID::kStandardName).toString();
-    }
-
-    return fileName;
-}
-/*!
- * \brief baseName 文件的基本名称
- *
- * url = file:///tmp/archive.tar.gz
- *
- * baseName = archive
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::baseName() const
-{
-    QString baseName;
-    QReadLocker locker(&d->lock);
-
-    if (d->attributes.count(DFileInfo::AttributeID::kStandardBaseName) == 0) {
-        locker.unlock();
-
-        QWriteLocker locker(&d->lock);
-        bool success = false;
-        if (d->dfmFileInfo) {
-            baseName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardBaseName, &success).toString();
-        }
-        if (!success)
-            baseName = QFileInfo(d->url.path()).baseName();
-
-        d->attributes.insert(DFileInfo::AttributeID::kStandardBaseName, baseName);
-    } else {
-        baseName = d->attributes.value(DFileInfo::AttributeID::kStandardBaseName).toString();
-    }
-
-    return baseName;
-}
-/*!
- * \brief completeBaseName 文件的完整基本名称
- *
- * url = file:///tmp/archive.tar.gz
- *
- * completeBaseName = archive.tar
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::completeBaseName() const
-{
-    QString completeBaseName;
-
-    QReadLocker locker(&d->lock);
-    if (d->attributes.count(DFileInfo::AttributeID::kStandardCompleteBaseName) == 0) {
-        locker.unlock();
-
-        QWriteLocker locker(&d->lock);
-        bool success = false;
-        if (d->dfmFileInfo) {
-            completeBaseName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardCompleteBaseName, &success).toString();
-        }
-        if (!success)
-            completeBaseName = QFileInfo(d->url.path()).completeBaseName();
-
-        d->attributes.insert(DFileInfo::AttributeID::kStandardCompleteBaseName, completeBaseName);
-    } else {
-        completeBaseName = d->attributes.value(DFileInfo::AttributeID::kStandardCompleteBaseName).toString();
-    }
-
-    return completeBaseName;
-}
-/*!
- * \brief suffix 文件的suffix
- *
- * url = file:///tmp/archive.tar.gz
- *
- * suffix = gz
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::suffix() const
-{
-    QString suffix;
-
-    QReadLocker locker(&d->lock);
-    if (d->attributes.count(DFileInfo::AttributeID::kStandardSuffix) == 0) {
-        locker.unlock();
-
-        QWriteLocker locker(&d->lock);
-        bool success = false;
-        if (d->dfmFileInfo) {
-            suffix = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSuffix, &success).toString();
-        }
-        if (!success)
-            suffix = QFileInfo(d->url.path()).suffix();
-
-        d->attributes.insert(DFileInfo::AttributeID::kStandardSuffix, suffix);
-    } else {
-        suffix = d->attributes.value(DFileInfo::AttributeID::kStandardSuffix).toString();
-    }
-
-    return suffix;
-}
-/*!
- * \brief suffix 文件的完整suffix
- *
- * url = file:///tmp/archive.tar.gz
- *
- * suffix = tar.gz
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::completeSuffix()
-{
-    QString completeSuffix;
-
-    QReadLocker locker(&d->lock);
-    if (d->attributes.count(DFileInfo::AttributeID::kStandardCompleteSuffix) == 0) {
-        locker.unlock();
-
-        QWriteLocker locker(&d->lock);
-        bool success = false;
-        if (d->dfmFileInfo) {
-            completeSuffix = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardCompleteSuffix, &success).toString();
-        }
-        if (!success)
-            completeSuffix = QFileInfo(d->url.path()).completeSuffix();
-
-        d->attributes.insert(DFileInfo::AttributeID::kStandardCompleteSuffix, completeSuffix);
-    } else {
-        completeSuffix = d->attributes.value(DFileInfo::AttributeID::kStandardCompleteSuffix).toString();
-    }
-
-    return completeSuffix;
 }
 /*!
  * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
@@ -879,7 +714,7 @@ bool LocalFileInfo::isBundle() const
 bool LocalFileInfo::isPrivate() const
 {
     const QString &path = absolutePath();
-    const QString &name = fileName();
+    const QString &name = d->fileName();
 
     static DFMBASE_NAMESPACE::Match match("PrivateFiles");
 
@@ -1540,11 +1375,6 @@ QString LocalFileInfo::fileDisplayName() const
     return fileDisplayName;
 }
 
-QString LocalFileInfo::fileCopyName() const
-{
-    return LocalFileInfo::fileDisplayName();
-}
-
 /*!
  * \brief toQFileInfo 获取他的QFileInfo实例对象
  *
@@ -1594,7 +1424,7 @@ QIcon LocalFileInfo::fileIcon()
 #endif
 
     bool hasThumbnail = false;
-    const int checkFast = DThumbnailProvider::instance()->hasThumbnailFast(mimeTypeName());
+    const int checkFast = DThumbnailProvider::instance()->hasThumbnailFast(d->mimeTypeName());
     if (1 == checkFast)
         hasThumbnail = true;
     else if (0 == checkFast)
@@ -1604,38 +1434,6 @@ QIcon LocalFileInfo::fileIcon()
 
     bool thumbEnabled = (d->enableThumbnail > 0) && hasThumbnail;
     return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
-}
-
-QString LocalFileInfo::iconName()
-{
-    QString iconNameValue;
-    QReadLocker locker(&d->lock);
-
-    if (d->attributes.count(DFileInfo::AttributeID::kStandardIcon) == 0) {
-        locker.unlock();
-
-        if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
-            iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(absoluteFilePath());
-        if (iconNameValue.isEmpty()) {
-            if (d->dfmFileInfo) {
-                const QStringList &list = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIcon, nullptr).toStringList();
-                if (!list.isEmpty())
-                    iconNameValue = list.first();
-            }
-        }
-
-        QWriteLocker locker(&d->lock);
-        d->attributes.insert(DFileInfo::AttributeID::kStandardIcon, iconNameValue);
-    } else {
-        iconNameValue = d->attributes.value(DFileInfo::AttributeID::kStandardIcon).toString();
-    }
-
-    return iconNameValue;
-}
-
-QString LocalFileInfo::genericIconName()
-{
-    return fileMimeType().genericIconName();
 }
 
 QUrl LocalFileInfo::redirectedFileUrl() const
@@ -1666,8 +1464,8 @@ quint64 LocalFileInfo::inode() const
     {
         QWriteLocker locker(&d->lock);
         d->inode = statinfo.st_ino;
+        return d->inode;
     }
-    return d->inode;
 }
 
 QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
@@ -1713,7 +1511,7 @@ bool LocalFileInfo::canDragCompress() const
 
 bool LocalFileInfo::isDragCompressFileFormat() const
 {
-    const QString &&name = fileName();
+    const QString &&name = d->fileName();
     return name.endsWith(".zip")
             || (name.endsWith(".7z")
                 && !name.endsWith(".tar.7z"));
@@ -1772,28 +1570,6 @@ void LocalFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const
     default:
         break;
     }
-}
-
-QString LocalFileInfo::mimeTypeName()
-{
-    QString type;
-
-    QReadLocker locker(&d->lock);
-    if (d->attributes.count(DFileInfo::AttributeID::kStandardContentType) == 0) {
-        locker.unlock();
-
-        QWriteLocker locker(&d->lock);
-        bool success = false;
-        if (d->dfmFileInfo) {
-            type = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardContentType, &success).toString();
-
-            if (success)
-                d->attributes.insert(DFileInfo::AttributeID::kStandardContentType, type);
-        }
-    } else {
-        type = d->attributes.value(DFileInfo::AttributeID::kStandardContentType).toString();
-    }
-    return type;
 }
 
 void LocalFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo)

@@ -68,7 +68,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
 
     DFMBASE_USE_NAMESPACE;
-    QString suffix = info->suffix();
+    QString suffix = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
     if (!ComputerUtils::isPresetSuffix(suffix)) {
         ComputerEventCaller::sendOpenItem(winId, info->url());
         return;
@@ -144,7 +144,7 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
 
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
-    if (removable && info->suffix() == SuffixInfo::kBlock) {
+    if (removable && info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kBlock) {
         if (info->displayName() == name)
             return;
         ComputerUtils::setCursorState(true);
@@ -233,7 +233,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     bool hasFileSystem = info->extraProperty(DeviceProperty::kHasFileSystem).toBool();
     bool isOpticalDrive = info->extraProperty(DeviceProperty::kOpticalDrive).toBool();
 
-    bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
+    bool needAskForFormat = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kBlock
             && !hasFileSystem
             && !isEncrypted
             && !isOpticalDrive;
@@ -395,7 +395,7 @@ static void onNetworkDeviceMountFinished(bool ok, DFMMOUNT::DeviceError err, con
 
 void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, bool enterAfterMounted)
 {
-    QString sfx = info->suffix();
+    QString sfx = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
     if (sfx == SuffixInfo::kStashedProtocol) {
         QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->url());
         DevMngIns->mountNetworkDeviceAsync(devId, [devId, enterAfterMounted, winId](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
@@ -415,7 +415,7 @@ void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, b
 void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
 {
     QString devId;
-    if (info->suffix() == SuffixInfo::kBlock) {
+    if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kBlock) {
         devId = ComputerUtils::getBlockDevIdByUrl(info->url());
         if (info->extraProperty(DeviceProperty::kIsEncrypted).toBool()) {
             QString cleartextId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
@@ -438,7 +438,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                 }
             });
         }
-    } else if (info->suffix() == SuffixInfo::kProtocol) {
+    } else if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kProtocol) {
         devId = ComputerUtils::getProtocolDevIdByUrl(info->url());
         DevMngIns->unmountProtocolDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             if (!ok) {
@@ -476,7 +476,7 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
 {
-    if (info->suffix() != SuffixInfo::kBlock) {
+    if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) != SuffixInfo::kBlock) {
         qWarning() << "non block device is not support format" << info->url();
         return;
     }
@@ -493,7 +493,7 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
 
 void ComputerController::actRemove(DFMEntryFileInfoPointer info)
 {
-    if (info->suffix() != SuffixInfo::kStashedProtocol)
+    if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) != SuffixInfo::kStashedProtocol)
         return;
     StashMountsUtils::removeStashedMount(info->url());
     Q_EMIT ComputerItemWatcherInstance->removeDevice(info->url());
@@ -508,7 +508,7 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
     if (info->order() == EntryFileInfo::EntryOrder::kOrderApps)
         return;
 
-    if (info->suffix() == SuffixInfo::kUserDir) {
+    if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kUserDir) {
         ComputerEventCaller::sendShowPropertyDialog({ info->targetUrl() });
         return;
     }
@@ -594,7 +594,7 @@ void ComputerController::handleUnAccessableDevCdCall(quint64 winId, DFMEntryFile
         return;
 
     qDebug() << "cannot access device: " << info->url();
-    bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
+    bool needAskForFormat = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kBlock
             && !info->extraProperty(DeviceProperty::kHasFileSystem).toBool()
             && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool()
             && !info->extraProperty(DeviceProperty::kOpticalDrive).toBool();

@@ -21,18 +21,27 @@
  */
 #include "recentfileinfo.h"
 #include "utils/recentmanager.h"
+#include "private/recentfileinfo_p.h"
 
 #include "dfm_global_defines.h"
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_recent {
+RecentFileInfoPrivate::RecentFileInfoPrivate(const QUrl &url, RecentFileInfo *qq)
+    : dfmbase::AbstractFileInfoPrivate(url, qq)
+{
+}
+
+RecentFileInfoPrivate::~RecentFileInfoPrivate()
+{
+}
 
 RecentFileInfo::RecentFileInfo(const QUrl &url)
-    : AbstractFileInfo(url)
+    : AbstractFileInfo(url), d(new RecentFileInfoPrivate(url, this))
 {
+    dptr.reset(d);
     if (url.path() != "/") {
         setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(url.path())));
     }
@@ -71,15 +80,20 @@ bool RecentFileInfo::canRename() const
     return false;
 }
 
-QString RecentFileInfo::fileName() const
+QString RecentFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    if (dptr->proxy)
-        return dptr->proxy->fileName();
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileName:
+        if (dptr->proxy)
+            return dptr->proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
 
-    if (UrlRoute::isRootUrl(url()))
-        return QObject::tr("Recent");
+        if (UrlRoute::isRootUrl(url()))
+            return QObject::tr("Recent");
 
-    return QString();
+        return QString();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 
 bool RecentFileInfo::canRedirectionFileUrl() const
@@ -102,4 +116,5 @@ QVariant RecentFileInfo::customData(int role) const
     else
         return QVariant();
 }
+
 }

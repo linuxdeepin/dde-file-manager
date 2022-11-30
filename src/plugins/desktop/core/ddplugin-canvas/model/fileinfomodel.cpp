@@ -232,7 +232,7 @@ QUrl FileInfoModel::rootUrl() const
 
 QModelIndex FileInfoModel::rootIndex() const
 {
-    return createIndex(INT_MAX, 0, (void *)this);
+    return createIndex(INT_MAX, 0, static_cast<void *>(const_cast<FileInfoModel *>(this)));
 }
 
 void FileInfoModel::installFilter(QSharedPointer<FileFilter> filter)
@@ -359,7 +359,7 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     case Global::ItemRoles::kItemIconRole:
         return indexFileInfo->fileIcon();
     case Global::ItemRoles::kItemNameRole:
-        return indexFileInfo->fileName();
+        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
     case Qt::EditRole:
     case Global::ItemRoles::kItemFileDisplayNameRole:
         return indexFileInfo->fileDisplayName();
@@ -374,15 +374,15 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     case Global::ItemRoles::kItemExtraProperties:
         return indexFileInfo->extraProperties();
     case Global::ItemRoles::kItemFileBaseNameRole:
-        return indexFileInfo->baseName();
+        return indexFileInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kBaseName);
     case Global::ItemRoles::kItemFileSuffixRole:
-        return indexFileInfo->suffix();
+        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
     case Global::ItemRoles::kItemFileNameOfRenameRole:
-        return indexFileInfo->fileNameOfRename();
+        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileNameOfRename);
     case Global::ItemRoles::kItemFileBaseNameOfRenameRole:
-        return indexFileInfo->baseNameOfRename();
+        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kBaseNameOfRename);
     case Global::ItemRoles::kItemFileSuffixOfRenameRole:
-        return indexFileInfo->suffixOfRename();
+        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffixOfRename);
     default:
         return QString();
     }

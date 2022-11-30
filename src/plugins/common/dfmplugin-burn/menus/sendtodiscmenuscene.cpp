@@ -204,7 +204,7 @@ bool SendToDiscMenuScene::create(QMenu *parent)
     if (!parent)
         return false;
 
-    if(d->isDDEDesktopFileIncluded)
+    if (d->isDDEDesktopFileIncluded)
         return AbstractMenuScene::create(parent);
 
     // stage file to disc
@@ -227,7 +227,7 @@ bool SendToDiscMenuScene::create(QMenu *parent)
     auto focusInfo { InfoFactory::create<AbstractFileInfo>(d->focusFile) };
     if (focusInfo) {
         static QSet<QString> mountable { "application/x-cd-image", "application/x-iso9660-image" };
-        if (mountable.contains(focusInfo->mimeTypeName())) {
+        if (mountable.contains(focusInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName))) {
             QAction *act { parent->addAction(d->predicateName[ActionId::kMountImageKey]) };
             act->setProperty(ActionPropertyKey::kActionID, ActionId::kMountImageKey);
             d->predicateAction.insert(ActionId::kMountImageKey, act);

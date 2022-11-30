@@ -216,7 +216,8 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
     const QUrl &sourceUrl = fileInfo->url();
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool result = false;
-    bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->fileCopyName(), newTargetInfo, &result);
+    bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName),
+                          newTargetInfo, &result);
     if (!ok && !result)
         return false;
     ok = createSystemLink(fileInfo, newTargetInfo, true, false, &result);
@@ -234,7 +235,7 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
 
 bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
 {
-    const QString &fileName = fileInfo->fileName();
+    const QString &fileName = fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
     QString newFileUrl = targetInfo->url().toString();
     if (!newFileUrl.endsWith("/"))
         newFileUrl.append("/");
@@ -267,7 +268,8 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
     toInfo.reset();
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
-        if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->fileCopyName(), toInfo, ok))
+        if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName),
+                         toInfo, ok))
             return ok ? *ok : false;
 
         emitCurrentTaskNotify(sourceInfo->url(), toInfo->url());
@@ -283,7 +285,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
         return result;
     }
 
-    if (!toInfo && !doCheckFile(sourceInfo, targetPathInfo, sourceInfo->fileCopyName(), toInfo, ok))
+    if (!toInfo && !doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName), toInfo, ok))
         return false;
 
     return false;

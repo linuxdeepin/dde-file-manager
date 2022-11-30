@@ -340,11 +340,11 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
         }
     }
 
-    if (fileInfo->fileName() == newFileName) {
+    if (fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName) == newFileName) {
         return;
     }
 
-    QUrl oldUrl = fileInfo->getUrlByNewFileName(fileInfo->fileName());
+    QUrl oldUrl = fileInfo->getUrlByNewFileName(fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName));
     QUrl newUrl = fileInfo->getUrlByNewFileName(newFileName);
     //Todo(yanghao): tag
     FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);

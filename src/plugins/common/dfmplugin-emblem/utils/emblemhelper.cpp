@@ -139,7 +139,7 @@ bool EmblemHelper::parseEmblemString(QIcon &emblem, QString &pos, const QString 
                 return false;
 
             auto info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(imgPath));
-            const QString &suffix = info->completeSuffix();
+            const QString &suffix = info->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteSuffix);
             // check support type
             if (suffix != "svg" && suffix != "png" && suffix != "gif" && suffix != "bmp" && suffix != "jpg")
                 return false;

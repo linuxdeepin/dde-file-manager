@@ -42,9 +42,8 @@ public:
     bool isReadable() const override;
     bool isWritable() const override;
 
-    QString fileName() const override;
+    QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     QString fileDisplayName() const override;
-    QString fileCopyName() const override;
     FileType fileType() const override;
     QIcon fileIcon() override;
 

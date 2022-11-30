@@ -48,17 +48,10 @@ public:
     QStringList desktopCategories() const;
 
     QIcon fileIcon() override;
-    virtual QString fileName() const override;
+    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     QString fileDisplayName() const override;
-    QString fileCopyName() const override;
-    QString fileNameOfRename() const override;
-    QString baseNameOfRename() const override;
-    QString suffixOfRename() const override;
 
     void refresh() override;
-
-    QString iconName() override;
-    QString genericIconName() override;
 
     //QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     //QSet<MenuAction> disableMenuActionList() const override;

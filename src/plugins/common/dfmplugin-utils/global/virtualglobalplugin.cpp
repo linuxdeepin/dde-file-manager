@@ -34,8 +34,8 @@ static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<df
     if (fileInfo->url().path().contains(QRegularExpression(DFMBASE_NAMESPACE::Global::Regex::kGvfsRoot)))
         return fileInfo;
 
-    const QString &suffix = fileInfo->suffix();
-    const QString &mimeTypeName = fileInfo->mimeTypeName();
+    const QString &suffix = fileInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kSuffix);
+    const QString &mimeTypeName = fileInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kMimeTypeName);
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop && mimeTypeName == "application/x-desktop") {
         const QUrl &url = fileInfo->url();
         return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));

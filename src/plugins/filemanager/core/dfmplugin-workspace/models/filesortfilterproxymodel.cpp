@@ -459,7 +459,7 @@ bool FileSortFilterProxyModel::passNameFilters(const AbstractFileInfoPointer &in
     // Check the name regularexpression filters
     if (!(info->isDir() && (filters & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        const QString &fileName = info->fileName();
+        const QString &fileName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
         QRegExp re("", caseSensitive, QRegExp::Wildcard);
 
         for (int i = 0; i < nameFilters.size(); ++i) {

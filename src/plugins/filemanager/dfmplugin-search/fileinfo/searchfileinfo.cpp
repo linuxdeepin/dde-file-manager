@@ -20,6 +20,7 @@
  */
 #include "searchfileinfo.h"
 #include "utils/searchhelper.h"
+#include "searchfileinfo_p.h"
 
 #include "dfm-base/base/schemefactory.h"
 
@@ -28,6 +29,7 @@ namespace dfmplugin_search {
 SearchFileInfo::SearchFileInfo(const QUrl &url)
     : AbstractFileInfo(url)
 {
+    dptr.reset(new SearchFileInfoPrivate(url, this));
 }
 
 SearchFileInfo::~SearchFileInfo()
@@ -82,12 +84,14 @@ qint64 SearchFileInfo::size() const
     return AbstractFileInfo::size();
 }
 
-QString SearchFileInfo::fileName() const
+QString SearchFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    if (SearchHelper::isRootUrl(url()))
-        return QObject::tr("Search");
-
-    return AbstractFileInfo::fileName();
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileName:
+        return dptr.staticCast<SearchFileInfoPrivate>()->fileName();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 
 QString SearchFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
@@ -100,6 +104,23 @@ QString SearchFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
     default:
         return QString();
     }
+}
+
+SearchFileInfoPrivate::SearchFileInfoPrivate(const QUrl &url, SearchFileInfo *qq)
+    : AbstractFileInfoPrivate(url, qq)
+{
+}
+
+SearchFileInfoPrivate::~SearchFileInfoPrivate()
+{
+}
+
+QString SearchFileInfoPrivate::fileName() const
+{
+    if (SearchHelper::isRootUrl(url))
+        return QObject::tr("Search");
+
+    return q->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
 }
 
 }

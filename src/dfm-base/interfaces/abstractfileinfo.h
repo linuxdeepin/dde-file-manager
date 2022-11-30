@@ -96,9 +96,10 @@ public:
         kFileNameOfRename = 5,   // 没有特殊情况返回: archive.tar.gz
         kBaseNameOfRename = 6,   // 没有特殊情况返回: archive
         kSuffixOfRename = 7,   // 没有特殊情况返回: tar.gz
-        kIconName = 8,   // 文件的icom名称
-        kGenericIconName = 9,   // 文件的
-        kMimeTypeName = 10,   // 文件的mimetype名称
+        kFileCopyName = 8,   // 文件的拷贝名称
+        kIconName = 9,   // 文件的icom名称
+        kGenericIconName = 10,   // 文件的
+        kMimeTypeName = 11,   // 文件的mimetype名称
         kCustomerStartName = 50,   // 其他用户使用
         kUnknowNameInfo = 255,
     };
@@ -268,20 +269,13 @@ public:
 
     virtual bool initQuerier();
     virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr);
-    virtual void setFile(const QUrl &url);
     virtual bool exists() const;
     virtual void refresh();
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
+    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const;
+
     virtual QString filePath() const;
     virtual QString absoluteFilePath() const;
-    virtual QString fileName() const;
-    virtual QString baseName() const;
-    virtual QString completeBaseName() const;
-    virtual QString fileNameOfRename() const;
-    virtual QString baseNameOfRename() const;
-    virtual QString suffixOfRename() const;
-    virtual QString suffix() const;
-    virtual QString completeSuffix();
     virtual QString path() const;
     virtual QString absolutePath() const;
     virtual QString canonicalPath() const;
@@ -290,15 +284,11 @@ public:
     virtual QString group() const;
     virtual QString sizeFormat() const;
     virtual QString fileDisplayName() const;
-    virtual QString fileCopyName() const;
     virtual QString fileDisplayPinyinName() const;
     virtual QString sizeDisplayName() const;
     virtual QString fileDisplayPath() const;
-    virtual QString iconName();
-    virtual QString genericIconName();
     virtual QString mimeTypeDisplayName();
     virtual QString fileTypeDisplayName();
-    virtual QString mimeTypeName();
     virtual QUrl url() const;
     virtual QUrl getUrlByChildFileName(const QString &fileName) const;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const;
@@ -368,6 +358,10 @@ protected:
     explicit AbstractFileInfo(const QUrl &url);
     void setProxy(const AbstractFileInfoPointer &proxy);
     QSharedPointer<AbstractFileInfoPrivate> dptr;
+
+private:
+    QString fileName() const;
+    QString baseName() const;
 
 private:
     bool hasProxy();

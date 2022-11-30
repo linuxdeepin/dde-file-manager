@@ -77,7 +77,7 @@ QString RecentDirIterator::fileName() const
 {
     AbstractFileInfoPointer currentInfo = d->recentNodes.value(d->currentUrl);
 
-    return currentInfo ? currentInfo->fileName() : QString();
+    return currentInfo ? currentInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kFileName) : QString();
 }
 
 QUrl RecentDirIterator::fileUrl() const

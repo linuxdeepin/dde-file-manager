@@ -37,20 +37,21 @@ SmbShareFileInfo::~SmbShareFileInfo()
 {
 }
 
-QString SmbShareFileInfo::fileName() const
+QString SmbShareFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    auto dp = dynamic_cast<SmbShareFileInfoPrivate *>(dptr.data());
-    return dp->node.displayName;
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileName:
+        [[fallthrough]];
+    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+        return dptr.staticCast<SmbShareFileInfoPrivate>()->fileName();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 
 QString SmbShareFileInfo::fileDisplayName() const
 {
-    return fileName();
-}
-
-QString SmbShareFileInfo::fileCopyName() const
-{
-    return SmbShareFileInfo::fileDisplayName();
+    return dptr.staticCast<SmbShareFileInfoPrivate>()->fileName();
 }
 
 QIcon SmbShareFileInfo::fileIcon()
@@ -92,4 +93,9 @@ SmbShareFileInfoPrivate::~SmbShareFileInfoPrivate()
 bool dfmplugin_smbbrowser::SmbShareFileInfo::canDrag()
 {
     return false;
+}
+
+QString SmbShareFileInfoPrivate::fileName() const
+{
+    return node.displayName;
 }

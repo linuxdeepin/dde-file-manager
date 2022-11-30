@@ -166,7 +166,7 @@ void CrumbInterface::onUpdateChildren(const QList<QUrl> &urlList)
     for (const QUrl &url : urlList) {
         auto infoPointer = InfoFactory::create<AbstractFileInfo>(url);
         if (infoPointer.data())
-            list.append(infoPointer->fileName());
+            list.append(infoPointer->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName));
     }
     emit completionFound(list);
 }

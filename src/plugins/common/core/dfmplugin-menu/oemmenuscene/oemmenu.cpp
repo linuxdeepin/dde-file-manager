@@ -208,7 +208,7 @@ bool OemMenuPrivate::isSuffixSupport(const QAction *action, const QUrl &url, con
     supportList << action->property(kSupportSuffixAliasKey).toStringList();
 
     // 7z.001,7z.002, 7z.003 ... 7z.xxx
-    QString cs = fileInfo->completeSuffix();
+    QString cs = fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteSuffix);
     if (supportList.contains(cs, Qt::CaseInsensitive)) {
         return true;
     }
@@ -239,7 +239,7 @@ bool OemMenuPrivate::isAllEx7zFile(const QList<QUrl> &files) const
         }
 
         // 7z.001,7z.002, 7z.003 ... 7z.xxx
-        QString cs = fileInfo->completeSuffix();
+        QString cs = fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteSuffix);
         if (!cs.startsWith(QString("7z."))) {
             return false;
         }

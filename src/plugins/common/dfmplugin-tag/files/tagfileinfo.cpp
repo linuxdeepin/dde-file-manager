@@ -21,6 +21,7 @@
  */
 #include "tagfileinfo.h"
 #include "utils/tagmanager.h"
+#include "tagfileinfo_p.h"
 
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
@@ -32,6 +33,7 @@ using namespace dfmplugin_tag;
 TagFileInfo::TagFileInfo(const QUrl &url)
     : AbstractFileInfo(url)
 {
+    dptr.reset(new AbstractFileInfoPrivate(url, this));
     if (!localFilePath().isEmpty())
         setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(localFilePath())));
 }
@@ -94,22 +96,20 @@ bool TagFileInfo::isWritable() const
     return true;
 }
 
-QString TagFileInfo::fileName() const
+QString TagFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    if (dptr->proxy)
-        return dptr->proxy->fileName();
-
-    return tagName();
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileName:
+    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+        return dptr.staticCast<TagFileInfoPrivate>()->fileName();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 
 QString TagFileInfo::fileDisplayName() const
 {
-    return fileName();
-}
-
-QString TagFileInfo::fileCopyName() const
-{
-    return TagFileInfo::fileDisplayName();
+    return dptr.staticCast<TagFileInfoPrivate>()->fileName();
 }
 
 AbstractFileInfo::FileType TagFileInfo::fileType() const
@@ -135,5 +135,22 @@ QString TagFileInfo::localFilePath() const
 
 QString TagFileInfo::tagName() const
 {
-    return url().path().mid(1, url().path().length() - 1);
+    return dptr.staticCast<TagFileInfoPrivate>()->fileName();
+}
+
+TagFileInfoPrivate::TagFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
+    : AbstractFileInfoPrivate(url, qq)
+{
+}
+
+TagFileInfoPrivate::~TagFileInfoPrivate()
+{
+}
+
+QString TagFileInfoPrivate::fileName() const
+{
+    if (proxy)
+        return proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+
+    return url.path().mid(1, url.path().length() - 1);
 }

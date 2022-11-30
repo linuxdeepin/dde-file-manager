@@ -62,8 +62,8 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
     if (!isMatchExtension) {
         //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
-        if (fileInfo->fileName().endsWith(".pid") || path.endsWith("msg.lock")
-            || fileInfo->fileName().endsWith(".lock") || fileInfo->fileName().endsWith("lockfile")) {
+        if (fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName).endsWith(".pid") || path.endsWith("msg.lock")
+            || fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName).endsWith(".lock") || fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName).endsWith("lockfile")) {
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
                                               | QRegularExpression::DontCaptureOption
@@ -96,8 +96,9 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
     // https://codereview.qt-project.org/c/qt/qtbase/+/244887
     // `file` command works but libmagic didn't even comes with any pkg-config support..
 
-    if (officeSuffixList.contains(fileInfo->suffix()) && wrongMimeTypeNames.contains(result.name())) {
-        QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo->fileName());
+    if (officeSuffixList.contains(fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix))
+        && wrongMimeTypeNames.contains(result.name())) {
+        QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName));
         if (!results.isEmpty()) {
             return results.first();
         }

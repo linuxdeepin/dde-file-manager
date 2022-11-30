@@ -239,7 +239,7 @@ bool OpticalHelper::isDupFileNameInPath(const QString &path, const QUrl &url)
         return false;
 
     QFileInfoList fileInfoList { dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Dirs) };
-    QString fileName { info->fileName() };
+    QString fileName { info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName) };
     for (const auto &info : fileInfoList) {
         if (info.fileName() == fileName)
             return true;

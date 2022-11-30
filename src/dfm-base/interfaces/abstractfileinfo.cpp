@@ -122,18 +122,6 @@ void DFMBASE_NAMESPACE::AbstractFileInfo::initQuerierAsync(int ioPriority, DFMBA
 {
     CALL_PROXY(initQuerierAsync(ioPriority, func, userData));
 }
-
-/*!
- * \brief setFile 设置文件的File，跟新当前的fileinfo
- *
- * \param const QUrl &url 新文件的URL
- *
- * \return
- */
-void AbstractFileInfo::setFile(const QUrl &url)
-{
-    dptr->url = url;
-}
 /*!
  * \brief exists 文件是否存在
  *
@@ -162,6 +150,43 @@ void AbstractFileInfo::refresh()
 void DFMBASE_NAMESPACE::AbstractFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
 {
     CALL_PROXY(refresh(id, value));
+}
+/*!
+  * \brief 获取文件名称，默认是获取文件的全名称带suffix，此接口不会实现异步，全部使用Qurl去
+  * 处理或者字符串处理，这都比较快
+  * \param FileNameInfoType
+  */
+QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::FileNameInfoType type) const
+{
+    CALL_PROXY(nameInfo(type));
+    switch (type) {
+    case FileNameInfoType::kFileName:
+        [[fallthrough]];
+    case FileNameInfoType::kFileNameOfRename:
+        return fileName();
+    case FileNameInfoType::kBaseName:
+        [[fallthrough]];
+    case FileNameInfoType::kBaseNameOfRename:
+        return baseName();
+    case FileNameInfoType::kCompleteBaseName:
+        [[fallthrough]];
+    case FileNameInfoType::kSuffix:
+        [[fallthrough]];
+    case FileNameInfoType::kCompleteSuffix:
+        [[fallthrough]];
+    case FileNameInfoType::kSuffixOfRename:
+        [[fallthrough]];
+    case FileNameInfoType::kFileCopyName:
+        [[fallthrough]];
+    case FileNameInfoType::kMimeTypeName:
+        return QString();
+    case FileNameInfoType::kIconName:
+        return const_cast<AbstractFileInfo *>(this)->fileMimeType().iconName();
+    case FileNameInfoType::kGenericIconName:
+        return const_cast<AbstractFileInfo *>(this)->fileMimeType().genericIconName();
+    default:
+        return QString();
+    }
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -209,8 +234,6 @@ QString AbstractFileInfo::absoluteFilePath() const
  */
 QString AbstractFileInfo::fileName() const
 {
-    CALL_PROXY(fileName());
-
     QString filePath = this->filePath();
 
     if (filePath.endsWith(QDir::separator())) {
@@ -238,88 +261,14 @@ QString AbstractFileInfo::fileName() const
  */
 QString AbstractFileInfo::baseName() const
 {
-    CALL_PROXY(baseName());
-
     const QString &fileName = this->fileName();
-    const QString &suffix = this->suffix();
+    const QString &suffix = this->nameInfo(FileNameInfoType::kSuffix);
 
     if (suffix.isEmpty()) {
         return fileName;
     }
 
     return fileName.left(fileName.length() - suffix.length() - 1);
-}
-/*!
- * \brief completeBaseName 文件的完整基本名称
- *
- * url = file:///tmp/archive.tar.gz
- *
- * completeBaseName = archive.tar
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::completeBaseName() const
-{
-    CALL_PROXY(completeBaseName());
-
-    return QString();
-}
-
-QString DFMBASE_NAMESPACE::AbstractFileInfo::fileNameOfRename() const
-{
-    CALL_PROXY(fileNameOfRename());
-
-    return fileName();
-}
-
-QString AbstractFileInfo::baseNameOfRename() const
-{
-    CALL_PROXY(baseNameOfRename());
-
-    return baseName();
-}
-
-QString AbstractFileInfo::suffixOfRename() const
-{
-    CALL_PROXY(suffixOfRename());
-
-    return suffix();
-}
-/*!
- * \brief suffix 文件的suffix
- *
- * url = file:///tmp/archive.tar.gz
- *
- * suffix = gz
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::suffix() const
-{
-    CALL_PROXY(suffix());
-
-    return QString();
-}
-/*!
- * \brief suffix 文件的完整suffix
- *
- * url = file:///tmp/archive.tar.gz
- *
- * suffix = tar.gz
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::completeSuffix()
-{
-    CALL_PROXY(completeSuffix());
-
-    return QString();
 }
 /*!
  * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
@@ -715,13 +664,6 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayName() const
     return QString();
 }
 
-QString DFMBASE_NAMESPACE::AbstractFileInfo::fileCopyName() const
-{
-    CALL_PROXY(fileCopyName());
-
-    return QString();
-}
-
 /*!
  * \brief fileDisplayPinyinName 文件的拼音名称，一般为文件的显示名称转为拼音
  *
@@ -929,7 +871,7 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeDisplayName()
 {
     CALL_PROXY(mimeTypeDisplayName());
 
-    return MimeTypeDisplayManager::instance()->displayName(mimeTypeName());
+    return MimeTypeDisplayManager::instance()->displayName(nameInfo(FileNameInfoType::kMimeTypeName));
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName Display name of the file type
@@ -939,7 +881,10 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName()
 {
     CALL_PROXY(fileTypeDisplayName());
 
-    return QString::number(static_cast<int>(MimeTypeDisplayManager::instance()->displayNameToEnum(fileMimeType().name()))).append(suffix());
+    return QString::number(static_cast<int>(MimeTypeDisplayManager::
+                                                    instance()
+                                                            ->displayNameToEnum(fileMimeType().name())))
+            .append(nameInfo(FileNameInfoType::kSuffix));
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl Can I redirect files
@@ -992,7 +937,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     }
 
     if (!isSymLink()) {
-        const bool isDesktop = mimeTypeName() == Global::Mime::kTypeAppXDesktop;
+        const bool isDesktop = nameInfo(FileNameInfoType::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
         return isDir() || isDesktop;
     }
 
@@ -1186,13 +1131,6 @@ void DFMBASE_NAMESPACE::AbstractFileInfo::setExtendedAttributes(const AbstractFi
 {
     CALL_PROXY(setExtendedAttributes(key, value));
 }
-
-QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeName()
-{
-    CALL_PROXY(mimeTypeName());
-
-    return QString();
-}
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon
  * \return
@@ -1202,16 +1140,6 @@ QIcon DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon()
     CALL_PROXY(fileIcon());
 
     return QIcon();
-}
-
-QString DFMBASE_NAMESPACE::AbstractFileInfo::iconName()
-{
-    return fileMimeType().iconName();
-}
-
-QString DFMBASE_NAMESPACE::AbstractFileInfo::genericIconName()
-{
-    return fileMimeType().genericIconName();
 }
 
 /*!

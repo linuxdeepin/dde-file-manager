@@ -20,32 +20,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREFILEINFO_H
-#define SHAREFILEINFO_H
-
-#include "dfmplugin_myshares_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
-
-namespace dfmplugin_myshares {
-
-class ShareFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+#ifndef RECENTFILEINFOPRIVATE_H
+#define RECENTFILEINFOPRIVATE_H
+#include "dfmplugin_recent_global.h"
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+namespace dfmplugin_recent {
+class RecentFileInfo;
+class RecentFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
 {
-public:
-    explicit ShareFileInfo(const QUrl &url);
-    virtual ~ShareFileInfo() override;
+    friend class RecentFileInfo;
 
-    // AbstractFileInfo interface
 public:
-    virtual QUrl redirectedFileUrl() const override;
-    virtual QString fileDisplayName() const override;
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual bool isDir() const override;
-    virtual bool canRename() const override;
-    virtual bool canDrag() override;
-    virtual bool isWritable() const override;
-    virtual void refresh() override;
+    explicit RecentFileInfoPrivate(const QUrl &url, RecentFileInfo *qq);
+    virtual ~RecentFileInfoPrivate();
 };
-
 }
-
-#endif   // SHAREFILEINFO_H
+#endif   // RECENTFILEINFOPRIVATE_H

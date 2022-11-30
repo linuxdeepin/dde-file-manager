@@ -109,7 +109,7 @@ void UnknowFilePreview::setFileInfo(const AbstractFileInfoPointer &info)
 
     QFont font = nameLabel->font();
     QFontMetrics fm(font);
-    QString elidedText = fm.elidedText(info->fileName(), Qt::ElideMiddle, 300);
+    QString elidedText = fm.elidedText(info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName), Qt::ElideMiddle, 300);
 
     nameLabel->setText(elidedText);
 

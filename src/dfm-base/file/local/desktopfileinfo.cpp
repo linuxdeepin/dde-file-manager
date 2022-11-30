@@ -139,7 +139,7 @@ QIcon DesktopFileInfo::fileIcon()
         d->icon = QIcon();
     }
 
-    const QString &iconName = this->iconName();
+    const QString &iconName = this->nameInfo(AbstractFileInfo::FileNameInfoType::kIconName);
 
     if (iconName.startsWith("data:image/")) {
         int firstSemicolon = iconName.indexOf(';', 11);
@@ -190,9 +190,24 @@ QIcon DesktopFileInfo::fileIcon()
     return d->icon;
 }
 
-QString DesktopFileInfo::fileName() const
+QString DesktopFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    return LocalFileInfo::fileName();
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileNameOfRename:
+        [[fallthrough]];
+    case AbstractFileInfo::FileNameInfoType::kBaseNameOfRename:
+        return fileDisplayName();
+    case AbstractFileInfo::FileNameInfoType::kSuffixOfRename:
+        return QString();
+    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+        return LocalFileInfo::nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+    case AbstractFileInfo::FileNameInfoType::kIconName:
+        return desktopIconName();
+    case AbstractFileInfo::FileNameInfoType::kGenericIconName:
+        return QStringLiteral("application-default-icon");
+    default:
+        return LocalFileInfo::nameInfo(type);
+    }
 }
 
 QString DesktopFileInfo::fileDisplayName() const
@@ -205,41 +220,12 @@ QString DesktopFileInfo::fileDisplayName() const
     return desktopName();
 }
 
-QString DesktopFileInfo::fileCopyName() const
-{
-    return DesktopFileInfo::fileName();
-}
-
-QString DesktopFileInfo::fileNameOfRename() const
-{
-    return fileDisplayName();
-}
-
-QString DesktopFileInfo::baseNameOfRename() const
-{
-    return fileDisplayName();
-}
-
-QString DesktopFileInfo::suffixOfRename() const
-{
-    return QString();
-}
-
 void DesktopFileInfo::refresh()
 {
     LocalFileInfo::refresh();
     d->updateInfo(url());
 }
 
-QString DesktopFileInfo::iconName()
-{
-    return desktopIconName();
-}
-
-QString DesktopFileInfo::genericIconName()
-{
-    return QStringLiteral("application-default-icon");
-}
 Qt::DropActions DesktopFileInfo::supportedAttributes(const SupportType type) const
 {
     if (type == SupportType::kDrag && (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")) {

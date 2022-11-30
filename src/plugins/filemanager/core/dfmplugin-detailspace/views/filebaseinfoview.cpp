@@ -235,7 +235,8 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     }
 
     if (fileType && fileType->RightValue().isEmpty() && localinfo) {
-        MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(localinfo->mimeTypeName());
+        MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(
+                localinfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName));
         switch (type) {
         case MimeDatabase::FileType::kDirectory:
             fileType->setRightValue(tr("Directory"), Qt::ElideNone, Qt::AlignLeft, true);

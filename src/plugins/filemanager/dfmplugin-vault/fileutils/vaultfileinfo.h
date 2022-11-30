@@ -60,10 +60,13 @@ public:
     virtual QUrl redirectedFileUrl() const override;
 
     virtual QIcon fileIcon() override;
-    QString iconName() override;
+
     virtual QString fileDisplayName() const override;
-    virtual QString fileCopyName() const override;
+    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     virtual QString fileDisplayPath() const override;
+
+private:
+    QString iconName();
 };
 }
 #endif   //! VAULTFILEINFO_H

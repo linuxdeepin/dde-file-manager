@@ -89,9 +89,14 @@ QString MasteredMediaFileInfo::fileDisplayName() const
     return dptr->proxy->fileDisplayName();
 }
 
-QString MasteredMediaFileInfo::fileCopyName() const
+QString MasteredMediaFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    return MasteredMediaFileInfo::fileDisplayName();
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+        return MasteredMediaFileInfo::fileDisplayName();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 
 QVariantHash MasteredMediaFileInfo::extraProperties() const

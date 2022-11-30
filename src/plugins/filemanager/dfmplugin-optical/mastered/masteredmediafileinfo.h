@@ -40,7 +40,7 @@ public:
     bool isWritable() const override;
     bool isDir() const override;
     QString fileDisplayName() const override;
-    QString fileCopyName() const override;
+    QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     QVariantHash extraProperties() const override;
     bool canRedirectionFileUrl() const override;
     QUrl redirectedFileUrl() const override;

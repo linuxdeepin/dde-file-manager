@@ -55,17 +55,13 @@ public:
 
     virtual bool initQuerier() override;
     virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr) override;
-    virtual void setFile(const QUrl &url) override;
     virtual bool exists() const override;
     virtual void refresh() override;
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant()) override;
+    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
+
     virtual QString filePath() const override;
     virtual QString absoluteFilePath() const override;
-    virtual QString fileName() const override;
-    virtual QString baseName() const override;
-    virtual QString completeBaseName() const override;
-    virtual QString suffix() const override;
-    virtual QString completeSuffix() override;
     virtual QString path() const override;
     virtual QString absolutePath() const override;
     virtual QString canonicalPath() const override;
@@ -102,10 +98,7 @@ public:
     virtual QDateTime fileTime(QFile::FileTime time) const override;
     virtual QVariantHash extraProperties() const override;
     virtual QIcon fileIcon() override;
-    virtual QString iconName() override;
-    virtual QString genericIconName() override;
     virtual QUrl redirectedFileUrl() const override;
-
     virtual bool isBlockDev() const;
     virtual QString mountPath() const;
     virtual bool isCharDev() const;
@@ -116,10 +109,8 @@ public:
     virtual int countChildFile() const override;
     virtual QString sizeFormat() const override;
     virtual QString fileDisplayName() const override;
-    virtual QString fileCopyName() const override;
     virtual QFileInfo toQFileInfo() const;
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
-    virtual QString mimeTypeName() override;
 
     virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
 

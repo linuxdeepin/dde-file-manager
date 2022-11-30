@@ -866,7 +866,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromI
     bool ok = doCopyFilePractically(fromInfo, toInfo, skip);
     FileUtils::removeCopyingFileUrl(targetUrl);
 
-    FileOperationsUtils::removeUsingName(toInfo->fileName());
+    FileOperationsUtils::removeUsingName(toInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName));
 
     return ok;
 }
@@ -963,7 +963,7 @@ void FileOperateBaseWorker::doThreadPoolCopyFile(const int index)
     if (!ok && !skip)
         setStat(AbstractJobHandler::JobState::kStopState);
     FileUtils::removeCopyingFileUrl(targetUrl);
-    FileOperationsUtils::removeUsingName(threadInfo->toInfo->fileName());
+    FileOperationsUtils::removeUsingName(threadInfo->toInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName));
 }
 
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)
@@ -1048,7 +1048,8 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
 {
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool result = false;
-    if (!doCheckFile(fromInfo, toInfo, fromInfo->fileCopyName(), newTargetInfo, skip))
+    if (!doCheckFile(fromInfo, toInfo,
+                     fromInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName), newTargetInfo, skip))
         return result;
 
     if (fromInfo->isSymLink()) {

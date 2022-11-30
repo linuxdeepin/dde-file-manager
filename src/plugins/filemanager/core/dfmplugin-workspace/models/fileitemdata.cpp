@@ -82,7 +82,7 @@ QVariant FileItemData::data(int role) const
     case kItemSizeHintRole:
         return QSize(-1, 26);
     case kItemNameRole:
-        return info->fileName();
+        return info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
     case Qt::DisplayRole:
     case kItemEditRole:
     case kItemFileDisplayNameRole:
@@ -90,15 +90,15 @@ QVariant FileItemData::data(int role) const
     case kItemFilePinyinNameRole:
         return info->fileDisplayPinyinName();
     case kItemFileBaseNameRole:
-        return info->completeBaseName();
+        return info->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName);
     case kItemFileSuffixRole:
-        return info->suffix();
+        return info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
     case kItemFileNameOfRenameRole:
-        return info->fileNameOfRename();
+        return info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileNameOfRename);
     case kItemFileBaseNameOfRenameRole:
-        return info->baseNameOfRename();
+        return info->nameInfo(AbstractFileInfo::FileNameInfoType::kBaseNameOfRename);
     case kItemFileSuffixOfRenameRole:
-        return info->suffixOfRename();
+        return info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffixOfRename);
     case kItemUrlRole:
         return info->url();
     case Qt::TextAlignmentRole:

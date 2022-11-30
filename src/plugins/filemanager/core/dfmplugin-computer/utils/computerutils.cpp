@@ -330,7 +330,7 @@ QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
         return QObject::tr("DVD");
     case EntryFileInfo::kOrderSmb:
     case EntryFileInfo::kOrderFtp:
-        if (info->suffix() == SuffixInfo::kStashedProtocol)
+        if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kStashedProtocol)
             return QObject::tr("Unconnected network shared directory");
         return QObject::tr("Network shared directory");
     case EntryFileInfo::kOrderMTP:

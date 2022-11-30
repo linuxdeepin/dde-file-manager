@@ -38,8 +38,18 @@ EntryFileInfoPrivate::EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq)
 
 void EntryFileInfoPrivate::init()
 {
-    const auto &&suffix = q->suffix();
+    const auto &&suffix = q->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
     entity.reset(EntryEntityFactor::create(suffix, q->url()));
+}
+
+QString EntryFileInfoPrivate::suffix() const
+{
+    QRegularExpression re(".*\\.(.*)$");
+    auto rem = re.match(q->path());
+    if (!rem.hasMatch()) {
+        return "";
+    }
+    return rem.captured(1);
 }
 
 EntryFileInfoPrivate::~EntryFileInfoPrivate()
@@ -145,19 +155,16 @@ QString EntryFileInfo::filePath() const
     return path();
 }
 
-QString EntryFileInfo::baseName() const
+QString EntryFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    return {};
-}
-
-QString EntryFileInfo::suffix() const
-{
-    QRegularExpression re(".*\\.(.*)$");
-    auto rem = re.match(path());
-    if (!rem.hasMatch()) {
-        return "";
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kBaseName:
+        return {};
+    case AbstractFileInfo::FileNameInfoType::kSuffix:
+        return d->suffix();
+    default:
+        return AbstractFileInfo::nameInfo(type);
     }
-    return rem.captured(1);
 }
 
 QString EntryFileInfo::path() const

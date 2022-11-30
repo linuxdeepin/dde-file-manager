@@ -511,15 +511,17 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         if (!info)
             continue;
 
-        bool isDesktopApp = info->mimeTypeName().contains(Global::Mime::kTypeAppDesktop);
+        bool isDesktopApp = info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName).contains(Global::Mime::kTypeAppDesktop);
 
         ///###: symlink is also processed here.
-        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+        const QString &suffix = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix).isEmpty()
+                ? QString()
+                : QString(".") + info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
         QString fileBaseName;
         if (isDesktopApp) {
             fileBaseName = info->fileDisplayName();
         } else {
-            fileBaseName = info->fileName();
+            fileBaseName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
             fileBaseName.chop(suffix.length());
         }
 
@@ -563,14 +565,16 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
             continue;
 
         // debug case 25414: failure to rename desktop app name
-        bool isDesktopApp = info->mimeTypeName().contains(Global::Mime::kTypeAppDesktop);
+        bool isDesktopApp = info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName).contains(Global::Mime::kTypeAppDesktop);
 
-        QString fileBaseName = isDesktopApp ? info->fileDisplayName() : info->baseName();   //{ info->baseName() };
+        QString fileBaseName = isDesktopApp ? info->fileDisplayName() : info->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kBaseName);   //{ info->baseName() };
         QString oldFileName = fileBaseName;
 
         QString addText = pair.first;
-        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
-        int maxLength = NAME_MAX - info->fileName().toLocal8Bit().size();
+        const QString &suffix = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix).isEmpty()
+                ? QString()
+                : QString(".") + info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
+        int maxLength = NAME_MAX - info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName).toLocal8Bit().size();
 
         if (addText.toLocal8Bit().size() > maxLength) {
             addText = cutString(addText, maxLength, QTextCodec::codecForLocale());
@@ -625,11 +629,13 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
             continue;
 
         // debug case 25414: failure to rename desktop app name
-        bool isDesktopApp = info->mimeTypeName().contains(Global::Mime::kTypeAppDesktop);
+        bool isDesktopApp = info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName).contains(Global::Mime::kTypeAppDesktop);
 
         QString fileBaseName { pair.first };
         const QString &indexString = QString::number(index);
-        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+        const QString &suffix = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix).isEmpty()
+                ? QString()
+                : QString(".") + info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
         int maxLength = NAME_MAX - indexString.toLocal8Bit().size() - suffix.toLocal8Bit().size();
 
         if (fileBaseName.toLocal8Bit().size() > maxLength) {
@@ -729,7 +735,9 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
     if (info && DecoratorFile(fileUrl).exists()) {
-        QString baseName = info->fileDisplayName() == info->fileName() ? info->baseName() : info->fileDisplayName();
+        QString baseName = info->fileDisplayName() == info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName)
+                ? info->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kBaseName)
+                : info->fileDisplayName();
         QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;
 
@@ -737,7 +745,7 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
 
         forever {
             if (info->isFile()) {
-                if (info->suffix().isEmpty()) {
+                if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix).isEmpty()) {
                     if (number == 1) {
 
                         linkBaseName = QString("%1 %2").arg(baseName, shortcut);
@@ -746,9 +754,9 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
                     }
                 } else {
                     if (number == 1) {
-                        linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, info->suffix());
+                        linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix));
                     } else {
-                        linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info->suffix());
+                        linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix));
                     }
                 }
             } else if (info->isDir()) {
@@ -1210,9 +1218,9 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     const QString &copySuffix2 = QObject::tr(" (copy %1)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
 
     AbstractFileInfoPointer targetFileInfo { nullptr };
-    QString fileBaseName = fromInfo->completeBaseName();
-    QString suffix = fromInfo->suffix();
-    QString fileName = fromInfo->fileName();
+    QString fileBaseName = fromInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName);
+    QString suffix = fromInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
+    QString fileName = fromInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
     //在7z分卷压缩后的名称特殊处理7z.003
     const QString &reg = ".7z.[0-9]{3,10}$";
     if (fileName.contains(QRegularExpression(reg))) {

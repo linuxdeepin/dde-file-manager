@@ -20,32 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREFILEINFO_H
-#define SHAREFILEINFO_H
+#ifndef TAGFILEINFO_P_H
+#define TAGFILEINFO_P_H
 
-#include "dfmplugin_myshares_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfmplugin_tag_global.h"
 
-namespace dfmplugin_myshares {
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
-class ShareFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+namespace dfmplugin_tag {
+
+class TagFileInfo;
+class TagFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
 {
-public:
-    explicit ShareFileInfo(const QUrl &url);
-    virtual ~ShareFileInfo() override;
+    friend class TagFileInfo;
 
-    // AbstractFileInfo interface
 public:
-    virtual QUrl redirectedFileUrl() const override;
-    virtual QString fileDisplayName() const override;
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual bool isDir() const override;
-    virtual bool canRename() const override;
-    virtual bool canDrag() override;
-    virtual bool isWritable() const override;
-    virtual void refresh() override;
+    explicit TagFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfo *qq);
+    virtual ~TagFileInfoPrivate();
+
+private:
+    QString fileName() const;
 };
 
 }
 
-#endif   // SHAREFILEINFO_H
+#endif   // TAGFILEINFO_P_H

@@ -44,6 +44,8 @@ public:
     virtual ~TrashFileInfoPrivate();
 
     QUrl initTarget();
+    QString fileName() const;
+    QString mimeTypeName();
 
     QSharedPointer<DFileInfo> dFileInfo { nullptr };
     QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
@@ -93,6 +95,32 @@ QUrl TrashFileInfoPrivate::initTarget()
     return targetUrl;
 }
 
+QString TrashFileInfoPrivate::fileName() const
+{
+    if (!dFileInfo)
+        return QString();
+
+    if (targetUrl.isValid()) {
+        if (FileUtils::isDesktopFile(targetUrl)) {
+            DesktopFileInfo dfi(targetUrl);
+            return dfi.fileDisplayName();
+        }
+    }
+
+    return dFileInfo->attribute(DFileInfo::AttributeID::kStandardName).toString();
+}
+
+QString TrashFileInfoPrivate::mimeTypeName()
+{
+    if (!dFileInfo)
+        return QString();
+
+    QString type;
+    bool success = false;
+    type = dFileInfo->attribute(DFileInfo::AttributeID::kStandardContentType, &success).toString();
+    return type;
+}
+
 TrashFileInfo::TrashFileInfo(const QUrl &url)
     : AbstractFileInfo(url), d(new TrashFileInfoPrivate(url, this))
 {
@@ -125,21 +153,6 @@ TrashFileInfo::~TrashFileInfo()
 {
 }
 
-QString TrashFileInfo::fileName() const
-{
-    if (!d->dFileInfo)
-        return QString();
-
-    if (d->targetUrl.isValid()) {
-        if (FileUtils::isDesktopFile(d->targetUrl)) {
-            DesktopFileInfo dfi(d->targetUrl);
-            return dfi.fileDisplayName();
-        }
-    }
-
-    return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardName).toString();
-}
-
 QString TrashFileInfo::fileDisplayName() const
 {
     if (FileUtils::isTrashRootFile(url()))
@@ -156,11 +169,6 @@ QString TrashFileInfo::fileDisplayName() const
     }
 
     return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
-}
-
-QString TrashFileInfo::fileCopyName() const
-{
-    return TrashFileInfo::fileDisplayName();
 }
 
 bool TrashFileInfo::exists() const
@@ -194,6 +202,20 @@ bool TrashFileInfo::canTrash() const
 void TrashFileInfo::refresh()
 {
     AbstractFileInfo::refresh();
+}
+
+QString TrashFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+{
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileName:
+        return d->fileName();
+    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+        return TrashFileInfo::fileDisplayName();
+    case AbstractFileInfo::FileNameInfoType::kMimeTypeName:
+        return const_cast<TrashFileInfoPrivate *>(d)->mimeTypeName();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 
 bool TrashFileInfo::canRename() const
@@ -303,17 +325,6 @@ QString TrashFileInfo::symLinkTarget() const
     bool success = false;
     symLinkTarget = d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget, &success).toString();
     return symLinkTarget;
-}
-
-QString TrashFileInfo::mimeTypeName()
-{
-    if (!d->dFileInfo)
-        return QString();
-
-    QString type;
-    bool success = false;
-    type = d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardContentType, &success).toString();
-    return type;
 }
 
 int TrashFileInfo::countChildFile() const

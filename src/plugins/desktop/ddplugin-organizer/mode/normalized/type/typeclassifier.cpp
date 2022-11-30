@@ -28,69 +28,67 @@
 using namespace ddplugin_organizer;
 DFMBASE_USE_NAMESPACE
 
-namespace  {
-    inline const char kTypeKeyApp[] = "Type_Apps";
-    inline const char kTypeKeyDoc[] = "Type_Documents";
-    inline const char kTypeKeyPic[] = "Type_Pictures";
-    inline const char kTypeKeyVid[] = "Type_Videos";
-    inline const char kTypeKeyMuz[] = "Type_Music";
-    inline const char kTypeKeyFld[] = "Type_Folders";
-    inline const char kTypeKeyOth[] = "Type_Other";
+namespace {
+inline const char kTypeKeyApp[] = "Type_Apps";
+inline const char kTypeKeyDoc[] = "Type_Documents";
+inline const char kTypeKeyPic[] = "Type_Pictures";
+inline const char kTypeKeyVid[] = "Type_Videos";
+inline const char kTypeKeyMuz[] = "Type_Music";
+inline const char kTypeKeyFld[] = "Type_Folders";
+inline const char kTypeKeyOth[] = "Type_Other";
 
-    inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,md,latex";
-    inline const char kTypeSuffixPic[] = "jpg,jpeg,jpe,bmp,png,gif,svg,tif,tiff";
-    inline const char kTypeSuffixMuz[] = "au,snd,mid,mp3,aif,aifc,aiff,m3u,ra,ram,wav,cda,wma,ape";
-    inline const char kTypeSuffixVid[] = "avi,mov,mp4,mp2,mpa,mpg,mpeg,mpe,qt,rm,rmvb,mkv,asx,asf,flv,3gp";
-    inline const char kTypeSuffixApp[] = "desktop";
-    //inline const char kTypeMimeApp[] = "application/x-shellscript,application/x-desktop,application/x-executable";
+inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,md,latex";
+inline const char kTypeSuffixPic[] = "jpg,jpeg,jpe,bmp,png,gif,svg,tif,tiff";
+inline const char kTypeSuffixMuz[] = "au,snd,mid,mp3,aif,aifc,aiff,m3u,ra,ram,wav,cda,wma,ape";
+inline const char kTypeSuffixVid[] = "avi,mov,mp4,mp2,mpa,mpg,mpeg,mpe,qt,rm,rmvb,mkv,asx,asf,flv,3gp";
+inline const char kTypeSuffixApp[] = "desktop";
+//inline const char kTypeMimeApp[] = "application/x-shellscript,application/x-desktop,application/x-executable";
 }
 
-#define InitSuffixTable(table, suffix) \
-        {\
-            QSet<QString> *tablePtr = const_cast<QSet<QString> *>(&table);\
-            *tablePtr = tablePtr->fromList(QString(suffix).split(','));\
-        }
-TypeClassifierPrivate::TypeClassifierPrivate(TypeClassifier *qq) : q(qq)
-{
-    //todo(zy) 类型后缀支持可配置
-    InitSuffixTable(docSuffix, kTypeSuffixDoc)
-    InitSuffixTable(picSuffix, kTypeSuffixPic)
-    InitSuffixTable(muzSuffix, kTypeSuffixMuz)
-    InitSuffixTable(vidSuffix, kTypeSuffixVid)
-    InitSuffixTable(appSuffix, kTypeSuffixApp)
-    //InitSuffixTable(appMimeType, kTypeMimeApp)
-}
+#define InitSuffixTable(table, suffix)                                 \
+    {                                                                  \
+        QSet<QString> *tablePtr = const_cast<QSet<QString> *>(&table); \
+        *tablePtr = tablePtr->fromList(QString(suffix).split(','));    \
+    }
+TypeClassifierPrivate::TypeClassifierPrivate(TypeClassifier *qq)
+    : q(qq) {
+          //todo(zy) 类型后缀支持可配置
+          InitSuffixTable(docSuffix, kTypeSuffixDoc)
+                  InitSuffixTable(picSuffix, kTypeSuffixPic)
+                          InitSuffixTable(muzSuffix, kTypeSuffixMuz)
+                                  InitSuffixTable(vidSuffix, kTypeSuffixVid)
+                                          InitSuffixTable(appSuffix, kTypeSuffixApp)
+          //InitSuffixTable(appMimeType, kTypeMimeApp)
+      }
 
-TypeClassifierPrivate::~TypeClassifierPrivate()
+      TypeClassifierPrivate::~TypeClassifierPrivate()
 {
-
 }
 
 TypeClassifier::TypeClassifier(QObject *parent)
-    : FileClassifier(parent)
-    , d(new TypeClassifierPrivate(this))
+    : FileClassifier(parent), d(new TypeClassifierPrivate(this))
 {
     {
         QHash<QString, QString> *namePtr = const_cast<QHash<QString, QString> *>(&d->keyNames);
         *namePtr = {
-                {kTypeKeyApp, tr("Apps")},
-                {kTypeKeyDoc, tr("Documents")},
-                {kTypeKeyPic, tr("Pictures")},
-                {kTypeKeyVid, tr("Videos")},
-                {kTypeKeyMuz, tr("Music")},
-                {kTypeKeyFld, tr("Folders")},
-                {kTypeKeyOth, tr("Other")}
-            };
+            { kTypeKeyApp, tr("Apps") },
+            { kTypeKeyDoc, tr("Documents") },
+            { kTypeKeyPic, tr("Pictures") },
+            { kTypeKeyVid, tr("Videos") },
+            { kTypeKeyMuz, tr("Music") },
+            { kTypeKeyFld, tr("Folders") },
+            { kTypeKeyOth, tr("Other") }
+        };
     }
     {
         QHash<ItemCategory, QString> *categoryPtr = const_cast<QHash<ItemCategory, QString> *>(&d->categoryKey);
         *categoryPtr = {
-            {kCatApplication, kTypeKeyApp},
-            {kCatDocument, kTypeKeyDoc},
-            {kCatPicture, kTypeKeyPic},
-            {kCatVideo, kTypeKeyVid},
-            {kCatMusic, kTypeKeyMuz},
-            {kCatFloder, kTypeKeyFld}
+            { kCatApplication, kTypeKeyApp },
+            { kCatDocument, kTypeKeyDoc },
+            { kCatPicture, kTypeKeyPic },
+            { kCatVideo, kTypeKeyVid },
+            { kCatMusic, kTypeKeyMuz },
+            { kCatFloder, kTypeKeyFld }
         };
     }
     // all datas shoud be accepted.
@@ -125,7 +123,7 @@ QStringList TypeClassifier::classes() const
     // classes
     QStringList usedKey;
     if (d->categories == kCatNone) {
-       // nothing to do.
+        // nothing to do.
     } else if (d->categories == kCatAll) {
         // append category in order.
         usedKey.append(kTypeKeyApp);
@@ -157,7 +155,7 @@ QString TypeClassifier::classify(const QUrl &url) const
 {
     auto itemInfo = InfoFactory::create<LocalFileInfo>(url);
     if (!itemInfo)
-        return QString(); // must return null string to represent the file is not existed.
+        return QString();   // must return null string to represent the file is not existed.
 
     QString key;
     //Classify whether it is a symlink according to the symlink's target
@@ -174,7 +172,7 @@ QString TypeClassifier::classify(const QUrl &url) const
         key = kTypeKeyFld;
     } else {
         // classified by suffix.
-        const QString &suffix = itemInfo->suffix().toLower();
+        const QString &suffix = itemInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix).toLower();
         if (d->docSuffix.contains(suffix))
             key = kTypeKeyDoc;
         else if (d->appSuffix.contains(suffix))

@@ -40,6 +40,7 @@ public:
 
 private:
     SmbShareNode node;
+    QString fileName() const;
 };
 
 }

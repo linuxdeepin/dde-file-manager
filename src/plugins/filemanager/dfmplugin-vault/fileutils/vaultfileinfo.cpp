@@ -178,7 +178,7 @@ QString VaultFileInfo::iconName()
         if (!dptr->proxy)
             return fileMimeType().iconName();
         else
-            dptr->proxy->iconName();
+            dptr->proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kIconName);
     }
     return QString();
 }
@@ -253,9 +253,17 @@ QString VaultFileInfo::fileDisplayName() const
     return dptr->proxy->fileDisplayName();
 }
 
-QString VaultFileInfo::fileCopyName() const
+QString VaultFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    return VaultFileInfo::fileDisplayName();
+
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+        return VaultFileInfo::fileDisplayName();
+    case AbstractFileInfo::FileNameInfoType::kIconName:
+        return const_cast<VaultFileInfo *>(this)->iconName();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 
 QString VaultFileInfo::fileDisplayPath() const

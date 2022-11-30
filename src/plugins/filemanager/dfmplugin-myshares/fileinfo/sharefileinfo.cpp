@@ -50,18 +50,19 @@ QUrl ShareFileInfo::redirectedFileUrl() const
 
 QString ShareFileInfo::fileDisplayName() const
 {
-    return fileName();
+    return dptr.staticCast<ShareFileInfoPrivate>()->fileName();
 }
 
-QString ShareFileInfo::fileCopyName() const
+QString ShareFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
-    return ShareFileInfo::fileDisplayName();
-}
-
-QString ShareFileInfo::fileName() const
-{
-    auto d = dynamic_cast<ShareFileInfoPrivate *>(dptr.data());
-    return d->info.value(ShareInfoKeys::kName).toString();
+    switch (type) {
+    case AbstractFileInfo::FileNameInfoType::kFileName:
+        [[fallthrough]];
+    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+        return dptr.staticCast<ShareFileInfoPrivate>()->fileName();
+    default:
+        return AbstractFileInfo::nameInfo(type);
+    }
 }
 
 bool ShareFileInfo::isDir() const
@@ -88,6 +89,11 @@ void ShareFileInfoPrivate::refresh()
 {
     if (url.path() != "/")
         info = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", url.path()).value<QVariantMap>();
+}
+
+QString ShareFileInfoPrivate::fileName() const
+{
+    return info.value(ShareInfoKeys::kName).toString();
 }
 
 bool dfmplugin_myshares::ShareFileInfo::canDrag()
