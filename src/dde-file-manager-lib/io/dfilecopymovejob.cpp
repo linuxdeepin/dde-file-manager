@@ -2415,7 +2415,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
             DFileCopyMoveJob::Error errortype = DFileCopyMoveJob::PermissionError;
             QString errorstr;
             if (fromInfo->isReadable()) {
-                errorstr = qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: ")/*.arg(fromDevice->errorString())*/;
+                errorstr = qApp->translate("DFileCopyMoveJob", "Failed to open the file, cause: %1").arg(strerror(errno));
                 errortype = DFileCopyMoveJob::OpenError;
             }
 
@@ -2493,7 +2493,7 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
             QString errorstr;
             if (copyinfo->frominfo->exists()) {
                 errortype = DFileCopyMoveJob::ReadError;
-                errorstr = qApp->translate("DFileCopyMoveJob", "Failed to read the file, cause: ")/*.arg(fromDevice->errorString())*/;
+                errorstr = qApp->translate("DFileCopyMoveJob", "Failed to read the file, cause: %1").arg(strerror(errno));
             }
             switch (setAndhandleError(errortype, copyinfo->frominfo, copyinfo->toinfo, errorstr)) {
             case DFileCopyMoveJob::RetryAction: {
@@ -3288,7 +3288,7 @@ write_data: {
                     errorQueueHandling();
                 isErrorOccur = true;
                 switch (setAndhandleError(DFileCopyMoveJob::WriteError, info->frominfo, info->toinfo,
-                                          qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause:").
+                                          qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").
                                           arg(errorstr))) {
                 case DFileCopyMoveJob::RetryAction: {
                     if (!lseek(toFd, info->currentpos, SEEK_SET)) {
@@ -3372,7 +3372,7 @@ write_data: {
 
                     if (checkFreeSpace(currentJobDataSizeInfo.first - currentJobDataSizeInfo.second)) {
                         errortype = DFileCopyMoveJob::WriteError;
-                        errorstr = qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause:").arg(strerror(errno));
+                        errorstr = qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(strerror(errno));
                     }
 
                     switch (setAndhandleError(errortype, info->frominfo, info->toinfo, errorstr)) {
