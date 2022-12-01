@@ -296,66 +296,6 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
     return false;
 }
 
-JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
-{
-    Q_UNUSED(windowId);
-
-    if (sources.isEmpty())
-        return nullptr;
-
-    if (SystemPathUtil::instance()->checkContainsSystemPath(sources)) {
-        DialogManagerInstance->showDeleteSystemPathWarnDialog(windowId);
-        return nullptr;
-    }
-
-    const QUrl &sourceFirst = sources.first();
-
-    if (!sourceFirst.isLocalFile()) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", windowId, sources, flags)) {
-            return nullptr;
-        }
-    }
-
-    // check url permission
-    QList<QUrl> urlsCanTrash = sources;
-    auto it = urlsCanTrash.begin();
-    while (it != urlsCanTrash.end()) {
-        auto info = InfoFactory::create<AbstractFileInfo>(*it);
-        if (!info || !info->canTrash())
-            it = urlsCanTrash.erase(it);
-        else
-            ++it;
-    }
-
-    if (urlsCanTrash.isEmpty())
-        return nullptr;
-
-    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
-        if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
-            return nullptr;
-    }
-    JobHandlePointer handle = copyMoveJob->moveToTrash(urlsCanTrash, flags);
-
-    if (handleCallback)
-        handleCallback(handle);
-    return handle;
-}
-
-JobHandlePointer FileOperationsEventReceiver::doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
-                                                                 const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
-{
-    Q_UNUSED(windowId)
-
-    if (sources.isEmpty())
-        return nullptr;
-
-    JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, target, flags);
-    if (handleCallback)
-        handleCallback(handle);
-    return handle;
-}
-
 JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                                          const AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback callbaskHandle)
 {

@@ -79,26 +79,32 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
         }
     }
 
-    // check url permission
-    QList<QUrl> urlsCanTrash = sources;
-    auto it = urlsCanTrash.begin();
-    while (it != urlsCanTrash.end()) {
-        auto info = InfoFactory::create<AbstractFileInfo>(*it);
-        if (!info || !info->canTrash())
-            it = urlsCanTrash.erase(it);
-        else
-            ++it;
-    }
-
-    if (urlsCanTrash.isEmpty())
-        return nullptr;
-
-    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
-        if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
+    JobHandlePointer handle = nullptr;
+    if (FileUtils::isGvfsFile(sourceFirst) || DFMIO::DFMUtils::fileIsRemovable(sourceFirst)) {
+        if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
             return nullptr;
-    }
-    JobHandlePointer handle = copyMoveJob->moveToTrash(urlsCanTrash, flags);
+        handle = copyMoveJob->deletes(sources, flags);
+    } else {
+        // check url permission
+        QList<QUrl> urlsCanTrash = sources;
+        auto it = urlsCanTrash.begin();
+        while (it != urlsCanTrash.end()) {
+            auto info = InfoFactory::create<AbstractFileInfo>(*it);
+            if (!info || !info->canTrash())
+                it = urlsCanTrash.erase(it);
+            else
+                ++it;
+        }
 
+        if (urlsCanTrash.isEmpty())
+            return nullptr;
+
+        if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
+            if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
+                return nullptr;
+        }
+        handle = copyMoveJob->moveToTrash(urlsCanTrash, flags);
+    }
     if (handleCallback)
         handleCallback(handle);
     return handle;
