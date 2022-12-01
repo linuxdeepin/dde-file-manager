@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "filemanagerwindow.h"
 #include "private/filemanagerwindow_p.h"
 
@@ -227,9 +227,9 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
         d->workspace = w;
         d->splitter->replaceWidget(1, d->workspace);
 
-        //NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
-        //             QSplitter是使用QLayout的策略对widgets进行布局，所以此处
-        //             设置size policy可以生效
+        // NOTE(zccrs): 保证窗口宽度改变时只会调整right view的宽度，侧边栏保持不变
+        //              QSplitter是使用QLayout的策略对widgets进行布局，所以此处
+        //              设置size policy可以生效
         QSizePolicy sp = d->workspace->sizePolicy();
         sp.setHorizontalStretch(1);
         d->workspace->setSizePolicy(sp);

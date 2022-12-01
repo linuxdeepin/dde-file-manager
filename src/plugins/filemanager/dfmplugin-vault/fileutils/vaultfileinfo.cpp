@@ -142,7 +142,7 @@ bool VaultFileInfo::isSymLink() const
 bool VaultFileInfo::isRoot() const
 {
     bool bRootDir = false;
-    QString localFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), kVaultDecryptDirName, nullptr);
+    const QString &localFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), kVaultDecryptDirName, nullptr);
     QString path = filePath();
     if (localFilePath == path || localFilePath + "/" == path || localFilePath == path + "/") {
         bRootDir = true;

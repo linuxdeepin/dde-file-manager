@@ -8,6 +8,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/interfaces/private/watchercache.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -39,6 +40,8 @@ void VaultEventReceiver::connectEvent()
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DragMoveData",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleSideBarItemDragMoveData);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", this, &VaultEventReceiver::handleShortCutPasteFiles);
+
+    dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &VaultEventReceiver::changeUrlEventFilter);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -150,4 +153,27 @@ void VaultEventReceiver::handleHideFilesResult(const quint64 &winId, const QList
             }
         }
     }
+}
+
+bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
+{
+    if (url.scheme() == VaultHelper::instance()->scheme()) {
+        VaultHelper::instance()->appendWinID(windowId);
+        const VaultState &state = VaultHelper::instance()->state(PathManager::vaultLockPath());
+        if (VaultState::kNotExisted == state) {
+            VaultHelper::instance()->creatVaultDialog();
+            return true;
+        } else if (VaultState::kEncrypted == state) {
+            VaultHelper::instance()->unlockVaultDialog();
+            return true;
+        } else if (VaultState::kUnlocked == state) {
+            return false;
+        } else if (VaultState::kNotAvailable == state) {
+            DialogManagerInstance->showErrorDialog(tr("Vault"), tr("Vault not available because cryfs not installed!"));
+            return true;
+        } else {
+            return true;
+        }
+    }
+    return false;
 }

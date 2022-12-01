@@ -24,6 +24,7 @@ public slots:
     bool handleSideBarItemDragMoveData(const QList<QUrl> &urls, const QUrl &url, Qt::DropAction *action);
     bool handleShortCutPasteFiles(const quint64 &winId, const QList<QUrl> &fromUrls, const QUrl &to);
     void handleHideFilesResult(const quint64 &winId, const QList<QUrl> &urls, bool ok);
+    bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
 };
 }
 #endif   // VAULTEVENTRECEIVER_H
