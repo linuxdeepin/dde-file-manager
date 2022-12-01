@@ -110,8 +110,18 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
     if (info)
         info->refresh();
 
-    if (!fileCache->containsChild(toUrl))
+    if (!fileCache->containsChild(toUrl)) {
+        {
+            // Before the file moved signal is received, `toUrl` may be filtered if it received a created signal
+            QMutexLocker lk(&watcherEventMutex);
+            auto iter = std::find_if(watcherEvent.cbegin(), watcherEvent.cend(), [&](const QPair<QUrl, EventType> &event) {
+                return (UniversalUtils::urlEquals(toUrl, event.first) && event.second == kAddFile);
+            });
+            if (iter != watcherEvent.cend())
+                watcherEvent.removeOne(*iter);
+        }
         dofileCreated(toUrl);
+    }
 
     // TODO(lanxs) TODO(xust) .hidden file's attribute changed signal not emitted in removable disks (vfat/exfat).
     // but renamed from a .goutputstream_xxx file
