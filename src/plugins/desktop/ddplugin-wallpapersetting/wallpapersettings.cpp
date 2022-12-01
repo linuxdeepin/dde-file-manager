@@ -37,11 +37,11 @@
 #include <QPushButton>
 
 #ifdef COMPILE_ON_V23
-#   define APPEARANCE_SERVICE "org.deepin.daemon.Appearance1"
-#   define APPEARANCE_PATH "/org/deepin/daemon/Appearance1"
+#    define APPEARANCE_SERVICE "org.deepin.daemon.Appearance1"
+#    define APPEARANCE_PATH "/org/deepin/daemon/Appearance1"
 #else
-#   define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
-#   define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
+#    define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
+#    define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
 #endif
 
 DCORE_USE_NAMESPACE
@@ -52,6 +52,7 @@ using namespace ddplugin_wallpapersetting;
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define DESKTOP_AND_LOCKSCREEN_BUTTON_ID "desktop-lockscreen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
+#define CUSTOMSCREENSAVER_BUTTON_ID "custom-screensaver"
 
 #define BUTTON_NARROW_WIDTH 79
 #define BUTTON_WIDE_WIDTH 164
@@ -430,6 +431,8 @@ void WallpaperSettingsPrivate::onItemButtonClicked(WallpaperItem *item, const QS
         q->applyToGreeter();
     } else if (id == SCREENSAVER_BUTTON_ID) {
         screenSaverIfs->setCurrentScreenSaver(item->itemData());
+    } else if (id == CUSTOMSCREENSAVER_BUTTON_ID) {
+        screenSaverIfs->StartCustomConfig(item->itemData());
     }
 
     q->hide();
@@ -1053,7 +1056,8 @@ void WallpaperSettings::loadWallpaper()
 
 void WallpaperSettings::loadScreenSaver()
 {
-    const QStringList &saverNameList = d->screenSaverIfs->allScreenSaver();
+    const QStringList &screensaverConfigurableItems = d->screenSaverIfs->ConfigurableItems();
+    QStringList saverNameList = d->screenSaverIfs->allScreenSaver();
     if (saverNameList.isEmpty() && !d->screenSaverIfs->isValid()) {
         qWarning() << "com.deepin.ScreenSaver allScreenSaver fail. retry";
         d->reloadTimer.start(5000);
@@ -1064,6 +1068,16 @@ void WallpaperSettings::loadScreenSaver()
     d->reloadTimer.stop();
     const QString &currentScreensaver = d->screenSaverIfs->currentScreenSaver();
     WallpaperItem *currentItem = nullptr;
+
+    // Supports parameter setting for multiple screensavers
+    int customSaverCount = 0;
+    for (const QString &name : saverNameList) {
+        // The screensaver with the parameter configuration is placed first
+        if (screensaverConfigurableItems.contains(name)) {
+            saverNameList.move(saverNameList.indexOf(name), customSaverCount);
+            customSaverCount++;
+        }
+    }
 
     for (const QString &name : saverNameList) {
         //romove
@@ -1076,7 +1090,15 @@ void WallpaperSettings::loadScreenSaver()
         item->setSketch(coverPath);
         item->setEnableThumbnail(false);
         item->setDeletable(false);
-        item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply", "button"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+
+        if (screensaverConfigurableItems.contains(name)) {
+            item->setEntranceIconOfSettings(CUSTOMSCREENSAVER_BUTTON_ID);
+            item->addButton(CUSTOMSCREENSAVER_BUTTON_ID, tr("Custom Screensaver"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply", "button"), BUTTON_WIDE_WIDTH, 1, 0, 1, 2);
+        } else {
+            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply", "button"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+        }
+
         item->show();
 
         connect(item, &WallpaperItem::buttonClicked, d, &WallpaperSettingsPrivate::onItemButtonClicked);

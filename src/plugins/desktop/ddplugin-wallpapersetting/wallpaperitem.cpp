@@ -21,6 +21,7 @@
 #include "wallpaperitem.h"
 #include "wallpaperlist.h"
 #include "thumbnailmanager.h"
+#include "editlabel.h"
 
 #include <QUrl>
 #include <QPushButton>
@@ -31,9 +32,9 @@
 
 using namespace ddplugin_wallpapersetting;
 
-WrapperWidget::WrapperWidget(QWidget *parent) : QWidget(parent)
+WrapperWidget::WrapperWidget(QWidget *parent)
+    : QWidget(parent)
 {
-
 }
 
 void WrapperWidget::setPixmap(const QPixmap &pix)
@@ -59,15 +60,13 @@ void WrapperWidget::paintEvent(QPaintEvent *event)
 }
 
 WallpaperItem::WallpaperItem(QWidget *parent)
-    : QFrame(parent)
-    , thumbnailerWatcher(new QFutureWatcher<QPixmap>(this))
+    : QFrame(parent), thumbnailerWatcher(new QFutureWatcher<QPixmap>(this))
 {
     init();
 }
 
 WallpaperItem::~WallpaperItem()
 {
-
 }
 
 QString WallpaperItem::itemData() const
@@ -158,7 +157,7 @@ void WallpaperItem::renderPixmap()
         QIcon icon(sketch());
         auto pix = icon.pixmap(window()->windowHandle(), QSize(WallpaperList::kItemWidth, WallpaperList::kItemHeight));
         pix.setDevicePixelRatio(qMax(pix.width() / qreal(WallpaperList::kItemWidth),
-                                    pix.height() / qreal(WallpaperList::kItemHeight)));
+                                     pix.height() / qreal(WallpaperList::kItemHeight)));
         wrapper->setPixmap(pix);
         wrapper->update();
     }
@@ -189,6 +188,22 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text, co
     return button;
 }
 
+/*!
+ * \brief WallpaperItem::setEntranceIconOfSettings, add Settings entrance icon for custom screensavers
+ * \param id, the name of custom screensaver with custom configuration
+ */
+void WallpaperItem::setEntranceIconOfSettings(const QString &id)
+{
+    EditLabel *editLabel = new EditLabel(wrapper);
+    QPixmap pmap(":/images/edit.svg");
+    editLabel->setPixmap(pmap);
+    editLabel->move(wrapper->width() - pmap.width(), 0);
+
+    connect(editLabel, &EditLabel::editLabelClicked, this, [this, id] {
+        emit buttonClicked(this, id);
+    });
+}
+
 void WallpaperItem::mousePressEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton)
@@ -198,13 +213,12 @@ void WallpaperItem::mousePressEvent(QMouseEvent *event)
 void WallpaperItem::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-    case Qt::Key_Up:
-    {
+    case Qt::Key_Up: {
         QWidget *w = focusWidget();
-        for (int i = 0; i <  buttonLayout->count(); ++i) {
+        for (int i = 0; i < buttonLayout->count(); ++i) {
             if (buttonLayout->itemAt(i)->widget() == w) {
                 if (0 == i) {
-                    focusOnLastButton();      // first,go to last
+                    focusOnLastButton();   // first,go to last
                 } else {
                     buttonLayout->itemAt(--i)->widget()->setFocus();
                 }
@@ -213,13 +227,12 @@ void WallpaperItem::keyPressEvent(QKeyEvent *event)
         }
         break;
     }
-    case Qt::Key_Down:
-    {
+    case Qt::Key_Down: {
         QWidget *w = focusWidget();
-        for (int i = 0; i <  buttonLayout->count(); ++i) {
+        for (int i = 0; i < buttonLayout->count(); ++i) {
             if (buttonLayout->itemAt(i)->widget() == w) {
                 if (buttonLayout->count() - 1 == i)
-                    focusOnFirstButton();      // last,go to first
+                    focusOnFirstButton();   // last,go to first
                 else
                     buttonLayout->itemAt(++i)->widget()->setFocus();
                 break;
@@ -254,15 +267,14 @@ void WallpaperItem::resizeEvent(QResizeEvent *event)
                                   (event->size().height() - WallpaperList::kItemHeight) / 2);
 
     wrapper->setFixedWidth(width());
-    wrapper->setBoxGeometry(QRect(offset * ratio, QSize(static_cast<int>(WallpaperList::kItemWidth * ratio)
-                                                        , static_cast<int>(WallpaperList::kItemHeight * ratio))));
+    wrapper->setBoxGeometry(QRect(offset * ratio, QSize(static_cast<int>(WallpaperList::kItemWidth * ratio), static_cast<int>(WallpaperList::kItemHeight * ratio))));
 
     QFrame::resizeEvent(event);
 }
 
 bool WallpaperItem::eventFilter(QObject *watched, QEvent *event)
 {
-    QPushButton *btn = dynamic_cast<QPushButton*>(watched);
+    QPushButton *btn = dynamic_cast<QPushButton *>(watched);
     if (btn && buttons.contains(btn)) {
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
@@ -344,7 +356,7 @@ void WallpaperItem::init()
 
 void WallpaperItem::onButtonClicked()
 {
-    QPushButton *btn = dynamic_cast<QPushButton*>(sender());
+    QPushButton *btn = dynamic_cast<QPushButton *>(sender());
     if (btn && buttons.contains(btn)) {
         emit buttonClicked(this, buttons.value(btn));
     }
@@ -367,5 +379,3 @@ void WallpaperItem::onFindAborted(const QQueue<QString> &list)
         refindPixmap();
     }
 }
-
-
