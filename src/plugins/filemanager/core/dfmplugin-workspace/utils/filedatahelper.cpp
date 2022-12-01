@@ -25,6 +25,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 
 #include <QApplication>
 
@@ -142,10 +143,9 @@ void FileDataHelper::doTravers(const int rootIndex)
         connect(info->traversal.data(), &QThread::finished,
                 info->fileCache.data(), &FileDataCacheThread::onHandleTraversalFinished,
                 Qt::QueuedConnection);
-        connect(info->fileCache.data(), &FileDataCacheThread::requestSetIdle,
-                this, [this, info] {
-                    this->model()->stateChanged(info->url, ModelState::kIdle);
-                },
+        connect(
+                info->fileCache.data(), &FileDataCacheThread::requestSetIdle,
+                this, [this, info] { this->model()->stateChanged(info->url, ModelState::kIdle); },
                 Qt::QueuedConnection);
 
         info->traversal->start();
@@ -192,6 +192,21 @@ void FileDataHelper::setFileActive(const int rootIndex, const int childIndex, bo
     }
 }
 
+void FileDataHelper::updateRootInfoStatus(const QString &, const QString &mountPoint)
+{
+    auto mpt = QUrl::fromLocalFile(mountPoint);
+    const QList<QUrl> &&caches = rootInfoMap.keys();
+    for (const auto &url : caches) {
+        if (mpt.isParentOf(url)) {   // if parent node is updated, then all the children should be updated too.
+            auto &node = rootInfoMap[url];
+            if (node) {
+                node->needTraversal = true;
+                qDebug() << "rootinfo is updated on device mounted: " << mpt << url;
+            }
+        }
+    }
+}
+
 FileViewModel *FileDataHelper::model() const
 {
     return dynamic_cast<FileViewModel *>(parent());
@@ -211,6 +226,11 @@ RootInfo *FileDataHelper::createRootInfo(const QUrl &url)
 FileDataHelper::FileDataHelper(QObject *parent)
     : QObject(parent)
 {
+    // unmount a protocol device will not trigger 'fileDeleted' signal, so re-enter
+    // a protocol device may not travers the inner files.
+    // FIXME(xust) FIXME(liuyangming) caches should be removed when device unmounted.
+    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, &FileDataHelper::updateRootInfoStatus);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevMounted, this, &FileDataHelper::updateRootInfoStatus);
 }
 
 int FileDataHelper::preSetRoot(const QUrl &rootUrl)

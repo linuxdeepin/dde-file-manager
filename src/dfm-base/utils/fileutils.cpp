@@ -443,7 +443,7 @@ bool FileUtils::isLowSpeedDevice(const QUrl &url)
 
 bool FileUtils::isLocalDevice(const QUrl &url)
 {
-    return !DFMIO::DFMUtils::fileIsRemovable(url.toLocalFile());
+    return !DFMIO::DFMUtils::fileIsRemovable(url.toLocalFile()) && !isGvfsFile(url);
 }
 
 bool FileUtils::isCdRomDevice(const QUrl &url)

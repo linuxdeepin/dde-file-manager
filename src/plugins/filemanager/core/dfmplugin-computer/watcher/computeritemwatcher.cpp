@@ -692,16 +692,13 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     removeDevice(devUrl);
     if (StashMountsUtils::isStashMountsEnabled()) {   // After removing smb device, adding stashed smb item to sidebar and computer view
-        QUrl stashedUrl;
         if (id.startsWith(Global::Scheme::kSmb)) {
-            stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(id);
+            onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
         } else if (DeviceUtils::isSamba(QUrl(id))) {
             const QVariantHash &newMount = StashMountsUtils::makeStashedSmbDataById(id);
             StashMountsUtils::stashSmbMount(newMount);
-            stashedUrl = StashMountsUtils::makeStashedSmbMountUrl(newMount);
+            onDeviceAdded(StashMountsUtils::makeStashedSmbMountUrl(newMount), getGroupId(diskGroup()));
         }
-
-        onDeviceAdded(stashedUrl, getGroupId(diskGroup()));
     }
 
     routeMapper.remove(ComputerUtils::makeProtocolDevUrl(id));

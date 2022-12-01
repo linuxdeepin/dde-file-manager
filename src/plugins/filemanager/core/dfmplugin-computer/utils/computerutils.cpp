@@ -29,6 +29,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -251,21 +252,19 @@ QMutex ComputerUtils::mtxForCheckGvfs;
 QWaitCondition ComputerUtils::condForCheckGvfs;
 bool ComputerUtils::checkGvfsMountExist(const QUrl &url, int timeout)
 {
-    if (!url.path().startsWith(QString("/run/user/%1/gvfs/").arg(getuid())))
+    if (!FileUtils::isGvfsFile(url))
         return true;
     setCursorState(true);
 
-    std::string path = url.path().toStdString();
+    QString path = url.path();
     bool exist = false;
-    auto &&fu = QtConcurrent::run([path, &exist, timeout] {
-        QTime t;
-        t.start();
-        int ret = access(path.c_str(), F_OK);
-        qDebug() << "gvfs path: " << path.c_str() << ", exist: " << (ret == 0) << ", error: " << strerror(ret);
-        if (t.elapsed() < timeout) {
-            exist = (ret == 0);
-            condForCheckGvfs.wakeAll();
-        }
+    auto &&fu = QtConcurrent::run([path, &exist] {
+        DecoratorFile f(path);
+        exist = f.exists();
+        qDebug() << "gvfs path: " << path << ", exist: " << exist;
+
+        QMutexLocker lk(&mtxForCheckGvfs);
+        condForCheckGvfs.wakeAll();
     });
 
     QMutexLocker lk(&mtxForCheckGvfs);
