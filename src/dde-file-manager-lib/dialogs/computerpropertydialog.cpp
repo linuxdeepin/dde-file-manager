@@ -11,20 +11,21 @@
 
 #include <DPlatformWindowHandle>
 #include <DSpinner>
+#include <DGraphicsClipEffect>
+#include <DSysInfo>
+#include <DTitlebar>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <DSysInfo>
-#include <DTitlebar>
 #include <QGridLayout>
 #include <QPixmap>
 #include <QProcess>
 #include <QDebug>
 #include <QRegularExpression>
 #include <QPainter>
-#include <DGraphicsClipEffect>
 #include <QWindow>
+#include <QImageReader>
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -282,8 +283,6 @@ ComputerPropertyDialog::~ComputerPropertyDialog()
 
 void ComputerPropertyDialog::initUI()
 {
-    QLabel *iconLabel = new QLabel(this);
-
     if(DFMGlobal::isWayLand())
     {
         //设置对话框窗口最大最小化按钮隐藏
@@ -294,15 +293,15 @@ void ComputerPropertyDialog::initUI()
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
 
+    QLabel *iconLabel = new QLabel(this);
     QString distributerLogoPath = DSysInfo::distributionOrgLogo();
-    QIcon logoIcon;
+    QPixmap logoPix;
     if (!distributerLogoPath.isEmpty() && QFile::exists(distributerLogoPath)) {
-        logoIcon = QIcon(distributerLogoPath);
+        iconLabel->setPixmap(getClearPixmap(distributerLogoPath));
     } else {
-        logoIcon = QIcon::fromTheme("dfm_deepin_logo");
+        iconLabel->setPixmap(QIcon::fromTheme("dfm_deepin_logo").pixmap(152, 39));
     }
 
-    iconLabel->setPixmap(logoIcon.pixmap(152, 39));
     QLabel *nameLabel = new QLabel(tr("Computer"), this);
     auto pt = nameLabel->palette();
     pt.setColor(QPalette::Text, palette().color(QPalette::Normal, QPalette::Text));
@@ -561,6 +560,26 @@ void ComputerPropertyDialog::slotSetInfo(QMap<QString, QString> mapNewDatas)
         }
     }
     adjustSize();
+}
+
+QPixmap ComputerPropertyDialog::getClearPixmap(const QString &path)
+{
+    qreal ratio = 1.0;
+    QPixmap pixmap;
+    const qreal devicePixelRatio = qApp->devicePixelRatio();
+    if (!qFuzzyCompare(ratio, devicePixelRatio)) {
+        QImageReader reader;
+        reader.setFileName(qt_findAtNxFile(path, devicePixelRatio, &ratio));
+        if (reader.canRead()) {
+            reader.setScaledSize(reader.size() * (devicePixelRatio / ratio));
+            pixmap = QPixmap::fromImage(reader.read());
+            pixmap.setDevicePixelRatio(devicePixelRatio);
+        }
+    } else {
+        pixmap.load(path);
+    }
+
+    return pixmap;
 }
 
 void ComputerPropertyDialog::hideEvent(QHideEvent *event)
