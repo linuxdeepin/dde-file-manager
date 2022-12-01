@@ -25,6 +25,7 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <dfm-framework/event/event.h>
 #include <dfm-io/dfmio_utils.h>
@@ -151,6 +152,7 @@ bool TrashFileHelper::blockPaste(quint64 winId, const QList<QUrl> &fromUrls, con
         return false;
 
     if (fromUrls.first().scheme() == scheme() && to.scheme() == scheme()) {
+        DFMBASE_NAMESPACE::ClipBoard::clearClipboard();
         qDebug() << "The trash directory does not support paste!";
         return true;
     }
