@@ -479,6 +479,42 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
     }
 }
 
+QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const QUrl tempUrl, const QString suffix, const QVariant custom, OperatorCallback callbackImmediately)
+{
+    if (url.isLocalFile()) {
+        auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        if (!fileInfo)
+            return QString();
+        QString newPath = newDocmentName(url.path(), fileInfo->completeBaseName(), suffix);
+        if (newPath.isEmpty())
+            return QString();
+
+        QUrl urlNew;
+        urlNew.setScheme(url.scheme());
+        urlNew.setPath(newPath);
+
+        if (callbackImmediately) {
+            CallbackArgus args(new QMap<CallbackKey, QVariant>);
+            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
+            args->insert(CallbackKey::kCustom, custom);
+            callbackImmediately(args);
+        }
+
+        return doTouchFilePractically(windowId, urlNew, tempUrl) ? newPath : QString();
+    } else {
+        QString error;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchFile", windowId, url, tempUrl, &error)) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                                         windowId, QList<QUrl>() << url, true, error);
+            return url.path();
+        }
+
+        return doTouchFilePractically(windowId, url, tempUrl) ? url.path() : QString();
+    }
+}
+
 void FileOperationsEventReceiver::saveFileOperation(const QList<QUrl> &sourcesUrls, const QList<QUrl> &targetUrls, GlobalEventType type)
 {
     // save operation by dbus
@@ -865,12 +901,12 @@ void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
     }
 }
 
-bool FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId, const QUrl url)
+bool FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId, const QUrl url, const QUrl &tempUrl /*= QUrl()*/)
 {
     QString error;
 
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    bool ok = fileHandler.touchFile(url);
+    bool ok = fileHandler.touchFile(url, tempUrl);
     if (!ok) {
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("touch file error", error);
@@ -890,6 +926,11 @@ QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 wind
     return doTouchFilePremature(windowId, url, fileType, suffix, QVariant(), nullptr);
 }
 
+QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId, const QUrl url, const QUrl tempUrl, const QString suffix)
+{
+    return doTouchFilePremature(windowId, url, tempUrl, suffix, QVariant(), nullptr);
+}
+
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                            const QUrl url,
                                                            const CreateFileType fileType,
@@ -898,6 +939,11 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
                                                            OperatorCallback callbackImmediately)
 {
     doTouchFilePremature(windowId, url, fileType, suffix, custom, callbackImmediately);
+}
+
+void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId, const QUrl url, const QUrl tempUrl, const QString suffix, const QVariant custom, OperatorCallback callbackImmediately)
+{
+    doTouchFilePremature(windowId, url, tempUrl, suffix, custom, callbackImmediately);
 }
 
 bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,

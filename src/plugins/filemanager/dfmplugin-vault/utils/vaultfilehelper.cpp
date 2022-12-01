@@ -155,9 +155,20 @@ bool VaultFileHelper::touchFile(const quint64 windowId, const QUrl url, const DF
     if (url.scheme() != scheme())
         return false;
 
-    const QUrl dirUrl = transUrlsToLocal({ url }).first();
+    const QUrl &dirUrl = transUrlsToLocal({ url }).first();
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFile,
                                  windowId, dirUrl, type, *error);
+    return true;
+}
+
+bool VaultFileHelper::touchCustomFile(const quint64 windowId, const QUrl url, const QUrl tempUrl, QString *error)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    const QUrl &dirUrl = transUrlsToLocal({ url }).first();
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFile,
+                                 windowId, dirUrl, tempUrl, *error);
     return true;
 }
 

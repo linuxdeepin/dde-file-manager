@@ -49,7 +49,7 @@ public:
     LocalFileHandler();
     ~LocalFileHandler();
 
-    bool touchFile(const QUrl &url);
+    bool touchFile(const QUrl &url, const QUrl &tempUrl = QUrl());
     bool mkdir(const QUrl &dir);
     bool rmdir(const QUrl &url);
     bool renameFile(const QUrl &url, const QUrl &newUrl, const bool needCheck = true);

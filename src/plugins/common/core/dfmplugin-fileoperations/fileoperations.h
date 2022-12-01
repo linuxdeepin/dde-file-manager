@@ -52,6 +52,7 @@ class FileOperations : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_Operation_RenameFile)
     DPF_EVENT_REG_HOOK(hook_Operation_MakeDir)
     DPF_EVENT_REG_HOOK(hook_Operation_TouchFile)
+    DPF_EVENT_REG_HOOK(hook_Operation_TouchCustomFile)
     DPF_EVENT_REG_HOOK(hook_Operation_LinkFile)
     DPF_EVENT_REG_HOOK(hook_Operation_SetPermission)
     DPF_EVENT_REG_HOOK(hook_Operation_WriteUrlsToClipboard)

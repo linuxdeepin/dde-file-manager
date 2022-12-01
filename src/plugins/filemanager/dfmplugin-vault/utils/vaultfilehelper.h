@@ -53,6 +53,7 @@ public:
                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     bool makeDir(const quint64 windowId, const QUrl url);
     bool touchFile(const quint64 windowId, const QUrl url, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString *error);
+    bool touchCustomFile(const quint64 windowId, const QUrl url, const QUrl tempUrl, QString *error);
     bool writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                               const QList<QUrl> urls);
     bool renameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> replacePair, bool flg);

@@ -88,7 +88,7 @@ LocalFileHandler::~LocalFileHandler()
  * \param url 新文件的url
  * \return bool 创建文件是否成功
  */
-bool LocalFileHandler::touchFile(const QUrl &url)
+bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()*/)
 {
     DecoratorFileOperator doperator(url);
 
@@ -107,15 +107,17 @@ bool LocalFileHandler::touchFile(const QUrl &url)
         return false;
     }
 
-    DecoratorFileInfo targetFileInfo(url);
-    const QString &suffix = targetFileInfo.suffix();
+    QUrl templateFile = tempUrl;
+    if (!templateFile.isValid()) {
+        DecoratorFileInfo targetFileInfo(url);
+        const QString &suffix = targetFileInfo.suffix();
 
-    QUrl templateFile;
-    DecoratorFileEnumerator enumerator(StandardPaths::location(StandardPaths::kTemplatesPath), {}, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)));
-    while (enumerator.hasNext()) {
-        if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
-            templateFile = enumerator.next();
-            break;
+        DecoratorFileEnumerator enumerator(StandardPaths::location(StandardPaths::kTemplatesPath), {}, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)));
+        while (enumerator.hasNext()) {
+            if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
+                templateFile = enumerator.next();
+                break;
+            }
         }
     }
 
@@ -126,10 +128,10 @@ bool LocalFileHandler::touchFile(const QUrl &url)
             if (writeCount <= 0)
                 qWarning() << "file touch succ, but write template failed";
         }
-    }
 
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-    fileInfo->refresh();
+        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        fileInfo->refresh();
+    }
 
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, url);
 
