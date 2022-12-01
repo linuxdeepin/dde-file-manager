@@ -181,7 +181,7 @@ QString BluetoothTransDialog::humanizeObexErrMsg(const QString &msg)
 void BluetoothTransDialog::setNextButtonEnable(bool enable)
 {
     if (stackedWidget->currentIndex() != Page::kSelectDevicePage) {
-        for (auto btn: getButtons())
+        for (auto btn : getButtons())
             btn->setEnabled(true);
         return;
     }
@@ -263,7 +263,7 @@ void BluetoothTransDialog::initConn()
                 item->setCheckState(Qt::Checked);
                 selectedDeviceName = item->text();
                 selectedDeviceId = item->data(kDevIdRole).toString();
-                setNextButtonEnable(true);  // when an item is selected, the next button should be enable.
+                setNextButtonEnable(true);   // when an item is selected, the next button should be enable.
             } else {
                 item->setCheckState(Qt::Unchecked);
             }
@@ -686,7 +686,7 @@ void BluetoothTransDialog::removeDevice(const QString &id)
         if (devModel->data(devModel->index(i, 0), kDevIdRole).toString() == id) {
             auto item = devModel->item(i);
             if (item && item->checkState() == Qt::Checked)
-                setNextButtonEnable(false); // set the next button disable when the selected item is removed.
+                setNextButtonEnable(false);   // set the next button disable when the selected item is removed.
 
             devModel->removeRow(i);
             if (devModel->rowCount() == 0 && stackedWidget->currentIndex() == kSelectDevicePage)
@@ -732,10 +732,34 @@ void BluetoothTransDialog::sendFiles()
         }
     }
 
-    subTitleForWaitPage->setText(TXT_SENDING_FILE.arg(selectedDeviceName));
-    subTitleOfTransPage->setText(TXT_SENDING_FILE.arg(selectedDeviceName));
-    subTitleOfFailedPage->setText(TXT_SENDING_FAIL.arg(selectedDeviceName));
-    subTitleOfSuccessPage->setText(TXT_SENDING_SUCC.arg(selectedDeviceName));
+    QFontMetrics fm = subTitleForWaitPage->fontMetrics();
+    auto shrinkLabel = [=](const QString &format, QString msg) -> QString {
+        QString pureFormat = format;
+        pureFormat.remove(QRegularExpression(R"(<.*>)"));   // remove the html tags in label text.
+        int fixedWidth = fm.width(pureFormat);
+        int freeWidth = this->width() - fixedWidth - 40;   // 40 is side margin.
+        msg = fm.elidedText(msg, Qt::ElideRight, freeWidth);
+        return format.arg(msg);
+    };
+
+    auto setToolTipAsNeeded = [](QLabel *lab, const QString &fullMsg, const QString &shortMsg, const QString &tooltip) {
+        if (Q_UNLIKELY(fullMsg != shortMsg) && lab)
+            lab->setToolTip(tooltip);
+    };
+
+    const auto &&sendingInfo = shrinkLabel(TXT_SENDING_FILE, selectedDeviceName);
+    const auto &&sendingFailed = shrinkLabel(TXT_SENDING_FAIL, selectedDeviceName);
+    const auto &&sendingSuccess = shrinkLabel(TXT_SENDING_SUCC, selectedDeviceName);
+
+    subTitleForWaitPage->setText(sendingInfo);
+    subTitleOfTransPage->setText(sendingInfo);
+    subTitleOfFailedPage->setText(sendingFailed);
+    subTitleOfSuccessPage->setText(sendingSuccess);
+
+    setToolTipAsNeeded(subTitleForWaitPage, TXT_SENDING_FILE.arg(selectedDeviceName), sendingInfo, selectedDeviceName);
+    setToolTipAsNeeded(subTitleOfTransPage, TXT_SENDING_FILE.arg(selectedDeviceName), sendingInfo, selectedDeviceName);
+    setToolTipAsNeeded(subTitleOfFailedPage, TXT_SENDING_FAIL.arg(selectedDeviceName), sendingInfo, selectedDeviceName);
+    setToolTipAsNeeded(subTitleOfSuccessPage, TXT_SENDING_SUCC.arg(selectedDeviceName), sendingInfo, selectedDeviceName);
 
     ignoreProgress = true;
     firstTransSize = 0;
