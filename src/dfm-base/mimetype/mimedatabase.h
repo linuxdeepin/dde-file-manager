@@ -37,23 +37,23 @@ private:
     virtual ~MimeDatabase();
 
 public:
-    enum FileType {
-        kDirectory,   // 目录
-        kCharDevice,   // 字符设备
-        kBlockDevice,   // 块设备
-        kFIFOFile,   // FIFO文件
-        kSocketFile,   // socket文件
-        kRegularFile,   // Regular文件
+    enum class FileType : uint16_t {
+        kDirectory = 0,   // 目录
+        kCharDevice = 1,   // 字符设备
+        kBlockDevice = 2,   // 块设备
+        kFIFOFile = 3,   // FIFO文件
+        kSocketFile = 4,   // socket文件
+        kRegularFile = 5,   // Regular文件
 
-        kDocuments,   // 文档
-        kImages,   // 镜像文件
-        kVideos,   // 视频文件
-        kAudios,   // 音乐文件
-        kArchives,   // 归档文件
-        kDesktopApplication,   // 应用
-        kExecutable,   // 可执行
-        kBackups,   // 回退
-        kUnknown,
+        kDocuments = 6,   // 文档
+        kImages = 7,   // 镜像文件
+        kVideos = 8,   // 视频文件
+        kAudios = 9,   // 音乐文件
+        kArchives = 10,   // 归档文件
+        kDesktopApplication = 11,   // 应用
+        kExecutable = 12,   // 可执行
+        kBackups = 13,   // 回退
+        kUnknown = 14,
         kCustomType = 0x100
     };
 

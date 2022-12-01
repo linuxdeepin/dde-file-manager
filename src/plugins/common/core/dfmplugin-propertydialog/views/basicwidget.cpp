@@ -262,7 +262,7 @@ void BasicWidget::basicFill(const QUrl &url)
 
         QMimeType mimeType = MimeDatabase::mimeTypeForUrl(localUrl);
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
-        switch (static_cast<int>(type)) {
+        switch (type) {
         case MimeDatabase::FileType::kDirectory: {
             fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
             if (fileCount && fileCount->RightValue().isEmpty()) {
@@ -296,6 +296,8 @@ void BasicWidget::basicFill(const QUrl &url)
         case MimeDatabase::FileType::kUnknown: {
             fileType->setRightValue(tr("Unknown") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         } break;
+        default:
+            break;
         }
     }
 }

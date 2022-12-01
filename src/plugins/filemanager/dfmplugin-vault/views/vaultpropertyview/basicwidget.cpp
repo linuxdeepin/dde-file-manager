@@ -144,7 +144,7 @@ void BasicWidget::selectFileUrl(const QUrl &url)
 
     QMimeType mimeType = MimeDatabase::mimeTypeForUrl(QUrl::fromLocalFile(url.path()));
     MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
-    switch (static_cast<int>(type)) {
+    switch (type) {
     case MimeDatabase::FileType::kDirectory:
         fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
@@ -152,6 +152,8 @@ void BasicWidget::selectFileUrl(const QUrl &url)
         fileCount->setRightValue(QString::number(0), Qt::ElideNone, Qt::AlignVCenter, true);
         fileCalculationUtils->start(QList<QUrl>() << realurl);
         connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
+        break;
+    default:
         break;
     }
 }
