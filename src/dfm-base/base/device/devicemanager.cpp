@@ -777,7 +777,7 @@ void DeviceManagerPrivate::mountAllBlockDev()
                                                   | DeviceQueryOption::kNotMounted) };
     qDebug() << "start to mount block devs: " << devs;
     for (const auto &dev : devs)
-        q->mountBlockDevAsync(dev);
+        q->mountBlockDevAsync(dev, { { "auth.no_user_interaction", true } });   // avoid the auth dialog raising
 }
 
 MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,

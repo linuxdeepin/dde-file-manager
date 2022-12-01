@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "computercontroller.h"
 #include "events/computereventcaller.h"
 #include "fileentity/appentryfileentity.h"
@@ -433,7 +433,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         } else {
             DevMngIns->unmountBlockDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
                 if (!ok) {
-                    qInfo() << "unlock device failed: " << devId << err;
+                    qInfo() << "unmount device failed: " << devId << err;
                     DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
                 }
             });
@@ -533,7 +533,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
         QUrl temUrl;
         temUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kSmb);
         temUrl.setHost(host);
-        temUrl.setPath("/"+shareName+"/");
+        temUrl.setPath("/" + shareName + "/");
         uri = temUrl.toString();
     }
 
@@ -568,7 +568,7 @@ void ComputerController::waitUDisks2DataReady(const QString &id)
      * solved this issue already, but the version of ours is too old and costs
      * a lot to make patch.
      * https://github.com/storaged-project/udisks/issues/930
-    */
+     */
     EntryFileInfo *info { nullptr };
     int maxRetry = 5;
     while (maxRetry > 0) {
