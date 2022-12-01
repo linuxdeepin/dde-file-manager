@@ -61,7 +61,7 @@ void KeyValueLabel::initPropertyMap()
     propertyMap.insert(kLeftTipVisible, false);
     propertyMap.insert(kLeftAlignment, -1);
     propertyMap.insert(kLeftWordWrap, -1);
-    propertyMap.insert(kRightValue, -1);
+    propertyMap.insert(kRightValue, {});
     propertyMap.insert(kRightElideMode, -1);
     propertyMap.insert(kRightTipVisible, false);
     propertyMap.insert(kRightAlignment, -1);

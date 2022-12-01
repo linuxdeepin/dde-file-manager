@@ -166,10 +166,6 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
             if (ok && !iconName.isEmpty())
                 return iconName;
 
-            ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
-            if (ok && !iconName.isEmpty())
-                return iconName;
-
             return QString();
         };
 

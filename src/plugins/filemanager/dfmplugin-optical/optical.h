@@ -40,13 +40,13 @@ public:
 
 private:
     void addOpticalCrumbToTitleBar();
-    void addFileOperations();
     void addCustomTopWidget();
     void addDelegateSettings();
     void addPropertySettings();
 
 private:
     void bindEvents();
+    void bindFileOperations();
 
 private slots:
     void onDeviceChanged(const QString &id);

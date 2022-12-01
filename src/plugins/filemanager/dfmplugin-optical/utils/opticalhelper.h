@@ -46,6 +46,7 @@ public:
     static QString scheme();
     static QIcon icon();
     static QString iconString();
+    static QUrl discRoot(const QString &dev);
     static QUrl localStagingRoot();
     static QUrl localStagingFile(const QUrl &dest);
     static QUrl localStagingFile(QString dev);

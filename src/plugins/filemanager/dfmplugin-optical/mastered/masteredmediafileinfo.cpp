@@ -79,6 +79,8 @@ QString MasteredMediaFileInfo::fileDisplayName() const
     if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
         const auto &map { DevProxyMng->queryBlockInfo(curDevId) };
         QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
+        if (idLabel.isEmpty())
+            idLabel = DeviceUtils::convertSuitableDisplayName(map);
         return idLabel;
     }
 

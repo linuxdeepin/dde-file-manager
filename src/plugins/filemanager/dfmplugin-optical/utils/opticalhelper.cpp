@@ -70,6 +70,14 @@ QString OpticalHelper::iconString()
     return "media-optical-symbolic";
 }
 
+QUrl OpticalHelper::discRoot(const QString &dev)
+{
+    QUrl url;
+    url.setScheme(scheme());
+    url.setPath(dev + "/" BURN_SEG_ONDISC "/");
+    return url;
+}
+
 QUrl OpticalHelper::localStagingRoot()
 {
     return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)

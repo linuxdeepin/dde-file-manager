@@ -45,6 +45,7 @@ Q_DECLARE_METATYPE(ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(QList<QVariantMap> *)
+Q_DECLARE_METATYPE(QString *);
 
 // using CreateTopWidgetCallback = std::function<dfmplugin_optical::OpticalMediaWidget *()>;
 
@@ -60,6 +61,7 @@ void Optical::initialize()
     DirIteratorFactory::regClass<MasteredMediaDirIterator>(Global::Scheme::kBurn);
 
     bindEvents();
+    bindFileOperations();
 
     connect(
             &FMWindowsIns, &FileManagerWindowsManager::windowCreated, this,
@@ -91,11 +93,6 @@ bool Optical::start()
     addDelegateSettings();
     addPropertySettings();
 
-    // follow event
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
-
-    addFileOperations();
-
     return true;
 }
 
@@ -107,7 +104,7 @@ void Optical::addOpticalCrumbToTitleBar()
     });
 }
 
-void Optical::addFileOperations()
+void Optical::bindFileOperations()
 {
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", OpticalFileHelper::instance(), &OpticalFileHelper::cutFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", OpticalFileHelper::instance(), &OpticalFileHelper::copyFile);
@@ -167,6 +164,8 @@ void Optical::bindEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleDropFiles);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", &OpticalEventReceiver::instance(), &OpticalEventReceiver::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
 }
 
 void Optical::onDeviceChanged(const QString &id)

@@ -26,6 +26,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -108,6 +109,20 @@ bool OpticalEventReceiver::handleDropFiles(const QList<QUrl> &fromUrls, const QU
                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
         return true;
+    }
+
+    return false;
+}
+
+bool OpticalEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
+{
+    if (url.scheme() == OpticalHelper::scheme()) {
+        const QString &dev { OpticalHelper::burnDestDevice(url) };
+        const QUrl &rootUrl { OpticalHelper::discRoot(dev) };
+        if (rootUrl.isValid() && UniversalUtils::urlEquals(url, rootUrl)) {
+            *iconName = "media-optical";
+            return true;
+        }
     }
 
     return false;
