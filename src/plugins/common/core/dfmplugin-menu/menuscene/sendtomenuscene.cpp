@@ -89,36 +89,29 @@ bool SendToMenuScene::create(QMenu *parent)
     if (d->isEmptyArea)
         return AbstractMenuScene::create(parent);
 
-    QAction *actionSendTo = nullptr;
-    QMenu *menuSendTo = nullptr;
+    QAction *actionSendTo = parent->addAction(d->predicateName.value(ActionID::kSendTo));
+    d->predicateAction[ActionID::kSendTo] = actionSendTo;
+    actionSendTo->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSendTo));
 
-    auto sendToActionInit = [&]() {
-        actionSendTo = parent->addAction(d->predicateName.value(ActionID::kSendTo));
-        d->predicateAction[ActionID::kSendTo] = actionSendTo;
-        actionSendTo->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSendTo));
+    QMenu *menuSendTo = new QMenu(parent);
+    actionSendTo->setMenu(menuSendTo);
 
-        menuSendTo = new QMenu(parent);
-        actionSendTo->setMenu(menuSendTo);
-    };
+    bool hasTargetItem = false;
 
     // create link
     if (d->selectFiles.count() == 1) {
-        if (!actionSendTo)
-            sendToActionInit();
-
         QAction *actionLink = menuSendTo->addAction(d->predicateName[ActionID::kCreateSymlink]);
         actionLink->setProperty(ActionPropertyKey::kActionID, ActionID::kCreateSymlink);
         d->predicateAction[ActionID::kCreateSymlink] = actionLink;
+        hasTargetItem = true;
     }
 
     // send to desktop
     if (!d->onDesktop && !d->isFocusOnDDEDesktopFile) {
-        if (!actionSendTo)
-            sendToActionInit();
-
         QAction *actionToDesktop = menuSendTo->addAction(d->predicateName[ActionID::kSendToDesktop]);
         actionToDesktop->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToDesktop);
         d->predicateAction[ActionID::kSendToDesktop] = actionToDesktop;
+        hasTargetItem = true;
     }
 
     if (!d->isFocusOnDDEDesktopFile && !d->isSystemPathIncluded) {
@@ -141,9 +134,12 @@ bool SendToMenuScene::create(QMenu *parent)
                 QString actId = ActionID::kSendToRemovablePrefix + QString::number(idx++);
                 d->predicateAction.insert(actId, act);
                 act->setProperty(ActionPropertyKey::kActionID, actId);
+                hasTargetItem = true;
             }
         }
     }
+    if (!hasTargetItem)
+        actionSendTo->setVisible(false);
 
     return AbstractMenuScene::create(parent);
 }
