@@ -256,12 +256,13 @@ bool ComputerUtils::checkGvfsMountExist(const QUrl &url, int timeout)
         return true;
     setCursorState(true);
 
-    QString path = url.path();
+    std::string path = url.path().toStdString();
     bool exist = false;
     auto &&fu = QtConcurrent::run([path, &exist] {
-        DecoratorFile f(path);
-        exist = f.exists();
-        qDebug() << "gvfs path: " << path << ", exist: " << exist;
+        QThread::msleep(100);
+        int ret = access(path.c_str(), F_OK);
+        exist = (ret == 0);
+        qDebug() << "gvfs path: " << path.c_str() << ", exist: " << exist << ", error: " << strerror(ret);
 
         QMutexLocker lk(&mtxForCheckGvfs);
         condForCheckGvfs.wakeAll();

@@ -23,6 +23,7 @@
 #include "models/fileviewmodel.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
@@ -197,7 +198,8 @@ void FileDataHelper::updateRootInfoStatus(const QString &, const QString &mountP
     auto mpt = QUrl::fromLocalFile(mountPoint);
     const QList<QUrl> &&caches = rootInfoMap.keys();
     for (const auto &url : caches) {
-        if (mpt.isParentOf(url)) {   // if parent node is updated, then all the children should be updated too.
+        // if parent node is updated, then all the children should be updated too.
+        if (mpt.isParentOf(url) || UniversalUtils::urlEquals(mpt, url)) {
             auto &node = rootInfoMap[url];
             if (node) {
                 node->needTraversal = true;
