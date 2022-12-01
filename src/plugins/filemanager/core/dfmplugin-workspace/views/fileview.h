@@ -155,6 +155,7 @@ public slots:
     void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFilterCallback(const quint64 windowID, const QUrl &url, const FileViewFilterCallback callback);
     void trashStateChanged();
+    void onFileHiddenChanged(quint64 winId, const QList<QUrl> &hiddenFiles);
 
     void onSelectAndEdit(const QUrl &url);
 

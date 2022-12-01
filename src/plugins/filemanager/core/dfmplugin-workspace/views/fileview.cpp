@@ -41,10 +41,12 @@
 #include "utils/filemodelmanager.h"
 #include "events/workspaceeventsequence.h"
 
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QResizeEvent>
@@ -90,6 +92,8 @@ FileView::~FileView()
     disconnect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
     disconnect(model(), &FileSortFilterProxyModel::stateChanged, this, &FileView::onModelStateChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
+
+    dpfSignalDispatcher->unsubscribe(GlobalEventType::kHideFiles, this, &FileView::onFileHiddenChanged);
 }
 
 QWidget *FileView::widget() const
@@ -911,6 +915,19 @@ void FileView::trashStateChanged()
         model()->update();
 }
 
+void FileView::onFileHiddenChanged(quint64, const QList<QUrl> &hiddenFiles)
+{
+    for (const auto &hidden : hiddenFiles) {
+        QDir locatedDir(hidden.toLocalFile());
+        locatedDir.cdUp();
+        QUrl locatedUrl = QUrl::fromLocalFile(locatedDir.absolutePath());
+        if (UniversalUtils::urlEquals(locatedUrl, rootUrl())) {
+            reloadView();
+            return;
+        }
+    }
+}
+
 bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     return DListView::edit(index, trigger, event);
@@ -1523,6 +1540,8 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, [this] { this->update(); });
     connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
+
+    dpfSignalDispatcher->subscribe(GlobalEventType::kHideFiles, this, &FileView::onFileHiddenChanged);
 }
 
 void FileView::updateStatusBar()

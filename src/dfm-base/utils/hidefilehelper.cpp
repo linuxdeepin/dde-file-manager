@@ -127,10 +127,10 @@ bool HideFileHelper::save() const
     if (d->dfile->open(DFMIO::DFile::OpenFlag::kWriteOnly)) {
         d->dfile->write(data);
         d->dfile->close();
+        d->updateAttribute();
+        return true;
     }
-    d->updateAttribute();
-
-    return true;
+    return false;
 }
 
 bool HideFileHelper::insert(const QString &name)

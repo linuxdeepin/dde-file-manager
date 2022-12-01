@@ -112,6 +112,13 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
 
     if (!fileCache->containsChild(toUrl))
         dofileCreated(toUrl);
+
+    // TODO(lanxs) TODO(xust) .hidden file's attribute changed signal not emitted in removable disks (vfat/exfat).
+    // but renamed from a .goutputstream_xxx file
+    // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
+    // when the file is modified in other way.
+    if (UniversalUtils::urlEquals(hiddenFileUrl, toUrl))
+        Q_EMIT reloadView();
 }
 
 void RootInfo::dofileCreated(const QUrl &url)
@@ -126,6 +133,8 @@ void RootInfo::doFileUpdated(const QUrl &url)
     if (info)
         info->refresh();
 
+    // NOTE: GlobalEventType::kHideFiles event is watched in fileview, but this can be used to notify update view
+    // when the file is modified in other way.
     if (UniversalUtils::urlEquals(hiddenFileUrl, url))
         Q_EMIT reloadView();
 }
