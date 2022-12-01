@@ -457,7 +457,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             action->setIcon(FileUtils::searchAppIcon(desktopFile));
             action->setProperty("app", app);
             if (urls.length() == 1) {
-                action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
+                action->setProperty("url", QVariant::fromValue(info->fileUrl()));
             } else {
 #if 0       // fix bug202007010011 优化文件判断效率，提升右键菜单响应速度
                 DUrlList redirectedUrlList;
