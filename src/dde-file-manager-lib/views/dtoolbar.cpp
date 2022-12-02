@@ -36,7 +36,7 @@
 
 const int DToolBar::ButtonWidth = 36;
 const int DToolBar::ButtonHeight = 36;
-static const QSize iconSize(16, 16);
+static const QSize iconSize(32, 32);
 
 /*!
  * \class DToolBar
