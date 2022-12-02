@@ -66,6 +66,9 @@ private slots:
     void slotSetInfo(QMap<QString, QString> mapNewDatas);
 
 private:
+    QPixmap getClearPixmap(const QString &path);
+
+private:
     DBusSystemInfo *m_systemInfo = nullptr;
     // 缓存计算机属性值项
     QHash<QString, QLabel*> m_mapItems = {};
