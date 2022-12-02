@@ -78,10 +78,10 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
         w->setVisible(true);
 
         if (!kLastSelectedUrl.isEmpty() && kLastSelectedUrl.isValid()) {
-            setDetailViewSelectFileUrl(windowId, kLastSelectedUrl);
+            setDetailViewByUrl(w, kLastSelectedUrl);
         } else {
             auto window = FMWindowsIns.findWindowById(windowId);
-            setDetailViewSelectFileUrl(windowId, window->currentUrl());
+            setDetailViewByUrl(w, window->currentUrl());
         }
     } else {
         if (w)
@@ -94,11 +94,16 @@ void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl 
     kLastSelectedUrl = url;
 
     DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
+    setDetailViewByUrl(w, kLastSelectedUrl);
+}
+
+void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url)
+{
     if (w) {
         if (!w->isVisible())
             return;
 
-        w->setCurrentUrl(url);
+        w->setCurrentUrl(url, 0);
         QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(url);
         if (!widgetMap.isEmpty()) {
             QList<int> indexs = widgetMap.keys();
@@ -107,6 +112,11 @@ void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl 
             }
         }
     }
+}
+
+void DetailSpaceHelper::resetSelectedUrl()
+{
+    kLastSelectedUrl.clear();
 }
 
 QMutex &DetailSpaceHelper::mutex()

@@ -22,6 +22,7 @@
 */
 #include "detailspacewidget.h"
 #include "detailview.h"
+#include "utils/detailspacehelper.h"
 
 #include <QHBoxLayout>
 
@@ -36,6 +37,7 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
+    DetailSpaceHelper::resetSelectedUrl();
     setCurrentUrl(url, 0);
 }
 

@@ -41,6 +41,8 @@ public:
     static void removeDetailSpace(quint64 windowId);
     static void showDetailView(quint64 windowId, bool checked);
     static void setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url);
+    static void setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url);
+    static void resetSelectedUrl();
 
 private:
     static QMutex &mutex();
