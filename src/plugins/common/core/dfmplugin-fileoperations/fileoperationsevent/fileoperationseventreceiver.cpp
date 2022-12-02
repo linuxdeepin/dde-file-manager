@@ -423,7 +423,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
         }
     }
 
-    QString newPath = newDocmentName(url.path(), QString(), CreateFileType::kCreateFileTypeFolder);
+    const QString newPath = newDocmentName(url.path(), QString(), CreateFileType::kCreateFileTypeFolder);
     if (newPath.isEmpty())
         return false;
 
@@ -449,7 +449,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
                                                           const QVariant custom, OperatorCallback callbackImmediately)
 {
     if (url.isLocalFile()) {
-        QString newPath = newDocmentName(url.path(), suffix, fileType);
+        const QString newPath = newDocmentName(url.path(), suffix, fileType);
         if (newPath.isEmpty())
             return newPath;
 
@@ -482,10 +482,10 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const QUrl tempUrl, const QString suffix, const QVariant custom, OperatorCallback callbackImmediately)
 {
     if (url.isLocalFile()) {
-        auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        auto fileInfo = InfoFactory::create<AbstractFileInfo>(tempUrl);
         if (!fileInfo)
             return QString();
-        QString newPath = newDocmentName(url.path(), fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName), suffix);
+        const QString newPath = newDocmentName(url.path(), fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName), suffix);
         if (newPath.isEmpty())
             return QString();
 

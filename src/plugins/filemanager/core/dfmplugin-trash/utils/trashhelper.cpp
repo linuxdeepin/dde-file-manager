@@ -241,6 +241,16 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     return false;
 }
 
+bool TrashHelper::checkCanMove(const QUrl &url)
+{
+    if (url.scheme() != scheme())
+        return false;
+    if (!FileUtils::isTrashRootFile(UrlRoute::urlParent(url)))
+        return false;
+
+    return true;
+}
+
 bool TrashHelper::detailViewIcon(const QUrl &url, QString *iconName)
 {
     if (UniversalUtils::urlEquals(url, rootUrl())) {

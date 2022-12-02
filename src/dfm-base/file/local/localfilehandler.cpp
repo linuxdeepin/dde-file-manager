@@ -107,31 +107,7 @@ bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
         return false;
     }
 
-    QUrl templateFile = tempUrl;
-    if (!templateFile.isValid()) {
-        DecoratorFileInfo targetFileInfo(url);
-        const QString &suffix = targetFileInfo.suffix();
-
-        DecoratorFileEnumerator enumerator(StandardPaths::location(StandardPaths::kTemplatesPath), {}, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)));
-        while (enumerator.hasNext()) {
-            if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
-                templateFile = enumerator.next();
-                break;
-            }
-        }
-    }
-
-    if (templateFile.isValid()) {
-        QByteArray arr = DecoratorFile(templateFile).readAll();
-        if (!arr.isEmpty()) {
-            qint64 writeCount = DecoratorFile(url).writeAll(arr, DFMIO::DFile::OpenFlag::kAppend);
-            if (writeCount <= 0)
-                qWarning() << "file touch succ, but write template failed";
-        }
-
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-        fileInfo->refresh();
-    }
+    d->loadTemplateInfo(url, tempUrl);
 
     FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, url);
 
@@ -1010,6 +986,35 @@ QString LocalFileHandlerPrivate::getInternetShortcutUrl(const QString &path)
     QString url = settings.value("URL").toString();
     settings.endGroup();
     return url;
+}
+
+void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &templateUrl /*= QUrl()*/)
+{
+    QUrl templateFile = templateUrl;
+    if (!templateFile.isValid()) {
+        DecoratorFileInfo targetFileInfo(url);
+        const QString &suffix = targetFileInfo.suffix();
+
+        DecoratorFileEnumerator enumerator(StandardPaths::location(StandardPaths::kTemplatesPath), {}, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)));
+        while (enumerator.hasNext()) {
+            if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
+                templateFile = enumerator.next();
+                break;
+            }
+        }
+    }
+
+    if (templateFile.isValid()) {
+        QByteArray arr = DecoratorFile(templateFile).readAll();
+        if (!arr.isEmpty()) {
+            qint64 writeCount = DecoratorFile(url).writeAll(arr, DFMIO::DFile::OpenFlag::kAppend);
+            if (writeCount <= 0)
+                qWarning() << "file touch succ, but write template failed";
+        }
+
+        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        fileInfo->refresh();
+    }
 }
 
 bool LocalFileHandlerPrivate::doOpenFile(const QUrl &url, const QString &desktopFile /*= QString()*/)

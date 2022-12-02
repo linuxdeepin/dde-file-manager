@@ -148,6 +148,7 @@ void Trash::addCustomTopWidget()
 void Trash::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileCanMove", TrashHelper::instance(), &TrashHelper::checkCanMove);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", TrashHelper::instance(), &TrashHelper::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);

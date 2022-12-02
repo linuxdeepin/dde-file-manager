@@ -118,7 +118,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
 
         for (const QUrl &url : fromUrls) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-            if (event->dropAction() == Qt::DropAction::MoveAction && !info->canRename()) {
+            if (event->dropAction() == Qt::DropAction::MoveAction && !info->canRename() && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
                 view->setViewSelectState(false);
                 event->ignore();
                 return true;

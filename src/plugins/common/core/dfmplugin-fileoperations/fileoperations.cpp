@@ -212,6 +212,21 @@ void FileOperations::initEventHandle()
                                                                                      const QString,
                                                                                      const QVariant,
                                                                                      OperatorCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
+
+    dpfSignalDispatcher->subscribe(GlobalEventType::kTouchFile,
+                                   FileOperationsEventReceiver::instance(),
+                                   static_cast<QString (FileOperationsEventReceiver::*)(const quint64,
+                                                                                        const QUrl,
+                                                                                        const QUrl,
+                                                                                        const QString)>(&FileOperationsEventReceiver::handleOperationTouchFile));
+    dpfSignalDispatcher->subscribe(GlobalEventType::kTouchFile,
+                                   FileOperationsEventReceiver::instance(),
+                                   static_cast<void (FileOperationsEventReceiver::*)(const quint64,
+                                                                                     const QUrl,
+                                                                                     const QUrl,
+                                                                                     const QString,
+                                                                                     const QVariant,
+                                                                                     OperatorCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfSignalDispatcher->subscribe(GlobalEventType::kCreateSymlink,
                                    FileOperationsEventReceiver::instance(),
                                    static_cast<bool (FileOperationsEventReceiver::*)(const quint64,

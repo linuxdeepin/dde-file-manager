@@ -453,7 +453,8 @@ bool FileUtils::isCdRomDevice(const QUrl &url)
 
 bool FileUtils::trashIsEmpty()
 {
-    auto info = InfoFactory::create<AbstractFileInfo>(trashRootUrl());
+    // not use cache, because some times info unreliable, such as watcher inited temporality
+    auto info = InfoFactory::create<AbstractFileInfo>(trashRootUrl(), false);
     if (info) {
         return info->countChildFile() == 0;
     }

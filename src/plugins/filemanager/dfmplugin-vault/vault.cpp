@@ -27,6 +27,7 @@
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(QString *)
+Q_DECLARE_METATYPE(Qt::DropAction *)
 
 using namespace dfmplugin_vault;
 
@@ -53,6 +54,8 @@ bool Vault::start()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", VaultFileHelper::instance(), &VaultFileHelper::writeUrlsToClipboard);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFiles", VaultFileHelper::instance(), &VaultFileHelper::renameFiles);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultFileHelper::instance(), &VaultFileHelper::renameFilesAddText);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", VaultFileHelper::instance(), &VaultFileHelper::checkDragDropAction);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", VaultFileHelper::instance(), &VaultFileHelper::handleDropFiles);
 
     return true;
 }

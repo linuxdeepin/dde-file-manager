@@ -79,6 +79,7 @@ public:
                                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
+    bool checkCanMove(const QUrl &url);
     bool detailViewIcon(const QUrl &url, QString *iconName);
 
     bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);

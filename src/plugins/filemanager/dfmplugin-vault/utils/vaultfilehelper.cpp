@@ -155,7 +155,7 @@ bool VaultFileHelper::touchFile(const quint64 windowId, const QUrl url, const DF
     if (url.scheme() != scheme())
         return false;
 
-    const QUrl &dirUrl = transUrlsToLocal({ url }).first();
+    const QUrl dirUrl = transUrlsToLocal({ url }).first();
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFile,
                                  windowId, dirUrl, type, *error);
     return true;
@@ -166,7 +166,7 @@ bool VaultFileHelper::touchCustomFile(const quint64 windowId, const QUrl url, co
     if (url.scheme() != scheme())
         return false;
 
-    const QUrl &dirUrl = transUrlsToLocal({ url }).first();
+    const QUrl dirUrl = transUrlsToLocal({ url }).first();
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFile,
                                  windowId, dirUrl, tempUrl, *error);
     return true;
@@ -212,6 +212,35 @@ bool VaultFileHelper::renameFilesAddText(const quint64 windowId, const QList<QUr
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair);
 
     return true;
+}
+
+bool VaultFileHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
+{
+    Q_UNUSED(urls);
+
+    if (urlTo.scheme() != scheme())
+        return false;
+
+    if (*action == Qt::MoveAction) {
+        *action = Qt::CopyAction;
+        return true;
+    }
+
+    return false;
+}
+
+bool VaultFileHelper::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl)
+{
+    if (toUrl.scheme() == scheme()) {
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopy,
+                                     0,
+                                     fromUrls,
+                                     toUrl,
+                                     DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        return true;
+    }
+
+    return false;
 }
 
 QList<QUrl> VaultFileHelper::transUrlsToLocal(const QList<QUrl> &urls)

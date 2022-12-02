@@ -49,6 +49,7 @@ public:
     bool addExecutableFlagAndExecuse(const QString &path, int flag);
     bool isFileWindowsUrlShortcut(const QString &path);
     QString getInternetShortcutUrl(const QString &path);
+    void loadTemplateInfo(const QUrl &url, const QUrl &templateUrl = QUrl());
 
     bool doOpenFile(const QUrl &url, const QString &desktopFile = QString());
     bool doOpenFiles(const QList<QUrl> &urls, const QString &desktopFile = QString());
