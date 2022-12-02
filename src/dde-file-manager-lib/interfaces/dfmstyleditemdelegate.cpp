@@ -5,6 +5,7 @@
 #include "dfmstyleditemdelegate.h"
 #include "dfileviewhelper.h"
 #include "dfilesystemmodel.h"
+#include "pixmapiconextend.h"
 #include "private/dstyleditemdelegate_p.h"
 
 #include <QDebug>
@@ -18,12 +19,10 @@
 DFMStyledItemDelegate::DFMStyledItemDelegate(DFileViewHelper *parent)
     : DFMStyledItemDelegate(*new DFMStyledItemDelegatePrivate(this), parent)
 {
-
 }
 
 DFMStyledItemDelegate::~DFMStyledItemDelegate()
 {
-
 }
 
 DFileViewHelper *DFMStyledItemDelegate::parent() const
@@ -86,7 +85,7 @@ void DFMStyledItemDelegate::hideAllIIndexWidget()
     hideNotEditingIndexWidget();
 
     if (d->editingIndex.isValid()) {
-        parent()->setIndexWidget(d->editingIndex, 0);
+        parent()->setIndexWidget(d->editingIndex, nullptr);
 
         d->editingIndex = QModelIndex();
     }
@@ -94,7 +93,6 @@ void DFMStyledItemDelegate::hideAllIIndexWidget()
 
 void DFMStyledItemDelegate::hideNotEditingIndexWidget()
 {
-
 }
 
 void DFMStyledItemDelegate::commitDataAndCloseActiveEditor()
@@ -118,8 +116,7 @@ QRect DFMStyledItemDelegate::fileNameRect(const QStyleOptionViewItem &option, co
     const QList<int> roleList = parent()->columnRoleList();
     int fileNameIndex = 0;
     for (int i = 0; i < roleList.length(); ++i) {
-        if (roleList.at(i) == DFileSystemModel::FileDisplayNameRole ||
-                roleList.at(i) == DFileSystemModel::FileNameRole ) {
+        if (roleList.at(i) == DFileSystemModel::FileDisplayNameRole || roleList.at(i) == DFileSystemModel::FileNameRole) {
             fileNameIndex = i;
             break;
         }
@@ -192,8 +189,7 @@ QList<QRectF> DFMStyledItemDelegate::drawText(const QModelIndex &index, QPainter
 }
 
 DFMStyledItemDelegate::DFMStyledItemDelegate(DFMStyledItemDelegatePrivate &dd, DFileViewHelper *parent)
-    : QStyledItemDelegate(parent)
-    , d_ptr(&dd)
+    : QStyledItemDelegate(parent), d_ptr(&dd)
 {
     dd.init();
 }
@@ -217,7 +213,8 @@ QList<QRectF> DFMStyledItemDelegate::getCornerGeometryList(const QRectF &baseRec
     const QSizeF &offset_size = cornerSize / 2;
 
     list.append(QRectF(QPointF(baseRect.right() - offset - offset_size.width(),
-                           baseRect.bottom() - offset - offset_size.height()), cornerSize));
+                               baseRect.bottom() - offset - offset_size.height()),
+                       cornerSize));
     list.append(QRectF(QPointF(baseRect.left() + offset - offset_size.width(), list.first().top()), cornerSize));
     list.append(QRectF(QPointF(list.at(1).left(), baseRect.top() + offset - offset_size.height()), cornerSize));
     list.append(QRectF(QPointF(list.first().left(), list.at(2).top()), cornerSize));
@@ -227,13 +224,6 @@ QList<QRectF> DFMStyledItemDelegate::getCornerGeometryList(const QRectF &baseRec
 
 QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio = 1.0, QIcon::Mode mode, QIcon::State state)
 {
-    // ###(zccrs): 开启Qt::AA_UseHighDpiPixmaps后，QIcon::pixmap会自动执行 pixmapSize *= qApp->devicePixelRatio()
-    //             而且，在有些QIconEngine的实现中，会去调用另一个QIcon::pixmap，导致 pixmapSize 在这种嵌套调用中越来越大
-    //             最终会获取到一个是期望大小几倍的图片，由于图片太大，会很快将 QPixmapCache 塞满，导致后面再调用QIcon::pixmap
-    //             读取新的图片时无法缓存，非常影响图片绘制性能。此处在获取图片前禁用 Qt::AA_UseHighDpiPixmaps，自行处理图片大小问题
-    bool useHighDpiPixmaps = qApp->testAttribute(Qt::AA_UseHighDpiPixmaps);
-    qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, false);
-
     if (icon.isNull())
         return QPixmap();
 
@@ -241,71 +231,7 @@ QPixmap DFMStyledItemDelegate::getIconPixmap(const QIcon &icon, const QSize &siz
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    QSize icon_size = icon.actualSize(size, mode, state);
-    //取出icon的真实大小
-    QList<QSize> iconSizeList = icon.availableSizes();
-    QSize iconRealSize;
-    if (iconSizeList.count() > 0)
-        iconRealSize = iconSizeList.first();
-    else
-        iconRealSize = icon_size;
-    if (iconRealSize.width() <= 0 || iconRealSize.height() <= 0) {
-//        return icon.pixmap(iconRealSize);
-        return icon.pixmap(icon_size);
-    }
-
-    //确保特殊比例icon的高或宽不为0
-    bool isSpecialSize = false;
-    QSize tempSize(size.width(), size.height());
-    while (icon_size.width() < 1) {
-        tempSize.setHeight(tempSize.height() * 2);
-        icon_size = icon.actualSize(tempSize, mode, state);
-        isSpecialSize = true;
-    }
-    while (icon_size.height() < 1) {
-        tempSize.setWidth(tempSize.width() * 2);
-        icon_size = icon.actualSize(tempSize, mode, state);
-        isSpecialSize = true;
-    }
-
-    if ((icon_size.width() > size.width() || icon_size.height() > size.height()) && !isSpecialSize)
-        icon_size.scale(size, Qt::KeepAspectRatio);
-
-    QSize pixmapSize = icon_size * pixelRatio;
-    QPixmap px = icon.pixmap(pixmapSize, mode, state);
-
-    // restore the value
-    qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, useHighDpiPixmaps);
-
-//    if (icon_size.width() == 0) {
-//        icon_size.setWidth(1);
-//    }
-//    if (icon_size.height() == 0) {
-//        icon_size.setHeight(1);
-//    }
-
-//    icon_size = icon_size * pixelRatio;
-//    px = px.scaled(icon_size.width(), icon_size.height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-
-    //约束特殊比例icon的尺寸
-    if (isSpecialSize) {
-        if (px.width() > size.width() * pixelRatio) {
-            px = px.scaled(size.width() * CEIL(pixelRatio), px.height(), Qt::IgnoreAspectRatio);
-        } else if (px.height() > size.height() * pixelRatio) {
-            px = px.scaled(px.width(), size.height() * CEIL(pixelRatio), Qt::IgnoreAspectRatio);
-        }
-    }
-
-    //类型限定符的更改会导致缩放小数点丢失，从而引发缩放因子的bug
-    if (px.width() > icon_size.width() * pixelRatio) {
-        px.setDevicePixelRatio(px.width() / qreal(icon_size.width()));
-    } else if (px.height() > icon_size.height() * pixelRatio) {
-        px.setDevicePixelRatio(px.height() / qreal(icon_size.height()));
-    } else {
-        px.setDevicePixelRatio(pixelRatio);
-    }
-
-    return px;
+    return PixmapIconExtend(icon).pixmapExtend(size, pixelRatio, mode, state);
 }
 
 void DFMStyledItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const
@@ -385,7 +311,7 @@ void DFMStyledItemDelegate::paintCircleList(QPainter *painter, QRectF boundingRe
         //根据tag颜色设置笔刷
         painter->setBrush(QBrush(color));
         circle.addEllipse(QRectF(QPointF(boundingRect.right() - diameter, boundingRect.top()), boundingRect.bottomRight()));
-//        painter->fillPath(circle, color);
+        //        painter->fillPath(circle, color);
         painter->drawPath(circle);
         boundingRect.setRight(boundingRect.right() - diameter / 2);
     }
