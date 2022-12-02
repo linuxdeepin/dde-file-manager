@@ -485,7 +485,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
         auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo)
             return QString();
-        QString newPath = newDocmentName(url.path(), fileInfo->completeBaseName(), suffix);
+        QString newPath = newDocmentName(url.path(), fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName), suffix);
         if (newPath.isEmpty())
             return QString();
 

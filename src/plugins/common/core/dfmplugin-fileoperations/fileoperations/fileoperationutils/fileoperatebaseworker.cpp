@@ -1055,11 +1055,11 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     if (fromInfo->isSymLink()) {
         result = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (result)
-            currentWriteSize += newTargetInfo->size();
+            zeroOrlinkOrDirWriteSize += newTargetInfo->size() > 0 ? newTargetInfo->size() : FileUtils::getMemoryPageSize();
     } else if (fromInfo->isDir()) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, skip);
         if (result || skip)
-            currentWriteSize += FileUtils::getMemoryPageSize();
+            zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
     } else {
         result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
     }
@@ -1090,7 +1090,7 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
     if (fromInfo->size() <= 0) {
         // 对文件加权
         setTargetPermissions(fromInfo, toInfo);
-        currentWriteSize += dirSize;
+        zeroOrlinkOrDirWriteSize += dirSize;
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->url());
         return true;
     }
@@ -1291,7 +1291,7 @@ qint64 FileOperateBaseWorker::getWriteDataSize()
             writeSize = (currentSectorsWritten - targetDeviceStartSectorsWritten) * targetLogSecionSize;
     }
 
-    writeSize += skipWritSize;
+    writeSize += (skipWritSize + zeroOrlinkOrDirWriteSize);
 
     return writeSize;
 }
