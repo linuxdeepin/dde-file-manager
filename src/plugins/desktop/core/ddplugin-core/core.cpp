@@ -31,6 +31,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 #include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 
@@ -50,6 +51,7 @@ static void registerFileSystem()
 {
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
     InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
+    InfoFactory::regClass<DesktopFileInfo>(Global::Scheme::kDesktop);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
 }

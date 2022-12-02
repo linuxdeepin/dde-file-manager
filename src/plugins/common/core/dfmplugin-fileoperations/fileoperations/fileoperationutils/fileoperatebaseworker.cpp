@@ -720,10 +720,17 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     newTargetUrl.setPath(newPath);
 
     newTargetInfo.reset();
-    newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl);
+    const QString &suffix = fromInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kSuffix);
+    const QString &mimeTypeName = fromInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kMimeTypeName);
+    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
+        && mimeTypeName == "application/x-desktop")
+        newTargetUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kDesktop);
 
-    if (!newTargetInfo) {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
+    QString error;
+    newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl, true, &error);
+
+    if (!newTargetInfo || !error.isEmpty()) {
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError, error);
         cancelThreadProcessingError();
         setSkipValue(skip, action);
         if (skip && *skip)

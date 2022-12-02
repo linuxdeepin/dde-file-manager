@@ -29,6 +29,7 @@
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/utils/clipboard.h"
@@ -55,6 +56,7 @@ void Core::initialize()
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
+    InfoFactory::regClass<DesktopFileInfo>(Global::Scheme::kDesktop);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
     // 初始化剪切板

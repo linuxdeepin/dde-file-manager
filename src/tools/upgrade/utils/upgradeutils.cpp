@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
+#include <QDebug>
 
 namespace dfm_upgrade {
 namespace UpgradeUtils {
