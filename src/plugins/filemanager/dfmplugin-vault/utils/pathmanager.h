@@ -35,8 +35,9 @@ public:
 
     static QString vaultUnlockPath();
 
-    static QString makeVaultLocalPath(QString path = "", QString base = "");
+    static QString makeVaultLocalPath(const QString &path = "", const QString &base = "");
 
+    static QString addPathSlash(const QString &path);
 signals:
 
 public slots:

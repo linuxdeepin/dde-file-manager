@@ -45,7 +45,7 @@ public slots:
     void handleSetSelect(quint64 windowId, const QUrl &url);
     bool handleViewExtensionRegister(CustomViewExtensionView view, int index);
     void handleViewExtensionUnregister(int index);
-    bool handleBasicViewExtensionRegister(const QString &scheme, BasicViewFieldFunc func);
+    bool handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme);
     void handleBasicViewExtensionUnregister(const QString &scheme);
     bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
     void handleBasicFiledFilterRemove(const QString &scheme);

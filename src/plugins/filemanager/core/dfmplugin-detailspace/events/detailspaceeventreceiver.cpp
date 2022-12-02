@@ -81,7 +81,7 @@ void DetailSpaceEventReceiver::handleViewExtensionUnregister(int index)
     DetailManager::instance().unregisterExtensionView(index);
 }
 
-bool DetailSpaceEventReceiver::handleBasicViewExtensionRegister(const QString &scheme, BasicViewFieldFunc func)
+bool DetailSpaceEventReceiver::handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme)
 {
     return DetailManager::instance().registerBasicViewExtension(scheme, func);
 }

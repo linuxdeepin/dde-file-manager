@@ -37,6 +37,7 @@ public:
 
 public:
     static ExpandFieldMap basicViewFieldFunc(const QUrl &url);
+    static ExpandFieldMap detailViewFieldFunc(const QUrl &url);
 };
 }
 #endif   // SERVICEMANAGER_H

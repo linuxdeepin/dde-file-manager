@@ -39,11 +39,18 @@ QString PathManager::vaultUnlockPath()
     return makeVaultLocalPath("", kVaultDecryptDirName);
 }
 
-QString PathManager::makeVaultLocalPath(QString path, QString base)
+QString PathManager::makeVaultLocalPath(const QString &path, const QString &base)
 {
     if (base.isEmpty()) {
-        base = kVaultDecryptDirName;
+        return DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), QString(kVaultDecryptDirName).toStdString().c_str(),
+                                              path.toStdString().c_str(), nullptr);
     }
     return DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), base.toStdString().c_str(),
                                           path.toStdString().c_str(), nullptr);
+}
+
+QString PathManager::addPathSlash(const QString &path)
+{
+    return DFMIO::DFMUtils::buildFilePath(path.toStdString().c_str(),
+                                          QString("/").toStdString().c_str(), nullptr);
 }

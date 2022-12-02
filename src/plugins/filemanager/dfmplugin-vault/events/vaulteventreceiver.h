@@ -26,6 +26,7 @@ public slots:
     void handleHideFilesResult(const quint64 &winId, const QList<QUrl> &urls, bool ok);
     bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
     bool handlePathtoVirtual(const QList<QUrl> files, QList<QUrl> *virtualFiles);
+    bool detailViewIcon(const QUrl &url, QString *iconName);
 };
 }
 #endif   // VAULTEVENTRECEIVER_H

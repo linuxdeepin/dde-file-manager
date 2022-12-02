@@ -108,9 +108,16 @@ void VaultVisibleManager::pluginServiceRegister()
         BasicViewFieldFunc func { ServiceManager::basicViewFieldFunc };
         dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
                              func, VaultHelper::instance()->scheme());
-        QStringList &&filters { "kPermission" };
+        BasicViewFieldFunc detailViewFunc { ServiceManager::detailViewFieldFunc };
+        dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Register",
+                             detailViewFunc, VaultHelper::instance()->scheme());
+
+        QStringList &&filters { kPermission };
         dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",
                              VaultHelper::instance()->scheme(), filters);
+        QStringList &&filtes { kFileChangeTimeField, kFileSizeField };
+        dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
+                             VaultHelper::instance()->sourceRootUrlWithSlash().path(), filtes);
 
         dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
         dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");

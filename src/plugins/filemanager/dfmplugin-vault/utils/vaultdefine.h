@@ -40,6 +40,52 @@ inline constexpr char kRSACiphertextFileName[] { "rsaclipher" };
 inline constexpr char kPasswordHintFileName[] { "passwordHint" };
 inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
 
+//propertydailog and detaillview property change
+inline constexpr char kFieldReplace[] { "kFieldReplace" };
+inline constexpr char kFieldInsert[] { "kFieldInsert" };
+
+//public
+inline constexpr char kNotAll[] { "kNotAll" };
+inline constexpr char kFileSize[] { "kFileSize" };
+inline constexpr char kFileType[] { "kFileType" };
+
+//propertydailog
+inline constexpr char kFileCount[] { "kFileCount" };
+inline constexpr char kFilePosition[] { "kFilePosition" };
+inline constexpr char kFileCreateTime[] { "kFileCreateTime" };
+inline constexpr char kFileAccessedTime[] { "kFileAccessedTime" };
+inline constexpr char kFileModifiedTime[] { "kFileModifiedTime" };
+
+//detailview
+inline constexpr char kFileName[] { "kFileName" };
+inline constexpr char kFileViewSize[] { "kFileViewSize" };
+inline constexpr char kFileDuration[] { "kFileDuration" };
+inline constexpr char kFileInterviewTime[] { "kFileInterviewTime" };
+inline constexpr char kFileChangeTIme[] { "kFileChangeTIme" };
+
+//property Filter
+inline constexpr char kNotFilter[] { "kNotFilter" };
+inline constexpr char kIconTitle[] { "kIconTitle" };
+inline constexpr char kBasisInfo[] { "kBasisInfo" };
+inline constexpr char kPermission[] { "kPermission" };
+inline constexpr char kFileSizeFiled[] { "kFileSizeFiled" };
+inline constexpr char kFileCountFiled[] { "kFileCountFiled" };
+inline constexpr char kFileTypeFiled[] { "kFileTypeFiled" };
+inline constexpr char kFilePositionFiled[] { "kFilePositionFiled" };
+inline constexpr char kFileCreateTimeFiled[] { "kFileCreateTimeFiled" };
+inline constexpr char kFileAccessedTimeFiled[] { "kFileAccessedTimeFiled" };
+inline constexpr char kFileModifiedTimeFiled[] { "kFileModifiedTimeFiled" };
+
+inline constexpr char kBasicView[] { "kBasicView" };
+inline constexpr char kIconView[] { "kIconView" };
+inline constexpr char kFileNameField[] { "kFileNameField" };
+inline constexpr char kFileSizeField[] { "kFileSizeField" };
+inline constexpr char kFileViewSizeField[] { "kFileViewSizeField" };
+inline constexpr char kFileDurationField[] { "kFileDurationField" };
+inline constexpr char kFileTypeField[] { "kFileTypeField" };
+inline constexpr char kFileInterviewTimeField[] { "kFileInterviewTimeField" };
+inline constexpr char kFileChangeTimeField[] { "kFileChangeTimeField" };
+
 inline constexpr int kRandomSaltLength { 10 };   //! 随机盐的字节数
 inline constexpr int kIteration { 1024 };   //! pbkdf2迭代次数
 inline constexpr int kIterationTwo { 10000 };   //! pbkdf2迭代次数

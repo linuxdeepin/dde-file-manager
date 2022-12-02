@@ -22,6 +22,7 @@
 
 #include <QDebug>
 #include <QMap>
+#include <QMetaEnum>
 #include <QUrl>
 
 using namespace dfmplugin_detailspace;
@@ -115,10 +116,30 @@ QMap<BasicExpandType, BasicExpandMap> DetailManager::createBasicViewExtensionFie
     QMap<BasicExpandType, BasicExpandMap> expandField {};
     BasicViewFieldFunc func { basicViewFieldFuncHash.value(url.scheme()) };
     if (func != nullptr) {
-        QMap<BasicExpandType, BasicExpandMap> &&field { func(url) };
-        if (!field.isEmpty())
-            expandField.unite(field);
+        auto &&fields { func(url) };
+        if (!fields.isEmpty()) {
+            QMetaEnum &&basicType { QMetaEnum::fromType<BasicExpandType>() };
+            QMetaEnum &&basicFieldType { QMetaEnum::fromType<BasicFieldExpandEnum>() };
+
+            for (auto basicIter = fields.constBegin(); basicIter != fields.constEnd(); ++basicIter) {
+                bool ok { false };
+                BasicExpandMap expandMap {};
+                auto type = static_cast<BasicExpandType>(basicType.keyToValue(basicIter.key().toUtf8().constData(), &ok));
+                if (ok) {
+                    const auto &basicMap = basicIter.value();
+                    for (auto basicMapItr = basicMap.constBegin(); basicMapItr != basicMap.constEnd(); ++basicMapItr) {
+                        ok = false;
+                        auto basicField = static_cast<BasicFieldExpandEnum>(basicFieldType.keyToValue(basicMapItr.key().toUtf8().constData(), &ok));
+                        if (ok)
+                            expandMap.insert(basicField, basicMapItr.value());
+                    }
+
+                    expandField.insert(type, expandMap);
+                }
+            }
+        }
     }
+
     return expandField;
 }
 
@@ -155,12 +176,16 @@ void DetailManager::removeBasicFiledFilters(const QString &scheme)
  */
 DetailFilterType DetailManager::basicFiledFiltes(const QUrl &url)
 {
-    if (detailFilterHash.isEmpty())
+    if (detailFilterHash.isEmpty()) {
         return kNotFilter;
-    else if (!detailFilterHash.contains(url.scheme()))
+    } else if (!detailFilterHash.contains(url.scheme())) {
+        if (detailFilterHash.contains(url.path())) {
+            return detailFilterHash.value(url.path());
+        }
         return kNotFilter;
-    else
+    } else {
         return detailFilterHash.value(url.scheme());
+    }
 }
 
 DetailManager::DetailManager(QObject *parent)

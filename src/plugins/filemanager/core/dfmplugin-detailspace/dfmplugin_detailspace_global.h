@@ -59,15 +59,17 @@ enum BasicFieldExpandEnum : int {
     kFileInterviewTime,
     kFileChangeTIme
 };
+Q_ENUM_NS(BasicFieldExpandEnum)
 
 enum BasicExpandType : int {
     kFieldInsert,
     kFieldReplace
 };
+Q_ENUM_NS(BasicExpandType)
 
 using BasicExpandMap = QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>>;
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
-using BasicViewFieldFunc = std::function<QMap<BasicExpandType, BasicExpandMap>(const QUrl &url)>;
+using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
 
 DPDETAILSPACE_END_NAMESPACE
 

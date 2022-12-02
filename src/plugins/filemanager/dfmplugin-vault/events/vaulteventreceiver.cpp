@@ -9,15 +9,18 @@
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/interfaces/private/watchercache.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/dpf.h>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QString *)
 
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
+
 VaultEventReceiver::VaultEventReceiver(QObject *parent)
     : QObject(parent)
 {
@@ -34,14 +37,17 @@ void VaultEventReceiver::connectEvent()
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, VaultEventReceiver::instance(), &VaultEventReceiver::handleCurrentUrlChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_Operation_OpenItem", this, &VaultEventReceiver::computerOpenItem);
     dpfSignalDispatcher->subscribe(GlobalEventType::kHideFilesResult, VaultEventReceiver::instance(), &VaultEventReceiver::handleHideFilesResult);
+    dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &VaultEventReceiver::changeUrlEventFilter);
 
     dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DragMoveData",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleSideBarItemDragMoveData);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", this, &VaultEventReceiver::handleShortCutPasteFiles);
-    dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &VaultEventReceiver::changeUrlEventFilter);
+
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Url_FetchPathtoVirtual", this, &VaultEventReceiver::handlePathtoVirtual);
+
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", this, &VaultEventReceiver::detailViewIcon);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -175,6 +181,14 @@ bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
         } else {
             return true;
         }
+    }
+}
+
+bool VaultEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
+{
+    if (url.scheme() == VaultHelper::instance()->scheme() && UniversalUtils::urlEquals(url, VaultHelper::instance()->rootUrl())) {
+        *iconName = "drive-harddisk-encrypted";
+        return true;
     }
     return false;
 }

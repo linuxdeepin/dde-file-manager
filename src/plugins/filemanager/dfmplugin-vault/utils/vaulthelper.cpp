@@ -78,6 +78,16 @@ QUrl VaultHelper::sourceRootUrl()
     return url;
 }
 
+QUrl VaultHelper::sourceRootUrlWithSlash()
+{
+    QUrl url;
+    url.setScheme(scheme());
+    QString path = PathManager::makeVaultLocalPath(QString(""), kVaultDecryptDirName);
+    url.setPath(PathManager::addPathSlash(path));
+    url.setHost("");
+    return url;
+}
+
 QUrl VaultHelper::pathToVaultVirtualUrl(const QString &path)
 {
     const QString &localPath = instance()->sourceRootUrl().path();

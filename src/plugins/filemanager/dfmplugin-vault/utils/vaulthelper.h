@@ -54,6 +54,8 @@ public:
 
     QUrl sourceRootUrl();
 
+    QUrl sourceRootUrlWithSlash();
+
     QUrl pathToVaultVirtualUrl(const QString &path);
 
     VaultState state(QString lockBaseDir);
