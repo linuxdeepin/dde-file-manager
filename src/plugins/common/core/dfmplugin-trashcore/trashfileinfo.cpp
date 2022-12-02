@@ -142,7 +142,7 @@ QString TrashFileInfo::fileName() const
 
 QString TrashFileInfo::fileDisplayName() const
 {
-    if (url() == TrashCoreHelper::rootUrl())
+    if (FileUtils::isTrashRootFile(url()))
         return QCoreApplication::translate("PathManager", "Trash");
 
     if (!d->dFileInfo)

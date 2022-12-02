@@ -27,10 +27,9 @@
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_menu_defines.h"
-#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -119,7 +118,7 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
 bool TrashMenuScene::create(QMenu *parent)
 {
     if (d->isEmptyArea) {
-        auto isDisabled = TrashHelper::isEmpty() || !UniversalUtils::urlEquals(d->currentDir, TrashHelper::rootUrl());
+        auto isDisabled = TrashHelper::isEmpty() || !FileUtils::isTrashRootFile(d->currentDir);
 
         auto act = parent->addAction(d->predicateName[TrashActionId::kRestoreAll]);
         act->setProperty(ActionPropertyKey::kActionID, TrashActionId::kRestoreAll);
@@ -231,7 +230,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
             auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (actId == TrashActionId::kRestoreAll
                 || actId == TrashActionId::kEmptyTrash)
-                act->setEnabled(curDir == TrashHelper::rootUrl() && !TrashHelper::isEmpty());
+                act->setEnabled(FileUtils::isTrashRootFile(curDir) && !TrashHelper::isEmpty());
 
             if (sceneName == "SortAndDisplayMenu" && actId == "sort-by") {
                 auto subMenu = act->menu();
@@ -280,7 +279,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
             if (actId == TrashActionId::kRestore
                 || actId == dfmplugin_menu::ActionID::kDelete
                 || actId == dfmplugin_menu::ActionID::kCut)
-                act->setEnabled(curDir == TrashHelper::rootUrl());
+                act->setEnabled(FileUtils::isTrashRootFile(curDir));
 
             if (actId == TrashActionId::kRestore)
                 actionRestore = act;
