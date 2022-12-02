@@ -22,7 +22,8 @@ DFM_BEGIN_NAMESPACE
 class DFMCrumbEdit : public DCrumbEdit
 {
 public:
-    explicit DFMCrumbEdit(QWidget *parent = nullptr): DCrumbEdit(parent)
+    explicit DFMCrumbEdit(QWidget *parent = nullptr)
+        : DCrumbEdit(parent)
     {
         auto doc = QTextEdit::document();
         doc->setDocumentMargin(doc->documentMargin() + 5);
@@ -32,6 +33,7 @@ public:
     {
         return m_isEditByDoubleClick;
     }
+
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override
     {
@@ -41,7 +43,7 @@ protected:
     }
 
 private:
-    bool m_isEditByDoubleClick{false};
+    bool m_isEditByDoubleClick { false };
 };
 
 class DFMTagWidgetPrivate : public QSharedData
@@ -54,20 +56,19 @@ protected:
     DUrl redirectUrl(const DUrl &url);
 
 private:
-    DUrl    m_url;
-    QLabel      *m_tagLable{nullptr};
-    QLabel      *m_tagLeftLable{nullptr};
-    QVBoxLayout *m_mainLayout{nullptr};
-    DFMCrumbEdit  *m_tagCrumbEdit{ nullptr };
-    DTagActionWidget *m_tagActionWidget{ nullptr };
-    DAbstractFileWatcher *m_devicesWatcher{ nullptr };
+    DUrl m_url;
+    QLabel *m_tagLable { nullptr };
+    QLabel *m_tagLeftLable { nullptr };
+    QVBoxLayout *m_mainLayout { nullptr };
+    DFMCrumbEdit *m_tagCrumbEdit { nullptr };
+    DTagActionWidget *m_tagActionWidget { nullptr };
+    DAbstractFileWatcher *m_devicesWatcher { nullptr };
 
     QMap<QString, QString> currentTagWithColorMap;
 
-    DFMTagWidget *q_ptr{ nullptr };
+    DFMTagWidget *q_ptr { nullptr };
     Q_DECLARE_PUBLIC(DFMTagWidget)
 };
-
 
 DUrl DFMTagWidgetPrivate::redirectUrl(const DUrl &url)
 {
@@ -86,20 +87,16 @@ DUrl DFMTagWidgetPrivate::redirectUrl(const DUrl &url)
 }
 
 DFMTagWidgetPrivate::DFMTagWidgetPrivate(DFMTagWidget *qq, const DUrl &url)
-    : m_url(redirectUrl(url))
-    , q_ptr(qq)
+    : m_url(redirectUrl(url)), q_ptr(qq)
 {
-
 }
 
 DFMTagWidgetPrivate::~DFMTagWidgetPrivate()
 {
-
 }
 
-DFMTagWidget::DFMTagWidget(DUrl url, QWidget *parent/*=nullptr*/)
-    : QFrame(parent)
-    , d_private(new DFMTagWidgetPrivate(this, url))
+DFMTagWidget::DFMTagWidget(DUrl url, QWidget *parent /*=nullptr*/)
+    : QFrame(parent), d_private(new DFMTagWidgetPrivate(this, url))
 {
     AC_SET_OBJECT_NAME(this, AC_TAG_WIDGET);
     AC_SET_ACCESSIBLE_NAME(this, AC_TAG_WIDGET);
@@ -109,7 +106,6 @@ DFMTagWidget::DFMTagWidget(DUrl url, QWidget *parent/*=nullptr*/)
 
 DFMTagWidget::~DFMTagWidget()
 {
-
 }
 
 void DFMTagWidget::initUi()
@@ -129,7 +125,7 @@ void DFMTagWidget::initUi()
     d->m_tagLeftLable->setObjectName(name);
     AC_SET_ACCESSIBLE_NAME(d->m_tagLeftLable, AC_TAG_LEFT_LABLE);
 
-    d->m_tagActionWidget =  new DTagActionWidget(this);
+    d->m_tagActionWidget = new DTagActionWidget(this);
     d->m_tagActionWidget->setMaximumHeight(20);
     d->m_tagActionWidget->setObjectName("tagActionWidget");
     AC_SET_ACCESSIBLE_NAME(d->m_tagActionWidget, AC_TAG_ACTION_WIDGET);
@@ -147,7 +143,7 @@ void DFMTagWidget::initUi()
     d->m_mainLayout->addWidget(d->m_tagCrumbEdit);
 
     // 修复bug-47113 UI显示问题
-//    d->m_mainLayout->addStretch();
+    //    d->m_mainLayout->addStretch();
     d->m_mainLayout->setContentsMargins(10, 10, 10, 10);
 
     loadTags(d->m_url);
@@ -159,12 +155,12 @@ void DFMTagWidget::initConnection()
     if (!d->m_tagCrumbEdit || !d->m_tagActionWidget)
         return;
 
-    QObject::connect(d->m_tagCrumbEdit, &DCrumbEdit::crumbListChanged, d->m_tagCrumbEdit, [ = ]() {
+    QObject::connect(d->m_tagCrumbEdit, &DCrumbEdit::crumbListChanged, d->m_tagCrumbEdit, [=]() {
         if (!d->m_tagCrumbEdit->property("updateCrumbsColor").toBool()) {
             updateCrumbsColor(tagsColor(d->m_tagCrumbEdit->crumbList()));
 
             if (!d->m_tagCrumbEdit->isEditing() && !d->m_tagCrumbEdit->property("LoadFileTags").toBool()) {
-                bool ret = DFileService::instance()->makeTagsOfFiles(nullptr, {d->m_url}, d->m_tagCrumbEdit->crumbList());
+                bool ret = DFileService::instance()->makeTagsOfFiles(nullptr, { d->m_url }, d->m_tagCrumbEdit->crumbList());
 
                 if (!ret) {
                     loadTags(d->m_url);
@@ -174,12 +170,34 @@ void DFMTagWidget::initConnection()
         }
     });
 
-    QObject::connect(d->m_tagActionWidget, &DTagActionWidget::checkedColorChanged, d->m_tagActionWidget, [ = ](const QColor & color) {
+    QObject::connect(d->m_tagCrumbEdit, &QTextEdit::textChanged, this, [=] {
+        QString srcTcxt = d->m_tagCrumbEdit->toPlainText().remove(QChar::ObjectReplacementCharacter);
+        QRegExp rx("[\\\\/\':\\*\\?\"<>|%&]");
+        if (!srcTcxt.isEmpty() && srcTcxt.contains(rx)) {
+            QList<QString> tagList { d->m_tagCrumbEdit->crumbList() };
+            d->m_tagCrumbEdit->textCursor().document()->setPlainText(srcTcxt.remove(rx));
+
+            QMap<QString, QColor> tagsColors { tagsColor(tagList) };
+            d->m_tagCrumbEdit->setProperty("updateCrumbsColor", true);
+            for (auto it = tagsColors.begin(); it != tagsColors.end(); ++it) {
+                DCrumbTextFormat format = d->m_tagCrumbEdit->makeTextFormat();
+                format.setText(it.key());
+
+                format.setBackground(QBrush(it.value()));
+                format.setBackgroundRadius(5);
+
+                d->m_tagCrumbEdit->insertCrumb(format, 0);
+            }
+            d->m_tagCrumbEdit->setProperty("updateCrumbsColor", false);
+        }
+    });
+
+    QObject::connect(d->m_tagActionWidget, &DTagActionWidget::checkedColorChanged, d->m_tagActionWidget, [=](const QColor &color) {
         Q_UNUSED(color)
-        const QStringList tagNameList = TagManager::instance()->getTagsThroughFiles({d->m_url});
-        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tagNameList});
-        DUrlList urlList{d->m_url};
-        QList<QColor> checkedColors{ d->m_tagActionWidget->checkedColorList() };
+        const QStringList tagNameList = TagManager::instance()->getTagsThroughFiles({ d->m_url });
+        QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({ tagNameList });
+        DUrlList urlList { d->m_url };
+        QList<QColor> checkedColors { d->m_tagActionWidget->checkedColorList() };
         QSet<QString> defaultNames = TagManager::instance()->allTagOfDefaultColors();
 
         QStringList newTagNames;
@@ -257,18 +275,17 @@ void DFMTagWidget::loadTags(const DUrl &durl)
     DUrl url = d->redirectUrl(durl);
     if (!d->m_tagCrumbEdit || !d->m_tagActionWidget || !shouldShow(url))
         return;
-    const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({url});
-    QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({tag_name_list});
+    const QStringList tag_name_list = TagManager::instance()->getTagsThroughFiles({ url });
+    QMap<QString, QColor> nameColors = TagManager::instance()->getTagColor({ tag_name_list });
     QSet<QString> defaultColors = TagManager::instance()->allTagOfDefaultColors();
-    QList<QColor>  selectColors;
+    QList<QColor> selectColors;
 
     //避免重复刷新edit，防止出现因刷新导致输入文本丢失的情况
     if (d->m_url == url && tag_name_list.length() == d->currentTagWithColorMap.count()) {
         bool needRefreshEdit = false;
         for (const QString &tag : tag_name_list) {
             QString colorName = TagManager::instance()->getColorByDisplayName(tag);
-            if (!d->currentTagWithColorMap.contains(tag) ||
-                    d->currentTagWithColorMap.value(tag) != colorName) {
+            if (!d->currentTagWithColorMap.contains(tag) || d->currentTagWithColorMap.value(tag) != colorName) {
                 needRefreshEdit = true;
                 break;
             }
@@ -311,15 +328,14 @@ void DFMTagWidget::loadTags(const DUrl &durl)
         if (d->m_devicesWatcher) {
             d->m_devicesWatcher->startWatcher();
 
-            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [ = ](const DUrl & url) {
+            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileAttributeChanged, this, [=](const DUrl &url) {
                 if (url == d->m_url) {
                     loadTags(d->m_url);
                 }
             });
             //当文件被删除时需要在这里把watcher移除，否则可能导致再创建同名文件无法正确添加watcher
-            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [ = ] {
-                if (d->m_devicesWatcher)
-                {
+            connect(d->m_devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [=] {
+                if (d->m_devicesWatcher) {
                     d->m_devicesWatcher->stopWatcher();
                     d->m_devicesWatcher->deleteLater();
                     d->m_devicesWatcher = nullptr;
@@ -355,7 +371,7 @@ DCrumbEdit *DFMTagWidget::tagCrumbEdit()
 
 bool DFMTagWidget::shouldShow(const DUrl &url)
 {
-    if (DFileService::instance()->checkGvfsMountfileBusy(url,false))
+    if (DFileService::instance()->checkGvfsMountfileBusy(url, false))
         return false;
     const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(nullptr, url);
     //如果是网络挂载（gvfs）文件就返回
@@ -372,8 +388,7 @@ bool DFMTagWidget::shouldShow(const DUrl &url)
         isComputerOrTrash = (df.getDeepinId() == "dde-trash" || df.getDeepinId() == "dde-computer");
     }
 
-    bool showTags = !systemPathManager->isSystemPath(url.path()) &&
-                    !isComputerOrTrash && DFileMenuManager::whetherShowTagActions({url});
+    bool showTags = !systemPathManager->isSystemPath(url.path()) && !isComputerOrTrash && DFileMenuManager::whetherShowTagActions({ url });
     return showTags;
 }
 
