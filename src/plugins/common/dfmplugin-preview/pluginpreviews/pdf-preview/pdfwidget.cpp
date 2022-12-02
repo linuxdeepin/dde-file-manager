@@ -138,16 +138,16 @@ bool PdfWidget::closeAllSheets()
 
 void PdfWidget::onOpened(DocSheet *sheet, Document::Error error)
 {
-    if (Document::FileError == error || Document::FileDamaged == error || Document::ConvertFailed == error) {
+    if (Document::kFileError == error || Document::kFileDamaged == error || Document::kConvertFailed == error) {
         stackedLayout->removeWidget(sheet);
 
         sheet->deleteLater();
 
-        if (Document::FileError == error)
+        if (Document::kFileError == error)
             qWarning() << "Open failed!";
-        else if (Document::FileDamaged == error)
+        else if (Document::kFileDamaged == error)
             qWarning() << "Please check if the file is damaged!";
-        else if (Document::ConvertFailed == error)
+        else if (Document::kConvertFailed == error)
             qWarning() << "Conversion failed, please check if the file is damaged!";
 
         return;

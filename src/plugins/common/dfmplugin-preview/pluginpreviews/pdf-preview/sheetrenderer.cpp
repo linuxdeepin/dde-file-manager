@@ -52,7 +52,7 @@ bool SheetRenderer::openFileExec(const QString &password)
 
     loop.exec();
 
-    return Document::NoError == docError;
+    return Document::kNoError == docError;
 }
 
 void SheetRenderer::openFileAsync(const QString &password)

@@ -354,7 +354,7 @@ bool PageRenderThread::execNextDocOpenTask()
 
     QString filePath = task.sheet->filePath();
 
-    Document::Error error = Document::NoError;
+    Document::Error error = Document::kNoError;
 
     Document *document = DocumentFactory::getDocument(task.sheet->fileType(), filePath, task.password, error);
 
@@ -376,7 +376,7 @@ bool PageRenderThread::execNextDocOpenTask()
         }
 
         if (pages.count() == pagesNumber) {
-            emit sigDocOpenTask(task, Document::NoError, document, pages);
+            emit sigDocOpenTask(task, Document::kNoError, document, pages);
 
         } else {
             qDeleteAll(pages);
@@ -385,7 +385,7 @@ bool PageRenderThread::execNextDocOpenTask()
 
             delete document;
 
-            emit sigDocOpenTask(task, Document::FileDamaged, nullptr, QList<Page *>());
+            emit sigDocOpenTask(task, Document::kFileDamaged, nullptr, QList<Page *>());
         }
     }
 

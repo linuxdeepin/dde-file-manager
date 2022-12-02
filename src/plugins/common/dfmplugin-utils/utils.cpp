@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "utils.h"
+#include "reportlog/virtualreportlogplugin.h"
 #include "global/virtualglobalplugin.h"
 #include "openwith/virtualopenwithplugin.h"
 #include "appendcompress/virtualappendcompressplugin.h"
@@ -29,6 +30,7 @@
 
 using namespace dfmplugin_utils;
 
+static constexpr char kReportLog[] { "dfmplugin-reportlog" };
 static constexpr char kAppendcompress[] { "dfmplugin-appendcompress" };
 static constexpr char kBluetooth[] { "dfmplugin-bluetooth" };
 static constexpr char kGlobal[] { "dfmplugin-global" };
@@ -38,6 +40,11 @@ static constexpr char kExtensionImpl[] { "dfmplugin-extensionimpl" };
 QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 {
     qInfo() << "Create plugin: " << pluginName;
+
+    if (pluginName == kReportLog) {
+        QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualReportLogPlugin };
+        return pugin;
+    }
 
     if (pluginName == kAppendcompress) {
         QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualAppendCompressPlugin };

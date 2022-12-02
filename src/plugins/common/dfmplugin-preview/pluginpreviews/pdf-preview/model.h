@@ -63,12 +63,12 @@ class Document : public QObject
     Q_OBJECT
 public:
     enum Error {
-        NoError = 0,
-        NeedPassword,   //需要密码
-        WrongPassword,   //密码错误
-        FileError,   //打开失败
-        FileDamaged,   //打开成功 文件损坏
-        ConvertFailed   //转换失败
+        kNoError = 0,
+        kNeedPassword,   //需要密码
+        kWrongPassword,   //密码错误
+        kFileError,   //打开失败
+        kFileDamaged,   //打开成功 文件损坏
+        kConvertFailed   //转换失败
     };
 
     Document()

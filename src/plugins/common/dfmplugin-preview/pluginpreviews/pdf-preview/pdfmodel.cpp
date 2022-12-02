@@ -105,15 +105,15 @@ PDFDocument *PDFDocument::loadDocument(const QString &filePath, const QString &p
     DPdfDoc *document = new DPdfDoc(filePath, password);
 
     if (document->status() == DPdfDoc::SUCCESS) {
-        error = Document::NoError;
+        error = Document::kNoError;
         return new PDFDocument(document);
     } else if (document->status() == DPdfDoc::PASSWORD_ERROR) {
         if (password.isEmpty())
-            error = Document::NeedPassword;
+            error = Document::kNeedPassword;
         else
-            error = Document::WrongPassword;
+            error = Document::kWrongPassword;
     } else
-        error = Document::FileError;
+        error = Document::kFileError;
 
     delete document;
 

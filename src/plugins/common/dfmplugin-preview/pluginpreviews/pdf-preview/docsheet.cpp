@@ -378,13 +378,13 @@ void DocSheet::resetChildParent()
 
 void DocSheet::onOpened(Document::Error error)
 {
-    if (Document::NeedPassword == error) {
+    if (Document::kNeedPassword == error) {
         showEncryPage();
-    } else if (Document::WrongPassword == error) {
+    } else if (Document::kWrongPassword == error) {
         showEncryPage();
 
         encrytionPage->wrongPassWordSlot();
-    } else if (Document::NoError == error) {
+    } else if (Document::kNoError == error) {
         if (!docPassword.isEmpty()) {
             sheetBrowser->setFocusPolicy(Qt::StrongFocus);
 

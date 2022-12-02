@@ -105,7 +105,7 @@ signals:
 
 private:
     DocSheet *docSheet { nullptr };
-    Document::Error docError { Document::NoError };
+    Document::Error docError { Document::kNoError };
     bool pageLabelLoaded { false };   //是否已经加载page label
     QMap<QString, int> docPageIndex {};   // 文档下标页码
     Document *documentObj { nullptr };

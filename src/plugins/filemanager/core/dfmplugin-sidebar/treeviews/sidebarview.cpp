@@ -105,7 +105,7 @@ class SidebarViewStyle : public QProxyStyle
 public:
     SidebarViewStyle(QStyle *style = nullptr);
 
-    void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = 0) const;
+    void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const;
 };
 
 SidebarViewStyle::SidebarViewStyle(QStyle *style)
