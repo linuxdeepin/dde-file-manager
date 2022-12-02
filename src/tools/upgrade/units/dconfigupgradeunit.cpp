@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "dconfigupgradeunit.h"
-#include "dfm-base/base/application/application.h"
+#include "utils/upgradeutils.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <QDebug>
@@ -152,9 +152,13 @@ bool DConfigUpgradeUnit::upgradeMenuConfigs()
 bool DConfigUpgradeUnit::upgradeSmbConfigs()
 {
     // 1. read main config value
-    auto alwaysShowSamba = Application::instance()->genericAttribute(Application::kAlwaysShowOfflineRemoteConnections).toBool();
+    auto oldVal = UpgradeUtils::genericAttribute("AlwaysShowOfflineRemoteConnections");
+    if (!oldVal.isValid())
+        return true;
+
+    auto alwaysShowSamba = oldVal.toBool();
     // 2. write to dconfig
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKeys::kSambaPermanent, alwaysShowSamba);
-    qDebug() << "upgrade: set samba permanent to dconfig, value: " << alwaysShowSamba;
+    qDebug() << "upgrade: set samba permanent to dconfig, value:" << alwaysShowSamba;
     return true;
 }
