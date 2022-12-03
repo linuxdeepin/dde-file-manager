@@ -52,6 +52,7 @@
 #include <QProcess>
 #include <QDebug>
 #include <QtConcurrent>
+#include <QGuiApplication>
 
 // use original poppler api
 #include <poppler/cpp/poppler-document.h>
@@ -848,6 +849,12 @@ DThumbnailProvider::DThumbnailProvider(QObject *parent)
     : QThread(parent), d(new DThumbnailProviderPrivate(this))
 {
     d->init();
+    connect(qApp, &QGuiApplication::aboutToQuit, this, [=]() {
+        d->running = false;
+        quit();
+        wait();
+    },
+            Qt::DirectConnection);
 }
 
 DThumbnailProvider::~DThumbnailProvider()
