@@ -26,6 +26,7 @@
 #include "dfmplugin_core_global.h"
 
 #include <QObject>
+#include <QVariant>
 
 DPCORE_BEGIN_NAMESPACE
 
@@ -33,7 +34,7 @@ class CoreHelper
 {
 public:
     static void cd(quint64 windowId, const QUrl &url);
-    static void openNewWindow(const QUrl &url);
+    static void openNewWindow(const QUrl &url, const QVariant &opt = QVariant());
 };
 
 DPCORE_END_NAMESPACE

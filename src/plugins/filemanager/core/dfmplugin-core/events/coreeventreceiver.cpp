@@ -57,3 +57,8 @@ void CoreEventReceiver::handleOpenWindow(const QUrl &url)
 {
     CoreHelper::openNewWindow(url);
 }
+
+void CoreEventReceiver::handleOpenWindow(const QUrl &url, const QVariant &opt)
+{
+    CoreHelper::openNewWindow(url, opt);
+}

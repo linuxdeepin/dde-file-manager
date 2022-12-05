@@ -40,6 +40,7 @@ public:
 public slots:
     void handleChangeUrl(quint64 windowId, const QUrl &url);
     void handleOpenWindow(const QUrl &url);
+    void handleOpenWindow(const QUrl &url, const QVariant &opt);
 
 private:
     explicit CoreEventReceiver(QObject *parent = nullptr);

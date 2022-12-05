@@ -101,7 +101,9 @@ void Core::onAllPluginsInitialized()
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
                                    CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
     dpfSignalDispatcher->subscribe(GlobalEventType::kOpenNewWindow,
-                                   CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenWindow);
+                                   CoreEventReceiver::instance(), static_cast<void (CoreEventReceiver::*)(const QUrl &)>(&CoreEventReceiver::handleOpenWindow));
+    dpfSignalDispatcher->subscribe(GlobalEventType::kOpenNewWindow,
+                                   CoreEventReceiver::instance(), static_cast<void (CoreEventReceiver::*)(const QUrl &, const QVariant &)>(&CoreEventReceiver::handleOpenWindow));
 }
 
 void Core::onAllPluginsStarted()

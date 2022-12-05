@@ -62,7 +62,7 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     }
 }
 
-void CoreHelper::openNewWindow(const QUrl &url)
+void CoreHelper::openNewWindow(const QUrl &url, const QVariant &opt)
 {
-    FMWindowsIns.showWindow(url, true);
+    FMWindowsIns.showWindow(url, opt.isValid() ? opt.toBool() : true);
 }

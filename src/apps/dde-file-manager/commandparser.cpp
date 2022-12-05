@@ -257,7 +257,7 @@ void CommandParser::openInUrls()
     if (argumentUrls.isEmpty())
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl());
     for (const QUrl &url : argumentUrls)
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isSet("n"));
 }
 
 CommandParser::CommandParser(QObject *parent)
