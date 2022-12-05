@@ -242,7 +242,7 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
         d->onWindowClosed(window);
     });
 
-    connect(window, &FileManagerWindow::aboutOpen, this, [this, window]() {
+    connect(window, &FileManagerWindow::aboutToOpen, this, [this, window]() {
         auto &&id { window->internalWinId() };
         qInfo() << "Window showed" << id;
         emit windowOpened(id);

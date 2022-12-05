@@ -14,7 +14,7 @@ namespace dfm_upgrade {
 namespace UpgradeUtils {
 QVariant genericAttribute(const QString &key)
 {
-    static constexpr char *kGenAttrKey { "GenericAttribute" };
+    static constexpr char kGenAttrKey[] { "GenericAttribute" };
     auto paths = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
     if (paths.count() > 0) {
         auto genCfgPath = paths.first() + "/deepin/dde-file-manager.json";
@@ -41,7 +41,7 @@ QVariant genericAttribute(const QString &key)
 
 QVariant applicationAttribute(const QString &key)
 {
-    static constexpr char *kAppAttrKey { "ApplicationAttribute" };
+    static constexpr char kAppAttrKey[] { "ApplicationAttribute" };
     auto paths = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
     if (paths.count() > 0) {
         auto appCfgPath = paths.first() + "/deepin/dde-file-manager/dde-file-manager.json";
@@ -66,5 +66,5 @@ QVariant applicationAttribute(const QString &key)
     return QVariant();
 }
 
-}
-}
+}   // namespace UpgradeUtils
+}   // namespace dfm_upgrade

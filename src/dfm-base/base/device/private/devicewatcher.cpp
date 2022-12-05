@@ -140,12 +140,14 @@ void DeviceWatcherPrivate::queryUsage(const QString &id, const QString &mpt, Dev
 
 void DeviceWatcher::initDevDatas()
 {
-    auto mng = DDeviceManager::instance();
-    auto &&devs = mng->devices();
+    qInfo() << "initDevDatas start";
+    auto mng { DDeviceManager::instance() };
+    const auto &devs { mng->devices() };
     for (const auto &dev : devs.value(DeviceType::kBlockDevice))
         d->allBlockInfos.insert(dev, DeviceHelper::loadBlockInfo(dev));
     for (const auto &dev : devs.value(DeviceType::kProtocolDevice))
         d->allProtocolInfos.insert(dev, DeviceHelper::loadProtocolInfo(dev));
+    qInfo() << "initDevDatas end";
 }
 
 /*!

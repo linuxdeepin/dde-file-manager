@@ -290,7 +290,7 @@ void FileManagerWindow::paintEvent(QPaintEvent *event)
     DMainWindow::paintEvent(event);
 
     std::call_once(d->openFlag, [this]() {
-        QMetaObject::invokeMethod(this, "aboutOpen", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, "aboutToOpen", Qt::QueuedConnection);
     });
 }
 

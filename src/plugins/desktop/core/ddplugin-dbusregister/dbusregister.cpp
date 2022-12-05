@@ -36,6 +36,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QDBusConnection>
+#include <QtConcurrent>
 
 DFMBASE_USE_NAMESPACE
 
@@ -43,29 +44,35 @@ void DBusRegister::initialize()
 {
     QString errStr;
     UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
+    dpfSignalDispatcher->subscribe("ddplugin_core", "signal_DesktopFrame_WindowShowed", this, &DBusRegister::onWindowShowed);
 }
 
 bool DBusRegister::start()
 {
-    QDBusConnection connection = QDBusConnection::sessionBus();
+    return true;
+}
+
+void DBusRegister::onWindowShowed()
+{
+    static QDBusConnection connection = QDBusConnection::sessionBus();
     if (!connection.isConnected()) {
         qWarning("Cannot connect to the D-Bus session bus.\n"
                  "Please check your system settings and try again.\n");
-        return false;
+        return;
     }
 
-    initServiceDBusInterfaces(&connection);
+    qInfo() << "Start register DBus interfaces";
     initFreedesktopDBusInterfaces(&connection);
 
-    QTimer::singleShot(1000, []() {
+    QTimer::singleShot(1000, [this]() {
         // mount business
+        initServiceDBusInterfaces(&connection);
+
         if (!DevProxyMng->connectToService()) {
             qCritical() << "device manager cannot connect to server!";
             DevMngIns->startMonitor();
         }
     });
-
-    return true;
 }
 
 std::once_flag &DBusRegister::onceFlag()
@@ -83,9 +90,17 @@ void DBusRegister::initServiceDBusInterfaces(QDBusConnection *connection)
             qWarning("Cannot register the \"com.deepin.filemanager.service\" service.\n");
             return;
         }
-        initDeviceDBus(connection);
+        qInfo() << "Init DBus OperationsStackManager start";
         initOperationsDBus(connection);
+        qInfo() << "Init DBus OperationsStackManager end";
+
+        qInfo() << "Init DBus VaultManager start";
         initVaultDBus(connection);
+        qInfo() << "Init DBus VaultManager end";
+
+        qInfo() << "Init DBus DeviceManager start";
+        initDeviceDBus(connection);
+        qInfo() << "Init DBus DeviceManager end";
     });
 }
 
@@ -98,8 +113,9 @@ void DBusRegister::initFreedesktopDBusInterfaces(QDBusConnection *connection)
             qWarning("Cannot register the \"org.freedesktop.FileManager1\" service.\n");
             return;
         }
-
+        qInfo() << "Init DBus FileManager1 start";
         initFileManager1DBus(connection);
+        qInfo() << "Init DBus FileManager1 end";
     });
 }
 

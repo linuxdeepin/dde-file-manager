@@ -69,7 +69,7 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
 
 Q_SIGNALS:
-    void aboutOpen();
+    void aboutToOpen();
     void aboutToClose();
     void positionChanged(const QPoint &pos);
     void currentUrlChanged(const QUrl &url);
