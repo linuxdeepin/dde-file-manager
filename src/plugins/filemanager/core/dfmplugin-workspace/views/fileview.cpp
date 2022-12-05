@@ -775,6 +775,11 @@ void FileView::updateView()
     viewport()->update();
 }
 
+void FileView::updateOneView(const QModelIndex &index)
+{
+    update(index);
+}
+
 void FileView::reloadView()
 {
     model()->setFilters(model()->getFilters());
@@ -1517,7 +1522,7 @@ void FileView::initializeConnect()
     connect(model(), &FileSortFilterProxyModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
     connect(model(), &FileSortFilterProxyModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(model(), &FileSortFilterProxyModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
-    connect(sourceModel(), &FileViewModel::dataChanged, this, &FileView::updateView);
+    connect(sourceModel(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
     connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
     connect(sourceModel(), &FileViewModel::reloadView, this, &FileView::reloadView);

@@ -21,8 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DFM_DVIDEOTHUMBNAILPROVIDER_H
-#define DFM_DVIDEOTHUMBNAILPROVIDER_H
+#ifndef VIDEOTHUMBNAILPROVIDER_H
+#define VIDEOTHUMBNAILPROVIDER_H
 
 #include "dfm_base_global.h"
 
@@ -33,20 +33,20 @@ class QString;
 
 namespace dfmbase {
 
-class DVideoThumbnailProviderPrivate;
-class DVideoThumbnailProvider
+class VideoThumbnailProviderPrivate;
+class VideoThumbnailProvider
 {
 public:
-    DVideoThumbnailProvider();
-    ~DVideoThumbnailProvider();
+    VideoThumbnailProvider();
+    ~VideoThumbnailProvider();
 
     bool hasKey(const QString &key) const;
     QImage createThumbnail(const QString &size, const QString &path);
 
 private:
-    QScopedPointer<DVideoThumbnailProviderPrivate> d;
+    QScopedPointer<VideoThumbnailProviderPrivate> d;
 };
 
 }
 
-#endif   // DFM_DVIDEOTHUMBNAILPROVIDER_H
+#endif   // VIDEOTHUMBNAILPROVIDER_H

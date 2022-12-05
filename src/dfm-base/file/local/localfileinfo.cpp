@@ -25,7 +25,6 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/chinese2pinyin.h"
-#include "dfm-base/utils/dthumbnailprovider.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/file/local/localfileiconprovider.h"
@@ -1012,13 +1011,13 @@ QIcon LocalFileInfo::fileIcon()
 #endif
 
     bool hasThumbnail = false;
-    const int checkFast = DThumbnailProvider::instance()->hasThumbnailFast(d->mimeTypeName());
+    const int checkFast = ThumbnailProvider::instance()->hasThumbnailFast(d->mimeTypeName());
     if (1 == checkFast)
         hasThumbnail = true;
     else if (0 == checkFast)
         hasThumbnail = false;
     else
-        hasThumbnail = DThumbnailProvider::instance()->hasThumbnail(fileMimeType());
+        hasThumbnail = ThumbnailProvider::instance()->hasThumbnail(fileMimeType());
 
     bool thumbEnabled = (d->enableThumbnail > 0) && hasThumbnail;
     return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
@@ -1131,15 +1130,6 @@ void LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileIn
     }
 }
 
-bool LocalFileInfo::notifyAttributeChanged()
-{
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        return d->dfmFileInfo->setCustomAttribute("xattr::update", DFMIO::DFileInfo::DFileAttributeType::kTypeString, "");
-    }
-    return false;
-}
-
 void LocalFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value)
 {
     QWriteLocker locker(&d->lock);
@@ -1216,9 +1206,9 @@ QIcon LocalFileInfoPrivate::thumbIcon()
     if (!icon.isNull())
         return icon;
 
-    icon = QIcon(DThumbnailProvider::instance()->thumbnailFilePath(url, DThumbnailProvider::kLarge));
+    icon = QIcon(ThumbnailProvider::instance()->thumbnailFilePath(url, ThumbnailProvider::kLarge));
     if (!icon.isNull()) {
-        QPixmap pixmap = icon.pixmap(DThumbnailProvider::kLarge, DThumbnailProvider::kLarge);
+        QPixmap pixmap = icon.pixmap(ThumbnailProvider::kLarge, ThumbnailProvider::kLarge);
         QPainter pa(&pixmap);
         pa.setPen(Qt::gray);
         pa.drawPixmap(0, 0, pixmap);
@@ -1236,24 +1226,17 @@ QIcon LocalFileInfoPrivate::thumbIcon()
     // and before thumb thread finish, return default icon.
     if (!loadingThumbnail) {
         loadingThumbnail = true;
-        QPointer<AbstractFileInfo> that(q);
-
-        if (!getIconTimer) {
-            QTimer *t = new QTimer;
-            getIconTimer = t;
-            getIconTimer->setInterval(kRequestThumbnailDealy);
-            getIconTimer->setSingleShot(true);
-            getIconTimer->moveToThread(qApp->thread());
-
-            QObject::connect(getIconTimer, &QTimer::timeout, t, [=] {
-                DThumbnailProvider::instance()->appendToProduceQueue(url, DThumbnailProvider::kLarge, [=](const QString &path) {
-                    if (that)
-                        onRequestThumbFinished(path);
-                });
-                t->deleteLater();
+        if (!getIconFuture) {
+            auto thumburl = url;
+            getIconFuture.reset(new ThumbnailProvider::ThumbNailCreateFuture());
+            QTimer::singleShot(kRequestThumbnailDealy, [=] {
+                ThumbnailProvider::instance()->appendToProduceQueue(thumburl, ThumbnailProvider::kLarge, getIconFuture);
             });
         }
-        QMetaObject::invokeMethod(getIconTimer, "start", Qt::QueuedConnection);
+    } else if (getIconFuture && getIconFuture->finished) {
+        onRequestThumbFinished(getIconFuture->thumbPath);
+        icon = icons.value(IconType::kThumbIcon);
+        return icon;
     }
 
     return defaultIcon();
@@ -1297,7 +1280,6 @@ void LocalFileInfoPrivate::onRequestThumbFinished(const QString &path)
         icons.insert(LocalFileInfoPrivate::kThumbIcon, icon);
     } else {
         thumbIcon();   // load icon from DThumbnailProvider
-        q->notifyAttributeChanged();
     }
     QWriteLocker wlk(&iconLock);
     loadingThumbnail = false;

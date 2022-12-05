@@ -21,8 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DFM_DTHUMBNAILPROVIDER_H
-#define DFM_DTHUMBNAILPROVIDER_H
+#ifndef THUMBNAILPROVIDER_H
+#define THUMBNAILPROVIDER_H
 
 #include "dfm_base_global.h"
 
@@ -35,11 +35,18 @@ class QMimeType;
 
 namespace dfmbase {
 
-class DThumbnailProviderPrivate;
+class ThumbnailProviderPrivate;
 
-class DThumbnailProvider : public QThread
+class ThumbnailProvider : public QThread
 {
     Q_OBJECT
+
+public:
+    struct ThumbNailCreateFuture
+    {
+        std::atomic_bool finished { 0 };
+        QString thumbPath;
+    };
 
 public:
     enum Size : uint16_t {
@@ -48,7 +55,7 @@ public:
         kLarge = 256,
     };
 
-    static DThumbnailProvider *instance();
+    static ThumbnailProvider *instance();
 
     bool hasThumbnail(const QUrl &url) const;
     bool hasThumbnail(const QMimeType &mimeType) const;
@@ -59,37 +66,37 @@ public:
     QString createThumbnail(const QUrl &url, Size size);
 
     using CallBack = std::function<void(const QString &)>;
-    void appendToProduceQueue(const QUrl &url, Size size, CallBack callback = nullptr);
+    void appendToProduceQueue(const QUrl &url, Size size, QSharedPointer<ThumbNailCreateFuture> &future);
 
     QString errorString() const;
     qint64 sizeLimit(const QMimeType &mimeType) const;
 
 Q_SIGNALS:
-    void createThumbnailFinished(const QString &sourceFilePath, const QString &thumbnailPath) const;
+    void createThumbnailFinished(const QUrl &sourceFilePath, const QString &thumbnailPath) const;
     void createThumbnailFailed(const QString &sourceFilePath) const;
 
 private:
-    void createAudioThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image);
-    bool createImageVDjvuThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image, const QString &thumbnailName, QString &thumbnail);
-    void createImageThumbnail(const QUrl &url, const QMimeType &mime, const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image);
-    void createTextThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image);
-    void createPdfThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image);
-    bool createDefaultThumbnail(const QMimeType &mime, const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image, QString &thumbnail);
+    void createAudioThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image);
+    bool createImageVDjvuThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image, const QString &thumbnailName, QString &thumbnail);
+    void createImageThumbnail(const QUrl &url, const QMimeType &mime, const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image);
+    void createTextThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image);
+    void createPdfThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image);
+    bool createDefaultThumbnail(const QMimeType &mime, const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image, QString &thumbnail);
     bool createThumnailByMovieLib(const QString &filePath, QScopedPointer<QImage> &image);
     void initThumnailTool();
-    bool createThumnailByDtkTools(const QMimeType &mime, DThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image);
-    bool createThumnailByTools(const QMimeType &mime, DThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image);
+    bool createThumnailByDtkTools(const QMimeType &mime, ThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image);
+    bool createThumnailByTools(const QMimeType &mime, ThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image);
 
 protected:
-    explicit DThumbnailProvider(QObject *parent = nullptr);
-    ~DThumbnailProvider() override;
+    explicit ThumbnailProvider(QObject *parent = nullptr);
+    ~ThumbnailProvider() override;
 
     void run() override;
 
 private:
-    QScopedPointer<DThumbnailProviderPrivate> d;
+    QScopedPointer<ThumbnailProviderPrivate> d;
 };
 
 }
 
-#endif   // DFM_DTHUMBNAILPROVIDER_H
+#endif   // THUMBNAILPROVIDER_H

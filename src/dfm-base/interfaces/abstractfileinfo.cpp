@@ -21,7 +21,7 @@
  */
 #include "private/abstractfileinfo_p.h"
 #include "abstractfileinfo.h"
-#include "utils/chinese2pinyin.h"
+#include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -1017,12 +1017,6 @@ void DFMBASE_NAMESPACE::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaTy
     CALL_PROXY(mediaInfoAttributes(type, ids));
 }
 
-bool DFMBASE_NAMESPACE::AbstractFileInfo::notifyAttributeChanged()
-{
-    CALL_PROXY(notifyAttributeChanged());
-
-    return false;
-}
 /*!
   * \brief setExtendedAttributes 设置文件的扩展属性
   * \param AbstractFileInfo::FileExtendedInfoType 扩展属性key \param QVariant 属性

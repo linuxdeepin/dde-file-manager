@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dvideothumbnailprovider.h"
+#include "videothumbnailprovider.h"
 
 #include <QImage>
 #include <QProcess>
@@ -29,41 +29,41 @@
 #include <QDebug>
 
 namespace dfmbase {
-class DVideoThumbnailProviderPrivate
+class VideoThumbnailProviderPrivate
 {
 public:
-    explicit DVideoThumbnailProviderPrivate(DVideoThumbnailProvider *qq)
+    explicit VideoThumbnailProviderPrivate(VideoThumbnailProvider *qq)
         : q(qq)
     {
         videoType << "video/*";
         videoType << "application/vnd.rn-realmedia";
     }
-    ~DVideoThumbnailProviderPrivate() = default;
+    ~VideoThumbnailProviderPrivate() = default;
 
 public:
     QStringList videoType;
-    DVideoThumbnailProvider *q;
+    VideoThumbnailProvider *q;
 };
 
 }
 
 using namespace dfmbase;
 
-DFMBASE_NAMESPACE::DVideoThumbnailProvider::DVideoThumbnailProvider()
-    : d(new DVideoThumbnailProviderPrivate(this))
+DFMBASE_NAMESPACE::VideoThumbnailProvider::VideoThumbnailProvider()
+    : d(new VideoThumbnailProviderPrivate(this))
 {
 }
 
-DVideoThumbnailProvider::~DVideoThumbnailProvider()
+VideoThumbnailProvider::~VideoThumbnailProvider()
 {
 }
 
-bool DVideoThumbnailProvider::hasKey(const QString &key) const
+bool VideoThumbnailProvider::hasKey(const QString &key) const
 {
     return d->videoType.contains(key);
 }
 
-QImage DVideoThumbnailProvider::createThumbnail(const QString &size, const QString &path)
+QImage VideoThumbnailProvider::createThumbnail(const QString &size, const QString &path)
 {
     QImage image;
     QByteArray output;

@@ -21,8 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dthumbnailprovider.h"
-#include "dvideothumbnailprovider.h"
+#include "thumbnailprovider.h"
+#include "videothumbnailprovider.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/base/standardpaths.h"
@@ -71,16 +71,16 @@ inline QByteArray dataToMd5Hex(const QByteArray &data)
 
 namespace dfmbase {
 
-class DThumbnailProviderPrivate
+class ThumbnailProviderPrivate
 {
 public:
-    explicit DThumbnailProviderPrivate(DThumbnailProvider *qq);
+    explicit ThumbnailProviderPrivate(ThumbnailProvider *qq);
 
     void init();
 
-    QString sizeToFilePath(DThumbnailProvider::Size size) const;
+    QString sizeToFilePath(ThumbnailProvider::Size size) const;
 
-    DThumbnailProvider *q = nullptr;
+    ThumbnailProvider *q = nullptr;
     QString errorString;
     qint64 defaultSizeLimit = 1024 * 1024 * 20;
     QHash<QMimeType, qint64> sizeLimitHash;
@@ -94,8 +94,8 @@ public:
     struct ProduceInfo
     {
         QUrl url;
-        DThumbnailProvider::CallBack callback = nullptr;
-        DThumbnailProvider::Size size;
+        QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> future;
+        ThumbnailProvider::Size size;
     };
 
     QQueue<ProduceInfo> produceQueue;
@@ -104,7 +104,7 @@ public:
     bool running = true;
 };
 
-class DFileThumbnailProviderPrivate : public DThumbnailProvider
+class DFileThumbnailProviderPrivate : public ThumbnailProvider
 {
 public:
     ~DFileThumbnailProviderPrivate();
@@ -118,15 +118,15 @@ DFileThumbnailProviderPrivate::~DFileThumbnailProviderPrivate()
 
 using namespace dfmbase;
 
-QSet<QString> DThumbnailProviderPrivate::hasThumbnailMimeHash;
+QSet<QString> ThumbnailProviderPrivate::hasThumbnailMimeHash;
 Q_GLOBAL_STATIC(DFileThumbnailProviderPrivate, ftpGlobal)
 
-DThumbnailProviderPrivate::DThumbnailProviderPrivate(DThumbnailProvider *qq)
+ThumbnailProviderPrivate::ThumbnailProviderPrivate(ThumbnailProvider *qq)
     : q(qq)
 {
 }
 
-void DThumbnailProviderPrivate::init()
+void ThumbnailProviderPrivate::init()
 {
     sizeLimitHash.reserve(28);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain), 1024 * 1024);
@@ -148,25 +148,25 @@ void DThumbnailProviderPrivate::init()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAudioFlac), INT64_MAX);
 }
 
-QString DThumbnailProviderPrivate::sizeToFilePath(DThumbnailProvider::Size size) const
+QString ThumbnailProviderPrivate::sizeToFilePath(ThumbnailProvider::Size size) const
 {
     switch (size) {
-    case DThumbnailProvider::Size::kSmall:
+    case ThumbnailProvider::Size::kSmall:
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailSmallPath);
-    case DThumbnailProvider::Size::kNormal:
+    case ThumbnailProvider::Size::kNormal:
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailNormalPath);
-    case DThumbnailProvider::Size::kLarge:
+    case ThumbnailProvider::Size::kLarge:
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailLargePath);
     }
     return "";
 }
 
-DThumbnailProvider *DThumbnailProvider::instance()
+ThumbnailProvider *ThumbnailProvider::instance()
 {
     return ftpGlobal;
 }
 
-bool DThumbnailProvider::hasThumbnail(const QUrl &url) const
+bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 {
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
@@ -194,7 +194,7 @@ bool DThumbnailProvider::hasThumbnail(const QUrl &url) const
     return hasThumbnail(mime);
 }
 
-bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
+bool ThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
 {
     const QString &mime = mimeType.name();
     QStringList mimeTypeList = { mime };
@@ -222,11 +222,11 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
         return false;
     }
 
-    if (DThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
+    if (ThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
         return true;
 
     if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("audio/") || mime.startsWith("video/"))) {
-        DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
+        ThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return true;
     }
@@ -236,7 +236,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
                  || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppVRRMedia
                  || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppVMAsf
                  || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf)) {
-        DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
+        ThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return true;
     }
@@ -248,7 +248,7 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
 }
 
 // true 1, false 0, invalid -1
-int DThumbnailProvider::hasThumbnailFast(const QString &mime) const
+int ThumbnailProvider::hasThumbnailFast(const QString &mime) const
 {
     if (mime.startsWith("image") && !Application::instance()->genericAttribute(Application::kPreviewImage).toBool())
         return 0;
@@ -272,11 +272,11 @@ int DThumbnailProvider::hasThumbnailFast(const QString &mime) const
         return 0;
     }
 
-    if (DThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
+    if (ThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
         return 1;
 
     if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("audio/") || mime.startsWith("video/"))) {
-        DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
+        ThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return 1;
     }
@@ -285,7 +285,7 @@ int DThumbnailProvider::hasThumbnailFast(const QString &mime) const
                  || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppVRRMedia
                  || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppVMAsf
                  || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf)) {
-        DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
+        ThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
 
         return 1;
     }
@@ -293,7 +293,7 @@ int DThumbnailProvider::hasThumbnailFast(const QString &mime) const
     return -1;
 }
 
-QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) const
+QString ThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) const
 {
     AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
     if (!fileInfo)
@@ -302,9 +302,9 @@ QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) co
     const QString &absolutePath = fileInfo->path();
     const QString &absoluteFilePath = fileInfo->filePath();
 
-    if (absolutePath == d->sizeToFilePath(DThumbnailProvider::Size::kSmall)
-        || absolutePath == d->sizeToFilePath(DThumbnailProvider::Size::kNormal)
-        || absolutePath == d->sizeToFilePath(DThumbnailProvider::Size::kLarge)
+    if (absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kSmall)
+        || absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kNormal)
+        || absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kLarge)
         || absolutePath == StandardPaths::location(StandardPaths::kThumbnailFailPath)) {
         return absoluteFilePath;
     }
@@ -344,7 +344,7 @@ static QString generalKey(const QString &key)
     return key;
 }
 
-QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider::Size size)
+QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::Size size)
 {
     d->errorString.clear();
 
@@ -353,9 +353,9 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
     const QString &DirPath = fileInfo->absolutePath();
     const QString &filePath = fileInfo->absoluteFilePath();
 
-    if (DirPath == d->sizeToFilePath(DThumbnailProvider::Size::kSmall)
-        || DirPath == d->sizeToFilePath(DThumbnailProvider::Size::kNormal)
-        || DirPath == d->sizeToFilePath(DThumbnailProvider::Size::kLarge)
+    if (DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kSmall)
+        || DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kNormal)
+        || DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kLarge)
         || DirPath == StandardPaths::location(StandardPaths::kThumbnailFailPath)) {
         return filePath;
     }
@@ -417,7 +417,7 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
     }
 
     if (d->errorString.isEmpty()) {
-        emit createThumbnailFinished(filePath, thumbnail);
+        emit createThumbnailFinished(QUrl::fromLocalFile(filePath), thumbnail);
 
         return thumbnail;
     }
@@ -428,7 +428,7 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
     return QString();
 }
 
-void DThumbnailProvider::createAudioThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image)
+void ThumbnailProvider::createAudioThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image)
 {
     QProcess ffmpeg;
     ffmpeg.start("ffmpeg", QStringList() << "-nostats"
@@ -458,15 +458,15 @@ void DThumbnailProvider::createAudioThumbnail(const QString &filePath, DThumbnai
     }
 }
 
-bool DThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image,
-                                                   const QString &thumbnailName, QString &thumbnail)
+bool ThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image,
+                                                  const QString &thumbnailName, QString &thumbnail)
 {
     thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(QFileInfo(filePath),
                                                                                    static_cast<DTK_GUI_NAMESPACE::DThumbnailProvider::Size>(size));
     d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
     if (d->errorString.isEmpty()) {
-        emit createThumbnailFinished(filePath, thumbnail);
+        emit createThumbnailFinished(QUrl::fromLocalFile(filePath), thumbnail);
 
         return true;
     } else {
@@ -515,7 +515,7 @@ bool DThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, DThu
     return false;
 }
 
-void DThumbnailProvider::createImageThumbnail(const QUrl &url, const QMimeType &mime, const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image)
+void ThumbnailProvider::createImageThumbnail(const QUrl &url, const QMimeType &mime, const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image)
 {
     //! fix bug#49451 因为使用mime.preferredSuffix(),会导致后续image.save崩溃，具体原因还需进一步跟进
     //! QImageReader构造时不传format参数，让其自行判断
@@ -555,7 +555,7 @@ void DThumbnailProvider::createImageThumbnail(const QUrl &url, const QMimeType &
     }
 }
 
-void DThumbnailProvider::createTextThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image)
+void ThumbnailProvider::createTextThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image)
 {
     //FIXME(zccrs): This should be done using the image plugin?
     auto dfile = DFMBASE_NAMESPACE::DecoratorFile(filePath).filePtr();
@@ -588,7 +588,7 @@ void DThumbnailProvider::createTextThumbnail(const QString &filePath, DThumbnail
     painter.drawText(image->rect(), text, option);
 }
 
-void DThumbnailProvider::createPdfThumbnail(const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image)
+void ThumbnailProvider::createPdfThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image)
 {
     //FIXME(zccrs): This should be done using the image plugin?
     QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));
@@ -649,7 +649,7 @@ void DThumbnailProvider::createPdfThumbnail(const QString &filePath, DThumbnailP
     *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
-bool DThumbnailProvider::createDefaultThumbnail(const QMimeType &mime, const QString &filePath, DThumbnailProvider::Size size, QScopedPointer<QImage> &image, QString &thumbnail)
+bool ThumbnailProvider::createDefaultThumbnail(const QMimeType &mime, const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image, QString &thumbnail)
 {
     if (createThumnailByMovieLib(filePath, image))
         return false;
@@ -658,7 +658,7 @@ bool DThumbnailProvider::createDefaultThumbnail(const QMimeType &mime, const QSt
     d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
     if (d->errorString.isEmpty()) {
-        emit createThumbnailFinished(filePath, thumbnail);
+        emit createThumbnailFinished(QUrl::fromLocalFile(filePath), thumbnail);
 
         return true;
     }
@@ -669,7 +669,7 @@ bool DThumbnailProvider::createDefaultThumbnail(const QMimeType &mime, const QSt
     return false;
 }
 
-bool DThumbnailProvider::createThumnailByMovieLib(const QString &filePath, QScopedPointer<QImage> &image)
+bool ThumbnailProvider::createThumnailByMovieLib(const QString &filePath, QScopedPointer<QImage> &image)
 {
     //获取缩略图生成库函数getMovieCover的指针
     if (!d->libMovieViewer || !d->libMovieViewer->isLoaded()) {
@@ -693,7 +693,7 @@ bool DThumbnailProvider::createThumnailByMovieLib(const QString &filePath, QScop
     return false;
 }
 
-void DThumbnailProvider::initThumnailTool()
+void ThumbnailProvider::initThumnailTool()
 {
 #ifdef THUMBNAIL_TOOL_DIR
     if (d->keyToThumbnailTool.isEmpty()) {
@@ -735,9 +735,9 @@ void DThumbnailProvider::initThumnailTool()
 #endif
 }
 
-bool DThumbnailProvider::createThumnailByDtkTools(const QMimeType &mime, DThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image)
+bool ThumbnailProvider::createThumnailByDtkTools(const QMimeType &mime, ThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image)
 {
-    DFMBASE_NAMESPACE::DVideoThumbnailProvider videoProvider;
+    DFMBASE_NAMESPACE::VideoThumbnailProvider videoProvider;
 
     QString mimeName = mime.name();
     bool useVideo = videoProvider.hasKey(mimeName);
@@ -754,7 +754,7 @@ bool DThumbnailProvider::createThumnailByDtkTools(const QMimeType &mime, DThumbn
     return false;
 }
 
-bool DThumbnailProvider::createThumnailByTools(const QMimeType &mime, DThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image)
+bool ThumbnailProvider::createThumnailByTools(const QMimeType &mime, ThumbnailProvider::Size size, const QString &filePath, QScopedPointer<QImage> &image)
 {
     initThumnailTool();
     QString mimeName = mime.name();
@@ -811,13 +811,14 @@ bool DThumbnailProvider::createThumnailByTools(const QMimeType &mime, DThumbnail
     return false;
 }
 
-void DThumbnailProvider::appendToProduceQueue(const QUrl &url, DThumbnailProvider::Size size, DThumbnailProvider::CallBack callback)
+void ThumbnailProvider::appendToProduceQueue(const QUrl &url, ThumbnailProvider::Size size,
+                                             QSharedPointer<ThumbNailCreateFuture> &future)
 {
-    DThumbnailProviderPrivate::ProduceInfo produceInfo;
+    ThumbnailProviderPrivate::ProduceInfo produceInfo;
 
     produceInfo.url = url;
     produceInfo.size = size;
-    produceInfo.callback = callback;
+    produceInfo.future = future;
 
     {
         QMutexLocker locker(&d->mutex);
@@ -835,29 +836,30 @@ void DThumbnailProvider::appendToProduceQueue(const QUrl &url, DThumbnailProvide
         d->waitCondition.wakeAll();
 }
 
-QString DThumbnailProvider::errorString() const
+QString ThumbnailProvider::errorString() const
 {
     return d->errorString;
 }
 
-qint64 DThumbnailProvider::sizeLimit(const QMimeType &mimeType) const
+qint64 ThumbnailProvider::sizeLimit(const QMimeType &mimeType) const
 {
     return d->sizeLimitHash.value(mimeType, d->defaultSizeLimit);
 }
 
-DThumbnailProvider::DThumbnailProvider(QObject *parent)
-    : QThread(parent), d(new DThumbnailProviderPrivate(this))
+ThumbnailProvider::ThumbnailProvider(QObject *parent)
+    : QThread(parent), d(new ThumbnailProviderPrivate(this))
 {
     d->init();
     connect(qApp, &QGuiApplication::aboutToQuit, this, [=]() {
         d->running = false;
         quit();
+        d->waitCondition.wakeAll();
         wait();
     },
             Qt::DirectConnection);
 }
 
-DThumbnailProvider::~DThumbnailProvider()
+ThumbnailProvider::~ThumbnailProvider()
 {
     d->running = false;
     d->waitCondition.wakeAll();
@@ -869,7 +871,7 @@ DThumbnailProvider::~DThumbnailProvider()
     }
 }
 
-void DThumbnailProvider::run()
+void ThumbnailProvider::run()
 {
     forever {
 
@@ -883,7 +885,7 @@ void DThumbnailProvider::run()
             return;
 
         QMutexLocker locker(&d->mutex);
-        const DThumbnailProviderPrivate::ProduceInfo &task = d->produceQueue.dequeue();
+        const ThumbnailProviderPrivate::ProduceInfo &task = d->produceQueue.dequeue();
 
         locker.unlock();
         const QString &thumbnail = createThumbnail(task.url, task.size);
@@ -893,7 +895,9 @@ void DThumbnailProvider::run()
         d->produceAbsoluteFilePathQueue.removeOne(task.url.path());
         locker.unlock();
 
-        if (task.callback)
-            task.callback(thumbnail);
+        if (task.future) {
+            task.future->finished = true;
+            task.future->thumbPath = thumbnail;
+        }
     }
 }

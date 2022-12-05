@@ -27,6 +27,7 @@
 #include "mimetype/mimedatabase.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/thumbnailprovider.h"
 
 #include <QFileInfo>
 #include <QIcon>
@@ -58,7 +59,7 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     };
     QReadWriteLock iconLock;
     QMap<IconType, QIcon> icons;
-    QPointer<QTimer> getIconTimer = nullptr;
+    QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> getIconFuture = nullptr;
     QVariant isLocalDevice;
     QVariant isCdRomDevice;
 
@@ -90,7 +91,7 @@ public:
         icons.clear();
         loadingThumbnail = false;
         enableThumbnail = -1;
-        getIconTimer = nullptr;
+        getIconFuture = nullptr;
     }
 
     QIcon thumbIcon();

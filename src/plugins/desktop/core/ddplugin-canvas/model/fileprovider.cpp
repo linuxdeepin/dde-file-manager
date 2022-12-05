@@ -22,6 +22,7 @@
 #include "filefilter.h"
 
 #include <base/schemefactory.h>
+#include <utils/fileinfohelper.h>
 
 #include <QApplication>
 
@@ -32,6 +33,7 @@ FileProvider::FileProvider(QObject *parent)
     : QObject(parent)
 {
     qRegisterMetaType<QList<QUrl>>();
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileProvider::update);
 }
 
 bool FileProvider::setRoot(const QUrl &url)
@@ -155,6 +157,9 @@ void FileProvider::rename(const QUrl &oldUrl, const QUrl &newUrl)
 
 void FileProvider::update(const QUrl &url)
 {
+    if (UrlRoute::urlParent(url) != rootUrl && url != rootUrl)
+        return;
+
     for (const auto &filter : fileFilters)
         if (filter->fileUpdatedFilter(url))
             return;

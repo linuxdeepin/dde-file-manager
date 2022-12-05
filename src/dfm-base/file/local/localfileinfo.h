@@ -120,8 +120,6 @@ public:
     // media info
     virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const override;
 
-    virtual bool notifyAttributeChanged() override;
-
     // cache attribute
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value) override;
 

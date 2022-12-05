@@ -34,6 +34,7 @@
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/utils/fileinfohelper.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -55,6 +56,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
       fileDataHelper(new FileDataHelper(this))
 
 {
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileUpdated);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestFileUpdate, this, &FileViewModel::onFileUpdated);
 }
 

@@ -202,6 +202,7 @@ private slots:
     void onShowFileSuffixChanged(bool isShow);
     void updateHorizontalOffset();
     void updateView();
+    void updateOneView(const QModelIndex &index);
     void reloadView();
     void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
     void onAppAttributeChanged(dfmbase::Application::ApplicationAttribute aa, const QVariant &value);
