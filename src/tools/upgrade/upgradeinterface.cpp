@@ -22,6 +22,7 @@
 #include "core/upgradelocker.h"
 #include "core/upgradefactory.h"
 #include "dialog/processdialog.h"
+#include "utils/crashhandle.h"
 
 #include "builtininterface.h"
 
@@ -29,9 +30,20 @@
 #include <QCoreApplication>
 
 using namespace dfm_upgrade;
+
 int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
 {
     Q_ASSERT(qApp);
+
+    CrashHandle crash;
+    if (crash.isCrashed()) {
+        qCritical() << "fail to upgrade, crashed twice.";
+        crash.clearCrash();
+        QFile::remove(upgradeConfigDir() + "/" + kUpgradeFlag);
+        return 0;
+    }
+
+    crash.regSignal();
 
     qInfo() << "upgrade args" << args;
 
@@ -69,9 +81,11 @@ int dfm_tools_upgrade_doUpgrade(const QMap<QString, QString> &args)
 
     // remove flag file
     QFile::remove(upgradeConfigDir() + "/" + kUpgradeFlag);
+    crash.clearCrash();
 
     // datas have been upgraded.
     qInfo() << "the upgrader has done.";
     dlg.restart();
     return 0;
 }
+

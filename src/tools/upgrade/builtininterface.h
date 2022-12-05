@@ -51,7 +51,16 @@ inline QString upgradeConfigDir() {
 }
 
 inline bool isNeedUpgrade() {
-    return QFile::exists(upgradeConfigDir() + "/" + kUpgradeFlag);
+    const QString dirPath = upgradeConfigDir();
+    if (QFile::exists(dirPath + "/" + kUpgradeFlag)) {
+        QFileInfo dir(dirPath);
+        if (!dir.isWritable()) {
+            qCritical() << "give up upgrading:the config dir is not writable" << dirPath;
+            return false;;
+        }
+        return true;
+    }
+    return false;
 }
 
 inline int tryUpgrade(const QString &libPath, const QMap<QString , QString> &args)

@@ -503,7 +503,11 @@ void WallpaperSettingsPrivate::onMousePressed(const QPoint &pos, int button)
                 qDebug() << "button pressed on blank area quit.";
                 q->hide();
             } else {
-                q->activateWindow();
+                if (!q->isActiveWindow()) {
+                    // activate window in mousepress event will case button can not emit clicked signal;
+                    qInfo() << "activate WallpaperSettings by mouse pressed." << button;
+                    q->activateWindow();
+                }
             }
         } else {
             qCritical() << "lost screen " << screenName << "closed";

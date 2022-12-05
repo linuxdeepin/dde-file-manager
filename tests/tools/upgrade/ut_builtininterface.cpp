@@ -47,6 +47,14 @@ TEST(BuiltIn, isNeedUpgrade)
         return file == path;
     });
 
+    bool wri = false;
+    stub.set_lamda(&QFileInfo::isWritable, [&wri]() {
+        return wri;
+    });
+
+    EXPECT_FALSE(isNeedUpgrade());
+
+    wri = true;
     EXPECT_TRUE(isNeedUpgrade());
 
     retDir = "/home";
