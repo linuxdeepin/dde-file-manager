@@ -111,7 +111,10 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDragMove", fromUrls, toUrl, &dropAction)) {
             event->setDropAction(dropAction);
             view->setViewSelectState(false);
-            event->accept();
+            if (dropAction != Qt::IgnoreAction)
+                event->accept();
+            else
+                event->ignore();
             currentHoverIndexUrl = toUrl;
             return true;
         }
