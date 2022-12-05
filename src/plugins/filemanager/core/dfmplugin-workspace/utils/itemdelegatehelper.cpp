@@ -21,6 +21,7 @@
  */
 
 #include "itemdelegatehelper.h"
+#include "dfm-base/utils/pixmapiconextend.h"
 
 #include <QPainter>
 #include <QApplication>
@@ -41,13 +42,6 @@ using namespace dfmplugin_workspace;
  **/
 QPixmap ItemDelegateHelper::getIconPixmap(const QIcon &icon, const QSize &size, qreal pixelRatio = 1.0, QIcon::Mode mode, QIcon::State state)
 {
-    // ###(zccrs): 开启Qt::AA_UseHighDpiPixmaps后，QIcon::pixmap会自动执行 pixmapSize *= qApp->devicePixelRatio()
-    //             而且，在有些QIconEngine的实现中，会去调用另一个QIcon::pixmap，导致 pixmapSize 在这种嵌套调用中越来越大
-    //             最终会获取到一个是期望大小几倍的图片，由于图片太大，会很快将 QPixmapCache 塞满，导致后面再调用QIcon::pixmap
-    //             读取新的图片时无法缓存，非常影响图片绘制性能。此处在获取图片前禁用 Qt::AA_UseHighDpiPixmaps，自行处理图片大小问题
-    bool useHighDpiPixmaps = qApp->testAttribute(Qt::AA_UseHighDpiPixmaps);
-    qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, false);
-
     if (icon.isNull())
         return QPixmap();
 
@@ -55,60 +49,7 @@ QPixmap ItemDelegateHelper::getIconPixmap(const QIcon &icon, const QSize &size, 
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    QSize iconSize = icon.actualSize(size, mode, state);
-    // 取出icon的真实大小
-    QList<QSize> iconSizeList = icon.availableSizes();
-    QSize iconRealSize;
-    if (iconSizeList.count() > 0)
-        iconRealSize = iconSizeList.first();
-    else
-        iconRealSize = iconSize;
-    if (iconRealSize.width() <= 0 || iconRealSize.height() <= 0) {
-        return icon.pixmap(iconSize);
-    }
-
-    // 确保特殊比例icon的高或宽不为0
-    bool isSpecialSize = false;
-    QSize tempSize(size.width(), size.height());
-    while (iconSize.width() < 1) {
-        tempSize.setHeight(tempSize.height() * 2);
-        iconSize = icon.actualSize(tempSize, mode, state);
-        isSpecialSize = true;
-    }
-    while (iconSize.height() < 1) {
-        tempSize.setWidth(tempSize.width() * 2);
-        iconSize = icon.actualSize(tempSize, mode, state);
-        isSpecialSize = true;
-    }
-
-    if ((iconSize.width() > size.width() || iconSize.height() > size.height()) && !isSpecialSize)
-        iconSize.scale(size, Qt::KeepAspectRatio);
-
-    QSize pixmapSize = iconSize * pixelRatio;
-    QPixmap px = icon.pixmap(pixmapSize, mode, state);
-
-    // restore the value
-    qApp->setAttribute(Qt::AA_UseHighDpiPixmaps, useHighDpiPixmaps);
-
-    // 约束特殊比例icon的尺寸
-    if (isSpecialSize) {
-        if (px.width() > size.width() * pixelRatio) {
-            px = px.scaled(size.width() * CEIL(pixelRatio), px.height(), Qt::IgnoreAspectRatio);
-        } else if (px.height() > size.height() * pixelRatio) {
-            px = px.scaled(px.width(), size.height() * CEIL(pixelRatio), Qt::IgnoreAspectRatio);
-        }
-    }
-
-    // 类型限定符的更改会导致缩放小数点丢失，从而引发缩放因子的bug
-    if (px.width() > iconSize.width() * pixelRatio) {
-        px.setDevicePixelRatio(px.width() / qreal(iconSize.width()));
-    } else if (px.height() > iconSize.height() * pixelRatio) {
-        px.setDevicePixelRatio(px.height() / qreal(iconSize.height()));
-    } else {
-        px.setDevicePixelRatio(pixelRatio);
-    }
-
-    return px;
+    return PixmapIconExtend(icon).pixmapExtend(size, pixelRatio, mode, state);
 }
 /*!
  * \brief paintIcon 绘制指定区域内每一个icon的pixmap
