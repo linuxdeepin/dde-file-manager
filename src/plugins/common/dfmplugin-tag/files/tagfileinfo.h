@@ -43,7 +43,7 @@ public:
     bool isWritable() const override;
 
     QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    QString fileDisplayName() const override;
+    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
     FileType fileType() const override;
     QIcon fileIcon() override;
 

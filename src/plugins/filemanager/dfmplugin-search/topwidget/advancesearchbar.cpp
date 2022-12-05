@@ -269,7 +269,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
     }
 
     if (filter.comboValid[kFileType]) {
-        QString fileTypeStr = info->mimeTypeDisplayName();
+        QString fileTypeStr = info->displayInfo(AbstractFileInfo::DisplayInfoType::kMimeTypeDisplayName);
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }
@@ -286,19 +286,19 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
     }
 
     if (filter.comboValid[kDateRange]) {
-        QDateTime filemtime = info->lastModified();
+        QDateTime filemtime = info->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>();
         if (filemtime < filter.dateRangeStart || filemtime > filter.dateRangeEnd)
             return false;
     }
 
     if (filter.comboValid[kAccessDateRange]) {
-        QDateTime filemtime = info->lastRead();
+        QDateTime filemtime = info->timeInfo(AbstractFileInfo::FileTimeType::kLastRead).value<QDateTime>();
         if (filemtime < filter.accessDateRangeStart || filemtime > filter.accessDateRangeEnd)
             return false;
     }
 
     if (filter.comboValid[kCreateDateRange]) {
-        QDateTime filemtime = info->created();
+        QDateTime filemtime = info->timeInfo(AbstractFileInfo::FileTimeType::kCreateTime).value<QDateTime>();
         if (filemtime < filter.createDateRangeStart || filemtime > filter.createDateRangeEnd)
             return false;
     }

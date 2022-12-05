@@ -22,11 +22,11 @@
 #include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 #include "utils/pathmanager.h"
+#include "private/vaultfileinfo_p.h"
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -42,9 +42,44 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_vault {
+
+VaultFileInfoPrivate::VaultFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
+    : AbstractFileInfoPrivate(url, qq)
+{
+}
+
+VaultFileInfoPrivate::~VaultFileInfoPrivate()
+{
+}
+
+QString VaultFileInfoPrivate::iconName()
+{
+    QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
+    if (q->isRoot())
+        return iconName;
+    else {
+        if (!proxy)
+            return q->fileMimeType().iconName();
+        else
+            proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kIconName);
+    }
+    return QString();
+}
+
+QString VaultFileInfoPrivate::fileDisplayPath() const
+{
+    QUrl currentUrl = url;
+    currentUrl.setHost("");
+    QString urlStr = currentUrl.toString();
+    QByteArray array = urlStr.toLocal8Bit();
+    QString filePath = QUrl::fromPercentEncoding(array);
+    return filePath;
+}
+
 VaultFileInfo::VaultFileInfo(const QUrl &url)
     : AbstractFileInfo(url)
 {
+    dptr.reset(new VaultFileInfoPrivate(url, this));
     QUrl tempUrl = VaultHelper::vaultToLocalUrl(url);
     setProxy(InfoFactory::create<AbstractFileInfo>(tempUrl));
 }
@@ -169,20 +204,6 @@ QUrl VaultFileInfo::url() const
     return url;
 }
 
-QString VaultFileInfo::iconName()
-{
-    QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
-    if (isRoot())
-        return iconName;
-    else {
-        if (!dptr->proxy)
-            return fileMimeType().iconName();
-        else
-            dptr->proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kIconName);
-    }
-    return QString();
-}
-
 QVariantHash VaultFileInfo::extraProperties() const
 {
     if (!dptr->proxy)
@@ -210,7 +231,7 @@ QUrl VaultFileInfo::redirectedFileUrl() const
 QIcon VaultFileInfo::fileIcon()
 {
     if (isRoot())
-        return QIcon::fromTheme(iconName());
+        return QIcon::fromTheme(dptr.staticCast<VaultFileInfoPrivate>()->iconName());
 
     if (!dptr->proxy)
         AbstractFileInfo::fileIcon();
@@ -243,36 +264,31 @@ QString VaultFileInfo::sizeFormat() const
     return dptr->proxy->sizeFormat();
 }
 
-QString VaultFileInfo::fileDisplayName() const
-{
-    if (isRoot()) {
-        return QObject::tr("My Vault");
-    }
-    if (!dptr->proxy)
-        return AbstractFileInfo::fileDisplayName();
-    return dptr->proxy->fileDisplayName();
-}
-
 QString VaultFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
 
     switch (type) {
     case AbstractFileInfo::FileNameInfoType::kFileCopyName:
-        return VaultFileInfo::fileDisplayName();
+        return displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     case AbstractFileInfo::FileNameInfoType::kIconName:
-        return const_cast<VaultFileInfo *>(this)->iconName();
+        return dptr.staticCast<VaultFileInfoPrivate>()->iconName();
     default:
         return AbstractFileInfo::nameInfo(type);
     }
 }
 
-QString VaultFileInfo::fileDisplayPath() const
+QString VaultFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
-    QUrl currentUrl = url();
-    currentUrl.setHost("");
-    QString urlStr = currentUrl.toString();
-    QByteArray array = urlStr.toLocal8Bit();
-    QString filePath = QUrl::fromPercentEncoding(array);
-    return filePath;
+    if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
+        if (isRoot()) {
+            return QObject::tr("My Vault");
+        }
+        if (dptr->proxy)
+            return dptr->proxy->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+    } else if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
+        return dptr.staticCast<VaultFileInfoPrivate>()->fileDisplayPath();
+    }
+
+    return AbstractFileInfo::displayInfo(type);
 }
 }

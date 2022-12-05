@@ -317,7 +317,7 @@ int DialogManager::showRunExcutableScriptDialog(const QUrl &url)
 
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 
-    const QString &fileDisplayName = info->fileDisplayName();
+    const QString &fileDisplayName = info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     const QString &fileDisplayNameNew = d.fontMetrics().elidedText(fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
     const QString &message = tr("Do you want to run %1 or display its content?").arg(fileDisplayNameNew);
     const QString &tipMessage = tr("It is an executable text file.");
@@ -347,7 +347,7 @@ int DialogManager::showRunExcutableFileDialog(const QUrl &url)
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 
     const int maxDisplayNameLength = 200;
-    const QString &fileDisplayName = info->fileDisplayName();
+    const QString &fileDisplayName = info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     const QString &fileDisplayNameNew = d.fontMetrics().elidedText(fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
     const QString &message = tr("Do you want to run %1?").arg(fileDisplayNameNew);
     const QString &tipMessage = tr("It is an executable file.");
@@ -382,7 +382,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList)
     if (isLocalFile) {
         if (urlList.size() == 1) {
             LocalFileInfo f(urlList.first());
-            fileName = f.fileDisplayName();
+            fileName = f.displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
         } else {
             title = DeleteFileItems.arg(urlList.size());
         }
@@ -467,7 +467,7 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     if (urlFirst.isLocalFile()) {   // delete local file
         if (urls.size() == 1) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlFirst);
-            d.setTitle(deleteFileName.arg(fm.elidedText(info->fileDisplayName(), Qt::ElideMiddle, NAME_MAX)));
+            d.setTitle(deleteFileName.arg(fm.elidedText(info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName), Qt::ElideMiddle, NAME_MAX)));
         } else {
             d.setTitle(deleteFileItems.arg(urls.size()));
         }

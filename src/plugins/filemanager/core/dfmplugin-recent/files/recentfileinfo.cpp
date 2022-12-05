@@ -112,7 +112,7 @@ QVariant RecentFileInfo::customData(int role) const
     if (role == kItemFilePathRole)
         return redirectedFileUrl().path();
     else if (role == kItemFileLastReadRole)
-        return lastRead().toString(FileUtils::dateTimeFormat());
+        return timeInfo(AbstractFileInfo::FileTimeType::kLastRead).value<QDateTime>().toString(FileUtils::dateTimeFormat());
     else
         return QVariant();
 }

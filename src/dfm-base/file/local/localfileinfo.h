@@ -49,7 +49,6 @@ public:
     LocalFileInfo(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfileInfo);
     virtual ~LocalFileInfo() override;
 
-    LocalFileInfo &operator=(const LocalFileInfo &info);
     virtual bool operator==(const LocalFileInfo &fileinfo) const;
     virtual bool operator!=(const LocalFileInfo &fileinfo) const;
 
@@ -90,12 +89,9 @@ public:
     virtual bool permission(QFile::Permissions permissions) const override;
     virtual QFile::Permissions permissions() const override;
     virtual qint64 size() const override;
-    virtual QDateTime created() const override;
-    virtual QDateTime birthTime() const override;
-    virtual QDateTime metadataChangeTime() const override;
-    virtual QDateTime lastModified() const override;
-    virtual QDateTime lastRead() const override;
-    virtual QDateTime fileTime(QFile::FileTime time) const override;
+
+    virtual QVariant timeInfo(const FileTimeType type = FileTimeType::kCreateTime) const override;
+
     virtual QVariantHash extraProperties() const override;
     virtual QIcon fileIcon() override;
     virtual QUrl redirectedFileUrl() const override;
@@ -108,8 +104,9 @@ public:
     virtual AbstractFileInfo::FileType fileType() const override;
     virtual int countChildFile() const override;
     virtual QString sizeFormat() const override;
-    virtual QString fileDisplayName() const override;
-    virtual QFileInfo toQFileInfo() const;
+
+    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
+
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
 
     virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;

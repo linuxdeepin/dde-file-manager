@@ -324,7 +324,7 @@ QString DThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) co
 
     const QImage image = ir.read();
 
-    const qint64 fileModify = fileInfo->lastModified().toSecsSinceEpoch();
+    const qint64 fileModify = fileInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModifiedSecond).value<qint64>();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
         DecoratorFileOperator(thumbnail).deleteFile();
 
@@ -406,7 +406,7 @@ QString DThumbnailProvider::createThumbnail(const QUrl &url, DThumbnailProvider:
     }
 
     image->setText(QT_STRINGIFY(Thumb::URL), fileUrl);
-    const qint64 fileModify = fileInfo->lastModified().toSecsSinceEpoch();
+    const qint64 fileModify = fileInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModifiedSecond).value<qint64>();
     image->setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
 
     // create path

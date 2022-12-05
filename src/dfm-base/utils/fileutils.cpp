@@ -521,7 +521,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
                 : QString(".") + info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
         QString fileBaseName;
         if (isDesktopApp) {
-            fileBaseName = info->fileDisplayName();
+            fileBaseName = info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
         } else {
             fileBaseName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
             fileBaseName.chop(suffix.length());
@@ -569,7 +569,8 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
         // debug case 25414: failure to rename desktop app name
         bool isDesktopApp = info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName).contains(Global::Mime::kTypeAppDesktop);
 
-        QString fileBaseName = isDesktopApp ? info->fileDisplayName() : info->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kBaseName);   //{ info->baseName() };
+        QString fileBaseName = isDesktopApp ? info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName)
+                                            : info->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kBaseName);   //{ info->baseName() };
         QString oldFileName = fileBaseName;
 
         QString addText = pair.first;
@@ -737,9 +738,9 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
     if (info && DecoratorFile(fileUrl).exists()) {
-        QString baseName = info->fileDisplayName() == info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName)
+        QString baseName = info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName) == info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName)
                 ? info->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kBaseName)
-                : info->fileDisplayName();
+                : info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
         QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;
 

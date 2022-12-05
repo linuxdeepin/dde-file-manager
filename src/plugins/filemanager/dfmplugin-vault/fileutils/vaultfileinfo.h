@@ -61,12 +61,11 @@ public:
 
     virtual QIcon fileIcon() override;
 
-    virtual QString fileDisplayName() const override;
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QString fileDisplayPath() const override;
+
+    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
 
 private:
-    QString iconName();
 };
 }
 #endif   //! VAULTFILEINFO_H

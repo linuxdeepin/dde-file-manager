@@ -189,16 +189,27 @@ public:
     };
     /*!
      * \enum FileTimeType 文件时间信息
-     * \brief 文件的时间信息
+     * \brief 文件的时间信息，Second的返回秒qint64, MSecond的返回毫秒
      */
     enum class FileTimeType : uint8_t {
         kCreateTime = 0,   // 文件的创建时间
         kBirthTime = 1,   // 文件出生时间
         kMetadataChangeTime = 2,   // 文件的metadata改变时间
-        kLastModified = 2,   // 文件的最后修改时间
+        kLastModified = 3,   // 文件的最后修改时间
         kLastRead = 4,   // 文件的最后读取时间
-        kFileTime = 5,   // 文件时间
-        kDeletionTime = 6,   // 文件的删除时间
+        kDeletionTime = 5,   // 文件的删除时间
+        kCreateTimeSecond = 6,   // 文件的创建时间s为单位
+        kBirthTimeSecond = 7,   // 文件出生时间
+        kMetadataChangeTimeSecond = 8,   // 文件的metadata改变时间
+        kLastModifiedSecond = 9,   // 文件的最后修改时间
+        kLastReadSecond = 10,   // 文件的最后读取时间
+        kDeletionTimeSecond = 11,   // 文件的删除时间
+        kCreateTimeMSecond = 12,   // 文件的创建时间s为单位
+        kBirthTimeMSecond = 13,   // 文件出生时间
+        kMetadataChangeTimeMSecond = 14,   // 文件的metadata改变时间
+        kLastModifiedMSecond = 15,   // 文件的最后修改时间
+        kLastReadMSecond = 16,   // 文件的最后读取时间
+        kDeletionTimeMSecond = 17,   // 文件的删除时间
         kCustomerSupport = 50,   // 其他用户使用
         kUnknowSupportTInfo = 255,
     };
@@ -283,12 +294,8 @@ public:
     virtual QString owner() const;
     virtual QString group() const;
     virtual QString sizeFormat() const;
-    virtual QString fileDisplayName() const;
-    virtual QString fileDisplayPinyinName() const;
-    virtual QString sizeDisplayName() const;
-    virtual QString fileDisplayPath() const;
-    virtual QString mimeTypeDisplayName();
-    virtual QString fileTypeDisplayName();
+
+    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const;
     virtual QUrl url() const;
     virtual QUrl getUrlByChildFileName(const QString &fileName) const;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const;
@@ -324,13 +331,9 @@ public:
     virtual uint ownerId() const;
     virtual uint groupId() const;
     virtual qint64 size() const;
-    virtual QDateTime created() const;
-    virtual QDateTime birthTime() const;
-    virtual QDateTime metadataChangeTime() const;
-    virtual QDateTime lastModified() const;
-    virtual QDateTime lastRead() const;
-    virtual QDateTime fileTime(QFile::FileTime time) const;
-    virtual QDateTime deletionTime() const;
+
+    virtual QVariant timeInfo(const FileTimeType type = FileTimeType::kCreateTime) const;
+
     virtual QIcon fileIcon();
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     virtual QVariantHash extraProperties() const;

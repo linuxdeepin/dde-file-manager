@@ -129,6 +129,7 @@ private:
     QString completeSuffix();
     QString iconName();
     QString mimeTypeName();
+    QString fileDisplayName() const;
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)

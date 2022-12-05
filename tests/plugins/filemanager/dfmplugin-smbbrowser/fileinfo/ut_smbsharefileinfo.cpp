@@ -61,8 +61,8 @@ TEST_F(UT_SmbShareFileInfo, FileName)
 
 TEST_F(UT_SmbShareFileInfo, FileDisplayName)
 {
-    EXPECT_NO_FATAL_FAILURE(info->fileDisplayName());
-    EXPECT_TRUE(info->fileDisplayName() == "HelloWorld");
+    EXPECT_NO_FATAL_FAILURE(info->displayInfo(dfmbase::AbstractFileInfo::DisplayInfoType::kFileDisplayName));
+    EXPECT_TRUE(info->displayInfo(dfmbase::AbstractFileInfo::DisplayInfoType::kFileDisplayName) == "HelloWorld");
 }
 
 TEST_F(UT_SmbShareFileInfo, FileIcon)

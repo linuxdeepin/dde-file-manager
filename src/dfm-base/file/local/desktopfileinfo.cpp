@@ -196,7 +196,7 @@ QString DesktopFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type)
     case AbstractFileInfo::FileNameInfoType::kFileNameOfRename:
         [[fallthrough]];
     case AbstractFileInfo::FileNameInfoType::kBaseNameOfRename:
-        return fileDisplayName();
+        return displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     case AbstractFileInfo::FileNameInfoType::kSuffixOfRename:
         return QString();
     case AbstractFileInfo::FileNameInfoType::kFileCopyName:
@@ -210,14 +210,12 @@ QString DesktopFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type)
     }
 }
 
-QString DesktopFileInfo::fileDisplayName() const
+QString DesktopFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
-    if (desktopName().isEmpty()) {
-        // if desktop file has no name section
-        return LocalFileInfo::fileDisplayName();
-    }
+    if (type == AbstractFileInfo::DisplayInfoType::kFileDisplayName && !desktopName().isEmpty())
+        return desktopName();
 
-    return desktopName();
+    return LocalFileInfo::displayInfo(type);
 }
 
 void DesktopFileInfo::refresh()

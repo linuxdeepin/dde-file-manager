@@ -133,7 +133,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             }
         } else {
             restoreFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
-                                                            fileInfo->fileDisplayName().toStdString().c_str(), nullptr);
+                                                            fileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName).toStdString().c_str(), nullptr);
         }
 
         const AbstractFileInfoPointer &restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl);

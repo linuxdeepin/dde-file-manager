@@ -101,15 +101,21 @@ bool TrashDirIterator::hasNext() const
 QString TrashDirIterator::fileName() const
 {
     auto fileinfo = fileInfo();
-    if (fileinfo)
-        return fileinfo->fileDisplayName();
+    if (fileinfo) {
+        return fileinfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+    } else {
+        return QString();
+    }
 }
 
 QUrl TrashDirIterator::fileUrl() const
 {
     auto fileinfo = fileInfo();
-    if (fileinfo)
+    if (fileinfo) {
         return fileinfo->redirectedFileUrl();
+    } else {
+        return QUrl();
+    }
 }
 
 const AbstractFileInfoPointer TrashDirIterator::fileInfo() const

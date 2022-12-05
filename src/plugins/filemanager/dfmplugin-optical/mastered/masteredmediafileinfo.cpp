@@ -74,26 +74,27 @@ bool MasteredMediaFileInfo::isDir() const
     return !dptr->proxy || dptr->proxy->isDir();
 }
 
-QString MasteredMediaFileInfo::fileDisplayName() const
+QString MasteredMediaFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
-    if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
-        const auto &map { DevProxyMng->queryBlockInfo(curDevId) };
-        QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
-        if (idLabel.isEmpty())
-            idLabel = DeviceUtils::convertSuitableDisplayName(map);
-        return idLabel;
-    }
+    if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
+        if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
+            const auto &map { DevProxyMng->queryBlockInfo(curDevId) };
+            QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
+            return idLabel;
+        }
 
-    if (!dptr->proxy)
-        return "";
-    return dptr->proxy->fileDisplayName();
+        if (!dptr->proxy)
+            return "";
+        return dptr->proxy->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+    }
+    return AbstractFileInfo::displayInfo(type);
 }
 
 QString MasteredMediaFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
     switch (type) {
     case AbstractFileInfo::FileNameInfoType::kFileCopyName:
-        return MasteredMediaFileInfo::fileDisplayName();
+        return MasteredMediaFileInfo::displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     default:
         return AbstractFileInfo::nameInfo(type);
     }

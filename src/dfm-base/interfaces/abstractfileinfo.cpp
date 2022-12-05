@@ -657,160 +657,54 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::sizeFormat() const
     return QString();
 }
 
-QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayName() const
-{
-    CALL_PROXY(fileDisplayName());
-
-    return QString();
-}
-
 /*!
- * \brief fileDisplayPinyinName 文件的拼音名称，一般为文件的显示名称转为拼音
- *
- * \return QString 文件的拼音名称
- */
-QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayPinyinName() const
+  * \brief 获取文件的时间信息
+  * \param FileTimeType
+  */
+QVariant dfmbase::AbstractFileInfo::timeInfo(const dfmbase::AbstractFileInfo::FileTimeType type) const
 {
-    const QString &displayName = fileDisplayName();
+    CALL_PROXY(timeInfo(type));
 
-    return Pinyin::Chinese2Pinyin(displayName);
-}
-
-QString DFMBASE_NAMESPACE::AbstractFileInfo::sizeDisplayName() const
-{
-    CALL_PROXY(sizeDisplayName());
-
-    if (isDir())
-        return "-";   // for dir don't display items count, highly improve the view's performance
-    else
-        return FileUtils::formatSize(size());
-}
-
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayPath Used to get the path displayed when the file is displayed.
- * \return Used to get the path displayed when the file is displayed.
- */
-QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayPath() const
-{
-    CALL_PROXY(fileTypeDisplayName());
-
-    return url().path();
-}
-
-/*!
- * \brief created 获取文件的创建时间
- *
- * Returns the date and time when the file was created,
- *
- * the time its metadata was last changed or the time of last modification,
- *
- * whichever one of the three is available (in that order).
- *
- * \param
- *
- * \return QDateTime 文件的创建时间的QDateTime实例
- */
-QDateTime AbstractFileInfo::created() const
-{
-    CALL_PROXY(created());
-
-    return QDateTime();
-}
-/*!
- * \brief birthTime 获取文件的创建时间
- *
- * Returns the date and time when the file was created / born.
- *
- * If the file birth time is not available, this function
- *
- * returns an invalid QDateTime.
- *
- * \param
- *
- * \return QDateTime 文件的创建时间的QDateTime实例
- */
-QDateTime AbstractFileInfo::birthTime() const
-{
-    CALL_PROXY(birthTime());
-
-    return created();
-}
-/*!
- * \brief metadataChangeTime 获取文件的改变时间
- *
- * Returns the date and time when the file metadata was changed.
- *
- * A metadata change occurs when the file is created,
- *
- * but it also occurs whenever the user writes or sets
- *
- * inode information (for example, changing the file permissions).
- *
- * \param
- *
- * \return QDateTime 文件的改变时间的QDateTime实例
- */
-QDateTime AbstractFileInfo::metadataChangeTime() const
-{
-    CALL_PROXY(metadataChangeTime());
-
-    return QDateTime();
-}
-/*!
- * \brief lastModified 获取文件的最后修改时间
- *
- * \param
- *
- * \return QDateTime 文件的最后修改时间的QDateTime实例
- */
-QDateTime AbstractFileInfo::lastModified() const
-{
-    CALL_PROXY(lastModified());
-
-    return QDateTime();
-}
-/*!
- * \brief lastRead 获取文件的最后读取时间
- *
- * \param
- *
- * \return QDateTime 文件的最后读取时间的QDateTime实例
- */
-QDateTime AbstractFileInfo::lastRead() const
-{
-    CALL_PROXY(lastRead());
-
-    return QDateTime();
-}
-/*!
- * \brief fileTime 获取文件的事件通过传入的参数
- *
- * \param QFile::FileTime time 时间类型
- *
- * \return QDateTime 文件的不同时间类型的时间的QDateTime实例
- */
-QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
-{
-    CALL_PROXY(fileTime(time));
-
-    if (time == QFileDevice::FileAccessTime) {
-        return lastRead();
-    } else if (time == QFileDevice::FileBirthTime) {
-        return created();
-    } else if (time == QFileDevice::FileMetadataChangeTime) {
-        return metadataChangeTime();
-    } else if (time == QFileDevice::FileModificationTime) {
-        return lastModified();
-    } else {
+    switch (type) {
+    case AbstractFileInfo::FileTimeType::kCreateTime:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kBirthTime:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kMetadataChangeTime:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastModified:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastRead:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kDeletionTime:
         return QDateTime();
+    case AbstractFileInfo::FileTimeType::kCreateTimeSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kBirthTimeSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kMetadataChangeTimeSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastModifiedSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastReadSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kDeletionTimeSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kCreateTimeMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kBirthTimeMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kMetadataChangeTimeMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastModifiedMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastReadMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kDeletionTimeMSecond:
+        return 0;
+    default:
+        return QVariant();
     }
-}
-
-QDateTime DFMBASE_NAMESPACE::AbstractFileInfo::deletionTime() const
-{
-    CALL_PROXY(deletionTime());
-
-    return QDateTime();
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::countChildFile 获取目录下有多少个文件（只有下一级）
@@ -866,25 +760,32 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName(const QString &fil
 
     return theUrl;
 }
-
-QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeDisplayName()
-{
-    CALL_PROXY(mimeTypeDisplayName());
-
-    return MimeTypeDisplayManager::instance()->displayName(nameInfo(FileNameInfoType::kMimeTypeName));
-}
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName Display name of the file type
- * \return Display name of the file typ
+ * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
+ * 处理或者字符串处理，这都比较快
+ * \param FileNameInfoType
  */
-QString DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName()
+QString dfmbase::AbstractFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
-    CALL_PROXY(fileTypeDisplayName());
-
-    return QString::number(static_cast<int>(MimeTypeDisplayManager::
-                                                    instance()
-                                                            ->displayNameToEnum(fileMimeType().name())))
-            .append(nameInfo(FileNameInfoType::kSuffix));
+    CALL_PROXY(displayInfo(type));
+    switch (type) {
+    case AbstractFileInfo::DisplayInfoType::kSizeDisplayName:
+        if (isDir())
+            return "-";   // for dir don't display items count, highly improve the view's performance
+        else
+            return FileUtils::formatSize(size());
+    case AbstractFileInfo::DisplayInfoType::kFileDisplayPath:
+        return dptr->url.path();
+    case AbstractFileInfo::DisplayInfoType::kMimeTypeDisplayName:
+        return MimeTypeDisplayManager::instance()->displayName(nameInfo(FileNameInfoType::kMimeTypeName));
+    case AbstractFileInfo::DisplayInfoType::kFileTypeDisplayName:
+        return QString::number(static_cast<int>(MimeTypeDisplayManager::
+                                                        instance()
+                                                                ->displayNameToEnum(const_cast<AbstractFileInfo *>(this)->fileMimeType().name())))
+                .append(nameInfo(FileNameInfoType::kSuffix));
+    default:
+        return QString();
+    }
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl Can I redirect files

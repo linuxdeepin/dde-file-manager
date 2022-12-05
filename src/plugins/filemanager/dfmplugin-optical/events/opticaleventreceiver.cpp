@@ -83,7 +83,7 @@ bool OpticalEventReceiver::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMa
                 break;
             QVariantMap map;
             map["CrumbData_Key_Url"] = curUrl;
-            map["CrumbData_Key_DisplayText"] = fileInfo->fileDisplayName();
+            map["CrumbData_Key_DisplayText"] = fileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
             mapGroup->push_front(map);
             if (fileInfo->parentUrl() == QUrl::fromLocalFile(QDir::homePath())) {
                 mapGroup->front()["CrumbData_Key_IconName"] = "media-optical-symbolic";

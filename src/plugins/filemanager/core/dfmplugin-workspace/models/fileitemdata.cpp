@@ -70,15 +70,17 @@ QVariant FileItemData::data(int role) const
 
     switch (role) {
     case kItemFilePathRole:
-        return info->fileDisplayPath();
-    case kItemFileLastModifiedRole:
-        return info->lastModified().isValid() ? info->lastModified().toString(FileUtils::dateTimeFormat()) : "-";
+        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+    case kItemFileLastModifiedRole: {
+        auto lastModified = info->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>();
+        return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
+    }
     case kItemIconRole:
         return info->fileIcon();
     case kItemFileSizeRole:
-        return info->sizeDisplayName();
+        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kSizeDisplayName);
     case kItemFileMimeTypeRole:
-        return info->mimeTypeDisplayName();
+        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kMimeTypeDisplayName);
     case kItemSizeHintRole:
         return QSize(-1, 26);
     case kItemNameRole:
@@ -86,9 +88,9 @@ QVariant FileItemData::data(int role) const
     case Qt::DisplayRole:
     case kItemEditRole:
     case kItemFileDisplayNameRole:
-        return info->fileDisplayName();
+        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     case kItemFilePinyinNameRole:
-        return info->fileDisplayPinyinName();
+        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayPinyinName);
     case kItemFileBaseNameRole:
         return info->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName);
     case kItemFileSuffixRole:

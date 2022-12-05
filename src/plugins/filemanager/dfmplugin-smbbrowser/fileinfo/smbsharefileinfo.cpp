@@ -49,9 +49,11 @@ QString SmbShareFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type
     }
 }
 
-QString SmbShareFileInfo::fileDisplayName() const
+QString SmbShareFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
-    return dptr.staticCast<SmbShareFileInfoPrivate>()->fileName();
+    if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type)
+        return dptr.staticCast<SmbShareFileInfoPrivate>()->fileName();
+    return AbstractFileInfo::displayInfo(type);
 }
 
 QIcon SmbShareFileInfo::fileIcon()

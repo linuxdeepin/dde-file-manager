@@ -46,6 +46,9 @@ public:
     QUrl initTarget();
     QString fileName() const;
     QString mimeTypeName();
+    QDateTime lastRead() const;
+    QDateTime lastModified() const;
+    QDateTime deletionTime() const;
 
     QSharedPointer<DFileInfo> dFileInfo { nullptr };
     QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
@@ -103,7 +106,7 @@ QString TrashFileInfoPrivate::fileName() const
     if (targetUrl.isValid()) {
         if (FileUtils::isDesktopFile(targetUrl)) {
             DesktopFileInfo dfi(targetUrl);
-            return dfi.fileDisplayName();
+            return dfi.displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
         }
     }
 
@@ -119,6 +122,43 @@ QString TrashFileInfoPrivate::mimeTypeName()
     bool success = false;
     type = dFileInfo->attribute(DFileInfo::AttributeID::kStandardContentType, &success).toString();
     return type;
+}
+
+QDateTime TrashFileInfoPrivate::lastRead() const
+{
+    if (!dFileInfo)
+        return QDateTime();
+
+    QDateTime time;
+    bool success = false;
+    uint64_t data = dFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, &success).value<uint64_t>();
+    if (success)
+        time = QDateTime::fromTime_t(static_cast<uint>(data));
+    return time;
+}
+
+QDateTime TrashFileInfoPrivate::lastModified() const
+{
+    if (!dFileInfo)
+        return QDateTime();
+
+    QDateTime time;
+    bool success = false;
+    uint64_t data = dFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, &success).value<uint64_t>();
+    if (success)
+        time = QDateTime::fromTime_t(static_cast<uint>(data));
+    return time;
+}
+
+QDateTime TrashFileInfoPrivate::deletionTime() const
+{
+    if (dAncestorsFileInfo)
+        return QDateTime::fromString(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
+
+    if (!dFileInfo)
+        return QDateTime();
+
+    return QDateTime::fromString(dFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
 }
 
 TrashFileInfo::TrashFileInfo(const QUrl &url)
@@ -151,24 +191,6 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
 
 TrashFileInfo::~TrashFileInfo()
 {
-}
-
-QString TrashFileInfo::fileDisplayName() const
-{
-    if (FileUtils::isTrashRootFile(url()))
-        return QCoreApplication::translate("PathManager", "Trash");
-
-    if (!d->dFileInfo)
-        return QString();
-
-    if (d->targetUrl.isValid()) {
-        if (FileUtils::isDesktopFile(d->targetUrl)) {
-            DesktopFileInfo dfi(d->targetUrl);
-            return dfi.fileDisplayName();
-        }
-    }
-
-    return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
 }
 
 bool TrashFileInfo::exists() const
@@ -210,12 +232,34 @@ QString TrashFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
     case AbstractFileInfo::FileNameInfoType::kFileName:
         return d->fileName();
     case AbstractFileInfo::FileNameInfoType::kFileCopyName:
-        return TrashFileInfo::fileDisplayName();
+        return displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     case AbstractFileInfo::FileNameInfoType::kMimeTypeName:
         return const_cast<TrashFileInfoPrivate *>(d)->mimeTypeName();
     default:
         return AbstractFileInfo::nameInfo(type);
     }
+}
+
+QString TrashFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
+{
+    if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
+        if (url() == TrashCoreHelper::rootUrl())
+            return QCoreApplication::translate("PathManager", "Trash");
+
+        if (!d->dFileInfo)
+            return QString();
+
+        if (d->targetUrl.isValid()) {
+            if (FileUtils::isDesktopFile(d->targetUrl)) {
+                DesktopFileInfo dfi(d->targetUrl);
+                return dfi.displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+            }
+        }
+
+        return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
+    }
+
+    return AbstractFileInfo::displayInfo(type);
 }
 
 bool TrashFileInfo::canRename() const
@@ -251,32 +295,6 @@ QIcon TrashFileInfo::fileIcon()
     }
 
     return AbstractFileInfo::fileIcon();
-}
-
-QDateTime TrashFileInfo::lastRead() const
-{
-    if (!d->dFileInfo)
-        return QDateTime();
-
-    QDateTime time;
-    bool success = false;
-    uint64_t data = d->dFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, &success).value<uint64_t>();
-    if (success)
-        time = QDateTime::fromTime_t(static_cast<uint>(data));
-    return time;
-}
-
-QDateTime TrashFileInfo::lastModified() const
-{
-    if (!d->dFileInfo)
-        return QDateTime();
-
-    QDateTime time;
-    bool success = false;
-    uint64_t data = d->dFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, &success).value<uint64_t>();
-    if (success)
-        time = QDateTime::fromTime_t(static_cast<uint>(data));
-    return time;
 }
 
 qint64 TrashFileInfo::size() const
@@ -403,15 +421,18 @@ bool TrashFileInfo::isHidden() const
     return false;
 }
 
-QDateTime TrashFileInfo::deletionTime() const
+QVariant TrashFileInfo::timeInfo(const AbstractFileInfo::FileTimeType type) const
 {
-    if (d->dAncestorsFileInfo)
-        return QDateTime::fromString(d->dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
-
-    if (!d->dFileInfo)
-        return QDateTime();
-
-    return QDateTime::fromString(d->dFileInfo->attribute(DFileInfo::AttributeID::kTrashDeletionDate).toString(), Qt::ISODate);
+    switch (type) {
+    case AbstractFileInfo::FileTimeType::kLastRead:
+        return d->lastRead();
+    case AbstractFileInfo::FileTimeType::kLastModified:
+        return d->lastRead();
+    case AbstractFileInfo::FileTimeType::kDeletionTime:
+        return d->lastRead();
+    default:
+        return AbstractFileInfo::timeInfo(type);
+    }
 }
 
 QVariant TrashFileInfo::customData(int role) const
@@ -420,7 +441,7 @@ QVariant TrashFileInfo::customData(int role) const
     if (role == kItemFileOriginalPath)
         return originalUrl().path();
     else if (role == kItemFileDeletionDate)
-        return deletionTime().toString(FileUtils::dateTimeFormat());
+        return d->deletionTime().toString(FileUtils::dateTimeFormat());
     else
         return QVariant();
 }

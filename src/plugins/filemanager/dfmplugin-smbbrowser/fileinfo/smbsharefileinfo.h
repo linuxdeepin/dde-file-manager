@@ -36,7 +36,7 @@ public:
     virtual ~SmbShareFileInfo() override;
 
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QString fileDisplayName() const override;
+    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
     virtual QIcon fileIcon() override;
     virtual bool isDir() const override;
     virtual bool isReadable() const override;

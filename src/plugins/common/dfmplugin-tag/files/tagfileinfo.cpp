@@ -107,9 +107,11 @@ QString TagFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) con
     }
 }
 
-QString TagFileInfo::fileDisplayName() const
+QString TagFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
-    return dptr.staticCast<TagFileInfoPrivate>()->fileName();
+    if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type)
+        return dptr.staticCast<TagFileInfoPrivate>()->fileName();
+    return AbstractFileInfo::displayInfo(type);
 }
 
 AbstractFileInfo::FileType TagFileInfo::fileType() const

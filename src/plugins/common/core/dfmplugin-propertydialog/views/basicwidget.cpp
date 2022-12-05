@@ -234,16 +234,19 @@ void BasicWidget::basicFill(const QUrl &url)
     }
 
     if (fileCreated && fileCreated->RightValue().isEmpty()) {
-        info->birthTime().isValid() ? fileCreated->setRightValue(info->birthTime().toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
-                                    : fileCreated->setVisible(false);
+        auto birthTime = info->timeInfo(AbstractFileInfo::FileTimeType::kBirthTime).value<QDateTime>();
+        birthTime.isValid() ? fileCreated->setRightValue(birthTime.toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
+                            : fileCreated->setVisible(false);
     }
     if (fileAccessed && fileAccessed->RightValue().isEmpty()) {
-        info->lastRead().isValid() ? fileAccessed->setRightValue(info->lastRead().toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
-                                   : fileAccessed->setVisible(false);
+        auto lastRead = info->timeInfo(AbstractFileInfo::FileTimeType::kLastRead).value<QDateTime>();
+        lastRead.isValid() ? fileAccessed->setRightValue(lastRead.toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
+                           : fileAccessed->setVisible(false);
     }
     if (fileModified && fileModified->RightValue().isEmpty()) {
-        info->lastModified().isValid() ? fileModified->setRightValue(info->lastModified().toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
-                                       : fileModified->setVisible(false);
+        auto lastModified = info->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>();
+        lastModified.isValid() ? fileModified->setRightValue(lastModified.toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
+                               : fileModified->setVisible(false);
     }
     if (fileSize && fileSize->RightValue().isEmpty()) {
         fSize = info->size();

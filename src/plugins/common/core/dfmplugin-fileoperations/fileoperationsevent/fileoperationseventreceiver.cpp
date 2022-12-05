@@ -274,12 +274,12 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
 
     AbstractFileInfoPointer newFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
     AbstractFileInfoPointer oldFileInfo = InfoFactory::create<AbstractFileInfo>(oldUrl);
-    const QString &newName = newFileInfo->fileDisplayName();
-    const QString &oldName = oldFileInfo->fileDisplayName();
+    const QString &newName = newFileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+    const QString &oldName = oldFileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     if (newName == oldName)
         return true;
 
-    desktop.set(key, newFileInfo->fileDisplayName());
+    desktop.set(key, newFileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName));
     desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
     if (desktop.save(desktopPath, "Desktop Entry")) {
         QMap<QUrl, QUrl> renamed { { oldUrl, newUrl } };

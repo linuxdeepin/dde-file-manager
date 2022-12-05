@@ -272,7 +272,9 @@ bool FileOperateBaseWorker::openFile(const AbstractFileInfoPointer &fromInfo, co
 void FileOperateBaseWorker::setTargetPermissions(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo)
 {
     // 修改文件修改时间
-    localFileHandler->setFileTime(toInfo->url(), fromInfo->lastRead(), fromInfo->lastModified());
+    localFileHandler->setFileTime(toInfo->url(),
+                                  fromInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastRead).value<QDateTime>(),
+                                  fromInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>());
     QFileDevice::Permissions permissions = fromInfo->permissions();
     QString path = fromInfo->url().path();
     //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000

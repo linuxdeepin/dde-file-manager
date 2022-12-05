@@ -20,32 +20,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREFILEINFO_H
-#define SHAREFILEINFO_H
+#ifndef VAULTFILEINFO_P_H
+#define VAULTFILEINFO_P_H
 
-#include "dfmplugin_myshares_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfmplugin_vault_global.h"
 
-namespace dfmplugin_myshares {
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
-class ShareFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+namespace dfmplugin_vault {
+
+class VaultFileInfo;
+class VaultFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
 {
-public:
-    explicit ShareFileInfo(const QUrl &url);
-    virtual ~ShareFileInfo() override;
+    friend class VaultFileInfo;
 
-    // AbstractFileInfo interface
 public:
-    virtual QUrl redirectedFileUrl() const override;
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual bool isDir() const override;
-    virtual bool canRename() const override;
-    virtual bool canDrag() override;
-    virtual bool isWritable() const override;
-    virtual void refresh() override;
+    explicit VaultFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfo *qq);
+    virtual ~VaultFileInfoPrivate();
+
+private:
+    QString iconName();
+    QString fileDisplayPath() const;
 };
 
 }
 
-#endif   // SHAREFILEINFO_H
+#endif   // VAULTFILEINFO_P_H

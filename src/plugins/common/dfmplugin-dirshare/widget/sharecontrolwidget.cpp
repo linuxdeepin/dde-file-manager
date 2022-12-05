@@ -309,7 +309,7 @@ void ShareControlWidget::init()
     QString filePath = url.path();
     auto shareName = UserShareHelperInstance->shareNameByPath(filePath);
     if (shareName.isEmpty())
-        shareName = info->fileDisplayName();
+        shareName = info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     shareNameEditor->setText(shareName);
 
     bool isShared = UserShareHelperInstance->isShared(filePath);

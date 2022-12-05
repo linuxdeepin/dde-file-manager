@@ -301,7 +301,7 @@ void EditStackedWidget::selectFile(const QUrl &url)
     filerUrl = url;
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (!info.isNull()) {
-        initTextShowFrame(info->fileDisplayName());
+        initTextShowFrame(info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName));
         if (!info->canRename()) {
             nameEditIcon->hide();
         } else {

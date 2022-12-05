@@ -38,7 +38,7 @@ public:
 
     virtual void refresh() override;
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QString fileDisplayName() const override;
+    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
     virtual bool exists() const override;
     virtual bool canDelete() const override;
     virtual bool canTrash() const override;
@@ -53,14 +53,13 @@ public:
     virtual QUrl redirectedFileUrl() const override;
     virtual QFile::Permissions permissions() const override;
     virtual QIcon fileIcon() override;
-    virtual QDateTime lastRead() const override;
-    virtual QDateTime lastModified() const override;
+
     virtual qint64 size() const override;
     virtual bool isSymLink() const override;
     virtual QString symLinkTarget() const override;
     virtual int countChildFile() const override;
 
-    virtual QDateTime deletionTime() const override;
+    virtual QVariant timeInfo(const FileTimeType type = FileTimeType::kCreateTime) const override;
     virtual QVariant customData(int role) const override;
 
 private:

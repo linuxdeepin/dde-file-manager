@@ -72,7 +72,7 @@ TEST_F(UT_ShareFileInfo, RedirectedFileUrl)
 
 TEST_F(UT_ShareFileInfo, FileDisplayName)
 {
-    EXPECT_TRUE(info->fileDisplayName() == "test");
+    EXPECT_TRUE(info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName) == "test");
 }
 
 TEST_F(UT_ShareFileInfo, FileName)

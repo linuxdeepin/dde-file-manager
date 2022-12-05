@@ -58,7 +58,7 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     auto fileInfo = InfoFactory::create<AbstractFileInfo>(titleUrl);
     if (fileInfo) {
         QUrl url { fileInfo->url() };
-        window->setWindowTitle(fileInfo->fileDisplayName());
+        window->setWindowTitle(fileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName));
     }
 }
 

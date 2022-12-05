@@ -49,7 +49,7 @@ public:
 
     QIcon fileIcon() override;
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    QString fileDisplayName() const override;
+    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
 
     void refresh() override;
 

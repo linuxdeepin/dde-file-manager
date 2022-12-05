@@ -38,6 +38,7 @@
 
 #include <QDateTime>
 #include <QDir>
+#include <QMap>
 #include <QPainter>
 #include <QApplication>
 #include <QtConcurrent>
@@ -49,6 +50,25 @@
 #include <mntent.h>
 
 static constexpr uint16_t kRequestThumbnailDealy { 500 };
+static QVector<DFileInfo::AttributeID> kTimeInfoToDFile = {
+    DFileInfo::AttributeID::kTimeCreatedUsec,
+    DFileInfo::AttributeID::kTimeCreatedUsec,
+    DFileInfo::AttributeID::kTimeChangedUsec,
+    DFileInfo::AttributeID::kTimeModifiedUsec,
+    DFileInfo::AttributeID::kTimeAccessUsec,
+    DFileInfo::AttributeID::kTimeAccessUsec,
+    DFileInfo::AttributeID::kTimeCreated,
+    DFileInfo::AttributeID::kTimeCreated,
+    DFileInfo::AttributeID::kTimeChanged,
+    DFileInfo::AttributeID::kTimeModified,
+    DFileInfo::AttributeID::kTimeAccess,
+    DFileInfo::AttributeID::kTimeAccess,
+    DFileInfo::AttributeID::kTimeCreatedUsec,
+    DFileInfo::AttributeID::kTimeCreatedUsec,
+    DFileInfo::AttributeID::kTimeChangedUsec,
+    DFileInfo::AttributeID::kTimeModifiedUsec,
+    DFileInfo::AttributeID::kTimeAccessUsec,
+};
 
 /*!
  * \class LocalFileInfo 本地文件信息类
@@ -75,25 +95,6 @@ LocalFileInfo::~LocalFileInfo()
     d = nullptr;
 }
 
-LocalFileInfo &LocalFileInfo::operator=(const LocalFileInfo &info)
-{
-    QWriteLocker locker(&d->lock);
-    AbstractFileInfo::operator=(info);
-    d->url = info.d->url;
-    d->dfmFileInfo = QSharedPointer<DFileInfo>(new DFileInfo(*info.d->dfmFileInfo.data()));
-    d->loadingThumbnail = info.d->loadingThumbnail.load();
-    d->fileType = info.d->fileType;
-    d->mimeTypeMode = info.d->mimeTypeMode;
-    d->enableThumbnail = info.d->enableThumbnail.load();
-    d->extraProperties = info.d->extraProperties;
-    d->attributesExtend = info.d->attributesExtend;
-    d->extendIDs = info.d->extendIDs;
-    d->mimeType = info.d->mimeType;
-    d->isLocalDevice = info.d->isLocalDevice;
-    d->isCdRomDevice = info.d->isCdRomDevice;
-    d->icons = info.d->icons;
-    return *this;
-}
 /*!
  * \brief == 重载操作符==
  *
@@ -192,7 +193,7 @@ QString LocalFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
     case FileNameInfoType::kCompleteSuffix:
         return const_cast<LocalFileInfoPrivate *>(d)->completeSuffix();
     case FileNameInfoType::kFileCopyName:
-        return LocalFileInfo::fileDisplayName();
+        return d->fileDisplayName();
     case FileNameInfoType::kIconName:
         return const_cast<LocalFileInfoPrivate *>(d)->iconName();
     case FileNameInfoType::kGenericIconName:
@@ -753,132 +754,51 @@ qint64 LocalFileInfo::size() const
     return size;
 }
 /*!
- * \brief created 获取文件的创建时间
+ * \brief timeInfo 获取文件的时间信息
  *
- * Returns the date and time when the file was created,
- *
- * the time its metadata was last changed or the time of last modification,
- *
- * whichever one of the three is available (in that order).
- *
- * \param
- *
- * \return QDateTime 文件的创建时间的QDateTime实例
+ * \return QVariant 普通的返回QDateTime, second和msecond返回qint64
  */
-QDateTime LocalFileInfo::created() const
+QVariant LocalFileInfo::timeInfo(const AbstractFileInfo::FileTimeType type) const
 {
-    QDateTime time;
-    uint64_t created { 0 };
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        created = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kTimeCreated, nullptr).value<uint64_t>();
+    qint64 data { 0 };
+    if (type < FileTimeType::kDeletionTimeMSecond) {
+        QReadLocker rlk(&d->lock);
+        if (d->dfmFileInfo)
+            data = d->dfmFileInfo->attribute(kTimeInfoToDFile[static_cast<int>(type)], nullptr).value<qint64>();
     }
-    time = QDateTime::fromTime_t(static_cast<uint>(created));
-
-    return time;
-}
-/*!
- * \brief birthTime 获取文件的创建时间
- *
- * Returns the date and time when the file was created / born.
- *
- * If the file birth time is not available, this function
- *
- * returns an invalid QDateTime.
- *
- * \param
- *
- * \return QDateTime 文件的创建时间的QDateTime实例
- */
-QDateTime LocalFileInfo::birthTime() const
-{
-    return created();
-}
-/*!
- * \brief metadataChangeTime 获取文件的改变时间
- *
- * Returns the date and time when the file metadata was changed.
- *
- * A metadata change occurs when the file is created,
- *
- * but it also occurs whenever the user writes or sets
- *
- * inode information (for example, changing the file permissions).
- *
- * \param
- *
- * \return QDateTime 文件的改变时间的QDateTime实例
- */
-QDateTime LocalFileInfo::metadataChangeTime() const
-{
-    QDateTime time;
-    uint64_t data { 0 };
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kTimeChanged, nullptr).value<uint64_t>();
-    }
-
-    time = QDateTime::fromTime_t(static_cast<uint>(data));
-
-    return time;
-}
-/*!
- * \brief lastModified 获取文件的最后修改时间
- *
- * \param
- *
- * \return QDateTime 文件的最后修改时间的QDateTime实例
- */
-QDateTime LocalFileInfo::lastModified() const
-{
-    QDateTime time;
-    uint64_t data { 0 };
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, nullptr).value<uint64_t>();
-    }
-    time = QDateTime::fromTime_t(static_cast<uint>(data));
-
-    return time;
-}
-/*!
- * \brief lastRead 获取文件的最后读取时间
- *
- * \param
- *
- * \return QDateTime 文件的最后读取时间的QDateTime实例
- */
-QDateTime LocalFileInfo::lastRead() const
-{
-    QDateTime time;
-    uint64_t data { 0 };
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, nullptr).value<uint64_t>();
-    }
-    time = QDateTime::fromTime_t(static_cast<uint>(data));
-
-    return time;
-}
-/*!
- * \brief fileTime 获取文件的事件通过传入的参数
- *
- * \param QFile::FileTime time 时间类型
- *
- * \return QDateTime 文件的不同时间类型的时间的QDateTime实例
- */
-QDateTime LocalFileInfo::fileTime(QFileDevice::FileTime time) const
-{
-    if (time == QFileDevice::FileAccessTime) {
-        return lastRead();
-    } else if (time == QFileDevice::FileBirthTime) {
-        return created();
-    } else if (time == QFileDevice::FileMetadataChangeTime) {
-        return metadataChangeTime();
-    } else if (time == QFileDevice::FileModificationTime) {
-        return lastModified();
-    } else {
-        return QDateTime();
+    switch (type) {
+    case AbstractFileInfo::FileTimeType::kCreateTime:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kBirthTime:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kMetadataChangeTime:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastModified:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastRead:
+        return QDateTime::fromMSecsSinceEpoch(data);
+    case AbstractFileInfo::FileTimeType::kCreateTimeSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kBirthTimeSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kMetadataChangeTimeSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastModifiedSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastReadSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kCreateTimeMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kBirthTimeMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kMetadataChangeTimeMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastModifiedMSecond:
+        [[fallthrough]];
+    case AbstractFileInfo::FileTimeType::kLastReadMSecond:
+        return data;
+    default:
+        return QVariant();
     }
 }
 /*!
@@ -1047,44 +967,14 @@ QString LocalFileInfo::sizeFormat() const
     QString unitString = withUnitVisible ? unit : QString();
     return QString("%1%2").arg(d->sizeString(QString::number(fileSize, 'f', 1)), unitString);
 }
-/*!
- * \brief fileDisplayName 文件的显示名称，一般为文件的名称
- *
- * \return QString 文件的显示名称
- */
-QString LocalFileInfo::fileDisplayName() const
+
+QString LocalFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
-    QString &&path { filePath() };
-    if (SystemPathUtil::instance()->isSystemPath(path)) {
-        QString displayName { SystemPathUtil::instance()->systemPathDisplayNameByPath(path) };
-        if (!displayName.isEmpty())
-            return displayName;
-    }
-
-    QString fileDisplayName;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        fileDisplayName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName, nullptr).toString();
-
-        // trans "/" to "smb-share:server=xxx,share=xxx"
-        if (fileDisplayName == R"(/)" && FileUtils::isGvfsFile(d->url)) {
-            fileDisplayName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kIdFilesystem, nullptr).toString();
-        }
-    }
-
-    return fileDisplayName;
+    if (type == AbstractFileInfo::DisplayInfoType::kFileDisplayName)
+        return d->fileDisplayName();
+    return AbstractFileInfo::displayInfo(type);
 }
 
-/*!
- * \brief toQFileInfo 获取他的QFileInfo实例对象
- *
- * \return QFileInfo 文件的QFileInfo实例
- */
-QFileInfo LocalFileInfo::toQFileInfo() const
-{
-    QFileInfo info = QFileInfo(d->url.path());
-    return info;
-}
 /*!
  * \brief extraProperties 获取文件的扩展属性
  *
@@ -1547,6 +1437,34 @@ QString LocalFileInfoPrivate::mimeTypeName()
     }
 
     return type;
+}
+
+/*!
+ * \brief fileDisplayName 文件的显示名称，一般为文件的名称
+ *
+ * \return QString 文件的显示名称
+ */
+QString LocalFileInfoPrivate::fileDisplayName() const
+{
+    QString &&path { q->filePath() };
+    if (SystemPathUtil::instance()->isSystemPath(path)) {
+        QString displayName { SystemPathUtil::instance()->systemPathDisplayNameByPath(path) };
+        if (!displayName.isEmpty())
+            return displayName;
+    }
+
+    QString fileDisplayName;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        fileDisplayName = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardDisplayName, nullptr).toString();
+
+        // trans "/" to "smb-share:server=xxx,share=xxx"
+        if (fileDisplayName == R"(/)" && FileUtils::isGvfsFile(url)) {
+            fileDisplayName = dfmFileInfo->attribute(DFileInfo::AttributeID::kIdFilesystem, nullptr).toString();
+        }
+    }
+
+    return fileDisplayName;
 }
 
 }

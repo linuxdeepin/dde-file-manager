@@ -140,7 +140,7 @@ bool OpenWithMenuScene::create(QMenu *parent)
 
     foreach (QString app, d->recommendApps) {
         DesktopFileInfo desktop(QUrl::fromLocalFile(app));
-        QAction *action = subMenu->addAction(desktop.fileIcon(), desktop.fileDisplayName());
+        QAction *action = subMenu->addAction(desktop.fileIcon(), desktop.displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName));
 
         // TODO(Lee or others): 此种外部注入的未分配谓词
         d->predicateAction[app] = action;

@@ -239,7 +239,10 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
             qWarning() << "get source file mimetype is valid!";
         }
         lbSrcIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
-        lbSrcModTime->setText(QString(tr("Time modified: %1")).arg(originInfo->lastModified().isValid() ? originInfo->lastModified().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
+        lbSrcModTime->setText(QString(tr("Time modified: %1"))
+                                      .arg(originInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().isValid()
+                                                   ? originInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
+                                                   : qApp->translate("MimeTypeDisplayManager", "Unknown")));
         if (originInfo->isDir()) {
             lbSrcTitle->setText(tr("Original folder"));
             QString filecount = originInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(originInfo->countChildFile()) : QObject::tr("%1 items").arg(originInfo->countChildFile());
@@ -253,7 +256,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
             qWarning() << "get source file mimetype is valid!";
         }
         lbDstIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
-        lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->lastModified().isValid() ? targetInfo->lastModified().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
+        lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().isValid() ? targetInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
 
         if (targetInfo->isDir()) {
             lbDstTitle->setText(tr("Target folder"));

@@ -198,7 +198,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_3)
 {
     stub_ext::StubExt st;
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, mimeTypeDisplayName), [] { return "test/test"; });
+    st.set_lamda(VADDR(LocalFileInfo, displayInfo), [] { return "test/test"; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = true;
@@ -251,7 +251,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_5)
 {
     stub_ext::StubExt st;
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, lastModified), [] { return QDateTime::currentDateTime(); });
+    st.set_lamda(VADDR(LocalFileInfo, timeInfo), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
@@ -282,7 +282,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_6)
 {
     stub_ext::StubExt st;
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, lastModified), [] { return QDateTime::currentDateTime(); });
+    st.set_lamda(VADDR(LocalFileInfo, timeInfo), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;
@@ -314,7 +314,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_7)
 {
     stub_ext::StubExt st;
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, lastModified), [] { return QDateTime::currentDateTime(); });
+    st.set_lamda(VADDR(LocalFileInfo, timeInfo), [] { return QDateTime::currentDateTime(); });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kFileType] = false;

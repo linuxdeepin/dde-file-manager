@@ -913,7 +913,7 @@ void FileDialog::showEvent(QShowEvent *event)
 
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(currentUrl());
     if (info)
-        setWindowTitle(info->fileDisplayName());
+        setWindowTitle(info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName));
 
     return FileManagerWindow::showEvent(event);
 }

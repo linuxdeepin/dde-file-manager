@@ -38,7 +38,7 @@ EntryFileInfoPrivate::EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq)
 
 void EntryFileInfoPrivate::init()
 {
-    const auto &&suffix = q->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
+    const auto &&suffix = const_cast<EntryFileInfoPrivate *>(this)->suffix();
     entity.reset(EntryEntityFactor::create(suffix, q->url()));
 }
 
