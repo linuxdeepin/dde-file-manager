@@ -1797,6 +1797,16 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
         default:
             break;
         }
+
+        if (QString(error->message).contains("Operation not permitted.")) {
+            format = false;
+            dialogManager->showMessageDialog(DialogManager::msgWarn,
+                                             tr("Mount failed"),
+                                             tr("The device has been blocked and you do not have permission to access it. "
+                                                "Please configure its connection policy in Security Center or contact your administrator."),
+                                             tr("Confirm"));
+        }
+
         if (AskedPasswordWhileMountDisk) { // 显示过密码框的设备，说明该设备可解锁，但密码不一定正确或取消了，不需要提示用户格式化
             if (!user_data && !errorCodeNeedSilent(error->code)) {
                 fileSignalManager->requestShowErrorDialog(err, QString(" "));
