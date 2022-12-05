@@ -54,7 +54,7 @@ QList<QIcon> EmblemHelper::getSystemEmblems(const AbstractFileInfoPointer &info)
     if (!info->isReadable())
         emblems << QIcon::fromTheme("emblem-unreadable", standardEmblem(SystemEmblemType::kUnreadable));
 
-    bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->absoluteFilePath()).toBool();
+    bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath)).toBool();
     if (shared)
         emblems << QIcon::fromTheme("emblem-shared", standardEmblem(SystemEmblemType::kShare));
 

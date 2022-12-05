@@ -188,39 +188,7 @@ QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::Fil
         return QString();
     }
 }
-/*!
- * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
- *
- * url = file:///tmp/archive.tar.gz
- *
- * filePath = /tmp/archive.tar.gz
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::filePath() const
-{
-    CALL_PROXY(filePath());
-    return QString();
-}
 
-/*!
- * \brief absoluteFilePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径，事例如下：
- *
- * url = file:///tmp/archive.tar.gz
- *
- * absoluteFilePath = /tmp/archive.tar.gz
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::absoluteFilePath() const
-{
-    CALL_PROXY(absoluteFilePath());
-    return filePath();
-}
 /*!
  * \brief fileName 文件名称，全名称
  *
@@ -234,7 +202,7 @@ QString AbstractFileInfo::absoluteFilePath() const
  */
 QString AbstractFileInfo::fileName() const
 {
-    QString filePath = this->filePath();
+    QString filePath = this->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);
 
     if (filePath.endsWith(QDir::separator())) {
         filePath.chop(1);
@@ -270,58 +238,7 @@ QString AbstractFileInfo::baseName() const
 
     return fileName.left(fileName.length() - suffix.length() - 1);
 }
-/*!
- * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
- *
- * url = file:///tmp/archive.tar.gz
- *
- * path = /tmp
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::path() const
-{
-    CALL_PROXY(path());
 
-    return QString();
-}
-/*!
- * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
- *
- * url = file:///tmp/archive.tar.gz
- *
- * absolutePath = /tmp
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::absolutePath() const
-{
-    CALL_PROXY(absolutePath());
-
-    return path();
-}
-/*!
- * \brief canonicalPath 获取文件canonical路径，包含文件的名称，相当于文件的全路径
- *
- * url = file:///tmp/archive.tar.gz
- *
- * canonicalPath = /tmp/archive.tar.gz
- *
- * \param
- *
- * \return QString 返回没有符号链接或冗余“.”或“..”元素的绝对路径
- */
-QString AbstractFileInfo::canonicalPath() const
-{
-
-    CALL_PROXY(canonicalPath());
-
-    return filePath();
-}
 /*!
  * \brief url 获取文件的url
  *
@@ -478,7 +395,7 @@ bool AbstractFileInfo::isRoot() const
 {
     CALL_PROXY(isRoot());
 
-    return filePath() == "/";
+    return pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) == "/";
 }
 /*!
  * \brief isBundle 获取文件是否是二进制文件
@@ -510,25 +427,29 @@ quint64 DFMBASE_NAMESPACE::AbstractFileInfo::inode() const
     return 0;
 }
 /*!
- * \brief isBundle 获取文件的链接目标文件
- *
- * Returns the absolute path to the file or directory a symbolic link points to,
- *
- * or an empty string if the object isn't a symbolic link.
- *
- * This name may not represent an existing file; it is only a string.
- *
- * QFileInfo::exists() returns true if the symlink points to an existing file.
- *
- * \param
- *
- * \return QString 链接目标文件的路径
- */
-QString AbstractFileInfo::symLinkTarget() const
+  * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
+  * 处理或者字符串处理，这都比较快
+  * \param FileNameInfoType
+  */
+QString dfmbase::AbstractFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
 {
-    CALL_PROXY(symLinkTarget());
-
-    return QString();
+    CALL_PROXY(pathInfo(type));
+    switch (type) {
+    case FilePathInfoType::kPath:
+        [[fallthrough]];
+    case FilePathInfoType::kFilePath:
+        [[fallthrough]];
+    case FilePathInfoType::kAbsoluteFilePath:
+        [[fallthrough]];
+    case FilePathInfoType::kAbsolutePath:
+        [[fallthrough]];
+    case FilePathInfoType::kCanonicalPath:
+        [[fallthrough]];
+    case FilePathInfoType::kSymLinkTarget:
+        [[fallthrough]];
+    default:
+        return QString();
+    }
 }
 /*!
  * \brief owner 获取文件的拥有者
@@ -741,7 +662,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName(const QString &f
         return QUrl();
     }
     QUrl theUrl = url();
-    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(absoluteFilePath().toStdString().c_str(),
+    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath).toStdString().c_str(),
                                                   fileName.toStdString().c_str(), nullptr));
     return theUrl;
 }
@@ -755,7 +676,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName(const QString &fil
     CALL_PROXY(getUrlByNewFileName(fileName));
 
     QUrl theUrl = url();
-    const QString &newPath = DFMIO::DFMUtils::buildFilePath(absolutePath().toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
+    const QString &newPath = DFMIO::DFMUtils::buildFilePath(pathInfo(AbstractFileInfo::FilePathInfoType::kAbsolutePath).toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
     theUrl.setPath(newPath);
 
     return theUrl;
@@ -843,7 +764,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     }
 
     AbstractFileInfoPointer info = nullptr;
-    QString linkTargetPath = symLinkTarget();
+    QString linkTargetPath = pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
 
     do {
         const QUrl &targetUrl = QUrl::fromLocalFile(linkTargetPath);
@@ -858,7 +779,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
             return false;
         }
 
-        linkTargetPath = info->symLinkTarget();
+        linkTargetPath = info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
     } while (info->isSymLink());
 
     return info->canDrop();

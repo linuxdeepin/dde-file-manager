@@ -171,7 +171,7 @@ TEST(AdvanceSearchBarPrivateTest, ut_shouldVisiableByFilterRule_2)
     auto searchUrl = SearchHelper::fromSearchFile(QUrl::fromLocalFile("/home"), "test", "123");
     stub_ext::StubExt st;
     st.set_lamda(&LocalFileInfo::init, [] {});
-    st.set_lamda(VADDR(LocalFileInfo, filePath), [] { return "/home/test/test"; });
+    st.set_lamda(VADDR(LocalFileInfo, pathInfo), [] { return "/home/test/test"; });
     st.set_lamda(&AdvanceSearchBarPrivate::parseFilterData, [&searchUrl] {
         AdvanceSearchBarPrivate::FileFilter filter;
         filter.comboValid[AdvanceSearchBarPrivate::kSearchRange] = true;

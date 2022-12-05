@@ -283,10 +283,10 @@ bool UserShareHelper::canShare(AbstractFileInfoPointer info)
     if (info->ownerId() != static_cast<uint>(SysInfoUtils::getUserId()) && !SysInfoUtils::isRootUser())
         return false;
 
-    if (DevProxyMng->isFileOfProtocolMounts(info->filePath()))
+    if (DevProxyMng->isFileOfProtocolMounts(info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath)))
         return false;
 
-    if (info->url().scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->filePath()))
+    if (info->url().scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath)))
         return false;
 
     return true;

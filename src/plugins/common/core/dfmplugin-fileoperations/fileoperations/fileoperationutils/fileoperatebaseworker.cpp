@@ -605,8 +605,10 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     }
     // 检查源文件是否存在
     if (!DecoratorFile(fromInfo->url()).exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError
-                                                                                                                                     : AbstractJobHandler::JobErrorType::kNonexistenceError;
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kPath).startsWith("/root/")
+                                                      && !toInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kPath).startsWith("/root/"))
+                ? AbstractJobHandler::JobErrorType::kPermissionError
+                : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo == nullptr ? QUrl() : toInfo->url(), errortype);
         cancelThreadProcessingError();
 
@@ -622,8 +624,10 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     }
     // 检查目标文件是否存在
     if (!DecoratorFile(toInfo->url()).exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError
-                                                                                                                                     : AbstractJobHandler::JobErrorType::kNonexistenceError;
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kPath).startsWith("/root/")
+                                                      && !toInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kPath).startsWith("/root/"))
+                ? AbstractJobHandler::JobErrorType::kPermissionError
+                : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), errortype);
         cancelThreadProcessingError();
         setSkipValue(skip, action);
@@ -670,7 +674,7 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
     if (followLink) {
         do {
             QUrl newUrl = newFromInfo->url();
-            newUrl.setPath(newFromInfo->symLinkTarget());
+            newUrl.setPath(newFromInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
             const AbstractFileInfoPointer &symlinkTarget = InfoFactory::create<AbstractFileInfo>(newUrl);
 
             if (!symlinkTarget || !DecoratorFile(newUrl).exists()) {

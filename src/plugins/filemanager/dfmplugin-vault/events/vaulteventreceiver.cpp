@@ -144,10 +144,11 @@ void VaultEventReceiver::handleHideFilesResult(const quint64 &winId, const QList
         const QUrl &url = urls.first();
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
-            const QUrl &parentUrlVirtual = VaultHelper::instance()->pathToVaultVirtualUrl(info->path());
+            const QUrl &parentUrlVirtual = VaultHelper::instance()->pathToVaultVirtualUrl(
+                    info->pathInfo(AbstractFileInfo::FilePathInfoType::kPath));
             QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(parentUrlVirtual);
             if (!watcher.isNull()) {
-                const QString &hideFilePath = info->path() + "/.hidden";
+                const QString &hideFilePath = info->pathInfo(AbstractFileInfo::FilePathInfoType::kPath) + "/.hidden";
                 const QUrl &hideFileUrl = QUrl::fromLocalFile(hideFilePath);
                 emit watcher->fileAttributeChanged(hideFileUrl);
             }

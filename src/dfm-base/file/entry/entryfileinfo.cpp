@@ -45,7 +45,7 @@ void EntryFileInfoPrivate::init()
 QString EntryFileInfoPrivate::suffix() const
 {
     QRegularExpression re(".*\\.(.*)$");
-    auto rem = re.match(q->path());
+    auto rem = re.match(url.path());
     if (!rem.hasMatch()) {
         return "";
     }
@@ -150,11 +150,6 @@ bool EntryFileInfo::exists() const
     return d->entity ? d->entity->exists() : false;
 }
 
-QString EntryFileInfo::filePath() const
-{
-    return path();
-}
-
 QString EntryFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
 {
     switch (type) {
@@ -167,9 +162,17 @@ QString EntryFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
     }
 }
 
-QString EntryFileInfo::path() const
+QString EntryFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
 {
-    return url().path();
+    QString path;
+    switch (type) {
+    case FilePathInfoType::kPath:
+        [[fallthrough]];
+    case FilePathInfoType::kFilePath:
+        return url().path();
+    default:
+        return AbstractFileInfo::pathInfo(type);
+    }
 }
 
 QIcon EntryFileInfo::fileIcon()

@@ -204,92 +204,28 @@ QString LocalFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
     }
 }
 /*!
- * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
- *
- * url = file:///tmp/archive.tar.gz
- *
- * filePath = /tmp/archive.tar.gz
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::filePath() const
+  * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
+  * 处理或者字符串处理，这都比较快
+  * \param FileNameInfoType
+  */
+QString LocalFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
 {
-    QString filePath;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        filePath = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardFilePath, nullptr).toString();
+    switch (type) {
+    case FilePathInfoType::kFilePath:
+        [[fallthrough]];
+    case FilePathInfoType::kAbsoluteFilePath:
+        [[fallthrough]];
+    case FilePathInfoType::kCanonicalPath:
+        return d->filePath();
+    case FilePathInfoType::kPath:
+        [[fallthrough]];
+    case FilePathInfoType::kAbsolutePath:
+        return d->path();
+    case FilePathInfoType::kSymLinkTarget:
+        return d->symLinkTarget();
+    default:
+        return AbstractFileInfo::pathInfo(type);
     }
-
-    return filePath;
-}
-
-/*!
- * \brief absoluteFilePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径，事例如下：
- *
- * url = file:///tmp/archive.tar.gz
- *
- * absoluteFilePath = /tmp/archive.tar.gz
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::absoluteFilePath() const
-{
-    return filePath();
-}
-/*!
- * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
- *
- * url = file:///tmp/archive.tar.gz
- *
- * path = /tmp
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::path() const
-{
-    QString path;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        path = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardParentPath, nullptr).toString();
-    }
-
-    return path;
-}
-/*!
- * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
- *
- * url = file:///tmp/archive.tar.gz
- *
- * absolutePath = /tmp
- *
- * \param
- *
- * \return
- */
-QString LocalFileInfo::absolutePath() const
-{
-    return path();
-}
-/*!
- * \brief canonicalPath 获取文件canonical路径，包含文件的名称，相当于文件的全路径
- *
- * url = file:///tmp/archive.tar.gz
- *
- * canonicalPath = /tmp/archive.tar.gz
- *
- * \param
- *
- * \return QString 返回没有符号链接或冗余“.”或“..”元素的绝对路径
- */
-QString LocalFileInfo::canonicalPath() const
-{
-    return filePath();
 }
 /*!
  * \brief url 获取文件的url，这里的url是转换后的
@@ -306,7 +242,7 @@ QUrl LocalFileInfo::url() const
 
 bool LocalFileInfo::canDelete() const
 {
-    if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
+    if (SystemPathUtil::instance()->isSystemPath(d->filePath()))
         return false;
 
     bool canDelete = SysInfoUtils::isRootUser();
@@ -321,7 +257,7 @@ bool LocalFileInfo::canDelete() const
 
 bool LocalFileInfo::canTrash() const
 {
-    if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
+    if (SystemPathUtil::instance()->isSystemPath(d->filePath()))
         return false;
 
     bool canTrash = false;
@@ -336,7 +272,7 @@ bool LocalFileInfo::canTrash() const
 
 bool LocalFileInfo::canRename() const
 {
-    if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
+    if (SystemPathUtil::instance()->isSystemPath(d->filePath()))
         return false;
 
     bool canRename = false;
@@ -423,7 +359,7 @@ bool LocalFileInfo::isExecutable() const
         if (FileUtils::isGvfsFile(this->url())) {
             qInfo() << "trying to get isExecutable by judging whether the dir can be iterated" << d->url;
             struct dirent *next { nullptr };
-            DIR *dirp = opendir(absoluteFilePath().toUtf8().constData());
+            DIR *dirp = opendir(d->filePath().toUtf8().constData());
             if (!dirp) {
                 isExecutable = false;
             } else {
@@ -541,7 +477,7 @@ bool LocalFileInfo::isSymLink() const
  */
 bool LocalFileInfo::isRoot() const
 {
-    return filePath() == "/";
+    return pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) == "/";
 }
 /*!
  * \brief isBundle 获取文件是否是二进制文件
@@ -563,7 +499,7 @@ bool LocalFileInfo::isBundle() const
 
 bool LocalFileInfo::isPrivate() const
 {
-    const QString &path = absolutePath();
+    const QString &path = d->path();
     const QString &name = d->fileName();
 
     static DFMBASE_NAMESPACE::Match match("PrivateFiles");
@@ -584,39 +520,6 @@ bool LocalFileInfo::canFetch() const
     return isDir() || (isArchive && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
 }
 
-/*!
- * \brief isBundle 获取文件的链接目标文件
- *
- * Returns the absolute path to the file or directory a symbolic link points to,
- *
- * or an empty string if the object isn't a symbolic link.
- *
- * This name may not represent an existing file; it is only a string.
- *
- * QFileInfo::exists() returns true if the symlink points to an existing file.
- *
- * \param
- *
- * \return QString 链接目标文件的路径
- */
-QString LocalFileInfo::symLinkTarget() const
-{
-    QString symLinkTarget;
-
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        symLinkTarget = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget, nullptr).toString();
-    }
-    // the link target may be a relative path.
-    if (!symLinkTarget.startsWith("/")) {
-        auto currPath = path();
-        if (currPath.right(1) != "/")
-            currPath += "/";
-        symLinkTarget.prepend(currPath);
-    }
-
-    return symLinkTarget;
-}
 /*!
  * \brief owner 获取文件的拥有者
  *
@@ -886,7 +789,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
 
     // Cannot access statBuf.st_mode from the filesystem engine, so we have to stat again.
     // In addition we want to follow symlinks.
-    const QString &absoluteFilePath = filePath();
+    const QString &absoluteFilePath = d->filePath();
     const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
@@ -916,7 +819,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
 int LocalFileInfo::countChildFile() const
 {
     if (isDir()) {
-        const QString &path = absoluteFilePath();
+        const QString &path = d->filePath();
         QReadLocker locker(&d->lock);
         DecoratorFileEnumerator enumerator(path);
         return int(enumerator.fileCount());
@@ -1026,7 +929,7 @@ QIcon LocalFileInfo::fileIcon()
 QUrl LocalFileInfo::redirectedFileUrl() const
 {
     if (isSymLink())
-        return QUrl::fromLocalFile(symLinkTarget());
+        return QUrl::fromLocalFile(pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
     return url();
 }
 /*!
@@ -1255,8 +1158,8 @@ QIcon LocalFileInfoPrivate::defaultIcon()
 
     icon = LocalFileIconProvider::globalProvider()->icon(q);
     if (q->isSymLink()) {
-        const auto &&target = q->symLinkTarget();
-        if (target != q->absoluteFilePath()) {
+        const auto &&target = symLinkTarget();
+        if (target != filePath()) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(target));
             if (info)
                 icon = info->fileIcon();
@@ -1396,8 +1299,8 @@ QString LocalFileInfoPrivate::completeSuffix()
 QString LocalFileInfoPrivate::iconName()
 {
     QString iconNameValue;
-    if (SystemPathUtil::instance()->isSystemPath(q->absoluteFilePath()))
-        iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(q->absoluteFilePath());
+    if (SystemPathUtil::instance()->isSystemPath(filePath()))
+        iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(filePath());
     if (iconNameValue.isEmpty()) {
         if (dfmFileInfo) {
             QReadLocker locker(&lock);
@@ -1428,7 +1331,7 @@ QString LocalFileInfoPrivate::mimeTypeName()
  */
 QString LocalFileInfoPrivate::fileDisplayName() const
 {
-    QString &&path { q->filePath() };
+    QString &&path { filePath() };
     if (SystemPathUtil::instance()->isSystemPath(path)) {
         QString displayName { SystemPathUtil::instance()->systemPathDisplayNameByPath(path) };
         if (!displayName.isEmpty())
@@ -1447,6 +1350,84 @@ QString LocalFileInfoPrivate::fileDisplayName() const
     }
 
     return fileDisplayName;
+}
+
+/*!
+ * \brief path 获取文件路径，不包含文件的名称，相当于是父目录
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * path = /tmp
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfoPrivate::path() const
+{
+    QString path;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        path = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardParentPath, nullptr).toString();
+    }
+
+    return path;
+}
+
+/*!
+ * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * filePath = /tmp/archive.tar.gz
+ *
+ * \param
+ *
+ * \return
+ */
+QString LocalFileInfoPrivate::filePath() const
+{
+    QString filePath;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        filePath = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardFilePath, nullptr).toString();
+    }
+
+    return filePath;
+}
+
+/*!
+ * \brief isBundle 获取文件的链接目标文件
+ *
+ * Returns the absolute path to the file or directory a symbolic link points to,
+ *
+ * or an empty string if the object isn't a symbolic link.
+ *
+ * This name may not represent an existing file; it is only a string.
+ *
+ * QFileInfo::exists() returns true if the symlink points to an existing file.
+ *
+ * \param
+ *
+ * \return QString 链接目标文件的路径
+ */
+QString LocalFileInfoPrivate::symLinkTarget() const
+{
+    QString symLinkTarget;
+
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        symLinkTarget = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget, nullptr).toString();
+    }
+    // the link target may be a relative path.
+    if (!symLinkTarget.startsWith("/")) {
+        auto currPath = path();
+        if (currPath.right(1) != "/")
+            currPath += "/";
+        symLinkTarget.prepend(currPath);
+    }
+
+    return symLinkTarget;
 }
 
 }

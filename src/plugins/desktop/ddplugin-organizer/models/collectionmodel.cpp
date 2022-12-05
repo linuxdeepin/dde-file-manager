@@ -45,8 +45,7 @@ using namespace ddplugin_organizer;
     dpfSignalDispatcher->unsubscribe("ddplugin_canvas", QT_STRINGIFY2(topic), this, func);
 
 CollectionModelPrivate::CollectionModelPrivate(CollectionModel *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
     CanvasModelSubscribe(signal_CanvasModel_OpenEditor, &CollectionModelPrivate::renameRequired);
 }
@@ -138,7 +137,7 @@ void CollectionModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft,
         return;
 
     // AscendingOrder
-    qSort(idxs.begin(), idxs.end(), [](const QModelIndex &t1, const QModelIndex &t2){
+    qSort(idxs.begin(), idxs.end(), [](const QModelIndex &t1, const QModelIndex &t2) {
         return t1.row() < t2.row();
     });
 
@@ -231,8 +230,8 @@ void CollectionModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &n
     else
         qWarning() << "no handler to insert reamed file.";
 
-    if (row < 0) { // no old data, need to insert
-        if (!fileMap.contains(newUrl) && accept) { // insert it if accept.
+    if (row < 0) {   // no old data, need to insert
+        if (!fileMap.contains(newUrl) && accept) {   // insert it if accept.
             row = fileList.count();
             q->beginInsertRows(q->rootIndex(), row, row);
             fileList.append(newUrl);
@@ -291,10 +290,8 @@ void CollectionModelPrivate::doRefresh(bool global)
 }
 
 CollectionModel::CollectionModel(QObject *parent)
-    : QAbstractProxyModel(parent)
-    , d(new CollectionModelPrivate(this))
+    : QAbstractProxyModel(parent), d(new CollectionModelPrivate(this))
 {
-
 }
 
 CollectionModel::~CollectionModel()
@@ -306,8 +303,8 @@ CollectionModel::~CollectionModel()
 void CollectionModel::setModelShell(FileInfoModelShell *shell)
 {
     if (auto model = sourceModel()) {
-       model->disconnect(this);
-       model->disconnect(d);
+        model->disconnect(this);
+        model->disconnect(d);
     }
 
     beginResetModel();
@@ -401,7 +398,7 @@ void CollectionModel::refresh(const QModelIndex &parent, bool global, int ms)
     } else {
         d->refreshTimer.reset(new QTimer);
         d->refreshTimer->setSingleShot(true);
-        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global](){
+        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global]() {
             d->doRefresh(global);
         });
 
@@ -548,14 +545,14 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     }
 
     QString errString;
-    auto itemInfo =  InfoFactory::create<LocalFileInfo>(targetFileUrl, true, &errString);
+    auto itemInfo = InfoFactory::create<LocalFileInfo>(targetFileUrl, true, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qInfo() << "create LocalFileInfo error: " << errString << targetFileUrl;
         return false;
     }
 
     if (itemInfo->isSymLink()) {
-        targetFileUrl = itemInfo->symLinkTarget();
+        targetFileUrl = itemInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {

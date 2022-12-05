@@ -167,7 +167,10 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
                 break;
             }
             //skip os file Shortcut
-            if (info->isSymLink() && (info->symLinkTarget() == QStringLiteral("/proc/kcore") || info->symLinkTarget() == QStringLiteral("/dev/core"))) {
+            if (info->isSymLink()
+                && (info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget)
+                            == QStringLiteral("/proc/kcore")
+                    || info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget) == QStringLiteral("/dev/core"))) {
                 break;
             }
 
@@ -214,7 +217,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
             }
 
             do {
-                info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->symLinkTarget()));
+                info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget)));
             } while (info && info->isSymLink());
 
             if (!info) {
@@ -421,7 +424,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                     continue;
                 }
 
-                info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->symLinkTarget()));
+                info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget)));
 
                 if (info->isSymLink()) {
                     continue;

@@ -376,7 +376,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         dropUrls = urls;
 
     if (targetFileInfo->isSymLink())
-        targetUrl = QUrl::fromLocalFile(targetFileInfo->symLinkTarget());
+        targetUrl = QUrl::fromLocalFile(targetFileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
 
     FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
 

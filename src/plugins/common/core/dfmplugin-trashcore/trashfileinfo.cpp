@@ -49,6 +49,7 @@ public:
     QDateTime lastRead() const;
     QDateTime lastModified() const;
     QDateTime deletionTime() const;
+    QString symLinkTarget() const;
 
     QSharedPointer<DFileInfo> dFileInfo { nullptr };
     QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
@@ -261,7 +262,15 @@ QString TrashFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type)
 
     return AbstractFileInfo::displayInfo(type);
 }
-
+QString TrashFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
+{
+    switch (type) {
+    case FilePathInfoType::kSymLinkTarget:
+        return d->symLinkTarget();
+    default:
+        return AbstractFileInfo::pathInfo(type);
+    }
+}
 bool TrashFileInfo::canRename() const
 {
     if (!d->dFileInfo)
@@ -334,14 +343,14 @@ bool TrashFileInfo::isSymLink() const
     return isSymLink;
 }
 
-QString TrashFileInfo::symLinkTarget() const
+QString TrashFileInfoPrivate::symLinkTarget() const
 {
-    if (!d->dFileInfo)
+    if (!dFileInfo)
         return QString();
 
     QString symLinkTarget;
     bool success = false;
-    symLinkTarget = d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget, &success).toString();
+    symLinkTarget = dFileInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget, &success).toString();
     return symLinkTarget;
 }
 

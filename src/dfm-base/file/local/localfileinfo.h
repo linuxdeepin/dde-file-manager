@@ -59,11 +59,8 @@ public:
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant()) override;
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
 
-    virtual QString filePath() const override;
-    virtual QString absoluteFilePath() const override;
-    virtual QString path() const override;
-    virtual QString absolutePath() const override;
-    virtual QString canonicalPath() const override;
+    virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const override;
+
     virtual QUrl url() const override;
     virtual bool canDelete() const override;
     virtual bool canTrash() const override;
@@ -81,7 +78,6 @@ public:
     virtual bool isPrivate() const override;
     virtual bool canFetch() const override;
     virtual quint64 inode() const override;
-    virtual QString symLinkTarget() const override;
     virtual QString owner() const override;
     virtual uint ownerId() const override;
     virtual QString group() const override;

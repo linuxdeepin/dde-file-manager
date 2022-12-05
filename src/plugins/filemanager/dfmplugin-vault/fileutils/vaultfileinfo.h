@@ -39,7 +39,7 @@ public:
     virtual bool operator==(const VaultFileInfo &fileinfo) const;
     virtual bool operator!=(const VaultFileInfo &fileinfo) const;
 
-    virtual QString absolutePath() const override;
+    virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const override;
     virtual bool exists() const override;
     virtual void refresh() override;
     virtual bool isReadable() const override;

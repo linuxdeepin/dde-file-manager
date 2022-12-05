@@ -37,7 +37,7 @@ DFMGLOBAL_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
 #define CanvasModelPublish(topic, args...) \
-            dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)
+    dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)
 
 CanvasProxyModelPrivate::CanvasProxyModelPrivate(CanvasProxyModel *qq)
     : QObject(qq), q(qq)
@@ -738,7 +738,7 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         return false;
 
     if (itemInfo->isSymLink()) {
-        targetFileUrl = itemInfo->symLinkTarget();
+        targetFileUrl = itemInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
     }
 
     if (d->hookIfs && d->hookIfs->dropMimeData(data, targetFileUrl, action)) {

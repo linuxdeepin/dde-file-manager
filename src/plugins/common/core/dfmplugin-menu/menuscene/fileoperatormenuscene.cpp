@@ -124,7 +124,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
     if (d->selectFiles.count() == 1) {
         auto focusFileInfo = d->focusFileInfo;
         if (d->focusFileInfo->isSymLink()) {
-            const auto &targetFile = d->focusFileInfo->symLinkTarget();
+            const auto &targetFile = d->focusFileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
             auto targetFileInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetFile));
             if (targetFileInfo && targetFileInfo->exists())
                 focusFileInfo = targetFileInfo;
@@ -289,7 +289,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // set as wallpaper
     if (actionId == ActionID::kSetAsWallpaper) {
         if (UrlRoute::isVirtual(d->focusFile)) {
-            const auto &localFile = d->focusFileInfo->absoluteFilePath();
+            const auto &localFile = d->focusFileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath);
             FileUtils::setBackGround(localFile);
         } else {
             FileUtils::setBackGround(d->focusFile.toLocalFile());

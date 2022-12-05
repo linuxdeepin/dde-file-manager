@@ -393,8 +393,8 @@ bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2)
     struct stat statFromInfo;
     struct stat statToInfo;
 
-    const QString &path1 = info1->absoluteFilePath();
-    const QString &path2 = info2->absoluteFilePath();
+    const QString &path1 = info1->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath);
+    const QString &path2 = info2->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath);
     int fromStat = stat(path1.toLocal8Bit().data(), &statFromInfo);
     int toStat = stat(path2.toLocal8Bit().data(), &statToInfo);
     if (0 == fromStat && 0 == toStat) {

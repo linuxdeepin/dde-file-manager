@@ -149,7 +149,7 @@ QStringList TagManager::getTagsByUrls(const QList<QUrl> &urlList) const
         for (const QUrl &url : urlList) {
             const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
             if (info) {
-                dataMap[info->filePath()] = QVariant { QList<QString> {} };
+                dataMap[info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath)] = QVariant { QList<QString> {} };
             } else {
                 dataMap[UrlRoute::urlToLocalPath(url)] = QVariant { QList<QString> {} };
             }
@@ -252,7 +252,7 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
 
             for (const QUrl &url : files) {
                 const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
-                fileWithTag[info->filePath()] = QVariant { tags };
+                fileWithTag[info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath)] = QVariant { tags };
             }
 
             qInfo() << fileWithTag;
@@ -280,7 +280,7 @@ bool TagManager::removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl>
         for (const QUrl &url : files) {
             const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
             if (info) {
-                fileWithTag[info->filePath()] = QVariant(tags);
+                fileWithTag[info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath)] = QVariant(tags);
             } else {
                 fileWithTag[UrlRoute::urlToLocalPath(url)] = QVariant(tags);
             }
@@ -369,7 +369,7 @@ bool TagManager::canTagFile(const QUrl &url) const
         if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->parentUrl().toLocalFile()))
             return false;
 
-        const QString filePath { fileInfo->filePath() };
+        const QString filePath { fileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) };
         const QString &compressPath { QDir::homePath() + "/.avfs/" };
         if (filePath.startsWith(compressPath))
             return false;

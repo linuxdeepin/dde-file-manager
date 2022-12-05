@@ -103,7 +103,7 @@ bool DirShareMenuScene::create(QMenu *parent)
 
     auto info = InfoFactory::create<AbstractFileInfo>(d->selectFiles.first(), true);
     if (info->isDir()) {
-        bool shared = UserShareHelperInstance->isShared(info->absoluteFilePath());
+        bool shared = UserShareHelperInstance->isShared(info->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath));
         if (shared) {
             auto act = parent->addAction(d->predicateName[ShareActionId::kActRemoveShareKey]);
             act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActRemoveShareKey);

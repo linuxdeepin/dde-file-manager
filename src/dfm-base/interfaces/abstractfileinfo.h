@@ -111,11 +111,11 @@ public:
         // 文件url = file://temp/archive.tar.gz
         // 目录url = file://temp/var/
         kFilePath = 0,   // 文件路径: /temp/archive.tar.gz 、/temp/var
-        kAbsoluteFilePath = 2,   // 文件绝对路径: /temp/archive.tar.gz 、/temp/var
-        kPath = 3,   // 路径:/temp 、/temp
-        kAbsolutePath = 4,   // 路径:/temp 、/temp
-        kCanonicalPath = 5,   // 返回没有符号链接或者冗余“.”或“..”元素的绝对路径:/temp/archive.tar.gz 、/temp/var
-        kSymLinkTarget = 6,   // 链接文件的目标的绝对路径
+        kAbsoluteFilePath = 1,   // 文件绝对路径: /temp/archive.tar.gz 、/temp/var
+        kPath = 2,   // 路径:/temp 、/temp
+        kAbsolutePath = 3,   // 路径:/temp 、/temp
+        kCanonicalPath = 4,   // 返回没有符号链接或者冗余“.”或“..”元素的绝对路径:/temp/archive.tar.gz 、/temp/var
+        kSymLinkTarget = 5,   // 链接文件的目标的绝对路径
         kCustomerStartPath = 50,   // 其他用户使用
         kUnknowPathInfo = 255,
     };
@@ -284,13 +284,8 @@ public:
     virtual void refresh();
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const;
+    virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const;
 
-    virtual QString filePath() const;
-    virtual QString absoluteFilePath() const;
-    virtual QString path() const;
-    virtual QString absolutePath() const;
-    virtual QString canonicalPath() const;
-    virtual QString symLinkTarget() const;
     virtual QString owner() const;
     virtual QString group() const;
     virtual QString sizeFormat() const;

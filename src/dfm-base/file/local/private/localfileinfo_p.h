@@ -131,6 +131,9 @@ private:
     QString iconName();
     QString mimeTypeName();
     QString fileDisplayName() const;
+    QString path() const;
+    QString filePath() const;
+    QString symLinkTarget() const;
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)

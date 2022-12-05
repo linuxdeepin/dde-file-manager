@@ -53,7 +53,7 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
         if (info && (info->url().isLocalFile() || info->exists())) {
             //判断链接文件的源文件是否存在
             if (info->isSymLink()) {
-                QUrl targetUrl = QUrl::fromLocalFile(info->symLinkTarget());
+                QUrl targetUrl = QUrl::fromLocalFile(info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
                 if (!targetUrl.isValid()) {
                     hasInvalidSymlink = true;
                     continue;

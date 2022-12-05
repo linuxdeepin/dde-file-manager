@@ -351,7 +351,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
 
             AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(currentUrl, true, &errString);
             while (fileInfo && fileInfo->isSymLink()) {
-                QUrl targetUrl = QUrl::fromLocalFile(fileInfo->symLinkTarget());
+                QUrl targetUrl = QUrl::fromLocalFile(fileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
                 if (targetUrl == fileInfo->url())
                     break;
 

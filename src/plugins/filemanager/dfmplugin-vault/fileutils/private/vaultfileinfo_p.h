@@ -41,6 +41,7 @@ public:
 private:
     QString iconName();
     QString fileDisplayPath() const;
+    QString absolutePath() const;
 };
 
 }
