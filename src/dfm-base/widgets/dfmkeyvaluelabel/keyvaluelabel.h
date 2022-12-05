@@ -64,8 +64,7 @@ public:
         kRightTipVisible,
         kRightAlignment,
         kRightWordWrap,
-        kRightFontWidth,
-        kRowHeight
+        kRightFontWidth
     };
 
     explicit KeyValueLabel(QWidget *parent);
@@ -84,7 +83,7 @@ public:
 
     void setLeftRightValue(QString leftValue, QString rightValue, Qt::TextElideMode elideMode = Qt::ElideNone, Qt::Alignment aligment = Qt::Alignment(), bool toolTipVisibility = false);
 
-    void setRowMinimumHeight(int height);
+    void adjustHeight();
 
     void setLeftWordWrap(bool wordWrap = false);
 

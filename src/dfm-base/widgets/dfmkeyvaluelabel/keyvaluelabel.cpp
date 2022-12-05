@@ -66,7 +66,6 @@ void KeyValueLabel::initPropertyMap()
     propertyMap.insert(kRightTipVisible, false);
     propertyMap.insert(kRightAlignment, -1);
     propertyMap.insert(kRightWordWrap, -1);
-    propertyMap.insert(kRowHeight, -1);
 }
 
 void KeyValueLabel::initFont()
@@ -146,10 +145,11 @@ void KeyValueLabel::setLeftRightValue(QString leftValue, QString rightValue, Qt:
  * \brief           设置行显示的最小高度
  * \param height    高度
  */
-void KeyValueLabel::setRowMinimumHeight(int height)
+void KeyValueLabel::adjustHeight()
 {
-    glayout->setRowMinimumHeight(0, height);
-    propertyMap[kRowHeight] = QVariant::fromValue(height);
+    auto maxHeight = qMax(leftValueLabel->sizeHint().height(), rightValueLabel->sizeHint().height());
+    leftValueLabel->setMinimumHeight(maxHeight);
+    rightValueLabel->setMinimumHeight(maxHeight);
 }
 
 /*!
@@ -216,11 +216,7 @@ void KeyValueLabel::paintEvent(QPaintEvent *evt)
     fontWeight = static_cast<Qt::TextElideMode>(propertyMap.value(kRightElideMode).toInt());
     alignment = propertyMap.value(kRightAlignment).value<Qt::Alignment>();
     setRightValue(propertyMap.value(kRightValue).toString(), fontWeight, alignment, propertyMap.value(kRightTipVisible).toBool(), fontW);
-    if (propertyMap.value(kRowHeight).toInt() > -1) {
-        QFontMetrics fontMetrics(font());
-        QRect boundingRect = fontMetrics.boundingRect(propertyMap.value(kLeftValue).toString());
-        setRowMinimumHeight(boundingRect.height() - boundingRect.y());
-    }
+
     QFrame::paintEvent(evt);
 }
 

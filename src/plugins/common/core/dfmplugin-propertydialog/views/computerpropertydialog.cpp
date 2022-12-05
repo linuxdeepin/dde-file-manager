@@ -152,9 +152,7 @@ void ComputerPropertyDialog::computerProcess(QMap<ComputerInfoItem, QString> com
     if (computerInfo.contains(ComputerInfoItem::kCpu)) {
         computerCpu->setRightValue(computerInfo[ComputerInfoItem::kCpu]);
         computerCpu->setRightWordWrap(true);
-        QFontMetrics fontMetrics(computerCpu->font());
-        QRect boundingRect = fontMetrics.boundingRect(computerInfo[ComputerInfoItem::kCpu]);
-        computerCpu->setRowMinimumHeight(boundingRect.height() - boundingRect.y());
+        computerCpu->adjustHeight();
     }
     if (computerInfo.contains(ComputerInfoItem::kMemory))
         computerMemory->setRightValue(computerInfo[ComputerInfoItem::kMemory]);
