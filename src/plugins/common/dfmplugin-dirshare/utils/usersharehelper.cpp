@@ -529,10 +529,10 @@ ShareInfo UserShareHelper::makeInfoByFileContent(const QMap<QString, QString> &c
 
 int UserShareHelper::validShareInfoCount() const
 {
-    int count = 0;
-    for (const auto &info : sharedInfos)
-        count += isValidShare(info) ? 1 : 0;
-    return count;
+    return std::accumulate(sharedInfos.begin(), sharedInfos.end(),
+                           0, [this](int sum, const ShareInfo &info) {
+                               return sum += isValidShare(info) ? 1 : 0;
+                           });
 }
 
 QPair<bool, QString> UserShareHelper::startSmbService()

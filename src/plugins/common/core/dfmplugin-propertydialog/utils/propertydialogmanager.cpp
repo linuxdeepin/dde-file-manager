@@ -219,11 +219,12 @@ QVariantHash PropertyDialogManager::getCreatorOptionByName(const QString &name) 
     auto keys { creatorOptions.keys() };
     for (int index : keys) {
         auto &&values { creatorOptions.values(index) };
-        for (const QVariantHash &data : values) {
-            if (data.value(kOption_Key_Name).toString() == name) {
-                return data;
-            }
-        }
+        auto iter = std::find_if(values.begin(), values.end(), [&name](const QVariantHash &data){
+            return (data.value(kOption_Key_Name).toString() == name);
+        });
+
+        if (iter != values.end())
+            return *iter;
     }
 
     return QVariantHash();

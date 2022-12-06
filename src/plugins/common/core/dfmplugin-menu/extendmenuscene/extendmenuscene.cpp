@@ -194,10 +194,9 @@ void ExtendMenuScene::updateState(QMenu *parent)
         parent->removeAction(*it);
     Q_ASSERT(parent->actions().isEmpty());
 
-    bool hasPos;
     for (auto action : d->extendActions) {
 
-        hasPos = false;
+        bool hasPos = false;
         for (auto pos : d->cacheLocateActions.keys()) {
             auto posActions = d->cacheLocateActions.value(pos);
             if (posActions.contains(action)) {

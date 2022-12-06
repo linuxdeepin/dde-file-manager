@@ -222,6 +222,7 @@ public:
     {
         QMutexLocker lk(&mutex);
         *myList = *l.myList;
+        return *this;
     }
     /*!
      * \brief 获取实例所在位置

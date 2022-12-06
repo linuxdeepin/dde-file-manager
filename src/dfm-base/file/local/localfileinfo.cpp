@@ -688,7 +688,7 @@ void LocalFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfile
     }
 }
 
-QMimeType LocalFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const QString inod, const bool isGvfs)
+QMimeType LocalFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs)
 {
     static DFMBASE_NAMESPACE::DMimeDatabase db;
     if (isGvfs) {

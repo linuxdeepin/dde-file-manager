@@ -36,7 +36,7 @@ namespace dfmbase {
 class DesktopFileInfoPrivate : public QSharedData
 {
 public:
-    inline DesktopFileInfoPrivate(const QUrl &url)
+    inline explicit DesktopFileInfoPrivate(const QUrl &url)
         : QSharedData()
     {
         updateInfo(url);

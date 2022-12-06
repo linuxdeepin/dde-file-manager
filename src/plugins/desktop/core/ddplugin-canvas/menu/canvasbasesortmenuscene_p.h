@@ -49,6 +49,7 @@ public:
 private:
     CanvasBaseSortMenuScene *q;
 };
-}
+
+DDP_CANVAS_END_NAMESPACE
 
 #endif   // BASESORTMENUSCENE_P_H

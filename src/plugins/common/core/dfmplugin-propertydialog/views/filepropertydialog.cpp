@@ -141,10 +141,10 @@ void FilePropertyDialog::filterControlView()
 
 int FilePropertyDialog::contentHeight()
 {
-    int expandsHeight = kArrowExpandSpacing;
-    for (const QWidget *expand : extendedControl) {
-        expandsHeight += expand->height();
-    }
+    int expandsHeight = std::accumulate(extendedControl.begin(), extendedControl.end(),
+                                        kArrowExpandSpacing, [](int sum, QWidget *w) {
+                                            return sum += w->height();
+                                        });
 
     QWidget *w = this->getContent(0);
     int h = w == nullptr ? 0 : w->height();

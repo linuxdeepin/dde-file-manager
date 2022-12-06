@@ -48,7 +48,7 @@ public:
     bool parseIp(const QString &mpt, QString &ip, QString &port);
 
 protected:
-    NetworkUtils(QObject *parent = nullptr);
+    explicit NetworkUtils(QObject *parent = nullptr);
 };
 
 }

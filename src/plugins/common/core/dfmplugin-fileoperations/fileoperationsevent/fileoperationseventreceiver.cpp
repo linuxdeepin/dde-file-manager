@@ -1016,12 +1016,12 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     bool ok = false;
     if (!url.isLocalFile()) {
         // hook events
-        bool ok = false;
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &ok, &error)) {
-            if (!ok)
+        bool hookOk = false;
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &hookOk, &error)) {
+            if (!hookOk)
                 dialogManager->showErrorDialog("set file permissions error", error);
-            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult, windowId, QList<QUrl>() << url, ok, error);
-            return ok;
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult, windowId, QList<QUrl>() << url, hookOk, error);
+            return hookOk;
         }
     }
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;

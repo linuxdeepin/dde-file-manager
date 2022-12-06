@@ -53,7 +53,7 @@ class PdfWidget : public QWidget
     Q_OBJECT
 
 public:
-    PdfWidget(QWidget *parent = nullptr);
+    explicit PdfWidget(QWidget *parent = nullptr);
     ~PdfWidget();
 
     /**

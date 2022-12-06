@@ -30,7 +30,7 @@ class HideFileHelperPrivate;
 class HideFileHelper
 {
 public:
-    HideFileHelper(const QUrl &dir);
+    explicit HideFileHelper(const QUrl &dir);
     ~HideFileHelper();
 
     QUrl dirUrl() const;

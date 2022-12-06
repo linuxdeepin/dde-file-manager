@@ -50,7 +50,7 @@ private:
     void onFileDeleted(const QUrl &url);
     void onFileAttributeChanged(const QUrl &url);
 
-    TagFileWatcherPrivate *dptr;
+    TagFileWatcherPrivate *dptr = nullptr;
 };
 
 }

@@ -129,11 +129,11 @@ bool PdfWidget::closeSheet(DocSheet *sheet)
 
 bool PdfWidget::closeAllSheets()
 {
-    bool flg = true;
-    for (DocSheet *sheet : sheetMap.getSheets()) {
-        flg = closeSheet(sheet);
-    }
-    return flg;
+    const auto &sheets = sheetMap.getSheets();
+    return std::accumulate(sheets.begin(), sheets.end(),
+                           true, [this](bool result, DocSheet *sheet) {
+                               return result = closeSheet(sheet);
+                           });
 }
 
 void PdfWidget::onOpened(DocSheet *sheet, Document::Error error)

@@ -141,18 +141,18 @@ void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const 
     if (srcUrls.isEmpty())
         return;
 
-    int index = 0;
     QList<QUrl> discUrls;
 
     // change files permission (from disc to native)
     if (srcUrls.size() == destUrls.size()) {
+        int index = 0;
         for (auto &&url : srcUrls) {
             if (DevProxyMng->isFileFromOptical(url.toLocalFile())) {
                 QUrl destUrl { destUrls.at(index) };
                 discUrls.append(destUrl);
 
                 qInfo() << "Add write permission for " << destUrl;
-                auto permissions = (QFileInfo(destUrl.toLocalFile()).permissions() | QFileDevice::WriteUser | QFileDevice::WriteUser
+                auto permissions = (QFileInfo(destUrl.toLocalFile()).permissions() | QFileDevice::WriteUser
                                     | QFileDevice::ReadGroup | QFileDevice::WriteGroup | QFileDevice::ReadOther);
                 LocalFileHandler().setPermissionsRecursive(destUrl, permissions);
             }

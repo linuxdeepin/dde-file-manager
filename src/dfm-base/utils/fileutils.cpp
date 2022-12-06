@@ -326,14 +326,9 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
         FileUtils::bindPathTransform(QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first(), true)
     };
 
-    for (const auto &url : urls) {
-        // usr Prohibit Paths
-
-        if (!url.isEmpty() && kUsrProhibitPaths.contains(url.path())) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(urls.begin(), urls.end(), [&kUsrProhibitPaths](const QUrl &url) {
+        return (!url.isEmpty() && kUsrProhibitPaths.contains(url.path()));
+    });
 }
 
 bool FileUtils::isDesktopFile(const QUrl &url)

@@ -58,12 +58,12 @@ PropertyDialogUtil::~PropertyDialogUtil()
 
 void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
 {
-    for (const QUrl &url : urls) {
-        if (!showCustomDialog(url)) {
-            showFilePropertyDialog(urls, option);
-            break;
-        }
-    }
+    bool result = std::any_of(urls.begin(), urls.end(), [this](const QUrl &url) {
+        return !showCustomDialog(url);
+    });
+
+    if (result)
+        showFilePropertyDialog(urls, option);
 }
 
 void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls, const QVariantHash &option)
