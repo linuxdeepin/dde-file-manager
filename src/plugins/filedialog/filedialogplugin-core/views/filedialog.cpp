@@ -299,9 +299,9 @@ QList<QUrl> FileDialog::selectedUrls() const
 
         if (fileInfo) {
             if (list.isEmpty()) {
-                fileUrl = fileInfo->getUrlByChildFileName(statusBar()->lineEdit()->text());
+                fileUrl = fileInfo->getUrlByType(AbstractFileInfo::FileUrlInfoType::kGetUrlByChildFileName, statusBar()->lineEdit()->text());
             } else {
-                fileUrl = fileInfo->getUrlByNewFileName(statusBar()->lineEdit()->text());
+                fileUrl = fileInfo->getUrlByType(AbstractFileInfo::FileUrlInfoType::kGetUrlByNewFileName, statusBar()->lineEdit()->text());
             }
         }
 
@@ -775,7 +775,7 @@ void FileDialog::updateAcceptButtonState()
 
     bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
     bool dialogShowMode = d->acceptMode;
-    bool isVirtual = UrlRoute::isVirtual(fileInfo->url().scheme());
+    bool isVirtual = UrlRoute::isVirtual(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).scheme());
     if (dialogShowMode == QFileDialog::AcceptOpen) {
         auto size = CoreEventsCaller::sendGetSelectedFiles(internalWinId()).size();
         bool isSelectFiles = size > 0;

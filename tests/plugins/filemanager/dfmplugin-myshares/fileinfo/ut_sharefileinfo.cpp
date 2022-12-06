@@ -67,7 +67,7 @@ protected:
 
 TEST_F(UT_ShareFileInfo, RedirectedFileUrl)
 {
-    EXPECT_TRUE(info->redirectedFileUrl() == QUrl::fromLocalFile("/test"));
+    EXPECT_TRUE(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl) == QUrl::fromLocalFile("/test"));
 }
 
 TEST_F(UT_ShareFileInfo, FileDisplayName)

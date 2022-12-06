@@ -175,15 +175,15 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
         return false;
 
     if (dir->countChildFile() < 0)
-        return deleteFileOnOtherDevice(dir->url());
+        return deleteFileOnOtherDevice(dir->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     AbstractDirIteratorPointer iterator(nullptr);
     do {
         QString errorMsg;
-        iterator = DirIteratorFactory::create<AbstractDirIterator>(dir->url(), &errorMsg);
+        iterator = DirIteratorFactory::create<AbstractDirIterator>(dir->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), &errorMsg);
         if (!iterator) {
-            action = doHandleErrorAndWait(dir->url(), AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
+            action = doHandleErrorAndWait(dir->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -215,7 +215,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
     }
 
     // delete self dir
-    return deleteFileOnOtherDevice(dir->url());
+    return deleteFileOnOtherDevice(dir->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 /*!
  * \brief DoCopyFilesWorker::doHandleErrorAndWait Blocking handles errors and returns

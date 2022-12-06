@@ -61,7 +61,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     if (info.isNull())
         return;
 
-    QUrl parentUrl = info->parentUrl();
+    QUrl parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
     QStorageInfo storageInfo(parentUrl.toLocalFile());
     const QString &fsType = storageInfo.fileSystemType();
 

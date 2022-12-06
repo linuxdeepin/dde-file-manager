@@ -66,7 +66,6 @@ const int CollectionItemDelegate::kIconTopSpacing = 4;
 const int CollectionItemDelegate::kIconBackRadius = 18;
 const int CollectionItemDelegate::kIconRectRadius = 4;
 
-
 CollectionItemDelegatePrivate::CollectionItemDelegatePrivate(CollectionItemDelegate *qq)
     : q(qq)
 {
@@ -108,7 +107,7 @@ bool CollectionItemDelegatePrivate::needExpend(const QStyleOptionViewItem &optio
     return calcNeedRect.height() > rText.height();
 }
 
-const QList<int> CollectionItemDelegatePrivate::kIconSizes = {32, 48, 64, 96, 128};
+const QList<int> CollectionItemDelegatePrivate::kIconSizes = { 32, 48, 64, 96, 128 };
 
 CollectionItemDelegate::CollectionItemDelegate(QAbstractItemView *parentPtr)
     : QStyledItemDelegate(parentPtr), d(new CollectionItemDelegatePrivate(this))
@@ -129,7 +128,7 @@ CollectionItemDelegate::CollectionItemDelegate(QAbstractItemView *parentPtr)
     setIconLevel(iconLevel);
     d->textLineHeight = parent()->fontMetrics().height();
 
-//    connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &CanvasItemDelegate::clipboardDataChanged);
+    //    connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &CanvasItemDelegate::clipboardDataChanged);
 }
 
 CollectionItemDelegate::~CollectionItemDelegate()
@@ -166,7 +165,7 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
                   (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   //why Enabled?
 
         // paint emblems to icon
-        paintEmblems(painter, rIcon,  parent()->model()->fileUrl(index));
+        paintEmblems(painter, rIcon, parent()->model()->fileUrl(index));
 
         // do not draw text if index is in editing,
         if (!parent()->isPersistentEditorOpen(index)) {
@@ -274,10 +273,9 @@ void CollectionItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     Q_ASSERT(regionModel);
 
     if (const AbstractFileInfoPointer &fileInfo = regionModel->fileInfo(index)) {
-        QUrl oldUrl = fileInfo->url();
-        QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
-        QMetaObject::invokeMethod(FileOperatorIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId())
-                                  , Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
+        QUrl oldUrl = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        QUrl newUrl = fileInfo->getUrlByType(AbstractFileInfo::FileUrlInfoType::kGetUrlByNewFileName, newName);
+        QMetaObject::invokeMethod(FileOperatorIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId()), Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
     }
 }
 
@@ -410,7 +408,7 @@ bool CollectionItemDelegate::isTransparent(const QModelIndex &index) const
         if (!file.get())
             return false;
 
-        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->url()))
+        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
             return true;
 
         // the linked file only judges the URL, not the inode,
@@ -424,7 +422,7 @@ bool CollectionItemDelegate::isTransparent(const QModelIndex &index) const
 }
 
 void CollectionItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionViewItem &option,
-                                       const QModelIndex &index, const QRectF &rText) const
+                                           const QModelIndex &index, const QRectF &rText) const
 {
     painter->save();
     painter->setPen(option.palette.color(QPalette::Text));
@@ -463,7 +461,7 @@ void CollectionItemDelegate::drawNormlText(QPainter *painter, const QStyleOption
 }
 
 void CollectionItemDelegate::drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option,
-                                           const QModelIndex &index, const QRect &rText) const
+                                               const QModelIndex &index, const QRect &rText) const
 {
     // single item selected and not in drag will to expand.
     bool isDrag = painter->device() != parent()->viewport();
@@ -506,7 +504,7 @@ void CollectionItemDelegate::drawExpandText(QPainter *painter, const QStyleOptio
 }
 
 QPixmap CollectionItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size,
-                                          qreal pixelRatio, QIcon::Mode mode, QIcon::State state)
+                                              qreal pixelRatio, QIcon::Mode mode, QIcon::State state)
 {
     // TODO: 优化
 
@@ -682,25 +680,25 @@ void CollectionItemDelegate::updateItemSizeHint() const
             + kIconSpacing + kTextPadding + 2 * d->textLineHeight + kTextPadding;
 
     // new style
-//    int textFontWidth = parent()->fontMetrics().width("中");
-//    auto iconSize = parent()->iconSize();
+    //    int textFontWidth = parent()->fontMetrics().width("中");
+    //    auto iconSize = parent()->iconSize();
 
-//    int width;
-//    {
-//        // defalut word num
-//        const int minWidth = iconSize.width();
-//        int num = 6;
-//        int index = d->iconSizes.indexOf(iconSize.width());
-//        if (index >= 0 && index < d->charOfLine.size())
-//            num = d->charOfLine.at(index);
+    //    int width;
+    //    {
+    //        // defalut word num
+    //        const int minWidth = iconSize.width();
+    //        int num = 6;
+    //        int index = d->iconSizes.indexOf(iconSize.width());
+    //        if (index >= 0 && index < d->charOfLine.size())
+    //            num = d->charOfLine.at(index);
 
-//        width = kTextPadding + num * textFontWidth + kTextPadding;
-//        if (Q_UNLIKELY(width < minWidth))
-//            width = minWidth;
-//    }
+    //        width = kTextPadding + num * textFontWidth + kTextPadding;
+    //        if (Q_UNLIKELY(width < minWidth))
+    //            width = minWidth;
+    //    }
 
-//    // two rows
-//    int height = kIconTopSpacing + iconSize.height() + kTextPadding + 2 * d->textLineHeight + kTextPadding;
+    //    // two rows
+    //    int height = kIconTopSpacing + iconSize.height() + kTextPadding + 2 * d->textLineHeight + kTextPadding;
 
     d->itemSizeHint = QSize(width, height);
 }
@@ -811,8 +809,8 @@ void CollectionItemDelegate::initStyleOption(QStyleOptionViewItem *option, const
  * \param state: The state for which a pixmap is intended to be used. (On, Off)
  */
 QRect CollectionItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
-                                    const QRectF &rect, Qt::Alignment alignment,
-                                    QIcon::Mode mode, QIcon::State state)
+                                        const QRectF &rect, Qt::Alignment alignment,
+                                        QIcon::Mode mode, QIcon::State state)
 {
     // Copy of QStyle::alignedRect
     alignment = visualAlignment(painter->layoutDirection(), alignment);

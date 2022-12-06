@@ -239,18 +239,6 @@ QString AbstractFileInfo::baseName() const
     return fileName.left(fileName.length() - suffix.length() - 1);
 }
 
-/*!
- * \brief url 获取文件的url
- *
- * \param
- *
- * \return QUrl 返回设置的url
- */
-QUrl AbstractFileInfo::url() const
-{
-    return dptr->url;
-}
-
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canRename() const
 {
 
@@ -650,38 +638,6 @@ AbstractFileInfo::FileType DFMBASE_NAMESPACE::AbstractFileInfo::fileType() const
 }
 
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName Get the URL based on the name of the sub file
- * \param fileName Sub file name
- * \return URL of the file
- */
-QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
-{
-    CALL_PROXY(getUrlByChildFileName(fileName));
-
-    if (!isDir()) {
-        return QUrl();
-    }
-    QUrl theUrl = url();
-    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath).toStdString().c_str(),
-                                                  fileName.toStdString().c_str(), nullptr));
-    return theUrl;
-}
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName Get URL based on new file name
- * \param fileName New file name
- * \return URL of the file
- */
-QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
-{
-    CALL_PROXY(getUrlByNewFileName(fileName));
-
-    QUrl theUrl = url();
-    const QString &newPath = DFMIO::DFMUtils::buildFilePath(pathInfo(AbstractFileInfo::FilePathInfoType::kAbsolutePath).toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
-    theUrl.setPath(newPath);
-
-    return theUrl;
-}
-/*!
  * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
  * 处理或者字符串处理，这都比较快
  * \param FileNameInfoType
@@ -718,28 +674,6 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl() const
 
     return false;
 }
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::redirectedFileUrl redirection file
- * \return
- */
-QUrl DFMBASE_NAMESPACE::AbstractFileInfo::redirectedFileUrl() const
-{
-    CALL_PROXY(redirectedFileUrl());
-
-    return url();
-}
-
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::originalUrl original file
- * if file is trash, return original path
- * \return QUrl
- */
-QUrl DFMBASE_NAMESPACE::AbstractFileInfo::originalUrl() const
-{
-    CALL_PROXY(originalUrl());
-
-    return url();
-}
 
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const
 {
@@ -769,7 +703,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     do {
         const QUrl &targetUrl = QUrl::fromLocalFile(linkTargetPath);
 
-        if (targetUrl == url()) {
+        if (targetUrl == dptr->url) {
             return false;
         }
 
@@ -791,22 +725,11 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrag()
     return true;
 }
 
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::parentUrl
- * \return
- */
-QUrl DFMBASE_NAMESPACE::AbstractFileInfo::parentUrl() const
-{
-    CALL_PROXY(parentUrl());
-
-    return UrlRoute::urlParent(url());
-}
-
 bool DFMBASE_NAMESPACE::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors) const
 {
     CALL_PROXY(isAncestorsUrl(url, ancestors));
 
-    QUrl parentUrl = this->parentUrl();
+    QUrl parentUrl = this->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
 
     forever {
         if (ancestors && parentUrl.isValid()) {
@@ -823,7 +746,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<
             break;
         }
 
-        const QUrl &pu = fileInfo->parentUrl();
+        const QUrl &pu = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
 
         if (pu == parentUrl) {
             break;
@@ -833,6 +756,40 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<
     }
 
     return false;
+}
+/*!
+ * \brief 获取文件url，默认是文件的url，此接口不会实现异步，全部使用Qurl去
+ * 处理或者字符串处理，这都比较快
+ * \param FileUrlInfoType
+ */
+QUrl dfmbase::AbstractFileInfo::urlInfo(const dfmbase::AbstractFileInfo::FileUrlInfoType type) const
+{
+    CALL_PROXY(urlInfo(type));
+    switch (type) {
+    case FileUrlInfoType::kUrl:
+        [[fallthrough]];
+    case FileUrlInfoType::kOriginalUrl:
+        [[fallthrough]];
+    case FileUrlInfoType::kRedirectedFileUrl:
+        return dptr->url;
+    case FileUrlInfoType::kParentUrl:
+        return UrlRoute::urlParent(dptr->url);
+    default:
+        return QUrl();
+    }
+}
+
+QUrl dfmbase::AbstractFileInfo::getUrlByType(const dfmbase::AbstractFileInfo::FileUrlInfoType type, const QString &fileName) const
+{
+    CALL_PROXY(getUrlByType(type, fileName));
+    switch (type) {
+    case FileUrlInfoType::kGetUrlByNewFileName:
+        return dptr->getUrlByNewFileName(fileName);
+    case FileUrlInfoType::kGetUrlByChildFileName:
+        return dptr->getUrlByChildFileName(fileName);
+    default:
+        return QUrl();
+    }
 }
 /*!
   * \brief view进入当前目录的提示信息，固定字符串处理，不实现异步
@@ -999,4 +956,35 @@ AbstractFileInfoPrivate::AbstractFileInfoPrivate(const QUrl &url, AbstractFileIn
 AbstractFileInfoPrivate::~AbstractFileInfoPrivate()
 {
 }
+
+/*!
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName Get the URL based on the name of the sub file
+ * \param fileName Sub file name
+ * \return URL of the file
+ */
+QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByChildFileName(const QString &fileName) const
+{
+    if (!q->isDir()) {
+        return QUrl();
+    }
+    QUrl theUrl = url;
+    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(q->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath).toStdString().c_str(),
+                                                  fileName.toStdString().c_str(), nullptr));
+    return theUrl;
+}
+
+/*!
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName Get URL based on new file name
+ * \param fileName New file name
+ * \return URL of the file
+ */
+QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
+{
+    QUrl theUrl = url;
+    const QString &newPath = DFMIO::DFMUtils::buildFilePath(q->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsolutePath).toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
+    theUrl.setPath(newPath);
+
+    return theUrl;
+}
+
 }

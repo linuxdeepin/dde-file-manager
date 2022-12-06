@@ -60,8 +60,7 @@ public:
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
 
     virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const override;
-
-    virtual QUrl url() const override;
+    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
     virtual bool canDelete() const override;
     virtual bool canTrash() const override;
     virtual bool canRename() const override;
@@ -90,7 +89,6 @@ public:
 
     virtual QVariantHash extraProperties() const override;
     virtual QIcon fileIcon() override;
-    virtual QUrl redirectedFileUrl() const override;
     virtual bool isBlockDev() const;
     virtual QString mountPath() const;
     virtual bool isCharDev() const;

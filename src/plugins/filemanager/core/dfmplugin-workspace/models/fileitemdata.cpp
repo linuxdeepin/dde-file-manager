@@ -102,7 +102,7 @@ QVariant FileItemData::data(int role) const
     case kItemFileSuffixOfRenameRole:
         return info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffixOfRename);
     case kItemUrlRole:
-        return info->url();
+        return info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
     case kItemFileIconModelToolTipRole: {

@@ -162,8 +162,8 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
     if (info->isFile()) {
         do {
             // ###(zccrs): skip the file,os file
-            if (UniversalUtils::urlEquals(info->url(), QUrl::fromLocalFile("/proc/kcore"))
-                || UniversalUtils::urlEquals(info->url(), QUrl::fromLocalFile("/dev/core"))) {
+            if (UniversalUtils::urlEquals(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), QUrl::fromLocalFile("/proc/kcore"))
+                || UniversalUtils::urlEquals(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), QUrl::fromLocalFile("/dev/core"))) {
                 break;
             }
             //skip os file Shortcut
@@ -228,11 +228,11 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
 
         ++directoryCount;
 
-        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && info->url().isLocalFile()) {
+        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isLocalFile()) {
             do {
-                QStorageInfo si(info->url().toLocalFile());
+                QStorageInfo si(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).toLocalFile());
 
-                if (si.rootPath() == info->url().toLocalFile()) {
+                if (si.rootPath() == info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).toLocalFile()) {
                     if (!fileHints.testFlag(FileStatisticsJob::kDontSkipPROCStorage)
                         && si.device() == "proc") {
                         break;
@@ -435,7 +435,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 if (d->sizeInfo->dirSize == 0) {
                     struct stat statInfo;
 
-                    if (0 == stat(info->url().path().toStdString().data(), &statInfo))
+                    if (0 == stat(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).path().toStdString().data(), &statInfo))
                         d->sizeInfo->dirSize = statInfo.st_size == 0 ? FileUtils::getMemoryPageSize() : static_cast<quint16>(statInfo.st_size);
                 }
                 directory_queue << url;

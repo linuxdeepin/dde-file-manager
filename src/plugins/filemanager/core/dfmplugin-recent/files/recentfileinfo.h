@@ -45,9 +45,9 @@ public:
     virtual bool canRename() const override;
 
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
+    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
 
     bool canRedirectionFileUrl() const override;
-    QUrl redirectedFileUrl() const override;
     virtual QVariant customData(int role) const override;
 
 private:

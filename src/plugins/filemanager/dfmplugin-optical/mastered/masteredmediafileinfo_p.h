@@ -20,32 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREFILEINFO_H
-#define SHAREFILEINFO_H
-
-#include "dfmplugin_myshares_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
-
-namespace dfmplugin_myshares {
-
-class ShareFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
+#ifndef MASTEREDMEDIAFILEINFOPRIVATE_H
+#define MASTEREDMEDIAFILEINFOPRIVATE_H
+#include "dfmplugin_optical_global.h"
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+namespace dfmplugin_optical {
+class MasteredMediaFileInfo;
+class MasteredMediaFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
 {
-public:
-    explicit ShareFileInfo(const QUrl &url);
-    virtual ~ShareFileInfo() override;
+    friend class MasteredMediaFileInfo;
 
-    // AbstractFileInfo interface
 public:
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
-    virtual bool isDir() const override;
-    virtual bool canRename() const override;
-    virtual bool canDrag() override;
-    virtual bool isWritable() const override;
-    virtual void refresh() override;
+    explicit MasteredMediaFileInfoPrivate(const QUrl &url, MasteredMediaFileInfo *qq);
+    virtual ~MasteredMediaFileInfoPrivate();
+
+private:
+    void backupInfo(const QUrl &url);
+    QUrl parentUrl() const;
+
+private:
+    QUrl backerUrl;
+    QString curDevId;
+    QVariantMap devInfoMap;
 };
-
 }
-
-#endif   // SHAREFILEINFO_H
+#endif   // MASTEREDMEDIAFILEINFOPRIVATE_H

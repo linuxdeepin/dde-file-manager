@@ -366,7 +366,7 @@ bool TagManager::canTagFile(const QUrl &url) const
         if (!fileInfo)
             return false;
 
-        if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->parentUrl().toLocalFile()))
+        if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl).toLocalFile()))
             return false;
 
         const QString filePath { fileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) };
@@ -374,7 +374,7 @@ bool TagManager::canTagFile(const QUrl &url) const
         if (filePath.startsWith(compressPath))
             return false;
 
-        const QString &parentPath { fileInfo->parentUrl().path() };
+        const QString &parentPath { fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl).path() };
         if (parentPath == "/home" || parentPath == FileUtils::bindPathTransform("/home", true))
             return false;
 

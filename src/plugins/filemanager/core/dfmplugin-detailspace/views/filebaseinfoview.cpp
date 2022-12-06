@@ -231,7 +231,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
         localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     }
     if (localinfo && FileUtils::isTrashFile(localUrl) && !UniversalUtils::urlEquals(localUrl, FileUtils::trashRootUrl())) {
-        const QUrl &targetUrl = localinfo->redirectedFileUrl();
+        const QUrl &targetUrl = localinfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
         localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     }
 

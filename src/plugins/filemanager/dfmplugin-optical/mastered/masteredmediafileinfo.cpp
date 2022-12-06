@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "masteredmediafileinfo.h"
+#include "masteredmediafileinfo_p.h"
 
 #include "utils/opticalhelper.h"
 
@@ -39,15 +40,18 @@ using namespace GlobalServerDefines;
 MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
     : AbstractFileInfo(url)
 {
-    backupInfo(url);
+    dptr.reset(new MasteredMediaFileInfoPrivate(url, this));
+    dptr.staticCast<MasteredMediaFileInfoPrivate>()->backupInfo(url);
 }
 
 bool MasteredMediaFileInfo::exists() const
 {
-    if (url().isEmpty() || !backerUrl.isValid() || backerUrl.isEmpty()) {
+    if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isEmpty()
+        || !dptr.staticCast<MasteredMediaFileInfoPrivate>()->backerUrl.isValid()
+        || dptr.staticCast<MasteredMediaFileInfoPrivate>()->backerUrl.isEmpty()) {
         return false;
     }
-    if (url().fragment() == "dup") {
+    if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).fragment() == "dup") {
         return false;
     }
 
@@ -77,8 +81,8 @@ bool MasteredMediaFileInfo::isDir() const
 QString MasteredMediaFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
-        if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
-            const auto &map { DevProxyMng->queryBlockInfo(curDevId) };
+        if (OpticalHelper::burnFilePath(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).contains(QRegularExpression("^(/*)$"))) {
+            const auto &map { DevProxyMng->queryBlockInfo(dptr.staticCast<MasteredMediaFileInfoPrivate>()->curDevId) };
             QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
             return idLabel;
         }
@@ -100,13 +104,27 @@ QString MasteredMediaFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType
     }
 }
 
+QUrl MasteredMediaFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
+{
+    switch (type) {
+    case FileUrlInfoType::kRedirectedFileUrl:
+        if (dptr->proxy) {
+            return dptr->proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        }
+
+        return AbstractFileInfo::urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    default:
+        return AbstractFileInfo::urlInfo(type);
+    }
+}
+
 QVariantHash MasteredMediaFileInfo::extraProperties() const
 {
     QVariantHash ret;
     if (dptr->proxy) {
         ret = dptr->proxy->extraProperties();
     }
-    ret["mm_backer"] = backerUrl.path();
+    ret["mm_backer"] = dptr.staticCast<MasteredMediaFileInfoPrivate>()->backerUrl.path();
     return ret;
 }
 
@@ -117,29 +135,11 @@ bool MasteredMediaFileInfo::canRedirectionFileUrl() const
     return !isDir();
 }
 
-QUrl MasteredMediaFileInfo::redirectedFileUrl() const
-{
-    if (dptr->proxy) {
-        return dptr->proxy->url();
-    }
-
-    return AbstractFileInfo::url();
-}
-
-QUrl MasteredMediaFileInfo::parentUrl() const
-{
-    QString burnPath { OpticalHelper::burnFilePath(url()) };
-    if (burnPath.contains(QRegularExpression("^(/*)$"))) {
-        return QUrl::fromLocalFile(QDir::homePath());
-    }
-    return UrlRoute::urlParent(url());
-}
-
 bool MasteredMediaFileInfo::canDrop()
 {
-    if (!OpticalHelper::burnIsOnDisc(backerUrl))
+    if (!OpticalHelper::burnIsOnDisc(dptr.staticCast<MasteredMediaFileInfoPrivate>()->backerUrl))
         return true;
-    const auto &map { DevProxyMng->queryBlockInfo(curDevId) };
+    const auto &map { DevProxyMng->queryBlockInfo(dptr.staticCast<MasteredMediaFileInfoPrivate>()->curDevId) };
     quint64 avil { qvariant_cast<quint64>(map[DeviceProperty::kSizeFree]) };
     return avil > 0;
 }
@@ -159,7 +159,7 @@ void MasteredMediaFileInfo::refresh()
         return;
     }
 
-    backupInfo(url());
+    dptr.staticCast<MasteredMediaFileInfoPrivate>()->backupInfo(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 
 bool MasteredMediaFileInfo::canDragCompress() const
@@ -187,7 +187,16 @@ QString MasteredMediaFileInfo::viewTip(const AbstractFileInfo::ViewType type) co
     return AbstractFileInfo::viewTip(type);
 }
 
-void MasteredMediaFileInfo::backupInfo(const QUrl &url)
+MasteredMediaFileInfoPrivate::MasteredMediaFileInfoPrivate(const QUrl &url, MasteredMediaFileInfo *qq)
+    : AbstractFileInfoPrivate(url, qq)
+{
+}
+
+MasteredMediaFileInfoPrivate::~MasteredMediaFileInfoPrivate()
+{
+}
+
+void MasteredMediaFileInfoPrivate::backupInfo(const QUrl &url)
 {
     if (OpticalHelper::burnDestDevice(url).length() == 0)
         return;
@@ -202,7 +211,16 @@ void MasteredMediaFileInfo::backupInfo(const QUrl &url)
     } else {
         backerUrl = OpticalHelper::localStagingFile(url);
     }
-    setProxy(InfoFactory::create<AbstractFileInfo>(backerUrl));
+    proxy = InfoFactory::create<AbstractFileInfo>(backerUrl);
+}
+
+QUrl MasteredMediaFileInfoPrivate::parentUrl() const
+{
+    QString burnPath { OpticalHelper::burnFilePath(q->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)) };
+    if (burnPath.contains(QRegularExpression("^(/*)$"))) {
+        return QUrl::fromLocalFile(QDir::homePath());
+    }
+    return UrlRoute::urlParent(q->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 
 }

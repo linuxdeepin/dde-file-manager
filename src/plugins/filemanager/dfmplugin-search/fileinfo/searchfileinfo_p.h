@@ -33,7 +33,6 @@ class SearchFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
 public:
     explicit SearchFileInfoPrivate(const QUrl &url, SearchFileInfo *qq);
     virtual ~SearchFileInfoPrivate();
-    QString fileName() const;
 };
 }
 #endif   // SEARCHFILEINFOPRIVATE_H

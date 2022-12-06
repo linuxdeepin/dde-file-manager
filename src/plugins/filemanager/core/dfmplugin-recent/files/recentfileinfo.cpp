@@ -53,12 +53,12 @@ RecentFileInfo::~RecentFileInfo()
 
 bool RecentFileInfo::exists() const
 {
-    return AbstractFileInfo::exists() || url() == RecentManager::rootUrl();
+    return AbstractFileInfo::exists() || dptr->url == RecentManager::rootUrl();
 }
 
 QFile::Permissions RecentFileInfo::permissions() const
 {
-    if (url() == RecentManager::rootUrl()) {
+    if (d->url == RecentManager::rootUrl()) {
         return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
     }
     return AbstractFileInfo::permissions();
@@ -87,7 +87,7 @@ QString RecentFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) 
         if (dptr->proxy)
             return dptr->proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
 
-        if (UrlRoute::isRootUrl(url()))
+        if (UrlRoute::isRootUrl(d->url))
             return QObject::tr("Recent");
 
         return QString();
@@ -96,21 +96,26 @@ QString RecentFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) 
     }
 }
 
+QUrl RecentFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
+{
+    switch (type) {
+    case FileUrlInfoType::kRedirectedFileUrl:
+        return dptr->proxy ? dptr->proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) : d->url;
+    default:
+        return AbstractFileInfo::urlInfo(type);
+    }
+}
+
 bool RecentFileInfo::canRedirectionFileUrl() const
 {
     return dptr->proxy;
 }
 
-QUrl RecentFileInfo::redirectedFileUrl() const
-{
-    return dptr->proxy ? dptr->proxy->url() : url();
-};
-
 QVariant RecentFileInfo::customData(int role) const
 {
     using namespace dfmbase::Global;
     if (role == kItemFilePathRole)
-        return redirectedFileUrl().path();
+        return urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl).path();
     else if (role == kItemFileLastReadRole)
         return timeInfo(AbstractFileInfo::FileTimeType::kLastRead).value<QDateTime>().toString(FileUtils::dateTimeFormat());
     else

@@ -160,7 +160,7 @@ QString TypeClassifier::classify(const QUrl &url) const
     QString key;
     //Classify whether it is a symlink according to the symlink's target
     if (itemInfo->isSymLink()) {
-        QUrl fileUrl = itemInfo->redirectedFileUrl();
+        QUrl fileUrl = itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
         itemInfo = InfoFactory::create<LocalFileInfo>(fileUrl);
         if (itemInfo->isSymLink()) {
             key = kTypeKeyOth;

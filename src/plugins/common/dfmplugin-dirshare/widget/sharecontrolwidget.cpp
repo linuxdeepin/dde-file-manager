@@ -302,7 +302,7 @@ void ShareControlWidget::init()
     }
 
     if (!watcher) {
-        watcher = WatcherFactory::create<AbstractFileWatcher>(info->parentUrl());
+        watcher = WatcherFactory::create<AbstractFileWatcher>(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl));
         watcher->startWatcher();
     }
 

@@ -41,10 +41,10 @@ public:
     bool isDir() const override;
     virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
     QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
+    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
     QVariantHash extraProperties() const override;
     bool canRedirectionFileUrl() const override;
-    QUrl redirectedFileUrl() const override;
-    QUrl parentUrl() const override;
+
     bool canDrop() override;
     bool canRename() const override;
     void refresh() override;
@@ -52,14 +52,6 @@ public:
     bool canHidden() const override;
     Qt::DropActions supportedAttributes(const SupportType type = SupportType::kDrag) const override;
     QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
-
-private:
-    void backupInfo(const QUrl &url);
-
-private:
-    QUrl backerUrl;
-    QString curDevId;
-    QVariantMap devInfoMap;
 };
 
 }

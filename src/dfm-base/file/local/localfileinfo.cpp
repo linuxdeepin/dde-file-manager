@@ -49,25 +49,6 @@
 #include <mntent.h>
 
 static constexpr uint16_t kRequestThumbnailDealy { 500 };
-static QVector<DFileInfo::AttributeID> kTimeInfoToDFile = {
-    DFileInfo::AttributeID::kTimeCreatedUsec,
-    DFileInfo::AttributeID::kTimeCreatedUsec,
-    DFileInfo::AttributeID::kTimeChangedUsec,
-    DFileInfo::AttributeID::kTimeModifiedUsec,
-    DFileInfo::AttributeID::kTimeAccessUsec,
-    DFileInfo::AttributeID::kTimeAccessUsec,
-    DFileInfo::AttributeID::kTimeCreated,
-    DFileInfo::AttributeID::kTimeCreated,
-    DFileInfo::AttributeID::kTimeChanged,
-    DFileInfo::AttributeID::kTimeModified,
-    DFileInfo::AttributeID::kTimeAccess,
-    DFileInfo::AttributeID::kTimeAccess,
-    DFileInfo::AttributeID::kTimeCreatedUsec,
-    DFileInfo::AttributeID::kTimeCreatedUsec,
-    DFileInfo::AttributeID::kTimeChangedUsec,
-    DFileInfo::AttributeID::kTimeModifiedUsec,
-    DFileInfo::AttributeID::kTimeAccessUsec,
-};
 
 /*!
  * \class LocalFileInfo 本地文件信息类
@@ -228,16 +209,18 @@ QString LocalFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoTyp
     }
 }
 /*!
- * \brief url 获取文件的url，这里的url是转换后的
- *
- * \param
- *
- * \return QUrl 返回真实路径转换的url
+ * \brief 获取文件url，默认是文件的url，此接口不会实现异步，全部使用Qurl去
+ * 处理或者字符串处理，这都比较快
+ * \param FileUrlInfoType
  */
-QUrl LocalFileInfo::url() const
+QUrl LocalFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
 {
-    QReadLocker locker(&d->lock);
-    return d->url;
+    switch (type) {
+    case FileUrlInfoType::kRedirectedFileUrl:
+        return d->redirectedFileUrl();
+    default:
+        return AbstractFileInfo::urlInfo(type);
+    }
 }
 
 bool LocalFileInfo::canDelete() const
@@ -356,7 +339,7 @@ bool LocalFileInfo::isExecutable() const
     if (!success) {
         qWarning() << "cannot obtain the property kAccessCanExecute of" << d->url;
 
-        if (FileUtils::isGvfsFile(this->url())) {
+        if (FileUtils::isGvfsFile(d->url)) {
             qInfo() << "trying to get isExecutable by judging whether the dir can be iterated" << d->url;
             struct dirent *next { nullptr };
             DIR *dirp = opendir(d->filePath().toUtf8().constData());
@@ -515,7 +498,7 @@ bool LocalFileInfo::canFetch() const
 
     bool isArchive = false;
     if (this->exists())
-        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(url()).name());
+        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(d->url).name());
 
     return isDir() || (isArchive && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
 }
@@ -666,7 +649,7 @@ QVariant LocalFileInfo::timeInfo(const AbstractFileInfo::FileTimeType type) cons
     if (type < FileTimeType::kDeletionTimeMSecond) {
         QReadLocker rlk(&d->lock);
         if (d->dfmFileInfo)
-            data = d->dfmFileInfo->attribute(kTimeInfoToDFile[static_cast<int>(type)], nullptr).value<qint64>();
+            data = d->dfmFileInfo->attribute(d->getAttributeIDVector()[static_cast<int>(type)], nullptr).value<qint64>();
     }
     switch (type) {
     case AbstractFileInfo::FileTimeType::kCreateTime:
@@ -777,7 +760,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
         }
     }
 
-    const QUrl &fileUrl = url();
+    const QUrl &fileUrl = d->url;
     if (FileUtils::isTrashFile(fileUrl) && isSymLink()) {
         {
             QWriteLocker locker(&d->lock);
@@ -889,7 +872,7 @@ QVariantHash LocalFileInfo::extraProperties() const
 
 QIcon LocalFileInfo::fileIcon()
 {
-    const QUrl &fileUrl = this->url();
+    const QUrl &fileUrl = d->url;
 
     if (FileUtils::containsCopyingFileUrl(fileUrl))
         return LocalFileIconProvider::globalProvider()->icon(this);
@@ -926,12 +909,6 @@ QIcon LocalFileInfo::fileIcon()
     return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
 }
 
-QUrl LocalFileInfo::redirectedFileUrl() const
-{
-    if (isSymLink())
-        return QUrl::fromLocalFile(pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
-    return url();
-}
 /*!
  * \brief inode linux系统下的唯一表示符
  *
@@ -951,7 +928,7 @@ quint64 LocalFileInfo::inode() const
 
 QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
-    const QUrl &url = this->url();
+    const QUrl &url = d->url;
     QMimeType type;
     QMimeDatabase::MatchMode modeCache { QMimeDatabase::MatchMode::MatchDefault };
     {
@@ -991,7 +968,7 @@ bool LocalFileInfo::canDragCompress() const
     return isDragCompressFileFormat()
             && isWritable()
             && isReadable()
-            && !FileUtils::isGvfsFile(this->url());
+            && !FileUtils::isGvfsFile(dptr->url);
 }
 
 bool LocalFileInfo::isDragCompressFileFormat() const
@@ -1428,6 +1405,13 @@ QString LocalFileInfoPrivate::symLinkTarget() const
     }
 
     return symLinkTarget;
+}
+
+QUrl LocalFileInfoPrivate::redirectedFileUrl() const
+{
+    if (q->isSymLink())
+        return QUrl::fromLocalFile(symLinkTarget());
+    return url;
 }
 
 }

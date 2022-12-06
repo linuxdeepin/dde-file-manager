@@ -117,7 +117,7 @@ void UnknowFilePreview::setFileInfo(const AbstractFileInfoPointer &info)
         sizeLabel->setText(QObject::tr("Size: %1").arg(info->displayInfo(AbstractFileInfo::DisplayInfoType::kSizeDisplayName)));
         typeLabel->setText(QObject::tr("Type: %1").arg(info->displayInfo(AbstractFileInfo::DisplayInfoType::kMimeTypeDisplayName)));
     } else if (info->isDir()) {
-        fileCalculationUtils->start(QList<QUrl>() << info->url());
+        fileCalculationUtils->start(QList<QUrl>() << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
         sizeLabel->setText(QObject::tr("Size: 0"));
     }
 }

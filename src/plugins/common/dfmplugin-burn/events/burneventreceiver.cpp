@@ -175,8 +175,8 @@ void BurnEventReceiver::handleMountImage(const QUrl &isoUrl)
     QString archiveuri;
     auto info { InfoFactory::create<AbstractFileInfo>(isoUrl) };
     if (info && info->canRedirectionFileUrl()) {
-        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->redirectedFileUrl().toString()));
-        qInfo() << "Mount image redirect the url to:" << info->redirectedFileUrl();
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl).toString()));
+        qInfo() << "Mount image redirect the url to:" << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
     } else {
         archiveuri = "archive://" + QString(QUrl::toPercentEncoding(isoUrl.toString()));
     }

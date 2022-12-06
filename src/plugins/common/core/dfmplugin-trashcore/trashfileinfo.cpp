@@ -199,7 +199,7 @@ TrashFileInfo::~TrashFileInfo()
 bool TrashFileInfo::exists() const
 {
     return AbstractFileInfo::exists()
-            || FileUtils::isTrashRootFile(url());
+            || FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 
 bool TrashFileInfo::canDelete() const
@@ -246,7 +246,7 @@ QString TrashFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
 QString TrashFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
-        if (url() == TrashCoreHelper::rootUrl())
+        if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == TrashCoreHelper::rootUrl())
             return QCoreApplication::translate("PathManager", "Trash");
 
         if (!d->dFileInfo)
@@ -271,6 +271,18 @@ QString TrashFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoTyp
         return d->symLinkTarget();
     default:
         return AbstractFileInfo::pathInfo(type);
+    }
+}
+
+QUrl TrashFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
+{
+    switch (type) {
+    case FileUrlInfoType::kRedirectedFileUrl:
+        return d->targetUrl;
+    case FileUrlInfoType::kOriginalUrl:
+        return d->originalUrl;
+    default:
+        return AbstractFileInfo::urlInfo(type);
     }
 }
 bool TrashFileInfo::canRename() const
@@ -314,7 +326,7 @@ qint64 TrashFileInfo::size() const
         return qint64();
 
     qint64 size = 0;
-    const QUrl &fileUrl = url();
+    const QUrl &fileUrl = urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     if (FileUtils::isTrashRootFile(fileUrl)) {
         DecoratorFileEnumerator enumerator(fileUrl);
         if (!enumerator.isValid())
@@ -358,13 +370,13 @@ QString TrashFileInfoPrivate::symLinkTarget() const
 
 int TrashFileInfo::countChildFile() const
 {
-    if (FileUtils::isTrashRootFile(url())) {
+    if (FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl))) {
         if (d->dFileInfo)
             return d->dFileInfo->attribute(DFMIO::DFileInfo::AttributeID::kTrashItemCount).toInt();
     }
 
     if (isDir()) {
-        DecoratorFileEnumerator enumerator(url());
+        DecoratorFileEnumerator enumerator(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
         return int(enumerator.fileCount());
     }
 
@@ -401,7 +413,7 @@ bool TrashFileInfo::isWritable() const
 
 bool TrashFileInfo::isDir() const
 {
-    if (FileUtils::isTrashRootFile(url()))
+    if (FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
         return true;
 
     return AbstractFileInfo::isDir();
@@ -409,22 +421,12 @@ bool TrashFileInfo::isDir() const
 
 bool TrashFileInfo::canDrop()
 {
-    return FileUtils::isTrashRootFile(url());
+    return FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 
 bool TrashFileInfo::canHidden() const
 {
     return false;
-}
-
-QUrl TrashFileInfo::originalUrl() const
-{
-    return d->originalUrl;
-}
-
-QUrl TrashFileInfo::redirectedFileUrl() const
-{
-    return d->targetUrl;
 }
 
 bool TrashFileInfo::isHidden() const
@@ -450,7 +452,7 @@ QVariant TrashFileInfo::customData(int role) const
 {
     using namespace dfmbase::Global;
     if (role == kItemFileOriginalPath)
-        return originalUrl().path();
+        return urlInfo(AbstractFileInfo::FileUrlInfoType::kOriginalUrl).path();
     else if (role == kItemFileDeletionDate)
         return d->deletionTime().toString(FileUtils::dateTimeFormat());
     else

@@ -352,7 +352,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(currentUrl, true, &errString);
             while (fileInfo && fileInfo->isSymLink()) {
                 QUrl targetUrl = QUrl::fromLocalFile(fileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
-                if (targetUrl == fileInfo->url())
+                if (targetUrl == fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl))
                     break;
 
                 fileInfo = InfoFactory::create<AbstractFileInfo>(targetUrl, true, &errString);
@@ -361,7 +361,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             if (!fileInfo) {
                 qDebug() << errString << "get final file info failed:" << currentUrl << actualEffectivedWallpaper;
             } else {
-                actualEffectivedWallpaper = fileInfo->url().toString();
+                actualEffectivedWallpaper = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).toString();
             }
         }
         if (actualEffectivedWallpaper.startsWith("file://"))

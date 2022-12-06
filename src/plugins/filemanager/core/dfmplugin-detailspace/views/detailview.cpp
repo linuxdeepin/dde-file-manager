@@ -170,7 +170,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         };
 
         // get icon from plugin
-        const QString &iconName = findPluginIcon(info->url());
+        const QString &iconName = findPluginIcon(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
         if (!iconName.isEmpty())
             iconLabel->setPixmap(QIcon::fromTheme(iconName).pixmap(targetSize));
         else

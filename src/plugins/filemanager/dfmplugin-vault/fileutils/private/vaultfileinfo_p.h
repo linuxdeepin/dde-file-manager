@@ -42,6 +42,8 @@ private:
     QString iconName();
     QString fileDisplayPath() const;
     QString absolutePath() const;
+    QUrl vaultUrl() const;
+    QUrl getUrlByNewFileName(const QString &fileName) const;
 };
 
 }

@@ -73,7 +73,7 @@ void InfoCache::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> info
         if (!info || info->hasProxy())
             continue;
         // 断开信号连接
-        auto url = UrlRoute::urlParent(info->url());
+        auto url = UrlRoute::urlParent(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
         QSharedPointer<AbstractFileWatcher> watcher =
                 WatcherCache::instance().getCacheWatcher(url);
         if (watcher) {

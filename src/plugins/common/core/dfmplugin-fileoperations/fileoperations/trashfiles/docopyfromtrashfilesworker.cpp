@@ -138,14 +138,14 @@ bool DoCopyFromTrashFilesWorker::doOperate()
             continue;
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool trashSucc = fileHandler.copyFile(url, newTargetInfo->url(), DFMIO::DFile::CopyFlag::kOverwrite);
+        bool trashSucc = fileHandler.copyFile(url, newTargetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
         if (trashSucc) {
             completeFilesCount++;
             if (!completeSourceFiles.contains(url)) {
                 completeSourceFiles.append(url);
             }
-            if (!completeTargetFiles.contains(targetFileInfo->url()))
-                completeTargetFiles.append(targetFileInfo->url());
+            if (!completeTargetFiles.contains(targetFileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
+                completeTargetFiles.append(targetFileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
             continue;
         }
         return false;
@@ -157,8 +157,8 @@ bool DoCopyFromTrashFilesWorker::doOperate()
 bool DoCopyFromTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
                                                  AbstractFileInfoPointer &targetFileInfo, bool *result)
 {
-    const QUrl &fromUrl = trashInfo->url();
-    const QUrl &toUrl = restoreInfo->url();
+    const QUrl &fromUrl = trashInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    const QUrl &toUrl = restoreInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     const QUrl &parentUrl = UrlRoute::urlParent(toUrl);
     if (!parentUrl.isValid())
         return false;

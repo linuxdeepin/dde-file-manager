@@ -222,7 +222,7 @@ QModelIndex FileViewModel::parent(const QModelIndex &child) const
 
     if (childData && childData->parentData()
         && childData->parentData()->fileInfo()) {
-        return findRootIndex(childData->parentData()->fileInfo()->url());
+        return findRootIndex(childData->parentData()->fileInfo()->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
     }
 
     return QModelIndex();
@@ -340,7 +340,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
     for (; it != indexes.end(); ++it) {
         if ((*it).column() == 0) {
             const AbstractFileInfoPointer &fileInfo = this->fileInfo(*it);
-            const QUrl &url = fileInfo->url();
+            const QUrl &url = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
 
             if (urlsSet.contains(url))
                 continue;
@@ -368,7 +368,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
 
     const AbstractFileInfoPointer &targetFileInfo = fileInfo(dropIndex);
-    QUrl targetUrl = targetFileInfo->url();
+    QUrl targetUrl = targetFileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     QList<QUrl> dropUrls = data->urls();
     QList<QUrl> urls {};
     bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", dropUrls, &urls);

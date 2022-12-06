@@ -53,8 +53,8 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
     QMap<QUrl, DFMLocalFileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
         if (auto itemInfo = FileCreator->createFileInfo(child)) {
-            fileUrls.append(itemInfo->url());
-            fileMaps.insert(itemInfo->url(), itemInfo);
+            fileUrls.append(itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+            fileMaps.insert(itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), itemInfo);
         }
     }
 

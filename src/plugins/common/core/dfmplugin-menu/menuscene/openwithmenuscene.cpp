@@ -91,7 +91,7 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
     }
 
     MimesAppsManager::instance()->initMimeTypeApps();
-    d->recommendApps = MimesAppsManager::instance()->getRecommendedApps(d->focusFileInfo->redirectedFileUrl());
+    d->recommendApps = MimesAppsManager::instance()->getRecommendedApps(d->focusFileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl));
 
     // why?
     d->recommendApps.removeAll("/usr/share/applications/dde-open.desktop");
@@ -135,7 +135,7 @@ bool OpenWithMenuScene::create(QMenu *parent)
             qDebug() << errString;
             continue;
         }
-        redirectedUrlList << fileInfo->redirectedFileUrl();
+        redirectedUrlList << fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
     }
 
     foreach (QString app, d->recommendApps) {
@@ -188,7 +188,7 @@ void OpenWithMenuScene::updateState(QMenu *parent)
             if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) != d->focusFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix)) {
 
                 QStringList mimeTypeList { info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName) };
-                QUrl parentUrl = info->parentUrl();
+                QUrl parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
                 auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
                 if (!info.isNull()) {
                     mimeTypeList << parentInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);

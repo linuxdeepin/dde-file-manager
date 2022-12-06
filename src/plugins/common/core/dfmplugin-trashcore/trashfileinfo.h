@@ -40,6 +40,7 @@ public:
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
     virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const override;
+    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
     virtual bool exists() const override;
     virtual bool canDelete() const override;
     virtual bool canTrash() const override;
@@ -50,8 +51,6 @@ public:
     virtual bool canDrop() override;
     virtual bool canHidden() const override;
     virtual bool isHidden() const override;
-    virtual QUrl originalUrl() const override;
-    virtual QUrl redirectedFileUrl() const override;
     virtual QFile::Permissions permissions() const override;
     virtual QIcon fileIcon() override;
 

@@ -134,6 +134,30 @@ private:
     QString path() const;
     QString filePath() const;
     QString symLinkTarget() const;
+    QVector<DFileInfo::AttributeID> getAttributeIDVector() const
+    {
+        static QVector<DFileInfo::AttributeID> kTimeInfoToDFile = {
+            DFileInfo::AttributeID::kTimeCreatedUsec,
+            DFileInfo::AttributeID::kTimeCreatedUsec,
+            DFileInfo::AttributeID::kTimeChangedUsec,
+            DFileInfo::AttributeID::kTimeModifiedUsec,
+            DFileInfo::AttributeID::kTimeAccessUsec,
+            DFileInfo::AttributeID::kTimeAccessUsec,
+            DFileInfo::AttributeID::kTimeCreated,
+            DFileInfo::AttributeID::kTimeCreated,
+            DFileInfo::AttributeID::kTimeChanged,
+            DFileInfo::AttributeID::kTimeModified,
+            DFileInfo::AttributeID::kTimeAccess,
+            DFileInfo::AttributeID::kTimeAccess,
+            DFileInfo::AttributeID::kTimeCreatedUsec,
+            DFileInfo::AttributeID::kTimeCreatedUsec,
+            DFileInfo::AttributeID::kTimeChangedUsec,
+            DFileInfo::AttributeID::kTimeModifiedUsec,
+            DFileInfo::AttributeID::kTimeAccessUsec,
+        };
+        return kTimeInfoToDFile;
+    }
+    QUrl redirectedFileUrl() const;
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)
@@ -147,7 +171,7 @@ LocalFileInfoPrivate::~LocalFileInfoPrivate()
 
 QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
 {
-    QUrl url = q->url();
+    QUrl url = q->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     if (url.isLocalFile())
         return MimeDatabase::mimeTypeForUrl(url);
     else

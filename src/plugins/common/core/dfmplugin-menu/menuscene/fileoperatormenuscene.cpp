@@ -213,7 +213,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
                 if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) != d->focusFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix)) {
 
                     QStringList mimeTypeList { info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName) };
-                    QUrl parentUrl = info->parentUrl();
+                    QUrl parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
                     auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
                     if (!info.isNull()) {
                         mimeTypeList << parentInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);

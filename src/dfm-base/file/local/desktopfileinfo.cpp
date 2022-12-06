@@ -221,7 +221,7 @@ QString DesktopFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType typ
 void DesktopFileInfo::refresh()
 {
     LocalFileInfo::refresh();
-    d->updateInfo(url());
+    d->updateInfo(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 
 Qt::DropActions DesktopFileInfo::supportedAttributes(const SupportType type) const

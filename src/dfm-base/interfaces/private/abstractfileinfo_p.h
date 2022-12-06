@@ -47,6 +47,10 @@ public:
 
     AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
     AbstractFileInfoPointer proxy { nullptr };
+
+private:
+    QUrl getUrlByChildFileName(const QString &fileName) const;
+    QUrl getUrlByNewFileName(const QString &fileName) const;
 };
 
 }

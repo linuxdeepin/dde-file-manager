@@ -38,7 +38,7 @@ SearchFileInfo::~SearchFileInfo()
 
 bool SearchFileInfo::exists() const
 {
-    if (SearchHelper::isRootUrl(url()))
+    if (SearchHelper::isRootUrl(dptr->url))
         return true;
 
     return AbstractFileInfo::exists();
@@ -46,7 +46,7 @@ bool SearchFileInfo::exists() const
 
 bool SearchFileInfo::isHidden() const
 {
-    if (SearchHelper::isRootUrl(url()))
+    if (SearchHelper::isRootUrl(dptr->url))
         return false;
 
     return AbstractFileInfo::isHidden();
@@ -54,7 +54,7 @@ bool SearchFileInfo::isHidden() const
 
 bool SearchFileInfo::isReadable() const
 {
-    if (SearchHelper::isRootUrl(url()))
+    if (SearchHelper::isRootUrl(dptr->url))
         return true;
 
     return AbstractFileInfo::isReadable();
@@ -62,7 +62,7 @@ bool SearchFileInfo::isReadable() const
 
 bool SearchFileInfo::isWritable() const
 {
-    if (SearchHelper::isRootUrl(url()))
+    if (SearchHelper::isRootUrl(dptr->url))
         return true;
 
     return AbstractFileInfo::isWritable();
@@ -70,7 +70,7 @@ bool SearchFileInfo::isWritable() const
 
 bool SearchFileInfo::isDir() const
 {
-    if (SearchHelper::isRootUrl(url()))
+    if (SearchHelper::isRootUrl(dptr->url))
         return true;
 
     return AbstractFileInfo::isDir();
@@ -78,7 +78,7 @@ bool SearchFileInfo::isDir() const
 
 qint64 SearchFileInfo::size() const
 {
-    if (SearchHelper::isRootUrl(url()))
+    if (SearchHelper::isRootUrl(dptr->url))
         return -1;
 
     return AbstractFileInfo::size();
@@ -88,7 +88,9 @@ QString SearchFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) 
 {
     switch (type) {
     case AbstractFileInfo::FileNameInfoType::kFileName:
-        return dptr.staticCast<SearchFileInfoPrivate>()->fileName();
+        if (SearchHelper::isRootUrl(dptr->url))
+            return QObject::tr("Search");
+        [[fallthrough]];
     default:
         return AbstractFileInfo::nameInfo(type);
     }
@@ -113,14 +115,6 @@ SearchFileInfoPrivate::SearchFileInfoPrivate(const QUrl &url, SearchFileInfo *qq
 
 SearchFileInfoPrivate::~SearchFileInfoPrivate()
 {
-}
-
-QString SearchFileInfoPrivate::fileName() const
-{
-    if (SearchHelper::isRootUrl(url))
-        return QObject::tr("Search");
-
-    return q->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
 }
 
 }

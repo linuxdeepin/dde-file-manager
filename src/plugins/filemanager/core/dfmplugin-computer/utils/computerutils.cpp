@@ -336,7 +336,7 @@ QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
     case EntryFileInfo::kOrderMTP:
         return QObject::tr("Android mobile device");
     case EntryFileInfo::kOrderGPhoto2:
-        if (getProtocolDevIdByUrl(info->url()).contains("Apple_Inc"))
+        if (getProtocolDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).contains("Apple_Inc"))
             return QObject::tr("Apple mobile device");
         return QObject::tr("Android mobile device");
     case EntryFileInfo::kOrderFiles:
@@ -356,7 +356,7 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
     DevicePropertyDialog *dialog = new DevicePropertyDialog;
     DeviceInfo devInfo;
     devInfo.icon = info->fileIcon();
-    devInfo.deviceUrl = info->url();
+    devInfo.deviceUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     devInfo.mountPoint = info->targetUrl();
     devInfo.deviceName = info->displayName();
     devInfo.deviceType = ComputerUtils::deviceTypeInfo(info);

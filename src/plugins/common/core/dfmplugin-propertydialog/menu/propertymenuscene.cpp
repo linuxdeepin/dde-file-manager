@@ -133,7 +133,7 @@ bool PropertyMenuScene::create(QMenu *parent)
             qDebug() << errString;
             continue;
         }
-        redirectedUrlList << fileInfo->redirectedFileUrl();
+        redirectedUrlList << fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
     }
 
     return AbstractMenuScene::create(parent);

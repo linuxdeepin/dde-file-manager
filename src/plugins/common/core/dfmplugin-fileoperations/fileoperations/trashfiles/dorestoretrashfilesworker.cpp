@@ -126,7 +126,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         QUrl restoreFileUrl;
         if (!this->targetUrl.isValid()) {
             // 获取回收站文件的原路径
-            restoreFileUrl = fileInfo->originalUrl();
+            restoreFileUrl = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kOriginalUrl);
             if (!restoreFileUrl.isValid()) {
                 completeFilesCount++;
                 continue;
@@ -158,7 +158,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         }
 
         // read trash info
-        QString trashInfoCache = readTrashInfo(fileInfo->redirectedFileUrl().toString().replace("/files/", "/info/") + ".trashinfo");
+        QString trashInfoCache = readTrashInfo(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl).toString().replace("/files/", "/info/") + ".trashinfo");
         emitCurrentTaskNotify(url, restoreFileUrl);
         AbstractFileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
@@ -166,15 +166,15 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             continue;
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool trashSucc = fileHandler.moveFile(url, newTargetInfo->url(), DFMIO::DFile::CopyFlag::kOverwrite);
+        bool trashSucc = fileHandler.moveFile(url, newTargetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
         if (trashSucc) {
             completeFilesCount++;
             if (!completeSourceFiles.contains(url)) {
                 completeSourceFiles.append(url);
                 completeCustomInfos.append(trashInfoCache);
             }
-            if (!completeTargetFiles.contains(restoreInfo->url()))
-                completeTargetFiles.append(restoreInfo->url());
+            if (!completeTargetFiles.contains(restoreInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
+                completeTargetFiles.append(restoreInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
             continue;
         }
         return false;
@@ -186,8 +186,8 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
 bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
                                                 AbstractFileInfoPointer &targetFileInfo, bool *result)
 {
-    const QUrl &fromUrl = trashInfo->url();
-    const QUrl &toUrl = restoreInfo->url();
+    const QUrl &fromUrl = trashInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    const QUrl &toUrl = restoreInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     const QUrl &parentUrl = UrlRoute::urlParent(toUrl);
     if (!parentUrl.isValid())
         return false;

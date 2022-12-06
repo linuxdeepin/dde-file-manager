@@ -1171,7 +1171,7 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
     for (const QUrl &url : urls) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
-            const QUrl &parentUrl = info->parentUrl();
+            const QUrl &parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
             const QString &fileName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
 
             HideFileHelper helper(parentUrl);

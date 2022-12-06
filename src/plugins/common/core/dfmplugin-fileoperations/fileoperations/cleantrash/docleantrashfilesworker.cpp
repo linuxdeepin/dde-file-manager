@@ -141,7 +141,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
             return false;
 
         cleanTrashFilesCount++;
-        completeTargetFiles.append(fileInfo->url());
+        completeTargetFiles.append(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
         ++it;
     }
     return true;
@@ -158,7 +158,7 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     bool resultFile = false;
     do {
-        const QUrl &fileUrl = trashInfo->url();
+        const QUrl &fileUrl = trashInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
         resultFile = deleteFile(fileUrl);
 
         if (!resultFile)

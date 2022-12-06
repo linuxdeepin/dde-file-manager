@@ -42,12 +42,6 @@ ShareFileInfo::~ShareFileInfo()
 {
 }
 
-QUrl ShareFileInfo::redirectedFileUrl() const
-{
-    const QString &path = dptr->url.path();
-    return QUrl::fromLocalFile(path);
-}
-
 QString ShareFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type)
@@ -64,6 +58,16 @@ QString ShareFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
         return dptr.staticCast<ShareFileInfoPrivate>()->fileName();
     default:
         return AbstractFileInfo::nameInfo(type);
+    }
+}
+
+QUrl ShareFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
+{
+    switch (type) {
+    case FileUrlInfoType::kRedirectedFileUrl:
+        return QUrl::fromLocalFile(dptr->url.path());
+    default:
+        return urlInfo(type);
     }
 }
 

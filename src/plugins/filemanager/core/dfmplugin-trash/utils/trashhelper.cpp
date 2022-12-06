@@ -138,7 +138,7 @@ QUrl TrashHelper::trashFileToTargetUrl(const QUrl &url)
 {
     auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
     if (fileInfo)
-        return fileInfo->redirectedFileUrl();
+        return fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
 
     return url;
 }
@@ -190,14 +190,14 @@ TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
     {
         // source path
         BasicExpand expand;
-        const QString &sourcePath = info->originalUrl().path();
+        const QString &sourcePath = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kOriginalUrl).path();
         expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
         map["kFieldInsert"] = expand;
     }
     {
         // trans trash path
         BasicExpand expand;
-        const QString &targetPath = info->redirectedFileUrl().path();
+        const QString &targetPath = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl).path();
         expand.insert("kFilePosition", qMakePair(QObject::tr("Location"), targetPath));
         map["kFieldReplace"] = expand;
     }

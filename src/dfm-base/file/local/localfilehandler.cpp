@@ -307,9 +307,11 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
                 DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
                 return false;
             }
-            const_cast<QUrl &>(fileUrl) = fileInfoLink->redirectedFileUrl();
+            const_cast<QUrl &>(fileUrl) = fileInfoLink->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
             if (!DecoratorFile(fileInfoLink->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath)).exists() && !d->isSmbUnmountedFile(fileUrl)) {
-                d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName), fileInfo->url());
+                d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->nameInfo(
+                                                                                     AbstractFileInfo::FileNameInfoType::kFileName),
+                                                                             fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
                 return d->lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
             }
         }

@@ -99,7 +99,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 { "Property_Key_DisplayName", itemName },
                 { "Property_Key_Editable", item->info->renamable() }
             };
-            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item->info->url(), map);
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item->info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), map);
             item->itemName = itemName;
         }
         return itemName;

@@ -86,6 +86,28 @@ QString VaultFileInfoPrivate::absolutePath() const
     return virtualUrl.path();
 }
 
+QUrl VaultFileInfoPrivate::vaultUrl() const
+{
+    if (!proxy)
+        return QUrl();
+
+    QUrl url = proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    url = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
+    return url;
+}
+
+QUrl VaultFileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
+{
+    QUrl theUrl = vaultUrl();
+
+    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(absolutePath().toStdString().c_str(),
+                                                  fileName.toStdString().c_str(), nullptr));
+
+    theUrl.setHost("");
+
+    return theUrl;
+}
+
 VaultFileInfo::VaultFileInfo(const QUrl &url)
     : AbstractFileInfo(url)
 {
@@ -122,7 +144,6 @@ bool VaultFileInfo::operator!=(const VaultFileInfo &fileinfo) const
 
 QString VaultFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
 {
-    QString path;
     switch (type) {
     case FilePathInfoType::kAbsolutePath:
         return dptr.staticCast<VaultFileInfoPrivate>()->absolutePath();
@@ -130,9 +151,21 @@ QString VaultFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoTyp
         return AbstractFileInfo::pathInfo(type);
     }
 }
+
+QUrl VaultFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
+{
+    switch (type) {
+    case FileUrlInfoType::kUrl:
+        [[fallthrough]];
+    case FileUrlInfoType::kRedirectedFileUrl:
+        return dptr.staticCast<VaultFileInfoPrivate>()->vaultUrl();
+    default:
+        return AbstractFileInfo::urlInfo(type);
+    }
+}
 bool VaultFileInfo::exists() const
 {
-    if (url().isEmpty())
+    if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isEmpty())
         return false;
 
     return dptr->proxy && dptr->proxy->exists();
@@ -146,7 +179,7 @@ void VaultFileInfo::refresh()
 
     dptr->proxy->refresh();
 
-    setProxy(InfoFactory::create<AbstractFileInfo>(dptr->proxy->url()));
+    setProxy(InfoFactory::create<AbstractFileInfo>(dptr->proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)));
 }
 
 bool VaultFileInfo::isReadable() const
@@ -204,16 +237,6 @@ bool VaultFileInfo::canDrop()
     return !dptr->proxy || dptr->proxy->canDrop();
 }
 
-QUrl VaultFileInfo::url() const
-{
-    if (!dptr->proxy)
-        return QUrl();
-
-    QUrl url = dptr->proxy->url();
-    url = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
-    return url;
-}
-
 QVariantHash VaultFileInfo::extraProperties() const
 {
     if (!dptr->proxy)
@@ -221,21 +244,14 @@ QVariantHash VaultFileInfo::extraProperties() const
     return dptr->proxy->extraProperties();
 }
 
-QUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
+QUrl VaultFileInfo::getUrlByType(const AbstractFileInfo::FileUrlInfoType type, const QString &fileName) const
 {
-    QUrl theUrl = url();
-
-    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(dptr.staticCast<VaultFileInfoPrivate>()->absolutePath().toStdString().c_str(),
-                                                  fileName.toStdString().c_str(), nullptr));
-
-    theUrl.setHost("");
-
-    return theUrl;
-}
-
-QUrl VaultFileInfo::redirectedFileUrl() const
-{
-    return url();
+    switch (type) {
+    case FileUrlInfoType::kGetUrlByNewFileName:
+        return dptr.staticCast<VaultFileInfoPrivate>()->getUrlByNewFileName(fileName);
+    default:
+        return AbstractFileInfo::getUrlByType(type, fileName);
+    }
 }
 
 QIcon VaultFileInfo::fileIcon()

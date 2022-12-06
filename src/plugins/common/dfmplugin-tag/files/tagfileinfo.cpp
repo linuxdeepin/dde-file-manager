@@ -63,7 +63,7 @@ bool TagFileInfo::exists() const
 
     QUrl rootUrl;
     rootUrl.setScheme(TagManager::scheme());
-    if (url() == rootUrl)
+    if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == rootUrl)
         return true;
 
     const QMap<QString, QColor> &tagMap = TagManager::instance()->getAllTags();
@@ -132,7 +132,7 @@ QIcon TagFileInfo::fileIcon()
 
 QString TagFileInfo::localFilePath() const
 {
-    return url().fragment(QUrl::FullyDecoded);
+    return urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).fragment(QUrl::FullyDecoded);
 }
 
 QString TagFileInfo::tagName() const

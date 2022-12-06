@@ -90,7 +90,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
 
     const AbstractFileInfoPointer &focusFileInfo = view->model()->itemFileInfo(index);
     if (focusFileInfo) {
-        tgUrl = focusFileInfo->url();
+        tgUrl = focusFileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
         // first is focus
         selectUrls.removeAll(tgUrl);
         selectUrls.prepend(tgUrl);

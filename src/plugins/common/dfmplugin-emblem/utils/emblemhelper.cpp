@@ -66,7 +66,7 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
     QMap<int, QIcon> emblemsMap;
 
     // use AbstractFileInfo to access emblems, avoid query again
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->url());
+    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
     if (!fileInfo)
         return {};
     const QStringList &emblemData = fileInfo->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();

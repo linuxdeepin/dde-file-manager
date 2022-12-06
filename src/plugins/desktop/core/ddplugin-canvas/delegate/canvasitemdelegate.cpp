@@ -258,8 +258,8 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     Q_ASSERT(canvasModel);
 
     if (const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index)) {
-        QUrl oldUrl = fileInfo->url();
-        QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
+        QUrl oldUrl = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        QUrl newUrl = fileInfo->getUrlByType(AbstractFileInfo::FileUrlInfoType::kGetUrlByNewFileName, newName);
         QMetaObject::invokeMethod(FileOperatorProxyIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId()), Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
     }
 }
@@ -393,7 +393,7 @@ bool CanvasItemDelegate::isTransparent(const QModelIndex &index) const
         if (!file.get())
             return false;
 
-        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->url()))
+        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
             return true;
 
         // the linked file only judges the URL, not the inode,

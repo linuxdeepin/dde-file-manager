@@ -285,18 +285,12 @@ public:
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const;
     virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const;
-
+    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const;
+    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const;
+    virtual QUrl getUrlByType(const FileUrlInfoType type, const QString &fileName) const;
     virtual QString owner() const;
     virtual QString group() const;
     virtual QString sizeFormat() const;
-
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const;
-    virtual QUrl url() const;
-    virtual QUrl getUrlByChildFileName(const QString &fileName) const;
-    virtual QUrl getUrlByNewFileName(const QString &fileName) const;
-    virtual QUrl redirectedFileUrl() const;
-    virtual QUrl originalUrl() const;
-    virtual QUrl parentUrl() const;
     virtual bool isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors = nullptr) const;
     virtual bool isReadable() const;
     virtual bool isWritable() const;

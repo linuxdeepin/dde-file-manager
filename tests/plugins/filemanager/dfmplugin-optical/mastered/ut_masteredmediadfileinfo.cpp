@@ -23,6 +23,7 @@
 
 #include "stubext.h"
 #include "plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.h"
+#include "plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo_p.h"
 #include "plugins/filemanager/dfmplugin-optical/utils/opticalhelper.h"
 
 #include <gtest/gtest.h>
@@ -35,7 +36,7 @@ class UT_MasteredMediaFileInfo : public testing::Test
 protected:
     virtual void SetUp() override
     {
-        stub.set_lamda(&MasteredMediaFileInfo::backupInfo, [] { __DBG_STUB_INVOKE__ });
+        stub.set_lamda(&MasteredMediaFileInfoPrivate::backupInfo, [] { __DBG_STUB_INVOKE__ });
         info = new MasteredMediaFileInfo(QUrl("burn:///file/to/disc"));
     }
     virtual void TearDown() override { stub.clear(); }

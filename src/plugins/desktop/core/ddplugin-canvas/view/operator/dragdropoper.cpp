@@ -329,7 +329,7 @@ bool DragDropOper::dropFilter(QDropEvent *event)
         if (index.isValid()) {
             QUrl targetItem = view->model()->fileUrl(index);
             auto itemInfo = FileCreator->createFileInfo(targetItem);
-            if (itemInfo && (itemInfo->isDir() || itemInfo->url() == DesktopAppUrl::homeDesktopFileUrl())) {
+            if (itemInfo && (itemInfo->isDir() || itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl())) {
                 auto sourceUrls = event->mimeData()->urls();
                 for (const QUrl &url : sourceUrls) {
                     if ((DesktopAppUrl::computerDesktopFileUrl() == url) || (DesktopAppUrl::trashDesktopFileUrl() == url) || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
@@ -462,11 +462,11 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
         const QModelIndex &index = view->indexAt(event->pos());
         auto fileInfo = view->model()->fileInfo(index.isValid() ? index : view->rootIndex());
 
-        if (fileInfo && fileInfo->url().isLocalFile()) {
+        if (fileInfo && fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isLocalFile()) {
             if (fileInfo->isDir())
-                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->url());
+                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
             else
-                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->parentUrl());
+                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl));
         }
 
         event->accept();   // yeah! we've done with XDS so stop Qt from further event propagation.

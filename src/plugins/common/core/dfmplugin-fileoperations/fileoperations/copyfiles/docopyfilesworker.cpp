@@ -144,7 +144,7 @@ void DoCopyFilesWorker::endWork()
 
     // deal target files
     for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
-        const QUrl &url = info->url();
+        const QUrl &url = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
         if (DecoratorFile(url).exists()) {
             completeTargetFiles.append(url);
             info->refresh();

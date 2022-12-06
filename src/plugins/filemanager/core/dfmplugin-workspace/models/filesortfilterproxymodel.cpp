@@ -334,10 +334,10 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
         return false;
 
     const QModelIndex &leftParent = left.parent();
-    if (!leftParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), leftParent)->url(), rootUrl))
+    if (!leftParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), leftParent)->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), rootUrl))
         return false;
     const QModelIndex &rightParent = right.parent();
-    if (!rightParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), rightParent)->url(), rootUrl))
+    if (!rightParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), rightParent)->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), rootUrl))
         return false;
 
     const AbstractFileInfoPointer &leftInfo = viewModel()->fileInfo(leftParent, left);
@@ -452,7 +452,7 @@ bool FileSortFilterProxyModel::passNameFilters(const AbstractFileInfoPointer &in
     if (!info)
         return true;
 
-    const QUrl fileUrl = info->url();
+    const QUrl fileUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     if (nameFiltersMatchResultMap.contains(fileUrl))
         return nameFiltersMatchResultMap.value(fileUrl, false);
 

@@ -226,7 +226,7 @@ void BasicWidget::basicFill(const QUrl &url)
             connect(filePosition, &KeyValueLabel::valueAreaClicked, this, [symlink] {
                 const QUrl &url = QUrl::fromLocalFile(symlink);
                 const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-                QUrl parentUrl = fileInfo->parentUrl();
+                QUrl parentUrl = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
                 parentUrl.setQuery("selectUrl=" + url.toString());
                 dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
             });

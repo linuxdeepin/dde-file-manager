@@ -403,7 +403,7 @@ void FileView::onClicked(const QModelIndex &index)
     QUrl url { "" };
     const AbstractFileInfoPointer &info = model()->itemFileInfo(index);
     if (info)
-        url = info->url();
+        url = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     QVariantMap data;
     data.insert("displayName", model()->data(index));
     data.insert("url", url);
@@ -1757,7 +1757,7 @@ void FileView::openIndex(const QModelIndex &index)
     if (!info)
         return;
 
-    FileOperatorHelperIns->openFiles(this, { info->url() });
+    FileOperatorHelperIns->openFiles(this, { info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) });
 }
 
 void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)
