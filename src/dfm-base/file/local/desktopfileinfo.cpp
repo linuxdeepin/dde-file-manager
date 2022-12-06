@@ -233,14 +233,6 @@ Qt::DropActions DesktopFileInfo::supportedAttributes(const SupportType type) con
     return LocalFileInfo::supportedAttributes(type);
 }
 
-bool DesktopFileInfo::canDrop()
-{
-    if (d->deepinID == "dde-computer")
-        return false;
-
-    return LocalFileInfo::canDrop();
-}
-
 bool DesktopFileInfo::canTag() const
 {
     if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
@@ -253,17 +245,27 @@ bool DesktopFileInfo::canTag() const
     return true;
 }
 
-bool DesktopFileInfo::canMoveOrCopy() const
+bool DesktopFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
 {
-    //部分桌面文件不允许复制或剪切
-    if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
-        return false;
+    switch (type) {
+    case FileCanType::kCanMoveOrCopy:
+        //部分桌面文件不允许复制或剪切
+        if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")
+            return false;
 
-    //exec执行字符串中“-O”参数表示打开主目录
-    if (d->deepinID == "dde-file-manager" && d->exec.contains(" -O "))
-        return false;
+        //exec执行字符串中“-O”参数表示打开主目录
+        if (d->deepinID == "dde-file-manager" && d->exec.contains(" -O "))
+            return false;
 
-    return true;
+        return true;
+    case FileCanType::kCanDrop:
+        if (d->deepinID == "dde-computer")
+            return false;
+
+        return LocalFileInfo::canAttributes(type);
+    default:
+        return LocalFileInfo::canAttributes(type);
+    }
 }
 
 QMap<QString, QVariant> DesktopFileInfo::desktopFileInfo(const QUrl &fileUrl)

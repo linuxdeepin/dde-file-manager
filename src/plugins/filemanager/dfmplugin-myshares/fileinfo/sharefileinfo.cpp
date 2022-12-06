@@ -83,14 +83,16 @@ bool ShareFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     }
 }
 
-bool ShareFileInfo::canRename() const
+bool ShareFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
 {
-    return false;
-}
-
-bool ShareFileInfo::canDrag()
-{
-    return false;
+    switch (type) {
+    case FileCanType::kCanRename:
+        [[fallthrough]];
+    case FileCanType::kCanDrag:
+        return false;
+    default:
+        return AbstractFileInfo::canAttributes(type);
+    }
 }
 
 ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)

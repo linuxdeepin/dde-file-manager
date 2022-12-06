@@ -76,6 +76,16 @@ bool SmbShareFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) con
     }
 }
 
+bool SmbShareFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
+{
+    switch (type) {
+    case FileCanType::kCanDrag:
+        return false;
+    default:
+        return AbstractFileInfo::canAttributes(type);
+    }
+}
+
 SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
     : AbstractFileInfoPrivate(url, qq)
 {
@@ -89,11 +99,6 @@ SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileIn
 
 SmbShareFileInfoPrivate::~SmbShareFileInfoPrivate()
 {
-}
-
-bool dfmplugin_smbbrowser::SmbShareFileInfo::canDrag()
-{
-    return false;
 }
 
 QString SmbShareFileInfoPrivate::fileName() const

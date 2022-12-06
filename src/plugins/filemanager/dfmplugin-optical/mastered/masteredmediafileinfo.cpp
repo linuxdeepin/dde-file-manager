@@ -127,30 +127,6 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
     return ret;
 }
 
-bool MasteredMediaFileInfo::canRedirectionFileUrl() const
-{
-    if (isAttributes(AbstractFileInfo::FileIsType::kIsDir))
-        return isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);   // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
-    return isAttributes(AbstractFileInfo::FileIsType::kIsDir);
-}
-
-bool MasteredMediaFileInfo::canDrop()
-{
-    if (!OpticalHelper::burnIsOnDisc(dptr.staticCast<MasteredMediaFileInfoPrivate>()->backerUrl))
-        return true;
-    const auto &map { DevProxyMng->queryBlockInfo(dptr.staticCast<MasteredMediaFileInfoPrivate>()->curDevId) };
-    quint64 avil { qvariant_cast<quint64>(map[DeviceProperty::kSizeFree]) };
-    return avil > 0;
-}
-
-bool MasteredMediaFileInfo::canRename() const
-{
-    if (dptr->proxy)
-        return dptr->proxy->canRename();
-
-    return false;
-}
-
 void MasteredMediaFileInfo::refresh()
 {
     AbstractFileInfo::refresh();
@@ -161,14 +137,27 @@ void MasteredMediaFileInfo::refresh()
     dptr.staticCast<MasteredMediaFileInfoPrivate>()->backupInfo(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 
-bool MasteredMediaFileInfo::canDragCompress() const
+bool MasteredMediaFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
 {
-    return false;
-}
+    switch (type) {
+    case FileCanType::kCanRename:
+        if (dptr->proxy)
+            return dptr->proxy->canAttributes(type);
 
-bool MasteredMediaFileInfo::canHidden() const
-{
-    return false;
+        return false;
+    case FileCanType::kCanRedirectionFileUrl:
+        if (isAttributes(AbstractFileInfo::FileIsType::kIsDir))
+            return isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);   // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
+        return isAttributes(AbstractFileInfo::FileIsType::kIsDir);
+    case FileCanType::kCanDrop:
+        return dptr.staticCast<MasteredMediaFileInfoPrivate>()->canDrop();
+    case FileCanType::kCanDragCompress:
+        [[fallthrough]];
+    case FileCanType::kCanHidden:
+        return false;
+    default:
+        return AbstractFileInfo::canAttributes(type);
+    }
 }
 
 Qt::DropActions MasteredMediaFileInfo::supportedAttributes(const AbstractFileInfo::SupportType type) const
@@ -220,6 +209,15 @@ QUrl MasteredMediaFileInfoPrivate::parentUrl() const
         return QUrl::fromLocalFile(QDir::homePath());
     }
     return UrlRoute::urlParent(q->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+}
+
+bool MasteredMediaFileInfoPrivate::canDrop()
+{
+    if (!OpticalHelper::burnIsOnDisc(backerUrl))
+        return true;
+    const auto &map { DevProxyMng->queryBlockInfo(curDevId) };
+    quint64 avil { qvariant_cast<quint64>(map[DeviceProperty::kSizeFree]) };
+    return avil > 0;
 }
 
 }

@@ -189,14 +189,6 @@ QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::Fil
     }
 }
 
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canRename() const
-{
-
-    CALL_PROXY(canRename());
-
-    return false;
-}
-
 /*!
  * \brief inode linux系统下的唯一表示符
  *
@@ -458,66 +450,6 @@ QString dfmbase::AbstractFileInfo::displayInfo(const AbstractFileInfo::DisplayIn
         return QString();
     }
 }
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl Can I redirect files
- * \return
- */
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl() const
-{
-    CALL_PROXY(canRedirectionFileUrl());
-
-    return false;
-}
-
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const
-{
-    CALL_PROXY(canMoveOrCopy());
-
-    return true;
-}
-
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canDrop
- * \return
- */
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
-{
-    if (isAttributes(AbstractFileInfo::FileIsType::kIsPrivate)) {
-        return false;
-    }
-
-    if (!isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
-        const bool isDesktop = nameInfo(FileNameInfoType::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
-        return isAttributes(AbstractFileInfo::FileIsType::kIsDir) || isDesktop;
-    }
-
-    AbstractFileInfoPointer info = nullptr;
-    QString linkTargetPath = pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
-
-    do {
-        const QUrl &targetUrl = QUrl::fromLocalFile(linkTargetPath);
-
-        if (targetUrl == dptr->url) {
-            return false;
-        }
-
-        info = InfoFactory::create<AbstractFileInfo>(targetUrl);
-
-        if (!info) {
-            return false;
-        }
-
-        linkTargetPath = info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
-    } while (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink));
-
-    return info->canDrop();
-}
-
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrag()
-{
-    CALL_PROXY(canDrag());
-    return true;
-}
 
 bool DFMBASE_NAMESPACE::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors) const
 {
@@ -601,7 +533,7 @@ Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedAttributes(const A
             return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
         }
 
-        if (const_cast<AbstractFileInfo *>(this)->canDrop()) {
+        if (dptr->canDrop()) {
             return Qt::CopyAction | Qt::MoveAction;
         }
         return Qt::IgnoreAction;
@@ -609,29 +541,7 @@ Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedAttributes(const A
         return Qt::IgnoreAction;
     }
 }
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress
- * \return
- */
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress() const
-{
-    CALL_PROXY(canDragCompress());
 
-    return false;
-}
-
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canFetch() const
-{
-    CALL_PROXY(canFetch());
-
-    return isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !isAttributes(AbstractFileInfo::FileIsType::kIsPrivate);
-}
-
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canHidden() const
-{
-    CALL_PROXY(canHidden());
-    return true;
-}
 /*!
  * \brief 获取文件扩展属性，如果创建时使用的异步，那么这里获取就是使用异步，没获取到就是
  * 默认，获取了就是读取属性
@@ -668,17 +578,36 @@ bool dfmbase::AbstractFileInfo::isAttributes(const dfmbase::AbstractFileInfo::Fi
     }
 }
 
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canDelete() const
+bool dfmbase::AbstractFileInfo::canAttributes(const dfmbase::AbstractFileInfo::FileCanType type) const
 {
-    CALL_PROXY(canDelete());
-    return false;
+    CALL_PROXY(canAttributes(type));
+    switch (type) {
+    case FileCanType::kCanFetch:
+        return isAttributes(AbstractFileInfo::FileIsType::kIsDir)
+                && !isAttributes(AbstractFileInfo::FileIsType::kIsPrivate);
+    case FileCanType::kCanDrop:
+        return dptr->canDrop();
+    case FileCanType::kCanDrag:
+        [[fallthrough]];
+    case FileCanType::kCanHidden:
+        [[fallthrough]];
+    case FileCanType::kCanMoveOrCopy:
+        return true;
+    case FileCanType::kCanDelete:
+        [[fallthrough]];
+    case FileCanType::kCanTrash:
+        [[fallthrough]];
+    case FileCanType::kCanRename:
+        [[fallthrough]];
+    case FileCanType::kCanRedirectionFileUrl:
+        [[fallthrough]];
+    case FileCanType::kCanDragCompress:
+        [[fallthrough]];
+    default:
+        return false;
+    }
 }
 
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canTrash() const
-{
-    CALL_PROXY(canTrash());
-    return false;
-}
 /*!
  * \brief view进入当前目录的提示信息，固定字符串处理，不实现异步
  * \param ViewType
@@ -847,6 +776,43 @@ QString AbstractFileInfoPrivate::baseName() const
     }
 
     return fileName.left(fileName.length() - suffix.length() - 1);
+}
+
+/*!
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canDrop
+ * \return
+ */
+bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
+{
+    if (q->isAttributes(AbstractFileInfo::FileIsType::kIsPrivate)) {
+        return false;
+    }
+
+    if (!q->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+        const bool isDesktop = q->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
+        return q->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || isDesktop;
+    }
+
+    AbstractFileInfoPointer info = nullptr;
+    QString linkTargetPath = q->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
+
+    do {
+        const QUrl &targetUrl = QUrl::fromLocalFile(linkTargetPath);
+
+        if (targetUrl == url) {
+            return false;
+        }
+
+        info = InfoFactory::create<AbstractFileInfo>(targetUrl);
+
+        if (!info) {
+            return false;
+        }
+
+        linkTargetPath = info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
+    } while (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink));
+
+    return info->canAttributes(AbstractFileInfo::FileCanType::kCanDrop);
 }
 
 }

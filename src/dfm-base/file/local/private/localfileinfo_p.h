@@ -166,6 +166,10 @@ private:
     bool isHidden() const;
     bool isSymLink() const;
     bool isPrivate() const;
+    bool canDelete() const;
+    bool canTrash() const;
+    bool canRename() const;
+    bool canFetch() const;
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)

@@ -147,7 +147,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
 
         if (auto cut = d->predicateAction.value(ActionID::kCut)) {
             d->focusFileInfo->refresh();
-            if (!d->focusFileInfo->canRename())
+            if (!d->focusFileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanRename))
                 cut->setDisabled(true);
         }
     } else {
@@ -158,7 +158,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
             info->refresh();
 
             if (auto cut = d->predicateAction.value(ActionID::kCut)) {
-                if (!info->canRename()) {
+                if (!info->canAttributes(AbstractFileInfo::FileCanType::kCanRename)) {
                     cut->setDisabled(true);
                     break;
                 }

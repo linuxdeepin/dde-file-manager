@@ -44,7 +44,7 @@ public:
     virtual bool exists() const override;
     virtual void refresh() override;
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
-    virtual bool canDrop() override;
+    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
 
     virtual qint64 size() const override;
     virtual int countChildFile() const override;

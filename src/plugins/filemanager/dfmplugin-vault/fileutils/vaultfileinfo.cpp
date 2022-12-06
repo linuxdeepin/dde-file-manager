@@ -215,13 +215,18 @@ bool VaultFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     }
 }
 
-bool VaultFileInfo::canDrop()
+bool VaultFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
 {
-    if (VaultHelper::instance()->state(PathManager::vaultLockPath()) != VaultState::kUnlocked) {
-        return false;
-    }
+    switch (type) {
+    case FileCanType::kCanDrop:
+        if (VaultHelper::instance()->state(PathManager::vaultLockPath()) != VaultState::kUnlocked) {
+            return false;
+        }
 
-    return !dptr->proxy || dptr->proxy->canDrop();
+        return !dptr->proxy || dptr->proxy->canAttributes(type);
+    default:
+        return AbstractFileInfo::canAttributes(type);
+    }
 }
 
 QVariantHash VaultFileInfo::extraProperties() const

@@ -536,7 +536,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         targetItemUrl = item->url();
     }
     auto itemInfo = InfoFactory::create<AbstractFileInfo>(targetItemUrl);
-    if (!itemInfo || !itemInfo->canDrop()) {
+    if (!itemInfo || !itemInfo->canAttributes(AbstractFileInfo::FileCanType::kCanDrop)) {
         return Qt::IgnoreAction;
     }
 
@@ -549,7 +549,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
             return Qt::IgnoreAction;
         }
         //部分文件不能复制或剪切，需要在拖拽时忽略
-        if (!fileInfo->canMoveOrCopy()) {
+        if (!fileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanMoveOrCopy)) {
             return Qt::IgnoreAction;
         }
     }

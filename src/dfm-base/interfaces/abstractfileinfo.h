@@ -237,16 +237,16 @@ public:
      * \brief 文件
      */
     enum class FileCanType : uint8_t {
-        kCanDelete,   // 可以删除
-        kCanTrash,   // 可以移动到回收站
-        kCanRename,   // 可以重命名
-        kCanRedirectionFileUrl,   // 可以重定向
-        kCanMoveOrCopy,   // 可以移动或者拷贝
-        kCanDrop,   // 可以Drop
-        kCanDrag,   // 可以drag
-        kCanDragCompress,   // 可以压缩
-        kCanFetch,   // 可以遍历
-        kCanHidden,   // 可以隐藏
+        kCanDelete = 0,   // 可以删除
+        kCanTrash = 1,   // 可以移动到回收站
+        kCanRename = 2,   // 可以重命名
+        kCanRedirectionFileUrl = 3,   // 可以重定向
+        kCanMoveOrCopy = 4,   // 可以移动或者拷贝
+        kCanDrop = 5,   // 可以Drop
+        kCanDrag = 6,   // 可以drag
+        kCanDragCompress = 7,   // 可以压缩
+        kCanFetch = 8,   // 可以遍历
+        kCanHidden = 9,   // 可以隐藏
         kCustomerFileCan = 50,   // 其他用户使用
         kUnknowFileCanInfo = 255,
     };
@@ -293,16 +293,7 @@ public:
     virtual QString sizeFormat() const;
     virtual bool isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors = nullptr) const;
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const;
-    virtual bool canDelete() const;
-    virtual bool canTrash() const;
-    virtual bool canRename() const;
-    virtual bool canRedirectionFileUrl() const;
-    virtual bool canMoveOrCopy() const;
-    virtual bool canDrop();
-    virtual bool canDrag();
-    virtual bool canDragCompress() const;
-    virtual bool canFetch() const;
-    virtual bool canHidden() const;
+    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const;
     virtual bool permission(QFile::Permissions permissions) const;
     virtual QFile::Permissions permissions() const;
     virtual int countChildFile() const;

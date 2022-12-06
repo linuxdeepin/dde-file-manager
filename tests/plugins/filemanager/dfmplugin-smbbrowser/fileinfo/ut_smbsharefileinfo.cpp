@@ -87,5 +87,5 @@ TEST_F(UT_SmbShareFileInfo, IsWritable)
 
 TEST_F(UT_SmbShareFileInfo, CanDrag)
 {
-    EXPECT_FALSE(info->canDrag());
+    EXPECT_FALSE(info->canAttributes(dfmbase::AbstractFileInfo::FileCanType::kCanDrag));
 }

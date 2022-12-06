@@ -40,8 +40,7 @@ public:
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
-    virtual bool canRename() const override;
-    virtual bool canDrag() override;
+    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
     virtual void refresh() override;
 };
 

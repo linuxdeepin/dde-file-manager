@@ -76,9 +76,16 @@ bool RecentFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     }
 }
 
-bool RecentFileInfo::canRename() const
+bool RecentFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
 {
-    return false;
+    switch (type) {
+    case FileCanType::kCanRename:
+        return false;
+    case FileCanType::kCanRedirectionFileUrl:
+        return dptr->proxy;
+    default:
+        return AbstractFileInfo::canAttributes(type);
+    }
 }
 
 QString RecentFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
@@ -105,11 +112,6 @@ QUrl RecentFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
     default:
         return AbstractFileInfo::urlInfo(type);
     }
-}
-
-bool RecentFileInfo::canRedirectionFileUrl() const
-{
-    return dptr->proxy;
 }
 
 QVariant RecentFileInfo::customData(int role) const

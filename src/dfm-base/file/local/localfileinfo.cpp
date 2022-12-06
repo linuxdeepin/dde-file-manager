@@ -223,59 +223,6 @@ QUrl LocalFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
     }
 }
 
-bool LocalFileInfo::canDelete() const
-{
-    if (SystemPathUtil::instance()->isSystemPath(d->filePath()))
-        return false;
-
-    bool canDelete = SysInfoUtils::isRootUser();
-    if (!canDelete) {
-        QReadLocker locker(&d->lock);
-        if (d->dfmFileInfo)
-            canDelete = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr).toBool();
-    }
-
-    return canDelete;
-}
-
-bool LocalFileInfo::canTrash() const
-{
-    if (SystemPathUtil::instance()->isSystemPath(d->filePath()))
-        return false;
-
-    bool canTrash = false;
-    if (!canTrash) {
-        QReadLocker locker(&d->lock);
-        if (d->dfmFileInfo)
-            canTrash = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr).toBool();
-    }
-
-    return canTrash;
-}
-
-bool LocalFileInfo::canRename() const
-{
-    if (SystemPathUtil::instance()->isSystemPath(d->filePath()))
-        return false;
-
-    bool canRename = false;
-    canRename = SysInfoUtils::isRootUser();
-    if (!canRename) {
-        QReadLocker locker(&d->lock);
-        if (d->dfmFileInfo)
-            canRename = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr).toBool();
-    }
-
-    return canRename;
-}
-
-bool LocalFileInfo::canHidden() const
-{
-    if (FileUtils::isGphotoFile(d->url))
-        return false;
-    return true;
-}
-
 bool LocalFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
     switch (type) {
@@ -308,16 +255,27 @@ bool LocalFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     }
 }
 
-bool LocalFileInfo::canFetch() const
+bool LocalFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
 {
-    if (d->isPrivate())
-        return false;
-
-    bool isArchive = false;
-    if (this->exists())
-        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(d->url).name());
-
-    return d->isDir() || (isArchive && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
+    switch (type) {
+    case FileCanType::kCanDelete:
+        return d->canDelete();
+    case FileCanType::kCanTrash:
+        return d->canTrash();
+    case FileCanType::kCanRename:
+        return d->canRename();
+    case FileCanType::kCanDragCompress:
+        return isAttributes(AbstractFileInfo::FileIsType::kIsDragCompressFileFormat)
+                && d->isWritable()
+                && d->isReadable()
+                && !FileUtils::isGvfsFile(dptr->url);
+    case FileCanType::kCanHidden:
+        if (FileUtils::isGphotoFile(d->url))
+            return false;
+        return true;
+    default:
+        return AbstractFileInfo::canAttributes(type);
+    }
 }
 
 /*!
@@ -778,14 +736,6 @@ QString LocalFileInfo::viewTip(const ViewType type) const
     }
 
     return AbstractFileInfo::viewTip(type);
-}
-
-bool LocalFileInfo::canDragCompress() const
-{
-    return isAttributes(AbstractFileInfo::FileIsType::kIsDragCompressFileFormat)
-            && d->isWritable()
-            && d->isReadable()
-            && !FileUtils::isGvfsFile(dptr->url);
 }
 
 QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
@@ -1409,6 +1359,68 @@ bool LocalFileInfoPrivate::isPrivate() const
 
     QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
     return match.match(path, name);
+}
+
+bool LocalFileInfoPrivate::canDelete() const
+{
+    if (SystemPathUtil::instance()->isSystemPath(filePath()))
+        return false;
+
+    bool canDelete = SysInfoUtils::isRootUser();
+    if (!canDelete) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        if (dfmFileInfo)
+            canDelete = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr).toBool();
+    }
+
+    return canDelete;
+}
+
+bool LocalFileInfoPrivate::canTrash() const
+{
+    if (SystemPathUtil::instance()->isSystemPath(filePath()))
+        return false;
+
+    bool canTrash = false;
+    if (!canTrash) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        if (dfmFileInfo)
+            canTrash = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr).toBool();
+    }
+
+    return canTrash;
+}
+
+bool LocalFileInfoPrivate::canRename() const
+{
+    if (SystemPathUtil::instance()->isSystemPath(filePath()))
+        return false;
+
+    bool canRename = false;
+    canRename = SysInfoUtils::isRootUser();
+    if (!canRename) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        if (dfmFileInfo)
+            canRename = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr).toBool();
+    }
+
+    return canRename;
+}
+
+bool LocalFileInfoPrivate::canFetch() const
+{
+    if (isPrivate())
+        return false;
+
+    bool isArchive = false;
+    if (q->exists())
+        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::
+                            supportArchiveMimetypes()
+                                    .contains(DMimeDatabase().mimeTypeForFile(url).name());
+
+    return isDir()
+            || (isArchive
+                && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
 }
 
 }

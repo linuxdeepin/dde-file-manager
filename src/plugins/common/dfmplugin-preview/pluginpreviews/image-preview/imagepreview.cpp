@@ -102,7 +102,7 @@ bool ImagePreview::setFileUrl(const QUrl &url)
     if (info.isNull())
         return false;
 
-    if (info->canRedirectionFileUrl()) {
+    if (info->canAttributes(AbstractFileInfo::FileCanType::kCanRedirectionFileUrl)) {
         tmpUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
     }
 

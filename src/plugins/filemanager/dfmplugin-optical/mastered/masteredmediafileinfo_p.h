@@ -37,6 +37,7 @@ public:
 private:
     void backupInfo(const QUrl &url);
     QUrl parentUrl() const;
+    bool canDrop();
 
 private:
     QUrl backerUrl;

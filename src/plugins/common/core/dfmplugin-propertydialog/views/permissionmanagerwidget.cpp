@@ -225,7 +225,7 @@ bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
     if (info.isNull())
         return false;
 
-    if (!info->canRename())
+    if (!info->canAttributes(AbstractFileInfo::FileCanType::kCanRename))
         return false;
 
     QString path = info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);

@@ -397,11 +397,11 @@ Qt::ItemFlags FileInfoModel::flags(const QModelIndex &index) const
     flags |= Qt::ItemIsDragEnabled;
 
     if (auto file = fileInfo(index)) {
-        if (file->canRename())
+        if (file->canAttributes(AbstractFileInfo::FileCanType::kCanRename))
             flags |= Qt::ItemIsEditable;
 
         if (file->isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) {
-            if (file->canDrop())
+            if (file->canAttributes(AbstractFileInfo::FileCanType::kCanDrop))
                 flags |= Qt::ItemIsDropEnabled;
             else
                 flags |= Qt::ItemNeverHasChildren;

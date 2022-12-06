@@ -53,6 +53,7 @@ private:
     QUrl getUrlByNewFileName(const QString &fileName) const;
     QString fileName() const;
     QString baseName() const;
+    bool canDrop();
 };
 
 }

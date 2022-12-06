@@ -87,12 +87,12 @@ TEST_F(UT_ShareFileInfo, IsDir)
 
 TEST_F(UT_ShareFileInfo, CanRename)
 {
-    EXPECT_FALSE(info->canRename());
+    EXPECT_FALSE(info->canAttributes(AbstractFileInfo::FileCanType::kCanRename));
 }
 
 TEST_F(UT_ShareFileInfo, CanDrag)
 {
-    EXPECT_FALSE(info->canDrag());
+    EXPECT_FALSE(info->canAttributes(AbstractFileInfo::FileCanType::kCanDrag));
 }
 
 TEST_F(UT_ShareFileInfo, IsWritable)

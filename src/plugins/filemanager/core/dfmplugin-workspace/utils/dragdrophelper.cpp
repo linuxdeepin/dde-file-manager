@@ -66,7 +66,7 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
 
     for (const QUrl &url : currentDragUrls) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (!info || !info->canMoveOrCopy()) {
+        if (!info || !info->canAttributes(AbstractFileInfo::FileCanType::kCanMoveOrCopy)) {
             event->ignore();
             return true;
         }
@@ -121,7 +121,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
 
         for (const QUrl &url : fromUrls) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-            if (event->dropAction() == Qt::DropAction::MoveAction && !info->canRename() && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
+            if (event->dropAction() == Qt::DropAction::MoveAction && !info->canAttributes(AbstractFileInfo::FileCanType::kCanRename) && !dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
                 view->setViewSelectState(false);
                 event->ignore();
                 return true;
@@ -138,7 +138,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             }
         }
 
-        if (!hoverFileInfo->canDrop()
+        if (!hoverFileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanDrop)
             || !hoverFileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction())
             || (hoverFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !hoverFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable))) {
             // NOTE: if item can not drop, the drag item will drop to root dir.

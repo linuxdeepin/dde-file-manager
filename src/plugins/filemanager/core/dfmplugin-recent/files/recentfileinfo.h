@@ -41,12 +41,11 @@ public:
     virtual bool exists() const override;
     virtual QFile::Permissions permissions() const override;
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
-    virtual bool canRename() const override;
+    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
 
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
 
-    bool canRedirectionFileUrl() const override;
     virtual QVariant customData(int role) const override;
 
 private:

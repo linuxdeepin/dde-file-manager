@@ -202,28 +202,6 @@ bool TrashFileInfo::exists() const
             || FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 
-bool TrashFileInfo::canDelete() const
-{
-    if (!d->dFileInfo)
-        return false;
-
-    bool value = false;
-    bool success = false;
-    value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, &success).toBool();
-    return value;
-}
-
-bool TrashFileInfo::canTrash() const
-{
-    if (!d->dFileInfo)
-        return false;
-
-    bool value = false;
-    bool success = false;
-    value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, &success).toBool();
-    return value;
-}
-
 void TrashFileInfo::refresh()
 {
     AbstractFileInfo::refresh();
@@ -285,15 +263,32 @@ QUrl TrashFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
         return AbstractFileInfo::urlInfo(type);
     }
 }
-bool TrashFileInfo::canRename() const
-{
-    if (!d->dFileInfo)
-        return false;
 
-    bool value = false;
-    bool success = false;
-    value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, &success).toBool();
-    return value;
+bool TrashFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
+{
+    switch (type) {
+    case FileCanType::kCanDelete:
+        if (!d->dFileInfo)
+            return false;
+
+        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr).toBool();
+    case FileCanType::kCanTrash:
+        if (!d->dFileInfo)
+            return false;
+
+        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr).toBool();
+    case FileCanType::kCanRename:
+        if (!d->dFileInfo)
+            return false;
+
+        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr).toBool();
+    case FileCanType::kCanDrop:
+        return FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    case FileCanType::kCanHidden:
+        return false;
+    default:
+        return AbstractFileInfo::canAttributes(type);
+    }
 }
 
 QFile::Permissions TrashFileInfo::permissions() const
@@ -405,16 +400,6 @@ bool TrashFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     default:
         return AbstractFileInfo::isAttributes(type);
     }
-}
-
-bool TrashFileInfo::canDrop()
-{
-    return FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
-}
-
-bool TrashFileInfo::canHidden() const
-{
-    return false;
 }
 
 QVariant TrashFileInfo::timeInfo(const AbstractFileInfo::FileTimeType type) const

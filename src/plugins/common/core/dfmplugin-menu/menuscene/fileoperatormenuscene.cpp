@@ -176,13 +176,13 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     d->focusFileInfo->refresh();
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
-        if (!d->focusFileInfo->canDelete() || (!d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)))
+        if (!d->focusFileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanDelete) || (!d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)))
             delAction->setDisabled(true);
     }
 
     // rename
     if (auto rename = d->predicateAction.value(ActionID::kRename)) {
-        if (!d->focusFileInfo->canRename() || !d->indexFlags.testFlag(Qt::ItemIsEditable))
+        if (!d->focusFileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
     if (d->selectFiles.count() > 1) {

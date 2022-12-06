@@ -405,7 +405,7 @@ void WorkspaceWidget::handleCtrlN()
     QList<QUrl> urlList;
     for (const auto &url : fileView->selectedUrlList()) {
         const auto &info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info && info->canFetch())
+        if (info && info->canAttributes(AbstractFileInfo::FileCanType::kCanFetch))
             urlList << url;
     }
 

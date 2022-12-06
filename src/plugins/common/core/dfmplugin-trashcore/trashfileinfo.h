@@ -42,13 +42,9 @@ public:
     virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const override;
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
     virtual bool exists() const override;
-    virtual bool canDelete() const override;
-    virtual bool canTrash() const override;
-    virtual bool canRename() const override;
+    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
 
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
-    virtual bool canDrop() override;
-    virtual bool canHidden() const override;
     virtual QFile::Permissions permissions() const override;
     virtual QIcon fileIcon() override;
 

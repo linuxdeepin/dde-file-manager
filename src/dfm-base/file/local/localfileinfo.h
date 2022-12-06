@@ -61,12 +61,8 @@ public:
 
     virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const override;
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
-    virtual bool canDelete() const override;
-    virtual bool canTrash() const override;
-    virtual bool canRename() const override;
-    virtual bool canHidden() const override;
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
-    virtual bool canFetch() const override;
+    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
     virtual quint64 inode() const override;
     virtual QString owner() const override;
     virtual uint ownerId() const override;
@@ -95,8 +91,6 @@ public:
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
 
     virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
-
-    virtual bool canDragCompress() const override;
 
     // emblems
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;

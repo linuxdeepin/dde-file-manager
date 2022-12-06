@@ -211,7 +211,7 @@ void BasicWidget::basicFill(const QUrl &url)
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
-    if (!info->canHidden())
+    if (!info->canAttributes(AbstractFileInfo::FileCanType::kCanHidden))
         hideFile->setEnabled(false);
 
     if (info->isAttributes(AbstractFileInfo::FileIsType::kIsHidden))

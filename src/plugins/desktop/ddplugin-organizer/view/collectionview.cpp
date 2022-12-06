@@ -1985,7 +1985,7 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
     auto currentUrl = hoverIndex.isValid() ? model()->fileUrl(hoverIndex) : model()->fileUrl(model()->rootIndex());
     if (hoverIndex.isValid()) {
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
-            bool canDrop = !fileInfo->canDrop()
+            bool canDrop = !fileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanDrop)
                     || (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable))
                     || !fileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction());
             if (!canDrop) {

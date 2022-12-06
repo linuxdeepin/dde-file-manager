@@ -41,13 +41,9 @@ public:
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     QVariantHash extraProperties() const override;
-    bool canRedirectionFileUrl() const override;
 
-    bool canDrop() override;
-    bool canRename() const override;
     void refresh() override;
-    bool canDragCompress() const override;
-    bool canHidden() const override;
+    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
     Qt::DropActions supportedAttributes(const SupportType type = SupportType::kDrag) const override;
     QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
 };
