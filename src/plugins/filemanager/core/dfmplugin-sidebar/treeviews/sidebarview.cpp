@@ -303,6 +303,11 @@ void SideBarView::dropEvent(QDropEvent *event)
         if (UrlRoute::isRootUrl(url)) {
             qDebug() << "skip the same dir file..." << url;
         } else {
+            if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileCanMove", url)) {
+                urls << url;
+                continue;
+            }
+
             QString folderPath = UrlRoute::urlToPath(UrlRoute::urlParent(url));
 
             bool isFolderWritable = false;
@@ -387,16 +392,14 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
     switch (action) {
     case Qt::CopyAction:
         // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
-        QtConcurrent::run([=]() {
+        QTimer::singleShot(0, const_cast<SideBarView *>(this), [=]() {
             FileOperatorHelperIns->pasteFiles(winId, srcUrls, dstUrl, action);
-            //            DFileService::instance()->pasteFile(this, DFMGlobal::CopyAction, dstUrl, srcUrls);
         });
         break;
     case Qt::LinkAction:
         break;
     case Qt::MoveAction:
         FileOperatorHelperIns->pasteFiles(winId, srcUrls, dstUrl, action);
-        //        DFileService::instance()->pasteFile(this, DFMGlobal::CutAction, dstUrl, srcUrls);
         break;
     default:
         return false;
