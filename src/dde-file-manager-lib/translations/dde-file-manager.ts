@@ -2284,6 +2284,443 @@
     </message>
 </context>
 <context>
+    <name>GenerateSettingTranslate</name>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="5"/>
+        <location filename="../configure/global-setting-template-pro.js" line="5"/>
+        <location filename="../configure/global-setting-template.js" line="5"/>
+        <source>Basic</source>
+        <translation>Basic</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="9"/>
+        <location filename="../configure/global-setting-template-pro.js" line="9"/>
+        <location filename="../configure/global-setting-template.js" line="9"/>
+        <source>Open behavior</source>
+        <translation>Open behavior</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="14"/>
+        <location filename="../configure/global-setting-template-pro.js" line="14"/>
+        <location filename="../configure/global-setting-template.js" line="14"/>
+        <source>Always open folder in new window</source>
+        <translation>Always open folder in new window</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="19"/>
+        <location filename="../configure/global-setting-template-pro.js" line="19"/>
+        <location filename="../configure/global-setting-template.js" line="19"/>
+        <source>Open file:</source>
+        <translation>Open file:</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="22"/>
+        <location filename="../configure/global-setting-template-pro.js" line="22"/>
+        <location filename="../configure/global-setting-template.js" line="22"/>
+        <source>Click</source>
+        <translation>Click</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="23"/>
+        <location filename="../configure/global-setting-template-pro.js" line="23"/>
+        <location filename="../configure/global-setting-template.js" line="23"/>
+        <source>Double click</source>
+        <translation>Double click</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="31"/>
+        <location filename="../configure/global-setting-template-pro.js" line="31"/>
+        <location filename="../configure/global-setting-template.js" line="31"/>
+        <source>New window and tab</source>
+        <translation>New window and tab</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="35"/>
+        <location filename="../configure/global-setting-template-pro.js" line="35"/>
+        <location filename="../configure/global-setting-template.js" line="35"/>
+        <source>Open from default window:</source>
+        <translation>Open from default window:</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="39"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="68"/>
+        <location filename="../configure/global-setting-template-pro.js" line="39"/>
+        <location filename="../configure/global-setting-template-pro.js" line="68"/>
+        <location filename="../configure/global-setting-template.js" line="39"/>
+        <location filename="../configure/global-setting-template.js" line="68"/>
+        <source>Computer</source>
+        <translation>Computer</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="40"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="69"/>
+        <location filename="../configure/global-setting-template-pro.js" line="40"/>
+        <location filename="../configure/global-setting-template-pro.js" line="69"/>
+        <location filename="../configure/global-setting-template.js" line="40"/>
+        <location filename="../configure/global-setting-template.js" line="69"/>
+        <source>Home</source>
+        <translation>Home</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="41"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="70"/>
+        <location filename="../configure/global-setting-template-pro.js" line="41"/>
+        <location filename="../configure/global-setting-template-pro.js" line="70"/>
+        <location filename="../configure/global-setting-template.js" line="41"/>
+        <location filename="../configure/global-setting-template.js" line="70"/>
+        <source>Desktop</source>
+        <translation>Desktop</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="42"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="71"/>
+        <location filename="../configure/global-setting-template-pro.js" line="42"/>
+        <location filename="../configure/global-setting-template-pro.js" line="71"/>
+        <location filename="../configure/global-setting-template.js" line="42"/>
+        <location filename="../configure/global-setting-template.js" line="71"/>
+        <source>Videos</source>
+        <translation>Videos</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="43"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="72"/>
+        <location filename="../configure/global-setting-template-pro.js" line="43"/>
+        <location filename="../configure/global-setting-template-pro.js" line="72"/>
+        <location filename="../configure/global-setting-template.js" line="43"/>
+        <location filename="../configure/global-setting-template.js" line="72"/>
+        <source>Music</source>
+        <translation>Music</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="44"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="73"/>
+        <location filename="../configure/global-setting-template-pro.js" line="44"/>
+        <location filename="../configure/global-setting-template-pro.js" line="73"/>
+        <location filename="../configure/global-setting-template.js" line="44"/>
+        <location filename="../configure/global-setting-template.js" line="73"/>
+        <source>Pictures</source>
+        <translation>Pictures</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="45"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="74"/>
+        <location filename="../configure/global-setting-template-pro.js" line="45"/>
+        <location filename="../configure/global-setting-template-pro.js" line="74"/>
+        <location filename="../configure/global-setting-template.js" line="45"/>
+        <location filename="../configure/global-setting-template.js" line="74"/>
+        <source>Documents</source>
+        <translation>Documents</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="46"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="75"/>
+        <location filename="../configure/global-setting-template-pro.js" line="46"/>
+        <location filename="../configure/global-setting-template-pro.js" line="75"/>
+        <location filename="../configure/global-setting-template.js" line="46"/>
+        <location filename="../configure/global-setting-template.js" line="75"/>
+        <source>Downloads</source>
+        <translation>Downloads</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="63"/>
+        <location filename="../configure/global-setting-template-pro.js" line="63"/>
+        <location filename="../configure/global-setting-template.js" line="63"/>
+        <source>Open in new tab:</source>
+        <translation>Open in new tab:</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="67"/>
+        <location filename="../configure/global-setting-template-pro.js" line="67"/>
+        <location filename="../configure/global-setting-template.js" line="67"/>
+        <source>Current Directory</source>
+        <translation>Current Directory</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="95"/>
+        <location filename="../configure/global-setting-template-pro.js" line="95"/>
+        <location filename="../configure/global-setting-template.js" line="95"/>
+        <source>View</source>
+        <translation>View</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="99"/>
+        <location filename="../configure/global-setting-template-pro.js" line="99"/>
+        <location filename="../configure/global-setting-template.js" line="99"/>
+        <source>Default size:</source>
+        <translation>Default size:</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="102"/>
+        <location filename="../configure/global-setting-template-pro.js" line="102"/>
+        <location filename="../configure/global-setting-template.js" line="102"/>
+        <source>Extra small</source>
+        <translation>Extra small</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="103"/>
+        <location filename="../configure/global-setting-template-pro.js" line="103"/>
+        <location filename="../configure/global-setting-template.js" line="103"/>
+        <source>Small</source>
+        <translation>Small</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="104"/>
+        <location filename="../configure/global-setting-template-pro.js" line="104"/>
+        <location filename="../configure/global-setting-template.js" line="104"/>
+        <source>Medium</source>
+        <translation>Medium</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="105"/>
+        <location filename="../configure/global-setting-template-pro.js" line="105"/>
+        <location filename="../configure/global-setting-template.js" line="105"/>
+        <source>Large</source>
+        <translation>Large</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="106"/>
+        <location filename="../configure/global-setting-template-pro.js" line="106"/>
+        <location filename="../configure/global-setting-template.js" line="106"/>
+        <source>Extra large</source>
+        <translation>Extra large</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="112"/>
+        <location filename="../configure/global-setting-template-pro.js" line="112"/>
+        <location filename="../configure/global-setting-template.js" line="112"/>
+        <source>Default view:</source>
+        <translation>Default view:</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="116"/>
+        <location filename="../configure/global-setting-template-pro.js" line="116"/>
+        <location filename="../configure/global-setting-template.js" line="116"/>
+        <source>Icon</source>
+        <translation>Icon</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="117"/>
+        <location filename="../configure/global-setting-template-pro.js" line="117"/>
+        <location filename="../configure/global-setting-template.js" line="117"/>
+        <source>List</source>
+        <translation>List</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="127"/>
+        <location filename="../configure/global-setting-template-pro.js" line="127"/>
+        <location filename="../configure/global-setting-template.js" line="127"/>
+        <source>Mix sorting of files and folders</source>
+        <translation>Mix sorting of files and folders</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="135"/>
+        <location filename="../configure/global-setting-template-pro.js" line="135"/>
+        <location filename="../configure/global-setting-template.js" line="135"/>
+        <source>Hidden files</source>
+        <translation>Hidden files</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="139"/>
+        <location filename="../configure/global-setting-template-pro.js" line="139"/>
+        <location filename="../configure/global-setting-template.js" line="139"/>
+        <source>Show hidden files</source>
+        <translation>Show hidden files</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="145"/>
+        <location filename="../configure/global-setting-template-pro.js" line="145"/>
+        <location filename="../configure/global-setting-template.js" line="145"/>
+        <source>Show file extensions</source>
+        <translation>Show file extensions</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="162"/>
+        <location filename="../configure/global-setting-template-pro.js" line="163"/>
+        <location filename="../configure/global-setting-template.js" line="163"/>
+        <source>Advanced</source>
+        <translation>Advanced</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="166"/>
+        <location filename="../configure/global-setting-template-pro.js" line="167"/>
+        <location filename="../configure/global-setting-template.js" line="167"/>
+        <source>Index</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="170"/>
+        <location filename="../configure/global-setting-template-pro.js" line="171"/>
+        <location filename="../configure/global-setting-template.js" line="171"/>
+        <source>Auto index internal disk</source>
+        <translation>Auto index internal disk</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="176"/>
+        <location filename="../configure/global-setting-template-pro.js" line="177"/>
+        <location filename="../configure/global-setting-template.js" line="177"/>
+        <source>Index external storage device after connected to computer</source>
+        <translation>Index external storage device after connected to computer</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="182"/>
+        <location filename="../configure/global-setting-template-pro.js" line="183"/>
+        <location filename="../configure/global-setting-template.js" line="183"/>
+        <source>Full-Text search</source>
+        <translation>Full-Text search</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="239"/>
+        <location filename="../configure/global-setting-template-pro.js" line="239"/>
+        <location filename="../configure/global-setting-template.js" line="238"/>
+        <source>Music preview</source>
+        <translation>Music preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="263"/>
+        <location filename="../configure/global-setting-template-pro.js" line="263"/>
+        <location filename="../configure/global-setting-template.js" line="262"/>
+        <source>Show item counts and sizes in the path of mounted MTP devices</source>
+        <translation>Show item counts and sizes in the path of mounted MTP devices</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="269"/>
+        <location filename="../configure/global-setting-template-pro.js" line="269"/>
+        <location filename="../configure/global-setting-template.js" line="268"/>
+        <source>Keep showing the mounted Samba shares</source>
+        <translation>Keep showing the mounted Samba shares</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="281"/>
+        <location filename="../configure/global-setting-template-pro.js" line="281"/>
+        <location filename="../configure/global-setting-template.js" line="280"/>
+        <source>Use the file chooser dialog of File Manager</source>
+        <translation>Use the file chooser dialog of File Manager</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="287"/>
+        <location filename="../configure/global-setting-template-pro.js" line="287"/>
+        <location filename="../configure/global-setting-template.js" line="286"/>
+        <source>Ask for my confirmation when deleting files</source>
+        <translation>Ask for my confirmation when deleting files</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="295"/>
+        <location filename="../configure/global-setting-template-pro.js" line="295"/>
+        <location filename="../configure/global-setting-template.js" line="294"/>
+        <source>Other</source>
+        <translation>Other</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="299"/>
+        <location filename="../configure/global-setting-template-pro.js" line="299"/>
+        <location filename="../configure/global-setting-template.js" line="298"/>
+        <source>Hide system disk</source>
+        <translation>Hide system disk</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="305"/>
+        <location filename="../configure/global-setting-template-pro.js" line="305"/>
+        <location filename="../configure/global-setting-template.js" line="311"/>
+        <source>Hide loop partitions</source>
+        <translation>Hide loop partitions</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="318"/>
+        <location filename="../configure/global-setting-template-pro.js" line="318"/>
+        <location filename="../configure/global-setting-template.js" line="317"/>
+        <source>Show file system on disk icon</source>
+        <translation>Show file system on disk icon</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="194"/>
+        <location filename="../configure/global-setting-template-pro.js" line="195"/>
+        <location filename="../configure/global-setting-template.js" line="195"/>
+        <source>Show hidden files in search results</source>
+        <translation>Show hidden files in search results</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="151"/>
+        <location filename="../configure/global-setting-template-pro.js" line="151"/>
+        <location filename="../configure/global-setting-template.js" line="151"/>
+        <source>Display recent file entry in left panel</source>
+        <translation>Display recent file entry in left panel</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="203"/>
+        <location filename="../configure/global-setting-template-pro.js" line="204"/>
+        <location filename="../configure/global-setting-template.js" line="204"/>
+        <source>Preview</source>
+        <translation>Preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="207"/>
+        <location filename="../configure/global-setting-template-pro.js" line="208"/>
+        <source>Compress file preview</source>
+        <translation>Compress file preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="214"/>
+        <location filename="../configure/global-setting-template-pro.js" line="215"/>
+        <location filename="../configure/global-setting-template.js" line="214"/>
+        <source>Text preview</source>
+        <translation>Text preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="220"/>
+        <location filename="../configure/global-setting-template-pro.js" line="221"/>
+        <location filename="../configure/global-setting-template.js" line="220"/>
+        <source>Document preview</source>
+        <translation>Document preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="226"/>
+        <location filename="../configure/global-setting-template-pro.js" line="227"/>
+        <location filename="../configure/global-setting-template.js" line="226"/>
+        <source>Image preview</source>
+        <translation>Image preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="232"/>
+        <location filename="../configure/global-setting-template-pro.js" line="233"/>
+        <location filename="../configure/global-setting-template.js" line="232"/>
+        <source>Video preview</source>
+        <translation>Video preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="247"/>
+        <location filename="../configure/global-setting-template-pro.js" line="247"/>
+        <location filename="../configure/global-setting-template.js" line="246"/>
+        <source>Mount</source>
+        <translation>Mount</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="251"/>
+        <location filename="../configure/global-setting-template-pro.js" line="251"/>
+        <location filename="../configure/global-setting-template.js" line="250"/>
+        <source>Auto mount</source>
+        <translation>Auto mount</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="257"/>
+        <location filename="../configure/global-setting-template-pro.js" line="257"/>
+        <location filename="../configure/global-setting-template.js" line="256"/>
+        <source>Open after auto mount</source>
+        <translation>Open after auto mount</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="277"/>
+        <location filename="../configure/global-setting-template-pro.js" line="277"/>
+        <location filename="../configure/global-setting-template.js" line="276"/>
+        <source>Dialog</source>
+        <translation>Dialog</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template.js" line="208"/>
+        <source>Compressed file preview</source>
+        <translation>Compressed file preview</translation>
+    </message>
+</context>
+<context>
     <name>GvfsMountManager</name>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="821"/>
