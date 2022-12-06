@@ -39,10 +39,9 @@ public:
     virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
-    virtual bool isDir() const override;
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     virtual bool canRename() const override;
     virtual bool canDrag() override;
-    virtual bool isWritable() const override;
     virtual void refresh() override;
 };
 

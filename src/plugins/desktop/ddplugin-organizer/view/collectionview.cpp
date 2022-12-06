@@ -693,7 +693,7 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
                 qWarning() << "create LocalFileInfo error: " << errString << targetItem;
                 return false;
             }
-            if (itemInfo->isDir() || itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl()) {
+            if (itemInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl()) {
                 auto sourceUrls = event->mimeData()->urls();
                 for (const QUrl &url : sourceUrls) {
                     if ((DesktopAppUrl::computerDesktopFileUrl() == url)
@@ -748,7 +748,7 @@ bool CollectionViewPrivate::dropDirectSaveMode(QDropEvent *event) const
         auto fileInfo = q->model()->fileInfo(index.isValid() ? index : q->rootIndex());
 
         if (fileInfo && fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isLocalFile()) {
-            if (fileInfo->isDir())
+            if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
             else
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl));
@@ -1514,11 +1514,11 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
     DFMLocalFileInfoPointer rightInfo = m->fileInfo(rightIdx);
 
     // The folder is fixed in the front position
-    if (leftInfo->isDir()) {
-        if (!rightInfo->isDir())
+    if (leftInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+        if (!rightInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
             return true;
     } else {
-        if (rightInfo->isDir())
+        if (rightInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
             return false;
     }
 
@@ -1986,7 +1986,7 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
     if (hoverIndex.isValid()) {
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
             bool canDrop = !fileInfo->canDrop()
-                    || (fileInfo->isDir() && !fileInfo->isWritable())
+                    || (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable))
                     || !fileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
                 d->handleMoveMimeData(event, currentUrl);

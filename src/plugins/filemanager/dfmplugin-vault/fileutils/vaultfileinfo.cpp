@@ -55,7 +55,7 @@ VaultFileInfoPrivate::~VaultFileInfoPrivate()
 QString VaultFileInfoPrivate::iconName()
 {
     QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
-    if (q->isRoot())
+    if (isRoot())
         return iconName;
     else {
         if (!proxy)
@@ -106,6 +106,17 @@ QUrl VaultFileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
     theUrl.setHost("");
 
     return theUrl;
+}
+
+bool VaultFileInfoPrivate::isRoot() const
+{
+    bool bRootDir = false;
+    const QString &localFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), kVaultDecryptDirName, nullptr);
+    QString path = q->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);
+    if (localFilePath == path || localFilePath + "/" == path || localFilePath == path + "/") {
+        bRootDir = true;
+    }
+    return bRootDir;
 }
 
 VaultFileInfo::VaultFileInfo(const QUrl &url)
@@ -182,50 +193,26 @@ void VaultFileInfo::refresh()
     setProxy(InfoFactory::create<AbstractFileInfo>(dptr->proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)));
 }
 
-bool VaultFileInfo::isReadable() const
+bool VaultFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
-    return !dptr->proxy || dptr->proxy->isReadable();
-}
-
-bool VaultFileInfo::isWritable() const
-{
-    return !dptr->proxy || dptr->proxy->isWritable();
-}
-
-bool VaultFileInfo::isExecutable() const
-{
-    return !dptr->proxy || dptr->proxy->isExecutable();
-}
-
-bool VaultFileInfo::isHidden() const
-{
-    return !dptr->proxy || dptr->proxy->isHidden();
-}
-
-bool VaultFileInfo::isFile() const
-{
-    return !dptr->proxy || dptr->proxy->isFile();
-}
-
-bool VaultFileInfo::isDir() const
-{
-    return !dptr->proxy || dptr->proxy->isDir();
-}
-
-bool VaultFileInfo::isSymLink() const
-{
-    return !dptr->proxy || dptr->proxy->isSymLink();
-}
-
-bool VaultFileInfo::isRoot() const
-{
-    bool bRootDir = false;
-    const QString &localFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), kVaultDecryptDirName, nullptr);
-    QString path = pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);
-    if (localFilePath == path || localFilePath + "/" == path || localFilePath == path + "/") {
-        bRootDir = true;
+    switch (type) {
+    case FileIsType::kIsFile:
+        [[fallthrough]];
+    case FileIsType::kIsDir:
+        [[fallthrough]];
+    case FileIsType::kIsReadable:
+        [[fallthrough]];
+    case FileIsType::kIsWritable:
+        [[fallthrough]];
+    case FileIsType::kIsExecutable:
+        [[fallthrough]];
+    case FileIsType::kIsSymLink:
+        [[fallthrough]];
+    case FileIsType::kIsHidden:
+        return !dptr->proxy || dptr->proxy->isAttributes(type);
+    default:
+        return AbstractFileInfo::isAttributes(type);
     }
-    return bRootDir;
 }
 
 bool VaultFileInfo::canDrop()
@@ -256,7 +243,7 @@ QUrl VaultFileInfo::getUrlByType(const AbstractFileInfo::FileUrlInfoType type, c
 
 QIcon VaultFileInfo::fileIcon()
 {
-    if (isRoot())
+    if (dptr.staticCast<VaultFileInfoPrivate>()->isRoot())
         return QIcon::fromTheme(dptr.staticCast<VaultFileInfoPrivate>()->iconName());
 
     if (!dptr->proxy)
@@ -273,7 +260,7 @@ qint64 VaultFileInfo::size() const
 
 int VaultFileInfo::countChildFile() const
 {
-    if (isDir()) {
+    if (isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         QDir dir(pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath));
         QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
                                               | QDir::NoDotAndDotDot | QDir::Hidden);
@@ -306,7 +293,7 @@ QString VaultFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
 QString VaultFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
-        if (isRoot()) {
+        if (dptr.staticCast<VaultFileInfoPrivate>()->isRoot()) {
             return QObject::tr("My Vault");
         }
         if (dptr->proxy)

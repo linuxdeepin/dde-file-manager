@@ -142,7 +142,7 @@ bool DoCutFilesWorker::cutFiles()
             continue;
 
         // check hierarchy
-        if (fileInfo->isDir()) {
+        if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
             const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
             if (higher) {
                 emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});
@@ -151,7 +151,7 @@ bool DoCutFilesWorker::cutFiles()
         }
 
         // check link
-        if (fileInfo->isSymLink()) {
+        if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
             const bool ok = checkSymLink(fileInfo);
             if (ok)
                 continue;
@@ -243,7 +243,7 @@ bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
     DecoratorFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
 
     if (newFileInfo.url() == fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)
-        || (FileUtils::isSameFile(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), newFileInfo.url()) && !fileInfo->isSymLink())) {
+        || (FileUtils::isSameFile(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), newFileInfo.url()) && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))) {
         return true;
     }
     return false;

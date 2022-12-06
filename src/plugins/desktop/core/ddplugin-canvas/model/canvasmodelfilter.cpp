@@ -29,7 +29,8 @@
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
-CanvasModelFilter::CanvasModelFilter(CanvasProxyModel *m) : model(m)
+CanvasModelFilter::CanvasModelFilter(CanvasProxyModel *m)
+    : model(m)
 {
 }
 
@@ -66,7 +67,7 @@ bool HiddenFileFilter::insertFilter(const QUrl &url)
     if (auto info = FileCreator->createFileInfo(url)) {
         //! fouce refresh
         info->refresh();
-        return info->isHidden();
+        return info->isAttributes(AbstractFileInfo::FileIsType::kIsHidden);
     }
 
     return false;
@@ -84,7 +85,7 @@ bool HiddenFileFilter::resetFilter(QList<QUrl> &urls)
             //! need to fouce refresh
             //! maybe it need be fixed in dfm-io
             info->refresh();
-            if (info->isHidden()) {
+            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsHidden)) {
                 itor = urls.erase(itor);
                 continue;
             }
@@ -115,8 +116,7 @@ bool HiddenFileFilter::renameFilter(const QUrl &oldUrl, const QUrl &newUrl)
 }
 
 InnerDesktopAppFilter::InnerDesktopAppFilter(CanvasProxyModel *model, QObject *parent)
-    : QObject(parent)
-    , CanvasModelFilter(model)
+    : QObject(parent), CanvasModelFilter(model)
 {
 
     keys.insert("desktopComputer", DesktopAppUrl::computerDesktopFileUrl());
@@ -137,7 +137,7 @@ InnerDesktopAppFilter::InnerDesktopAppFilter(CanvasProxyModel *model, QObject *p
 void InnerDesktopAppFilter::update()
 {
     if (gsettings) {
-        for (auto iter = hidden.begin() ; iter != hidden.end(); ++iter) {
+        for (auto iter = hidden.begin(); iter != hidden.end(); ++iter) {
             auto var = gsettings->get(iter.key());
             if (var.isValid())
                 iter.value() = !var.toBool();
@@ -187,7 +187,7 @@ void InnerDesktopAppFilter::changed(const QString &key)
         else
             hidden[key] = false;
 
-       if (old != hidden.value(key))
-           refreshModel();
+        if (old != hidden.value(key))
+            refreshModel();
     }
 }

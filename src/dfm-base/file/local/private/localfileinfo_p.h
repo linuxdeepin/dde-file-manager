@@ -158,6 +158,14 @@ private:
         return kTimeInfoToDFile;
     }
     QUrl redirectedFileUrl() const;
+    bool isFile() const;
+    bool isDir() const;
+    bool isReadable() const;
+    bool isWritable() const;
+    bool isExecutable() const;
+    bool isHidden() const;
+    bool isSymLink() const;
+    bool isPrivate() const;
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)

@@ -276,231 +276,48 @@ bool LocalFileInfo::canHidden() const
     return true;
 }
 
-/*!
- * \brief isReadable 获取文件是否可读
- *
- * Returns the file can Read
- *
- * url = file:///tmp/archive.tar.gz
- *
- * \param
- *
- * \return bool 返回文件是否可读
- */
-bool LocalFileInfo::isReadable() const
+bool LocalFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
-    if (isPrivate())
-        return false;
-
-    bool isReadable = false;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        isReadable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, nullptr).toBool();
+    switch (type) {
+    case FileIsType::kIsFile:
+        return d->isFile();
+    case FileIsType::kIsDir:
+        return d->isDir();
+    case FileIsType::kIsReadable:
+        return d->isReadable();
+    case FileIsType::kIsWritable:
+        return d->isWritable();
+    case FileIsType::kIsExecutable:
+        return d->isExecutable();
+    case FileIsType::kIsHidden:
+        return d->isHidden();
+    case FileIsType::kIsRoot:
+        return d->filePath() == "/";
+    case FileIsType::kIsBundle:
+        return QFileInfo(d->url.path()).isBundle();
+    case FileIsType::kIsDragCompressFileFormat: {
+        const QString &&name = d->fileName();
+        return name.endsWith(".zip")
+                || (name.endsWith(".7z")
+                    && !name.endsWith(".tar.7z"));
     }
-
-    return isReadable;
-}
-/*!
- * \brief isWritable 获取文件是否可写
- *
- * Returns the file can write
- *
- * url = file:///tmp/archive.tar.gz
- *
- * \param
- *
- * \return bool 返回文件是否可写
- */
-bool LocalFileInfo::isWritable() const
-{
-    bool isWritable = false;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        isWritable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, nullptr).toBool();
+    case FileIsType::kIsPrivate:
+        return d->isPrivate();
+    default:
+        return AbstractFileInfo::isAttributes(type);
     }
-
-    return isWritable;
-}
-/*!
- * \brief isExecutable 获取文件是否可执行
- *
- * \param
- *
- * \return bool 返回文件是否可执行
- */
-bool LocalFileInfo::isExecutable() const
-{
-    bool isExecutable = false;
-    bool success = false;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        isExecutable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
-    }
-    if (!success) {
-        qWarning() << "cannot obtain the property kAccessCanExecute of" << d->url;
-
-        if (FileUtils::isGvfsFile(d->url)) {
-            qInfo() << "trying to get isExecutable by judging whether the dir can be iterated" << d->url;
-            struct dirent *next { nullptr };
-            DIR *dirp = opendir(d->filePath().toUtf8().constData());
-            if (!dirp) {
-                isExecutable = false;
-            } else {
-                errno = 0;
-                next = readdir(dirp);
-                closedir(dirp);
-                isExecutable = (next || errno == 0);
-            }
-            qInfo() << "dir can be iterated? " << isExecutable << d->url;
-        }
-    }
-
-    return isExecutable;
-}
-/*!
- * \brief isHidden 获取文件是否是隐藏
- *
- * \param
- *
- * \return bool 返回文件是否隐藏
- */
-bool LocalFileInfo::isHidden() const
-{
-    bool isHidden = false;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        isHidden = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsHidden, nullptr).toBool();
-    }
-
-    return isHidden;
-}
-/*!
- * \brief isFile 获取文件是否是文件
- *
- * Returns true if this object points to a file or to a symbolic link to a file.
- *
- * Returns false if the object points to something which isn't a file,
- *
- * such as a directory.
- *
- * \param
- *
- * \return bool 返回文件是否文件
- */
-bool LocalFileInfo::isFile() const
-{
-    bool isFile = false;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        isFile = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsFile, nullptr).toBool();
-    }
-
-    return isFile;
-}
-/*!
- * \brief isDir 获取文件是否是目录
- *
- * Returns true if this object points to a directory or to a symbolic link to a directory;
- *
- * otherwise returns false.
- *
- * \param
- *
- * \return bool 返回文件是否目录
- */
-bool LocalFileInfo::isDir() const
-{
-    bool isDir = false;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        isDir = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsDir, nullptr).toBool();
-    }
-    return isDir;
-}
-/*!
- * \brief isSymLink 获取文件是否是链接文件
- *
- * Returns true if this object points to a symbolic link;
- *
- * otherwise returns false.Symbolic links exist on Unix (including macOS and iOS)
- *
- * and Windows and are typically created by the ln -s or mklink commands, respectively.
- *
- * Opening a symbolic link effectively opens the link's target.
- *
- * In addition, true will be returned for shortcuts (*.lnk files) on Windows.
- *
- * Opening those will open the .lnk file itself.
- *
- * \param
- *
- * \return bool 返回文件是否是链接文件
- */
-bool LocalFileInfo::isSymLink() const
-{
-    bool isSymLink = false;
-
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        isSymLink = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, nullptr).toBool();
-    }
-
-    return isSymLink;
-}
-/*!
- * \brief isRoot 获取文件是否是根目录
- *
- * Returns true if the object points to a directory or to a symbolic link to a directory,
- *
- * and that directory is the root directory; otherwise returns false.
- *
- * \param
- *
- * \return bool 返回文件是否是根目录
- */
-bool LocalFileInfo::isRoot() const
-{
-    return pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) == "/";
-}
-/*!
- * \brief isBundle 获取文件是否是二进制文件
- *
- * Returns true if this object points to a bundle or to a symbolic
- *
- * link to a bundle on macOS and iOS; otherwise returns false.
- *
- * \param
- *
- * \return bool 返回文件是否是二进制文件
- */
-bool LocalFileInfo::isBundle() const
-{
-    QReadLocker locker(&d->lock);
-    bool isBundle = QFileInfo(d->url.path()).isBundle();
-    return isBundle;
-}
-
-bool LocalFileInfo::isPrivate() const
-{
-    const QString &path = d->path();
-    const QString &name = d->fileName();
-
-    static DFMBASE_NAMESPACE::Match match("PrivateFiles");
-
-    QReadLocker locker(&d->lock);
-    return match.match(path, name);
 }
 
 bool LocalFileInfo::canFetch() const
 {
-    if (isPrivate())
+    if (d->isPrivate())
         return false;
 
     bool isArchive = false;
     if (this->exists())
         isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(d->url).name());
 
-    return isDir() || (isArchive && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
+    return d->isDir() || (isArchive && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
 }
 
 /*!
@@ -761,7 +578,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
     }
 
     const QUrl &fileUrl = d->url;
-    if (FileUtils::isTrashFile(fileUrl) && isSymLink()) {
+    if (FileUtils::isTrashFile(fileUrl) && d->isSymLink()) {
         {
             QWriteLocker locker(&d->lock);
             d->fileType = MimeDatabase::FileType::kRegularFile;
@@ -801,7 +618,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
  */
 int LocalFileInfo::countChildFile() const
 {
-    if (isDir()) {
+    if (d->isDir()) {
         const QString &path = d->filePath();
         QReadLocker locker(&d->lock);
         DecoratorFileEnumerator enumerator(path);
@@ -816,7 +633,7 @@ int LocalFileInfo::countChildFile() const
  */
 QString LocalFileInfo::sizeFormat() const
 {
-    if (isDir()) {
+    if (d->isDir()) {
         return QStringLiteral("-");
     }
 
@@ -952,10 +769,10 @@ QString LocalFileInfo::viewTip(const ViewType type) const
     if (type == ViewType::kEmptyDir) {
         if (!exists()) {
             return QObject::tr("File has been moved or deleted");
-        } else if (!isReadable()) {
+        } else if (!d->isReadable()) {
             return QObject::tr("You do not have permission to access this folder");
-        } else if (isDir()) {
-            if (!isExecutable())
+        } else if (d->isDir()) {
+            if (!d->isExecutable())
                 return QObject::tr("You do not have permission to traverse files in it");
         }
     }
@@ -965,18 +782,10 @@ QString LocalFileInfo::viewTip(const ViewType type) const
 
 bool LocalFileInfo::canDragCompress() const
 {
-    return isDragCompressFileFormat()
-            && isWritable()
-            && isReadable()
+    return isAttributes(AbstractFileInfo::FileIsType::kIsDragCompressFileFormat)
+            && d->isWritable()
+            && d->isReadable()
             && !FileUtils::isGvfsFile(dptr->url);
-}
-
-bool LocalFileInfo::isDragCompressFileFormat() const
-{
-    const QString &&name = d->fileName();
-    return name.endsWith(".zip")
-            || (name.endsWith(".7z")
-                && !name.endsWith(".tar.7z"));
 }
 
 QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
@@ -1134,7 +943,7 @@ QIcon LocalFileInfoPrivate::defaultIcon()
         return icon;
 
     icon = LocalFileIconProvider::globalProvider()->icon(q);
-    if (q->isSymLink()) {
+    if (isSymLink()) {
         const auto &&target = symLinkTarget();
         if (target != filePath()) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(target));
@@ -1409,9 +1218,197 @@ QString LocalFileInfoPrivate::symLinkTarget() const
 
 QUrl LocalFileInfoPrivate::redirectedFileUrl() const
 {
-    if (q->isSymLink())
+    if (isSymLink())
         return QUrl::fromLocalFile(symLinkTarget());
     return url;
+}
+
+/*!
+ * \brief isFile 获取文件是否是文件
+ *
+ * Returns true if this object points to a file or to a symbolic link to a file.
+ *
+ * Returns false if the object points to something which isn't a file,
+ *
+ * such as a directory.
+ *
+ * \param
+ *
+ * \return bool 返回文件是否文件
+ */
+bool LocalFileInfoPrivate::isFile() const
+{
+    bool isFile = false;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        isFile = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsFile, nullptr).toBool();
+    }
+
+    return isFile;
+}
+/*!
+ * \brief isDir 获取文件是否是目录
+ *
+ * Returns true if this object points to a directory or to a symbolic link to a directory;
+ *
+ * otherwise returns false.
+ *
+ * \param
+ *
+ * \return bool 返回文件是否目录
+ */
+bool LocalFileInfoPrivate::isDir() const
+{
+    bool isDir = false;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        isDir = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsDir, nullptr).toBool();
+    }
+    return isDir;
+}
+
+/*!
+ * \brief isReadable 获取文件是否可读
+ *
+ * Returns the file can Read
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * \param
+ *
+ * \return bool 返回文件是否可读
+ */
+bool LocalFileInfoPrivate::isReadable() const
+{
+    if (isPrivate())
+        return false;
+
+    bool isReadable = false;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        isReadable = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, nullptr).toBool();
+    }
+
+    return isReadable;
+}
+
+/*!
+ * \brief isWritable 获取文件是否可写
+ *
+ * Returns the file can write
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * \param
+ *
+ * \return bool 返回文件是否可写
+ */
+bool LocalFileInfoPrivate::isWritable() const
+{
+    bool isWritable = false;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        isWritable = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, nullptr).toBool();
+    }
+
+    return isWritable;
+}
+
+/*!
+ * \brief isExecutable 获取文件是否可执行
+ *
+ * \param
+ *
+ * \return bool 返回文件是否可执行
+ */
+bool LocalFileInfoPrivate::isExecutable() const
+{
+    bool isExecutable = false;
+    bool success = false;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        isExecutable = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
+    }
+    if (!success) {
+        qWarning() << "cannot obtain the property kAccessCanExecute of" << url;
+
+        if (FileUtils::isGvfsFile(url)) {
+            qInfo() << "trying to get isExecutable by judging whether the dir can be iterated" << url;
+            struct dirent *next { nullptr };
+            DIR *dirp = opendir(filePath().toUtf8().constData());
+            if (!dirp) {
+                isExecutable = false;
+            } else {
+                errno = 0;
+                next = readdir(dirp);
+                closedir(dirp);
+                isExecutable = (next || errno == 0);
+            }
+            qInfo() << "dir can be iterated? " << isExecutable << url;
+        }
+    }
+
+    return isExecutable;
+}
+
+/*!
+ * \brief isHidden 获取文件是否是隐藏
+ *
+ * \param
+ *
+ * \return bool 返回文件是否隐藏
+ */
+bool LocalFileInfoPrivate::isHidden() const
+{
+    bool isHidden = false;
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        isHidden = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsHidden, nullptr).toBool();
+    }
+
+    return isHidden;
+}
+
+/*!
+ * \brief isSymLink 获取文件是否是链接文件
+ *
+ * Returns true if this object points to a symbolic link;
+ *
+ * otherwise returns false.Symbolic links exist on Unix (including macOS and iOS)
+ *
+ * and Windows and are typically created by the ln -s or mklink commands, respectively.
+ *
+ * Opening a symbolic link effectively opens the link's target.
+ *
+ * In addition, true will be returned for shortcuts (*.lnk files) on Windows.
+ *
+ * Opening those will open the .lnk file itself.
+ *
+ * \param
+ *
+ * \return bool 返回文件是否是链接文件
+ */
+bool LocalFileInfoPrivate::isSymLink() const
+{
+    bool isSymLink = false;
+
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        isSymLink = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, nullptr).toBool();
+    }
+
+    return isSymLink;
+}
+
+bool LocalFileInfoPrivate::isPrivate() const
+{
+    const QString &path = const_cast<LocalFileInfoPrivate *>(this)->path();
+    const QString &name = fileName();
+
+    static DFMBASE_NAMESPACE::Match match("PrivateFiles");
+
+    QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+    return match.match(path, name);
 }
 
 }

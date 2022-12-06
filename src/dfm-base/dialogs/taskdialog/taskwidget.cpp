@@ -243,7 +243,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
                                       .arg(originInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().isValid()
                                                    ? originInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
                                                    : qApp->translate("MimeTypeDisplayManager", "Unknown")));
-        if (originInfo->isDir()) {
+        if (originInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
             lbSrcTitle->setText(tr("Original folder"));
             QString filecount = originInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(originInfo->countChildFile()) : QObject::tr("%1 items").arg(originInfo->countChildFile());
             lbSrcFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
@@ -258,7 +258,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         lbDstIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
         lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().isValid() ? targetInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
 
-        if (targetInfo->isDir()) {
+        if (targetInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
             lbDstTitle->setText(tr("Target folder"));
             QString filecount = targetInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(targetInfo->countChildFile()) : QObject::tr("%1 items").arg(targetInfo->countChildFile());
             lbDstFileSize->setText(QString(tr("Contains: %1")).arg(filecount));

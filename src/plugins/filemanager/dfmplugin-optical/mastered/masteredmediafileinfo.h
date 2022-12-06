@@ -36,12 +36,10 @@ public:
     explicit MasteredMediaFileInfo(const QUrl &url);
 
     bool exists() const override;
-    bool isReadable() const override;
-    bool isWritable() const override;
-    bool isDir() const override;
     virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
     QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     QVariantHash extraProperties() const override;
     bool canRedirectionFileUrl() const override;
 

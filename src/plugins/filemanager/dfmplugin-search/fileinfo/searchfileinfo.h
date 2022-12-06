@@ -36,10 +36,7 @@ public:
     explicit SearchFileInfo(const QUrl &url);
     ~SearchFileInfo() override;
     virtual bool exists() const override;
-    virtual bool isHidden() const override;
-    virtual bool isReadable() const override;
-    virtual bool isWritable() const override;
-    virtual bool isDir() const override;
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     virtual qint64 size() const override;
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
 

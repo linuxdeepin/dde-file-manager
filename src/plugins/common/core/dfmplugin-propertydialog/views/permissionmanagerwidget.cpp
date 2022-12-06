@@ -65,7 +65,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     QStorageInfo storageInfo(parentUrl.toLocalFile());
     const QString &fsType = storageInfo.fileSystemType();
 
-    if (info->isFile()) {
+    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
         // append `Executable` string
         QString append = QStringLiteral(" , ") + QObject::tr("Executable");
         authorityList[3] += append;
@@ -77,7 +77,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
         readWriteIndex = readWriteFlag;
     }
 
-    if (info->isDir()) {
+    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         // folder: read is read and executable, read-write is read-write and executable
         readOnlyIndex = readOnlyWithXFlag;
         readWriteIndex = readWriteWithXFlag;
@@ -95,7 +95,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     setComboBoxByPermission(groupComboBox, static_cast<int>(info->permissions() & kGroupAll), 4);
     setComboBoxByPermission(otherComboBox, static_cast<int>(info->permissions() & kOtherAll), 0);
 
-    if (info->isFile()) {
+    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
         executableCheckBox->setText(tr("Allow to execute as program"));
         if (info->ownerId() != getuid())
             executableCheckBox->setDisabled(true);
@@ -120,7 +120,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     }
 
     // tmp: 暂时的处理
-    if (fsType == "vfat" && !info->isDir())
+    if (fsType == "vfat" && !info->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
         ownerComboBox->setDisabled(false);
 
     connect(ownerComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);

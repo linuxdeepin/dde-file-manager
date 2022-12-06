@@ -99,7 +99,7 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
         // the linked file only judges the URL, not the inode,
         // because the inode of the linked file is consistent with that of the source file
-        if (!file->isSymLink()) {
+        if (!file->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
             if (ClipBoard::instance()->clipboardFileInodeList().contains(file->inode()))
                 return true;
         }

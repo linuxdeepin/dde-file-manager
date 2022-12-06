@@ -58,7 +58,7 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
         return;
     }
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
-    if (info && info->exists() && info->isFile()) {
+    if (info && info->exists() && info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
         TitleBarEventCaller::sendOpenFile(sender, url);
     } else {
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);

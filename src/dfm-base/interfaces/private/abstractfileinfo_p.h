@@ -51,6 +51,8 @@ public:
 private:
     QUrl getUrlByChildFileName(const QString &fileName) const;
     QUrl getUrlByNewFileName(const QString &fileName) const;
+    QString fileName() const;
+    QString baseName() const;
 };
 
 }

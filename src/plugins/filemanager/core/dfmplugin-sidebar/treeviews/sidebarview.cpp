@@ -384,7 +384,7 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
     auto dstInfo = InfoFactory::create<AbstractFileInfo>(dstUrl);
 
     // convert destnation url to real path if it's a symbol link.
-    if (dstInfo->isSymLink())
+    if (dstInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
         dstUrl = dstInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
 
     auto winId = SideBarHelper::windowId(qobject_cast<QWidget *>(parent()));
@@ -545,7 +545,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         if (!fileInfo)
             return Qt::IgnoreAction;
 
-        if (!fileInfo->isReadable()) {
+        if (!fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable)) {
             return Qt::IgnoreAction;
         }
         //部分文件不能复制或剪切，需要在拖拽时忽略

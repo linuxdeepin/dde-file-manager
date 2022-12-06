@@ -63,7 +63,7 @@ void RecentIterateWorker::doWork()
             if (!location.isEmpty()) {
                 QUrl url = QUrl(location.toString());
                 auto info = InfoFactory::create<AbstractFileInfo>(url);
-                if (info && info->exists() && info->isFile()) {
+                if (info && info->exists() && info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
                     const auto &bindPath = FileUtils::bindPathTransform(info->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath), false);
                     QUrl recentUrl = QUrl::fromLocalFile(bindPath);
                     recentUrl.setScheme(RecentManager::scheme());

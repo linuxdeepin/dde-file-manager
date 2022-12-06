@@ -163,11 +163,11 @@ QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::Fil
     case FileNameInfoType::kFileName:
         [[fallthrough]];
     case FileNameInfoType::kFileNameOfRename:
-        return fileName();
+        return dptr->fileName();
     case FileNameInfoType::kBaseName:
         [[fallthrough]];
     case FileNameInfoType::kBaseNameOfRename:
-        return baseName();
+        return dptr->baseName();
     case FileNameInfoType::kCompleteBaseName:
         [[fallthrough]];
     case FileNameInfoType::kSuffix:
@@ -189,216 +189,10 @@ QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::Fil
     }
 }
 
-/*!
- * \brief fileName 文件名称，全名称
- *
- * url = file:///tmp/archive.tar.gz
- *
- * fileName = archive.tar.gz
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::fileName() const
-{
-    QString filePath = this->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);
-
-    if (filePath.endsWith(QDir::separator())) {
-        filePath.chop(1);
-    }
-
-    int index = filePath.lastIndexOf(QDir::separator());
-
-    if (index >= 0) {
-        return filePath.mid(index + 1);
-    }
-
-    return filePath;
-}
-/*!
- * \brief baseName 文件的基本名称
- *
- * url = file:///tmp/archive.tar.gz
- *
- * baseName = archive
- *
- * \param
- *
- * \return
- */
-QString AbstractFileInfo::baseName() const
-{
-    const QString &fileName = this->fileName();
-    const QString &suffix = this->nameInfo(FileNameInfoType::kSuffix);
-
-    if (suffix.isEmpty()) {
-        return fileName;
-    }
-
-    return fileName.left(fileName.length() - suffix.length() - 1);
-}
-
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canRename() const
 {
 
     CALL_PROXY(canRename());
-
-    return false;
-}
-
-/*!
- * \brief isReadable 获取文件是否可读
- *
- * Returns the file can Read
- *
- * url = file:///tmp/archive.tar.gz
- *
- * \param
- *
- * \return bool 返回文件是否可读
- */
-bool AbstractFileInfo::isReadable() const
-{
-    CALL_PROXY(isReadable());
-
-    return false;
-}
-/*!
- * \brief isWritable 获取文件是否可写
- *
- * Returns the file can write
- *
- * url = file:///tmp/archive.tar.gz
- *
- * \param
- *
- * \return bool 返回文件是否可写
- */
-bool AbstractFileInfo::isWritable() const
-{
-    CALL_PROXY(isWritable());
-
-    return false;
-}
-/*!
- * \brief isExecutable 获取文件是否可执行
- *
- * \param
- *
- * \return bool 返回文件是否可执行
- */
-bool AbstractFileInfo::isExecutable() const
-{
-    CALL_PROXY(isExecutable());
-
-    return false;
-}
-/*!
- * \brief isHidden 获取文件是否是隐藏
- *
- * \param
- *
- * \return bool 返回文件是否隐藏
- */
-bool AbstractFileInfo::isHidden() const
-{
-    CALL_PROXY(isHidden());
-
-    return false;
-}
-/*!
- * \brief isFile 获取文件是否是文件
- *
- * Returns true if this object points to a file or to a symbolic link to a file.
- *
- * Returns false if the object points to something which isn't a file,
- *
- * such as a directory.
- *
- * \param
- *
- * \return bool 返回文件是否文件
- */
-bool AbstractFileInfo::isFile() const
-{
-    CALL_PROXY(isFile());
-
-    return false;
-}
-/*!
- * \brief isDir 获取文件是否是目录
- *
- * Returns true if this object points to a directory or to a symbolic link to a directory;
- *
- * otherwise returns false.
- *
- * \param
- *
- * \return bool 返回文件是否目录
- */
-bool AbstractFileInfo::isDir() const
-{
-    CALL_PROXY(isDir());
-
-    return false;
-}
-/*!
- * \brief isSymLink 获取文件是否是链接文件
- *
- * Returns true if this object points to a symbolic link;
- *
- * otherwise returns false.Symbolic links exist on Unix (including macOS and iOS)
- *
- * and Windows and are typically created by the ln -s or mklink commands, respectively.
- *
- * Opening a symbolic link effectively opens the link's target.
- *
- * In addition, true will be returned for shortcuts (*.lnk files) on Windows.
- *
- * Opening those will open the .lnk file itself.
- *
- * \param
- *
- * \return bool 返回文件是否是链接文件
- */
-bool AbstractFileInfo::isSymLink() const
-{
-    CALL_PROXY(isSymLink());
-
-    return false;
-}
-/*!
- * \brief isRoot 获取文件是否是根目录
- *
- * Returns true if the object points to a directory or to a symbolic link to a directory,
- *
- * and that directory is the root directory; otherwise returns false.
- *
- * \param
- *
- * \return bool 返回文件是否是根目录
- */
-bool AbstractFileInfo::isRoot() const
-{
-    CALL_PROXY(isRoot());
-
-    return pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) == "/";
-}
-/*!
- * \brief isBundle 获取文件是否是二进制文件
- *
- * Returns true if this object points to a bundle or to a symbolic
- *
- * link to a bundle on macOS and iOS; otherwise returns false.
- *
- * \param
- *
- * \return bool 返回文件是否是二进制文件
- */
-bool AbstractFileInfo::isBundle() const
-{
-    CALL_PROXY(isBundle());
 
     return false;
 }
@@ -647,7 +441,7 @@ QString dfmbase::AbstractFileInfo::displayInfo(const AbstractFileInfo::DisplayIn
     CALL_PROXY(displayInfo(type));
     switch (type) {
     case AbstractFileInfo::DisplayInfoType::kSizeDisplayName:
-        if (isDir())
+        if (isAttributes(AbstractFileInfo::FileIsType::kIsDir))
             return "-";   // for dir don't display items count, highly improve the view's performance
         else
             return FileUtils::formatSize(size());
@@ -688,13 +482,13 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const
  */
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
 {
-    if (isPrivate()) {
+    if (isAttributes(AbstractFileInfo::FileIsType::kIsPrivate)) {
         return false;
     }
 
-    if (!isSymLink()) {
+    if (!isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
         const bool isDesktop = nameInfo(FileNameInfoType::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
-        return isDir() || isDesktop;
+        return isAttributes(AbstractFileInfo::FileIsType::kIsDir) || isDesktop;
     }
 
     AbstractFileInfoPointer info = nullptr;
@@ -714,7 +508,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
         }
 
         linkTargetPath = info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
-    } while (info->isSymLink());
+    } while (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink));
 
     return info->canDrop();
 }
@@ -803,7 +597,7 @@ Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedAttributes(const A
     case SupportType::kDrag:
         return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
     case SupportType::kDrop:
-        if (isWritable()) {
+        if (isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) {
             return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
         }
 
@@ -830,7 +624,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canFetch() const
 {
     CALL_PROXY(canFetch());
 
-    return isDir() && !isPrivate();
+    return isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !isAttributes(AbstractFileInfo::FileIsType::kIsPrivate);
 }
 
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canHidden() const
@@ -839,21 +633,39 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canHidden() const
     return true;
 }
 /*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat
- * \return
+ * \brief 获取文件扩展属性，如果创建时使用的异步，那么这里获取就是使用异步，没获取到就是
+ * 默认，获取了就是读取属性
+ * \param FileIsType
  */
-bool DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat() const
+bool dfmbase::AbstractFileInfo::isAttributes(const dfmbase::AbstractFileInfo::FileIsType type) const
 {
-    CALL_PROXY(isDragCompressFileFormat());
-
-    return false;
-}
-
-bool DFMBASE_NAMESPACE::AbstractFileInfo::isPrivate() const
-{
-    CALL_PROXY(isPrivate());
-
-    return false;
+    CALL_PROXY(isAttributes(type));
+    switch (type) {
+    case FileIsType::kIsRoot:
+        return pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) == "/";
+    case FileIsType::kIsFile:
+        [[fallthrough]];
+    case FileIsType::kIsDir:
+        [[fallthrough]];
+    case FileIsType::kIsReadable:
+        [[fallthrough]];
+    case FileIsType::kIsWritable:
+        [[fallthrough]];
+    case FileIsType::kIsExecutable:
+        [[fallthrough]];
+    case FileIsType::kIsHidden:
+        [[fallthrough]];
+    case FileIsType::kIsSymLink:
+        [[fallthrough]];
+    case FileIsType::kIsBundle:
+        [[fallthrough]];
+    case FileIsType::kIsDragCompressFileFormat:
+        [[fallthrough]];
+    case FileIsType::kIsPrivate:
+        [[fallthrough]];
+    default:
+        return false;
+    }
 }
 
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canDelete() const
@@ -964,7 +776,7 @@ AbstractFileInfoPrivate::~AbstractFileInfoPrivate()
  */
 QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByChildFileName(const QString &fileName) const
 {
-    if (!q->isDir()) {
+    if (!q->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         return QUrl();
     }
     QUrl theUrl = url;
@@ -985,6 +797,56 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByNewFileName(const QStri
     theUrl.setPath(newPath);
 
     return theUrl;
+}
+
+/*!
+ * \brief fileName 文件名称，全名称
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * fileName = archive.tar.gz
+ *
+ * \param
+ *
+ * \return
+ */
+QString AbstractFileInfoPrivate::fileName() const
+{
+    QString filePath = q->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);
+
+    if (filePath.endsWith(QDir::separator())) {
+        filePath.chop(1);
+    }
+
+    int index = filePath.lastIndexOf(QDir::separator());
+
+    if (index >= 0) {
+        return filePath.mid(index + 1);
+    }
+
+    return filePath;
+}
+/*!
+ * \brief baseName 文件的基本名称
+ *
+ * url = file:///tmp/archive.tar.gz
+ *
+ * baseName = archive
+ *
+ * \param
+ *
+ * \return
+ */
+QString AbstractFileInfoPrivate::baseName() const
+{
+    const QString &fileName = this->fileName();
+    const QString &suffix = q->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
+
+    if (suffix.isEmpty()) {
+        return fileName;
+    }
+
+    return fileName.left(fileName.length() - suffix.length() - 1);
 }
 
 }

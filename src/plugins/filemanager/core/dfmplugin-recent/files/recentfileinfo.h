@@ -40,8 +40,7 @@ public:
 
     virtual bool exists() const override;
     virtual QFile::Permissions permissions() const override;
-    virtual bool isReadable() const override;
-    virtual bool isWritable() const override;
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     virtual bool canRename() const override;
 
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;

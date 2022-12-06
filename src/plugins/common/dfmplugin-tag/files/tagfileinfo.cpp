@@ -42,14 +42,6 @@ TagFileInfo::~TagFileInfo()
 {
 }
 
-bool TagFileInfo::isDir() const
-{
-    if (dptr->proxy)
-        return dptr->proxy->isDir();
-
-    return true;
-}
-
 bool TagFileInfo::exists() const
 {
     if (dptr->proxy) {
@@ -80,20 +72,27 @@ QFileDevice::Permissions TagFileInfo::permissions() const
             | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
 }
 
-bool TagFileInfo::isReadable() const
+bool TagFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
-    if (dptr->proxy)
-        return dptr->proxy->isReadable();
+    switch (type) {
+    case FileIsType::kIsDir:
+        if (dptr->proxy)
+            return dptr->proxy->isAttributes(type);
 
-    return true;
-}
+        return true;
+    case FileIsType::kIsReadable:
+        if (dptr->proxy)
+            return dptr->proxy->isAttributes(type);
 
-bool TagFileInfo::isWritable() const
-{
-    if (dptr->proxy)
-        return dptr->proxy->isWritable();
+        return true;
+    case FileIsType::kIsWritable:
+        if (dptr->proxy)
+            return dptr->proxy->isAttributes(type);
 
-    return true;
+        return true;
+    default:
+        return AbstractFileInfo::isAttributes(type);
+    }
 }
 
 QString TagFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const

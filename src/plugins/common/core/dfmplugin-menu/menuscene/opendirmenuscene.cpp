@@ -172,7 +172,7 @@ void OpenDirMenuScene::emptyMenu(QMenu *parent)
 
 void OpenDirMenuScene::normalMenu(QMenu *parent)
 {
-    if (d->selectFiles.count() == 1 && d->focusFileInfo->isDir()) {
+    if (d->selectFiles.count() == 1 && d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInNewWindow));
         d->predicateAction[ActionID::kOpenInNewWindow] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInNewWindow);

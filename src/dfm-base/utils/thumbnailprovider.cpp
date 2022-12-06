@@ -170,7 +170,7 @@ bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 {
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-    if (!fileInfo->isReadable() || !fileInfo->isFile())
+    if (!fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable) || !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile))
         return false;
 
     qint64 fileSize = fileInfo->size();

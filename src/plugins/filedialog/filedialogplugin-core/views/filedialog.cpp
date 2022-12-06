@@ -112,7 +112,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
     case QFileDialog::ExistingFile:
         if (urls.count() == 1) {
             auto fileInfo = InfoFactory::create<AbstractFileInfo>(urls.first());
-            if (fileInfo->isDir()) {
+            if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
                 q->cd(urls.first());
             } else {
                 q->accept();
@@ -126,8 +126,8 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
             if (!fileInfo)
                 continue;
 
-            if (!fileInfo->isFile() && !allowMixedSelection) {
-                if (doCdWhenPossible && fileInfo->isDir()) {
+            if (!fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) && !allowMixedSelection) {
+                if (doCdWhenPossible && fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
                     // blumia: it's possible to select more than one file/dirs, we only do cd when select a single directory.
                     q->cd(urls.first());
                 }
@@ -144,7 +144,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
         for (const QUrl &url : urls) {
             auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-            if (!fileInfo->isDir())
+            if (!fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
                 return;
         }
         q->accept();
@@ -800,7 +800,7 @@ void FileDialog::handleEnterPressed()
     auto &&urls = CoreEventsCaller::sendGetSelectedFiles(internalWinId());
     for (const QUrl &url : urls) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (!info || info->isDir()) {
+        if (!info || info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
             exit = true;
             break;
         }
@@ -865,7 +865,7 @@ void FileDialog::onViewItemClicked(const QVariantMap &data)
         return;
 
     const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-    if (fileInfo && !fileInfo->isDir()) {
+    if (fileInfo && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         QMimeDatabase db;
         // TODO(gongheng): Encapsulate get true suffix interface to fileinfo like QMimeDatabase::suffix.
         int suffixLength = db.suffixForFileName(displayName).count();

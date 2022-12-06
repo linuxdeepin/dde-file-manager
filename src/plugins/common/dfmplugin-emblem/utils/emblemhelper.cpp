@@ -45,13 +45,13 @@ QList<QIcon> EmblemHelper::getSystemEmblems(const AbstractFileInfoPointer &info)
 {
     QList<QIcon> emblems;
 
-    if (info->isSymLink())
+    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
         emblems << QIcon::fromTheme("emblem-symbolic-link", standardEmblem(SystemEmblemType::kLink));
 
-    if (!info->isWritable())
+    if (!info->isAttributes(AbstractFileInfo::FileIsType::kIsWritable))
         emblems << QIcon::fromTheme("emblem-readonly", standardEmblem(SystemEmblemType::kLock));
 
-    if (!info->isReadable())
+    if (!info->isAttributes(AbstractFileInfo::FileIsType::kIsReadable))
         emblems << QIcon::fromTheme("emblem-unreadable", standardEmblem(SystemEmblemType::kUnreadable));
 
     bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath)).toBool();

@@ -749,7 +749,7 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
         int number = 1;
 
         forever {
-            if (info->isFile()) {
+            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
                 if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix).isEmpty()) {
                     if (number == 1) {
 
@@ -764,13 +764,13 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
                         linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix));
                     }
                 }
-            } else if (info->isDir()) {
+            } else if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
                 if (number == 1) {
                     linkBaseName = QString("%1 %2").arg(baseName, shortcut);
                 } else {
                     linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
                 }
-            } else if (info->isSymLink()) {
+            } else if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
                 return QString();
             }
 
@@ -1215,7 +1215,7 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
         return QString();
     }
 
-    if (!targetDir->isDir()) {
+    if (!targetDir->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         return QString();
     }
 

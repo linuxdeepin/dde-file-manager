@@ -34,7 +34,7 @@ using namespace ddplugin_organizer;
 static DFMLocalFileInfoPointer createFileInfo(const QUrl &url)
 {
     QString errString;
-    auto itemInfo =  InfoFactory::create<LocalFileInfo>(url, true, &errString);
+    auto itemInfo = InfoFactory::create<LocalFileInfo>(url, true, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qInfo() << "create LocalFileInfo error: " << errString << url;
         return nullptr;
@@ -43,7 +43,8 @@ static DFMLocalFileInfoPointer createFileInfo(const QUrl &url)
     return itemInfo;
 }
 
-HiddenFileFilter::HiddenFileFilter() : QObject(), ModelDataHandler()
+HiddenFileFilter::HiddenFileFilter()
+    : QObject(), ModelDataHandler()
 {
     updateFlag();
     dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_CanvasModel_HiddenFlagChanged", this, &HiddenFileFilter::hiddenFlagChanged);
@@ -67,7 +68,7 @@ bool HiddenFileFilter::acceptInsert(const QUrl &url)
     if (auto info = createFileInfo(url)) {
         //! fouce refresh
         info->refresh();
-        return !info->isHidden();
+        return !info->isAttributes(AbstractFileInfo::FileIsType::kIsHidden);
     }
 
     return true;
@@ -86,7 +87,7 @@ QList<QUrl> HiddenFileFilter::acceptReset(const QList<QUrl> &urls)
             //! need to fouce refresh
             //! maybe it need be fixed in dfm-io
             info->refresh();
-            if (info->isHidden()) {
+            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsHidden)) {
                 itor = allUrl.erase(itor);
                 continue;
             }

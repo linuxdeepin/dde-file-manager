@@ -65,16 +65,7 @@ public:
     virtual bool canTrash() const override;
     virtual bool canRename() const override;
     virtual bool canHidden() const override;
-    virtual bool isReadable() const override;
-    virtual bool isWritable() const override;
-    virtual bool isExecutable() const override;
-    virtual bool isHidden() const override;
-    virtual bool isFile() const override;
-    virtual bool isDir() const override;
-    virtual bool isSymLink() const override;
-    virtual bool isRoot() const override;
-    virtual bool isBundle() const override;
-    virtual bool isPrivate() const override;
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     virtual bool canFetch() const override;
     virtual quint64 inode() const override;
     virtual QString owner() const override;
@@ -106,7 +97,6 @@ public:
     virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
 
     virtual bool canDragCompress() const override;
-    virtual bool isDragCompressFileFormat() const override;
 
     // emblems
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;

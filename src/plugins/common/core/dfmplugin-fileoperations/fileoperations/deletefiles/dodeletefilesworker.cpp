@@ -123,7 +123,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
             return false;
         }
 
-        if (info->isSymLink() || info->isFile()) {
+        if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink) || info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
             ok = deleteFileOnOtherDevice(url);
         } else {
             ok = deleteDirOnOtherDevice(info);
@@ -204,7 +204,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
             return false;
         }
 
-        if (info->isSymLink() || info->isFile()) {
+        if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink) || info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
             ok = deleteFileOnOtherDevice(url);
         } else {
             ok = deleteDirOnOtherDevice(info);

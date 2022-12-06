@@ -558,11 +558,11 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
 
     bool oldExist = DecoratorFile(toInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).exists();
 
-    if (fromInfo->isSymLink()) {
+    if (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
         ok = createSystemLink(fromInfo, toInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (ok)
             ok = deleteFile(fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), targetPathInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), skip);
-    } else if (fromInfo->isDir()) {
+    } else if (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         ok = checkAndCopyDir(fromInfo, toInfo, skip);
         if (ok)
             ok = deleteDir(fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), targetPathInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), skip);
@@ -682,11 +682,11 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
             }
 
             newFromInfo = symlinkTarget;
-        } while (newFromInfo->isSymLink());
+        } while (newFromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink));
 
         if (DecoratorFile(newFromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).exists() && doCopy) {
             // copy file here
-            if (fromInfo->isFile()) {
+            if (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
                 return checkAndCopyFile(fromInfo, toInfo, skip);
             } else {
                 return checkAndCopyDir(fromInfo, toInfo, skip);
@@ -740,7 +740,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
         cancelThreadProcessingError();
         setSkipValue(skip, action);
         if (skip && *skip)
-            skipWritSize += (isCountSize && (fromInfo->isSymLink() || fromInfo->size() <= 0)) ? dirSize : fromInfo->size();
+            skipWritSize += (isCountSize && (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink) || fromInfo->size() <= 0)) ? dirSize : fromInfo->size();
 
         return false;
     }
@@ -752,7 +752,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
             if (AbstractJobHandler::SupportAction::kSkipAction == action) {
                 setSkipValue(skip, action);
                 if (skip && *skip)
-                    skipWritSize += isCountSize && (fromInfo->isSymLink() || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
+                    skipWritSize += isCountSize && (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink) || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
 
                 return false;
             }
@@ -760,12 +760,12 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
             if (action != AbstractJobHandler::SupportAction::kEnforceAction) {
                 setSkipValue(skip, action);
                 if (skip && *skip)
-                    skipWritSize += isCountSize && (fromInfo->isSymLink() || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
+                    skipWritSize += isCountSize && (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink) || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
 
                 return false;
             }
         };
-        bool newTargetIsFile = newTargetInfo->isFile() || newTargetInfo->isSymLink();
+        bool newTargetIsFile = newTargetInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) || newTargetInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);
         AbstractJobHandler::JobErrorType errortype = newTargetIsFile ? AbstractJobHandler::JobErrorType::kFileExistsError
                                                                      : AbstractJobHandler::JobErrorType::kDirectoryExistsError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), newTargetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), errortype);
@@ -787,7 +787,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
             break;
         }
         case AbstractJobHandler::SupportAction::kSkipAction: {
-            skipWritSize += isCountSize && (fromInfo->isSymLink() || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
+            skipWritSize += isCountSize && (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink) || fromInfo->size() <= 0) ? dirSize : fromInfo->size();
             cancelThreadProcessingError();
             setSkipValue(skip, action);
             return false;
@@ -987,7 +987,7 @@ void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::Support
 
 QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize)
 {
-    if (newTargetInfo->isSymLink()) {
+    if (newTargetInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
         LocalFileHandler handler;
         if (!handler.deleteFile(newTargetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
             return false;
@@ -995,7 +995,7 @@ QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const AbstractFileInfoPointe
 
     const QUrl &newTargetUrl = newTargetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     if (newTargetUrl == fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)) {
-        skipWritSize += (isCountSize && (fromInfo->isSymLink() || fromInfo->size() <= 0)) ? dirSize : fromInfo->size();
+        skipWritSize += (isCountSize && (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink) || fromInfo->size() <= 0)) ? dirSize : fromInfo->size();
         cancelThreadProcessingError();
         return true;
     }
@@ -1009,8 +1009,8 @@ QVariant FileOperateBaseWorker::doActionReplace(const AbstractFileInfoPointer &f
     if (var.isValid())
         return var;
 
-    const bool fromIsFile = fromInfo->isFile() || fromInfo->isSymLink();
-    const bool newTargetIsFile = newTargetInfo->isFile() || newTargetInfo->isSymLink();
+    const bool fromIsFile = fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) || fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);
+    const bool newTargetIsFile = newTargetInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) || newTargetInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);
 
     if (fromIsFile == newTargetIsFile) {
         return QVariant();
@@ -1022,8 +1022,8 @@ QVariant FileOperateBaseWorker::doActionReplace(const AbstractFileInfoPointer &f
 
 QVariant FileOperateBaseWorker::doActionMerge(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize)
 {
-    const bool fromIsFile = fromInfo->isFile() || fromInfo->isSymLink();
-    const bool newTargetIsFile = newTargetInfo->isFile() || newTargetInfo->isSymLink();
+    const bool fromIsFile = fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) || fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);
+    const bool newTargetIsFile = newTargetInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) || newTargetInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);
 
     if (!fromIsFile && !newTargetIsFile) {
         // target is dir, do merged
@@ -1045,10 +1045,10 @@ bool FileOperateBaseWorker::checkRememberAction(const QUrl &url)
     if (!info)
         return false;
 
-    if (info->isDir() && currentAction == AbstractJobHandler::SupportAction::kReplaceAction)
+    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && currentAction == AbstractJobHandler::SupportAction::kReplaceAction)
         return false;
 
-    if (info->isFile() && currentAction == AbstractJobHandler::SupportAction::kMergeAction)
+    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile) && currentAction == AbstractJobHandler::SupportAction::kMergeAction)
         return false;
 
     if (currentAction != AbstractJobHandler::SupportAction::kNoAction)
@@ -1065,11 +1065,11 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
                      fromInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName), newTargetInfo, skip))
         return result;
 
-    if (fromInfo->isSymLink()) {
+    if (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
         result = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
         if (result)
             zeroOrlinkOrDirWriteSize += newTargetInfo->size() > 0 ? newTargetInfo->size() : FileUtils::getMemoryPageSize();
-    } else if (fromInfo->isDir()) {
+    } else if (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, skip);
         if (result || skip)
             zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();

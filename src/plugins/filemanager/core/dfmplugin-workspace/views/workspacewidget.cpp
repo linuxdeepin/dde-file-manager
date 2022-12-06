@@ -309,11 +309,11 @@ void WorkspaceWidget::handleCtrlT()
 {
     // If a directory is selected, open NewTab through the URL of the selected directory
     auto view = tabBar->currentTab()->getCurrentView();
-    if(view){
+    if (view) {
         const QList<QUrl> &urls = view->selectedUrlList();
         if (urls.count() == 1) {
             const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(urls.at(0));
-            if (fileInfoPtr && fileInfoPtr->isDir()){
+            if (fileInfoPtr && fileInfoPtr->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
                 openNewTab(urls.at(0));
                 return;
             }

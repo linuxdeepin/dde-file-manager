@@ -342,7 +342,7 @@ QUrl CollectionModel::rootUrl() const
 
 QModelIndex CollectionModel::rootIndex() const
 {
-    return createIndex(INT_MAX, 0, (void *)this);
+    return createIndex(INT_MAX, 0, static_cast<void *>(const_cast<CollectionModel *>(this)));
 }
 
 QModelIndex CollectionModel::index(const QUrl &url, int column) const
@@ -551,7 +551,7 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
         return false;
     }
 
-    if (itemInfo->isSymLink()) {
+    if (itemInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
         targetFileUrl = itemInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
     }
 

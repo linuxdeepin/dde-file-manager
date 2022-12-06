@@ -43,14 +43,7 @@ public:
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
     virtual bool exists() const override;
     virtual void refresh() override;
-    virtual bool isReadable() const override;
-    virtual bool isWritable() const override;
-    virtual bool isExecutable() const override;
-    virtual bool isHidden() const override;
-    virtual bool isFile() const override;
-    virtual bool isDir() const override;
-    virtual bool isSymLink() const override;
-    virtual bool isRoot() const override;
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     virtual bool canDrop() override;
 
     virtual qint64 size() const override;

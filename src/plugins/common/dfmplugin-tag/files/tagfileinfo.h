@@ -36,11 +36,9 @@ public:
     explicit TagFileInfo(const QUrl &url);
     ~TagFileInfo() override;
 
-    bool isDir() const override;
     bool exists() const override;
     QFile::Permissions permissions() const override;
-    bool isReadable() const override;
-    bool isWritable() const override;
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
 
     QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;

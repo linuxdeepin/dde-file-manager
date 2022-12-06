@@ -77,12 +77,12 @@ TEST_F(UT_ShareFileInfo, FileDisplayName)
 
 TEST_F(UT_ShareFileInfo, FileName)
 {
-    EXPECT_TRUE(info->fileName() == "test");
+    EXPECT_TRUE(info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName) == "test");
 }
 
 TEST_F(UT_ShareFileInfo, IsDir)
 {
-    EXPECT_TRUE(info->isDir());
+    EXPECT_TRUE(info->isAttributes(AbstractFileInfo::FileIsType::kIsDir));
 }
 
 TEST_F(UT_ShareFileInfo, CanRename)
@@ -97,7 +97,7 @@ TEST_F(UT_ShareFileInfo, CanDrag)
 
 TEST_F(UT_ShareFileInfo, IsWritable)
 {
-    EXPECT_TRUE(info->isWritable());
+    EXPECT_TRUE(info->isAttributes(AbstractFileInfo::FileIsType::kIsWritable));
 }
 
 TEST_F(UT_ShareFileInfo, Refresh)

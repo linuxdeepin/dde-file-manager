@@ -313,7 +313,7 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
     if (info->canRename())
         flags |= Qt::ItemIsEditable;
 
-    if (info->isWritable()) {
+    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) {
         if (info->canDrop())
             flags |= Qt::ItemIsDropEnabled;
         else
@@ -375,7 +375,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (ok && !urls.isEmpty())
         dropUrls = urls;
 
-    if (targetFileInfo->isSymLink())
+    if (targetFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
         targetUrl = QUrl::fromLocalFile(targetFileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
 
     FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());

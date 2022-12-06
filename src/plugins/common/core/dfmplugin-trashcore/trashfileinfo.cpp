@@ -346,17 +346,6 @@ qint64 TrashFileInfo::size() const
     return size;
 }
 
-bool TrashFileInfo::isSymLink() const
-{
-    if (!d->dFileInfo)
-        return false;
-
-    bool isSymLink = false;
-    bool success = false;
-    isSymLink = d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, &success).toBool();
-    return isSymLink;
-}
-
 QString TrashFileInfoPrivate::symLinkTarget() const
 {
     if (!dFileInfo)
@@ -375,7 +364,7 @@ int TrashFileInfo::countChildFile() const
             return d->dFileInfo->attribute(DFMIO::DFileInfo::AttributeID::kTrashItemCount).toInt();
     }
 
-    if (isDir()) {
+    if (isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         DecoratorFileEnumerator enumerator(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
         return int(enumerator.fileCount());
     }
@@ -383,40 +372,39 @@ int TrashFileInfo::countChildFile() const
     return -1;
 }
 
-bool TrashFileInfo::isReadable() const
+bool TrashFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
-    if (!d->dFileInfo)
+    switch (type) {
+    case FileIsType::kIsDir:
+        if (FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
+            return true;
+        return AbstractFileInfo::isAttributes(type);
+    case FileIsType::kIsReadable:
+        if (!d->dFileInfo)
+            return false;
+
+        if (d->targetUrl.isValid())
+            return AbstractFileInfo::isAttributes(AbstractFileInfo::FileIsType::kIsReadable);
+
+        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, nullptr).toBool();
+    case FileIsType::kIsWritable:
+        if (!d->dFileInfo)
+            return false;
+
+        if (d->targetUrl.isValid())
+            return AbstractFileInfo::isAttributes(type);
+
+        return d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, nullptr).toBool();
+    case FileIsType::kIsHidden:
         return false;
+    case FileIsType::kIsSymLink:
+        if (!d->dFileInfo)
+            return false;
 
-    if (d->targetUrl.isValid())
-        return AbstractFileInfo::isReadable();
-
-    bool value = false;
-    bool success = false;
-    value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, &success).toBool();
-    return value;
-}
-
-bool TrashFileInfo::isWritable() const
-{
-    if (!d->dFileInfo)
-        return false;
-
-    if (d->targetUrl.isValid())
-        return AbstractFileInfo::isWritable();
-
-    bool value = false;
-    bool success = false;
-    value = d->dFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, &success).toBool();
-    return value;
-}
-
-bool TrashFileInfo::isDir() const
-{
-    if (FileUtils::isTrashRootFile(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
-        return true;
-
-    return AbstractFileInfo::isDir();
+        return d->dFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, nullptr).toBool();
+    default:
+        return AbstractFileInfo::isAttributes(type);
+    }
 }
 
 bool TrashFileInfo::canDrop()
@@ -425,11 +413,6 @@ bool TrashFileInfo::canDrop()
 }
 
 bool TrashFileInfo::canHidden() const
-{
-    return false;
-}
-
-bool TrashFileInfo::isHidden() const
 {
     return false;
 }

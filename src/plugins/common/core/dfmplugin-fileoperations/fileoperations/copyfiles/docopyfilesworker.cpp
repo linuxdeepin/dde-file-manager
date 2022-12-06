@@ -178,7 +178,7 @@ bool DoCopyFilesWorker::copyFiles()
         fileInfo->refresh();
 
         // check self
-        if (fileInfo->isDir()) {
+        if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
             const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
             if (higher) {
                 emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});

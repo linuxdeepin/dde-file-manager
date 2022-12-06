@@ -58,26 +58,6 @@ bool MasteredMediaFileInfo::exists() const
     return dptr->proxy && dptr->proxy->exists();
 }
 
-bool MasteredMediaFileInfo::isReadable() const
-{
-    if (!dptr->proxy)
-        return true;
-
-    return dptr->proxy->isReadable();
-}
-
-bool MasteredMediaFileInfo::isWritable() const
-{
-    if (!dptr->proxy)
-        return false;
-    return dptr->proxy->isWritable();
-}
-
-bool MasteredMediaFileInfo::isDir() const
-{
-    return !dptr->proxy || dptr->proxy->isDir();
-}
-
 QString MasteredMediaFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
@@ -118,6 +98,25 @@ QUrl MasteredMediaFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type
     }
 }
 
+bool MasteredMediaFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
+{
+    switch (type) {
+    case FileIsType::kIsDir:
+        return !dptr->proxy || dptr->proxy->isAttributes(type);
+    case FileIsType::kIsReadable:
+        if (!dptr->proxy)
+            return true;
+
+        return dptr->proxy->isAttributes(type);
+    case FileIsType::kIsWritable:
+        if (!dptr->proxy)
+            return false;
+        return dptr->proxy->isAttributes(type);
+    default:
+        return AbstractFileInfo::isAttributes(type);
+    }
+}
+
 QVariantHash MasteredMediaFileInfo::extraProperties() const
 {
     QVariantHash ret;
@@ -130,9 +129,9 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
 
 bool MasteredMediaFileInfo::canRedirectionFileUrl() const
 {
-    if (isDir())
-        return isSymLink();   // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
-    return !isDir();
+    if (isAttributes(AbstractFileInfo::FileIsType::kIsDir))
+        return isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);   // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
+    return isAttributes(AbstractFileInfo::FileIsType::kIsDir);
 }
 
 bool MasteredMediaFileInfo::canDrop()

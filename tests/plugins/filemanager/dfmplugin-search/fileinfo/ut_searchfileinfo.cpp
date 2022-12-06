@@ -34,25 +34,25 @@ TEST(SearchFileInfoTest, ut_exists)
 TEST(SearchFileInfoTest, ut_isHidden)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_FALSE(info.isHidden());
+    EXPECT_FALSE(info.isAttributes(AbstractFileInfo::FileIsType::kIsHidden));
 }
 
 TEST(SearchFileInfoTest, ut_isReadable)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_TRUE(info.isReadable());
+    EXPECT_TRUE(info.isAttributes(AbstractFileInfo::FileIsType::kIsReadable));
 }
 
 TEST(SearchFileInfoTest, ut_isWritable)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_TRUE(info.isWritable());
+    EXPECT_TRUE(info.isAttributes(AbstractFileInfo::FileIsType::kIsWritable));
 }
 
 TEST(SearchFileInfoTest, ut_isDir)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_TRUE(info.isDir());
+    EXPECT_TRUE(info.isAttributes(AbstractFileInfo::FileIsType::kIsDir));
 }
 
 TEST(SearchFileInfoTest, ut_size)

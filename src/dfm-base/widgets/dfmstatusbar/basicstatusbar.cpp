@@ -69,7 +69,7 @@ void BasicStatusBar::itemSelected(const QList<AbstractFileInfo *> &infoList)
 
     QList<QUrl> dirUrlList;
     for (const AbstractFileInfo *info : infoList) {
-        if (info->isDir()) {
+        if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
             d->folderCount += 1;
             dirUrlList << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
         } else {

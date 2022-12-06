@@ -368,7 +368,7 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     case Global::ItemRoles::kItemFileLastModifiedRole:
         return indexFileInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss");   // todo by file info: lastModifiedDisplayName
     case Global::ItemRoles::kItemFileSizeRole:
-        return indexFileInfo->isDir() ? indexFileInfo->countChildFile() : indexFileInfo->size();
+        return indexFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) ? indexFileInfo->countChildFile() : indexFileInfo->size();
     case Global::ItemRoles::kItemFileMimeTypeRole:
         return indexFileInfo->fileMimeType().name();   // todo by file info: mimeTypeDisplayName
     case Global::ItemRoles::kItemExtraProperties:
@@ -400,7 +400,7 @@ Qt::ItemFlags FileInfoModel::flags(const QModelIndex &index) const
         if (file->canRename())
             flags |= Qt::ItemIsEditable;
 
-        if (file->isWritable()) {
+        if (file->isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) {
             if (file->canDrop())
                 flags |= Qt::ItemIsDropEnabled;
             else
@@ -449,7 +449,7 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (Q_UNLIKELY(!itemInfo))
         return false;
 
-    if (itemInfo->isSymLink()) {
+    if (itemInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
         targetFileUrl = itemInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
     }
 

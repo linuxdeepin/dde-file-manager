@@ -275,7 +275,7 @@ UserShareHelper::~UserShareHelper()
 
 bool UserShareHelper::canShare(AbstractFileInfoPointer info)
 {
-    if (!info || !info->isDir() || !info->isReadable())
+    if (!info || !info->isAttributes(dfmbase::AbstractFileInfo::FileIsType::kIsDir) || !info->isAttributes(dfmbase::AbstractFileInfo::FileIsType::kIsReadable))
         return false;
 
     DFMBASE_USE_NAMESPACE

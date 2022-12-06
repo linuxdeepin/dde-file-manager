@@ -50,7 +50,6 @@ static constexpr char kRemoteCopyKey[] = "uos/remote-copy";
 static constexpr char kGnomeCopyKey[] = "x-special/gnome-copied-files";
 static constexpr char kRemoteAssistanceCopyKey[] = "uos/remote-copied-files";
 
-
 void onClipboardDataChanged()
 {
     {
@@ -101,7 +100,7 @@ void onClipboardDataChanged()
             qWarning() << QString("create file info error, case : %1").arg(errorStr);
             continue;
         }
-        if (info->isSymLink())
+        if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
             continue;
 
         struct stat statInfo;
@@ -162,13 +161,13 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
         }
         if (maxIconsNum-- > 0) {
             QStringList iconList;
-            if (info->isSymLink()) {
+            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
                 iconList << "emblem-symbolic-link";
             }
-            if (!info->isWritable()) {
+            if (!info->isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) {
                 iconList << "emblem-readonly";
             }
-            if (!info->isReadable()) {
+            if (!info->isAttributes(AbstractFileInfo::FileIsType::kIsReadable)) {
                 iconList << "emblem-unreadable";
             }
             // TODO lanxs::目前缩略图还没有处理，等待处理完成了在修改
@@ -338,7 +337,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     } while (event.type != SelectionNotify || event.xselection.selection != bufid);
     if (event.xselection.property) {
         XGetWindowProperty(display, window, propid, 0, LONG_MAX / 4, True, AnyPropertyType,
-                           &fmtid, &resbits, &ressize, &restail, (unsigned char **)&result);
+                           &fmtid, &resbits, &ressize, &restail, reinterpret_cast<unsigned char **>(&result));
         if (fmtid != incrid) {
             qInfo() << QString(result);
             urls += QUrl::fromStringList(QString(result).split("\n"));
@@ -360,10 +359,10 @@ QList<QUrl> ClipBoard::getUrlsByX11()
                     break;
 
                 XGetWindowProperty(display, window, propid, 0, 0, True, AnyPropertyType, &fmtid, &resbits,
-                                   &ressize, &restail, (unsigned char **)&result);
+                                   &ressize, &restail, reinterpret_cast<unsigned char **>(&result));
                 XFree(result);
                 XGetWindowProperty(display, window, propid, 0, static_cast<long>(restail), True, AnyPropertyType, &fmtid, &resbits,
-                                   &ressize, &restail, (unsigned char **)&result);
+                                   &ressize, &restail, reinterpret_cast<unsigned char **>(&result));
 
                 if (QString(result) != "/")
                     results += QString(result);
@@ -389,7 +388,9 @@ QList<QUrl> ClipBoard::getUrlsByX11()
             } while (true);
 
             if (!isCanceled) {
-                XGetWindowProperty(display, window, propid, 0, LONG_MAX / 4, True, AnyPropertyType, &fmtid, &resbits, &ressize, &restail, (unsigned char **)&result);
+                XGetWindowProperty(display, window, propid, 0, LONG_MAX / 4,
+                                   True, AnyPropertyType, &fmtid, &resbits, &ressize, &restail,
+                                   reinterpret_cast<unsigned char **>(&result));
                 if (QString(result) != "/")
                     results += QString(result);
                 XFree(result);

@@ -45,17 +45,14 @@ public:
     virtual bool canDelete() const override;
     virtual bool canTrash() const override;
     virtual bool canRename() const override;
-    virtual bool isReadable() const override;
-    virtual bool isWritable() const override;
-    virtual bool isDir() const override;
+
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     virtual bool canDrop() override;
     virtual bool canHidden() const override;
-    virtual bool isHidden() const override;
     virtual QFile::Permissions permissions() const override;
     virtual QIcon fileIcon() override;
 
     virtual qint64 size() const override;
-    virtual bool isSymLink() const override;
     virtual int countChildFile() const override;
 
     virtual QVariant timeInfo(const FileTimeType type = FileTimeType::kCreateTime) const override;

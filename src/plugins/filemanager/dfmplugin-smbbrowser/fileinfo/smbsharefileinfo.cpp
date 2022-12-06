@@ -62,19 +62,18 @@ QIcon SmbShareFileInfo::fileIcon()
     return QIcon::fromTheme(dp->node.iconType);
 }
 
-bool SmbShareFileInfo::isDir() const
+bool SmbShareFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
-    return true;
-}
-
-bool SmbShareFileInfo::isReadable() const
-{
-    return true;
-}
-
-bool SmbShareFileInfo::isWritable() const
-{
-    return true;
+    switch (type) {
+    case FileIsType::kIsDir:
+        [[fallthrough]];
+    case FileIsType::kIsReadable:
+        [[fallthrough]];
+    case FileIsType::kIsWritable:
+        return true;
+    default:
+        return AbstractFileInfo::isAttributes(type);
+    }
 }
 
 SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)

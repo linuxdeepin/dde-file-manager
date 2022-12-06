@@ -71,12 +71,24 @@ QUrl ShareFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
     }
 }
 
-bool ShareFileInfo::isDir() const
+bool ShareFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
-    return true;
+    switch (type) {
+    case FileIsType::kIsDir:
+        return true;
+    case FileIsType::kIsWritable:
+        return false;
+    default:
+        return AbstractFileInfo::isAttributes(type);
+    }
 }
 
 bool ShareFileInfo::canRename() const
+{
+    return false;
+}
+
+bool ShareFileInfo::canDrag()
 {
     return false;
 }
@@ -100,16 +112,6 @@ void ShareFileInfoPrivate::refresh()
 QString ShareFileInfoPrivate::fileName() const
 {
     return info.value(ShareInfoKeys::kName).toString();
-}
-
-bool dfmplugin_myshares::ShareFileInfo::canDrag()
-{
-    return false;
-}
-
-bool dfmplugin_myshares::ShareFileInfo::isWritable() const
-{
-    return true;
 }
 
 void dfmplugin_myshares::ShareFileInfo::refresh()

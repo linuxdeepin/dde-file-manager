@@ -214,14 +214,14 @@ void BasicWidget::basicFill(const QUrl &url)
     if (!info->canHidden())
         hideFile->setEnabled(false);
 
-    if (info->isHidden())
+    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsHidden))
         hideFile->setChecked(true);
 
     connect(hideFile, &QCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
 
     if (filePosition && filePosition->RightValue().isEmpty()) {
-        filePosition->setRightValue(info->isSymLink() ? info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget) : url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
-        if (info->isSymLink()) {
+        filePosition->setRightValue(info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink) ? info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget) : url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
+        if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
             auto &&symlink = info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
             connect(filePosition, &KeyValueLabel::valueAreaClicked, this, [symlink] {
                 const QUrl &url = QUrl::fromLocalFile(symlink);

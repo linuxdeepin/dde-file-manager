@@ -44,6 +44,7 @@ private:
     QString absolutePath() const;
     QUrl vaultUrl() const;
     QUrl getUrlByNewFileName(const QString &fileName) const;
+    bool isRoot() const;
 };
 
 }

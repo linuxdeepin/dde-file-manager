@@ -64,15 +64,16 @@ QFile::Permissions RecentFileInfo::permissions() const
     return AbstractFileInfo::permissions();
 }
 
-bool RecentFileInfo::isReadable() const
+bool RecentFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
-    return permissions().testFlag(QFile::Permission::ReadUser);
-}
-
-bool RecentFileInfo::isWritable() const
-{
-    // Todo(yanghao): gvfs优化
-    return permissions().testFlag(QFile::Permission::WriteUser);
+    switch (type) {
+    case FileIsType::kIsReadable:
+        return permissions().testFlag(QFile::Permission::ReadUser);
+    case FileIsType::kIsWritable:
+        return permissions().testFlag(QFile::Permission::WriteUser);
+    default:
+        return AbstractFileInfo::isAttributes(type);
+    }
 }
 
 bool RecentFileInfo::canRename() const

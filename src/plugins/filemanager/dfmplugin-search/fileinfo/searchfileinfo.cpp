@@ -44,36 +44,30 @@ bool SearchFileInfo::exists() const
     return AbstractFileInfo::exists();
 }
 
-bool SearchFileInfo::isHidden() const
+bool SearchFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
-    if (SearchHelper::isRootUrl(dptr->url))
-        return false;
+    switch (type) {
+    case FileIsType::kIsDir:
+        if (SearchHelper::isRootUrl(dptr->url))
+            return true;
+        return AbstractFileInfo::isAttributes(type);
+    case FileIsType::kIsReadable:
+        if (SearchHelper::isRootUrl(dptr->url))
+            return true;
+        return AbstractFileInfo::isAttributes(type);
+    case FileIsType::kIsWritable:
+        if (SearchHelper::isRootUrl(dptr->url))
+            return true;
 
-    return AbstractFileInfo::isHidden();
-}
+        return AbstractFileInfo::isAttributes(type);
+    case FileIsType::kIsHidden:
+        if (SearchHelper::isRootUrl(dptr->url))
+            return false;
 
-bool SearchFileInfo::isReadable() const
-{
-    if (SearchHelper::isRootUrl(dptr->url))
-        return true;
-
-    return AbstractFileInfo::isReadable();
-}
-
-bool SearchFileInfo::isWritable() const
-{
-    if (SearchHelper::isRootUrl(dptr->url))
-        return true;
-
-    return AbstractFileInfo::isWritable();
-}
-
-bool SearchFileInfo::isDir() const
-{
-    if (SearchHelper::isRootUrl(dptr->url))
-        return true;
-
-    return AbstractFileInfo::isDir();
+        return AbstractFileInfo::isAttributes(type);
+    default:
+        return AbstractFileInfo::isAttributes(type);
+    }
 }
 
 qint64 SearchFileInfo::size() const

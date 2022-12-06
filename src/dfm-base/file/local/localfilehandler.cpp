@@ -300,7 +300,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
         AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
         AbstractFileInfoPointer fileInfoLink = fileInfo;
-        while (fileInfoLink->isSymLink()) {
+        while (fileInfoLink->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
             const QString &targetLink = fileInfoLink->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
             fileInfoLink = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetLink));
             if (!fileInfoLink) {

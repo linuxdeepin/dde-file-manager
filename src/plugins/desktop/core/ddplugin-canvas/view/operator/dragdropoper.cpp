@@ -107,7 +107,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
     QUrl curUrl = hoverIndex.isValid() ? view->model()->fileUrl(hoverIndex) : view->model()->rootUrl();
     if (hoverIndex.isValid()) {
         if (auto fileInfo = view->model()->fileInfo(hoverIndex)) {
-            bool canDrop = !fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) || !fileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction());
+            bool canDrop = !fileInfo->canDrop() || (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) || !fileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
                 handleMoveMimeData(event, curUrl);
 
@@ -137,7 +137,7 @@ bool DragDropOper::drop(QDropEvent *event)
     // extend
     if (view->d->hookIfs) {
         QVariantHash ext;
-        ext.insert("QDropEvent", (qlonglong)event);
+        ext.insert("QDropEvent", reinterpret_cast<qlonglong>(event));
         QUrl dropUrl;
         QModelIndex dropIndex = view->indexAt(event->pos());
         if (dropIndex.isValid()) {
@@ -329,7 +329,7 @@ bool DragDropOper::dropFilter(QDropEvent *event)
         if (index.isValid()) {
             QUrl targetItem = view->model()->fileUrl(index);
             auto itemInfo = FileCreator->createFileInfo(targetItem);
-            if (itemInfo && (itemInfo->isDir() || itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl())) {
+            if (itemInfo && (itemInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl())) {
                 auto sourceUrls = event->mimeData()->urls();
                 for (const QUrl &url : sourceUrls) {
                     if ((DesktopAppUrl::computerDesktopFileUrl() == url) || (DesktopAppUrl::trashDesktopFileUrl() == url) || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
@@ -463,7 +463,7 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
         auto fileInfo = view->model()->fileInfo(index.isValid() ? index : view->rootIndex());
 
         if (fileInfo && fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isLocalFile()) {
-            if (fileInfo->isDir())
+            if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
             else
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl));

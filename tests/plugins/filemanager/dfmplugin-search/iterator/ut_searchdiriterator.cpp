@@ -28,6 +28,7 @@
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/file/local/private/localfilewatcher_p.h"
+#include "dfm-base/file/local/private/localfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include "stubext.h"
@@ -71,7 +72,7 @@ TEST(SearchDirIteratorTest, ut_fileName)
     st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [] {
         return QSharedPointer<LocalFileInfo>(new LocalFileInfo(QUrl::fromLocalFile("/home")));
     });
-    st.set_lamda(VADDR(LocalFileInfo, fileName), [] {
+    st.set_lamda(VADDR(LocalFileInfoPrivate, fileName), [] {
         return "/home";
     });
 

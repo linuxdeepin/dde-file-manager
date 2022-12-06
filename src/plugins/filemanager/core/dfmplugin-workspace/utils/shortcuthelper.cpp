@@ -84,7 +84,7 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
         int dirCount = 0;
         for (const QUrl &url : urls) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-            if (info->isDir())
+            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
                 ++dirCount;
             if (dirCount > 1)
                 break;

@@ -111,7 +111,7 @@ void CopyFromDiscAuditLog::doLog(QDBusInterface &interface)
         qInfo() << "Current env auditlog allowed: " << srcPath;
 
         auto fileInfo { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(srcPath)) };
-        if (fileInfo->isDir()) {
+        if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
             for (const QFileInfo &subInfo : localFileInfoListRecursive(srcPath))
                 writeLog(interface, subInfo.absoluteFilePath(), destPath);
         } else {

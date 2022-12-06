@@ -292,17 +292,7 @@ public:
     virtual QString group() const;
     virtual QString sizeFormat() const;
     virtual bool isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors = nullptr) const;
-    virtual bool isReadable() const;
-    virtual bool isWritable() const;
-    virtual bool isExecutable() const;
-    virtual bool isHidden() const;
-    virtual bool isFile() const;
-    virtual bool isDir() const;
-    virtual bool isSymLink() const;
-    virtual bool isRoot() const;
-    virtual bool isBundle() const;
-    virtual bool isDragCompressFileFormat() const;
-    virtual bool isPrivate() const;
+    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const;
     virtual bool canDelete() const;
     virtual bool canTrash() const;
     virtual bool canRename() const;
@@ -348,10 +338,6 @@ protected:
     explicit AbstractFileInfo(const QUrl &url);
     void setProxy(const AbstractFileInfoPointer &proxy);
     QSharedPointer<AbstractFileInfoPrivate> dptr;
-
-private:
-    QString fileName() const;
-    QString baseName() const;
 
 private:
     bool hasProxy();

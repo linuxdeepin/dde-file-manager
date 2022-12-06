@@ -76,7 +76,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
         } else {
             // filemanger will be blocked when blacklist contais the filepath.
             QString filePath = fileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath);
-            if (fileInfo->isSymLink()) {
+            if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
                 filePath = fileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
             }
             isMatchExtension = blackList.contains(filePath);

@@ -55,8 +55,8 @@ private:
 
 TEST_F(UT_SmbShareFileInfo, FileName)
 {
-    EXPECT_NO_FATAL_FAILURE(info->fileName());
-    EXPECT_TRUE(info->fileName() == "HelloWorld");
+    EXPECT_NO_FATAL_FAILURE(info->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kFileName));
+    EXPECT_TRUE(info->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kFileName) == "HelloWorld");
 }
 
 TEST_F(UT_SmbShareFileInfo, FileDisplayName)
@@ -72,17 +72,17 @@ TEST_F(UT_SmbShareFileInfo, FileIcon)
 
 TEST_F(UT_SmbShareFileInfo, IsDir)
 {
-    EXPECT_TRUE(info->isDir());
+    EXPECT_TRUE(info->isAttributes(dfmbase::AbstractFileInfo::FileIsType::kIsDir));
 }
 
 TEST_F(UT_SmbShareFileInfo, IsReadable)
 {
-    EXPECT_TRUE(info->isReadable());
+    EXPECT_TRUE(info->isAttributes(dfmbase::AbstractFileInfo::FileIsType::kIsReadable));
 }
 
 TEST_F(UT_SmbShareFileInfo, IsWritable)
 {
-    EXPECT_TRUE(info->isWritable());
+    EXPECT_TRUE(info->isAttributes(dfmbase::AbstractFileInfo::FileIsType::kIsWritable));
 }
 
 TEST_F(UT_SmbShareFileInfo, CanDrag)

@@ -135,12 +135,13 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
                 return;
 
             curDirInfo->refresh();
-            bool disabled = (ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction) || !curDirInfo->isWritable();
+            bool disabled = (ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction)
+                    || !curDirInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable);
             paste->setDisabled(disabled);
         }
     } else if (1 == d->selectFiles.count()) {
         if (auto copy = d->predicateAction.value(ActionID::kCopy)) {
-            if (!d->focusFileInfo->isReadable() && !d->focusFileInfo->isSymLink())
+            if (!d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
                 copy->setDisabled(true);
         }
 
@@ -193,7 +194,7 @@ bool ClipBoardMenuScene::triggered(QAction *action)
 
             // clear clipboard after cutting files from clipboard
             ClipBoard::instance()->clearClipboard();
-        }  else if (action == ClipBoard::kRemoteCopiedAction) { // 远程协助
+        } else if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
             qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
             ClipBoard::setCurUrlToClipboardForRemote(d->currentDir);
         } else {

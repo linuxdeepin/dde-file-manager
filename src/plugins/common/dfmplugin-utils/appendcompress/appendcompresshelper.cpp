@@ -97,7 +97,7 @@ bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const 
     }
 
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(toUrl);
-    if (info && info->isWritable() && isCompressedFile(toUrl))
+    if (info && info->isAttributes(AbstractFileInfo::FileIsType::kIsWritable) && isCompressedFile(toUrl))
         return true;
 
     return false;
@@ -108,7 +108,7 @@ bool AppendCompressHelper::isCompressedFile(const QUrl &toUrl)
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(toUrl);
     if (info) {
         const QString &fileTypeName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);
-        if (info->isFile() && ((fileTypeName == "application/zip") || (fileTypeName == "application/x-7z-compressed" && !info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName).endsWith(".tar.7z")))) {
+        if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile) && ((fileTypeName == "application/zip") || (fileTypeName == "application/x-7z-compressed" && !info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName).endsWith(".tar.7z")))) {
             return true;
         }
     }

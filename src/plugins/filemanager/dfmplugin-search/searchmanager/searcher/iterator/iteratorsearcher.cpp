@@ -116,7 +116,7 @@ void IteratorSearcher::doSearch()
                 continue;
 
             // 将目录添加到待搜索目录中
-            if (info->isDir() && !info->isSymLink()) {
+            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
                 const auto &fileUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
                 if (!searchPathList.contains(fileUrl) || !fileUrl.path().startsWith("/sys/"))
                     searchPathList << fileUrl;

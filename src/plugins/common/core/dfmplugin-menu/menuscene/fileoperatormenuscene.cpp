@@ -123,7 +123,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
 
     if (d->selectFiles.count() == 1) {
         auto focusFileInfo = d->focusFileInfo;
-        if (d->focusFileInfo->isSymLink()) {
+        if (d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
             const auto &targetFile = d->focusFileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
             auto targetFileInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetFile));
             if (targetFileInfo && targetFileInfo->exists())
@@ -131,7 +131,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
         }
 
         const auto mimeType = focusFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);
-        if (mimeType.startsWith("image") && focusFileInfo->isReadable()
+        if (mimeType.startsWith("image") && focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable)
             && !mimeType.endsWith("svg+xml") && !mimeType.endsWith("raf")
             && !mimeType.endsWith("crw")) {
             tempAction = parent->addAction(d->predicateName.value(ActionID::kSetAsWallpaper));
@@ -176,7 +176,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     d->focusFileInfo->refresh();
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
-        if (!d->focusFileInfo->canDelete() || (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink()))
+        if (!d->focusFileInfo->canDelete() || (!d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)))
             delAction->setDisabled(true);
     }
 
@@ -250,7 +250,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // open
     if (actionId == ActionID::kOpen) {
-        if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isDir()) {
+        if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
             if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
                 dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
             } else {
