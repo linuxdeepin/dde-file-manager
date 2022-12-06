@@ -42,6 +42,9 @@
  */
 #include "private/newcreatemenuscene_p.h"
 #include "action_defines.h"
+#include "templatemenuscene/templatemenuscene.h"
+
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -51,6 +54,8 @@
 
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
+
+static const char *const kTemplateMenuSceneName = "TemplateMenu";
 
 AbstractMenuScene *NewCreateMenuCreator::create()
 {
@@ -87,6 +92,12 @@ bool NewCreateMenuScene::initialize(const QVariantHash &params)
     if (!d->currentDir.isValid())
         return false;
 
+    d->newActionSubScene = dfmplugin_menu_util::menuSceneCreateScene(kTemplateMenuSceneName);
+    if (d->newActionSubScene) {
+        d->newActionSubScene->setParent(this);
+        d->newActionSubScene->initialize(params);
+    }
+
     return AbstractMenuScene::initialize(params);
 }
 
@@ -97,6 +108,9 @@ AbstractMenuScene *NewCreateMenuScene::scene(QAction *action) const
 
     if (d->predicateAction.values().contains(action))
         return const_cast<NewCreateMenuScene *>(this);
+
+    if (d->newActionSubScene->scene(action))
+        return d->newActionSubScene;
 
     return AbstractMenuScene::scene(action);
 }
@@ -134,6 +148,9 @@ bool NewCreateMenuScene::create(QMenu *parent)
     d->predicateAction[ActionID::kNewPlainText] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewPlainText));
 
+    // add action of template file
+    d->newActionSubScene->create(newDocSubMenu);
+
     return AbstractMenuScene::create(parent);
 }
 
@@ -166,21 +183,10 @@ bool NewCreateMenuScene::triggered(QAction *action)
     // TODO(Lee or others):
 
     QString id = d->predicateAction.key(action);
-    if (d->predicateName.contains(id)) {
-        if (id == ActionID::kNewFolder) {
-
-        } else if (id == ActionID::kNewDoc) {
-
-        } else if (id == ActionID::kNewOfficeText) {
-
-        } else if (id == ActionID::kNewSpreadsheets) {
-
-        } else if (id == ActionID::kNewPresentation) {
-
-        } else if (id == ActionID::kNewPlainText) {
-        }
-        return true;
+    if (id.isEmpty()) {
+        if (!d->newActionSubScene->triggered(action))
+            return AbstractMenuScene::triggered(action);
+    } else {
+        return AbstractMenuScene::triggered(action);
     }
-
-    return AbstractMenuScene::triggered(action);
 }

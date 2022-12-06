@@ -1,23 +1,7 @@
-/*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
- *
- * Author:     liqiang<liqianga@uniontech.com>
- *
- * Maintainer: liqiang<liqianga@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "menu.h"
 #include "menuscene/clipboardmenuscene.h"
 #include "menuscene/opendirmenuscene.h"
@@ -33,6 +17,8 @@
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 #include "oemmenuscene/oemmenuscene.h"
 #include "oemmenuscene/oemmenu.h"
+#include "templatemenuscene/templatemenuscene.h"
+#include "templatemenuscene/templatemenu.h"
 
 #include <QWidget>
 #include <QApplication>
@@ -93,6 +79,7 @@ bool MenuHandle::init()
     registerScene(ShareMenuCreator::name(), new ShareMenuCreator);
     registerScene(ExtendMenuCreator::name(), new ExtendMenuCreator);
     registerScene(OemMenuCreator::name(), new OemMenuCreator);
+    registerScene(TemplateMenuCreator::name(), new TemplateMenuCreator);
     registerScene(SendToMenuCreator::name(), new SendToMenuCreator);
     registerScene(DConfigHiddenMenuCreator::name(), new DConfigHiddenMenuCreator);
     registerScene(ActionIconMenuCreator::name(), new ActionIconMenuCreator);
@@ -222,7 +209,7 @@ void Menu::initialize()
 {
     CustomParserIns->delayRefresh();
     OemMenu::instance()->loadDesktopFile();
-
+    TemplateMenu::instance()->loadTemplateFile();
     handle = new MenuHandle();
     handle->init();
 }

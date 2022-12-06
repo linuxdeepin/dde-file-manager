@@ -486,7 +486,8 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
         if (!fileInfo)
             return QString();
 
-        const QString newPath = newDocmentName(url.path(), fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName), suffix);
+        const QString &newPath = newDocmentName(url.path(), fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName),
+                                                suffix.isEmpty() ? fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) : suffix);
 
         if (newPath.isEmpty())
             return QString();
