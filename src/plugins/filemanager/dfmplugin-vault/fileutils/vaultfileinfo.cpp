@@ -275,11 +275,16 @@ int VaultFileInfo::countChildFile() const
     return -1;
 }
 
-QString VaultFileInfo::sizeFormat() const
+QVariant VaultFileInfo::extendedAttributes(const AbstractFileInfo::FileExtendedInfoType type) const
 {
-    if (!dptr->proxy)
-        return AbstractFileInfo::sizeFormat();
-    return dptr->proxy->sizeFormat();
+    switch (type) {
+    case FileExtendedInfoType::kSizeFormat:
+        if (!dptr->proxy)
+            return AbstractFileInfo::extendedAttributes(type);
+        return dptr->proxy->extendedAttributes(type);
+    default:
+        return AbstractFileInfo::extendedAttributes(type);
+    }
 }
 
 QString VaultFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const

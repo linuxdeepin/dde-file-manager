@@ -48,7 +48,7 @@ public:
 
     virtual qint64 size() const override;
     virtual int countChildFile() const override;
-    virtual QString sizeFormat() const override;
+    virtual QVariant extendedAttributes(const FileExtendedInfoType type = FileExtendedInfoType::kInode) const override;
     virtual QVariantHash extraProperties() const override;
     virtual QUrl getUrlByType(const FileUrlInfoType type, const QString &fileName) const override;
 

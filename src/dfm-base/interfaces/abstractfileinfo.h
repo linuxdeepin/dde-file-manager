@@ -156,14 +156,14 @@ public:
     enum class FileExtendedInfoType : uint8_t {
         // 文件url = file://temp/archive.tar.gz
         kOwner = 0,   // 文件的所有者string
-        kGroup = 2,   // 文件的所属组的string
-        kSizeFormat = 3,   // 文件大小的固定格式
-        kInode = 4,   // 文件的inode
-        kOwnerId = 5,   // 文件的拥有者的id
-        kGroupId = 6,   // 文件的组id
-        kFileIsHid = 7,   // 是否是隐藏文件
-        kFileLocalDevice = 8,   // 文件是本地文件
-        kFileCdRomDevice = 9,   // 文件是光驱
+        kGroup = 1,   // 文件的所属组的string
+        kSizeFormat = 2,   // 文件大小的固定格式
+        kInode = 3,   // 文件的inode
+        kOwnerId = 4,   // 文件的拥有者的id
+        kGroupId = 5,   // 文件的组id
+        kFileIsHid = 6,   // 是否是隐藏文件
+        kFileLocalDevice = 7,   // 文件是本地文件
+        kFileCdRomDevice = 8,   // 文件是光驱
         kCustomerStartExtended = 50,   // 其他用户使用
         kUnknowExtendedInfo = 255,
     };
@@ -288,18 +288,14 @@ public:
     virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const;
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const;
     virtual QUrl getUrlByType(const FileUrlInfoType type, const QString &fileName) const;
-    virtual QString owner() const;
-    virtual QString group() const;
-    virtual QString sizeFormat() const;
     virtual bool isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors = nullptr) const;
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const;
     virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const;
+    virtual QVariant extendedAttributes(const FileExtendedInfoType type = FileExtendedInfoType::kInode) const;
+
     virtual bool permission(QFile::Permissions permissions) const;
     virtual QFile::Permissions permissions() const;
     virtual int countChildFile() const;
-    virtual quint64 inode() const;
-    virtual uint ownerId() const;
-    virtual uint groupId() const;
     virtual qint64 size() const;
 
     virtual QVariant timeInfo(const FileTimeType type = FileTimeType::kCreateTime) const;

@@ -63,11 +63,8 @@ public:
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
     virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
     virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
-    virtual quint64 inode() const override;
-    virtual QString owner() const override;
-    virtual uint ownerId() const override;
-    virtual QString group() const override;
-    virtual uint groupId() const override;
+    virtual QVariant extendedAttributes(const FileExtendedInfoType type = FileExtendedInfoType::kInode) const override;
+
     virtual bool permission(QFile::Permissions permissions) const override;
     virtual QFile::Permissions permissions() const override;
     virtual qint64 size() const override;
@@ -78,13 +75,8 @@ public:
     virtual QIcon fileIcon() override;
     virtual bool isBlockDev() const;
     virtual QString mountPath() const;
-    virtual bool isCharDev() const;
-    virtual bool isFifo() const;
-    virtual bool isSocket() const;
-    virtual bool isRegular() const;
     virtual AbstractFileInfo::FileType fileType() const override;
     virtual int countChildFile() const override;
-    virtual QString sizeFormat() const override;
 
     virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
 

@@ -97,7 +97,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
 
     if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
         executableCheckBox->setText(tr("Allow to execute as program"));
-        if (info->ownerId() != getuid())
+        if (info->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kOwnerId).toUInt() != getuid())
             executableCheckBox->setDisabled(true);
 
         if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther))
@@ -113,7 +113,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     // 置灰：
     // 1. 本身用户无权限
     // 2. 所属文件系统无权限机制
-    if (info->ownerId() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType)) {
+    if (info->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kOwnerId).toUInt() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType)) {
         ownerComboBox->setDisabled(true);
         groupComboBox->setDisabled(true);
         otherComboBox->setDisabled(true);

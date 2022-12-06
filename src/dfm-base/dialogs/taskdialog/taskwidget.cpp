@@ -249,7 +249,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
             lbSrcFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
         } else {
             lbSrcTitle->setText(tr("Original file"));
-            lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->sizeFormat()));
+            lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kSizeFormat).toString()));
         }
         QMimeType mimeTypeDst = MimeDatabase::mimeTypeForUrl(source);
         if (!mimeTypeDst.isValid()) {
@@ -264,7 +264,7 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
             lbDstFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
         } else {
             lbDstTitle->setText(tr("Target file"));
-            lbDstFileSize->setText(QString(tr("Size: %1")).arg(targetInfo->sizeFormat()));
+            lbDstFileSize->setText(QString(tr("Size: %1")).arg(targetInfo->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kSizeFormat).toString()));
         }
 
         widConfict->show();

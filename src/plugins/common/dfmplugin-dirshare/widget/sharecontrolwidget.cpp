@@ -498,7 +498,7 @@ void ShareControlWidget::updateWidgetStatus(const QString &filePath)
             shareAnonymousSelector->setCurrentIndex(0);
 
         uint shareUid = UserShareHelperInstance->whoShared(name);
-        if ((shareUid != info->ownerId() || shareUid != getuid()) && getuid() != 0)
+        if ((shareUid != info->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kOwnerId).toUInt() || shareUid != getuid()) && getuid() != 0)
             this->setEnabled(false);
 
         sharePermissionSelector->setEnabled(true);

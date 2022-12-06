@@ -188,18 +188,6 @@ QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::Fil
         return QString();
     }
 }
-
-/*!
- * \brief inode linux系统下的唯一表示符
- *
- * \return quint64 文件的inode
- */
-quint64 DFMBASE_NAMESPACE::AbstractFileInfo::inode() const
-{
-    CALL_PROXY(inode());
-
-    return 0;
-}
 /*!
   * \brief 获取文件路径，默认是文件全路径，此接口不会实现异步，全部使用Qurl去
   * 处理或者字符串处理，这都比较快
@@ -224,72 +212,6 @@ QString dfmbase::AbstractFileInfo::pathInfo(const dfmbase::AbstractFileInfo::Fil
     default:
         return QString();
     }
-}
-/*!
- * \brief owner 获取文件的拥有者
- *
- * Returns the owner of the file. On systems where files do not have owners,
- *
- * or if an error occurs, an empty string is returned.
- *
- * This function can be time consuming under Unix (in the order of milliseconds).
- *
- * \param
- *
- * \return QString 文件的拥有者
- */
-QString AbstractFileInfo::owner() const
-{
-    CALL_PROXY(owner());
-
-    return QString();
-}
-/*!
- * \brief ownerId 获取文件的拥有者ID
- *
- * Returns the id of the owner of the file.
- *
- * \param
- *
- * \return uint 文件的拥有者ID
- */
-uint AbstractFileInfo::ownerId() const
-{
-    CALL_PROXY(ownerId());
-
-    return static_cast<uint>(-1);
-}
-/*!
- * \brief group 获取文件所属组
- *
- * Returns the group of the file.
- *
- * This function can be time consuming under Unix (in the order of milliseconds).
- *
- * \param
- *
- * \return QString 文件所属组
- */
-QString AbstractFileInfo::group() const
-{
-    CALL_PROXY(group());
-
-    return QString();
-}
-/*!
- * \brief groupId 获取文件所属组的ID
- *
- * Returns the id of the group the file belongs to.
- *
- * \param
- *
- * \return uint 文件所属组ID
- */
-uint AbstractFileInfo::groupId() const
-{
-    CALL_PROXY(groupId());
-
-    return static_cast<uint>(-1);
 }
 /*!
  * \brief permission 判断文件是否有传入的权限
@@ -339,17 +261,6 @@ qint64 AbstractFileInfo::size() const
     CALL_PROXY(size());
 
     return 0;
-}
-
-/*!
- * \brief DFMBASE_NAMESPACE::AbstractFileInfo::sizeFormat 使用kb，mb，gb显示文件大小
- * \return
- */
-QString DFMBASE_NAMESPACE::AbstractFileInfo::sizeFormat() const
-{
-    CALL_PROXY(sizeFormat());
-
-    return QString();
 }
 
 /*!
@@ -605,6 +516,27 @@ bool dfmbase::AbstractFileInfo::canAttributes(const dfmbase::AbstractFileInfo::F
         [[fallthrough]];
     default:
         return false;
+    }
+}
+
+QVariant dfmbase::AbstractFileInfo::extendedAttributes(const dfmbase::AbstractFileInfo::FileExtendedInfoType type) const
+{
+    CALL_PROXY(extendedAttributes(type));
+    switch (type) {
+    case FileExtendedInfoType::kInode:
+        return 0;
+    case FileExtendedInfoType::kOwner:
+        [[fallthrough]];
+    case FileExtendedInfoType::kSizeFormat:
+        [[fallthrough]];
+    case FileExtendedInfoType::kGroup:
+        return QString();
+    case FileExtendedInfoType::kOwnerId:
+        [[fallthrough]];
+    case FileExtendedInfoType::kGroupId:
+        return static_cast<uint>(-1);
+    default:
+        return QVariant();
     }
 }
 

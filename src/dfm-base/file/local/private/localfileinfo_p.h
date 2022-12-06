@@ -158,18 +158,40 @@ private:
         return kTimeInfoToDFile;
     }
     QUrl redirectedFileUrl() const;
-    bool isFile() const;
-    bool isDir() const;
-    bool isReadable() const;
-    bool isWritable() const;
+    QVector<DFileInfo::AttributeID> getAttributeIDIsVector() const
+    {
+        static QVector<DFileInfo::AttributeID> kIsToDFile = {
+            DFileInfo::AttributeID::kAccessCanRead,
+            DFileInfo::AttributeID::kAccessCanWrite,
+            DFileInfo::AttributeID::kAccessCanExecute,
+            DFileInfo::AttributeID::kStandardIsHidden,
+            DFileInfo::AttributeID::kStandardIsFile,
+            DFileInfo::AttributeID::kStandardIsDir,
+            DFileInfo::AttributeID::kStandardIsSymlink,
+        };
+
+        return kIsToDFile;
+    }
     bool isExecutable() const;
-    bool isHidden() const;
-    bool isSymLink() const;
     bool isPrivate() const;
     bool canDelete() const;
     bool canTrash() const;
     bool canRename() const;
     bool canFetch() const;
+    QVector<DFileInfo::AttributeID> getAttributeIDExtendVector() const
+    {
+        static QVector<DFileInfo::AttributeID> kExtendToDFile = {
+            DFileInfo::AttributeID::kOwnerUser,
+            DFileInfo::AttributeID::kOwnerGroup,
+            DFileInfo::AttributeID::kAttributeIDMax,
+            DFileInfo::AttributeID::kUnixInode,
+            DFileInfo::AttributeID::kUnixUID,
+            DFileInfo::AttributeID::kUnixGID,
+        };
+
+        return kExtendToDFile;
+    }
+    QString sizeFormat() const;
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)

@@ -227,17 +227,23 @@ bool LocalFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
     switch (type) {
     case FileIsType::kIsFile:
-        return d->isFile();
+        [[fallthrough]];
     case FileIsType::kIsDir:
-        return d->isDir();
+        [[fallthrough]];
     case FileIsType::kIsReadable:
-        return d->isReadable();
+        [[fallthrough]];
     case FileIsType::kIsWritable:
-        return d->isWritable();
+        [[fallthrough]];
+    case FileIsType::kIsHidden:
+        [[fallthrough]];
+    case FileIsType::kIsSymLink:
+        if (d->dfmFileInfo) {
+            QReadLocker locker(&d->lock);
+            return d->dfmFileInfo->attribute(d->getAttributeIDIsVector()[static_cast<int>(type)], nullptr).toBool();
+        }
+        return false;
     case FileIsType::kIsExecutable:
         return d->isExecutable();
-    case FileIsType::kIsHidden:
-        return d->isHidden();
     case FileIsType::kIsRoot:
         return d->filePath() == "/";
     case FileIsType::kIsBundle:
@@ -266,8 +272,8 @@ bool LocalFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) cons
         return d->canRename();
     case FileCanType::kCanDragCompress:
         return isAttributes(AbstractFileInfo::FileIsType::kIsDragCompressFileFormat)
-                && d->isWritable()
-                && d->isReadable()
+                && isAttributes(FileIsType::kIsReadable)
+                && isAttributes(FileIsType::kIsWritable)
                 && !FileUtils::isGvfsFile(dptr->url);
     case FileCanType::kCanHidden:
         if (FileUtils::isGphotoFile(d->url))
@@ -278,85 +284,36 @@ bool LocalFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) cons
     }
 }
 
-/*!
- * \brief owner 获取文件的拥有者
- *
- * Returns the owner of the file. On systems where files do not have owners,
- *
- * or if an error occurs, an empty string is returned.
- *
- * This function can be time consuming under Unix (in the order of milliseconds).
- *
- * \param
- *
- * \return QString 文件的拥有者
- */
-QString LocalFileInfo::owner() const
+QVariant LocalFileInfo::extendedAttributes(const AbstractFileInfo::FileExtendedInfoType type) const
 {
-    QString owner;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        owner = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kOwnerUser, nullptr).toString();
+    switch (type) {
+    case FileExtendedInfoType::kInode:
+        [[fallthrough]];
+    case FileExtendedInfoType::kOwner:
+        [[fallthrough]];
+    case FileExtendedInfoType::kGroup:
+        [[fallthrough]];
+    case FileExtendedInfoType::kOwnerId:
+        [[fallthrough]];
+    case FileExtendedInfoType::kGroupId:
+        if (d->dfmFileInfo) {
+            QReadLocker locker(&d->lock);
+            return d->dfmFileInfo->attribute(d->getAttributeIDExtendVector()[static_cast<int>(type)], nullptr);
+        }
+        return QVariant();
+    case FileExtendedInfoType::kFileLocalDevice:
+        return d->isLocalDevice;
+    case FileExtendedInfoType::kFileCdRomDevice:
+        return d->isCdRomDevice;
+    case FileExtendedInfoType::kFileIsHid:
+        if (d->dfmFileInfo)
+            return d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsHidden, nullptr);
+        return QVariant();
+    case FileExtendedInfoType::kSizeFormat:
+        return d->sizeFormat();
+    default:
+        return AbstractFileInfo::extendedAttributes(type);
     }
-    return owner;
-}
-/*!
- * \brief ownerId 获取文件的拥有者ID
- *
- * Returns the id of the owner of the file.
- * On Windows and on systems where files do not have owners this function returns ((uint) -2).
- *
- * \param
- *
- * \return uint 文件的拥有者ID
- */
-uint LocalFileInfo::ownerId() const
-{
-    uint ownerId = uint(-2);
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        ownerId = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kUnixUID, nullptr).toUInt();
-    }
-    return ownerId;
-}
-/*!
- * \brief group 获取文件所属组
- *
- * Returns the group of the file.
- *
- * This function can be time consuming under Unix (in the order of milliseconds).
- *
- * \param
- *
- * \return QString 文件所属组
- */
-QString LocalFileInfo::group() const
-{
-    QString group;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        group = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kOwnerGroup, nullptr).toString();
-    }
-
-    return group;
-}
-/*!
- * \brief groupId 获取文件所属组的ID
- *
- * Returns the id of the group the file belongs to.
- *
- * \param
- *
- * \return uint 文件所属组ID
- */
-uint LocalFileInfo::groupId() const
-{
-    uint groupId = 0;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        groupId = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kOwnerGroup, nullptr).toUInt();
-    }
-    return groupId;
 }
 /*!
  * \brief permission 判断文件是否有传入的权限
@@ -482,42 +439,6 @@ QString LocalFileInfo::mountPath() const
     else
         return QString();
 }
-/*!
- * \brief isCharDev 获取是否是字符设备
- *
- * \return bool 是否是字符设备
- */
-bool LocalFileInfo::isCharDev() const
-{
-    return fileType() == FileType::kCharDevice;
-}
-/*!
- * \brief isFifo 获取当前是否为管道文件
- *
- * \return bool 返回当前是否为管道文件
- */
-bool LocalFileInfo::isFifo() const
-{
-    return fileType() == FileType::kFIFOFile;
-}
-/*!
- * \brief isSocket 获取当前是否为套接字文件
- *
- * \return bool 返回是否为套接字文件
- */
-bool LocalFileInfo::isSocket() const
-{
-    return fileType() == FileType::kSocketFile;
-}
-/*!
- * \brief isRegular 获取当前是否是常规文件(与isFile一致)
- *
- * \return bool 返回是否是常规文件(与isFile一致)
- */
-bool LocalFileInfo::isRegular() const
-{
-    return fileType() == FileType::kRegularFile;
-}
 
 /*!
  * \brief fileType 获取文件类型
@@ -536,7 +457,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
     }
 
     const QUrl &fileUrl = d->url;
-    if (FileUtils::isTrashFile(fileUrl) && d->isSymLink()) {
+    if (FileUtils::isTrashFile(fileUrl) && isAttributes(FileIsType::kIsSymLink)) {
         {
             QWriteLocker locker(&d->lock);
             d->fileType = MimeDatabase::FileType::kRegularFile;
@@ -576,7 +497,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
  */
 int LocalFileInfo::countChildFile() const
 {
-    if (d->isDir()) {
+    if (isAttributes(FileIsType::kIsDir)) {
         const QString &path = d->filePath();
         QReadLocker locker(&d->lock);
         DecoratorFileEnumerator enumerator(path);
@@ -584,48 +505,6 @@ int LocalFileInfo::countChildFile() const
     }
 
     return -1;
-}
-/*!
- * \brief sizeFormat 格式化大小
- * \return QString 大小格式化后的大小
- */
-QString LocalFileInfo::sizeFormat() const
-{
-    if (d->isDir()) {
-        return QStringLiteral("-");
-    }
-
-    qlonglong fileSize(size());
-    bool withUnitVisible = true;
-    int forceUnit = -1;
-
-    if (fileSize < 0) {
-        qWarning() << "Negative number passed to formatSize():" << fileSize;
-        fileSize = 0;
-    }
-
-    bool isForceUnit = false;
-    QStringList list { " B", " KB", " MB", " GB", " TB" };
-
-    QStringListIterator i(list);
-    QString unit = i.hasNext() ? i.next() : QStringLiteral(" B");
-
-    int index = 0;
-    while (i.hasNext()) {
-        if (fileSize < 1024 && !isForceUnit) {
-            break;
-        }
-
-        if (isForceUnit && index == forceUnit) {
-            break;
-        }
-
-        unit = i.next();
-        fileSize /= 1024;
-        index++;
-    }
-    QString unitString = withUnitVisible ? unit : QString();
-    return QString("%1%2").arg(d->sizeString(QString::number(fileSize, 'f', 1)), unitString);
 }
 
 QString LocalFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
@@ -684,23 +563,6 @@ QIcon LocalFileInfo::fileIcon()
     return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
 }
 
-/*!
- * \brief inode linux系统下的唯一表示符
- *
- * \return quint64 文件的inode
- */
-quint64 LocalFileInfo::inode() const
-{
-    quint64 inNode = 0;
-    {
-        QReadLocker locker(&d->lock);
-        if (d->dfmFileInfo)
-            inNode = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kUnixInode, nullptr).toULongLong();
-    }
-
-    return inNode;
-}
-
 QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
     const QUrl &url = d->url;
@@ -727,9 +589,9 @@ QString LocalFileInfo::viewTip(const ViewType type) const
     if (type == ViewType::kEmptyDir) {
         if (!exists()) {
             return QObject::tr("File has been moved or deleted");
-        } else if (!d->isReadable()) {
+        } else if (!isAttributes(FileIsType::kIsReadable)) {
             return QObject::tr("You do not have permission to access this folder");
-        } else if (d->isDir()) {
+        } else if (isAttributes(FileIsType::kIsDir)) {
             if (!d->isExecutable())
                 return QObject::tr("You do not have permission to traverse files in it");
         }
@@ -893,7 +755,7 @@ QIcon LocalFileInfoPrivate::defaultIcon()
         return icon;
 
     icon = LocalFileIconProvider::globalProvider()->icon(q);
-    if (isSymLink()) {
+    if (q->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
         const auto &&target = symLinkTarget();
         if (target != filePath()) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(target));
@@ -1168,100 +1030,9 @@ QString LocalFileInfoPrivate::symLinkTarget() const
 
 QUrl LocalFileInfoPrivate::redirectedFileUrl() const
 {
-    if (isSymLink())
+    if (q->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
         return QUrl::fromLocalFile(symLinkTarget());
     return url;
-}
-
-/*!
- * \brief isFile 获取文件是否是文件
- *
- * Returns true if this object points to a file or to a symbolic link to a file.
- *
- * Returns false if the object points to something which isn't a file,
- *
- * such as a directory.
- *
- * \param
- *
- * \return bool 返回文件是否文件
- */
-bool LocalFileInfoPrivate::isFile() const
-{
-    bool isFile = false;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        isFile = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsFile, nullptr).toBool();
-    }
-
-    return isFile;
-}
-/*!
- * \brief isDir 获取文件是否是目录
- *
- * Returns true if this object points to a directory or to a symbolic link to a directory;
- *
- * otherwise returns false.
- *
- * \param
- *
- * \return bool 返回文件是否目录
- */
-bool LocalFileInfoPrivate::isDir() const
-{
-    bool isDir = false;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        isDir = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsDir, nullptr).toBool();
-    }
-    return isDir;
-}
-
-/*!
- * \brief isReadable 获取文件是否可读
- *
- * Returns the file can Read
- *
- * url = file:///tmp/archive.tar.gz
- *
- * \param
- *
- * \return bool 返回文件是否可读
- */
-bool LocalFileInfoPrivate::isReadable() const
-{
-    if (isPrivate())
-        return false;
-
-    bool isReadable = false;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        isReadable = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, nullptr).toBool();
-    }
-
-    return isReadable;
-}
-
-/*!
- * \brief isWritable 获取文件是否可写
- *
- * Returns the file can write
- *
- * url = file:///tmp/archive.tar.gz
- *
- * \param
- *
- * \return bool 返回文件是否可写
- */
-bool LocalFileInfoPrivate::isWritable() const
-{
-    bool isWritable = false;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        isWritable = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, nullptr).toBool();
-    }
-
-    return isWritable;
 }
 
 /*!
@@ -1299,55 +1070,6 @@ bool LocalFileInfoPrivate::isExecutable() const
     }
 
     return isExecutable;
-}
-
-/*!
- * \brief isHidden 获取文件是否是隐藏
- *
- * \param
- *
- * \return bool 返回文件是否隐藏
- */
-bool LocalFileInfoPrivate::isHidden() const
-{
-    bool isHidden = false;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        isHidden = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsHidden, nullptr).toBool();
-    }
-
-    return isHidden;
-}
-
-/*!
- * \brief isSymLink 获取文件是否是链接文件
- *
- * Returns true if this object points to a symbolic link;
- *
- * otherwise returns false.Symbolic links exist on Unix (including macOS and iOS)
- *
- * and Windows and are typically created by the ln -s or mklink commands, respectively.
- *
- * Opening a symbolic link effectively opens the link's target.
- *
- * In addition, true will be returned for shortcuts (*.lnk files) on Windows.
- *
- * Opening those will open the .lnk file itself.
- *
- * \param
- *
- * \return bool 返回文件是否是链接文件
- */
-bool LocalFileInfoPrivate::isSymLink() const
-{
-    bool isSymLink = false;
-
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        isSymLink = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, nullptr).toBool();
-    }
-
-    return isSymLink;
 }
 
 bool LocalFileInfoPrivate::isPrivate() const
@@ -1418,9 +1140,51 @@ bool LocalFileInfoPrivate::canFetch() const
                             supportArchiveMimetypes()
                                     .contains(DMimeDatabase().mimeTypeForFile(url).name());
 
-    return isDir()
+    return q->isAttributes(AbstractFileInfo::FileIsType::kIsDir)
             || (isArchive
                 && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
+}
+/*!
+ * \brief sizeFormat 格式化大小
+ * \return QString 大小格式化后的大小
+ */
+QString LocalFileInfoPrivate::sizeFormat() const
+{
+    if (q->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+        return QStringLiteral("-");
+    }
+
+    qlonglong fileSize(q->size());
+    bool withUnitVisible = true;
+    int forceUnit = -1;
+
+    if (fileSize < 0) {
+        qWarning() << "Negative number passed to formatSize():" << fileSize;
+        fileSize = 0;
+    }
+
+    bool isForceUnit = false;
+    QStringList list { " B", " KB", " MB", " GB", " TB" };
+
+    QStringListIterator i(list);
+    QString unit = i.hasNext() ? i.next() : QStringLiteral(" B");
+
+    int index = 0;
+    while (i.hasNext()) {
+        if (fileSize < 1024 && !isForceUnit) {
+            break;
+        }
+
+        if (isForceUnit && index == forceUnit) {
+            break;
+        }
+
+        unit = i.next();
+        fileSize /= 1024;
+        index++;
+    }
+    QString unitString = withUnitVisible ? unit : QString();
+    return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', 1)), unitString);
 }
 
 }
