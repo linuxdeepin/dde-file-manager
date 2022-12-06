@@ -66,18 +66,11 @@ QSize DiskPluginItem::sizeHint() const
 
 void DiskPluginItem::updateIcon()
 {
-//    if (m_displayMode == Dock::Efficient)
-//        m_icon = QIcon::fromTheme("drive-removable-dock-symbolic").pixmap(16 * qApp->devicePixelRatio(), 16 * qApp->devicePixelRatio());
-//    else
-//        m_icon = QIcon::fromTheme("drive-removable-dock").pixmap(std::min(width(), height()) * 0.8 * qApp->devicePixelRatio(), std::min(width(), height()) * 0.8 * qApp->devicePixelRatio());
-
-    // fashion mode icons are no longer needed
-
     QString iconName = "drive-removable-dock-symbolic";
     if (height() <= PLUGIN_BACKGROUND_MIN_SIZE && DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
         iconName.append(PLUGIN_MIN_ICON_NAME);
 
-    m_icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap(static_cast<int>(16 * qApp->devicePixelRatio()), static_cast<int>(16 * qApp->devicePixelRatio()));
-    m_icon.setDevicePixelRatio(qApp->devicePixelRatio());
+    const int IconWidth = static_cast<int>(PLUGIN_ICON_MAX_SIZE * 0.8);
+    m_icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap({IconWidth, IconWidth});
     update();
 }
