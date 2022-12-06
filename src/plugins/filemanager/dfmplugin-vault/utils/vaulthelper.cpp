@@ -423,9 +423,12 @@ bool VaultHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
     if (!urls)
         return false;
     for (const QUrl &url : origins) {
-        if (url.scheme() != VaultHelper::scheme())
+        if (!isVaultFile(url))
             return false;
-        (*urls).push_back(vaultToLocalUrl(url));
+        if (url.scheme() == VaultHelper::instance()->scheme())
+            (*urls).push_back(vaultToLocalUrl(url));
+        else
+            (*urls).push_back(url);
     }
     return true;
 }

@@ -85,12 +85,10 @@ bool VaultFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sour
 {
     if (sources.isEmpty())
         return false;
-    if (sources.first().scheme() != scheme())
+    if (!VaultHelper::isVaultFile(sources.first()))
         return false;
 
-    Q_UNUSED(flags)
     QList<QUrl> redirectedFileUrls = transUrlsToLocal(sources);
-
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles,
                                  windowId,
                                  redirectedFileUrls, flags, nullptr);

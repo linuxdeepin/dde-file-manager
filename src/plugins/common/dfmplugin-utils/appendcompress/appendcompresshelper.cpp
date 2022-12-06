@@ -107,8 +107,8 @@ bool AppendCompressHelper::isCompressedFile(const QUrl &toUrl)
 {
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(toUrl);
     if (info) {
-        const QString &fileTypeName = info->mimeTypeName();
-        if (info->isFile() && ((fileTypeName == "application/zip") || (fileTypeName == "application/x-7z-compressed" && !info->fileName().endsWith(".tar.7z")))) {
+        const QString &fileTypeName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);
+        if (info->isFile() && ((fileTypeName == "application/zip") || (fileTypeName == "application/x-7z-compressed" && !info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName).endsWith(".tar.7z")))) {
             return true;
         }
     }

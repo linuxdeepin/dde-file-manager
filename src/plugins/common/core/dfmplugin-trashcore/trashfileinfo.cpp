@@ -184,10 +184,12 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
     }
 
     const QUrl &urlTarget = d->initTarget();
-    if (urlTarget.isValid())
+    if (urlTarget.isValid()) {
         setProxy(InfoFactory::create<AbstractFileInfo>(urlTarget));
-    else
-        qWarning() << "create proxy failed, target url is invalid, url: " << url;
+    } else {
+        if (!FileUtils::isTrashRootFile(url))
+            qWarning() << "create proxy failed, target url is invalid, url: " << url;
+    }
 }
 
 TrashFileInfo::~TrashFileInfo()

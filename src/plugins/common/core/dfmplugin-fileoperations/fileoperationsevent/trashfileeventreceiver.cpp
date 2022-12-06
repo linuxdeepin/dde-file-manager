@@ -71,14 +71,11 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
         return nullptr;
     }
 
-    const QUrl &sourceFirst = sources.first();
-
-    if (!sourceFirst.isLocalFile()) {
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", windowId, sources, flags)) {
-            return nullptr;
-        }
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", windowId, sources, flags)) {
+        return nullptr;
     }
 
+    const QUrl &sourceFirst = sources.first();
     JobHandlePointer handle = nullptr;
     if (FileUtils::isGvfsFile(sourceFirst) || DFMIO::DFMUtils::fileIsRemovable(sourceFirst)) {
         if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
