@@ -21,6 +21,12 @@
 #ifndef WALLPAPERSETTINGS_P_H
 #define WALLPAPERSETTINGS_P_H
 
+#ifdef COMPILE_ON_V23
+#    define APPEARANCE_NAME org::deepin::daemon::Appearance1
+#else
+#    define APPEARANCE_NAME com::deepin::daemon::Appearance
+#endif
+
 #include "wallpapersettings.h"
 #include "wallpaperlist.h"
 #include "loadinglabel.h"
@@ -28,8 +34,12 @@
 #include "dbus/screensaver_interface.h"
 
 #include <com_deepin_wm.h>
-#include <com_deepin_daemon_appearance.h>
 #include <com_deepin_sessionmanager.h>
+#ifdef COMPILE_ON_V23
+#    include "dbus/appearance_interface.h"
+#else
+#    include <com_deepin_daemon_appearance.h>
+#endif
 
 #include <DIconButton>
 #include <DRegionMonitor>
@@ -44,7 +54,7 @@ DWIDGET_USE_NAMESPACE
 
 namespace ddplugin_wallpapersetting {
 using WMInter = com::deepin::wm;
-using AppearanceIfs = com::deepin::daemon::Appearance;
+using AppearanceIfs = APPEARANCE_NAME;
 using SessionIfs = com::deepin::SessionManager;
 using ScreenSaverIfs = com::deepin::ScreenSaver;
 

@@ -11,6 +11,16 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
+#delete files which are not needed on the current system
+if (COMPLIE_ON_V20)
+    FILE(GLOB_RECURSE RM_SRC
+        "${CMAKE_CURRENT_SOURCE_DIR}/appearance_interface.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/appearance_interface.cpp"
+        )
+endif()
+
+list(REMOVE_ITEM SRC_FILES ${RM_SRC})
+
 set(EXT_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.h
     )

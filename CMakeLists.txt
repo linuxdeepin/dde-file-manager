@@ -23,9 +23,11 @@ endif()
 #Indentify the version
 if (${DEEPIN_OS_VERSION} MATCHES "23")
     add_definitions(-DCOMPILE_ON_V23)
+    set(COMPLIE_ON_V23 TRUE)
     message("COMPILE ON v23")
 else()
     add_definitions(-DCOMPILE_ON_V20)
+    set(COMPLIE_ON_V20 TRUE)
     message("COMPILE ON v20")
 endif()
 
