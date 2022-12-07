@@ -28,6 +28,9 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/thumbnailprovider.h"
+#include "infodatafuture.h"
+
+#include <dfm-io/core/dfilefuture.h>
 
 #include <QFileInfo>
 #include <QIcon>
@@ -59,9 +62,10 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     };
     QReadWriteLock iconLock;
     QMap<IconType, QIcon> icons;
-    QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> getIconFuture = nullptr;
+    QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> getIconFuture { nullptr };
     QVariant isLocalDevice;
     QVariant isCdRomDevice;
+    QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
 
 public:
     explicit LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq);
@@ -98,38 +102,14 @@ public:
     QIcon defaultIcon();
     void onRequestThumbFinished(const QString &path);
 
-    void attributesExtendCallback(bool ok, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> values)
-    {
-        if (ok) {
-            auto it = values.constBegin();
-            while (it != values.constEnd()) {
-                const QVariant &value = it.value();
-                if (value.isValid() && !value.toString().isEmpty())
-                    attributesExtend.insert(it.key(), value);
-                ++it;
-            }
-
-            QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> ret;
-            for (const DFileInfo::AttributeExtendID &id : extendIDs) {
-                if (attributesExtend.count(id) > 0) {
-                    ret.insert(id, attributesExtend.value(id));
-                }
-            }
-
-            q->mediaDataFinished(true, ret);
-        } else {
-            q->mediaDataFinished(false, {});
-        }
-    }
-
 private:
     QString fileName() const;
     QString baseName() const;
     QString completeBaseName() const;
     QString suffix() const;
-    QString completeSuffix();
-    QString iconName();
-    QString mimeTypeName();
+    QString completeSuffix() const;
+    QString iconName() const;
+    QString mimeTypeName() const;
     QString fileDisplayName() const;
     QString path() const;
     QString filePath() const;
@@ -137,12 +117,12 @@ private:
     QVector<DFileInfo::AttributeID> getAttributeIDVector() const
     {
         static QVector<DFileInfo::AttributeID> kTimeInfoToDFile = {
-            DFileInfo::AttributeID::kTimeCreatedUsec,
-            DFileInfo::AttributeID::kTimeCreatedUsec,
-            DFileInfo::AttributeID::kTimeChangedUsec,
-            DFileInfo::AttributeID::kTimeModifiedUsec,
-            DFileInfo::AttributeID::kTimeAccessUsec,
-            DFileInfo::AttributeID::kTimeAccessUsec,
+            DFileInfo::AttributeID::kTimeCreated,
+            DFileInfo::AttributeID::kTimeCreated,
+            DFileInfo::AttributeID::kTimeChanged,
+            DFileInfo::AttributeID::kTimeModified,
+            DFileInfo::AttributeID::kTimeAccess,
+            DFileInfo::AttributeID::kTimeAccess,
             DFileInfo::AttributeID::kTimeCreated,
             DFileInfo::AttributeID::kTimeCreated,
             DFileInfo::AttributeID::kTimeChanged,
@@ -187,11 +167,14 @@ private:
             DFileInfo::AttributeID::kUnixInode,
             DFileInfo::AttributeID::kUnixUID,
             DFileInfo::AttributeID::kUnixGID,
+            DFileInfo::AttributeID::kStandardIsHidden,
         };
 
         return kExtendToDFile;
     }
     QString sizeFormat() const;
+    QVariant attribute(DFileInfo::AttributeID key) const;
+    QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)

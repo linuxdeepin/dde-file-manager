@@ -31,9 +31,9 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_myshares;
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)
-    : AbstractFileInfo(url)
+    : AbstractFileInfo(url), d(new ShareFileInfoPrivate(url, this))
 {
-    dptr.reset(new ShareFileInfoPrivate(url, this));
+    dptr.reset(d);
     QString path = url.path();
     setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path)));
 }
@@ -45,7 +45,7 @@ ShareFileInfo::~ShareFileInfo()
 QString ShareFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type)
-        return dptr.staticCast<ShareFileInfoPrivate>()->fileName();
+        return d->fileName();
     return AbstractFileInfo::displayInfo(type);
 }
 
@@ -55,7 +55,7 @@ QString ShareFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
     case AbstractFileInfo::FileNameInfoType::kFileName:
         [[fallthrough]];
     case AbstractFileInfo::FileNameInfoType::kFileCopyName:
-        return dptr.staticCast<ShareFileInfoPrivate>()->fileName();
+        return d->fileName();
     default:
         return AbstractFileInfo::nameInfo(type);
     }
@@ -67,7 +67,7 @@ QUrl ShareFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return QUrl::fromLocalFile(dptr->url.path());
     default:
-        return urlInfo(type);
+        return AbstractFileInfo::urlInfo(type);
     }
 }
 
@@ -118,6 +118,5 @@ QString ShareFileInfoPrivate::fileName() const
 
 void dfmplugin_myshares::ShareFileInfo::refresh()
 {
-    auto d = dynamic_cast<ShareFileInfoPrivate *>(dptr.data());
     d->refresh();
 }

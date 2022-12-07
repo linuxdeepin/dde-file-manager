@@ -224,8 +224,7 @@ bool DragDropHelper::drop(QDropEvent *event)
             if (fileInfo) {
                 // NOTE: if item can not drop, the drag item will drop to root dir.
                 if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile)
-                    && !FileUtils::isDesktopFile(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl))
-                    && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDragCompressFileFormat))
+                    && !FileUtils::isDesktopFile(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
                     hoverIndex = view->rootIndex();
             }
         }

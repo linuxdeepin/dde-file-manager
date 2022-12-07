@@ -28,10 +28,9 @@
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
+#include <dfm-io/core/dfileinfo.h>
 
 #include <QPointer>
-
-#include <dfm-io/core/dfileinfo.h>
 
 USING_IO_NAMESPACE
 namespace dfmbase {
@@ -47,6 +46,7 @@ public:
 
     AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
     AbstractFileInfoPointer proxy { nullptr };
+    QMap<AbstractFileInfo::FileExtendedInfoType, QVariant> extendOtherCache;
 
 private:
     QUrl getUrlByChildFileName(const QString &fileName) const;

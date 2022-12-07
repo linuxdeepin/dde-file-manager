@@ -28,9 +28,9 @@ using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 
 SmbShareFileInfo::SmbShareFileInfo(const QUrl &url)
-    : AbstractFileInfo(url)
+    : AbstractFileInfo(url), d(new SmbShareFileInfoPrivate(url, this))
 {
-    dptr.reset(new SmbShareFileInfoPrivate(url, this));
+    dptr.reset(d);
 }
 
 SmbShareFileInfo::~SmbShareFileInfo()
@@ -43,7 +43,7 @@ QString SmbShareFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type
     case AbstractFileInfo::FileNameInfoType::kFileName:
         [[fallthrough]];
     case AbstractFileInfo::FileNameInfoType::kFileCopyName:
-        return dptr.staticCast<SmbShareFileInfoPrivate>()->fileName();
+        return d->fileName();
     default:
         return AbstractFileInfo::nameInfo(type);
     }
@@ -52,7 +52,7 @@ QString SmbShareFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type
 QString SmbShareFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type)
-        return dptr.staticCast<SmbShareFileInfoPrivate>()->fileName();
+        return d->fileName();
     return AbstractFileInfo::displayInfo(type);
 }
 

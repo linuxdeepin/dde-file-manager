@@ -28,9 +28,11 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 namespace dfmplugin_smbbrowser {
-
+class SmbShareFileInfoPrivate;
 class SmbShareFileInfo : public dfmbase::AbstractFileInfo
 {
+    SmbShareFileInfoPrivate *d;
+
 public:
     explicit SmbShareFileInfo(const QUrl &url);
     virtual ~SmbShareFileInfo() override;

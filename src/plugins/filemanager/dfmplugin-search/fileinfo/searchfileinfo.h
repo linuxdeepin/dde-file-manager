@@ -28,7 +28,6 @@
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {
 
-class SearchFileInfoPrivate;
 class SearchFileInfo : public AbstractFileInfo
 {
     Q_GADGET

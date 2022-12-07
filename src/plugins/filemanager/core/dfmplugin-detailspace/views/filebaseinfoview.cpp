@@ -24,6 +24,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/fileinfohelper.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -249,14 +250,14 @@ void FileBaseInfoView::basicFill(const QUrl &url)
             fileType->setRightValue(tr("Videos"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight << DFileInfo::AttributeExtendID::kExtendMediaDuration;
-            connect(localinfo.data(), &AbstractFileInfo::mediaDataFinished, this, &FileBaseInfoView::videoExtenInfo);
+            connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::videoExtenInfo);
             localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList);
         } break;
         case MimeDatabase::FileType::kImages: {
             fileType->setRightValue(tr("Images"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight;
-            connect(localinfo.data(), &AbstractFileInfo::mediaDataFinished, this, &FileBaseInfoView::imageExtenInfo);
+            connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::imageExtenInfo);
             localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList);
 
         } break;
@@ -264,7 +265,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
             fileType->setRightValue(tr("Audios"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaDuration;
-            connect(localinfo.data(), &AbstractFileInfo::mediaDataFinished, this, &FileBaseInfoView::audioExtenInfo);
+            connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::audioExtenInfo);
             localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList);
         } break;
         case MimeDatabase::FileType::kExecutable:
@@ -348,9 +349,9 @@ void FileBaseInfoView::slotAudioExtenInfo(const QStringList &properties)
     }
 }
 
-void FileBaseInfoView::imageExtenInfo(bool flg, QMap<DFileInfo::AttributeExtendID, QVariant> properties)
+void FileBaseInfoView::imageExtenInfo(const QUrl url, QMap<DFileInfo::AttributeExtendID, QVariant> properties)
 {
-    if (flg) {
+    if (url == currentUrl) {
         QStringList property;
         if (!properties.isEmpty()) {
             int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
@@ -362,9 +363,9 @@ void FileBaseInfoView::imageExtenInfo(bool flg, QMap<DFileInfo::AttributeExtendI
     }
 }
 
-void FileBaseInfoView::videoExtenInfo(bool flg, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
+void FileBaseInfoView::videoExtenInfo(const QUrl url, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
 {
-    if (flg) {
+    if (url == currentUrl) {
         QStringList property;
         if (!properties.isEmpty()) {
             int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
@@ -387,9 +388,9 @@ void FileBaseInfoView::videoExtenInfo(bool flg, QMap<dfmio::DFileInfo::Attribute
     }
 }
 
-void FileBaseInfoView::audioExtenInfo(bool flg, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
+void FileBaseInfoView::audioExtenInfo(const QUrl url, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
 {
-    if (flg) {
+    if (url == currentUrl) {
         QStringList property;
         if (!properties.isEmpty()) {
             QVariant duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration];

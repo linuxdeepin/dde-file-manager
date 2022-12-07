@@ -27,9 +27,11 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 namespace dfmplugin_myshares {
-
+class ShareFileInfoPrivate;
 class ShareFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
+    ShareFileInfoPrivate *d;
+
 public:
     explicit ShareFileInfo(const QUrl &url);
     virtual ~ShareFileInfo() override;

@@ -30,6 +30,7 @@ class VaultFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
     Q_GADGET
     friend class VaultFileInfoPrivate;
+    VaultFileInfoPrivate *d;
 
 public:
     explicit VaultFileInfo(const QUrl &url);

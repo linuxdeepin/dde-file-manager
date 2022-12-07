@@ -20,8 +20,8 @@
  */
 #include "searchfileinfo.h"
 #include "utils/searchhelper.h"
-#include "searchfileinfo_p.h"
 
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 
 namespace dfmplugin_search {
@@ -29,7 +29,6 @@ namespace dfmplugin_search {
 SearchFileInfo::SearchFileInfo(const QUrl &url)
     : AbstractFileInfo(url)
 {
-    dptr.reset(new SearchFileInfoPrivate(url, this));
 }
 
 SearchFileInfo::~SearchFileInfo()
@@ -100,15 +99,6 @@ QString SearchFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
     default:
         return QString();
     }
-}
-
-SearchFileInfoPrivate::SearchFileInfoPrivate(const QUrl &url, SearchFileInfo *qq)
-    : AbstractFileInfoPrivate(url, qq)
-{
-}
-
-SearchFileInfoPrivate::~SearchFileInfoPrivate()
-{
 }
 
 }

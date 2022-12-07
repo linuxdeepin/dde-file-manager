@@ -194,7 +194,7 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
         && Application::appObtuselySetting()->value("ApplicationAttribute", "UseParentViewMode", false).toBool()) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
         QList<QUrl> parentUrlList {};
-        info->isAncestorsUrl(QUrl(), &parentUrlList);
+        UrlRoute::urlParentList(url, &parentUrlList);
 
         for (const QUrl &parentUrl : parentUrlList) {
             parentViewMode = fileViewStateValue(parentUrl, "viewMode", -1).toInt();

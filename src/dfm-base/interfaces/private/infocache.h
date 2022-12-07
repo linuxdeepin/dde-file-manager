@@ -60,6 +60,7 @@ class InfoCachePrivate;
 class InfoCache : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(InfoCache)
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), InfoCache)
     QScopedPointer<InfoCachePrivate> d;
     friend class CacheWorker;
@@ -96,6 +97,7 @@ private Q_SLOTS:
 
 class InfoCacheController : public QObject
 {
+    Q_DISABLE_COPY(InfoCacheController)
     Q_OBJECT
     QSharedPointer<QThread> thread { nullptr };
     QSharedPointer<CacheWorker> worker { nullptr };

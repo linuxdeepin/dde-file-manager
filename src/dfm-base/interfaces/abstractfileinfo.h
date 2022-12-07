@@ -44,44 +44,9 @@ typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPoin
 
 namespace dfmbase {
 class AbstractFileInfoPrivate;
-class AbstractFileInfo : public QObject, public QSharedData, public QEnableSharedFromThis<AbstractFileInfo>
+class AbstractFileInfo : public QSharedData, public QEnableSharedFromThis<AbstractFileInfo>
 {
-    Q_OBJECT
 public:
-    /*!
-     * \enum FileInfoCacheType 文件缓存的key值
-     * \brief 文件缓存的key值，不同的key对应不同的文件属性，用于在DAbstractFileInfoPrivate中缓存文件信息的key
-     */
-    enum FileInfoCacheType {
-        kTypeExists,   // 文件存在
-        kTypeFilePath,   // 文件路径
-        kTypeAbsoluteFilePath,   // 文件绝对路径
-        kTypeFileName,   // 文件名称
-        kTypeBaseName,   // 文件基础名称
-        kTypeCompleteBaseName,   // 文件完整的基础名称
-        kTypeSuffix,   // 文件的suffix
-        kTypeCompleteSuffix,   // 文件的完成suffix
-        kTypePath,   // 路径
-        kTypeIsReadable,   // 文件是否可读
-        kTypeIsWritable,   // 文件是否可写
-        kTypeIsExecutable,   // 文件是否可执行
-        kTypeIsHidden,   // 文件是否隐藏
-        kTypeIsFile,   // 是否是文件
-        kTypeIsDir,   // 是否是目录
-        kTypeIsSymLink,   // 是否是链接文件
-        kTypeSymLinkTarget,   // 链接文件的目标文件
-        kTypeOwner,   // 文件的拥有者
-        kTypeOwnerID,   // 文件的拥有者的id
-        kTypeGroup,   // 文件所在组
-        kTypeGroupID,   // 文件所在组的id
-        kTypePermissions,   // 文件的所有权限
-        kTypeSize,   // 文件的大小
-        kTypeCreateTime,   // 文件的创建时间
-        kTypeChangeTime,   // 文件的改变时间
-        kTypeLastModifyTime,   // 文件的最后修改时间
-        kTypeLastReadTime,   // 文件的最后修改时间
-        kTypeUnknow = 255
-    };
     /*!
      * \enum FileNameInfoType 文件名称信息
      * \brief 文件的名称信息的key
@@ -283,43 +248,29 @@ public:
     virtual bool exists() const;
     virtual void refresh();
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const;
-    virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const;
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const;
-    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const;
+    virtual QString nameInfo(const FileNameInfoType type) const;
+    virtual QString pathInfo(const FilePathInfoType type) const;
+    virtual QString displayInfo(const DisplayInfoType type) const;
+    virtual QUrl urlInfo(const FileUrlInfoType type) const;
     virtual QUrl getUrlByType(const FileUrlInfoType type, const QString &fileName) const;
-    virtual bool isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors = nullptr) const;
-    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const;
-    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const;
-    virtual QVariant extendedAttributes(const FileExtendedInfoType type = FileExtendedInfoType::kInode) const;
-
+    virtual bool isAttributes(const FileIsType type) const;
+    virtual bool canAttributes(const FileCanType type) const;
+    virtual QVariant extendedAttributes(const FileExtendedInfoType type) const;
     virtual bool permission(QFile::Permissions permissions) const;
     virtual QFile::Permissions permissions() const;
     virtual int countChildFile() const;
     virtual qint64 size() const;
-
-    virtual QVariant timeInfo(const FileTimeType type = FileTimeType::kCreateTime) const;
-
+    virtual QVariant timeInfo(const FileTimeType type) const;
     virtual QIcon fileIcon();
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     virtual QVariantHash extraProperties() const;
     virtual QVariant customData(int role) const;
     virtual FileType fileType() const;
-    virtual Qt::DropActions supportedAttributes(const SupportType type = SupportType::kDrag) const;
-
-    // property for view
-    virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const;
-
-    // emblems
+    virtual Qt::DropActions supportedAttributes(const SupportType type) const;
+    virtual QString viewTip(const ViewType type) const;
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type);
-
-    // media info
-    virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const;
-
+    virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const;
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value);
-
-Q_SIGNALS:
-    void mediaDataFinished(bool, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>);
 
 protected:
     explicit AbstractFileInfo(const QUrl &url);

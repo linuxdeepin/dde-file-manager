@@ -31,9 +31,9 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagFileInfo::TagFileInfo(const QUrl &url)
-    : AbstractFileInfo(url)
+    : AbstractFileInfo(url), d(new TagFileInfoPrivate(url, this))
 {
-    dptr.reset(new AbstractFileInfoPrivate(url, this));
+    dptr.reset(d);
     if (!localFilePath().isEmpty())
         setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(localFilePath())));
 }
@@ -44,13 +44,13 @@ TagFileInfo::~TagFileInfo()
 
 bool TagFileInfo::exists() const
 {
-    if (dptr->proxy) {
+    if (d->proxy) {
         // TODO(liuyangming): handle path in sql
         if (!localFilePath().startsWith("/home/")
             && !localFilePath().startsWith(FileUtils::bindPathTransform("/home/", true))
             && !localFilePath().startsWith("/media/"))
             return false;
-        return dptr->proxy->exists();
+        return d->proxy->exists();
     }
 
     QUrl rootUrl;
@@ -65,8 +65,8 @@ bool TagFileInfo::exists() const
 
 QFileDevice::Permissions TagFileInfo::permissions() const
 {
-    if (dptr->proxy)
-        return dptr->proxy->permissions();
+    if (d->proxy)
+        return d->proxy->permissions();
 
     return QFile::ReadGroup | QFile::ReadOwner | QFile::ReadUser | QFile::ReadOther
             | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
@@ -76,18 +76,18 @@ bool TagFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
-        if (dptr->proxy)
-            return dptr->proxy->isAttributes(type);
+        if (d->proxy)
+            return d->proxy->isAttributes(type);
 
         return true;
     case FileIsType::kIsReadable:
-        if (dptr->proxy)
-            return dptr->proxy->isAttributes(type);
+        if (d->proxy)
+            return d->proxy->isAttributes(type);
 
         return true;
     case FileIsType::kIsWritable:
-        if (dptr->proxy)
-            return dptr->proxy->isAttributes(type);
+        if (d->proxy)
+            return d->proxy->isAttributes(type);
 
         return true;
     default:
@@ -100,7 +100,7 @@ QString TagFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) con
     switch (type) {
     case AbstractFileInfo::FileNameInfoType::kFileName:
     case AbstractFileInfo::FileNameInfoType::kFileCopyName:
-        return dptr.staticCast<TagFileInfoPrivate>()->fileName();
+        return d->fileName();
     default:
         return AbstractFileInfo::nameInfo(type);
     }
@@ -109,22 +109,22 @@ QString TagFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) con
 QString TagFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type)
-        return dptr.staticCast<TagFileInfoPrivate>()->fileName();
+        return d->fileName();
     return AbstractFileInfo::displayInfo(type);
 }
 
 AbstractFileInfo::FileType TagFileInfo::fileType() const
 {
-    if (dptr->proxy)
-        return dptr->proxy->fileType();
+    if (d->proxy)
+        return d->proxy->fileType();
 
     return FileType::kDirectory;
 }
 
 QIcon TagFileInfo::fileIcon()
 {
-    if (dptr->proxy)
-        return dptr->proxy->fileIcon();
+    if (d->proxy)
+        return d->proxy->fileIcon();
 
     return QIcon::fromTheme("folder");
 }
@@ -136,7 +136,7 @@ QString TagFileInfo::localFilePath() const
 
 QString TagFileInfo::tagName() const
 {
-    return dptr.staticCast<TagFileInfoPrivate>()->fileName();
+    return d->fileName();
 }
 
 TagFileInfoPrivate::TagFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)

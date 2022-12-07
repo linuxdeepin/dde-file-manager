@@ -27,13 +27,9 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 namespace dfmplugin_recent {
-
-class RecentFileInfoPrivate;
 class RecentFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
     Q_GADGET
-    friend class RecentFileInfoPrivate;
-
 public:
     explicit RecentFileInfo(const QUrl &url);
     ~RecentFileInfo() override;
@@ -47,9 +43,6 @@ public:
     virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
 
     virtual QVariant customData(int role) const override;
-
-private:
-    RecentFileInfoPrivate *const d;
 };
 
 using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;

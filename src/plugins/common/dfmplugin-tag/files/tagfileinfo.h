@@ -27,10 +27,12 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 namespace dfmplugin_tag {
+class TagFileInfoPrivate;
 class TagFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
     Q_GADGET
     friend class TagFileInfoPrivate;
+    TagFileInfoPrivate *d;
 
 public:
     explicit TagFileInfo(const QUrl &url);

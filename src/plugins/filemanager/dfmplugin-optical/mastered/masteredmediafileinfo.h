@@ -28,9 +28,11 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 namespace dfmplugin_optical {
+class MasteredMediaFileInfoPrivate;
 class MasteredMediaFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
     Q_GADGET
+    MasteredMediaFileInfoPrivate *d;
 
 public:
     explicit MasteredMediaFileInfo(const QUrl &url);

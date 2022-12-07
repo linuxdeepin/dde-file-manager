@@ -40,25 +40,19 @@ public:
 
 public:
     virtual ~DesktopFileInfo() override;
-
     QString desktopName() const;
     QString desktopExec() const;
     QString desktopIconName() const;
     QString desktopType() const;
     QStringList desktopCategories() const;
-
     QIcon fileIcon() override;
     virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
     virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
-
     void refresh() override;
-
     //QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     //QSet<MenuAction> disableMenuActionList() const override;
     virtual Qt::DropActions supportedAttributes(const SupportType type = SupportType::kDrag) const override;
-
     virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
-
     static QMap<QString, QVariant> desktopFileInfo(const QUrl &fileUrl);
 
 private:

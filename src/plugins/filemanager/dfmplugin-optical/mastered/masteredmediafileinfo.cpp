@@ -38,38 +38,38 @@ namespace dfmplugin_optical {
 using namespace GlobalServerDefines;
 
 MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
-    : AbstractFileInfo(url)
+    : AbstractFileInfo(url), d(new MasteredMediaFileInfoPrivate(url, this))
 {
-    dptr.reset(new MasteredMediaFileInfoPrivate(url, this));
+    dptr.reset(d);
     dptr.staticCast<MasteredMediaFileInfoPrivate>()->backupInfo(url);
 }
 
 bool MasteredMediaFileInfo::exists() const
 {
     if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isEmpty()
-        || !dptr.staticCast<MasteredMediaFileInfoPrivate>()->backerUrl.isValid()
-        || dptr.staticCast<MasteredMediaFileInfoPrivate>()->backerUrl.isEmpty()) {
+        || !d->backerUrl.isValid()
+        || d->backerUrl.isEmpty()) {
         return false;
     }
     if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).fragment() == "dup") {
         return false;
     }
 
-    return dptr->proxy && dptr->proxy->exists();
+    return d->proxy && d->proxy->exists();
 }
 
 QString MasteredMediaFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
 {
     if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
         if (OpticalHelper::burnFilePath(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).contains(QRegularExpression("^(/*)$"))) {
-            const auto &map { DevProxyMng->queryBlockInfo(dptr.staticCast<MasteredMediaFileInfoPrivate>()->curDevId) };
+            const auto &map { DevProxyMng->queryBlockInfo(d->curDevId) };
             QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
             return idLabel;
         }
 
-        if (!dptr->proxy)
+        if (!d->proxy)
             return "";
-        return dptr->proxy->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        return d->proxy->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     }
     return AbstractFileInfo::displayInfo(type);
 }
@@ -88,8 +88,8 @@ QUrl MasteredMediaFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        if (dptr->proxy) {
-            return dptr->proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        if (d->proxy) {
+            return d->proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
         }
 
         return AbstractFileInfo::urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
@@ -102,16 +102,16 @@ bool MasteredMediaFileInfo::isAttributes(const AbstractFileInfo::FileIsType type
 {
     switch (type) {
     case FileIsType::kIsDir:
-        return !dptr->proxy || dptr->proxy->isAttributes(type);
+        return !d->proxy || d->proxy->isAttributes(type);
     case FileIsType::kIsReadable:
-        if (!dptr->proxy)
+        if (!d->proxy)
             return true;
 
-        return dptr->proxy->isAttributes(type);
+        return d->proxy->isAttributes(type);
     case FileIsType::kIsWritable:
-        if (!dptr->proxy)
+        if (!d->proxy)
             return false;
-        return dptr->proxy->isAttributes(type);
+        return d->proxy->isAttributes(type);
     default:
         return AbstractFileInfo::isAttributes(type);
     }
@@ -120,29 +120,29 @@ bool MasteredMediaFileInfo::isAttributes(const AbstractFileInfo::FileIsType type
 QVariantHash MasteredMediaFileInfo::extraProperties() const
 {
     QVariantHash ret;
-    if (dptr->proxy) {
-        ret = dptr->proxy->extraProperties();
+    if (d->proxy) {
+        ret = d->proxy->extraProperties();
     }
-    ret["mm_backer"] = dptr.staticCast<MasteredMediaFileInfoPrivate>()->backerUrl.path();
+    ret["mm_backer"] = d->backerUrl.path();
     return ret;
 }
 
 void MasteredMediaFileInfo::refresh()
 {
     AbstractFileInfo::refresh();
-    if (dptr->proxy) {
+    if (d->proxy) {
         return;
     }
 
-    dptr.staticCast<MasteredMediaFileInfoPrivate>()->backupInfo(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    d->backupInfo(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
 }
 
 bool MasteredMediaFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
 {
     switch (type) {
     case FileCanType::kCanRename:
-        if (dptr->proxy)
-            return dptr->proxy->canAttributes(type);
+        if (d->proxy)
+            return d->proxy->canAttributes(type);
 
         return false;
     case FileCanType::kCanRedirectionFileUrl:
@@ -150,7 +150,7 @@ bool MasteredMediaFileInfo::canAttributes(const AbstractFileInfo::FileCanType ty
             return isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);   // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
         return isAttributes(AbstractFileInfo::FileIsType::kIsDir);
     case FileCanType::kCanDrop:
-        return dptr.staticCast<MasteredMediaFileInfoPrivate>()->canDrop();
+        return d->canDrop();
     case FileCanType::kCanDragCompress:
         [[fallthrough]];
     case FileCanType::kCanHidden:

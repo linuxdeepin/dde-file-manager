@@ -811,8 +811,8 @@ bool ThumbnailProvider::createThumnailByTools(const QMimeType &mime, ThumbnailPr
     return false;
 }
 
-void ThumbnailProvider::appendToProduceQueue(const QUrl &url, ThumbnailProvider::Size size,
-                                             QSharedPointer<ThumbNailCreateFuture> &future)
+void ThumbnailProvider::appendToProduceQueue(const QUrl url, ThumbnailProvider::Size size,
+                                             QSharedPointer<ThumbNailCreateFuture> future)
 {
     ThumbnailProviderPrivate::ProduceInfo produceInfo;
 

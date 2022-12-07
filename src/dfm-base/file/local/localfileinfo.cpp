@@ -138,6 +138,7 @@ void LocalFileInfo::refresh()
 {
     QWriteLocker locker(&d->lock);
     d->dfmFileInfo->refresh();
+    d->mediaFuture.reset(nullptr);
     d->loadingThumbnail = false;
     d->fileType = MimeDatabase::FileType::kUnknown;
     d->mimeTypeMode = QMimeDatabase::MatchMode::MatchDefault;
@@ -171,15 +172,15 @@ QString LocalFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) c
     case FileNameInfoType::kSuffix:
         return d->suffix();
     case FileNameInfoType::kCompleteSuffix:
-        return const_cast<LocalFileInfoPrivate *>(d)->completeSuffix();
+        return d->completeSuffix();
     case FileNameInfoType::kFileCopyName:
         return d->fileDisplayName();
     case FileNameInfoType::kIconName:
-        return const_cast<LocalFileInfoPrivate *>(d)->iconName();
+        return d->iconName();
     case FileNameInfoType::kGenericIconName:
         return const_cast<LocalFileInfo *>(this)->fileMimeType().genericIconName();
     case FileNameInfoType::kMimeTypeName:
-        return const_cast<LocalFileInfoPrivate *>(d)->mimeTypeName();
+        return d->mimeTypeName();
     default:
         return AbstractFileInfo::nameInfo(type);
     }
@@ -237,23 +238,13 @@ bool LocalFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     case FileIsType::kIsHidden:
         [[fallthrough]];
     case FileIsType::kIsSymLink:
-        if (d->dfmFileInfo) {
-            QReadLocker locker(&d->lock);
-            return d->dfmFileInfo->attribute(d->getAttributeIDIsVector()[static_cast<int>(type)], nullptr).toBool();
-        }
-        return false;
+        return d->attribute(d->getAttributeIDIsVector()[static_cast<int>(type)]).toBool();
     case FileIsType::kIsExecutable:
         return d->isExecutable();
     case FileIsType::kIsRoot:
         return d->filePath() == "/";
     case FileIsType::kIsBundle:
         return QFileInfo(d->url.path()).isBundle();
-    case FileIsType::kIsDragCompressFileFormat: {
-        const QString &&name = d->fileName();
-        return name.endsWith(".zip")
-                || (name.endsWith(".7z")
-                    && !name.endsWith(".tar.7z"));
-    }
     case FileIsType::kIsPrivate:
         return d->isPrivate();
     default:
@@ -270,11 +261,6 @@ bool LocalFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) cons
         return d->canTrash();
     case FileCanType::kCanRename:
         return d->canRename();
-    case FileCanType::kCanDragCompress:
-        return isAttributes(AbstractFileInfo::FileIsType::kIsDragCompressFileFormat)
-                && isAttributes(FileIsType::kIsReadable)
-                && isAttributes(FileIsType::kIsWritable)
-                && !FileUtils::isGvfsFile(dptr->url);
     case FileCanType::kCanHidden:
         if (FileUtils::isGphotoFile(d->url))
             return false;
@@ -287,31 +273,26 @@ bool LocalFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) cons
 QVariant LocalFileInfo::extendedAttributes(const AbstractFileInfo::FileExtendedInfoType type) const
 {
     switch (type) {
+    case FileExtendedInfoType::kFileLocalDevice:
+        return d->isLocalDevice;
+    case FileExtendedInfoType::kFileCdRomDevice:
+        return d->isCdRomDevice;
+    case FileExtendedInfoType::kSizeFormat:
+        return d->sizeFormat();
     case FileExtendedInfoType::kInode:
         [[fallthrough]];
     case FileExtendedInfoType::kOwner:
         [[fallthrough]];
     case FileExtendedInfoType::kGroup:
         [[fallthrough]];
+    case FileExtendedInfoType::kFileIsHid:
+        [[fallthrough]];
     case FileExtendedInfoType::kOwnerId:
         [[fallthrough]];
     case FileExtendedInfoType::kGroupId:
-        if (d->dfmFileInfo) {
-            QReadLocker locker(&d->lock);
-            return d->dfmFileInfo->attribute(d->getAttributeIDExtendVector()[static_cast<int>(type)], nullptr);
-        }
-        return QVariant();
-    case FileExtendedInfoType::kFileLocalDevice:
-        return d->isLocalDevice;
-    case FileExtendedInfoType::kFileCdRomDevice:
-        return d->isCdRomDevice;
-    case FileExtendedInfoType::kFileIsHid:
-        if (d->dfmFileInfo)
-            return d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsHidden, nullptr);
-        return QVariant();
-    case FileExtendedInfoType::kSizeFormat:
-        return d->sizeFormat();
+        return d->attribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
     default:
+        QReadLocker(&d->lock);
         return AbstractFileInfo::extendedAttributes(type);
     }
 }
@@ -363,12 +344,7 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
  */
 qint64 LocalFileInfo::size() const
 {
-    qint64 size = 0;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        size = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSize, nullptr).value<qint64>();
-    }
-    return size;
+    return d->attribute(DFileInfo::AttributeID::kStandardSize).value<qint64>();
 }
 /*!
  * \brief timeInfo 获取文件的时间信息
@@ -378,11 +354,9 @@ qint64 LocalFileInfo::size() const
 QVariant LocalFileInfo::timeInfo(const AbstractFileInfo::FileTimeType type) const
 {
     qint64 data { 0 };
-    if (type < FileTimeType::kDeletionTimeMSecond) {
-        QReadLocker rlk(&d->lock);
-        if (d->dfmFileInfo)
-            data = d->dfmFileInfo->attribute(d->getAttributeIDVector()[static_cast<int>(type)], nullptr).value<qint64>();
-    }
+    if (type < FileTimeType::kDeletionTimeMSecond)
+        data = d->attribute(d->getAttributeIDVector()[static_cast<int>(type)]).value<qint64>();
+
     switch (type) {
     case AbstractFileInfo::FileTimeType::kCreateTime:
         [[fallthrough]];
@@ -393,7 +367,7 @@ QVariant LocalFileInfo::timeInfo(const AbstractFileInfo::FileTimeType type) cons
     case AbstractFileInfo::FileTimeType::kLastModified:
         [[fallthrough]];
     case AbstractFileInfo::FileTimeType::kLastRead:
-        return QDateTime::fromMSecsSinceEpoch(data);
+        return QDateTime::fromSecsSinceEpoch(data);
     case AbstractFileInfo::FileTimeType::kCreateTimeSecond:
         [[fallthrough]];
     case AbstractFileInfo::FileTimeType::kBirthTimeSecond:
@@ -415,17 +389,8 @@ QVariant LocalFileInfo::timeInfo(const AbstractFileInfo::FileTimeType type) cons
     case AbstractFileInfo::FileTimeType::kLastReadMSecond:
         return data;
     default:
-        return QVariant();
+        return AbstractFileInfo::timeInfo(type);
     }
-}
-/*!
- * \brief isBlockDev 获取是否是块设备
- *
- * \return bool 是否是块设备
- */
-bool LocalFileInfo::isBlockDev() const
-{
-    return fileType() == FileType::kBlockDevice;
 }
 /*!
  * \brief mountPath 获取挂载路径
@@ -434,7 +399,7 @@ bool LocalFileInfo::isBlockDev() const
  */
 QString LocalFileInfo::mountPath() const
 {
-    if (isBlockDev())
+    if (fileType() == FileType::kBlockDevice)
         return DFMIO::DFMUtils::devicePathFromUrl(d->url);
     else
         return QString();
@@ -609,26 +574,9 @@ QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileA
     return QVariant();
 }
 
-void LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
+QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
-    if (d->dfmFileInfo) {
-        d->extendIDs = ids;
-
-        auto it = ids.begin();
-        while (it != ids.end()) {
-            if (d->attributesExtend.count(*it))
-                it = ids.erase(it);
-            else
-                ++it;
-        }
-
-        if (!ids.isEmpty()) {
-            QReadLocker locker(&d->lock);
-            d->dfmFileInfo->attributeExtend(type, ids, std::bind(&LocalFileInfoPrivate::attributesExtendCallback, d, std::placeholders::_1, std::placeholders::_2));
-        } else {
-            d->attributesExtendCallback(true, {});
-        }
-    }
+    return d->mediaInfo(type, ids);
 }
 
 void LocalFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value)
@@ -642,10 +590,13 @@ void LocalFileInfo::setExtendedAttributes(const FileExtendedInfoType &key, const
         d->isCdRomDevice = value;
         break;
     case FileExtendedInfoType::kFileIsHid:
-        if (d->dfmFileInfo)
+        if (d->dfmFileInfo) {
             d->dfmFileInfo->setAttribute(DFileInfo::AttributeID::kStandardIsHidden, value);
-        break;
+            break;
+        }
+        [[fallthrough]];
     default:
+        AbstractFileInfo::setExtendedAttributes(key, value);
         break;
     }
 }
@@ -728,10 +679,11 @@ QIcon LocalFileInfoPrivate::thumbIcon()
     if (!loadingThumbnail) {
         loadingThumbnail = true;
         if (!getIconFuture) {
-            auto thumburl = url;
+            QUrl thumburl = url;
             getIconFuture.reset(new ThumbnailProvider::ThumbNailCreateFuture());
-            QTimer::singleShot(kRequestThumbnailDealy, [=] {
-                ThumbnailProvider::instance()->appendToProduceQueue(thumburl, ThumbnailProvider::kLarge, getIconFuture);
+            QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> future = getIconFuture;
+            QTimer::singleShot(kRequestThumbnailDealy, [thumburl, future] {
+                ThumbnailProvider::instance()->appendToProduceQueue(thumburl, ThumbnailProvider::kLarge, future);
             });
         }
     } else if (getIconFuture && getIconFuture->finished) {
@@ -822,13 +774,7 @@ QString LocalFileInfoPrivate::fileName() const
  */
 QString LocalFileInfoPrivate::baseName() const
 {
-    QString baseName;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        baseName = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardBaseName, nullptr).toString();
-    }
-
-    return baseName;
+    return attribute(DFileInfo::AttributeID::kStandardBaseName).toString();
 }
 /*!
  * \brief completeBaseName 文件的完整基本名称
@@ -843,13 +789,7 @@ QString LocalFileInfoPrivate::baseName() const
  */
 QString LocalFileInfoPrivate::completeBaseName() const
 {
-    QString completeBaseName;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        completeBaseName = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardCompleteBaseName, nullptr).toString();
-    }
-
-    return completeBaseName;
+    return attribute(DFileInfo::AttributeID::kStandardCompleteBaseName).toString();
 }
 /*!
  * \brief suffix 文件的suffix
@@ -864,13 +804,7 @@ QString LocalFileInfoPrivate::completeBaseName() const
  */
 QString LocalFileInfoPrivate::suffix() const
 {
-    QString suffix;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        suffix = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSuffix, nullptr).toString();
-    }
-
-    return suffix;
+    return attribute(DFileInfo::AttributeID::kStandardSuffix).toString();
 }
 /*!
  * \brief suffix 文件的完整suffix
@@ -883,25 +817,19 @@ QString LocalFileInfoPrivate::suffix() const
  *
  * \return
  */
-QString LocalFileInfoPrivate::completeSuffix()
+QString LocalFileInfoPrivate::completeSuffix() const
 {
-    QString completeSuffix;
-    if (dfmFileInfo) {
-        QReadLocker locker(&lock);
-        completeSuffix = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardCompleteSuffix, nullptr).toString();
-    }
-
-    return completeSuffix;
+    return attribute(DFileInfo::AttributeID::kStandardCompleteSuffix).toString();
 }
 
-QString LocalFileInfoPrivate::iconName()
+QString LocalFileInfoPrivate::iconName() const
 {
     QString iconNameValue;
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
         iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(filePath());
     if (iconNameValue.isEmpty()) {
         if (dfmFileInfo) {
-            QReadLocker locker(&lock);
+            QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
             const QStringList &list = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIcon, nullptr).toStringList();
             if (!list.isEmpty())
                 iconNameValue = list.first();
@@ -911,15 +839,9 @@ QString LocalFileInfoPrivate::iconName()
     return iconNameValue;
 }
 
-QString LocalFileInfoPrivate::mimeTypeName()
+QString LocalFileInfoPrivate::mimeTypeName() const
 {
-    QString type;
-    if (dfmFileInfo) {
-        QReadLocker locker(&lock);
-        type = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardContentType, nullptr).toString();
-    }
-
-    return type;
+    return attribute(DFileInfo::AttributeID::kStandardContentType).toString();
 }
 
 /*!
@@ -963,13 +885,7 @@ QString LocalFileInfoPrivate::fileDisplayName() const
  */
 QString LocalFileInfoPrivate::path() const
 {
-    QString path;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        path = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardParentPath, nullptr).toString();
-    }
-
-    return path;
+    return attribute(DFileInfo::AttributeID::kStandardParentPath).toString();
 }
 
 /*!
@@ -985,13 +901,7 @@ QString LocalFileInfoPrivate::path() const
  */
 QString LocalFileInfoPrivate::filePath() const
 {
-    QString filePath;
-    if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        filePath = dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardFilePath, nullptr).toString();
-    }
-
-    return filePath;
+    return attribute(DFileInfo::AttributeID::kStandardFilePath).toString();
 }
 
 /*!
@@ -1089,11 +999,8 @@ bool LocalFileInfoPrivate::canDelete() const
         return false;
 
     bool canDelete = SysInfoUtils::isRootUser();
-    if (!canDelete) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        if (dfmFileInfo)
-            canDelete = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanDelete, nullptr).toBool();
-    }
+    if (!canDelete)
+        return attribute(DFileInfo::AttributeID::kAccessCanDelete).toBool();
 
     return canDelete;
 }
@@ -1104,11 +1011,8 @@ bool LocalFileInfoPrivate::canTrash() const
         return false;
 
     bool canTrash = false;
-    if (!canTrash) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        if (dfmFileInfo)
-            canTrash = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanTrash, nullptr).toBool();
-    }
+    if (!canTrash)
+        return attribute(DFileInfo::AttributeID::kAccessCanTrash).toBool();
 
     return canTrash;
 }
@@ -1120,11 +1024,8 @@ bool LocalFileInfoPrivate::canRename() const
 
     bool canRename = false;
     canRename = SysInfoUtils::isRootUser();
-    if (!canRename) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        if (dfmFileInfo)
-            canRename = dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr).toBool();
-    }
+    if (!canRename)
+        return attribute(DFileInfo::AttributeID::kAccessCanRename).toBool();
 
     return canRename;
 }
@@ -1154,37 +1055,40 @@ QString LocalFileInfoPrivate::sizeFormat() const
         return QStringLiteral("-");
     }
 
-    qlonglong fileSize(q->size());
-    bool withUnitVisible = true;
-    int forceUnit = -1;
+    return FileUtils::formatSize(q->size());
+}
 
-    if (fileSize < 0) {
-        qWarning() << "Negative number passed to formatSize():" << fileSize;
-        fileSize = 0;
+QVariant LocalFileInfoPrivate::attribute(DFileInfo::AttributeID key) const
+{
+    if (dfmFileInfo) {
+        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+        return dfmFileInfo->attribute(key, nullptr);
     }
+    return QVariant();
+}
 
-    bool isForceUnit = false;
-    QStringList list { " B", " KB", " MB", " GB", " TB" };
+QMap<DFileInfo::AttributeExtendID, QVariant> LocalFileInfoPrivate::mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids)
+{
+    if (dfmFileInfo) {
+        extendIDs = ids;
 
-    QStringListIterator i(list);
-    QString unit = i.hasNext() ? i.next() : QStringLiteral(" B");
-
-    int index = 0;
-    while (i.hasNext()) {
-        if (fileSize < 1024 && !isForceUnit) {
-            break;
+        auto it = ids.begin();
+        while (it != ids.end()) {
+            if (attributesExtend.count(*it))
+                it = ids.erase(it);
+            else
+                ++it;
         }
 
-        if (isForceUnit && index == forceUnit) {
-            break;
+        if (!ids.isEmpty() && !mediaFuture) {
+            mediaFuture.reset(new InfoDataFuture(dfmFileInfo->attributeExtend(type, ids, 0)));
+        } else if (mediaFuture && mediaFuture->isFinished()) {
+            attributesExtend = mediaFuture->mediaInfo();
+            mediaFuture.reset(nullptr);
         }
-
-        unit = i.next();
-        fileSize /= 1024;
-        index++;
     }
-    QString unitString = withUnitVisible ? unit : QString();
-    return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', 1)), unitString);
+
+    return attributesExtend;
 }
 
 }

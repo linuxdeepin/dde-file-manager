@@ -66,7 +66,7 @@ public:
     QString createThumbnail(const QUrl &url, Size size);
 
     using CallBack = std::function<void(const QString &)>;
-    void appendToProduceQueue(const QUrl &url, Size size, QSharedPointer<ThumbNailCreateFuture> &future);
+    void appendToProduceQueue(const QUrl url, Size size, QSharedPointer<ThumbNailCreateFuture> future);
 
     QString errorString() const;
     qint64 sizeLimit(const QMimeType &mimeType) const;

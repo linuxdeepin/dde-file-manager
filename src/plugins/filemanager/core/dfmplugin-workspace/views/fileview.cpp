@@ -64,6 +64,7 @@ DFMBASE_USE_NAMESPACE
 FileView::FileView(const QUrl &url, QWidget *parent)
     : DListView(parent), d(new FileViewPrivate(this))
 {
+    Q_UNUSED(url);
     setDragDropMode(QAbstractItemView::DragDrop);
     setDropIndicatorShown(false);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -1696,7 +1697,7 @@ QUrl FileView::parseSelectedUrl(const QUrl &url)
         // checkGvfsMountfileBusy
         QList<QUrl> ancestors;
         if (const AbstractFileInfoPointer &currentFileInfo = InfoFactory::create<AbstractFileInfo>(rootUrl())) {
-            if (currentFileInfo->isAncestorsUrl(fileUrl, &ancestors))
+            if (UrlRoute::isAncestorsUrl(rootUrl(), fileUrl, &ancestors))
                 d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl());
         }
     }

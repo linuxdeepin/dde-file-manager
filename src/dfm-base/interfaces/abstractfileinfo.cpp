@@ -168,18 +168,6 @@ QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::Fil
         [[fallthrough]];
     case FileNameInfoType::kBaseNameOfRename:
         return dptr->baseName();
-    case FileNameInfoType::kCompleteBaseName:
-        [[fallthrough]];
-    case FileNameInfoType::kSuffix:
-        [[fallthrough]];
-    case FileNameInfoType::kCompleteSuffix:
-        [[fallthrough]];
-    case FileNameInfoType::kSuffixOfRename:
-        [[fallthrough]];
-    case FileNameInfoType::kFileCopyName:
-        [[fallthrough]];
-    case FileNameInfoType::kMimeTypeName:
-        return QString();
     case FileNameInfoType::kIconName:
         return const_cast<AbstractFileInfo *>(this)->fileMimeType().iconName();
     case FileNameInfoType::kGenericIconName:
@@ -196,22 +184,8 @@ QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::Fil
 QString dfmbase::AbstractFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
 {
     CALL_PROXY(pathInfo(type));
-    switch (type) {
-    case FilePathInfoType::kPath:
-        [[fallthrough]];
-    case FilePathInfoType::kFilePath:
-        [[fallthrough]];
-    case FilePathInfoType::kAbsoluteFilePath:
-        [[fallthrough]];
-    case FilePathInfoType::kAbsolutePath:
-        [[fallthrough]];
-    case FilePathInfoType::kCanonicalPath:
-        [[fallthrough]];
-    case FilePathInfoType::kSymLinkTarget:
-        [[fallthrough]];
-    default:
-        return QString();
-    }
+
+    return QString();
 }
 /*!
  * \brief permission 判断文件是否有传入的权限
@@ -362,38 +336,6 @@ QString dfmbase::AbstractFileInfo::displayInfo(const AbstractFileInfo::DisplayIn
     }
 }
 
-bool DFMBASE_NAMESPACE::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors) const
-{
-    CALL_PROXY(isAncestorsUrl(url, ancestors));
-
-    QUrl parentUrl = this->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
-
-    forever {
-        if (ancestors && parentUrl.isValid()) {
-            ancestors->append(parentUrl);
-        }
-
-        if (UniversalUtils::urlEquals(parentUrl, url)) {
-            return true;
-        }
-
-        auto fileInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
-
-        if (!fileInfo) {
-            break;
-        }
-
-        const QUrl &pu = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
-
-        if (pu == parentUrl) {
-            break;
-        }
-
-        parentUrl = pu;
-    }
-
-    return false;
-}
 /*!
  * \brief 获取文件url，默认是文件的url，此接口不会实现异步，全部使用Qurl去
  * 处理或者字符串处理，这都比较快
@@ -464,26 +406,6 @@ bool dfmbase::AbstractFileInfo::isAttributes(const dfmbase::AbstractFileInfo::Fi
     switch (type) {
     case FileIsType::kIsRoot:
         return pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) == "/";
-    case FileIsType::kIsFile:
-        [[fallthrough]];
-    case FileIsType::kIsDir:
-        [[fallthrough]];
-    case FileIsType::kIsReadable:
-        [[fallthrough]];
-    case FileIsType::kIsWritable:
-        [[fallthrough]];
-    case FileIsType::kIsExecutable:
-        [[fallthrough]];
-    case FileIsType::kIsHidden:
-        [[fallthrough]];
-    case FileIsType::kIsSymLink:
-        [[fallthrough]];
-    case FileIsType::kIsBundle:
-        [[fallthrough]];
-    case FileIsType::kIsDragCompressFileFormat:
-        [[fallthrough]];
-    case FileIsType::kIsPrivate:
-        [[fallthrough]];
     default:
         return false;
     }
@@ -504,16 +426,6 @@ bool dfmbase::AbstractFileInfo::canAttributes(const dfmbase::AbstractFileInfo::F
         [[fallthrough]];
     case FileCanType::kCanMoveOrCopy:
         return true;
-    case FileCanType::kCanDelete:
-        [[fallthrough]];
-    case FileCanType::kCanTrash:
-        [[fallthrough]];
-    case FileCanType::kCanRename:
-        [[fallthrough]];
-    case FileCanType::kCanRedirectionFileUrl:
-        [[fallthrough]];
-    case FileCanType::kCanDragCompress:
-        [[fallthrough]];
     default:
         return false;
     }
@@ -536,7 +448,7 @@ QVariant dfmbase::AbstractFileInfo::extendedAttributes(const dfmbase::AbstractFi
     case FileExtendedInfoType::kGroupId:
         return static_cast<uint>(-1);
     default:
-        return QVariant();
+        return dptr->extendOtherCache.value(type);
     }
 }
 
@@ -563,9 +475,10 @@ QVariant DFMBASE_NAMESPACE::AbstractFileInfo::customAttribute(const char *key, c
     return QVariant();
 }
 
-void DFMBASE_NAMESPACE::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
+QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids) const
 {
     CALL_PROXY(mediaInfoAttributes(type, ids));
+    return QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant>();
 }
 
 /*!
@@ -576,6 +489,7 @@ void DFMBASE_NAMESPACE::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaTy
 void DFMBASE_NAMESPACE::AbstractFileInfo::setExtendedAttributes(const AbstractFileInfo::FileExtendedInfoType &key, const QVariant &value)
 {
     CALL_PROXY(setExtendedAttributes(key, value));
+    dptr->extendOtherCache.insert(key, value);
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon
