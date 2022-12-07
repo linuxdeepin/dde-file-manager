@@ -255,6 +255,7 @@ void DFMCrumbBarPrivate::initConnections()
     q->connect(addressBar, &DFMAddressBar::lostFocus, q, [q, this]() {
         if (crumbController && !qobject_cast<DFileManagerWindow *>(q->window())->isAdvanceSearchBarVisible()) {
             crumbController->processAction(DFMCrumbInterface::AddressBarLostFocus);
+            q->setFocus();
         }
     });
 
