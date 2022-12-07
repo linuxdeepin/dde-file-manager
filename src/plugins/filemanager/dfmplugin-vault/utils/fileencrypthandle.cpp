@@ -21,6 +21,9 @@
 
 #include "fileencrypthandle.h"
 #include "fileencrypthandle_p.h"
+#include "encryption/vaultconfig.h"
+
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <QDirIterator>
 #include <QStandardPaths>
@@ -36,6 +39,7 @@
 #include <unistd.h>
 
 DPVAULT_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 FileEncryptHandle::FileEncryptHandle(QObject *parent)
     : QObject(parent), d(new FileEncryptHandlerPrivate(this))
@@ -79,6 +83,12 @@ void FileEncryptHandle::createVault(QString lockBaseDir, QString unlockFileDir, 
     d->activeState.insert(1, static_cast<int>(ErrorCode::kSuccess));
     createDirIfNotExist(lockBaseDir);
     createDirIfNotExist(unlockFileDir);
+
+    const QString &algoName = d->encryptTypeMap.value(type);
+    DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
+    VaultConfig config;
+    config.set(kConfigNodeName, kConfigKeyAlgoName, QVariant(algoName));
+
     int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
     if (d->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalCreateVault(d->activeState.value(1));
@@ -106,6 +116,9 @@ void FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, 
     d->mutex->lock();
     d->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
     qDebug() << "VaultHandle::unlockVault:" << QThread::currentThread();
+
+    d->syncGroupPolicyAlgoName();
+
     createDirIfNotExist(unlockFileDir);
     int flg = d->runVaultProcess(lockBaseDir, unlockFileDir, DSecureString);
     if (d->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
@@ -184,6 +197,11 @@ VaultState FileEncryptHandle::state(const QString &encryptBaseDir, const QString
     } else {
         return kNotExisted;
     }
+}
+
+EncryptType FileEncryptHandle::encryptAlgoTypeOfGroupPolicy()
+{
+    return d->encryptAlgoTypeOfGroupPolicy();
 }
 
 /*!
@@ -383,6 +401,11 @@ void FileEncryptHandlerPrivate::initEncryptType()
     encryptTypeMap.insert(EncryptType::MARS_256_CFB, "mars-256-cfb");
     encryptTypeMap.insert(EncryptType::MARS_128_GCM, "mars-128-gcm");
     encryptTypeMap.insert(EncryptType::MARS_128_CFB, "mars-128-cfb");
+    encryptTypeMap.insert(EncryptType::SM4_128_ECB, "sm4-128-ecb");
+    encryptTypeMap.insert(EncryptType::SM4_128_CBC, "sm4-128-cbc");
+    encryptTypeMap.insert(EncryptType::SM4_128_CFB, "sm4-128-cfb");
+    encryptTypeMap.insert(EncryptType::SM4_128_OFB, "sm4-128-ofb");
+    encryptTypeMap.insert(EncryptType::SM4_128_CTR, "sm4-128-ctr");
 }
 
 void FileEncryptHandlerPrivate::runVaultProcessAndGetOutput(const QStringList &arguments, QString &standardError, QString &standardOutput)
@@ -442,4 +465,74 @@ FileEncryptHandlerPrivate::CryfsVersionInfo FileEncryptHandlerPrivate::versionSt
     }
 
     return cryfsVersion;
+}
+
+QStringList FileEncryptHandlerPrivate::algoNameOfSupport()
+{
+    QStringList result { "" };
+    QString cryfsProgram = QStandardPaths::findExecutable("cryfs");
+    if (cryfsProgram.isEmpty()) {
+        qWarning() << "cryfs is not exist!";
+        return result;
+    }
+
+    QProcess process;
+    process.setEnvironment({ "CRYFS_FRONTEND=noninteractive", "CRYFS_NO_UPDATE_CHECK=true" });
+    process.start(cryfsProgram, { "--show-ciphers" });
+    process.waitForStarted();
+    process.waitForFinished();
+    QString output = QString::fromLocal8Bit(process.readAllStandardError());
+    result = output.split('\n', QString::SkipEmptyParts);
+
+    return result;
+}
+
+bool FileEncryptHandlerPrivate::isSupportAlgoName(const QString &algoName)
+{
+    static QStringList algoNames = algoNameOfSupport();
+    if (algoNames.contains(algoName))
+        return true;
+    return false;
+}
+
+void FileEncryptHandlerPrivate::syncGroupPolicyAlgoName()
+{
+    VaultConfig config;
+    const QString &algoName = config.get(kConfigNodeName, kConfigKeyAlgoName, QVariant("NoExist")).toString();
+    if (algoName == "NoExist") {
+        // 字段不存在，引入国密之前的保险箱，默认算法为aes-256-gcm
+        DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, encryptTypeMap.value(EncryptType::AES_256_GCM));
+    } else {
+        if (!algoName.isEmpty())
+            DConfigManager::instance()->setValue(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
+    }
+}
+
+EncryptType FileEncryptHandlerPrivate::encryptAlgoTypeOfGroupPolicy()
+{
+    QString algoName { encryptTypeMap.value(EncryptType::SM4_128_ECB) };
+    if (DConfigManager::instance()->contains(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName)) {
+        algoName = DConfigManager::instance()->value(kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, QVariant(kConfigKeyNotExist)).toString();
+        if (algoName == kConfigKeyNotExist || algoName.isEmpty()) {
+            algoName = encryptTypeMap.value(EncryptType::SM4_128_ECB);
+        }
+    }
+
+    if (!isSupportAlgoName(algoName)) {
+        algoName = encryptTypeMap.value(EncryptType::SM4_128_ECB);
+        if (!isSupportAlgoName(algoName))
+            algoName = encryptTypeMap.value(EncryptType::AES_256_GCM);
+    }
+
+    EncryptType type { EncryptType::AES_256_GCM };
+    QMap<EncryptType, QString>::const_iterator i = encryptTypeMap.constBegin();
+    while (i != encryptTypeMap.constEnd()) {
+        if (i.value() == algoName) {
+            type = i.key();
+            break;
+        }
+        ++i;
+    }
+
+    return type;
 }

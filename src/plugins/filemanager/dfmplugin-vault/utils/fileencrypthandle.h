@@ -43,6 +43,7 @@ public:
     void createDirIfNotExist(QString path);
     VaultState state(const QString &encryptBaseDir, const QString &decryptFileDir) const;
 
+    EncryptType encryptAlgoTypeOfGroupPolicy();
 signals:
     void signalReadError(QString error);
     void signalReadOutput(QString msg);

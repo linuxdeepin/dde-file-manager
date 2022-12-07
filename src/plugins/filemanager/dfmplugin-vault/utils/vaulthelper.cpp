@@ -320,7 +320,8 @@ void VaultHelper::createVault(QString &password)
         connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault, VaultHelper::instance(), &VaultHelper::sigCreateVault);
         flg = false;
     }
-    FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
+    const EncryptType &type = FileEncryptHandle::instance()->encryptAlgoTypeOfGroupPolicy();
+    FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password, type);
 }
 
 void VaultHelper::unlockVault(QString &password)

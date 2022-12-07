@@ -143,7 +143,12 @@ enum class EncryptType : int {
     MARS_256_GCM,
     MARS_256_CFB,
     MARS_128_GCM,
-    MARS_128_CFB
+    MARS_128_CFB,
+    SM4_128_ECB,
+    SM4_128_CBC,
+    SM4_128_CFB,
+    SM4_128_OFB,
+    SM4_128_CTR
 };
 
 DPVAULT_END_NAMESPACE

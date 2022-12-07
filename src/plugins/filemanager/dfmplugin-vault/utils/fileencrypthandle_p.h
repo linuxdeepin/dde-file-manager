@@ -77,6 +77,11 @@ private:
     void runVaultProcessAndGetOutput(const QStringList &arguments, QString &standardError, QString &standardOutput);
     CryfsVersionInfo versionString();
 
+    QStringList algoNameOfSupport();
+    bool isSupportAlgoName(const QString &algoName);
+    void syncGroupPolicyAlgoName();
+    EncryptType encryptAlgoTypeOfGroupPolicy();
+
 private:
     QProcess *process { nullptr };
     QMutex *mutex { nullptr };
