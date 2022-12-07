@@ -41,13 +41,11 @@ class Tab : public QGraphicsObject
     Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
 
 public:
-    explicit Tab(QGraphicsObject *parent = nullptr, DFMBASE_NAMESPACE::AbstractBaseView *view = nullptr);
+    explicit Tab(QGraphicsObject *parent = nullptr);
 
-    DFMBASE_NAMESPACE::AbstractBaseView *getCurrentView();
     QUrl getCurrentUrl() const;
     void setCurrentUrl(const QUrl &url);
     void setTabText(const QString &text);
-    void setFileView(DFMBASE_NAMESPACE::AbstractBaseView *view);
 
     bool isChecked() const;
     void setChecked(const bool check);

@@ -179,8 +179,10 @@ void FileDataHelper::update(const QUrl &rootUrl)
 void FileDataHelper::clear(const QUrl &rootUrl)
 {
     RootInfo *info = findRootInfo(rootUrl);
-    if (info)
+    if (info) {
+        info->needTraversal = true;
         info->clearChildren();
+    }
 }
 
 void FileDataHelper::setFileActive(const int rootIndex, const int childIndex, bool active)

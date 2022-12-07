@@ -51,6 +51,7 @@ public:
 
     void clear();
     void update();
+    void refresh();
 
     AbstractFileInfoPointer itemFileInfo(const QModelIndex &index) const;
 
@@ -96,7 +97,6 @@ public Q_SLOTS:
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
     virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
-
 
 private:
     bool passFileFilters(const AbstractFileInfoPointer &info) const;

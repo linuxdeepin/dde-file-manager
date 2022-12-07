@@ -41,8 +41,9 @@ class TabBar : public QGraphicsView
     Q_OBJECT
 public:
     explicit TabBar(QWidget *parent = nullptr);
+    ~TabBar() override;
 
-    int createTab(DFMBASE_NAMESPACE::AbstractBaseView *view);
+    int createTab();
     void removeTab(const int index, const bool &remainState = false);
     Tab *currentTab() const;
     Tab *tabAt(const int &index);
@@ -50,7 +51,6 @@ public:
     bool tabAddable() const;
     void setCurrentIndex(const int index);
     void setCurrentUrl(const QUrl &url);
-    void setCurrentView(DFMBASE_NAMESPACE::AbstractBaseView *view);
     void closeTab(quint64 winId, const QUrl &url);
     int count() const;
 

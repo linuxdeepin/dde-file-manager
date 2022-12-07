@@ -21,6 +21,7 @@
  */
 #include "tab.h"
 #include "private/tab_p.h"
+#include "utils/filemodelmanager.h"
 
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/base/schemefactory.h"
@@ -41,19 +42,13 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
-Tab::Tab(QGraphicsObject *parent, AbstractBaseView *view)
+Tab::Tab(QGraphicsObject *parent)
     : QGraphicsObject(parent),
       d(new TabPrivate())
 {
-    setFileView(view);
     setAcceptHoverEvents(true);
     setFlags(ItemIsSelectable);
     setAcceptedMouseButtons(Qt::LeftButton);
-}
-
-AbstractBaseView *Tab::getCurrentView()
-{
-    return d->currentView;
 }
 
 QUrl Tab::getCurrentUrl() const
@@ -61,20 +56,14 @@ QUrl Tab::getCurrentUrl() const
     return d->url;
 }
 
-void Tab::setFileView(AbstractBaseView *view)
-{
-    if (d->currentView == view)
-        return;
-
-    d->currentView = view;
-
-    if (d->currentView)
-        setCurrentUrl(d->currentView->rootUrl());
-}
-
 void Tab::setCurrentUrl(const QUrl &url)
 {
+    if (d->url.isValid())
+        FileModelManager::instance()->derefRootData(d->url);
+
     d->url = url;
+
+    FileModelManager::instance()->refRootData(d->url);
 
     QString fileName = UrlRoute::isRootUrl(url)
             ? UrlRoute::rootDisplayName(url.scheme())

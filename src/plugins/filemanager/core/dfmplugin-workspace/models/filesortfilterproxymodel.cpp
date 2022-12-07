@@ -126,6 +126,14 @@ void FileSortFilterProxyModel::update()
     viewModel()->update(rootUrl);
 }
 
+void FileSortFilterProxyModel::refresh()
+{
+    if (state != ModelState::kIdle)
+        return;
+
+    viewModel()->refresh(rootUrl);
+}
+
 AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex &index) const
 {
     const QModelIndex &sourceIndex = mapToSource(index);

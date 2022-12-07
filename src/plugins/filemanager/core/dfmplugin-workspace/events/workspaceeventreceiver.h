@@ -89,6 +89,7 @@ public slots:
     void handleSetCustomFilterData(quint64 windowID, const QUrl &url, const QVariant &data);
     void handleSetCustomFilterCallback(quint64 windowID, const QUrl &url, const QVariant callback);
     bool handleRegisterRoutePrehandle(const QString &scheme, const FileViewRoutePrehaldler &prehandler);
+    void handleRegisterDataCache(const QString &scheme);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

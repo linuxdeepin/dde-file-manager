@@ -37,10 +37,20 @@ public:
     static FileModelManager *instance();
     FileSortFilterProxyModel *createProxyModel(QAbstractItemView *view);
 
+    void refRootData(const QUrl &url);
+    void derefRootData(const QUrl &url);
+
+    bool needCacheData(const QString &scheme);
+    void registerDataCache(const QString &scheme);
+
 private:
     explicit FileModelManager(QObject *parent = nullptr);
 
     FileViewModel *sourceDataModel = nullptr;
+
+    // scheme in cacheDataSchemes will cache data in source model
+    QList<QString> cacheDataSchemes {};
+    QMap<QUrl, int> dataRefMap {};
 };
 
 }

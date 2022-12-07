@@ -283,6 +283,18 @@ void FileViewModel::update(const QUrl &rootUrl)
     }
 }
 
+void FileViewModel::refresh(const QUrl &rootUrl)
+{
+    auto rootInfo = fileDataHelper->findRootInfo(rootUrl);
+    if (rootInfo) {
+        fileDataHelper->clear(rootUrl);
+
+        rootInfo->canFetchMore = true;
+        const QModelIndex &index = rootIndex(rootUrl);
+        fetchMore(index);
+    }
+}
+
 void FileViewModel::fetchMore(const QModelIndex &parent)
 {
     if (!canFetchMore(parent)) {
@@ -459,6 +471,11 @@ QList<ItemRoles> FileViewModel::getColumnRoles(const QUrl &rootUrl) const
 void FileViewModel::setIndexActive(const QModelIndex &index, bool enable)
 {
     fileDataHelper->setFileActive(index.parent().row(), index.row(), enable);
+}
+
+void FileViewModel::cleanDataCacheByUrl(const QUrl &url)
+{
+    fileDataHelper->clear(url);
 }
 
 void FileViewModel::onFilesUpdated()

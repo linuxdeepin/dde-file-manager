@@ -22,6 +22,7 @@
 #include "workspaceeventreceiver.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
+#include "utils/filemodelmanager.h"
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
 
@@ -131,6 +132,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCurrentSortRole);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_SetSort",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSort);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Model_RegisterDataCache",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRegisterDataCache);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
@@ -383,4 +386,9 @@ void WorkspaceEventReceiver::handleSetCustomFilterCallback(quint64 windowID, con
 bool WorkspaceEventReceiver::handleRegisterRoutePrehandle(const QString &scheme, const FileViewRoutePrehaldler &prehandler)
 {
     return WorkspaceHelper::instance()->reigsterViewRoutePrehandler(scheme, prehandler);
+}
+
+void WorkspaceEventReceiver::handleRegisterDataCache(const QString &scheme)
+{
+    FileModelManager::instance()->registerDataCache(scheme);
 }

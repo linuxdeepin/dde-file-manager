@@ -230,7 +230,7 @@ QList<QUrl> FileView::selectedUrlList() const
 void FileView::refresh()
 {
     model()->initMixDirAndFile();
-    model()->fetchMore(rootIndex());
+    model()->refresh();
 }
 
 FileSortFilterProxyModel *FileView::model() const

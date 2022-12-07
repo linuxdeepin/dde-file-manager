@@ -96,6 +96,7 @@ void Workspace::onWindowOpened(quint64 windId)
     connect(window, &FileManagerWindow::reqActivatePreviousTab, workspace, &WorkspaceWidget::onPreviousTab);
     connect(window, &FileManagerWindow::reqCloseCurrentTab, workspace, &WorkspaceWidget::onCloseCurrentTab);
     connect(window, &FileManagerWindow::reqActivateTabByIndex, workspace, &WorkspaceWidget::onSetCurrentTabIndex);
+    connect(window, &FileManagerWindow::reqRefresh, workspace, &WorkspaceWidget::onRefreshCurrentView);
 }
 
 void Workspace::onWindowClosed(quint64 windId)

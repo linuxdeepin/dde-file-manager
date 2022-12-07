@@ -24,6 +24,7 @@
 #include "tabclosebutton.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
+#include "utils/filemodelmanager.h"
 
 #include "global_server_defines.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -49,9 +50,16 @@ TabBar::TabBar(QWidget *parent)
     initializeUI();
 }
 
-int TabBar::createTab(AbstractBaseView *view)
+TabBar::~TabBar()
 {
-    Tab *tab = new Tab(nullptr, view);
+    for (int index = tabList.count() - 1; index >= 0; --index) {
+        removeTab(index);
+    }
+}
+
+int TabBar::createTab()
+{
+    Tab *tab = new Tab();
     tabList.append(tab);
     scene->addItem(tab);
 
@@ -87,6 +95,9 @@ int TabBar::createTab(AbstractBaseView *view)
 void TabBar::removeTab(const int index, const bool &remainState)
 {
     Tab *tab = tabList.at(index);
+
+    const QUrl &oldUrl = tab->getCurrentUrl();
+    FileModelManager::instance()->derefRootData(oldUrl);
 
     tabList.removeAt(index);
     tab->deleteLater();
@@ -170,18 +181,9 @@ void TabBar::setCurrentUrl(const QUrl &url)
 {
     Tab *tab = currentTab();
     if (!tab)
-        createTab(nullptr);
+        createTab();
 
     tab->setCurrentUrl(url);
-}
-
-void TabBar::setCurrentView(AbstractBaseView *view)
-{
-    Tab *tab = currentTab();
-    if (!tab)
-        createTab(view);
-
-    tab->setFileView(view);
 }
 
 void TabBar::closeTab(quint64 winId, const QUrl &url)

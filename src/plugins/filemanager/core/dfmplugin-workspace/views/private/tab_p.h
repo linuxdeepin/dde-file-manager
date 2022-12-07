@@ -43,8 +43,6 @@ class TabPrivate
 public:
     TabPrivate();
 
-    DFMBASE_NAMESPACE::AbstractBaseView *currentView = nullptr;
-
     QDrag *dragObject = nullptr;
     QVariant tabData;
     QString tabText;

@@ -84,7 +84,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
     workspaceUrl = url;
 
     if (!tabBar->currentTab())
-        tabBar->createTab(nullptr);
+        tabBar->createTab();
 
     // NOTE: In the function `initCustomTopWidgets` the `cd` event may be
     // called causing this function to reentrant!!!
@@ -101,21 +101,11 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
             return;
         }
 
-        viewStackLayout->addWidget(fileView->widget());
-        viewStackLayout->setCurrentWidget(fileView->widget());
         views.insert(url.scheme(), fileView);
-        fileView->setRootUrl(url);
-        tabBar->setCurrentView(fileView.get());
-        tabBar->setCurrentUrl(url);
-        initCustomTopWidgets(url);
-        return;
+        viewStackLayout->addWidget(fileView->widget());
     }
 
-    views[scheme]->setRootUrl(url);
-    viewStackLayout->setCurrentWidget(views[scheme]->widget());
-    tabBar->setCurrentView(views[scheme].get());
-    tabBar->setCurrentUrl(url);
-    initCustomTopWidgets(url);
+    setCurrentView(url);
 }
 
 QUrl WorkspaceWidget::currentUrl() const
@@ -125,8 +115,8 @@ QUrl WorkspaceWidget::currentUrl() const
 
 AbstractBaseView *WorkspaceWidget::currentView()
 {
-    auto tab { tabBar->currentTab() };
-    return tab ? tab->getCurrentView() : nullptr;
+    auto scheme = currentUrl().scheme();
+    return views.value(scheme).data();
 }
 
 void WorkspaceWidget::openNewTab(const QUrl &url)
@@ -134,7 +124,7 @@ void WorkspaceWidget::openNewTab(const QUrl &url)
     if (!tabBar->tabAddable())
         return;
 
-    tabBar->createTab(nullptr);
+    tabBar->createTab();
 
     auto windowID = WorkspaceHelper::instance()->windowId(this);
     if (url.isEmpty())
@@ -223,6 +213,11 @@ void WorkspaceWidget::onSetCurrentTabIndex(const int index)
     tabBar->setCurrentIndex(index);
 }
 
+void WorkspaceWidget::onRefreshCurrentView()
+{
+    currentView()->refresh();
+}
+
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)
 {
     quint64 thisWindowID = WorkspaceHelper::instance()->windowId(this);
@@ -308,7 +303,7 @@ void WorkspaceWidget::keyPressEvent(QKeyEvent *event)
 void WorkspaceWidget::handleCtrlT()
 {
     // If a directory is selected, open NewTab through the URL of the selected directory
-    auto view = tabBar->currentTab()->getCurrentView();
+    auto view = currentView();
     if (view) {
         const QList<QUrl> &urls = view->selectedUrlList();
         if (urls.count() == 1) {
@@ -436,5 +431,18 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
                 topWidgetPtr->setVisible(interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
             }
         }
+    }
+}
+
+void WorkspaceWidget::setCurrentView(const QUrl &url)
+{
+    auto view = views[url.scheme()];
+    if (view) {
+        viewStackLayout->setCurrentWidget(view->widget());
+
+        view->setRootUrl(url);
+        tabBar->setCurrentUrl(url);
+
+        initCustomTopWidgets(url);
     }
 }

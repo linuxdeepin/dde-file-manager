@@ -71,6 +71,7 @@ public:
 
     void clear(const QUrl &rootUrl);
     void update(const QUrl &rootUrl);
+    void refresh(const QUrl &rootUrl);
 
     AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
     AbstractFileInfoPointer fileInfo(const QModelIndex &parent, const QModelIndex &index) const;
@@ -86,6 +87,8 @@ public:
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles(const QUrl &rootUrl) const;
 
     void setIndexActive(const QModelIndex &index, bool enable);
+
+    void cleanDataCacheByUrl(const QUrl &url);
 
 public Q_SLOTS:
     void onFilesUpdated();

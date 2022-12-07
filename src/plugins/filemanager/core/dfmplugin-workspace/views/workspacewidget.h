@@ -89,6 +89,7 @@ public slots:
     void onPreviousTab();
     void onCloseCurrentTab();
     void onSetCurrentTabIndex(const int index);
+    void onRefreshCurrentView();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -102,6 +103,7 @@ private:
     void handleCtrlN();
     void handleCtrlT();
     void initCustomTopWidgets(const QUrl &url);
+    void setCurrentView(const QUrl &url);
 
     QUrl workspaceUrl;
     QFrame *topWidgetContainer { nullptr };
