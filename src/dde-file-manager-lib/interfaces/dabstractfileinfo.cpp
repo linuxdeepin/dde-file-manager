@@ -954,10 +954,11 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                            << MenuAction::Separator;
             } else if (isFile()) {
                 if (mimeTypeName().startsWith("image") && isReadable()
-//                        && !mimeTypeName().endsWith("gif")
-                        && !mimeTypeName().endsWith("svg+xml")
-                        && !mimeTypeName().endsWith("raf")
-                        && !mimeTypeName().endsWith("crw")) {
+                        && (mimeTypeName().endsWith("jpeg")
+                        || mimeTypeName().endsWith("png")
+                        || mimeTypeName().endsWith("bmp")
+                        || mimeTypeName().endsWith("tiff")
+                        || mimeTypeName().endsWith("gif"))) {
                     actionKeys << MenuAction::SetAsWallpaper
                                << MenuAction::Separator;
                 }
