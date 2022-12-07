@@ -11,6 +11,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
 
+#安全加固
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all -z now -fPIC")
+if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -z noexecstack -z relro")
+endif()
+
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(DtkCMake REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on
