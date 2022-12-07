@@ -48,6 +48,8 @@ void VaultEventReceiver::connectEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Url_FetchPathtoVirtual", this, &VaultEventReceiver::handlePathtoVirtual);
 
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", this, &VaultEventReceiver::detailViewIcon);
+
+    dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DropData", this, &VaultEventReceiver::fileDropHandleWithAction);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -205,4 +207,15 @@ bool VaultEventReceiver::handlePathtoVirtual(const QList<QUrl> files, QList<QUrl
         *virtualFiles << VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
     }
     return true;
+}
+
+bool VaultEventReceiver::fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action)
+{
+    for (const QUrl &url : fromUrls) {
+        if (VaultHelper::isVaultFile(url)) {
+            *action = Qt::CopyAction;
+            return true;
+        }
+    }
+    return false;
 }

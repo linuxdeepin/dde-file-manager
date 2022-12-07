@@ -393,8 +393,10 @@ QModelIndex SideBarView::getCurrentIndex() const
 
 bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const
 {
-    if (dpfHookSequence->run("dfmplugin_sidebar", "hook_Item_DropData", srcUrls, dstUrl, action))
-        return true;
+    if (dpfHookSequence->run("dfmplugin_sidebar", "hook_Item_DropData", srcUrls, dstUrl, &action)) {
+        if (action == Qt::IgnoreAction)
+            return true;
+    }
 
     auto dstInfo = InfoFactory::create<AbstractFileInfo>(dstUrl);
 

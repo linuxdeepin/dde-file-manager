@@ -24,6 +24,8 @@
 #include <QMenu>
 #include <QWidgetAction>
 
+Q_DECLARE_METATYPE(Qt::DropAction *)
+
 DPTAG_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -175,10 +177,11 @@ bool TagManager::fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl)
     return false;
 }
 
-bool TagManager::fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction action)
+bool TagManager::fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action)
 {
-    Q_UNUSED(action)
-
+    if (toUrl.scheme() == scheme()) {
+        *action = Qt::IgnoreAction;
+    }
     return fileDropHandle(fromUrls, toUrl);
 }
 

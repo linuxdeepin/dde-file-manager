@@ -27,6 +27,7 @@ public slots:
     bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
     bool handlePathtoVirtual(const QList<QUrl> files, QList<QUrl> *virtualFiles);
     bool detailViewIcon(const QUrl &url, QString *iconName);
+    bool fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action);
 };
 }
 #endif   // VAULTEVENTRECEIVER_H

@@ -52,6 +52,7 @@ Q_DECLARE_METATYPE(QList<QVariantMap> *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 Q_DECLARE_METATYPE(QByteArray *)
+Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_tag;
