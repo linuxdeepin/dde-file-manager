@@ -433,6 +433,16 @@ bool VaultHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
     return true;
 }
 
+void VaultHelper::showInProgressDailog(QString msg)
+{
+    //期间有拷贝，压缩任务时，提示不可上锁
+    if (msg.contains("Device or resource busy")) {
+        DialogManagerInstance->showErrorDialog(tr("Vault"), tr("A task is in progress, so it cannot perform your operation"));
+    }
+}
+
 VaultHelper::VaultHelper()
 {
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalReadError, this, &VaultHelper::showInProgressDailog);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalReadOutput, this, &VaultHelper::showInProgressDailog);
 }

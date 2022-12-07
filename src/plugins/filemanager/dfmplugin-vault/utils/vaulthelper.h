@@ -89,6 +89,8 @@ public:
 
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
+    void showInProgressDailog(QString progressState);
+
 public slots:
     void slotlockVault(int state);
 

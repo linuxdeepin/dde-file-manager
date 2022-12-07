@@ -139,7 +139,6 @@ void FileEncryptHandle::lockVault(QString unlockFileDir)
         emit signalLockVault(flg);
         qInfo() << "encrypt success " << flg;
     }
-    createDirIfNotExist(unlockFileDir);
     d->activeState.clear();
     d->mutex->unlock();
 }
@@ -346,7 +345,7 @@ int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir)
         arguments << unlockFileDir;
     } else {
         fusermountBinary = QStandardPaths::findExecutable("fusermount");
-        arguments << "-zu" << unlockFileDir;
+        arguments << "-u" << unlockFileDir;
     }
     if (fusermountBinary.isEmpty()) return static_cast<int>(ErrorCode::kFusermountNotExist);
 
