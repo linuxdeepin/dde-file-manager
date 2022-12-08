@@ -72,7 +72,7 @@ private:
 
     int runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString);
     int runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type, int blockSize);
-    int lockVaultProcess(QString unlockFileDir);
+    int lockVaultProcess(QString unlockFileDir, bool isForced);
     void initEncryptType();
     void runVaultProcessAndGetOutput(const QStringList &arguments, QString &standardError, QString &standardOutput);
     CryfsVersionInfo versionString();

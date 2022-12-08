@@ -247,7 +247,7 @@ void VaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
                 qDebug() << "Whether there are copying, clipping or compression tasks in the current safe, the vault cannot be deleted!";
             } else {
                 //! The verification is successful, first lock the vault
-                VaultHelper::instance()->lockVault();
+                VaultHelper::instance()->lockVault(true);
             }
             //! The button is grayed out to prevent users from operating indiscriminately
             if (btn)

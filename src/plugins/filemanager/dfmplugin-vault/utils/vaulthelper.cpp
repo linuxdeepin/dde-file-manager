@@ -232,7 +232,9 @@ QMenu *VaultHelper::createMenu()
 
         menu->addSeparator();
 
-        menu->addAction(QObject::tr("Lock"), VaultHelper::instance(), &VaultHelper::lockVault);
+        menu->addAction(QObject::tr("Lock"), []() {
+            VaultHelper::instance()->lockVault(false);
+        });
 
         QAction *timeLock = new QAction;
         timeLock->setText(QObject::tr("Auto lock"));
@@ -334,14 +336,14 @@ void VaultHelper::unlockVault(QString &password)
     FileEncryptHandle::instance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
-void VaultHelper::lockVault()
+void VaultHelper::lockVault(bool isForced)
 {
     static bool flg = true;
     if (flg) {
         connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, VaultHelper::instance(), &VaultHelper::slotlockVault);
         flg = false;
     }
-    FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath());
+    FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath(), isForced);
 }
 
 void VaultHelper::creatVaultDialog()

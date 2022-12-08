@@ -140,11 +140,11 @@ void FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, 
  *  调用runVaultProcess函数进行上锁保险箱并返回上锁状态标记。
  *  最后使用信号signalLockVault发送上锁状态标记。
  */
-void FileEncryptHandle::lockVault(QString unlockFileDir)
+void FileEncryptHandle::lockVault(QString unlockFileDir, bool isForced)
 {
     d->mutex->lock();
     d->activeState.insert(7, static_cast<int>(ErrorCode::kSuccess));
-    int flg = d->lockVaultProcess(unlockFileDir);
+    int flg = d->lockVaultProcess(unlockFileDir, isForced);
     if (d->activeState.value(7) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalLockVault(d->activeState.value(7));
         qInfo() << "encrypt fial";
@@ -352,7 +352,7 @@ int FileEncryptHandlerPrivate::runVaultProcess(QString lockBaseDir, QString unlo
  *  最后根据执行结果返回cryfs执行状态。此函数主要用于上锁保险箱
  * \return                  返回ErrorCode枚举值
  */
-int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir)
+int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir, bool isForced)
 {
     CryfsVersionInfo version = versionString();
     QString fusermountBinary;
@@ -363,7 +363,11 @@ int FileEncryptHandlerPrivate::lockVaultProcess(QString unlockFileDir)
         arguments << unlockFileDir;
     } else {
         fusermountBinary = QStandardPaths::findExecutable("fusermount");
-        arguments << "-u" << unlockFileDir;
+        if (isForced) {
+            arguments << "-zu" << unlockFileDir;
+        } else {
+            arguments << "-u" << unlockFileDir;
+        }
     }
     if (fusermountBinary.isEmpty()) return static_cast<int>(ErrorCode::kFusermountNotExist);
 

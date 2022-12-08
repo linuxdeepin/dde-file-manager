@@ -85,6 +85,7 @@ public:
     static VaultHelper *instance();
 
     static void recordTime(const QString &group, const QString &key);
+
     static bool isVaultFile(const QUrl &url);
 
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
@@ -98,7 +99,7 @@ public slots:
 
     void unlockVault(QString &password);
 
-    void lockVault();
+    void lockVault(bool isForced);
 
     void defaultCdAction(const quint64 windowId, const QUrl &url);
 

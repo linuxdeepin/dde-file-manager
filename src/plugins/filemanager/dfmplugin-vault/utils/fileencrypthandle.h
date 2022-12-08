@@ -39,7 +39,7 @@ public:
 
     void createVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type = EncryptType::AES_256_GCM, int blockSize = 32768);
     void unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString);
-    void lockVault(QString unlockFileDir);
+    void lockVault(QString unlockFileDir, bool isForced);
     void createDirIfNotExist(QString path);
     VaultState state(const QString &encryptBaseDir, const QString &decryptFileDir) const;
 

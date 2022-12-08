@@ -100,7 +100,7 @@ void VaultAutoLock::processAutoLock()
         qDebug() << "-----------enter interval > threshold-------------";
         //        VaultAutoLock::killVaultTasks();
         qDebug() << "---------------begin lockVault---------------";
-        VaultHelper::instance()->lockVault();
+        VaultHelper::instance()->lockVault(true);
         qDebug() << "---------------leave lockVault---------------";
     }
 }
@@ -123,7 +123,7 @@ void VaultAutoLock::slotLockVault(int state)
 
 void VaultAutoLock::processLockEvent()
 {
-    VaultHelper::instance()->lockVault();
+    VaultHelper::instance()->lockVault(true);
 }
 
 void VaultAutoLock::slotLockEvent(const QString &user)
