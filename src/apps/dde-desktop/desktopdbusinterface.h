@@ -42,6 +42,8 @@ signals:
 public slots:
     // the listed method is to compatible with the old.
     void Refresh(bool silent = true);
+    void ShowWallpaperChooser(const QString &screen = "");
+    void ShowScreensaverChooser(const QString &screen = "");
 };
 
 }

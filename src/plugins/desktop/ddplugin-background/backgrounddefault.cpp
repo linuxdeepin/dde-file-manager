@@ -83,7 +83,12 @@ void BackgroundDefault::paintEvent(QPaintEvent *event)
         pa.drawPixmap(event->rect().topLeft(), pixmap, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
     }
     // 这里写其他扩展逻辑
-    return DFMBASE_NAMESPACE::AbstractBackground::paintEvent(event);
+    DFMBASE_NAMESPACE::AbstractBackground::paintEvent(event);
+
+    if (painted > 0)
+        qInfo() << "background painted" << painted-- << screen;
+
+    return;
 }
 
 void BackgroundDefault::setMode(int mode)

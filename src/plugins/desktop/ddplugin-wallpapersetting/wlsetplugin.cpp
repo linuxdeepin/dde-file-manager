@@ -20,10 +20,13 @@
  */
 #include "wlsetplugin.h"
 #include "wallpapersettings.h"
+#include "settingsdbusinterface.h"
 #include "private/autoactivatewindow.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include "dfm-base/utils/universalutils.h"
+
+#include <QDBusConnection>
 
 using namespace ddplugin_wallpapersetting;
 
@@ -47,6 +50,7 @@ bool WlSetPlugin::start()
 {
     handle = new EventHandle();
     handle->init();
+    registerDBus();
     return true;
 }
 
@@ -54,6 +58,19 @@ void WlSetPlugin::stop()
 {
     delete handle;
     handle = nullptr;
+}
+
+void WlSetPlugin::registerDBus()
+{
+    Q_ASSERT(handle);
+    auto ifs = new SettingsDBusInterface(handle);
+
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
+    if (!conn.registerObject("/org/deepin/dde/desktop/wallpapersettings", "org.deepin.dde.desktop.wallpapersettings", ifs, registerOptions)) {
+        qCritical() << "org.deepin.dde.desktop.wallpapersettings register object failed" << conn.lastError();
+        delete ifs;
+    }
 }
 
 EventHandle::EventHandle(QObject *parent)
@@ -112,7 +129,9 @@ void EventHandle::onChanged()
 
 void EventHandle::show(QString name, int mode)
 {
-    if (name.isNull() || name.isEmpty()) {
+    if (name.isNull() || name.isEmpty()
+            || ddplugin_desktop_util::screenProxyScreen(name).isNull()) {
+        qWarning() << "invalid screen" << name;
         auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (!primary.get()) {
             qCritical() << "get primary screen failed! stop show wallpaper";

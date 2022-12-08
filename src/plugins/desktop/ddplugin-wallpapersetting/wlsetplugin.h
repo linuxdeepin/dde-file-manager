@@ -58,7 +58,8 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
-
+private:
+    void registerDBus();
 private:
     EventHandle *handle = nullptr;
 

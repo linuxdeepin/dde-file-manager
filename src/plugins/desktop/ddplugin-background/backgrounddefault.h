@@ -41,6 +41,7 @@ protected:
     QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap);
 
 private:
+    int painted = 3;
     QPixmap pixmap;
     QPixmap noScalePixmap;
 };

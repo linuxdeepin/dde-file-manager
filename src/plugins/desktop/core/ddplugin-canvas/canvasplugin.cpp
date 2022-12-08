@@ -23,7 +23,7 @@
 #include "utils/fileutil.h"
 #include "canvasdbusinterface.h"
 
-#include <dfm-base/utils/clipboard.h>
+#include "dfm-base/utils/clipboard.h"
 
 #include <QDBusConnection>
 
@@ -63,8 +63,8 @@ void CanvasPlugin::registerDBus()
 
     QDBusConnection conn = QDBusConnection::sessionBus();
     auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
-    if (!conn.registerObject("/com/deepin/dde/desktop/canvas", "com.deepin.dde.desktop.canvas", ifs, registerOptions)) {
-        qCritical() << "com.deepin.dde.desktop.canvas register object failed" << conn.lastError();
+    if (!conn.registerObject("/org/deepin/dde/desktop/canvas", "org.deepin.dde.desktop.canvas", ifs, registerOptions)) {
+        qCritical() << "org.deepin.dde.desktop.canvas register object failed" << conn.lastError();
         delete ifs;
     }
 }
