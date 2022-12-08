@@ -27,6 +27,7 @@
 #include <QDateTime>
 #include <QDBusPendingCall>
 #include <QApplication>
+#include <QElapsedTimer>
 
 #include <algorithm>
 

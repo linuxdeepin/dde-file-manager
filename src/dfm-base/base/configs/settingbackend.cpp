@@ -55,6 +55,7 @@ BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::k
     { "advance.mount.auto_mount_and_open", Application::kAutoMountAndOpen },
     { "advance.mount.mtp_show_bottom_info", Application::kMTPShowBottomInfo },
     { "advance.mount.always_show_offline_remote_connection", Application::kAlwaysShowOfflineRemoteConnections },
+    { "advance.mount.merge_the_entries_of_samba_shared_folders", Application::kMergeTheEntriesOfSambaSharedFolders },
     { "advance.dialog.default_chooser_dialog", Application::kOverrideFileChooserDialog },
     { "advance.dialog.delete_confirmation_dialog", Application::kShowDeleteConfirmDialog },
     { "advance.other.hide_builtin_partition", Application::kHiddenSystemPartition },

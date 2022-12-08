@@ -68,7 +68,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
 
     DFMBASE_USE_NAMESPACE;
-    QString suffix = info->nameInfo(NameInfo::kSuffix);
+    QString suffix = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
     if (!ComputerUtils::isPresetSuffix(suffix)) {
         ComputerEventCaller::sendOpenItem(winId, info->urlInfo(UrlInfo::kUrl));
         return;
@@ -521,9 +521,9 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
     // 1. forget passwd
     const QString &id = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(UrlInfo::kUrl));
     QString uri;
-    if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb))
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb)) {
         uri = id;
-    else if (DeviceUtils::isSamba(id)) {
+    } else if (DeviceUtils::isSamba(id)) {
         const QUrl &url = QUrl::fromPercentEncoding(id.toUtf8());
         const QString &path = url.path();
         int pos = path.lastIndexOf("/");

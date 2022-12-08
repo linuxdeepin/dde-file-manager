@@ -22,6 +22,7 @@
 */
 
 #include "settingdialog.h"
+#include "controls/checkboxwithmessage.h"
 
 #include "dfm-base/base/configs/settingbackend.h"
 #include "dfm-base/base/application/application.h"
@@ -186,6 +187,7 @@ void SettingDialog::loadSettings(const QString &templateFile)
 
 QPointer<QCheckBox> SettingDialog::kAutoMountCheckBox = nullptr;
 QPointer<QCheckBox> SettingDialog::kAutoMountOpenCheckBox = nullptr;
+QPointer<QCheckBox> SettingDialog::kMergeSmbCheckBox = nullptr;
 QSet<QString> SettingDialog::kHiddenSettingItems {};
 
 SettingDialog::SettingDialog(QWidget *parent)
@@ -194,6 +196,7 @@ SettingDialog::SettingDialog(QWidget *parent)
     widgetFactory()->registerWidget("mountCheckBox", &SettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &SettingDialog::createAutoMountOpenCheckBox);
     widgetFactory()->registerWidget("splitter", &SettingDialog::createSplitter);
+    widgetFactory()->registerWidget("checkBoxWithMessage", &SettingDialog::createCheckBoxWithMessage);
 
     if (WindowUtils::isWayLand()) {
         setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
@@ -299,6 +302,36 @@ QPair<QWidget *, QWidget *> SettingDialog::createSplitter(QObject *opt)
     auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
     auto lab = new QLabel(qApp->translate("QObject", option->name().toStdString().c_str()));
     return qMakePair(lab, nullptr);
+}
+
+QPair<QWidget *, QWidget *> SettingDialog::createCheckBoxWithMessage(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    const QString &text = option->data("text").toString();
+    const QString &message = option->data("message").toString();
+
+    CheckBoxWithMessage *checkBoxWithMsg = new CheckBoxWithMessage;
+    checkBoxWithMsg->setText(qApp->translate("SettingDialog", text.toStdString().c_str()));
+    checkBoxWithMsg->setMessage(qApp->translate("SettingDialog", message.toStdString().c_str()));
+    checkBoxWithMsg->setText(text);
+    checkBoxWithMsg->setMessage(message);
+
+    SettingDialog::kMergeSmbCheckBox = checkBoxWithMsg->getCheckBox();
+
+    checkBoxWithMsg->getCheckBox()->setChecked(option->value().toBool());
+
+    QObject::connect(checkBoxWithMsg->getCheckBox(), &QCheckBox::stateChanged, option, [=](int state) {
+        if (state == 0)
+            option->setValue(false);
+        else if (state == 2)
+            option->setValue(true);
+    });
+
+    QObject::connect(option, &DSettingsOption::valueChanged, checkBoxWithMsg->getCheckBox(), [=](QVariant value) {
+        checkBoxWithMsg->getCheckBox()->setChecked(value.toBool());
+    });
+
+    return qMakePair(checkBoxWithMsg, nullptr);
 }
 
 void SettingDialog::mountCheckBoxStateChangedHandle(DSettingsOption *option, int state)

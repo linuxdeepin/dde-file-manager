@@ -67,6 +67,7 @@ public:
         kAutoMountAndOpen,   // automatically mount and open hard disk devices
         kMTPShowBottomInfo,   // mtp show bottom statistics when mounted
         kAlwaysShowOfflineRemoteConnections,   // always show offline remote mounts (currently only smb mounts are resident)
+        kMergeTheEntriesOfSambaSharedFolders,   // merge the entries of Samba shared folders
         kOverrideFileChooserDialog,   // dialog box when using DDE File Manager as an application to select files
         kShowedHiddenOnSearch,   // show hidden files when searching
         kShowedHiddenFiles,   // show hidden files

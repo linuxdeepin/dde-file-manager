@@ -23,6 +23,8 @@
 */
 #include "smbbrowsereventcaller.h"
 
+#include "smbintegration/smbintegrationmanager.h"
+#include "dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/event/event.h>
@@ -45,4 +47,9 @@ void SmbBrowserEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 bool SmbBrowserEventCaller::sendCheckTabAddable(quint64 windowId)
 {
     return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
+}
+
+void SmbBrowserEventCaller::sendChangeCurrentUrl(quint64 windowId, const QUrl &url)
+{
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }

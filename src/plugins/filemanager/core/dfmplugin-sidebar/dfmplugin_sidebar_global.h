@@ -121,7 +121,8 @@ struct ItemInfo
     {
         return (url.scheme() == info.url.scheme()
                 && url.path() == info.url.path()
-                && group == info.group);
+                && group == info.group
+                && url.host() == info.url.host());
     }
 };
 

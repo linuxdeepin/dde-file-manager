@@ -47,10 +47,12 @@ inline constexpr char kKeyName[] { "dfm.samba.permanent" };
 class StashMountsUtils
 {
 public:
+    static bool isSmbIntegrationEnabled();
     static bool isStashMountsEnabled();
     static QString stashedConfigPath();
 
     static QMap<QString, QString> stashedMounts();
+    static QStringList stashedSmbIntegrationUrls();
     static QString displayName(const QUrl &url);
     static void removeStashedMount(const QUrl &url);
     static void stashMount(const QUrl &protocolUrl, const QString &displayName);

@@ -48,11 +48,20 @@ public:
 
 protected Q_SLOTS:
     void onWindowOpened(quint64 windd);
+    void onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, QList<QUrl> &urls);
+
+private:
+    void bindScene(const QString &parentScene);
+    void bindSceneOnAdded(const QString &newScene);
 
 private:
     void addNeighborToSidebar();
     void registerNetworkAccessPrehandler();
     static void networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
 }

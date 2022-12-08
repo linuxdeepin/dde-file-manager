@@ -58,6 +58,15 @@ static Settings *cfgSettings()
     return Application::genericSetting();
 }
 
+static constexpr char kStashedSmbDevices[] = { "StashedSmbDevices" };
+static constexpr char kSmbIntegrations[] = { "SmbIntegrations" };
+
+bool StashMountsUtils::isSmbIntegrationEnabled()
+{
+    DFMBASE_USE_NAMESPACE;
+    return Application::genericAttribute(Application::kMergeTheEntriesOfSambaSharedFolders).toBool();
+}
+
 bool StashMountsUtils::isStashMountsEnabled()
 {
     DFMBASE_USE_NAMESPACE;
@@ -97,6 +106,11 @@ QMap<QString, QString> StashMountsUtils::stashedMounts()
     }
 
     return ret;
+}
+
+QStringList StashMountsUtils::stashedSmbIntegrationUrls()
+{
+    return cfgSettings()->value(kStashedSmbDevices, kSmbIntegrations).toStringList();
 }
 
 QString StashMountsUtils::displayName(const QUrl &url)

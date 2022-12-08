@@ -231,6 +231,10 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
     devs = DevProxyMng->getAllProtocolIds();
 
     for (const auto &dev : devs) {
+        if (StashMountsUtils::isSmbIntegrationEnabled()
+            && (dev.startsWith(Global::Scheme::kSmb) || DeviceUtils::isSamba(dev)))
+            continue;   // With smb integration mode, do not show smb mounted folder in sidebar and computer view.
+
         auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
         //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
@@ -253,6 +257,9 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 
 ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, const ComputerDataList &protocolDevs)
 {
+    if (StashMountsUtils::isSmbIntegrationEnabled())
+        return ComputerDataList();   // Do nothing, smb integration items would be added by smbbrowser plugin.
+
     auto hasProtocolDev = [](const QUrl &url, const ComputerDataList &container) {
         for (auto dev : container) {
             if (dev.url == url)
@@ -263,15 +270,42 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, 
     ComputerDataList ret;
 
     const QMap<QString, QString> &&stashedMounts = StashMountsUtils::stashedMounts();
+
+    auto isStashedSmbBeMounted = [](const QUrl &smbUrl) {
+        QUrl url(smbUrl);
+        if (url.scheme() != Global::Scheme::kSmb)
+            return false;
+
+        QString temPath = url.path();
+        QStringList devs = DevProxyMng->getAllProtocolIds();
+        for (const QString &dev : devs) {
+            if (dev.startsWith(Global::Scheme::kSmb)) {   //mounted by gvfs
+                if (UniversalUtils::urlEquals(url, QUrl(dev)))
+                    return true;
+            }
+            if (DeviceUtils::isSamba(dev)) {   // mounted by cifs
+                if (temPath.endsWith("/")) {
+                    temPath.chop(1);
+                    url.setPath(temPath);
+                }
+                const QUrl &temUrl = QUrl::fromPercentEncoding(dev.toUtf8());
+                const QString &path = temUrl.path();
+                int pos = path.lastIndexOf("/");
+                const QString &displayName = path.mid(pos + 1);
+                if (QString("%1 on %2").arg(url.fileName()).arg(url.host()) == displayName)
+                    return true;
+            }
+        }
+
+        return false;
+    };
+
     for (auto iter = stashedMounts.cbegin(); iter != stashedMounts.cend(); ++iter) {
         QUrl protocolUrl;
         if (iter.key().startsWith(Global::Scheme::kSmb)) {
-            protocolUrl.setScheme(Global::Scheme::kFile);
-            const QString &path = QString("/media/%1/smbmounts/%2")
-                                          .arg(SysInfoUtils::getUser())
-                                          .arg(QString(QUrl::toPercentEncoding(iter.value())));
-            protocolUrl.setPath(path);
-            protocolUrl = ComputerUtils::makeProtocolDevUrl(protocolUrl.toString());
+            QUrl temUrl(iter.key());
+            if (isStashedSmbBeMounted(temUrl))
+                continue;
         } else {
             protocolUrl = ComputerUtils::makeProtocolDevUrl(iter.key());
         }
@@ -280,6 +314,7 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, 
             continue;
 
         const QUrl &stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(iter.key());
+
         DFMEntryFileInfoPointer info(new EntryFileInfo(stashedUrl));
         if (!info->exists())
             continue;
@@ -685,6 +720,9 @@ void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QStri
         const QVariantHash &newMount = StashMountsUtils::makeStashedSmbDataById(id);
         const QUrl &stashedUrl = StashMountsUtils::makeStashedSmbMountUrl(newMount);
         removeDevice(stashedUrl);   // Before adding mounted smb item, removing its stashed item firstly.
+
+        if (StashMountsUtils::isSmbIntegrationEnabled())
+            return;   //onDeviceAdded has been called from SmbBrowser with `slot_AddDevice` event of computer plugin.
     }
 
     this->onDeviceAdded(url, getGroupId(diskGroup()));
@@ -694,7 +732,11 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
 {
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     removeDevice(devUrl);
-    if (StashMountsUtils::isStashMountsEnabled()) {   // After removing smb device, adding stashed smb item to sidebar and computer view
+
+    if (StashMountsUtils::isSmbIntegrationEnabled() && DeviceUtils::isSamba(QUrl(id))) {
+        //Do nothing, it was handled in SmbIntegrationManager::onProtocolDeviceUnmounted
+    } else if (StashMountsUtils::isStashMountsEnabled()) {   // After removing smb device, adding stashed smb item to sidebar and computer view
+        QUrl stashedUrl;
         if (id.startsWith(Global::Scheme::kSmb)) {
             onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
         } else if (DeviceUtils::isSamba(QUrl(id))) {

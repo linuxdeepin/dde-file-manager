@@ -34,6 +34,7 @@ void global_setting_template_trans()
     auto advance_mount_always_show_offline_remote_connectionText = QObject::tr("Keep showing the mounted Samba shares");
     auto advance_mount_auto_mountText = QObject::tr("Auto mount");
     auto advance_mount_auto_mount_and_openText = QObject::tr("Open after auto mount");
+    auto advance_mount_merge_the_entries_of_samba_shared_foldersText = QObject::tr("Merge the entries of Samba shared folders");
     auto advance_mount_mtp_show_bottom_infoText = QObject::tr("Show item counts and sizes in the path of mounted MTP devices");
     auto advance_other_hide_builtin_partitionText = QObject::tr("Hide built-in disks on the Computer page");
     auto advance_other_hide_loop_partitionsText = QObject::tr("Hide loop partitions on the Computer page");

@@ -27,9 +27,14 @@
 #include "fileinfo/smbsharefileinfo.h"
 #include "iterator/smbshareiterator.h"
 #include "menu/smbbrowsermenuscene.h"
+#include "menu/smbintcomputermenuscene.h"
+#include "menu/smbintcomputermenuscene_p.h"
+#include "smbintegration/smbintegrationentity.h"
+#include "smbintegration/smbintegrationmanager.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -41,12 +46,12 @@
 #include <QMenu>
 
 using namespace dfmplugin_smbbrowser;
-using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
-
-Q_DECLARE_METATYPE(ContextMenuCallback);
 
 DFMBASE_USE_NAMESPACE
 
+static constexpr char kSmbInteg[] = { "smbinteg" };
+static constexpr char kSmbIntegPath[] = { "/.smbinteg" };
+static constexpr char kProtodevstashed[] = { "protodevstashed" };
 void SmbBrowser::initialize()
 {
     UrlRoute::regScheme(Global::Scheme::kSmb, "/", SmbBrowserUtils::icon(), true);
@@ -66,14 +71,22 @@ void SmbBrowser::initialize()
     InfoFactory::regClass<SmbShareFileInfo>(SmbBrowserUtils::networkScheme());
     DirIteratorFactory::regClass<SmbShareIterator>(SmbBrowserUtils::networkScheme());
 
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
+    EntryEntityFactor::registCreator<SmbIntegrationEntity>(kSmbInteg);
 
     connect(dpfListener, &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerNetworkAccessPrehandler, Qt::DirectConnection);
+
+    dfmplugin_menu_util::menuSceneRegisterScene(SmbIntComputerMenuCreator::name(), new SmbIntComputerMenuCreator());
+
+    SmbIntegrationManager::instance();
 }
 
 bool SmbBrowser::start()
 {
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
+    connect(SmbIntegrationManager::instance(), &SmbIntegrationManager::refreshToSmbIntegrationMode, this, &SmbBrowser::onWindowOpened);
+    connect(SmbIntegrationManager::instance(), &SmbIntegrationManager::refreshToSmbSeperatedMode, this, &SmbBrowser::onRefreshToSmbSeperatedMode);
     dfmplugin_menu_util::menuSceneRegisterScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
+    bindScene("ComputerMenu");
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSmb));
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", QString(Global::Scheme::kSmb), SmbBrowserMenuCreator::name());
@@ -83,6 +96,7 @@ bool SmbBrowser::start()
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kFtp));
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSFtp));
+    dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_Operation_OpenItem", SmbIntegrationManager::instance(), &SmbIntegrationManager::computerOpenItem);
 
     return true;
 }
@@ -93,14 +107,43 @@ void SmbBrowser::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
     bool bEnabled = info.exists();
 
     QMenu *menu = new QMenu;
-    auto newWindowAct = menu->addAction(QObject::tr("Open in new window"), [url]() { SmbBrowserEventCaller::sendOpenWindow(url); });
-    newWindowAct->setEnabled(bEnabled);
+    if (url.scheme() == Global::Scheme::kNetwork) {
+        auto newWindowAct = menu->addAction(QObject::tr("Open in new window"), [url]() { SmbBrowserEventCaller::sendOpenWindow(url); });
+        newWindowAct->setEnabled(bEnabled);
 
-    auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
-        SmbBrowserEventCaller::sendOpenTab(windowId, url);
-    });
+        auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
+            SmbBrowserEventCaller::sendOpenTab(windowId, url);
+        });
+        newTabAct->setEnabled(bEnabled && SmbBrowserEventCaller::sendCheckTabAddable(windowId));
+    } else if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled() && url.path() == kSmbIntegPath) {
+        auto newWindowAct = menu->addAction(QObject::tr("Unmount"), [windowId, url]() {
+            SmbIntegrationManager::instance()->umountAllProtocolDevice(windowId, url, false);
+            SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(url);
+        });
+        newWindowAct->setEnabled(true);
 
-    newTabAct->setEnabled(bEnabled && SmbBrowserEventCaller::sendCheckTabAddable(windowId));
+        auto newTabAct = menu->addAction(QObject::tr("Clear saved password and unmount"), [windowId, url]() {
+            SmbIntegrationManager::instance()->umountAllProtocolDevice(windowId, url, true);
+            SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(url);
+        });
+        newTabAct->setEnabled(true);
+    } else if (!SmbIntegrationManager::instance()->isSmbIntegrationEnabled() && url.path().endsWith(kProtodevstashed)) {
+        auto newWindowAct1 = menu->addAction(QObject::tr("Mount"), [windowId, url]() {
+            QString suffix = QString(".%1").arg(kProtodevstashed);
+            QString encodecId = url.path().remove(suffix);
+            QString id = QByteArray::fromBase64(encodecId.toUtf8());
+            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, QUrl(id));
+        });
+
+        auto newWindowAct2 = menu->addAction(QObject::tr("Remove"), [url]() {
+            QString suffix = QString(".%1").arg(kProtodevstashed);
+            QString encodecId = url.path().remove(suffix);
+            QString id = QByteArray::fromBase64(encodecId.toUtf8());
+            SmbIntegrationManager::instance()->removeStashedSeperatedItem(QUrl(id));
+        });
+        newWindowAct1->setEnabled(true);
+        newWindowAct2->setEnabled(true);
+    }
 
     menu->exec(globalPos);
     delete menu;
@@ -108,13 +151,63 @@ void SmbBrowser::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
 
 void SmbBrowser::onWindowOpened(quint64 winId)
 {
+    SmbIntegrationManager::instance()->setWindowId(winId);
+
     auto window = FMWindowsIns.findWindowById(winId);
-    if (window->sideBar())
+    ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
+    if (window->sideBar()) {
         addNeighborToSidebar();
-    else
-        connect(
-                window, &FileManagerWindow::sideBarInstallFinished,
-                this, [this] { addNeighborToSidebar(); }, Qt::DirectConnection);
+        SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle);
+    } else {
+        connect(window, &FileManagerWindow::sideBarInstallFinished,
+                this, [this, ctxMenuHandle] {
+                    addNeighborToSidebar();
+                    SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle);
+                },
+                Qt::DirectConnection);
+    }
+
+    if (window->workSpace()) {
+        SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle, false);
+    } else {
+        connect(window, &FileManagerWindow::workspaceInstallFinished,
+                this, [this, ctxMenuHandle] {
+                    addNeighborToSidebar();
+                    SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle, false);
+                },
+                Qt::DirectConnection);
+    }
+}
+
+void SmbBrowser::onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, QList<QUrl> &urls)
+{
+    // add items to sidebar
+    ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
+    SmbIntegrationManager::instance()->addStashedSeperatedItemToSidebar(stashedSeperatedData, ctxMenuHandle);
+
+    //add items to computer view
+    SmbIntegrationManager::instance()->addStashedSeperatedItemToComputer(urls);
+}
+
+void SmbBrowser::bindScene(const QString &parentScene)
+{
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(SmbIntComputerMenuCreator::name(), "ComputerMenu");
+    } else {
+        waitToBind << parentScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &SmbBrowser::bindSceneOnAdded);
+    }
+}
+
+void SmbBrowser::bindSceneOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &SmbBrowser::bindSceneOnAdded);
+        bindScene(newScene);
+    }
 }
 
 void SmbBrowser::addNeighborToSidebar()
@@ -151,11 +244,27 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
     if (!kSupportedSchemes.contains(scheme))
         return;
 
-    DevMngIns->mountNetworkDeviceAsync(url.toString(), [after, winId](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+    DevMngIns->mountNetworkDeviceAsync(url.toString(), [after, winId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+        auto makeSmbRootUrl = [](const QUrl &url) {
+            QUrl smbRootUrl;
+            smbRootUrl.setScheme(url.scheme());
+            smbRootUrl.setHost(url.host());
+            return smbRootUrl;
+        };
         if (!mpt.isEmpty()) {
             dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, QUrl::fromLocalFile(mpt));
+
+            if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled()) {
+                ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
+                SmbIntegrationManager::instance()->addSmbIntegrationItem(makeSmbRootUrl(url), ctxMenuHandle);
+            }
         } else if ((ok || err == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) && after) {
             after();
+
+            if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled()) {
+                ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
+                SmbIntegrationManager::instance()->addSmbIntegrationItem(makeSmbRootUrl(url), ctxMenuHandle);
+            }
         } else {
             DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
             qDebug() << DeviceUtils::errMessage(err);

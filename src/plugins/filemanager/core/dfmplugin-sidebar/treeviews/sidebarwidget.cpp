@@ -270,11 +270,6 @@ void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newNa
     SideBarManager::instance()->runRename(item, SideBarHelper::windowId(this), newName);
 }
 
-void SideBarWidget::onItemRemoved()
-{
-    SideBarEventCaller::sendItemActived(SideBarHelper::windowId(this), sidebarView->currentUrl());
-}
-
 void SideBarWidget::initializeUi()
 {
     QVBoxLayout *vlayout = new QVBoxLayout(this);
@@ -376,6 +371,4 @@ void SideBarWidget::initConnect()
     connect(kSidebarModelIns.data(), &SideBarModel::rowsInserted, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsRemoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
     connect(kSidebarModelIns.data(), &SideBarModel::rowsMoved, sidebarView, &SideBarView::updateSeparatorVisibleState);
-    connect(kSidebarModelIns.data(), &SideBarModel::rowsAboutToBeRemoved, sidebarView, &SideBarView::onItemAboutToBeRemoved);
-    connect(kSidebarModelIns.data(), &SideBarModel::rowsRemoved, this, &SideBarWidget::onItemRemoved);
 }

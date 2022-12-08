@@ -172,6 +172,7 @@ inline constexpr char kComputer[] { "computer" };
 inline constexpr char kTrash[] { "trash" };
 inline constexpr char kRecent[] { "recent" };
 inline constexpr char kUserShare[] { "usershare" };
+inline constexpr char kNetwork[] { "network" };
 }   // namespace Scheme
 
 namespace Regex {

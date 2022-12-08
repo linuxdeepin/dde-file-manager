@@ -360,7 +360,7 @@ bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
     if (!path2.endsWith("/"))
         path2.append("/");
 
-    if ((url1.scheme() == url2.scheme() && path1 == path2))
+    if (url1.scheme() == url2.scheme() && path1 == path2 && url1.host() == url2.host())
         return true;
     return false;
 }

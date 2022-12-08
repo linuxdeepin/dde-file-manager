@@ -125,6 +125,8 @@ FILE (GLOB DIALOGS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/mountpasswddialog/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/settingsdialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/settingsdialog/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/settingsdialog/controls/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/settingsdialog/controls/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/taskdialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/taskdialog/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/basedialog/*.h"

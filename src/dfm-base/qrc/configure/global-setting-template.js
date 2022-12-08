@@ -256,6 +256,13 @@
                             "text": "Keep showing the mounted Samba shares",
                             "type": "checkbox",
                             "default": true
+                        },
+                        {
+                            "key": "merge_the_entries_of_samba_shared_folders",
+                            "text": "Merge the entries of Samba shared folders",
+                            "message": "Switching the entry display may lead to failed mounting",
+                            "type": "checkBoxWithMessage",
+                            "default": true
                         }
                     ]
                 },

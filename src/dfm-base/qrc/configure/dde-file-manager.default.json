@@ -29,6 +29,7 @@
         "DisableNonRemovableDeviceUnmount": false,
         "HiddenSystemPartition": false,
         "AlwaysShowOfflineRemoteConnections": true,
+        "MergeTheEntriesOfSambaSharedFolders": true,
         "HideLoopPartitions": true
     },
     "AnythingMonitorFilterPath": {

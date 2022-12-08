@@ -256,7 +256,7 @@ bool SideBarModel::removeRow(const QUrl &url)
                 SideBarItem *subItem = static_cast<SideBarItem *>(childItem);
                 if (!subItem)
                     continue;
-                if ((subItem->url().scheme() == url.scheme() && subItem->url().path() == url.path())) {
+                if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(subItem->url(), url)) {
                     QStandardItemModel::removeRows(j, 1, groupItem->index());
                     return true;
                 }
@@ -283,7 +283,8 @@ void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
             if (!subItem)
                 continue;
             bool foundByCb = subItem->itemInfo().findMeCb && subItem->itemInfo().findMeCb(subItem->url(), url);
-            if (foundByCb || (subItem->url().scheme() == url.scheme() && subItem->url().path() == url.path())) {
+
+            if (foundByCb || DFMBASE_NAMESPACE::UniversalUtils::urlEquals(subItem->url(), url)) {
                 subItem->setIcon(newInfo.icon);
                 subItem->setText(newInfo.displayName);
                 subItem->setUrl(newInfo.url);
@@ -335,9 +336,8 @@ QModelIndex SideBarModel::findRowByUrl(const QUrl &url) const
                 SideBarItem *subItem = static_cast<SideBarItem *>(childItem);
                 if (!subItem)
                     continue;
-                if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, subItem->url())) {
+                if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, subItem->url()))
                     return subItem->index();
-                }
             }
         }
     }

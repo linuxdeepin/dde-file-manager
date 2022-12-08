@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangsheng<zhangsheng@uniontech.com>
+ * Author:     zhuangshu<zhuangshu@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,26 +20,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SMBBROWSEREVENTCALLER_H
-#define SMBBROWSEREVENTCALLER_H
+#ifndef SMBINTCOMPUTERMENUSCENE_P_H
+#define SMBINTCOMPUTERMENUSCENE_P_H
 
 #include "dfmplugin_smbbrowser_global.h"
 
-#include <QObject>
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
-class SmbBrowserEventCaller
+class SmbIntComputerMenuScene;
+class SmbIntComputerMenuScenePrivate : DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
-    SmbBrowserEventCaller() = delete;
+    friend class SmbIntComputerMenuScene;
+    DFMEntryFileInfoPointer info { nullptr };
 
 public:
-    static void sendOpenWindow(const QUrl &url);
-    static void sendOpenTab(quint64 windowId, const QUrl &url);
-    static bool sendCheckTabAddable(quint64 windowId);
-    static void sendChangeCurrentUrl(quint64 windowId, const QUrl &url);
+    explicit SmbIntComputerMenuScenePrivate(SmbIntComputerMenuScene *qq);
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 
-#endif   // SMBBROWSEREVENTCALLER_H
+#endif   // SMBINTCOMPUTERMENUSCENE_P_H
