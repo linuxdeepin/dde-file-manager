@@ -69,12 +69,20 @@ bool AvfsUtils::isAvfsMounted()
 
 void AvfsUtils::mountAvfs()
 {
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
     QProcess::startDetached("/usr/bin/mountavfs");
+#else
+    QProcess::startDetached("/usr/bin/mountavfs", {});
+#endif
 }
 
 void AvfsUtils::unmountAvfs()
 {
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
     QProcess::startDetached("/usr/bin/umountavfs");
+#else
+    QProcess::startDetached("/usr/bin/umountavfs", {});
+#endif
 }
 
 QString AvfsUtils::avfsMountPoint()
@@ -137,7 +145,11 @@ QList<QVariantMap> AvfsUtils::seperateUrl(const QUrl &url)
 {
     QString longestLocalParent;
     QList<QVariantMap> ret;
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
     QStringList frags { url.path().split("/", QString::SkipEmptyParts) };
+#else
+    QStringList frags { url.path().split("/", Qt::SkipEmptyParts) };
+#endif
     while (!frags.isEmpty()) {
         auto path = frags.join("/").prepend("/");
         auto icon = parseDirIcon(path);

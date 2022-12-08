@@ -155,7 +155,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     qreal min = baseValue - 2 * ejectIconSize.width();
     qreal max = baseValue - ejectIconSize.width();
 
-    if (metricsLabel.width(text) > (isEjectable ? min : max))
+    if (metricsLabel.horizontalAdvance(text) > (isEjectable ? min : max))
         text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? int(min) : int(max)));
     int rowHeight = itemRect.height();
     qreal txtDx = separatorItem ? 22 : 42;
@@ -170,7 +170,7 @@ QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
 }
 
 void SideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{    
+{
     QLineEdit *edt = nullptr;
     if ((edt = dynamic_cast<QLineEdit *>(editor)) && edt->isModified()) {
         QByteArray n = editor->metaObject()->userProperty().name();

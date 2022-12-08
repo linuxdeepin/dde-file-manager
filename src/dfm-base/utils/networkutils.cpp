@@ -108,7 +108,11 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
     } else if (s.contains(cifsMptPref)) {
         s.remove(cifsMptPref);   // shareFolder on host[_idx]
         port = kSmbPort;
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
         auto frags = s.split(" on ", QString::SkipEmptyParts);
+#else
+        auto frags = s.split(" on ", Qt::SkipEmptyParts);
+#endif
         if (frags.count() < 2)
             return false;
         ip = frags[1];

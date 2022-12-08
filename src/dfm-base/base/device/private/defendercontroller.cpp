@@ -97,7 +97,7 @@ bool DefenderController::stopScanning(const QList<QUrl> &urls)
     }
 
     // Wait for the scan directory change signal until it times out
-    QTime t;
+    QElapsedTimer t;
     t.start();
     while (t.elapsed() < kMaxDBusTimeout) {
         qApp->processEvents();

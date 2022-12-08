@@ -77,7 +77,11 @@ enum ItemRoles {
     kItemInitialSortOrderRole = Qt::InitialSortOrderRole,
     kItemFontRole = Qt::FontRole,
     kItemTextAlignmentRole = Qt::TextAlignmentRole,
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 13, 0))
     kItemColorRole = Qt::TextColorRole,
+#else
+    kItemColorRole = Qt::ForegroundRole,
+#endif
 
     kItemFilePathRole = Qt::UserRole + 1,
     kItemNameRole = Qt::UserRole + 2,

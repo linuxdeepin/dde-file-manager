@@ -189,7 +189,7 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
         d.setTitle(tr("You do not have permission to operate file/folder!"));
         QString message = urls.at(0).toLocalFile();
 
-        if (fm.width(message) > NAME_MAX) {
+        if (fm.horizontalAdvance(message) > NAME_MAX) {
             message = fm.elidedText(message, Qt::ElideMiddle, NAME_MAX);
         }
 
@@ -214,7 +214,7 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
                 break;
             }
             QString s = QString("%1.%2").arg(QString::number(i + 1), urls.at(i).toLocalFile());
-            if (fm.width(s) > NAME_MAX) {
+            if (fm.horizontalAdvance(s) > NAME_MAX) {
                 s = fm.elidedText(s, Qt::ElideMiddle, NAME_MAX);
             }
             message += s + "\n";

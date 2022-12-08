@@ -130,7 +130,11 @@ void Tag::installToSideBar()
     auto orders = Application::genericSetting()->value(kSidebarOrder, kTagOrderKey).toStringList();
     for (const auto &item : orders) {
         QUrl u(item);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
         auto query = u.query().split("=", QString::SkipEmptyParts);
+#else
+        auto query = u.query().split("=", Qt::SkipEmptyParts);
+#endif
         if (query.count() == 2 && tagNames.contains(query[1])) {
             auto &&url { TagHelper::instance()->makeTagUrlByTagName(query[1]) };
             auto &&map { TagHelper::instance()->createSidebarItemInfo(query[1]) };

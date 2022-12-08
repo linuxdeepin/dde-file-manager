@@ -161,7 +161,11 @@ void BasicWidget::basicExpand(const QUrl &url)
             row++;
         }
     }
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
     QStringList list = url.path().split("/", QString::SkipEmptyParts);
+#else
+    QStringList &&list = url.path().split("/", Qt::SkipEmptyParts);
+#endif
     if (!list.isEmpty() && url.isValid() && list.last().startsWith("."))
         tempFrame->hide();
     else

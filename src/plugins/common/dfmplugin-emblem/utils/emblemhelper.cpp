@@ -77,7 +77,11 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
     const QString &emblemsStr = emblemData.first();
 
     if (!emblemsStr.isEmpty()) {
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
         const QStringList &emblemsStrList = emblemsStr.split("|", QString::SkipEmptyParts);
+#else
+        const QStringList &emblemsStrList = emblemsStr.split("|", Qt::SkipEmptyParts);
+#endif
         for (int i = 0; i < emblemsStrList.length(); i++) {
             QString pos;
             QIcon emblem;

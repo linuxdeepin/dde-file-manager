@@ -799,7 +799,11 @@ bool ThumbnailProvider::createThumnailByTools(const QMimeType &mime, ThumbnailPr
     } else {
         // 过滤video tool的其他输出信息
         QString processResult(output);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
         processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
+#else
+        processResult = processResult.split(QRegExp("[\n]"), Qt::SkipEmptyParts).last();
+#endif
         const QByteArray pngData = QByteArray::fromBase64(processResult.toUtf8());
         Q_ASSERT(!pngData.isEmpty());
         if (image->loadFromData(pngData, "png")) {

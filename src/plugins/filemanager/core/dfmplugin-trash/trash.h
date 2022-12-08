@@ -36,7 +36,6 @@ public:
     virtual bool start() override;
 
 private slots:
-    void onTrashDisplayChanged(bool enabled);
     void regTrashCrumbToTitleBar();
     void onWindowOpened(quint64 windId);
 

@@ -244,7 +244,7 @@ void PermissionManagerWidget::setExecText()
     executableCheckBox->adjustSize();
     QString text = tr("Allow to execute as program");
     QFontMetrics fontWidth(executableCheckBox->font());
-    int fontSize = fontWidth.width(text);
+    int fontSize = fontWidth.horizontalAdvance(text);
     int fontW = executableCheckBox->width() - executableCheckBox->contentsMargins().left() - executableCheckBox->contentsMargins().right() - this->contentsMargins().left() - this->contentsMargins().right();
     if (fontSize > fontW) {
         text = fontWidth.elidedText(text, Qt::ElideMiddle, fontW);

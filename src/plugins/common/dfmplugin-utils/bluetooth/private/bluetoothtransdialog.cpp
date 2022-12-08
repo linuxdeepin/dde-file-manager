@@ -736,7 +736,7 @@ void BluetoothTransDialog::sendFiles()
     auto shrinkLabel = [=](const QString &format, QString msg) -> QString {
         QString pureFormat = format;
         pureFormat.remove(QRegularExpression(R"(<.*>)"));   // remove the html tags in label text.
-        int fixedWidth = fm.width(pureFormat);
+        int fixedWidth = fm.horizontalAdvance(pureFormat);
         int freeWidth = this->width() - fixedWidth - 40;   // 40 is side margin.
         msg = fm.elidedText(msg, Qt::ElideRight, freeWidth);
         return format.arg(msg);

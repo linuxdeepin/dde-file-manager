@@ -207,7 +207,11 @@ bool DCustomActionParser::parseFile(QSettings &actionSetting)
         return false;   //无一级菜单,无效文件
 
     auto actStr = getValue(actionSetting, kMenuPrefix, kActionGroups);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
     auto actList = actStr.toString().simplified().split(":", QString::SkipEmptyParts);
+#else
+    auto actList = actStr.toString().simplified().split(":", Qt::SkipEmptyParts);
+#endif
 
     for (auto &once : actList) {
         if (topActionCount == kCustomMaxNumOne)   //一级数量限制
@@ -299,8 +303,11 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         //add 子菜单项，父级有子菜单，则忽略动作，即便子菜单无一有效，后续也不再添加动作
         QList<DCustomActionData> tpChildrenActions;
         auto actStr = getValue(actionSetting, group, kActionGroups);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
         auto actList = actStr.toString().simplified().split(":", QString::SkipEmptyParts);
-
+#else
+        auto actList = actStr.toString().simplified().split(":", Qt::SkipEmptyParts);
+#endif
         int actCount = 0;
         bool needSort = true;
         for (auto &once : actList) {
@@ -337,7 +344,11 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
         if (comboStr.isEmpty()) {
             return false;   //无支持选中类型默认该一级无效
         } else {
-            QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
+            QStringList &&comboList = comboStr.split(":", QString::SkipEmptyParts);
+#else
+            QStringList &&comboList = comboStr.split(":", Qt::SkipEmptyParts);
+#endif
             ComboTypes target;
             for (auto temp : comboList) {
                 auto tp = temp.simplified();
@@ -520,7 +531,11 @@ bool DCustomActionParser::comboPosForTopAction(QSettings &actionSetting, const Q
     auto comboStr = getValue(actionSetting, group, kConfCombo).toString().simplified();
     if (comboStr.isEmpty())
         comboStr = getValue(actionSetting, group, kConfComboAlias).toString().simplified();
-    QStringList comboList = comboStr.split(":", QString::SkipEmptyParts);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
+    QStringList &&comboList = comboStr.split(":", QString::SkipEmptyParts);
+#else
+    QStringList &&comboList = comboStr.split(":", Qt::SkipEmptyParts);
+#endif
 
     QString cPos;
     bool hasCombo = false;

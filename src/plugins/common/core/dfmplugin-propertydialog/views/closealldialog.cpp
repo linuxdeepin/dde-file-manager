@@ -90,8 +90,8 @@ void CloseAllDialog::setTotalMessage(qint64 size, int count)
 {
     QString message = tr("Total size: %1, %2 files").arg(FileUtils::formatSize(size), QString::number(count));
     QFontMetrics fm(messageLabel->fontMetrics());
-    int txtWidth = fm.width(message);
-    int charWidth = fm.width(message[0]);
+    int txtWidth = fm.horizontalAdvance(message);
+    int charWidth = fm.horizontalAdvance(message[0]);
     messageLabel->setText(message);
     if (txtWidth > messageLabel->width() - charWidth)   // consider the inner spacing of text label
         setFixedWidth(this->width() + charWidth);

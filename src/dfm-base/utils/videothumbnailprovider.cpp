@@ -93,7 +93,11 @@ QImage VideoThumbnailProvider::createThumbnail(const QString &size, const QStrin
         } else {
             //过滤video tool的其他输出信息
             QString processResult(output);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
             processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
+#else
+            processResult = processResult.split(QRegExp("[\n]"), Qt::SkipEmptyParts).last();
+#endif
             if (!processResult.isEmpty()) {
                 if (image.loadFromData(processResult.toLocal8Bit().data(), "png")) {
                     return image;

@@ -142,7 +142,7 @@ bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
 
         if (tooltip.isEmpty() || index == view->rootIndex() || geometries.count() < 3) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
             ItemDelegateHelper::hideTooltipImmediately();
-        } else if (option.fontMetrics.width(tooltip) > geometries[1].width() * 2) {
+        } else if (option.fontMetrics.horizontalAdvance(tooltip) > geometries[1].width() * 2) {
             int tooltipsize = tooltip.size();
             const int nlong = 32;
             int lines = tooltipsize / nlong + 1;

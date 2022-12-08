@@ -23,7 +23,7 @@
 
 #include "core/upgradeunit.h"
 
-#include <QTime>
+#include <QElapsedTimer>
 
 namespace dfm_upgrade {
 
@@ -35,10 +35,11 @@ public:
     bool initialize(const QMap<QString, QString> &args) override;
     bool upgrade() override;
     void completed() override;
+
 protected:
-    QTime time;
+    QElapsedTimer time;
 };
 
 }
 
-#endif // HEADERUNIT_H
+#endif   // HEADERUNIT_H

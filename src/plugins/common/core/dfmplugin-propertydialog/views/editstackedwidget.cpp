@@ -211,7 +211,7 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
         hLayout->addStretch(1);
         hLayout->addWidget(fileNameLabel);
         if (i < (labelTexts.length() - 1) && i != (maxLineCount - 1)) {
-            if (fileNameLabel->fontMetrics().width(labelText) > (fileNameEdit->width() - 10)) {
+            if (fileNameLabel->fontMetrics().horizontalAdvance(labelText) > (fileNameEdit->width() - 10)) {
                 fileNameLabel->setFixedWidth(fileNameEdit->width());
             }
         } else {
@@ -222,7 +222,7 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
                 }
             }
 
-            if (fileNameLabel->fontMetrics().width(labelText) > (fileNameEdit->width() - 2 * nameEditIcon->width()) && labelTexts.length() >= maxLineCount) {
+            if (fileNameLabel->fontMetrics().horizontalAdvance(labelText) > (fileNameEdit->width() - 2 * nameEditIcon->width()) && labelTexts.length() >= maxLineCount) {
                 labelText = fileNameLabel->fontMetrics().elidedText(labelText, Qt::ElideMiddle, fileNameEdit->width() - nameEditIcon->width());
             }
             fileNameLabel->setText(labelText);

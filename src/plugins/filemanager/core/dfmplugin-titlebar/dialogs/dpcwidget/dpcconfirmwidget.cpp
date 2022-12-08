@@ -161,7 +161,7 @@ void DPCConfirmWidget::showToolTips(const QString &msg, QWidget *w)
     if (toolTipFrame->parent()) {
         QFont font = toolTip->font();
         QFontMetrics fontMetrics(font);
-        int fontWidth = fontMetrics.width(msg) + 30;
+        int fontWidth = fontMetrics.horizontalAdvance(msg) + 30;
         int fontHeight = fontMetrics.lineSpacing() + 12;
         int per = fontWidth / w->width() + 1;
 

@@ -24,7 +24,7 @@
 #include "searchmanager/searcher/abstractsearcher.h"
 
 #include <QSharedPointer>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QMutex>
 
 class ComDeepinAnythingInterface;
@@ -57,8 +57,8 @@ private:
     QString originalPath;
 
     //计时
-    QTime notifyTimer;
-    int lastEmit = 0;
+    QElapsedTimer notifyTimer;
+    qint64 lastEmit = 0;
 };
 
 DPSEARCH_END_NAMESPACE

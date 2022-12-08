@@ -521,7 +521,11 @@ QStringList Settings::keyList(const QString &group) const
         }
     }
 
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 14, 0))
     keyList << keys.toList();
+#else
+    keyList << keys.values();
+#endif
 
     return keyList;
 }

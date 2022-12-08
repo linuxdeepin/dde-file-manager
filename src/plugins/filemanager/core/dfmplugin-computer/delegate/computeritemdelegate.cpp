@@ -255,7 +255,7 @@ void ComputerItemDelegate::paintSmallItem(QPainter *painter, const QStyleOptionV
 
     const int TextMaxWidth = option.rect.width() - 20;
     const QString &ElidedText = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, TextMaxWidth);
-    const int LabelWidth = QFontMetrics(fnt).width(ElidedText);
+    const int LabelWidth = QFontMetrics(fnt).horizontalAdvance(ElidedText);
     const int LabelTopMargin = 10;
     auto labelRect = QRect(option.rect.x() + (option.rect.width() - LabelWidth) / 2, option.rect.y() + TopMargin + IconSize + LabelTopMargin, LabelWidth, 40);
     painter->setPen(qApp->palette().color(/*(option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText : */ QPalette::ColorRole::Text));   // PO: no highlight
@@ -322,7 +322,7 @@ void ComputerItemDelegate::drawDeviceLabelAndFs(QPainter *painter, const QStyleO
 
     QString devName = index.data(Qt::DisplayRole).toString();
     auto fs = index.data(ComputerModel::DataRoles::kFileSystemRole).toString();
-    int fsLabelWidth = fm.width(fs.toUpper());
+    int fsLabelWidth = fm.horizontalAdvance(fs.toUpper());
 
     const int IconSize = view->iconSize().width();
     const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;

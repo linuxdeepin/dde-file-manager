@@ -30,9 +30,9 @@
 
 DWIDGET_USE_NAMESPACE
 
-ProcessDialog::ProcessDialog(QWidget *parent) : DDialog(parent)
+ProcessDialog::ProcessDialog(QWidget *parent)
+    : DDialog(parent)
 {
-
 }
 
 void ProcessDialog::initialize(bool desktop)
@@ -67,9 +67,13 @@ bool ProcessDialog::execDialog()
 void ProcessDialog::restart()
 {
     if (killed && !onDesktop) {
-        const QString desktop = "/usr/bin/dde-desktop";
+        const QString &desktop = "/usr/bin/dde-desktop";
         qInfo() << "restart desktop...";
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
         QProcess::startDetached(desktop);
+#else
+        QProcess::startDetached(desktop, {});
+#endif
     }
 }
 
@@ -110,7 +114,11 @@ void ProcessDialog::killAll(const QList<int> &pids)
 QString ProcessDialog::targetExe(const QString &proc)
 {
     QFileInfo exeFile(proc + "/exe");
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 13, 0))
     return exeFile.readLink();
+#else
+    return exeFile.symLinkTarget();
+#endif
 }
 
 int ProcessDialog::targetUid(const QString &proc)

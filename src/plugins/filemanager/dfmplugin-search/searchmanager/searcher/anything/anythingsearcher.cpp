@@ -149,7 +149,7 @@ QList<QUrl> AnythingSearcher::takeAll()
 
 void AnythingSearcher::tryNotify()
 {
-    int cur = notifyTimer.elapsed();
+    qint64 cur = notifyTimer.elapsed();
     if (hasItem() && (cur - lastEmit) > kEmitInterval) {
         lastEmit = cur;
         qDebug() << "unearthed, current spend:" << cur;

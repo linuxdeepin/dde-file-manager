@@ -131,7 +131,11 @@ void BookmarkCallBack::handleNetworkMountResult(bool ok, dfmmount::DeviceError e
         auto filePath = target.path();
         QUrl result = target;
         if (!filePath.startsWith(mpt)) {
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
             QStringList paths = filePath.split("/", QString::SkipEmptyParts);
+#else
+            QStringList paths = filePath.split("/", Qt::SkipEmptyParts);
+#endif
             if (filePath.startsWith("/run/user")) {   // remove first 5 path just leave the share dir. /run/user/1000/gvfs/smbxxxxx/share
                 paths = paths.mid(5);
                 result = QUrl::fromLocalFile(mpt + "/" + paths.join("/"));

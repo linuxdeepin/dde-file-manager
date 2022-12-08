@@ -198,22 +198,22 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
         QPen tPen = painter->pen();
         tPen.setColor(color);
         painter->setPen(tPen);
-        painter->drawText((d->width - fm.width(str)) / 2, (d->height - fm.height()) / 2,
-                          fm.width(str), fm.height(), 0, str);
+        painter->drawText((d->width - fm.horizontalAdvance(str)) / 2, (d->height - fm.height()) / 2,
+                          fm.horizontalAdvance(str), fm.height(), 0, str);
     } else if (d->hovered || (d->hovered && !isChecked())) {
         color = pal.color(QPalette::Active, QPalette::Light);
         color = DGuiApplicationHelper::adjustColor(color, 0, 0, 0, +2, +2, +2, +51);
         painter->fillRect(boundingRect(), color);
-        painter->drawText((d->width - fm.width(str)) / 2, (d->height - fm.height()) / 2,
-                          fm.width(str), fm.height(), 0, str);
+        painter->drawText((d->width - fm.horizontalAdvance(str)) / 2, (d->height - fm.height()) / 2,
+                          fm.horizontalAdvance(str), fm.height(), 0, str);
     } else {
         if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
             color = QColor(235, 235, 235, 204);
         else
             color = QColor(30, 30, 30, 204);
         painter->fillRect(boundingRect(), color);
-        painter->drawText((d->width - fm.width(str)) / 2, (d->height - fm.height()) / 2,
-                          fm.width(str), fm.height(), 0, str);
+        painter->drawText((d->width - fm.horizontalAdvance(str)) / 2, (d->height - fm.height()) / 2,
+                          fm.horizontalAdvance(str), fm.height(), 0, str);
     }
 
     // draw line
@@ -365,8 +365,8 @@ QPixmap Tab::toPixmap(bool drawBorder) const
     color.setNamedColor("#303030");
     pen.setColor(color);
     painter.setPen(pen);
-    painter.drawText((300 - fm.width(str)) / 2, (d->height - fm.height()) / 2,
-                     fm.width(str), fm.height(), 0, str);
+    painter.drawText((300 - fm.horizontalAdvance(str)) / 2, (d->height - fm.height()) / 2,
+                     fm.horizontalAdvance(str), fm.height(), 0, str);
 
     if (drawBorder) {
         QPainterPath path;

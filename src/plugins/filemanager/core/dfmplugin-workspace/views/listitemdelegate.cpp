@@ -105,6 +105,7 @@ void ListItemDelegate::paint(QPainter *painter,
 
 QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(index)
     Q_D(const ListItemDelegate);
 
     // Todo(yanghao): isColumnCompact (fontMetrics.height() * 2 + 10)
@@ -223,7 +224,7 @@ bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
             if (rect.left() <= event->x() && rect.right() >= event->x()) {
                 const QString &tipStr = index.data(columnRoleList[i - 1]).toString();
 
-                if (option.fontMetrics.width(tipStr, -1, static_cast<int>(Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()))) > rect.width()) {
+                if (option.fontMetrics.horizontalAdvance(tipStr) > rect.width()) {
                     tooltip = tipStr;
                     break;
                 }
@@ -543,7 +544,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 if (suffix == ".")
                     break;
                 fileName = ItemDelegateHelper::elideText(index.data(kItemFileBaseNameRole).toString().remove('\n'),
-                                                         QSize(static_cast<int>(rect.width()) - option.fontMetrics.width(suffix), static_cast<int>(rect.height())),
+                                                         QSize(static_cast<int>(rect.width()) - option.fontMetrics.horizontalAdvance(suffix), static_cast<int>(rect.height())),
                                                          QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                          option.font, Qt::ElideRight,
                                                          d->textLineHeight);
@@ -597,22 +598,21 @@ bool ListItemDelegate::setEditorData(ListItemEditor *editor)
 int ListItemDelegate::dataWidth(const QStyleOptionViewItem &option, const QModelIndex &index, int role) const
 {
     const QVariant &data = index.data(role);
-    Qt::Alignment alignment = Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt());
 
     if (data.canConvert<QString>()) {
-        return option.fontMetrics.width(data.toString(), -1, static_cast<int>(alignment));
+        return option.fontMetrics.horizontalAdvance(data.toString());
     }
 
     if (data.canConvert<QPair<QString, QString>>()) {
         const QPair<QString, QString> &string_string = qvariant_cast<QPair<QString, QString>>(data);
 
-        return qMax(option.fontMetrics.width(string_string.first, -1, static_cast<int>(alignment)), option.fontMetrics.width(string_string.second, -1, static_cast<int>(alignment)));
+        return qMax(option.fontMetrics.horizontalAdvance(string_string.first), option.fontMetrics.horizontalAdvance(string_string.second));
     }
 
     if (data.canConvert<QPair<QString, QPair<QString, QString>>>()) {
         const QPair<QString, QPair<QString, QString>> &string_p_string = qvariant_cast<QPair<QString, QPair<QString, QString>>>(data);
 
-        return option.fontMetrics.width(string_p_string.first, -1, static_cast<int>(alignment));
+        return option.fontMetrics.horizontalAdvance(string_p_string.first);
     }
 
     return -1;

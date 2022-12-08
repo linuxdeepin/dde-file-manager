@@ -412,14 +412,26 @@ FileEncryptHandlerPrivate::CryfsVersionInfo FileEncryptHandlerPrivate::versionSt
 
     runVaultProcessAndGetOutput({ "--version" }, standardError, standardOutput);
     if (!standardOutput.isEmpty()) {
-        QStringList datas = standardOutput.split('\n', QString::SkipEmptyParts);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
+        QStringList &&datas = standardOutput.split('\n', QString::SkipEmptyParts);
+#else
+        QStringList &&datas = standardOutput.split('\n', Qt::SkipEmptyParts);
+#endif
         if (!datas.isEmpty()) {
             const QString &data = datas.first();
-            QStringList tmpDatas = data.split(' ', QString::SkipEmptyParts);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
+            QStringList &&tmpDatas = data.split(' ', QString::SkipEmptyParts);
+#else
+            QStringList &&tmpDatas = data.split(' ', Qt::SkipEmptyParts);
+#endif
             for (int i = 0; i < tmpDatas.size(); ++i) {
                 if (tmpDatas.at(i).contains(QRegExp("^[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}$"))) {
                     const QString tmpVersions = tmpDatas.at(i);
-                    QStringList versions = tmpVersions.split('.', QString::SkipEmptyParts);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
+                    QStringList &&versions = tmpVersions.split('.', QString::SkipEmptyParts);
+#else
+                    QStringList &&versions = tmpVersions.split('.', Qt::SkipEmptyParts);
+#endif
                     cryfsVersion.majorVersion = versions.at(kMajorIndex).toInt();
                     cryfsVersion.minorVersion = versions.at(kMinorIndex).toInt();
                     cryfsVersion.hotfixVersion = versions.at(kHotFixIndex).toInt();

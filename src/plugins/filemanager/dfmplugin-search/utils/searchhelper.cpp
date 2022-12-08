@@ -313,8 +313,12 @@ bool SearchHelper::isHiddenFile(const QString &fileName, QHash<QString, QSet<QSt
 
             QByteArray data = file.readAll();
             file.close();
-
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
             const auto &hiddenFiles = QSet<QString>::fromList(QString(data).split('\n', QString::SkipEmptyParts));
+#else
+            auto &&list { QString(data).split('\n', Qt::SkipEmptyParts) };
+            const auto &hiddenFiles = QSet<QString>(list.begin(), list.end());
+#endif
             filters[fileParentPath] = hiddenFiles;
         } else {
             return isHiddenFile(fileParentPath, filters, searchPath);
