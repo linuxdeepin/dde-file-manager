@@ -134,7 +134,7 @@ QIcon LocalFileIconProvider::icon(AbstractFileInfo *info, const QIcon &feedback)
     if (Q_LIKELY(!icon.isNull()))
         return icon;
 
-    icon = this->icon(info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath));
+    icon = this->icon(info->pathInfo(PathInfo::kFilePath));
 
     if (Q_LIKELY(!icon.isNull()))
         return icon;

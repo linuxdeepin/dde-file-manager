@@ -177,7 +177,7 @@ void DumpISOOptDialog::onFileChoosed(const QString &fileName)
         info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(fileName + "/" + discName + ".iso"));
     }
 
-    fileChooser->setText(info->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath));
+    fileChooser->setText(info->pathInfo(PathInfo::kAbsoluteFilePath));
 }
 
 void DumpISOOptDialog::onPathChanged(const QString &path)

@@ -738,7 +738,7 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         return false;
 
     if (itemInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
-        targetFileUrl = itemInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
+        targetFileUrl = itemInfo->pathInfo(PathInfo::kSymLinkTarget);
     }
 
     if (d->hookIfs && d->hookIfs->dropMimeData(data, targetFileUrl, action)) {

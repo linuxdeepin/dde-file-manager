@@ -262,7 +262,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
     const auto &filter = parseFilterData(filterData);
     if (filter.comboValid[kSearchRange] && !filter.includeSubDir) {
         const QUrl &parentUrl = SearchHelper::searchTargetUrl(filter.currentUrl);
-        QString filePath = info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);
+        QString filePath = info->pathInfo(PathInfo::kFilePath);
         filePath.remove(parentUrl.toLocalFile().endsWith("/") ? parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
         if (filePath.contains('/'))
             return false;

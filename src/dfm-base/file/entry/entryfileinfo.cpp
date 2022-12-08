@@ -162,7 +162,7 @@ QString EntryFileInfo::nameInfo(const NameInfo type) const
     }
 }
 
-QString EntryFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
+QString EntryFileInfo::pathInfo(const PathInfo type) const
 {
     QString path;
     switch (type) {

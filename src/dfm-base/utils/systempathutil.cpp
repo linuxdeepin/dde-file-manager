@@ -107,7 +107,7 @@ bool SystemPathUtil::checkContainsSystemPath(const QList<QUrl> &urlList)
 {
     for (const auto &url : urlList) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info && isSystemPath(info->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath)))
+        if (info && isSystemPath(info->pathInfo(PathInfo::kAbsoluteFilePath)))
             return true;
     }
 

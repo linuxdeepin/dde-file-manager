@@ -244,7 +244,7 @@ void ShortcutOper::clearClipBoard()
     auto homePath = view->model()->rootUrl();
     if (!urls.isEmpty()) {
         auto itemInfo = FileCreator->createFileInfo(urls.first(), false);
-        if (itemInfo && (itemInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsolutePath) == homePath.toLocalFile()))
+        if (itemInfo && (itemInfo->pathInfo(PathInfo::kAbsolutePath) == homePath.toLocalFile()))
             ClipBoard::instance()->clearClipboard();
     }
 }

@@ -190,7 +190,7 @@ QString LocalFileInfo::nameInfo(const NameInfo type) const
   * 处理或者字符串处理，这都比较快
   * \param FileNameInfoType
   */
-QString LocalFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
+QString LocalFileInfo::pathInfo(const PathInfo type) const
 {
     switch (type) {
     case FilePathInfoType::kFilePath:

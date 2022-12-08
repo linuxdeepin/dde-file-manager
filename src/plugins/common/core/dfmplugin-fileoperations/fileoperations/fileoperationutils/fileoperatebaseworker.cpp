@@ -605,8 +605,8 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     }
     // 检查源文件是否存在
     if (!DecoratorFile(fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kPath).startsWith("/root/")
-                                                      && !toInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kPath).startsWith("/root/"))
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathInfo(PathInfo::kPath).startsWith("/root/")
+                                                      && !toInfo->pathInfo(PathInfo::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), toInfo == nullptr ? QUrl() : toInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), errortype);
@@ -624,8 +624,8 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     }
     // 检查目标文件是否存在
     if (!DecoratorFile(toInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kPath).startsWith("/root/")
-                                                      && !toInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kPath).startsWith("/root/"))
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathInfo(PathInfo::kPath).startsWith("/root/")
+                                                      && !toInfo->pathInfo(PathInfo::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), toInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), errortype);
@@ -674,7 +674,7 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
     if (followLink) {
         do {
             QUrl newUrl = newFromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
-            newUrl.setPath(newFromInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget));
+            newUrl.setPath(newFromInfo->pathInfo(PathInfo::kSymLinkTarget));
             const AbstractFileInfoPointer &symlinkTarget = InfoFactory::create<AbstractFileInfo>(newUrl);
 
             if (!symlinkTarget || !DecoratorFile(newUrl).exists()) {

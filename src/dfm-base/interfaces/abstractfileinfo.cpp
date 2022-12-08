@@ -181,7 +181,7 @@ QString dfmbase::AbstractFileInfo::nameInfo(const NameInfo type) const
   * 处理或者字符串处理，这都比较快
   * \param FileNameInfoType
   */
-QString dfmbase::AbstractFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
+QString dfmbase::AbstractFileInfo::pathInfo(const PathInfo type) const
 {
     CALL_PROXY(pathInfo(type));
 
@@ -405,7 +405,7 @@ bool dfmbase::AbstractFileInfo::isAttributes(const dfmbase::AbstractFileInfo::Fi
     CALL_PROXY(isAttributes(type));
     switch (type) {
     case FileIsType::kIsRoot:
-        return pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) == "/";
+        return pathInfo(PathInfo::kFilePath) == "/";
     default:
         return false;
     }
@@ -555,7 +555,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByChildFileName(const QSt
         return QUrl();
     }
     QUrl theUrl = url;
-    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(q->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath).toStdString().c_str(),
+    theUrl.setPath(DFMIO::DFMUtils::buildFilePath(q->pathInfo(PathInfo::kAbsoluteFilePath).toStdString().c_str(),
                                                   fileName.toStdString().c_str(), nullptr));
     return theUrl;
 }
@@ -568,7 +568,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByChildFileName(const QSt
 QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByNewFileName(const QString &fileName) const
 {
     QUrl theUrl = url;
-    const QString &newPath = DFMIO::DFMUtils::buildFilePath(q->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsolutePath).toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
+    const QString &newPath = DFMIO::DFMUtils::buildFilePath(q->pathInfo(PathInfo::kAbsolutePath).toStdString().c_str(), fileName.toStdString().c_str(), nullptr);
     theUrl.setPath(newPath);
 
     return theUrl;
@@ -587,7 +587,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByNewFileName(const QStri
  */
 QString AbstractFileInfoPrivate::fileName() const
 {
-    QString filePath = q->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);
+    QString filePath = q->pathInfo(PathInfo::kFilePath);
 
     if (filePath.endsWith(QDir::separator())) {
         filePath.chop(1);
@@ -640,7 +640,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
     }
 
     AbstractFileInfoPointer info = nullptr;
-    QString linkTargetPath = q->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
+    QString linkTargetPath = q->pathInfo(PathInfo::kSymLinkTarget);
 
     do {
         const QUrl &targetUrl = QUrl::fromLocalFile(linkTargetPath);
@@ -655,7 +655,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
             return false;
         }
 
-        linkTargetPath = info->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
+        linkTargetPath = info->pathInfo(PathInfo::kSymLinkTarget);
     } while (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink));
 
     return info->canAttributes(AbstractFileInfo::FileCanType::kCanDrop);

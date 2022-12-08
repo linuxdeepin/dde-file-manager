@@ -385,7 +385,7 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
 
     // convert destnation url to real path if it's a symbol link.
     if (dstInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
-        dstUrl = dstInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kSymLinkTarget);
+        dstUrl = dstInfo->pathInfo(PathInfo::kSymLinkTarget);
 
     auto winId = SideBarHelper::windowId(qobject_cast<QWidget *>(parent()));
 

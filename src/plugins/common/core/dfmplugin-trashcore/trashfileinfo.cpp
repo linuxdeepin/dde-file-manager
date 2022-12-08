@@ -242,7 +242,7 @@ QString TrashFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type)
 
     return AbstractFileInfo::displayInfo(type);
 }
-QString TrashFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
+QString TrashFileInfo::pathInfo(const PathInfo type) const
 {
     switch (type) {
     case FilePathInfoType::kSymLinkTarget:

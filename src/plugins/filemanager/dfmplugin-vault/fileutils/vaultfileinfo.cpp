@@ -81,7 +81,7 @@ QString VaultFileInfoPrivate::absolutePath() const
     if (!proxy)
         return "";
 
-    QString path = proxy->pathInfo(AbstractFileInfo::FilePathInfoType::kPath);
+    QString path = proxy->pathInfo(PathInfo::kPath);
     QUrl virtualUrl = VaultHelper::instance()->pathToVaultVirtualUrl(path);
     return virtualUrl.path();
 }
@@ -112,7 +112,7 @@ bool VaultFileInfoPrivate::isRoot() const
 {
     bool bRootDir = false;
     const QString &localFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), kVaultDecryptDirName, nullptr);
-    QString path = q->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath);
+    QString path = q->pathInfo(PathInfo::kFilePath);
     if (localFilePath == path || localFilePath + "/" == path || localFilePath == path + "/") {
         bRootDir = true;
     }
@@ -153,7 +153,7 @@ bool VaultFileInfo::operator!=(const VaultFileInfo &fileinfo) const
     return !(operator==(fileinfo));
 }
 
-QString VaultFileInfo::pathInfo(const dfmbase::AbstractFileInfo::FilePathInfoType type) const
+QString VaultFileInfo::pathInfo(const PathInfo type) const
 {
     switch (type) {
     case FilePathInfoType::kAbsolutePath:
@@ -266,7 +266,7 @@ qint64 VaultFileInfo::size() const
 int VaultFileInfo::countChildFile() const
 {
     if (isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
-        QDir dir(pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath));
+        QDir dir(pathInfo(PathInfo::kAbsoluteFilePath));
         QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
                                               | QDir::NoDotAndDotDot | QDir::Hidden);
         return entryList.size();
