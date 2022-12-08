@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>AppController</name>
     <message>
@@ -274,76 +272,76 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="306"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
         <source>Computer</source>
         <translation>计算机</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="315"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="314"/>
         <source>Basic Info</source>
         <translation>基本信息</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="128"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="326"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="129"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="325"/>
         <source>Computer name</source>
         <translation>计算机名</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="130"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="328"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="131"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="327"/>
         <source>Edition</source>
         <translation>版本</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="132"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="327"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="339"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="133"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="326"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="338"/>
         <source>Version</source>
         <translation>版本号</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="134"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="330"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="135"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="329"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="136"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="331"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="372"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="137"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="330"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="371"/>
         <source>Processor</source>
         <translation>处理器</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="139"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="332"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="369"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="140"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="331"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="368"/>
         <source>Memory</source>
         <translation>内存</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="164"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="226"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="470"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="512"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="165"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="227"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="469"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="511"/>
         <source>Bit</source>
         <translation>位</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="248"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="523"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="249"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="522"/>
         <source>Available</source>
         <translation>可用</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="329"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="378"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="328"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="377"/>
         <source>OS build</source>
         <translation>构建号</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="392"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="391"/>
         <source>Obtaining...</source>
         <translation>正在获取中...</translation>
     </message>
@@ -559,7 +557,7 @@
 <context>
     <name>DFMTagWidget</name>
     <message>
-        <location filename="../views/dfmtagwidget.cpp" line="122"/>
+        <location filename="../views/dfmtagwidget.cpp" line="118"/>
         <source>Tag</source>
         <translation>标记</translation>
     </message>
@@ -867,19 +865,24 @@
 <context>
     <name>DFMVaultFileView</name>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="39"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="41"/>
         <source>Cannot open this path</source>
         <translation>无法打开当前路径</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="39"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="41"/>
         <source>Hint</source>
         <translation>提示</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="40"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="42"/>
         <source>OK</source>
         <translation>确 定</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultfileview.cpp" line="85"/>
+        <source>A task is in progress, and you cannot delete the vault</source>
+        <translation>当前有任务正在进行，无法删除保险箱</translation>
     </message>
 </context>
 <context>
@@ -1281,12 +1284,6 @@
         <translation>创建链接失败，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3291"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3375"/>
-        <source>Failed to write the file, cause:</source>
-        <translation>文件内容写入失败，原因：</translation>
-    </message>
-    <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3791"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>指针定位失败，原因：%1</translation>
@@ -1311,6 +1308,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1464"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1937"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1977"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2418"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3840"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>文件打开失败，原因：%1</translation>
@@ -1326,6 +1324,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1574"/>
         <location filename="../io/dfilecopymovejob.cpp" line="2087"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2496"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>文件内容读取失败，原因：%1</translation>
     </message>
@@ -1334,6 +1333,8 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1701"/>
         <location filename="../io/dfilecopymovejob.cpp" line="2131"/>
         <location filename="../io/dfilecopymovejob.cpp" line="2178"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3291"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3375"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>文件内容写入失败，原因：%1</translation>
     </message>
@@ -1342,16 +1343,6 @@
         <location filename="../io/dfilecopymovejob.cpp" line="2286"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>文件完整性检查失败，原因：%1</translation>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2418"/>
-        <source>Failed to open the file, cause: </source>
-        <translation>文件打开失败，原因：</translation>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2496"/>
-        <source>Failed to read the file, cause: </source>
-        <translation>文件内容读取失败，原因：</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="2594"/>
@@ -1556,7 +1547,7 @@
         <translation>保存为：</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="649"/>
+        <location filename="../views/dstatusbar.cpp" line="687"/>
         <source>Loading...</source>
         <translation>正在加载......</translation>
     </message>
@@ -2774,7 +2765,7 @@
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1804"/>
-        <source>Mount failed</source>
+        <source>Mounting failed</source>
         <translation>挂载失败</translation>
     </message>
     <message>
@@ -3493,7 +3484,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="51"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="599"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="600"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="39"/>
         <source>Open in new window</source>
         <translation>在新窗口打开</translation>
@@ -3504,7 +3495,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="55"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="603"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="604"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="43"/>
         <source>Open in new tab</source>
         <translation>在新标签中打开</translation>
@@ -4304,12 +4295,12 @@
         <translation>擦除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="588"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="589"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="609"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="610"/>
         <source>Edit address</source>
         <translation>编辑地址</translation>
     </message>
@@ -4404,12 +4395,12 @@
         <translation>选择镜像文件存放路径：</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="86"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="87"/>
         <source>For Government</source>
         <translation>政务授权</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="88"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="89"/>
         <source>For Enterprise</source>
         <translation>企业授权</translation>
     </message>

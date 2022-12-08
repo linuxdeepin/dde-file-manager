@@ -141,17 +141,17 @@
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1005"/>
         <source>Lock Screen</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>صفحه قفل</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1006"/>
         <source>Both</source>
-        <translation type="unfinished"/>
+        <translation>هر دو</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1094"/>
         <source>Custom Screensaver</source>
-        <translation type="unfinished"/>
+        <translation>محافظ صفحه شخصی</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1095"/>
@@ -167,13 +167,13 @@
         <location filename="../view/watermaskframe.cpp" line="127"/>
         <location filename="../view/watermaskframe.cpp" line="128"/>
         <source>Not authorized</source>
-        <translation type="unfinished"/>
+        <translation>مجاز نیست</translation>
     </message>
     <message>
         <location filename="../view/watermaskframe.cpp" line="136"/>
         <location filename="../view/watermaskframe.cpp" line="137"/>
         <source>In trial period</source>
-        <translation type="unfinished"/>
+        <translation>در بازه آزمایشی</translation>
     </message>
 </context>
 </TS>

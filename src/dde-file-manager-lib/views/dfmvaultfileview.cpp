@@ -23,6 +23,8 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "singleton.h"
+#include "dialogs/dtaskdialog.h"
+#include "dialogs/dialogmanager.h"
 
 #include <QDrag>
 
@@ -77,6 +79,13 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
         }
     } else {
         if (url.host() == "delete") {
+            DTaskDialog *pTaskDlg = dialogManager->taskDialog();
+            if (pTaskDlg) {
+                if (pTaskDlg->haveNotCompletedVaultTask()) {
+                    dialogManager->showErrorDialog("", tr("A task is in progress, and you cannot delete the vault"));
+                    return false;
+                }
+            }
             page = qobject_cast<DFMVaultRemovePages *>(new DFMVaultRemovePages(wndPtr));
         }
 
