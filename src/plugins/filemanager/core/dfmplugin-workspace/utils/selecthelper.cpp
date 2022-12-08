@@ -30,7 +30,8 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
 SelectHelper::SelectHelper(FileView *parent)
-    : view(parent)
+    : QObject(parent),
+      view(parent)
 {
 }
 

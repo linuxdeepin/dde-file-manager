@@ -375,9 +375,6 @@ void WorkspaceWidget::initViewLayout()
     viewStackLayout = new QStackedLayout;
     viewStackLayout->setSpacing(0);
     viewStackLayout->setContentsMargins(0, 0, 0, 0);
-    topWidgetContainer = new QFrame;
-    QVBoxLayout *layout = new QVBoxLayout;
-    topWidgetContainer->setLayout(layout);
 
     widgetLayout = new QVBoxLayout;
     widgetLayout->addWidget(tabTopLine);
@@ -417,6 +414,9 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
     }
 
     auto interface = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
+    if (interface && !interface->parent())
+        interface->setParent(this);
+
     if (topWidgets.contains(scheme)) {
         bool showUrl { interface->isShowFromUrl(topWidgets[scheme].data(), url) };
         qDebug() << interface->isKeepShow() << showUrl;

@@ -32,7 +32,8 @@ using namespace GlobalPrivate;
 using namespace dfmplugin_workspace;
 
 ViewDrawHelper::ViewDrawHelper(FileView *parent)
-    : view(parent)
+    : QObject(parent),
+      view(parent)
 {
 }
 

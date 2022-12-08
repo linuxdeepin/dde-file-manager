@@ -148,6 +148,11 @@ FileManagerWindow::FileManagerWindow(const QUrl &url, QWidget *parent)
 
 FileManagerWindow::~FileManagerWindow()
 {
+    auto menu = titlebar()->menu();
+    if (menu) {
+        delete menu;
+        menu = nullptr;
+    }
 }
 
 void FileManagerWindow::cd(const QUrl &url)

@@ -81,27 +81,27 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
 {
     QMenu *menu = new QMenu();
 
-    QAction *action { new QAction(QObject::tr("New window")) };
+    QAction *action { new QAction(QObject::tr("New window"), menu) };
     action->setData(MenuAction::kNewWindow);
     menu->addAction(action);
 
     menu->addSeparator();
 
-    action = new QAction(QObject::tr("Connect to Server"));
+    action = new QAction(QObject::tr("Connect to Server"), menu);
     action->setData(MenuAction::kConnectToServer);
     menu->addAction(action);
 
-    action = new QAction(QObject::tr("Set share password"));
+    action = new QAction(QObject::tr("Set share password"), menu);
     action->setData(MenuAction::kSetUserSharePassword);
     menu->addAction(action);
 
     if (DeviceUtils::checkDiskEncrypted()) {
-        action = new QAction(QObject::tr("Change disk password"));
+        action = new QAction(QObject::tr("Change disk password"), menu);
         action->setData(MenuAction::kChangeDiskPassword);
         menu->addAction(action);
     }
 
-    action = new QAction(QObject::tr("Settings"));
+    action = new QAction(QObject::tr("Settings"), menu);
     action->setData(MenuAction::kSettings);
     menu->addAction(action);
 

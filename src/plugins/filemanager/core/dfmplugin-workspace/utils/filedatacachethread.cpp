@@ -168,6 +168,7 @@ void FileDataCacheThread::removeChildren(const QList<QUrl> &urls)
         root->remove(root->rowIndex, childIndex, 1);
         QWriteLocker lk(&childrenLock);
         childrenUrlList.removeOne(url);
+        chilrenDataMap[url]->deleteLater();
         chilrenDataMap.remove(url);
         lk.unlock();
         root->removeFinish();
@@ -193,6 +194,7 @@ void FileDataCacheThread::clearChildren()
     root->remove(root->rowIndex, 0, childCount);
     QWriteLocker lk(&childrenLock);
     childrenUrlList.clear();
+    qDeleteAll(chilrenDataMap.values());
     chilrenDataMap.clear();
     lk.unlock();
     root->removeFinish();
