@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -274,76 +272,76 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="306"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="315"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="314"/>
         <source>Basic Info</source>
         <translation>Basic Info</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="128"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="326"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="129"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="325"/>
         <source>Computer name</source>
         <translation>Computer name</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="130"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="328"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="131"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="327"/>
         <source>Edition</source>
         <translation>Edition</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="132"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="327"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="339"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="133"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="326"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="338"/>
         <source>Version</source>
         <translation>Version</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="134"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="330"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="135"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="329"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="136"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="331"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="372"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="137"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="330"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="371"/>
         <source>Processor</source>
         <translation>Processor</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="139"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="332"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="369"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="140"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="331"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="368"/>
         <source>Memory</source>
         <translation>Memory</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="164"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="226"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="470"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="512"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="165"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="227"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="469"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="511"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="248"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="523"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="249"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="522"/>
         <source>Available</source>
         <translation>Available</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="329"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="378"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="328"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="377"/>
         <source>OS build</source>
         <translation>OS build</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="392"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="391"/>
         <source>Obtaining...</source>
         <translation>Obtaining...</translation>
     </message>
@@ -559,7 +557,7 @@
 <context>
     <name>DFMTagWidget</name>
     <message>
-        <location filename="../views/dfmtagwidget.cpp" line="122"/>
+        <location filename="../views/dfmtagwidget.cpp" line="118"/>
         <source>Tag</source>
         <translation>Tag</translation>
     </message>
@@ -867,19 +865,24 @@
 <context>
     <name>DFMVaultFileView</name>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="39"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="41"/>
         <source>Cannot open this path</source>
         <translation>Cannot open this path</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="39"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="41"/>
         <source>Hint</source>
         <translation>Hint</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultfileview.cpp" line="40"/>
+        <location filename="../views/dfmvaultfileview.cpp" line="42"/>
         <source>OK</source>
         <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="../views/dfmvaultfileview.cpp" line="85"/>
+        <source>A task is in progress, and you cannot delete the vault</source>
+        <translation>A task is in progress, and you cannot delete the vault</translation>
     </message>
 </context>
 <context>
@@ -1281,12 +1284,6 @@
         <translation>Failed to create symlink, cause: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3291"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3375"/>
-        <source>Failed to write the file, cause:</source>
-        <translation>Failed to write the file, cause:</translation>
-    </message>
-    <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3791"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>Failed to position the file pointer, cause: %1</translation>
@@ -1311,6 +1308,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1464"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1937"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1977"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2418"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3840"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Failed to open the file, cause: %1</translation>
@@ -1326,6 +1324,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1574"/>
         <location filename="../io/dfilecopymovejob.cpp" line="2087"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2496"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Failed to read the file, cause: %1</translation>
     </message>
@@ -1334,6 +1333,8 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1701"/>
         <location filename="../io/dfilecopymovejob.cpp" line="2131"/>
         <location filename="../io/dfilecopymovejob.cpp" line="2178"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3291"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3375"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Failed to write the file, cause: %1</translation>
     </message>
@@ -1342,16 +1343,6 @@
         <location filename="../io/dfilecopymovejob.cpp" line="2286"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>File integrity was damaged, cause: %1</translation>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2418"/>
-        <source>Failed to open the file, cause: </source>
-        <translation>Failed to open the file, cause: </translation>
-    </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2496"/>
-        <source>Failed to read the file, cause: </source>
-        <translation>Failed to read the file, cause: </translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="2594"/>
@@ -1556,7 +1547,7 @@
         <translation>Save as:</translation>
     </message>
     <message>
-        <location filename="../views/dstatusbar.cpp" line="649"/>
+        <location filename="../views/dstatusbar.cpp" line="687"/>
         <source>Loading...</source>
         <translation>Loading...</translation>
     </message>
@@ -2590,44 +2581,51 @@
         <translation>Keep showing the mounted Samba shares</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="281"/>
-        <location filename="../configure/global-setting-template-pro.js" line="281"/>
-        <location filename="../configure/global-setting-template.js" line="280"/>
-        <source>Use the file chooser dialog of File Manager</source>
-        <translation>Use the file chooser dialog of File Manager</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="275"/>
+        <location filename="../configure/global-setting-template-pro.js" line="275"/>
+        <location filename="../configure/global-setting-template.js" line="274"/>
+        <source>Merge the entries of Samba shared folders</source>
+        <translation>Merge the entries of Samba shared folders</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="287"/>
         <location filename="../configure/global-setting-template-pro.js" line="287"/>
-        <location filename="../configure/global-setting-template.js" line="286"/>
+        <location filename="../configure/global-setting-template.js" line="287"/>
+        <source>Use the file chooser dialog of File Manager</source>
+        <translation>Use the file chooser dialog of File Manager</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="293"/>
+        <location filename="../configure/global-setting-template-pro.js" line="293"/>
+        <location filename="../configure/global-setting-template.js" line="293"/>
         <source>Ask for my confirmation when deleting files</source>
         <translation>Ask for my confirmation when deleting files</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="295"/>
-        <location filename="../configure/global-setting-template-pro.js" line="295"/>
-        <location filename="../configure/global-setting-template.js" line="294"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="301"/>
+        <location filename="../configure/global-setting-template-pro.js" line="301"/>
+        <location filename="../configure/global-setting-template.js" line="301"/>
         <source>Other</source>
         <translation>Other</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="299"/>
-        <location filename="../configure/global-setting-template-pro.js" line="299"/>
-        <location filename="../configure/global-setting-template.js" line="298"/>
-        <source>Hide system disk</source>
-        <translation>Hide system disk</translation>
-    </message>
-    <message>
         <location filename="../configure/global-setting-template-fedora.js" line="305"/>
         <location filename="../configure/global-setting-template-pro.js" line="305"/>
-        <location filename="../configure/global-setting-template.js" line="311"/>
+        <location filename="../configure/global-setting-template.js" line="305"/>
+        <source>Hide built-in disks</source>
+        <translation>Hide built-in disks</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="311"/>
+        <location filename="../configure/global-setting-template-pro.js" line="311"/>
+        <location filename="../configure/global-setting-template.js" line="318"/>
         <source>Hide loop partitions</source>
         <translation>Hide loop partitions</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="318"/>
-        <location filename="../configure/global-setting-template-pro.js" line="318"/>
-        <location filename="../configure/global-setting-template.js" line="317"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="324"/>
+        <location filename="../configure/global-setting-template-pro.js" line="324"/>
+        <location filename="../configure/global-setting-template.js" line="324"/>
         <source>Show file system on disk icon</source>
         <translation>Show file system on disk icon</translation>
     </message>
@@ -2708,9 +2706,9 @@
         <translation>Open after auto mount</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="277"/>
-        <location filename="../configure/global-setting-template-pro.js" line="277"/>
-        <location filename="../configure/global-setting-template.js" line="276"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="283"/>
+        <location filename="../configure/global-setting-template-pro.js" line="283"/>
+        <location filename="../configure/global-setting-template.js" line="283"/>
         <source>Dialog</source>
         <translation>Dialog</translation>
     </message>
@@ -2718,6 +2716,11 @@
         <location filename="../configure/global-setting-template.js" line="208"/>
         <source>Compressed file preview</source>
         <translation>Compressed file preview</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template.js" line="275"/>
+        <source>Switching the entry display may lead to failed mounting</source>
+        <translation>Switching the entry display may lead to failed mounting</translation>
     </message>
 </context>
 <context>
@@ -2762,18 +2765,18 @@
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1804"/>
-        <source>Mount failed</source>
-        <translation type="unfinished"></translation>
+        <source>Mounting failed</source>
+        <translation>Mounting failed</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1805"/>
         <source>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>The device has been blocked and you do not have permission to access it. Please configure its connection policy in Security Center or contact your administrator.</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1807"/>
         <source>Confirm</source>
-        <translation type="unfinished">Confirm</translation>
+        <translation>Confirm</translation>
     </message>
     <message>
         <location filename="../gvfs/gvfsmountmanager.cpp" line="1884"/>
@@ -3481,7 +3484,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="51"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="599"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="600"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="39"/>
         <source>Open in new window</source>
         <translation>Open in new window</translation>
@@ -3492,7 +3495,7 @@
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="55"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="603"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="604"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="43"/>
         <source>Open in new tab</source>
         <translation>Open in new tab</translation>
@@ -4292,12 +4295,12 @@
         <translation>Erase</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="588"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="589"/>
         <source>Copy path</source>
         <translation>Copy path</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfmcrumbbar.cpp" line="609"/>
+        <location filename="../interfaces/dfmcrumbbar.cpp" line="610"/>
         <source>Edit address</source>
         <translation>Edit address</translation>
     </message>
@@ -4392,12 +4395,12 @@
         <translation>Save the ISO image here:</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="86"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="87"/>
         <source>For Government</source>
         <translation>For Government</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="88"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="89"/>
         <source>For Enterprise</source>
         <translation>For Enterprise</translation>
     </message>
