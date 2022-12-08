@@ -66,7 +66,6 @@ public:
     virtual QVariant timeInfo(const FileTimeType type) const override;
     virtual QVariantHash extraProperties() const override;
     virtual QIcon fileIcon() override;
-    virtual QString mountPath() const;
     virtual AbstractFileInfo::FileType fileType() const override;
     virtual int countChildFile() const override;
     virtual QString displayInfo(const DisplayInfoType type) const override;

@@ -100,7 +100,6 @@ public:
 
     QIcon thumbIcon();
     QIcon defaultIcon();
-    void onRequestThumbFinished(const QString &path);
 
 private:
     QString fileName() const;

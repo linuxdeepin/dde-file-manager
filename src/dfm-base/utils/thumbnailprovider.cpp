@@ -900,8 +900,8 @@ void ThumbnailProvider::run()
         locker.unlock();
 
         if (task.future) {
-            task.future->finished = true;
             task.future->thumbPath = thumbnail;
+            task.future->finished = true;
         }
     }
 }

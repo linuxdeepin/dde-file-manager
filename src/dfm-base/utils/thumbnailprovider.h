@@ -44,7 +44,7 @@ class ThumbnailProvider : public QThread
 public:
     struct ThumbNailCreateFuture
     {
-        std::atomic_bool finished { 0 };
+        std::atomic_bool finished { false };
         QString thumbPath;
     };
 

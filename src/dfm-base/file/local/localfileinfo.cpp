@@ -392,18 +392,6 @@ QVariant LocalFileInfo::timeInfo(const TimeInfo type) const
         return AbstractFileInfo::timeInfo(type);
     }
 }
-/*!
- * \brief mountPath 获取挂载路径
- *
- * \return QString 挂载路径
- */
-QString LocalFileInfo::mountPath() const
-{
-    if (fileType() == FileType::kBlockDevice)
-        return DFMIO::DFMUtils::devicePathFromUrl(d->url);
-    else
-        return QString();
-}
 
 /*!
  * \brief fileType 获取文件类型
@@ -464,8 +452,8 @@ int LocalFileInfo::countChildFile() const
 {
     if (isAttributes(FileIsType::kIsDir)) {
         const QString &path = d->filePath();
-        QReadLocker locker(&d->lock);
         DecoratorFileEnumerator enumerator(path);
+        QReadLocker locker(&d->lock);
         return int(enumerator.fileCount());
     }
 
@@ -676,20 +664,16 @@ QIcon LocalFileInfoPrivate::thumbIcon()
 
     // else load thumb from DThumbnailProvider in async.
     // and before thumb thread finish, return default icon.
-    if (!loadingThumbnail) {
+    if (!loadingThumbnail   // thumbnail unload
+        || (getIconFuture && getIconFuture->finished && getIconFuture->thumbPath.isEmpty())) {   // create thumbnail failed
         loadingThumbnail = true;
-        if (!getIconFuture) {
-            QUrl thumburl = url;
+        if (!getIconFuture)
             getIconFuture.reset(new ThumbnailProvider::ThumbNailCreateFuture());
-            QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> future = getIconFuture;
-            QTimer::singleShot(kRequestThumbnailDealy, [thumburl, future] {
-                ThumbnailProvider::instance()->appendToProduceQueue(thumburl, ThumbnailProvider::kLarge, future);
-            });
-        }
-    } else if (getIconFuture && getIconFuture->finished) {
-        onRequestThumbFinished(getIconFuture->thumbPath);
-        icon = icons.value(IconType::kThumbIcon);
-        return icon;
+        QUrl thumburl = url;
+        QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> future = getIconFuture;
+        QTimer::singleShot(kRequestThumbnailDealy, [thumburl, future] {
+            ThumbnailProvider::instance()->appendToProduceQueue(thumburl, ThumbnailProvider::kLarge, future);
+        });
     }
 
     return defaultIcon();
@@ -722,20 +706,6 @@ QIcon LocalFileInfoPrivate::defaultIcon()
     }
 
     return icon;
-}
-
-void LocalFileInfoPrivate::onRequestThumbFinished(const QString &path)
-{
-    if (path.isEmpty()) {
-        // cannot generate thumbnail, using default icon
-        auto icon = defaultIcon();
-        QWriteLocker wlk(&iconLock);
-        icons.insert(LocalFileInfoPrivate::kThumbIcon, icon);
-    } else {
-        thumbIcon();   // load icon from DThumbnailProvider
-    }
-    QWriteLocker wlk(&iconLock);
-    loadingThumbnail = false;
 }
 /*!
  * \brief fileName 文件名称，全名称
