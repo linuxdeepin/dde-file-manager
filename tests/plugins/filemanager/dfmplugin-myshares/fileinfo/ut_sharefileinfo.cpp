@@ -77,7 +77,7 @@ TEST_F(UT_ShareFileInfo, FileDisplayName)
 
 TEST_F(UT_ShareFileInfo, FileName)
 {
-    EXPECT_TRUE(info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName) == "test");
+    EXPECT_TRUE(info->nameInfo(NameInfo::kFileName) == "test");
 }
 
 TEST_F(UT_ShareFileInfo, IsDir)

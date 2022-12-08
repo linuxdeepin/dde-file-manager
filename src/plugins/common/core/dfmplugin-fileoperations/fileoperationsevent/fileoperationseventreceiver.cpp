@@ -756,7 +756,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
 
     AbstractFileInfoPointer toFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
     if (toFileInfo && DecoratorFile(newUrl).exists()) {
-        dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName));
+        dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameInfo(NameInfo::kFileName));
         return false;
     }
 
@@ -1173,7 +1173,7 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
             const QUrl &parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
-            const QString &fileName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+            const QString &fileName = info->nameInfo(NameInfo::kFileName);
 
             HideFileHelper helper(parentUrl);
             helper.contains(fileName) ? helper.remove(fileName) : helper.insert(fileName);

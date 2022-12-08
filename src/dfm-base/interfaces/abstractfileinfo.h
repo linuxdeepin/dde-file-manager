@@ -286,4 +286,15 @@ private:
 typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
 Q_DECLARE_METATYPE(AbstractFileInfoPointer)
 
+using NameInfo = dfmbase::AbstractFileInfo::FileNameInfoType;
+using PathInfo = dfmbase::AbstractFileInfo::FilePathInfoType;
+using DisPlay = dfmbase::AbstractFileInfo::DisplayInfoType;
+using UrlInfo = dfmbase::AbstractFileInfo::FileUrlInfoType;
+using ExInfo = dfmbase::AbstractFileInfo::FileExtendedInfoType;
+using ViewInfo = dfmbase::AbstractFileInfo::ViewType;
+using Support = dfmbase::AbstractFileInfo::SupportType;
+using TimeInfo = dfmbase::AbstractFileInfo::FileTimeType;
+using IsInfo = dfmbase::AbstractFileInfo::FileIsType;
+using CanInfo = dfmbase::AbstractFileInfo::FileCanType;
+
 #endif   // ABSTRACTFILEINFO_H

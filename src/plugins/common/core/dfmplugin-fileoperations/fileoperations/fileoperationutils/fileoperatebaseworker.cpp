@@ -726,8 +726,8 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     newTargetUrl.setPath(newPath);
 
     newTargetInfo.reset();
-    const QString &suffix = fromInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kSuffix);
-    const QString &mimeTypeName = fromInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kMimeTypeName);
+    const QString &suffix = fromInfo->nameInfo(NameInfo::kSuffix);
+    const QString &mimeTypeName = fromInfo->nameInfo(NameInfo::kMimeTypeName);
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
         && mimeTypeName == "application/x-desktop")
         newTargetUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kDesktop);
@@ -879,7 +879,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromI
     bool ok = doCopyFilePractically(fromInfo, toInfo, skip);
     FileUtils::removeCopyingFileUrl(targetUrl);
 
-    FileOperationsUtils::removeUsingName(toInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName));
+    FileOperationsUtils::removeUsingName(toInfo->nameInfo(NameInfo::kFileName));
 
     return ok;
 }
@@ -976,7 +976,7 @@ void FileOperateBaseWorker::doThreadPoolCopyFile(const int index)
     if (!ok && !skip)
         setStat(AbstractJobHandler::JobState::kStopState);
     FileUtils::removeCopyingFileUrl(targetUrl);
-    FileOperationsUtils::removeUsingName(threadInfo->toInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName));
+    FileOperationsUtils::removeUsingName(threadInfo->toInfo->nameInfo(NameInfo::kFileName));
 }
 
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)
@@ -1062,7 +1062,7 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool result = false;
     if (!doCheckFile(fromInfo, toInfo,
-                     fromInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName), newTargetInfo, skip))
+                     fromInfo->nameInfo(NameInfo::kFileCopyName), newTargetInfo, skip))
         return result;
 
     if (fromInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {

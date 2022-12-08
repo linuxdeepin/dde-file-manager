@@ -150,12 +150,12 @@ bool EntryFileInfo::exists() const
     return d->entity ? d->entity->exists() : false;
 }
 
-QString EntryFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString EntryFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kBaseName:
+    case NameInfo::kBaseName:
         return {};
-    case AbstractFileInfo::FileNameInfoType::kSuffix:
+    case NameInfo::kSuffix:
         return d->suffix();
     default:
         return AbstractFileInfo::nameInfo(type);

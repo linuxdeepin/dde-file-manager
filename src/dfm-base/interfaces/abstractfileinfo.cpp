@@ -156,7 +156,7 @@ void DFMBASE_NAMESPACE::AbstractFileInfo::refresh(DFileInfo::AttributeID id, con
   * 处理或者字符串处理，这都比较快
   * \param FileNameInfoType
   */
-QString dfmbase::AbstractFileInfo::nameInfo(const dfmbase::AbstractFileInfo::FileNameInfoType type) const
+QString dfmbase::AbstractFileInfo::nameInfo(const NameInfo type) const
 {
     CALL_PROXY(nameInfo(type));
     switch (type) {
@@ -615,7 +615,7 @@ QString AbstractFileInfoPrivate::fileName() const
 QString AbstractFileInfoPrivate::baseName() const
 {
     const QString &fileName = this->fileName();
-    const QString &suffix = q->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
+    const QString &suffix = q->nameInfo(NameInfo::kSuffix);
 
     if (suffix.isEmpty()) {
         return fileName;
@@ -635,7 +635,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
     }
 
     if (!q->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
-        const bool isDesktop = q->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
+        const bool isDesktop = q->nameInfo(NameInfo::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
         return q->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || isDesktop;
     }
 

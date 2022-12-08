@@ -207,14 +207,14 @@ void TrashFileInfo::refresh()
     AbstractFileInfo::refresh();
 }
 
-QString TrashFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString TrashFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kFileName:
+    case NameInfo::kFileName:
         return d->fileName();
-    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+    case NameInfo::kFileCopyName:
         return displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
-    case AbstractFileInfo::FileNameInfoType::kMimeTypeName:
+    case NameInfo::kMimeTypeName:
         return const_cast<TrashFileInfoPrivate *>(d)->mimeTypeName();
     default:
         return AbstractFileInfo::nameInfo(type);

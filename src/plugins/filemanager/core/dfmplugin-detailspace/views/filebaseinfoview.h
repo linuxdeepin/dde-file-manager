@@ -55,9 +55,9 @@ signals:
     void sigAudioExtenInfo(const QStringList &properties);
 
 public slots:
-    void imageExtenInfo(const QUrl url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
-    void videoExtenInfo(const QUrl url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
-    void audioExtenInfo(const QUrl url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+    void imageExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+    void videoExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+    void audioExtenInfo(const QUrl &url, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
     void slotImageExtenInfo(const QStringList &properties);
     void slotVideoExtenInfo(const QStringList &properties);
     void slotAudioExtenInfo(const QStringList &properties);

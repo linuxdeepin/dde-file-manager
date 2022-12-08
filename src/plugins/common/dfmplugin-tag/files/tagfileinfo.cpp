@@ -95,11 +95,11 @@ bool TagFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     }
 }
 
-QString TagFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString TagFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kFileName:
-    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+    case NameInfo::kFileName:
+    case NameInfo::kFileCopyName:
         return d->fileName();
     default:
         return AbstractFileInfo::nameInfo(type);
@@ -151,7 +151,7 @@ TagFileInfoPrivate::~TagFileInfoPrivate()
 QString TagFileInfoPrivate::fileName() const
 {
     if (proxy)
-        return proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+        return proxy->nameInfo(NameInfo::kFileName);
 
     return url.path().mid(1, url.path().length() - 1);
 }

@@ -139,7 +139,7 @@ QIcon DesktopFileInfo::fileIcon()
         d->icon = QIcon();
     }
 
-    const QString &iconName = this->nameInfo(AbstractFileInfo::FileNameInfoType::kIconName);
+    const QString &iconName = this->nameInfo(NameInfo::kIconName);
 
     if (iconName.startsWith("data:image/")) {
         int firstSemicolon = iconName.indexOf(';', 11);
@@ -190,20 +190,20 @@ QIcon DesktopFileInfo::fileIcon()
     return d->icon;
 }
 
-QString DesktopFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString DesktopFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kFileNameOfRename:
+    case NameInfo::kFileNameOfRename:
         [[fallthrough]];
-    case AbstractFileInfo::FileNameInfoType::kBaseNameOfRename:
+    case NameInfo::kBaseNameOfRename:
         return displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
-    case AbstractFileInfo::FileNameInfoType::kSuffixOfRename:
+    case NameInfo::kSuffixOfRename:
         return QString();
-    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
-        return LocalFileInfo::nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
-    case AbstractFileInfo::FileNameInfoType::kIconName:
+    case NameInfo::kFileCopyName:
+        return LocalFileInfo::nameInfo(NameInfo::kFileName);
+    case NameInfo::kIconName:
         return desktopIconName();
-    case AbstractFileInfo::FileNameInfoType::kGenericIconName:
+    case NameInfo::kGenericIconName:
         return QStringLiteral("application-default-icon");
     default:
         return LocalFileInfo::nameInfo(type);

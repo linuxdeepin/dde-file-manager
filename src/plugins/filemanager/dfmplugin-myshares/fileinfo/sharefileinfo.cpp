@@ -49,12 +49,12 @@ QString ShareFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type)
     return AbstractFileInfo::displayInfo(type);
 }
 
-QString ShareFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString ShareFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kFileName:
+    case NameInfo::kFileName:
         [[fallthrough]];
-    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+    case NameInfo::kFileCopyName:
         return d->fileName();
     default:
         return AbstractFileInfo::nameInfo(type);

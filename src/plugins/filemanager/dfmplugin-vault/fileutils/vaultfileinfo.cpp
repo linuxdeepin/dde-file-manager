@@ -61,7 +61,7 @@ QString VaultFileInfoPrivate::iconName()
         if (!proxy)
             return q->fileMimeType().iconName();
         else
-            proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kIconName);
+            proxy->nameInfo(NameInfo::kIconName);
     }
     return QString();
 }
@@ -287,13 +287,13 @@ QVariant VaultFileInfo::extendedAttributes(const AbstractFileInfo::FileExtendedI
     }
 }
 
-QString VaultFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString VaultFileInfo::nameInfo(const NameInfo type) const
 {
 
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+    case NameInfo::kFileCopyName:
         return displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
-    case AbstractFileInfo::FileNameInfoType::kIconName:
+    case NameInfo::kIconName:
         return d->iconName();
     default:
         return AbstractFileInfo::nameInfo(type);

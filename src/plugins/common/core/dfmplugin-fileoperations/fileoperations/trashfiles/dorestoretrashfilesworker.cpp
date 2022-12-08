@@ -162,7 +162,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         emitCurrentTaskNotify(url, restoreFileUrl);
         AbstractFileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
-        if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName), newTargetInfo, &ok))
+        if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameInfo(NameInfo::kFileCopyName), newTargetInfo, &ok))
             continue;
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;

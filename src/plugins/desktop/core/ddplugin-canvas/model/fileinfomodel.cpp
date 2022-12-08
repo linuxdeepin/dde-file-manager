@@ -359,7 +359,7 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     case Global::ItemRoles::kItemIconRole:
         return indexFileInfo->fileIcon();
     case Global::ItemRoles::kItemNameRole:
-        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+        return indexFileInfo->nameInfo(NameInfo::kFileName);
     case Qt::EditRole:
     case Global::ItemRoles::kItemFileDisplayNameRole:
         return indexFileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
@@ -374,15 +374,15 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     case Global::ItemRoles::kItemExtraProperties:
         return indexFileInfo->extraProperties();
     case Global::ItemRoles::kItemFileBaseNameRole:
-        return indexFileInfo->nameInfo(dfmbase::AbstractFileInfo::FileNameInfoType::kBaseName);
+        return indexFileInfo->nameInfo(NameInfo::kBaseName);
     case Global::ItemRoles::kItemFileSuffixRole:
-        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
+        return indexFileInfo->nameInfo(NameInfo::kSuffix);
     case Global::ItemRoles::kItemFileNameOfRenameRole:
-        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileNameOfRename);
+        return indexFileInfo->nameInfo(NameInfo::kFileNameOfRename);
     case Global::ItemRoles::kItemFileBaseNameOfRenameRole:
-        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kBaseNameOfRename);
+        return indexFileInfo->nameInfo(NameInfo::kBaseNameOfRename);
     case Global::ItemRoles::kItemFileSuffixOfRenameRole:
-        return indexFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffixOfRename);
+        return indexFileInfo->nameInfo(NameInfo::kSuffixOfRename);
     default:
         return QString();
     }

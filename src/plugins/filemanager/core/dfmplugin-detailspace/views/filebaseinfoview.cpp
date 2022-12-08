@@ -238,7 +238,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
 
     if (fileType && fileType->RightValue().isEmpty() && localinfo) {
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(
-                localinfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName));
+                localinfo->nameInfo(NameInfo::kMimeTypeName));
         switch (type) {
         case MimeDatabase::FileType::kDirectory:
             fileType->setRightValue(tr("Directory"), Qt::ElideNone, Qt::AlignLeft, true);
@@ -349,7 +349,7 @@ void FileBaseInfoView::slotAudioExtenInfo(const QStringList &properties)
     }
 }
 
-void FileBaseInfoView::imageExtenInfo(const QUrl url, QMap<DFileInfo::AttributeExtendID, QVariant> properties)
+void FileBaseInfoView::imageExtenInfo(const QUrl &url, QMap<DFileInfo::AttributeExtendID, QVariant> properties)
 {
     if (url == currentUrl) {
         QStringList property;
@@ -363,7 +363,7 @@ void FileBaseInfoView::imageExtenInfo(const QUrl url, QMap<DFileInfo::AttributeE
     }
 }
 
-void FileBaseInfoView::videoExtenInfo(const QUrl url, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
+void FileBaseInfoView::videoExtenInfo(const QUrl &url, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
 {
     if (url == currentUrl) {
         QStringList property;
@@ -388,7 +388,7 @@ void FileBaseInfoView::videoExtenInfo(const QUrl url, QMap<dfmio::DFileInfo::Att
     }
 }
 
-void FileBaseInfoView::audioExtenInfo(const QUrl url, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
+void FileBaseInfoView::audioExtenInfo(const QUrl &url, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
 {
     if (url == currentUrl) {
         QStringList property;

@@ -567,7 +567,7 @@ void ThumbnailProvider::createTextThumbnail(const QString &filePath, ThumbnailPr
     if (!fileinfo)
         return;
 
-    QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName)) };
+    QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->nameInfo(NameInfo::kFileName)) };
 
     QFont font;
     font.setPixelSize(12);
@@ -815,8 +815,8 @@ bool ThumbnailProvider::createThumnailByTools(const QMimeType &mime, ThumbnailPr
     return false;
 }
 
-void ThumbnailProvider::appendToProduceQueue(const QUrl url, ThumbnailProvider::Size size,
-                                             QSharedPointer<ThumbNailCreateFuture> future)
+void ThumbnailProvider::appendToProduceQueue(const QUrl &url, ThumbnailProvider::Size size,
+                                             const QSharedPointer<ThumbNailCreateFuture> &future)
 {
     ThumbnailProviderPrivate::ProduceInfo produceInfo;
 

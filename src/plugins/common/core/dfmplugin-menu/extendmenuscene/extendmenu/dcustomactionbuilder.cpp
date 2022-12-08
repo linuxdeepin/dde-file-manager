@@ -64,7 +64,7 @@ void DCustomActionBuilder::setActiveDir(const QUrl &dir)
         return;
     }
 
-    dirName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+    dirName = info->nameInfo(NameInfo::kFileName);
 
     //解决根目录没有名称问题
     if (dirName.isEmpty() && dir.toLocalFile() == "/") {
@@ -86,7 +86,7 @@ void DCustomActionBuilder::setFocusFile(const QUrl &file)
         return;
     }
 
-    fileFullName = info->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+    fileFullName = info->nameInfo(NameInfo::kFileName);
     //baseName
     if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
         fileBaseName = fileFullName;

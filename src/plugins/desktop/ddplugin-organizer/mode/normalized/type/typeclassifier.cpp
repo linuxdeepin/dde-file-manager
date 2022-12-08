@@ -172,7 +172,7 @@ QString TypeClassifier::classify(const QUrl &url) const
         key = kTypeKeyFld;
     } else {
         // classified by suffix.
-        const QString &suffix = itemInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix).toLower();
+        const QString &suffix = itemInfo->nameInfo(NameInfo::kSuffix).toLower();
         if (d->docSuffix.contains(suffix))
             key = kTypeKeyDoc;
         else if (d->appSuffix.contains(suffix))

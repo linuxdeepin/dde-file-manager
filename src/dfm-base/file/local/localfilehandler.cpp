@@ -197,7 +197,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
     {   // check hidden name
         if (needCheck) {
             auto toFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-            const QString &newName = toFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+            const QString &newName = toFileInfo->nameInfo(NameInfo::kFileName);
             if (!doHiddenFileRemind(newName))
                 return true;
         }
@@ -209,7 +209,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
         const QUrl &toParentUrl = UrlRoute::urlParent(newUrl);
         if (fromParentUrl == toParentUrl) {
             AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-            const QString &newName = toInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+            const QString &newName = toInfo->nameInfo(NameInfo::kFileName);
             QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
             if (!factory) {
                 qWarning() << "create factory failed, url: " << url;
@@ -310,7 +310,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
             const_cast<QUrl &>(fileUrl) = fileInfoLink->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
             if (!DecoratorFile(fileInfoLink->pathInfo(AbstractFileInfo::FilePathInfoType::kAbsoluteFilePath)).exists() && !d->isSmbUnmountedFile(fileUrl)) {
                 d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->nameInfo(
-                                                                                     AbstractFileInfo::FileNameInfoType::kFileName),
+                                                                                     NameInfo::kFileName),
                                                                              fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
                 return d->lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
             }
@@ -1047,7 +1047,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
 
     QString mimeType;
     if (Q_UNLIKELY(!filePath.contains("#")) && fileInfo && fileInfo->size() == 0 && fileInfo->exists()) {
-        mimeType = fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);
+        mimeType = fileInfo->nameInfo(NameInfo::kMimeTypeName);
     } else {
         mimeType = getFileMimetype(fileUrl);
     }
@@ -1146,7 +1146,7 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
         auto fileinfo = InfoFactory::create<AbstractFileInfo>(expectedName);
 
         if (!check) {
-            bool checkPass = doHiddenFileRemind(fileinfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName), &check);
+            bool checkPass = doHiddenFileRemind(fileinfo->nameInfo(NameInfo::kFileName), &check);
             if (!checkPass)
                 return true;
         }

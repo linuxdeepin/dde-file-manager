@@ -130,7 +130,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
                 focusFileInfo = targetFileInfo;
         }
 
-        const auto mimeType = focusFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);
+        const auto mimeType = focusFileInfo->nameInfo(NameInfo::kMimeTypeName);
         if (mimeType.startsWith("image") && focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable)
             && !mimeType.endsWith("svg+xml") && !mimeType.endsWith("raf")
             && !mimeType.endsWith("crw")) {
@@ -210,13 +210,13 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
                 }
 
                 // if the suffix is the same, it can be opened with the same application
-                if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) != d->focusFileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix)) {
+                if (info->nameInfo(NameInfo::kSuffix) != d->focusFileInfo->nameInfo(NameInfo::kSuffix)) {
 
-                    QStringList mimeTypeList { info->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName) };
+                    QStringList mimeTypeList { info->nameInfo(NameInfo::kMimeTypeName) };
                     QUrl parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
                     auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
                     if (!info.isNull()) {
-                        mimeTypeList << parentInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kMimeTypeName);
+                        mimeTypeList << parentInfo->nameInfo(NameInfo::kMimeTypeName);
                     }
 
                     bool matched = false;

@@ -216,7 +216,7 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
     const QUrl &sourceUrl = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool result = false;
-    bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName),
+    bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->nameInfo(NameInfo::kFileCopyName),
                           newTargetInfo, &result);
     if (!ok && !result)
         return false;
@@ -235,7 +235,7 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
 
 bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
 {
-    const QString &fileName = fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+    const QString &fileName = fileInfo->nameInfo(NameInfo::kFileName);
     QString newFileUrl = targetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).toString();
     if (!newFileUrl.endsWith("/"))
         newFileUrl.append("/");
@@ -268,7 +268,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
     toInfo.reset();
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
-        if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName),
+        if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameInfo(NameInfo::kFileCopyName),
                          toInfo, ok))
             return ok ? *ok : false;
 
@@ -285,7 +285,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
         return result;
     }
 
-    if (!toInfo && !doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kFileCopyName), toInfo, ok))
+    if (!toInfo && !doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameInfo(NameInfo::kFileCopyName), toInfo, ok))
         return false;
 
     return false;

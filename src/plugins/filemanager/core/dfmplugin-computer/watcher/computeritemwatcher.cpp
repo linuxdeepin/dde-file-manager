@@ -414,9 +414,9 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 
     // additem to sidebar
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool()
-            || info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kProtocol;
+            || info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kProtocol;
     if (ComputerUtils::shouldSystemPartitionHide()
-        && info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kBlock && !removable)
+        && info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kBlock && !removable)
         return;
 
     ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
@@ -560,7 +560,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     if (!info->exists()) return;
 
-    if (info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) == SuffixInfo::kProtocol) {
+    if (info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kProtocol) {
         QString id = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
         if (id.startsWith(Global::Scheme::kSmb)) {
             StashMountsUtils::stashMount(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), info->displayName());

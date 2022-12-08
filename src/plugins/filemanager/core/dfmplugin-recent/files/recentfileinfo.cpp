@@ -79,12 +79,12 @@ bool RecentFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) con
     }
 }
 
-QString RecentFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString RecentFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kFileName:
+    case NameInfo::kFileName:
         if (dptr->proxy)
-            return dptr->proxy->nameInfo(AbstractFileInfo::FileNameInfoType::kFileName);
+            return dptr->proxy->nameInfo(NameInfo::kFileName);
 
         if (UrlRoute::isRootUrl(dptr->url))
             return QObject::tr("Recent");

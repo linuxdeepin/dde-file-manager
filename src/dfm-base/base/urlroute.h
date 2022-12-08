@@ -78,7 +78,7 @@ public:
     static bool isVirtual(const QUrl &url);
     static bool isRootUrl(const QUrl &url);
     static QUrl urlParent(const QUrl &url);
-    static bool isAncestorsUrl(QUrl url, QUrl ancestorsUrl, QList<QUrl> *list);
+    static bool isAncestorsUrl(QUrl url, const QUrl &ancestorsUrl, QList<QUrl> *list);
     static void urlParentList(QUrl url, QList<QUrl> *list);
     static QString rootDisplayName(const QString &scheme);
     static QUrl fromUserInput(const QString &userInput, bool preferredLocalPath = true);

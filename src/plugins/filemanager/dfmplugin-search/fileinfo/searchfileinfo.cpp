@@ -77,10 +77,10 @@ qint64 SearchFileInfo::size() const
     return AbstractFileInfo::size();
 }
 
-QString SearchFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString SearchFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kFileName:
+    case NameInfo::kFileName:
         if (SearchHelper::isRootUrl(dptr->url))
             return QObject::tr("Search");
         [[fallthrough]];

@@ -160,7 +160,7 @@ void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
         d->dfmFileInfo->setAttribute(id, value);
 }
 
-QString LocalFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString LocalFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
     case FileNameInfoType::kFileName:

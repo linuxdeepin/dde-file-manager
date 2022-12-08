@@ -189,7 +189,7 @@ QUrl UrlRoute::urlParent(const QUrl &url)
     return reUrl;
 }
 
-bool UrlRoute::isAncestorsUrl(QUrl url, QUrl ancestorsUrl, QList<QUrl> *list)
+bool UrlRoute::isAncestorsUrl(QUrl url, const QUrl &ancestorsUrl, QList<QUrl> *list)
 {
     Q_ASSERT(list);
 

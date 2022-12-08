@@ -74,10 +74,10 @@ QString MasteredMediaFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoTy
     return AbstractFileInfo::displayInfo(type);
 }
 
-QString MasteredMediaFileInfo::nameInfo(const AbstractFileInfo::FileNameInfoType type) const
+QString MasteredMediaFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
-    case AbstractFileInfo::FileNameInfoType::kFileCopyName:
+    case NameInfo::kFileCopyName:
         return MasteredMediaFileInfo::displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
     default:
         return AbstractFileInfo::nameInfo(type);
