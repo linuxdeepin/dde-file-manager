@@ -25,10 +25,11 @@
 #include "interfaces/private/abstractfileinfo_p.h"
 #include "file/local/localfileinfo.h"
 #include "mimetype/mimedatabase.h"
+#include "infodatafuture.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/thumbnailprovider.h"
-#include "infodatafuture.h"
+#include "dfm-base/utils/fileinfohelper.h"
 
 #include <dfm-io/core/dfilefuture.h>
 
@@ -62,10 +63,12 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     };
     QReadWriteLock iconLock;
     QMap<IconType, QIcon> icons;
-    QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> getIconFuture { nullptr };
     QVariant isLocalDevice;
     QVariant isCdRomDevice;
     QSharedPointer<InfoDataFuture> mediaFuture { nullptr };
+    InfoHelperUeserDataPointer fileCountFuture { nullptr };
+    InfoHelperUeserDataPointer fileMimeTypeFuture { nullptr };
+    InfoHelperUeserDataPointer iconFuture { nullptr };
 
 public:
     explicit LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq);
@@ -95,7 +98,7 @@ public:
         icons.clear();
         loadingThumbnail = false;
         enableThumbnail = -1;
-        getIconFuture = nullptr;
+        iconFuture.reset(nullptr);
     }
 
     QIcon thumbIcon();
@@ -174,6 +177,7 @@ private:
     QString sizeFormat() const;
     QVariant attribute(DFileInfo::AttributeID key) const;
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
+    bool canThumb() const;
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(const QUrl &url, LocalFileInfo *qq)

@@ -69,6 +69,8 @@ InfoCache::~InfoCache()
  */
 void InfoCache::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> infos)
 {
+    if (d->cacheWorkerStoped)
+        return;
     for (const auto &info : infos) {
         if (!info || info->hasProxy())
             continue;
@@ -138,7 +140,7 @@ void InfoCache::setCacheDisbale(const QString &scheme, bool disable)
 void InfoCache::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
 {
     Q_D(InfoCache);
-    if (!info)
+    if (!info || d->cacheWorkerStoped)
         return;
 
     if (!info->hasProxy()) {
@@ -183,6 +185,8 @@ void InfoCache::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
 void InfoCache::updateSortTimeWorker(const QUrl url)
 {
     Q_D(InfoCache);
+    if (d->cacheWorkerStoped)
+        return;
     auto time = QDateTime::currentMSecsSinceEpoch();
     auto key = QString::number(time) + QString("-") + url.toString();
     if (d->urlTimeSortMap.contains(url))
@@ -207,6 +211,7 @@ void InfoCache::stop()
  */
 void InfoCache::removeCaches(const QList<QUrl> urls)
 {
+    Q_D(InfoCache);
     if (d->cacheWorkerStoped || urls.size() <= 0)
         return;
 

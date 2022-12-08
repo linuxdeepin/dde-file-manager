@@ -37,30 +37,19 @@
 #include <DThumbnailProvider>
 
 #include <QCryptographicHash>
-#include <QDir>
 #include <QDateTime>
 #include <QImageReader>
-#include <QQueue>
 #include <QMimeType>
-#include <QReadWriteLock>
-#include <QWaitCondition>
 #include <QPainter>
-#include <QDirIterator>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 #include <QProcess>
 #include <QDebug>
 #include <QtConcurrent>
-#include <QGuiApplication>
 
 // use original poppler api
 #include <poppler/cpp/poppler-document.h>
 #include <poppler/cpp/poppler-image.h>
 #include <poppler/cpp/poppler-page.h>
 #include <poppler/cpp/poppler-page-renderer.h>
-
-#include <sys/stat.h>
 
 constexpr char kFormat[] { ".png" };
 
@@ -87,39 +76,11 @@ public:
     DMimeDatabase mimeDatabase;
     QLibrary *libMovieViewer = nullptr;
     QHash<QString, QString> keyToThumbnailTool;
-    QWaitCondition waitCondition;
-    QMutex mutex;
     static QSet<QString> hasThumbnailMimeHash;
-
-    struct ProduceInfo
-    {
-        QUrl url;
-        QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> future;
-        ThumbnailProvider::Size size;
-    };
-
-    QQueue<ProduceInfo> produceQueue;
-    QQueue<QString> produceAbsoluteFilePathQueue;
-
-    bool running = true;
+    QQueue<QUrl> produceAbsoluteFilePathQueue;
 };
-
-class DFileThumbnailProviderPrivate : public ThumbnailProvider
-{
-public:
-    ~DFileThumbnailProviderPrivate();
-};
-
-DFileThumbnailProviderPrivate::~DFileThumbnailProviderPrivate()
-{
-}
-
-}
-
-using namespace dfmbase;
 
 QSet<QString> ThumbnailProviderPrivate::hasThumbnailMimeHash;
-Q_GLOBAL_STATIC(DFileThumbnailProviderPrivate, ftpGlobal)
 
 ThumbnailProviderPrivate::ThumbnailProviderPrivate(ThumbnailProvider *qq)
     : q(qq)
@@ -161,11 +122,6 @@ QString ThumbnailProviderPrivate::sizeToFilePath(ThumbnailProvider::Size size) c
     return "";
 }
 
-ThumbnailProvider *ThumbnailProvider::instance()
-{
-    return ftpGlobal;
-}
-
 bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 {
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
@@ -180,10 +136,7 @@ bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 
     const QMimeType &mime = d->mimeDatabase.mimeTypeForFile(url);
 
-    // todo lanxs
-    //if (mime.name().startsWith("video/") && FileJob::CopyingFiles.contains(QUrl::fromLocalFile(info.filePath())))
-    //if (mime.name().startsWith("video/"))
-    //  return false;
+    // todo lanxs 正在做拷贝的文件不去获取获取缩略图
 
     if (mime.name().startsWith("video/") && DFMBASE_NAMESPACE::FileUtils::isGvfsFile(url))
         return false;
@@ -293,7 +246,7 @@ int ThumbnailProvider::hasThumbnailFast(const QString &mime) const
     return -1;
 }
 
-QString ThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) const
+QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
 {
     AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
     if (!fileInfo)
@@ -318,20 +271,19 @@ QString ThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) con
     QImageReader ir(thumbnail, QByteArray(kFormat).mid(1));
     if (!ir.canRead()) {
         DecoratorFileOperator(thumbnail).deleteFile();
-        return QString();
+        return QPixmap();
     }
     ir.setAutoDetectImageFormat(false);
 
     const QImage image = ir.read();
-
     const qint64 fileModify = fileInfo->timeInfo(TimeInfo::kLastModifiedSecond).value<qint64>();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
         DecoratorFileOperator(thumbnail).deleteFile();
 
-        return QString();
+        return QPixmap();
     }
 
-    return thumbnail;
+    return QPixmap::fromImage(image);
 }
 
 static QString generalKey(const QString &key)
@@ -412,18 +364,13 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
     // create path
     QFileInfo(thumbnail).absoluteDir().mkpath(".");
 
-    if (!image->save(thumbnail, Q_NULLPTR, 80)) {
+    if (!image->save(thumbnail, Q_NULLPTR, 50)) {
         d->errorString = QStringLiteral("Can not save image to ") + thumbnail;
     }
 
     if (d->errorString.isEmpty()) {
-        emit createThumbnailFinished(QUrl::fromLocalFile(filePath), thumbnail);
-
         return thumbnail;
     }
-
-    // fail
-    emit createThumbnailFailed(filePath);
 
     return QString();
 }
@@ -466,8 +413,6 @@ bool ThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, Thumb
     d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
     if (d->errorString.isEmpty()) {
-        emit createThumbnailFinished(QUrl::fromLocalFile(filePath), thumbnail);
-
         return true;
     } else {
         const QString &readerBinary = QStandardPaths::findExecutable("deepin-reader");
@@ -658,8 +603,6 @@ bool ThumbnailProvider::createDefaultThumbnail(const QMimeType &mime, const QStr
     d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
     if (d->errorString.isEmpty()) {
-        emit createThumbnailFinished(QUrl::fromLocalFile(filePath), thumbnail);
-
         return true;
     }
 
@@ -815,31 +758,6 @@ bool ThumbnailProvider::createThumnailByTools(const QMimeType &mime, ThumbnailPr
     return false;
 }
 
-void ThumbnailProvider::appendToProduceQueue(const QUrl &url, ThumbnailProvider::Size size,
-                                             const QSharedPointer<ThumbNailCreateFuture> &future)
-{
-    ThumbnailProviderPrivate::ProduceInfo produceInfo;
-
-    produceInfo.url = url;
-    produceInfo.size = size;
-    produceInfo.future = future;
-
-    {
-        QMutexLocker locker(&d->mutex);
-        // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
-        // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
-        if (!d->produceAbsoluteFilePathQueue.contains(url.path())) {
-            d->produceQueue.append(std::move(produceInfo));
-            d->produceAbsoluteFilePathQueue.push_back(url.path());
-        }
-    }
-
-    if (!isRunning())
-        start();
-    else
-        d->waitCondition.wakeAll();
-}
-
 QString ThumbnailProvider::errorString() const
 {
     return d->errorString;
@@ -851,23 +769,13 @@ qint64 ThumbnailProvider::sizeLimit(const QMimeType &mimeType) const
 }
 
 ThumbnailProvider::ThumbnailProvider(QObject *parent)
-    : QThread(parent), d(new ThumbnailProviderPrivate(this))
+    : QObject(parent), d(new ThumbnailProviderPrivate(this))
 {
     d->init();
-    connect(qApp, &QGuiApplication::aboutToQuit, this, [=]() {
-        d->running = false;
-        quit();
-        d->waitCondition.wakeAll();
-        wait();
-    },
-            Qt::DirectConnection);
 }
 
 ThumbnailProvider::~ThumbnailProvider()
 {
-    d->running = false;
-    d->waitCondition.wakeAll();
-    wait();
     if (d->libMovieViewer && d->libMovieViewer->isLoaded()) {
         d->libMovieViewer->unload();
         delete d->libMovieViewer;
@@ -875,33 +783,4 @@ ThumbnailProvider::~ThumbnailProvider()
     }
 }
 
-void ThumbnailProvider::run()
-{
-    forever {
-
-        if (d->produceQueue.isEmpty()) {
-            d->mutex.lock();
-            d->waitCondition.wait(&d->mutex);
-            d->mutex.unlock();
-        }
-
-        if (!d->running)
-            return;
-
-        QMutexLocker locker(&d->mutex);
-        const ThumbnailProviderPrivate::ProduceInfo &task = d->produceQueue.dequeue();
-
-        locker.unlock();
-        const QString &thumbnail = createThumbnail(task.url, task.size);
-
-        locker.relock();
-        //fix 62540 生成结束了去除缓存
-        d->produceAbsoluteFilePathQueue.removeOne(task.url.path());
-        locker.unlock();
-
-        if (task.future) {
-            task.future->thumbPath = thumbnail;
-            task.future->finished = true;
-        }
-    }
 }

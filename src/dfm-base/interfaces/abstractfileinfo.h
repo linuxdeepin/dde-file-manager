@@ -259,10 +259,12 @@ public:
     virtual bool permission(QFile::Permissions permissions) const;
     virtual QFile::Permissions permissions() const;
     virtual int countChildFile() const;
+    virtual int countChildFileAsync() const;
     virtual qint64 size() const;
     virtual QVariant timeInfo(const FileTimeType type) const;
     virtual QIcon fileIcon();
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
+    virtual QMimeType fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     virtual QVariantHash extraProperties() const;
     virtual QVariant customData(int role) const;
     virtual FileType fileType() const;

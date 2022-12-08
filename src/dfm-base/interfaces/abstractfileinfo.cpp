@@ -297,6 +297,13 @@ int DFMBASE_NAMESPACE::AbstractFileInfo::countChildFile() const
     return -1;
 }
 
+int dfmbase::AbstractFileInfo::countChildFileAsync() const
+{
+    CALL_PROXY(countChildFileAsync());
+
+    return -1;
+}
+
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileType 获取文件的设备类型
  * \return 返回文件的设备类型
@@ -509,6 +516,13 @@ QIcon DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon()
 QMimeType DFMBASE_NAMESPACE::AbstractFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
     CALL_PROXY(fileMimeType(mode));
+
+    return QMimeType();
+}
+
+QMimeType dfmbase::AbstractFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
+{
+    CALL_PROXY(fileMimeTypeAsync(mode));
 
     return QMimeType();
 }

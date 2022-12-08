@@ -1289,6 +1289,13 @@ QString FileUtils::bindPathTransform(const QString &path, bool toDevice)
     return bindPath;
 }
 
+int FileUtils::dirFfileCount(const QUrl &url)
+{
+    const QString &path = url.path();
+    DecoratorFileEnumerator enumerator(path);
+    return int(enumerator.fileCount());
+}
+
 QUrl DesktopAppUrl::trashDesktopFileUrl()
 {
     static QUrl trash = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath) + "/dde-trash.desktop");

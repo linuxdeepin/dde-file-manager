@@ -68,8 +68,10 @@ public:
     virtual QIcon fileIcon() override;
     virtual AbstractFileInfo::FileType fileType() const override;
     virtual int countChildFile() const override;
+    virtual int countChildFileAsync() const override;
     virtual QString displayInfo(const DisplayInfoType type) const override;
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
+    virtual QMimeType fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
     virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
     // emblems
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;

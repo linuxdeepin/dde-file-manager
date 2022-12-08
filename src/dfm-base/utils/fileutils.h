@@ -96,6 +96,7 @@ public:
     // If toDevice is true, convert the path to the device name
     // otherwise convert the path to the mount point name
     static QString bindPathTransform(const QString &path, bool toDevice);
+    static int dirFfileCount(const QUrl &url);
 
 private:
     static QMutex cacheCopyingMutex;

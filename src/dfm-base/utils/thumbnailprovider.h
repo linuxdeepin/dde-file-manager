@@ -26,8 +26,7 @@
 
 #include "dfm_base_global.h"
 
-#include <QThread>
-#include <QFileInfo>
+#include <QObject>
 
 #include <functional>
 
@@ -37,17 +36,9 @@ namespace dfmbase {
 
 class ThumbnailProviderPrivate;
 
-class ThumbnailProvider : public QThread
+class ThumbnailProvider : public QObject
 {
     Q_OBJECT
-
-public:
-    struct ThumbNailCreateFuture
-    {
-        std::atomic_bool finished { false };
-        QString thumbPath;
-    };
-
 public:
     enum Size : uint16_t {
         kSmall = 64,
@@ -55,25 +46,22 @@ public:
         kLarge = 256,
     };
 
-    static ThumbnailProvider *instance();
+    static ThumbnailProvider *instance()
+    {
+        static ThumbnailProvider thumb;
+        return &thumb;
+    }
 
     bool hasThumbnail(const QUrl &url) const;
     bool hasThumbnail(const QMimeType &mimeType) const;
     int hasThumbnailFast(const QString &mimeType) const;
 
-    QString thumbnailFilePath(const QUrl &fileUrl, Size size) const;
+    QPixmap thumbnailPixmap(const QUrl &fileUrl, Size size) const;
 
     QString createThumbnail(const QUrl &url, Size size);
 
-    using CallBack = std::function<void(const QString &)>;
-    void appendToProduceQueue(const QUrl &url, Size size, const QSharedPointer<ThumbNailCreateFuture> &future);
-
     QString errorString() const;
     qint64 sizeLimit(const QMimeType &mimeType) const;
-
-Q_SIGNALS:
-    void createThumbnailFinished(const QUrl &sourceFilePath, const QString &thumbnailPath) const;
-    void createThumbnailFailed(const QString &sourceFilePath) const;
 
 private:
     void createAudioThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image);
@@ -91,12 +79,12 @@ protected:
     explicit ThumbnailProvider(QObject *parent = nullptr);
     ~ThumbnailProvider() override;
 
-    void run() override;
-
 private:
     QScopedPointer<ThumbnailProviderPrivate> d;
 };
 
 }
+
+Q_DECLARE_METATYPE(dfmbase::ThumbnailProvider::Size)
 
 #endif   // THUMBNAILPROVIDER_H

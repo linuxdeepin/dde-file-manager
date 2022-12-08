@@ -48,8 +48,6 @@
 #include <stdio.h>
 #include <mntent.h>
 
-static constexpr uint16_t kRequestThumbnailDealy { 500 };
-
 /*!
  * \class LocalFileInfo 本地文件信息类
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
@@ -138,6 +136,9 @@ void LocalFileInfo::refresh()
 {
     QWriteLocker locker(&d->lock);
     d->dfmFileInfo->refresh();
+    d->fileCountFuture.reset(nullptr);
+    d->fileMimeTypeFuture.reset(nullptr);
+    d->iconFuture.reset(nullptr);
     d->mediaFuture.reset(nullptr);
     d->loadingThumbnail = false;
     d->fileType = MimeDatabase::FileType::kUnknown;
@@ -450,13 +451,22 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
  */
 int LocalFileInfo::countChildFile() const
 {
-    if (isAttributes(FileIsType::kIsDir)) {
-        const QString &path = d->filePath();
-        DecoratorFileEnumerator enumerator(path);
-        QReadLocker locker(&d->lock);
-        return int(enumerator.fileCount());
-    }
+    return isAttributes(FileIsType::kIsDir) ? FileUtils::dirFfileCount(d->url) : -1;
+}
 
+int LocalFileInfo::countChildFileAsync() const
+{
+    if (isAttributes(FileIsType::kIsDir)) {
+        QReadLocker locker(&d->lock);
+        if (!d->fileCountFuture) {
+            locker.unlock();
+            auto future = FileInfoHelper::instance().fileCountAsync(d->url);
+            QWriteLocker locker(&d->lock);
+            d->fileCountFuture = future;
+        } else {
+            return d->fileCountFuture->finish ? d->fileCountFuture->data.toInt() : -1;
+        }
+    }
     return -1;
 }
 
@@ -532,6 +542,29 @@ QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDat
         QWriteLocker locker(&d->lock);
         d->mimeType = type;
         d->mimeTypeMode = mode;
+    }
+
+    return type;
+}
+
+QMimeType LocalFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
+{
+    QMimeType type;
+    QMimeDatabase::MatchMode modeCache { QMimeDatabase::MatchMode::MatchDefault };
+
+    QReadLocker rlk(&d->lock);
+    type = d->mimeType;
+    modeCache = d->mimeTypeMode;
+
+    if (!d->fileMimeTypeFuture && (!type.isValid() || modeCache != mode)) {
+        rlk.unlock();
+        auto future = FileInfoHelper::instance().fileMimeTypeAsync(d->url, mode, QString(), false);
+        QWriteLocker wlk(&d->lock);
+        d->mimeType = type;
+        d->mimeTypeMode = mode;
+        d->fileMimeTypeFuture = future;
+    } else if (d->fileMimeTypeFuture->finish) {
+        type = d->fileMimeTypeFuture->data.value<QMimeType>();
     }
 
     return type;
@@ -646,7 +679,7 @@ QIcon LocalFileInfoPrivate::thumbIcon()
     if (!icon.isNull())
         return icon;
 
-    icon = QIcon(ThumbnailProvider::instance()->thumbnailFilePath(url, ThumbnailProvider::kLarge));
+    icon = QIcon(ThumbnailProvider::instance()->thumbnailPixmap(url, ThumbnailProvider::kLarge));
     if (!icon.isNull()) {
         QPixmap pixmap = icon.pixmap(ThumbnailProvider::kLarge, ThumbnailProvider::kLarge);
         QPainter pa(&pixmap);
@@ -664,16 +697,15 @@ QIcon LocalFileInfoPrivate::thumbIcon()
 
     // else load thumb from DThumbnailProvider in async.
     // and before thumb thread finish, return default icon.
-    if (!loadingThumbnail   // thumbnail unload
-        || (getIconFuture && getIconFuture->finished && getIconFuture->thumbPath.isEmpty())) {   // create thumbnail failed
-        loadingThumbnail = true;
-        if (!getIconFuture)
-            getIconFuture.reset(new ThumbnailProvider::ThumbNailCreateFuture());
-        QUrl thumburl = url;
-        QSharedPointer<ThumbnailProvider::ThumbNailCreateFuture> future = getIconFuture;
-        QTimer::singleShot(kRequestThumbnailDealy, [thumburl, future] {
-            ThumbnailProvider::instance()->appendToProduceQueue(thumburl, ThumbnailProvider::kLarge, future);
-        });
+    {
+        QReadLocker rlk(&iconLock);
+        if (canThumb()) {   // create thumbnail failed
+            rlk.unlock();
+            auto future = FileInfoHelper::instance().fileThumbAsync(url, ThumbnailProvider::kLarge);
+            QWriteLocker wlk(&iconLock);
+            loadingThumbnail = true;
+            iconFuture = future;
+        }
     }
 
     return defaultIcon();
@@ -1059,6 +1091,12 @@ QMap<DFileInfo::AttributeExtendID, QVariant> LocalFileInfoPrivate::mediaInfo(DFi
     }
 
     return attributesExtend;
+}
+
+bool LocalFileInfoPrivate::canThumb() const
+{
+    return !loadingThumbnail
+            || (iconFuture && iconFuture->finish && iconFuture->data.toString().isEmpty());
 }
 
 }
