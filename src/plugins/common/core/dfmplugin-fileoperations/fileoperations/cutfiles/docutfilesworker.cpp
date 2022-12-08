@@ -142,7 +142,7 @@ bool DoCutFilesWorker::cutFiles()
             continue;
 
         // check hierarchy
-        if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+        if (fileInfo->isAttributes(IsInfo::kIsDir)) {
             const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
             if (higher) {
                 emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});
@@ -151,7 +151,7 @@ bool DoCutFilesWorker::cutFiles()
         }
 
         // check link
-        if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+        if (fileInfo->isAttributes(IsInfo::kIsSymLink)) {
             const bool ok = checkSymLink(fileInfo);
             if (ok)
                 continue;
@@ -182,11 +182,11 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
         return false;
     }
 
-    qDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) << " to url: " << targetPathInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    qDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->urlInfo(UrlInfo::kUrl) << " to url: " << targetPathInfo->urlInfo(UrlInfo::kUrl);
 
     bool result = false;
     // check space
-    if (!checkDiskSpaceAvailable(fromInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), targetPathInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), targetStorageInfo, &result))
+    if (!checkDiskSpaceAvailable(fromInfo->urlInfo(UrlInfo::kUrl), targetPathInfo->urlInfo(UrlInfo::kUrl), targetStorageInfo, &result))
         return result;
 
     if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, &result))
@@ -213,7 +213,7 @@ void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
 
 bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
 {
-    const QUrl &sourceUrl = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    const QUrl &sourceUrl = fileInfo->urlInfo(UrlInfo::kUrl);
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool result = false;
     bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->nameInfo(NameInfo::kFileCopyName),
@@ -228,7 +228,7 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
         return false;
 
     completeSourceFiles.append(sourceUrl);
-    completeTargetFiles.append(newTargetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    completeTargetFiles.append(newTargetInfo->urlInfo(UrlInfo::kUrl));
 
     return true;
 }
@@ -236,14 +236,14 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
 bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
 {
     const QString &fileName = fileInfo->nameInfo(NameInfo::kFileName);
-    QString newFileUrl = targetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).toString();
+    QString newFileUrl = targetInfo->urlInfo(UrlInfo::kUrl).toString();
     if (!newFileUrl.endsWith("/"))
         newFileUrl.append("/");
     newFileUrl.append(fileName);
     DecoratorFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
 
-    if (newFileInfo.url() == fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)
-        || (FileUtils::isSameFile(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), newFileInfo.url()) && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))) {
+    if (newFileInfo.url() == fileInfo->urlInfo(UrlInfo::kUrl)
+        || (FileUtils::isSameFile(fileInfo->urlInfo(UrlInfo::kUrl), newFileInfo.url()) && !fileInfo->isAttributes(IsInfo::kIsSymLink))) {
         return true;
     }
     return false;
@@ -252,8 +252,8 @@ bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
 bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)
 {
     if (localFileHandler) {
-        const QUrl &sourceUrl = sourceInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
-        const QUrl &targetUrl = targetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        const QUrl &sourceUrl = sourceInfo->urlInfo(UrlInfo::kUrl);
+        const QUrl &targetUrl = targetInfo->urlInfo(UrlInfo::kUrl);
         return localFileHandler->renameFile(sourceUrl, targetUrl);
     }
     return false;
@@ -262,9 +262,9 @@ bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &source
 bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetPathInfo, AbstractFileInfoPointer &toInfo, bool *ok)
 {
     QSharedPointer<QStorageInfo> sourceStorageInfo = nullptr;
-    sourceStorageInfo.reset(new QStorageInfo(sourceInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).path()));
+    sourceStorageInfo.reset(new QStorageInfo(sourceInfo->urlInfo(UrlInfo::kUrl).path()));
 
-    const QUrl &sourceUrl = sourceInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    const QUrl &sourceUrl = sourceInfo->urlInfo(UrlInfo::kUrl);
 
     toInfo.reset();
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
@@ -272,12 +272,12 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
                          toInfo, ok))
             return ok ? *ok : false;
 
-        emitCurrentTaskNotify(sourceInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), toInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        emitCurrentTaskNotify(sourceInfo->urlInfo(UrlInfo::kUrl), toInfo->urlInfo(UrlInfo::kUrl));
         bool result = renameFileByHandler(sourceInfo, toInfo);
         if (result) {
             if (targetPathInfo == this->targetInfo) {
                 completeSourceFiles.append(sourceUrl);
-                completeTargetFiles.append(toInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+                completeTargetFiles.append(toInfo->urlInfo(UrlInfo::kUrl));
             }
         }
         if (ok)

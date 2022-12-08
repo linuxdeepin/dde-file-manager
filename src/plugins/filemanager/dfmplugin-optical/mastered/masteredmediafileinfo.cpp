@@ -46,22 +46,22 @@ MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
 
 bool MasteredMediaFileInfo::exists() const
 {
-    if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isEmpty()
+    if (urlInfo(UrlInfo::kUrl).isEmpty()
         || !d->backerUrl.isValid()
         || d->backerUrl.isEmpty()) {
         return false;
     }
-    if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).fragment() == "dup") {
+    if (urlInfo(UrlInfo::kUrl).fragment() == "dup") {
         return false;
     }
 
     return d->proxy && d->proxy->exists();
 }
 
-QString MasteredMediaFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
+QString MasteredMediaFileInfo::displayInfo(const DisPlay type) const
 {
-    if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type) {
-        if (OpticalHelper::burnFilePath(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).contains(QRegularExpression("^(/*)$"))) {
+    if (DisPlay::kFileDisplayName == type) {
+        if (OpticalHelper::burnFilePath(urlInfo(UrlInfo::kUrl)).contains(QRegularExpression("^(/*)$"))) {
             const auto &map { DevProxyMng->queryBlockInfo(d->curDevId) };
             QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
             return idLabel;
@@ -69,7 +69,7 @@ QString MasteredMediaFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoTy
 
         if (!d->proxy)
             return "";
-        return d->proxy->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        return d->proxy->displayInfo(DisPlay::kFileDisplayName);
     }
     return AbstractFileInfo::displayInfo(type);
 }
@@ -78,27 +78,27 @@ QString MasteredMediaFileInfo::nameInfo(const NameInfo type) const
 {
     switch (type) {
     case NameInfo::kFileCopyName:
-        return MasteredMediaFileInfo::displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        return MasteredMediaFileInfo::displayInfo(DisPlay::kFileDisplayName);
     default:
         return AbstractFileInfo::nameInfo(type);
     }
 }
 
-QUrl MasteredMediaFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
+QUrl MasteredMediaFileInfo::urlInfo(const UrlInfo type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
         if (d->proxy) {
-            return d->proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+            return d->proxy->urlInfo(UrlInfo::kUrl);
         }
 
-        return AbstractFileInfo::urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        return AbstractFileInfo::urlInfo(UrlInfo::kUrl);
     default:
         return AbstractFileInfo::urlInfo(type);
     }
 }
 
-bool MasteredMediaFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
+bool MasteredMediaFileInfo::isAttributes(const IsInfo type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
@@ -134,10 +134,10 @@ void MasteredMediaFileInfo::refresh()
         return;
     }
 
-    d->backupInfo(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    d->backupInfo(urlInfo(UrlInfo::kUrl));
 }
 
-bool MasteredMediaFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
+bool MasteredMediaFileInfo::canAttributes(const CanInfo type) const
 {
     switch (type) {
     case FileCanType::kCanRename:
@@ -146,9 +146,9 @@ bool MasteredMediaFileInfo::canAttributes(const AbstractFileInfo::FileCanType ty
 
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        if (isAttributes(AbstractFileInfo::FileIsType::kIsDir))
-            return isAttributes(AbstractFileInfo::FileIsType::kIsSymLink);   // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
-        return isAttributes(AbstractFileInfo::FileIsType::kIsDir);
+        if (isAttributes(IsInfo::kIsDir))
+            return isAttributes(IsInfo::kIsSymLink);   // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
+        return isAttributes(IsInfo::kIsDir);
     case FileCanType::kCanDrop:
         return d->canDrop();
     case FileCanType::kCanDragCompress:
@@ -160,7 +160,7 @@ bool MasteredMediaFileInfo::canAttributes(const AbstractFileInfo::FileCanType ty
     }
 }
 
-Qt::DropActions MasteredMediaFileInfo::supportedAttributes(const AbstractFileInfo::SupportType type) const
+Qt::DropActions MasteredMediaFileInfo::supportedAttributes(const Support type) const
 {
     if (type == SupportType::kDrop)
         if (!OpticalHelper::isBurnEnabled())
@@ -168,7 +168,7 @@ Qt::DropActions MasteredMediaFileInfo::supportedAttributes(const AbstractFileInf
     return AbstractFileInfo::supportedAttributes(type);
 }
 
-QString MasteredMediaFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
+QString MasteredMediaFileInfo::viewTip(const ViewInfo type) const
 {
     if (type == ViewType::kEmptyDir)
         return QObject::tr("Folder is empty");
@@ -204,11 +204,11 @@ void MasteredMediaFileInfoPrivate::backupInfo(const QUrl &url)
 
 QUrl MasteredMediaFileInfoPrivate::parentUrl() const
 {
-    QString burnPath { OpticalHelper::burnFilePath(q->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)) };
+    QString burnPath { OpticalHelper::burnFilePath(q->urlInfo(UrlInfo::kUrl)) };
     if (burnPath.contains(QRegularExpression("^(/*)$"))) {
         return QUrl::fromLocalFile(QDir::homePath());
     }
-    return UrlRoute::urlParent(q->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    return UrlRoute::urlParent(q->urlInfo(UrlInfo::kUrl));
 }
 
 bool MasteredMediaFileInfoPrivate::canDrop()

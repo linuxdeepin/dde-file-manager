@@ -302,14 +302,14 @@ void ShareControlWidget::init()
     }
 
     if (!watcher) {
-        watcher = WatcherFactory::create<AbstractFileWatcher>(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl));
+        watcher = WatcherFactory::create<AbstractFileWatcher>(info->urlInfo(UrlInfo::kParentUrl));
         watcher->startWatcher();
     }
 
     QString filePath = url.path();
     auto shareName = UserShareHelperInstance->shareNameByPath(filePath);
     if (shareName.isEmpty())
-        shareName = info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        shareName = info->displayInfo(DisPlay::kFileDisplayName);
     shareNameEditor->setText(shareName);
 
     bool isShared = UserShareHelperInstance->isShared(filePath);
@@ -498,7 +498,7 @@ void ShareControlWidget::updateWidgetStatus(const QString &filePath)
             shareAnonymousSelector->setCurrentIndex(0);
 
         uint shareUid = UserShareHelperInstance->whoShared(name);
-        if ((shareUid != info->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kOwnerId).toUInt() || shareUid != getuid()) && getuid() != 0)
+        if ((shareUid != info->extendedAttributes(ExInfo::kOwnerId).toUInt() || shareUid != getuid()) && getuid() != 0)
             this->setEnabled(false);
 
         sharePermissionSelector->setEnabled(true);

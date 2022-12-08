@@ -196,7 +196,7 @@ QString DesktopFileInfo::nameInfo(const NameInfo type) const
     case NameInfo::kFileNameOfRename:
         [[fallthrough]];
     case NameInfo::kBaseNameOfRename:
-        return displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        return displayInfo(DisPlay::kFileDisplayName);
     case NameInfo::kSuffixOfRename:
         return QString();
     case NameInfo::kFileCopyName:
@@ -210,9 +210,9 @@ QString DesktopFileInfo::nameInfo(const NameInfo type) const
     }
 }
 
-QString DesktopFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
+QString DesktopFileInfo::displayInfo(const DisPlay type) const
 {
-    if (type == AbstractFileInfo::DisplayInfoType::kFileDisplayName && !desktopName().isEmpty())
+    if (type == DisPlay::kFileDisplayName && !desktopName().isEmpty())
         return desktopName();
 
     return LocalFileInfo::displayInfo(type);
@@ -221,7 +221,7 @@ QString DesktopFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType typ
 void DesktopFileInfo::refresh()
 {
     LocalFileInfo::refresh();
-    d->updateInfo(urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    d->updateInfo(urlInfo(UrlInfo::kUrl));
 }
 
 Qt::DropActions DesktopFileInfo::supportedAttributes(const SupportType type) const
@@ -245,7 +245,7 @@ bool DesktopFileInfo::canTag() const
     return true;
 }
 
-bool DesktopFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
+bool DesktopFileInfo::canAttributes(const CanInfo type) const
 {
     switch (type) {
     case FileCanType::kCanMoveOrCopy:

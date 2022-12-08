@@ -491,10 +491,10 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
 
     // todo,from vault???
 
-    if (!itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction())) {
+    if (!itemInfo->supportedAttributes(Support::kDrop).testFlag(event->dropAction())) {
         QList<Qt::DropAction> actions { Qt::CopyAction, Qt::MoveAction, Qt::LinkAction };
         for (auto action : actions) {
-            if (event->possibleActions().testFlag(action) && itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(action)) {
+            if (event->possibleActions().testFlag(action) && itemInfo->supportedAttributes(Support::kDrop).testFlag(action)) {
                 event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
                 break;
             }
@@ -693,7 +693,7 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
                 qWarning() << "create LocalFileInfo error: " << errString << targetItem;
                 return false;
             }
-            if (itemInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl()) {
+            if (itemInfo->isAttributes(IsInfo::kIsDir) || itemInfo->urlInfo(UrlInfo::kUrl) == DesktopAppUrl::homeDesktopFileUrl()) {
                 auto sourceUrls = event->mimeData()->urls();
                 for (const QUrl &url : sourceUrls) {
                     if ((DesktopAppUrl::computerDesktopFileUrl() == url)
@@ -747,11 +747,11 @@ bool CollectionViewPrivate::dropDirectSaveMode(QDropEvent *event) const
         const QModelIndex &index = q->indexAt(event->pos());
         auto fileInfo = q->model()->fileInfo(index.isValid() ? index : q->rootIndex());
 
-        if (fileInfo && fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isLocalFile()) {
-            if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
-                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        if (fileInfo && fileInfo->urlInfo(UrlInfo::kUrl).isLocalFile()) {
+            if (fileInfo->isAttributes(IsInfo::kIsDir))
+                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(UrlInfo::kUrl));
             else
-                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl));
+                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(UrlInfo::kParentUrl));
         }
 
         event->accept();   // yeah! we've done with XDS so stop Qt from further event propagation.
@@ -1514,11 +1514,11 @@ bool CollectionView::lessThan(const QUrl &left, const QUrl &right) const
     DFMLocalFileInfoPointer rightInfo = m->fileInfo(rightIdx);
 
     // The folder is fixed in the front position
-    if (leftInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
-        if (!rightInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
+    if (leftInfo->isAttributes(IsInfo::kIsDir)) {
+        if (!rightInfo->isAttributes(IsInfo::kIsDir))
             return true;
     } else {
-        if (rightInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
+        if (rightInfo->isAttributes(IsInfo::kIsDir))
             return false;
     }
 
@@ -1985,9 +1985,9 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
     auto currentUrl = hoverIndex.isValid() ? model()->fileUrl(hoverIndex) : model()->fileUrl(model()->rootIndex());
     if (hoverIndex.isValid()) {
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
-            bool canDrop = !fileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanDrop)
-                    || (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable))
-                    || !fileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction());
+            bool canDrop = !fileInfo->canAttributes(CanInfo::kCanDrop)
+                    || (fileInfo->isAttributes(IsInfo::kIsDir) && !fileInfo->isAttributes(IsInfo::kIsWritable))
+                    || !fileInfo->supportedAttributes(Support::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
                 d->handleMoveMimeData(event, currentUrl);
                 return;

@@ -313,7 +313,7 @@ void WorkspaceWidget::handleCtrlT()
         const QList<QUrl> &urls = view->selectedUrlList();
         if (urls.count() == 1) {
             const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(urls.at(0));
-            if (fileInfoPtr && fileInfoPtr->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+            if (fileInfoPtr && fileInfoPtr->isAttributes(IsInfo::kIsDir)) {
                 openNewTab(urls.at(0));
                 return;
             }
@@ -405,7 +405,7 @@ void WorkspaceWidget::handleCtrlN()
     QList<QUrl> urlList;
     for (const auto &url : fileView->selectedUrlList()) {
         const auto &info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info && info->canAttributes(AbstractFileInfo::FileCanType::kCanFetch))
+        if (info && info->canAttributes(CanInfo::kCanFetch))
             urlList << url;
     }
 

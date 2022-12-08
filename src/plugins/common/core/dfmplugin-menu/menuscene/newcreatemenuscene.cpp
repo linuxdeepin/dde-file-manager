@@ -163,7 +163,7 @@ void NewCreateMenuScene::updateState(QMenu *parent)
     if (!curDirInfo)
         return;
     curDirInfo->refresh();
-    if (!curDirInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) {
+    if (!curDirInfo->isAttributes(IsInfo::kIsWritable)) {
         auto actions = parent->actions();
         for (auto act : actions) {
             const auto &actId = act->property(ActionPropertyKey::kActionID);

@@ -100,7 +100,7 @@ void onClipboardDataChanged()
             qWarning() << QString("create file info error, case : %1").arg(errorStr);
             continue;
         }
-        if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
+        if (info->isAttributes(IsInfo::kIsSymLink))
             continue;
 
         struct stat statInfo;
@@ -161,13 +161,13 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
         }
         if (maxIconsNum-- > 0) {
             QStringList iconList;
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+            if (info->isAttributes(IsInfo::kIsSymLink)) {
                 iconList << "emblem-symbolic-link";
             }
-            if (!info->isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) {
+            if (!info->isAttributes(IsInfo::kIsWritable)) {
                 iconList << "emblem-readonly";
             }
-            if (!info->isAttributes(AbstractFileInfo::FileIsType::kIsReadable)) {
+            if (!info->isAttributes(IsInfo::kIsReadable)) {
                 iconList << "emblem-unreadable";
             }
             // TODO lanxs::目前缩略图还没有处理，等待处理完成了在修改

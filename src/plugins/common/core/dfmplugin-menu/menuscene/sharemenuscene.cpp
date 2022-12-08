@@ -75,7 +75,7 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
 
     for (auto url : d->selectFiles) {
         auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
-        if (f->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+        if (f->isAttributes(IsInfo::kIsDir)) {
             d->folderSelected = true;
             break;
         }

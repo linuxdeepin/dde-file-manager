@@ -276,7 +276,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
                 menu->insertSeparator(act);
 
             if (sceneName == kFileOperatorMenuSceneName
-                && focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile)
+                && focusFileInfo->isAttributes(IsInfo::kIsFile)
                 && actId == dfmplugin_menu::ActionID::kOpen)
                 menu->removeAction(act);
 
@@ -287,7 +287,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
 
             if (actId == TrashActionId::kRestore)
                 actionRestore = act;
-            if (focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+            if (focusFileInfo->isAttributes(IsInfo::kIsDir)) {
                 if (actId == dfmplugin_menu::ActionID::kOpen)
                     actionOpen = act;
                 if (actId == dfmplugin_menu::ActionID::kOpenInNewWindow)

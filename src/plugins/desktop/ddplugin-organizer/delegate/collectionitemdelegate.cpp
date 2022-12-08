@@ -273,8 +273,8 @@ void CollectionItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
     Q_ASSERT(regionModel);
 
     if (const AbstractFileInfoPointer &fileInfo = regionModel->fileInfo(index)) {
-        QUrl oldUrl = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
-        QUrl newUrl = fileInfo->getUrlByType(AbstractFileInfo::FileUrlInfoType::kGetUrlByNewFileName, newName);
+        QUrl oldUrl = fileInfo->urlInfo(UrlInfo::kUrl);
+        QUrl newUrl = fileInfo->getUrlByType(UrlInfo::kGetUrlByNewFileName, newName);
         QMetaObject::invokeMethod(FileOperatorIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId()), Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
     }
 }
@@ -408,13 +408,13 @@ bool CollectionItemDelegate::isTransparent(const QModelIndex &index) const
         if (!file.get())
             return false;
 
-        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
+        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->urlInfo(UrlInfo::kUrl)))
             return true;
 
         // the linked file only judges the URL, not the inode,
         // because the inode of the linked file is consistent with that of the source file
-        if (!file->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
-            if (ClipBoard::instance()->clipboardFileInodeList().contains(file->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kInode).toULongLong()))
+        if (!file->isAttributes(IsInfo::kIsSymLink)) {
+            if (ClipBoard::instance()->clipboardFileInodeList().contains(file->extendedAttributes(ExInfo::kInode).toULongLong()))
                 return true;
         }
     }

@@ -516,7 +516,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
                 : QString(".") + info->nameInfo(NameInfo::kSuffix);
         QString fileBaseName;
         if (isDesktopApp) {
-            fileBaseName = info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+            fileBaseName = info->displayInfo(DisPlay::kFileDisplayName);
         } else {
             fileBaseName = info->nameInfo(NameInfo::kFileName);
             fileBaseName.chop(suffix.length());
@@ -538,7 +538,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         if (!isDesktopApp) {
             fileBaseName += suffix;
         }
-        QUrl changedUrl { info->getUrlByType(AbstractFileInfo::FileUrlInfoType::kGetUrlByNewFileName, fileBaseName) };
+        QUrl changedUrl { info->getUrlByType(UrlInfo::kGetUrlByNewFileName, fileBaseName) };
 
         if (changedUrl != url)
             result.insert(url, changedUrl);
@@ -564,7 +564,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
         // debug case 25414: failure to rename desktop app name
         bool isDesktopApp = info->nameInfo(NameInfo::kMimeTypeName).contains(Global::Mime::kTypeAppDesktop);
 
-        QString fileBaseName = isDesktopApp ? info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName)
+        QString fileBaseName = isDesktopApp ? info->displayInfo(DisPlay::kFileDisplayName)
                                             : info->nameInfo(NameInfo::kBaseName);   //{ info->baseName() };
         QString oldFileName = fileBaseName;
 
@@ -587,11 +587,11 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
         if (!isDesktopApp) {
             fileBaseName += suffix;
         }
-        QUrl changedUrl = { info->getUrlByType(AbstractFileInfo::FileUrlInfoType::kGetUrlByNewFileName, fileBaseName) };
+        QUrl changedUrl = { info->getUrlByType(UrlInfo::kGetUrlByNewFileName, fileBaseName) };
 
         if (isDesktopApp) {
             qDebug() << "this is desktop app case,file name will be changed { " << oldFileName << " } to { "
-                     << fileBaseName << " } for path:" << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+                     << fileBaseName << " } for path:" << info->urlInfo(UrlInfo::kUrl);
         }
 
         if (changedUrl != url)
@@ -642,7 +642,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
         }
 
         fileBaseName = isDesktopApp ? (fileBaseName + indexString) : (fileBaseName + indexString + suffix);
-        QUrl beModifieddUrl = { info->getUrlByType(AbstractFileInfo::FileUrlInfoType::kGetUrlByNewFileName, fileBaseName) };
+        QUrl beModifieddUrl = { info->getUrlByType(UrlInfo::kGetUrlByNewFileName, fileBaseName) };
         result.insert(url, beModifieddUrl);
 
         modifyUrls << beModifieddUrl;
@@ -653,7 +653,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
 
         if (isDesktopApp) {
             qDebug() << "this is desktop app case,file name will be changed as { "
-                     << fileBaseName << " } for path:" << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+                     << fileBaseName << " } for path:" << info->urlInfo(UrlInfo::kUrl);
         }
 
         ++index;
@@ -735,16 +735,16 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
     if (info && DecoratorFile(fileUrl).exists()) {
-        QString baseName = info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName) == info->nameInfo(NameInfo::kFileName)
+        QString baseName = info->displayInfo(DisPlay::kFileDisplayName) == info->nameInfo(NameInfo::kFileName)
                 ? info->nameInfo(NameInfo::kBaseName)
-                : info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+                : info->displayInfo(DisPlay::kFileDisplayName);
         QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;
 
         int number = 1;
 
         forever {
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
+            if (info->isAttributes(IsInfo::kIsFile)) {
                 if (info->nameInfo(NameInfo::kSuffix).isEmpty()) {
                     if (number == 1) {
 
@@ -759,13 +759,13 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
                         linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info->nameInfo(NameInfo::kSuffix));
                     }
                 }
-            } else if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+            } else if (info->isAttributes(IsInfo::kIsDir)) {
                 if (number == 1) {
                     linkBaseName = QString("%1 %2").arg(baseName, shortcut);
                 } else {
                     linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
                 }
-            } else if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+            } else if (info->isAttributes(IsInfo::kIsSymLink)) {
                 return QString();
             }
 
@@ -1206,11 +1206,11 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
 
 QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir, std::function<bool(const QString &)> functionCheck)
 {
-    if (!targetDir || !DecoratorFile(targetDir->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)).exists()) {
+    if (!targetDir || !DecoratorFile(targetDir->urlInfo(UrlInfo::kUrl)).exists()) {
         return QString();
     }
 
-    if (!targetDir->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+    if (!targetDir->isAttributes(IsInfo::kIsDir)) {
         return QString();
     }
 
@@ -1233,7 +1233,7 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     int number = 0;
     QString newFileName;
     QUrl newUrl;
-    QString scheme = targetDir->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).scheme(), errorString;
+    QString scheme = targetDir->urlInfo(UrlInfo::kUrl).scheme(), errorString;
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
         && mimeTypeName == "application/x-desktop")
         scheme = DFMBASE_NAMESPACE::Global::Scheme::kDesktop;
@@ -1246,7 +1246,7 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
         }
 
         ++number;
-        newUrl = targetDir->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        newUrl = targetDir->urlInfo(UrlInfo::kUrl);
         newUrl.setScheme(scheme);
         newUrl.setPath(newUrl.path() + "/" + newFileName);
 

@@ -88,7 +88,7 @@ void DCustomActionBuilder::setFocusFile(const QUrl &file)
 
     fileFullName = info->nameInfo(NameInfo::kFileName);
     //baseName
-    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+    if (info->isAttributes(IsInfo::kIsDir)) {
         fileBaseName = fileFullName;
         return;
     }
@@ -152,7 +152,7 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList
         }
 
         //目前只判断是否为文件夹
-        info->isAttributes(AbstractFileInfo::FileIsType::kIsDir) ? ++dirCount : ++fileCount;
+        info->isAttributes(IsInfo::kIsDir) ? ++dirCount : ++fileCount;
 
         //文件夹和文件同时存在
         if (dirCount > 0 && fileCount > 0)
@@ -450,7 +450,7 @@ bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, con
     const AbstractFileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
 
     auto supportList = action.supportStuffix();
-    if (!fileInfo || fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || supportList.isEmpty() || supportList.contains("*")) {
+    if (!fileInfo || fileInfo->isAttributes(IsInfo::kIsDir) || supportList.isEmpty() || supportList.contains("*")) {
         return true;   //未特殊指明支持项或者包含*为支持所有
     }
     QFileInfo info(url.toLocalFile());

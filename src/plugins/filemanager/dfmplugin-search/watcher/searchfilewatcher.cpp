@@ -117,7 +117,7 @@ void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
         const auto &keyword = SearchHelper::instance()->checkWildcardAndToRegularExpression((SearchHelper::searchKeyword(url())));
         QRegularExpression regexp(keyword, QRegularExpression::CaseInsensitiveOption);
         const auto &info = InfoFactory::create<AbstractFileInfo>(toUrl);
-        auto match = regexp.match(info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName));
+        auto match = regexp.match(info->displayInfo(DisPlay::kFileDisplayName));
 
         if (match.hasMatch()) {
             isMatched = true;

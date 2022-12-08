@@ -204,7 +204,7 @@ bool ComputerMenuScene::triggered(QAction *action)
     if (d->predicateAction.contains(key) && d->predicateAction.value(key) == action) {
         auto ins { ComputerControllerInstance };
         if (key == kOpen)
-            ins->onOpenItem(0, d->info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+            ins->onOpenItem(0, d->info->urlInfo(UrlInfo::kUrl));
         else if (key == kOpenInNewTab)
             ins->actOpenInNewTab(d->windowId, d->info);
         else if (key == kOpenInNewWin)
@@ -220,7 +220,7 @@ bool ComputerMenuScene::triggered(QAction *action)
         else if (key == kRemove)
             ins->actRemove(d->info);
         else if (key == kEject)
-            ins->actEject(d->info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+            ins->actEject(d->info->urlInfo(UrlInfo::kUrl));
         else if (key == kErase)
             ins->actErase(d->info);
         else if (key == kSafelyRemove)

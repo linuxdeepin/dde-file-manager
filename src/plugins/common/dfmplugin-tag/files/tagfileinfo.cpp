@@ -55,7 +55,7 @@ bool TagFileInfo::exists() const
 
     QUrl rootUrl;
     rootUrl.setScheme(TagManager::scheme());
-    if (urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == rootUrl)
+    if (urlInfo(UrlInfo::kUrl) == rootUrl)
         return true;
 
     const QMap<QString, QColor> &tagMap = TagManager::instance()->getAllTags();
@@ -72,7 +72,7 @@ QFileDevice::Permissions TagFileInfo::permissions() const
             | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
 }
 
-bool TagFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
+bool TagFileInfo::isAttributes(const IsInfo type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
@@ -106,9 +106,9 @@ QString TagFileInfo::nameInfo(const NameInfo type) const
     }
 }
 
-QString TagFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
+QString TagFileInfo::displayInfo(const DisPlay type) const
 {
-    if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type)
+    if (DisPlay::kFileDisplayName == type)
         return d->fileName();
     return AbstractFileInfo::displayInfo(type);
 }
@@ -131,7 +131,7 @@ QIcon TagFileInfo::fileIcon()
 
 QString TagFileInfo::localFilePath() const
 {
-    return urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).fragment(QUrl::FullyDecoded);
+    return urlInfo(UrlInfo::kUrl).fragment(QUrl::FullyDecoded);
 }
 
 QString TagFileInfo::tagName() const

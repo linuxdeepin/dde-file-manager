@@ -107,7 +107,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
     QUrl curUrl = hoverIndex.isValid() ? view->model()->fileUrl(hoverIndex) : view->model()->rootUrl();
     if (hoverIndex.isValid()) {
         if (auto fileInfo = view->model()->fileInfo(hoverIndex)) {
-            bool canDrop = !fileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanDrop) || (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) || !fileInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction());
+            bool canDrop = !fileInfo->canAttributes(CanInfo::kCanDrop) || (fileInfo->isAttributes(IsInfo::kIsDir) && !fileInfo->isAttributes(IsInfo::kIsWritable)) || !fileInfo->supportedAttributes(Support::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
                 handleMoveMimeData(event, curUrl);
 
@@ -219,14 +219,14 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
 
         // todo is from vault
 
-        if (!itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(event->dropAction())) {
+        if (!itemInfo->supportedAttributes(Support::kDrop).testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
 
             actions.reserve(3);
             actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
 
             for (Qt::DropAction action : actions) {
-                if (event->possibleActions().testFlag(action) && itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop).testFlag(action)) {
+                if (event->possibleActions().testFlag(action) && itemInfo->supportedAttributes(Support::kDrop).testFlag(action)) {
                     event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
                     break;
                 }
@@ -329,7 +329,7 @@ bool DragDropOper::dropFilter(QDropEvent *event)
         if (index.isValid()) {
             QUrl targetItem = view->model()->fileUrl(index);
             auto itemInfo = FileCreator->createFileInfo(targetItem);
-            if (itemInfo && (itemInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || itemInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl())) {
+            if (itemInfo && (itemInfo->isAttributes(IsInfo::kIsDir) || itemInfo->urlInfo(UrlInfo::kUrl) == DesktopAppUrl::homeDesktopFileUrl())) {
                 auto sourceUrls = event->mimeData()->urls();
                 for (const QUrl &url : sourceUrls) {
                     if ((DesktopAppUrl::computerDesktopFileUrl() == url) || (DesktopAppUrl::trashDesktopFileUrl() == url) || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
@@ -462,11 +462,11 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
         const QModelIndex &index = view->indexAt(event->pos());
         auto fileInfo = view->model()->fileInfo(index.isValid() ? index : view->rootIndex());
 
-        if (fileInfo && fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isLocalFile()) {
-            if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
-                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        if (fileInfo && fileInfo->urlInfo(UrlInfo::kUrl).isLocalFile()) {
+            if (fileInfo->isAttributes(IsInfo::kIsDir))
+                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(UrlInfo::kUrl));
             else
-                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl));
+                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlInfo(UrlInfo::kParentUrl));
         }
 
         event->accept();   // yeah! we've done with XDS so stop Qt from further event propagation.

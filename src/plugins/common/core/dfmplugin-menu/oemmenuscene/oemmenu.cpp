@@ -197,7 +197,7 @@ bool OemMenuPrivate::isSuffixSupport(const QAction *action, const QUrl &url, con
     auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
 
     // X-DFM-SupportSuffix not exist
-    if (!fileInfo || fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || !action || (!action->property(kSupportSuffixKey).isValid() && !action->property(kSupportSuffixAliasKey).isValid())) {
+    if (!fileInfo || fileInfo->isAttributes(IsInfo::kIsDir) || !action || (!action->property(kSupportSuffixKey).isValid() && !action->property(kSupportSuffixAliasKey).isValid())) {
         if (allEx7z) {
             return false;
         }
@@ -514,7 +514,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
             return {};
         }
 
-        menuType = fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir) ? kSingleDir : kSingleFile;
+        menuType = fileInfo->isAttributes(IsInfo::kIsDir) ? kSingleDir : kSingleFile;
     } else {
         menuType = kMultiFileDirs;
     }

@@ -87,7 +87,7 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
         auto it = urlsCanTrash.begin();
         while (it != urlsCanTrash.end()) {
             auto info = InfoFactory::create<AbstractFileInfo>(*it);
-            if (!info || !info->canAttributes(AbstractFileInfo::FileCanType::kCanTrash))
+            if (!info || !info->canAttributes(CanInfo::kCanTrash))
                 it = urlsCanTrash.erase(it);
             else
                 ++it;

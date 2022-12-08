@@ -241,46 +241,46 @@ qint64 AbstractFileInfo::size() const
   * \brief 获取文件的时间信息
   * \param FileTimeType
   */
-QVariant dfmbase::AbstractFileInfo::timeInfo(const dfmbase::AbstractFileInfo::FileTimeType type) const
+QVariant dfmbase::AbstractFileInfo::timeInfo(const TimeInfo type) const
 {
     CALL_PROXY(timeInfo(type));
 
     switch (type) {
-    case AbstractFileInfo::FileTimeType::kCreateTime:
+    case TimeInfo::kCreateTime:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kBirthTime:
+    case TimeInfo::kBirthTime:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kMetadataChangeTime:
+    case TimeInfo::kMetadataChangeTime:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kLastModified:
+    case TimeInfo::kLastModified:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kLastRead:
+    case TimeInfo::kLastRead:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kDeletionTime:
+    case TimeInfo::kDeletionTime:
         return QDateTime();
-    case AbstractFileInfo::FileTimeType::kCreateTimeSecond:
+    case TimeInfo::kCreateTimeSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kBirthTimeSecond:
+    case TimeInfo::kBirthTimeSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kMetadataChangeTimeSecond:
+    case TimeInfo::kMetadataChangeTimeSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kLastModifiedSecond:
+    case TimeInfo::kLastModifiedSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kLastReadSecond:
+    case TimeInfo::kLastReadSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kDeletionTimeSecond:
+    case TimeInfo::kDeletionTimeSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kCreateTimeMSecond:
+    case TimeInfo::kCreateTimeMSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kBirthTimeMSecond:
+    case TimeInfo::kBirthTimeMSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kMetadataChangeTimeMSecond:
+    case TimeInfo::kMetadataChangeTimeMSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kLastModifiedMSecond:
+    case TimeInfo::kLastModifiedMSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kLastReadMSecond:
+    case TimeInfo::kLastReadMSecond:
         [[fallthrough]];
-    case AbstractFileInfo::FileTimeType::kDeletionTimeMSecond:
+    case TimeInfo::kDeletionTimeMSecond:
         return 0;
     default:
         return QVariant();
@@ -313,20 +313,20 @@ AbstractFileInfo::FileType DFMBASE_NAMESPACE::AbstractFileInfo::fileType() const
  * 处理或者字符串处理，这都比较快
  * \param FileNameInfoType
  */
-QString dfmbase::AbstractFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
+QString dfmbase::AbstractFileInfo::displayInfo(const DisPlay type) const
 {
     CALL_PROXY(displayInfo(type));
     switch (type) {
-    case AbstractFileInfo::DisplayInfoType::kSizeDisplayName:
-        if (isAttributes(AbstractFileInfo::FileIsType::kIsDir))
+    case DisPlay::kSizeDisplayName:
+        if (isAttributes(IsInfo::kIsDir))
             return "-";   // for dir don't display items count, highly improve the view's performance
         else
             return FileUtils::formatSize(size());
-    case AbstractFileInfo::DisplayInfoType::kFileDisplayPath:
+    case DisPlay::kFileDisplayPath:
         return dptr->url.path();
-    case AbstractFileInfo::DisplayInfoType::kMimeTypeDisplayName:
+    case DisPlay::kMimeTypeDisplayName:
         return MimeTypeDisplayManager::instance()->displayName(nameInfo(FileNameInfoType::kMimeTypeName));
-    case AbstractFileInfo::DisplayInfoType::kFileTypeDisplayName:
+    case DisPlay::kFileTypeDisplayName:
         return QString::number(static_cast<int>(MimeTypeDisplayManager::
                                                         instance()
                                                                 ->displayNameToEnum(const_cast<AbstractFileInfo *>(this)->fileMimeType().name())))
@@ -341,7 +341,7 @@ QString dfmbase::AbstractFileInfo::displayInfo(const AbstractFileInfo::DisplayIn
  * 处理或者字符串处理，这都比较快
  * \param FileUrlInfoType
  */
-QUrl dfmbase::AbstractFileInfo::urlInfo(const dfmbase::AbstractFileInfo::FileUrlInfoType type) const
+QUrl dfmbase::AbstractFileInfo::urlInfo(const UrlInfo type) const
 {
     CALL_PROXY(urlInfo(type));
     switch (type) {
@@ -358,7 +358,7 @@ QUrl dfmbase::AbstractFileInfo::urlInfo(const dfmbase::AbstractFileInfo::FileUrl
     }
 }
 
-QUrl dfmbase::AbstractFileInfo::getUrlByType(const dfmbase::AbstractFileInfo::FileUrlInfoType type, const QString &fileName) const
+QUrl dfmbase::AbstractFileInfo::getUrlByType(const UrlInfo type, const QString &fileName) const
 {
     CALL_PROXY(getUrlByType(type, fileName));
     switch (type) {
@@ -374,7 +374,7 @@ QUrl dfmbase::AbstractFileInfo::getUrlByType(const dfmbase::AbstractFileInfo::Fi
   * \brief view进入当前目录的提示信息，固定字符串处理，不实现异步
   * \param SupportType
   */
-Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedAttributes(const AbstractFileInfo::SupportType type) const
+Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedAttributes(const Support type) const
 {
     CALL_PROXY(supportedAttributes(type));
 
@@ -382,7 +382,7 @@ Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedAttributes(const A
     case SupportType::kDrag:
         return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
     case SupportType::kDrop:
-        if (isAttributes(AbstractFileInfo::FileIsType::kIsWritable)) {
+        if (isAttributes(IsInfo::kIsWritable)) {
             return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
         }
 
@@ -400,7 +400,7 @@ Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedAttributes(const A
  * 默认，获取了就是读取属性
  * \param FileIsType
  */
-bool dfmbase::AbstractFileInfo::isAttributes(const dfmbase::AbstractFileInfo::FileIsType type) const
+bool dfmbase::AbstractFileInfo::isAttributes(const IsInfo type) const
 {
     CALL_PROXY(isAttributes(type));
     switch (type) {
@@ -411,13 +411,13 @@ bool dfmbase::AbstractFileInfo::isAttributes(const dfmbase::AbstractFileInfo::Fi
     }
 }
 
-bool dfmbase::AbstractFileInfo::canAttributes(const dfmbase::AbstractFileInfo::FileCanType type) const
+bool dfmbase::AbstractFileInfo::canAttributes(const CanInfo type) const
 {
     CALL_PROXY(canAttributes(type));
     switch (type) {
     case FileCanType::kCanFetch:
-        return isAttributes(AbstractFileInfo::FileIsType::kIsDir)
-                && !isAttributes(AbstractFileInfo::FileIsType::kIsPrivate);
+        return isAttributes(IsInfo::kIsDir)
+                && !isAttributes(IsInfo::kIsPrivate);
     case FileCanType::kCanDrop:
         return dptr->canDrop();
     case FileCanType::kCanDrag:
@@ -431,7 +431,7 @@ bool dfmbase::AbstractFileInfo::canAttributes(const dfmbase::AbstractFileInfo::F
     }
 }
 
-QVariant dfmbase::AbstractFileInfo::extendedAttributes(const dfmbase::AbstractFileInfo::FileExtendedInfoType type) const
+QVariant dfmbase::AbstractFileInfo::extendedAttributes(const ExInfo type) const
 {
     CALL_PROXY(extendedAttributes(type));
     switch (type) {
@@ -456,7 +456,7 @@ QVariant dfmbase::AbstractFileInfo::extendedAttributes(const dfmbase::AbstractFi
  * \brief view进入当前目录的提示信息，固定字符串处理，不实现异步
  * \param ViewType
  */
-QString DFMBASE_NAMESPACE::AbstractFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::viewTip(const ViewInfo type) const
 {
     switch (type) {
     case ViewType::kEmptyDir:
@@ -483,10 +483,10 @@ QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> DFMBASE_NAMESPACE::AbstractF
 
 /*!
   * \brief setExtendedAttributes 设置文件的扩展属性
-  * \param AbstractFileInfo::FileExtendedInfoType 扩展属性key \param QVariant 属性
+  * \param ExInfo 扩展属性key \param QVariant 属性
   * return
   */
-void DFMBASE_NAMESPACE::AbstractFileInfo::setExtendedAttributes(const AbstractFileInfo::FileExtendedInfoType &key, const QVariant &value)
+void DFMBASE_NAMESPACE::AbstractFileInfo::setExtendedAttributes(const ExInfo &key, const QVariant &value)
 {
     CALL_PROXY(setExtendedAttributes(key, value));
     dptr->extendOtherCache.insert(key, value);
@@ -551,7 +551,7 @@ AbstractFileInfoPrivate::~AbstractFileInfoPrivate()
  */
 QUrl DFMBASE_NAMESPACE::AbstractFileInfoPrivate::getUrlByChildFileName(const QString &fileName) const
 {
-    if (!q->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+    if (!q->isAttributes(IsInfo::kIsDir)) {
         return QUrl();
     }
     QUrl theUrl = url;
@@ -630,13 +630,13 @@ QString AbstractFileInfoPrivate::baseName() const
  */
 bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
 {
-    if (q->isAttributes(AbstractFileInfo::FileIsType::kIsPrivate)) {
+    if (q->isAttributes(IsInfo::kIsPrivate)) {
         return false;
     }
 
-    if (!q->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+    if (!q->isAttributes(IsInfo::kIsSymLink)) {
         const bool isDesktop = q->nameInfo(NameInfo::kMimeTypeName) == Global::Mime::kTypeAppXDesktop;
-        return q->isAttributes(AbstractFileInfo::FileIsType::kIsDir) || isDesktop;
+        return q->isAttributes(IsInfo::kIsDir) || isDesktop;
     }
 
     AbstractFileInfoPointer info = nullptr;
@@ -656,9 +656,9 @@ bool DFMBASE_NAMESPACE::AbstractFileInfoPrivate::canDrop()
         }
 
         linkTargetPath = info->pathInfo(PathInfo::kSymLinkTarget);
-    } while (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink));
+    } while (info->isAttributes(IsInfo::kIsSymLink));
 
-    return info->canAttributes(AbstractFileInfo::FileCanType::kCanDrop);
+    return info->canAttributes(CanInfo::kCanDrop);
 }
 
 }

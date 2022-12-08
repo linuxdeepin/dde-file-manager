@@ -67,12 +67,12 @@ protected:
 
 TEST_F(UT_ShareFileInfo, RedirectedFileUrl)
 {
-    EXPECT_TRUE(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl) == QUrl::fromLocalFile("/test"));
+    EXPECT_TRUE(info->urlInfo(UrlInfo::kRedirectedFileUrl) == QUrl::fromLocalFile("/test"));
 }
 
 TEST_F(UT_ShareFileInfo, FileDisplayName)
 {
-    EXPECT_TRUE(info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName) == "test");
+    EXPECT_TRUE(info->displayInfo(DisPlay::kFileDisplayName) == "test");
 }
 
 TEST_F(UT_ShareFileInfo, FileName)
@@ -82,22 +82,22 @@ TEST_F(UT_ShareFileInfo, FileName)
 
 TEST_F(UT_ShareFileInfo, IsDir)
 {
-    EXPECT_TRUE(info->isAttributes(AbstractFileInfo::FileIsType::kIsDir));
+    EXPECT_TRUE(info->isAttributes(IsInfo::kIsDir));
 }
 
 TEST_F(UT_ShareFileInfo, CanRename)
 {
-    EXPECT_FALSE(info->canAttributes(AbstractFileInfo::FileCanType::kCanRename));
+    EXPECT_FALSE(info->canAttributes(CanInfo::kCanRename));
 }
 
 TEST_F(UT_ShareFileInfo, CanDrag)
 {
-    EXPECT_FALSE(info->canAttributes(AbstractFileInfo::FileCanType::kCanDrag));
+    EXPECT_FALSE(info->canAttributes(CanInfo::kCanDrag));
 }
 
 TEST_F(UT_ShareFileInfo, IsWritable)
 {
-    EXPECT_TRUE(info->isAttributes(AbstractFileInfo::FileIsType::kIsWritable));
+    EXPECT_TRUE(info->isAttributes(IsInfo::kIsWritable));
 }
 
 TEST_F(UT_ShareFileInfo, Refresh)

@@ -102,8 +102,8 @@ bool ImagePreview::setFileUrl(const QUrl &url)
     if (info.isNull())
         return false;
 
-    if (info->canAttributes(AbstractFileInfo::FileCanType::kCanRedirectionFileUrl)) {
-        tmpUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl);
+    if (info->canAttributes(CanInfo::kCanRedirectionFileUrl)) {
+        tmpUrl = info->urlInfo(UrlInfo::kRedirectedFileUrl);
     }
 
     if (!tmpUrl.isLocalFile())

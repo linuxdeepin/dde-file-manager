@@ -136,18 +136,18 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
 
             curDirInfo->refresh();
             bool disabled = (ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction)
-                    || !curDirInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable);
+                    || !curDirInfo->isAttributes(IsInfo::kIsWritable);
             paste->setDisabled(disabled);
         }
     } else if (1 == d->selectFiles.count()) {
         if (auto copy = d->predicateAction.value(ActionID::kCopy)) {
-            if (!d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
+            if (!d->focusFileInfo->isAttributes(IsInfo::kIsReadable) && !d->focusFileInfo->isAttributes(IsInfo::kIsSymLink))
                 copy->setDisabled(true);
         }
 
         if (auto cut = d->predicateAction.value(ActionID::kCut)) {
             d->focusFileInfo->refresh();
-            if (!d->focusFileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanRename))
+            if (!d->focusFileInfo->canAttributes(CanInfo::kCanRename))
                 cut->setDisabled(true);
         }
     } else {
@@ -158,7 +158,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
             info->refresh();
 
             if (auto cut = d->predicateAction.value(ActionID::kCut)) {
-                if (!info->canAttributes(AbstractFileInfo::FileCanType::kCanRename)) {
+                if (!info->canAttributes(CanInfo::kCanRename)) {
                     cut->setDisabled(true);
                     break;
                 }

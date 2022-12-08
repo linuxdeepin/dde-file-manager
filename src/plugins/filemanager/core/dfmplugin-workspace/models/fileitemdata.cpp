@@ -70,17 +70,17 @@ QVariant FileItemData::data(int role) const
 
     switch (role) {
     case kItemFilePathRole:
-        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        return info->displayInfo(DisPlay::kFileDisplayName);
     case kItemFileLastModifiedRole: {
-        auto lastModified = info->timeInfo(AbstractFileInfo::FileTimeType::kLastModified).value<QDateTime>();
+        auto lastModified = info->timeInfo(TimeInfo::kLastModified).value<QDateTime>();
         return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
     }
     case kItemIconRole:
         return info->fileIcon();
     case kItemFileSizeRole:
-        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kSizeDisplayName);
+        return info->displayInfo(DisPlay::kSizeDisplayName);
     case kItemFileMimeTypeRole:
-        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kMimeTypeDisplayName);
+        return info->displayInfo(DisPlay::kMimeTypeDisplayName);
     case kItemSizeHintRole:
         return QSize(-1, 26);
     case kItemNameRole:
@@ -88,9 +88,9 @@ QVariant FileItemData::data(int role) const
     case Qt::DisplayRole:
     case kItemEditRole:
     case kItemFileDisplayNameRole:
-        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+        return info->displayInfo(DisPlay::kFileDisplayName);
     case kItemFilePinyinNameRole:
-        return info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayPinyinName);
+        return info->displayInfo(DisPlay::kFileDisplayPinyinName);
     case kItemFileBaseNameRole:
         return info->nameInfo(NameInfo::kCompleteBaseName);
     case kItemFileSuffixRole:
@@ -102,7 +102,7 @@ QVariant FileItemData::data(int role) const
     case kItemFileSuffixOfRenameRole:
         return info->nameInfo(NameInfo::kSuffixOfRename);
     case kItemUrlRole:
-        return info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        return info->urlInfo(UrlInfo::kUrl);
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
     case kItemFileIconModelToolTipRole: {

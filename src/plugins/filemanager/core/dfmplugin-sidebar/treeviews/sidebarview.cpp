@@ -384,7 +384,7 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
     auto dstInfo = InfoFactory::create<AbstractFileInfo>(dstUrl);
 
     // convert destnation url to real path if it's a symbol link.
-    if (dstInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
+    if (dstInfo->isAttributes(IsInfo::kIsSymLink))
         dstUrl = dstInfo->pathInfo(PathInfo::kSymLinkTarget);
 
     auto winId = SideBarHelper::windowId(qobject_cast<QWidget *>(parent()));
@@ -536,7 +536,7 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         targetItemUrl = item->url();
     }
     auto itemInfo = InfoFactory::create<AbstractFileInfo>(targetItemUrl);
-    if (!itemInfo || !itemInfo->canAttributes(AbstractFileInfo::FileCanType::kCanDrop)) {
+    if (!itemInfo || !itemInfo->canAttributes(CanInfo::kCanDrop)) {
         return Qt::IgnoreAction;
     }
 
@@ -545,17 +545,17 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         if (!fileInfo)
             return Qt::IgnoreAction;
 
-        if (!fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable)) {
+        if (!fileInfo->isAttributes(IsInfo::kIsReadable)) {
             return Qt::IgnoreAction;
         }
         //部分文件不能复制或剪切，需要在拖拽时忽略
-        if (!fileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanMoveOrCopy)) {
+        if (!fileInfo->canAttributes(CanInfo::kCanMoveOrCopy)) {
             return Qt::IgnoreAction;
         }
     }
 
     Qt::DropAction action = Qt::IgnoreAction;
-    const Qt::DropActions support_actions = itemInfo->supportedAttributes(AbstractFileInfo::SupportType::kDrop) & actions;
+    const Qt::DropActions support_actions = itemInfo->supportedAttributes(Support::kDrop) & actions;
 
     if (support_actions.testFlag(Qt::CopyAction)) {
         action = Qt::CopyAction;

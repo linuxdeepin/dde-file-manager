@@ -275,18 +275,18 @@ UserShareHelper::~UserShareHelper()
 
 bool UserShareHelper::canShare(AbstractFileInfoPointer info)
 {
-    if (!info || !info->isAttributes(dfmbase::AbstractFileInfo::FileIsType::kIsDir) || !info->isAttributes(dfmbase::AbstractFileInfo::FileIsType::kIsReadable))
+    if (!info || !info->isAttributes(IsInfo::kIsDir) || !info->isAttributes(IsInfo::kIsReadable))
         return false;
 
     DFMBASE_USE_NAMESPACE
     // in v20, this part controls whether to disable share action.
-    if (info->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kOwnerId).toUInt() != static_cast<uint>(SysInfoUtils::getUserId()) && !SysInfoUtils::isRootUser())
+    if (info->extendedAttributes(ExInfo::kOwnerId).toUInt() != static_cast<uint>(SysInfoUtils::getUserId()) && !SysInfoUtils::isRootUser())
         return false;
 
     if (DevProxyMng->isFileOfProtocolMounts(info->pathInfo(PathInfo::kFilePath)))
         return false;
 
-    if (info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->pathInfo(PathInfo::kFilePath)))
+    if (info->urlInfo(UrlInfo::kUrl).scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->pathInfo(PathInfo::kFilePath)))
         return false;
 
     return true;

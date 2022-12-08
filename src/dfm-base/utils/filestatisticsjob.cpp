@@ -159,15 +159,15 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
 
     qint64 size = 0;
 
-    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
+    if (info->isAttributes(IsInfo::kIsFile)) {
         do {
             // ###(zccrs): skip the file,os file
-            if (UniversalUtils::urlEquals(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), QUrl::fromLocalFile("/proc/kcore"))
-                || UniversalUtils::urlEquals(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), QUrl::fromLocalFile("/dev/core"))) {
+            if (UniversalUtils::urlEquals(info->urlInfo(UrlInfo::kUrl), QUrl::fromLocalFile("/proc/kcore"))
+                || UniversalUtils::urlEquals(info->urlInfo(UrlInfo::kUrl), QUrl::fromLocalFile("/dev/core"))) {
                 break;
             }
             //skip os file Shortcut
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)
+            if (info->isAttributes(IsInfo::kIsSymLink)
                 && (info->pathInfo(PathInfo::kSymLinkTarget)
                             == QStringLiteral("/proc/kcore")
                     || info->pathInfo(PathInfo::kSymLinkTarget) == QStringLiteral("/dev/core"))) {
@@ -203,14 +203,14 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
             // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
             // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
             // 判断文件是否是链接文件
-            totalProgressSize += (size <= 0 || info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) ? FileUtils::getMemoryPageSize() : size;
+            totalProgressSize += (size <= 0 || info->isAttributes(IsInfo::kIsSymLink)) ? FileUtils::getMemoryPageSize() : size;
         } while (false);
 
         ++filesCount;
     } else {
         // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
         totalProgressSize += FileUtils::getMemoryPageSize();
-        if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+        if (info->isAttributes(IsInfo::kIsSymLink)) {
             if (!followLink) {
                 ++directoryCount;
                 return;
@@ -218,7 +218,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
 
             do {
                 info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->pathInfo(PathInfo::kSymLinkTarget)));
-            } while (info && info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink));
+            } while (info && info->isAttributes(IsInfo::kIsSymLink));
 
             if (!info) {
                 ++directoryCount;
@@ -228,11 +228,11 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
 
         ++directoryCount;
 
-        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isLocalFile()) {
+        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && info->urlInfo(UrlInfo::kUrl).isLocalFile()) {
             do {
-                QStorageInfo si(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).toLocalFile());
+                QStorageInfo si(info->urlInfo(UrlInfo::kUrl).toLocalFile());
 
-                if (si.rootPath() == info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).toLocalFile()) {
+                if (si.rootPath() == info->urlInfo(UrlInfo::kUrl).toLocalFile()) {
                     if (!fileHints.testFlag(FileStatisticsJob::kDontSkipPROCStorage)
                         && si.device() == "proc") {
                         break;
@@ -413,29 +413,29 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 continue;
             }
 
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && d->fileHints.testFlag(kSingleDepth)) {
+            if (info->isAttributes(IsInfo::kIsDir) && d->fileHints.testFlag(kSingleDepth)) {
                 fileCount += info->countChildFile();
             } else {
                 fileCount++;
             }
 
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+            if (info->isAttributes(IsInfo::kIsSymLink)) {
                 if (!followLink) {
                     continue;
                 }
 
                 info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->pathInfo(PathInfo::kSymLinkTarget)));
 
-                if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+                if (info->isAttributes(IsInfo::kIsSymLink)) {
                     continue;
                 }
             }
 
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+            if (info->isAttributes(IsInfo::kIsDir)) {
                 if (d->sizeInfo->dirSize == 0) {
                     struct stat statInfo;
 
-                    if (0 == stat(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).path().toStdString().data(), &statInfo))
+                    if (0 == stat(info->urlInfo(UrlInfo::kUrl).path().toStdString().data(), &statInfo))
                         d->sizeInfo->dirSize = statInfo.st_size == 0 ? FileUtils::getMemoryPageSize() : static_cast<quint16>(statInfo.st_size);
                 }
                 directory_queue << url;

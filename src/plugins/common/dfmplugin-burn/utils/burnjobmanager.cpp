@@ -245,7 +245,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
         qInfo() << "button clicked" << text;
         if (index == 1) {
             const auto &fileInfo { InfoFactory::create<AbstractFileInfo>(imageUrl) };
-            QUrl parentUrl { fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl) };
+            QUrl parentUrl { fileInfo->urlInfo(UrlInfo::kParentUrl) };
             parentUrl.setQuery("selectUrl=" + imageUrl.toString());
             dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
         }

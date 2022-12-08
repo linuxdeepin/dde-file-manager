@@ -43,7 +43,7 @@ bool SearchFileInfo::exists() const
     return AbstractFileInfo::exists();
 }
 
-bool SearchFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
+bool SearchFileInfo::isAttributes(const IsInfo type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
@@ -89,7 +89,7 @@ QString SearchFileInfo::nameInfo(const NameInfo type) const
     }
 }
 
-QString SearchFileInfo::viewTip(const AbstractFileInfo::ViewType type) const
+QString SearchFileInfo::viewTip(const ViewInfo type) const
 {
     switch (type) {
     case ViewType::kEmptyDir:

@@ -84,7 +84,7 @@ QUrl RecentDirIterator::fileUrl() const
 {
     AbstractFileInfoPointer currentInfo = d->recentNodes.value(d->currentUrl);
 
-    return currentInfo ? currentInfo->urlInfo(dfmbase::AbstractFileInfo::FileUrlInfoType::kUrl) : QString();
+    return currentInfo ? currentInfo->urlInfo(UrlInfo::kUrl) : QString();
 }
 
 const AbstractFileInfoPointer RecentDirIterator::fileInfo() const

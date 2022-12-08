@@ -70,7 +70,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     DFMBASE_USE_NAMESPACE;
     QString suffix = info->nameInfo(NameInfo::kSuffix);
     if (!ComputerUtils::isPresetSuffix(suffix)) {
-        ComputerEventCaller::sendOpenItem(winId, info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        ComputerEventCaller::sendOpenItem(winId, info->urlInfo(UrlInfo::kUrl));
         return;
     }
 
@@ -170,7 +170,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
 
     QString uuid = info->extraProperty(DeviceProperty::kUUID).toString();
     if (uuid.isEmpty()) {
-        qWarning() << "params exception!" << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        qWarning() << "params exception!" << info->urlInfo(UrlInfo::kUrl);
         return;
     }
 
@@ -216,8 +216,8 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
         { "Property_Key_DisplayName", sidebarName },
         { "Property_Key_Editable", true }
     };
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), map);
-    Q_EMIT updateItemAlias(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", info->urlInfo(UrlInfo::kUrl), map);
+    Q_EMIT updateItemAlias(info->urlInfo(UrlInfo::kUrl));
 }
 
 void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act)
@@ -229,7 +229,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
 
     bool isEncrypted = info->extraProperty(DeviceProperty::kIsEncrypted).toBool();
     bool isUnlocked = info->extraProperty(DeviceProperty::kCleartextDevice).toString().length() > 1;
-    QString shellId = ComputerUtils::getBlockDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    QString shellId = ComputerUtils::getBlockDevIdByUrl(info->urlInfo(UrlInfo::kUrl));
     bool hasFileSystem = info->extraProperty(DeviceProperty::kHasFileSystem).toBool();
     bool isOpticalDrive = info->extraProperty(DeviceProperty::kOpticalDrive).toBool();
 
@@ -350,14 +350,14 @@ void ComputerController::actEject(const QUrl &url)
 void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)
 {
     if (info->order() == EntryFileInfo::kOrderApps) {
-        onOpenItem(winId, info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        onOpenItem(winId, info->urlInfo(UrlInfo::kUrl));
     } else if (info->order() > EntryFileInfo::kOrderCustom) {
-        ComputerEventCaller::sendCtrlNOnItem(winId, info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        ComputerEventCaller::sendCtrlNOnItem(winId, info->urlInfo(UrlInfo::kUrl));
     } else {
         auto target = info->targetUrl();
         if (target.isValid()) {
             if (info->extraProperty(DeviceProperty::kOptical).toBool())
-                target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)));
+                target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->urlInfo(UrlInfo::kUrl)));
             ComputerEventCaller::sendEnterInNewWindow(target);
         } else {
             mountDevice(winId, info, kEnterInNewWindow);
@@ -368,14 +368,14 @@ void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPoint
 void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info)
 {
     if (info->order() == EntryFileInfo::kOrderApps) {
-        onOpenItem(winId, info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        onOpenItem(winId, info->urlInfo(UrlInfo::kUrl));
     } else if (info->order() > EntryFileInfo::kOrderCustom) {
-        ComputerEventCaller::sendCtrlTOnItem(winId, info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        ComputerEventCaller::sendCtrlTOnItem(winId, info->urlInfo(UrlInfo::kUrl));
     } else {
         auto target = info->targetUrl();
         if (target.isValid()) {
             if (info->extraProperty(DeviceProperty::kOptical).toBool())
-                target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)));
+                target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->urlInfo(UrlInfo::kUrl)));
             ComputerEventCaller::sendEnterInNewTab(winId, target);
         } else {
             mountDevice(winId, info, kEnterInNewTab);
@@ -397,7 +397,7 @@ void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, b
 {
     QString sfx = info->nameInfo(NameInfo::kSuffix);
     if (sfx == SuffixInfo::kStashedProtocol) {
-        QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->urlInfo(UrlInfo::kUrl));
         DevMngIns->mountNetworkDeviceAsync(devId, [devId, enterAfterMounted, winId](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
             if (ok)
                 ComputerItemWatcherInstance->insertUrlMapper(devId, QUrl::fromLocalFile(mntPath));
@@ -416,7 +416,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
 {
     QString devId;
     if (info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kBlock) {
-        devId = ComputerUtils::getBlockDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        devId = ComputerUtils::getBlockDevIdByUrl(info->urlInfo(UrlInfo::kUrl));
         if (info->extraProperty(DeviceProperty::kIsEncrypted).toBool()) {
             QString cleartextId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
             DevMngIns->unmountBlockDevAsync(cleartextId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
@@ -439,7 +439,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
             });
         }
     } else if (info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kProtocol) {
-        devId = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        devId = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(UrlInfo::kUrl));
         DevMngIns->unmountProtocolDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             if (!ok) {
                 qWarning() << "unmount protocol device failed: " << devId << err;
@@ -447,13 +447,13 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
             }
         });
     } else {
-        qDebug() << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) << "is not support " << __FUNCTION__;
+        qDebug() << info->urlInfo(UrlInfo::kUrl) << "is not support " << __FUNCTION__;
     }
 }
 
 void ComputerController::actSafelyRemove(DFMEntryFileInfoPointer info)
 {
-    actEject(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    actEject(info->urlInfo(UrlInfo::kUrl));
 }
 
 void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar)
@@ -469,18 +469,18 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
     }
 
     if (!triggerFromSidebar)
-        Q_EMIT requestRename(winId, info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        Q_EMIT requestRename(winId, info->urlInfo(UrlInfo::kUrl));
     else
-        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, info->urlInfo(UrlInfo::kUrl));
 }
 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
 {
     if (info->nameInfo(NameInfo::kSuffix) != SuffixInfo::kBlock) {
-        qWarning() << "non block device is not support format" << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        qWarning() << "non block device is not support format" << info->urlInfo(UrlInfo::kUrl);
         return;
     }
-    auto url = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    auto url = info->urlInfo(UrlInfo::kUrl);
     QString devDesc = "/dev/" + url.path().remove("." + QString(SuffixInfo::kBlock));
     qDebug() << devDesc;
 
@@ -495,8 +495,8 @@ void ComputerController::actRemove(DFMEntryFileInfoPointer info)
 {
     if (info->nameInfo(NameInfo::kSuffix) != SuffixInfo::kStashedProtocol)
         return;
-    StashMountsUtils::removeStashedMount(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
-    Q_EMIT ComputerItemWatcherInstance->removeDevice(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    StashMountsUtils::removeStashedMount(info->urlInfo(UrlInfo::kUrl));
+    Q_EMIT ComputerItemWatcherInstance->removeDevice(info->urlInfo(UrlInfo::kUrl));
 }
 
 void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer info)
@@ -513,13 +513,13 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
         return;
     }
 
-    ComputerEventCaller::sendShowPropertyDialog({ info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) });
+    ComputerEventCaller::sendShowPropertyDialog({ info->urlInfo(UrlInfo::kUrl) });
 }
 
 void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
 {
     // 1. forget passwd
-    const QString &id = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    const QString &id = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(UrlInfo::kUrl));
     QString uri;
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb))
         uri = id;
@@ -545,7 +545,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
     // 3. remove stashed entry
     QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(id);
     StashMountsUtils::removeStashedMount(stashedUrl);
-    Q_EMIT ComputerItemWatcherInstance->removeDevice(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    Q_EMIT ComputerItemWatcherInstance->removeDevice(info->urlInfo(UrlInfo::kUrl));
 }
 
 void ComputerController::actErase(DFMEntryFileInfoPointer info)
@@ -593,7 +593,7 @@ void ComputerController::handleUnAccessableDevCdCall(quint64 winId, DFMEntryFile
     if (!info)
         return;
 
-    qDebug() << "cannot access device: " << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    qDebug() << "cannot access device: " << info->urlInfo(UrlInfo::kUrl);
     bool needAskForFormat = info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kBlock
             && !info->extraProperty(DeviceProperty::kHasFileSystem).toBool()
             && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool()

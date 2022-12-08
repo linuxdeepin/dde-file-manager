@@ -34,25 +34,25 @@ TEST(SearchFileInfoTest, ut_exists)
 TEST(SearchFileInfoTest, ut_isHidden)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_FALSE(info.isAttributes(AbstractFileInfo::FileIsType::kIsHidden));
+    EXPECT_FALSE(info.isAttributes(IsInfo::kIsHidden));
 }
 
 TEST(SearchFileInfoTest, ut_isReadable)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_TRUE(info.isAttributes(AbstractFileInfo::FileIsType::kIsReadable));
+    EXPECT_TRUE(info.isAttributes(IsInfo::kIsReadable));
 }
 
 TEST(SearchFileInfoTest, ut_isWritable)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_TRUE(info.isAttributes(AbstractFileInfo::FileIsType::kIsWritable));
+    EXPECT_TRUE(info.isAttributes(IsInfo::kIsWritable));
 }
 
 TEST(SearchFileInfoTest, ut_isDir)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_TRUE(info.isAttributes(AbstractFileInfo::FileIsType::kIsDir));
+    EXPECT_TRUE(info.isAttributes(IsInfo::kIsDir));
 }
 
 TEST(SearchFileInfoTest, ut_size)
@@ -64,11 +64,11 @@ TEST(SearchFileInfoTest, ut_size)
 TEST(SearchFileInfoTest, ut_emptyDirectoryTip)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_EQ("No results", info.viewTip(AbstractFileInfo::ViewType::kEmptyDir));
+    EXPECT_EQ("No results", info.viewTip(ViewInfo::kEmptyDir));
 }
 
 TEST(SearchFileInfoTest, ut_loadingTip)
 {
     SearchFileInfo info(SearchHelper::rootUrl());
-    EXPECT_EQ("Searching...", info.viewTip(AbstractFileInfo::ViewType::kLoading));
+    EXPECT_EQ("Searching...", info.viewTip(ViewInfo::kLoading));
 }

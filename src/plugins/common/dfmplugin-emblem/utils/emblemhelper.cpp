@@ -45,13 +45,13 @@ QList<QIcon> EmblemHelper::getSystemEmblems(const AbstractFileInfoPointer &info)
 {
     QList<QIcon> emblems;
 
-    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink))
+    if (info->isAttributes(IsInfo::kIsSymLink))
         emblems << QIcon::fromTheme("emblem-symbolic-link", standardEmblem(SystemEmblemType::kLink));
 
-    if (!info->isAttributes(AbstractFileInfo::FileIsType::kIsWritable))
+    if (!info->isAttributes(IsInfo::kIsWritable))
         emblems << QIcon::fromTheme("emblem-readonly", standardEmblem(SystemEmblemType::kLock));
 
-    if (!info->isAttributes(AbstractFileInfo::FileIsType::kIsReadable))
+    if (!info->isAttributes(IsInfo::kIsReadable))
         emblems << QIcon::fromTheme("emblem-unreadable", standardEmblem(SystemEmblemType::kUnreadable));
 
     bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->pathInfo(PathInfo::kAbsoluteFilePath)).toBool();
@@ -66,7 +66,7 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
     QMap<int, QIcon> emblemsMap;
 
     // use AbstractFileInfo to access emblems, avoid query again
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->urlInfo(UrlInfo::kUrl));
     if (!fileInfo)
         return {};
     const QStringList &emblemData = fileInfo->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();

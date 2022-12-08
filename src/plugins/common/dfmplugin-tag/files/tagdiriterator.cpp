@@ -68,7 +68,7 @@ QUrl TagDirIterator::fileUrl() const
 {
     AbstractFileInfoPointer currentInfo = d->tagNodes.value(d->currentUrl);
 
-    return currentInfo ? currentInfo->urlInfo(dfmbase::AbstractFileInfo::FileUrlInfoType::kUrl) : QString();
+    return currentInfo ? currentInfo->urlInfo(UrlInfo::kUrl) : QString();
 }
 
 const AbstractFileInfoPointer TagDirIterator::fileInfo() const

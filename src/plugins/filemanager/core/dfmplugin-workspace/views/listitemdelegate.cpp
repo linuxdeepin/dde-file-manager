@@ -122,7 +122,7 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
     const AbstractFileInfoPointer &fileInfo = this->parent()->fileInfo(index);
 
-    if (fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).scheme() == "search") {
+    if (fileInfo->urlInfo(UrlInfo::kUrl).scheme() == "search") {
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight * 2 - 10);
     } else {
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight);

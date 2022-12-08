@@ -55,7 +55,7 @@ QFile::Permissions RecentFileInfo::permissions() const
     return AbstractFileInfo::permissions();
 }
 
-bool RecentFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
+bool RecentFileInfo::isAttributes(const IsInfo type) const
 {
     switch (type) {
     case FileIsType::kIsReadable:
@@ -67,7 +67,7 @@ bool RecentFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     }
 }
 
-bool RecentFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
+bool RecentFileInfo::canAttributes(const CanInfo type) const
 {
     switch (type) {
     case FileCanType::kCanRename:
@@ -95,11 +95,11 @@ QString RecentFileInfo::nameInfo(const NameInfo type) const
     }
 }
 
-QUrl RecentFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
+QUrl RecentFileInfo::urlInfo(const UrlInfo type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        return dptr->proxy ? dptr->proxy->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) : dptr->url;
+        return dptr->proxy ? dptr->proxy->urlInfo(UrlInfo::kUrl) : dptr->url;
     default:
         return AbstractFileInfo::urlInfo(type);
     }
@@ -109,9 +109,9 @@ QVariant RecentFileInfo::customData(int role) const
 {
     using namespace dfmbase::Global;
     if (role == kItemFilePathRole)
-        return urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl).path();
+        return urlInfo(UrlInfo::kRedirectedFileUrl).path();
     else if (role == kItemFileLastReadRole)
-        return timeInfo(AbstractFileInfo::FileTimeType::kLastRead).value<QDateTime>().toString(FileUtils::dateTimeFormat());
+        return timeInfo(TimeInfo::kLastRead).value<QDateTime>().toString(FileUtils::dateTimeFormat());
     else
         return QVariant();
 }

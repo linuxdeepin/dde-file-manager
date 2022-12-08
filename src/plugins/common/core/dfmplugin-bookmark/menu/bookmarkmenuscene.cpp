@@ -85,7 +85,7 @@ bool BookmarkMenuScene::create(QMenu *parent)
 
     for (const auto &file : d->selectFiles) {
         auto info = InfoFactory::create<AbstractFileInfo>(file);
-        if ((info && !info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) || d->isSystemPathIncluded)
+        if ((info && !info->isAttributes(IsInfo::kIsDir)) || d->isSystemPathIncluded)
             return AbstractMenuScene::create(parent);
     }
 

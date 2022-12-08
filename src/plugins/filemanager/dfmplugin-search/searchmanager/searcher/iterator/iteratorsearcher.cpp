@@ -116,15 +116,15 @@ void IteratorSearcher::doSearch()
                 continue;
 
             // 将目录添加到待搜索目录中
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir) && !info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
-                const auto &fileUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+            if (info->isAttributes(IsInfo::kIsDir) && !info->isAttributes(IsInfo::kIsSymLink)) {
+                const auto &fileUrl = info->urlInfo(UrlInfo::kUrl);
                 if (!searchPathList.contains(fileUrl) || !fileUrl.path().startsWith("/sys/"))
                     searchPathList << fileUrl;
             }
 
-            QRegularExpressionMatch match = regex.match(info->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName));
+            QRegularExpressionMatch match = regex.match(info->displayInfo(DisPlay::kFileDisplayName));
             if (match.hasMatch()) {
-                const auto &fileUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+                const auto &fileUrl = info->urlInfo(UrlInfo::kUrl);
                 {
                     QMutexLocker lk(&mutex);
                     allResults << fileUrl;

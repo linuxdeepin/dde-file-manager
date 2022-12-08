@@ -61,11 +61,11 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     if (info.isNull())
         return;
 
-    QUrl parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
+    QUrl parentUrl = info->urlInfo(UrlInfo::kParentUrl);
     QStorageInfo storageInfo(parentUrl.toLocalFile());
     const QString &fsType = storageInfo.fileSystemType();
 
-    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
+    if (info->isAttributes(IsInfo::kIsFile)) {
         // append `Executable` string
         QString append = QStringLiteral(" , ") + QObject::tr("Executable");
         authorityList[3] += append;
@@ -77,7 +77,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
         readWriteIndex = readWriteFlag;
     }
 
-    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+    if (info->isAttributes(IsInfo::kIsDir)) {
         // folder: read is read and executable, read-write is read-write and executable
         readOnlyIndex = readOnlyWithXFlag;
         readWriteIndex = readWriteWithXFlag;
@@ -95,9 +95,9 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     setComboBoxByPermission(groupComboBox, static_cast<int>(info->permissions() & kGroupAll), 4);
     setComboBoxByPermission(otherComboBox, static_cast<int>(info->permissions() & kOtherAll), 0);
 
-    if (info->isAttributes(AbstractFileInfo::FileIsType::kIsFile)) {
+    if (info->isAttributes(IsInfo::kIsFile)) {
         executableCheckBox->setText(tr("Allow to execute as program"));
-        if (info->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kOwnerId).toUInt() != getuid())
+        if (info->extendedAttributes(ExInfo::kOwnerId).toUInt() != getuid())
             executableCheckBox->setDisabled(true);
 
         if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther))
@@ -113,14 +113,14 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     // 置灰：
     // 1. 本身用户无权限
     // 2. 所属文件系统无权限机制
-    if (info->extendedAttributes(AbstractFileInfo::FileExtendedInfoType::kOwnerId).toUInt() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType)) {
+    if (info->extendedAttributes(ExInfo::kOwnerId).toUInt() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType)) {
         ownerComboBox->setDisabled(true);
         groupComboBox->setDisabled(true);
         otherComboBox->setDisabled(true);
     }
 
     // tmp: 暂时的处理
-    if (fsType == "vfat" && !info->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
+    if (fsType == "vfat" && !info->isAttributes(IsInfo::kIsDir))
         ownerComboBox->setDisabled(false);
 
     connect(ownerComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
@@ -225,7 +225,7 @@ bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
     if (info.isNull())
         return false;
 
-    if (!info->canAttributes(AbstractFileInfo::FileCanType::kCanRename))
+    if (!info->canAttributes(CanInfo::kCanRename))
         return false;
 
     QString path = info->pathInfo(PathInfo::kFilePath);

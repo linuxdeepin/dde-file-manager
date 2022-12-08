@@ -123,7 +123,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
 
     if (d->selectFiles.count() == 1) {
         auto focusFileInfo = d->focusFileInfo;
-        if (d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+        if (d->focusFileInfo->isAttributes(IsInfo::kIsSymLink)) {
             const auto &targetFile = d->focusFileInfo->pathInfo(PathInfo::kSymLinkTarget);
             auto targetFileInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetFile));
             if (targetFileInfo && targetFileInfo->exists())
@@ -131,7 +131,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
         }
 
         const auto mimeType = focusFileInfo->nameInfo(NameInfo::kMimeTypeName);
-        if (mimeType.startsWith("image") && focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable)
+        if (mimeType.startsWith("image") && focusFileInfo->isAttributes(IsInfo::kIsReadable)
             && !mimeType.endsWith("svg+xml") && !mimeType.endsWith("raf")
             && !mimeType.endsWith("crw")) {
             tempAction = parent->addAction(d->predicateName.value(ActionID::kSetAsWallpaper));
@@ -176,13 +176,13 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     d->focusFileInfo->refresh();
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
-        if (!d->focusFileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanDelete) || (!d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsWritable) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile) && !d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)))
+        if (!d->focusFileInfo->canAttributes(CanInfo::kCanDelete) || (!d->focusFileInfo->isAttributes(IsInfo::kIsWritable) && !d->focusFileInfo->isAttributes(IsInfo::kIsFile) && !d->focusFileInfo->isAttributes(IsInfo::kIsSymLink)))
             delAction->setDisabled(true);
     }
 
     // rename
     if (auto rename = d->predicateAction.value(ActionID::kRename)) {
-        if (!d->focusFileInfo->canAttributes(AbstractFileInfo::FileCanType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
+        if (!d->focusFileInfo->canAttributes(CanInfo::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
     if (d->selectFiles.count() > 1) {
@@ -213,7 +213,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
                 if (info->nameInfo(NameInfo::kSuffix) != d->focusFileInfo->nameInfo(NameInfo::kSuffix)) {
 
                     QStringList mimeTypeList { info->nameInfo(NameInfo::kMimeTypeName) };
-                    QUrl parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
+                    QUrl parentUrl = info->urlInfo(UrlInfo::kParentUrl);
                     auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
                     if (!info.isNull()) {
                         mimeTypeList << parentInfo->nameInfo(NameInfo::kMimeTypeName);
@@ -250,7 +250,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // open
     if (actionId == ActionID::kOpen) {
-        if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+        if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isAttributes(IsInfo::kIsDir)) {
             if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
                 dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
             } else {

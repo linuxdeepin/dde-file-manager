@@ -42,9 +42,9 @@ ShareFileInfo::~ShareFileInfo()
 {
 }
 
-QString ShareFileInfo::displayInfo(const AbstractFileInfo::DisplayInfoType type) const
+QString ShareFileInfo::displayInfo(const DisPlay type) const
 {
-    if (AbstractFileInfo::DisplayInfoType::kFileDisplayName == type)
+    if (DisPlay::kFileDisplayName == type)
         return d->fileName();
     return AbstractFileInfo::displayInfo(type);
 }
@@ -61,7 +61,7 @@ QString ShareFileInfo::nameInfo(const NameInfo type) const
     }
 }
 
-QUrl ShareFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
+QUrl ShareFileInfo::urlInfo(const UrlInfo type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
@@ -71,7 +71,7 @@ QUrl ShareFileInfo::urlInfo(const AbstractFileInfo::FileUrlInfoType type) const
     }
 }
 
-bool ShareFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
+bool ShareFileInfo::isAttributes(const IsInfo type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
@@ -83,7 +83,7 @@ bool ShareFileInfo::isAttributes(const AbstractFileInfo::FileIsType type) const
     }
 }
 
-bool ShareFileInfo::canAttributes(const AbstractFileInfo::FileCanType type) const
+bool ShareFileInfo::canAttributes(const CanInfo type) const
 {
     switch (type) {
     case FileCanType::kCanRename:

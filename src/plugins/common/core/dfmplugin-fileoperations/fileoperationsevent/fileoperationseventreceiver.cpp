@@ -274,12 +274,12 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
 
     AbstractFileInfoPointer newFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
     AbstractFileInfoPointer oldFileInfo = InfoFactory::create<AbstractFileInfo>(oldUrl);
-    const QString &newName = newFileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
-    const QString &oldName = oldFileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName);
+    const QString &newName = newFileInfo->displayInfo(DisPlay::kFileDisplayName);
+    const QString &oldName = oldFileInfo->displayInfo(DisPlay::kFileDisplayName);
     if (newName == oldName)
         return true;
 
-    desktop.set(key, newFileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName));
+    desktop.set(key, newFileInfo->displayInfo(DisPlay::kFileDisplayName));
     desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
     if (desktop.save(desktopPath, "Desktop Entry")) {
         QMap<QUrl, QUrl> renamed { { oldUrl, newUrl } };
@@ -1172,7 +1172,7 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
     for (const QUrl &url : urls) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
-            const QUrl &parentUrl = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl);
+            const QUrl &parentUrl = info->urlInfo(UrlInfo::kParentUrl);
             const QString &fileName = info->nameInfo(NameInfo::kFileName);
 
             HideFileHelper helper(parentUrl);

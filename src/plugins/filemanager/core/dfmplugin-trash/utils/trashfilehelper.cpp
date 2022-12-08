@@ -133,7 +133,7 @@ bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
     bool isOpenFile = false;
     for (const QUrl &url : urls) {
         auto fileinfo = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::AbstractFileInfo>(url);
-        if (fileinfo && fileinfo->isAttributes(dfmbase::AbstractFileInfo::FileIsType::kIsFile)) {
+        if (fileinfo && fileinfo->isAttributes(IsInfo::kIsFile)) {
             isOpenFile = true;
             break;
         }

@@ -126,14 +126,14 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         QUrl restoreFileUrl;
         if (!this->targetUrl.isValid()) {
             // 获取回收站文件的原路径
-            restoreFileUrl = fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kOriginalUrl);
+            restoreFileUrl = fileInfo->urlInfo(UrlInfo::kOriginalUrl);
             if (!restoreFileUrl.isValid()) {
                 completeFilesCount++;
                 continue;
             }
         } else {
             restoreFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
-                                                            fileInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kFileDisplayName).toStdString().c_str(), nullptr);
+                                                            fileInfo->displayInfo(DisPlay::kFileDisplayName).toStdString().c_str(), nullptr);
         }
 
         const AbstractFileInfoPointer &restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl);
@@ -158,7 +158,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         }
 
         // read trash info
-        QString trashInfoCache = readTrashInfo(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl).toString().replace("/files/", "/info/") + ".trashinfo");
+        QString trashInfoCache = readTrashInfo(fileInfo->urlInfo(UrlInfo::kRedirectedFileUrl).toString().replace("/files/", "/info/") + ".trashinfo");
         emitCurrentTaskNotify(url, restoreFileUrl);
         AbstractFileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
@@ -166,15 +166,15 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             continue;
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool trashSucc = fileHandler.moveFile(url, newTargetInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
+        bool trashSucc = fileHandler.moveFile(url, newTargetInfo->urlInfo(UrlInfo::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
         if (trashSucc) {
             completeFilesCount++;
             if (!completeSourceFiles.contains(url)) {
                 completeSourceFiles.append(url);
                 completeCustomInfos.append(trashInfoCache);
             }
-            if (!completeTargetFiles.contains(restoreInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl)))
-                completeTargetFiles.append(restoreInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+            if (!completeTargetFiles.contains(restoreInfo->urlInfo(UrlInfo::kUrl)))
+                completeTargetFiles.append(restoreInfo->urlInfo(UrlInfo::kUrl));
             continue;
         }
         return false;
@@ -186,8 +186,8 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
 bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
                                                 AbstractFileInfoPointer &targetFileInfo, bool *result)
 {
-    const QUrl &fromUrl = trashInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
-    const QUrl &toUrl = restoreInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+    const QUrl &fromUrl = trashInfo->urlInfo(UrlInfo::kUrl);
+    const QUrl &toUrl = restoreInfo->urlInfo(UrlInfo::kUrl);
     const QUrl &parentUrl = UrlRoute::urlParent(toUrl);
     if (!parentUrl.isValid())
         return false;

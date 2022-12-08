@@ -81,7 +81,7 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
         || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSFtp)) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url, false);
         if (info && info->exists()) {
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsDir))
+            if (info->isAttributes(IsInfo::kIsDir))
                 BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         } else {
             auto callback = std::bind(handleNetworkMountResult, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, url, windowId);

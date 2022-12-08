@@ -111,7 +111,7 @@ void CopyFromDiscAuditLog::doLog(QDBusInterface &interface)
         qInfo() << "Current env auditlog allowed: " << srcPath;
 
         auto fileInfo { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(srcPath)) };
-        if (fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsDir)) {
+        if (fileInfo->isAttributes(IsInfo::kIsDir)) {
             for (const QFileInfo &subInfo : localFileInfoListRecursive(srcPath))
                 writeLog(interface, subInfo.absoluteFilePath(), destPath);
         } else {
@@ -130,7 +130,7 @@ void CopyFromDiscAuditLog::writeLog(QDBusInterface &interface, const QString &sr
     static const QString &kHostName { SysInfoUtils::getHostName() };
 
     auto fmInfo { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(srcPath)) };
-    const QString &fileType { fmInfo ? fmInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kMimeTypeDisplayName) : "" };
+    const QString &fileType { fmInfo ? fmInfo->displayInfo(DisPlay::kMimeTypeDisplayName) : "" };
     const QString &curLog { kLogTemplate.arg(dateTime).arg(kHostName).arg(kUserName).arg(kCount).arg(srcPath).arg(destPath).arg(fileType).arg(FileUtils::formatSize(fmInfo->size())) };
     interface.call("WriteLog", kLogKey, curLog);
 }
@@ -183,7 +183,7 @@ void BurnFilesAuditLogJob::writeLog(QDBusInterface &interface, const QString &di
 
     qint64 id { baseID + (index++) };
     auto fmInfo { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(discPath)) };
-    const QString &fileType { fmInfo ? fmInfo->displayInfo(AbstractFileInfo::DisplayInfoType::kMimeTypeDisplayName) : "" };
+    const QString &fileType { fmInfo ? fmInfo->displayInfo(DisPlay::kMimeTypeDisplayName) : "" };
     QString curLog { kLogTemplate.arg(id).arg(dateTime).arg(burner).arg(discType).arg(result).arg(kUserName).arg(nativePath).arg(FileUtils::formatSize(size)).arg(fileType) };
     interface.call("WriteLog", kLogKey, curLog);
 

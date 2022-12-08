@@ -31,13 +31,13 @@ using namespace dfmplugin_utils;
 static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
 {
     // no translate for gvfs file, invoking suffix/mimeTypeName might cost huge time
-    if (fileInfo->urlInfo(dfmbase::AbstractFileInfo::FileUrlInfoType::kUrl).path().contains(QRegularExpression(DFMBASE_NAMESPACE::Global::Regex::kGvfsRoot)))
+    if (fileInfo->urlInfo(UrlInfo::kUrl).path().contains(QRegularExpression(DFMBASE_NAMESPACE::Global::Regex::kGvfsRoot)))
         return fileInfo;
 
     const QString &suffix = fileInfo->nameInfo(NameInfo::kSuffix);
     const QString &mimeTypeName = fileInfo->nameInfo(NameInfo::kMimeTypeName);
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop && mimeTypeName == "application/x-desktop") {
-        const QUrl &url = fileInfo->urlInfo(dfmbase::AbstractFileInfo::FileUrlInfoType::kUrl);
+        const QUrl &url = fileInfo->urlInfo(UrlInfo::kUrl);
         return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
     }
     return fileInfo;

@@ -404,7 +404,7 @@ void FileView::onClicked(const QModelIndex &index)
     QUrl url { "" };
     const AbstractFileInfoPointer &info = model()->itemFileInfo(index);
     if (info)
-        url = info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+        url = info->urlInfo(UrlInfo::kUrl);
     QVariantMap data;
     data.insert("displayName", model()->data(index));
     data.insert("url", url);
@@ -1577,7 +1577,7 @@ void FileView::updateLoadingIndicator()
 
         const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex());
         if (fileInfo)
-            tip = fileInfo->viewTip(AbstractFileInfo::ViewType::kLoading);
+            tip = fileInfo->viewTip(ViewInfo::kLoading);
 
         d->statusBar->showLoadingIncator(tip);
     }
@@ -1601,7 +1601,7 @@ void FileView::updateContentLabel()
         // set custom empty tips
         const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex());
         if (fileInfo) {
-            d->contentLabel->setText(fileInfo->viewTip(AbstractFileInfo::ViewType::kEmptyDir));
+            d->contentLabel->setText(fileInfo->viewTip(ViewInfo::kEmptyDir));
             d->contentLabel->adjustSize();
             return;
         }
@@ -1758,7 +1758,7 @@ void FileView::openIndex(const QModelIndex &index)
     if (!info)
         return;
 
-    FileOperatorHelperIns->openFiles(this, { info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl) });
+    FileOperatorHelperIns->openFiles(this, { info->urlInfo(UrlInfo::kUrl) });
 }
 
 void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)

@@ -50,9 +50,9 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
     for (const QUrl &url : selecturls) {
         const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
 
-        if (info && (info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl).isLocalFile() || info->exists())) {
+        if (info && (info->urlInfo(UrlInfo::kUrl).isLocalFile() || info->exists())) {
             //判断链接文件的源文件是否存在
-            if (info->isAttributes(AbstractFileInfo::FileIsType::kIsSymLink)) {
+            if (info->isAttributes(IsInfo::kIsSymLink)) {
                 QUrl targetUrl = QUrl::fromLocalFile(info->pathInfo(PathInfo::kSymLinkTarget));
                 if (!targetUrl.isValid()) {
                     hasInvalidSymlink = true;

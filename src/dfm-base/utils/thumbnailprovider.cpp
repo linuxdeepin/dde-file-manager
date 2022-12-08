@@ -170,7 +170,7 @@ bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 {
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-    if (!fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsReadable) || !fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile))
+    if (!fileInfo->isAttributes(IsInfo::kIsReadable) || !fileInfo->isAttributes(IsInfo::kIsFile))
         return false;
 
     qint64 fileSize = fileInfo->size();
@@ -324,7 +324,7 @@ QString ThumbnailProvider::thumbnailFilePath(const QUrl &fileUrl, Size size) con
 
     const QImage image = ir.read();
 
-    const qint64 fileModify = fileInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModifiedSecond).value<qint64>();
+    const qint64 fileModify = fileInfo->timeInfo(TimeInfo::kLastModifiedSecond).value<qint64>();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
         DecoratorFileOperator(thumbnail).deleteFile();
 
@@ -406,7 +406,7 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
     }
 
     image->setText(QT_STRINGIFY(Thumb::URL), fileUrl);
-    const qint64 fileModify = fileInfo->timeInfo(AbstractFileInfo::FileTimeType::kLastModifiedSecond).value<qint64>();
+    const qint64 fileModify = fileInfo->timeInfo(TimeInfo::kLastModifiedSecond).value<qint64>();
     image->setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
 
     // create path

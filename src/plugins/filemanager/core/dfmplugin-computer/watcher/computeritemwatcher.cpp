@@ -317,7 +317,7 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
 
         DFMEntryFileInfoPointer info(new EntryFileInfo(entryUrl));
         if (!info->exists()) {
-            qInfo() << "the appentry is in extension folder but not exist: " << info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl);
+            qInfo() << "the appentry is in extension folder but not exist: " << info->urlInfo(UrlInfo::kUrl);
             continue;
         }
         QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
@@ -475,7 +475,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 
     };
 
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), map);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->urlInfo(UrlInfo::kUrl), map);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
@@ -561,9 +561,9 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     if (!info->exists()) return;
 
     if (info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kProtocol) {
-        QString id = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl));
+        QString id = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(UrlInfo::kUrl));
         if (id.startsWith(Global::Scheme::kSmb)) {
-            StashMountsUtils::stashMount(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kUrl), info->displayName());
+            StashMountsUtils::stashMount(info->urlInfo(UrlInfo::kUrl), info->displayName());
             removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
     }

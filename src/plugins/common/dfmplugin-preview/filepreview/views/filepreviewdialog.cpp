@@ -314,7 +314,7 @@ void FilePreviewDialog::switchToPage(int index)
         if (view) {
             view->initialize(this, statusBar);
 
-            if (info->canAttributes(AbstractFileInfo::FileCanType::kCanRedirectionFileUrl) && view->setFileUrl(info->urlInfo(AbstractFileInfo::FileUrlInfoType::kRedirectedFileUrl)))
+            if (info->canAttributes(CanInfo::kCanRedirectionFileUrl) && view->setFileUrl(info->urlInfo(UrlInfo::kRedirectedFileUrl)))
                 break;
             else if (view->setFileUrl(fileList.at(index)))
                 break;
