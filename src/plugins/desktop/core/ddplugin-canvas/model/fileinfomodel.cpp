@@ -53,8 +53,8 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
     QMap<QUrl, DFMLocalFileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {
         if (auto itemInfo = FileCreator->createFileInfo(child)) {
-            fileUrls.append(itemInfo->urlInfo(UrlInfo::kUrl));
-            fileMaps.insert(itemInfo->urlInfo(UrlInfo::kUrl), itemInfo);
+            fileUrls.append(itemInfo->urlOf(UrlInfoType::kUrl));
+            fileMaps.insert(itemInfo->urlOf(UrlInfoType::kUrl), itemInfo);
         }
     }
 
@@ -359,30 +359,30 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     case Global::ItemRoles::kItemIconRole:
         return indexFileInfo->fileIcon();
     case Global::ItemRoles::kItemNameRole:
-        return indexFileInfo->nameInfo(NameInfo::kFileName);
+        return indexFileInfo->nameOf(NameInfoType::kFileName);
     case Qt::EditRole:
     case Global::ItemRoles::kItemFileDisplayNameRole:
-        return indexFileInfo->displayInfo(DisPlay::kFileDisplayName);
+        return indexFileInfo->displayOf(DisPlayInfoType::kFileDisplayName);
     case Global::ItemRoles::kItemFilePinyinNameRole:
-        return indexFileInfo->displayInfo(DisPlay::kFileDisplayPinyinName);
+        return indexFileInfo->displayOf(DisPlayInfoType::kFileDisplayPinyinName);
     case Global::ItemRoles::kItemFileLastModifiedRole:
-        return indexFileInfo->timeInfo(TimeInfo::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss");   // todo by file info: lastModifiedDisplayName
+        return indexFileInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss");   // todo by file info: lastModifiedDisplayName
     case Global::ItemRoles::kItemFileSizeRole:
-        return indexFileInfo->isAttributes(IsInfo::kIsDir) ? indexFileInfo->countChildFile() : indexFileInfo->size();
+        return indexFileInfo->isAttributes(OptInfoType::kIsDir) ? indexFileInfo->countChildFile() : indexFileInfo->size();
     case Global::ItemRoles::kItemFileMimeTypeRole:
         return indexFileInfo->fileMimeType().name();   // todo by file info: mimeTypeDisplayName
     case Global::ItemRoles::kItemExtraProperties:
         return indexFileInfo->extraProperties();
     case Global::ItemRoles::kItemFileBaseNameRole:
-        return indexFileInfo->nameInfo(NameInfo::kBaseName);
+        return indexFileInfo->nameOf(NameInfoType::kBaseName);
     case Global::ItemRoles::kItemFileSuffixRole:
-        return indexFileInfo->nameInfo(NameInfo::kSuffix);
+        return indexFileInfo->nameOf(NameInfoType::kSuffix);
     case Global::ItemRoles::kItemFileNameOfRenameRole:
-        return indexFileInfo->nameInfo(NameInfo::kFileNameOfRename);
+        return indexFileInfo->nameOf(NameInfoType::kFileNameOfRename);
     case Global::ItemRoles::kItemFileBaseNameOfRenameRole:
-        return indexFileInfo->nameInfo(NameInfo::kBaseNameOfRename);
+        return indexFileInfo->nameOf(NameInfoType::kBaseNameOfRename);
     case Global::ItemRoles::kItemFileSuffixOfRenameRole:
-        return indexFileInfo->nameInfo(NameInfo::kSuffixOfRename);
+        return indexFileInfo->nameOf(NameInfoType::kSuffixOfRename);
     default:
         return QString();
     }
@@ -397,11 +397,11 @@ Qt::ItemFlags FileInfoModel::flags(const QModelIndex &index) const
     flags |= Qt::ItemIsDragEnabled;
 
     if (auto file = fileInfo(index)) {
-        if (file->canAttributes(CanInfo::kCanRename))
+        if (file->canAttributes(CanableInfoType::kCanRename))
             flags |= Qt::ItemIsEditable;
 
-        if (file->isAttributes(IsInfo::kIsWritable)) {
-            if (file->canAttributes(CanInfo::kCanDrop))
+        if (file->isAttributes(OptInfoType::kIsWritable)) {
+            if (file->canAttributes(CanableInfoType::kCanDrop))
                 flags |= Qt::ItemIsDropEnabled;
             else
                 flags |= Qt::ItemNeverHasChildren;
@@ -449,8 +449,8 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     if (Q_UNLIKELY(!itemInfo))
         return false;
 
-    if (itemInfo->isAttributes(IsInfo::kIsSymLink)) {
-        targetFileUrl = itemInfo->pathInfo(PathInfo::kSymLinkTarget);
+    if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
+        targetFileUrl = itemInfo->pathOfInfo(PathInfoType::kSymLinkTarget);
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {

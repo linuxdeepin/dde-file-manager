@@ -35,12 +35,12 @@ public:
     explicit SearchFileInfo(const QUrl &url);
     ~SearchFileInfo() override;
     virtual bool exists() const override;
-    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
+    virtual bool isAttributes(const FileIsType type) const override;
     virtual qint64 size() const override;
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
+    virtual QString nameOf(const FileNameInfoType type) const override;
 
     // property for view
-    virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
+    virtual QString viewOfTip(const ViewType type) const override;
 };
 
 using SearchFileInfoPointer = QSharedPointer<SearchFileInfo>;

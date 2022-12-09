@@ -248,28 +248,28 @@ public:
     virtual bool exists() const;
     virtual void refresh();
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
-    virtual QString nameInfo(const FileNameInfoType type) const;
-    virtual QString pathInfo(const FilePathInfoType type) const;
-    virtual QString displayInfo(const DisplayInfoType type) const;
-    virtual QUrl urlInfo(const FileUrlInfoType type) const;
+    virtual QString nameOf(const FileNameInfoType type) const;
+    virtual QString pathOfInfo(const FilePathInfoType type) const;
+    virtual QString displayOf(const DisplayInfoType type) const;
+    virtual QUrl urlOf(const FileUrlInfoType type) const;
     virtual QUrl getUrlByType(const FileUrlInfoType type, const QString &fileName) const;
     virtual bool isAttributes(const FileIsType type) const;
     virtual bool canAttributes(const FileCanType type) const;
-    virtual QVariant extendedAttributes(const FileExtendedInfoType type) const;
+    virtual QVariant extendAttributes(const FileExtendedInfoType type) const;
     virtual bool permission(QFile::Permissions permissions) const;
     virtual QFile::Permissions permissions() const;
     virtual int countChildFile() const;
     virtual int countChildFileAsync() const;
     virtual qint64 size() const;
-    virtual QVariant timeInfo(const FileTimeType type) const;
+    virtual QVariant timeOf(const FileTimeType type) const;
     virtual QIcon fileIcon();
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     virtual QMimeType fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     virtual QVariantHash extraProperties() const;
     virtual QVariant customData(int role) const;
     virtual FileType fileType() const;
-    virtual Qt::DropActions supportedAttributes(const SupportType type) const;
-    virtual QString viewTip(const ViewType type) const;
+    virtual Qt::DropActions supportedOfAttributes(const SupportType type) const;
+    virtual QString viewOfTip(const ViewType type) const;
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type);
     virtual QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfoAttributes(DFMIO::DFileInfo::MediaType type, QList<DFMIO::DFileInfo::AttributeExtendID> ids) const;
     virtual void setExtendedAttributes(const FileExtendedInfoType &key, const QVariant &value);
@@ -283,20 +283,18 @@ private:
     bool hasProxy();
     friend class InfoCache;
 };
+
+using NameInfoType = AbstractFileInfo::FileNameInfoType;
+using PathInfoType = AbstractFileInfo::FilePathInfoType;
+using DisPlayInfoType = AbstractFileInfo::DisplayInfoType;
+using UrlInfoType = AbstractFileInfo::FileUrlInfoType;
+using ExtInfoType = AbstractFileInfo::FileExtendedInfoType;
+using ViewInfoType = AbstractFileInfo::ViewType;
+using SupportedType = AbstractFileInfo::SupportType;
+using TimeInfoType = AbstractFileInfo::FileTimeType;
+using OptInfoType = AbstractFileInfo::FileIsType;
+using CanableInfoType = AbstractFileInfo::FileCanType;
 }
-
-typedef std::function<const AbstractFileInfoPointer(int)> getFileInfoFun;
 Q_DECLARE_METATYPE(AbstractFileInfoPointer)
-
-using NameInfo = dfmbase::AbstractFileInfo::FileNameInfoType;
-using PathInfo = dfmbase::AbstractFileInfo::FilePathInfoType;
-using DisPlay = dfmbase::AbstractFileInfo::DisplayInfoType;
-using UrlInfo = dfmbase::AbstractFileInfo::FileUrlInfoType;
-using ExInfo = dfmbase::AbstractFileInfo::FileExtendedInfoType;
-using ViewInfo = dfmbase::AbstractFileInfo::ViewType;
-using Support = dfmbase::AbstractFileInfo::SupportType;
-using TimeInfo = dfmbase::AbstractFileInfo::FileTimeType;
-using IsInfo = dfmbase::AbstractFileInfo::FileIsType;
-using CanInfo = dfmbase::AbstractFileInfo::FileCanType;
 
 #endif   // ABSTRACTFILEINFO_H

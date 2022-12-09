@@ -58,12 +58,12 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
     if (!fileInfo)
         return QMimeType();
 
-    QString path = fileInfo->pathInfo(PathInfo::kPath);
+    QString path = fileInfo->pathOfInfo(PathInfoType::kPath);
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
     if (!isMatchExtension) {
         //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
-        if (fileInfo->nameInfo(NameInfo::kFileName).endsWith(".pid") || path.endsWith("msg.lock")
-            || fileInfo->nameInfo(NameInfo::kFileName).endsWith(".lock") || fileInfo->nameInfo(NameInfo::kFileName).endsWith("lockfile")) {
+        if (fileInfo->nameOf(NameInfoType::kFileName).endsWith(".pid") || path.endsWith("msg.lock")
+            || fileInfo->nameOf(NameInfoType::kFileName).endsWith(".lock") || fileInfo->nameOf(NameInfoType::kFileName).endsWith("lockfile")) {
             QRegularExpression regExp("^/run/user/\\d+/gvfs/(?<scheme>\\w+(-?)\\w+):\\S*",
                                       QRegularExpression::DotMatchesEverythingOption
                                               | QRegularExpression::DontCaptureOption
@@ -75,18 +75,18 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
             isMatchExtension = match.hasMatch();
         } else {
             // filemanger will be blocked when blacklist contais the filepath.
-            QString filePath = fileInfo->pathInfo(PathInfo::kAbsoluteFilePath);
-            if (fileInfo->isAttributes(IsInfo::kIsSymLink)) {
-                filePath = fileInfo->pathInfo(PathInfo::kSymLinkTarget);
+            QString filePath = fileInfo->pathOfInfo(PathInfoType::kAbsoluteFilePath);
+            if (fileInfo->isAttributes(OptInfoType::kIsSymLink)) {
+                filePath = fileInfo->pathOfInfo(PathInfoType::kSymLinkTarget);
             }
             isMatchExtension = blackList.contains(filePath);
         }
     }
 
     if (isMatchExtension || FileUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
-        result = QMimeDatabase::mimeTypeForFile(fileInfo->pathInfo(PathInfo::kFilePath), QMimeDatabase::MatchExtension);
+        result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOfInfo(PathInfoType::kFilePath), QMimeDatabase::MatchExtension);
     } else {
-        result = QMimeDatabase::mimeTypeForFile(fileInfo->pathInfo(PathInfo::kFilePath), mode);
+        result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOfInfo(PathInfoType::kFilePath), mode);
     }
 
     // temporary dirty fix, once WPS get installed, the whole mimetype database thing get fscked up.
@@ -96,9 +96,9 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
     // https://codereview.qt-project.org/c/qt/qtbase/+/244887
     // `file` command works but libmagic didn't even comes with any pkg-config support..
 
-    if (officeSuffixList.contains(fileInfo->nameInfo(NameInfo::kSuffix))
+    if (officeSuffixList.contains(fileInfo->nameOf(NameInfoType::kSuffix))
         && wrongMimeTypeNames.contains(result.name())) {
-        QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo->nameInfo(NameInfo::kFileName));
+        QList<QMimeType> results = QMimeDatabase::mimeTypesForFileName(fileInfo->nameOf(NameInfoType::kFileName));
         if (!results.isEmpty()) {
             return results.first();
         }

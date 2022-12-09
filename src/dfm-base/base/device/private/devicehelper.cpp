@@ -37,6 +37,7 @@
 #include <QDebug>
 #include <QStandardPaths>
 #include <QProcess>
+#include <QTextStream>
 
 #include <dfm-mount/dmount.h>
 #include <dfm-burn/dburn_global.h>

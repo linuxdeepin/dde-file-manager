@@ -144,7 +144,7 @@ void DoCopyFilesWorker::endWork()
 
     // deal target files
     for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
-        const QUrl &url = info->urlInfo(UrlInfo::kUrl);
+        const QUrl &url = info->urlOf(UrlInfoType::kUrl);
         if (DecoratorFile(url).exists()) {
             completeTargetFiles.append(url);
             info->refresh();
@@ -178,7 +178,7 @@ bool DoCopyFilesWorker::copyFiles()
         fileInfo->refresh();
 
         // check self
-        if (fileInfo->isAttributes(IsInfo::kIsDir)) {
+        if (fileInfo->isAttributes(OptInfoType::kIsDir)) {
             const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
             if (higher) {
                 emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});

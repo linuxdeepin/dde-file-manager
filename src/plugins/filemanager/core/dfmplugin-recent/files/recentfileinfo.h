@@ -36,11 +36,11 @@ public:
 
     virtual bool exists() const override;
     virtual QFile::Permissions permissions() const override;
-    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
-    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
+    virtual bool isAttributes(const FileIsType type) const override;
+    virtual bool canAttributes(const FileCanType type) const override;
 
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
+    virtual QString nameOf(const FileNameInfoType type) const override;
+    virtual QUrl urlOf(const FileUrlInfoType type) const override;
 
     virtual QVariant customData(int role) const override;
 };

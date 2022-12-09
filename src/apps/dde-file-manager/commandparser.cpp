@@ -248,7 +248,7 @@ void CommandParser::openInUrls()
             if (!fileInfo)
                 continue;
 
-            QUrl parentUrl = fileInfo->urlInfo(UrlInfo::kParentUrl);
+            QUrl parentUrl = fileInfo->urlOf(UrlInfoType::kParentUrl);
             parentUrl.setQuery("selectUrl=" + url.toString());
             url = parentUrl;
         }

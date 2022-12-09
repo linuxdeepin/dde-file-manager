@@ -352,7 +352,7 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
 
         DFMEntryFileInfoPointer info(new EntryFileInfo(entryUrl));
         if (!info->exists()) {
-            qInfo() << "the appentry is in extension folder but not exist: " << info->urlInfo(UrlInfo::kUrl);
+            qInfo() << "the appentry is in extension folder but not exist: " << info->urlOf(UrlInfoType::kUrl);
             continue;
         }
         QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
@@ -488,9 +488,9 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 
     // additem to sidebar
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool()
-            || info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kProtocol;
+            || info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kProtocol;
     if (ComputerUtils::shouldSystemPartitionHide()
-        && info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kBlock && !removable)
+        && info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock && !removable)
         return;
 
     ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
@@ -552,7 +552,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_ReportName", reportName }
     };
 
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->urlInfo(UrlInfo::kUrl), map);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->urlOf(UrlInfoType::kUrl), map);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
@@ -637,10 +637,10 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     if (!info->exists()) return;
 
-    if (info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kProtocol) {
-        QString id = ComputerUtils::getProtocolDevIdByUrl(info->urlInfo(UrlInfo::kUrl));
+    if (info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kProtocol) {
+        QString id = ComputerUtils::getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
         if (id.startsWith(Global::Scheme::kSmb)) {
-            StashMountsUtils::stashMount(info->urlInfo(UrlInfo::kUrl), info->displayName());
+            StashMountsUtils::stashMount(info->urlOf(UrlInfoType::kUrl), info->displayName());
             removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
     }

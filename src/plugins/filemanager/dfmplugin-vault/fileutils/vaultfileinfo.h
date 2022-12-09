@@ -40,24 +40,24 @@ public:
     virtual bool operator==(const VaultFileInfo &fileinfo) const;
     virtual bool operator!=(const VaultFileInfo &fileinfo) const;
 
-    virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const override;
-    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
+    virtual QString pathOfInfo(const FilePathInfoType type) const override;
+    virtual QUrl urlOf(const FileUrlInfoType type) const override;
     virtual bool exists() const override;
     virtual void refresh() override;
-    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
-    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
+    virtual bool isAttributes(const FileIsType type) const override;
+    virtual bool canAttributes(const FileCanType type) const override;
 
     virtual qint64 size() const override;
     virtual int countChildFile() const override;
-    virtual QVariant extendedAttributes(const FileExtendedInfoType type = FileExtendedInfoType::kInode) const override;
+    virtual QVariant extendAttributes(const FileExtendedInfoType type) const override;
     virtual QVariantHash extraProperties() const override;
     virtual QUrl getUrlByType(const FileUrlInfoType type, const QString &fileName) const override;
 
     virtual QIcon fileIcon() override;
 
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
+    virtual QString nameOf(const FileNameInfoType type) const override;
 
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
+    virtual QString displayOf(const DisplayInfoType type) const override;
 };
 }
 #endif   //! VAULTFILEINFO_H

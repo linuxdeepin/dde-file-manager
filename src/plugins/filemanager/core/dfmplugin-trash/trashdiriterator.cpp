@@ -87,7 +87,7 @@ bool TrashDirIterator::hasNext() const
         const QUrl &urlNext = d->dEnumerator->next();
         auto fileinfo = InfoFactory::create<AbstractFileInfo>(urlNext);
         if (fileinfo) {
-            const QUrl &urlTarget = fileinfo->urlInfo(UrlInfo::kRedirectedFileUrl);
+            const QUrl &urlTarget = fileinfo->urlOf(UrlInfoType::kRedirectedFileUrl);
             for (const QString &key : d->fstabMap.keys()) {
                 if (urlTarget.path().startsWith(key))
                     return hasNext();
@@ -102,7 +102,7 @@ QString TrashDirIterator::fileName() const
 {
     auto fileinfo = fileInfo();
     if (fileinfo) {
-        return fileinfo->displayInfo(DisPlay::kFileDisplayName);
+        return fileinfo->displayOf(DisPlayInfoType::kFileDisplayName);
     } else {
         return QString();
     }
@@ -112,7 +112,7 @@ QUrl TrashDirIterator::fileUrl() const
 {
     auto fileinfo = fileInfo();
     if (fileinfo) {
-        return fileinfo->urlInfo(UrlInfo::kRedirectedFileUrl);
+        return fileinfo->urlOf(UrlInfoType::kRedirectedFileUrl);
     } else {
         return QUrl();
     }

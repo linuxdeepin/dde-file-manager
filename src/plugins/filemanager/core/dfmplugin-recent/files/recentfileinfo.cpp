@@ -55,7 +55,7 @@ QFile::Permissions RecentFileInfo::permissions() const
     return AbstractFileInfo::permissions();
 }
 
-bool RecentFileInfo::isAttributes(const IsInfo type) const
+bool RecentFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsReadable:
@@ -67,7 +67,7 @@ bool RecentFileInfo::isAttributes(const IsInfo type) const
     }
 }
 
-bool RecentFileInfo::canAttributes(const CanInfo type) const
+bool RecentFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanRename:
@@ -79,29 +79,29 @@ bool RecentFileInfo::canAttributes(const CanInfo type) const
     }
 }
 
-QString RecentFileInfo::nameInfo(const NameInfo type) const
+QString RecentFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
-    case NameInfo::kFileName:
+    case NameInfoType::kFileName:
         if (dptr->proxy)
-            return dptr->proxy->nameInfo(NameInfo::kFileName);
+            return dptr->proxy->nameOf(NameInfoType::kFileName);
 
         if (UrlRoute::isRootUrl(dptr->url))
             return QObject::tr("Recent");
 
         return QString();
     default:
-        return AbstractFileInfo::nameInfo(type);
+        return AbstractFileInfo::nameOf(type);
     }
 }
 
-QUrl RecentFileInfo::urlInfo(const UrlInfo type) const
+QUrl RecentFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
-        return dptr->proxy ? dptr->proxy->urlInfo(UrlInfo::kUrl) : dptr->url;
+        return dptr->proxy ? dptr->proxy->urlOf(UrlInfoType::kUrl) : dptr->url;
     default:
-        return AbstractFileInfo::urlInfo(type);
+        return AbstractFileInfo::urlOf(type);
     }
 }
 
@@ -109,9 +109,9 @@ QVariant RecentFileInfo::customData(int role) const
 {
     using namespace dfmbase::Global;
     if (role == kItemFilePathRole)
-        return urlInfo(UrlInfo::kRedirectedFileUrl).path();
+        return urlOf(UrlInfoType::kRedirectedFileUrl).path();
     else if (role == kItemFileLastReadRole)
-        return timeInfo(TimeInfo::kLastRead).value<QDateTime>().toString(FileUtils::dateTimeFormat());
+        return timeOf(TimeInfoType::kLastRead).value<QDateTime>().toString(FileUtils::dateTimeFormat());
     else
         return QVariant();
 }

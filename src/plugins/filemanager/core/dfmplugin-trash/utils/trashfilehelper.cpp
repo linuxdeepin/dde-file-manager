@@ -34,6 +34,7 @@
 #include <QFileInfo>
 
 DPTRASH_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 TrashFileHelper *TrashFileHelper::instance()
 {
     static TrashFileHelper ins;
@@ -125,6 +126,7 @@ bool TrashFileHelper::deleteFile(const quint64 windowId, const QList<QUrl> sourc
 
 bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
 {
+    Q_UNUSED(windowId);
     if (urls.isEmpty())
         return false;
     if (urls.first().scheme() != scheme())
@@ -133,7 +135,7 @@ bool TrashFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
     bool isOpenFile = false;
     for (const QUrl &url : urls) {
         auto fileinfo = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::AbstractFileInfo>(url);
-        if (fileinfo && fileinfo->isAttributes(IsInfo::kIsFile)) {
+        if (fileinfo && fileinfo->isAttributes(OptInfoType::kIsFile)) {
             isOpenFile = true;
             break;
         }

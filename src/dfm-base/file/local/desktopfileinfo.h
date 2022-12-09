@@ -46,13 +46,13 @@ public:
     QString desktopType() const;
     QStringList desktopCategories() const;
     QIcon fileIcon() override;
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
+    virtual QString nameOf(const FileNameInfoType type) const override;
+    virtual QString displayOf(const DisplayInfoType type) const override;
     void refresh() override;
     //QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     //QSet<MenuAction> disableMenuActionList() const override;
-    virtual Qt::DropActions supportedAttributes(const SupportType type = SupportType::kDrag) const override;
-    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
+    virtual Qt::DropActions supportedOfAttributes(const SupportType type) const override;
+    virtual bool canAttributes(const FileCanType type) const override;
     static QMap<QString, QVariant> desktopFileInfo(const QUrl &fileUrl);
 
 private:

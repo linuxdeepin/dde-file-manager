@@ -139,7 +139,7 @@ QIcon DesktopFileInfo::fileIcon()
         d->icon = QIcon();
     }
 
-    const QString &iconName = this->nameInfo(NameInfo::kIconName);
+    const QString &iconName = this->nameOf(NameInfoType::kIconName);
 
     if (iconName.startsWith("data:image/")) {
         int firstSemicolon = iconName.indexOf(';', 11);
@@ -164,7 +164,7 @@ QIcon DesktopFileInfo::fileIcon()
     } else {
         const QString &currentDir = QDir::currentPath();
 
-        QDir::setCurrent(pathInfo(PathInfo::kAbsolutePath));
+        QDir::setCurrent(pathOfInfo(PathInfoType::kAbsolutePath));
 
         QFileInfo fileInfo(iconName.startsWith("~") ? (QDir::homePath() + iconName.mid(1)) : iconName);
 
@@ -190,47 +190,47 @@ QIcon DesktopFileInfo::fileIcon()
     return d->icon;
 }
 
-QString DesktopFileInfo::nameInfo(const NameInfo type) const
+QString DesktopFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
-    case NameInfo::kFileNameOfRename:
+    case NameInfoType::kFileNameOfRename:
         [[fallthrough]];
-    case NameInfo::kBaseNameOfRename:
-        return displayInfo(DisPlay::kFileDisplayName);
-    case NameInfo::kSuffixOfRename:
+    case NameInfoType::kBaseNameOfRename:
+        return displayOf(DisPlayInfoType::kFileDisplayName);
+    case NameInfoType::kSuffixOfRename:
         return QString();
-    case NameInfo::kFileCopyName:
-        return LocalFileInfo::nameInfo(NameInfo::kFileName);
-    case NameInfo::kIconName:
+    case NameInfoType::kFileCopyName:
+        return LocalFileInfo::nameOf(NameInfoType::kFileName);
+    case NameInfoType::kIconName:
         return desktopIconName();
-    case NameInfo::kGenericIconName:
+    case NameInfoType::kGenericIconName:
         return QStringLiteral("application-default-icon");
     default:
-        return LocalFileInfo::nameInfo(type);
+        return LocalFileInfo::nameOf(type);
     }
 }
 
-QString DesktopFileInfo::displayInfo(const DisPlay type) const
+QString DesktopFileInfo::displayOf(const DisPlayInfoType type) const
 {
-    if (type == DisPlay::kFileDisplayName && !desktopName().isEmpty())
+    if (type == DisPlayInfoType::kFileDisplayName && !desktopName().isEmpty())
         return desktopName();
 
-    return LocalFileInfo::displayInfo(type);
+    return LocalFileInfo::displayOf(type);
 }
 
 void DesktopFileInfo::refresh()
 {
     LocalFileInfo::refresh();
-    d->updateInfo(urlInfo(UrlInfo::kUrl));
+    d->updateInfo(urlOf(UrlInfoType::kUrl));
 }
 
-Qt::DropActions DesktopFileInfo::supportedAttributes(const SupportType type) const
+Qt::DropActions DesktopFileInfo::supportedOfAttributes(const SupportType type) const
 {
     if (type == SupportType::kDrag && (d->deepinID == "dde-trash" || d->deepinID == "dde-computer")) {
         return Qt::IgnoreAction;
     }
 
-    return LocalFileInfo::supportedAttributes(type);
+    return LocalFileInfo::supportedOfAttributes(type);
 }
 
 bool DesktopFileInfo::canTag() const
@@ -245,7 +245,7 @@ bool DesktopFileInfo::canTag() const
     return true;
 }
 
-bool DesktopFileInfo::canAttributes(const CanInfo type) const
+bool DesktopFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanMoveOrCopy:

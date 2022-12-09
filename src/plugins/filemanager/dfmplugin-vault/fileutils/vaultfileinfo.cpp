@@ -61,7 +61,7 @@ QString VaultFileInfoPrivate::iconName()
         if (!proxy)
             return q->fileMimeType().iconName();
         else
-            proxy->nameInfo(NameInfo::kIconName);
+            proxy->nameOf(NameInfoType::kIconName);
     }
     return QString();
 }
@@ -81,7 +81,7 @@ QString VaultFileInfoPrivate::absolutePath() const
     if (!proxy)
         return "";
 
-    QString path = proxy->pathInfo(PathInfo::kPath);
+    QString path = proxy->pathOfInfo(PathInfoType::kPath);
     QUrl virtualUrl = VaultHelper::instance()->pathToVaultVirtualUrl(path);
     return virtualUrl.path();
 }
@@ -91,7 +91,7 @@ QUrl VaultFileInfoPrivate::vaultUrl() const
     if (!proxy)
         return QUrl();
 
-    QUrl url = proxy->urlInfo(UrlInfo::kUrl);
+    QUrl url = proxy->urlOf(UrlInfoType::kUrl);
     url = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
     return url;
 }
@@ -112,7 +112,7 @@ bool VaultFileInfoPrivate::isRoot() const
 {
     bool bRootDir = false;
     const QString &localFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(), kVaultDecryptDirName, nullptr);
-    QString path = q->pathInfo(PathInfo::kFilePath);
+    QString path = q->pathOfInfo(PathInfoType::kFilePath);
     if (localFilePath == path || localFilePath + "/" == path || localFilePath == path + "/") {
         bRootDir = true;
     }
@@ -153,17 +153,17 @@ bool VaultFileInfo::operator!=(const VaultFileInfo &fileinfo) const
     return !(operator==(fileinfo));
 }
 
-QString VaultFileInfo::pathInfo(const PathInfo type) const
+QString VaultFileInfo::pathOfInfo(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kAbsolutePath:
         return d->absolutePath();
     default:
-        return AbstractFileInfo::pathInfo(type);
+        return AbstractFileInfo::pathOfInfo(type);
     }
 }
 
-QUrl VaultFileInfo::urlInfo(const UrlInfo type) const
+QUrl VaultFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kUrl:
@@ -171,12 +171,12 @@ QUrl VaultFileInfo::urlInfo(const UrlInfo type) const
     case FileUrlInfoType::kRedirectedFileUrl:
         return d->vaultUrl();
     default:
-        return AbstractFileInfo::urlInfo(type);
+        return AbstractFileInfo::urlOf(type);
     }
 }
 bool VaultFileInfo::exists() const
 {
-    if (urlInfo(UrlInfo::kUrl).isEmpty())
+    if (urlOf(UrlInfoType::kUrl).isEmpty())
         return false;
 
     return d->proxy && d->proxy->exists();
@@ -190,10 +190,10 @@ void VaultFileInfo::refresh()
 
     d->proxy->refresh();
 
-    setProxy(InfoFactory::create<AbstractFileInfo>(d->proxy->urlInfo(UrlInfo::kUrl)));
+    setProxy(InfoFactory::create<AbstractFileInfo>(d->proxy->urlOf(UrlInfoType::kUrl)));
 }
 
-bool VaultFileInfo::isAttributes(const IsInfo type) const
+bool VaultFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsFile:
@@ -215,7 +215,7 @@ bool VaultFileInfo::isAttributes(const IsInfo type) const
     }
 }
 
-bool VaultFileInfo::canAttributes(const CanInfo type) const
+bool VaultFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanDrop:
@@ -236,7 +236,7 @@ QVariantHash VaultFileInfo::extraProperties() const
     return d->proxy->extraProperties();
 }
 
-QUrl VaultFileInfo::getUrlByType(const UrlInfo type, const QString &fileName) const
+QUrl VaultFileInfo::getUrlByType(const UrlInfoType type, const QString &fileName) const
 {
     switch (type) {
     case FileUrlInfoType::kGetUrlByNewFileName:
@@ -265,8 +265,8 @@ qint64 VaultFileInfo::size() const
 
 int VaultFileInfo::countChildFile() const
 {
-    if (isAttributes(IsInfo::kIsDir)) {
-        QDir dir(pathInfo(PathInfo::kAbsoluteFilePath));
+    if (isAttributes(OptInfoType::kIsDir)) {
+        QDir dir(pathOfInfo(PathInfoType::kAbsoluteFilePath));
         QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
                                               | QDir::NoDotAndDotDot | QDir::Hidden);
         return entryList.size();
@@ -275,43 +275,43 @@ int VaultFileInfo::countChildFile() const
     return -1;
 }
 
-QVariant VaultFileInfo::extendedAttributes(const ExInfo type) const
+QVariant VaultFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kSizeFormat:
         if (!d->proxy)
-            return AbstractFileInfo::extendedAttributes(type);
-        return d->proxy->extendedAttributes(type);
+            return AbstractFileInfo::extendAttributes(type);
+        return d->proxy->extendAttributes(type);
     default:
-        return AbstractFileInfo::extendedAttributes(type);
+        return AbstractFileInfo::extendAttributes(type);
     }
 }
 
-QString VaultFileInfo::nameInfo(const NameInfo type) const
+QString VaultFileInfo::nameOf(const NameInfoType type) const
 {
 
     switch (type) {
-    case NameInfo::kFileCopyName:
-        return displayInfo(DisPlay::kFileDisplayName);
-    case NameInfo::kIconName:
+    case NameInfoType::kFileCopyName:
+        return displayOf(DisPlayInfoType::kFileDisplayName);
+    case NameInfoType::kIconName:
         return d->iconName();
     default:
-        return AbstractFileInfo::nameInfo(type);
+        return AbstractFileInfo::nameOf(type);
     }
 }
 
-QString VaultFileInfo::displayInfo(const DisPlay type) const
+QString VaultFileInfo::displayOf(const DisPlayInfoType type) const
 {
-    if (DisPlay::kFileDisplayName == type) {
+    if (DisPlayInfoType::kFileDisplayName == type) {
         if (d->isRoot()) {
             return QObject::tr("My Vault");
         }
         if (d->proxy)
-            return d->proxy->displayInfo(DisPlay::kFileDisplayName);
-    } else if (DisPlay::kFileDisplayName == type) {
+            return d->proxy->displayOf(DisPlayInfoType::kFileDisplayName);
+    } else if (DisPlayInfoType::kFileDisplayName == type) {
         return d->fileDisplayPath();
     }
 
-    return AbstractFileInfo::displayInfo(type);
+    return AbstractFileInfo::displayOf(type);
 }
 }

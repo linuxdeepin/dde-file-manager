@@ -23,6 +23,7 @@
 #include "private/tagdiriterator_p.h"
 
 using namespace dfmplugin_tag;
+DFMBASE_USE_NAMESPACE
 
 TagDirIterator::TagDirIterator(const QUrl &url,
                                const QStringList &nameFilters,
@@ -61,14 +62,14 @@ QString TagDirIterator::fileName() const
 {
     AbstractFileInfoPointer currentInfo = d->tagNodes.value(d->currentUrl);
 
-    return currentInfo ? currentInfo->nameInfo(NameInfo::kFileName) : QString();
+    return currentInfo ? currentInfo->nameOf(NameInfoType::kFileName) : QString();
 }
 
 QUrl TagDirIterator::fileUrl() const
 {
     AbstractFileInfoPointer currentInfo = d->tagNodes.value(d->currentUrl);
 
-    return currentInfo ? currentInfo->urlInfo(UrlInfo::kUrl) : QString();
+    return currentInfo ? currentInfo->urlOf(UrlInfoType::kUrl) : QString();
 }
 
 const AbstractFileInfoPointer TagDirIterator::fileInfo() const

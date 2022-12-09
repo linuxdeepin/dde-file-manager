@@ -123,15 +123,15 @@ bool FileOperatorMenuScene::create(QMenu *parent)
 
     if (d->selectFiles.count() == 1) {
         auto focusFileInfo = d->focusFileInfo;
-        if (d->focusFileInfo->isAttributes(IsInfo::kIsSymLink)) {
-            const auto &targetFile = d->focusFileInfo->pathInfo(PathInfo::kSymLinkTarget);
+        if (d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink)) {
+            const auto &targetFile = d->focusFileInfo->pathOfInfo(PathInfoType::kSymLinkTarget);
             auto targetFileInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetFile));
             if (targetFileInfo && targetFileInfo->exists())
                 focusFileInfo = targetFileInfo;
         }
 
-        const auto mimeType = focusFileInfo->nameInfo(NameInfo::kMimeTypeName);
-        if (mimeType.startsWith("image") && focusFileInfo->isAttributes(IsInfo::kIsReadable)
+        const auto mimeType = focusFileInfo->nameOf(NameInfoType::kMimeTypeName);
+        if (mimeType.startsWith("image") && focusFileInfo->isAttributes(OptInfoType::kIsReadable)
             && !mimeType.endsWith("svg+xml") && !mimeType.endsWith("raf")
             && !mimeType.endsWith("crw")) {
             tempAction = parent->addAction(d->predicateName.value(ActionID::kSetAsWallpaper));
@@ -176,13 +176,13 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     d->focusFileInfo->refresh();
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
-        if (!d->focusFileInfo->canAttributes(CanInfo::kCanDelete) || (!d->focusFileInfo->isAttributes(IsInfo::kIsWritable) && !d->focusFileInfo->isAttributes(IsInfo::kIsFile) && !d->focusFileInfo->isAttributes(IsInfo::kIsSymLink)))
+        if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanDelete) || (!d->focusFileInfo->isAttributes(OptInfoType::kIsWritable) && !d->focusFileInfo->isAttributes(OptInfoType::kIsFile) && !d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink)))
             delAction->setDisabled(true);
     }
 
     // rename
     if (auto rename = d->predicateAction.value(ActionID::kRename)) {
-        if (!d->focusFileInfo->canAttributes(CanInfo::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
+        if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanRename) || !d->indexFlags.testFlag(Qt::ItemIsEditable))
             rename->setDisabled(true);
     }
     if (d->selectFiles.count() > 1) {
@@ -210,13 +210,13 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
                 }
 
                 // if the suffix is the same, it can be opened with the same application
-                if (info->nameInfo(NameInfo::kSuffix) != d->focusFileInfo->nameInfo(NameInfo::kSuffix)) {
+                if (info->nameOf(NameInfoType::kSuffix) != d->focusFileInfo->nameOf(NameInfoType::kSuffix)) {
 
-                    QStringList mimeTypeList { info->nameInfo(NameInfo::kMimeTypeName) };
-                    QUrl parentUrl = info->urlInfo(UrlInfo::kParentUrl);
+                    QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
+                    QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
                     auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
                     if (!info.isNull()) {
-                        mimeTypeList << parentInfo->nameInfo(NameInfo::kMimeTypeName);
+                        mimeTypeList << parentInfo->nameOf(NameInfoType::kMimeTypeName);
                     }
 
                     bool matched = false;
@@ -250,7 +250,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // open
     if (actionId == ActionID::kOpen) {
-        if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isAttributes(IsInfo::kIsDir)) {
+        if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isAttributes(OptInfoType::kIsDir)) {
             if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
                 dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
             } else {
@@ -294,7 +294,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // set as wallpaper
     if (actionId == ActionID::kSetAsWallpaper) {
         if (UrlRoute::isVirtual(d->focusFile)) {
-            const auto &localFile = d->focusFileInfo->pathInfo(PathInfo::kAbsoluteFilePath);
+            const auto &localFile = d->focusFileInfo->pathOfInfo(PathInfoType::kAbsoluteFilePath);
             FileUtils::setBackGround(localFile);
         } else {
             FileUtils::setBackGround(d->focusFile.toLocalFile());

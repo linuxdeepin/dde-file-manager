@@ -91,7 +91,7 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
     }
 
     MimesAppsManager::instance()->initMimeTypeApps();
-    d->recommendApps = MimesAppsManager::instance()->getRecommendedApps(d->focusFileInfo->urlInfo(UrlInfo::kRedirectedFileUrl));
+    d->recommendApps = MimesAppsManager::instance()->getRecommendedApps(d->focusFileInfo->urlOf(UrlInfoType::kRedirectedFileUrl));
 
     // why?
     d->recommendApps.removeAll("/usr/share/applications/dde-open.desktop");
@@ -135,12 +135,12 @@ bool OpenWithMenuScene::create(QMenu *parent)
             qDebug() << errString;
             continue;
         }
-        redirectedUrlList << fileInfo->urlInfo(UrlInfo::kRedirectedFileUrl);
+        redirectedUrlList << fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
     }
 
     foreach (QString app, d->recommendApps) {
         DesktopFileInfo desktop(QUrl::fromLocalFile(app));
-        QAction *action = subMenu->addAction(desktop.fileIcon(), desktop.displayInfo(DisPlay::kFileDisplayName));
+        QAction *action = subMenu->addAction(desktop.fileIcon(), desktop.displayOf(DisPlayInfoType::kFileDisplayName));
 
         // TODO(Lee or others): 此种外部注入的未分配谓词
         d->predicateAction[app] = action;
@@ -185,13 +185,13 @@ void OpenWithMenuScene::updateState(QMenu *parent)
             }
 
             // if the suffix is the same, it can be opened with the same application
-            if (info->nameInfo(NameInfo::kSuffix) != d->focusFileInfo->nameInfo(NameInfo::kSuffix)) {
+            if (info->nameOf(NameInfoType::kSuffix) != d->focusFileInfo->nameOf(NameInfoType::kSuffix)) {
 
-                QStringList mimeTypeList { info->nameInfo(NameInfo::kMimeTypeName) };
-                QUrl parentUrl = info->urlInfo(UrlInfo::kParentUrl);
+                QStringList mimeTypeList { info->nameOf(NameInfoType::kMimeTypeName) };
+                QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
                 auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
                 if (!info.isNull()) {
-                    mimeTypeList << parentInfo->nameInfo(NameInfo::kMimeTypeName);
+                    mimeTypeList << parentInfo->nameOf(NameInfoType::kMimeTypeName);
                 }
 
                 bool matched = false;

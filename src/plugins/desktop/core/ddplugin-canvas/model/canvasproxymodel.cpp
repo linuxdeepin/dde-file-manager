@@ -282,11 +282,11 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
 
     // The folder is fixed in the front position
     if (isNotMixDirAndFile) {
-        if (leftInfo->isAttributes(IsInfo::kIsDir)) {
-            if (!rightInfo->isAttributes(IsInfo::kIsDir))
+        if (leftInfo->isAttributes(OptInfoType::kIsDir)) {
+            if (!rightInfo->isAttributes(OptInfoType::kIsDir))
                 return true;
         } else {
-            if (rightInfo->isAttributes(IsInfo::kIsDir))
+            if (rightInfo->isAttributes(OptInfoType::kIsDir))
                 return false;
         }
     }
@@ -737,8 +737,8 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     if (Q_UNLIKELY(!itemInfo))
         return false;
 
-    if (itemInfo->isAttributes(IsInfo::kIsSymLink)) {
-        targetFileUrl = itemInfo->pathInfo(PathInfo::kSymLinkTarget);
+    if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
+        targetFileUrl = itemInfo->pathOfInfo(PathInfoType::kSymLinkTarget);
     }
 
     if (d->hookIfs && d->hookIfs->dropMimeData(data, targetFileUrl, action)) {

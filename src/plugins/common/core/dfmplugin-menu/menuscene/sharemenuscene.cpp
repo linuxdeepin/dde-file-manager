@@ -75,7 +75,7 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
 
     for (auto url : d->selectFiles) {
         auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
-        if (f->isAttributes(IsInfo::kIsDir)) {
+        if (f->isAttributes(OptInfoType::kIsDir)) {
             d->folderSelected = true;
             break;
         }
@@ -179,7 +179,7 @@ void ShareMenuScenePrivate::handleActionTriggered(QAction *act)
     QStringList filePaths;
     for (const auto &url : selectFiles) {
         auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
-        filePaths << f->pathInfo(PathInfo::kAbsoluteFilePath);
+        filePaths << f->pathOfInfo(PathInfoType::kAbsoluteFilePath);
     }
     QString actId = act->property(ActionPropertyKey::kActionID).toString();
     if (actId == ActionID::kShareToBluetooth) {

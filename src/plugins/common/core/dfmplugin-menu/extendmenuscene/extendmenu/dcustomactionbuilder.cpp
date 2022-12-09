@@ -64,7 +64,7 @@ void DCustomActionBuilder::setActiveDir(const QUrl &dir)
         return;
     }
 
-    dirName = info->nameInfo(NameInfo::kFileName);
+    dirName = info->nameOf(NameInfoType::kFileName);
 
     //解决根目录没有名称问题
     if (dirName.isEmpty() && dir.toLocalFile() == "/") {
@@ -86,9 +86,9 @@ void DCustomActionBuilder::setFocusFile(const QUrl &file)
         return;
     }
 
-    fileFullName = info->nameInfo(NameInfo::kFileName);
+    fileFullName = info->nameOf(NameInfoType::kFileName);
     //baseName
-    if (info->isAttributes(IsInfo::kIsDir)) {
+    if (info->isAttributes(OptInfoType::kIsDir)) {
         fileBaseName = fileFullName;
         return;
     }
@@ -152,7 +152,7 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList
         }
 
         //目前只判断是否为文件夹
-        info->isAttributes(IsInfo::kIsDir) ? ++dirCount : ++fileCount;
+        info->isAttributes(OptInfoType::kIsDir) ? ++dirCount : ++fileCount;
 
         //文件夹和文件同时存在
         if (dirCount > 0 && fileCount > 0)
@@ -450,7 +450,7 @@ bool DCustomActionBuilder::isSuffixSupport(const DCustomActionEntry &action, con
     const AbstractFileInfoPointer &fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
 
     auto supportList = action.supportStuffix();
-    if (!fileInfo || fileInfo->isAttributes(IsInfo::kIsDir) || supportList.isEmpty() || supportList.contains("*")) {
+    if (!fileInfo || fileInfo->isAttributes(OptInfoType::kIsDir) || supportList.isEmpty() || supportList.contains("*")) {
         return true;   //未特殊指明支持项或者包含*为支持所有
     }
     QFileInfo info(url.toLocalFile());

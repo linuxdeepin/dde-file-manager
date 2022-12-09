@@ -36,7 +36,7 @@ QWidget *OpenWithHelper::createOpenWithWidget(const QUrl &url)
         AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (fileInfo.isNull())
             return nullptr;
-        if (fileInfo->isAttributes(IsInfo::kIsDir))
+        if (fileInfo->isAttributes(OptInfoType::kIsDir))
             return nullptr;
         OpenWithWidget *openWidget = new OpenWithWidget;
         openWidget->selectFileUrl(url);

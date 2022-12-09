@@ -94,9 +94,9 @@ void LocalDirIteratorPrivate::initQuerierAsyncCallback(bool succ, void *data)
         } else {
             isHidden = hideFileList.contains(fileName);
         }
-        infoTrans->setExtendedAttributes(ExInfo::kFileIsHid, isHidden);
-        infoTrans->setExtendedAttributes(ExInfo::kFileLocalDevice, isLocalDevice);
-        infoTrans->setExtendedAttributes(ExInfo::kFileCdRomDevice, isCdRomDevice);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, isLocalDevice);
+        infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
 
         emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
 

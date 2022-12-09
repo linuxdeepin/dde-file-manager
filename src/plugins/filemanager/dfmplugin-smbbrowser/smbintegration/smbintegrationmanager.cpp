@@ -256,7 +256,7 @@ void SmbIntegrationManager::addSmbIntegrationItem(const QUrl &hostUrl, ContextMe
 void SmbIntegrationManager::onOpenItem(quint64 winId, const QUrl &url)
 {
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-    QString suffix = info->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix);
+    QString suffix = info->nameOf(NameInfoType::kSuffix);
     if (suffix == kSmbIntegrationSuffix) {
         QUrl smbHostUrl;
         smbHostUrl.setScheme(Global::Scheme::kSmb);

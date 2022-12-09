@@ -112,7 +112,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
     case QFileDialog::ExistingFile:
         if (urls.count() == 1) {
             auto fileInfo = InfoFactory::create<AbstractFileInfo>(urls.first());
-            if (fileInfo->isAttributes(IsInfo::kIsDir)) {
+            if (fileInfo->isAttributes(OptInfoType::kIsDir)) {
                 q->cd(urls.first());
             } else {
                 q->accept();
@@ -126,8 +126,8 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
             if (!fileInfo)
                 continue;
 
-            if (!fileInfo->isAttributes(IsInfo::kIsFile) && !allowMixedSelection) {
-                if (doCdWhenPossible && fileInfo->isAttributes(IsInfo::kIsDir)) {
+            if (!fileInfo->isAttributes(OptInfoType::kIsFile) && !allowMixedSelection) {
+                if (doCdWhenPossible && fileInfo->isAttributes(OptInfoType::kIsDir)) {
                     // blumia: it's possible to select more than one file/dirs, we only do cd when select a single directory.
                     q->cd(urls.first());
                 }
@@ -144,7 +144,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
         for (const QUrl &url : urls) {
             auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-            if (!fileInfo->isAttributes(IsInfo::kIsDir))
+            if (!fileInfo->isAttributes(OptInfoType::kIsDir))
                 return;
         }
         q->accept();
@@ -299,9 +299,9 @@ QList<QUrl> FileDialog::selectedUrls() const
 
         if (fileInfo) {
             if (list.isEmpty()) {
-                fileUrl = fileInfo->getUrlByType(UrlInfo::kGetUrlByChildFileName, statusBar()->lineEdit()->text());
+                fileUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByChildFileName, statusBar()->lineEdit()->text());
             } else {
-                fileUrl = fileInfo->getUrlByType(UrlInfo::kGetUrlByNewFileName, statusBar()->lineEdit()->text());
+                fileUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, statusBar()->lineEdit()->text());
             }
         }
 
@@ -775,7 +775,7 @@ void FileDialog::updateAcceptButtonState()
 
     bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
     bool dialogShowMode = d->acceptMode;
-    bool isVirtual = UrlRoute::isVirtual(fileInfo->urlInfo(UrlInfo::kUrl).scheme());
+    bool isVirtual = UrlRoute::isVirtual(fileInfo->urlOf(UrlInfoType::kUrl).scheme());
     if (dialogShowMode == QFileDialog::AcceptOpen) {
         auto size = CoreEventsCaller::sendGetSelectedFiles(internalWinId()).size();
         bool isSelectFiles = size > 0;
@@ -800,7 +800,7 @@ void FileDialog::handleEnterPressed()
     auto &&urls = CoreEventsCaller::sendGetSelectedFiles(internalWinId());
     for (const QUrl &url : urls) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (!info || info->isAttributes(IsInfo::kIsDir)) {
+        if (!info || info->isAttributes(OptInfoType::kIsDir)) {
             exit = true;
             break;
         }
@@ -865,7 +865,7 @@ void FileDialog::onViewItemClicked(const QVariantMap &data)
         return;
 
     const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-    if (fileInfo && !fileInfo->isAttributes(IsInfo::kIsDir)) {
+    if (fileInfo && !fileInfo->isAttributes(OptInfoType::kIsDir)) {
         QMimeDatabase db;
         // TODO(gongheng): Encapsulate get true suffix interface to fileinfo like QMimeDatabase::suffix.
         int suffixLength = db.suffixForFileName(displayName).count();
@@ -913,7 +913,7 @@ void FileDialog::showEvent(QShowEvent *event)
 
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(currentUrl());
     if (info)
-        setWindowTitle(info->displayInfo(DisPlay::kFileDisplayName));
+        setWindowTitle(info->displayOf(DisPlayInfoType::kFileDisplayName));
 
     return FileManagerWindow::showEvent(event);
 }

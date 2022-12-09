@@ -181,7 +181,7 @@ bool TagDirMenuScene::triggered(QAction *action)
         if (actionId == TagActionId::kOpenFileLocation) {
             for (const auto &file : d->selectFiles) {
                 auto info = InfoFactory::create<AbstractFileInfo>(file);
-                d->openFileLocation(info->pathInfo(PathInfo::kAbsoluteFilePath));
+                d->openFileLocation(info->pathOfInfo(PathInfoType::kAbsoluteFilePath));
             }
 
             return true;

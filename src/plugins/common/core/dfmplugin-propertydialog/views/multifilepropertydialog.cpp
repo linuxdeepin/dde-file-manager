@@ -137,20 +137,20 @@ void MultiFilePropertyDialog::calculateFileCount()
         if (info.isNull())
             return;
 
-        if (info->isAttributes(IsInfo::kIsSymLink)) {
-            if (info->isAttributes(IsInfo::kIsDir))
+        if (info->isAttributes(OptInfoType::kIsSymLink)) {
+            if (info->isAttributes(OptInfoType::kIsDir))
                 ++dirCount;
             else
                 ++fileCount;
             continue;
         }
 
-        if (info->isAttributes(IsInfo::kIsDir)) {
+        if (info->isAttributes(OptInfoType::kIsDir)) {
             ++dirCount;
             continue;
         }
 
-        if (info->isAttributes(IsInfo::kIsFile)) {
+        if (info->isAttributes(OptInfoType::kIsFile)) {
             ++fileCount;
             continue;
         }

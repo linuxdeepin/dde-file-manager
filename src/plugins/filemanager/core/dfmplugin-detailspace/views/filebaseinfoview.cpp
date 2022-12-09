@@ -198,15 +198,15 @@ void FileBaseInfoView::basicFill(const QUrl &url)
         return;
 
     if (fileName && fileName->RightValue().isEmpty())
-        fileName->setRightValue(info->displayInfo(DisPlay::kFileDisplayName), Qt::ElideMiddle, Qt::AlignLeft, true);
+        fileName->setRightValue(info->displayOf(DisPlayInfoType::kFileDisplayName), Qt::ElideMiddle, Qt::AlignLeft, true);
 
     if (fileInterviewTime && fileInterviewTime->RightValue().isEmpty()) {
-        auto lastRead = info->timeInfo(TimeInfo::kLastRead).value<QDateTime>();
+        auto lastRead = info->timeOf(TimeInfoType::kLastRead).value<QDateTime>();
         lastRead.isValid() ? fileInterviewTime->setRightValue(lastRead.toString(FileUtils::dateTimeFormat()), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
                            : fileInterviewTime->setVisible(false);
     }
     if (fileChangeTime && fileChangeTime->RightValue().isEmpty()) {
-        auto lastModified = info->timeInfo(TimeInfo::kLastModified).value<QDateTime>();
+        auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
         lastModified.isValid() ? fileChangeTime->setRightValue(lastModified.toString(FileUtils::dateTimeFormat()), Qt::ElideMiddle, Qt::AlignLeft, true, 150)
                                : fileChangeTime->setVisible(false);
     }
@@ -227,18 +227,18 @@ void FileBaseInfoView::basicFill(const QUrl &url)
         localUrl = urls.first();
 
     AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
-    if (localinfo && localinfo->isAttributes(IsInfo::kIsSymLink)) {
-        const QUrl &targetUrl = QUrl::fromLocalFile(localinfo->pathInfo(PathInfo::kSymLinkTarget));
+    if (localinfo && localinfo->isAttributes(OptInfoType::kIsSymLink)) {
+        const QUrl &targetUrl = QUrl::fromLocalFile(localinfo->pathOfInfo(PathInfoType::kSymLinkTarget));
         localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     }
     if (localinfo && FileUtils::isTrashFile(localUrl) && !UniversalUtils::urlEquals(localUrl, FileUtils::trashRootUrl())) {
-        const QUrl &targetUrl = localinfo->urlInfo(UrlInfo::kRedirectedFileUrl);
+        const QUrl &targetUrl = localinfo->urlOf(UrlInfoType::kRedirectedFileUrl);
         localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     }
 
     if (fileType && fileType->RightValue().isEmpty() && localinfo) {
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(
-                localinfo->nameInfo(NameInfo::kMimeTypeName));
+                localinfo->nameOf(NameInfoType::kMimeTypeName));
         switch (type) {
         case MimeDatabase::FileType::kDirectory:
             fileType->setRightValue(tr("Directory"), Qt::ElideNone, Qt::AlignLeft, true);

@@ -262,14 +262,14 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
     const auto &filter = parseFilterData(filterData);
     if (filter.comboValid[kSearchRange] && !filter.includeSubDir) {
         const QUrl &parentUrl = SearchHelper::searchTargetUrl(filter.currentUrl);
-        QString filePath = info->pathInfo(PathInfo::kFilePath);
+        QString filePath = info->pathOfInfo(PathInfoType::kFilePath);
         filePath.remove(parentUrl.toLocalFile().endsWith("/") ? parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
         if (filePath.contains('/'))
             return false;
     }
 
     if (filter.comboValid[kFileType]) {
-        QString fileTypeStr = info->displayInfo(DisPlay::kMimeTypeDisplayName);
+        QString fileTypeStr = info->displayOf(DisPlayInfoType::kMimeTypeDisplayName);
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }
@@ -286,19 +286,19 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
     }
 
     if (filter.comboValid[kDateRange]) {
-        QDateTime filemtime = info->timeInfo(TimeInfo::kLastModified).value<QDateTime>();
+        QDateTime filemtime = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
         if (filemtime < filter.dateRangeStart || filemtime > filter.dateRangeEnd)
             return false;
     }
 
     if (filter.comboValid[kAccessDateRange]) {
-        QDateTime filemtime = info->timeInfo(TimeInfo::kLastRead).value<QDateTime>();
+        QDateTime filemtime = info->timeOf(TimeInfoType::kLastRead).value<QDateTime>();
         if (filemtime < filter.accessDateRangeStart || filemtime > filter.accessDateRangeEnd)
             return false;
     }
 
     if (filter.comboValid[kCreateDateRange]) {
-        QDateTime filemtime = info->timeInfo(TimeInfo::kCreateTime).value<QDateTime>();
+        QDateTime filemtime = info->timeOf(TimeInfoType::kCreateTime).value<QDateTime>();
         if (filemtime < filter.createDateRangeStart || filemtime > filter.createDateRangeEnd)
             return false;
     }

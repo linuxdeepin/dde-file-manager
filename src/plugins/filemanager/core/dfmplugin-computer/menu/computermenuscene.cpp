@@ -205,7 +205,7 @@ bool ComputerMenuScene::triggered(QAction *action)
         dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         auto ins { ComputerControllerInstance };
         if (key == kOpen)
-            ins->onOpenItem(0, d->info->urlInfo(UrlInfo::kUrl));
+            ins->onOpenItem(0, d->info->urlOf(UrlInfoType::kUrl));
         else if (key == kOpenInNewTab)
             ins->actOpenInNewTab(d->windowId, d->info);
         else if (key == kOpenInNewWin)
@@ -221,7 +221,7 @@ bool ComputerMenuScene::triggered(QAction *action)
         else if (key == kRemove)
             ins->actRemove(d->info);
         else if (key == kEject)
-            ins->actEject(d->info->urlInfo(UrlInfo::kUrl));
+            ins->actEject(d->info->urlOf(UrlInfoType::kUrl));
         else if (key == kErase)
             ins->actErase(d->info);
         else if (key == kSafelyRemove)

@@ -55,7 +55,7 @@ bool TagFileInfo::exists() const
 
     QUrl rootUrl;
     rootUrl.setScheme(TagManager::scheme());
-    if (urlInfo(UrlInfo::kUrl) == rootUrl)
+    if (urlOf(UrlInfoType::kUrl) == rootUrl)
         return true;
 
     const QMap<QString, QColor> &tagMap = TagManager::instance()->getAllTags();
@@ -72,7 +72,7 @@ QFileDevice::Permissions TagFileInfo::permissions() const
             | QFile::WriteGroup | QFile::WriteOwner | QFile::WriteUser | QFile::WriteOther;
 }
 
-bool TagFileInfo::isAttributes(const IsInfo type) const
+bool TagFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
@@ -95,22 +95,22 @@ bool TagFileInfo::isAttributes(const IsInfo type) const
     }
 }
 
-QString TagFileInfo::nameInfo(const NameInfo type) const
+QString TagFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
-    case NameInfo::kFileName:
-    case NameInfo::kFileCopyName:
+    case NameInfoType::kFileName:
+    case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return AbstractFileInfo::nameInfo(type);
+        return AbstractFileInfo::nameOf(type);
     }
 }
 
-QString TagFileInfo::displayInfo(const DisPlay type) const
+QString TagFileInfo::displayOf(const DisPlayInfoType type) const
 {
-    if (DisPlay::kFileDisplayName == type)
+    if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return AbstractFileInfo::displayInfo(type);
+    return AbstractFileInfo::displayOf(type);
 }
 
 AbstractFileInfo::FileType TagFileInfo::fileType() const
@@ -131,7 +131,7 @@ QIcon TagFileInfo::fileIcon()
 
 QString TagFileInfo::localFilePath() const
 {
-    return urlInfo(UrlInfo::kUrl).fragment(QUrl::FullyDecoded);
+    return urlOf(UrlInfoType::kUrl).fragment(QUrl::FullyDecoded);
 }
 
 QString TagFileInfo::tagName() const
@@ -151,7 +151,7 @@ TagFileInfoPrivate::~TagFileInfoPrivate()
 QString TagFileInfoPrivate::fileName() const
 {
     if (proxy)
-        return proxy->nameInfo(NameInfo::kFileName);
+        return proxy->nameOf(NameInfoType::kFileName);
 
     return url.path().mid(1, url.path().length() - 1);
 }

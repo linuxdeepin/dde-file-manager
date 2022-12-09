@@ -240,31 +240,31 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         }
         lbSrcIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
         lbSrcModTime->setText(QString(tr("Time modified: %1"))
-                                      .arg(originInfo->timeInfo(TimeInfo::kLastModified).value<QDateTime>().isValid()
-                                                   ? originInfo->timeInfo(TimeInfo::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
+                                      .arg(originInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid()
+                                                   ? originInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss")
                                                    : qApp->translate("MimeTypeDisplayManager", "Unknown")));
-        if (originInfo->isAttributes(IsInfo::kIsDir)) {
+        if (originInfo->isAttributes(OptInfoType::kIsDir)) {
             lbSrcTitle->setText(tr("Original folder"));
             QString filecount = originInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(originInfo->countChildFile()) : QObject::tr("%1 items").arg(originInfo->countChildFile());
             lbSrcFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
         } else {
             lbSrcTitle->setText(tr("Original file"));
-            lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->extendedAttributes(ExInfo::kSizeFormat).toString()));
+            lbSrcFileSize->setText(QString(tr("Size: %1")).arg(originInfo->extendAttributes(ExtInfoType::kSizeFormat).toString()));
         }
         QMimeType mimeTypeDst = MimeDatabase::mimeTypeForUrl(source);
         if (!mimeTypeDst.isValid()) {
             qWarning() << "get source file mimetype is valid!";
         }
         lbDstIcon->setPixmap(QIcon::fromTheme(mimeTypeSrc.iconName()).pixmap(48, 48));
-        lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->timeInfo(TimeInfo::kLastModified).value<QDateTime>().isValid() ? targetInfo->timeInfo(TimeInfo::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
+        lbDstModTime->setText(QString(tr("Time modified: %1")).arg(targetInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().isValid() ? targetInfo->timeOf(TimeInfoType::kLastModified).value<QDateTime>().toString("yyyy/MM/dd HH:mm:ss") : qApp->translate("MimeTypeDisplayManager", "Unknown")));
 
-        if (targetInfo->isAttributes(IsInfo::kIsDir)) {
+        if (targetInfo->isAttributes(OptInfoType::kIsDir)) {
             lbDstTitle->setText(tr("Target folder"));
             QString filecount = targetInfo->countChildFile() <= 1 ? QObject::tr("%1 item").arg(targetInfo->countChildFile()) : QObject::tr("%1 items").arg(targetInfo->countChildFile());
             lbDstFileSize->setText(QString(tr("Contains: %1")).arg(filecount));
         } else {
             lbDstTitle->setText(tr("Target file"));
-            lbDstFileSize->setText(QString(tr("Size: %1")).arg(targetInfo->extendedAttributes(ExInfo::kSizeFormat).toString()));
+            lbDstFileSize->setText(QString(tr("Size: %1")).arg(targetInfo->extendAttributes(ExtInfoType::kSizeFormat).toString()));
         }
 
         widConfict->show();

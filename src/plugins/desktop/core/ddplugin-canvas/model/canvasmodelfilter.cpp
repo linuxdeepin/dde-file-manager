@@ -67,7 +67,7 @@ bool HiddenFileFilter::insertFilter(const QUrl &url)
     if (auto info = FileCreator->createFileInfo(url)) {
         //! fouce refresh
         info->refresh();
-        return info->isAttributes(IsInfo::kIsHidden);
+        return info->isAttributes(OptInfoType::kIsHidden);
     }
 
     return false;
@@ -85,7 +85,7 @@ bool HiddenFileFilter::resetFilter(QList<QUrl> &urls)
             //! need to fouce refresh
             //! maybe it need be fixed in dfm-io
             info->refresh();
-            if (info->isAttributes(IsInfo::kIsHidden)) {
+            if (info->isAttributes(OptInfoType::kIsHidden)) {
                 itor = urls.erase(itor);
                 continue;
             }

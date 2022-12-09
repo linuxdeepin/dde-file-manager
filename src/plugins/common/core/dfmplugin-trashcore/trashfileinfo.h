@@ -37,21 +37,21 @@ public:
     ~TrashFileInfo() override;
 
     virtual void refresh() override;
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
-    virtual QString pathInfo(const FilePathInfoType type = FilePathInfoType::kFilePath) const override;
-    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
+    virtual QString nameOf(const FileNameInfoType type) const override;
+    virtual QString displayOf(const DisplayInfoType type) const override;
+    virtual QString pathOfInfo(const FilePathInfoType type) const override;
+    virtual QUrl urlOf(const FileUrlInfoType type) const override;
     virtual bool exists() const override;
-    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
+    virtual bool canAttributes(const FileCanType type) const override;
 
-    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
+    virtual bool isAttributes(const FileIsType type) const override;
     virtual QFile::Permissions permissions() const override;
     virtual QIcon fileIcon() override;
 
     virtual qint64 size() const override;
     virtual int countChildFile() const override;
 
-    virtual QVariant timeInfo(const FileTimeType type = FileTimeType::kCreateTime) const override;
+    virtual QVariant timeOf(const FileTimeType type) const override;
     virtual QVariant customData(int role) const override;
 
 private:

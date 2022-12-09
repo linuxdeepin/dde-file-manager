@@ -54,25 +54,25 @@ public:
     virtual bool exists() const override;
     virtual void refresh() override;
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant()) override;
-    virtual QString nameInfo(const FileNameInfoType type) const override;
-    virtual QString pathInfo(const FilePathInfoType type) const override;
-    virtual QUrl urlInfo(const FileUrlInfoType type) const override;
+    virtual QString nameOf(const FileNameInfoType type) const override;
+    virtual QString pathOfInfo(const FilePathInfoType type) const override;
+    virtual QUrl urlOf(const FileUrlInfoType type) const override;
     virtual bool isAttributes(const FileIsType type) const override;
     virtual bool canAttributes(const FileCanType type) const override;
-    virtual QVariant extendedAttributes(const FileExtendedInfoType type) const override;
+    virtual QVariant extendAttributes(const FileExtendedInfoType type) const override;
     virtual bool permission(QFile::Permissions permissions) const override;
     virtual QFile::Permissions permissions() const override;
     virtual qint64 size() const override;
-    virtual QVariant timeInfo(const FileTimeType type) const override;
+    virtual QVariant timeOf(const FileTimeType type) const override;
     virtual QVariantHash extraProperties() const override;
     virtual QIcon fileIcon() override;
     virtual AbstractFileInfo::FileType fileType() const override;
     virtual int countChildFile() const override;
     virtual int countChildFileAsync() const override;
-    virtual QString displayInfo(const DisplayInfoType type) const override;
+    virtual QString displayOf(const DisplayInfoType type) const override;
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
     virtual QMimeType fileMimeTypeAsync(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
-    virtual QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
+    virtual QString viewOfTip(const ViewType type) const override;
     // emblems
     virtual QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type) override;
     // media info

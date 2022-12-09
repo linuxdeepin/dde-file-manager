@@ -51,10 +51,10 @@ AvfsUtils *AvfsUtils::instance()
 bool AvfsUtils::isSupportedArchives(const QUrl &url)
 {
     auto info = InfoFactory::create<AbstractFileInfo>(url);
-    if (!info || info->nameInfo(NameInfo::kMimeTypeName) == kTypeCdImage)
+    if (!info || info->nameOf(NameInfoType::kMimeTypeName) == kTypeCdImage)
         return false;
 
-    return supportedArchives().contains(info->nameInfo(NameInfo::kMimeTypeName));
+    return supportedArchives().contains(info->nameOf(NameInfoType::kMimeTypeName));
 }
 
 bool AvfsUtils::isSupportedArchives(const QString &path)

@@ -274,12 +274,12 @@ bool FileOperationsEventReceiver::doRenameDesktopFile(const quint64 windowId, co
 
     AbstractFileInfoPointer newFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
     AbstractFileInfoPointer oldFileInfo = InfoFactory::create<AbstractFileInfo>(oldUrl);
-    const QString &newName = newFileInfo->displayInfo(DisPlay::kFileDisplayName);
-    const QString &oldName = oldFileInfo->displayInfo(DisPlay::kFileDisplayName);
+    const QString &newName = newFileInfo->displayOf(DisPlayInfoType::kFileDisplayName);
+    const QString &oldName = oldFileInfo->displayOf(DisPlayInfoType::kFileDisplayName);
     if (newName == oldName)
         return true;
 
-    desktop.set(key, newFileInfo->displayInfo(DisPlay::kFileDisplayName));
+    desktop.set(key, newFileInfo->displayOf(DisPlayInfoType::kFileDisplayName));
     desktop.set("X-Deepin-Vendor", QStringLiteral("user-custom"));
     if (desktop.save(desktopPath, "Desktop Entry")) {
         QMap<QUrl, QUrl> renamed { { oldUrl, newUrl } };
@@ -486,8 +486,8 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
         if (!fileInfo)
             return QString();
 
-        const QString &newPath = newDocmentName(url.path(), fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName),
-                                                suffix.isEmpty() ? fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kSuffix) : suffix);
+        const QString &newPath = newDocmentName(url.path(), fileInfo->nameOf(AbstractFileInfo::FileNameInfoType::kCompleteBaseName),
+                                                suffix.isEmpty() ? fileInfo->nameOf(AbstractFileInfo::FileNameInfoType::kSuffix) : suffix);
 
         if (newPath.isEmpty())
             return QString();
@@ -756,7 +756,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
 
     AbstractFileInfoPointer toFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
     if (toFileInfo && DecoratorFile(newUrl).exists()) {
-        dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameInfo(NameInfo::kFileName));
+        dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameOf(NameInfoType::kFileName));
         return false;
     }
 
@@ -1172,8 +1172,8 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
     for (const QUrl &url : urls) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
-            const QUrl &parentUrl = info->urlInfo(UrlInfo::kParentUrl);
-            const QString &fileName = info->nameInfo(NameInfo::kFileName);
+            const QUrl &parentUrl = info->urlOf(UrlInfoType::kParentUrl);
+            const QString &fileName = info->nameOf(NameInfoType::kFileName);
 
             HideFileHelper helper(parentUrl);
             helper.contains(fileName) ? helper.remove(fileName) : helper.insert(fileName);

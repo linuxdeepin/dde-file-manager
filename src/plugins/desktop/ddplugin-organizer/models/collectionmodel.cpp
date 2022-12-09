@@ -551,8 +551,8 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
         return false;
     }
 
-    if (itemInfo->isAttributes(IsInfo::kIsSymLink)) {
-        targetFileUrl = itemInfo->pathInfo(PathInfo::kSymLinkTarget);
+    if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
+        targetFileUrl = itemInfo->pathOfInfo(PathInfoType::kSymLinkTarget);
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {

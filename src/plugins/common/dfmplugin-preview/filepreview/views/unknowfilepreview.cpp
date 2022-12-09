@@ -109,15 +109,15 @@ void UnknowFilePreview::setFileInfo(const AbstractFileInfoPointer &info)
 
     QFont font = nameLabel->font();
     QFontMetrics fm(font);
-    QString elidedText = fm.elidedText(info->nameInfo(NameInfo::kFileName), Qt::ElideMiddle, 300);
+    QString elidedText = fm.elidedText(info->nameOf(NameInfoType::kFileName), Qt::ElideMiddle, 300);
 
     nameLabel->setText(elidedText);
 
-    if (info->isAttributes(IsInfo::kIsFile) || info->isAttributes(IsInfo::kIsSymLink)) {
-        sizeLabel->setText(QObject::tr("Size: %1").arg(info->displayInfo(DisPlay::kSizeDisplayName)));
-        typeLabel->setText(QObject::tr("Type: %1").arg(info->displayInfo(DisPlay::kMimeTypeDisplayName)));
-    } else if (info->isAttributes(IsInfo::kIsDir)) {
-        fileCalculationUtils->start(QList<QUrl>() << info->urlInfo(UrlInfo::kUrl));
+    if (info->isAttributes(OptInfoType::kIsFile) || info->isAttributes(OptInfoType::kIsSymLink)) {
+        sizeLabel->setText(QObject::tr("Size: %1").arg(info->displayOf(DisPlayInfoType::kSizeDisplayName)));
+        typeLabel->setText(QObject::tr("Type: %1").arg(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName)));
+    } else if (info->isAttributes(OptInfoType::kIsDir)) {
+        fileCalculationUtils->start(QList<QUrl>() << info->urlOf(UrlInfoType::kUrl));
         sizeLabel->setText(QObject::tr("Size: 0"));
     }
 }

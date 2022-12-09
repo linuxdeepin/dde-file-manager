@@ -330,13 +330,13 @@ QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
         return QObject::tr("DVD");
     case EntryFileInfo::kOrderSmb:
     case EntryFileInfo::kOrderFtp:
-        if (info->nameInfo(NameInfo::kSuffix) == SuffixInfo::kStashedProtocol)
+        if (info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kStashedProtocol)
             return QObject::tr("Unconnected network shared directory");
         return QObject::tr("Network shared directory");
     case EntryFileInfo::kOrderMTP:
         return QObject::tr("Android mobile device");
     case EntryFileInfo::kOrderGPhoto2:
-        if (getProtocolDevIdByUrl(info->urlInfo(UrlInfo::kUrl)).contains("Apple_Inc"))
+        if (getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl)).contains("Apple_Inc"))
             return QObject::tr("Apple mobile device");
         return QObject::tr("Android mobile device");
     case EntryFileInfo::kOrderFiles:
@@ -356,7 +356,7 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
     DevicePropertyDialog *dialog = new DevicePropertyDialog;
     DeviceInfo devInfo;
     devInfo.icon = info->fileIcon();
-    devInfo.deviceUrl = info->urlInfo(UrlInfo::kUrl);
+    devInfo.deviceUrl = info->urlOf(UrlInfoType::kUrl);
     devInfo.mountPoint = info->targetUrl();
     devInfo.deviceName = info->displayName();
     devInfo.deviceType = ComputerUtils::deviceTypeInfo(info);

@@ -61,11 +61,11 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     if (info.isNull())
         return;
 
-    QUrl parentUrl = info->urlInfo(UrlInfo::kParentUrl);
+    QUrl parentUrl = info->urlOf(UrlInfoType::kParentUrl);
     QStorageInfo storageInfo(parentUrl.toLocalFile());
     const QString &fsType = storageInfo.fileSystemType();
 
-    if (info->isAttributes(IsInfo::kIsFile)) {
+    if (info->isAttributes(OptInfoType::kIsFile)) {
         // append `Executable` string
         QString append = QStringLiteral(" , ") + QObject::tr("Executable");
         authorityList[3] += append;
@@ -77,7 +77,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
         readWriteIndex = readWriteFlag;
     }
 
-    if (info->isAttributes(IsInfo::kIsDir)) {
+    if (info->isAttributes(OptInfoType::kIsDir)) {
         // folder: read is read and executable, read-write is read-write and executable
         readOnlyIndex = readOnlyWithXFlag;
         readWriteIndex = readWriteWithXFlag;
@@ -95,9 +95,9 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     setComboBoxByPermission(groupComboBox, static_cast<int>(info->permissions() & kGroupAll), 4);
     setComboBoxByPermission(otherComboBox, static_cast<int>(info->permissions() & kOtherAll), 0);
 
-    if (info->isAttributes(IsInfo::kIsFile)) {
+    if (info->isAttributes(OptInfoType::kIsFile)) {
         executableCheckBox->setText(tr("Allow to execute as program"));
-        if (info->extendedAttributes(ExInfo::kOwnerId).toUInt() != getuid())
+        if (info->extendAttributes(ExtInfoType::kOwnerId).toUInt() != getuid())
             executableCheckBox->setDisabled(true);
 
         if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther))
@@ -113,14 +113,14 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     // 置灰：
     // 1. 本身用户无权限
     // 2. 所属文件系统无权限机制
-    if (info->extendedAttributes(ExInfo::kOwnerId).toUInt() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType)) {
+    if (info->extendAttributes(ExtInfoType::kOwnerId).toUInt() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType)) {
         ownerComboBox->setDisabled(true);
         groupComboBox->setDisabled(true);
         otherComboBox->setDisabled(true);
     }
 
     // tmp: 暂时的处理
-    if (fsType == "vfat" && !info->isAttributes(IsInfo::kIsDir))
+    if (fsType == "vfat" && !info->isAttributes(OptInfoType::kIsDir))
         ownerComboBox->setDisabled(false);
 
     connect(ownerComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
@@ -225,10 +225,10 @@ bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
     if (info.isNull())
         return false;
 
-    if (!info->canAttributes(CanInfo::kCanRename))
+    if (!info->canAttributes(CanableInfoType::kCanRename))
         return false;
 
-    QString path = info->pathInfo(PathInfo::kFilePath);
+    QString path = info->pathOfInfo(PathInfoType::kFilePath);
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
                                      QRegularExpression::DotMatchesEverythingOption
                                              | QRegularExpression::DontCaptureOption
@@ -266,7 +266,7 @@ void PermissionManagerWidget::onComboBoxChanged()
         return;
 
     struct stat fileStat;
-    QByteArray infoBytes(info->pathInfo(PathInfo::kAbsoluteFilePath).toUtf8());
+    QByteArray infoBytes(info->pathOfInfo(PathInfoType::kAbsoluteFilePath).toUtf8());
     stat(infoBytes.data(), &fileStat);
     auto preMode = fileStat.st_mode;
     int ownerFlags = ownerComboBox->currentData().toInt();
@@ -279,7 +279,7 @@ void PermissionManagerWidget::onComboBoxChanged()
     otherFlags |= (permissions & QFile::ExeOther);
     PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, QFileDevice::Permissions(ownerFlags) | QFileDevice::Permissions(groupFlags) | QFileDevice::Permissions(otherFlags));
 
-    infoBytes = info->pathInfo(PathInfo::kAbsoluteFilePath).toUtf8();
+    infoBytes = info->pathOfInfo(PathInfoType::kAbsoluteFilePath).toUtf8();
     stat(infoBytes.data(), &fileStat);
     auto afterMode = fileStat.st_mode;
     // 修改权限失败

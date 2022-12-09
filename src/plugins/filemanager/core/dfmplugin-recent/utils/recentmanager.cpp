@@ -103,7 +103,7 @@ RecentManager::ExpandFieldMap RecentManager::propetyExtensionFunc(const QUrl &ur
 {
     BasicExpand expand;
     const auto &info = InfoFactory::create<AbstractFileInfo>(url);
-    const QString &sourcePath = info->urlInfo(UrlInfo::kRedirectedFileUrl).toLocalFile();
+    const QString &sourcePath = info->urlOf(UrlInfoType::kRedirectedFileUrl).toLocalFile();
     expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
 
     ExpandFieldMap map;

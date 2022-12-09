@@ -75,15 +75,15 @@ bool TagManager::canTagFile(const QUrl &url) const
         if (!fileInfo)
             return false;
 
-        if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl).toLocalFile()))
+        if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl).toLocalFile()))
             return false;
 
-        const QString filePath { fileInfo->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath) };
+        const QString filePath { fileInfo->pathOfInfo(AbstractFileInfo::FilePathInfoType::kFilePath) };
         const QString &compressPath { QDir::homePath() + "/.avfs/" };
         if (filePath.startsWith(compressPath))
             return false;
 
-        const QString &parentPath { fileInfo->urlInfo(AbstractFileInfo::FileUrlInfoType::kParentUrl).path() };
+        const QString &parentPath { fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl).path() };
         if (parentPath == "/home" || parentPath == FileUtils::bindPathTransform("/home", true))
             return false;
 
@@ -376,7 +376,7 @@ bool TagManager::removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl>
     for (const QUrl &url : files) {
         const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
-            fileWithTag[info->pathInfo(AbstractFileInfo::FilePathInfoType::kFilePath)] = QVariant(tags);
+            fileWithTag[info->pathOfInfo(AbstractFileInfo::FilePathInfoType::kFilePath)] = QVariant(tags);
         } else {
             fileWithTag[UrlRoute::urlToLocalPath(url)] = QVariant(tags);
         }

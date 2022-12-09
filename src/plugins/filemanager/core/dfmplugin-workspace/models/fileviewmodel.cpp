@@ -222,7 +222,7 @@ QModelIndex FileViewModel::parent(const QModelIndex &child) const
 
     if (childData && childData->parentData()
         && childData->parentData()->fileInfo()) {
-        return findRootIndex(childData->parentData()->fileInfo()->urlInfo(UrlInfo::kUrl));
+        return findRootIndex(childData->parentData()->fileInfo()->urlOf(UrlInfoType::kUrl));
     }
 
     return QModelIndex();
@@ -322,17 +322,17 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
     if (!info)
         return flags;
 
-    if (info->canAttributes(CanInfo::kCanRename))
+    if (info->canAttributes(CanableInfoType::kCanRename))
         flags |= Qt::ItemIsEditable;
 
-    if (info->isAttributes(IsInfo::kIsWritable)) {
-        if (info->canAttributes(CanInfo::kCanDrop))
+    if (info->isAttributes(OptInfoType::kIsWritable)) {
+        if (info->canAttributes(CanableInfoType::kCanDrop))
             flags |= Qt::ItemIsDropEnabled;
         else
             flags |= Qt::ItemNeverHasChildren;
     }
 
-    if (info->canAttributes(CanInfo::kCanDrag))
+    if (info->canAttributes(CanableInfoType::kCanDrag))
         flags |= Qt::ItemIsDragEnabled;
 
     return flags;
@@ -352,7 +352,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
     for (; it != indexes.end(); ++it) {
         if ((*it).column() == 0) {
             const AbstractFileInfoPointer &fileInfo = this->fileInfo(*it);
-            const QUrl &url = fileInfo->urlInfo(UrlInfo::kUrl);
+            const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
 
             if (urlsSet.contains(url))
                 continue;
@@ -380,15 +380,15 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
 
     const AbstractFileInfoPointer &targetFileInfo = fileInfo(dropIndex);
-    QUrl targetUrl = targetFileInfo->urlInfo(UrlInfo::kUrl);
+    QUrl targetUrl = targetFileInfo->urlOf(UrlInfoType::kUrl);
     QList<QUrl> dropUrls = data->urls();
     QList<QUrl> urls {};
     bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", dropUrls, &urls);
     if (ok && !urls.isEmpty())
         dropUrls = urls;
 
-    if (targetFileInfo->isAttributes(IsInfo::kIsSymLink))
-        targetUrl = QUrl::fromLocalFile(targetFileInfo->pathInfo(PathInfo::kSymLinkTarget));
+    if (targetFileInfo->isAttributes(OptInfoType::kIsSymLink))
+        targetUrl = QUrl::fromLocalFile(targetFileInfo->pathOfInfo(PathInfoType::kSymLinkTarget));
 
     FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
 

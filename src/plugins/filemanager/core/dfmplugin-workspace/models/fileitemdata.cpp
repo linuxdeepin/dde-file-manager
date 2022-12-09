@@ -70,39 +70,39 @@ QVariant FileItemData::data(int role) const
 
     switch (role) {
     case kItemFilePathRole:
-        return info->displayInfo(DisPlay::kFileDisplayName);
+        return info->displayOf(DisPlayInfoType::kFileDisplayName);
     case kItemFileLastModifiedRole: {
-        auto lastModified = info->timeInfo(TimeInfo::kLastModified).value<QDateTime>();
+        auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
         return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
     }
     case kItemIconRole:
         return info->fileIcon();
     case kItemFileSizeRole:
-        return info->displayInfo(DisPlay::kSizeDisplayName);
+        return info->displayOf(DisPlayInfoType::kSizeDisplayName);
     case kItemFileMimeTypeRole:
-        return info->displayInfo(DisPlay::kMimeTypeDisplayName);
+        return info->displayOf(DisPlayInfoType::kMimeTypeDisplayName);
     case kItemSizeHintRole:
         return QSize(-1, 26);
     case kItemNameRole:
-        return info->nameInfo(NameInfo::kFileName);
+        return info->nameOf(NameInfoType::kFileName);
     case Qt::DisplayRole:
     case kItemEditRole:
     case kItemFileDisplayNameRole:
-        return info->displayInfo(DisPlay::kFileDisplayName);
+        return info->displayOf(DisPlayInfoType::kFileDisplayName);
     case kItemFilePinyinNameRole:
-        return info->displayInfo(DisPlay::kFileDisplayPinyinName);
+        return info->displayOf(DisPlayInfoType::kFileDisplayPinyinName);
     case kItemFileBaseNameRole:
-        return info->nameInfo(NameInfo::kCompleteBaseName);
+        return info->nameOf(NameInfoType::kCompleteBaseName);
     case kItemFileSuffixRole:
-        return info->nameInfo(NameInfo::kSuffix);
+        return info->nameOf(NameInfoType::kSuffix);
     case kItemFileNameOfRenameRole:
-        return info->nameInfo(NameInfo::kFileNameOfRename);
+        return info->nameOf(NameInfoType::kFileNameOfRename);
     case kItemFileBaseNameOfRenameRole:
-        return info->nameInfo(NameInfo::kBaseNameOfRename);
+        return info->nameOf(NameInfoType::kBaseNameOfRename);
     case kItemFileSuffixOfRenameRole:
-        return info->nameInfo(NameInfo::kSuffixOfRename);
+        return info->nameOf(NameInfoType::kSuffixOfRename);
     case kItemUrlRole:
-        return info->urlInfo(UrlInfo::kUrl);
+        return info->urlOf(UrlInfoType::kUrl);
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
     case kItemFileIconModelToolTipRole: {

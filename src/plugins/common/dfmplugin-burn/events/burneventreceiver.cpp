@@ -103,7 +103,7 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
         auto fi { InfoFactory::create<AbstractFileInfo>(urls.front()) };
         static const QSet<QString> imageTypes { Global::Mime::kTypeCdImage, Global::Mime::kTypeISO9660Image };
 
-        if (isBlank && fi && imageTypes.contains(fi->nameInfo(NameInfo::kMimeTypeName)) && destDir.count() == 0) {
+        if (isBlank && fi && imageTypes.contains(fi->nameOf(NameInfoType::kMimeTypeName)) && destDir.count() == 0) {
             int r { BurnHelper::showOpticalImageOpSelectionDialog() };
             if (r == 1) {
                 qint64 srcSize { fi->size() };
@@ -174,9 +174,9 @@ void BurnEventReceiver::handleMountImage(const QUrl &isoUrl)
     qInfo() << "Mount image:" << isoUrl;
     QString archiveuri;
     auto info { InfoFactory::create<AbstractFileInfo>(isoUrl) };
-    if (info && info->canAttributes(CanInfo::kCanRedirectionFileUrl)) {
-        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->urlInfo(UrlInfo::kRedirectedFileUrl).toString()));
-        qInfo() << "Mount image redirect the url to:" << info->urlInfo(UrlInfo::kRedirectedFileUrl);
+    if (info && info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->urlOf(UrlInfoType::kRedirectedFileUrl).toString()));
+        qInfo() << "Mount image redirect the url to:" << info->urlOf(UrlInfoType::kRedirectedFileUrl);
     } else {
         archiveuri = "archive://" + QString(QUrl::toPercentEncoding(isoUrl.toString()));
     }

@@ -158,7 +158,7 @@ void OpticalMenuScene::updateState(QMenu *parent)
             if (!OpticalHelper::burnIsOnDisc(d->focusFile) && nativeBlackActIdList.contains(id))
                 act->setVisible(false);
 
-            if (d->focusFileInfo && d->focusFileInfo->isAttributes(IsInfo::kIsDir)) {
+            if (d->focusFileInfo && d->focusFileInfo->isAttributes(OptInfoType::kIsDir)) {
                 // cannot "open-*" for dirs to be burned
                 static const QStringList nativeDirBlackActIdList { "open-as-administrator", "open-in-terminal", "add-bookmark" };
                 if (!OpticalHelper::burnIsOnDisc(d->focusFile) && nativeDirBlackActIdList.contains(id))

@@ -163,7 +163,7 @@ bool SearchDirIterator::hasNext() const
 
 QString SearchDirIterator::fileName() const
 {
-    return fileInfo()->nameInfo(NameInfo::kFileName);
+    return fileInfo()->nameOf(NameInfoType::kFileName);
 }
 
 QUrl SearchDirIterator::fileUrl() const

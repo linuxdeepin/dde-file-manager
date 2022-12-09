@@ -129,17 +129,17 @@ QIcon LocalFileIconProvider::icon(const QString &path, const QIcon &feedback) co
 
 QIcon LocalFileIconProvider::icon(AbstractFileInfo *info, const QIcon &feedback)
 {
-    QIcon icon = d->fromTheme(info->nameInfo(NameInfo::kIconName));
+    QIcon icon = d->fromTheme(info->nameOf(NameInfoType::kIconName));
 
     if (Q_LIKELY(!icon.isNull()))
         return icon;
 
-    icon = this->icon(info->pathInfo(PathInfo::kFilePath));
+    icon = this->icon(info->pathOfInfo(PathInfoType::kFilePath));
 
     if (Q_LIKELY(!icon.isNull()))
         return icon;
 
-    icon = d->fromTheme(info->nameInfo(NameInfo::kGenericIconName));
+    icon = d->fromTheme(info->nameOf(NameInfoType::kGenericIconName));
 
     if (icon.isNull())
         icon = d->fromTheme("unknown");

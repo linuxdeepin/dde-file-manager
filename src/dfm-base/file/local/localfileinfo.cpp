@@ -161,7 +161,7 @@ void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
         d->dfmFileInfo->setAttribute(id, value);
 }
 
-QString LocalFileInfo::nameInfo(const NameInfo type) const
+QString LocalFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
     case FileNameInfoType::kFileName:
@@ -183,7 +183,7 @@ QString LocalFileInfo::nameInfo(const NameInfo type) const
     case FileNameInfoType::kMimeTypeName:
         return d->mimeTypeName();
     default:
-        return AbstractFileInfo::nameInfo(type);
+        return AbstractFileInfo::nameOf(type);
     }
 }
 /*!
@@ -191,7 +191,7 @@ QString LocalFileInfo::nameInfo(const NameInfo type) const
   * 处理或者字符串处理，这都比较快
   * \param FileNameInfoType
   */
-QString LocalFileInfo::pathInfo(const PathInfo type) const
+QString LocalFileInfo::pathOfInfo(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kFilePath:
@@ -207,7 +207,7 @@ QString LocalFileInfo::pathInfo(const PathInfo type) const
     case FilePathInfoType::kSymLinkTarget:
         return d->symLinkTarget();
     default:
-        return AbstractFileInfo::pathInfo(type);
+        return AbstractFileInfo::pathOfInfo(type);
     }
 }
 /*!
@@ -215,17 +215,17 @@ QString LocalFileInfo::pathInfo(const PathInfo type) const
  * 处理或者字符串处理，这都比较快
  * \param FileUrlInfoType
  */
-QUrl LocalFileInfo::urlInfo(const UrlInfo type) const
+QUrl LocalFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kRedirectedFileUrl:
         return d->redirectedFileUrl();
     default:
-        return AbstractFileInfo::urlInfo(type);
+        return AbstractFileInfo::urlOf(type);
     }
 }
 
-bool LocalFileInfo::isAttributes(const IsInfo type) const
+bool LocalFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsFile:
@@ -253,7 +253,7 @@ bool LocalFileInfo::isAttributes(const IsInfo type) const
     }
 }
 
-bool LocalFileInfo::canAttributes(const CanInfo type) const
+bool LocalFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanDelete:
@@ -271,7 +271,7 @@ bool LocalFileInfo::canAttributes(const CanInfo type) const
     }
 }
 
-QVariant LocalFileInfo::extendedAttributes(const ExInfo type) const
+QVariant LocalFileInfo::extendAttributes(const ExtInfoType type) const
 {
     switch (type) {
     case FileExtendedInfoType::kFileLocalDevice:
@@ -294,7 +294,7 @@ QVariant LocalFileInfo::extendedAttributes(const ExInfo type) const
         return d->attribute(d->getAttributeIDExtendVector()[static_cast<int>(type)]);
     default:
         QReadLocker(&d->lock);
-        return AbstractFileInfo::extendedAttributes(type);
+        return AbstractFileInfo::extendAttributes(type);
     }
 }
 /*!
@@ -352,45 +352,45 @@ qint64 LocalFileInfo::size() const
  *
  * \return QVariant 普通的返回QDateTime, second和msecond返回qint64
  */
-QVariant LocalFileInfo::timeInfo(const TimeInfo type) const
+QVariant LocalFileInfo::timeOf(const TimeInfoType type) const
 {
     qint64 data { 0 };
     if (type < FileTimeType::kDeletionTimeMSecond)
         data = d->attribute(d->getAttributeIDVector()[static_cast<int>(type)]).value<qint64>();
 
     switch (type) {
-    case TimeInfo::kCreateTime:
+    case TimeInfoType::kCreateTime:
         [[fallthrough]];
-    case TimeInfo::kBirthTime:
+    case TimeInfoType::kBirthTime:
         [[fallthrough]];
-    case TimeInfo::kMetadataChangeTime:
+    case TimeInfoType::kMetadataChangeTime:
         [[fallthrough]];
-    case TimeInfo::kLastModified:
+    case TimeInfoType::kLastModified:
         [[fallthrough]];
-    case TimeInfo::kLastRead:
+    case TimeInfoType::kLastRead:
         return QDateTime::fromSecsSinceEpoch(data);
-    case TimeInfo::kCreateTimeSecond:
+    case TimeInfoType::kCreateTimeSecond:
         [[fallthrough]];
-    case TimeInfo::kBirthTimeSecond:
+    case TimeInfoType::kBirthTimeSecond:
         [[fallthrough]];
-    case TimeInfo::kMetadataChangeTimeSecond:
+    case TimeInfoType::kMetadataChangeTimeSecond:
         [[fallthrough]];
-    case TimeInfo::kLastModifiedSecond:
+    case TimeInfoType::kLastModifiedSecond:
         [[fallthrough]];
-    case TimeInfo::kLastReadSecond:
+    case TimeInfoType::kLastReadSecond:
         [[fallthrough]];
-    case TimeInfo::kCreateTimeMSecond:
+    case TimeInfoType::kCreateTimeMSecond:
         [[fallthrough]];
-    case TimeInfo::kBirthTimeMSecond:
+    case TimeInfoType::kBirthTimeMSecond:
         [[fallthrough]];
-    case TimeInfo::kMetadataChangeTimeMSecond:
+    case TimeInfoType::kMetadataChangeTimeMSecond:
         [[fallthrough]];
-    case TimeInfo::kLastModifiedMSecond:
+    case TimeInfoType::kLastModifiedMSecond:
         [[fallthrough]];
-    case TimeInfo::kLastReadMSecond:
+    case TimeInfoType::kLastReadMSecond:
         return data;
     default:
-        return AbstractFileInfo::timeInfo(type);
+        return AbstractFileInfo::timeOf(type);
     }
 }
 
@@ -470,11 +470,11 @@ int LocalFileInfo::countChildFileAsync() const
     return -1;
 }
 
-QString LocalFileInfo::displayInfo(const DisPlay type) const
+QString LocalFileInfo::displayOf(const DisPlayInfoType type) const
 {
-    if (type == DisPlay::kFileDisplayName)
+    if (type == DisPlayInfoType::kFileDisplayName)
         return d->fileDisplayName();
-    return AbstractFileInfo::displayInfo(type);
+    return AbstractFileInfo::displayOf(type);
 }
 
 /*!
@@ -570,7 +570,7 @@ QMimeType LocalFileInfo::fileMimeTypeAsync(QMimeDatabase::MatchMode mode)
     return type;
 }
 
-QString LocalFileInfo::viewTip(const ViewType type) const
+QString LocalFileInfo::viewOfTip(const ViewType type) const
 {
     if (type == ViewType::kEmptyDir) {
         if (!exists()) {
@@ -583,7 +583,7 @@ QString LocalFileInfo::viewTip(const ViewType type) const
         }
     }
 
-    return AbstractFileInfo::viewTip(type);
+    return AbstractFileInfo::viewOfTip(type);
 }
 
 QVariant LocalFileInfo::customAttribute(const char *key, const DFileInfo::DFileAttributeType type)
@@ -723,7 +723,7 @@ QIcon LocalFileInfoPrivate::defaultIcon()
         return icon;
 
     icon = LocalFileIconProvider::globalProvider()->icon(q);
-    if (q->isAttributes(IsInfo::kIsSymLink)) {
+    if (q->isAttributes(OptInfoType::kIsSymLink)) {
         const auto &&target = symLinkTarget();
         if (target != filePath()) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(target));
@@ -942,7 +942,7 @@ QString LocalFileInfoPrivate::symLinkTarget() const
 
 QUrl LocalFileInfoPrivate::redirectedFileUrl() const
 {
-    if (q->isAttributes(IsInfo::kIsSymLink))
+    if (q->isAttributes(OptInfoType::kIsSymLink))
         return QUrl::fromLocalFile(symLinkTarget());
     return url;
 }
@@ -1043,7 +1043,7 @@ bool LocalFileInfoPrivate::canFetch() const
                             supportArchiveMimetypes()
                                     .contains(DMimeDatabase().mimeTypeForFile(url).name());
 
-    return q->isAttributes(IsInfo::kIsDir)
+    return q->isAttributes(OptInfoType::kIsDir)
             || (isArchive
                 && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
 }
@@ -1053,7 +1053,7 @@ bool LocalFileInfoPrivate::canFetch() const
  */
 QString LocalFileInfoPrivate::sizeFormat() const
 {
-    if (q->isAttributes(IsInfo::kIsDir)) {
+    if (q->isAttributes(OptInfoType::kIsDir)) {
         return QStringLiteral("-");
     }
 

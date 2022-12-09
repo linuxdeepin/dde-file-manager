@@ -126,7 +126,7 @@ bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 {
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-    if (!fileInfo->isAttributes(IsInfo::kIsReadable) || !fileInfo->isAttributes(IsInfo::kIsFile))
+    if (!fileInfo->isAttributes(OptInfoType::kIsReadable) || !fileInfo->isAttributes(OptInfoType::kIsFile))
         return false;
 
     qint64 fileSize = fileInfo->size();
@@ -252,8 +252,8 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
     if (!fileInfo)
         return QString();
 
-    const QString &absolutePath = fileInfo->pathInfo(PathInfo::kPath);
-    const QString &absoluteFilePath = fileInfo->pathInfo(PathInfo::kFilePath);
+    const QString &absolutePath = fileInfo->pathOfInfo(PathInfoType::kPath);
+    const QString &absoluteFilePath = fileInfo->pathOfInfo(PathInfoType::kFilePath);
 
     if (absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kSmall)
         || absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kNormal)
@@ -276,7 +276,7 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
     ir.setAutoDetectImageFormat(false);
 
     const QImage image = ir.read();
-    const qint64 fileModify = fileInfo->timeInfo(TimeInfo::kLastModifiedSecond).value<qint64>();
+    const qint64 fileModify = fileInfo->timeOf(TimeInfoType::kLastModifiedSecond).value<qint64>();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
         DecoratorFileOperator(thumbnail).deleteFile();
 
@@ -302,8 +302,8 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-    const QString &DirPath = fileInfo->pathInfo(PathInfo::kAbsolutePath);
-    const QString &filePath = fileInfo->pathInfo(PathInfo::kAbsoluteFilePath);
+    const QString &DirPath = fileInfo->pathOfInfo(PathInfoType::kAbsolutePath);
+    const QString &filePath = fileInfo->pathOfInfo(PathInfoType::kAbsoluteFilePath);
 
     if (DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kSmall)
         || DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kNormal)
@@ -358,7 +358,7 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
     }
 
     image->setText(QT_STRINGIFY(Thumb::URL), fileUrl);
-    const qint64 fileModify = fileInfo->timeInfo(TimeInfo::kLastModifiedSecond).value<qint64>();
+    const qint64 fileModify = fileInfo->timeOf(TimeInfoType::kLastModifiedSecond).value<qint64>();
     image->setText(QT_STRINGIFY(Thumb::MTime), QString::number(fileModify));
 
     // create path
@@ -512,7 +512,7 @@ void ThumbnailProvider::createTextThumbnail(const QString &filePath, ThumbnailPr
     if (!fileinfo)
         return;
 
-    QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->nameInfo(NameInfo::kFileName)) };
+    QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->nameOf(NameInfoType::kFileName)) };
 
     QFont font;
     font.setPixelSize(12);

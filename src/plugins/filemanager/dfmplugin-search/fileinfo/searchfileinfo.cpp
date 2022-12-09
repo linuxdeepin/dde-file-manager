@@ -43,7 +43,7 @@ bool SearchFileInfo::exists() const
     return AbstractFileInfo::exists();
 }
 
-bool SearchFileInfo::isAttributes(const IsInfo type) const
+bool SearchFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
@@ -77,19 +77,19 @@ qint64 SearchFileInfo::size() const
     return AbstractFileInfo::size();
 }
 
-QString SearchFileInfo::nameInfo(const NameInfo type) const
+QString SearchFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
-    case NameInfo::kFileName:
+    case NameInfoType::kFileName:
         if (SearchHelper::isRootUrl(dptr->url))
             return QObject::tr("Search");
         [[fallthrough]];
     default:
-        return AbstractFileInfo::nameInfo(type);
+        return AbstractFileInfo::nameOf(type);
     }
 }
 
-QString SearchFileInfo::viewTip(const ViewInfo type) const
+QString SearchFileInfo::viewOfTip(const ViewInfoType type) const
 {
     switch (type) {
     case ViewType::kEmptyDir:

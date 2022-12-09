@@ -29,6 +29,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 using namespace dfmplugin_recent;
+DFMBASE_USE_NAMESPACE
 
 RecentDirIteratorPrivate::RecentDirIteratorPrivate(RecentDirIterator *qq)
     : q(qq)
@@ -77,14 +78,14 @@ QString RecentDirIterator::fileName() const
 {
     AbstractFileInfoPointer currentInfo = d->recentNodes.value(d->currentUrl);
 
-    return currentInfo ? currentInfo->nameInfo(NameInfo::kFileName) : QString();
+    return currentInfo ? currentInfo->nameOf(NameInfoType::kFileName) : QString();
 }
 
 QUrl RecentDirIterator::fileUrl() const
 {
     AbstractFileInfoPointer currentInfo = d->recentNodes.value(d->currentUrl);
 
-    return currentInfo ? currentInfo->urlInfo(UrlInfo::kUrl) : QString();
+    return currentInfo ? currentInfo->urlOf(UrlInfoType::kUrl) : QString();
 }
 
 const AbstractFileInfoPointer RecentDirIterator::fileInfo() const

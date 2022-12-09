@@ -37,23 +37,23 @@ SmbShareFileInfo::~SmbShareFileInfo()
 {
 }
 
-QString SmbShareFileInfo::nameInfo(const NameInfo type) const
+QString SmbShareFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
-    case NameInfo::kFileName:
+    case NameInfoType::kFileName:
         [[fallthrough]];
-    case NameInfo::kFileCopyName:
+    case NameInfoType::kFileCopyName:
         return d->fileName();
     default:
-        return AbstractFileInfo::nameInfo(type);
+        return AbstractFileInfo::nameOf(type);
     }
 }
 
-QString SmbShareFileInfo::displayInfo(const DisPlay type) const
+QString SmbShareFileInfo::displayOf(const DisPlayInfoType type) const
 {
-    if (DisPlay::kFileDisplayName == type)
+    if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
-    return AbstractFileInfo::displayInfo(type);
+    return AbstractFileInfo::displayOf(type);
 }
 
 QIcon SmbShareFileInfo::fileIcon()
@@ -62,7 +62,7 @@ QIcon SmbShareFileInfo::fileIcon()
     return QIcon::fromTheme(dp->node.iconType);
 }
 
-bool SmbShareFileInfo::isAttributes(const IsInfo type) const
+bool SmbShareFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
     case FileIsType::kIsDir:
@@ -76,7 +76,7 @@ bool SmbShareFileInfo::isAttributes(const IsInfo type) const
     }
 }
 
-bool SmbShareFileInfo::canAttributes(const CanInfo type) const
+bool SmbShareFileInfo::canAttributes(const CanableInfoType type) const
 {
     switch (type) {
     case FileCanType::kCanDrag:

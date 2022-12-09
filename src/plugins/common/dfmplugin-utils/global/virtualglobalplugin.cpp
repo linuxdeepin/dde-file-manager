@@ -27,17 +27,18 @@
 #include "dfm-base/file/local/desktopfileinfo.h"
 
 using namespace dfmplugin_utils;
+DFMBASE_USE_NAMESPACE
 
 static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
 {
     // no translate for gvfs file, invoking suffix/mimeTypeName might cost huge time
-    if (fileInfo->urlInfo(UrlInfo::kUrl).path().contains(QRegularExpression(DFMBASE_NAMESPACE::Global::Regex::kGvfsRoot)))
+    if (fileInfo->urlOf(UrlInfoType::kUrl).path().contains(QRegularExpression(DFMBASE_NAMESPACE::Global::Regex::kGvfsRoot)))
         return fileInfo;
 
-    const QString &suffix = fileInfo->nameInfo(NameInfo::kSuffix);
-    const QString &mimeTypeName = fileInfo->nameInfo(NameInfo::kMimeTypeName);
+    const QString &suffix = fileInfo->nameOf(NameInfoType::kSuffix);
+    const QString &mimeTypeName = fileInfo->nameOf(NameInfoType::kMimeTypeName);
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop && mimeTypeName == "application/x-desktop") {
-        const QUrl &url = fileInfo->urlInfo(UrlInfo::kUrl);
+        const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
         return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
     }
     return fileInfo;

@@ -39,7 +39,7 @@ EntryFileInfoPrivate::EntryFileInfoPrivate(const QUrl &url, EntryFileInfo *qq)
 void EntryFileInfoPrivate::init()
 {
     const auto &&suffix = const_cast<EntryFileInfoPrivate *>(this)->suffix();
-    entity.reset(EntryEntityFactor::create(suffix, q->urlInfo(UrlInfo::kUrl)));
+    entity.reset(EntryEntityFactor::create(suffix, q->urlOf(UrlInfoType::kUrl)));
 }
 
 QString EntryFileInfoPrivate::suffix() const
@@ -150,19 +150,19 @@ bool EntryFileInfo::exists() const
     return d->entity ? d->entity->exists() : false;
 }
 
-QString EntryFileInfo::nameInfo(const NameInfo type) const
+QString EntryFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {
-    case NameInfo::kBaseName:
+    case NameInfoType::kBaseName:
         return {};
-    case NameInfo::kSuffix:
+    case NameInfoType::kSuffix:
         return d->suffix();
     default:
-        return AbstractFileInfo::nameInfo(type);
+        return AbstractFileInfo::nameOf(type);
     }
 }
 
-QString EntryFileInfo::pathInfo(const PathInfo type) const
+QString EntryFileInfo::pathOfInfo(const PathInfoType type) const
 {
     QString path;
     switch (type) {
@@ -171,7 +171,7 @@ QString EntryFileInfo::pathInfo(const PathInfo type) const
     case FilePathInfoType::kFilePath:
         return dptr->url.path();
     default:
-        return AbstractFileInfo::pathInfo(type);
+        return AbstractFileInfo::pathOfInfo(type);
     }
 }
 

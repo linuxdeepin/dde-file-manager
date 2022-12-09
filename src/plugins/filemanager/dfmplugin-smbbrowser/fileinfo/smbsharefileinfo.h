@@ -37,11 +37,11 @@ public:
     explicit SmbShareFileInfo(const QUrl &url);
     virtual ~SmbShareFileInfo() override;
 
-    virtual QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
+    virtual QString nameOf(const FileNameInfoType type) const override;
+    virtual QString displayOf(const DisplayInfoType type) const override;
     virtual QIcon fileIcon() override;
-    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
-    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
+    virtual bool isAttributes(const FileIsType type) const override;
+    virtual bool canAttributes(const FileCanType type) const override;
 };
 
 }

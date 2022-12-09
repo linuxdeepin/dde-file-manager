@@ -76,7 +76,7 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
         return false;
 
     TransparentStatus status = TransparentStatus::kDefault;
-    if (WorkspaceEventSequence::instance()->doCheckTransparent(file->urlInfo(UrlInfo::kUrl), &status)) {
+    if (WorkspaceEventSequence::instance()->doCheckTransparent(file->urlOf(UrlInfoType::kUrl), &status)) {
         switch (status) {
         case TransparentStatus::kTransparent:
             return true;
@@ -89,7 +89,7 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
     //  cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
-        QUrl localUrl = file->urlInfo(UrlInfo::kUrl);
+        QUrl localUrl = file->urlOf(UrlInfoType::kUrl);
         QList<QUrl> urls {};
         bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
         if (ok && !urls.isEmpty())
@@ -99,8 +99,8 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
         // the linked file only judges the URL, not the inode,
         // because the inode of the linked file is consistent with that of the source file
-        if (!file->isAttributes(IsInfo::kIsSymLink)) {
-            if (ClipBoard::instance()->clipboardFileInodeList().contains(file->extendedAttributes(ExInfo::kInode).toULongLong()))
+        if (!file->isAttributes(OptInfoType::kIsSymLink)) {
+            if (ClipBoard::instance()->clipboardFileInodeList().contains(file->extendAttributes(ExtInfoType::kInode).toULongLong()))
                 return true;
         }
     }
@@ -338,12 +338,12 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
         }
     }
 
-    if (fileInfo->nameInfo(NameInfo::kFileName) == newFileName) {
+    if (fileInfo->nameOf(NameInfoType::kFileName) == newFileName) {
         return;
     }
 
-    QUrl oldUrl = fileInfo->getUrlByType(UrlInfo::kGetUrlByNewFileName, fileInfo->nameInfo(NameInfo::kFileName));
-    QUrl newUrl = fileInfo->getUrlByType(UrlInfo::kGetUrlByNewFileName, newFileName);
+    QUrl oldUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, fileInfo->nameOf(NameInfoType::kFileName));
+    QUrl newUrl = fileInfo->getUrlByType(UrlInfoType::kGetUrlByNewFileName, newFileName);
     //Todo(yanghao): tag
     FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }

@@ -215,22 +215,22 @@ void BasicWidget::basicFill(const QUrl &url)
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
-    if (!info->canAttributes(CanInfo::kCanHidden))
+    if (!info->canAttributes(CanableInfoType::kCanHidden))
         hideFile->setEnabled(false);
 
-    if (info->isAttributes(IsInfo::kIsHidden))
+    if (info->isAttributes(OptInfoType::kIsHidden))
         hideFile->setChecked(true);
 
     connect(hideFile, &QCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
 
     if (filePosition && filePosition->RightValue().isEmpty()) {
-        filePosition->setRightValue(info->isAttributes(IsInfo::kIsSymLink) ? info->pathInfo(PathInfo::kSymLinkTarget) : url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
-        if (info->isAttributes(IsInfo::kIsSymLink)) {
-            auto &&symlink = info->pathInfo(PathInfo::kSymLinkTarget);
+        filePosition->setRightValue(info->isAttributes(OptInfoType::kIsSymLink) ? info->pathOfInfo(PathInfoType::kSymLinkTarget) : url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
+        if (info->isAttributes(OptInfoType::kIsSymLink)) {
+            auto &&symlink = info->pathOfInfo(PathInfoType::kSymLinkTarget);
             connect(filePosition, &KeyValueLabel::valueAreaClicked, this, [symlink] {
                 const QUrl &url = QUrl::fromLocalFile(symlink);
                 const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-                QUrl parentUrl = fileInfo->urlInfo(UrlInfo::kParentUrl);
+                QUrl parentUrl = fileInfo->urlOf(UrlInfoType::kParentUrl);
                 parentUrl.setQuery("selectUrl=" + url.toString());
                 dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
             });
@@ -238,17 +238,17 @@ void BasicWidget::basicFill(const QUrl &url)
     }
 
     if (fileCreated && fileCreated->RightValue().isEmpty()) {
-        auto birthTime = info->timeInfo(TimeInfo::kBirthTime).value<QDateTime>();
+        auto birthTime = info->timeOf(TimeInfoType::kBirthTime).value<QDateTime>();
         birthTime.isValid() ? fileCreated->setRightValue(birthTime.toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
                             : fileCreated->setVisible(false);
     }
     if (fileAccessed && fileAccessed->RightValue().isEmpty()) {
-        auto lastRead = info->timeInfo(TimeInfo::kLastRead).value<QDateTime>();
+        auto lastRead = info->timeOf(TimeInfoType::kLastRead).value<QDateTime>();
         lastRead.isValid() ? fileAccessed->setRightValue(lastRead.toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
                            : fileAccessed->setVisible(false);
     }
     if (fileModified && fileModified->RightValue().isEmpty()) {
-        auto lastModified = info->timeInfo(TimeInfo::kLastModified).value<QDateTime>();
+        auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
         lastModified.isValid() ? fileModified->setRightValue(lastModified.toString(FileUtils::dateTimeFormat()), Qt::ElideNone, Qt::AlignVCenter, true)
                                : fileModified->setVisible(false);
     }

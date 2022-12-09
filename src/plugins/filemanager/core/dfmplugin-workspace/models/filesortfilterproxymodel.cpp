@@ -84,7 +84,7 @@ Qt::DropActions FileSortFilterProxyModel::supportedDragActions() const
     const AbstractFileInfoPointer info = viewModel()->fileInfo(rootIndex);
 
     if (info)
-        return info->supportedAttributes(Support::kDrag);
+        return info->supportedOfAttributes(SupportedType::kDrag);
 
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
@@ -95,7 +95,7 @@ Qt::DropActions FileSortFilterProxyModel::supportedDropActions() const
     const AbstractFileInfoPointer info = viewModel()->fileInfo(rootIndex);
 
     if (info)
-        return info->supportedAttributes(Support::kDrop);
+        return info->supportedOfAttributes(SupportedType::kDrop);
 
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
@@ -342,10 +342,10 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
         return false;
 
     const QModelIndex &leftParent = left.parent();
-    if (!leftParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), leftParent)->urlInfo(UrlInfo::kUrl), rootUrl))
+    if (!leftParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), leftParent)->urlOf(UrlInfoType::kUrl), rootUrl))
         return false;
     const QModelIndex &rightParent = right.parent();
-    if (!rightParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), rightParent)->urlInfo(UrlInfo::kUrl), rootUrl))
+    if (!rightParent.isValid() || !UniversalUtils::urlEquals(viewModel()->fileInfo(QModelIndex(), rightParent)->urlOf(UrlInfoType::kUrl), rootUrl))
         return false;
 
     const AbstractFileInfoPointer &leftInfo = viewModel()->fileInfo(leftParent, left);
@@ -358,11 +358,11 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
 
     // The folder is fixed in the front position
     if (isNotMixDirAndFile) {
-        if (leftInfo->isAttributes(IsInfo::kIsDir)) {
-            if (!rightInfo->isAttributes(IsInfo::kIsDir))
+        if (leftInfo->isAttributes(OptInfoType::kIsDir)) {
+            if (!rightInfo->isAttributes(OptInfoType::kIsDir))
                 return sortOrder() == Qt::AscendingOrder;
         } else {
-            if (rightInfo->isAttributes(IsInfo::kIsDir))
+            if (rightInfo->isAttributes(OptInfoType::kIsDir))
                 return sortOrder() == Qt::DescendingOrder;
         }
     }
@@ -384,7 +384,7 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
         return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder()) == (sortOrder() == Qt::AscendingOrder);
     case kItemFileSizeRole:
         if (isNotMixDirAndFile) {
-            if (leftInfo->isAttributes(IsInfo::kIsDir)) {
+            if (leftInfo->isAttributes(OptInfoType::kIsDir)) {
                 int leftCount = qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile();
                 int rightCount = qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile();
                 return leftCount < rightCount;
@@ -392,8 +392,8 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
                 return leftInfo->size() < rightInfo->size();
             }
         } else {
-            qint64 sizel = leftInfo->isAttributes(IsInfo::kIsDir) && rightInfo->isAttributes(IsInfo::kIsDir) ? qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile() : leftInfo->isAttributes(IsInfo::kIsDir) ? 0 : leftInfo->size();
-            qint64 sizer = leftInfo->isAttributes(IsInfo::kIsDir) && rightInfo->isAttributes(IsInfo::kIsDir) ? qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile() : rightInfo->isAttributes(IsInfo::kIsDir) ? 0 : rightInfo->size();
+            qint64 sizel = leftInfo->isAttributes(OptInfoType::kIsDir) && rightInfo->isAttributes(OptInfoType::kIsDir) ? qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile() : leftInfo->isAttributes(OptInfoType::kIsDir) ? 0 : leftInfo->size();
+            qint64 sizer = leftInfo->isAttributes(OptInfoType::kIsDir) && rightInfo->isAttributes(OptInfoType::kIsDir) ? qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile() : rightInfo->isAttributes(OptInfoType::kIsDir) ? 0 : rightInfo->size();
             return sizel < sizer;
         }
     default:
@@ -428,25 +428,25 @@ bool FileSortFilterProxyModel::passFileFilters(const AbstractFileInfoPointer &fi
     if (filters == QDir::NoFilter)
         return true;
 
-    if (!(filters & (QDir::Dirs | QDir::AllDirs)) && fileInfo->isAttributes(IsInfo::kIsDir))
+    if (!(filters & (QDir::Dirs | QDir::AllDirs)) && fileInfo->isAttributes(OptInfoType::kIsDir))
         return false;
 
-    if (!(filters & QDir::Files) && fileInfo->isAttributes(IsInfo::kIsFile))
+    if (!(filters & QDir::Files) && fileInfo->isAttributes(OptInfoType::kIsFile))
         return false;
 
-    if ((filters & QDir::NoSymLinks) && fileInfo->isAttributes(IsInfo::kIsSymLink))
+    if ((filters & QDir::NoSymLinks) && fileInfo->isAttributes(OptInfoType::kIsSymLink))
         return false;
 
-    if (!(filters & QDir::Hidden) && fileInfo->isAttributes(IsInfo::kIsHidden))
+    if (!(filters & QDir::Hidden) && fileInfo->isAttributes(OptInfoType::kIsHidden))
         return false;
 
-    if ((filters & QDir::Readable) && !fileInfo->isAttributes(IsInfo::kIsReadable))
+    if ((filters & QDir::Readable) && !fileInfo->isAttributes(OptInfoType::kIsReadable))
         return false;
 
-    if ((filters & QDir::Writable) && !fileInfo->isAttributes(IsInfo::kIsWritable))
+    if ((filters & QDir::Writable) && !fileInfo->isAttributes(OptInfoType::kIsWritable))
         return false;
 
-    if ((filters & QDir::Executable) && !fileInfo->isAttributes(IsInfo::kIsExecutable))
+    if ((filters & QDir::Executable) && !fileInfo->isAttributes(OptInfoType::kIsExecutable))
         return false;
 
     return true;
@@ -460,14 +460,14 @@ bool FileSortFilterProxyModel::passNameFilters(const AbstractFileInfoPointer &in
     if (!info)
         return true;
 
-    const QUrl fileUrl = info->urlInfo(UrlInfo::kUrl);
+    const QUrl fileUrl = info->urlOf(UrlInfoType::kUrl);
     if (nameFiltersMatchResultMap.contains(fileUrl))
         return nameFiltersMatchResultMap.value(fileUrl, false);
 
     // Check the name regularexpression filters
-    if (!(info->isAttributes(IsInfo::kIsDir) && (filters & QDir::Dirs))) {
+    if (!(info->isAttributes(OptInfoType::kIsDir) && (filters & QDir::Dirs))) {
         const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
-        const QString &fileName = info->nameInfo(NameInfo::kFileName);
+        const QString &fileName = info->nameOf(NameInfoType::kFileName);
         QRegExp re("", caseSensitive, QRegExp::Wildcard);
 
         for (int i = 0; i < nameFilters.size(); ++i) {

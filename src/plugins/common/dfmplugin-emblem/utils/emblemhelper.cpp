@@ -45,16 +45,16 @@ QList<QIcon> EmblemHelper::getSystemEmblems(const AbstractFileInfoPointer &info)
 {
     QList<QIcon> emblems;
 
-    if (info->isAttributes(IsInfo::kIsSymLink))
+    if (info->isAttributes(OptInfoType::kIsSymLink))
         emblems << QIcon::fromTheme("emblem-symbolic-link", standardEmblem(SystemEmblemType::kLink));
 
-    if (!info->isAttributes(IsInfo::kIsWritable))
+    if (!info->isAttributes(OptInfoType::kIsWritable))
         emblems << QIcon::fromTheme("emblem-readonly", standardEmblem(SystemEmblemType::kLock));
 
-    if (!info->isAttributes(IsInfo::kIsReadable))
+    if (!info->isAttributes(OptInfoType::kIsReadable))
         emblems << QIcon::fromTheme("emblem-unreadable", standardEmblem(SystemEmblemType::kUnreadable));
 
-    bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->pathInfo(PathInfo::kAbsoluteFilePath)).toBool();
+    bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->pathOfInfo(PathInfoType::kAbsoluteFilePath)).toBool();
     if (shared)
         emblems << QIcon::fromTheme("emblem-shared", standardEmblem(SystemEmblemType::kShare));
 
@@ -66,7 +66,7 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
     QMap<int, QIcon> emblemsMap;
 
     // use AbstractFileInfo to access emblems, avoid query again
-    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->urlInfo(UrlInfo::kUrl));
+    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(info->urlOf(UrlInfoType::kUrl));
     if (!fileInfo)
         return {};
     const QStringList &emblemData = fileInfo->customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
@@ -143,7 +143,7 @@ bool EmblemHelper::parseEmblemString(QIcon &emblem, QString &pos, const QString 
                 return false;
 
             auto info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(imgPath));
-            const QString &suffix = info->nameInfo(NameInfo::kCompleteSuffix);
+            const QString &suffix = info->nameOf(NameInfoType::kCompleteSuffix);
             // check support type
             if (suffix != "svg" && suffix != "png" && suffix != "gif" && suffix != "bmp" && suffix != "jpg")
                 return false;

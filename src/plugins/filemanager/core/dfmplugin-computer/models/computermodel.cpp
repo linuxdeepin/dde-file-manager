@@ -99,7 +99,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                 { "Property_Key_DisplayName", itemName },
                 { "Property_Key_Editable", item->info->renamable() }
             };
-            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item->info->urlInfo(UrlInfo::kUrl), map);
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", item->info->urlOf(UrlInfoType::kUrl), map);
             item->itemName = itemName;
         }
         return itemName;
@@ -134,7 +134,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->url;
 
     case kSuffixRole:
-        return item->info ? item->info->nameInfo(NameInfo::kSuffix) : "";
+        return item->info ? item->info->nameOf(NameInfoType::kSuffix) : "";
 
     case kProgressVisiableRole:
         return item->info ? item->info->showProgress() : false;

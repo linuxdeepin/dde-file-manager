@@ -70,7 +70,7 @@ void TemplateMenuPrivate::createActionByNormalFile(const QString &path)
         return;
     }
 
-    const QString &entryText = fileInfo->nameInfo(AbstractFileInfo::FileNameInfoType::kCompleteBaseName);
+    const QString &entryText = fileInfo->nameOf(AbstractFileInfo::FileNameInfoType::kCompleteBaseName);
     const QIcon &icon = fileInfo->fileIcon();
     QAction *action = new QAction(icon, entryText, Q_NULLPTR);
     action->setData(QVariant::fromValue(path));

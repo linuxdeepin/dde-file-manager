@@ -197,7 +197,7 @@ bool OemMenuPrivate::isSuffixSupport(const QAction *action, const QUrl &url, con
     auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
 
     // X-DFM-SupportSuffix not exist
-    if (!fileInfo || fileInfo->isAttributes(IsInfo::kIsDir) || !action || (!action->property(kSupportSuffixKey).isValid() && !action->property(kSupportSuffixAliasKey).isValid())) {
+    if (!fileInfo || fileInfo->isAttributes(OptInfoType::kIsDir) || !action || (!action->property(kSupportSuffixKey).isValid() && !action->property(kSupportSuffixAliasKey).isValid())) {
         if (allEx7z) {
             return false;
         }
@@ -208,7 +208,7 @@ bool OemMenuPrivate::isSuffixSupport(const QAction *action, const QUrl &url, con
     supportList << action->property(kSupportSuffixAliasKey).toStringList();
 
     // 7z.001,7z.002, 7z.003 ... 7z.xxx
-    QString cs = fileInfo->nameInfo(NameInfo::kCompleteSuffix);
+    QString cs = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
     if (supportList.contains(cs, Qt::CaseInsensitive)) {
         return true;
     }
@@ -239,7 +239,7 @@ bool OemMenuPrivate::isAllEx7zFile(const QList<QUrl> &files) const
         }
 
         // 7z.001,7z.002, 7z.003 ... 7z.xxx
-        QString cs = fileInfo->nameInfo(NameInfo::kCompleteSuffix);
+        QString cs = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
         if (!cs.startsWith(QString("7z."))) {
             return false;
         }
@@ -514,7 +514,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
             return {};
         }
 
-        menuType = fileInfo->isAttributes(IsInfo::kIsDir) ? kSingleDir : kSingleFile;
+        menuType = fileInfo->isAttributes(OptInfoType::kIsDir) ? kSingleDir : kSingleFile;
     } else {
         menuType = kMultiFileDirs;
     }

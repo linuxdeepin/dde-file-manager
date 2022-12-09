@@ -38,16 +38,16 @@ public:
     explicit MasteredMediaFileInfo(const QUrl &url);
 
     bool exists() const override;
-    virtual QString displayInfo(const DisplayInfoType type = DisplayInfoType::kFileDisplayName) const override;
-    QString nameInfo(const FileNameInfoType type = FileNameInfoType::kFileName) const override;
-    virtual QUrl urlInfo(const FileUrlInfoType type = FileUrlInfoType::kUrl) const override;
-    virtual bool isAttributes(const FileIsType type = FileIsType::kIsFile) const override;
+    virtual QString displayOf(const DisplayInfoType type) const override;
+    QString nameOf(const FileNameInfoType type) const override;
+    virtual QUrl urlOf(const FileUrlInfoType type) const override;
+    virtual bool isAttributes(const FileIsType type) const override;
     QVariantHash extraProperties() const override;
 
     void refresh() override;
-    virtual bool canAttributes(const FileCanType type = FileCanType::kCanDrag) const override;
-    Qt::DropActions supportedAttributes(const SupportType type = SupportType::kDrag) const override;
-    QString viewTip(const ViewType type = ViewType::kEmptyDir) const override;
+    virtual bool canAttributes(const FileCanType type) const override;
+    Qt::DropActions supportedOfAttributes(const SupportType type) const override;
+    QString viewOfTip(const ViewType type = ViewType::kEmptyDir) const override;
 };
 
 }

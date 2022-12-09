@@ -123,7 +123,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
             return false;
         }
 
-        if (info->isAttributes(IsInfo::kIsSymLink) || info->isAttributes(IsInfo::kIsFile)) {
+        if (info->isAttributes(OptInfoType::kIsSymLink) || info->isAttributes(OptInfoType::kIsFile)) {
             ok = deleteFileOnOtherDevice(url);
         } else {
             ok = deleteDirOnOtherDevice(info);
@@ -175,15 +175,15 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
         return false;
 
     if (dir->countChildFile() < 0)
-        return deleteFileOnOtherDevice(dir->urlInfo(UrlInfo::kUrl));
+        return deleteFileOnOtherDevice(dir->urlOf(UrlInfoType::kUrl));
 
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     AbstractDirIteratorPointer iterator(nullptr);
     do {
         QString errorMsg;
-        iterator = DirIteratorFactory::create<AbstractDirIterator>(dir->urlInfo(UrlInfo::kUrl), &errorMsg);
+        iterator = DirIteratorFactory::create<AbstractDirIterator>(dir->urlOf(UrlInfoType::kUrl), &errorMsg);
         if (!iterator) {
-            action = doHandleErrorAndWait(dir->urlInfo(UrlInfo::kUrl), AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
+            action = doHandleErrorAndWait(dir->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -204,7 +204,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
             return false;
         }
 
-        if (info->isAttributes(IsInfo::kIsSymLink) || info->isAttributes(IsInfo::kIsFile)) {
+        if (info->isAttributes(OptInfoType::kIsSymLink) || info->isAttributes(OptInfoType::kIsFile)) {
             ok = deleteFileOnOtherDevice(url);
         } else {
             ok = deleteDirOnOtherDevice(info);
@@ -215,7 +215,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
     }
 
     // delete self dir
-    return deleteFileOnOtherDevice(dir->urlInfo(UrlInfo::kUrl));
+    return deleteFileOnOtherDevice(dir->urlOf(UrlInfoType::kUrl));
 }
 /*!
  * \brief DoCopyFilesWorker::doHandleErrorAndWait Blocking handles errors and returns
