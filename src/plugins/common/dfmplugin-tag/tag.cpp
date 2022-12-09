@@ -44,6 +44,7 @@
 
 #include <QRectF>
 #include <QDBusConnection>
+#include <QCoreApplication>
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 
@@ -65,13 +66,16 @@ void Tag::initialize()
     WatcherFactory::regClass<TagFileWatcher>(TagManager::scheme());
     DirIteratorFactory::regClass<TagDirIterator>(TagManager::scheme());
 
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
-    connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Tag::onAllPluginsInitialized, Qt::DirectConnection);
+    if (DPF_NAMESPACE::LifeCycle::isAllPluginsStarted())
+        onAllPluginsStarted();
+    else
+        connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Tag::onAllPluginsStarted, Qt::DirectConnection);
 
     TagManager::instance();
 
     bindEvents();
     followEvents();
+    bindWindows();
 }
 
 bool Tag::start()
@@ -108,7 +112,7 @@ void Tag::regTagCrumbToTitleBar()
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", TagManager::scheme(), QVariantMap {});
 }
 
-void Tag::onAllPluginsInitialized()
+void Tag::onAllPluginsStarted()
 {
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", TagManager::scheme());
 
@@ -118,7 +122,8 @@ void Tag::onAllPluginsInitialized()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", TagManager::scheme(), TagDirMenuCreator::name());
     dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
 
-    initDbus();
+    if (qApp->applicationName() == "dde-desktop")
+        initDbus();
 }
 
 QWidget *Tag::createTagWidget(const QUrl &url)
@@ -213,6 +218,15 @@ void Tag::bindEvents()
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted", TagEventReceiver::instance(), &TagEventReceiver::handleSidebarOrderChanged);
 
     dpfSlotChannel->connect("dfmplugin_tag", "slot_GetTags", TagEventReceiver::instance(), &TagEventReceiver::handleGetTags);
+}
+
+void Tag::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
 }
 
 void Tag::initServiceDBusInterfaces(QDBusConnection *connection)

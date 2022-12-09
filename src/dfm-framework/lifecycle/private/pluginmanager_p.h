@@ -49,10 +49,14 @@ class PluginManagerPrivate : public QSharedData
     QStringList pluginLoadIIDs;
     QStringList pluginLoadPaths;
     QStringList blackPlguinNames;
+    QStringList lazyLoadPluginsNames;
     QStringList loadedVirtualPlugins;
     QStringList unloadedVirtualPlugins;
     QQueue<PluginMetaObjectPointer> readQueue;
+    QQueue<PluginMetaObjectPointer> notLazyLoadQuene;
     QQueue<PluginMetaObjectPointer> loadQueue;
+    bool allPluginsInitialized { false };
+    bool allPluginsStarted { false };
 
 public:
     explicit PluginManagerPrivate(PluginManager *qq);
@@ -70,7 +74,6 @@ public:
     bool startPlugins();
     void stopPlugins();
 
-    static QMutex *mutex();
     static void scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
                                const QStringList &pluginPaths,
                                const QStringList &pluginIIDs,

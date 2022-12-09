@@ -137,7 +137,8 @@ void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &
 {
     bool ignore = false;
     if (hookIfs) {
-        if (ignore = hookIfs->dataRenamed(oldUrl, newUrl))
+        ignore = hookIfs->dataRenamed(oldUrl, newUrl);
+        if (ignore)
             qDebug() << "dataRenamed: ignore target" << newUrl << "old:" << oldUrl;
     }
 

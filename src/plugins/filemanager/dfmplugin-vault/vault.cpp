@@ -22,6 +22,9 @@
 #include "utils/vaultvisiblemanager.h"
 #include "utils/vaulthelper.h"
 #include "utils/vaultfilehelper.h"
+#include "events/vaulteventreceiver.h"
+
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QUrl>
 
@@ -31,15 +34,18 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 
 using namespace dfmplugin_vault;
 
+DFMBASE_USE_NAMESPACE
+
 void Vault::initialize()
 {
     VaultVisibleManager::instance()->infoRegister();
+    VaultEventReceiver::instance()->connectEvent();
+
+    bindWindows();
 }
 
 bool Vault::start()
 {
-    VaultVisibleManager::instance()->pluginServiceRegister();
-
     // follow event
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", VaultHelper::instance(), &VaultHelper::urlsToLocal);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", VaultFileHelper::instance(), &VaultFileHelper::cutFile);
@@ -58,4 +64,14 @@ bool Vault::start()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", VaultFileHelper::instance(), &VaultFileHelper::handleDropFiles);
 
     return true;
+}
+
+void Vault::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [](quint64 id) {
+        VaultVisibleManager::instance()->onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened,
+            VaultVisibleManager::instance(), &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
 }

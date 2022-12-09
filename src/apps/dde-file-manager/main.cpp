@@ -113,10 +113,15 @@ static bool pluginsLoad()
     }
 
     qDebug() << "using plugins dir:" << pluginsDirs;
-    if (DTK_CORE_NAMESPACE::DSysInfo::isCommunityEdition())   // TODO(zhangs): use config
-        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, { "dfmplugin-vault" });
+    // TODO(zhangs): use config
+    static const QStringList kLazyLoadPluginNames { "dfmplugin-emblem", "dfmplugin-burn", "dfmplugin-dirshare",
+                                                    "dfmplugin-tag", "dfmplugin-avfsbrowser", "dfmplugin-myshares",
+                                                    "dfmplugin-smbbrowser", "dfmplugin-recent", "dfmplugin-trash",
+                                                    "dfmplugin-search", "dfmplugin-vault", "dfmplugin-filepreview" };
+    if (DTK_CORE_NAMESPACE::DSysInfo::isCommunityEdition())
+        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, { "dfmplugin-vault" }, kLazyLoadPluginNames);
     else
-        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs);
+        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, {}, kLazyLoadPluginNames);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

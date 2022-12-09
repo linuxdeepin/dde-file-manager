@@ -59,7 +59,6 @@ public:
 private:
     //! true为已注册 false未注册
     bool infoRegisterState { false };
-    bool serviceRegisterState { false };
 };
 }
 #endif   // VAULTVISIBLEMANAGER_H

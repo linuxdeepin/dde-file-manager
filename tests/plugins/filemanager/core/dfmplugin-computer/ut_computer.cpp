@@ -88,14 +88,6 @@ TEST_F(UT_Computer, Stop)
     EXPECT_NO_FATAL_FAILURE(ins.stop());
 }
 
-TEST_F(UT_Computer, OnWindowCreated)
-{
-    stub.set_lamda(&Computer::regComputerCrumbToTitleBar, [] { __DBG_STUB_INVOKE__ });
-    EXPECT_NO_FATAL_FAILURE(ins.onWindowCreated(0));
-    EXPECT_NO_FATAL_FAILURE(ins.onWindowCreated(1));
-    EXPECT_NO_FATAL_FAILURE(ins.onWindowCreated(-2222));
-}
-
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 

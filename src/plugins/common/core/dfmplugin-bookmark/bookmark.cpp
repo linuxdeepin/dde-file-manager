@@ -35,11 +35,9 @@ DFMBASE_USE_NAMESPACE
 
 void BookMark::initialize()
 {
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this,
-            &BookMark::onWindowCreated, Qt::DirectConnection);
-
     bindEvents();
     followEvents();
+    bindWindows();
 }
 
 bool BookMark::start()
@@ -50,18 +48,24 @@ bool BookMark::start()
     return true;
 }
 
-void BookMark::onWindowCreated(quint64 winId)
+void BookMark::onWindowOpened(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
 
-    connect(window, &FileManagerWindow::sideBarInstallFinished, this,
-            []() {
-                DefaultItemManager::instance()->initDefaultItems();
-                BookMarkManager::instance()->bookmarkDataToQuickAccess();
-                BookMarkManager::instance()->addQuickAccessItemsFromConfig();
-            },
-            Qt::DirectConnection);
+    if (window->sideBar()) {
+        onSideBarInstallFinished();
+    } else {
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this,
+                &BookMark::onSideBarInstallFinished, Qt::DirectConnection);
+    }
+}
+
+void BookMark::onSideBarInstallFinished()
+{
+    DefaultItemManager::instance()->initDefaultItems();
+    BookMarkManager::instance()->bookmarkDataToQuickAccess();
+    BookMarkManager::instance()->addQuickAccessItemsFromConfig();
 }
 
 void BookMark::bindScene(const QString &parentScene)
@@ -99,6 +103,16 @@ void BookMark::bindEvents()
                             BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPBOOKMARK_NAMESPACE), "slot_AddPluginItem",
                             BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handlePluginItem);
+}
+
+void BookMark::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this,
+            &BookMark::onWindowOpened, Qt::DirectConnection);
 }
 
 void BookMark::followEvents()

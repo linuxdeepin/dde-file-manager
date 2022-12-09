@@ -53,7 +53,6 @@ PluginMetaObjectPointer PluginManagerPrivate::pluginMetaObj(const QString &name,
                                                             const QString &version)
 {
     dpfCheckTimeBegin();
-    QMutexLocker lock(PluginManagerPrivate::mutex());
     int size = readQueue.size();
     int idx = 0;
     while (idx < size) {
@@ -82,7 +81,6 @@ bool PluginManagerPrivate::loadPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
     dpfCheckTimeBegin();
 
-    QMutexLocker lock(PluginManagerPrivate::mutex());
     bool result = doLoadPlugin(pluginMetaObj);
 
     dpfCheckTimeEnd();
@@ -97,7 +95,6 @@ bool PluginManagerPrivate::initPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
     dpfCheckTimeBegin();
 
-    QMutexLocker lock(PluginManagerPrivate::mutex());
     bool result = doInitPlugin(pluginMetaObj);
 
     dpfCheckTimeEnd();
@@ -112,8 +109,6 @@ bool PluginManagerPrivate::startPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
     dpfCheckTimeBegin();
 
-    //线程互斥
-    QMutexLocker lock(PluginManagerPrivate::mutex());
     bool result = doStartPlugin(pluginMetaObj);
 
     dpfCheckTimeEnd();
@@ -128,8 +123,6 @@ void PluginManagerPrivate::stopPlugin(PluginMetaObjectPointer &pluginMetaObj)
 {
     dpfCheckTimeBegin();
 
-    // 线程互斥
-    QMutexLocker lock(PluginManagerPrivate::mutex());
     doStopPlugin(pluginMetaObj);
 
     dpfCheckTimeEnd();
@@ -143,29 +136,20 @@ bool PluginManagerPrivate::readPlugins()
 {
     dpfCheckTimeBegin();
 
-    int currMaxCountThread = QThreadPool::globalInstance()->maxThreadCount();
-    if (currMaxCountThread < 4) {
-        QThreadPool::globalInstance()->setMaxThreadCount(4);
-    }
-
-    // 内部已有线程互斥
-    QFuture<void> scanController = QtConcurrent::run(scanfAllPlugin,
-                                                     &readQueue,
-                                                     pluginLoadPaths,
-                                                     pluginLoadIIDs,
-                                                     blackPlguinNames);
-    scanController.waitForFinished();
-
-    QMutexLocker lock(PluginManagerPrivate::mutex());
-
-    QFuture<void> mapController = QtConcurrent::map(readQueue.begin(),
-                                                    readQueue.end(),
-                                                    readJsonToMeta);
-    mapController.waitForFinished();
+    scanfAllPlugin(&readQueue, pluginLoadPaths, pluginLoadIIDs, blackPlguinNames);
+    qInfo() << "Lazy load plugin names: " << lazyLoadPluginsNames;
+    std::for_each(readQueue.begin(), readQueue.end(), [this](PluginMetaObjectPointer obj) {
+        readJsonToMeta(obj);
+        if (!lazyLoadPluginsNames.contains(obj->name()))
+            notLazyLoadQuene.append(obj);
+        else
+            qInfo() << "Skip load: " << obj->name();
+    });
 
 #ifdef QT_DEBUG
-    for (auto read : readQueue)
+    for (auto read : readQueue) {
         qDebug() << read;
+    }
 #endif
 
     dpfCheckTimeEnd();
@@ -194,11 +178,8 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
                               QDir::Filter::Files,
                               QDirIterator::IteratorFlag::NoIteratorFlags);
 
-        QMutexLocker lock(PluginManagerPrivate::mutex());
-
         while (dirItera.hasNext()) {
             dirItera.next();
-
             PluginMetaObjectPointer metaObj(new PluginMetaObject);
             const QString &fileName { dirItera.path() + "/" + dirItera.fileName() };
             metaObj->d->loader->setFileName(fileName);
@@ -306,33 +287,19 @@ void PluginManagerPrivate::readJsonToMeta(PluginMetaObjectPointer metaObject)
 
 void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const QJsonObject &metaData)
 {
-    QString &&version = metaData.value(kPluginVersion).toString();
-    metaObject->d->version = version;
-
-    QString &&compatVersion = metaData.value(kPluginCompatversion).toString();
-    metaObject->d->compatVersion = compatVersion;
-
-    QString &&category = metaData.value(kPluginCategory).toString();
-    metaObject->d->category = category;
+    metaObject->d->version = metaData.value(kPluginVersion).toString();
+    metaObject->d->compatVersion = metaData.value(kPluginCompatversion).toString();
+    metaObject->d->category = metaData.value(kPluginCategory).toString();
 
     QJsonArray &&licenseArray = metaData.value(kPluginLicense).toArray();
-    auto licenItera = licenseArray.begin();
-    while (licenItera != licenseArray.end()) {
-        metaObject->d->license.append(licenItera->toString());
-        ++licenItera;
-    }
+    std::for_each(licenseArray.begin(), licenseArray.end(), [metaObject](const auto &licenItera) {
+        metaObject->d->license.append(licenItera.toString());
+    });
 
-    QString &&copyright = metaData.value(kPluginCopyright).toString();
-    metaObject->d->copyright = copyright;
-
-    QString &&vendor = metaData.value(kPluginVendor).toString();
-    metaObject->d->vendor = vendor;
-
-    QString &&description = metaData.value(kPluginDescription).toString();
-    metaObject->d->description = description;
-
-    QString &&urlLink = metaData.value(kPluginUrlLink).toString();
-    metaObject->d->urlLink = urlLink;
+    metaObject->d->copyright = metaData.value(kPluginCopyright).toString();
+    metaObject->d->vendor = metaData.value(kPluginVendor).toString();
+    metaObject->d->description = metaData.value(kPluginDescription).toString();
+    metaObject->d->urlLink = metaData.value(kPluginUrlLink).toString();
 
     QJsonArray &&dependsArray = metaData.value(kPluginDepends).toArray();
     auto itera = dependsArray.begin();
@@ -357,10 +324,7 @@ bool PluginManagerPrivate::loadPlugins()
 {
     dpfCheckTimeBegin();
 
-    QFuture<void> sortController = QtConcurrent::run(dependsSort,
-                                                     &loadQueue,
-                                                     &readQueue);
-    sortController.waitForFinished();
+    dependsSort(&loadQueue, &notLazyLoadQuene);
 
     bool ret = true;
     std::for_each(loadQueue.begin(), loadQueue.end(), [&ret, this](PluginMetaObjectPointer pointer) {
@@ -386,6 +350,7 @@ bool PluginManagerPrivate::initPlugins()
     });
 
     emit Listener::instance()->pluginsInitialized();
+    allPluginsInitialized = true;
     dpfCheckTimeEnd();
 
     return ret;
@@ -405,6 +370,7 @@ bool PluginManagerPrivate::startPlugins()
     });
 
     emit Listener::instance()->pluginsStarted();
+    allPluginsStarted = true;
     dpfCheckTimeEnd();
 
     return ret;
@@ -424,12 +390,6 @@ void PluginManagerPrivate::stopPlugins()
     dpfCheckTimeEnd();
 }
 
-QMutex *PluginManagerPrivate::mutex()
-{
-    static QMutex m;
-    return &m;
-}
-
 /*!
  * \brief 按照依赖排序
  * \param dstQueue
@@ -441,8 +401,6 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
     dpfCheckTimeBegin();
     Q_ASSERT(dstQueue);
     Q_ASSERT(srcQueue);
-
-    QMutexLocker lock(PluginManagerPrivate::mutex());
 
     PluginDependGroup dependGroup;   // list of pair<depended plugin, plugin>
     QMap<QString, PluginMetaObjectPointer> srcMap;   // key: plugin name

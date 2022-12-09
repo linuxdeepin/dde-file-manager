@@ -44,8 +44,10 @@ private:
     void addFileOperations();
     void addCustomTopWidget();
     void followEvents();
+    void bindWindows();
+
 private slots:
-    void onAllPluginsInitialized();
+    void onAllPluginsStarted();
 };
 
 }

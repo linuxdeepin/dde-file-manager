@@ -131,7 +131,7 @@ PluginMetaObject::State PluginMetaObject::pluginState() const
  * 获取插件对象接口
  * \return
  */
-QSharedPointer<Plugin> PluginMetaObject::plugin()
+QSharedPointer<Plugin> PluginMetaObject::plugin() const
 {
     return d->plugin;
 }
@@ -141,7 +141,7 @@ QSharedPointer<Plugin> PluginMetaObject::plugin()
  * 获取插件加载错误信息
  * \return
  */
-QString PluginMetaObject::errorString()
+QString PluginMetaObject::errorString() const
 {
     return d->error;
 }

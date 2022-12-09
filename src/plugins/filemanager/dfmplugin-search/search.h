@@ -48,6 +48,7 @@ private slots:
     void regSearchToWorkspace();
     void regSearchToDetailView();
     void bindEvents();
+    void bindWindows();
 };
 
 }

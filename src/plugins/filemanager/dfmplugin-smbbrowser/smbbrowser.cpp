@@ -73,21 +73,19 @@ void SmbBrowser::initialize()
 
     EntryEntityFactor::registCreator<SmbIntegrationEntity>(kSmbInteg);
 
-    connect(dpfListener, &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerNetworkAccessPrehandler, Qt::DirectConnection);
+    connect(SmbIntegrationManager::instance(), &SmbIntegrationManager::refreshToSmbIntegrationMode, this, &SmbBrowser::onWindowOpened);
+    connect(SmbIntegrationManager::instance(), &SmbIntegrationManager::refreshToSmbSeperatedMode, this, &SmbBrowser::onRefreshToSmbSeperatedMode);
+    dfmplugin_menu_util::menuSceneRegisterScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
+    bindScene("ComputerMenu");
+    bindWindows();
+    registerNetworkAccessPrehandler();
 
     dfmplugin_menu_util::menuSceneRegisterScene(SmbIntComputerMenuCreator::name(), new SmbIntComputerMenuCreator());
-
     SmbIntegrationManager::instance();
 }
 
 bool SmbBrowser::start()
 {
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
-    connect(SmbIntegrationManager::instance(), &SmbIntegrationManager::refreshToSmbIntegrationMode, this, &SmbBrowser::onWindowOpened);
-    connect(SmbIntegrationManager::instance(), &SmbIntegrationManager::refreshToSmbSeperatedMode, this, &SmbBrowser::onRefreshToSmbSeperatedMode);
-    dfmplugin_menu_util::menuSceneRegisterScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
-    bindScene("ComputerMenu");
-
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSmb));
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", QString(Global::Scheme::kSmb), SmbBrowserMenuCreator::name());
 
@@ -208,6 +206,15 @@ void SmbBrowser::bindSceneOnAdded(const QString &newScene)
             eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &SmbBrowser::bindSceneOnAdded);
         bindScene(newScene);
     }
+}
+
+void SmbBrowser::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
 }
 
 void SmbBrowser::addNeighborToSidebar()

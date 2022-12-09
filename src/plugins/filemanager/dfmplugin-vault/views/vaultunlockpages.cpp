@@ -93,7 +93,7 @@ void VaultUnlockPages::pageSelect(PageType page)
         setTitle(recoveryKeyView->titleText());
         addContent(recoveryKeyView);
         clearButtons();
-        QStringList btnList = recoveryKeyView->btnText();
+        const QStringList &btnList = recoveryKeyView->btnText();
         addButton(btnList[0], false);
         addButton(btnList[1], true, ButtonType::ButtonRecommend);
         connect(recoveryKeyView, &RecoveryKeyView::sigCloseDialog, this, &VaultUnlockPages::close);

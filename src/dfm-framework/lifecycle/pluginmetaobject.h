@@ -111,8 +111,8 @@ public:
     QString urlLink() const;
     QList<PluginDepend> depends() const;
     State pluginState() const;
-    QSharedPointer<Plugin> plugin();
-    QString errorString();
+    QSharedPointer<Plugin> plugin() const;
+    QString errorString() const;
 
 private:
     QSharedPointer<PluginMetaObjectPrivate> d;

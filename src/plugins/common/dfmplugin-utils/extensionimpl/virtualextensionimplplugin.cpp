@@ -36,8 +36,7 @@ void VirtualExtensionImplPlugin::initialize()
     auto manager = &ExtensionPluginManager::instance();   // run in main thread
     connect(manager, &ExtensionPluginManager::requestInitlaizePlugins, manager, &ExtensionPluginManager::onLoadingPlugins);
 
-    dpfHookSequence->follow("dfmplugin_emblem", "hook_ExtendEmblems_Fetch",
-                            &ExtensionEmblemManager::instance(), &ExtensionEmblemManager::onFetchCustomEmblems);
+    followEvents();
 }
 
 bool VirtualExtensionImplPlugin::start()
@@ -66,6 +65,22 @@ void VirtualExtensionImplPlugin::bindSceneOnAdded(const QString &newScene)
         if (waitToBind.isEmpty())
             eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &VirtualExtensionImplPlugin::bindSceneOnAdded);
         bindScene(newScene);
+    }
+}
+
+void VirtualExtensionImplPlugin::followEvents()
+{
+    // `dfmplugin-emblem` is a lazy loedded plugin, cannot follow it whene current init
+    bool ret = dpfHookSequence->follow("dfmplugin_emblem", "hook_ExtendEmblems_Fetch",
+                                       &ExtensionEmblemManager::instance(), &ExtensionEmblemManager::onFetchCustomEmblems);
+    if (!ret) {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this,
+                [](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-emblem")
+                        dpfHookSequence->follow("dfmplugin_emblem", "hook_ExtendEmblems_Fetch", &ExtensionEmblemManager::instance(), &ExtensionEmblemManager::onFetchCustomEmblems);
+                },
+                Qt::DirectConnection);
     }
 }
 

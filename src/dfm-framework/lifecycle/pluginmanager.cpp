@@ -57,6 +57,12 @@ void PluginManager::addBlackPluginName(const QString &name)
         d->blackPlguinNames.push_back(name);
 }
 
+void PluginManager::addLazyLoadPluginName(const QString &name)
+{
+    if (!d->lazyLoadPluginsNames.contains(name))
+        d->lazyLoadPluginsNames.push_back(name);
+}
+
 /*!
  * \brief setPluginPaths 设置插件加载的路径
  * \param const QStringList &pluginPaths 传入路径列表
@@ -90,6 +96,16 @@ bool PluginManager::startPlugin(PluginMetaObjectPointer &pointer)
 void PluginManager::stopPlugin(PluginMetaObjectPointer &pointer)
 {
     return d->stopPlugin(pointer);
+}
+
+bool PluginManager::isAllPluginsInitialized()
+{
+    return d->allPluginsInitialized;
+}
+
+bool PluginManager::isAllPluginsStarted()
+{
+    return d->allPluginsStarted;
 }
 
 /*!
@@ -176,4 +192,9 @@ QStringList PluginManager::pluginPaths() const
 QStringList PluginManager::blackList() const
 {
     return d->blackPlguinNames;
+}
+
+QStringList PluginManager::lazyLoadList() const
+{
+    return d->lazyLoadPluginsNames;
 }

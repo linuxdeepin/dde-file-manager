@@ -24,6 +24,7 @@
 #include "pluginmetaobject.h"
 
 DPF_BEGIN_NAMESPACE
+namespace LifeCycle {
 
 Q_GLOBAL_STATIC(PluginManager, pluginManager);
 
@@ -35,25 +36,32 @@ Q_GLOBAL_STATIC(PluginManager, pluginManager);
  * like org.deepin.plugin.[XXX]
  * \param paths
  */
-void LifeCycle::initialize(const QStringList &IIDs, const QStringList &paths)
+void initialize(const QStringList &IIDs, const QStringList &paths)
 {
     for (const QString &id : IIDs)
         pluginManager->addPluginIID(id);
     pluginManager->setPluginPaths(paths);
 }
 
-void LifeCycle::initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames)
+void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames)
 {
     for (const QString &name : blackNames)
         pluginManager->addBlackPluginName(name);
     initialize(IIDs, paths);
 }
 
+void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames, const QStringList &lazyNames)
+{
+    for (const QString &name : lazyNames)
+        pluginManager->addLazyLoadPluginName(name);
+    initialize(IIDs, paths, blackNames);
+}
+
 /*!
  * \brief LifeCycle::pluginIIDs Get plugin identity
  * \return all id list
  */
-QStringList LifeCycle::pluginIIDs()
+QStringList pluginIIDs()
 {
     return pluginManager->pluginIIDs();
 }
@@ -62,18 +70,23 @@ QStringList LifeCycle::pluginIIDs()
  * \brief LifeCycle::pluginPaths get all plugin path list
  * \return plugin path list
  */
-QStringList LifeCycle::pluginPaths()
+QStringList pluginPaths()
 {
     return pluginManager->pluginPaths();
 }
 
-QStringList LifeCycle::blackList()
+QStringList blackList()
 {
     return pluginManager->blackList();
 }
 
-PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,
-                                                 const QString version)
+QStringList lazyLoadList()
+{
+    return pluginManager->lazyLoadList();
+}
+
+PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
+                                      const QString version)
 {
     return pluginManager->pluginMetaObj(pluginName, version);
 }
@@ -89,7 +102,7 @@ PluginMetaObjectPointer LifeCycle::pluginMetaObj(const QString &pluginName,
  * See the file pluginmetaobject.h/.cpp
  * \return true if success
  */
-bool LifeCycle::readPlugins()
+bool readPlugins()
 {
     return pluginManager->readPlugins();
 }
@@ -110,7 +123,7 @@ bool LifeCycle::readPlugins()
  *
  * \return true if success
  */
-bool LifeCycle::loadPlugins()
+bool loadPlugins()
 {
     if (!pluginManager->loadPlugins())
         return false;
@@ -131,12 +144,12 @@ bool LifeCycle::loadPlugins()
  * See the stopPlugins function in the class PluginManager for details
  *
  */
-void LifeCycle::shutdownPlugins()
+void shutdownPlugins()
 {
     pluginManager->stopPlugins();
 }
 
-bool LifeCycle::loadPlugin(PluginMetaObjectPointer &pointer)
+bool loadPlugin(PluginMetaObjectPointer &pointer)
 {
     if (!pluginManager->loadPlugin(pointer))
         return false;
@@ -148,9 +161,20 @@ bool LifeCycle::loadPlugin(PluginMetaObjectPointer &pointer)
     return true;
 }
 
-void LifeCycle::shutdownPlugin(PluginMetaObjectPointer &pointer)
+void shutdownPlugin(PluginMetaObjectPointer &pointer)
 {
     pluginManager->stopPlugin(pointer);
 }
 
+bool isAllPluginsInitialized()
+{
+    return pluginManager->isAllPluginsInitialized();
+}
+
+bool isAllPluginsStarted()
+{
+    return pluginManager->isAllPluginsStarted();
+}
+
+}   // namespace LifeCycle
 DPF_END_NAMESPACE

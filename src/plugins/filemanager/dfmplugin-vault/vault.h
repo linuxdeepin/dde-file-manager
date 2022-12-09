@@ -34,7 +34,10 @@ class Vault : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
+
+private:
+    void bindWindows();
 };
-}
+}   // namespace dfmplugin_vault
 
 #endif   // VAULT_H

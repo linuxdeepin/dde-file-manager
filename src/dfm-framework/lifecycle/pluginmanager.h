@@ -49,8 +49,10 @@ public:
     QStringList pluginIIDs() const;
     QStringList pluginPaths() const;
     QStringList blackList() const;
+    QStringList lazyLoadList() const;
     void addPluginIID(const QString &pluginIIDs);
     void addBlackPluginName(const QString &name);
+    void addLazyLoadPluginName(const QString &name);
     void setPluginPaths(const QStringList &pluginPaths);
 
     bool readPlugins();
@@ -66,6 +68,8 @@ public:
     bool initPlugin(PluginMetaObjectPointer &pointer);
     bool startPlugin(PluginMetaObjectPointer &pointer);
     void stopPlugin(PluginMetaObjectPointer &pointer);
+    bool isAllPluginsInitialized();
+    bool isAllPluginsStarted();
 };
 
 DPF_END_NAMESPACE

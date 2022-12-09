@@ -64,6 +64,14 @@ void Core::initialize()
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
     // 初始化剪切板
     ClipBoard::instance();
+
+    connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
+    connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, [this](quint64 id) {
+        QTimer::singleShot(0, [this, id]() {
+            onWindowOpened(id);
+        });
+    });
 }
 
 bool Core::start()
@@ -93,11 +101,6 @@ bool Core::start()
         DevMngIns->startMonitor();
         DevMngIns->startPollingDeviceUsage();
     }
-
-    // show first window when all plugin initialized
-    connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
-
-    connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
 
     // the object must be initialized in main thread, otherwise the GVolumeMonitor do not have an event loop.
     static std::once_flag flg;
@@ -133,4 +136,27 @@ void Core::onAllPluginsStarted()
         dpfSignalDispatcher->publish(DPF_MACRO_TO_STR(DPCORE_NAMESPACE), "signal_StartApp");
     else
         qInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
+}
+
+/*!
+ * \brief init all lazy plguis call once
+ * \param windd
+ */
+void Core::onWindowOpened(quint64 windd)
+{
+    Q_UNUSED(windd)
+
+    std::once_flag flag;
+    std::call_once(flag, []() {
+        const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
+        std::for_each(list.begin(), list.end(), [](const QString &name) {
+            QTimer::singleShot(0, [name]() {
+                Q_ASSERT(qApp->thread() == QThread::currentThread());
+                qInfo() << "About to load plugin:" << name;
+                auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
+                if (plugin)
+                    qInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin);
+            });
+        });
+    });
 }

@@ -58,8 +58,8 @@ void Search::initialize()
     WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
 
     bindEvents();
+    bindWindows();
 
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
     connect(Application::instance(), &Application::indexFullTextSearchChanged,
             SearchManager::instance(), &SearchManager::onIndexFullTextConfigChanged, Qt::DirectConnection);
 }
@@ -155,4 +155,13 @@ void Search::bindEvents()
                             CustomManager::instance(), &CustomManager::redirectedPath);
 }
 
+void Search::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
 }
+
+}   // namespace Search

@@ -60,7 +60,8 @@ void MyShares::initialize()
     dfmplugin_menu_util::menuSceneRegisterScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
     beMySubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
 
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
+    followEvents();
+    bindWindows();
 }
 
 bool MyShares::start()
@@ -70,8 +71,6 @@ bool MyShares::start()
 
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
-
-    hookEvent();
 
     return true;
 }
@@ -105,10 +104,17 @@ void MyShares::onWindowOpened(quint64 winId)
     else
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addToSidebar(); }, Qt::DirectConnection);
 
-    if (window->titleBar())
+    auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
+    if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
         regMyShareToSearch();
-    else
-        connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regMyShareToSearch(); }, Qt::DirectConnection);
+    } else {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+            Q_UNUSED(iid)
+            if (name == "dfmplugin-search")
+                regMyShareToSearch();
+        },
+                Qt::DirectConnection);
+    }
 }
 
 void MyShares::onShareAdded(const QString &)
@@ -174,7 +180,7 @@ void MyShares::beMySubOnAdded(const QString &newScene)
     }
 }
 
-void MyShares::hookEvent()
+void MyShares::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", ShareEventHelper::instance(), &ShareEventHelper::blockDelete);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_MoveToTrash", ShareEventHelper::instance(), &ShareEventHelper::blockMoveToTrash);
@@ -185,4 +191,15 @@ void MyShares::hookEvent()
 
     // file operation
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", ShareFileHelper::instance(), &ShareFileHelper::openFileInPlugin);
+}
+
+void MyShares::bindWindows()
+{
+    DFMBASE_USE_NAMESPACE
+
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
 }

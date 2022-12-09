@@ -32,27 +32,28 @@
 
 DPF_BEGIN_NAMESPACE
 
-class LifeCycle final : public QObject
-{
-    Q_OBJECT
+namespace LifeCycle {
+void initialize(const QStringList &IIDs, const QStringList &paths);
+void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames);
+void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames,
+                const QStringList &lazyNames);
 
-public:
-    static void initialize(const QStringList &IIDs, const QStringList &paths);
-    static void initialize(const QStringList &IIDs, const QStringList &paths, const QStringList &blackNames);
+bool isAllPluginsInitialized();
+bool isAllPluginsStarted();
+QStringList pluginIIDs();
+QStringList pluginPaths();
+QStringList blackList();
+QStringList lazyLoadList();
+PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
+                                      const QString version = "");
 
-    static QStringList pluginIIDs();
-    static QStringList pluginPaths();
-    static QStringList blackList();
-    static PluginMetaObjectPointer pluginMetaObj(const QString &pluginName,
-                                                 const QString version = "");
+bool readPlugins();
+bool loadPlugins();
+void shutdownPlugins();
 
-    static bool readPlugins();
-    static bool loadPlugins();
-    static void shutdownPlugins();
-
-    static bool loadPlugin(PluginMetaObjectPointer &pointer);
-    static void shutdownPlugin(PluginMetaObjectPointer &pointer);
-};
+bool loadPlugin(PluginMetaObjectPointer &pointer);
+void shutdownPlugin(PluginMetaObjectPointer &pointer);
+}   // namepsace LifeCycle
 
 DPF_END_NAMESPACE
 

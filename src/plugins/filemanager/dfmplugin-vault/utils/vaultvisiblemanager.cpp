@@ -38,7 +38,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -91,12 +90,6 @@ void VaultVisibleManager::infoRegister()
 
 void VaultVisibleManager::pluginServiceRegister()
 {
-    if (!serviceRegisterState) {
-        connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
-        VaultEventReceiver::instance()->connectEvent();
-        serviceRegisterState = true;
-    }
-
     if (isVaultEnabled()) {
         dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", VaultHelper::instance()->scheme());
         dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());

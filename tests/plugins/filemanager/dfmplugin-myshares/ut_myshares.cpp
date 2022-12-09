@@ -70,7 +70,7 @@ TEST_F(UT_MyShares, Start)
     auto push2 = static_cast<Push2>(&EventChannelManager::push);
     stub.set_lamda(push2, [] { __DBG_STUB_INVOKE__ return QVariant(); });
 
-    stub.set_lamda(&MyShares::hookEvent, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&MyShares::followEvents, [] { __DBG_STUB_INVOKE__ });
 
     EXPECT_TRUE(ins.start());
 }
@@ -279,5 +279,5 @@ TEST_F(UT_MyShares, HookEvent)
     auto follow5 = static_cast<HookType5>(&EventSequenceManager::follow);
     stub.set_lamda(follow5, [] { __DBG_STUB_INVOKE__ return true; });
 
-    EXPECT_NO_FATAL_FAILURE(ins.hookEvent());
+    EXPECT_NO_FATAL_FAILURE(ins.followEvents());
 }

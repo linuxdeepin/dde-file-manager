@@ -59,11 +59,15 @@ void Recent::initialize()
     WatcherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
 
-    connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Recent::onAllPluginsInitialized);
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
+    if (DPF_NAMESPACE::LifeCycle::isAllPluginsStarted())
+        onAllPluginsStarted();
+    else
+        connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Recent::onAllPluginsStarted);
+
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
 
-    followEvent();
+    followEvents();
+    bindWindows();
     RecentEventReceiver::instance()->initConnect();
     RecentManager::instance();
 }
@@ -140,7 +144,7 @@ void Recent::removeRecentItem()
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", RecentManager::rootUrl());
 }
 
-void Recent::followEvent()
+void Recent::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
@@ -159,12 +163,21 @@ void Recent::followEvent()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", RecentFileHelper::instance(), &RecentFileHelper::openFileInTerminal);
 }
 
+void Recent::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
+}
+
 void Recent::regRecentCrumbToTitleBar()
 {
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentManager::scheme(), QVariantMap {});
 }
 
-void Recent::onAllPluginsInitialized()
+void Recent::onAllPluginsStarted()
 {
     const QString &nameKey = "Recent";
     const QString &displayName = tr("Recent");

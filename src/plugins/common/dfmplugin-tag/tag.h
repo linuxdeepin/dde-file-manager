@@ -49,7 +49,7 @@ private slots:
     void onWindowOpened(quint64 windId);
     void regTagCrumbToTitleBar();
     void installToSideBar();
-    void onAllPluginsInitialized();
+    void onAllPluginsStarted();
 
 private:
     static QWidget *createTagWidget(const QUrl &url);
@@ -57,6 +57,7 @@ private:
     void bindScene(const QString &parentScene);
     void onMenuSceneAdded(const QString &scene);
     void bindEvents();
+    void bindWindows();
     void initDbus();
     void initServiceDBusInterfaces(QDBusConnection *connection);
 

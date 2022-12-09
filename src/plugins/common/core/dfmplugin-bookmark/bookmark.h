@@ -42,11 +42,13 @@ public:
     virtual bool start() override;
 
 private slots:
-    void onWindowCreated(quint64 winId);
+    void onWindowOpened(quint64 winId);
+    void onSideBarInstallFinished();
 
 private:
     void bindScene(const QString &parentScene);
     void bindEvents();
+    void bindWindows();
     void followEvents();
     void onMenuSceneAdded(const QString &scene);
 

@@ -42,6 +42,9 @@ private slots:
     void bindSceneOnAdded(const QString &newScene);
 
 private:
+    void followEvents();
+
+private:
     QSet<QString> waitToBind;
     bool eventSubscribed { false };
 };

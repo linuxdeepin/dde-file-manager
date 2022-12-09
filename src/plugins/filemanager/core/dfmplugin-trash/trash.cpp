@@ -53,10 +53,13 @@ void Trash::initialize()
     WatcherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
 
-    connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Trash::onAllPluginsInitialized);
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
+    if (DPF_NAMESPACE::LifeCycle::isAllPluginsStarted())
+        onAllPluginsStarted();
+    else
+        connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Trash::onAllPluginsStarted);
 
     followEvents();
+    bindWindows();
 }
 
 bool Trash::start()
@@ -164,7 +167,16 @@ void Trash::followEvents()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TrashFileHelper::instance(), &TrashFileHelper::openFileInPlugin);
 }
 
-void Trash::onAllPluginsInitialized()
+void Trash::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
+}
+
+void Trash::onAllPluginsStarted()
 {
     const QString &nameKey = "Trash";
     const QString &displayName = SystemPathUtil::instance()->systemPathDisplayName(nameKey);

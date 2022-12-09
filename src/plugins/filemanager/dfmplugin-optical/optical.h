@@ -46,6 +46,7 @@ private:
 
 private:
     void bindEvents();
+    void bindWindows();
     void bindFileOperations();
 
 private slots:

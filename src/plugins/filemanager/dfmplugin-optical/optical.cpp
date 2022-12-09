@@ -61,14 +61,8 @@ void Optical::initialize()
     DirIteratorFactory::regClass<MasteredMediaDirIterator>(Global::Scheme::kBurn);
 
     bindEvents();
+    bindWindows();
     bindFileOperations();
-
-    connect(
-            &FMWindowsIns, &FileManagerWindowsManager::windowCreated, this,
-            [this]() {
-                addOpticalCrumbToTitleBar();
-            },
-            Qt::DirectConnection);
 
     // for blank disc
     connect(
@@ -166,6 +160,20 @@ void Optical::bindEvents()
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", &OpticalEventReceiver::instance(), &OpticalEventReceiver::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
+}
+
+void Optical::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        Q_UNUSED(id)
+        addOpticalCrumbToTitleBar();
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this,
+            [this]() {
+                addOpticalCrumbToTitleBar();
+            },
+            Qt::DirectConnection);
 }
 
 void Optical::onDeviceChanged(const QString &id)

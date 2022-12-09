@@ -50,7 +50,8 @@ private:
     void regMyShareToSearch();
     void beMySubScene(const QString &scene);
     void beMySubOnAdded(const QString &newScene);
-    void hookEvent();
+    void followEvents();
+    void bindWindows();
 
 private:
     QSet<QString> waitToBind;

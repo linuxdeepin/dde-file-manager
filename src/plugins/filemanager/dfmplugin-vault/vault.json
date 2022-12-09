@@ -10,6 +10,5 @@
     "Description" : "The vault plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
-        {"Name" : "dfmplugin-core", "Version": "1.0.0"}
     ]
 }

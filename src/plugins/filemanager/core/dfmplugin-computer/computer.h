@@ -50,7 +50,6 @@ public:
     virtual bool start() override;
 
 protected Q_SLOTS:
-    void onWindowCreated(quint64 winId);
     void onWindowOpened(quint64 windd);
 
 private:
@@ -59,6 +58,7 @@ private:
     void regComputerToSearch();
     void bindEvents();
     void followEvents();
+    void bindWindows();
 };
 }
 

@@ -51,6 +51,7 @@ protected Q_SLOTS:
 private:
     void bindScene(const QString &parentScene);
     void bindSceneOnAdded(const QString &newScene);
+    void bindWindows();
 
 private:
     void addNeighborToSidebar();

@@ -40,7 +40,7 @@ private slots:
     void onRecentDisplayChanged(bool enabled);
     void onWindowOpened(quint64 windId);
     void regRecentCrumbToTitleBar();
-    void onAllPluginsInitialized();
+    void onAllPluginsStarted();
 
 private:
     void installToSideBar();
@@ -48,7 +48,8 @@ private:
     void addRecentItem();
     void removeRecentItem();
 
-    void followEvent();
+    void followEvents();
+    void bindWindows();
 };
 
 }

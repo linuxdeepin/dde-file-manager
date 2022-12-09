@@ -67,8 +67,6 @@ RecoveryKeyView::RecoveryKeyView(QWidget *parent)
 
     mainFrame->setLayout(mainLayout);
 
-    QStringList btnList({ tr("Cancel", "button"), tr("Unlock", "button") });
-
     //    connect(this, &RecoveryKeyView::buttonClicked, this, &RecoveryKeyView::onButtonClicked);
     connect(recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &RecoveryKeyView::recoveryKeyChanged);
     connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, this, &RecoveryKeyView::onUnlockVault);
@@ -79,6 +77,11 @@ RecoveryKeyView::~RecoveryKeyView()
     if (tooltip) {
         tooltip->deleteLater();
     }
+}
+
+QStringList RecoveryKeyView::btnText()
+{
+    return { tr("Cancel", "button"), tr("Unlock", "button") };
 }
 
 QString RecoveryKeyView::titleText()

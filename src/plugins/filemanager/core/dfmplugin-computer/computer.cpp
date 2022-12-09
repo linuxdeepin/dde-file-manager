@@ -64,11 +64,9 @@ void Computer::initialize()
     EntryEntityFactor::registCreator<StashedProtocolEntryFileEntity>(SuffixInfo::kStashedProtocol);
     EntryEntityFactor::registCreator<AppEntryFileEntity>(SuffixInfo::kAppEntry);
 
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
-
     bindEvents();
     followEvents();
+    bindWindows();
 }
 
 bool Computer::start()
@@ -84,34 +82,32 @@ bool Computer::start()
     return true;
 }
 
-void Computer::onWindowCreated(quint64 winId)
-{
-    Q_UNUSED(winId);
-    regComputerCrumbToTitleBar();
-}
-
 void Computer::onWindowOpened(quint64 winId)
 {
     auto window = FMWindowsIns.findWindowById(winId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
-
+    regComputerCrumbToTitleBar();
     if (window->workSpace())
         ComputerItemWatcherInstance->startQueryItems();
     else
-        connect(
-                window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
 
     if (window->sideBar())
         addComputerToSidebar();
     else
-        connect(
-                window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
 
-    if (window->titleBar())
+    auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
+    if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
         regComputerToSearch();
-    else
-        connect(
-                window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regComputerToSearch(); }, Qt::DirectConnection);
+    } else {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+            Q_UNUSED(iid)
+            if (name == "dfmplugin-search")
+                regComputerToSearch();
+        },
+                Qt::DirectConnection);
+    }
 
     CustomViewExtensionView func { ComputerUtils::devicePropertyDialog };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
@@ -160,6 +156,15 @@ void Computer::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", ComputerEventReceiver::instance(), &ComputerEventReceiver::handleSepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Group_Sort", ComputerEventReceiver::instance(), &ComputerEventReceiver::handleSortItem);
+}
+
+void Computer::bindWindows()
+{
+    const auto &winIdList { FMWindowsIns.windowIdList() };
+    std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
+        onWindowOpened(id);
+    });
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
 }
 
 }   // namespace dfmplugin_computer
