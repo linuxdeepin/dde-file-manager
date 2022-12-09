@@ -146,6 +146,7 @@ bool VaultEventReceiver::handleShortCutPasteFiles(const quint64 &winId, const QL
 
 void VaultEventReceiver::handleHideFilesResult(const quint64 &winId, const QList<QUrl> &urls, bool ok)
 {
+    Q_UNUSED(winId)
     if (ok && !urls.isEmpty()) {
         const QUrl &url = urls.first();
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
@@ -182,6 +183,7 @@ bool VaultEventReceiver::changeUrlEventFilter(quint64 windowId, const QUrl &url)
             return true;
         }
     }
+    return false;
 }
 
 bool VaultEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)

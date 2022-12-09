@@ -337,11 +337,11 @@ void DeviceHelper::readOpticalInfo(QVariantMap &datas)
         datas[DeviceProperty::kOpticalMediaType] = info.value(kBurnMediaType).toInt();
         datas[DeviceProperty::kOpticalWriteSpeed] = info.value(kBurnWriteSpeed).toStringList();
 
-        qDebug() << "optical usage loaded: " << tag << endl
-                 << "sizeTotal: " << datas.value(DeviceProperty::kSizeTotal) << endl
-                 << "sizeUsed: " << datas.value(DeviceProperty::kSizeUsed) << endl
-                 << "sizeFree: " << datas.value(DeviceProperty::kSizeFree) << endl
-                 << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << endl
+        qDebug() << "optical usage loaded: " << tag << "\n"
+                 << "sizeTotal: " << datas.value(DeviceProperty::kSizeTotal) << "\n"
+                 << "sizeUsed: " << datas.value(DeviceProperty::kSizeUsed) << "\n"
+                 << "sizeFree: " << datas.value(DeviceProperty::kSizeFree) << "\n"
+                 << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << "\n"
                  << "speed: " << datas.value(DeviceProperty::kOpticalWriteSpeed);
     }
 }

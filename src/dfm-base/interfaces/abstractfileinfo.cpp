@@ -350,10 +350,11 @@ QString dfmbase::AbstractFileInfo::displayInfo(const DisPlay type) const
  */
 QUrl dfmbase::AbstractFileInfo::urlInfo(const UrlInfo type) const
 {
+    // FileUrlInfoType::kUrl don't you proxy,must use the original url
+    if (FileUrlInfoType::kUrl == type)
+        return dptr->url;
     CALL_PROXY(urlInfo(type));
     switch (type) {
-    case FileUrlInfoType::kUrl:
-        [[fallthrough]];
     case FileUrlInfoType::kOriginalUrl:
         [[fallthrough]];
     case FileUrlInfoType::kRedirectedFileUrl:
