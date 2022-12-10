@@ -6,6 +6,8 @@
 
 #include <QDateTime>
 
+using namespace dfmplugin_utils;
+
 QString FileMenuReportData::type() const
 {
     return "FileMenu";

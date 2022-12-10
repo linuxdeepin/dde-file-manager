@@ -48,7 +48,7 @@ public:
         kUrlOfNewWindow,   // default path to new window
         kUrlOfNewTab,   // default path to new tabs
         kThemeName,
-        kFileAndDirMixedSort  // Mixed sorting of ordinary files and directories
+        kFileAndDirMixedSort   // Mixed sorting of ordinary files and directories
     };
 
     Q_ENUM(ApplicationAttribute)
@@ -118,6 +118,7 @@ Q_SIGNALS:
     void showedHiddenFilesChanged(bool enable);
     void recentDisplayChanged(bool enable);
     void csdClickableAreaAttributeChanged(bool enabled);
+    void indexFullTextSearchChanged(bool enabled);
 
     void genericSettingCreated(Settings *settings);
     void appSettingCreated(Settings *settings);

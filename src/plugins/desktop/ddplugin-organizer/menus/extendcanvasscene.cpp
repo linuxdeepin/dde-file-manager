@@ -29,6 +29,7 @@
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/menuutils.h"
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
+#include "dfm-framework/dpf.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -42,8 +43,7 @@ AbstractMenuScene *ExtendCanvasCreator::create()
 }
 
 ExtendCanvasScenePrivate::ExtendCanvasScenePrivate(ExtendCanvasScene *qq)
-    : AbstractMenuScenePrivate(qq)
-    , q(qq)
+    : AbstractMenuScenePrivate(qq), q(qq)
 {
 }
 
@@ -96,16 +96,16 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
     auto actions = parent->actions();
     // auto arrage
     {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
             return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kAutoArrange;
         });
 
         if (actionIter != actions.end() && turnOn) {
             bool hide = false;
             if (CfgPresenter->mode() == OrganizerMode::kCustom) {
-                hide = onCollection; // don't show on colletion.
+                hide = onCollection;   // don't show on colletion.
             } else if (CfgPresenter->mode() == OrganizerMode::kNormalized) {
-                hide = true; // don't show in normal mode.
+                hide = true;   // don't show in normal mode.
             }
             if (hide)
                 (*actionIter)->setVisible(false);
@@ -114,15 +114,14 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 
     // sort by
     {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
             return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kSortBy;
         });
 
         // normal mode
         if (actionIter != actions.end()
-                && turnOn
-                && CfgPresenter->mode() == OrganizerMode::kNormalized
-                ) {
+            && turnOn
+            && CfgPresenter->mode() == OrganizerMode::kNormalized) {
             // on desktop
             if (!onCollection)
                 (*actionIter)->setVisible(false);
@@ -131,15 +130,14 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 
     // select all
     {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
             return ac->property(ActionPropertyKey::kActionID).toString() == dfmplugin_menu::ActionID::kSelectAll;
         });
 
         // normal mode
         if (actionIter != actions.end()
-                && turnOn
-                && CfgPresenter->mode() == OrganizerMode::kNormalized
-                ) {
+            && turnOn
+            && CfgPresenter->mode() == OrganizerMode::kNormalized) {
             // on desktop
             if (!onCollection)
                 (*actionIter)->setVisible(false);
@@ -148,15 +146,14 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 
     // wallpager
     {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
             return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kWallpaperSettings;
         });
 
         // normal mode
         if (actionIter != actions.end()
-                && turnOn
-                && CfgPresenter->mode() == OrganizerMode::kNormalized
-                ) {
+            && turnOn
+            && CfgPresenter->mode() == OrganizerMode::kNormalized) {
             // on onCollection
             if (onCollection)
                 (*actionIter)->setVisible(false);
@@ -165,12 +162,13 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 
     // Organize Desktop
     {
-        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+        auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
             return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kDisplaySettings;
         });
 
         if (actionIter == actions.end()) {
-            qWarning() << "can not find action:" << "display-settings";
+            qWarning() << "can not find action:"
+                       << "display-settings";
         } else {
             QAction *indexAction = *actionIter;
             parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeDesktop]);
@@ -197,7 +195,7 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 
     // icon size
     {
-        auto iconSizeIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+        auto iconSizeIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
             return ac->property(ActionPropertyKey::kActionID).toString() == ddplugin_canvas::ActionID::kIconSize;
         });
 
@@ -215,45 +213,45 @@ void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
 
 void ExtendCanvasScenePrivate::updateNormalMenu(QMenu *parent)
 {
-//    auto actions = parent->actions();
-//    auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
-//        return ac->property(ActionPropertyKey::kActionID).toString() == QString("display-settings");
-//    });
+    //    auto actions = parent->actions();
+    //    auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+    //        return ac->property(ActionPropertyKey::kActionID).toString() == QString("display-settings");
+    //    });
 
-//    if (actionIter == actions.end()) {
-//        qWarning() << "can not find action:" << "display-settings";
-//        return ;
-//    }
+    //    if (actionIter == actions.end()) {
+    //        qWarning() << "can not find action:" << "display-settings";
+    //        return ;
+    //    }
 }
 
 QMenu *ExtendCanvasScenePrivate::organizeBySubActions(QMenu *menu)
 {
     QMenu *subMenu = new QMenu(menu);
 
-//    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByCustom));
-//    predicateAction[ActionID::kOrganizeByCustom] = tempAction;
-//    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByCustom));
-//    tempAction->setCheckable(true);
+    //    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByCustom));
+    //    predicateAction[ActionID::kOrganizeByCustom] = tempAction;
+    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByCustom));
+    //    tempAction->setCheckable(true);
 
-//    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByType));
-//    predicateAction[ActionID::kOrganizeByType] = tempAction;
-//    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByType));
-//    tempAction->setCheckable(true);
+    //    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByType));
+    //    predicateAction[ActionID::kOrganizeByType] = tempAction;
+    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByType));
+    //    tempAction->setCheckable(true);
 
-//    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeAccessed));
-//    predicateAction[ActionID::kOrganizeByTimeAccessed] = tempAction;
-//    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeAccessed));
-//    tempAction->setCheckable(true);
+    //    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeAccessed));
+    //    predicateAction[ActionID::kOrganizeByTimeAccessed] = tempAction;
+    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeAccessed));
+    //    tempAction->setCheckable(true);
 
-//    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeModified));
-//    predicateAction[ActionID::kOrganizeByTimeModified] = tempAction;
-//    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeModified));
-//    tempAction->setCheckable(true);
+    //    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeModified));
+    //    predicateAction[ActionID::kOrganizeByTimeModified] = tempAction;
+    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeModified));
+    //    tempAction->setCheckable(true);
 
-//    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeCreated));
-//    predicateAction[ActionID::kOrganizeByTimeCreated] = tempAction;
-//    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeCreated));
-//    tempAction->setCheckable(true);
+    //    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByTimeCreated));
+    //    predicateAction[ActionID::kOrganizeByTimeCreated] = tempAction;
+    //    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByTimeCreated));
+    //    tempAction->setCheckable(true);
 
     return subMenu;
 }
@@ -354,8 +352,7 @@ QString ExtendCanvasScenePrivate::displaySizeToActionID(DisplaySize size)
 #endif
 
 ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
-    : AbstractMenuScene(parent)
-    , d(new ExtendCanvasScenePrivate(this))
+    : AbstractMenuScene(parent), d(new ExtendCanvasScenePrivate(this))
 {
     d->predicateName[ActionID::kOrganizeDesktop] = tr("Organize desktop");
     d->predicateName[ActionID::kOrganizeOptions] = tr("Desktop options");
@@ -469,6 +466,7 @@ bool ExtendCanvasScene::triggered(QAction *action)
         else if (actionId == ActionID::kOrganizeOptions) {
             emit CfgPresenter->showOptionWindow();
         }
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 
@@ -497,7 +495,7 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
                 if (1 == d->selectFiles.count()) {
                     auto index = d->view->model()->index(d->focusFile);
                     if (Q_UNLIKELY(!index.isValid()))
-                       qWarning() << "can not rename: invaild file" << d->focusFile;
+                        qWarning() << "can not rename: invaild file" << d->focusFile;
                     else
                         d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
                 } else {
@@ -529,5 +527,3 @@ bool ExtendCanvasScene::actionFilter(AbstractMenuScene *caller, QAction *action)
 
     return false;
 }
-
-

@@ -109,8 +109,10 @@ bool BookmarkMenuScene::triggered(QAction *action)
 
     if (action == d->predicateAction.value(BookmarkActionId::kActAddBookmarkKey)) {
         BookMarkManager::instance()->addBookMark(d->selectFiles);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
     } else if (action == d->predicateAction.value(BookmarkActionId::kActRemoveBookmarkKey)) {
         BookMarkManager::instance()->removeBookMark(d->focusFile);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
     }
 
     return AbstractMenuScene::triggered(action);

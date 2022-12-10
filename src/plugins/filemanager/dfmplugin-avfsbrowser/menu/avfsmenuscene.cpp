@@ -27,6 +27,7 @@
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-framework/dpf.h"
 
 #include <QDebug>
 #include <QMenu>
@@ -136,6 +137,7 @@ bool AvfsMenuScene::triggered(QAction *action)
         else if (id == kProperty)
             AvfsEventHandler::instance()->showProperty(d->selectFiles);
 
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
     return AbstractMenuScene::triggered(action);

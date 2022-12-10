@@ -54,6 +54,7 @@
 #include <unistd.h>
 
 Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(const char *)
 
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -214,6 +215,20 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
 {
     d->draggedUrl = QUrl {};
     d->draggedGroup.clear();
+
+    QModelIndex index = indexAt(event->pos());
+    if (index.isValid() && index.data(SideBarItem::kItemTypeRole) == SideBarItem::kSidebarItem) {
+        const QUrl &url = index.data(SideBarItem::kItemUrlRole).toUrl();
+        if (url.isValid()) {
+            auto info = SideBarInfoCacheMananger::instance()->itemInfo(url);
+            QString reportName = info.reportName;
+            QVariantMap data;
+            data.insert("sidebar_item", reportName);
+
+            dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Sidebar", data);
+        }
+    }
+
     DTreeView::mouseReleaseEvent(event);
 }
 

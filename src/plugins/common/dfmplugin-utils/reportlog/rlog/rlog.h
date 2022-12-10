@@ -11,6 +11,8 @@
 #include <QVariantMap>
 #include <QJsonObject>
 
+namespace dfmplugin_utils {
+
 class ReportDataInterface;
 class CommitLog;
 class RLog : public QObject
@@ -35,5 +37,7 @@ private:
     CommitLog *commitLog = nullptr;
     QThread *commitThread = nullptr;
 };
+
+}
 
 #endif   // RLOG_H

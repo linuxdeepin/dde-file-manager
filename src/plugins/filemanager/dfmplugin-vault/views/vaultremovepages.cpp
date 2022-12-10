@@ -30,6 +30,9 @@
 #include "removevaultview/vaultremovebypasswordview.h"
 #include "removevaultview/vaultremovebyrecoverykeyview.h"
 
+#include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/vaultreportdata.h"
+#include "dfm-framework/dpf.h"
+
 #include <DLabel>
 #include <QFrame>
 #include <QRegExpValidator>
@@ -37,6 +40,8 @@
 #include <QAbstractButton>
 #include <QLabel>
 #include <QVBoxLayout>
+
+Q_DECLARE_METATYPE(const char *)
 
 using namespace PolkitQt1;
 
@@ -284,7 +289,15 @@ void VaultRemovePages::onLockVault(int state)
 
 void VaultRemovePages::onVualtRemoveFinish(bool result)
 {
+    using namespace dfmplugin_utils;
+
     if (result) {
+        // report log
+        QVariantMap data;
+        data.insert("mode", VaultReportData::kDeleted);
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Vault", data);
+
         setInfo(tr("Deleted successfully"));
     } else {
         setInfo(tr("Failed to delete"));

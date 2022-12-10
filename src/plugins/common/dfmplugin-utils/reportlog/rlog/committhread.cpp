@@ -9,6 +9,8 @@
 #include <QJsonDocument>
 #include <QApplication>
 
+using namespace dfmplugin_utils;
+
 CommitLog::CommitLog(QObject *parent)
     : QObject(parent)
 {

@@ -23,6 +23,7 @@
 #include "smbbrowsermenuscene.h"
 #include "smbintegration/smbintegrationmanager.h"
 #include "private/smbbrowsermenuscene_p.h"
+#include "utils/smbbrowserutils.h"
 
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -111,11 +112,13 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
     if (d->selectFiles.count() != 1)
         return false;
 
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
     quint64 winId = d->windowId;
     const QString &smbUrl = d->selectFiles.first().toString();
     if (actId == SmbBrowserActionId::kOpenSmb || actId == SmbBrowserActionId::kMountSmb || actId == SmbBrowserActionId::kOpenSmbInNewWin) {
         DeviceManager::instance()->mountNetworkDeviceAsync(smbUrl, [actId, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
             if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
+                SmbBrowserUtils::instance()->reportLog(ok, err, mntPath);
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
             } else {
                 QUrl u = QUrl::fromLocalFile(mntPath);

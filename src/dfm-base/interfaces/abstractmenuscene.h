@@ -28,6 +28,8 @@ class QMenu;
 class QAction;
 QT_END_NAMESPACE
 
+Q_DECLARE_METATYPE(const char *)
+
 namespace dfmbase {
 
 class AbstractMenuScenePrivate;
@@ -59,7 +61,8 @@ protected:
 };
 
 //! this function must not be called in `actionFilter`
-inline bool filterActionBySubscene(AbstractMenuScene *self, QAction *action) {
+inline bool filterActionBySubscene(AbstractMenuScene *self, QAction *action)
+{
     if (!self || !action)
         return false;
 

@@ -26,8 +26,10 @@
 #include "utils/policy/policymanager.h"
 #include "utils/fileencrypthandle.h"
 
+#include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/vaultreportdata.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-framework/dpf.h"
 
 #include <DLabel>
 #include <DDialog>
@@ -41,6 +43,8 @@
 #include <QThread>
 #include <QMessageBox>
 #include <QTimer>
+
+Q_DECLARE_METATYPE(const char *)
 
 using namespace PolkitQt1;
 DFMBASE_USE_NAMESPACE
@@ -142,6 +146,7 @@ void VaultActiveFinishedView::setFinishedBtnEnabled(bool b)
 
 void VaultActiveFinishedView::slotEncryptComplete(int nState)
 {
+    using namespace dfmplugin_utils;
     if (nState == 0) {   // 创建保险箱成功
         waterProgress->setValue(100);
         waterProgress->stop();
@@ -149,6 +154,13 @@ void VaultActiveFinishedView::slotEncryptComplete(int nState)
         timer->setSingleShot(true);
         timer->start(500);
         VaultHelper::recordTime(kjsonGroupName, kjsonKeyCreateTime);
+
+        // report log
+        QVariantMap data;
+        data.insert("mode", VaultReportData::kCreated);
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Vault", data);
+
     } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }

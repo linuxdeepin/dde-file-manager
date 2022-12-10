@@ -36,6 +36,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/base/application/application.h"
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
@@ -59,6 +60,8 @@ void Search::initialize()
     bindEvents();
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
+    connect(Application::instance(), &Application::indexFullTextSearchChanged,
+            SearchManager::instance(), &SearchManager::onIndexFullTextConfigChanged, Qt::DirectConnection);
 }
 
 bool Search::start()

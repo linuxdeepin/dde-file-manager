@@ -25,6 +25,8 @@
 
 #include "dfmplugin_smbbrowser_global.h"
 
+#include "dfm-mount/base/dmount_global.h"
+
 #include <QString>
 #include <QIcon>
 #include <QMutex>
@@ -42,6 +44,7 @@ public:
     static QIcon icon();
 
     bool mountSmb(const quint64 windowId, const QList<QUrl> urls);
+    void reportLog(bool result, DFMMOUNT::DeviceError err, const QString &msg);
 
 public:
     static QMutex mutex;

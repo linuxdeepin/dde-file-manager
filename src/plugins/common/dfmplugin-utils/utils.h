@@ -27,6 +27,8 @@
 
 #include <dfm-framework/dpf.h>
 
+using namespace dpf;
+
 namespace dfmplugin_utils {
 
 class Utils : public DPF_NAMESPACE::PluginCreator
@@ -34,6 +36,11 @@ class Utils : public DPF_NAMESPACE::PluginCreator
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "utils.json")
 
+    DPF_EVENT_NAMESPACE(DPUTILS_NAMESPACE)
+
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_ReportLog_Commit)
+    DPF_EVENT_REG_SLOT(slot_ReportLog_ReportMenuData)
 public:
     virtual QSharedPointer<DPF_NAMESPACE::Plugin> create(const QString &pluginName) override;
 };

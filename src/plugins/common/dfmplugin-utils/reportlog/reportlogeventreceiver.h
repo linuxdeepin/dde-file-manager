@@ -32,6 +32,7 @@ class ReportLogEventReceiver : public QObject
 public:
     explicit ReportLogEventReceiver(QObject *parent = nullptr);
     void commit(const QString &type, const QVariantMap &args);
+    void handleMenuData(const QString &name, const QList<QUrl> &urlList);
     void bindEvents();
 };
 }

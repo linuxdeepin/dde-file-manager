@@ -23,8 +23,11 @@
 #include "utils/searchhelper.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/searchreportdata.h"
 
 #include <dfm-framework/dpf.h>
+
+Q_DECLARE_METATYPE(const char *)
 
 using namespace dfmplugin_search;
 
@@ -64,6 +67,18 @@ void SearchManager::stop(quint64 winId)
 {
     if (taskIdMap.contains(winId))
         stop(taskIdMap[winId]);
+}
+
+void SearchManager::onIndexFullTextConfigChanged(bool enabled)
+{
+    using namespace dfmplugin_utils;
+
+    QVariantMap data;
+    data.insert("mode", enabled ? SearchReportData::kTurnOn : SearchReportData::kTurnOff);
+
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Search", data);
+
+    // TODO(liuzhangjian): impl createFullTextIndex logic
 }
 
 SearchManager::SearchManager(QObject *parent)

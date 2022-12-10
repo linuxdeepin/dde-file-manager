@@ -21,14 +21,18 @@
 #include "reportlogeventreceiver.h"
 #include "rlog/rlog.h"
 
+#include "dfm-base/base/schemefactory.h"
+
 #include <dfm-framework/dpf.h>
 
+using namespace dfmbase;
 using namespace dfmplugin_utils;
 
 void ReportLogEventReceiver::bindEvents()
 {
-    // Subscribe all the singal events of plugins which need report log.
-    dpfSignalDispatcher->subscribe("dfmplugin_smbbrowser", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
+    // connect all the slot events of plugins which need report log.
+    dpfSlotChannel->connect("dfmplugin_utils", "slot_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
+    dpfSlotChannel->connect("dfmplugin_utils", "slot_ReportLog_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
 }
 
 ReportLogEventReceiver::ReportLogEventReceiver(QObject *parent)
@@ -39,4 +43,34 @@ ReportLogEventReceiver::ReportLogEventReceiver(QObject *parent)
 void ReportLogEventReceiver::commit(const QString &type, const QVariantMap &args)
 {
     RLog::instance()->commit(type, args);
+}
+
+void ReportLogEventReceiver::handleMenuData(const QString &name, const QList<QUrl> &urlList)
+{
+    QVariantMap data {};
+    data.insert("item_name", name);
+
+    QString location("");
+    QStringList types {};
+
+    if (urlList.count() > 0) {
+        location = "File";
+
+        for (auto url : urlList) {
+            auto info = InfoFactory::create<AbstractFileInfo>(url);
+            if (info) {
+                QString type = info->nameInfo(NameInfo::kMimeTypeName);
+                if (!types.contains(type))
+                    types << type;
+            }
+        }
+
+    } else {
+        location = "Workspace";
+    }
+
+    data.insert("location", location);
+    data.insert("type", types);
+
+    RLog::instance()->commit("FileMenu", data);
 }

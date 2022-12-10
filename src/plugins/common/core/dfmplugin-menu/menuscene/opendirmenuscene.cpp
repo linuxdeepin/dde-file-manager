@@ -127,6 +127,7 @@ bool OpenDirMenuScene::triggered(QAction *action)
     // open in new window
     if (actionId == ActionID::kOpenInNewWindow) {
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 
@@ -139,18 +140,21 @@ bool OpenDirMenuScene::triggered(QAction *action)
             urls << d->focusFile;
 
         dpfSignalDispatcher->publish(GlobalEventType::kOpenInTerminal, d->windowId, urls);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 
     // open as admin
     if (actionId == ActionID::kOpenAsAdmin) {
         dpfSignalDispatcher->publish(GlobalEventType::kOpenAsAdmin, d->isEmptyArea ? d->currentDir : d->focusFile);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 
     // select all
     if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
         dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectAll", d->windowId);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 

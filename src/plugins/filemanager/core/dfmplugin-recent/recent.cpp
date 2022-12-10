@@ -121,9 +121,10 @@ void Recent::addRecentItem()
         { "Property_Key_DisplayName", tr("Recent") },
         { "Property_Key_Icon", RecentManager::icon() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
-        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) } /*,
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         // use old config to hide it for compatibility
-        { "Property_Key_VisiableControl", "recent" }*/
+        //{ "Property_Key_VisiableControl", "recent" }
+        { "Property_Key_ReportName", "Recent" }
     };
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
 

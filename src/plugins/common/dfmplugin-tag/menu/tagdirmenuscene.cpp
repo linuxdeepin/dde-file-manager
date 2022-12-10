@@ -174,6 +174,9 @@ bool TagDirMenuScene::triggered(QAction *action)
 {
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actionId)) {
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
+
         // open file location
         if (actionId == TagActionId::kOpenFileLocation) {
             for (const auto &file : d->selectFiles) {

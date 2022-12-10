@@ -112,9 +112,7 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
             break;
         case Application::kIndexFullTextSearch:
-            if (value.toBool()) {
-                //TODO: emit full search index signal
-            }
+            Q_EMIT self->indexFullTextSearchChanged(value.toBool());
             break;
         default:
             break;

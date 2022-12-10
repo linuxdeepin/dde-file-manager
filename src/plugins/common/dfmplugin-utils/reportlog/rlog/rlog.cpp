@@ -19,6 +19,8 @@
 #include <QJsonDocument>
 #include <QThread>
 
+using namespace dfmplugin_utils;
+
 RLog::RLog(QObject *parent)
     : QObject(parent)
 {

@@ -183,6 +183,9 @@ bool SendToMenuScene::triggered(QAction *action)
 
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
+
         if (actId == ActionID::kCreateSymlink) {
             QUrl localUrl { d->focusFile };
             QList<QUrl> urls {};
@@ -221,7 +224,6 @@ bool SendToMenuScene::triggered(QAction *action)
                 return true;
             }
         }
-
         qWarning() << "action not found, id: " << actId;
         return false;
     } else {

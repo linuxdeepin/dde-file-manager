@@ -4,6 +4,8 @@
 
 #include "sidebarreportdata.h"
 
+using namespace dfmplugin_utils;
+
 QString SidebarReportData::type() const
 {
     return "Sidebar";

@@ -12,6 +12,8 @@
 //#include <ddiskmanager.h>
 #include <dblockdevice.h>
 
+using namespace dfmplugin_utils;
+
 static constexpr int kBlockMountTid { 1000500004 };
 static constexpr char kReportType[] { "BlockMount" };
 

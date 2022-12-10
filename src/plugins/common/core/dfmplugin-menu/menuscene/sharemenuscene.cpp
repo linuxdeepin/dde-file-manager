@@ -124,6 +124,9 @@ bool ShareMenuScene::triggered(QAction *action)
 
     if (!d->predicateAction.key(action).isEmpty()) {
         d->handleActionTriggered(action);
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
+
         return true;
     }
 

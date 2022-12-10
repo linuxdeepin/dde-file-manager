@@ -6,6 +6,8 @@
 
 #include <QDateTime>
 
+using namespace dfmplugin_utils;
+
 QString AppStartupReportData::type() const
 {
     return "AppStartup";

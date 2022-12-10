@@ -6,6 +6,8 @@
 
 #include <QDateTime>
 
+using namespace dfmplugin_utils;
+
 QString SearchReportData::type() const
 {
     return "Search";

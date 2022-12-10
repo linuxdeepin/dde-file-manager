@@ -30,6 +30,7 @@
 #include <QCloseEvent>
 #include <QKeyEvent>
 #include <QHideEvent>
+#include <QApplication>
 
 namespace dfmbase {
 

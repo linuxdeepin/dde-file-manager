@@ -272,6 +272,9 @@ bool CanvasMenuScene::triggered(QAction *action)
 
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.values().contains(action)) {
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
+
         // sort by
         {
             static const QMap<QString, Global::ItemRoles> sortRole = {
@@ -340,6 +343,8 @@ bool CanvasMenuScene::triggered(QAction *action)
             qWarning() << actionId << " doesn't belong to any scene.";
             return false;
         }
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
 
         const QString &sceneName = actionScene->name();
 
@@ -464,8 +469,7 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kWallpaperSettings));
 }
 
-void CanvasMenuScene::normalMenu(QMenu *parent)
-{
+void CanvasMenuScene::normalMenu(QMenu *parent) {
     Q_UNUSED(parent)
 }
 

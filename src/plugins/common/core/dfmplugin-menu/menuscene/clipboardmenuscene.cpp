@@ -207,5 +207,7 @@ bool ClipBoardMenuScene::triggered(QAction *action)
         dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCopyAction, selectedUrlsTemp);
     }
 
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), selectedUrlsTemp);
+
     return AbstractMenuScene::triggered(action);
 }

@@ -209,6 +209,8 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
         return false;
     }
 
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
+
     const QString &sceneName = actionScene->name();
     // ClipBoardMenu scene
     if (sceneName == kClipBoardMenuSceneName) {
@@ -271,6 +273,8 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
         qWarning() << actionId << " doesn't belong to any scene.";
         return false;
     }
+
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
 
     const QString &sceneName = actionScene->name();
     if (sceneName == kFileOperatorMenuSceneName) {

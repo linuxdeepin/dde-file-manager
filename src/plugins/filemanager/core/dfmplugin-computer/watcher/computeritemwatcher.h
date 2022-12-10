@@ -124,6 +124,8 @@ private:
 
     void cacheItem(const ComputerItemData &in);
 
+    QString reportName(const QUrl &url);
+
 private:
     ComputerDataList initedDatas;
     QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> appEntryWatcher { nullptr };

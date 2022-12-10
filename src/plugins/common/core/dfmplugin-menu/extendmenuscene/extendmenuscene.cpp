@@ -25,6 +25,7 @@
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-framework/dpf.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -262,6 +263,8 @@ bool ExtendMenuScene::triggered(QAction *action)
 
         QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(cmd, argFlag, d->currentDir, d->focusFile, d->selectFiles);
         qInfo() << "exec:" << runable.first << runable.second;
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
 
         if (!runable.first.isEmpty())
             return UniversalUtils::runCommand(runable.first, runable.second);

@@ -220,6 +220,7 @@ void SmbBrowser::addNeighborToSidebar()
         { "Property_Key_Icon", SmbBrowserUtils::icon() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_VisiableControl", "computers_in_lan" },
+        { "Property_Key_ReportName", "Network" },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
     };
 
@@ -266,6 +267,7 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
                 SmbIntegrationManager::instance()->addSmbIntegrationItem(makeSmbRootUrl(url), ctxMenuHandle);
             }
         } else {
+            SmbBrowserUtils::instance()->reportLog(ok, err, mpt);
             DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
             qDebug() << DeviceUtils::errMessage(err);
         }

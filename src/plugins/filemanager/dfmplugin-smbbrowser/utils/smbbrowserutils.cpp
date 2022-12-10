@@ -22,6 +22,7 @@
 */
 #include "smbbrowserutils.h"
 
+#include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/smbreportdata.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -31,6 +32,8 @@
 #include <dfm-framework/dpf.h>
 
 #include <QUrl>
+
+Q_DECLARE_METATYPE(const char *)
 
 using namespace dfmplugin_smbbrowser;
 
@@ -76,8 +79,9 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls)
     DFMBASE_USE_NAMESPACE
     QUrl url = urls.first();
     QString urlStr = url.toString();
-    DeviceManager::instance()->mountNetworkDeviceAsync(urlStr, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+    DeviceManager::instance()->mountNetworkDeviceAsync(urlStr, [windowId, url, this](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
+            this->reportLog(ok, err, mpt);
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         } else {
             QUrl u = mpt.isEmpty() ? url : QUrl::fromLocalFile(mpt);
@@ -85,4 +89,37 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls)
         }
     });
     return true;
+}
+
+void SmbBrowserUtils::reportLog(bool result, DFMMOUNT::DeviceError err, const QString &msg)
+{
+    using namespace dfmmount;
+    using namespace dfmplugin_utils;
+
+    QVariantMap data;
+    data.insert("result", result);
+
+    if (!result) {
+        switch (err) {
+        case DeviceError::kUserErrorUserCancelled:
+            data.insert("errorId", SmbReportData::kUserCancelError);
+            data.insert("errorSysMsg", msg);
+            data.insert("errorUiMsg", "User cancel mount dialog.");
+            break;
+        case DeviceError::kUDisksErrorNotMounted:
+        case DeviceError::kGIOErrorNotMounted:
+        case DeviceError::kUserErrorNotMounted:
+            data.insert("errorId", SmbReportData::kNotMount);
+            data.insert("errorSysMsg", msg);
+            data.insert("errorUiMsg", msg);
+            break;
+        default:
+            data.insert("errorId", SmbReportData::kMountError);
+            data.insert("errorSysMsg", msg);
+            data.insert("errorUiMsg", msg);
+            break;
+        }
+    }
+
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Smb", data);
 }

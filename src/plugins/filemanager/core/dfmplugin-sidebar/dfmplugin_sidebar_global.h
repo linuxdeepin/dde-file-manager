@@ -60,6 +60,7 @@ inline constexpr char kIsEjectable[] { "Property_Key_Ejectable" };   // value is
 inline constexpr char kIsEditable[] { "Property_Key_Editable" };   // value is bool
 inline constexpr char kIsHidden[] { "Property_Key_Hidden" };   // value is bool, item will be hidden
 inline constexpr char kVisiableControlKey[] { "Property_Key_VisiableControl" };   // a string, used to identify the item when visiable state changed in dconfig;
+inline constexpr char kReportName[] { "Property_Key_ReportName" };   // a string, used to report log
 // calllbacks
 inline constexpr char kCallbackItemClicked[] { "Property_Key_CallbackItemClicked" };   // value is ItemClickedActionCallback
 inline constexpr char kCallbackContextMenu[] { "Property_Key_CallbackContextMenu" };   // value is ContextMenuCallback
@@ -93,6 +94,7 @@ struct ItemInfo
     bool isEditable { false };
     bool isHidden { false };   // TODO(zhangs): update
     QString visiableControlKey;
+    QString reportName;
 
     ItemClickedActionCallback clickedCb { nullptr };
     ContextMenuCallback contextMenuCb { nullptr };
@@ -110,6 +112,7 @@ struct ItemInfo
           flags { qvariant_cast<Qt::ItemFlags>(map[PropertyKey::kQtItemFlags]) },
           isEjectable { map[PropertyKey::kIsEjectable].toBool() },
           visiableControlKey({ map[PropertyKey::kVisiableControlKey].toString() }),
+          reportName({ map[PropertyKey::kReportName].toString() }),
           clickedCb { qvariant_cast<ItemClickedActionCallback>(map[PropertyKey::kCallbackItemClicked]) },
           contextMenuCb { qvariant_cast<ContextMenuCallback>(map[PropertyKey::kCallbackContextMenu]) },
           renameCb { qvariant_cast<RenameCallback>(map[PropertyKey::kCallbackRename]) },

@@ -260,6 +260,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
             dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
         }
 
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 
@@ -274,6 +275,8 @@ bool FileOperatorMenuScene::triggered(QAction *action)
         } else {
             dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 
@@ -283,6 +286,8 @@ bool FileOperatorMenuScene::triggered(QAction *action)
                                      d->windowId,
                                      QList<QUrl>(),
                                      AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 
@@ -294,6 +299,8 @@ bool FileOperatorMenuScene::triggered(QAction *action)
         } else {
             FileUtils::setBackGround(d->focusFile.toLocalFile());
         }
+
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 

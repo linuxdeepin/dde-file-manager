@@ -45,6 +45,8 @@ SideBarItem::SideBarItem(const SideBarItem &item)
     setGroup(item.group());
     setIcon(item.icon());
     setText(item.text());
+
+    setData(kSidebarItem, kItemTypeRole);
 }
 
 SideBarItem::SideBarItem(const QIcon &icon, const QString &text, const QString &group, const QUrl &url)
@@ -92,6 +94,8 @@ SideBarItemSeparator::SideBarItemSeparator(const QString &group)
 {
     setGroup(group);
     setText(group);
+
+    setData(kSeparator, kItemTypeRole);
 }
 
 SideBarItemSeparator::~SideBarItemSeparator()

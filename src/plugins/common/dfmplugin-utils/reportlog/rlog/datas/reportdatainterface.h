@@ -8,6 +8,8 @@
 #include <QJsonObject>
 #include <QVariantMap>
 
+namespace dfmplugin_utils {
+
 class ReportDataInterface
 {
 public:
@@ -17,4 +19,5 @@ public:
     virtual QJsonObject prepareData(const QVariantMap &args) const = 0;
 };
 
-#endif // REPORTDATAINTERFACE_H
+}
+#endif   // REPORTDATAINTERFACE_H

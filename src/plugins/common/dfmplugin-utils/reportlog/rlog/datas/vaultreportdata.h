@@ -9,15 +9,18 @@
 
 #include "reportdatainterface.h"
 
+namespace dfmplugin_utils {
+
 class VaultReportData : public ReportDataInterface
 {
 public:
-    enum VaultMode{
-      kCreated = 1, //创建保险箱
-      kDeleted      //删除保险箱
+    enum VaultMode {
+        kCreated = 1,   //创建保险箱
+        kDeleted   //删除保险箱
     };
     QString type() const override;
     QJsonObject prepareData(const QVariantMap &args) const override;
 };
 
-#endif // VAULTREPORTDATA_H
+}
+#endif   // VAULTREPORTDATA_H

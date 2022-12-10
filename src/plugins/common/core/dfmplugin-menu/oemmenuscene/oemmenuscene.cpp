@@ -24,6 +24,7 @@
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-framework/dpf.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -138,8 +139,10 @@ bool OemMenuScene::triggered(QAction *action)
         return AbstractMenuScene::triggered(action);
 
     QPair<QString, QStringList> runable = OemMenu::instance()->makeCommand(action, d->currentDir, d->focusFile, d->selectFiles);
-    if (!runable.first.isEmpty())
+    if (!runable.first.isEmpty()) {
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return UniversalUtils::runCommand(runable.first, runable.second);
+    }
 
     return AbstractMenuScene::triggered(action);
 }

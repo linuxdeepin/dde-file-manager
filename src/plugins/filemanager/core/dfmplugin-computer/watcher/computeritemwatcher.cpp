@@ -442,6 +442,45 @@ void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
     initedDatas.insert(insertAt, in);
 }
 
+QString ComputerItemWatcher::reportName(const QUrl &url)
+{
+    //    if (url.scheme() == DFMGLOBAL_NAMESPACE::Scheme::kSmb) {
+    //        return "Sharing Folders";
+    //    } else if (url.scheme() == DFMROOT_SCHEME) {
+    //        QString strPath = url.path();
+    //        if (strPath.endsWith(SUFFIX_UDISKS)) {
+    //            // 截获盘符名
+    //            int startIndex = strPath.indexOf("/");
+    //            int endIndex = strPath.indexOf(".");
+    //            int count = endIndex - startIndex - 1;
+    //            QString result = strPath.mid(startIndex + 1, count);
+    //            // 组装盘符绝对路径
+    //            QString localPath = "/dev/" + result;
+    //            // 获得块设备路径
+    //            QStringList devicePaths = DDiskManager::resolveDeviceNode(localPath, {});
+    //            if (!devicePaths.isEmpty()) {
+    //                QString devicePath = devicePaths.first();
+    //                // 获得块设备对象
+    //                DBlockDevice *blDev = DDiskManager::createBlockDevice(devicePath);
+    //                // 获得块设备挂载点
+    //                QByteArrayList mounts = blDev->mountPoints();
+    //                if (!mounts.isEmpty()) {
+    //                    QString mountPath = mounts.first();
+    //                    // 如果挂载点为"/"，则为系统盘
+    //                    if (mountPath == "/") {
+    //                        return "System Disk";
+    //                    } else {   // 数据盘
+    //                        return "Data Disk";
+    //                    }
+    //                }
+    //            }
+    //        } else if (strPath.endsWith(SUFFIX_GVFSMP)) {
+    //            return REPORT_SHARE_DIR;
+    //        }
+    //    }
+    return "unknow disk";
+}
+
 void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     if (!info)
@@ -468,13 +507,16 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 
     static const QStringList kItemVisiableControlKeys { "builtin_disks", "loop_dev", "other_disks", "mounted_share_dirs" };
     QString key;
+    QString reportName = "Unknown Disk";
     QString subGroup = Global::Scheme::kComputer;
     if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
         key = kItemVisiableControlKeys[1];
     } else if (info->extraProperty(DeviceProperty::kHintSystem).toBool()) {
         key = kItemVisiableControlKeys[0];
+        reportName = info->targetUrl().path() == "/" ? "System Disk" : "Data Disk";
     } else if (info->order() == EntryFileInfo::kOrderSmb || info->order() == EntryFileInfo::kOrderFtp) {
         key = kItemVisiableControlKeys[3];
+        reportName = "Sharing Folders";
         if (info->order() == EntryFileInfo::kOrderSmb)
             subGroup = Global::Scheme::kSmb;
         else if (info->order() == EntryFileInfo::kOrderFtp)
@@ -506,8 +548,8 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
         { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) },
-        { "Property_Key_VisiableControl", key }
-
+        { "Property_Key_VisiableControl", key },
+        { "Property_Key_ReportName", reportName }
     };
 
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->urlInfo(UrlInfo::kUrl), map);

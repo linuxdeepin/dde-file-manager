@@ -9,6 +9,8 @@
 
 #include <QObject>
 
+namespace dfmplugin_utils {
+
 class FileMenuReportData : public ReportDataInterface
 {
 public:
@@ -16,4 +18,5 @@ public:
     QJsonObject prepareData(const QVariantMap &args) const override;
 };
 
-#endif // FILEMENUREPORTDATA_H
+}
+#endif   // FILEMENUREPORTDATA_H

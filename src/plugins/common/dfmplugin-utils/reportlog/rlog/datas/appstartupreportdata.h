@@ -9,6 +9,8 @@
 
 #include <QObject>
 
+namespace dfmplugin_utils {
+
 class AppStartupReportData : public ReportDataInterface
 {
 public:
@@ -16,4 +18,5 @@ public:
     QJsonObject prepareData(const QVariantMap &args) const override;
 };
 
+}
 #endif   // APPSTARTUPREPORTDATA_H

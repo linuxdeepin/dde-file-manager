@@ -148,6 +148,7 @@ bool RecentMenuScene::triggered(QAction *action)
 {
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         if (actId == RecentActionID::kRemove) {
             RecentFileHelper::removeRecent(d->selectFiles);
             return true;

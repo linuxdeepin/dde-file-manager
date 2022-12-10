@@ -230,6 +230,7 @@ bool SearchMenuScene::triggered(QAction *action)
 {
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actionId)) {
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         // open file location
         if (actionId == SearchActionId::kOpenFileLocation) {
             for (const auto &file : d->selectFiles) {

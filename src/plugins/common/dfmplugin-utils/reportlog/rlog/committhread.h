@@ -7,6 +7,7 @@
 
 #include <QObject>
 #include <QLibrary>
+namespace dfmplugin_utils {
 
 class CommitLog : public QObject
 {
@@ -27,4 +28,5 @@ private:
     WriteEventLog writeEventLogFunc = nullptr;
 };
 
+}
 #endif   // COMMITTHREAD_H

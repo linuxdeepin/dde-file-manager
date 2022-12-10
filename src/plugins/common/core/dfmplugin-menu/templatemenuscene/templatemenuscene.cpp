@@ -90,5 +90,7 @@ bool TemplateMenuScene::triggered(QAction *action)
                                  QUrl::fromLocalFile(action->data().toString()),
                                  "");
 
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
+
     return AbstractMenuScene::triggered(action);
 }

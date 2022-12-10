@@ -22,6 +22,7 @@
 */
 #include "virtualreportlogplugin.h"
 #include "rlog/rlog.h"
+
 using namespace dfmplugin_utils;
 
 void VirtualReportLogPlugin::initialize()

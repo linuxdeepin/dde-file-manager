@@ -10,6 +10,8 @@
 #include <QObject>
 #include <QDateTime>
 
+namespace dfmplugin_utils {
+
 class SidebarReportData : public ReportDataInterface
 {
 public:
@@ -17,4 +19,5 @@ public:
     QJsonObject prepareData(const QVariantMap &args) const override;
 };
 
+}
 #endif   // SIDEBARREPORTDATA_H

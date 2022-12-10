@@ -37,7 +37,13 @@ public:
     enum Roles {
         kItemUrlRole = Dtk::UserRole + 1,
         kItemGroupRole,
+        kItemTypeRole,
         kItemUserCustomRole = Dtk::UserRole + 0x0100
+    };
+
+    enum ItemTypes {
+        kSidebarItem,
+        kSeparator
     };
 
     explicit SideBarItem(const QUrl &url);

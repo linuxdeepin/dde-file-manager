@@ -43,6 +43,9 @@ public:
     void stop(const QString &taskId);
     void stop(quint64 winId);
 
+public Q_SLOTS:
+    void onIndexFullTextConfigChanged(bool enabled);
+
 signals:
     void matched(const QString &taskId);
     void searchCompleted(const QString &taskId);

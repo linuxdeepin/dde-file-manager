@@ -37,8 +37,6 @@ class SmbBrowser : public dpf::Plugin
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "smbbrowser.json")
 
     DPF_EVENT_NAMESPACE(DPSMBBROWSER_NAMESPACE)
-    // signal events
-    DPF_EVENT_REG_SIGNAL(signal_ReportLog_Commit)
 
 public:
     virtual void initialize() override;

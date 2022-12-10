@@ -138,7 +138,8 @@ void VaultVisibleManager::addSideBarVaultItem()
             { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
             { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
             { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
-            { "Property_Key_VisiableControl", "vault" }
+            { "Property_Key_VisiableControl", "vault" },
+            { "Property_Key_ReportName", "Vault" }
         };
 
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 1, VaultHelper::instance()->rootUrl(), map);

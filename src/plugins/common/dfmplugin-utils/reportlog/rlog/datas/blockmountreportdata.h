@@ -7,7 +7,9 @@
 
 #include "reportdatainterface.h"
 
-class BlockMountReportData: public ReportDataInterface
+namespace dfmplugin_utils {
+
+class BlockMountReportData : public ReportDataInterface
 {
     // ReportDataInterface interface
 public:
@@ -17,4 +19,5 @@ public:
     static void report(const QVariantMap &datas);
 };
 
-#endif // BLOCKMOUNTREPORTDATA_H
+}
+#endif   // BLOCKMOUNTREPORTDATA_H

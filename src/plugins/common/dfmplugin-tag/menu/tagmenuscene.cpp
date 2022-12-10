@@ -158,6 +158,7 @@ bool TagMenuScene::triggered(QAction *action)
         iconRect = TagEventCaller::getItemRect(d->windowId, d->focusFile, DFMGLOBAL_NAMESPACE::kItemIconRole);
     }
 
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
     TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles);
 
     return AbstractMenuScene::triggered(action);
