@@ -5,8 +5,7 @@
 #ifndef TAGHELPER_H
 #define TAGHELPER_H
 
-#include "dfmplugin_tag_global.h"
-
+#include <QObject>
 #include <QColor>
 
 class QPainter;

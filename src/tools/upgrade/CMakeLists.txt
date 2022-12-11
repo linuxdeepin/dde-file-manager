@@ -9,6 +9,8 @@ find_package(Dtk REQUIRED Widget REQUIRED)
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     )
     
 add_library(${PROJECT_NAME}

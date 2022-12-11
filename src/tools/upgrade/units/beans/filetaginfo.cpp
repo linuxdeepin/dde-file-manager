@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filetaginfo.h"
-#include "dfmplugin_tag_global.h"
 
-DPTAG_USE_NAMESPACE
+using namespace dfm_upgrade;
+
 FileTagInfo::FileTagInfo(QObject *parent)
     : QObject(parent)
 {

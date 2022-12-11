@@ -7,7 +7,7 @@
 
 #include <QObject>
 
-namespace dfmplugin_tag {
+namespace dfm_upgrade {
 class FileTagInfo : public QObject
 {
     Q_OBJECT
@@ -44,6 +44,6 @@ private:
     int tagOrder {};
     QString future {};
 };
-} // dfmplugin_tag
+} // dfm_upgrade
 
 #endif   // FILETAGINFO_H

@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tagproperty.h"
-#include "dfmplugin_tag_global.h"
 
-DPTAG_USE_NAMESPACE
+using namespace dfm_upgrade;
+
 TagProperty::TagProperty(QObject *parent)
     : QObject(parent)
 {

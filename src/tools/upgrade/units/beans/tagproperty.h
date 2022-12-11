@@ -7,7 +7,7 @@
 
 #include <QObject>
 
-namespace dfmplugin_tag {
+namespace dfm_upgrade {
 class TagProperty : public QObject
 {
     Q_OBJECT
@@ -44,6 +44,6 @@ private:
     int ambiguity {};
     QString future {};
 };
-} // dfmplugin_tag
+} // dfm_upgrade
 
 #endif   // TAGPROPERTY_H
