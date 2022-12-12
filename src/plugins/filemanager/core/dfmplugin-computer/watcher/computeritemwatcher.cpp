@@ -57,6 +57,7 @@ Q_DECLARE_METATYPE(ItemClickedActionCallback);
 Q_DECLARE_METATYPE(ContextMenuCallback);
 Q_DECLARE_METATYPE(RenameCallback);
 Q_DECLARE_METATYPE(FindMeCallback);
+Q_DECLARE_METATYPE(QList<QUrl> *);
 
 DFMBASE_USE_NAMESPACE
 
@@ -105,6 +106,18 @@ ComputerDataList ComputerItemWatcher::items()
 
     if (!hasInsertNewDisk)
         ret.pop_back();
+
+    QList<QUrl> computerItems;
+    for (const auto &item : ret)
+        computerItems << item.url;
+
+    qDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
+    dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemListFilter", &computerItems);
+    qDebug() << "computer: [LIST] items are filtered by external plugins: " << computerItems;
+    for (int i = ret.count() - 1; i >= 0; --i) {
+        if (computerItems.contains(ret[i].url))
+            ret.removeAt(i);
+    }
 
     return ret;
 }
@@ -590,6 +603,11 @@ void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, i
 
 void ComputerItemWatcher::removeDevice(const QUrl &url)
 {
+    if (dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemFilterOnRemove", url)) {
+        qDebug() << "computer: [REMOVE] device is filtered by external plugin: " << url;
+        return;
+    }
+
     Q_EMIT itemRemoved(url);
     removeSidebarItem(url);
     auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [url](const ComputerItemData &item) { return UniversalUtils::urlEquals(url, item.url); });
@@ -643,6 +661,11 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
             StashMountsUtils::stashMount(info->urlOf(UrlInfoType::kUrl), info->displayName());
             removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
+    }
+
+    if (dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemFilterOnAdd", devUrl)) {
+        qDebug() << "computer: [ADD] device is filtered by external plugin: " << devUrl;
+        return;
     }
 
     ComputerItemData data;
