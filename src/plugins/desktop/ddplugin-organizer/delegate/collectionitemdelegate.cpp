@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "collectionitemdelegate_p.h"
-#include "elidetextlayout.h"
 #include "itemeditor.h"
 #include "view/collectionview.h"
 #include "view/collectionview_p.h"
@@ -40,10 +39,7 @@
 #include <DApplicationHelper>
 
 #include <QPainter>
-#include <QAbstractTextDocumentLayout>
 #include <QScrollBar>
-
-#include <private/qtextengine_p.h>
 
 #include <cmath>
 #include <mutex>
@@ -82,13 +78,12 @@ ElideTextLayout *CollectionItemDelegatePrivate::createTextlayout(const QModelInd
     QString name = showSuffix ? index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
                               : index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
-    layout->setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-    layout->setLineHeight(textLineHeight);
-    layout->setAlignment(Qt::AlignCenter);
-
+    layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
+    layout->setAttribute(ElideTextLayout::kLineHeight, textLineHeight);
+    layout->setAttribute(ElideTextLayout::kAlignment, Qt::AlignCenter);
     if (painter) {
-        layout->setFont(painter->font());
-        layout->setTextDirection(painter->layoutDirection());
+        layout->setAttribute(ElideTextLayout::kFont, painter->font());
+        layout->setAttribute(ElideTextLayout::kTextDirection, painter->layoutDirection());
     }
 
     return layout;
@@ -481,7 +476,7 @@ void CollectionItemDelegate::drawHighlightText(QPainter *painter, const QStyleOp
 
         // create text Layout.
         QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, painter));
-        layout->setBackgroundRadius(kIconRectRadius);
+        layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
         // elide and draw
         layout->layout(rText, option.textElideMode, painter, background);
@@ -497,7 +492,7 @@ void CollectionItemDelegate::drawExpandText(QPainter *painter, const QStyleOptio
 
     // create text Layout.
     QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, painter));
-    layout->setBackgroundRadius(kIconRectRadius);
+    layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
     // elide and draw
     layout->layout(rect, option.textElideMode, painter, background);

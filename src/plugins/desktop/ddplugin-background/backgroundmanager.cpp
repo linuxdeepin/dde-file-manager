@@ -385,7 +385,7 @@ void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString 
 void BackgroundManager::onWorkspaceSwitched(int from, int to)
 {
     Q_UNUSED(from);
-
+    qInfo() << "workspace switched" << from << to;
     d->currentWorkspaceIndex = to;
     updateBackgroundPaths();
     resetBackgroundImage();
@@ -394,6 +394,7 @@ void BackgroundManager::onWorkspaceSwitched(int from, int to)
 void BackgroundManager::onAppearanceCalueChanged(const QString &key)
 {
     if (QStringLiteral("backgroundUris") == key) {
+        qInfo() << "appearance background changed....";
         updateBackgroundPaths();
         resetBackgroundImage();
     }
@@ -401,7 +402,6 @@ void BackgroundManager::onAppearanceCalueChanged(const QString &key)
 
 void BackgroundManager::updateBackgroundPaths()
 {
-
     d->backgroundPaths.clear();
 
     if (!d->isEnableBackground())

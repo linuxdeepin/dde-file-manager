@@ -22,7 +22,8 @@
 #define COLLECTIONITEMDELEGATE_P_H
 
 #include "collectionitemdelegate.h"
-#include "elidetextlayout.h"
+
+#include "dfm-base/utils/elidetextlayout.h"
 
 #include <QPointer>
 #include <QTextDocument>
@@ -36,7 +37,7 @@ public:
     explicit CollectionItemDelegatePrivate(CollectionItemDelegate *qq);
     ~CollectionItemDelegatePrivate();
 
-    ElideTextLayout *createTextlayout(const QModelIndex &index, const QPainter *painter = nullptr) const;
+    dfmbase::ElideTextLayout *createTextlayout(const QModelIndex &index, const QPainter *painter = nullptr) const;
 
     inline QRect availableTextRect(QRect labelRect) const {
         // available text rect top is label rect minus icon space and text padding.

@@ -20,58 +20,69 @@
  */
 #include "elidetextlayout.h"
 
+#include <QPainter>
 #include <QtMath>
 #include <QPainterPath>
+#include <QTextDocument>
+#include <QTextLayout>
+#include <QTextBlock>
+#include <QDebug>
 
-#include <private/qtextengine_p.h>
+using namespace dfmbase;
 
-void ElideTextLayout::setLineHeight(int height)
+ElideTextLayout::ElideTextLayout(const QString &text)
+    : document(new QTextDocument)
 {
-    textLineHeight = height;
+    document->setPlainText(text);
+
+    attributes.insert(kFont, document->defaultFont());
+    attributes.insert(kLineHeight, QFontMetrics(document->defaultFont()).height());
+    attributes.insert(kBackgroundRadius, 0);
+    attributes.insert(kAlignment, Qt::AlignCenter);
+    attributes.insert(kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
+    attributes.insert(kTextDirection, Qt::LeftToRight);
 }
 
-QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode mode, QPainter *painter, const QBrush &background)
+ElideTextLayout::~ElideTextLayout()
+{
+    delete document;
+    document = nullptr;
+}
+
+void ElideTextLayout::setText(const QString &text)
+{
+    document->setPlainText(text);
+}
+
+QString ElideTextLayout::text() const
+{
+    return document->toPlainText();
+}
+
+QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter, const QBrush &background)
 {
     QList<QRectF> ret;
+    QTextLayout *lay = document->firstBlock().layout();
+    if (!lay) {
+        qWarning() << "invaild block" << text();
+        return ret;
+    }
 
-    // dont paint
-    engine()->ignoreBidi = !painter;
-
+    initLayoutOption(lay);
+    int textLineHeight = attribute<int>(kLineHeight);
     QSizeF size = rect.size();
     QPointF offset = rect.topLeft();
+    qreal curHeight = 0;
 
-    QString curText = engine()->hasFormats() ? engine()->block.text() : text();
-    beginLayout();
-
-    QTextLine line = createLine();
-    qreal height = 0;
     // for draw background.
     QRectF lastLineRect;
+    QString elideText;
 
-    auto oldWrap = wrapMode();
-    while (line.isValid()) {
-        height += textLineHeight;
-        if (height + textLineHeight > size.height()) {
-            const QString &end_str = engine()->elidedText(mode, qRound(size.width()), alignment(), line.textStart());
-            endLayout();
-            setText(end_str);
+    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight](QTextLine &line){
+        QRectF lRect = line.naturalTextRect();
+        lRect.setHeight(textLineHeight);
 
-            if (engine()->block.docHandle())
-                const_cast<QTextDocument *>(engine()->block.document())->setPlainText(end_str);
-
-            // use NoWrap
-            setWrapMode(QTextOption::NoWrap);
-            beginLayout();
-            line = createLine();
-            line.setLineWidth(size.width() - 1);
-            curText = end_str;
-        } else {
-            line.setLineWidth(size.width());
-        }
-
-        line.setPosition(offset);
-
-        const QRectF lRect = naturalTextRect(line.naturalTextRect());
+        ret.append(lRect);
 
         // draw
         if (painter) {
@@ -83,61 +94,66 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode mode
             // draw text line
             line.draw(painter, QPoint(0, 0));
         }
+    };
 
-        ret.append(lRect);
+    {
+        lay->beginLayout();
+        QTextLine line = lay->createLine();
+        while (line.isValid()) {
+            curHeight += textLineHeight;
+            line.setLineWidth(size.width());
+            line.setPosition(offset);
 
-        offset.setY(offset.y() + textLineHeight);
-        if (height + textLineHeight > size.height())
-            break;
+            // check next line is out or not.
+            if (curHeight + textLineHeight > size.height()) {
+                auto nextLine = lay->createLine();
+                if (nextLine.isValid()) {
+                    // elide current line.
+                    QFontMetrics fm(lay->font());
+                    elideText = fm.elidedText(text().mid(line.textStart()), elideMode, qRound(size.width()));
+                    break;
+                }
+                // next line is empty.
+            }
 
-        line = createLine();
+            processLine(line);
+
+            // next line
+            line = lay->createLine();
+            offset.setY(offset.y() + textLineHeight);
+        }
+
+        lay->endLayout();
     }
 
-    // restore
-    setWrapMode(oldWrap);
+    // process last elided line.
+    if (!elideText.isEmpty()) {
+        QTextLayout newlay;
+        newlay.setFont(lay->font());
+        {
+            auto oldWrap = (QTextOption::WrapMode)attribute<uint>(kWrapMode);
+            setAttribute(kWrapMode, (uint)QTextOption::NoWrap);
+            initLayoutOption(&newlay);
+
+            // restore
+            setAttribute(kWrapMode, oldWrap);
+        }
+        newlay.setText(elideText);
+        newlay.beginLayout();
+        auto line = newlay.createLine();
+        line.setLineWidth(size.width() - 1);
+        line.setPosition(offset);
+
+        processLine(line);
+        newlay.endLayout();
+    }
 
     return ret;
 }
 
-QTextOption::WrapMode ElideTextLayout::wrapMode() const
-{
-    return textOption().wrapMode();
-}
-
-void ElideTextLayout::setAlignment(Qt::Alignment flags)
-{
-    auto opt = textOption();
-
-    if (flags & Qt::AlignRight)
-        opt.setAlignment(Qt::AlignRight);
-    else if (flags & Qt::AlignHCenter)
-        opt.setAlignment(Qt::AlignHCenter);
-
-    setTextOption(opt);
-
-    alignmentFlags = flags;
-}
-
-void ElideTextLayout::setBackgroundRadius(qreal radius)
-{
-    lineRadius = radius;
-}
-
-void ElideTextLayout::setTextDirection(Qt::LayoutDirection direction)
-{
-    auto opt = textOption();
-    opt.setTextDirection(direction);
-    setTextOption(opt);
-}
-
-Qt::LayoutDirection ElideTextLayout::textDirection() const
-{
-    return textOption().textDirection();
-}
-
 QRectF ElideTextLayout::drawLineBackground(QPainter *painter, const QRectF &curLineRect, QRectF lastLineRect, const QBrush &brush) const
 {
-    const qreal backgroundRadius = lineRadius;
+    const qreal backgroundRadius = attribute<qreal>(kBackgroundRadius);
     const QMarginsF margins(backgroundRadius, 0, backgroundRadius, 0);
     QRectF backBounding = curLineRect;
     QPainterPath path;
@@ -193,10 +209,13 @@ QRectF ElideTextLayout::drawLineBackground(QPainter *painter, const QRectF &curL
     return lastLineRect;
 }
 
-void ElideTextLayout::setWrapMode(QTextOption::WrapMode mode)
+void ElideTextLayout::initLayoutOption(QTextLayout *lay)
 {
-    auto opt = textOption();
-    opt.setWrapMode(mode);
-    setTextOption(opt);
+    auto opt = lay->textOption();
+    opt.setAlignment((Qt::Alignment)attribute<uint>(kAlignment));
+    opt.setWrapMode((QTextOption::WrapMode)attribute<uint>(kWrapMode));
+    opt.setTextDirection(attribute<Qt::LayoutDirection>(kTextDirection));
+    lay->setTextOption(opt);
+    lay->setFont(attribute<QFont>(kFont));
 }
 

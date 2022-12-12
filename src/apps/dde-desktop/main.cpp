@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
         a.setApplicationName("dde-file-manager");
         a.loadTranslator();
         a.setApplicationName(appName);
+        a.setQuitOnLastWindowClosed(false);
     }
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
@@ -183,8 +184,7 @@ int main(int argc, char *argv[])
     qInfo() << "start desktop " << a.applicationVersion() << "pid" << getpid() << "parent id" << getppid()
             << "argments" << a.arguments();
 
-    // if (!fileDialogOnly)
-    if (true) {
+    {
         QDBusConnection conn = QDBusConnection::sessionBus();
 
         if (!conn.registerService(kDesktopServiceName)) {

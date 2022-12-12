@@ -30,6 +30,11 @@ DDP_GRANDSEARCHDAEMON_USE_NAMESPACE
 
 void DaemonPlugin::initialize()
 {
+    if (qApp->arguments().contains("--no-grandsearch")) {
+        qInfo() << "no grand search...";
+        return;
+    }
+
     QString libPath;
     {
         auto defaultPath = GRANDSEARCHDAEMON_LIB_DIR;

@@ -22,7 +22,8 @@
 #define CANVASITEMDELEGATE_P_H
 
 #include "canvasitemdelegate.h"
-#include "elidetextlayout.h"
+
+#include "dfm-base/utils/elidetextlayout.h"
 
 #include <QPointer>
 #include <QTextDocument>
@@ -36,7 +37,7 @@ public:
     explicit CanvasItemDelegatePrivate(CanvasItemDelegate *qq);
     ~CanvasItemDelegatePrivate();
 
-    ElideTextLayout *createTextlayout(const QModelIndex &index, const QPainter *painter = nullptr) const;
+    dfmbase::ElideTextLayout *createTextlayout(const QModelIndex &index, const QPainter *painter = nullptr) const;
 
     inline QRect availableTextRect(QRect labelRect) const
     {
