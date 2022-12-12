@@ -340,7 +340,7 @@ void CanvasView::startDrag(Qt::DropActions supportedActions)
         return;
     }
 
-    QModelIndexList validIndexes = selectionModel()->selectedIndexes();
+    QModelIndexList validIndexes = selectionModel()->selectedIndexesCache();
     if (validIndexes.count() > 1) {
         QMimeData *data = model()->mimeData(validIndexes);
         if (!data)

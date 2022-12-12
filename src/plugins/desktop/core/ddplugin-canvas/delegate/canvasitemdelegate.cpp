@@ -266,7 +266,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 
 bool CanvasItemDelegate::mayExpand(QModelIndex *who) const
 {
-    QModelIndexList list = parent()->selectionModel()->selectedIndexes();
+    const QModelIndexList &list = parent()->selectionModel()->selectedIndexesCache();
     bool expend = list.size() == 1;
     if (expend && who)
         *who = list.first();
@@ -670,7 +670,7 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
     option->palette.setBrush(QPalette::Shadow, QColor(0, 0, 0, 178));
 
     // multi-selected background
-    if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && model->selectedIndexes().size() > 1) {
+    if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && model->selectedIndexesCache().size() > 1) {
         option->palette.setColor(QPalette::Background, QColor("#0076F9"));
         option->backgroundBrush = QColor("#0076F9");
     } else {   // normal

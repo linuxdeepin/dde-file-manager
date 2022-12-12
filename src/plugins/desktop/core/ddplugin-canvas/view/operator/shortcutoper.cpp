@@ -202,7 +202,7 @@ void ShortcutOper::showMenu()
     if (CanvasViewMenuProxy::disableMenu())
         return;
 
-    QModelIndexList indexList = view->selectionModel()->selectedIndexes();
+    QModelIndexList indexList = view->selectionModel()->selectedIndexesCache();
     bool isEmptyArea = indexList.isEmpty();
     Qt::ItemFlags flags;
     QModelIndex index;

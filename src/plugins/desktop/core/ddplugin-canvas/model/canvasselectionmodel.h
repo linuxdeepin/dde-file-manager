@@ -32,8 +32,13 @@ class CanvasSelectionModel : public QItemSelectionModel
     Q_OBJECT
 public:
     explicit CanvasSelectionModel(CanvasProxyModel *model, QObject *parent);
-    CanvasProxyModel *model();
-    QList<QUrl> selectedUrls();
+    CanvasProxyModel *model() const;
+    QModelIndexList selectedIndexesCache() const;
+    QList<QUrl> selectedUrls() const;
+public slots:
+    void clearSelectedCache();
+protected:
+    mutable QModelIndexList selectedCahe;
 };
 }
 #endif // CANVASSELECTIONMODEL_H

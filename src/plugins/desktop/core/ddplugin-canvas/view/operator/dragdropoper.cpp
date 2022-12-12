@@ -386,7 +386,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
     auto dropIndex = view->indexAt(dropRect.center());
 
     auto targetIndex = view->indexAt(event->pos());
-    bool dropOnSelf = targetIndex.isValid() ? view->selectionModel()->selectedIndexes().contains(targetIndex) : false;
+    bool dropOnSelf = targetIndex.isValid() ? view->selectionModel()->selectedIndexesCache().contains(targetIndex) : false;
 
     // process this case in other drop function(e.g. move) if targetGridPos is used and it is not drop-needed.
     if (dropIndex.isValid() && !dropOnSelf) {

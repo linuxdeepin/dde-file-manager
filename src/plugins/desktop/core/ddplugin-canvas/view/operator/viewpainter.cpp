@@ -85,7 +85,6 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
     }
 
     // 重叠图标绘制(不包括最底层被覆盖的图标)
-    // todo暂时没考虑堆叠的栈情况；
     {
         auto overlapPos = d->overlapPos();
         auto overlap = GridIns->overloadItems(d->screenNum);

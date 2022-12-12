@@ -21,21 +21,38 @@
 #include "canvasselectionmodel.h"
 #include "canvasproxymodel.h"
 
+#include <QDebug>
+
 using namespace ddplugin_canvas;
 
 CanvasSelectionModel::CanvasSelectionModel(CanvasProxyModel *model, QObject *parent) : QItemSelectionModel(model, parent)
 {
-
+    // clear immediately the cache if selection changed.
+    connect(this, &CanvasSelectionModel::selectionChanged, this, &CanvasSelectionModel::clearSelectedCache, Qt::DirectConnection);
 }
 
-CanvasProxyModel *CanvasSelectionModel::model()
+CanvasProxyModel *CanvasSelectionModel::model() const
 {
-    return qobject_cast<CanvasProxyModel *>(QItemSelectionModel::model());
+    return qobject_cast<CanvasProxyModel *>(const_cast<QAbstractItemModel *>(QItemSelectionModel::model()));
 }
 
-QList<QUrl> CanvasSelectionModel::selectedUrls()
+QModelIndexList CanvasSelectionModel::selectedIndexesCache() const
 {
-    auto indexs = selectedIndexes();
+    if (selectedCahe.isEmpty()) {
+        selectedCahe = selectedIndexes();
+    }
+
+    return selectedCahe;
+}
+
+void CanvasSelectionModel::clearSelectedCache()
+{
+    selectedCahe.clear();
+}
+
+QList<QUrl> CanvasSelectionModel::selectedUrls() const
+{
+    auto indexs = selectedIndexesCache();
     QList<QUrl> urls;
     for (auto index : indexs)
         urls <<  model()->fileUrl(index);
