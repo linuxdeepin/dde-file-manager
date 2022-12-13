@@ -721,6 +721,11 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
         });
     }
 
+    if (menu->actions().isEmpty()) {
+        menu->deleteLater();
+        return nullptr;
+    }
+
     return menu;
 }
 
