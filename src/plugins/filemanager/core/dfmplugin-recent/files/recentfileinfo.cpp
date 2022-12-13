@@ -116,4 +116,14 @@ QVariant RecentFileInfo::customData(int role) const
         return QVariant();
 }
 
+QString RecentFileInfo::displayOf(const AbstractFileInfo::DisplayInfoType type) const
+{
+    if (DisPlayInfoType::kFileDisplayName == type) {
+        if (UrlRoute::isRootUrl(dptr->url)) {
+            return QObject::tr("Recent");
+        }
+    }
+    return AbstractFileInfo::displayOf(type);
+}
+
 }

@@ -43,6 +43,8 @@ public:
     virtual QUrl urlOf(const FileUrlInfoType type) const override;
 
     virtual QVariant customData(int role) const override;
+
+    virtual QString displayOf(const DisplayInfoType type) const override;
 };
 
 using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;
