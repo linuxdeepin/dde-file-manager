@@ -95,7 +95,7 @@ public:
         FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
         if (transList[scheme]) {
-            error = QObject::tr("The current scheme trans func has registered");
+            error = "The current scheme trans func has registered";
             return false;
         }
 
@@ -119,8 +119,8 @@ public:
         FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
         if (constructList[scheme]) {
-            error = QObject::tr("The current scheme has registered "
-                                "the associated construction class");
+            error = "The current scheme has registered "
+                    "the associated construction class";
             return false;
         }
 
@@ -147,16 +147,16 @@ public:
         FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
         if (!UrlRoute::hasScheme(url.scheme())) {
-            error = QObject::tr("No scheme found for "
-                                "URL registration");
+            error = "No scheme found for "
+                    "URL registration";
             return nullptr;
         }
 
         QString &&scheme = url.scheme();
         CreateFunc constantFunc = constructList.value(scheme);
         if (!constantFunc) {
-            error = QObject::tr("Scheme should be call registered 'regClass()' function "
-                                "before create function");
+            error = "Scheme should be call registered 'regClass()' function "
+                    "before create function";
             return nullptr;
         }
         finally.dismiss();
@@ -352,8 +352,8 @@ public:
     {
         if (constructAguList[scheme]) {
             if (errorString)
-                *errorString = QObject::tr("The current scheme has registered "
-                                           "the associated construction class");
+                *errorString = "The current scheme has registered "
+                               "the associated construction class";
             qWarning() << errorString;
             return false;
         }
@@ -389,8 +389,8 @@ public:
     {
         if (!UrlRoute::hasScheme(url.scheme())) {
             if (errorString)
-                *errorString = QObject::tr("No scheme found for "
-                                           "URL registration");
+                *errorString = "No scheme found for "
+                               "URL registration";
             qWarning() << errorString;
             return nullptr;
         }
@@ -401,8 +401,8 @@ public:
             return qSharedPointerDynamicCast<RT>(constantFunc(url, nameFilters, filters, flags));
         } else {
             if (errorString)
-                *errorString = QObject::tr("Scheme should be call registered 'regClass()' function "
-                                           "before create function");
+                *errorString = "Scheme should be call registered 'regClass()' function "
+                               "before create function";
             qWarning() << errorString;
             return nullptr;
         }

@@ -149,7 +149,7 @@ QString BurnHelper::parseXorrisoErrorMessage(const QStringList &msg)
         }
         if (msgs.contains("-volid: Text too long")) {
             // something is wrong if the following return statement is reached.
-            return QObject::tr("invalid volume name");
+            return QObject::tr("Invalid volume name");
         }
     }
     return QObject::tr("Unknown error");

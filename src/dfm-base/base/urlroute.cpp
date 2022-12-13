@@ -59,7 +59,7 @@ bool UrlRoute::regScheme(const QString &scheme,
     QString error;
     FinallyUtil finally([&]() {if (errorString) *errorString = error; });
     if (hasScheme(scheme)) {
-        error = QObject::tr("Scheme cannot be registered repeatedly.");
+        error = "Scheme cannot be registered repeatedly.";
         return false;
     }
     // 统一处理路径在最后加上 "/"
@@ -70,7 +70,7 @@ bool UrlRoute::regScheme(const QString &scheme,
     // 非虚拟路径则进行本地路径判断
     if (!isVirtual) {
         if (!QDir().exists(formatRoot)) {
-            error = QObject::tr("Scheme map to root path not exists.");
+            error = "Scheme map to root path not exists.";
             return false;
         }
 
