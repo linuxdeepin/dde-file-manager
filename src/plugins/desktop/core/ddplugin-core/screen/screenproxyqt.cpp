@@ -22,7 +22,7 @@
 #include "screenproxyqt.h"
 #include "screenqt.h"
 
-#include "dbus-private/dbusdock.h"
+#include "dbus-private/dockhelper.h"
 #include "dbus-private/dbusdisplay.h"
 
 #include <QDebug>

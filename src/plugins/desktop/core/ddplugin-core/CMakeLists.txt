@@ -14,6 +14,19 @@ FILE(GLOB_RECURSE SCREEN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/screen/*.cpp"
 )
 
+if (COMPLIE_ON_V23)
+    set(RM_SRC
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.cpp"
+    )
+else ()
+    set(RM_SRC
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.cpp"
+    )
+endif()
+list(REMOVE_ITEM SCREEN_FILES ${RM_SRC})
+
 set(CORE_FILES
     frame/basewindow.h
     frame/basewindow.cpp

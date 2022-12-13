@@ -22,7 +22,7 @@
 #include "screendbus.h"
 #include "dbus-private/dbusdisplay.h"
 #include "dbus-private/dbusmonitor.h"
-#include "dbus-private/dbusdock.h"
+#include "dbus-private/dockhelper.h"
 
 #include <QApplication>
 #include <QScreen>

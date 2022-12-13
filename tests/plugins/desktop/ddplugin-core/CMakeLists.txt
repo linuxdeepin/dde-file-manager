@@ -16,6 +16,19 @@ file(GLOB_RECURSE SRC_FILES
     "${DESKTOP_PLUGIN_DIR}/desktoputils/*"
 )
 
+if (COMPLIE_ON_V23)
+    set(RM_SRC
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock.h"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock.cpp"
+    )
+else ()
+    set(RM_SRC
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock1.h"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock1.cpp"
+    )
+endif()
+list(REMOVE_ITEM SRC_FILES ${RM_SRC})
+
 add_executable(${PROJECT_NAME}
     ${UT_CXX_FILE}
     ${CPP_STUB_SRC}

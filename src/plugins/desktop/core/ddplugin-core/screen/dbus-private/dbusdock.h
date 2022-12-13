@@ -58,7 +58,6 @@ struct DockRect{
     }
 };
 Q_DECLARE_METATYPE(DockRect)
-
 QDBusArgument &operator<<(QDBusArgument &argument, const DockRect &rect);
 const QDBusArgument &operator>>(const QDBusArgument &argument, DockRect &rect);
 QDebug operator<<(QDebug deg, const DockRect &rect);
@@ -226,18 +225,6 @@ Q_SIGNALS: // SIGNALS
     void IconSizeChanged();
     void ShowTimeoutChanged();
     void FrontendWindowRectChanged();
-};
-
-#define DockInfoIns DockInfo::ins()->dock()
-class DockInfo : public QObject
-{
-    Q_OBJECT
-public:
-    static DockInfo *ins();
-    DBusDock *dock() const;
-private:
-    explicit DockInfo(QObject *parent = nullptr);
-    DBusDock *m_dock = nullptr;
 };
 
 namespace com {
