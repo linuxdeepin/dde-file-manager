@@ -139,10 +139,8 @@ bool OemMenuScene::triggered(QAction *action)
         return AbstractMenuScene::triggered(action);
 
     QPair<QString, QStringList> runable = OemMenu::instance()->makeCommand(action, d->currentDir, d->focusFile, d->selectFiles);
-    if (!runable.first.isEmpty()) {
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
+    if (!runable.first.isEmpty())
         return UniversalUtils::runCommand(runable.first, runable.second);
-    }
 
     return AbstractMenuScene::triggered(action);
 }

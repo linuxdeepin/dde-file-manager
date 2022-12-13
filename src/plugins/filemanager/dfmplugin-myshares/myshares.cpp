@@ -90,7 +90,12 @@ void MyShares::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoin
 
     newTabAct->setEnabled(bEnabled && ShareEventsCaller::sendCheckTabAddable(windowId));
 
-    menu->exec(globalPos);
+    QAction *act = menu->exec(globalPos);
+    if (act) {
+        QList<QUrl> urls { url };
+        dpfSignalDispatcher->publish("dfmplugin_myshares", "signal_ReportLog_MenuData", act->text(), urls);
+    }
+
     delete menu;
 }
 

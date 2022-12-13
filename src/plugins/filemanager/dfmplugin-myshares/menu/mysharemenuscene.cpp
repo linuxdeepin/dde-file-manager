@@ -86,7 +86,6 @@ bool MyShareMenuScene::triggered(QAction *action)
         if (!d->predicateAction.contains(id))
             break;
 
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return d->triggered(id);
     } while (false);
     return AbstractMenuScene::triggered(action);

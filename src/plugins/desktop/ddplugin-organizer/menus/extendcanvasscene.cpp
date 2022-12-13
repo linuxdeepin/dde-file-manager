@@ -466,7 +466,6 @@ bool ExtendCanvasScene::triggered(QAction *action)
         else if (actionId == ActionID::kOrganizeOptions) {
             emit CfgPresenter->showOptionWindow();
         }
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 

@@ -264,8 +264,6 @@ bool ExtendMenuScene::triggered(QAction *action)
         QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(cmd, argFlag, d->currentDir, d->focusFile, d->selectFiles);
         qInfo() << "exec:" << runable.first << runable.second;
 
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
-
         if (!runable.first.isEmpty())
             return UniversalUtils::runCommand(runable.first, runable.second);
     }

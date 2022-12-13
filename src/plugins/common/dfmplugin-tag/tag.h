@@ -38,6 +38,9 @@ class Tag : public dpf::Plugin
     // slot events
     DPF_EVENT_REG_SLOT(slot_GetTags)
 
+    // signal events
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
+
     // hook events
     DPF_EVENT_REG_HOOK(hook_CanTag)
 

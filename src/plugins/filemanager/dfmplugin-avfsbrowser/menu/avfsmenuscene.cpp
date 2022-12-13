@@ -137,7 +137,6 @@ bool AvfsMenuScene::triggered(QAction *action)
         else if (id == kProperty)
             AvfsEventHandler::instance()->showProperty(d->selectFiles);
 
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
     return AbstractMenuScene::triggered(action);

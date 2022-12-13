@@ -225,7 +225,7 @@ void SideBarView::mouseReleaseEvent(QMouseEvent *event)
             QVariantMap data;
             data.insert("sidebar_item", reportName);
 
-            dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Sidebar", data);
+            dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_ReportLog_Commit", "Sidebar", data);
         }
     }
 

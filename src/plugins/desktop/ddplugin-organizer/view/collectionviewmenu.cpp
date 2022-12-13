@@ -44,10 +44,8 @@ DFMBASE_USE_NAMESPACE
 using namespace ddplugin_organizer;
 
 CollectionViewMenu::CollectionViewMenu(CollectionView *parent)
-    : QObject(parent)
-    , view(parent)
+    : QObject(parent), view(parent)
 {
-
 }
 
 bool CollectionViewMenu::disableMenu()
@@ -96,8 +94,11 @@ void CollectionViewMenu::emptyAreaMenu()
     canvasScene->create(&menu);
     canvasScene->updateState(&menu);
 
-    if (QAction *act = menu.exec(QCursor::pos()))
+    if (QAction *act = menu.exec(QCursor::pos())) {
+        QList<QUrl> urls { view->model()->rootUrl() };
+        dpfSignalDispatcher->publish("ddplugin_organizer", "signal_CollectionView_ReportMenuData", act->text(), urls);
         canvasScene->triggered(act);
+    }
 
     delete canvasScene;
 }
@@ -153,11 +154,12 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
     canvasScene->create(&menu);
     canvasScene->updateState(&menu);
 
-    if (QAction *act = menu.exec(QCursor::pos()))
+    if (QAction *act = menu.exec(QCursor::pos())) {
+        dpfSignalDispatcher->publish("ddplugin_organizer", "signal_CollectionView_ReportMenuData", act->text(), selectUrls);
         canvasScene->triggered(act);
+    }
 
     delete canvasScene;
-
 }
 
 QWidget *CollectionViewMenu::getCanvasView()

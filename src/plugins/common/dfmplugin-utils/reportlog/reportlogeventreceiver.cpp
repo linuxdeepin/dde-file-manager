@@ -20,19 +20,77 @@
  */
 #include "reportlogeventreceiver.h"
 #include "rlog/rlog.h"
+#include "rlog/datas/smbreportdata.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/devicemanager.h"
 
 #include <dfm-framework/dpf.h>
+
+#include <QApplication>
 
 using namespace dfmbase;
 using namespace dfmplugin_utils;
 
 void ReportLogEventReceiver::bindEvents()
 {
-    // connect all the slot events of plugins which need report log.
-    dpfSlotChannel->connect("dfmplugin_utils", "slot_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
-    dpfSlotChannel->connect("dfmplugin_utils", "slot_ReportLog_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
+    connect(qApp, &QApplication::aboutToQuit, this, [=]() {
+        // report quit
+        QVariantMap data;
+        data.insert("type", false);
+        RLog::instance()->commit("AppStartup", data);
+    });
+
+    // connect device manager mount result signal
+    connect(DeviceManager::instance(), &DeviceManager::mountNetworkDeviceResult,
+            this, &ReportLogEventReceiver::handleMountNetworkResult);
+
+    // connect all the signal events of plugins which need report log.
+    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
+    dpfSignalDispatcher->subscribe("dfmplugin_search", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
+    dpfSignalDispatcher->subscribe("dfmplugin_vault", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
+
+    dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_CanvasView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
+    dpfSignalDispatcher->subscribe("ddplugin_organizer", "signal_CollectionView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+    dpfSignalDispatcher->subscribe("dfmplugin_myshares", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+    dpfSignalDispatcher->subscribe("dfmplugin_smbbrowser", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+    dpfSignalDispatcher->subscribe("dfmplugin_vault", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+    dpfSignalDispatcher->subscribe("dfmplugin_trash", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+    dpfSignalDispatcher->subscribe("dfmplugin_recent", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+}
+
+void ReportLogEventReceiver::handleMountNetworkResult(bool ret, dfmmount::DeviceError err, const QString &msg)
+{
+    using namespace dfmmount;
+
+    QVariantMap data;
+    data.insert("result", ret);
+
+    if (!ret) {
+        switch (err) {
+        case DeviceError::kUserErrorUserCancelled:
+            data.insert("errorId", SmbReportData::kUserCancelError);
+            data.insert("errorSysMsg", msg);
+            data.insert("errorUiMsg", "User cancel mount dialog.");
+            break;
+        case DeviceError::kUDisksErrorNotMounted:
+        case DeviceError::kGIOErrorNotMounted:
+        case DeviceError::kUserErrorNotMounted:
+            data.insert("errorId", SmbReportData::kNotMount);
+            data.insert("errorSysMsg", msg);
+            data.insert("errorUiMsg", msg);
+            break;
+        default:
+            data.insert("errorId", SmbReportData::kMountError);
+            data.insert("errorSysMsg", msg);
+            data.insert("errorUiMsg", msg);
+            break;
+        }
+    }
+
+    RLog::instance()->commit("Smb", data);
 }
 
 ReportLogEventReceiver::ReportLogEventReceiver(QObject *parent)

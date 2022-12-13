@@ -581,6 +581,7 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     auto func = std::bind(DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
 
     auto wrappedCb = [=](bool ok, DeviceError err, const QString &msg) {
+        Q_EMIT mountNetworkDeviceResult(ok, err, msg);
         if (cb) cb(ok, err, msg);
         QApplication::restoreOverrideCursor();
     };

@@ -534,7 +534,11 @@ void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
         }
     });
 
-    menu->exec(globalPos);
+    QAction *act = menu->exec(globalPos);
+    if (act) {
+        QList<QUrl> urls { url };
+        dpfSignalDispatcher->publish("dfmplugin_tag", "signal_ReportLog_MenuData", act->text(), urls);
+    }
     delete menu;
 }
 

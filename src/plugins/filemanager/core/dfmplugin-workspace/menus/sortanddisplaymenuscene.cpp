@@ -108,7 +108,6 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
 
     const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.values().contains(action)) {
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         // display as
         {
             // display as icon

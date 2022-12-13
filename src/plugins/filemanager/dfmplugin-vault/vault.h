@@ -31,6 +31,12 @@ class Vault : public dpf::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "vault.json")
 
+    DPF_EVENT_NAMESPACE(DPVAULT_NAMESPACE)
+
+    // signal events
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_Commit)
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

@@ -36,8 +36,10 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
+
 private:
     FrameManager *instance = nullptr;
+
 private:
     DPF_EVENT_NAMESPACE(DDP_ORGANIZER_NAMESPACE)
 
@@ -45,6 +47,8 @@ private:
     DPF_EVENT_REG_SLOT(slot_CollectionView_GridPoint)
     DPF_EVENT_REG_SLOT(slot_CollectionView_VisualRect)
     DPF_EVENT_REG_SLOT(slot_CollectionView_View)
+
+    DPF_EVENT_REG_SIGNAL(signal_CollectionView_ReportMenuData)
 
     // CollectionItemDelegate begin
     DPF_EVENT_REG_SLOT(slot_CollectionItemDelegate_IconRect)
@@ -55,4 +59,4 @@ private:
 
 }
 
-#endif // ORGANIZERPLUGIN_H
+#endif   // ORGANIZERPLUGIN_H

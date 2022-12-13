@@ -23,6 +23,8 @@
 #include "virtualreportlogplugin.h"
 #include "rlog/rlog.h"
 
+#include <QTimer>
+
 using namespace dfmplugin_utils;
 
 void VirtualReportLogPlugin::initialize()
@@ -32,5 +34,11 @@ void VirtualReportLogPlugin::initialize()
 
 bool VirtualReportLogPlugin::start()
 {
+    QTimer::singleShot(3000, this, [=]() {
+        QVariantMap data;
+        data.insert("type", true);
+
+        RLog::instance()->commit("AppStartup", data);
+    });
     return true;
 }

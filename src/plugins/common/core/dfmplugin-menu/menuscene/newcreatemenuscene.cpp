@@ -187,7 +187,6 @@ bool NewCreateMenuScene::triggered(QAction *action)
         if (!d->newActionSubScene->triggered(action))
             return AbstractMenuScene::triggered(action);
     } else {
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return AbstractMenuScene::triggered(action);
     }
 }

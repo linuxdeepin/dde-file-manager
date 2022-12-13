@@ -254,13 +254,11 @@ bool SendToDiscMenuScene::triggered(QAction *action)
         || key.startsWith(ActionId::kSendToOptical)) {
         QString dev { action->data().toString() };
         d->actionStageFileForBurning(dev);
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 
     if (key == ActionId::kMountImageKey) {
         d->actionMountImage();
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 

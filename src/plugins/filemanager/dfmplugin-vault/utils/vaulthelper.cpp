@@ -116,7 +116,11 @@ void VaultHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QP
 {
     VaultHelper::instance()->appendWinID(windowId);
     QMenu *menu = createMenu();
-    menu->exec(globalPos);
+    QAction *act = menu->exec(globalPos);
+    if (act) {
+        QList<QUrl> urls { url };
+        dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_MenuData", act->text(), urls);
+    }
     delete menu;
 }
 

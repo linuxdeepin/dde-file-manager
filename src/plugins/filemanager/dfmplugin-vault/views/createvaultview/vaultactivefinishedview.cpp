@@ -159,8 +159,7 @@ void VaultActiveFinishedView::slotEncryptComplete(int nState)
         QVariantMap data;
         data.insert("mode", VaultReportData::kCreated);
 
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Vault", data);
-
+        dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", "Vault", data);
     } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }

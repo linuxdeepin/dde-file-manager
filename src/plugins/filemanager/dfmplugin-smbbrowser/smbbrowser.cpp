@@ -143,7 +143,11 @@ void SmbBrowser::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
         newWindowAct2->setEnabled(true);
     }
 
-    menu->exec(globalPos);
+    QAction *act = menu->exec(globalPos);
+    if (act) {
+        QList<QUrl> urls { url };
+        dpfSignalDispatcher->publish("dfmplugin_smbbrowser", "signal_ReportLog_MenuData", act->text(), urls);
+    }
     delete menu;
 }
 
@@ -274,7 +278,6 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
                 SmbIntegrationManager::instance()->addSmbIntegrationItem(makeSmbRootUrl(url), ctxMenuHandle);
             }
         } else {
-            SmbBrowserUtils::instance()->reportLog(ok, err, mpt);
             DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
             qDebug() << DeviceUtils::errMessage(err);
         }

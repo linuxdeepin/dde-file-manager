@@ -79,10 +79,9 @@ void VaultComputerMenuScene::updateState(QMenu *parent)
 
 bool VaultComputerMenuScene::triggered(QAction *action)
 {
-    if (d->acts.contains(action)) {
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
+    if (d->acts.contains(action))
         return true;
-    }
+
     return AbstractMenuScene::triggered(action);
 }
 

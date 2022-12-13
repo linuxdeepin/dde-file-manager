@@ -137,6 +137,8 @@ Q_SIGNALS:
 
     void opticalDiscWorkStateChanged(const QString &id, const QString &dev, bool working);
 
+    void mountNetworkDeviceResult(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
+
 private:
     explicit DeviceManager(QObject *parent = nullptr);
     virtual ~DeviceManager() override;

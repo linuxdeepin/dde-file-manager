@@ -222,15 +222,12 @@ bool OpenWithMenuScene::triggered(QAction *action)
         auto appName = action->property(kAppName).toString();
         auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
 
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), selectUrls);
-
         return dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, selectUrls, QList<QString>() << appName);
     }
 
     if (actProperty == ActionID::kOpenWithCustom) {
         auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
         dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", selectUrls);
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), selectUrls);
 
         return true;
     }

@@ -95,7 +95,11 @@ void RecentManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const 
     menu->addAction(QObject::tr("Clear recent history"), [url]() {
         RecentManager::clearRecent();
     });
-    menu->exec(globalPos);
+    QAction *act = menu->exec(globalPos);
+    if (act) {
+        QList<QUrl> urls { url };
+        dpfSignalDispatcher->publish("dfmplugin_recent", "signal_ReportLog_MenuData", act->text(), urls);
+    }
     delete menu;
 }
 

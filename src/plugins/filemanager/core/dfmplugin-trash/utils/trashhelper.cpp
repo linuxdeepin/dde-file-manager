@@ -100,7 +100,11 @@ void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, co
     menu->addAction(QObject::tr("Properties"), [url]() {
         TrashEventCaller::sendTrashPropertyDialog(url);
     });
-    menu->exec(globalPos);
+    QAction *act = menu->exec(globalPos);
+    if (act) {
+        QList<QUrl> urls { url };
+        dpfSignalDispatcher->publish("dfmplugin_trash", "signal_ReportLog_MenuData", act->text(), urls);
+    }
     delete menu;
 }
 

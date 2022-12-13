@@ -296,7 +296,7 @@ void VaultRemovePages::onVualtRemoveFinish(bool result)
         QVariantMap data;
         data.insert("mode", VaultReportData::kDeleted);
 
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Vault", data);
+        dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", "Vault", data);
 
         setInfo(tr("Deleted successfully"));
     } else {

@@ -76,22 +76,6 @@ void Core::initialize()
 
 bool Core::start()
 {
-    // report startup event
-    QTimer::singleShot(500, this, [=]() {
-        QVariantMap data;
-        data.insert("type", true);
-
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "AppStartup", data);
-    });
-
-    connect(qApp, &QApplication::aboutToQuit, this, [=]() {
-        // report quit
-        QVariantMap data;
-        data.insert("type", false);
-
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "AppStartup", data);
-    });
-
     qDebug() << __PRETTY_FUNCTION__;
     GlobalPrivate::kDFMApp = new Application;   // must create it
 

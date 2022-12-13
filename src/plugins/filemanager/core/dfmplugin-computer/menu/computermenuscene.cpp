@@ -202,7 +202,6 @@ bool ComputerMenuScene::triggered(QAction *action)
     using namespace ContextMenuAction;
     auto key = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(key) && d->predicateAction.value(key) == action) {
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         auto ins { ComputerControllerInstance };
         if (key == kOpen)
             ins->onOpenItem(0, d->info->urlOf(UrlInfoType::kUrl));

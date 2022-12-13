@@ -83,6 +83,8 @@ private:
     DPF_EVENT_REG_HOOK(hook_CanvasView_DrawFile)
     DPF_EVENT_REG_HOOK(hook_CanvasView_ShortcutKeyPress)
 
+    DPF_EVENT_REG_SIGNAL(signal_CanvasView_ReportMenuData)
+
     // CanvasGrid begin
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_Items)
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_Item)

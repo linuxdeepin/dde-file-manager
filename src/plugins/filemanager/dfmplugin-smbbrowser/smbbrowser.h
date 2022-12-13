@@ -38,6 +38,9 @@ class SmbBrowser : public dpf::Plugin
 
     DPF_EVENT_NAMESPACE(DPSMBBROWSER_NAMESPACE)
 
+    // signal
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

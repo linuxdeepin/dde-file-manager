@@ -76,7 +76,7 @@ void SearchManager::onIndexFullTextConfigChanged(bool enabled)
     QVariantMap data;
     data.insert("mode", enabled ? SearchReportData::kTurnOn : SearchReportData::kTurnOff);
 
-    dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_Commit", "Search", data);
+    dpfSignalDispatcher->publish("dfmplugin_search", "signal_ReportLog_Commit", "Search", data);
 
     // TODO(liuzhangjian): impl createFullTextIndex logic
 }

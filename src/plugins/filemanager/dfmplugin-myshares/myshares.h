@@ -33,6 +33,11 @@ class MyShares : public dpf::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "myshares.json")
 
+    DPF_EVENT_NAMESPACE(DPMYSHARES_NAMESPACE)
+
+    // signal events
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

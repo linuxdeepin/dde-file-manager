@@ -143,11 +143,9 @@ bool DirShareMenuScene::triggered(QAction *action)
     QString key = action->property(ActionPropertyKey::kActionID).toString();
     if (key == ShareActionId::kActAddShareKey) {
         d->addShare(u);
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     } else if (key == ShareActionId::kActRemoveShareKey) {
         UserShareHelperInstance->removeShareByPath(u.path());
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ReportLog_ReportMenuData", action->text(), d->selectFiles);
         return true;
     }
 

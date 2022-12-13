@@ -33,6 +33,9 @@ namespace dfmplugin_utils {
 class VirtualReportLogPlugin : public dpf::Plugin
 {
     Q_OBJECT
+
+
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

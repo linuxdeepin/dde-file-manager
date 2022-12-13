@@ -44,7 +44,6 @@ public:
     static QIcon icon();
 
     bool mountSmb(const quint64 windowId, const QList<QUrl> urls);
-    void reportLog(bool result, DFMMOUNT::DeviceError err, const QString &msg);
 
 public:
     static QMutex mutex;

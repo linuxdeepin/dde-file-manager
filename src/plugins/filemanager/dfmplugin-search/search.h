@@ -38,6 +38,9 @@ class Search : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Custom_IsDisableSearch)
     DPF_EVENT_REG_SLOT(slot_Custom_RedirectedPath)
 
+    // signal events
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_Commit)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

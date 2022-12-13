@@ -50,6 +50,8 @@ class SideBar : public dpf::Plugin
     // signal events
     DPF_EVENT_REG_SIGNAL(signal_Sidebar_Sorted)
     DPF_EVENT_REG_SIGNAL(signal_Item_EjectClicked)
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_Commit)
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_Group_Sort)

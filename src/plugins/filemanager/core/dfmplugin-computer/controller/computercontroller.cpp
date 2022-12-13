@@ -132,8 +132,11 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
     scene->updateState(&m);
 
     auto act = m.exec(QCursor::pos());
-    if (act)
+    if (act) {
+        QList<QUrl> urls { url };
+        dpfSignalDispatcher->publish("dfmplugin_computer", "signal_ReportLog_MenuData", act->text(), urls);
         scene->triggered(act);
+    }
     delete scene;
     scene = nullptr;
 }

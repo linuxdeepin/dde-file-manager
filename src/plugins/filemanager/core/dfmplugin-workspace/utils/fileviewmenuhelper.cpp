@@ -70,7 +70,11 @@ void FileViewMenuHelper::showEmptyAreaMenu()
 
     QAction *act = menu.exec(QCursor::pos());
     if (act)
-        scene->triggered(act);
+        if (act) {
+            QList<QUrl> urls { view->rootUrl() };
+            dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), urls);
+            scene->triggered(act);
+        }
     delete scene;
 }
 
@@ -112,8 +116,10 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     scene->updateState(&menu);
 
     QAction *act = menu.exec(QCursor::pos());
-    if (act)
+    if (act) {
+        dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_ReportLog_MenuData", act->text(), selectUrls);
         scene->triggered(act);
+    }
     delete scene;
 }
 

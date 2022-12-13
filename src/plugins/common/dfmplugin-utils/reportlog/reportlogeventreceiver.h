@@ -23,6 +23,8 @@
 
 #include "dfmplugin_utils_global.h"
 
+#include <dfm-mount/base/dmount_global.h>
+
 #include <QObject>
 
 namespace dfmplugin_utils {
@@ -31,9 +33,14 @@ class ReportLogEventReceiver : public QObject
     Q_OBJECT
 public:
     explicit ReportLogEventReceiver(QObject *parent = nullptr);
+
+    void bindEvents();
+
     void commit(const QString &type, const QVariantMap &args);
     void handleMenuData(const QString &name, const QList<QUrl> &urlList);
-    void bindEvents();
+
+public Q_SLOTS:
+    void handleMountNetworkResult(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
 };
 }
 #endif   // REPORTLOGEVENTRECEIVER_H

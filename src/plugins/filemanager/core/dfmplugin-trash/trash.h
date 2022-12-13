@@ -31,6 +31,11 @@ class Trash : public dpf::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "trash.json")
 
+    DPF_EVENT_NAMESPACE(DPTRASH_NAMESPACE)
+
+    // signal events
+    DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
