@@ -131,6 +131,8 @@ private:
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), DFileDialog)
 
     bool m_acceptCanOpenOnSave;
+    DUrl curUrl { DUrl() };
+    bool isChanged { false };
 };
 
 #endif // DFILEDIALOG_H

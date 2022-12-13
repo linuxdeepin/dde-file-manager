@@ -213,7 +213,8 @@ void DFileDialog::setDirectoryUrl(const DUrl &directory)
             url.setPath(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first());
         }
     }
-    getFileView()->cd(url);
+    curUrl = directory;
+    isChanged = true;
 }
 
 QUrl DFileDialog::directoryUrl() const
@@ -897,6 +898,11 @@ void DFileDialog::listViewItemClicked(const QModelIndex &index)
 
 void DFileDialog::showEvent(QShowEvent *event)
 {
+    if (getFileView() && isChanged) {
+        getFileView()->cd(curUrl);
+        isChanged = false;
+    }
+
     if (!event->spontaneous() && !testAttribute(Qt::WA_Moved)) {
         Qt::WindowStates  state = windowState();
         adjustPosition(parentWidget());
