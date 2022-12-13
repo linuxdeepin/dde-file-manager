@@ -34,15 +34,16 @@
 #include <QX11Info>
 #include <QFile>
 #include <QProcess>
+#include <QDBusConnectionInterface>
 
 #ifdef COMPILE_ON_V23
-#   define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager"
-#   define APP_MANAGER_PATH "org/desktopspec/ApplicationManager"
-#   define APP_MANAGER_INTERFACE "org.desktopspec.ApplicationManager"
+#    define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager"
+#    define APP_MANAGER_PATH "org/desktopspec/ApplicationManager"
+#    define APP_MANAGER_INTERFACE "org.desktopspec.ApplicationManager"
 #else
-#   define APP_MANAGER_SERVICE "com.deepin.SessionManager"
-#   define APP_MANAGER_PATH "/com/deepin/StartManager"
-#   define APP_MANAGER_INTERFACE "com.deepin.StartManager"
+#    define APP_MANAGER_SERVICE "com.deepin.SessionManager"
+#    define APP_MANAGER_PATH "/com/deepin/StartManager"
+#    define APP_MANAGER_INTERFACE "com.deepin.StartManager"
 #endif
 
 namespace dfmbase {
@@ -224,6 +225,11 @@ bool UniversalUtils::checkLaunchAppInterface()
     static bool initStatus = true;
     static std::once_flag flag;
     std::call_once(flag, []() {
+        QDBusConnectionInterface *interface = QDBusConnection::sessionBus().interface();
+        if (!interface || !interface->isServiceRegistered(APP_MANAGER_SERVICE).isValid() || !interface->isServiceRegistered(APP_MANAGER_SERVICE).value()) {
+            initStatus = false;
+            return;
+        }
         QDBusInterface introspect(APP_MANAGER_SERVICE,
                                   APP_MANAGER_PATH,
                                   "org.freedesktop.DBus.Introspectable",
