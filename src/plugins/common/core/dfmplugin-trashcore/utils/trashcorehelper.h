@@ -45,6 +45,7 @@ public:
     }
     static QUrl rootUrl();
     static QWidget *createTrashPropertyDialog(const QUrl &url);
+    static std::pair<qint64, int> calculateTrashRoot();
 };
 
 }

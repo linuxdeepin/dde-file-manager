@@ -147,8 +147,12 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
             return nullptr;
     } else {
         // Show clear trash dialog
-        DecoratorFileEnumerator enumerator(QUrl("trash:"));
-        if (DialogManagerInstance->showClearTrashDialog(enumerator.fileCount()) != QDialog::Accepted) return nullptr;
+        int count = 0;
+        auto info = InfoFactory::create<AbstractFileInfo>(FileUtils::trashRootUrl());
+        if (info) {
+            count = info->countChildFile();
+        }
+        if (DialogManagerInstance->showClearTrashDialog(count) != QDialog::Accepted) return nullptr;
     }
 
     DWIDGET_USE_NAMESPACE

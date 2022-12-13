@@ -396,8 +396,12 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
             return nullptr;
     } else {
         // Show clear trash dialog
-        DecoratorFileEnumerator enumerator(QUrl("trash:"));
-        if (DialogManagerInstance->showClearTrashDialog(enumerator.fileCount()) != QDialog::Accepted) return nullptr;
+        int count = 0;
+        auto info = InfoFactory::create<AbstractFileInfo>(FileUtils::trashRootUrl());
+        if (info) {
+            count = info->countChildFile();
+        }
+        if (DialogManagerInstance->showClearTrashDialog(count) != QDialog::Accepted) return nullptr;
     }
 
     QList<QUrl> urls = std::move(sources);

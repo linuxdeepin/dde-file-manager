@@ -71,7 +71,6 @@ public:
     static QUrl trashFileToTargetUrl(const QUrl &url);
     static bool isTrashFile(const QUrl &url);
     static bool isTrashRootFile(const QUrl &url);
-    static bool isEmpty();
     static void emptyTrash(const quint64 windowId = 0);
     static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
     static JobHandlePointer restoreFromTrashHandle(const quint64 windowId,

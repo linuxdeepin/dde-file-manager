@@ -126,7 +126,7 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
 bool TrashMenuScene::create(QMenu *parent)
 {
     if (d->isEmptyArea) {
-        auto isDisabled = TrashHelper::isEmpty() || !FileUtils::isTrashRootFile(d->currentDir);
+        auto isDisabled = FileUtils::trashIsEmpty() || !FileUtils::isTrashRootFile(d->currentDir);
 
         auto act = parent->addAction(d->predicateName[TrashActionId::kRestoreAll]);
         act->setProperty(ActionPropertyKey::kActionID, TrashActionId::kRestoreAll);
@@ -238,7 +238,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
             auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (actId == TrashActionId::kRestoreAll
                 || actId == TrashActionId::kEmptyTrash)
-                act->setEnabled(FileUtils::isTrashRootFile(curDir) && !TrashHelper::isEmpty());
+                act->setEnabled(FileUtils::isTrashRootFile(curDir) && !FileUtils::trashIsEmpty());
 
             if (sceneName == "SortAndDisplayMenu" && actId == "sort-by") {
                 auto subMenu = act->menu();

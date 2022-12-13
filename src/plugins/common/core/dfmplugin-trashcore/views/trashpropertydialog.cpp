@@ -20,6 +20,8 @@
  */
 
 #include "trashpropertydialog.h"
+#include "utils/trashcorehelper.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/fileutils.h"
@@ -99,21 +101,8 @@ void TrashPropertyDialog::updateLeftInfo(const int &count)
 
 void TrashPropertyDialog::calculateSize()
 {
-    qint64 size = 0;
-    int count = 0;
-    DecoratorFileEnumerator enumerator(FileUtils::trashRootUrl());
-    if (!enumerator.isValid())
-        return;
-    while (enumerator.hasNext()) {
-        const QUrl &urlNext = enumerator.next();
-        ++count;
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(urlNext);
-        if (!fileInfo)
-            continue;
-        size += fileInfo->size();
-    }
-
-    updateUI(size, count);
+    auto data = TrashCoreHelper::calculateTrashRoot();
+    updateUI(data.first, data.second);
 }
 
 void TrashPropertyDialog::updateUI(qint64 size, int count)

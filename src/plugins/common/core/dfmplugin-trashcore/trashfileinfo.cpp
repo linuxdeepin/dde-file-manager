@@ -323,17 +323,8 @@ qint64 TrashFileInfo::size() const
     qint64 size = 0;
     const QUrl &fileUrl = urlOf(UrlInfoType::kUrl);
     if (FileUtils::isTrashRootFile(fileUrl)) {
-        DecoratorFileEnumerator enumerator(fileUrl);
-        if (!enumerator.isValid())
-            return qint64();
-        while (enumerator.hasNext()) {
-            const QUrl &urlNext = enumerator.next();
-            AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(urlNext);
-            if (!fileInfo)
-                continue;
-            size += fileInfo->size();
-        }
-        return size;
+        auto data = TrashCoreHelper::calculateTrashRoot();
+        return data.first;
     }
 
     bool success = false;

@@ -93,7 +93,7 @@ void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, co
     auto emptyTrashAct = menu->addAction(QObject::tr("Empty Trash"), [windowId, url]() {
         TrashEventCaller::sendEmptyTrash(windowId, {});
     });
-    emptyTrashAct->setDisabled(TrashHelper::isEmpty());
+    emptyTrashAct->setDisabled(FileUtils::trashIsEmpty());
 
     menu->addSeparator();
 
@@ -123,7 +123,7 @@ bool TrashHelper::showTopWidget(QWidget *w, const QUrl &url)
     Q_UNUSED(w)
 
     auto rootUrl = TrashHelper::rootUrl();
-    if (UniversalUtils::urlEquals(url, rootUrl) && !TrashHelper::isEmpty()) {
+    if (UniversalUtils::urlEquals(url, rootUrl) && !FileUtils::trashIsEmpty()) {
         return true;
     } else {
         return false;
@@ -171,14 +171,6 @@ bool TrashHelper::isTrashRootFile(const QUrl &url)
     QRegularExpression reg(rule);
     QRegularExpressionMatch matcher = reg.match(url.toString());
     return matcher.hasMatch();
-}
-
-bool TrashHelper::isEmpty()
-{
-    DecoratorFileEnumerator enumerator(rootUrl());
-    if (!enumerator.isValid())
-        return true;
-    return !enumerator.hasNext();
 }
 
 void TrashHelper::emptyTrash(const quint64 windowId)
@@ -300,10 +292,10 @@ bool TrashHelper::customRoleDisplayName(const QUrl &url, const Global::ItemRoles
 
 void TrashHelper::onTrashStateChanged()
 {
-    if (isEmpty() == isTrashEmpty)
+    if (FileUtils::trashIsEmpty() == isTrashEmpty)
         return;
 
-    isTrashEmpty = isEmpty();
+    isTrashEmpty = !isTrashEmpty;
 
     const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
     for (const quint64 winId : windowIds) {
@@ -317,9 +309,9 @@ void TrashHelper::onTrashStateChanged()
 }
 
 TrashHelper::TrashHelper(QObject *parent)
-    : QObject(parent),
-      isTrashEmpty(isEmpty())
+    : QObject(parent)
 {
+    isTrashEmpty = FileUtils::trashIsEmpty();
     initEvent();
 }
 

@@ -38,7 +38,8 @@ void TrashCore::initialize()
     TrashCoreEventSender::instance();
 
     DFMBASE_NAMESPACE::UrlRoute::regScheme(TrashCoreHelper::scheme(), "/", TrashCoreHelper::icon(), true, tr("Trash"));
-    DFMBASE_NAMESPACE::InfoFactory::regClass<TrashFileInfo>(TrashCoreHelper::scheme());
+    // TODO(lanxs): 目前缓存存在问题，trash由于其特性，容易触发缓存更新问题，所以trash里面暂不使用缓存，等后期缓存完善再放开
+    DFMBASE_NAMESPACE::InfoFactory::regClass<TrashFileInfo>(TrashCoreHelper::scheme(), DFMBASE_NAMESPACE::InfoFactory::kNoCache);
 }
 
 bool TrashCore::start()
