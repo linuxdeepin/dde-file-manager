@@ -211,6 +211,11 @@ bool VaultEventReceiver::handlePathtoVirtual(const QList<QUrl> files, QList<QUrl
 
 bool VaultEventReceiver::fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action)
 {
+    if (VaultHelper::isVaultFile(toUrl)) {
+        *action = Qt::CopyAction;
+        return true;
+    }
+
     for (const QUrl &url : fromUrls) {
         if (VaultHelper::isVaultFile(url)) {
             *action = Qt::CopyAction;
