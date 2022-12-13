@@ -471,7 +471,7 @@ public:
         bool ret { true };
         if (lastQuery) {
             *lastQuery = query.lastQuery();
-            // qInfo().noquote() << "SQL Query:" << *lastQuery;
+            qInfo().noquote() << "SQL Query:" << *lastQuery;
         }
         if (query.lastError().type() != QSqlError::NoError) {
             qWarning().noquote() << "SQL Error: " << query.lastError().text().trimmed();

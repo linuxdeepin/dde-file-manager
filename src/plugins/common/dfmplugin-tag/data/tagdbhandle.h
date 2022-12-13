@@ -54,6 +54,7 @@ public:
     bool changeFilePaths(const QVariantMap &data);
 
     QString lastError();
+    bool checkDatabase();
 
 private:
     bool checkTag(const QString &tag);
@@ -64,6 +65,9 @@ private:
     bool changeTagColor(const QString &tagName, const QString &newTagColor);
     bool changeTagName(const QString &tagName, const QString &newName);
     bool changeFilePath(const QString &oldPath, const QString &newPath);
+
+    bool chechTable(const QString &tableName);
+    bool createTable(const QString &tableName);
 
     explicit TagDbHandle(QObject *parent = nullptr);
     virtual ~TagDbHandle() = default;

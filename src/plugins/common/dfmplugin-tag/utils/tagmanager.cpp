@@ -6,6 +6,7 @@
 
 #include "dfmplugin_tag_global.h"
 #include "dbus/tagdbus.h"
+#include "data/tagdbhandle.h"
 #include "taghelper.h"
 #include "events/tageventcaller.h"
 #include "widgets/tagcolorlistwidget.h"

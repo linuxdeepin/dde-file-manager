@@ -31,8 +31,8 @@ private:
     bool checkNewDatabase();
 
     bool checkDatabaseFile(const QString &dbPath);
-    bool chechTable(const QSqlDatabase &db, const QString &tableName, bool newTable = false);
-    bool createTableForNewDb(const QSqlDatabase &db, const QString &tableName);
+    bool chechTable(SqliteHandle *handle, const QString &tableName, bool newTable = false);
+    bool createTableForNewDb(const QString &tableName);
 
     bool upgradeData();
 
@@ -40,7 +40,6 @@ private:
     SqliteHandle *mainDbHandle { nullptr };
     SqliteHandle *deepinDbHandle { nullptr };
     SqliteHandle *newTagDbhandle { nullptr };
-    QMap<QString, QString> tableInfos;
 };
 }
 

@@ -5,9 +5,11 @@
 #include "tagdbhandle.h"
 
 #include "dfmplugin_tag_global.h"
-#include "base/db/sqlitehandle.h"
+#include "dfm-base/base/db/sqlitehandle.h"
+#include "dfm-base/base/db/sqlitehelper.h"
 #include "beans/filetaginfo.h"
 #include "beans/tagproperty.h"
+#include "beans/sqlitemaster.h"
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/finallyutil.h"
@@ -24,6 +26,8 @@ DPTAG_USE_NAMESPACE
 USING_IO_NAMESPACE
 
 static constexpr char kTagDbName[] = ".__tag.db";
+static constexpr char kTagTableFileTags[] = "file_tags";
+static constexpr char kTagTableTagProperty[] = "tag_property";
 
 TagDbHandle *TagDbHandle::instance()
 {
@@ -32,12 +36,9 @@ TagDbHandle *TagDbHandle::instance()
 }
 
 TagDbHandle::TagDbHandle(QObject *parent)
-    : QObject(parent),
-      handle(new SqliteHandle(DFMUtils::buildFilePath(StandardPaths::location(StandardPaths::kApplicationConfigPath).toLocal8Bit(),
-                                                      "/deepin/dde-file-manager/database",
-                                                      kTagDbName,
-                                                      nullptr)))
+    : QObject(parent)
 {
+    checkDatabase();
 }
 
 QVariantMap TagDbHandle::getAllTags()
@@ -97,7 +98,8 @@ QVariantMap TagDbHandle::getTagsByUrls(const QStringList &urlList)
         for (auto oneBean : beanList)
             fileTags.append(oneBean->getTagName());
 
-        allFileTags.insert(path, fileTags);
+        if (!fileTags.isEmpty())
+            allFileTags.insert(path, fileTags);
     }
 
     finally.dismiss();
@@ -212,6 +214,11 @@ bool TagDbHandle::addTagsForFiles(const QVariantMap &data)
                         return false;
                     }
                 }
+            }
+        } else {
+            ret = tagFile(dataIt.key(), dataIt.value());
+            if (!ret) {
+                return false;
             }
         }
     }
@@ -351,6 +358,38 @@ bool TagDbHandle::changeFilePaths(const QVariantMap &data)
 QString TagDbHandle::lastError()
 {
     return lastErr;
+}
+
+bool TagDbHandle::checkDatabase()
+{
+    using namespace dfmio;
+    const auto &dbPath = DFMUtils::buildFilePath(StandardPaths::location(StandardPaths::kApplicationConfigPath).toLocal8Bit(),
+                                                 "/deepin/dde-file-manager/database",
+                                                 nullptr);
+
+    QDir dir(dbPath);
+    if (!dir.exists())
+        dir.mkdir(dbPath);
+
+    const auto &dbFilePath = DFMUtils::buildFilePath(dbPath.toLocal8Bit(),
+                                                     kTagDbName,
+                                                     nullptr);
+
+    QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
+    if (!db.isValid() || db.isOpenError()) {
+        qWarning() << "The tag database is invalid! open error";
+        return false;
+    }
+    db.close();
+
+    handle = new SqliteHandle(dbFilePath);
+    if (!chechTable(kTagTableTagProperty))
+        return false;
+
+    if (!chechTable(kTagTableFileTags))
+        return false;
+
+    return true;
 }
 
 bool TagDbHandle::checkTag(const QString &tag)
@@ -503,4 +542,41 @@ bool TagDbHandle::changeFilePath(const QString &oldPath, const QString &newPath)
 
     finally.dismiss();
     return true;
+}
+
+bool TagDbHandle::chechTable(const QString &tableName)
+{
+    if (tableName.isEmpty())
+        return false;
+
+    // check table
+    const auto &field = Expression::Field<SqliteMaster>;
+    const auto &beanList = handle->query<SqliteMaster>().where(field("type") == "table" && field("name") == tableName).toBeans();
+
+    if (0 == beanList.size())
+        return createTable(tableName);
+    return true;
+}
+
+bool TagDbHandle::createTable(const QString &tableName)
+{
+
+    bool ret = false;
+    if (SqliteHelper::tableName<FileTagInfo>() == tableName) {
+
+        ret = handle->createTable<FileTagInfo>(
+                SqliteConstraint::primary("fileIndex"),
+                SqliteConstraint::autoIncreament("fileIndex"),
+                SqliteConstraint::unique("fileIndex"));
+    }
+
+    if (SqliteHelper::tableName<TagProperty>() == tableName) {
+
+        ret = handle->createTable<TagProperty>(
+                SqliteConstraint::primary("tagIndex"),
+                SqliteConstraint::autoIncreament("tagIndex"),
+                SqliteConstraint::unique("tagIndex"));
+    }
+
+    return ret;
 }

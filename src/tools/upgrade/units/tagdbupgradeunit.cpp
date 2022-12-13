@@ -7,11 +7,14 @@
 #include "beans/tagproperty.h"
 #include "beans/oldfileproperty.h"
 #include "beans/oldtagproperty.h"
+#include "beans/sqlitemaster.h"
 
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/db/sqliteconnectionpool.h"
+#include "dfm-base/base/db/sqlitehandle.h"
+#include "dfm-base/base/db/sqlitehelper.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -26,19 +29,11 @@ static constexpr char kTagNewDbName[] = ".__tag.db";
 static constexpr char kTagNewTableFileTags[] = "file_tags";
 static constexpr char kTagNewTableTagProperty[] = "tag_property";
 
-static constexpr char kTagDbTableExistCheckSql[] = "SELECT count(*) FROM sqlite_master WHERE type=\"table\" AND name = \"%1\";";
-static constexpr char kTagNewTableTagPropertyCreateSql[] = "CREATE TABLE `tag_property` ( `tagIndex` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                                           "`tagName` TEXT NOT NULL, `tagColor` TEXT NOT NULL, `ambiguity` INTEGER NOT NULL, `future` TEXT NOT NULL )";
-static constexpr char kTagNewTableFileTagsCreateSql[] = "CREATE TABLE `file_tags` ( `fileIndex` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, "
-                                                        "`filePath` TEXT NOT NULL, `tagName` TEXT NOT NULL, `tagOrder` INTEGER NOT NULL, `future` TEXT NOT NULL )";
-
 using namespace dfm_upgrade;
 DFMBASE_USE_NAMESPACE
 
 TagDbUpgradeUnit::TagDbUpgradeUnit()
 {
-    tableInfos.insert(kTagNewTableTagProperty, kTagNewTableTagPropertyCreateSql);
-    tableInfos.insert(kTagNewTableFileTags, kTagNewTableFileTagsCreateSql);
 }
 
 QString dfm_upgrade::TagDbUpgradeUnit::name()
@@ -86,30 +81,40 @@ bool TagDbUpgradeUnit::checkDatabaseFile(const QString &dbPath)
     return fileInfo ? true : false;
 }
 
-bool TagDbUpgradeUnit::chechTable(const QSqlDatabase &db, const QString &tableName, bool newTable)
+bool TagDbUpgradeUnit::chechTable(SqliteHandle *handle, const QString &tableName, bool newTable)
 {
-    auto sqlStr = QString(kTagDbTableExistCheckSql).arg(tableName);
-    QSqlQuery query { db };
-    query.exec(sqlStr);
+    // check table
+    const auto &field = Expression::Field<SqliteMaster>;
+    const auto &beanList = handle->query<SqliteMaster>().where(field("type") == "table" && field("name") == tableName).toBeans();
 
-    if (!newTable)
-        return query.next();
-
-    return createTableForNewDb(db, tableName);
+    if (0 == beanList.size())
+        return newTable ? createTableForNewDb(tableName) : false;
+    return true;
 }
 
-bool TagDbUpgradeUnit::createTableForNewDb(const QSqlDatabase &db, const QString &tableName)
+bool TagDbUpgradeUnit::createTableForNewDb(const QString &tableName)
 {
-    if (db.isValid() || db.isOpenError() || tableName.isEmpty())
+    if (newTagDbhandle)
         return false;
 
-    const auto createSql = tableInfos.value(tableName);
-    if (createSql.isEmpty()) {
-        return false;
+    bool ret = false;
+    if (SqliteHelper::tableName<FileTagInfo>() == tableName) {
+
+        ret = newTagDbhandle->createTable<FileTagInfo>(
+                SqliteConstraint::primary("fileIndex"),
+                SqliteConstraint::autoIncreament("fileIndex"),
+                SqliteConstraint::unique("fileIndex"));
     }
 
-    QSqlQuery query { db };
-    return query.exec(createSql);
+    if (SqliteHelper::tableName<TagProperty>() == tableName) {
+
+        ret = newTagDbhandle->createTable<TagProperty>(
+                SqliteConstraint::primary("tagIndex"),
+                SqliteConstraint::autoIncreament("tagIndex"),
+                SqliteConstraint::unique("tagIndex"));
+    }
+
+    return ret;
 }
 
 bool TagDbUpgradeUnit::upgradeData()
@@ -191,17 +196,19 @@ bool TagDbUpgradeUnit::checkOldDatabase()
                                                   kTagOldDbName1,
                                                   nullptr);
 
+    // chech database
     if (!checkDatabaseFile(dbPath1))
         return false;
 
     QSqlDatabase db1 { SqliteConnectionPool::instance().openConnection(dbPath1) };
     if (!db1.isValid() || db1.isOpenError())
         return false;
+    db1.close();
 
-    if (!chechTable(db1, kTagOldDb1TableTagProperty))
-        return false;
-
+    // check ".__main.db" database table
     mainDbHandle = new SqliteHandle(dbPath1);
+    if (!chechTable(mainDbHandle, kTagOldDb1TableTagProperty))
+        return false;
 
     const auto &dbPath2 = DFMUtils::buildFilePath(StandardPaths::location(StandardPaths::kApplicationSharePath).toLocal8Bit(),
                                                   "/database",
@@ -211,11 +218,13 @@ bool TagDbUpgradeUnit::checkOldDatabase()
     QSqlDatabase db2 { SqliteConnectionPool::instance().openConnection(dbPath2) };
     if (!db2.isValid() || db2.isOpenError())
         return false;
+    db2.close();
 
-    if (!chechTable(db2, kTagOldDb2TableFileProperty))
+    // check ".__deepin.db" database table
+    deepinDbHandle = new SqliteHandle(dbPath2);
+    if (!chechTable(deepinDbHandle, kTagOldDb2TableFileProperty))
         return false;
 
-    deepinDbHandle = new SqliteHandle(dbPath2);
     return true;
 }
 
@@ -227,16 +236,26 @@ bool TagDbUpgradeUnit::checkNewDatabase()
                                                  kTagNewDbName,
                                                  nullptr);
 
-    QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbPath) };
+    QDir dir(dbPath);
+    if (!dir.exists())
+        dir.mkdir(dbPath);
+
+    const auto &dbFilePath = DFMUtils::buildFilePath(dbPath.toLocal8Bit(),
+                                                     kTagNewDbName,
+                                                     nullptr);
+
+    QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
     if (!db.isValid() || db.isOpenError())
         return false;
+    db.close();
 
-    if (!chechTable(db, kTagNewTableTagProperty, true))
-        return false;
-
-    if (!chechTable(db, kTagNewTableFileTags, true))
-        return false;
-
+    // check ".__tag.db" database table
     newTagDbhandle = new SqliteHandle(dbPath);
+    if (!chechTable(newTagDbhandle, kTagNewTableTagProperty, true))
+        return false;
+
+    if (!chechTable(newTagDbhandle, kTagNewTableFileTags, true))
+        return false;
+
     return true;
 }

@@ -101,7 +101,8 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
 {
     Q_UNUSED(color)
 
-    const QStringList tagNameList = TagManager::instance()->getTagsByUrls({ d->url }, false).toMap().first().toStringList();
+    const auto &ret = TagManager::instance()->getTagsByUrls({ d->url }, false).toMap();
+    const QStringList &tagNameList = ret.isEmpty() ? QStringList() : ret.first().toStringList();
     QMap<QString, QColor> nameColors = TagManager::instance()->getTagsColor(tagNameList);
     QList<QUrl> urlList { d->url };
     QList<QColor> checkedColors = d->colorListWidget->checkedColorList();
