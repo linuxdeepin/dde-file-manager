@@ -849,7 +849,7 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
             matcher = reg.match(newMsg);
             arg2 = matcher.captured(0);
 
-            title = QObject::tr("Can’t verify the identity of %1.").arg(arg1);
+            title = QObject::tr("Can't verify the identity of %1.").arg(arg1);
             newMsg = QObject::tr("This happens when you log in to a computer the first time.")
                     + '\n' + QObject::tr("The identity sent by the remote computer is") + '\n'
                     + arg2 + '\n'
