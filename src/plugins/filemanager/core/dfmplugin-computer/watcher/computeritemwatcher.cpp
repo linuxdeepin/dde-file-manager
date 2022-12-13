@@ -244,10 +244,6 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
     devs = DevProxyMng->getAllProtocolIds();
 
     for (const auto &dev : devs) {
-        if (StashMountsUtils::isSmbIntegrationEnabled()
-            && (dev.startsWith(Global::Scheme::kSmb) || DeviceUtils::isSamba(dev)))
-            continue;   // With smb integration mode, do not show smb mounted folder in sidebar and computer view.
-
         auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
         //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
@@ -270,9 +266,6 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 
 ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, const ComputerDataList &protocolDevs)
 {
-    if (StashMountsUtils::isSmbIntegrationEnabled())
-        return ComputerDataList();   // Do nothing, smb integration items would be added by smbbrowser plugin.
-
     auto hasProtocolDev = [](const QUrl &url, const ComputerDataList &container) {
         for (auto dev : container) {
             if (dev.url == url)
@@ -284,7 +277,7 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, 
 
     const QMap<QString, QString> &&stashedMounts = StashMountsUtils::stashedMounts();
 
-    auto isStashedSmbBeMounted = [](const QUrl &smbUrl) {
+    auto isStashedSmbBeMounted = [](const QUrl &smbUrl) {   //TOOD(zhuangshu):do it out of computer plugin
         QUrl url(smbUrl);
         if (url.scheme() != Global::Scheme::kSmb)
             return false;
@@ -785,9 +778,6 @@ void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QStri
         const QVariantHash &newMount = StashMountsUtils::makeStashedSmbDataById(id);
         const QUrl &stashedUrl = StashMountsUtils::makeStashedSmbMountUrl(newMount);
         removeDevice(stashedUrl);   // Before adding mounted smb item, removing its stashed item firstly.
-
-        if (StashMountsUtils::isSmbIntegrationEnabled())
-            return;   //onDeviceAdded has been called from SmbBrowser with `slot_AddDevice` event of computer plugin.
     }
 
     this->onDeviceAdded(url, getGroupId(diskGroup()));
@@ -798,9 +788,7 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     removeDevice(devUrl);
 
-    if (StashMountsUtils::isSmbIntegrationEnabled() && DeviceUtils::isSamba(QUrl(id))) {
-        //Do nothing, it was handled in SmbIntegrationManager::onProtocolDeviceUnmounted
-    } else if (StashMountsUtils::isStashMountsEnabled()) {   // After removing smb device, adding stashed smb item to sidebar and computer view
+    if (StashMountsUtils::isStashMountsEnabled()) {   // After removing smb device, adding stashed smb item to sidebar and computer view
         QUrl stashedUrl;
         if (id.startsWith(Global::Scheme::kSmb)) {
             onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));

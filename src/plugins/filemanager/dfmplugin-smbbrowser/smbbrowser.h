@@ -49,12 +49,13 @@ public:
 
 protected Q_SLOTS:
     void onWindowOpened(quint64 windd);
-    void onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, QList<QUrl> &urls);
+    void onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &urls);
 
 private:
     void bindScene(const QString &parentScene);
     void bindSceneOnAdded(const QString &newScene);
     void bindWindows();
+    void followEvents();
 
 private:
     void addNeighborToSidebar();

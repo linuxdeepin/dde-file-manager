@@ -12,6 +12,7 @@ extern "C" {
 #define signals public
 
 DFMBASE_USE_NAMESPACE
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 namespace dfmplugin_smbbrowser {
 
@@ -36,21 +37,24 @@ public:
 
     void addStashedSeperatedItemToSidebar(QVariantMap stashedSeperatedData, ContextMenuCallback contexMenu);
     void addStashedSeperatedItemToComputer(const QList<QUrl> &urlList);
-
+    bool handleItemListFilter(QList<QUrl> *items);
+    bool handleItemFilterOnAdd(const QUrl &devUrl);
     void setWindowId(quint64 winId);
+    void switchIntegrationMode(bool value);
 
 public Q_SLOTS:
     void computerOpenItem(quint64 winId, const QUrl &url);
 
 Q_SIGNALS:
     void refreshToSmbIntegrationMode(quint64 winId);
-    void refreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, QList<QUrl> &urls);
+    void refreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &urls);
 
 private:
     explicit SmbIntegrationManager(QObject *parent = nullptr);
     void addIntegrationItemToSidebar(const QUrl &hostUrl, ContextMenuCallback contexMenu);
     void addIntegrationItemToComputer(const QUrl &hostUrl);
-    void switchIntegrationMode(bool value);
+    void doSwitchToSmbIntegratedMode(const QList<QUrl> &stashedUrls);
+    void doSwitchToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &stashedUrls);
 
     void clearPasswd(const QUrl &url);
     QString parseServer(const QString &uri);

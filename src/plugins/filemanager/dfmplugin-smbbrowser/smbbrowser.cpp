@@ -96,6 +96,11 @@ bool SmbBrowser::start()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSFtp));
     dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_Operation_OpenItem", SmbIntegrationManager::instance(), &SmbIntegrationManager::computerOpenItem);
 
+    followEvents();
+    // After followEvents, call switchIntegrationMode() to refresh the smb display mode.
+    //Because before call followEvents(), the hook events do not work.
+    SmbIntegrationManager::instance()->switchIntegrationMode(SmbIntegrationManager::instance()->isSmbIntegrationEnabled());
+
     return true;
 }
 
@@ -181,7 +186,7 @@ void SmbBrowser::onWindowOpened(quint64 winId)
     }
 }
 
-void SmbBrowser::onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, QList<QUrl> &urls)
+void SmbBrowser::onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &urls)
 {
     // add items to sidebar
     ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
@@ -218,7 +223,14 @@ void SmbBrowser::bindWindows()
     std::for_each(winIdList.begin(), winIdList.end(), [this](quint64 id) {
         onWindowOpened(id);
     });
+
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
+}
+
+void SmbBrowser::followEvents()
+{
+    dpfHookSequence->follow("dfmplugin_computer", "hook_ComputerView_ItemListFilter", SmbIntegrationManager::instance(), &SmbIntegrationManager::handleItemListFilter);
+    dpfHookSequence->follow("dfmplugin_computer", "hook_ComputerView_ItemFilterOnAdd", SmbIntegrationManager::instance(), &SmbIntegrationManager::handleItemFilterOnAdd);
 }
 
 void SmbBrowser::addNeighborToSidebar()
