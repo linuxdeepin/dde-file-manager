@@ -228,7 +228,7 @@ bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
     if (!info->canAttributes(CanableInfoType::kCanRename))
         return false;
 
-    QString path = info->pathOfInfo(PathInfoType::kFilePath);
+    QString path = info->pathOf(PathInfoType::kFilePath);
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
                                      QRegularExpression::DotMatchesEverythingOption
                                              | QRegularExpression::DontCaptureOption
@@ -266,7 +266,7 @@ void PermissionManagerWidget::onComboBoxChanged()
         return;
 
     struct stat fileStat;
-    QByteArray infoBytes(info->pathOfInfo(PathInfoType::kAbsoluteFilePath).toUtf8());
+    QByteArray infoBytes(info->pathOf(PathInfoType::kAbsoluteFilePath).toUtf8());
     stat(infoBytes.data(), &fileStat);
     auto preMode = fileStat.st_mode;
     int ownerFlags = ownerComboBox->currentData().toInt();
@@ -279,7 +279,7 @@ void PermissionManagerWidget::onComboBoxChanged()
     otherFlags |= (permissions & QFile::ExeOther);
     PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, QFileDevice::Permissions(ownerFlags) | QFileDevice::Permissions(groupFlags) | QFileDevice::Permissions(otherFlags));
 
-    infoBytes = info->pathOfInfo(PathInfoType::kAbsoluteFilePath).toUtf8();
+    infoBytes = info->pathOf(PathInfoType::kAbsoluteFilePath).toUtf8();
     stat(infoBytes.data(), &fileStat);
     auto afterMode = fileStat.st_mode;
     // 修改权限失败

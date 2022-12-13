@@ -55,14 +55,14 @@ private:
 
 TEST_F(UT_SmbShareFileInfo, FileName)
 {
-    EXPECT_NO_FATAL_FAILURE(info->nameInfo(NameInfo::kFileName));
-    EXPECT_TRUE(info->nameInfo(NameInfo::kFileName) == "HelloWorld");
+    EXPECT_NO_FATAL_FAILURE(info->nameOf(dfmbase::NameInfoType::kFileName));
+    EXPECT_TRUE(info->nameOf(dfmbase::NameInfoType::kFileName) == "HelloWorld");
 }
 
 TEST_F(UT_SmbShareFileInfo, FileDisplayName)
 {
-    EXPECT_NO_FATAL_FAILURE(info->displayInfo(DisPlay::kFileDisplayName));
-    EXPECT_TRUE(info->displayInfo(DisPlay::kFileDisplayName) == "HelloWorld");
+    EXPECT_NO_FATAL_FAILURE(info->displayOf(dfmbase::DisPlayInfoType::kFileDisplayName));
+    EXPECT_TRUE(info->displayOf(dfmbase::DisPlayInfoType::kFileDisplayName) == "HelloWorld");
 }
 
 TEST_F(UT_SmbShareFileInfo, FileIcon)
@@ -72,20 +72,20 @@ TEST_F(UT_SmbShareFileInfo, FileIcon)
 
 TEST_F(UT_SmbShareFileInfo, IsDir)
 {
-    EXPECT_TRUE(info->isAttributes(IsInfo::kIsDir));
+    EXPECT_TRUE(info->isAttributes(dfmbase::OptInfoType::kIsDir));
 }
 
 TEST_F(UT_SmbShareFileInfo, IsReadable)
 {
-    EXPECT_TRUE(info->isAttributes(IsInfo::kIsReadable));
+    EXPECT_TRUE(info->isAttributes(dfmbase::OptInfoType::kIsReadable));
 }
 
 TEST_F(UT_SmbShareFileInfo, IsWritable)
 {
-    EXPECT_TRUE(info->isAttributes(IsInfo::kIsWritable));
+    EXPECT_TRUE(info->isAttributes(dfmbase::OptInfoType::kIsWritable));
 }
 
 TEST_F(UT_SmbShareFileInfo, CanDrag)
 {
-    EXPECT_FALSE(info->canAttributes(CanInfo::kCanDrag));
+    EXPECT_FALSE(info->canAttributes(dfmbase::CanableInfoType::kCanDrag));
 }

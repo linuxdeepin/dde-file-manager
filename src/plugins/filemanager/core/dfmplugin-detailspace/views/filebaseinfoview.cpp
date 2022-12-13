@@ -228,7 +228,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
 
     AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
     if (localinfo && localinfo->isAttributes(OptInfoType::kIsSymLink)) {
-        const QUrl &targetUrl = QUrl::fromLocalFile(localinfo->pathOfInfo(PathInfoType::kSymLinkTarget));
+        const QUrl &targetUrl = QUrl::fromLocalFile(localinfo->pathOf(PathInfoType::kSymLinkTarget));
         localinfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     }
     if (localinfo && FileUtils::isTrashFile(localUrl) && !UniversalUtils::urlEquals(localUrl, FileUtils::trashRootUrl())) {

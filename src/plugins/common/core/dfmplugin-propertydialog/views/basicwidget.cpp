@@ -224,9 +224,9 @@ void BasicWidget::basicFill(const QUrl &url)
     connect(hideFile, &QCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
 
     if (filePosition && filePosition->RightValue().isEmpty()) {
-        filePosition->setRightValue(info->isAttributes(OptInfoType::kIsSymLink) ? info->pathOfInfo(PathInfoType::kSymLinkTarget) : url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
+        filePosition->setRightValue(info->isAttributes(OptInfoType::kIsSymLink) ? info->pathOf(PathInfoType::kSymLinkTarget) : url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
         if (info->isAttributes(OptInfoType::kIsSymLink)) {
-            auto &&symlink = info->pathOfInfo(PathInfoType::kSymLinkTarget);
+            auto &&symlink = info->pathOf(PathInfoType::kSymLinkTarget);
             connect(filePosition, &KeyValueLabel::valueAreaClicked, this, [symlink] {
                 const QUrl &url = QUrl::fromLocalFile(symlink);
                 const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);

@@ -191,7 +191,7 @@ QString LocalFileInfo::nameOf(const NameInfoType type) const
   * 处理或者字符串处理，这都比较快
   * \param FileNameInfoType
   */
-QString LocalFileInfo::pathOfInfo(const PathInfoType type) const
+QString LocalFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kFilePath:
@@ -207,7 +207,7 @@ QString LocalFileInfo::pathOfInfo(const PathInfoType type) const
     case FilePathInfoType::kSymLinkTarget:
         return d->symLinkTarget();
     default:
-        return AbstractFileInfo::pathOfInfo(type);
+        return AbstractFileInfo::pathOf(type);
     }
 }
 /*!

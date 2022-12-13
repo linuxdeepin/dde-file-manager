@@ -55,7 +55,7 @@ public:
     virtual void refresh() override;
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant()) override;
     virtual QString nameOf(const FileNameInfoType type) const override;
-    virtual QString pathOfInfo(const FilePathInfoType type) const override;
+    virtual QString pathOf(const FilePathInfoType type) const override;
     virtual QUrl urlOf(const FileUrlInfoType type) const override;
     virtual bool isAttributes(const FileIsType type) const override;
     virtual bool canAttributes(const FileCanType type) const override;

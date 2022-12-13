@@ -40,7 +40,7 @@ public:
     virtual bool operator==(const VaultFileInfo &fileinfo) const;
     virtual bool operator!=(const VaultFileInfo &fileinfo) const;
 
-    virtual QString pathOfInfo(const FilePathInfoType type) const override;
+    virtual QString pathOf(const FilePathInfoType type) const override;
     virtual QUrl urlOf(const FileUrlInfoType type) const override;
     virtual bool exists() const override;
     virtual void refresh() override;

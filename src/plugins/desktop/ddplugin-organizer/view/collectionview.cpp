@@ -632,7 +632,7 @@ void CollectionViewPrivate::clearClipBoard()
             return;
         }
         auto homePath = q->model()->rootUrl().toLocalFile();
-        if (itemInfo && (itemInfo->pathOfInfo(PathInfoType::kAbsolutePath) == homePath))
+        if (itemInfo && (itemInfo->pathOf(PathInfoType::kAbsolutePath) == homePath))
             ClipBoard::instance()->clearClipboard();
     }
 }
@@ -823,7 +823,7 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
         return false;
     }
 
-    if (itemInfo->pathOfInfo(PathInfoType::kAbsolutePath) != q->model()->fileUrl(q->model()->rootIndex()).toLocalFile()) {
+    if (itemInfo->pathOf(PathInfoType::kAbsolutePath) != q->model()->fileUrl(q->model()->rootIndex()).toLocalFile()) {
         qWarning() << "source file not belong desktop:" << event->mimeData()->urls();
         return false;
     }

@@ -39,7 +39,7 @@ public:
     virtual void refresh() override;
     virtual QString nameOf(const FileNameInfoType type) const override;
     virtual QString displayOf(const DisplayInfoType type) const override;
-    virtual QString pathOfInfo(const FilePathInfoType type) const override;
+    virtual QString pathOf(const FilePathInfoType type) const override;
     virtual QUrl urlOf(const FileUrlInfoType type) const override;
     virtual bool exists() const override;
     virtual bool canAttributes(const FileCanType type) const override;

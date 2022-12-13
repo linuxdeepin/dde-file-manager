@@ -162,7 +162,7 @@ QString EntryFileInfo::nameOf(const NameInfoType type) const
     }
 }
 
-QString EntryFileInfo::pathOfInfo(const PathInfoType type) const
+QString EntryFileInfo::pathOf(const PathInfoType type) const
 {
     QString path;
     switch (type) {
@@ -171,7 +171,7 @@ QString EntryFileInfo::pathOfInfo(const PathInfoType type) const
     case FilePathInfoType::kFilePath:
         return dptr->url.path();
     default:
-        return AbstractFileInfo::pathOfInfo(type);
+        return AbstractFileInfo::pathOf(type);
     }
 }
 

@@ -249,7 +249,7 @@ public:
     virtual void refresh();
     virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
     virtual QString nameOf(const FileNameInfoType type) const;
-    virtual QString pathOfInfo(const FilePathInfoType type) const;
+    virtual QString pathOf(const FilePathInfoType type) const;
     virtual QString displayOf(const DisplayInfoType type) const;
     virtual QUrl urlOf(const FileUrlInfoType type) const;
     virtual QUrl getUrlByType(const FileUrlInfoType type, const QString &fileName) const;

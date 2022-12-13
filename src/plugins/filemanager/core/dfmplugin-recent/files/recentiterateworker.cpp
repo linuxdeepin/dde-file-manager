@@ -64,7 +64,7 @@ void RecentIterateWorker::doWork()
                 QUrl url = QUrl(location.toString());
                 auto info = InfoFactory::create<AbstractFileInfo>(url);
                 if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
-                    const auto &bindPath = FileUtils::bindPathTransform(info->pathOfInfo(PathInfoType::kAbsoluteFilePath), false);
+                    const auto &bindPath = FileUtils::bindPathTransform(info->pathOf(PathInfoType::kAbsoluteFilePath), false);
                     QUrl recentUrl = QUrl::fromLocalFile(bindPath);
                     recentUrl.setScheme(RecentManager::scheme());
                     qint64 readTimeSecs = QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch();

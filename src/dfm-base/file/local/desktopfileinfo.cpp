@@ -164,7 +164,7 @@ QIcon DesktopFileInfo::fileIcon()
     } else {
         const QString &currentDir = QDir::currentPath();
 
-        QDir::setCurrent(pathOfInfo(PathInfoType::kAbsolutePath));
+        QDir::setCurrent(pathOf(PathInfoType::kAbsolutePath));
 
         QFileInfo fileInfo(iconName.startsWith("~") ? (QDir::homePath() + iconName.mid(1)) : iconName);
 

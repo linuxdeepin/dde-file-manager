@@ -103,7 +103,7 @@ TEST(SearchFileWatcherTest, ut_onFileRenamed)
     st.set_lamda(&InfoFactory::create<AbstractFileInfo>, [&toUrl] {
         return QSharedPointer<LocalFileInfo>(new LocalFileInfo(toUrl));
     });
-    st.set_lamda(VADDR(LocalFileInfo, displayInfo), [] {
+    st.set_lamda(VADDR(LocalFileInfo, displayOf), [] {
         return "test123";
     });
 

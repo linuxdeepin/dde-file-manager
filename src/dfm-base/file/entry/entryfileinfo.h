@@ -76,7 +76,7 @@ public:
     // AbstractFileInfo interface
     virtual bool exists() const override;
     virtual QString nameOf(const FileNameInfoType type) const override;
-    virtual QString pathOfInfo(const FilePathInfoType type) const override;
+    virtual QString pathOf(const FilePathInfoType type) const override;
     virtual QIcon fileIcon() override;
     virtual void refresh() override;
     virtual QVariantHash extraProperties() const override;

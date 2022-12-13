@@ -179,7 +179,7 @@ void ShareMenuScenePrivate::handleActionTriggered(QAction *act)
     QStringList filePaths;
     for (const auto &url : selectFiles) {
         auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
-        filePaths << f->pathOfInfo(PathInfoType::kAbsoluteFilePath);
+        filePaths << f->pathOf(PathInfoType::kAbsoluteFilePath);
     }
     QString actId = act->property(ActionPropertyKey::kActionID).toString();
     if (actId == ActionID::kShareToBluetooth) {

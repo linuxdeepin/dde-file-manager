@@ -252,8 +252,8 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
     if (!fileInfo)
         return QString();
 
-    const QString &absolutePath = fileInfo->pathOfInfo(PathInfoType::kPath);
-    const QString &absoluteFilePath = fileInfo->pathOfInfo(PathInfoType::kFilePath);
+    const QString &absolutePath = fileInfo->pathOf(PathInfoType::kPath);
+    const QString &absoluteFilePath = fileInfo->pathOf(PathInfoType::kFilePath);
 
     if (absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kSmall)
         || absolutePath == d->sizeToFilePath(ThumbnailProvider::Size::kNormal)
@@ -302,8 +302,8 @@ QString ThumbnailProvider::createThumbnail(const QUrl &url, ThumbnailProvider::S
 
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-    const QString &DirPath = fileInfo->pathOfInfo(PathInfoType::kAbsolutePath);
-    const QString &filePath = fileInfo->pathOfInfo(PathInfoType::kAbsoluteFilePath);
+    const QString &DirPath = fileInfo->pathOf(PathInfoType::kAbsolutePath);
+    const QString &filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
 
     if (DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kSmall)
         || DirPath == d->sizeToFilePath(ThumbnailProvider::Size::kNormal)

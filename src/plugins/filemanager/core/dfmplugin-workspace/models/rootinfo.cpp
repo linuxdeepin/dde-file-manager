@@ -39,7 +39,7 @@ RootInfo::RootInfo(int i, const QUrl &u, const AbstractFileWatcherPointer &w)
 {
     QString localFilePath = this->url.path();
     if (!data->fileInfo().isNull())
-        localFilePath = data->fileInfo()->pathOfInfo(PathInfoType::kFilePath);
+        localFilePath = data->fileInfo()->pathOf(PathInfoType::kFilePath);
     hiddenFileUrl = QUrl::fromLocalFile(localFilePath + "/.hidden");
 }
 

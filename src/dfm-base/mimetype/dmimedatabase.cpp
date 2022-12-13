@@ -58,7 +58,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
     if (!fileInfo)
         return QMimeType();
 
-    QString path = fileInfo->pathOfInfo(PathInfoType::kPath);
+    QString path = fileInfo->pathOf(PathInfoType::kPath);
     bool isMatchExtension = mode == QMimeDatabase::MatchExtension;
     if (!isMatchExtension) {
         //fix bug 35448 【文件管理器】【5.1.2.2-1】【sp2】预览ftp路径下某个文件夹后，文管卡死,访问特殊系统文件卡死
@@ -75,18 +75,18 @@ QMimeType DMimeDatabase::mimeTypeForFile(const AbstractFileInfoPointer &fileInfo
             isMatchExtension = match.hasMatch();
         } else {
             // filemanger will be blocked when blacklist contais the filepath.
-            QString filePath = fileInfo->pathOfInfo(PathInfoType::kAbsoluteFilePath);
+            QString filePath = fileInfo->pathOf(PathInfoType::kAbsoluteFilePath);
             if (fileInfo->isAttributes(OptInfoType::kIsSymLink)) {
-                filePath = fileInfo->pathOfInfo(PathInfoType::kSymLinkTarget);
+                filePath = fileInfo->pathOf(PathInfoType::kSymLinkTarget);
             }
             isMatchExtension = blackList.contains(filePath);
         }
     }
 
     if (isMatchExtension || FileUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
-        result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOfInfo(PathInfoType::kFilePath), QMimeDatabase::MatchExtension);
+        result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOf(PathInfoType::kFilePath), QMimeDatabase::MatchExtension);
     } else {
-        result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOfInfo(PathInfoType::kFilePath), mode);
+        result = QMimeDatabase::mimeTypeForFile(fileInfo->pathOf(PathInfoType::kFilePath), mode);
     }
 
     // temporary dirty fix, once WPS get installed, the whole mimetype database thing get fscked up.

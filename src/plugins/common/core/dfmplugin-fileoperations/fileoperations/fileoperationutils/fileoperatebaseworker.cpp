@@ -605,8 +605,8 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     }
     // 检查源文件是否存在
     if (!DecoratorFile(fromInfo->urlOf(UrlInfoType::kUrl)).exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOfInfo(PathInfoType::kPath).startsWith("/root/")
-                                                      && !toInfo->pathOfInfo(PathInfoType::kPath).startsWith("/root/"))
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
+                                                      && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl), errortype);
@@ -624,8 +624,8 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     }
     // 检查目标文件是否存在
     if (!DecoratorFile(toInfo->urlOf(UrlInfoType::kUrl)).exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOfInfo(PathInfoType::kPath).startsWith("/root/")
-                                                      && !toInfo->pathOfInfo(PathInfoType::kPath).startsWith("/root/"))
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
+                                                      && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), errortype);
@@ -674,7 +674,7 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
     if (followLink) {
         do {
             QUrl newUrl = newFromInfo->urlOf(UrlInfoType::kUrl);
-            newUrl.setPath(newFromInfo->pathOfInfo(PathInfoType::kSymLinkTarget));
+            newUrl.setPath(newFromInfo->pathOf(PathInfoType::kSymLinkTarget));
             const AbstractFileInfoPointer &symlinkTarget = InfoFactory::create<AbstractFileInfo>(newUrl);
 
             if (!symlinkTarget || !DecoratorFile(newUrl).exists()) {

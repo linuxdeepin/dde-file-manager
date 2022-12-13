@@ -242,13 +242,13 @@ QString TrashFileInfo::displayOf(const DisPlayInfoType type) const
 
     return AbstractFileInfo::displayOf(type);
 }
-QString TrashFileInfo::pathOfInfo(const PathInfoType type) const
+QString TrashFileInfo::pathOf(const PathInfoType type) const
 {
     switch (type) {
     case FilePathInfoType::kSymLinkTarget:
         return d->symLinkTarget();
     default:
-        return AbstractFileInfo::pathOfInfo(type);
+        return AbstractFileInfo::pathOf(type);
     }
 }
 

@@ -301,14 +301,14 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
 
         AbstractFileInfoPointer fileInfoLink = fileInfo;
         while (fileInfoLink->isAttributes(OptInfoType::kIsSymLink)) {
-            const QString &targetLink = fileInfoLink->pathOfInfo(PathInfoType::kSymLinkTarget);
+            const QString &targetLink = fileInfoLink->pathOf(PathInfoType::kSymLinkTarget);
             fileInfoLink = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetLink));
             if (!fileInfoLink) {
                 DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
                 return false;
             }
             const_cast<QUrl &>(fileUrl) = fileInfoLink->urlOf(UrlInfoType::kRedirectedFileUrl);
-            if (!DecoratorFile(fileInfoLink->pathOfInfo(PathInfoType::kAbsoluteFilePath)).exists() && !d->isSmbUnmountedFile(fileUrl)) {
+            if (!DecoratorFile(fileInfoLink->pathOf(PathInfoType::kAbsoluteFilePath)).exists() && !d->isSmbUnmountedFile(fileUrl)) {
                 d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->nameOf(
                                                                                      NameInfoType::kFileName),
                                                                              fileInfo->urlOf(UrlInfoType::kUrl));
