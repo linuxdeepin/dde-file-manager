@@ -41,6 +41,7 @@ DFMBASE_USE_NAMESPACE
 static constexpr char kWorkspaceMenuSceneName[] = "WorkspaceMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
 static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
+static constexpr char kDConfigFilterSceneName[] = "DConfigMenuFilter";
 
 AbstractMenuScene *SearchMenuCreator::create()
 {
@@ -169,6 +170,9 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
                 currentScene.append(workspaceScene);
         }
     }
+
+    if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigFilterSceneName))
+        currentScene.append(filterScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

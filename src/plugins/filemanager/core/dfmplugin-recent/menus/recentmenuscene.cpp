@@ -43,6 +43,7 @@ static constexpr char kFileOperatorMenuSceneName[] = "FileOperatorMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
 static constexpr char kOpenDirMenuSceneName[] = "OpenDirMenu";
 static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
+static constexpr char kDConfigMenuFilterSceneName[] = "DConfigMenuFilter";
 
 static constexpr char kSortByActionId[] = "sort-by";
 static constexpr char kSrtTimeModifiedActionId[] = "sort-by-time-modified";
@@ -102,6 +103,9 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
         if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName))
             currentScene.append(workspaceScene);
     }
+
+    if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigMenuFilterSceneName))
+        currentScene.append(filterScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

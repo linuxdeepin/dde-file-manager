@@ -75,6 +75,12 @@ bool TagMenuScene::initialize(const QVariantHash &params)
     d->predicateName.insert(TagActionId::kActTagColorListKey, "");
     d->predicateName.insert(TagActionId::kActTagAddKey, tr("Tag information"));
 
+    auto subScenes = subscene();
+    if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter"))
+        subScenes << filterScene;
+
+    setSubscene(subScenes);
+
     return AbstractMenuScene::initialize(params);
 }
 

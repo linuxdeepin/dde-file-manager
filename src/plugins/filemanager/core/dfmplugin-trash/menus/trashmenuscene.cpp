@@ -35,14 +35,15 @@
 
 #include <QMenu>
 
-static const char *const kActionIconMenuSceneName = "ActionIconManager";
+static constexpr char kActionIconMenuSceneName[] = "ActionIconManager";
 static constexpr char kClipBoardMenuSceneName[] = "ClipBoardMenu";
 static constexpr char kFileOperatorMenuSceneName[] = "FileOperatorMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
 static constexpr char kPropertyMenuSceneName[] = "PropertyMenu";
 static constexpr char kTrashMenuSceneName[] = "TrashMenu";
-static const char *const kOemMenuSceneName = "OemMenu";
-static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
+static constexpr char kOemMenuSceneName[] = "OemMenu";
+static constexpr char kOpenDirMenuSceneName[] = "OpenDirMenu";
+static constexpr char kDConfigMenuFilterSceneName[] = "DConfigMenuFilter";
 
 using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
@@ -111,6 +112,9 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
 
     if (auto actionIconManagerScene = dfmplugin_menu_util::menuSceneCreateScene(kActionIconMenuSceneName))
         currentScene.append(actionIconManagerScene);
+
+    if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigMenuFilterSceneName))
+        currentScene.append(filterScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

@@ -29,6 +29,7 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_menu_defines.h"
+#include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -64,6 +65,12 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     if (d->selectFiles.count() != 1 || d->isEmptyArea)
         return false;
+
+    auto subScenes = subscene();
+    if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter"))
+        subScenes << filterScene;
+
+    setSubscene(subScenes);
 
     return AbstractMenuScene::initialize(params);
 }
