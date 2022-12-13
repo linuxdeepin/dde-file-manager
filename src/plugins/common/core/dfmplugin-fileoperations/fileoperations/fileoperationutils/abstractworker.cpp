@@ -407,21 +407,21 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey, QVariant::fromValue(to));
     QString fromMsg, toMsg;
     if (AbstractJobHandler::JobType::kCopyType == jobType) {
-        fromMsg = QString(QObject::tr("copy file %1")).arg(from.toString());
+        fromMsg = QString(QObject::tr("Copying %1")).arg(from.toString());
         toMsg = QString(QObject::tr("to %1")).arg(to.toString());
     } else if (AbstractJobHandler::JobType::kDeleteTpye == jobType) {
-        fromMsg = QString(QObject::tr("delete file %1")).arg(from.toString());
+        fromMsg = QString(QObject::tr("Deleting %1")).arg(from.toString());
     } else if (AbstractJobHandler::JobType::kCutType == jobType) {
-        fromMsg = QString(QObject::tr("cut file %1")).arg(from.toString());
+        fromMsg = QString(QObject::tr("Moving %1")).arg(from.toString());
         toMsg = QString(QObject::tr("to %1")).arg(to.toString());
     } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType) {
-        fromMsg = QString(QObject::tr("move file %1")).arg(from.toString());
-        toMsg = QString(QObject::tr("to trash %1")).arg(to.toString());
+        fromMsg = QString(QObject::tr("Trashing %1")).arg(from.toString());
+        toMsg = QString(QObject::tr("to %1")).arg(to.toString());
     } else if (AbstractJobHandler::JobType::kRestoreType == jobType) {
-        fromMsg = QString(QObject::tr("restore file %1 from trash ")).arg(from.toString());
+        fromMsg = QString(QObject::tr("Restoring %1")).arg(from.toString());
         toMsg = QString(QObject::tr("to %1")).arg(to.toString());
     } else if (AbstractJobHandler::JobType::kCleanTrashType == jobType) {
-        fromMsg = QString(QObject::tr("clean trash file %1  ")).arg(from.toString());
+        fromMsg = QString(QObject::tr("Deleting %1")).arg(from.toString());
     }
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, QVariant::fromValue(fromMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));

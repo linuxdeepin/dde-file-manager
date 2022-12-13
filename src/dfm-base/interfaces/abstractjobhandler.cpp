@@ -193,9 +193,9 @@ QString AbstractJobHandler::errorToString(const AbstractJobHandler::JobErrorType
     case AbstractJobHandler::JobErrorType::kSpecialFileError:
         return tr("The action is denied");
     case AbstractJobHandler::JobErrorType::kFileExistsError:
-        return tr("Target file is exists");
+        return tr("Target file already exists");
     case AbstractJobHandler::JobErrorType::kDirectoryExistsError:
-        return tr("Target directory is exists");
+        return tr("Target directory already exists");
     case AbstractJobHandler::JobErrorType::kOpenError:
         return tr("Failed to open the file");
     case AbstractJobHandler::JobErrorType::kReadError:
