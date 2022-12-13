@@ -211,7 +211,7 @@ void UnlockView::onVaultUlocked(int state)
                 }
             }
         } else if (state == static_cast<int>(ErrorCode::kWrongPassword)) {
-            DDialog dialog(tr("Password error"), "", this);
+            DDialog dialog(tr("Wrong password"), "", this);
             dialog.setIcon(QIcon::fromTheme("dialog-warning"));
             dialog.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
             dialog.exec();
