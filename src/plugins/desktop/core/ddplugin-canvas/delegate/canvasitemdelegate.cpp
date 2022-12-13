@@ -29,7 +29,7 @@
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/clipboard.h>
-#include <dfm-base/utils/pixmapiconextend.h>
+#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -500,7 +500,10 @@ QPixmap CanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size,
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    return PixmapIconExtend(icon).pixmapExtend(size, pixelRatio, mode, state);
+    auto px = icon.pixmap(size * pixelRatio, mode, state);
+    px.setDevicePixelRatio(dfmbase::FileUtils::pixmapDevicePixelRatio(pixelRatio, size, px.size()));
+
+    return px;
 }
 
 CanvasView *CanvasItemDelegate::parent() const

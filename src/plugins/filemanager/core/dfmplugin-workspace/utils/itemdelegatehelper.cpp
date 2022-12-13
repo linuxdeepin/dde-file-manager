@@ -21,7 +21,8 @@
  */
 
 #include "itemdelegatehelper.h"
-#include "dfm-base/utils/pixmapiconextend.h"
+
+#include <dfm-base/utils/fileutils.h>
 
 #include <QPainter>
 #include <QApplication>
@@ -49,7 +50,10 @@ QPixmap ItemDelegateHelper::getIconPixmap(const QIcon &icon, const QSize &size, 
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    return PixmapIconExtend(icon).pixmapExtend(size, pixelRatio, mode, state);
+    auto px = icon.pixmap(size * pixelRatio, mode, state);
+    px.setDevicePixelRatio(dfmbase::FileUtils::pixmapDevicePixelRatio(pixelRatio, size, px.size()));
+
+    return px;
 }
 /*!
  * \brief paintIcon 绘制指定区域内每一个icon的pixmap
