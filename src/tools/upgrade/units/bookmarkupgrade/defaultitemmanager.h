@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangyu<zhangyub@uniontech.com>
+ * Author:     zhuangshu <zhuangshu@uniontech.com>
  *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
+ * Maintainer: zhengyouge <zhengyouge@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,35 +18,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef UNITLIST_H
-#define UNITLIST_H
+#ifndef DEFAULTITEMMANAGER_H
+#define DEFAULTITEMMANAGER_H
 
-#include "core/upgradeunit.h"
-
-// units
-#include "headerunit.h"
-#include "dconfigupgradeunit.h"
-#include "bookmarkupgradeunit.h"
-
-// units end
-
-#include <QList>
-#include <QSharedPointer>
-
-#define RegUnit(unit) \
-    QSharedPointer<UpgradeUnit>(new unit)
-
+#include "units/bookmarkupgradeunit.h"
+#include <QObject>
 namespace dfm_upgrade {
 
-inline QList<QSharedPointer<UpgradeUnit>> createUnits()
+class DefaultItemManagerPrivate;
+class DefaultItemManager : public QObject
 {
-    return QList<QSharedPointer<UpgradeUnit>> {
-        RegUnit(dfm_upgrade::HeaderUnit),
-        RegUnit(dfm_upgrade::DConfigUpgradeUnit),
-        RegUnit(dfm_upgrade::BookMarkUpgradeUnit)
-    };
-}
+    Q_OBJECT
+    friend class DefaultItemManagerPrivate;
+    DefaultItemManagerPrivate *const d = nullptr;
+
+public:
+    static DefaultItemManager *instance();
+    void initDefaultItems();
+    QList<BookmarkData> defaultItemInitOrder();
+
+private:
+    explicit DefaultItemManager(QObject *parent = nullptr);
+};
 
 }
 
-#endif   // UNITLIST_H
+#endif   // DEFAULTITEMMANAGER_H

@@ -23,16 +23,11 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/systempathutil.h"
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/utils/dialogmanager.h"
 
 USING_IO_NAMESPACE
 
-namespace dfmplugin_bookmark {
-
-using namespace dfmplugin_bookmark;
+using namespace dfm_upgrade;
 DFMBASE_USE_NAMESPACE
-DWIDGET_USE_NAMESPACE
 
 DefaultItemManagerPrivate::DefaultItemManagerPrivate(DefaultItemManager *qq)
     : QObject(qq),
@@ -57,10 +52,6 @@ void DefaultItemManager::initDefaultItems()
         const QString &displayName = SystemPathUtil::instance()->systemPathDisplayName(nameKey);
         BookmarkData bookmarkData;
         bookmarkData.name = nameKey;   //For default item, save the english name to config.
-        QString path { SystemPathUtil::instance()->systemPath(nameKey) };
-        QUrl url = { UrlRoute::pathToReal(path) };
-        d->defaultItemUrls.insert(nameKey, url);
-        bookmarkData.url = url;
         bookmarkData.isDefaultItem = true;
         bookmarkData.index = i;
         bookmarkData.transName = displayName;
@@ -85,8 +76,6 @@ void DefaultItemManager::initDefaultItems()
         bookmarkData.index = index;
         bookmarkData.isDefaultItem = isDefaultItem;
 
-        if (isDefaultItem)
-            d->defaultItemUrls.insert(it.key(), url);
         if (index < 0)
             d->defaultItemInitOrder.append(bookmarkData);
         else
@@ -94,79 +83,12 @@ void DefaultItemManager::initDefaultItems()
     }
 }
 
-void DefaultItemManager::addPluginItem(const QVariantMap &args)
-{
-    const QString &nameKey = args.value("Property_Key_NameKey").toString();
-
-    if (args.contains("Property_Key_PluginItemData")) {
-        const QVariantMap &itemData = args.value("Property_Key_PluginItemData").toMap();
-        QVariantMap bookmarkData = d->pluginItemData.value(nameKey);
-        bookmarkData.insert("Property_Key_PluginItemData", itemData);
-        d->pluginItemData.insert(nameKey, bookmarkData);
-        return;
-    }
-
-    d->pluginItemData.insert(nameKey, args);
-}
-
-QMap<QString, QUrl> DefaultItemManager::defaultItemUrls()
-{
-    return d->defaultItemUrls;
-}
-
 QList<BookmarkData> DefaultItemManager::defaultItemInitOrder()
 {
     return d->defaultItemInitOrder;
 }
 
-QMap<QString, QVariantMap> DefaultItemManager::pluginItemData()
-{
-    return d->pluginItemData;
-}
-
-bool DefaultItemManager::isDefaultItem(const BookmarkData &data)
-{
-    bool isNameKeyEqual = false;
-    bool isUrlEqual = false;
-    if (data.isDefaultItem) {
-        isNameKeyEqual = DefaultItemManager::instance()->defaultItemUrls().keys().contains(data.name);
-        return isNameKeyEqual;
-    }
-    isNameKeyEqual = DefaultItemManager::instance()->defaultItemUrls().keys().contains(data.name);
-    isUrlEqual = DefaultItemManager::instance()->defaultItemUrls().values().contains(data.url);
-
-    return isNameKeyEqual && isUrlEqual;
-}
-
-bool DefaultItemManager::isDefaultUrl(const BookmarkData &data)
-{
-    return DefaultItemManager::instance()->defaultItemUrls().values().contains(data.url);
-}
-
-bool DefaultItemManager::isDefaultPluginItem(const QString &name)
-{
-    return d->defaultPluginItem.contains(name);
-}
-
-BookmarkData DefaultItemManager::pluginItemDataToBookmark(const QVariantMap &data)
-{
-    const QString &nameKey = data.value("Property_Key_NameKey").toString();
-    const QString &displayName = data.value("Property_Key_DisplayName").toString();
-    const QUrl &url = data.value("Property_Key_Url").toUrl();
-    int index = data.value("Property_Key_Index").toInt();
-    bool isDefaultItem = data.value("Property_Key_IsDefaultItem").toBool();
-    BookmarkData bookmarkData;
-    bookmarkData.name = nameKey;
-    bookmarkData.transName = displayName;
-    bookmarkData.url = url;
-    bookmarkData.index = index;
-    bookmarkData.isDefaultItem = isDefaultItem;
-
-    return bookmarkData;
-}
-
 DefaultItemManager::DefaultItemManager(QObject *parent)
     : QObject(parent), d(new DefaultItemManagerPrivate(this))
 {
-}
 }
