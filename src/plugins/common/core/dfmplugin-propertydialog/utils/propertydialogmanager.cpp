@@ -92,6 +92,9 @@ QMap<int, QWidget *> PropertyDialogManager::createExtensionView(const QUrl &url,
             }
 
             CustomViewExtensionView creatorCallback = showViewOption.value(kOption_Key_CreatorCalback).value<CustomViewExtensionView>();
+            if (!creatorCallback)
+                continue;
+
             QWidget *g = creatorCallback(url);
             if (g != nullptr) {
                 if (viewInitCallback)
@@ -219,7 +222,7 @@ QVariantHash PropertyDialogManager::getCreatorOptionByName(const QString &name) 
     auto keys { creatorOptions.keys() };
     for (int index : keys) {
         auto &&values { creatorOptions.values(index) };
-        auto iter = std::find_if(values.begin(), values.end(), [&name](const QVariantHash &data){
+        auto iter = std::find_if(values.begin(), values.end(), [&name](const QVariantHash &data) {
             return (data.value(kOption_Key_Name).toString() == name);
         });
 
