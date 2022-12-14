@@ -115,7 +115,7 @@ ComputerDataList ComputerItemWatcher::items()
     dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemListFilter", &computerItems);
     qDebug() << "computer: [LIST] items are filtered by external plugins: " << computerItems;
     for (int i = ret.count() - 1; i >= 0; --i) {
-        if (computerItems.contains(ret[i].url))
+        if (!computerItems.contains(ret[i].url))
             ret.removeAt(i);
     }
 
