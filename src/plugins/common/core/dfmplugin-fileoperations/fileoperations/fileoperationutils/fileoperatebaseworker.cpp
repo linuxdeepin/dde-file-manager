@@ -30,6 +30,7 @@
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/file/local/desktopfileinfo.h"
 
 #include <dfm-io/core/diofactory.h>
 #include <dfm-io/dfmio_register.h>
@@ -725,15 +726,16 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     const QString &newPath = DFMIO::DFMUtils::buildFilePath(newTargetPath.toStdString().c_str(), fileNewName.toStdString().c_str(), nullptr);
     newTargetUrl.setPath(newPath);
 
+    QString error;
     newTargetInfo.reset();
     const QString &suffix = fromInfo->nameOf(NameInfoType::kSuffix);
     const QString &mimeTypeName = fromInfo->nameOf(NameInfoType::kMimeTypeName);
-    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
-        && mimeTypeName == "application/x-desktop")
-        newTargetUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kDesktop);
-
-    QString error;
-    newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl, true, &error);
+    if (Q_UNLIKELY(suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop && mimeTypeName == "application/x-desktop")) {
+        newTargetInfo.reset(new DFMBASE_NAMESPACE::DesktopFileInfo(newTargetUrl));
+        InfoCacheController::instance().cacheFileInfo(newTargetUrl, newTargetInfo);
+    } else {
+        newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl, false, &error);
+    }
 
     if (!newTargetInfo || !error.isEmpty()) {
         AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError, error);

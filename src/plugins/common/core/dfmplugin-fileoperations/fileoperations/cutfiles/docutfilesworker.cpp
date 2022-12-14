@@ -268,8 +268,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
     toInfo.reset();
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
-        if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameOf(NameInfoType::kFileCopyName),
-                         toInfo, ok))
+        if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->nameOf(NameInfoType::kFileCopyName), toInfo, ok))
             return ok ? *ok : false;
 
         emitCurrentTaskNotify(sourceInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));

@@ -51,7 +51,6 @@ static void registerFileSystem()
 {
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
     InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
-    InfoFactory::regClass<DesktopFileInfo>(Global::Scheme::kDesktop);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
     WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
 }

@@ -31,7 +31,6 @@
 #include "dfm-base/interfaces/private/infocache.h"
 #include "dfm-base/interfaces/private/watchercache.h"
 #include "dfm-base/utils/finallyutil.h"
-#include "dfm-base/dfm_global_defines.h"
 
 #include <dfmio_register.h>
 
@@ -226,13 +225,10 @@ public:
         if (Q_UNLIKELY(!cache) || InfoCacheController::instance().cacheDisable(url.scheme()))
             return qSharedPointerDynamicCast<T>(instance().SchemeFactory<AbstractFileInfo>::
                                                         create(url, errorString));
-        auto cacheUrl = url;
-        if (Global::Scheme::kDesktop == url.scheme())
-            cacheUrl.setScheme(Global::Scheme::kFile);
-        QSharedPointer<AbstractFileInfo> info = InfoCacheController::instance().getCacheInfo(cacheUrl);
+        QSharedPointer<AbstractFileInfo> info = InfoCacheController::instance().getCacheInfo(url);
         if (!info) {
             info = instance().SchemeFactory<AbstractFileInfo>::create(url, errorString);
-            emit InfoCacheController::instance().cacheFileInfo(cacheUrl, info);
+            emit InfoCacheController::instance().cacheFileInfo(url, info);
         }
         return qSharedPointerDynamicCast<T>(info);
     }

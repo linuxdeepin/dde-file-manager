@@ -36,10 +36,12 @@ static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<df
         return fileInfo;
 
     const QString &suffix = fileInfo->nameOf(NameInfoType::kSuffix);
-    const QString &mimeTypeName = fileInfo->nameOf(NameInfoType::kMimeTypeName);
-    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop && mimeTypeName == "application/x-desktop") {
-        const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
-        return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
+    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop) {
+        const QString &mimeTypeName = fileInfo->nameOf(NameInfoType::kMimeTypeName);
+        if (mimeTypeName == "application/x-desktop") {
+            const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);
+            return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
+        }
     }
     return fileInfo;
 }

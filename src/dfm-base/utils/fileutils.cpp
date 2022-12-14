@@ -1221,7 +1221,6 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     QString fileBaseName = fromInfo->nameOf(NameInfoType::kCompleteBaseName);
     QString suffix = fromInfo->nameOf(NameInfoType::kSuffix);
     QString fileName = fromInfo->nameOf(NameInfoType::kFileName);
-    QString mimeTypeName = fromInfo->nameOf(NameInfoType::kMimeTypeName);
     //在7z分卷压缩后的名称特殊处理7z.003
     const QString &reg = ".7z.[0-9]{3,10}$";
     if (fileName.contains(QRegularExpression(reg))) {
@@ -1233,10 +1232,6 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     int number = 0;
     QString newFileName;
     QUrl newUrl;
-    QString scheme = targetDir->urlOf(UrlInfoType::kUrl).scheme(), errorString;
-    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
-        && mimeTypeName == "application/x-desktop")
-        scheme = DFMBASE_NAMESPACE::Global::Scheme::kDesktop;
     do {
         auto nameSuffix = number > 0 ? copySuffix2.arg(number) : copySuffix;
         newFileName = QString("%1%2").arg(fileBaseName, nameSuffix);
@@ -1247,14 +1242,8 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
 
         ++number;
         newUrl = targetDir->urlOf(UrlInfoType::kUrl);
-        newUrl.setScheme(scheme);
         newUrl.setPath(newUrl.path() + "/" + newFileName);
-
-        targetFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl, true, &errorString);
-        if (!errorString.isEmpty()) {
-            qInfo() << "get none exit file name failed, cause : " << errorString;
-            return QString();
-        }
+        targetFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
     } while ((targetFileInfo && DecoratorFile(newUrl).exists()) || (functionCheck ? functionCheck(newFileName) : false));
 
     return newFileName;
