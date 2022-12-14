@@ -80,14 +80,6 @@ void RecentFileHelper::removeRecent(const QList<QUrl> &urls)
 
 bool RecentFileHelper::openFileLocation(const QUrl &url)
 {
-    if (SysInfoUtils::isRootUser()) {
-        QStringList urls { QStringList() << url.toLocalFile() };
-        // call by platform 'mips', but file-manager.sh not ready, todo:max
-        //        if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" << urls << "--raw"))
-        //            return true;
-
-        return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << urls << "--raw");
-    }
 
     QUrl localUrl = url;
     QList<QUrl> urls {};
@@ -95,7 +87,11 @@ bool RecentFileHelper::openFileLocation(const QUrl &url)
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 
-    return DDesktopServices::showFileItem(localUrl);
+    const auto &fileInfo { InfoFactory::create<AbstractFileInfo>(localUrl) };
+    QUrl parentUrl { fileInfo->urlOf(UrlInfoType::kParentUrl) };
+    parentUrl.setQuery("selectUrl=" + localUrl.toString());
+
+    return dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
 }
 
 void RecentFileHelper::openFileLocation(const QList<QUrl> &urls)
