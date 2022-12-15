@@ -1,15 +1,15 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en" sourcelanguage="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="pt_BR" sourcelanguage="en">
 <context>
     <name>AccessControlDBus</name>
     <message>
         <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="57"/>
         <source>Invalid args</source>
-        <translation>Invalid args</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="58"/>
         <source>Invalid invoker</source>
-        <translation>Invalid invoker</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -17,12 +17,12 @@
     <message>
         <location filename="../src/apps/dde-file-manager/main.cpp" line="233"/>
         <source>File Manager</source>
-        <translation>File Manager</translation>
+        <translation>Gerenciador de Arquivos</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager/main.cpp" line="237"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
-        <translation>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</translation>
+        <translation>O Gerenciador de Arquivos é uma ferramenta poderosa e fácil de usar para manusear os arquivos.</translation>
     </message>
 </context>
 <context>
@@ -30,7 +30,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedprotocoldevice.cpp" line="66"/>
         <source>Unknown device</source>
-        <translation>Unknown device</translation>
+        <translation>Dispositivo desconhecido</translation>
     </message>
 </context>
 <context>
@@ -39,7 +39,7 @@
         <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedblockdevice.cpp" line="106"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedblockdevice.cpp" line="118"/>
         <source>%1 Volume</source>
-        <translation>%1 Volume</translation>
+        <translation>Volume de %1</translation>
     </message>
 </context>
 <context>
@@ -47,7 +47,7 @@
     <message>
         <location filename="../src/apps/dde-desktop/main.cpp" line="169"/>
         <source>Desktop</source>
-        <translation>Desktop</translation>
+        <translation>Área de Trabalho</translation>
     </message>
 </context>
 <context>
@@ -55,7 +55,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="160"/>
         <source>Cannot access %1</source>
-        <translation>Cannot access %1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -63,32 +63,32 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="145"/>
         <source>Disks</source>
-        <translation>Disks</translation>
+        <translation>Dispositivos</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="340"/>
         <source>The device was not safely removed</source>
-        <translation>The device was not safely removed</translation>
+        <translation>O dispositivo não foi removido com segurança</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="341"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
-        <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
+        <translation>Clique em &quot;Remover com segurança&quot; e então desconecte-o na próxima vez</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="344"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Disk is busy, cannot unmount now</translation>
+        <translation>O disco está ocupado; impossível desmontá-lo</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="347"/>
         <source>The device is busy, cannot remove now</source>
-        <translation>The device is busy, cannot remove now</translation>
+        <translation>O dispositivo está ocupado; impossível removê-lo</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="350"/>
         <source>The device is busy, cannot eject now</source>
-        <translation>The device is busy, cannot eject now</translation>
+        <translation>O dispositivo está ocupado; impossível ejetá-lo</translation>
     </message>
 </context>
 <context>
@@ -96,17 +96,17 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="54"/>
         <source>Disk</source>
-        <translation>Disk</translation>
+        <translation>Disco</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="110"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="117"/>
         <source>Eject all</source>
-        <translation>Eject all</translation>
+        <translation>Ejetar tudo</translation>
     </message>
 </context>
 <context>
@@ -115,7 +115,7 @@
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="259"/>
         <source>Unknown</source>
-        <translation>Unknown</translation>
+        <translation>Desconhecido</translation>
     </message>
 </context>
 <context>
@@ -123,7 +123,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="228"/>
         <source>Trash</source>
-        <translation>Trash</translation>
+        <translation>Lixeira</translation>
     </message>
 </context>
 <context>
@@ -131,24 +131,24 @@
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="43"/>
         <source>File Manager will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation>File Manager will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="45"/>
         <source>The desktop services will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation>The desktop services will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="46"/>
         <source>Update</source>
         <comment>button</comment>
-        <translation>Update</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="47"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -156,42 +156,42 @@
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="803"/>
         <source>need authorization to access</source>
-        <translation>need authorization to access</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="852"/>
         <source>Can&apos;t verify the identity of %1.</source>
-        <translation>Can&apos;t verify the identity of %1.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="853"/>
         <source>This happens when you log in to a computer the first time.</source>
-        <translation>This happens when you log in to a computer the first time.</translation>
+        <translation>Isto ocorre quando o login é feito pela primeira vez em um computador</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="854"/>
         <source>The identity sent by the remote computer is</source>
-        <translation>The identity sent by the remote computer is</translation>
+        <translation>A identidade enviada pelo computador remoto é</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="856"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
-        <translation>If you want to be absolutely sure it is safe to continue, contact the system administrator.</translation>
+        <translation>Para continuar com segurança, contate o administrador do sistema.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="247"/>
         <source>System Disk</source>
-        <translation>System Disk</translation>
+        <translation>Disco do Sistema</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="249"/>
         <source>Data Disk</source>
-        <translation>Data Disk</translation>
+        <translation>Disco de Dados</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="288"/>
         <source>Blank %1 Disc</source>
-        <translation>Blank %1 Disc</translation>
+        <translation>%1 Disco Vazio</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="288"/>
@@ -200,38 +200,38 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/stashmountsutils.cpp" line="120"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/stashmountsutils.cpp" line="126"/>
         <source>Unknown</source>
-        <translation>Unknown</translation>
+        <translation>Desconhecido</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="299"/>
         <source>%1 Drive</source>
-        <translation>%1 Drive</translation>
+        <translation>%1 Disco</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="315"/>
         <source>%1 Encrypted</source>
-        <translation>%1 Encrypted</translation>
+        <translation>Criptografado %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="322"/>
         <source>%1 Volume</source>
-        <translation>%1 Volume</translation>
+        <translation>Volume de %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="254"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="325"/>
         <source>Scanning the device, stop it?</source>
-        <translation>Scanning the device, stop it?</translation>
+        <translation>Verificando o dispositivo, parar?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="261"/>
         <source>Unmount failed</source>
-        <translation>Unmount failed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="261"/>
         <source>Cannot stop scanning device</source>
-        <translation>Cannot stop scanning device</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="218"/>
@@ -239,7 +239,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="18"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="18"/>
         <source>Home</source>
-        <translation>Home</translation>
+        <translation>Pasta Pessoal</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="220"/>
@@ -248,7 +248,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="15"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="15"/>
         <source>Desktop</source>
-        <translation>Desktop</translation>
+        <translation>Área de trabalho</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="222"/>
@@ -257,7 +257,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="33"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="33"/>
         <source>Videos</source>
-        <translation>Videos</translation>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="224"/>
@@ -266,7 +266,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="21"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="21"/>
         <source>Music</source>
-        <translation>Music</translation>
+        <translation>Música</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="226"/>
@@ -275,7 +275,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="26"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="26"/>
         <source>Pictures</source>
-        <translation>Pictures</translation>
+        <translation>Imagens</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="228"/>
@@ -284,7 +284,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="16"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="16"/>
         <source>Documents</source>
-        <translation>Documents</translation>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="230"/>
@@ -301,7 +301,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="31"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="31"/>
         <source>Trash</source>
-        <translation>Trash</translation>
+        <translation>Lixeira</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="234"/>
@@ -310,7 +310,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="28"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/files/recentfileinfo.cpp" line="90"/>
         <source>Recent</source>
-        <translation>Recent</translation>
+        <translation>Recentes</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="248"/>
@@ -318,7 +318,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="35"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="35"/>
         <source>Auto mount</source>
-        <translation>Auto mount</translation>
+        <translation>Montar automaticamente</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="274"/>
@@ -326,12 +326,12 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="36"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="36"/>
         <source>Open after auto mount</source>
-        <translation>Open after auto mount</translation>
+        <translation>Abrir após montar automáticamente</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="167"/>
         <source>%1 tasks in progress</source>
-        <translation>%1 tasks in progress</translation>
+        <translation>%1 tarefas em andamento</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="248"/>
@@ -343,443 +343,443 @@
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="248"/>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="263"/>
         <source>%1 items</source>
-        <translation>%1 items</translation>
+        <translation>%1 itens</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="307"/>
         <source>Unable to find the original file</source>
-        <translation>Unable to find the original file</translation>
+        <translation>Impossível encontrar o arquivo original</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="577"/>
         <source>File has been moved or deleted</source>
-        <translation>File has been moved or deleted</translation>
+        <translation>O arquivo foi movido ou excluído</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="579"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="127"/>
         <source>You do not have permission to access this folder</source>
-        <translation>You do not have permission to access this folder</translation>
+        <translation>Você não tem permissão para acessar esta pasta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="582"/>
         <source>You do not have permission to traverse files in it</source>
-        <translation>You do not have permission to traverse files in it</translation>
+        <translation>Você não tem permissão para mover os arquivos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="471"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="175"/>
         <source>Folder is empty</source>
-        <translation>Folder is empty</translation>
+        <translation>A pasta está vazia</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="473"/>
         <source>Loading...</source>
-        <translation>Loading...</translation>
+        <translation>Carregando...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="107"/>
         <source>Directory</source>
-        <translation>Directory</translation>
+        <translation>Diretório</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="108"/>
         <source>Application</source>
-        <translation>Application</translation>
+        <translation>Aplicativo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="109"/>
         <source>Video</source>
-        <translation>Video</translation>
+        <translation>Vídeo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="110"/>
         <source>Audio</source>
-        <translation>Audio</translation>
+        <translation>Áudio</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="111"/>
         <source>Image</source>
-        <translation>Image</translation>
+        <translation>Imagem</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="112"/>
         <source>Archive</source>
-        <translation>Archive</translation>
+        <translation>Arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="113"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="77"/>
         <source>Text</source>
-        <translation>Text</translation>
+        <translation>Texto</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="114"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="70"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="150"/>
         <source>Executable</source>
-        <translation>Executable</translation>
+        <translation>Executável</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="115"/>
         <source>Backup file</source>
-        <translation>Backup file</translation>
+        <translation>Arquivo de backup</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="7"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="7"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="7"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>Use the file chooser dialog of File Manager</translation>
+        <translation>Usar a caixa de diálogo do Gerenciador de Arquivos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="8"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="8"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="8"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation>Ask for my confirmation when deleting files</translation>
+        <translation>Pedir confirmação antes de excluir os arquivos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="9"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="9"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="9"/>
         <source>Index external storage device after connected to computer</source>
-        <translation>Index external storage device after connected to computer</translation>
+        <translation>Indexar os dispositivos de armazenamento externo após conectarem-se ao computador</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="10"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="10"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="10"/>
         <source>Auto index internal disk</source>
-        <translation>Auto index internal disk</translation>
+        <translation>Indexar automaticamente o disco interno</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="11"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="11"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="11"/>
         <source>Full-Text search</source>
-        <translation>Full-Text search</translation>
+        <translation>Pesquisar no conteúdo dos arquivos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
         <source>Built-in disks</source>
-        <translation>Built-in disks</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="13"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="13"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="13"/>
         <source>Computer</source>
-        <translation>Computer</translation>
+        <translation>Computador</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="14"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="14"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="14"/>
         <source>Computers in LAN</source>
-        <translation>Computers in LAN</translation>
+        <translation>Rede</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
         <source>Loop partitions</source>
-        <translation>Loop partitions</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
         <source>Mounted sharing folders</source>
-        <translation>Mounted sharing folders</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="22"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="22"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="22"/>
         <source>My shares</source>
-        <translation>My shares</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
         <source>Network</source>
-        <translation>Network</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
         <source>Mounted partitions and discs</source>
-        <translation>Mounted partitions and discs</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
         <source>Partitions</source>
-        <translation>Partitions</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
         <source>Quick access</source>
-        <translation>Quick access</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
         <source>Tag</source>
-        <translation>Tag</translation>
+        <translation>Etiqueta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="30"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
         <source>Added tags</source>
-        <translation>Added tags</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="32"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="32"/>
         <source>Vault</source>
-        <translation>Vault</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="34"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="34"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation>Keep showing the mounted Samba shares</translation>
+        <translation>Continuar exibindo os compartilhamentos Samba montados</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="37"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="37"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="37"/>
         <source>Merge the entries of Samba shared folders</source>
-        <translation>Merge the entries of Samba shared folders</translation>
+        <translation>Mesclar as entradas das pastas compartilhadas do Samba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="38"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="38"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="38"/>
         <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation>Show item counts and sizes in the path of mounted MTP devices</translation>
+        <translation>Mostrar a quantidade e tamanho de itens no endereço de dispositivos MTP montados</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="39"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="39"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="39"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation>Hide built-in disks on the Computer page</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="40"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="40"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="40"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation>Hide loop partitions on the Computer page</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="41"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="41"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="41"/>
         <source>Show crumb bar clickable area</source>
-        <translation>Show crumb bar clickable area</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="42"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="42"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="42"/>
         <source>Show file system on disk icon</source>
-        <translation>Show file system on disk icon</translation>
+        <translation>Exibir o sistema de arquivos no ícone do disco</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="43"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="43"/>
         <source>Compressed file preview</source>
-        <translation>Compressed file preview</translation>
+        <translation>Pré-visualizar arquivos comprimidos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="43"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="44"/>
         <source>Document preview</source>
-        <translation>Document preview</translation>
+        <translation>Pré-visualização de documento</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="45"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="44"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="45"/>
         <source>Image preview</source>
-        <translation>Image preview</translation>
+        <translation>Pré-visualização de imagem</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="46"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="45"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="46"/>
         <source>Text preview</source>
-        <translation>Text preview</translation>
+        <translation>Pré-visualização de texto</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="46"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="47"/>
         <source>Video preview</source>
-        <translation>Video preview</translation>
+        <translation>Pré-visualização de vídeo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
         <source>Show hidden files in search results</source>
-        <translation>Show hidden files in search results</translation>
+        <translation>Mostrar arquivos ocultos nos resultados da pesquisa</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="49"/>
         <source>Default size:</source>
-        <translation>Default size:</translation>
+        <translation>Tamanho padrão:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
         <source>Extra small</source>
-        <translation>Extra small</translation>
+        <translation>Muito pequeno</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="50"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="51"/>
         <source>Small</source>
-        <translation>Small</translation>
+        <translation>Pequeno</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Medium</source>
-        <translation>Medium</translation>
+        <translation>Médio</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
         <source>Large</source>
-        <translation>Large</translation>
+        <translation>Grande</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="54"/>
         <source>Extra large</source>
-        <translation>Extra large</translation>
+        <translation>Muito grande</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="55"/>
         <source>Mix sorting of files and folders</source>
-        <translation>Mix sorting of files and folders</translation>
+        <translation>Misturar classificação de arquivos e pastas</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="56"/>
         <source>Default view:</source>
-        <translation>Default view:</translation>
+        <translation>Visualização padrão: </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
         <source>Show hidden files</source>
-        <translation>Show hidden files</translation>
+        <translation>Mostrar arquivos ocultos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
         <source>Show file extensions</source>
-        <translation>Show file extensions</translation>
+        <translation>Mostrar extensões de arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="59"/>
         <source>Open from default window:</source>
-        <translation>Open from default window:</translation>
+        <translation>Janela padrão:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="60"/>
         <source>Open in new tab:</source>
-        <translation>Open in new tab:</translation>
+        <translation>Abrir em nova aba:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
         <source>Always open folder in new window</source>
-        <translation>Always open folder in new window</translation>
+        <translation>Abrir as pastas sempre em uma nova janela</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="62"/>
         <source>Open file:</source>
-        <translation>Open file:</translation>
+        <translation>Abrir arquivo:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="63"/>
         <source>Click</source>
-        <translation>Click</translation>
+        <translation>Clique</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="64"/>
         <source>Double click</source>
-        <translation>Double click</translation>
+        <translation>Duplo clique</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="65"/>
         <source>Advanced</source>
-        <translation>Advanced</translation>
+        <translation>Avançado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="66"/>
         <source>Dialog</source>
-        <translation>Dialog</translation>
+        <translation>Diálogo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
         <source>Index</source>
-        <translation>Index</translation>
+        <translation>Índice</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="68"/>
         <source>Items on sidebar pane</source>
-        <translation>Items on sidebar pane</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="69"/>
@@ -789,71 +789,71 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="39"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="129"/>
         <source>Mount</source>
-        <translation>Mount</translation>
+        <translation>Montagem</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
         <source>Other</source>
-        <translation>Other</translation>
+        <translation>Outro</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="71"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
         <source>Preview</source>
-        <translation>Preview</translation>
+        <translation>Pré-visualizar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
         <source>Basic</source>
-        <translation>Basic</translation>
+        <translation>Básico</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="72"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="73"/>
         <source>View</source>
-        <translation>View</translation>
+        <translation>Visualizar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="74"/>
         <source>Hidden files</source>
-        <translation>Hidden files</translation>
+        <translation>Arquivos ocultos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="75"/>
         <source>New window and tab</source>
-        <translation>New window and tab</translation>
+        <translation>Nova janela e aba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="76"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="76"/>
         <source>Open behavior</source>
-        <translation>Open behavior</translation>
+        <translation>Comportamento ao abrir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="43"/>
         <source>Icon</source>
-        <translation>Icon</translation>
+        <translation>Ícone</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="44"/>
         <source>List</source>
-        <translation>List</translation>
+        <translation>Lista</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="46"/>
         <source>Current Directory</source>
-        <translation>Current Directory</translation>
+        <translation>Diretório atual</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="60"/>
@@ -871,31 +871,31 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="118"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="61"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="247"/>
         <source>Stop</source>
         <comment>button</comment>
-        <translation>Stop</translation>
+        <translation>Parar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="741"/>
         <source>Shortcut</source>
-        <translation>Shortcut</translation>
+        <translation>Atalho</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1217"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation> (copy)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1218"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation> (copy %1)</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="62"/>
@@ -906,7 +906,7 @@
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="147"/>
         <source>Files are being processed</source>
-        <translation>Files are being processed</translation>
+        <translation>Arquivos estão sendo processados</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="180"/>
@@ -917,18 +917,18 @@
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="127"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="149"/>
         <source>Access denied</source>
-        <translation>Access denied</translation>
+        <translation>Acesso negado</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="132"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>Confirm</translation>
+        <translation>Confirmar</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="116"/>
         <source>The device has been safely removed</source>
-        <translation>The device has been safely removed</translation>
+        <translation>O dispositivo foi removido com segurança</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="25"/>
@@ -942,7 +942,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="109"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="241"/>
         <source>Open in new window</source>
-        <translation>Open in new window</translation>
+        <translation>Abrir em nova janela</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="28"/>
@@ -955,19 +955,19 @@
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="87"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="112"/>
         <source>Open in new tab</source>
-        <translation>Open in new tab</translation>
+        <translation>Abrir em nova aba</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="35"/>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="509"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="47"/>
         <source>Rename</source>
-        <translation>Rename</translation>
+        <translation>Renomear</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
         <source>Remove from quick access</source>
-        <translation>Remove from quick access</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="45"/>
@@ -976,12 +976,12 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="100"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="281"/>
         <source>Properties</source>
-        <translation>Properties</translation>
+        <translation>Propriedades</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="410"/>
         <source>Copying %1</source>
-        <translation>Copying %1</translation>
+        <translation>Copiando %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="411"/>
@@ -989,323 +989,323 @@
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="419"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="422"/>
         <source>to %1</source>
-        <translation>to %1</translation>
+        <translation>para %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="413"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="424"/>
         <source>Deleting %1</source>
-        <translation>Deleting %1</translation>
+        <translation>Excluindo %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="415"/>
         <source>Moving %1</source>
-        <translation>Moving %1</translation>
+        <translation>Movendo %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="418"/>
         <source>Trashing %1</source>
-        <translation>Trashing %1</translation>
+        <translation>Destruindo %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="421"/>
         <source>Restoring %1</source>
-        <translation>Restoring %1</translation>
+        <translation>Restaurando %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="159"/>
         <source>create dfm io factory failed!</source>
-        <translation>create dfm io factory failed!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="174"/>
         <source>create dfm io dfile failed!</source>
-        <translation>create dfm io dfile failed!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="327"/>
         <source>Failed to read the file, cause: %1</source>
-        <translation>Failed to read the file, cause: %1</translation>
+        <translation>Falha ao ler o arquivo; motivo: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="402"/>
         <source>Failed to write the file, cause: %1</source>
-        <translation>Failed to write the file, cause: %1</translation>
+        <translation>Falha ao gravar o arquivo; motivo: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="703"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="898"/>
         <source>Fail to create symlink, cause: %1</source>
-        <translation>Fail to create symlink, cause: %1</translation>
+        <translation>Falha ao criar o link simbólico; motivo: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="927"/>
         <source>create dir&apos;s iterator failed, case : %1</source>
-        <translation>create dir&apos;s iterator failed, case : %1</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1199"/>
         <source>resize file failed!</source>
-        <translation>resize file failed!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1229"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1255"/>
         <source>File integrity was damaged, cause: %1</source>
-        <translation>File integrity was damaged, cause: %1</translation>
+        <translation>A integridade do arquivo foi comprometida; motivo: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="74"/>
         <source>New Folder</source>
-        <translation>New Folder</translation>
+        <translation>Nova Pasta</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="81"/>
         <source>Document</source>
-        <translation>Document</translation>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="85"/>
         <source>Spreadsheet</source>
-        <translation>Spreadsheet</translation>
+        <translation>Planilha</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="89"/>
         <source>Presentation</source>
-        <translation>Presentation</translation>
+        <translation>Apresentação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="93"/>
         <source>New File</source>
-        <translation>New File</translation>
+        <translation>Novo Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="196"/>
         <source>Create symlink</source>
-        <translation>Create symlink</translation>
+        <translation>Criação de atalho</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/oemmenuscene/oemmenu.cpp" line="555"/>
         <source>Compress</source>
-        <translation>Compress</translation>
+        <translation>Comprimir</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="151"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="152"/>
         <source>Write only</source>
-        <translation>Write only</translation>
+        <translation>Somente escrita</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="153"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="154"/>
         <source>Read only</source>
-        <translation>Read only</translation>
+        <translation>Somente Leitura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="155"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="156"/>
         <source>Read-write</source>
-        <translation>Read-write</translation>
+        <translation>Leitura e Escrita</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="175"/>
         <source>Owner</source>
-        <translation>Owner</translation>
+        <translation>Proprietário</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="176"/>
         <source>Group</source>
-        <translation>Group</translation>
+        <translation>Grupo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="177"/>
         <source>Others</source>
-        <translation>Others</translation>
+        <translation>Outros</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="126"/>
         <source>Burn</source>
         <comment>button</comment>
-        <translation>Burn</translation>
+        <translation>Gravar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="137"/>
         <source>Disc name:</source>
-        <translation>Disc name:</translation>
+        <translation>Nome do disco:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="206"/>
         <source>Write speed:</source>
-        <translation>Write speed:</translation>
+        <translation>Velocidade de gravação:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="209"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="211"/>
         <source>Maximum</source>
-        <translation>Maximum</translation>
+        <translation>Máximo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="216"/>
         <source>Allow files to be added later</source>
-        <translation>Allow files to be added later</translation>
+        <translation>Permitir que arquivos sejam adicionados mais tarde</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="226"/>
         <source>Verify data</source>
-        <translation>Verify data</translation>
+        <translation>Verificar dados</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="230"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="51"/>
         <source>Eject</source>
-        <translation>Eject</translation>
+        <translation>Ejetar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="179"/>
         <source>Add to disc</source>
-        <translation>Add to disc</translation>
+        <translation>Adicionar ao disco</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="51"/>
         <source>Are you sure you want to erase all data on the disc?</source>
-        <translation>Are you sure you want to erase all data on the disc?</translation>
+        <translation>Apagar todos os dados no disco?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="54"/>
         <source>Erase</source>
         <comment>button</comment>
-        <translation>Erase</translation>
+        <translation>Apagar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
         <source>This action cannot be undone</source>
-        <translation>This action cannot be undone</translation>
+        <translation>Está ação não poderá ser revertida</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="77"/>
         <source>How do you want to use this disc?</source>
-        <translation>How do you want to use this disc?</translation>
+        <translation>Como usar este disco?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="80"/>
         <source>Burn image</source>
         <comment>button</comment>
-        <translation>Burn image</translation>
+        <translation>Gravar imagem</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="81"/>
         <source>Burn files</source>
         <comment>button</comment>
-        <translation>Burn files</translation>
+        <translation>Gravar arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="136"/>
         <source>%1 is a duplicate file.</source>
-        <translation>%1 is a duplicate file.</translation>
+        <translation>%1 é um arquivo duplicado.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="139"/>
         <source>Insufficient disc space.</source>
-        <translation>Insufficient disc space.</translation>
+        <translation>Espaço insuficiente em disco.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="142"/>
         <source>Lost connection to drive.</source>
-        <translation>Lost connection to drive.</translation>
+        <translation>Conexão perdida com o dispositivo.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="145"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
-        <translation>The CD/DVD drive is not ready. Try another disc.</translation>
+        <translation>O dispositivo de CD/DVD não está pronto. Tente outro disco.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="148"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
-        <translation>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</translation>
+        <translation>O dispositivo de CD/DVD está ocupado. Feche o programa que o está utilizando e insira o disco novamente.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="152"/>
         <source>Invalid volume name</source>
-        <translation>Invalid volume name</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="155"/>
         <source>Unknown error</source>
-        <translation>Unknown error</translation>
+        <translation>Erro desconhecido</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/filepreviewdialogstatusbar.cpp" line="51"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="117"/>
         <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="127"/>
         <source>Size: %1</source>
-        <translation>Size: %1</translation>
+        <translation>Tamanho: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="118"/>
         <source>Type: %1</source>
-        <translation>Type: %1</translation>
+        <translation>Tipo: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="121"/>
         <source>Size: 0</source>
-        <translation>Size: 0</translation>
+        <translation>Tamanho: 0</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/filepreview/views/unknowfilepreview.cpp" line="128"/>
         <source>Items: %1</source>
-        <translation>Items: %1</translation>
+        <translation>Itens: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="314"/>
         <source>Orange</source>
-        <translation>Orange</translation>
+        <translation>Laranja</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="315"/>
         <source>Red</source>
-        <translation>Red</translation>
+        <translation>Vermelha</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="316"/>
         <source>Purple</source>
-        <translation>Purple</translation>
+        <translation>Roxa</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="317"/>
         <source>Navy-blue</source>
-        <translation>Navy-blue</translation>
+        <translation>Azul marinho</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="318"/>
         <source>Azure</source>
-        <translation>Azure</translation>
+        <translation>Azul</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="319"/>
         <source>Green</source>
-        <translation>Green</translation>
+        <translation>Verde</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="320"/>
         <source>Yellow</source>
-        <translation>Yellow</translation>
+        <translation>Amarela</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/taghelper.cpp" line="321"/>
         <source>Gray</source>
-        <translation>Gray</translation>
+        <translation>Cinza</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="513"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="67"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="136"/>
         <source>Remove</source>
-        <translation>Remove</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="346"/>
@@ -1313,84 +1313,84 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="120"/>
         <source>Rename</source>
         <comment>button</comment>
-        <translation>Rename</translation>
+        <translation>Renomear</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="88"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</translation>
+        <translation>Este arquivo ficará oculto se o nome do arquivo começar com &quot;.&quot; (ponto). Ocultá-lo?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="89"/>
         <source>Hide</source>
         <comment>button</comment>
-        <translation>Hide</translation>
+        <translation>Ocultar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="119"/>
         <source>%1 already exists, do you want to replace it?</source>
-        <translation>%1 already exists, do you want to replace it?</translation>
+        <translation>%1 já existe, substituí-lo?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="122"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation>Replace</translation>
+        <translation>Substituir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="43"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbintcomputermenuscene.cpp" line="72"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="117"/>
         <source>Unmount</source>
-        <translation>Unmount</translation>
+        <translation>Desmontar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="55"/>
         <source>Safely Remove</source>
-        <translation>Safely Remove</translation>
+        <translation>Remover com Segurança</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="63"/>
         <source>Format</source>
-        <translation>Format</translation>
+        <translation>Formato</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="71"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbintcomputermenuscene.cpp" line="78"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="123"/>
         <source>Clear saved password and unmount</source>
-        <translation>Clear saved password and unmount</translation>
+        <translation>Apagar senhas salvas e desmontar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="75"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="239"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="79"/>
         <source>Erase</source>
-        <translation>Erase</translation>
+        <translation>Apagar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="278"/>
         <source>Cannot access</source>
-        <translation>Cannot access</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="322"/>
         <source>User directory</source>
-        <translation>User directory</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="326"/>
         <source>Local disk</source>
-        <translation>Local disk</translation>
+        <translation>Disco local</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="328"/>
         <source>Removable disk</source>
-        <translation>Removable disk</translation>
+        <translation>Disco removível</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="330"/>
@@ -1400,130 +1400,130 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="334"/>
         <source>Unconnected network shared directory</source>
-        <translation>Unconnected network shared directory</translation>
+        <translation>Diretório compartilhado em rede desconectado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="335"/>
         <source>Network shared directory</source>
-        <translation>Network shared directory</translation>
+        <translation>Diretório de rede compartilhado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="337"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="341"/>
         <source>Android mobile device</source>
-        <translation>Android mobile device</translation>
+        <translation>Dispositivo Móvel Android</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="340"/>
         <source>Apple mobile device</source>
-        <translation>Apple mobile device</translation>
+        <translation>Dispositivo Móvel Apple</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="345"/>
         <source>Unknown device</source>
-        <translation>Unknown device</translation>
+        <translation>Dispositivo desconhecido</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="58"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="267"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation>Remove</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="61"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="270"/>
         <source>Do you want to remove this item?</source>
-        <translation>Do you want to remove this item?</translation>
+        <translation>Deseja remover este item?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="63"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="272"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation>Do yout want to remove %1 items?</translation>
+        <translation>Deseja remover %1 itens?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="64"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="273"/>
         <source>It does not delete the original files</source>
-        <translation>It does not delete the original files</translation>
+        <translation>Isto não apaga os arquivos originais</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="95"/>
         <source>Clear recent history</source>
-        <translation>Clear recent history</translation>
+        <translation>Limpar o histórico recente</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="107"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="194"/>
         <source>Source path</source>
-        <translation>Source path</translation>
+        <translation>Caminho de origem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="84"/>
         <source>New window</source>
-        <translation>New window</translation>
+        <translation>Nova janela</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="90"/>
         <source>Connect to Server</source>
-        <translation>Connect to Server</translation>
+        <translation>Conectar ao servidor</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="94"/>
         <source>Set share password</source>
-        <translation>Set share password</translation>
+        <translation>Definir a senha de compartilhamento</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="99"/>
         <source>Change disk password</source>
-        <translation>Change disk password</translation>
+        <translation>Alterar a senha do disco</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
         <source>Settings</source>
-        <translation>Settings</translation>
+        <translation>Configurações</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="400"/>
         <source>Copy path</source>
-        <translation>Copy path</translation>
+        <translation>Copiar caminho</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="417"/>
         <source>Edit address</source>
-        <translation>Edit address</translation>
+        <translation>Editar endereço</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="93"/>
         <source>Empty Trash</source>
-        <translation>Empty Trash</translation>
+        <translation>Esvaziar Lixeira</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="201"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="90"/>
         <source>Location</source>
-        <translation>Location</translation>
+        <translation>Local</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="62"/>
         <source>Replace Text</source>
-        <translation>Replace Text</translation>
+        <translation>Substituir texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="62"/>
         <source>Add Text</source>
-        <translation>Add Text</translation>
+        <translation>Adicionar Texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="62"/>
         <source>Custom Text</source>
-        <translation>Custom Text</translation>
+        <translation>Personalizar texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="68"/>
         <source>Find</source>
-        <translation>Find</translation>
+        <translation>Encontrar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="70"/>
@@ -1531,134 +1531,134 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="98"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="105"/>
         <source>Required</source>
-        <translation>Required</translation>
+        <translation>Requeridos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="76"/>
         <source>Replace</source>
-        <translation>Replace</translation>
+        <translation>Substituir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="77"/>
         <source>Optional</source>
-        <translation>Optional</translation>
+        <translation>Opcional</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="83"/>
         <source>Add</source>
-        <translation>Add</translation>
+        <translation>Adicionar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="91"/>
         <source>Before file name</source>
-        <translation>Before file name</translation>
+        <translation>Antes do nome do arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="91"/>
         <source>After file name</source>
-        <translation>After file name</translation>
+        <translation>Após o nome do arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="97"/>
         <source>File name</source>
-        <translation>File name</translation>
+        <translation>Nome do arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="104"/>
         <source>Start at</source>
-        <translation>Start at</translation>
+        <translation>Iniciar em</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="115"/>
         <source>Tips: Sort by selected file order</source>
-        <translation>Tips: Sort by selected file order</translation>
+        <translation>Dicas: Classificar por ordem de arquivo selecionado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/utils/shareutils.cpp" line="50"/>
         <source>My Shares</source>
-        <translation>My Shares</translation>
+        <translation>Compartilhamentos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="155"/>
         <source>Free Space %1</source>
-        <translation>Free Space %1</translation>
+        <translation>Espaço livre %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="85"/>
         <source>Search</source>
-        <translation>Search</translation>
+        <translation>Pesquisar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="96"/>
         <source>No results</source>
-        <translation>No results</translation>
+        <translation>Nenhum resultado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="98"/>
         <source>Searching...</source>
-        <translation>Searching...</translation>
+        <translation>Pesquisando...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/fileutils/vaultfileinfo.cpp" line="307"/>
         <source>My Vault</source>
-        <translation>My Vault</translation>
+        <translation>Meu Cofre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="233"/>
         <source>Create Vault</source>
-        <translation>Create Vault</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="236"/>
         <source>Unlock</source>
-        <translation>Unlock</translation>
+        <translation>Desbloquear</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="245"/>
         <source>Lock</source>
-        <translation>Lock</translation>
+        <translation>Bloquear</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="250"/>
         <source>Auto lock</source>
-        <translation>Auto lock</translation>
+        <translation>Bloquear automaticamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="252"/>
         <source>Never</source>
-        <translation>Never</translation>
+        <translation>Nunca</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
         <source>5 minutes</source>
-        <translation>5 minutes</translation>
+        <translation>5 minutos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
         <source>10 minutes</source>
-        <translation>10 minutes</translation>
+        <translation>10 minutos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="268"/>
         <source>20 minutes</source>
-        <translation>20 minutes</translation>
+        <translation>20 minutos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="279"/>
         <source>Delete File Vault</source>
-        <translation>Delete File Vault</translation>
+        <translation>Excluir o Cofre de Arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="242"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="286"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation>Close</translation>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashfilehelper.cpp" line="144"/>
         <source>Unable to open items in the trash, please restore it first</source>
-        <translation>Unable to open items in the trash, please restore it first</translation>
+        <translation>Impossível abrir os itens da lixeira; restaure-os</translation>
     </message>
 </context>
 <context>
@@ -1666,82 +1666,82 @@
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="119"/>
         <source>Sort by</source>
-        <translation>Sort by</translation>
+        <translation>Ordenar por</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="120"/>
         <source>Icon size</source>
-        <translation>Icon size</translation>
+        <translation>Tamanho do ícone</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="121"/>
         <source>Auto arrange</source>
-        <translation>Auto arrange</translation>
+        <translation>Organizar automaticamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="122"/>
         <source>Display Settings</source>
-        <translation>Display Settings</translation>
+        <translation>Configurações da Tela</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="123"/>
         <source>Refresh</source>
-        <translation>Refresh</translation>
+        <translation>Atualizar</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="126"/>
         <source>Wallpaper and Screensaver</source>
-        <translation>Wallpaper and Screensaver</translation>
+        <translation>Papel de Parede e Protetor de Tela</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="128"/>
         <source>Set Wallpaper</source>
-        <translation>Set Wallpaper</translation>
+        <translation>Definir Papel de Parede</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="131"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="132"/>
         <source>Time modified</source>
-        <translation>Time modified</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="133"/>
         <source>Size</source>
-        <translation>Size</translation>
+        <translation>Tamanho</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="134"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="137"/>
         <source>Tiny</source>
-        <translation>Tiny</translation>
+        <translation>Muito Pequeno</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="138"/>
         <source>Small</source>
-        <translation>Small</translation>
+        <translation>Pequeno</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="139"/>
         <source>Medium</source>
-        <translation>Medium</translation>
+        <translation>Médio</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="140"/>
         <source>Large</source>
-        <translation>Large</translation>
+        <translation>Grande</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/menu/canvasmenuscene.cpp" line="141"/>
         <source>Super large</source>
-        <translation>Super large</translation>
+        <translation>Super Grande</translation>
     </message>
 </context>
 <context>
@@ -1749,7 +1749,7 @@
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/delegate/itemeditor.cpp" line="292"/>
         <source>%1 are not allowed</source>
-        <translation>%1 are not allowed</translation>
+        <translation>%1 não são permitidos</translation>
     </message>
 </context>
 <context>
@@ -1757,7 +1757,7 @@
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="291"/>
         <source>Rename %1 Files</source>
-        <translation>Rename %1 Files</translation>
+        <translation>Renomear %1 arquivos</translation>
     </message>
 </context>
 <context>
@@ -1765,27 +1765,27 @@
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="82"/>
         <source>Mode:</source>
-        <translation>Mode:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="84"/>
         <source>Replace Text</source>
-        <translation>Replace Text</translation>
+        <translation>Substituir texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="84"/>
         <source>Add Text</source>
-        <translation>Add Text</translation>
+        <translation>Adicionar Texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="84"/>
         <source>Custom Text</source>
-        <translation>Custom Text</translation>
+        <translation>Personalizar texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="89"/>
         <source>Find:</source>
-        <translation>Find:</translation>
+        <translation>Encontrar:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="92"/>
@@ -1793,47 +1793,47 @@
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="119"/>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="125"/>
         <source>Required</source>
-        <translation>Required</translation>
+        <translation>Requeridos</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="96"/>
         <source>Replace:</source>
-        <translation>Replace:</translation>
+        <translation>Substituir:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="98"/>
         <source>Optional</source>
-        <translation>Optional</translation>
+        <translation>Opcional</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="103"/>
         <source>Add:</source>
-        <translation>Add:</translation>
+        <translation>Adicionar:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="110"/>
         <source>Location:</source>
-        <translation>Location:</translation>
+        <translation>Local:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="112"/>
         <source>Befor file name</source>
-        <translation>Befor file name</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="112"/>
         <source>After file name</source>
-        <translation>After file name</translation>
+        <translation>Após o nome do arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="117"/>
         <source>File name:</source>
-        <translation>File name:</translation>
+        <translation>Nome do arquivo:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="123"/>
         <source>Start at:</source>
-        <translation>Start at:</translation>
+        <translation>Prefixo:</translation>
     </message>
 </context>
 <context>
@@ -1842,13 +1842,13 @@
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermaskframe.cpp" line="134"/>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermaskframe.cpp" line="135"/>
         <source>Not authorized</source>
-        <translation>Not authorized</translation>
+        <translation>Não autorizado</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermaskframe.cpp" line="142"/>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/watermask/watermaskframe.cpp" line="143"/>
         <source>In trial period</source>
-        <translation>In trial period</translation>
+        <translation>Em período de testes</translation>
     </message>
 </context>
 <context>
@@ -1856,27 +1856,27 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="116"/>
         <source>Tiny</source>
-        <translation>Tiny</translation>
+        <translation>Muito Pequeno</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="117"/>
         <source>Small</source>
-        <translation>Small</translation>
+        <translation>Pequeno</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="118"/>
         <source>Medium</source>
-        <translation>Medium</translation>
+        <translation>Médio</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="119"/>
         <source>Large</source>
-        <translation>Large</translation>
+        <translation>Grande</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/collectionitemdelegate.cpp" line="120"/>
         <source>Super large</source>
-        <translation>Super large</translation>
+        <translation>Super Grande</translation>
     </message>
 </context>
 <context>
@@ -1884,27 +1884,27 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="140"/>
         <source>Collection size</source>
-        <translation>Collection size</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="147"/>
         <source>Large area</source>
-        <translation>Large area</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="159"/>
         <source>Small area</source>
-        <translation>Small area</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="172"/>
         <source>Rename</source>
-        <translation>Rename</translation>
+        <translation>Renomear</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="181"/>
         <source>Delete</source>
-        <translation>Delete</translation>
+        <translation>Excluir</translation>
     </message>
 </context>
 <context>
@@ -1912,7 +1912,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/custommode.cpp" line="345"/>
         <source>New Collection</source>
-        <translation>New Collection</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1920,67 +1920,67 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="357"/>
         <source>Organize desktop</source>
-        <translation>Organize desktop</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="358"/>
         <source>Desktop options</source>
-        <translation>Desktop options</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="359"/>
         <source>Organize by</source>
-        <translation>Organize by</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="362"/>
         <source>Custom collection</source>
-        <translation>Custom collection</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="363"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="364"/>
         <source>Time accessed</source>
-        <translation>Time accessed</translation>
+        <translation>Último acesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="365"/>
         <source>Time modified</source>
-        <translation>Time modified</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="366"/>
         <source>Time created</source>
-        <translation>Time created</translation>
+        <translation>Data da criação</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="368"/>
         <source>Create a collection</source>
-        <translation>Create a collection</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="372"/>
         <source>Display Size</source>
-        <translation>Display Size</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="373"/>
         <source>Smaller</source>
-        <translation>Smaller</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="374"/>
         <source>Normal</source>
-        <translation>Normal</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="375"/>
         <source>Larger</source>
-        <translation>Larger</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1988,7 +1988,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/delegate/itemeditor.cpp" line="292"/>
         <source>%1 are not allowed</source>
-        <translation>%1 are not allowed</translation>
+        <translation>%1 não são permitidos</translation>
     </message>
 </context>
 <context>
@@ -1996,7 +1996,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/methodcombox.cpp" line="51"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
 </context>
 <context>
@@ -2004,12 +2004,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="107"/>
         <source>Desktop options</source>
-        <translation>Desktop options</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="129"/>
         <source>Auto arrange icons</source>
-        <translation>Auto arrange icons</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2017,12 +2017,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="53"/>
         <source>Organize desktop</source>
-        <translation>Organize desktop</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="68"/>
         <source>Organize by</source>
-        <translation>Organize by</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2030,7 +2030,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="291"/>
         <source>Rename %1 Files</source>
-        <translation>Rename %1 Files</translation>
+        <translation>Renomear %1 arquivos</translation>
     </message>
 </context>
 <context>
@@ -2038,27 +2038,27 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="82"/>
         <source>Mode:</source>
-        <translation>Mode:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="84"/>
         <source>Replace Text</source>
-        <translation>Replace Text</translation>
+        <translation>Substituir texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="84"/>
         <source>Add Text</source>
-        <translation>Add Text</translation>
+        <translation>Adicionar Texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="84"/>
         <source>Custom Text</source>
-        <translation>Custom Text</translation>
+        <translation>Personalizar texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="89"/>
         <source>Find:</source>
-        <translation>Find:</translation>
+        <translation>Encontrar:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="92"/>
@@ -2066,47 +2066,47 @@
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="119"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="125"/>
         <source>Required</source>
-        <translation>Required</translation>
+        <translation>Requeridos</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="96"/>
         <source>Replace:</source>
-        <translation>Replace:</translation>
+        <translation>Substituir:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="98"/>
         <source>Optional</source>
-        <translation>Optional</translation>
+        <translation>Opcional</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="103"/>
         <source>Add:</source>
-        <translation>Add:</translation>
+        <translation>Adicionar:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="110"/>
         <source>Location:</source>
-        <translation>Location:</translation>
+        <translation>Local:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="112"/>
         <source>Befor file name</source>
-        <translation>Befor file name</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="112"/>
         <source>After file name</source>
-        <translation>After file name</translation>
+        <translation>Após o nome do arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="117"/>
         <source>File name:</source>
-        <translation>File name:</translation>
+        <translation>Nome do arquivo:</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="123"/>
         <source>Start at:</source>
-        <translation>Start at:</translation>
+        <translation>Prefixo:</translation>
     </message>
 </context>
 <context>
@@ -2114,12 +2114,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="107"/>
         <source>Display size</source>
-        <translation>Display size</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="119"/>
         <source>Icon size</source>
-        <translation>Icon size</translation>
+        <translation>Tamanho do ícone</translation>
     </message>
 </context>
 <context>
@@ -2127,37 +2127,37 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="74"/>
         <source>Apps</source>
-        <translation>Apps</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="75"/>
         <source>Documents</source>
-        <translation>Documents</translation>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="76"/>
         <source>Pictures</source>
-        <translation>Pictures</translation>
+        <translation>Imagens</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="77"/>
         <source>Videos</source>
-        <translation>Videos</translation>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="78"/>
         <source>Music</source>
-        <translation>Music</translation>
+        <translation>Música</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="79"/>
         <source>Folders</source>
-        <translation>Folders</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="80"/>
         <source>Other</source>
-        <translation>Other</translation>
+        <translation>Outro</translation>
     </message>
 </context>
 <context>
@@ -2165,32 +2165,32 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="38"/>
         <source>Apps</source>
-        <translation>Apps</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="39"/>
         <source>Documents</source>
-        <translation>Documents</translation>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="40"/>
         <source>Pictures</source>
-        <translation>Pictures</translation>
+        <translation>Imagens</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="41"/>
         <source>Videos</source>
-        <translation>Videos</translation>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="42"/>
         <source>Music</source>
-        <translation>Music</translation>
+        <translation>Música</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="43"/>
         <source>Folders</source>
-        <translation>Folders</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2198,24 +2198,24 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1038"/>
         <source>Loading wallpapers...</source>
-        <translation>Loading wallpapers...</translation>
+        <translation>Carregando os papéis de parede...</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1040"/>
         <source>Loading screensavers...</source>
-        <translation>Loading screensavers...</translation>
+        <translation>Carregando os protetores de tela...</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1100"/>
         <source>Custom Screensaver</source>
-        <translation>Custom Screensaver</translation>
+        <translation>Protetor de tela personalizado</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1101"/>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1103"/>
         <source>Apply</source>
         <comment>button</comment>
-        <translation>Apply</translation>
+        <translation>Aplicar</translation>
     </message>
 </context>
 <context>
@@ -2223,59 +2223,59 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="156"/>
         <source>Wallpaper</source>
-        <translation>Wallpaper</translation>
+        <translation>Papel de Parede</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="166"/>
         <source>Screensaver</source>
-        <translation>Screensaver</translation>
+        <translation>Protetor de Tela</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="379"/>
         <source>Desktop</source>
         <comment>button</comment>
-        <translation>Desktop</translation>
+        <translation>Área de Trabalho</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="380"/>
         <source>Lock Screen</source>
         <comment>button</comment>
-        <translation>Lock Screen</translation>
+        <translation>Tela de bloqueio</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="381"/>
         <source>Both</source>
-        <translation>Both</translation>
+        <translation>Ambos</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="558"/>
         <source>Wallpaper Slideshow</source>
-        <translation>Wallpaper Slideshow</translation>
+        <translation>Alternar o papel de parede automaticamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="599"/>
         <source>When login</source>
-        <translation>When login</translation>
+        <translation>Quando fizer login</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="601"/>
         <source>When wakeup</source>
-        <translation>When wakeup</translation>
+        <translation>Quando acordar</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="639"/>
         <source>Require a password on wakeup</source>
-        <translation>Require a password on wakeup</translation>
+        <translation>Solicitar senha ao acordar</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="671"/>
         <source>Never</source>
-        <translation>Never</translation>
+        <translation>Nunca</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="673"/>
         <source>Wait:</source>
-        <translation>Wait:</translation>
+        <translation>Intervalo:</translation>
     </message>
 </context>
 <context>
@@ -2283,92 +2283,92 @@
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="192"/>
         <source>Permission error</source>
-        <translation>Permission error</translation>
+        <translation>Erro de permissão</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="194"/>
         <source>The action is denied</source>
-        <translation>The action is denied</translation>
+        <translation>Esta ação não é permitida</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="196"/>
         <source>Target file already exists</source>
-        <translation>Target file already exists</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="198"/>
         <source>Target directory already exists</source>
-        <translation>Target directory already exists</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="200"/>
         <source>Failed to open the file</source>
-        <translation>Failed to open the file</translation>
+        <translation>Falha ao abrir o arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="202"/>
         <source>Failed to read the file</source>
-        <translation>Failed to read the file</translation>
+        <translation>Falha ao ler o arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="204"/>
         <source>Failed to write the file</source>
-        <translation>Failed to write the file</translation>
+        <translation>Falha ao escrever o arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="206"/>
         <source>Failed to create the directory</source>
-        <translation>Failed to create the directory</translation>
+        <translation>Falha ao criar o diretório</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="209"/>
         <source>Failed to delete the file</source>
-        <translation>Failed to delete the file</translation>
+        <translation>Falha ao excluir o arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="211"/>
         <source>Failed to move the file</source>
-        <translation>Failed to move the file</translation>
+        <translation>Falha ao mover o arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="213"/>
         <source>Original file does not exist</source>
-        <translation>Original file does not exist</translation>
+        <translation>O arquivo original não existe</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="215"/>
         <source>Failed, file size must be less than 4GB</source>
-        <translation>Failed, file size must be less than 4GB</translation>
+        <translation>Falha! O tamanho do arquivo deve ser inferior a 4GB</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="217"/>
         <source>Not enough free space on the target disk</source>
-        <translation>Not enough free space on the target disk</translation>
+        <translation>Não há espaço disponível no disco de destino</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="219"/>
         <source>File integrity was damaged</source>
-        <translation>File integrity was damaged</translation>
+        <translation>A integridade do arquivo foi comprometida</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="221"/>
         <source>The target device is read only</source>
-        <translation>The target device is read only</translation>
+        <translation>O dispositivo de destino é somente leitura</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="223"/>
         <source>Target folder is inside the source folder</source>
-        <translation>Target folder is inside the source folder</translation>
+        <translation>A pasta de destino está dentro da pasta de origem</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="225"/>
         <source>The action is not supported</source>
-        <translation>The action is not supported</translation>
+        <translation>A ação não é suportada</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="227"/>
         <source>You do not have permission to traverse files in it</source>
-        <translation>You do not have permission to traverse files in it</translation>
+        <translation>Você não tem permissão para mover os arquivos</translation>
     </message>
 </context>
 <context>
@@ -2381,42 +2381,42 @@
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="42"/>
         <source>%1 items</source>
-        <translation>%1 items</translation>
+        <translation>%1 itens</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="43"/>
         <source>%1 item selected</source>
-        <translation>%1 item selected</translation>
+        <translation>%1 item selecionado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="44"/>
         <source>%1 items selected</source>
-        <translation>%1 items selected</translation>
+        <translation>%1 itens selecionados</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="45"/>
         <source>%1 folder selected (contains %2)</source>
-        <translation>%1 folder selected (contains %2)</translation>
+        <translation>%1 pasta selecionada (contém %2)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="46"/>
         <source>%1 folders selected (contains %2)</source>
-        <translation>%1 folders selected (contains %2)</translation>
+        <translation>%1 pastas selecionadas (contém %2)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="47"/>
         <source>%1 file selected (%2)</source>
-        <translation>%1 file selected (%2)</translation>
+        <translation>%1 arquivo selecionado (%2)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="48"/>
         <source>%1 files selected (%2)</source>
-        <translation>%1 files selected (%2)</translation>
+        <translation>%1 arquivos selecionados (%2)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/widgets/dfmstatusbar/private/basicstatusbar_p.cpp" line="49"/>
         <source>%1 folder selected</source>
-        <translation>%1 folder selected</translation>
+        <translation>%1 pasta selecionada</translation>
     </message>
 </context>
 <context>
@@ -2429,82 +2429,82 @@
         <location filename="../src/dfm-base/utils/dialogmanager.h" line="72"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>Confirm</translation>
+        <translation>Confirmar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
         <source>Operating failed</source>
-        <translation>Operating failed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="101"/>
         <source>Mount failed</source>
-        <translation>Mount failed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
         <source>Unmount failed</source>
-        <translation>Unmount failed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="107"/>
         <source>Unmounting device now...</source>
-        <translation>Unmounting device now...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="110"/>
         <source>Mounting device now...</source>
-        <translation>Mounting device now...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="113"/>
         <source>Erasing device now...</source>
-        <translation>Erasing device now...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="116"/>
         <source>Making filesystem for device now...</source>
-        <translation>Making filesystem for device now...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="119"/>
         <source>Locking device now...</source>
-        <translation>Locking device now...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="122"/>
         <source>Unlocking device now...</source>
-        <translation>Unlocking device now...</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="146"/>
         <source>The device is busy now</source>
-        <translation>The device is busy now</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
         <source>Anonymous mount is not allowed</source>
-        <translation>Anonymous mount is not allowed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
         <source>Error occured while mounting device</source>
-        <translation>Error occured while mounting device</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="168"/>
         <source>The device is busy, cannot remove now</source>
-        <translation>The device is busy, cannot remove now</translation>
+        <translation>O dispositivo está ocupado; impossível removê-lo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="189"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation>You do not have permission to operate file/folder!</translation>
+        <translation>O usuário não tem permissão para operar o/a arquivo/pasta!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="206"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</translation>
+        <translation>O usuário não tem permissão para operar os seguintes arquivo(s)/pasta(s) %1!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="235"/>
@@ -2513,23 +2513,23 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="590"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="242"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="493"/>
         <source>Operation failed!</source>
-        <translation>Operation failed!</translation>
+        <translation>Operação falhou!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="243"/>
         <source>Target folder is inside the source folder!</source>
-        <translation>Target folder is inside the source folder!</translation>
+        <translation>A pasta de destino está dentro da pasta de origem!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="298"/>
         <source>Need password to unlock device</source>
-        <translation>Need password to unlock device</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="306"/>
@@ -2542,28 +2542,28 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="577"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="307"/>
         <source>Format</source>
         <comment>button</comment>
-        <translation>Format</translation>
+        <translation>Formato</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="308"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
-        <translation>To access the device, you must format the disk first. Are you sure you want to format it now?</translation>
+        <translation>Para acessar o dispositivo, é necessário formatar o disco. Formatá-lo agora?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="322"/>
         <source>Do you want to run %1 or display its content?</source>
-        <translation>Do you want to run %1 or display its content?</translation>
+        <translation>Executar %1 ou exibir o conteúdo?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="323"/>
         <source>It is an executable text file.</source>
-        <translation>It is an executable text file.</translation>
+        <translation>O arquivo de texto é executável.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="327"/>
@@ -2571,50 +2571,50 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="578"/>
         <source>Run</source>
         <comment>button</comment>
-        <translation>Run</translation>
+        <translation>Executar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="328"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="356"/>
         <source>Run in terminal</source>
         <comment>button</comment>
-        <translation>Run in terminal</translation>
+        <translation>Executar no Terminal</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="329"/>
         <source>Display</source>
         <comment>button</comment>
-        <translation>Display</translation>
+        <translation>Exibir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="352"/>
         <source>Do you want to run %1?</source>
-        <translation>Do you want to run %1?</translation>
+        <translation>Executar %1?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="353"/>
         <source>It is an executable file.</source>
-        <translation>It is an executable file.</translation>
+        <translation>O arquivo é executável.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="418"/>
         <source>Are you sure you want to empty %1 item?</source>
-        <translation>Are you sure you want to empty %1 item?</translation>
+        <translation>Excluir permanentemente %1 item?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="419"/>
         <source>Are you sure you want to empty %1 items?</source>
-        <translation>Are you sure you want to empty %1 items?</translation>
+        <translation>Excluir permanentemente %1 itens?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="400"/>
         <source>Permanently delete %1?</source>
-        <translation>Permanently delete %1?</translation>
+        <translation>Excluir permanentemente %1?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="370"/>
         <source>Permanently delete %1 items?</source>
-        <translation>Permanently delete %1 items?</translation>
+        <translation>Excluir permanentemente %1 itens?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="376"/>
@@ -2622,88 +2622,88 @@
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="480"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation>Delete</translation>
+        <translation>Excluir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="428"/>
         <source>Empty</source>
-        <translation>Empty</translation>
+        <translation>Esvaziar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="406"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="442"/>
         <source>This action cannot be undone</source>
-        <translation>This action cannot be undone</translation>
+        <translation>Está ação não poderá ser revertida</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="158"/>
         <source>Wrong password</source>
-        <translation>Wrong password</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="463"/>
         <source>Do you want to delete %1?</source>
-        <translation>Do you want to delete %1?</translation>
+        <translation>Excluir %1?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="464"/>
         <source>Do you want to delete the selected %1 items?</source>
-        <translation>Do you want to delete the selected %1 items?</translation>
+        <translation>Excluir os %1 itens selecionados?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="495"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
-        <translation>Failed to restore %1 file, the target folder is read-only</translation>
+        <translation>Falha ao restaurar %1 arquivo, a pasta de destino é somente leitura</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="497"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
-        <translation>Failed to restore %1 files, the target folder is read-only</translation>
+        <translation>Falha ao restaurar %1 arquivos, a pasta de destino é somente leitura</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="508"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>&quot;%1&quot; already exists, please use another name.</translation>
+        <translation>&quot;%1&quot; já existe; use outro nome.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="522"/>
         <source>Device or resource busy</source>
-        <translation>Device or resource busy</translation>
+        <translation>Dispositivo ou recurso ocupado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="535"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</translation>
+        <translation>Este arquivo ficará oculto se o nome do arquivo começar com &quot;.&quot; (ponto). Ocultá-lo?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="536"/>
         <source>Hide</source>
-        <translation>Hide</translation>
+        <translation>Ocultar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="537"/>
         <source>Cancel</source>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="547"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
-        <translation>%1 that this shortcut refers to has been changed or moved</translation>
+        <translation>%1 a que este atalho se refere foi alterado ou movido</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="551"/>
         <source>Do you want to delete this shortcut？</source>
-        <translation>Do you want to delete this shortcut？</translation>
+        <translation>Excluir este atalho?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="576"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation>This file is not executable, do you want to add the execute permission and run?</translation>
+        <translation>Este arquivo não é executável. Adicionar a permissão de execução e executá-lo?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="588"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
-        <translation>The selected files contain system file/directory, and it cannot be deleted</translation>
+        <translation>Os arquivos selecionados contém um arquivo/diretório do sistema, e não podem ser excluídos </translation>
     </message>
 </context>
 <context>
@@ -2711,52 +2711,52 @@
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="54"/>
         <source>Directory</source>
-        <translation>Directory</translation>
+        <translation>Diretório</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="55"/>
         <source>Application</source>
-        <translation>Application</translation>
+        <translation>Aplicativo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="56"/>
         <source>Video</source>
-        <translation>Video</translation>
+        <translation>Vídeo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="57"/>
         <source>Audio</source>
-        <translation>Audio</translation>
+        <translation>Áudio</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="58"/>
         <source>Image</source>
-        <translation>Image</translation>
+        <translation>Imagem</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="59"/>
         <source>Archive</source>
-        <translation>Archive</translation>
+        <translation>Arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="60"/>
         <source>Text</source>
-        <translation>Text</translation>
+        <translation>Texto</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="61"/>
         <source>Executable</source>
-        <translation>Executable</translation>
+        <translation>Executável</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="62"/>
         <source>Backup file</source>
-        <translation>Backup file</translation>
+        <translation>Arquivo de backup</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimetypedisplaymanager.cpp" line="63"/>
         <source>Unknown</source>
-        <translation>Unknown</translation>
+        <translation>Desconhecido</translation>
     </message>
 </context>
 <context>
@@ -2765,48 +2765,48 @@
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="53"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="53"/>
         <source>Connect</source>
         <comment>button</comment>
-        <translation>Connect</translation>
+        <translation>Conectar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="57"/>
         <source>Log in as</source>
-        <translation>Log in as</translation>
+        <translation>Entrar como</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="63"/>
         <source>Anonymous</source>
-        <translation>Anonymous</translation>
+        <translation>Anônimo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="68"/>
         <source>Registered user</source>
-        <translation>Registered user</translation>
+        <translation>Usuário Registrado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="83"/>
         <source>Username</source>
-        <translation>Username</translation>
+        <translation>Nome de Usuário</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="91"/>
         <source>Domain</source>
-        <translation>Domain</translation>
+        <translation>Domínio</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="99"/>
         <source>Password</source>
-        <translation>Password</translation>
+        <translation>Senha</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.cpp" line="112"/>
         <source>Remember password</source>
-        <translation>Remember password</translation>
+        <translation>Lembrar senha</translation>
     </message>
 </context>
 <context>
@@ -2815,18 +2815,18 @@
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.cpp" line="52"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.cpp" line="52"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>Unlock</translation>
+        <translation>Desbloquear</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.cpp" line="56"/>
         <source>Input password to decrypt the disk</source>
-        <translation>Input password to decrypt the disk</translation>
+        <translation>Insira a senha para descriptografar o disco</translation>
     </message>
 </context>
 <context>
@@ -2839,7 +2839,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
         <source>Select to the first item</source>
-        <translation>Select to the first item</translation>
+        <translation>Selecionar o primeiro item</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="35"/>
@@ -2849,7 +2849,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
         <source>Select to the last item</source>
-        <translation>Select to the last item</translation>
+        <translation>Selecionar até o último item</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="36"/>
@@ -2859,7 +2859,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
         <source>Select leftwards</source>
-        <translation>Select leftwards</translation>
+        <translation>Selecionar para a esquerda</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="37"/>
@@ -2869,7 +2869,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
         <source>Select rightwards</source>
-        <translation>Select rightwards</translation>
+        <translation>Selecionar para a direita</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="38"/>
@@ -2879,7 +2879,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
         <source>Select to upper row</source>
-        <translation>Select to upper row</translation>
+        <translation>Selecionar para a linha superior</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="39"/>
@@ -2889,7 +2889,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
         <source>Select to lower row</source>
-        <translation>Select to lower row</translation>
+        <translation>Selecionar para a linha inferior</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="40"/>
@@ -2899,7 +2899,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="41"/>
@@ -2909,7 +2909,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
         <source>To parent directory</source>
-        <translation>To parent directory</translation>
+        <translation>Para o diretório superior</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="42"/>
@@ -2919,7 +2919,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
         <source>Permanently delete</source>
-        <translation>Permanently delete</translation>
+        <translation>Excluir permanentemente</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="43"/>
@@ -2929,17 +2929,17 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
         <source>Delete file</source>
-        <translation>Delete file</translation>
+        <translation>Excluir arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="44"/>
         <source>Delete</source>
-        <translation>Delete</translation>
+        <translation>Excluir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
         <source>Select all</source>
-        <translation>Select all</translation>
+        <translation>Selecionar tudo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="45"/>
@@ -2949,7 +2949,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
         <source>Copy</source>
-        <translation>Copy</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="46"/>
@@ -2959,7 +2959,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
         <source>Cut</source>
-        <translation>Cut</translation>
+        <translation>Recortar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="47"/>
@@ -2969,7 +2969,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
         <source>Paste</source>
-        <translation>Paste</translation>
+        <translation>Colar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="48"/>
@@ -2979,7 +2979,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
         <source>Rename</source>
-        <translation>Rename</translation>
+        <translation>Renomear</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="49"/>
@@ -2989,12 +2989,12 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="50"/>
         <source>New/Search</source>
-        <translation>New/Search</translation>
+        <translation>Nova Pesquisa</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
         <source>New window</source>
-        <translation>New window</translation>
+        <translation>Nova janela</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="51"/>
@@ -3004,7 +3004,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
         <source>New folder</source>
-        <translation>New folder</translation>
+        <translation>Nova pasta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="52"/>
@@ -3014,7 +3014,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
         <source>Search</source>
-        <translation>Search</translation>
+        <translation>Pesquisar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="53"/>
@@ -3024,7 +3024,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
         <source>New tab</source>
-        <translation>New tab</translation>
+        <translation>Nova aba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="54"/>
@@ -3034,12 +3034,12 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="55"/>
         <source>View</source>
-        <translation>View</translation>
+        <translation>Visualizar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
         <source>Item information</source>
-        <translation>Item information</translation>
+        <translation>Informação do item</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="56"/>
@@ -3049,7 +3049,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
         <source>Help</source>
-        <translation>Help</translation>
+        <translation>Ajuda</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="57"/>
@@ -3059,7 +3059,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="58"/>
         <source>Keyboard shortcuts</source>
-        <translation>Keyboard shortcuts</translation>
+        <translation>Atalhos de teclado</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="58"/>
@@ -3069,12 +3069,12 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="59"/>
         <source>Switch display status</source>
-        <translation>Switch display status</translation>
+        <translation>Mudar a exibição de status</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="60"/>
         <source>Hide item</source>
-        <translation>Hide item</translation>
+        <translation>Ocultar item</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="60"/>
@@ -3084,7 +3084,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="61"/>
         <source>Input in address bar</source>
-        <translation>Input in address bar</translation>
+        <translation>Insira na barra de endereços</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="61"/>
@@ -3094,32 +3094,32 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="62"/>
         <source>Switch to icon view</source>
-        <translation>Switch to icon view</translation>
+        <translation>Alternar para visualização em ícone</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="62"/>
         <source>Ctrl + 1 </source>
-        <translation>Ctrl + 1 </translation>
+        <translation>Ctrl + 1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="63"/>
         <source>Switch to list view</source>
-        <translation>Switch to list view</translation>
+        <translation>Alternar para visualização em lista</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="63"/>
         <source>Ctrl + 2 </source>
-        <translation>Ctrl + 2 </translation>
+        <translation>Ctrl + 2</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="64"/>
         <source>Others</source>
-        <translation>Others</translation>
+        <translation>Outros</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="65"/>
         <source>Close</source>
-        <translation>Close</translation>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="65"/>
@@ -3129,7 +3129,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="66"/>
         <source>Close current tab</source>
-        <translation>Close current tab</translation>
+        <translation>Fechar aba atual</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="66"/>
@@ -3139,7 +3139,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="67"/>
         <source>Back</source>
-        <translation>Back</translation>
+        <translation>Voltar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="67"/>
@@ -3149,7 +3149,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="68"/>
         <source>Forward</source>
-        <translation>Forward</translation>
+        <translation>Avançar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="68"/>
@@ -3159,7 +3159,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="69"/>
         <source>Switch to next tab</source>
-        <translation>Switch to next tab</translation>
+        <translation>Alterar para a próxima aba</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="69"/>
@@ -3169,7 +3169,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="70"/>
         <source>Switch to previous tab</source>
-        <translation>Switch to previous tab</translation>
+        <translation>Alternar para a aba anterior</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="70"/>
@@ -3179,7 +3179,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="71"/>
         <source>Next file</source>
-        <translation>Next file</translation>
+        <translation>Próximo arquivo</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="71"/>
@@ -3189,7 +3189,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="72"/>
         <source>Previous file</source>
-        <translation>Previous file</translation>
+        <translation>Arquivo anterior</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="72"/>
@@ -3199,7 +3199,7 @@
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="73"/>
         <source>Switch tab by specified number between 1 to 8</source>
-        <translation>Switch tab by specified number between 1 to 8</translation>
+        <translation>Alternar a aba pelo número especificado entre 1 e 8</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="73"/>
@@ -3212,32 +3212,32 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="132"/>
         <source>Home</source>
-        <translation>Home</translation>
+        <translation>Pasta Pessoal</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="133"/>
         <source>Desktop</source>
-        <translation>Desktop</translation>
+        <translation>Área de Trabalho</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="134"/>
         <source>Videos</source>
-        <translation>Videos</translation>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="135"/>
         <source>Music</source>
-        <translation>Music</translation>
+        <translation>Música</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="136"/>
         <source>Pictures</source>
-        <translation>Pictures</translation>
+        <translation>Imagens</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="137"/>
         <source>Documents</source>
-        <translation>Documents</translation>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="138"/>
@@ -3247,12 +3247,12 @@
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="139"/>
         <source>Trash</source>
-        <translation>Trash</translation>
+        <translation>Lixeira</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/systempathutil.cpp" line="140"/>
         <source>System Disk</source>
-        <translation>System Disk</translation>
+        <translation>Disco do Sistema</translation>
     </message>
 </context>
 <context>
@@ -3260,96 +3260,96 @@
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="216"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation>create source file %1 Info failed in show conflict Info function!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="226"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation>create target file %1 Info failed in show conflict Info function!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="242"/>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="259"/>
         <source>Time modified: %1</source>
-        <translation>Time modified: %1</translation>
+        <translation>Última modificação: %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="247"/>
         <source>Original folder</source>
-        <translation>Original folder</translation>
+        <translation>Pasta de origem</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="249"/>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="264"/>
         <source>Contains: %1</source>
-        <translation>Contains: %1</translation>
+        <translation>Contém: %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="251"/>
         <source>Original file</source>
-        <translation>Original file</translation>
+        <translation>Arquivo original</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="252"/>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="267"/>
         <source>Size: %1</source>
-        <translation>Size: %1</translation>
+        <translation>Tamanho: %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="262"/>
         <source>Target folder</source>
-        <translation>Target folder</translation>
+        <translation>Pasta de destino</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="266"/>
         <source>Target file</source>
-        <translation>Target file</translation>
+        <translation>Arquivo de destino</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="402"/>
         <source>Syncing data</source>
-        <translation>Syncing data</translation>
+        <translation>Sincronizando os dados</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="403"/>
         <source>Please wait</source>
-        <translation>Please wait</translation>
+        <translation>Aguarde</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="592"/>
         <source>Keep both</source>
         <comment>button</comment>
-        <translation>Keep both</translation>
+        <translation>Manter Ambos</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="595"/>
         <source>Skip</source>
         <comment>button</comment>
-        <translation>Skip</translation>
+        <translation>Ignorar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="600"/>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="650"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation>Replace</translation>
+        <translation>Substituir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="622"/>
         <source>Do not ask again</source>
-        <translation>Do not ask again</translation>
+        <translation>Não perguntar novamente</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="647"/>
         <source>Retry</source>
         <comment>button</comment>
-        <translation>Retry</translation>
+        <translation>Tentar novamente</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="653"/>
         <source>Merge</source>
         <comment>button</comment>
-        <translation>Merge</translation>
+        <translation>Mesclar</translation>
     </message>
 </context>
 <context>
@@ -3357,17 +3357,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="161"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="162"/>
         <source>Copy</source>
-        <translation>Copy</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-avfsbrowser/menu/avfsmenuscene.cpp" line="163"/>
         <source>Properties</source>
-        <translation>Properties</translation>
+        <translation>Propriedades</translation>
     </message>
 </context>
 <context>
@@ -3375,19 +3375,19 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="369"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
-        <translation>Sorry, unable to locate your bookmark directory, remove it?</translation>
+        <translation>Impossível localizar o diretório dos favoritos. Removê-lo?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="371"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="372"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation>Remove</translation>
+        <translation>Remover</translation>
     </message>
 </context>
 <context>
@@ -3395,12 +3395,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="72"/>
         <source>Pin to quick access</source>
-        <translation>Pin to quick access</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="73"/>
         <source>Remove from quick access</source>
-        <translation>Remove from quick access</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3408,38 +3408,38 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="100"/>
         <source>Burning disc %1, please wait...</source>
-        <translation>Burning disc %1, please wait...</translation>
+        <translation>Gravando disco %1, aguarde...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="101"/>
         <source>Writing data...</source>
-        <translation>Writing data...</translation>
+        <translation>Gravando dados...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="104"/>
         <source>Verifying data...</source>
-        <translation>Verifying data...</translation>
+        <translation>Verificando dados...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="178"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="184"/>
         <source>Data verification successful.</source>
-        <translation>Data verification successful.</translation>
+        <translation>Verificação de Dados Bem-sucedida.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="186"/>
         <source>Burn process completed</source>
-        <translation>Burn process completed</translation>
+        <translation>Gravação completa</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="232"/>
         <source>The device was not safely unmounted</source>
-        <translation>The device was not safely unmounted</translation>
+        <translation>O dispositivo não foi desmontado com segurança</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="232"/>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Disk is busy, cannot unmount now</translation>
+        <translation>O disco está ocupado; impossível desmontá-lo</translation>
     </message>
 </context>
 <context>
@@ -3447,12 +3447,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="113"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation>Unable to burn. Not enough free space on the target disk.</translation>
+        <translation>Impossível gravar. Não há espaço disponível no disco de destino.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/events/burneventreceiver.cpp" line="190"/>
         <source>Mount error: unsupported image format</source>
-        <translation>Mount error: unsupported image format</translation>
+        <translation>Erro de montagem: formato de imagem não suportado</translation>
     </message>
 </context>
 <context>
@@ -3465,12 +3465,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="177"/>
         <source>Success</source>
-        <translation>Success</translation>
+        <translation>Sucesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="177"/>
         <source>Failed</source>
-        <translation>Failed</translation>
+        <translation>Falha</translation>
     </message>
 </context>
 <context>
@@ -3479,22 +3479,22 @@
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="176"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="189"/>
         <source>Disc erase failed</source>
-        <translation>Disc erase failed</translation>
+        <translation>Falha ao apagar o disco</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="193"/>
         <source>Burn process failed</source>
-        <translation>Burn process failed</translation>
+        <translation>Falha no processo de gravação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="196"/>
         <source>Data verification failed</source>
-        <translation>Data verification failed</translation>
+        <translation>A verificação de dados falhou</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="199"/>
@@ -3504,45 +3504,45 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="215"/>
         <source>Show details</source>
-        <translation>Show details</translation>
+        <translation>Exibir Detalhes</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="219"/>
         <source>Hide details</source>
-        <translation>Hide details</translation>
+        <translation>Ocultar detalhes</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="220"/>
         <source>Error</source>
-        <translation>Error</translation>
+        <translation>Erro</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="229"/>
         <source>Show details</source>
         <comment>button</comment>
-        <translation>Show details</translation>
+        <translation>Exibir Detalhes</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="230"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>Confirm</translation>
+        <translation>Confirmar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="243"/>
         <source>View Image File</source>
         <comment>button</comment>
-        <translation>View Image File</translation>
+        <translation>Visualizar arquivo de imagem</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="262"/>
         <source>Image successfully created</source>
-        <translation>Image successfully created</translation>
+        <translation>Imagem criada com sucesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="296"/>
         <source>Image creation failed</source>
-        <translation>Image creation failed</translation>
+        <translation>Falha ao criar imagem</translation>
     </message>
 </context>
 <context>
@@ -3550,42 +3550,42 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="159"/>
         <source>Advanced settings</source>
-        <translation>Advanced settings</translation>
+        <translation>Configurações avançadas</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="183"/>
         <source>File system: </source>
-        <translation>File system: </translation>
+        <translation>Sistema de arquivos:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="186"/>
         <source>ISO9660 Only</source>
-        <translation>ISO9660 Only</translation>
+        <translation>Somente ISO 9660</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="187"/>
         <source>ISO9660/Joliet (For Windows)</source>
-        <translation>ISO9660/Joliet (For Windows)</translation>
+        <translation>ISO 9660 / Joliet (Windows)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="188"/>
         <source>ISO9660/Rock Ridge (For Unix)</source>
-        <translation>ISO9660/Rock Ridge (For Unix)</translation>
+        <translation>ISO 9660 / Rock Ridge (Unix)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="198"/>
         <source>%1 (Compatible with Windows CD/DVD mode)</source>
-        <translation>%1 (Compatible with Windows CD/DVD mode)</translation>
+        <translation>%1 (Compatível com modo Windows de CD / DVD)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="333"/>
         <source>Device error</source>
-        <translation>Device error</translation>
+        <translation>Erro de dispositivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="333"/>
         <source>Optical device %1 doesn&apos;t exist</source>
-        <translation>Optical device %1 doesn&apos;t exist</translation>
+        <translation>O dispositivo óptico %1 não existe</translation>
     </message>
 </context>
 <context>
@@ -3593,12 +3593,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="519"/>
         <source>Creating an ISO image</source>
-        <translation>Creating an ISO image</translation>
+        <translation>Criando uma imagem ISO</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
         <source>to %1</source>
-        <translation>to %1</translation>
+        <translation>para %1</translation>
     </message>
 </context>
 <context>
@@ -3607,22 +3607,22 @@
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="75"/>
         <source>Create ISO Image</source>
         <comment>button</comment>
-        <translation>Create ISO Image</translation>
+        <translation>Criar Imagem ISO</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="88"/>
         <source>Save as Image File</source>
-        <translation>Save as Image File</translation>
+        <translation>Salvar como Arquivo de Imagem</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="99"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
-        <translation>All files in the disc will be packaged and created as an ISO image file.</translation>
+        <translation>Todos os arquivos no disco serão empacotados e criados como um arquivo de imagem ISO.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="110"/>
         <source>Save the ISO image here:</source>
-        <translation>Save the ISO image here:</translation>
+        <translation>Salvar o arquivo de imagem ISO aqui:</translation>
     </message>
 </context>
 <context>
@@ -3630,7 +3630,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="368"/>
         <source>Erasing disc %1, please wait...</source>
-        <translation>Erasing disc %1, please wait...</translation>
+        <translation>Apagando disco %1, aguarde...</translation>
     </message>
 </context>
 <context>
@@ -3638,7 +3638,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/appentryfileentity.cpp" line="76"/>
         <source>Double click to open it</source>
-        <translation>Double click to open it</translation>
+        <translation>Clique duas vezes para abri-lo</translation>
     </message>
 </context>
 <context>
@@ -3647,7 +3647,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="56"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="122"/>
         <source>Computer</source>
-        <translation>Computer</translation>
+        <translation>Computador</translation>
     </message>
 </context>
 <context>
@@ -3655,22 +3655,22 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="266"/>
         <source>Unlock device failed</source>
-        <translation>Unlock device failed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="266"/>
         <source>Wrong password</source>
-        <translation>Wrong password</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="625"/>
         <source>Mount error</source>
-        <translation>Mount error</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="625"/>
         <source>Cannot access %1</source>
-        <translation>Cannot access %1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3678,7 +3678,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="50"/>
         <source>Computer</source>
-        <translation>Computer</translation>
+        <translation>Computador</translation>
     </message>
 </context>
 <context>
@@ -3686,12 +3686,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="413"/>
         <source>My Directories</source>
-        <translation>My Directories</translation>
+        <translation>Meus Diretórios</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="418"/>
         <source>Disks</source>
-        <translation>Disks</translation>
+        <translation>Dispositivos</translation>
     </message>
 </context>
 <context>
@@ -3699,37 +3699,37 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="47"/>
         <source>Basic info</source>
-        <translation>Basic info</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="55"/>
         <source>Device type</source>
-        <translation>Device type</translation>
+        <translation>Tipo de dispositivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="58"/>
         <source>Total space</source>
-        <translation>Total space</translation>
+        <translation>Espaço total</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="61"/>
         <source>File system</source>
-        <translation>File system</translation>
+        <translation>Sistema de arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="64"/>
         <source>Contains</source>
-        <translation>Contains</translation>
+        <translation>Contém</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="67"/>
         <source>Free space</source>
-        <translation>Free space</translation>
+        <translation>Espaço livre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="115"/>
         <source>%1 items</source>
-        <translation>%1 items</translation>
+        <translation>%1 itens</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="115"/>
@@ -3742,82 +3742,82 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="50"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="54"/>
         <source>Size</source>
-        <translation>Size</translation>
+        <translation>Tamanho</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="58"/>
         <source>Dimension</source>
-        <translation>Dimension</translation>
+        <translation>Dimensão</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="62"/>
         <source>Duration</source>
-        <translation>Duration</translation>
+        <translation>Duração</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="66"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="70"/>
         <source>Accessed</source>
-        <translation>Accessed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="74"/>
         <source>Modified</source>
-        <translation>Modified</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="244"/>
         <source>Directory</source>
-        <translation>Directory</translation>
+        <translation>Diretório</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="247"/>
         <source>Documents</source>
-        <translation>Documents</translation>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="250"/>
         <source>Videos</source>
-        <translation>Videos</translation>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="257"/>
         <source>Images</source>
-        <translation>Images</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="265"/>
         <source>Audios</source>
-        <translation>Audios</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="272"/>
         <source>Executable</source>
-        <translation>Executable</translation>
+        <translation>Executável</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="275"/>
         <source>Archives</source>
-        <translation>Archives</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="278"/>
         <source>Unknown</source>
-        <translation>Unknown</translation>
+        <translation>Desconhecido</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="281"/>
         <source>Application</source>
-        <translation>Application</translation>
+        <translation>Aplicativo</translation>
     </message>
 </context>
 <context>
@@ -3825,12 +3825,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/dirsharemenu/dirsharemenuscene.cpp" line="79"/>
         <source>Share folder</source>
-        <translation>Share folder</translation>
+        <translation>Compartilhar pasta</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/dirsharemenu/dirsharemenuscene.cpp" line="80"/>
         <source>Cancel sharing</source>
-        <translation>Cancel sharing</translation>
+        <translation>Cancelar compartilhamento</translation>
     </message>
 </context>
 <context>
@@ -3838,125 +3838,125 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="118"/>
         <source>Sharing</source>
-        <translation>Sharing</translation>
+        <translation>Compartilhar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="136"/>
         <source>Share this folder</source>
-        <translation>Share this folder</translation>
+        <translation>Compartilhar esta pasta</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="163"/>
         <source>Read and write</source>
-        <translation>Read and write</translation>
+        <translation>Leitura e Escrita</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="163"/>
         <source>Read only</source>
-        <translation>Read only</translation>
+        <translation>Somente Leitura</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="165"/>
         <source>Not allow</source>
-        <translation>Not allow</translation>
+        <translation>Não permitido</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="165"/>
         <source>Allow</source>
-        <translation>Allow</translation>
+        <translation>Permitir</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="197"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="224"/>
         <source>Copy</source>
-        <translation>Copy</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="242"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="530"/>
         <source>None</source>
-        <translation>None</translation>
+        <translation>Nenhum</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="249"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="250"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="531"/>
         <source>Set password</source>
-        <translation>Set password</translation>
+        <translation>Definir senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="250"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="531"/>
         <source>Change password</source>
-        <translation>Change password</translation>
+        <translation>Alterar senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="151"/>
         <source>Share name</source>
-        <translation>Share name</translation>
+        <translation>Compartilhar nome</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="155"/>
         <source>Permission</source>
-        <translation>Permission</translation>
+        <translation>Permissão</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="159"/>
         <source>Anonymous</source>
-        <translation>Anonymous</translation>
+        <translation>Anônimo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="188"/>
         <source>Network path</source>
-        <translation>Network path</translation>
+        <translation>Localização da rede</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="214"/>
         <source>Username</source>
-        <translation>Username</translation>
+        <translation>Nome de Usuário</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="263"/>
         <source>Share password</source>
-        <translation>Share password</translation>
+        <translation>Compartilhar senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="276"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
-        <translation>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </translation>
+        <translation>A senha será aplicada a todas as pastas compartilhadas, e usuários sem a senha só poderão acessar as pastas que permitam acesso anónimo.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="377"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
-        <translation>The share name must not be two dots (..) or one dot (.)</translation>
+        <translation>O nome do compartilhamento não deve ser dois pontos (..) ou um ponto (.)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="395"/>
         <source>The share name is used by another user.</source>
-        <translation>The share name is used by another user.</translation>
+        <translation>O nome do compartilhamento é utilizado por outro usuário.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="396"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="398"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
-        <translation>The share name already exists. Do you want to replace the shared folder?</translation>
+        <translation>O nome do compartilhamento já existe. Substituir a pasta compartilhada?</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="399"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="400"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation>Replace</translation>
+        <translation>Substituir</translation>
     </message>
 </context>
 <context>
@@ -3964,33 +3964,33 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="104"/>
         <source>Kindly Reminder</source>
-        <translation>Kindly Reminder</translation>
+        <translation>Lembrete amigável</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="104"/>
         <source>Please firstly install samba to continue</source>
-        <translation>Please firstly install samba to continue</translation>
+        <translation>Instale o samba para continuar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="114"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="484"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</translation>
+        <translation>O nome do compartilhamento não deve conter %1, e não pode começar com um traço (-) ou espaço em branco, nem terminar com espaço em branco.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="478"/>
         <source>To protect the files, you cannot share this folder.</source>
-        <translation>To protect the files, you cannot share this folder.</translation>
+        <translation>O compartilhamento desta pasta não é permitido, visando proteger os arquivos.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="501"/>
         <source>Sharing failed</source>
-        <translation>Sharing failed</translation>
+        <translation>O compartilhamento falhou</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="501"/>
         <source>The computer name is too long</source>
-        <translation>The computer name is too long</translation>
+        <translation>O nome do computador é muito longo</translation>
     </message>
 </context>
 <context>
@@ -3998,7 +3998,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/filepreview/utils/previewdialogmanager.cpp" line="73"/>
         <source>Unable to find the original file</source>
-        <translation>Unable to find the original file</translation>
+        <translation>Impossível encontrar o arquivo original</translation>
     </message>
 </context>
 <context>
@@ -4006,17 +4006,17 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="49"/>
         <source>Paste</source>
-        <translation>Paste</translation>
+        <translation>Colar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="50"/>
         <source>Cut</source>
-        <translation>Cut</translation>
+        <translation>Recortar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="51"/>
         <source>Copy</source>
-        <translation>Copy</translation>
+        <translation>Copiar</translation>
     </message>
 </context>
 <context>
@@ -4024,27 +4024,27 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="54"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="55"/>
         <source>Rename</source>
-        <translation>Rename</translation>
+        <translation>Renomear</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="56"/>
         <source>Delete</source>
-        <translation>Delete</translation>
+        <translation>Excluir</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="57"/>
         <source>Empty Trash</source>
-        <translation>Empty Trash</translation>
+        <translation>Esvaziar Lixeira</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/fileoperatormenuscene.cpp" line="58"/>
         <source>Set as wallpaper</source>
-        <translation>Set as wallpaper</translation>
+        <translation>Definir como papel de parede</translation>
     </message>
 </context>
 <context>
@@ -4052,32 +4052,32 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="68"/>
         <source>New folder</source>
-        <translation>New folder</translation>
+        <translation>Nova pasta</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="69"/>
         <source>New document</source>
-        <translation>New document</translation>
+        <translation>Novo documento</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="70"/>
         <source>Office Text</source>
-        <translation>Office Text</translation>
+        <translation>Texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="71"/>
         <source>Spreadsheets</source>
-        <translation>Spreadsheets</translation>
+        <translation>Planilha</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="72"/>
         <source>Presentation</source>
-        <translation>Presentation</translation>
+        <translation>Apresentação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/newcreatemenuscene.cpp" line="73"/>
         <source>Plain Text</source>
-        <translation>Plain Text</translation>
+        <translation>Texto Simples</translation>
     </message>
 </context>
 <context>
@@ -4085,27 +4085,27 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="47"/>
         <source>Open as administrator</source>
-        <translation>Open as administrator</translation>
+        <translation>Abrir como administrador</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="48"/>
         <source>Select all</source>
-        <translation>Select all</translation>
+        <translation>Selecionar tudo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="49"/>
         <source>Open in new window</source>
-        <translation>Open in new window</translation>
+        <translation>Abrir em nova janela</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="50"/>
         <source>Open in new tab</source>
-        <translation>Open in new tab</translation>
+        <translation>Abrir em nova aba</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="51"/>
         <source>Open in terminal</source>
-        <translation>Open in terminal</translation>
+        <translation>Abrir no terminal</translation>
     </message>
 </context>
 <context>
@@ -4113,12 +4113,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/openwithmenuscene.cpp" line="54"/>
         <source>Open with</source>
-        <translation>Open with</translation>
+        <translation>Abrir com</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/openwithmenuscene.cpp" line="55"/>
         <source>Select default program</source>
-        <translation>Select default program</translation>
+        <translation>Selecionar o aplicativo padrão</translation>
     </message>
 </context>
 <context>
@@ -4126,17 +4126,17 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="248"/>
         <source>Send to</source>
-        <translation>Send to</translation>
+        <translation>Enviar para</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="249"/>
         <source>Create link</source>
-        <translation>Create link</translation>
+        <translation>Criar atalho</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="250"/>
         <source>Send to desktop</source>
-        <translation>Send to desktop</translation>
+        <translation>Enviar para a área de trabalho</translation>
     </message>
 </context>
 <context>
@@ -4144,7 +4144,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="155"/>
         <source>Share</source>
-        <translation>Share</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="156"/>
@@ -4157,27 +4157,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="114"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="115"/>
         <source>Open in new window</source>
-        <translation>Open in new window</translation>
+        <translation>Abrir em nova janela</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="116"/>
         <source>Open in new tab</source>
-        <translation>Open in new tab</translation>
+        <translation>Abrir em nova aba</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="117"/>
         <source>Cancel sharing</source>
-        <translation>Cancel sharing</translation>
+        <translation>Cancelar compartilhamento</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="118"/>
         <source>Properties</source>
-        <translation>Properties</translation>
+        <translation>Propriedades</translation>
     </message>
 </context>
 <context>
@@ -4185,7 +4185,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="55"/>
         <source>My Shares</source>
-        <translation>My Shares</translation>
+        <translation>Compartilhamentos</translation>
     </message>
 </context>
 <context>
@@ -4193,44 +4193,44 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="127"/>
         <source>It does not support burning UDF discs</source>
-        <translation>It does not support burning UDF discs</translation>
+        <translation>Não suporta a gravação de discos UDF</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="131"/>
         <source>Save as Image File</source>
-        <translation>Save as Image File</translation>
+        <translation>Salvar como Arquivo de Imagem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="132"/>
         <source>Burn</source>
-        <translation>Burn</translation>
+        <translation>Gravar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="159"/>
         <source>%1 burning is not supported</source>
-        <translation>%1 burning is not supported</translation>
+        <translation>A gravação de %1 não é permitida</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="163"/>
         <source>1. It is not %1 disc;
 2. The version of this file system does not support adding files yet.</source>
-        <translation>1. It is not %1 disc;
-2. The version of this file system does not support adding files yet.</translation>
+        <translation>1. Não é um disco %1;
+2. A versão deste sistema de arquivos ainda não permite a adição de arquivos.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="206"/>
         <source>Mounting failed</source>
-        <translation>Mounting failed</translation>
+        <translation>A montagem falhou</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="245"/>
         <source>No files to burn</source>
-        <translation>No files to burn</translation>
+        <translation>Nenhum arquivo para gravar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/views/opticalmediawidget.cpp" line="291"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation>Unable to burn. Not enough free space on the target disk.</translation>
+        <translation>Impossível gravar. Não há espaço disponível no disco de destino.</translation>
     </message>
 </context>
 <context>
@@ -4238,97 +4238,97 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="60"/>
         <source>Basic info</source>
-        <translation>Basic info</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="68"/>
         <source>Size</source>
-        <translation>Size</translation>
+        <translation>Tamanho</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="73"/>
         <source>Contains</source>
-        <translation>Contains</translation>
+        <translation>Contém</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="78"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="83"/>
         <source>Location</source>
-        <translation>Location</translation>
+        <translation>Local</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="88"/>
         <source>Time created</source>
-        <translation>Time created</translation>
+        <translation>Data da criação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="93"/>
         <source>Time accessed</source>
-        <translation>Time accessed</translation>
+        <translation>Último acesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="98"/>
         <source>Time modified</source>
-        <translation>Time modified</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="102"/>
         <source>Hide this file</source>
-        <translation>Hide this file</translation>
+        <translation>Ocultar este arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="274"/>
         <source>Directory</source>
-        <translation>Directory</translation>
+        <translation>Diretório</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="283"/>
         <source>Documents</source>
-        <translation>Documents</translation>
+        <translation>Documentos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="286"/>
         <source>Videos</source>
-        <translation>Videos</translation>
+        <translation>Vídeos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="289"/>
         <source>Images</source>
-        <translation>Images</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="292"/>
         <source>Audios</source>
-        <translation>Audios</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="295"/>
         <source>Executable</source>
-        <translation>Executable</translation>
+        <translation>Executável</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="298"/>
         <source>Archives</source>
-        <translation>Archives</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="301"/>
         <source>Application</source>
-        <translation>Application</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="304"/>
         <source>Unknown</source>
-        <translation>Unknown</translation>
+        <translation>Desconhecido</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="352"/>
         <source>%1 items</source>
-        <translation>%1 items</translation>
+        <translation>%1 itens</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="277"/>
@@ -4342,12 +4342,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/closealldialog.cpp" line="62"/>
         <source>Close all</source>
-        <translation>Close all</translation>
+        <translation>Fechar tudo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/closealldialog.cpp" line="91"/>
         <source>Total size: %1, %2 files</source>
-        <translation>Total size: %1, %2 files</translation>
+        <translation>Tamanho total: %1, %2 arquivos</translation>
     </message>
 </context>
 <context>
@@ -4355,12 +4355,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="283"/>
         <source>For Government</source>
-        <translation>For Government</translation>
+        <translation>Para Governos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="285"/>
         <source>For Enterprise</source>
-        <translation>For Enterprise</translation>
+        <translation>Para Empresas</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="308"/>
@@ -4370,7 +4370,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="366"/>
         <source>Available</source>
-        <translation>Available</translation>
+        <translation>Disponível</translation>
     </message>
 </context>
 <context>
@@ -4378,47 +4378,47 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="67"/>
         <source>Computer</source>
-        <translation>Computer</translation>
+        <translation>Computador</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="79"/>
         <source>Basic Info</source>
-        <translation>Basic Info</translation>
+        <translation>Informação Básica</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="89"/>
         <source>Edition</source>
-        <translation>Edition</translation>
+        <translation>Versão</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="87"/>
         <source>Version</source>
-        <translation>Version</translation>
+        <translation>Versão</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="85"/>
         <source>Computer name</source>
-        <translation>Computer name</translation>
+        <translation>Nome do computador</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="91"/>
         <source>OS build</source>
-        <translation>OS build</translation>
+        <translation>Build do Sistema</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="93"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="95"/>
         <source>Processor</source>
-        <translation>Processor</translation>
+        <translation>Processador</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="97"/>
         <source>Memory</source>
-        <translation>Memory</translation>
+        <translation>Memória</translation>
     </message>
 </context>
 <context>
@@ -4426,37 +4426,37 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="64"/>
         <source>Multiple Files</source>
-        <translation>Multiple Files</translation>
+        <translation>Arquivos múltiplos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="68"/>
         <source>Basic info</source>
-        <translation>Basic info</translation>
+        <translation>Informação básica</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="73"/>
         <source>Total size</source>
-        <translation>Total size</translation>
+        <translation>Tamanho total</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="80"/>
         <source>Number of files</source>
-        <translation>Number of files</translation>
+        <translation>Número de arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="87"/>
         <source>Time accessed</source>
-        <translation>Time accessed</translation>
+        <translation>Último acesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="93"/>
         <source>Time modified</source>
-        <translation>Time modified</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/multifilepropertydialog.cpp" line="159"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation>%1 file(s), %2 folder(s)</translation>
+        <translation>%1 arquivo(s), %2 pasta(s)</translation>
     </message>
 </context>
 <context>
@@ -4466,12 +4466,12 @@
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="172"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="245"/>
         <source>Allow to execute as program</source>
-        <translation>Allow to execute as program</translation>
+        <translation>Executar como programa</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="141"/>
         <source>Permissions</source>
-        <translation>Permissions</translation>
+        <translation>Permissões</translation>
     </message>
 </context>
 <context>
@@ -4479,7 +4479,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/menu/propertymenuscene.cpp" line="49"/>
         <source>Properties</source>
-        <translation>Properties</translation>
+        <translation>Propriedades</translation>
     </message>
 </context>
 <context>
@@ -4489,7 +4489,7 @@
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="125"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="183"/>
         <source>Recent</source>
-        <translation>Recent</translation>
+        <translation>Recentes</translation>
     </message>
 </context>
 <context>
@@ -4497,17 +4497,17 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="160"/>
         <source>Path</source>
-        <translation>Path</translation>
+        <translation>Caminho</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="165"/>
         <source>Last access</source>
-        <translation>Last access</translation>
+        <translation>Último acesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="189"/>
         <source>Recent</source>
-        <translation>Recent</translation>
+        <translation>Recentes</translation>
     </message>
 </context>
 <context>
@@ -4515,22 +4515,22 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="190"/>
         <source>Remove</source>
-        <translation>Remove</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="191"/>
         <source>Open file location</source>
-        <translation>Open file location</translation>
+        <translation>Abrir local do arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="192"/>
         <source>Path</source>
-        <translation>Path</translation>
+        <translation>Caminho</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/menus/recentmenuscene.cpp" line="193"/>
         <source>Last access</source>
-        <translation>Last access</translation>
+        <translation>Último acesso</translation>
     </message>
 </context>
 <context>
@@ -4538,127 +4538,127 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="64"/>
         <source>Search:</source>
-        <translation>Search:</translation>
+        <translation>Pesquisar:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="65"/>
         <source>File Type:</source>
-        <translation>File Type:</translation>
+        <translation>Tipo de Arquivo:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="66"/>
         <source>File Size:</source>
-        <translation>File Size:</translation>
+        <translation>Tamanho do Arquivo:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="67"/>
         <source>Time Modified:</source>
-        <translation>Time Modified:</translation>
+        <translation>Última modificação:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="68"/>
         <source>Time Accessed:</source>
-        <translation>Time Accessed:</translation>
+        <translation>Último acesso:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="69"/>
         <source>Time Created:</source>
-        <translation>Time Created:</translation>
+        <translation>Data da Criação:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="71"/>
         <source>Reset</source>
-        <translation>Reset</translation>
+        <translation>Redefinir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
         <source>All subdirectories</source>
-        <translation>All subdirectories</translation>
+        <translation>Todas as subpastas</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
         <source>Current directory</source>
-        <translation>Current directory</translation>
+        <translation>Diretório</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="99"/>
         <source>Application</source>
-        <translation>Application</translation>
+        <translation>Aplicativo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="100"/>
         <source>Video</source>
-        <translation>Video</translation>
+        <translation>Vídeo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="101"/>
         <source>Audio</source>
-        <translation>Audio</translation>
+        <translation>Áudio</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="102"/>
         <source>Image</source>
-        <translation>Image</translation>
+        <translation>Imagem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="103"/>
         <source>Archive</source>
-        <translation>Archive</translation>
+        <translation>Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="104"/>
         <source>Text</source>
-        <translation>Text</translation>
+        <translation>Texto</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="105"/>
         <source>Executable</source>
-        <translation>Executable</translation>
+        <translation>Executável</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="106"/>
         <source>Backup file</source>
-        <translation>Backup file</translation>
+        <translation>Arquivo de backup</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="118"/>
         <source>Today</source>
-        <translation>Today</translation>
+        <translation>Hoje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="119"/>
         <source>Yesterday</source>
-        <translation>Yesterday</translation>
+        <translation>Ontem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="120"/>
         <source>This week</source>
-        <translation>This week</translation>
+        <translation>Esta semana</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="121"/>
         <source>Last week</source>
-        <translation>Last week</translation>
+        <translation>Semana passada</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="122"/>
         <source>This month</source>
-        <translation>This month</translation>
+        <translation>Este mês</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="123"/>
         <source>Last month</source>
-        <translation>Last month</translation>
+        <translation>Mês passado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="124"/>
         <source>This year</source>
-        <translation>This year</translation>
+        <translation>Este Ano</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="125"/>
         <source>Last year</source>
-        <translation>Last year</translation>
+        <translation>Ano passado</translation>
     </message>
 </context>
 <context>
@@ -4666,7 +4666,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="54"/>
         <source>Search</source>
-        <translation>Search</translation>
+        <translation>Pesquisar</translation>
     </message>
 </context>
 <context>
@@ -4674,7 +4674,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="177"/>
         <source>Path</source>
-        <translation>Path</translation>
+        <translation>Caminho</translation>
     </message>
 </context>
 <context>
@@ -4682,12 +4682,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="130"/>
         <source>Open file location</source>
-        <translation>Open file location</translation>
+        <translation>Abrir local do arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="131"/>
         <source>Select all</source>
-        <translation>Select all</translation>
+        <translation>Selecionar tudo</translation>
     </message>
 </context>
 <context>
@@ -4695,37 +4695,37 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="306"/>
         <source>Quick access</source>
-        <translation>Quick access</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="307"/>
         <source>Partitions</source>
-        <translation>Partitions</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="308"/>
         <source>Network</source>
-        <translation>Network</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="309"/>
         <source>Tag</source>
-        <translation>Tag</translation>
+        <translation>Etiqueta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="310"/>
         <source>Bookmark</source>
-        <translation>Bookmark</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="311"/>
         <source>Other</source>
-        <translation>Other</translation>
+        <translation>Outro</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="312"/>
         <source>Unknown Group</source>
-        <translation>Unknown Group</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4733,7 +4733,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="226"/>
         <source>Computers in LAN</source>
-        <translation>Computers in LAN</translation>
+        <translation>Rede</translation>
     </message>
 </context>
 <context>
@@ -4741,22 +4741,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="161"/>
         <source>Open</source>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="162"/>
         <source>Open in new window</source>
-        <translation>Open in new window</translation>
+        <translation>Abrir em nova janela</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="163"/>
         <source>Mount</source>
-        <translation>Mount</translation>
+        <translation>Montagem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="164"/>
         <source>Unmount</source>
-        <translation>Unmount</translation>
+        <translation>Desmontar</translation>
     </message>
 </context>
 <context>
@@ -4765,7 +4765,7 @@
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbintegration/smbintegrationmanager.cpp" line="492"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbintegration/smbintegrationmanager.cpp" line="558"/>
         <source>Disks</source>
-        <translation>Disks</translation>
+        <translation>Dispositivos</translation>
     </message>
 </context>
 <context>
@@ -4773,7 +4773,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/tag.cpp" line="63"/>
         <source>Tag</source>
-        <translation>Tag</translation>
+        <translation>Etiqueta</translation>
     </message>
 </context>
 <context>
@@ -4781,7 +4781,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagdirmenuscene.cpp" line="101"/>
         <source>Open file location</source>
-        <translation>Open file location</translation>
+        <translation>Abrir local do arquivo</translation>
     </message>
 </context>
 <context>
@@ -4789,7 +4789,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="105"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>Input tag info, such as work, family. A comma is used between two tags.</translation>
+        <translation>Insira as informações de etiqueta; como trabalho, família e etc.. Uma vírgula é usada entre duas etiquetas.</translation>
     </message>
 </context>
 <context>
@@ -4797,12 +4797,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="76"/>
         <source>Tag information</source>
-        <translation>Tag information</translation>
+        <translation>Informação da etiqueta</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="191"/>
         <source>Add tag &quot;%1&quot;</source>
-        <translation>Add tag &quot;%1&quot;</translation>
+        <translation>Adicionar Etiqueta &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -4810,7 +4810,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="47"/>
         <source>Tag</source>
-        <translation>Tag</translation>
+        <translation>Etiqueta</translation>
     </message>
 </context>
 <context>
@@ -4818,7 +4818,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/private/addressbar_p.h" line="66"/>
         <source>Search or enter address</source>
-        <translation>Search or enter address</translation>
+        <translation>Pesquise ou insira o endereço</translation>
     </message>
 </context>
 <context>
@@ -4826,47 +4826,47 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="67"/>
         <source>Connect to Server</source>
-        <translation>Connect to Server</translation>
+        <translation>Conectar ao servidor</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="119"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="160"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
         <source>Clear History</source>
-        <translation>Clear History</translation>
+        <translation>Limpar histórico</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="192"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="402"/>
         <source>Unfavorite</source>
-        <translation>Unfavorite</translation>
+        <translation>Desfavorável</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="220"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="221"/>
         <source>Connect</source>
         <comment>button</comment>
-        <translation>Connect</translation>
+        <translation>Conectar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="233"/>
         <source>My Favorites</source>
-        <translation>My Favorites</translation>
+        <translation>Favoritos:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="338"/>
         <source>No favorites yet</source>
-        <translation>No favorites yet</translation>
+        <translation>Ainda sem favoritos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
         <source>Favorite</source>
-        <translation>Favorite</translation>
+        <translation>Favoritos</translation>
     </message>
 </context>
 <context>
@@ -4874,61 +4874,61 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="69"/>
         <source>Change disk password</source>
-        <translation>Change disk password</translation>
+        <translation>Alterar a senha do disco</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="90"/>
         <source>Current password:</source>
-        <translation>Current password:</translation>
+        <translation>Senha atual:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="91"/>
         <source>New password:</source>
-        <translation>New password:</translation>
+        <translation>Nova senha:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="92"/>
         <source>Repeat password:</source>
-        <translation>Repeat password:</translation>
+        <translation>Confirmar senha:</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="105"/>
         <source>Save</source>
         <comment>button</comment>
-        <translation>Save</translation>
+        <translation>Salvar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="107"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="188"/>
         <source>Passwords do not match</source>
-        <translation>Passwords do not match</translation>
+        <translation>As senhas não coincidem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="204"/>
         <source>New password should differ from the current one</source>
-        <translation>New password should differ from the current one</translation>
+        <translation>A nova senha deve ser diferente da senha atual</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="225"/>
         <source>Password must be no more than 512 characters</source>
-        <translation>Password must be no more than 512 characters</translation>
+        <translation>A senha não deve ter mais do que 512 caracteres</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="235"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="239"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="243"/>
         <source>Password cannot be empty</source>
-        <translation>Password cannot be empty</translation>
+        <translation>A senha não pode ficar em branco</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcconfirmwidget.cpp" line="268"/>
         <source>Wrong password</source>
-        <translation>Wrong password</translation>
+        <translation>Senha incorreta</translation>
     </message>
 </context>
 <context>
@@ -4936,27 +4936,27 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="65"/>
         <source>Changing disk password...</source>
-        <translation>Changing disk password...</translation>
+        <translation>Alterando a senha do disco...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="73"/>
         <source>The window cannot be closed during the process</source>
-        <translation>The window cannot be closed during the process</translation>
+        <translation>A janela não pode ser fechada durante o processo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="133"/>
         <source>Passwords of disks are different</source>
-        <translation>Passwords of disks are different</translation>
+        <translation>As senhas dos discos são diferentes</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="136"/>
         <source>Unable to get the encrypted disk list</source>
-        <translation>Unable to get the encrypted disk list</translation>
+        <translation>Impossível obter a lista de discos criptografados</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcprogresswidget.cpp" line="140"/>
         <source>Initialization failed</source>
-        <translation>Initialization failed</translation>
+        <translation>A inicialização falhou</translation>
     </message>
 </context>
 <context>
@@ -4964,18 +4964,18 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="45"/>
         <source>Disk password changed</source>
-        <translation>Disk password changed</translation>
+        <translation>A senha do disco foi alterada</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="48"/>
         <source>Failed to change the disk password</source>
-        <translation>Failed to change the disk password</translation>
+        <translation>A alteração da senha do disco falhou</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/dpcwidget/dpcresultwidget.cpp" line="74"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation>Close</translation>
+        <translation>Fechar</translation>
     </message>
 </context>
 <context>
@@ -4983,19 +4983,19 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="43"/>
         <source>Enter a password to protect shared folders</source>
-        <translation>Enter a password to protect shared folders</translation>
+        <translation>Insira uma senha para proteger as pastas compartilhadas</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="51"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="52"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>Confirm</translation>
+        <translation>Confirmar</translation>
     </message>
 </context>
 <context>
@@ -5003,17 +5003,17 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/views/emptyTrashWidget.cpp" line="41"/>
         <source>Trash</source>
-        <translation>Trash</translation>
+        <translation>Lixeira</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/views/emptyTrashWidget.cpp" line="50"/>
         <source>Empty</source>
-        <translation>Empty</translation>
+        <translation>Esvaziar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/views/emptyTrashWidget.cpp" line="51"/>
         <source>Empty Trash</source>
-        <translation>Empty Trash</translation>
+        <translation>Esvaziar Lixeira</translation>
     </message>
 </context>
 <context>
@@ -5021,7 +5021,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="110"/>
         <source>Trash</source>
-        <translation>Trash</translation>
+        <translation>Lixeira</translation>
     </message>
 </context>
 <context>
@@ -5029,12 +5029,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="285"/>
         <source>Source Path</source>
-        <translation>Source Path</translation>
+        <translation>Caminho de origem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="290"/>
         <source>Time deleted</source>
-        <translation>Time deleted</translation>
+        <translation>Excluido</translation>
     </message>
 </context>
 <context>
@@ -5042,27 +5042,27 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="209"/>
         <source>Restore</source>
-        <translation>Restore</translation>
+        <translation>Restaurar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="210"/>
         <source>Restore all</source>
-        <translation>Restore all</translation>
+        <translation>Restaurar tudo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="211"/>
         <source>Empty trash</source>
-        <translation>Empty trash</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="212"/>
         <source>Source path</source>
-        <translation>Source path</translation>
+        <translation>Caminho de origem</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="213"/>
         <source>Time deleted</source>
-        <translation>Time deleted</translation>
+        <translation>Excluido</translation>
     </message>
 </context>
 <context>
@@ -5070,7 +5070,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashcore.cpp" line="40"/>
         <source>Trash</source>
-        <translation>Trash</translation>
+        <translation>Lixeira</translation>
     </message>
 </context>
 <context>
@@ -5078,22 +5078,22 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="46"/>
         <source>Trash</source>
-        <translation>Trash</translation>
+        <translation>Lixeira</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="93"/>
         <source>item</source>
-        <translation>item</translation>
+        <translation>Item</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="95"/>
         <source>items</source>
-        <translation>items</translation>
+        <translation>Itens</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="97"/>
         <source>Contains %1 %2</source>
-        <translation>Contains %1 %2</translation>
+        <translation>Contém %1 %2</translation>
     </message>
 </context>
 <context>
@@ -5101,117 +5101,117 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="53"/>
         <source>Bluetooth File Transfer</source>
-        <translation>Bluetooth File Transfer</translation>
+        <translation>Transferir arquivos por Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="54"/>
         <source>File Transfer Successful</source>
-        <translation>File Transfer Successful</translation>
+        <translation>A transferência dos arquivos foi bem-sucedida</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="55"/>
         <source>File Transfer Failed</source>
-        <translation>File Transfer Failed</translation>
+        <translation>A transferência dos arquivos falhou</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="57"/>
         <source>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
-        <translation>Sending files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
+        <translation>Enviando os arquivos para &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="58"/>
         <source>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</source>
-        <translation>Failed to send files to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
+        <translation>Falha ao enviar os arquivos para &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="59"/>
         <source>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</source>
-        <translation>Sent to &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot; successfully</translation>
+        <translation>Enviado para &quot;&lt;b style=&quot;font-weight: 550;&quot;&gt;%1&lt;/b&gt;&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="60"/>
         <source>Select a Bluetooth device to receive files</source>
-        <translation>Select a Bluetooth device to receive files</translation>
+        <translation>Selecione um dispositivo Bluetooth para receber os arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="61"/>
         <source>Cannot find the connected Bluetooth device</source>
-        <translation>Cannot find the connected Bluetooth device</translation>
+        <translation>Impossível encontrar o dispositivo Bluetooth conectado</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="62"/>
         <source>Waiting to be received...</source>
-        <translation>Waiting to be received...</translation>
+        <translation>Aguardando ser recebido...</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="63"/>
         <source>Go to Bluetooth Settings</source>
-        <translation>Go to Bluetooth Settings</translation>
+        <translation>Ir para Configurações de Bluetooth</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="64"/>
         <source>%1/%2 Sent</source>
-        <translation>%1/%2 Sent</translation>
+        <translation>Enviado %1/%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="65"/>
         <source>Error: the Bluetooth device is disconnected</source>
-        <translation>Error: the Bluetooth device is disconnected</translation>
+        <translation>Erro: o dispositivo Bluetooth está desconectado</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="66"/>
         <source>Unable to send the file more than 2 GB</source>
-        <translation>Unable to send the file more than 2 GB</translation>
+        <translation>Impossível enviar os arquivos com mais de 2 GB</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="67"/>
         <source>Unable to send 0 KB files</source>
-        <translation>Unable to send 0 KB files</translation>
+        <translation>Impossível enviar arquivos de 0 kB</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="68"/>
         <source>File doesn&apos;t exist</source>
-        <translation>File doesn&apos;t exist</translation>
+        <translation>O arquivo não existe</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="70"/>
         <source>Next</source>
         <comment>button</comment>
-        <translation>Next</translation>
+        <translation>Próximo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="71"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="72"/>
         <source>Done</source>
         <comment>button</comment>
-        <translation>Done</translation>
+        <translation>Concluído</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="73"/>
         <source>Retry</source>
         <comment>button</comment>
-        <translation>Retry</translation>
+        <translation>Tentar novamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="74"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="173"/>
         <source>File sending request timed out</source>
-        <translation>File sending request timed out</translation>
+        <translation>A solicitação de envio do arquivo expirou</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="175"/>
         <source>The service is busy and unable to process the request</source>
-        <translation>The service is busy and unable to process the request</translation>
+        <translation>O serviço está ocupado e não pode processar a solicitação</translation>
     </message>
 </context>
 <context>
@@ -5219,39 +5219,39 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="207"/>
         <source>Open with</source>
-        <translation>Open with</translation>
+        <translation>Abrir com</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="229"/>
         <source>Add other programs</source>
-        <translation>Add other programs</translation>
+        <translation>Adicionar mais aplicativos</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="230"/>
         <source>Set as default</source>
-        <translation>Set as default</translation>
+        <translation>Definir como padrão</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="232"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="233"/>
         <source>Confirm</source>
         <comment>button</comment>
-        <translation>Confirm</translation>
+        <translation>Confirmar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="237"/>
         <source>Recommended Applications</source>
-        <translation>Recommended Applications</translation>
+        <translation>Aplicativos Recomendados</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="239"/>
         <source>Other Applications</source>
-        <translation>Other Applications</translation>
+        <translation>Outras Aplicativos</translation>
     </message>
 </context>
 <context>
@@ -5259,7 +5259,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithwidget.cpp" line="49"/>
         <source>Open with</source>
-        <translation>Open with</translation>
+        <translation>Abrir com</translation>
     </message>
 </context>
 <context>
@@ -5267,7 +5267,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="52"/>
         <source>Sending files now, please try later.</source>
-        <translation>Sending files now, please try later.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5275,47 +5275,47 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="54"/>
         <source>Basic info</source>
-        <translation>Basic info</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="62"/>
         <source>Size</source>
-        <translation>Size</translation>
+        <translation>Tamanho</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="67"/>
         <source>Contains</source>
-        <translation>Contains</translation>
+        <translation>Contém</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="72"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="77"/>
         <source>Location</source>
-        <translation>Location</translation>
+        <translation>Local</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="82"/>
         <source>Time created</source>
-        <translation>Time created</translation>
+        <translation>Data da criação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="87"/>
         <source>Time accessed</source>
-        <translation>Time accessed</translation>
+        <translation>Último acesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="92"/>
         <source>Time locked</source>
-        <translation>Time locked</translation>
+        <translation>Tempo bloqueado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="149"/>
         <source>Directory</source>
-        <translation>Directory</translation>
+        <translation>Diretório</translation>
     </message>
 </context>
 <context>
@@ -5323,29 +5323,29 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="44"/>
         <source>Keep it safe</source>
-        <translation>Keep it safe</translation>
+        <translation>Mantenha seguro</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="58"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
-        <translation>Go to Unlock</translation>
+        <translation>Ir para Desbloquear</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="58"/>
         <source>Close</source>
         <comment>button</comment>
-        <translation>Close</translation>
+        <translation>Fechar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="63"/>
         <source>Verification Successful</source>
-        <translation>Verification Successful</translation>
+        <translation>Verificado com sucesso</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/passwordrecoveryview.cpp" line="68"/>
         <source>Vault password: %1</source>
-        <translation>Vault password: %1</translation>
+        <translation>Senha do Cofre: %1</translation>
     </message>
 </context>
 <context>
@@ -5354,39 +5354,39 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="48"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="89"/>
         <source>Unlock by Key</source>
-        <translation>Unlock by Key</translation>
+        <translation>Desbloquear por Chave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="56"/>
         <source>Input the 32-digit recovery key</source>
-        <translation>Input the 32-digit recovery key</translation>
+        <translation>Insira a chave de recuperação de 32 dígitos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="84"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="84"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>Unlock</translation>
+        <translation>Desbloquear</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="141"/>
         <source>Wrong recovery key</source>
-        <translation>Wrong recovery key</translation>
+        <translation>Chave de recuperação incorreta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="247"/>
         <source>Failed to unlock file vault</source>
-        <translation>Failed to unlock file vault</translation>
+        <translation>Falha ao desbloquear o cofre de arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="251"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
 </context>
 <context>
@@ -5394,18 +5394,18 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="57"/>
         <source>By key in the default path</source>
-        <translation>By key in the default path</translation>
+        <translation>Pela chave no local padrão</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="58"/>
         <source>By key in the specified path</source>
-        <translation>By key in the specified path</translation>
+        <translation>Pela chave no local especificado</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="61"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="208"/>
         <source>Select a path</source>
-        <translation>Select a path</translation>
+        <translation>Selecione um local</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="116"/>
@@ -5415,29 +5415,29 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="204"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="241"/>
         <source>Unable to get the key file</source>
-        <translation>Unable to get the key file</translation>
+        <translation>Não foi possível obter o arquivo de chave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="138"/>
         <source>Verification failed</source>
-        <translation>Verification failed</translation>
+        <translation>Falha na verificação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="151"/>
         <source>Back</source>
         <comment>button</comment>
-        <translation>Back</translation>
+        <translation>Voltar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="151"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation>Verify Key</translation>
+        <translation>Verificar chave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/retrievepasswordview.cpp" line="156"/>
         <source>Retrieve Password</source>
-        <translation>Retrieve Password</translation>
+        <translation>Recuperar Senha</translation>
     </message>
 </context>
 <context>
@@ -5445,12 +5445,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="40"/>
         <source>Location</source>
-        <translation>Location</translation>
+        <translation>Local</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/servicemanager.cpp" line="60"/>
         <source>Time locked</source>
-        <translation>Time locked</translation>
+        <translation>Tempo bloqueado</translation>
     </message>
 </context>
 <context>
@@ -5459,71 +5459,71 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="58"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>Unlock</translation>
+        <translation>Desbloquear</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="63"/>
         <source>Unlock File Vault</source>
-        <translation>Unlock File Vault</translation>
+        <translation>Desbloquear o Cofre de Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="69"/>
         <source>Forgot password?</source>
-        <translation>Forgot password?</translation>
+        <translation>Esqueceu a senha?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="76"/>
         <source>Password</source>
-        <translation>Password</translation>
+        <translation>Senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="110"/>
         <source>Password hint: %1</source>
-        <translation>Password hint: %1</translation>
+        <translation>Dica de senha: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="128"/>
         <source>Please try again %1 minutes later</source>
-        <translation>Please try again %1 minutes later</translation>
+        <translation>Por favor, tente novamente em %1 minutos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="157"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation>Wrong password, please try again %1 minutes later</translation>
+        <translation>Senha incorreta, por favor, tente novamente em  %1 minutos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="160"/>
         <source>Wrong password, one chance left</source>
-        <translation>Wrong password, one chance left</translation>
+        <translation>Senha incorreta, uma tentativa restante</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="162"/>
         <source>Wrong password, %1 chances left</source>
-        <translation>Wrong password, %1 chances left</translation>
+        <translation>Senha incorreta, %1 tentativas restantes</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="210"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="214"/>
         <source>Wrong password</source>
-        <translation>Wrong password</translation>
+        <translation>Senha incorreta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="220"/>
         <source>Failed to unlock file vault</source>
-        <translation>Failed to unlock file vault</translation>
+        <translation>Falha ao desbloquear o cofre de arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="216"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="224"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
 </context>
 <context>
@@ -5531,22 +5531,22 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="58"/>
         <source>Encrypt File Vault</source>
-        <translation>Encrypt File Vault</translation>
+        <translation>Criptografar o Cofre de Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="65"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
-        <translation>Click &apos;Encrypt&apos; and input the user password.</translation>
+        <translation>Clique em &apos;Criptografar&apos; e insira a senha do usuário.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="78"/>
         <source>Encrypting...</source>
-        <translation>Encrypting...</translation>
+        <translation>Criptografando...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="86"/>
         <source>The setup is complete</source>
-        <translation>The setup is complete</translation>
+        <translation>A configuração está completa</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="90"/>
@@ -5554,17 +5554,17 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="171"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="197"/>
         <source>Encrypt</source>
-        <translation>Encrypt</translation>
+        <translation>Criptografar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="165"/>
         <source>Failed to create file vault: %1</source>
-        <translation>Failed to create file vault: %1</translation>
+        <translation>Falha ao criar o cofre de arquivos: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="236"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
 </context>
 <context>
@@ -5572,42 +5572,42 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="53"/>
         <source>Save Recovery Key</source>
-        <translation>Save Recovery Key</translation>
+        <translation>Salvar a Chave de Recuperação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="60"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation>Keep the key safe to retrieve the vault password later</translation>
+        <translation>Mantenha a chave segura para recuperar a senha do cofre mais tarde</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="66"/>
         <source>Save to default path</source>
-        <translation>Save to default path</translation>
+        <translation>Salvar no local padrão</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="71"/>
         <source>Save to other locations</source>
-        <translation>Save to other locations</translation>
+        <translation>Salvar em outros locais</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="73"/>
         <source>No permission, please reselect</source>
-        <translation>No permission, please reselect</translation>
+        <translation>Sem permissões, por favor selecione novamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="81"/>
         <source>Select a path</source>
-        <translation>Select a path</translation>
+        <translation>Selecione um local</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="100"/>
         <source>Next</source>
-        <translation>Next</translation>
+        <translation>Próximo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="111"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation>The default path is invisible to other users, and the path information will not be shown.</translation>
+        <translation>O local padrão é invisível para outros usuários e a informação do local não será exibida</translation>
     </message>
 </context>
 <context>
@@ -5615,12 +5615,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="49"/>
         <source>Set Vault Password</source>
-        <translation>Set Vault Password</translation>
+        <translation>Definir a Senha do Cofre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="56"/>
         <source>Method</source>
-        <translation>Method</translation>
+        <translation>Método</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="59"/>
@@ -5630,44 +5630,44 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="70"/>
         <source>Password</source>
-        <translation>Password</translation>
+        <translation>Senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="73"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="170"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
-        <translation>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</translation>
+        <translation>≥ 8 caracteres; contém A-Z, a-z, 0-9 e símbolos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="85"/>
         <source>Repeat password</source>
-        <translation>Repeat password</translation>
+        <translation>Repetir senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="88"/>
         <source>Input the password again</source>
-        <translation>Input the password again</translation>
+        <translation>Insira a senha novamente</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="100"/>
         <source>Password hint</source>
-        <translation>Password hint</translation>
+        <translation>Dica de senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="103"/>
         <source>Optional</source>
-        <translation>Optional</translation>
+        <translation>Opcional</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="106"/>
         <source>Next</source>
-        <translation>Next</translation>
+        <translation>Próximo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="193"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="209"/>
         <source>Passwords do not match</source>
-        <translation>Passwords do not match</translation>
+        <translation>As senhas não coincidem</translation>
     </message>
 </context>
 <context>
@@ -5675,27 +5675,27 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="38"/>
         <source>File Vault</source>
-        <translation>File Vault</translation>
+        <translation>Cofre de Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="44"/>
         <source>Create your secure private space</source>
-        <translation>Create your secure private space</translation>
+        <translation>Criar um espaço privado e seguro</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="44"/>
         <source>Advanced encryption technology</source>
-        <translation>Advanced encryption technology</translation>
+        <translation>Tecnologia avançada de criptografia</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="44"/>
         <source>Convenient and easy to use</source>
-        <translation>Convenient and easy to use</translation>
+        <translation>Conveniente e fácil de usar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="51"/>
         <source>Create</source>
-        <translation>Create</translation>
+        <translation>Criar</translation>
     </message>
 </context>
 <context>
@@ -5703,7 +5703,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultentryfileentity.cpp" line="45"/>
         <source>My Vault</source>
-        <translation>My Vault</translation>
+        <translation>Meu Cofre</translation>
     </message>
 </context>
 <context>
@@ -5711,12 +5711,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="182"/>
         <source>Vault</source>
-        <translation>Vault</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="182"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation>Vault not available because cryfs not installed!</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5725,17 +5725,17 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="148"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="453"/>
         <source>Vault</source>
-        <translation>Vault</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="148"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation>Vault not available because cryfs not installed!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="453"/>
         <source>A task is in progress, so it cannot perform your operation</source>
-        <translation>A task is in progress, so it cannot perform your operation</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5743,7 +5743,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/vaultpropertydialog.cpp" line="59"/>
         <source>My Vault</source>
-        <translation>My Vault</translation>
+        <translation>Meu Cofre</translation>
     </message>
 </context>
 <context>
@@ -5751,12 +5751,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="41"/>
         <source>Password</source>
-        <translation>Password</translation>
+        <translation>Senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="58"/>
         <source>Password hint: %1</source>
-        <translation>Password hint: %1</translation>
+        <translation>Dica de senha: %1</translation>
     </message>
 </context>
 <context>
@@ -5764,7 +5764,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="41"/>
         <source>Input the 32-digit recovery key</source>
-        <translation>Input the 32-digit recovery key</translation>
+        <translation>Insira a chave de recuperação de 32 dígitos</translation>
     </message>
 </context>
 <context>
@@ -5772,77 +5772,77 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="63"/>
         <source>Delete File Vault</source>
-        <translation>Delete File Vault</translation>
+        <translation>Excluir o Cofre de Arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="108"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation>Once deleted, the files in it will be permanently deleted</translation>
+        <translation>Uma vez excluídos, os arquivos serão excluídos permanentemente</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="112"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="112"/>
         <source>Use Key</source>
         <comment>button</comment>
-        <translation>Use Key</translation>
+        <translation>Usar Chave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="112"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation>Delete</translation>
+        <translation>Excluir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="137"/>
         <source>Removing...</source>
-        <translation>Removing...</translation>
+        <translation>Removendo...</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="139"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="283"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="178"/>
         <source>Use Password</source>
-        <translation>Use Password</translation>
+        <translation>Usar Senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="181"/>
         <source>Use Key</source>
-        <translation>Use Key</translation>
+        <translation>Usar Chave</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="194"/>
         <source>Wrong password</source>
-        <translation>Wrong password</translation>
+        <translation>Senha incorreta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="204"/>
         <source>Wrong recovery key</source>
-        <translation>Wrong recovery key</translation>
+        <translation>Chave de recuperação incorreta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="279"/>
         <source>Failed to delete file vault</source>
-        <translation>Failed to delete file vault</translation>
+        <translation>Falha ao excluir o cofre de arquivos</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="301"/>
         <source>Deleted successfully</source>
-        <translation>Deleted successfully</translation>
+        <translation>Excluído</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultremovepages.cpp" line="303"/>
         <source>Failed to delete</source>
-        <translation>Failed to delete</translation>
+        <translation>Falha ao excluir</translation>
     </message>
 </context>
 <context>
@@ -5850,17 +5850,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="80"/>
         <source>My Vault</source>
-        <translation>My Vault</translation>
+        <translation>Meu Cofre</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="129"/>
         <source>File Vault</source>
-        <translation>File Vault</translation>
+        <translation>Cofre de Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="145"/>
         <source>Vault</source>
-        <translation>Vault</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5868,22 +5868,22 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="503"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="505"/>
         <source>Time modified</source>
-        <translation>Time modified</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="507"/>
         <source>Size</source>
-        <translation>Size</translation>
+        <translation>Tamanho</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="509"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
 </context>
 <context>
@@ -5891,7 +5891,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="79"/>
         <source>Loading...</source>
-        <translation>Loading...</translation>
+        <translation>Carregando...</translation>
     </message>
 </context>
 <context>
@@ -5899,7 +5899,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/iconitemeditor.cpp" line="267"/>
         <source>%1 are not allowed</source>
-        <translation>%1 are not allowed</translation>
+        <translation>%1 não são permitidos</translation>
     </message>
 </context>
 <context>
@@ -5907,7 +5907,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/listitemeditor.cpp" line="101"/>
         <source>%1 are not allowed</source>
-        <translation>%1 are not allowed</translation>
+        <translation>%1 não são permitidos</translation>
     </message>
 </context>
 <context>
@@ -5915,42 +5915,42 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="48"/>
         <source>Sort by</source>
-        <translation>Sort by</translation>
+        <translation>Ordenar por</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="49"/>
         <source>Display as</source>
-        <translation>Display as</translation>
+        <translation>Exibir como</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="52"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="53"/>
         <source>Time modified</source>
-        <translation>Time modified</translation>
+        <translation>Última modificação</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="54"/>
         <source>Size</source>
-        <translation>Size</translation>
+        <translation>Tamanho</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="55"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="58"/>
         <source>Icon</source>
-        <translation>Icon</translation>
+        <translation>Ícone</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="59"/>
         <source>List</source>
-        <translation>List</translation>
+        <translation>Lista</translation>
     </message>
 </context>
 <context>
@@ -5958,7 +5958,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/menus/workspacemenuscene.cpp" line="72"/>
         <source>Refresh</source>
-        <translation>Refresh</translation>
+        <translation>Atualizar</translation>
     </message>
 </context>
 <context>
@@ -5967,7 +5967,7 @@
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="836"/>
         <source>Save</source>
         <comment>button</comment>
-        <translation>Save</translation>
+        <translation>Salvar</translation>
     </message>
 </context>
 <context>
@@ -5976,42 +5976,42 @@
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="54"/>
         <source>Save</source>
         <comment>button</comment>
-        <translation>Save</translation>
+        <translation>Salvar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="54"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>Open</translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="61"/>
         <source>Save File</source>
         <comment>button</comment>
-        <translation>Save File</translation>
+        <translation>Salvar Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="61"/>
         <source>Open File</source>
         <comment>button</comment>
-        <translation>Open File</translation>
+        <translation>Abrir Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="228"/>
         <source>File Name</source>
-        <translation>File Name</translation>
+        <translation>Nome do Arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="229"/>
         <source>Format</source>
-        <translation>Format</translation>
+        <translation>Formato</translation>
     </message>
     <message>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="244"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="246"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Cancel</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -6019,112 +6019,112 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="287"/>
         <source>Available sizes: </source>
-        <translation>Available sizes: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="289"/>
         <source>Custom Size</source>
-        <translation>Custom Size</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="316"/>
         <source>Device Pixel Ratio: </source>
-        <translation>Device Pixel Ratio: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Theme: </source>
-        <translation>Theme: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="340"/>
         <source>Light</source>
-        <translation>Light</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="340"/>
         <source>Dark</source>
-        <translation>Dark</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="344"/>
         <source>Mode: </source>
-        <translation>Mode: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Normal</source>
-        <translation>Normal</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Disabled</source>
-        <translation>Disabled</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Hovered</source>
-        <translation>Hovered</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Pressed</source>
-        <translation>Pressed</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="350"/>
         <source>Palette</source>
-        <translation>Palette</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="352"/>
         <source>Current mode icon does not support the palette</source>
-        <translation>Current mode icon does not support the palette</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="371"/>
         <source>Foreground:</source>
-        <translation>Foreground:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="386"/>
         <source>Background:</source>
-        <translation>Background:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="399"/>
         <source>Highlight:</source>
-        <translation>Highlight:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="411"/>
         <source>HighlightForeground:</source>
-        <translation>HighlightForeground:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="427"/>
         <source>Background Color: </source>
-        <translation>Background Color: </translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="429"/>
         <source>White</source>
-        <translation>White</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="429"/>
         <source>Black</source>
-        <translation>Black</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="429"/>
         <source>Transparent</source>
-        <translation>Transparent</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="429"/>
         <source>Custom</source>
-        <translation>Custom</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6132,23 +6132,23 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="53"/>
         <source>Encrypted file, please enter the password</source>
-        <translation>Encrypted file, please enter the password</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="59"/>
         <source>Password</source>
-        <translation>Password</translation>
+        <translation>Senha</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="64"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>OK</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="107"/>
         <source>Wrong password</source>
-        <translation>Wrong password</translation>
+        <translation>Senha incorreta</translation>
     </message>
 </context>
 <context>
@@ -6156,22 +6156,22 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="60"/>
         <source>Artist:</source>
-        <translation>Artist:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="66"/>
         <source>Album:</source>
-        <translation>Album:</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="153"/>
         <source>unknown artist</source>
-        <translation>unknown artist</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="157"/>
         <source>unknown album</source>
-        <translation>unknown album</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

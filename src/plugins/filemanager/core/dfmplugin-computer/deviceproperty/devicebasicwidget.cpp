@@ -44,7 +44,7 @@ void DeviceBasicWidget::initUI()
     setExpandedSeparatorVisible(false);
     setSeparatorVisible(false);
 
-    setTitle(QString(tr("BasicInfo")));
+    setTitle(QString(tr("Basic info")));
 
     setExpand(true);
 

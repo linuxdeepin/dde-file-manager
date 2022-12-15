@@ -837,7 +837,7 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
 {
     QString newMsg = message;
     QString title;
-    if (message.startsWith("Can’t verify the identity of")
+    if (message.startsWith("Can't verify the identity of")
         && message.endsWith("If you want to be absolutely sure it is safe to continue, contact the "
                             "system administrator.")) {
         QString arg1, arg2;

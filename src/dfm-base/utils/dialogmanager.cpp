@@ -155,7 +155,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
             showErrorDialog(kMountFailed, tr("Anonymous mount is not allowed"));
             return;
         case DeviceError::kUserErrorNetworkWrongPasswd:
-            showErrorDialog(kMountFailed, tr("Wrong password is inputed"));
+            showErrorDialog(kMountFailed, tr("Wrong password"));
             return;
         case DeviceError::kUserErrorUserCancelled:
             return;

@@ -57,7 +57,7 @@ void BasicWidget::initUI()
     setExpandedSeparatorVisible(false);
     setSeparatorVisible(false);
 
-    setTitle(QString(tr("BasicInfo")));
+    setTitle(QString(tr("Basic info")));
 
     setExpand(true);
 
@@ -298,7 +298,7 @@ void BasicWidget::basicFill(const QUrl &url)
             fileType->setRightValue(tr("Archives") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         } break;
         case MimeDatabase::FileType::kDesktopApplication: {
-            fileType->setRightValue(tr("application") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
+            fileType->setRightValue(tr("Application") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         } break;
         case MimeDatabase::FileType::kUnknown: {
             fileType->setRightValue(tr("Unknown") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);

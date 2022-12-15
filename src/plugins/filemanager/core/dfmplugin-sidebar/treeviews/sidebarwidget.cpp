@@ -309,7 +309,7 @@ void SideBarWidget::initDefaultModel()
     groupDisplayName.insert(DefaultGroup::kTag, tr("Tag"));
     groupDisplayName.insert(DefaultGroup::kBookmark, tr("Bookmark"));
     groupDisplayName.insert(DefaultGroup::kOther, tr("Other"));
-    groupDisplayName.insert(DefaultGroup::kNotExistedGroup, tr("Unkown Group"));
+    groupDisplayName.insert(DefaultGroup::kNotExistedGroup, tr("Unknown Group"));
 
     // create defualt separator item.
     for (const QString &group : currentGroups) {

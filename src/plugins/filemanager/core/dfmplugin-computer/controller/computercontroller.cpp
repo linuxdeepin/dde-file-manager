@@ -266,7 +266,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                 if (ok) {
                     this->mountDevice(winId, newId, shellId, act);
                 } else {
-                    DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
+                    DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), tr("Wrong password"));
                     qInfo() << "unlock device failed: " << shellId << err;
                 }
             });
