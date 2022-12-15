@@ -326,6 +326,27 @@ void WorkspaceHelper::fileUpdate(const QUrl &url)
     emit requestFileUpdate(url);
 }
 
+void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
+{
+    WorkspaceWidget *widget = nullptr;
+    {
+        QMutexLocker locker(&WorkspaceHelper::mutex());
+        widget = kWorkspaceMap.value(windowID);
+    }
+
+    auto window = FMWindowsIns.findWindowById(windowID);
+    if (!window || !widget)
+        return;
+
+    window->installWorkSpace(widget);
+
+    connect(window, &FileManagerWindow::reqActivateNextTab, widget, &WorkspaceWidget::onNextTab);
+    connect(window, &FileManagerWindow::reqActivatePreviousTab, widget, &WorkspaceWidget::onPreviousTab);
+    connect(window, &FileManagerWindow::reqCloseCurrentTab, widget, &WorkspaceWidget::onCloseCurrentTab);
+    connect(window, &FileManagerWindow::reqActivateTabByIndex, widget, &WorkspaceWidget::onSetCurrentTabIndex);
+    connect(window, &FileManagerWindow::reqRefresh, widget, &WorkspaceWidget::onRefreshCurrentView);
+}
+
 WorkspaceHelper::WorkspaceHelper(QObject *parent)
     : QObject(parent)
 {

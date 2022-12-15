@@ -107,6 +107,9 @@ public:
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 
+public Q_SLOTS:
+    void installWorkspaceWidgetToWindow(const quint64 windowID);
+
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
     void openNewTab(quint64 windowId, const QUrl &url);

@@ -117,6 +117,9 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
 
+signals:
+    void readyToInstallWidget(const quint64);
+
 private slots:
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 winId);

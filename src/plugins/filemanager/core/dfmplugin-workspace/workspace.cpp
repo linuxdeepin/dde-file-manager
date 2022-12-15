@@ -51,6 +51,9 @@ void Workspace::initialize()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
 
+    connect(this, &Workspace::readyToInstallWidget,
+            WorkspaceHelper::instance(), &WorkspaceHelper::installWorkspaceWidgetToWindow, Qt::QueuedConnection);
+
     WorkspaceEventReceiver::instance()->initConnection();
 }
 
@@ -90,13 +93,8 @@ void Workspace::onWindowOpened(quint64 windId)
     Q_ASSERT_X(window, "WorkSpace", "Cannot find window by id");
     WorkspaceWidget *workspace = new WorkspaceWidget;
     WorkspaceHelper::instance()->addWorkspace(windId, workspace);
-    window->installWorkSpace(workspace);
 
-    connect(window, &FileManagerWindow::reqActivateNextTab, workspace, &WorkspaceWidget::onNextTab);
-    connect(window, &FileManagerWindow::reqActivatePreviousTab, workspace, &WorkspaceWidget::onPreviousTab);
-    connect(window, &FileManagerWindow::reqCloseCurrentTab, workspace, &WorkspaceWidget::onCloseCurrentTab);
-    connect(window, &FileManagerWindow::reqActivateTabByIndex, workspace, &WorkspaceWidget::onSetCurrentTabIndex);
-    connect(window, &FileManagerWindow::reqRefresh, workspace, &WorkspaceWidget::onRefreshCurrentView);
+    Q_EMIT readyToInstallWidget(windId);
 }
 
 void Workspace::onWindowClosed(quint64 windId)
