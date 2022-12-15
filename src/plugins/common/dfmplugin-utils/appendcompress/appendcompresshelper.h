@@ -34,12 +34,12 @@ class AppendCompressHelper : public QObject
 public:
     static bool setMouseStyle(const QUrl &toUrl, const QList<QUrl> &fromUrls, Qt::DropAction *dropAction);
     static bool dragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls);
+    static bool isCompressedFile(const QUrl &toUrl);
 
 private:
     explicit AppendCompressHelper(QObject *parent = nullptr);
     static bool appendCompress(const QString &toFilePath, const QStringList &fromFilePaths);
     static bool canAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
-    static bool isCompressedFile(const QUrl &toUrl);
 };
 
 }

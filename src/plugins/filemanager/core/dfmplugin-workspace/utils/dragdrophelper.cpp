@@ -191,7 +191,6 @@ bool DragDropHelper::dragLeave(QDragLeaveEvent *event)
 bool DragDropHelper::drop(QDropEvent *event)
 {
     currentHoverIndexUrl = QUrl();
-
     bool fall = true;
     handleDropEvent(event, &fall);
 
@@ -222,9 +221,11 @@ bool DragDropHelper::drop(QDropEvent *event)
         } else {
             const AbstractFileInfoPointer &fileInfo = view->model()->itemFileInfo(hoverIndex);
             if (fileInfo) {
+                bool isDrop = dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_IsDrop", fileInfo->urlOf(UrlInfoType::kUrl));
                 // NOTE: if item can not drop, the drag item will drop to root dir.
                 if (fileInfo->isAttributes(OptInfoType::kIsFile)
-                    && !FileUtils::isDesktopFile(fileInfo->urlOf(UrlInfoType::kUrl)))
+                    && !FileUtils::isDesktopFile(fileInfo->urlOf(UrlInfoType::kUrl))
+                    && !isDrop)
                     hoverIndex = view->rootIndex();
             }
         }

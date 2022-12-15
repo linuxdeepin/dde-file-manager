@@ -95,6 +95,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_DragDrop_CheckDragDropAction)
     DPF_EVENT_REG_HOOK(hook_DragDrop_FileDragMove)
     DPF_EVENT_REG_HOOK(hook_DragDrop_FileDrop)
+    DPF_EVENT_REG_HOOK(hook_DragDrop_IsDrop)
     DPF_EVENT_REG_HOOK(hook_DragDrop_FileCanMove)
 
     DPF_EVENT_REG_HOOK(hook_ShortCut_PasteFiles)

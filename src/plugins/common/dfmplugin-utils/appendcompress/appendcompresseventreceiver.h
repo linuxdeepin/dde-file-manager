@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef APPENDCOMPRESSEVENTRECEIVER_H
 #define APPENDCOMPRESSEVENTRECEIVER_H
 
@@ -48,6 +48,7 @@ public slots:
     bool handleDragDropCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool handleSetMouseStyleOnDesktop(int viewIndex, const QMimeData *mime, const QPoint &viewPos, void *extData);
     bool handleDragDropCompressOnDesktop(int viewIndex, const QMimeData *md, const QPoint &viewPos, void *extData);
+    bool handleIsDrop(const QUrl &toUrl);
 };
 
 }

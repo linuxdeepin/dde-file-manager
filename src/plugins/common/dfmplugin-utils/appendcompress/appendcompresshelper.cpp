@@ -70,11 +70,19 @@ bool AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl>
 
 bool AppendCompressHelper::appendCompress(const QString &toFilePath, const QStringList &fromFilePaths)
 {
-    QStringList arguments { toFilePath };
+    QStringList arguments;
+    QString cmd = "deepin-compressor";
+#ifdef COMPILE_ON_V23
+    cmd = "ll-cli";
+    arguments << "run";
+    arguments << "org.deepin.compressor";
+    arguments << "--exec";
+    arguments << "deepin-compressor";
+#endif
+    arguments << toFilePath;
     arguments << fromFilePaths;
     arguments << "dragdropadd";
-
-    return QProcess::startDetached("deepin-compressor", arguments);
+    return QProcess::startDetached(cmd, arguments);
 }
 
 bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl)

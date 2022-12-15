@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "appendcompresseventreceiver.h"
 #include "appendcompress/appendcompresshelper.h"
 
@@ -40,6 +40,8 @@ void AppendCompressEventReceiver::initEventConnect()
                             this, &AppendCompressEventReceiver::handleSetMouseStyle);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop",
                             this, &AppendCompressEventReceiver::handleDragDropCompress);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_IsDrop",
+                            this, &AppendCompressEventReceiver::handleIsDrop);
 
     // desktop
     dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_DragMove",
@@ -88,6 +90,11 @@ bool AppendCompressEventReceiver::handleDragDropCompressOnDesktop(int viewIndex,
     }
 
     return false;
+}
+
+bool AppendCompressEventReceiver::handleIsDrop(const QUrl &url)
+{
+    return AppendCompressHelper::isCompressedFile(url);
 }
 
 AppendCompressEventReceiver::AppendCompressEventReceiver(QObject *parent)

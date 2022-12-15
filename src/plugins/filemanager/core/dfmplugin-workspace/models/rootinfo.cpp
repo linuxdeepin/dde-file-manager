@@ -121,6 +121,14 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
                 watcherEvent.removeOne(*iter);
         }
         dofileCreated(toUrl);
+    } else {
+        // if watcherEvent exist toUrl rmevent,cancel this rmevent, beacuse if watcherEvent has toUrl rmevent will bypass this check
+        QMutexLocker lk(&watcherEventMutex);
+        auto iter = std::find_if(watcherEvent.cbegin(), watcherEvent.cend(), [&](const QPair<QUrl, EventType> &event) {
+            return (UniversalUtils::urlEquals(toUrl, event.first) && event.second == kRmFile);
+        });
+        if (iter != watcherEvent.cend())
+            watcherEvent.removeOne(*iter);
     }
 
     // TODO(lanxs) TODO(xust) .hidden file's attribute changed signal not emitted in removable disks (vfat/exfat).
