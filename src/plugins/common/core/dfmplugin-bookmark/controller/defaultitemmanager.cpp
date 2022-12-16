@@ -66,35 +66,9 @@ void DefaultItemManager::initDefaultItems()
         bookmarkData.transName = displayName;
         d->defaultItemInitOrder.append(bookmarkData);
     }
-
-    //Here plugin items are ready and add them as bookmark items
-    //Currently, plugin items are trash and recent plugin
-    QMapIterator<QString, QVariantMap> it(d->pluginItemData);
-    while (it.hasNext()) {
-        it.next();
-        const QVariantMap &args = it.value();
-        const QString &nameKey = args.value("Property_Key_NameKey").toString();
-        const QString &displayName = args.value("Property_Key_DisplayName").toString();
-        const QUrl &url = args.value("Property_Key_Url").toUrl();
-        int index = args.value("Property_Key_Index").toInt();
-        bool isDefaultItem = args.value("Property_Key_IsDefaultItem").toBool();
-        BookmarkData bookmarkData;
-        bookmarkData.name = nameKey;
-        bookmarkData.transName = displayName;
-        bookmarkData.url = url;
-        bookmarkData.index = index;
-        bookmarkData.isDefaultItem = isDefaultItem;
-
-        if (isDefaultItem)
-            d->defaultItemUrls.insert(it.key(), url);
-        if (index < 0)
-            d->defaultItemInitOrder.append(bookmarkData);
-        else
-            d->defaultItemInitOrder.insert(0, bookmarkData);
-    }
 }
 
-void DefaultItemManager::addPluginItem(const QVariantMap &args)
+void DefaultItemManager::addPluginItem(const QVariantMap &args, bool notify)
 {
     const QString &nameKey = args.value("Property_Key_NameKey").toString();
 
@@ -103,6 +77,11 @@ void DefaultItemManager::addPluginItem(const QVariantMap &args)
         QVariantMap bookmarkData = d->pluginItemData.value(nameKey);
         bookmarkData.insert("Property_Key_PluginItemData", itemData);
         d->pluginItemData.insert(nameKey, bookmarkData);
+        if (notify)
+            Q_EMIT pluginItemDataAdded(bookmarkData.value("Property_Key_Url").toString(),
+                                       nameKey,
+                                       bookmarkData.value("Property_Key_IsDefaultItem").toBool(),
+                                       bookmarkData.value("Property_Key_Index").toInt());
         return;
     }
 

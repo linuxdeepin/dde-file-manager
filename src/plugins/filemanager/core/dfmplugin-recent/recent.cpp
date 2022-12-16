@@ -130,7 +130,7 @@ void Recent::addRecentItem()
         //{ "Property_Key_VisiableControl", "recent" }
         { "Property_Key_ReportName", "Recent" }
     };
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
+    //    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
 
     QVariantMap itemMap {
         { "Property_Key_NameKey", "Recent" },

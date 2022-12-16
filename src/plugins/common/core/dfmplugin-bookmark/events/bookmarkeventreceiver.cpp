@@ -72,7 +72,7 @@ bool BookMarkEventReceiver::handleItemSort(const QString &group, const QString &
 
 void BookMarkEventReceiver::handlePluginItem(const QVariantMap &args)
 {
-    DefaultItemManager::instance()->addPluginItem(args);
+    DefaultItemManager::instance()->addPluginItem(args, true);
 }
 
 BookMarkEventReceiver::BookMarkEventReceiver(QObject *parent)

@@ -36,6 +36,8 @@ using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
+static constexpr qint64 kMaxSidebarItemCount { 999999 };
+
 Q_DECLARE_METATYPE(CreateTopWidgetCallback);
 Q_DECLARE_METATYPE(ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(ContextMenuCallback)
@@ -114,7 +116,7 @@ void Trash::installToSideBar()
         { "Property_Key_VisiableControl", "trash" },
         { "Property_Key_ReportName", "Trash" }
     };
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", TrashHelper::rootUrl(), map);
+    //    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", TrashHelper::rootUrl(), map);
 
     QVariantMap itemMap {
         { "Property_Key_NameKey", "Trash" },
@@ -185,7 +187,7 @@ void Trash::onAllPluginsStarted()
         { "Property_Key_NameKey", nameKey },
         { "Property_Key_DisplayName", displayName },
         { "Property_Key_Url", TrashHelper::rootUrl() },
-        { "Property_Key_Index", -1 },
+        { "Property_Key_Index", kMaxSidebarItemCount },
         { "Property_Key_IsDefaultItem", true }
     };
 

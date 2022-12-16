@@ -61,6 +61,7 @@ public:
 
     bool addBookMark(const QList<QUrl> &urls);
     bool removeBookMark(const QUrl &url);
+    void updateBookMark(const QUrl &url, const BookmarkData &data);
 
     void addBookMarkItem(const QUrl &url, const QString &bookmarkName, bool isDefaultItem = false) const;
     void addQuickAccessItemsFromConfig();
@@ -70,7 +71,6 @@ public:
     void addSchemeOfBookMarkDisabled(const QString &scheme);
     QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
     bool handleItemSort(const QUrl &a, const QUrl &b);
-    void bookmarkDataToQuickAccess();
     void initData();
     bool isItemDuplicated(const BookmarkData &data);
     bool bookMarkRename(const QUrl &url, const QString &newName);
@@ -92,7 +92,6 @@ private slots:
 
 private:
     QMap<QUrl, BookmarkData> quickAccessDataMap = {};
-    QMap<QUrl, BookmarkData> bookmarkDataMap = {};
     QSet<QString> bookmarkDisabledSchemes;
     QList<QUrl> sortedUrls;
 };

@@ -39,7 +39,7 @@ class DefaultItemManager : public QObject
 public:
     static DefaultItemManager *instance();
     void initDefaultItems();
-    void addPluginItem(const QVariantMap &args);
+    void addPluginItem(const QVariantMap &args, bool notify = false);
     QMap<QString, QUrl> defaultItemUrls();
     QList<BookmarkData> defaultItemInitOrder();
     QMap<QString, QVariantMap> pluginItemData();
@@ -47,6 +47,8 @@ public:
     bool isDefaultUrl(const BookmarkData &data);
     bool isDefaultPluginItem(const QString &name);
     BookmarkData pluginItemDataToBookmark(const QVariantMap &data);
+Q_SIGNALS:
+    void pluginItemDataAdded(const QUrl &url, const QString &bookmarkName, bool isDefaultItem, int index);
 
 private:
     explicit DefaultItemManager(QObject *parent = nullptr);

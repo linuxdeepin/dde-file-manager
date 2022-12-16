@@ -64,7 +64,6 @@ void BookMark::onWindowOpened(quint64 winId)
 void BookMark::onSideBarInstallFinished()
 {
     DefaultItemManager::instance()->initDefaultItems();
-    BookMarkManager::instance()->bookmarkDataToQuickAccess();
     BookMarkManager::instance()->addQuickAccessItemsFromConfig();
 }
 

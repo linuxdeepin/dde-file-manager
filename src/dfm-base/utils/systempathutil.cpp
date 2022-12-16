@@ -138,6 +138,7 @@ void SystemPathUtil::initialize()
     systemPathDisplayNamesMap["Downloads"] = tr("Downloads");
     systemPathDisplayNamesMap["Trash"] = tr("Trash");
     systemPathDisplayNamesMap["System Disk"] = tr("System Disk");
+    systemPathDisplayNamesMap["Recent"] = tr("Recent");
 
     systemPathIconNamesMap["Home"] = "user-home";
     systemPathIconNamesMap["Desktop"] = "user-desktop";
