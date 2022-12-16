@@ -26,6 +26,8 @@
 
 #include <dfm-io/dfmio_utils.h>
 
+#include <dfm-framework/dpf.h>
+
 #include <QDir>
 #include <QDebug>
 #include <QPixmap>
@@ -578,4 +580,14 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
             return res;
         }
     }
+}
+
+bool OperatorCenter::savePasswordToKeyring(const QString &password)
+{
+    return dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_SavePasswordToKeyring", password).toBool();
+}
+
+QString OperatorCenter::passwordFromKeyring()
+{
+    return dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_PasswordFromKeyring").toString();
 }

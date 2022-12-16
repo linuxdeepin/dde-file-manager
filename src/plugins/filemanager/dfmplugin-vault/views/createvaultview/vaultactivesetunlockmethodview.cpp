@@ -53,10 +53,10 @@ VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
     pLabel->setAlignment(Qt::AlignHCenter);
 
     //! 类型
-    DLabel *pTypeLabel = new DLabel(tr("Method"), this);
+    DLabel *pTypeLabel = new DLabel(tr("Encryption method"), this);
     typeCombo = new QComboBox(this);
     QStringList lstItems;
-    lstItems << tr("Manual") /* << tr("Random")*/;
+    lstItems << tr("Key encryption")  << tr("Transparent encryption");
     typeCombo->addItems(lstItems);
     connect(typeCombo, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slotTypeChanged(int)));
@@ -101,6 +101,17 @@ VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
     tipsEdit = new QLineEdit(this);
     tipsEdit->setMaxLength(14);
     tipsEdit->setPlaceholderText(tr("Optional"));
+
+    // transparent encryption text
+    transEncryptTextLay = new QVBoxLayout();
+    transEncryptionText = new DLabel(tr("The file vault will be automatically unlocked when accessed, "
+                                        "without verifying the password. "
+                                        "Files in it will be inaccessible under other user accounts. "),
+                                     this);
+    transEncryptionText->setVisible(false);
+    transEncryptionText->setWordWrap(true);
+    transEncryptTextLay->setContentsMargins(10, 0, 0, 0);
+    transEncryptTextLay->addWidget(transEncryptionText);
 
     //! 下一步按钮
     nextBtn = new QPushButton(tr("Next"), this);
@@ -236,40 +247,72 @@ void VaultActiveSetUnlockMethodView::slotNextBtnClicked()
     VaultConfig config;
     config.set(kConfigNodeName, kConfigKeyUseUserPassWord, QVariant("Yes"));
 
-    QString strPassword = passwordEdit->text();
-    QString strPasswordHint = tipsEdit->text();
-    if (OperatorCenter::getInstance()->savePasswordAndPasswordHint(strPassword, strPasswordHint)
-        && OperatorCenter::getInstance()->createKeyNew(strPassword))
-        emit sigAccepted();
+    if (typeCombo->currentIndex() == 0) {   // key encryption
+        QString strPassword = passwordEdit->text();
+        QString strPasswordHint = tipsEdit->text();
+        if (OperatorCenter::getInstance()->savePasswordAndPasswordHint(strPassword, strPasswordHint)
+                && OperatorCenter::getInstance()->createKeyNew(strPassword)) {
+            config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodKey));
+            emit sigAccepted();
+        }
+    } else {   // transparent encryption
+        const QString &password = OperatorCenter::getInstance()->autoGeneratePassword(kPasswordLength);
+        if (password.isEmpty()) {
+            qWarning() << "Vault: auto Generate password failed!";
+            return;
+        }
+
+        // save password to keyring
+        if (OperatorCenter::getInstance()->savePasswordToKeyring(password)) {
+            config.set(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigValueMethodTransparent));
+            config.set(kConfigNodeName, kConfigKeyVersion, QVariant(kConfigVaultVersion1050));
+            emit sigAccepted();
+        } else {
+            qWarning() << "Vault: save password to keyring failed!";
+        }
+    }
 }
 
 void VaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 {
-    if (index) {   // 随机
-
+    if (index) {   // transparent encrypyion
         gridLayout->removeWidget(passwordLabel);
         gridLayout->removeWidget(passwordEdit);
         gridLayout->removeWidget(repeatPasswordLabel);
         gridLayout->removeWidget(repeatPasswordEdit);
+        gridLayout->removeWidget(passwordHintLabel);
+        gridLayout->removeWidget(tipsEdit);
 
         passwordLabel->setVisible(false);
         passwordEdit->setVisible(false);
         repeatPasswordLabel->setVisible(false);
         repeatPasswordEdit->setVisible(false);
-    } else {   // 手动
+        passwordHintLabel->setVisible(false);
+        tipsEdit->setVisible(false);
 
-        gridLayout->addWidget(passwordLabel, 2, 0, 1, 1, Qt::AlignLeft);
-        gridLayout->addWidget(passwordEdit, 2, 1, 1, 5);
-        gridLayout->addWidget(repeatPasswordLabel, 3, 0, 1, 1, Qt::AlignLeft);
-        gridLayout->addWidget(repeatPasswordEdit, 3, 1, 1, 5);
+        gridLayout->addLayout(transEncryptTextLay, 1, 1, 3, 5);
+        transEncryptionText->setVisible(true);
+
+        nextBtn->setEnabled(true);
+    } else {   // key encryption
+        gridLayout->removeItem(transEncryptTextLay);
+        transEncryptionText->setVisible(false);
+
+        gridLayout->addWidget(passwordLabel, 1, 0, 1, 1, Qt::AlignLeft);
+        gridLayout->addWidget(passwordEdit, 1, 1, 1, 5);
+        gridLayout->addWidget(repeatPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
+        gridLayout->addWidget(repeatPasswordEdit, 2, 1, 1, 5);
+        gridLayout->addWidget(passwordHintLabel, 3, 0, 1, 1, Qt::AlignLeft);
+        gridLayout->addWidget(tipsEdit, 3, 1, 1, 5);
 
         passwordLabel->setVisible(true);
         passwordEdit->setVisible(true);
         repeatPasswordLabel->setVisible(true);
         repeatPasswordEdit->setVisible(true);
+        passwordHintLabel->setVisible(true);
+        tipsEdit->setVisible(true);
 
-        //! 检测密码正确性
-        slotRepeatPasswordEditFinished();
+        checkInputInfo() ? nextBtn->setEnabled(true) : nextBtn->setEnabled(false);
     }
 }
 

@@ -49,6 +49,9 @@ private slots:
     void slotNextWidget();
 
 private:
+    void setBeginingState();
+
+private:
     //! 窗口容器
     QStackedWidget *stackedWidget { nullptr };
 

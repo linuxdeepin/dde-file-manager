@@ -25,6 +25,7 @@
 #include "utils/servicemanager.h"
 #include "utils/policy/policymanager.h"
 #include "utils/fileencrypthandle.h"
+#include "utils/encryption/vaultconfig.h"
 
 #include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/vaultreportdata.h"
 #include "dfm-base/base/urlroute.h"
@@ -204,14 +205,27 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
                 widgetThree->setVisible(false);
 
                 std::thread t([]() {
-                    // 调用创建保险箱接口
-                    // 拿到密码
-                    QString strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
-                    if (!strPassword.isEmpty()) {
-                        VaultHelper::instance()->createVault(strPassword);
+                    VaultConfig config;
+                    QString encrypitonMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+                    if (encrypitonMethod == QString(kConfigKeyNotExist)) {
+                        qWarning() << "Vault: Get encryption method failed!";
+                        return;
+                    }
+
+                    QString password { "" };
+                    if (encrypitonMethod == QString(kConfigValueMethodKey)) {
+                        password = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
+                    } else if (encrypitonMethod == QString(kConfigValueMethodTransparent)) {
+                        password = OperatorCenter::getInstance()->passwordFromKeyring();
+                    } else {
+                        qWarning() << "Vault: Get encryption method failed, can't create vault!";
+                    }
+                    if (!password.isEmpty()) {
+                        VaultHelper::instance()->createVault(password);
                         OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
-                    } else
-                        qDebug() << "获取cryfs密码为空，创建保险箱失败！";
+                    } else {
+                        qWarning() << "Vault: Get password is empty, failed to create the vault!";
+                    }
                 });
                 t.detach();
             }

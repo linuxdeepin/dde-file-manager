@@ -26,6 +26,7 @@
 #include "utils/pathmanager.h"
 #include "utils/servicemanager.h"
 #include "utils/fileencrypthandle.h"
+#include "utils/encryption/vaultconfig.h"
 #include "removevaultview/vaultremoveprogressview.h"
 #include "removevaultview/vaultremovebypasswordview.h"
 #include "removevaultview/vaultremovebyrecoverykeyview.h"
@@ -186,13 +187,18 @@ void VaultRemovePages::onButtonClicked(int index)
         }
     case 2: {   // 删除
         if (stackedWidget->currentIndex() == 0) {
-            // 密码验证
-            QString strPwd = passwordView->getPassword();
-            QString strCipher("");
 
-            if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
-                passwordView->showToolTip(tr("Wrong password"), 3000, VaultRemoveByPasswordView::EN_ToolTip::kWarning);
-                return;
+            VaultConfig config;
+            const QString &encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+            if (encryptionMethod != QString(kConfigValueMethodTransparent)) {
+                // 密码验证
+                QString strPwd = passwordView->getPassword();
+                QString strCipher("");
+
+                if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
+                    passwordView->showToolTip(tr("Wrong password"), 3000, VaultRemoveByPasswordView::EN_ToolTip::kWarning);
+                    return;
+                }
             }
         } else {
             // 密钥验证

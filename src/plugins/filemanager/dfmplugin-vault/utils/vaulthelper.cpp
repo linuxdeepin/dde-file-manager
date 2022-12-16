@@ -27,6 +27,7 @@
 #include "views/vaultremovepages.h"
 #include "views/vaultpropertyview/vaultpropertydialog.h"
 #include "utils/encryption/vaultconfig.h"
+#include "utils/encryption/operatorcenter.h"
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
 #include "utils/policy/policymanager.h"
@@ -246,39 +247,43 @@ QMenu *VaultHelper::createMenu()
 
         menu->addSeparator();
 
-        menu->addAction(QObject::tr("Lock"), []() {
-            VaultHelper::instance()->lockVault(false);
-        });
+        VaultConfig config;
+        QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+        if (encryptionMethod == QString(kConfigValueMethodKey) || encryptionMethod == QString(kConfigKeyNotExist)) {
+            menu->addAction(QObject::tr("Lock"), []() {
+                VaultHelper::instance()->lockVault(false);
+            });
 
-        QAction *timeLock = new QAction;
-        timeLock->setText(QObject::tr("Auto lock"));
-        VaultAutoLock::AutoLockState autoState = VaultAutoLock::instance()->getAutoLockState();
-        QAction *actionNever = timeMenu->addAction(QObject::tr("Never"), []() {
-            VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kNever);
-        });
-        actionNever->setCheckable(true);
-        actionNever->setChecked(VaultAutoLock::AutoLockState::kNever == autoState ? true : false);
-        timeMenu->addSeparator();
-        QAction *actionFiveMins = timeMenu->addAction(QObject::tr("5 minutes"), []() {
-            VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kFiveMinutes);
-        });
-        actionFiveMins->setCheckable(true);
-        actionFiveMins->setChecked(VaultAutoLock::AutoLockState::kFiveMinutes == autoState ? true : false);
-        QAction *actionTenMins = timeMenu->addAction(QObject::tr("10 minutes"), []() {
-            VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kTenMinutes);
-        });
-        actionTenMins->setCheckable(true);
-        actionTenMins->setChecked(VaultAutoLock::AutoLockState::kTenMinutes == autoState ? true : false);
-        QAction *actionTwentyMins = timeMenu->addAction(QObject::tr("20 minutes"), []() {
-            VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kTwentyMinutes);
-        });
-        actionTwentyMins->setCheckable(true);
-        actionTwentyMins->setChecked(VaultAutoLock::AutoLockState::kTwentyMinutes == autoState ? true : false);
-        timeLock->setMenu(timeMenu);
+            QAction *timeLock = new QAction;
+            timeLock->setText(QObject::tr("Auto lock"));
+            VaultAutoLock::AutoLockState autoState = VaultAutoLock::instance()->getAutoLockState();
+            QAction *actionNever = timeMenu->addAction(QObject::tr("Never"), []() {
+                VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kNever);
+            });
+            actionNever->setCheckable(true);
+            actionNever->setChecked(VaultAutoLock::AutoLockState::kNever == autoState ? true : false);
+            timeMenu->addSeparator();
+            QAction *actionFiveMins = timeMenu->addAction(QObject::tr("5 minutes"), []() {
+                VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kFiveMinutes);
+            });
+            actionFiveMins->setCheckable(true);
+            actionFiveMins->setChecked(VaultAutoLock::AutoLockState::kFiveMinutes == autoState ? true : false);
+            QAction *actionTenMins = timeMenu->addAction(QObject::tr("10 minutes"), []() {
+                VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kTenMinutes);
+            });
+            actionTenMins->setCheckable(true);
+            actionTenMins->setChecked(VaultAutoLock::AutoLockState::kTenMinutes == autoState ? true : false);
+            QAction *actionTwentyMins = timeMenu->addAction(QObject::tr("20 minutes"), []() {
+                VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kTwentyMinutes);
+            });
+            actionTwentyMins->setCheckable(true);
+            actionTwentyMins->setChecked(VaultAutoLock::AutoLockState::kTwentyMinutes == autoState ? true : false);
+            timeLock->setMenu(timeMenu);
 
-        menu->addMenu(timeMenu);
+            menu->addMenu(timeMenu);
 
-        menu->addSeparator();
+            menu->addSeparator();
+        }
 
         menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::removeVaultDialog);
 
@@ -340,14 +345,14 @@ void VaultHelper::createVault(QString &password)
     FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password, type);
 }
 
-void VaultHelper::unlockVault(QString &password)
+int VaultHelper::unlockVault(const QString &password)
 {
     static bool flg = true;
     if (flg) {
         connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, VaultHelper::instance(), &VaultHelper::sigUnlocked);
         flg = false;
     }
-    FileEncryptHandle::instance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
+    return FileEncryptHandle::instance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
 void VaultHelper::lockVault(bool isForced)
@@ -369,10 +374,26 @@ void VaultHelper::creatVaultDialog()
 
 void VaultHelper::unlockVaultDialog()
 {
-    VaultUnlockPages *page = new VaultUnlockPages();
-    page->pageSelect(PageType::kUnlockPage);
-    page->moveToCenter();
-    page->exec();
+    VaultConfig config;
+    QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+    if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
+        const QString &password = OperatorCenter::getInstance()->passwordFromKeyring();
+        if (!password.isEmpty()) {
+            int result = unlockVault(password);
+            if (result == static_cast<int>(ErrorCode::kSuccess)) {
+                VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
+                                                         VaultHelper::instance()->rootUrl());
+                VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
+            }
+        } else {
+            qWarning() << "Vault: The password from Keyring is empty!";
+        }
+    } else {
+        VaultUnlockPages *page = new VaultUnlockPages();
+        page->pageSelect(PageType::kUnlockPage);
+        page->moveToCenter();
+        page->exec();
+    }
 }
 
 void VaultHelper::removeVaultDialog()

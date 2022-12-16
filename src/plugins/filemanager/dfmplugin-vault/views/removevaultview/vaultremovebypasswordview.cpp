@@ -21,6 +21,7 @@
 
 #include "vaultremovebypasswordview.h"
 #include "utils/encryption/interfaceactivevault.h"
+#include "utils/encryption/vaultconfig.h"
 
 #include <DToolTip>
 #include <DPasswordEdit>
@@ -40,13 +41,19 @@ VaultRemoveByPasswordView::VaultRemoveByPasswordView(QWidget *parent)
     pwdEdit = new DPasswordEdit(this);
     pwdEdit->lineEdit()->setPlaceholderText(tr("Password"));
     pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
+    pwdEdit->setVisible(false);
 
     //! 提示按钮
     tipsBtn = new QPushButton(this);
     tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     QHBoxLayout *layout = new QHBoxLayout();
-    layout->addWidget(pwdEdit);
+    VaultConfig config;
+    const QString &encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+    if (encryptionMethod != QString(kConfigValueMethodTransparent)) {
+        layout->addWidget(pwdEdit);
+        pwdEdit->setVisible(true);
+    }
     layout->addWidget(tipsBtn);
     layout->setContentsMargins(0, 15, 0, 0);
     this->setLayout(layout);

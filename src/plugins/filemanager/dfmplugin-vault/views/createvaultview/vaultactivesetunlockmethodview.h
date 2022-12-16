@@ -40,6 +40,7 @@ class OperatorCenter;
 class QSlider;
 class QComboBox;
 class QGridLayout;
+class QVBoxLayout;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
@@ -49,6 +50,8 @@ DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 namespace dfmplugin_vault {
+inline constexpr int kPasswordLength { 18 };
+
 class VaultActiveSetUnlockMethodView : public QWidget
 {
     Q_OBJECT
@@ -99,6 +102,9 @@ private:
 
     DLabel *passwordHintLabel { nullptr };
     QLineEdit *tipsEdit { nullptr };
+
+    DLabel *transEncryptionText { nullptr };
+    QVBoxLayout *transEncryptTextLay { nullptr };
 
     QPushButton *nextBtn { nullptr };
 

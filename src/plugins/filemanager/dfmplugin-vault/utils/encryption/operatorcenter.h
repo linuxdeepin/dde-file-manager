@@ -112,6 +112,9 @@ public:
     //! 执行shell命令并获得shell命令的返回值
     int executionShellCommand(const QString &strCmd, QStringList &lstShellOutput);
 
+    bool savePasswordToKeyring(const QString &password);
+    QString passwordFromKeyring();
+
 private:
     explicit OperatorCenter(QObject *parent = nullptr);
     // 组织保险箱本地文件路径

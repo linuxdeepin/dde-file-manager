@@ -99,7 +99,7 @@ public slots:
 
     void createVault(QString &password);
 
-    void unlockVault(QString &password);
+    int unlockVault(const QString &password);
 
     void lockVault(bool isForced);
 

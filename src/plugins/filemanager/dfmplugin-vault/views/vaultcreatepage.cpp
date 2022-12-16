@@ -25,6 +25,7 @@
 #include "createvaultview/vaultactivesavekeyfileview.h"
 #include "createvaultview/vaultactivefinishedview.h"
 #include "utils/policy/policymanager.h"
+#include "utils/encryption/vaultconfig.h"
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -88,10 +89,31 @@ void VaultActiveView::slotNextWidget()
         int nIndex = stackedWidget->currentIndex();
         int nCount = stackedWidget->count();
         if (nIndex < nCount - 1) {
-            int nNextIndex = nIndex + 1;
-            stackedWidget->setCurrentIndex(nNextIndex);
+            if (nIndex == 1) {  // set encryption method view
+                VaultConfig config;
+                QString encryptionMethod = config.get(kConfigNodeName, kConfigKeyEncryptionMethod, QVariant(kConfigKeyNotExist)).toString();
+                if (encryptionMethod == QString(kConfigValueMethodKey)) {
+                    stackedWidget->setCurrentIndex(++nIndex);
+                } else if (encryptionMethod == QString(kConfigValueMethodTransparent)) {
+                    stackedWidget->setCurrentIndex(nIndex + 2);
+                } else if (encryptionMethod == QString(kConfigKeyNotExist)) {
+                    qWarning() << "Vault: Get encryption method failed, can't next!";
+                }
+                return;
+
+            }
+            stackedWidget->setCurrentIndex(++nIndex);
         } else {
-            close();
+            setBeginingState();
+            accept();
         }
     }
+}
+
+void VaultActiveView::setBeginingState()
+{
+    stackedWidget->setCurrentIndex(0);
+    setUnclockMethodWidget->clearText();
+    activeVaultFinishedWidget->setFinishedBtnEnabled(true);
+    setCloseButtonVisible(true);
 }

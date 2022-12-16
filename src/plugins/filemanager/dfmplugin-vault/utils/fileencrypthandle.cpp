@@ -111,7 +111,7 @@ void FileEncryptHandle::createVault(QString lockBaseDir, QString unlockFileDir, 
  *  调用runVaultProcess函数进行解锁保险箱并返回解锁状态标记。
  *  最后使用信号signalUnlockVault发送解锁状态标记。
  */
-void FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
+int FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
 {
     d->mutex->lock();
     d->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
@@ -130,6 +130,8 @@ void FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, 
     }
     d->activeState.clear();
     d->mutex->unlock();
+
+    return flg;
 }
 
 /*!
@@ -163,12 +165,8 @@ void FileEncryptHandle::createDirIfNotExist(QString path)
     } else {   // 修复bug-52351 创建保险箱前，如果文件夹存在，则清空
         QDir dir(path);
         if (!dir.isEmpty()) {
-            QDirIterator dirsIterator(path, QDir::AllEntries | QDir::NoDotAndDotDot);
-            while (dirsIterator.hasNext()) {
-                if (!dir.remove(dirsIterator.next())) {
-                    QDir(dirsIterator.filePath()).removeRecursively();
-                }
-            }
+            qWarning() << "Vault: Unlock vault failed, mount dir is not empty!";
+            return;
         }
     }
 }

@@ -27,6 +27,7 @@
 #include "appendcompress/virtualappendcompressplugin.h"
 #include "bluetooth/virtualbluetoothplugin.h"
 #include "extensionimpl/virtualextensionimplplugin.h"
+#include "vaultassist/virtualvaulthelperplugin.h"
 
 using namespace dfmplugin_utils;
 
@@ -36,39 +37,45 @@ static constexpr char kBluetooth[] { "dfmplugin-bluetooth" };
 static constexpr char kGlobal[] { "dfmplugin-global" };
 static constexpr char kOpenWith[] { "dfmplugin-openwith" };
 static constexpr char kExtensionImpl[] { "dfmplugin-extensionimpl" };
+static constexpr char kVaultAssist[] { "dfmplugin-vaultassist" };
 
 QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 {
     qInfo() << "Create plugin: " << pluginName;
 
     if (pluginName == kReportLog) {
-        QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualReportLogPlugin };
-        return pugin;
+        QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualReportLogPlugin };
+        return plugin;
     }
 
     if (pluginName == kAppendcompress) {
-        QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualAppendCompressPlugin };
-        return pugin;
+        QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualAppendCompressPlugin };
+        return plugin;
     }
 
     if (pluginName == kBluetooth) {
-        QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualBluetoothPlugin };
-        return pugin;
+        QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualBluetoothPlugin };
+        return plugin;
     }
 
     if (pluginName == kGlobal) {
-        QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualGlobalPlugin };
-        return pugin;
+        QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualGlobalPlugin };
+        return plugin;
     }
 
     if (pluginName == kOpenWith) {
-        QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualOpenWithPlugin };
-        return pugin;
+        QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualOpenWithPlugin };
+        return plugin;
     }
 
     if (pluginName == kExtensionImpl) {
-        QSharedPointer<DPF_NAMESPACE::Plugin> pugin { new VirtualExtensionImplPlugin };
-        return pugin;
+        QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualExtensionImplPlugin };
+        return plugin;
+    }
+
+    if (pluginName == kVaultAssist) {
+        QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualVaultHelperPlugin };
+        return plugin;
     }
 
     return {};

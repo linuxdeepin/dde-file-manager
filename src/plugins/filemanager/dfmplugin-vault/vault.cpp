@@ -46,6 +46,7 @@ void Vault::initialize()
 
 bool Vault::start()
 {
+    VaultVisibleManager::instance()->pluginServiceRegister();
     // follow event
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", VaultHelper::instance(), &VaultHelper::urlsToLocal);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", VaultFileHelper::instance(), &VaultFileHelper::cutFile);

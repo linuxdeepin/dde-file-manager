@@ -2,6 +2,8 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/application/settings.h"
 
+#include <dfm-framework/dpf.h>
+
 #include <QDateTime>
 #include <QTimer>
 #include <QDir>
@@ -92,6 +94,9 @@ VaultManagerDBus::VaultManagerDBus(QObject *parent)
     UniversalUtils::userChange(this, SLOT(sysUserChanged(QString)));
 
     UniversalUtils::prepareForSleep(this, SLOT(computerSleep(bool)));
+
+    dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_ConnectLockScreenDBus");
+    dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_TransparentUnlockVault");
 
     sessionManagerDBusConnect();
 }
