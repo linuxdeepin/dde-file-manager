@@ -29,11 +29,21 @@ using namespace ddplugin_wallpapersetting;
 WallaperPreview::WallaperPreview(QObject *parent)
     : QObject(parent)
 {
-    qInfo() << "create com.deepin.wm";
-    wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm",
+
+#ifdef COMPILE_ON_V23
+    qInfo() << "create org.deepin.dde.Appearance1";
+    inter = new BackgroudInter("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
                           QDBusConnection::sessionBus(), this);
-    wmInter->setTimeout(1000);
+    inter->setTimeout(1000);
+    qInfo() << "create org.deepin.dde.Appearance1 end";
+#else
+    qInfo() << "create com.deepin.wm";
+    inter = new BackgroudInter("com.deepin.wm", "/com/deepin/wm",
+                          QDBusConnection::sessionBus(), this);
+    inter->setTimeout(1000);
     qInfo() << "create com.deepin.wm end";
+#endif
+
 }
 
 WallaperPreview::~WallaperPreview()
@@ -59,7 +69,7 @@ void WallaperPreview::pullImageSettings()
 {
     wallpapers.clear();
     for (ScreenPointer sc : ddplugin_desktop_util::screenProxyLogicScreens()) {
-        QString path = getBackgroundFromWm(sc->name());
+        QString path = getBackground(sc->name());
         wallpapers.insert(sc->name(), path);
     }
 }
@@ -70,7 +80,7 @@ void WallaperPreview::updateWallpaper()
     for (auto screenName : previewWidgets.keys()) {
         QString userPath;
         if (!wallpapers.contains(screenName)) {
-            userPath = getBackgroundFromWm(screenName);
+            userPath = getBackground(screenName);
         } else {
             userPath = wallpapers.value(screenName);
         }
@@ -175,7 +185,7 @@ PreviewWidgetPtr WallaperPreview::createWidget(ScreenPointer sc)
     return wid;
 }
 
-QString WallaperPreview::getBackgroundFromWm(const QString &screen)
+QString WallaperPreview::getBackground(const QString &screen)
 {
     QString ret;
     if (screen.isEmpty())
@@ -183,16 +193,16 @@ QString WallaperPreview::getBackgroundFromWm(const QString &screen)
 
     int retry = 5;
     static const int timeOut = 200;
-    int oldTimeOut = wmInter->timeout();
-    wmInter->setTimeout(timeOut);
+    int oldTimeOut = inter->timeout();
+    inter->setTimeout(timeOut);
 
     while (retry--) {
-        qInfo() << "Get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
-        QDBusPendingReply<QString> reply = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);
+        qInfo() << "Get background by GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
+        QDBusPendingReply<QString> reply = inter->GetCurrentWorkspaceBackgroundForMonitor(screen);
         reply.waitForFinished();
 
         if (reply.error().type() != QDBusError::NoError) {
-            qWarning() << "Get background failed by wmDBus and times:" << (5-retry)
+            qWarning() << "Get background failed by DBus and times:" << (5-retry)
                        << reply.error().type() << reply.error().name() << reply.error().message();
         } else {
             ret = reply.argumentAt<0>();
@@ -200,11 +210,11 @@ QString WallaperPreview::getBackgroundFromWm(const QString &screen)
             break;
         }
     }
-    wmInter->setTimeout(oldTimeOut);
+    inter->setTimeout(oldTimeOut);
 
     if (ret.isEmpty() || !QFile::exists(QUrl(ret).toLocalFile()))
         qCritical() << "get background fail path :" << ret << "screen" << screen;
     else
-        qInfo() << "getBackgroundFromWm path :" << ret << "screen" << screen;
+        qInfo() << "getBackground path :" << ret << "screen" << screen;
     return ret;
 }

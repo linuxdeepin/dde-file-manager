@@ -37,9 +37,9 @@
 #include <QDBusConnectionInterface>
 
 #ifdef COMPILE_ON_V23
-#    define APP_MANAGER_SERVICE "org.desktopspec.ApplicationManager"
-#    define APP_MANAGER_PATH "org/desktopspec/ApplicationManager"
-#    define APP_MANAGER_INTERFACE "org.desktopspec.ApplicationManager"
+#    define APP_MANAGER_SERVICE "org.deepin.dde.Application1.Manager"
+#    define APP_MANAGER_PATH "/org/deepin/dde/Application1/Manager"
+#    define APP_MANAGER_INTERFACE "org.deepin.dde.Application1.Manager"
 #else
 #    define APP_MANAGER_SERVICE "com.deepin.SessionManager"
 #    define APP_MANAGER_PATH "/com/deepin/StartManager"
@@ -226,7 +226,7 @@ bool UniversalUtils::checkLaunchAppInterface()
     static std::once_flag flag;
     std::call_once(flag, []() {
         QDBusConnectionInterface *interface = QDBusConnection::sessionBus().interface();
-        if (!interface || !interface->isServiceRegistered(APP_MANAGER_SERVICE).isValid() || !interface->isServiceRegistered(APP_MANAGER_SERVICE).value()) {
+        if (!interface || !interface->isServiceRegistered(APP_MANAGER_SERVICE).value()) {
             initStatus = false;
             return;
         }
@@ -259,14 +259,14 @@ bool UniversalUtils::checkLaunchAppInterface()
 
 bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringList &filePaths)
 {
-    QDBusInterface systemInfo(APP_MANAGER_SERVICE,
+    QDBusInterface appManager(APP_MANAGER_SERVICE,
                               APP_MANAGER_PATH,
                               APP_MANAGER_INTERFACE,
                               QDBusConnection::sessionBus());
 
     QList<QVariant> argumentList;
     argumentList << QVariant::fromValue(desktopFile) << QVariant::fromValue(static_cast<uint>(QX11Info::getTimestamp())) << QVariant::fromValue(filePaths);
-    systemInfo.asyncCallWithArgumentList(QStringLiteral("LaunchApp"), argumentList);
+    appManager.asyncCallWithArgumentList(QStringLiteral("LaunchApp"), argumentList);
     return true;
 }
 
@@ -274,7 +274,7 @@ bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, con
 {
     if (checkLaunchAppInterface()) {
         qDebug() << "launch cmd by dbus:" << cmd << args;
-        QDBusInterface systemInfo(APP_MANAGER_SERVICE,
+        QDBusInterface appManager(APP_MANAGER_SERVICE,
                                   APP_MANAGER_PATH,
                                   APP_MANAGER_INTERFACE,
                                   QDBusConnection::sessionBus());
@@ -285,9 +285,9 @@ bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, con
         if (!wd.isEmpty()) {
             QVariantMap opt = { { "dir", wd } };
             argumentList << QVariant::fromValue(opt);
-            systemInfo.asyncCallWithArgumentList(QStringLiteral("RunCommandWithOptions"), argumentList);
+            appManager.asyncCallWithArgumentList(QStringLiteral("RunCommandWithOptions"), argumentList);
         } else {
-            systemInfo.asyncCallWithArgumentList(QStringLiteral("RunCommand"), argumentList);
+            appManager.asyncCallWithArgumentList(QStringLiteral("RunCommand"), argumentList);
         }
 
         return true;

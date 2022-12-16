@@ -107,6 +107,16 @@ static bool pluginsLoad()
     return true;
 }
 
+#ifdef COMPILE_ON_V23
+#    define SESSION_MANAGER_SERVICE "org.deepin.dde.SessionManager1"
+#    define SESSION_MANAGER_PATH "org/deepin/dde/SessionManager1"
+#    define SESSION_MANAGER_INTERFACE "org.deepin.dde.SessionManager1"
+#else
+#    define SESSION_MANAGER_SERVICE "com.deepin.SessionManager"
+#    define SESSION_MANAGER_PATH "/com/deepin/SessionManager"
+#    define SESSION_MANAGER_INTERFACE "com.deepin.SessionManager"
+#endif
+
 static void registerDDESession()
 {
     const char *envName = "DDE_SESSION_PROCESS_COOKIE_ID";
@@ -114,9 +124,9 @@ static void registerDDESession()
     qunsetenv(envName);
 
     if (!cookie.isEmpty()) {
-        QDBusInterface iface("com.deepin.SessionManager",
-                             "/com/deepin/SessionManager",
-                             "com.deepin.SessionManager",
+        QDBusInterface iface(SESSION_MANAGER_SERVICE,
+                             SESSION_MANAGER_PATH,
+                             SESSION_MANAGER_INTERFACE,
                              QDBusConnection::sessionBus());
         iface.call("Register", QString(cookie));
     }

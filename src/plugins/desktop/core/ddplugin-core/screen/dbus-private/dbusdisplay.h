@@ -297,7 +297,6 @@ class DBusAppearance: public QDBusAbstractInterface
         if (3 != arguments.count())
             return;
         QString interfaceName = msg.arguments().at(0).toString();
-//        if (interfaceName != "com.deepin.daemon.Appearance")
         if (interfaceName != "com.deepin.XSettings")
             return;
         QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());

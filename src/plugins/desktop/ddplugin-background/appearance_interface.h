@@ -11,6 +11,8 @@
 #ifndef APPEARANCE_INTERFACE_H
 #define APPEARANCE_INTERFACE_H
 
+#include "ddplugin_background_global.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
 #include <QtCore/QList>
@@ -19,12 +21,13 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
-
 /*
  * Proxy class for interface org.deepin.dde.Appearance1
  */
 
 typedef QMap<QString, double> ScaleFactors;
+
+DDP_BACKGROUND_BEGIN_NAMESPACE
 
 class Appearance_Interface: public QDBusAbstractInterface
 {
@@ -238,9 +241,11 @@ Q_SIGNALS: // SIGNALS
 namespace org {
   namespace deepin {
     namespace dde {
-      typedef ::Appearance_Interface Appearance1;
+      typedef ddplugin_background::Appearance_Interface Appearance1;
     }
   }
 }
+
+DDP_BACKGROUND_END_NAMESPACE
 
 #endif

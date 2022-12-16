@@ -66,8 +66,8 @@
 #include <sys/stat.h>
 
 #ifdef COMPILE_ON_V23
-#    define APPEARANCE_SERVICE "org.deepin.daemon.Appearance1"
-#    define APPEARANCE_PATH "/org/deepin/daemon/Appearance1"
+#    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
+#    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
 #else
 #    define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
 #    define APPEARANCE_PATH "/com/deepin/daemon/Appearance"

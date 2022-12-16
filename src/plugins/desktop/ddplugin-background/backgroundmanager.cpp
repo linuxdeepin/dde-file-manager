@@ -18,15 +18,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#ifdef COMPILE_ON_V23
+    #include "backgrounddde.h"
+#else
+    #include "backgroundwm.h"
+#endif
 #include "backgroundmanager.h"
 #include "backgroundmanager_p.h"
 #include "backgrounddefault.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include "dfm-base/dfm_desktop_defines.h"
-
-#include <QGSettings>
 
 #include <QImageReader>
 
@@ -67,105 +69,11 @@ BackgroundManagerPrivate::BackgroundManagerPrivate(BackgroundManager *qq)
 }
 
 BackgroundManagerPrivate::~BackgroundManagerPrivate()
-{
-    if (gsettings) {
-        gsettings->deleteLater();
-        gsettings = nullptr;
-    }
-
-    if (wmInter) {
-        wmInter->deleteLater();
-        wmInter = nullptr;
-    }
-
+{       
     windowManagerHelper = nullptr;
 
     backgroundWidgets.clear();
     backgroundPaths.clear();
-}
-
-QString BackgroundManagerPrivate::getBackgroundFormWm(const QString &screen)
-{
-    QString path;
-
-    int retry = 5;
-    static const int timeOut = 200;
-    int oldTimeOut = wmInter->timeout();
-    wmInter->setTimeout(timeOut);
-
-    while (retry--) {
-        qInfo() << "Get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
-        QDBusPendingReply<QString> reply = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);
-        reply.waitForFinished();
-
-        if (reply.error().type() != QDBusError::NoError) {
-            qWarning() << "Get background failed by wmDBus and times:" << (5 - retry)
-                       << reply.error().type() << reply.error().name() << reply.error().message();
-        } else {
-            path = reply.argumentAt<0>();
-            qInfo() << "Get background path succeed:" << path << "screen" << screen << "   times:" << (5 - retry);
-            break;
-        }
-    }
-
-    wmInter->setTimeout(oldTimeOut);
-
-    return path;
-}
-
-QString BackgroundManagerPrivate::getBackgroundFormConfig(const QString &screen)
-{
-    QString path;
-
-    QString homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
-    QFile wmFile(homePath + "/.config/deepinwmrc");
-    if (wmFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-
-        // 根据工作区和屏幕名称查找对应的壁纸
-        while (!wmFile.atEnd()) {
-            QString line = wmFile.readLine();
-            int index = line.indexOf("@");
-            int indexEQ = line.indexOf("=");
-            if (index <= 0 || indexEQ <= index + 1) {
-                continue;
-            }
-
-            int workspaceIndex = line.left(index).toInt();
-            QString screenName = line.mid(index + 1, indexEQ - index - 1);
-            if (workspaceIndex != currentWorkspaceIndex || screenName != screen) {
-                continue;
-            }
-
-            path = line.mid(indexEQ + 1).trimmed();
-            break;
-        }
-
-        wmFile.close();
-    }
-
-    return path;
-}
-
-QString BackgroundManagerPrivate::getDefaultBackground() const
-{
-    QString defaultPath;
-    if (gsettings) {
-        for (const QString &path : gsettings->get("background-uris").toStringList()) {
-            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
-                continue;
-            } else {
-                defaultPath = path;
-                qInfo() << "default background path:" << path;
-                break;
-            }
-        }
-    }
-    // 设置默认壁纸
-    if (defaultPath.isEmpty()) {
-        defaultPath = QString("file:///usr/share/backgrounds/default_background.jpg");
-    }
-
-    return defaultPath;
 }
 
 bool BackgroundManagerPrivate::isEnableBackground()
@@ -179,12 +87,12 @@ BackgroundManager::BackgroundManager(QObject *parent)
     : QObject(parent)
     , d(new BackgroundManagerPrivate(this))
 {
-    QDBusConnection::sessionBus().connect("org.freedesktop.DBus"
-                                          , "/org/freedesktop/DBus"
-                                          , "org.freedesktop.DBus"
-                                          , "NameOwnerChanged"
-                                          , this
-                                          , SLOT(onWmDbusStarted(QString, QString, QString)));
+    d->service =
+    #ifdef COMPILE_ON_V23
+        new BackgroundDDE(this);
+    #else
+        new BackgroundWM(this);
+    #endif
 }
 
 BackgroundManager::~BackgroundManager()
@@ -317,21 +225,16 @@ void BackgroundManager::onRestBackgroundManager()
 {
     if (d->isEnableBackground()) {
         // 绘制背景图片
-
-        if (!d->wmInter) {
-            d->wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this);
-            connect(d->wmInter, &WMInter::WorkspaceSwitched, this, &BackgroundManager::onWorkspaceSwitched);
-        }
-
-        if (!d->gsettings) {
-            d->gsettings = new QGSettings("com.deepin.dde.appearance", "", this);
-            connect(d->gsettings, &QGSettings::changed, this, &BackgroundManager::onAppearanceCalueChanged);
-        }
-
+        connect(d->service, &BackgroundService::backgroundChanged, this, &BackgroundManager::onBackgroundChanged);
         updateBackgroundPaths();
     }
-
     onBackgroundBuild();
+}
+
+void BackgroundManager::onBackgroundChanged()
+{
+    updateBackgroundPaths();
+    resetBackgroundImage();
 }
 
 void BackgroundManager::onGeometryChanged()
@@ -364,42 +267,6 @@ void BackgroundManager::onGeometryChanged()
     }
 }
 
-void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString newOwner)
-{
-    Q_UNUSED(oldOwner)
-    Q_UNUSED(newOwner)
-    // 窗管服务注销也会进入该函数，因此需要判断服务是否已注册
-    if (name == QString("com.deepin.wm") && QDBusConnection::sessionBus().interface()->isServiceRegistered("com.deepin.wm")) {
-        qInfo() << "dbus server com.deepin.wm started.";
-        updateBackgroundPaths();
-        resetBackgroundImage();
-        QDBusConnection::sessionBus().disconnect("org.freedesktop.DBus"
-                                                 , "/org/freedesktop/DBus"
-                                                 , "org.freedesktop.DBus"
-                                                 , "NameOwnerChanged"
-                                                 , this
-                                                 , SLOT(onWmDbusStarted(QString, QString, QString)));
-    }
-}
-
-void BackgroundManager::onWorkspaceSwitched(int from, int to)
-{
-    Q_UNUSED(from);
-    qInfo() << "workspace switched" << from << to;
-    d->currentWorkspaceIndex = to;
-    updateBackgroundPaths();
-    resetBackgroundImage();
-}
-
-void BackgroundManager::onAppearanceCalueChanged(const QString &key)
-{
-    if (QStringLiteral("backgroundUris") == key) {
-        qInfo() << "appearance background changed....";
-        updateBackgroundPaths();
-        resetBackgroundImage();
-    }
-}
-
 void BackgroundManager::updateBackgroundPaths()
 {
     d->backgroundPaths.clear();
@@ -416,7 +283,7 @@ void BackgroundManager::updateBackgroundPaths()
         }
 
         QString screenName = getScreenName(win);
-        QString path = getBackground(screenName);
+        QString path = d->service->background(screenName);
         d->backgroundPaths.insert(screenName, path);
     }
 }
@@ -431,7 +298,7 @@ void BackgroundManager::resetBackgroundImage()
         for (auto screenName : d->backgroundWidgets.keys()) {
             QString userPath;
             if (!d->backgroundPaths.contains(screenName)) {
-                userPath = getBackground(screenName);
+                userPath = d->service->background(screenName);
             } else {
                 userPath = d->backgroundPaths.value(screenName);
             }
@@ -457,33 +324,6 @@ void BackgroundManager::resetBackgroundImage()
             }
         }
     }
-}
-
-QString BackgroundManager::getBackground(const QString &screen)
-{
-    QString path;
-    if (!screen.isEmpty() && d->wmInter) {
-
-        // 1.从窗管获取壁纸
-        path = d->getBackgroundFormWm(screen);
-        qInfo() << "getBackgroundFromWm GetCurrentWorkspaceBackgroundForMonitor path :" << path << "screen" << screen;
-
-        if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
-            // 2.从配置文件解析壁纸
-            path = d->getBackgroundFormConfig(screen);
-            qInfo() << "getBackgroundFormConfig path :" << path << "screen" << screen;
-
-            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
-                // 3.使用默认壁纸
-                path = d->getDefaultBackground();
-                qInfo() << "getDefaultBackground path :" << path << "screen" << screen;
-            }
-        }
-    } else {
-        qInfo() << "Get background path terminated screen:" << screen << d->wmInter;
-    }
-
-    return path;
 }
 
 BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)

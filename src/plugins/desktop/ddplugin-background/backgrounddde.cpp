@@ -1,0 +1,176 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     wangtingwei<wangtingwei@uniontech.com>
+ *
+ * Maintainer: wangtingwei<wangtingwei@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "backgrounddde.h"
+
+#include <DConfig>
+
+#include <QJsonDocument>
+
+DDP_BACKGROUND_USE_NAMESPACE
+DCORE_USE_NAMESPACE
+
+BackgroundDDE::BackgroundDDE(QObject *parent)
+    : BackgroundService(parent)
+{
+    qInfo() << "create org.deepin.dde.Appearance1";
+    interface = new InterFace("org.deepin.dde.Appearance1", "/org/deepin/dde/Appearance1",
+                          QDBusConnection::sessionBus(), this);
+    interface->setTimeout(1000);
+    qInfo() << "create org.deepin.dde.Appearance1 end";
+
+    apperanceConf = DConfig::create("org.deepin.dde.appearance", "org.deepin.dde.appearance", "", this);
+    connect(apperanceConf, &DConfig::valueChanged, this, &BackgroundDDE::onAppearanceValueChanged);
+}
+
+BackgroundDDE::~BackgroundDDE()
+{
+    if (interface) {
+        interface->deleteLater();
+        interface = nullptr;
+    }
+}
+
+QString BackgroundDDE::getBackgroundFromDDE(const QString &screen)
+{
+    QString path;
+    if (screen.isEmpty())
+        return path;
+
+    int retry = 5;
+    static const int timeOut = 200;
+    int oldTimeOut = interface->timeout();
+    interface->setTimeout(timeOut);
+
+    while (retry--) {
+        qInfo() << "Get background by DDE GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
+        QDBusPendingReply<QString> reply = interface->GetCurrentWorkspaceBackgroundForMonitor(screen);
+        reply.waitForFinished();
+
+        if (reply.error().type() != QDBusError::NoError) {
+            qWarning() << "Get background failed by DDE_DBus and times:" << (5-retry)
+                       << reply.error().type() << reply.error().name() << reply.error().message();
+        } else {
+            path = reply.argumentAt<0>();
+            qInfo() << "Get background path succeed:" << path << "screen" << screen << "   times:" << (5 - retry);
+            break;
+        }
+    }
+    interface->setTimeout(oldTimeOut);
+
+    if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile()))
+        qCritical() << "get background fail path :" << path << "screen" << screen;
+    else
+        qInfo() << "getBackgroundFromDDE path :" << path << "screen" << screen;
+    return path;
+}
+
+QString BackgroundDDE::getBackgroundFromConfig(const QString &screen)
+{
+    QString path;
+    QString homePath = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+    QFile ddeFile(homePath + "/.cache/deepin/dde-appearance/config.json");
+    if (!ddeFile.open(QFile::ReadOnly | QIODevice::Text)) {
+        qWarning() << "config file doesn't exist";
+        return path;
+    }
+
+    //Judge whether the configuration file is valid
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(ddeFile.readAll(), &error);
+    if (error.error != QJsonParseError::NoError) {
+        qCritical() << "config file is invailid :" << error.errorString();
+        return path;
+    }
+
+    //Find the background path based on the workspace and screen name
+    if (doc.isArray()) {
+        QJsonArray arr = doc.array();
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr.at(i).isObject()) {
+                QJsonValue type = arr.at(i).toObject().value("type");
+                QJsonValue info = arr.at(i).toObject().value("wallpaperInfo");
+                if (type.toString() == ("index+monitorName") && info.isArray()) {
+                    QJsonArray val = info.toArray();
+                    for (int i =0; i < val.size(); i++) {
+                        if (val.at(i).isObject()) {
+                            QString wpIndex = val.at(i).toObject().value("wpIndex").toString();
+                            int index = wpIndex.indexOf("+");
+                            if (index <= 0) {
+                                continue;
+                            }
+
+                            int workspaceIndex = wpIndex.left(index).toInt();
+                            QString screenName = wpIndex.mid(index+1);
+                            if (workspaceIndex != currentWorkspaceIndex || screenName != screen) {
+                                continue;
+                            }
+
+                            path = val.at(i).toObject().value("uri").toString();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    ddeFile.close();
+
+    return path;
+}
+
+void BackgroundDDE::onAppearanceValueChanged(const QString &key)
+{
+    if (key == QString("Wallpaper_Uris")) {
+        qInfo() << "appearance Wallpaper_Uris changed...";
+        emit backgroundChanged();
+    }
+}
+
+QString BackgroundDDE::background(const QString &screen)
+{
+    QString path;
+
+    if (!screen.isEmpty()) {
+
+        //1.Get the background from DDE
+        path = getBackgroundFromDDE(screen);
+        if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+            // 2Parse background from config file
+            path = getBackgroundFromConfig(screen);
+            qInfo() << "getBackgroundFormConfig path :" << path << "screen" << screen;
+
+            if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile())) {
+                // 3.Use the default background
+                path = getDefaultBackground();
+                qInfo() << "getDefaultBackground path :" << path << "screen" << screen;
+            }
+        }
+    } else {
+        qInfo() << "Get background path terminated screen:" << screen << interface;
+    }
+
+    return path;
+}
+
+QString BackgroundDDE::getDefaultBackground()
+{
+    return BackgroundService::getDefaultBackground();
+}

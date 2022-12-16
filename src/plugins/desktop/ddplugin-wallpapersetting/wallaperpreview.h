@@ -25,14 +25,19 @@
 #include "backgroundpreview.h"
 
 #include "interfaces/screen/abstractscreen.h"
+
+#ifdef COMPILE_ON_V23
+#include "dbus/appearance_interface.h"
+using BackgroudInter = org::deepin::dde::Appearance1;
+#else
 #include <com_deepin_wm.h>
+using BackgroudInter = com::deepin::wm;
+#endif
 
 #include <QObject>
 #include <QMap>
 
 namespace ddplugin_wallpapersetting {
-
-using WMInter = com::deepin::wm;
 
 class WallaperPreview : public QObject
 {
@@ -61,10 +66,10 @@ public slots:
     void updateWallpaper();
 protected:
     PreviewWidgetPtr createWidget(DFMBASE_NAMESPACE::ScreenPointer);
-    QString getBackgroundFromWm(const QString &screen);
+    QString getBackground(const QString &screen);
 private:
     bool visible = false;
-    WMInter *wmInter = nullptr;
+    BackgroudInter *inter = nullptr;
     QMap<QString, QString> wallpapers;
     QMap<QString, PreviewWidgetPtr> previewWidgets;
 };

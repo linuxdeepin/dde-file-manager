@@ -15,6 +15,7 @@
  * Implementation of interface class Appearance_Interface
  */
 
+DDP_BACKGROUND_USE_NAMESPACE
 
 Appearance_Interface::Appearance_Interface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent)
     : QDBusAbstractInterface(service, path, staticInterfaceName(), connection, parent)

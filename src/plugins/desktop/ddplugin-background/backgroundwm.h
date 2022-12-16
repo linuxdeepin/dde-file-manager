@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     wangchunlin<wangchunlin@uniontech.com>
+ * Author:     wangtingwei<wangtingwei@uniontech.com>
  *
- * Maintainer: wangchunlin<wangchunlin@uniontech.com>
+ * Maintainer: wangtingwei<wangtingwei@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,42 +18,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef BACKGROUNDMANAGER_P_H
-#define BACKGROUNDMANAGER_P_H
+#ifndef BACKGROUNDWM_H
+#define BACKGROUNDWM_H
 
-#include "backgroundmanager.h"
 #include "backgroundservice.h"
-
-#include <com_deepin_wm.h>
 
 #include <DWindowManagerHelper>
 
 #include <QObject>
 
+class QGSettings;
+
 DDP_BACKGROUND_BEGIN_NAMESPACE
 
-class BackgroundManagerPrivate : public QObject
+class BackgroundWM : public BackgroundService
 {
     Q_OBJECT
 public:
-    explicit BackgroundManagerPrivate(BackgroundManager *qq);
-    ~BackgroundManagerPrivate();
-    bool isEnableBackground();
+    explicit BackgroundWM(QObject *parent = nullptr);
+    ~BackgroundWM() override;
+public:
+    QString background(const QString &screen) override;
+    QString getDefaultBackground() override;
 
-    inline QRect relativeGeometry(const QRect &geometry)
-    {
-        return QRect(QPoint(0, 0), geometry.size());
-    }
+protected:
+    QString getBackgroundFromWm(const QString &screen);
+    QString getBackgroundFromConfig(const QString &screen);
+
+private slots:
+    void onAppearanceValueChanged(const QString& key);
 
 public:
-    BackgroundManager *const q = nullptr;
-    BackgroundService *service = nullptr;
-    Dtk::Gui::DWindowManagerHelper* windowManagerHelper = nullptr;
-    QMap<QString, DFMBASE_NAMESPACE::BackgroundWidgetPointer> backgroundWidgets;
-    QMap<QString, QString> backgroundPaths;
-    bool enableBackground = true;
+    QGSettings *gsettings = nullptr;
 };
 
 DDP_BACKGROUND_END_NAMESPACE
 
-#endif // BACKGROUNDMANAGER_P_H
+#endif // BACKGROUNDWM_H

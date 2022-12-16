@@ -22,6 +22,7 @@
 #define BACKGROUNDMANAGER_H
 
 #include "ddplugin_background_global.h"
+#include "backgroundservice.h"
 
 #include "interfaces/background/abstractbackground.h"
 
@@ -51,14 +52,11 @@ private slots:
     void onDetachWindows();
     void onRestBackgroundManager();
     void onGeometryChanged();
-    void onWmDbusStarted(QString name, QString oldOwner, QString newOwner);
-    void onWorkspaceSwitched(int from, int to);
-    void onAppearanceCalueChanged(const QString& key);
+    void onBackgroundChanged();
 
 private:
     void updateBackgroundPaths();
     void resetBackgroundImage();
-    QString getBackground(const QString &screen);
     DFMBASE_NAMESPACE::BackgroundWidgetPointer createBackgroundWidget(QWidget *root);
 
 private:

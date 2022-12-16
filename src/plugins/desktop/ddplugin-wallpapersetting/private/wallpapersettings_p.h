@@ -21,12 +21,6 @@
 #ifndef WALLPAPERSETTINGS_P_H
 #define WALLPAPERSETTINGS_P_H
 
-#ifdef COMPILE_ON_V23
-#    define APPEARANCE_NAME org::deepin::daemon::Appearance1
-#else
-#    define APPEARANCE_NAME com::deepin::daemon::Appearance
-#endif
-
 #include "wallpapersettings.h"
 #include "wallpaperlist.h"
 #include "loadinglabel.h"
@@ -35,10 +29,13 @@
 
 #include <com_deepin_wm.h>
 #include <com_deepin_sessionmanager.h>
+
 #ifdef COMPILE_ON_V23
 #    include "dbus/appearance_interface.h"
+#    define APPEARANCE_NAME org::deepin::dde::Appearance1
 #else
 #    include <com_deepin_daemon_appearance.h>
+#    define APPEARANCE_NAME com::deepin::daemon::Appearance
 #endif
 
 #include <DIconButton>

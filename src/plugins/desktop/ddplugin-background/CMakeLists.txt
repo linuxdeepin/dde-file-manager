@@ -11,6 +11,23 @@ FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
+#delete files which are not needed on the current system
+if (COMPLIE_ON_V23)
+    FILE(GLOB_RECURSE RM_SRC
+        "${CMAKE_CURRENT_SOURCE_DIR}/backgroundwm.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/backgroundwm.cpp"
+        )
+else()
+    FILE(GLOB_RECURSE RM_SRC
+        "${CMAKE_CURRENT_SOURCE_DIR}/backgrounddde.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/backgrounddde.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/appearance_interface.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/appearance_interface.cpp"
+        )
+endif()
+
+list(REMOVE_ITEM SRC_FILES ${RM_SRC})
+
 add_library(${PROJECT_NAME}
     SHARED
     ${SRC_FILES}
