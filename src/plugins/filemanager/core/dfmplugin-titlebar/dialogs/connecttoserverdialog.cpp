@@ -100,8 +100,12 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         QDir::setCurrent(currentDir);
 
         // add search history list
-        if (!SearchHistroyManager::instance()->getSearchHistroy().contains(text))
+        if (!SearchHistroyManager::instance()->getSearchHistroy().contains(text)) {
             SearchHistroyManager::instance()->writeIntoSearchHistory(text);
+        } else {   // to make sure it is the recent one
+            SearchHistroyManager::instance()->removeSearchHistory(text);
+            SearchHistroyManager::instance()->writeIntoSearchHistory(text);
+        }
 
         if (protocolIPRegExp.exactMatch(text))
             SearchHistroyManager::instance()->writeIntoIPHistory(text);
@@ -164,11 +168,12 @@ void ConnectToServerDialog::onCurrentInputChanged(const QString &text)
         Application::appObtuselySetting()->sync();
     }
 
-    QUrl url = QUrl::fromUserInput(text);
+    QUrl url(text);
     const QString &scheme = url.scheme();
-    if (supportedSchemes.contains(scheme + "://")) {
-        serverComboBox->setEditText(url.toString(QUrl::RemoveScheme).mid(2));
-        schemeComboBox->setCurrentText(scheme + "://");
+    if (supportedSchemes.contains(schemeWithSlash(scheme))) {
+        QString temText = text;
+        serverComboBox->setEditText(temText.remove(schemeWithSlash(scheme)));
+        schemeComboBox->setCurrentText(schemeWithSlash(scheme));
     }
 
     upateUiState();
@@ -179,7 +184,7 @@ void ConnectToServerDialog::onCollectionViewClicked(const QModelIndex &index)
     const QString &history = index.data().toString();
     if (history != schemeComboBox->currentText() + serverComboBox->currentText()) {
         QUrl histroyUrl(history);
-        schemeComboBox->setCurrentText(histroyUrl.scheme() + "://");
+        schemeComboBox->setCurrentText(schemeWithSlash(histroyUrl.scheme()));
         int checkedIndex = serverComboBox->findText(history);
         if (checkedIndex >= 0)
             serverComboBox->setCurrentIndex(checkedIndex);
@@ -199,7 +204,7 @@ void ConnectToServerDialog::onCompleterActivated(const QString &text)
 {
     const QString &scheme = QUrl::fromUserInput(text).scheme();
     if (!scheme.isEmpty())
-        schemeComboBox->setCurrentText(scheme + "://");
+        schemeComboBox->setCurrentText(schemeWithSlash(scheme));
 }
 
 void ConnectToServerDialog::initializeUi()
@@ -269,7 +274,7 @@ void ConnectToServerDialog::initializeUi()
     QStringList historyList = SearchHistroyManager::instance()->getSearchHistroy();
     for (const QString &data : historyList) {
         QUrl url(data);
-        if (!url.isValid() || !supportedSchemes.contains(url.scheme() + "://"))
+        if (!url.isValid() || !supportedSchemes.contains(schemeWithSlash(url.scheme())))
             historyList.removeOne(data);
     }
 
@@ -294,8 +299,8 @@ void ConnectToServerDialog::initializeUi()
             if (checkedIndex >= 0)
                 serverComboBox->setCurrentIndex(checkedIndex);
 
-            serverComboBox->setEditText(recentAccessUrl.toString(QUrl::RemoveScheme).mid(2));
-            schemeComboBox->setCurrentText(scheme + "://");
+            serverComboBox->setEditText(recentAccessOne.remove(schemeWithSlash(scheme)));
+            schemeComboBox->setCurrentText(schemeWithSlash(scheme));
         }
     }
 
@@ -414,4 +419,9 @@ void ConnectToServerDialog::upateUiState()
         centerNotes->setVisible(!hasCollections);
     if (collectionServerView)
         collectionServerView->setVisible(hasCollections);
+}
+
+QString ConnectToServerDialog::schemeWithSlash(const QString &scheme) const
+{
+    return scheme + "://";
 }

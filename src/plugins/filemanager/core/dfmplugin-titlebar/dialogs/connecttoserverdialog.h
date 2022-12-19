@@ -56,12 +56,14 @@ public slots:
     void onCurrentInputChanged(const QString &text);
     void onCollectionViewClicked(const QModelIndex &index);
     void onCompleterActivated(const QString &text);
+
 private:
     void initializeUi();
     void initConnect();
     void onAddButtonClicked();
     void onDelButtonClicked();
     void upateUiState();
+    QString schemeWithSlash(const QString &scheme) const;
 
     enum DialogButton {
         kCannelButton,
