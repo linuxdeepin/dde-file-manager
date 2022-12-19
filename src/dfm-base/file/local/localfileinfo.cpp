@@ -171,6 +171,8 @@ QString LocalFileInfo::nameOf(const NameInfoType type) const
     case FileNameInfoType::kCompleteBaseName:
         return d->completeBaseName();
     case FileNameInfoType::kSuffix:
+        [[fallthrough]];
+    case FileNameInfoType::kSuffixOfRename:
         return d->suffix();
     case FileNameInfoType::kCompleteSuffix:
         return d->completeSuffix();

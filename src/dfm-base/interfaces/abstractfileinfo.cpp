@@ -168,6 +168,8 @@ QString dfmbase::AbstractFileInfo::nameOf(const NameInfoType type) const
         [[fallthrough]];
     case FileNameInfoType::kBaseNameOfRename:
         return dptr->baseName();
+    case FileNameInfoType::kSuffix:
+        return dptr->suffix();
     case FileNameInfoType::kIconName:
         return const_cast<AbstractFileInfo *>(this)->fileMimeType().iconName();
     case FileNameInfoType::kGenericIconName:
@@ -637,6 +639,26 @@ QString AbstractFileInfoPrivate::baseName() const
     }
 
     return fileName.left(fileName.length() - suffix.length() - 1);
+}
+
+QString dfmbase::AbstractFileInfoPrivate::suffix() const
+{
+    if (q->isAttributes(OptInfoType::kIsDir)) {
+        return QString();
+    }
+    // xushitong 20200424 修改后缀名获取策略为小数点后非空字符串
+    const QString &strFileName = this->fileName();
+    QString tmpName = strFileName;
+    int nIdx = 0;
+    QString strSuffix;
+    while (strSuffix.isEmpty()) {
+        nIdx = tmpName.lastIndexOf(".");
+        if (nIdx == -1 || nIdx == 0)
+            return QString();
+        strSuffix = tmpName.mid(nIdx + 1);
+        tmpName = tmpName.mid(0, nIdx);
+    }
+    return strFileName.mid(nIdx + 1);
 }
 
 /*!
