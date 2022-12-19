@@ -24,7 +24,7 @@
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/mimetype/mimedatabase.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/event/event.h>
@@ -261,50 +261,13 @@ void BasicWidget::basicFill(const QUrl &url)
         fileCount->setVisible(false);
 
     if (fileType && fileType->RightValue().isEmpty()) {
-        QUrl localUrl = url;
-        QList<QUrl> urls {};
-        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
-        if (ok && !urls.isEmpty())
-            localUrl = urls.first();
-
-        QMimeType mimeType = MimeDatabase::mimeTypeForUrl(localUrl);
-        MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
-        switch (type) {
-        case MimeDatabase::FileType::kDirectory: {
-            fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-            if (fileCount && fileCount->RightValue().isEmpty()) {
-                fileCount->setVisible(true);
-                fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
-                fileCalculationUtils->start(QList<QUrl>() << localUrl);
-                connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
-            }
-        } break;
-        case MimeDatabase::FileType::kDocuments: {
-            fileType->setRightValue(tr("Documents") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-        } break;
-        case MimeDatabase::FileType::kVideos: {
-            fileType->setRightValue(tr("Videos") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-        } break;
-        case MimeDatabase::FileType::kImages: {
-            fileType->setRightValue(tr("Images") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-        } break;
-        case MimeDatabase::FileType::kAudios: {
-            fileType->setRightValue(tr("Audios") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-        } break;
-        case MimeDatabase::FileType::kExecutable: {
-            fileType->setRightValue(tr("Executable") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-        } break;
-        case MimeDatabase::FileType::kArchives: {
-            fileType->setRightValue(tr("Archives") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-        } break;
-        case MimeDatabase::FileType::kDesktopApplication: {
-            fileType->setRightValue(tr("Application") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-        } break;
-        case MimeDatabase::FileType::kUnknown: {
-            fileType->setRightValue(tr("Unknown") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-        } break;
-        default:
-            break;
+        const AbstractFileInfo::FileType type = info->fileType();
+        fileType->setRightValue(info->displayOf(DisPlayInfoType::kMimeTypeDisplayName), Qt::ElideMiddle, Qt::AlignVCenter, true);
+        if (type == AbstractFileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
+            fileCount->setVisible(true);
+            fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
+            fileCalculationUtils->start(QList<QUrl>() << url);
+            connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
         }
     }
 }
