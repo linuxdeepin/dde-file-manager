@@ -67,6 +67,14 @@ void SearchEventReceiver::handleUrlChanged(quint64 winId, const QUrl &u)
         SearchEventReceiver::handleStopSearch(winId);
 }
 
+void SearchEventReceiver::handleAddressInputStr(quint64 windId, QString *str)
+{
+    if (str->startsWith("search:?") && !str->contains("winId=")) {
+        QString winId = "&winId=" + QString::number(windId);
+        str->append(winId);
+    }
+}
+
 SearchEventReceiver::SearchEventReceiver(QObject *parent)
     : QObject(parent)
 {

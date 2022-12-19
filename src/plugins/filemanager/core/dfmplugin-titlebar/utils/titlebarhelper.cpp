@@ -211,7 +211,7 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         QDir::setCurrent(currentUrl.toLocalFile());
 
     QString inputStr = text;
-    TitleBarEventCaller::sendCheckAddressInputStr(&inputStr);
+    TitleBarEventCaller::sendCheckAddressInputStr(sender, &inputStr);
 
     bool search { false };
     FinallyUtil finally([&]() {if (isSearch) *isSearch = search; });
@@ -223,7 +223,7 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
     QString scheme { url.scheme() };
     if (!url.scheme().isEmpty() && UrlRoute::hasScheme(scheme)) {
         if (url.path().isEmpty())
-            url = UrlRoute::fromUserInput(inputStr + "/");
+            url.setPath("/");
         qInfo() << "jump :" << inputStr;
         TitleBarEventCaller::sendCd(sender, url);
     } else {

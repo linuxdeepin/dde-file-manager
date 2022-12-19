@@ -103,9 +103,11 @@ void TitleBarEventCaller::sendShowFilterView(QWidget *sender, bool visible)
     dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_FilterView_Show", id, visible);
 }
 
-void TitleBarEventCaller::sendCheckAddressInputStr(QString *str)
+void TitleBarEventCaller::sendCheckAddressInputStr(QWidget *sender, QString *str)
 {
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_InputAdddressStr_Check", str);
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_InputAdddressStr_Check", id, str);
 }
 
 bool TitleBarEventCaller::sendCheckTabAddable(quint64 windowId)

@@ -46,8 +46,10 @@ void RecentEventReceiver::initConnect()
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, RecentEventReceiver::instance(), &RecentEventReceiver::handleWindowUrlChanged);
 }
 
-void RecentEventReceiver::handleAddressInputStr(QString *str)
+void RecentEventReceiver::handleAddressInputStr(quint64 winId, QString *str)
 {
+    Q_UNUSED(winId)
+
     if (str->startsWith(RecentManager::scheme())) {
         str->clear();
         str->append(RecentManager::scheme() + ":/");

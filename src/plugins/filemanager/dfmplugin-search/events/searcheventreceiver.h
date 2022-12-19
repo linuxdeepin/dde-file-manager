@@ -41,6 +41,7 @@ public slots:
     void handleStopSearch(quint64 winId);
     void handleShowAdvanceSearchBar(quint64 winId, bool visible);
     void handleUrlChanged(quint64 winId, const QUrl &u);
+    void handleAddressInputStr(quint64 windId, QString *str);
 
 private:
     explicit SearchEventReceiver(QObject *parent = nullptr);

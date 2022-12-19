@@ -144,6 +144,8 @@ void Search::bindEvents()
                                    SearchEventReceiverIns, &SearchEventReceiver::handleShowAdvanceSearchBar);
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
                                    SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_InputAdddressStr_Check",
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleAddressInputStr);
 
     // connect self slot events
     static constexpr auto selfSpace { DPF_MACRO_TO_STR(DPSEARCH_NAMESPACE) };

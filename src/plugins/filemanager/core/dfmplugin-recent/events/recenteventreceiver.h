@@ -37,7 +37,7 @@ public:
     void initConnect();
 
 public slots:
-    void handleAddressInputStr(QString *str);
+    void handleAddressInputStr(quint64 winId, QString *str);
     void handleWindowUrlChanged(quint64 winId, const QUrl &url);
 
 private:
