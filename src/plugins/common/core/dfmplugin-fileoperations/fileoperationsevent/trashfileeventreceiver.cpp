@@ -42,6 +42,8 @@
 
 #include <dfm-io/dfmio_utils.h>
 
+#include <DDesktopServices>
+
 #include <QDebug>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -148,6 +150,9 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
         DecoratorFileEnumerator enumerator(QUrl("trash:"));
         if (DialogManagerInstance->showClearTrashDialog(enumerator.fileCount()) != QDialog::Accepted) return nullptr;
     }
+
+    DWIDGET_USE_NAMESPACE
+    DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
 
     QList<QUrl> urls = std::move(sources);
     if (urls.isEmpty())
