@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "sidebareventreceiver.h"
 
 #include "sidebarwidget.h"
@@ -165,7 +165,7 @@ bool SideBarEventReceiver::handleItemUpdate(const QUrl &url, const QVariantMap &
     if (properties.contains(PropertyKey::kIcon))
         info.icon = qvariant_cast<QIcon>(properties[PropertyKey::kIcon]);
     if (properties.contains(PropertyKey::kFinalUrl))
-        info.finalUrl = properties[PropertyKey::kGroup].toUrl();
+        info.finalUrl = properties[PropertyKey::kFinalUrl].toUrl();
     if (properties.contains(PropertyKey::kQtItemFlags))
         info.flags = qvariant_cast<Qt::ItemFlags>(properties[PropertyKey::kQtItemFlags]);
     if (properties.contains(PropertyKey::kIsEjectable))

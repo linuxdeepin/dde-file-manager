@@ -25,6 +25,7 @@
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-framework/dpf.h"
 
 #include <QMenu>
@@ -215,7 +216,10 @@ void ExtendMenuScene::updateState(QMenu *parent)
     }
 
     //开始按顺序插入菜单
-    DCustomActionDefines::sortFunc(d->cacheLocateActions, systemActions, [parent](const QList<QAction *> &acs) { parent->addActions(acs); }, [](QAction *ac) -> bool { return ac && !ac->isSeparator(); });
+    DCustomActionDefines::sortFunc(
+            d->cacheLocateActions, systemActions,
+            [parent](const QList<QAction *> &acs) { parent->addActions(acs); },
+            [](QAction *ac) -> bool { return ac && !ac->isSeparator(); });
 
     Q_ASSERT(systemActions.isEmpty());
 
@@ -243,6 +247,8 @@ void ExtendMenuScene::updateState(QMenu *parent)
         }
     }
 
+    d->menuVisiableControl(parent);
+
     AbstractMenuScene::updateState(parent);
 }
 
@@ -269,4 +275,13 @@ bool ExtendMenuScene::triggered(QAction *action)
     }
 
     return AbstractMenuScene::triggered(action);
+}
+
+void ExtendMenuScenePrivate::menuVisiableControl(QMenu *parent)
+{
+    auto hiddenMenus = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList();
+    if (hiddenMenus.contains("extension-menu")) {
+        for (auto act : extendActions)
+            act->setVisible(false);
+    }
 }

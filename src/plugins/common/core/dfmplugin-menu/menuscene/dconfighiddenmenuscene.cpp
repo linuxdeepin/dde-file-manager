@@ -32,6 +32,13 @@ QString dfmplugin_menu::DConfigHiddenMenuScene::name() const
 
 void dfmplugin_menu::DConfigHiddenMenuScene::updateState(QMenu *parent)
 {
+    updateMenuHidden(parent);
+    updateActionHidden(parent);
+    AbstractMenuScene::updateState(parent);
+}
+
+void DConfigHiddenMenuScene::updateActionHidden(QMenu *parent)
+{
     static const QMap<QString, QString> appKeyMap {
         { "dde-file-manager", "dfm.menu.action.hidden" },
         { "dde-desktop", "dd.menu.action.hidden" },
@@ -57,7 +64,19 @@ void dfmplugin_menu::DConfigHiddenMenuScene::updateState(QMenu *parent)
                 menus.append(subMenu);
         }
     } while (menus.count() > 0);
-    AbstractMenuScene::updateState(parent);
+}
+
+void DConfigHiddenMenuScene::updateMenuHidden(QMenu *parent)
+{
+    auto hiddenMenus = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList();
+    qDebug() << "menu: hidden menu in app: " << qApp->applicationName() << hiddenMenus;
+    if ((hiddenMenus.contains("dde-file-manager") && qApp->applicationName() == "dde-file-manager")
+        || (hiddenMenus.contains("dde-desktop") && qApp->applicationName() == "dde-desktop")
+        || (hiddenMenus.contains("dde-file-dialog") && qApp->applicationName().startsWith("dde-select-dialog"))) {
+        auto acts = parent->actions();
+        for (auto act : acts)
+            act->setVisible(false);
+    }
 }
 
 AbstractMenuScene *DConfigHiddenMenuCreator::create()

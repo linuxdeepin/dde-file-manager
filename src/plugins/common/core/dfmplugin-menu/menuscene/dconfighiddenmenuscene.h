@@ -30,6 +30,10 @@ public:
 
     virtual QString name() const override;
     virtual void updateState(QMenu *parent) override;
+
+private:
+    void updateActionHidden(QMenu *parent);
+    void updateMenuHidden(QMenu *parent);
 };
 
 DPMENU_END_NAMESPACE

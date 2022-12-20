@@ -33,6 +33,7 @@ class ExtendMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 public:
     friend class FileOperatorMenuScene;
     explicit ExtendMenuScenePrivate(ExtendMenuScene *qq);
+    void menuVisiableControl(QMenu *parent);
 
     QList<QAction *> childActions(QAction *action);
 
