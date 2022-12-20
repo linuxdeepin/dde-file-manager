@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "diskcontrolwidget.h"
 #include "dattachedblockdevice.h"
 #include "dattachedprotocoldevice.h"
@@ -120,6 +120,10 @@ void DiskControlWidget::initConnection()
     connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &DiskControlWidget::onDiskListChanged);
     connect(DevProxyMng, &DeviceProxyManager::blockDevFsAdded, this, &DiskControlWidget::onDiskListChanged);
     connect(DevProxyMng, &DeviceProxyManager::blockDevFsRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(DevProxyMng, &dfmbase::DeviceProxyManager::blockDevPropertyChanged, this, [=](const QString &, const QString &property, const QVariant &) {
+        if (property == DeviceProperty::kHintIgnore)
+            this->onDiskListChanged();
+    });
 
     //    connect(DevProxyMng, &DeviceProxyManager::protocolDevAdded, this, &DiskControlWidget::onDiskListChanged);
     //    connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, &DiskControlWidget::onDiskListChanged);
