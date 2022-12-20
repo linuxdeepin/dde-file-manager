@@ -158,6 +158,8 @@ VideoPreview::VideoPreview(QObject *parent)
     //   dmr::CompositingManager::get().overrideCompositeMode(true);
 
     playerWidget = new VideoWidget(this);
+    playerWidget->setMinimumSize(800, 355);
+
     statusBar = new VideoStatusBar(this);
 }
 
