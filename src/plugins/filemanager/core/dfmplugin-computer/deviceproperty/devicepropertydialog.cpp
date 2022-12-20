@@ -138,7 +138,7 @@ void DevicePropertyDialog::setSelectDeviceInfo(const DeviceInfo &info)
     deviceName->setText(info.deviceName);
     deviceBasicWidget->selectFileInfo(info);
     basicInfo->setLeftValue(info.deviceName, Qt::ElideMiddle, Qt::AlignLeft, true);
-    setProgressBar(info.totalCapacity, info.availableSpace);
+    setProgressBar(info.totalCapacity, info.availableSpace, !info.mountPoint.isEmpty());
     addExtendedControl(deviceBasicWidget);
 }
 
@@ -149,13 +149,18 @@ void DevicePropertyDialog::handleHeight(int height)
     setGeometry(rect);
 }
 
-void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize)
+void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize, bool mounted)
 {
     devicesProgressBar->setMaximum(10000);
+    if (!mounted)
+        freeSize = totalSize;
     devicesProgressBar->setValue(totalSize && ~totalSize ? int(10000. * (totalSize - freeSize) / totalSize) : 0);
     QString sizeTotalStr = UniversalUtils::sizeFormat(totalSize, 1);
     QString sizeFreeStr = UniversalUtils::sizeFormat(totalSize - freeSize, 1);
-    basicInfo->setRightValue(sizeFreeStr + QString("/") + sizeTotalStr, Qt::ElideNone, Qt::AlignRight, true);
+    if (mounted)
+        basicInfo->setRightValue(sizeFreeStr + QString("/") + sizeTotalStr, Qt::ElideNone, Qt::AlignRight, true);
+    else
+        basicInfo->setRightValue(sizeTotalStr, Qt::ElideNone, Qt::AlignRight, true);
 
     // 在浅色模式下，手动设置进度条背景色
     if (DGuiApplicationHelper::LightType == DGuiApplicationHelper::instance()->themeType()) {

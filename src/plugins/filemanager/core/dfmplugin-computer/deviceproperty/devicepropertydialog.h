@@ -64,7 +64,7 @@ private:
 
     void handleHeight(int height);
 
-    void setProgressBar(qint64 totalSize, qint64 freeSize);
+    void setProgressBar(qint64 totalSize, qint64 freeSize, bool mounted);
 
 public slots:
     void setSelectDeviceInfo(const DeviceInfo &info);

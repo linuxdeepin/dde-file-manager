@@ -102,6 +102,8 @@ void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
     fileSystem->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 
     QString sizeFreeStr = UniversalUtils::sizeFormat(info.availableSpace, 1);
+    if (info.mountPoint.isEmpty())
+        sizeFreeStr = UniversalUtils::sizeFormat(info.totalCapacity, 1);
     freeSize->setRightValue(sizeFreeStr);
     freeSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 
