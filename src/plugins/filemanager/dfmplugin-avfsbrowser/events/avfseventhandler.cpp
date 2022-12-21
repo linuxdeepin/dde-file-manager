@@ -104,10 +104,10 @@ void AvfsEventHandler::openArchivesAsDir(quint64 winId, const QList<QUrl> &urls)
 
 void AvfsEventHandler::writeToClipbord(quint64 winId, const QList<QUrl> &urls)
 {
-    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, winId, ClipBoard::kCopyAction, urls, QVariantHash());
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, winId, ClipBoard::kCopyAction, urls);
 }
 
 void AvfsEventHandler::showProperty(const QList<QUrl> &urls)
 {
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
