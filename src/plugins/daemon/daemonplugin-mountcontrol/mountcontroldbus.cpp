@@ -277,17 +277,13 @@ bool MountControlDBusPrivate::mkdirMntRoot()
 
 bool MountControlDBusPrivate::checkAuth()
 {
-    qint64 pid = 0;
-    QDBusConnection c =
-            QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
-    if (c.isConnected())
-        pid = c.interface()->servicePid(q->message().service()).value();
+    QString appBusName = q->message().service();
 
-    if (pid > 0) {
+    if (!appBusName.isEmpty()) {
         using namespace PolkitQt1;
         Authority::Result result = Authority::instance()->checkAuthorizationSync(
                 kPolicyKitActionId,
-                UnixProcessSubject(pid),   /// 第一个参数是需要验证的action，和规则文件写的保持一致
+                SystemBusNameSubject(appBusName),   /// 第一个参数是需要验证的action，和规则文件写的保持一致
                 Authority::AllowUserInteraction);
         return result == Authority::Yes;
     }

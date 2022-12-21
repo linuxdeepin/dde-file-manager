@@ -30,12 +30,15 @@ PolicyKitHelper *PolicyKitHelper::instance()
     return &instance;
 }
 
-bool PolicyKitHelper::checkAuthorization(const QString &actionId, qint64 applicationPid)
+bool PolicyKitHelper::checkAuthorization(const QString &actionId, const QString &appBusName)
 {
     using namespace PolkitQt1;
 
+    if(appBusName.isEmpty())
+        return false;
+
     Authority::Result result;
-    result = Authority::instance()->checkAuthorizationSync(actionId, UnixProcessSubject(applicationPid),   /// 第一个参数是需要验证的action，和规则文件写的保持一致
+    result = Authority::instance()->checkAuthorizationSync(actionId, SystemBusNameSubject(appBusName),   /// 第一个参数是需要验证的action，和规则文件写的保持一致
                                                            Authority::AllowUserInteraction);
     if (result == Authority::Yes) {
         return true;

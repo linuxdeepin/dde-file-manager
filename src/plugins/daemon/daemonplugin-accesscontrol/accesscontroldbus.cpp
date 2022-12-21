@@ -478,19 +478,9 @@ void AccessControlDBus::changeMountedProtocol(int mode, const QString &device)
 
 bool AccessControlDBus::checkAuthentication(const QString &id)
 {
-    bool ret = false;
-    qint64 pid = 0;
-    QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
-    if (c.isConnected()) {
-        pid = c.interface()->servicePid(message().service()).value();
-    }
-
-    if (pid) {
-        ret = PolicyKitHelper::instance()->checkAuthorization(id, pid);
-    }
-
-    if (!ret) {
+    if (!PolicyKitHelper::instance()->checkAuthorization(id, message().service())) {
         qInfo() << "Authentication failed !!";
+        return false;
     }
-    return ret;
+    return true;
 }

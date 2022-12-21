@@ -52,10 +52,7 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     if (!show) {
         return true;
     }
-    //    if (!checkAuthentication()) {
-    //        qDebug() << "closeSmbShareByShareName failed" <<  sharename;
-    //        return false;
-    //    }
+
     unsigned int suid = 0;
     QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
     if (!c.isConnected()) {
@@ -64,9 +61,12 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     }
     suid = c.interface()->serviceUid(message().service()).value();   //获取调用总线进程属主
 
-    QString filename = name.toLower();   //文件名小写
-    QFileInfo info("/var/lib/samba/usershares/" + filename);
-    if (suid != info.ownerId() && suid != 0) {   //对比文件属主与调用总线进程属主
+    QString sharePath = "/var/lib/samba/usershares/";
+    QString filePath = QString("%1%2").arg(sharePath).arg(name.toLower());//文件名小写
+    QFileInfo info(filePath);
+    if ((suid != 0 && suid != info.ownerId())  //对比文件属主与调用总线进程属主;
+            || info.isSymLink()      //禁止使用符合链接
+            || !info.absoluteFilePath().startsWith(sharePath)) {   //禁止使用../等
         qDebug() << "invoker doesn't own the file: " << info.path();
         return false;
     }
@@ -136,19 +136,9 @@ bool ShareControlDBus::IsUserSharePasswordSet(const QString &username)
 
 bool ShareControlDBus::checkAuthentication()
 {
-    bool ret = false;
-    qint64 pid = 0;
-    QDBusConnection c = QDBusConnection::connectToBus(QDBusConnection::SystemBus, "org.freedesktop.DBus");
-    if (c.isConnected()) {
-        pid = c.interface()->servicePid(message().service()).value();
-    }
-
-    if (pid) {
-        ret = DAEMONPSHARECONTROL_NAMESPACE::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionId, pid);
-    }
-
-    if (!ret) {
+    if (!DAEMONPSHARECONTROL_NAMESPACE::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionId, message().service())) {
         qInfo() << "Authentication failed !!";
+        return false;
     }
-    return ret;
+    return true;
 }
