@@ -51,10 +51,6 @@ void TitleBar::initialize()
 
     // event has been sended before the Window showed
     bindEvents();
-
-    UrlRoute::regScheme(Global::Scheme::kSmb, "/", {}, true);
-    UrlRoute::regScheme(Global::Scheme::kFtp, "/", {}, true);
-    UrlRoute::regScheme(Global::Scheme::kSFtp, "/", {}, true);
 }
 
 bool TitleBar::start()
