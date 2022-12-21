@@ -56,7 +56,7 @@ void Core::initialize()
     QString errStr;
 
     // 注册路由
-    UrlRoute::regScheme(Global::Scheme::kFile, "/");
+    UrlRoute::regScheme(Global::Scheme::kFile, "/", QIcon(), false, QObject::tr("System Disk"));
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
