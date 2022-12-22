@@ -641,7 +641,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                    // 'device busy' error.
+                                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -728,7 +728,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() {}
+DeviceManager::~DeviceManager() { }
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -837,9 +837,10 @@ int DeviceManagerPrivate::askForUserChoice(const QString &message, const QString
 {
     QString newMsg = message;
     QString title;
-    if (message.startsWith("Can't verify the identity of")
-        && message.endsWith("If you want to be absolutely sure it is safe to continue, contact the "
-                            "system administrator.")) {
+    if (message.startsWith("Can’t verify the identity of")
+        /*&& message.endsWith("If you want to be absolutely sure it is safe to continue, contact the "
+                            "system administrator.")*/
+    ) {
         QString arg1, arg2;
         QRegularExpression reg("“.*?”");
         auto matcher = reg.match(message);
