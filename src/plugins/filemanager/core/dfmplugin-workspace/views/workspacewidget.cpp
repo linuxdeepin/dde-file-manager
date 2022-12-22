@@ -324,6 +324,15 @@ void WorkspaceWidget::showEvent(QShowEvent *event)
     setFocus();
 }
 
+void WorkspaceWidget::focusInEvent(QFocusEvent *event)
+{
+    FileView *view = dynamic_cast<FileView *>(currentView());
+    if (view && !view->hasFocus())
+        view->setFocus();
+
+    AbstractFrame::focusInEvent(event);
+}
+
 // NOTE(zhangs): please ref to: DFileManagerWindow::initRightView (old filemanager)
 void WorkspaceWidget::initializeUi()
 {

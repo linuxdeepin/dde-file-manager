@@ -94,6 +94,7 @@ public slots:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void showEvent(QShowEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
 
 private:
     void initializeUi();
