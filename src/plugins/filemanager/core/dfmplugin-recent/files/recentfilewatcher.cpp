@@ -119,7 +119,7 @@ void RecentFileWatcher::removeWatcher(const QUrl &url)
 
 void RecentFileWatcher::onFileDeleted(const QUrl &url)
 {
-    QUrl newUrl = url;
+    QUrl newUrl = QUrl::fromLocalFile(url.path());
     newUrl.setScheme(RecentManager::scheme());
     removeWatcher(newUrl);
     RecentManager::instance()->removeRecentFile(newUrl);
