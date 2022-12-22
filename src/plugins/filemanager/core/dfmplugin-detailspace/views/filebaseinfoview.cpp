@@ -262,7 +262,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
 
         } break;
         case MimeDatabase::FileType::kAudios: {
-            fileType->setRightValue(tr("Audios"), Qt::ElideNone, Qt::AlignLeft, true);
+            fileType->setRightValue(tr("Audio"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaDuration;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::audioExtenInfo);

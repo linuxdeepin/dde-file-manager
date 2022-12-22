@@ -4,8 +4,15 @@ Comment=Open file with dialog
 Exec=/usr/bin/dde-file-manager -o %u
 GenericName=Open Dialog
 Icon=dde-file-manager
+Name=DDE Open Dialog
 NoDisplay=true
 StartupNotify=true
-Name=DDE Open Dialog
 Terminal=false
 Type=Application
+
+# Translations:
+# Do not manually modify!
+Comment[hu]=Fájl megnyitása párbeszédpanelen
+GenericName[hu]=Párbeszédpanel megnyitása
+Name[hu]=DDE párbeszédpanel megnyitása
+

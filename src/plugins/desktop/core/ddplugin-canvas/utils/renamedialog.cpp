@@ -109,7 +109,7 @@ void RenameDialogPrivate::initParameters()
     label = std::get<0>(addForLocating);
     label->setText(tr("Location:"));
     comboBox = std::get<1>(addForLocating);
-    comboBox->addItems(QStringList() << tr("Befor file name") << tr("After file name"));
+    comboBox->addItems(QStringList() << tr("Before file name") << tr("After file name"));
     comboBox->setFixedSize(CONTENTSIZE);
 
     // mode:custom

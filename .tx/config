@@ -5,8 +5,34 @@ mode = developer
 
 [deepin-file-manager.dde-file-manager]
 file_filter = translations/dde-file-manager_<lang>.ts
-preTranslate_file = src/apps/dde-file-manager/dde-file-manager.desktop
 source_file = translations/dde-file-manager.ts
 source_lang = en
 type = QT
 
+[deepin-file-manager.dde-computer-desktop]
+preTranslate_file = src/apps/dde-desktop/data/applications/dde-computer.desktop
+file_filter = translations/dde-computer-desktop/desktop_<lang>.ts
+source_file = translations/dde-computer-desktop/desktop.ts
+source_lang = en
+type = QT
+
+[deepin-file-manager.dde-home-desktop]
+preTranslate_file = src/apps/dde-desktop/data/applications/dde-home.desktop
+file_filter = translations/dde-home-desktop/desktop_<lang>.ts
+source_file = translations/dde-home-desktop/desktop.ts
+source_lang = en
+type = QT
+
+[deepin-file-manager.dde-trash-desktop]
+preTranslate_file = src/apps/dde-desktop/data/applications/dde-trash.desktop
+file_filter = translations/dde-trash-desktop/desktop_<lang>.ts
+source_file = translations/dde-trash-desktop/desktop.ts
+source_lang = en
+type = QT
+
+[deepin-file-manager.dde-file-manager-desktop]
+preTranslate_file = src/apps/dde-file-manager/dde-file-manager.desktop
+file_filter = translations/dde-file-manager-desktop/desktop_<lang>.ts
+source_file = translations/dde-file-manager-desktop/desktop.ts
+source_lang = en
+type = QT
