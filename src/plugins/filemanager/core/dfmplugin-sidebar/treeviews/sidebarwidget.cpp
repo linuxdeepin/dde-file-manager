@@ -177,8 +177,6 @@ void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
     if (item && item->parent()) {
         sidebarView->setRowHidden(item->row(), item->parent()->index(), !visible);
-        if (!visible && UniversalUtils::urlEquals(url, currentUrl()))   // If the selected item be hiden.
-            SideBarEventCaller::sendItemActived(SideBarHelper::windowId(this), QUrl("computer:///"));
     }
 
     sidebarView->updateSeparatorVisibleState();
