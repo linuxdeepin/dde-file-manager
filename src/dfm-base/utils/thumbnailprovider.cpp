@@ -157,7 +157,7 @@ bool ThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
         return false;
 
     if ((mime.startsWith("audio") || DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportAudioMimeTypes().contains(mime))
-        && !Application::instance()->genericAttribute(Application::kPreviewVideo).toBool())
+        && !Application::instance()->genericAttribute(Application::kPreviewAudio).toBool())
         return false;
 
     if ((mime.startsWith("video")
@@ -213,7 +213,7 @@ int ThumbnailProvider::hasThumbnailFast(const QString &mime) const
 
     if ((mime.startsWith("audio")
          || DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportAudioMimeTypes().contains(mime))
-        && !Application::instance()->genericAttribute(Application::kPreviewVideo).toBool())
+        && !Application::instance()->genericAttribute(Application::kPreviewAudio).toBool())
         return 0;
 
     if (mime == DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain && !Application::instance()->genericAttribute(Application::kPreviewTextFile).toBool())

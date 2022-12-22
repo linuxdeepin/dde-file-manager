@@ -63,6 +63,7 @@ public:
         kPreviewDocumentFile,   // document generation thumbnails (pdf)
         kPreviewImage,   // image generation thumbnails
         kPreviewVideo,   // video generation thumbnails
+        kPreviewAudio,   // audio generation thumbnails
         kAutoMount,   // automatic mounting of hard disk devices
         kAutoMountAndOpen,   // automatically mount and open hard disk devices
         kMTPShowBottomInfo,   // mtp show bottom statistics when mounted

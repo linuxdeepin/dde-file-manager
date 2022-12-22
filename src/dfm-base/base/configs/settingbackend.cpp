@@ -51,6 +51,7 @@ BidirectionHash<QString, Application::GenericAttribute> SettingBackendPrivate::k
     { "advance.preview.document_file_preview", Application::kPreviewDocumentFile },
     { "advance.preview.image_file_preview", Application::kPreviewImage },
     { "advance.preview.video_file_preview", Application::kPreviewVideo },
+    { "advance.preview.audio_file_preview", Application::kPreviewAudio },
     { "advance.mount.auto_mount", Application::kAutoMount },
     { "advance.mount.auto_mount_and_open", Application::kAutoMountAndOpen },
     { "advance.mount.mtp_show_bottom_info", Application::kMTPShowBottomInfo },

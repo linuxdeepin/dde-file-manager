@@ -220,7 +220,13 @@
                             "text": "Video preview",
                             "type": "checkbox",
                             "default": true
-                        }
+                        },
+                        {
+                            "key": "audio_file_preview",
+                            "text": "Music preview",
+                            "type": "checkbox",
+                            "default": true
+                         }
                     ]
                 },
                 {
