@@ -30,9 +30,9 @@
 #include <QDBusServiceWatcher>
 
 using namespace dfmbase;
-static constexpr char kDesktopService[] { "com.deepin.filemanager.service" };
-static constexpr char kDevMngPath[] { "/com/deepin/filemanager/service/DeviceManager" };
-static constexpr char kDevMngIFace[] { "com.deepin.filemanager.service.DeviceManager" };
+static constexpr char kDesktopService[] { "org.deepin.filemanager.service" };
+static constexpr char kDevMngPath[] { "/org/deepin/filemanager/service/DeviceManager" };
+static constexpr char kDevMngIFace[] { "org.deepin.filemanager.service.DeviceManager" };
 
 const DeviceManagerInterface *DeviceProxyManager::getDBusIFace() const
 {

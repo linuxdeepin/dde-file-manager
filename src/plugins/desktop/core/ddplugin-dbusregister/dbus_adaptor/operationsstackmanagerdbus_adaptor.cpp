@@ -35,19 +35,19 @@ OperationsStackManagerAdaptor::~OperationsStackManagerAdaptor()
 
 void OperationsStackManagerAdaptor::CleanOperations()
 {
-    // handle method call com.deepin.filemanager.service.OperationsStackManager.CleanOperations
+    // handle method call org.deepin.filemanager.service.OperationsStackManager.CleanOperations
     parent()->CleanOperations();
 }
 
 QVariantMap OperationsStackManagerAdaptor::RevocationOperations()
 {
-    // handle method call com.deepin.filemanager.service.OperationsStackManager.RevocationOperations
+    // handle method call org.deepin.filemanager.service.OperationsStackManager.RevocationOperations
     return parent()->RevocationOperations();
 }
 
 void OperationsStackManagerAdaptor::SaveOperations(const QVariantMap &values)
 {
-    // handle method call com.deepin.filemanager.service.OperationsStackManager.SaveOperations
+    // handle method call org.deepin.filemanager.service.OperationsStackManager.SaveOperations
     parent()->SaveOperations(values);
 }
 

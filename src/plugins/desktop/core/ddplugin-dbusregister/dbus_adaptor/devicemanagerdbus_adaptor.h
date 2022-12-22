@@ -25,14 +25,14 @@ class QVariant;
 QT_END_NAMESPACE
 
 /*
- * Adaptor class for interface com.deepin.filemanager.service.DeviceManager
+ * Adaptor class for interface org.deepin.filemanager.service.DeviceManager
  */
 class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.DeviceManager")
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.service.DeviceManager")
     Q_CLASSINFO("D-Bus Introspection", ""
-"  <interface name=\"com.deepin.filemanager.service.DeviceManager\">\n"
+"  <interface name=\"org.deepin.filemanager.service.DeviceManager\">\n"
 "    <signal name=\"SizeUsedChanged\">\n"
 "      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "      <arg direction=\"out\" type=\"x\" name=\"total\"/>\n"

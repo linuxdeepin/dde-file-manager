@@ -21,14 +21,14 @@
 #include <QtDBus/QtDBus>
 
 /*
- * Proxy class for interface com.deepin.filemanager.service.OperationsStackManager
+ * Proxy class for interface org.deepin.filemanager.service.OperationsStackManager
  */
 class OperationsStackManagerInterface: public QDBusAbstractInterface
 {
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "com.deepin.filemanager.service.OperationsStackManager"; }
+    { return "org.deepin.filemanager.service.OperationsStackManager"; }
 
 public:
     OperationsStackManagerInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
@@ -58,7 +58,7 @@ public Q_SLOTS: // METHODS
 Q_SIGNALS: // SIGNALS
 };
 
-namespace com {
+namespace org {
   namespace deepin {
     namespace filemanager {
       namespace service {

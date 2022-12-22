@@ -21,7 +21,7 @@
 #include <QtDBus/QtDBus>
 
 /*
- * Proxy class for interface com.deepin.filemanager.service.VaultManager
+ * Proxy class for interface org.deepin.filemanager.service.VaultManager
  */
 class VaultManagerInterface : public QDBusAbstractInterface
 {
@@ -29,7 +29,7 @@ class VaultManagerInterface : public QDBusAbstractInterface
 public:
     static inline const char *staticInterfaceName()
     {
-        return "com.deepin.filemanager.service.VaultManager";
+        return "org.deepin.filemanager.service.VaultManager";
     }
 
 public:

@@ -27,14 +27,14 @@ class QVariant;
 QT_END_NAMESPACE
 
 /*
- * Adaptor class for interface com.deepin.filemanager.service.VaultManager
+ * Adaptor class for interface org.deepin.filemanager.service.VaultManager
  */
 class VaultManagerAdaptor : public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.VaultManager")
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.service.VaultManager")
     Q_CLASSINFO("D-Bus Introspection", ""
-                                       "  <interface name=\"com.deepin.filemanager.service.VaultManager\">\n"
+                                       "  <interface name=\"org.deepin.filemanager.service.VaultManager\">\n"
                                        "    <signal name=\"lockEventTriggered\">\n"
                                        "      <arg direction=\"out\" type=\"s\" name=\"user\"/>\n"
                                        "    </signal>\n"

@@ -35,49 +35,49 @@ DeviceManagerAdaptor::~DeviceManagerAdaptor()
 
 void DeviceManagerAdaptor::DetachAllMountedDevices()
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.DetachAllMountedDevices
+    // handle method call org.deepin.filemanager.service.DeviceManager.DetachAllMountedDevices
     parent()->DetachAllMountedDevices();
 }
 
 void DeviceManagerAdaptor::DetachBlockDevice(const QString &id)
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.DetachBlockDevice
+    // handle method call org.deepin.filemanager.service.DeviceManager.DetachBlockDevice
     parent()->DetachBlockDevice(id);
 }
 
 void DeviceManagerAdaptor::DetachProtocolDevice(const QString &id)
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.DetachProtocolDevice
+    // handle method call org.deepin.filemanager.service.DeviceManager.DetachProtocolDevice
     parent()->DetachProtocolDevice(id);
 }
 
 QStringList DeviceManagerAdaptor::GetBlockDevicesIdList(int opts)
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.GetBlockDevicesIdList
+    // handle method call org.deepin.filemanager.service.DeviceManager.GetBlockDevicesIdList
     return parent()->GetBlockDevicesIdList(opts);
 }
 
 QStringList DeviceManagerAdaptor::GetProtocolDevicesIdList()
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.GetProtocolDevicesIdList
+    // handle method call org.deepin.filemanager.service.DeviceManager.GetProtocolDevicesIdList
     return parent()->GetProtocolDevicesIdList();
 }
 
 bool DeviceManagerAdaptor::IsMonotorWorking()
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.IsMonotorWorking
+    // handle method call org.deepin.filemanager.service.DeviceManager.IsMonotorWorking
     return parent()->IsMonotorWorking();
 }
 
 QVariantMap DeviceManagerAdaptor::QueryBlockDeviceInfo(const QString &id, bool reload)
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.QueryBlockDeviceInfo
+    // handle method call org.deepin.filemanager.service.DeviceManager.QueryBlockDeviceInfo
     return parent()->QueryBlockDeviceInfo(id, reload);
 }
 
 QVariantMap DeviceManagerAdaptor::QueryProtocolDeviceInfo(const QString &id, bool reload)
 {
-    // handle method call com.deepin.filemanager.service.DeviceManager.QueryProtocolDeviceInfo
+    // handle method call org.deepin.filemanager.service.DeviceManager.QueryProtocolDeviceInfo
     return parent()->QueryProtocolDeviceInfo(id, reload);
 }
 

@@ -11,5 +11,5 @@ qdbuscpp2xml -M -S $INTERFACES_PATH/operationsstackmanagerdbus.h -o ./operations
 echo "-->make XML of FileManager1DBus"
 qdbuscpp2xml -M -S $INTERFACES_PATH/filemanager1dbus.h -o ./filemanager1dbus.xml
 
-echo "-->make XML of VaultManagerDBus"
-qdbuscpp2xml -M -S $INTERFACES_PATH/vaultmanagerdbus.h -o ./vaultmanagerdbus.xml
+#echo "-->make XML of VaultManagerDBus"
+#qdbuscpp2xml -M -S $INTERFACES_PATH/vaultmanagerdbus.h -o ./vaultmanagerdbus.xml

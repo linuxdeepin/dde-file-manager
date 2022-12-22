@@ -25,14 +25,14 @@ class QVariant;
 QT_END_NAMESPACE
 
 /*
- * Adaptor class for interface com.deepin.filemanager.service.OperationsStackManager
+ * Adaptor class for interface org.deepin.filemanager.service.OperationsStackManager
  */
 class OperationsStackManagerAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.OperationsStackManager")
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.service.OperationsStackManager")
     Q_CLASSINFO("D-Bus Introspection", ""
-"  <interface name=\"com.deepin.filemanager.service.OperationsStackManager\">\n"
+"  <interface name=\"org.deepin.filemanager.service.OperationsStackManager\">\n"
 "    <method name=\"SaveOperations\">\n"
 "      <arg direction=\"in\" type=\"a{sv}\" name=\"values\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In0\"/>\n"

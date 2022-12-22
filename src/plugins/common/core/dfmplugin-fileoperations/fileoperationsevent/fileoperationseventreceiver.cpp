@@ -126,11 +126,11 @@ void FileOperationsEventReceiver::initDBus()
     qInfo() << "Start initilize dbus: `OperationsStackManagerInterface`";
     // Note: the plugin depends on `dde-file-manager-server`!
     // the plugin will not work if `dde-file-manager-server` not run.
-    static const QString OperationsStackService = "com.deepin.filemanager.service";
-    static const QString OperationsStackPath = "/com/deepin/filemanager/service/OperationsStackManager";
+    static const QString kOperationsStackService = "org.deepin.filemanager.service";
+    static const QString kOperationsStackPath = "/org/deepin/filemanager/service/OperationsStackManager";
 
-    operationsStackDbus.reset(new OperationsStackManagerInterface(OperationsStackService,
-                                                                  OperationsStackPath,
+    operationsStackDbus.reset(new OperationsStackManagerInterface(kOperationsStackService,
+                                                                  kOperationsStackPath,
                                                                   QDBusConnection::sessionBus(),
                                                                   this));
     qInfo() << "Finish initilize dbus: `OperationsStackManagerInterface`";

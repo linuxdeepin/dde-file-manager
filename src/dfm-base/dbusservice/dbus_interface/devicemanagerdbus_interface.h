@@ -21,14 +21,14 @@
 #include <QtDBus/QtDBus>
 
 /*
- * Proxy class for interface com.deepin.filemanager.service.DeviceManager
+ * Proxy class for interface org.deepin.filemanager.service.DeviceManager
  */
 class DeviceManagerInterface: public QDBusAbstractInterface
 {
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "com.deepin.filemanager.service.DeviceManager"; }
+    { return "org.deepin.filemanager.service.DeviceManager"; }
 
 public:
     DeviceManagerInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
@@ -109,7 +109,7 @@ Q_SIGNALS: // SIGNALS
     void SizeUsedChanged(const QString &id, qlonglong total, qlonglong free);
 };
 
-namespace com {
+namespace org {
   namespace deepin {
     namespace filemanager {
       namespace service {

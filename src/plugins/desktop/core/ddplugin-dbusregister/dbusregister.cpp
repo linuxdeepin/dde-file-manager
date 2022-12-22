@@ -86,8 +86,8 @@ void DBusRegister::initServiceDBusInterfaces(QDBusConnection *connection)
     static std::once_flag flag;
     std::call_once(flag, [&connection, this]() {
         // add our D-Bus interface and connect to D-Bus
-        if (!connection->registerService("com.deepin.filemanager.service")) {
-            qWarning("Cannot register the \"com.deepin.filemanager.service\" service.\n");
+        if (!connection->registerService("org.deepin.filemanager.service")) {
+            qWarning("Cannot register the \"org.deepin.filemanager.service\" service.\n");
             return;
         }
         qInfo() << "Init DBus OperationsStackManager start";
@@ -124,9 +124,9 @@ void DBusRegister::initDeviceDBus(QDBusConnection *connection)
     // register object
     deviceManager.reset(new DeviceManagerDBus);
     Q_UNUSED(new DeviceManagerAdaptor(deviceManager.data()));
-    if (!connection->registerObject("/com/deepin/filemanager/service/DeviceManager",
+    if (!connection->registerObject("/org/deepin/filemanager/service/DeviceManager",
                                     deviceManager.data())) {
-        qWarning("Cannot register the \"/com/deepin/filemanager/service/DeviceManager\" object.\n");
+        qWarning("Cannot register the \"/org/deepin/filemanager/service/DeviceManager\" object.\n");
         deviceManager.reset(nullptr);
     }
 }
@@ -136,9 +136,9 @@ void DBusRegister::initOperationsDBus(QDBusConnection *connection)
     // register object
     operationsStackManager.reset(new OperationsStackManagerDbus);
     Q_UNUSED(new OperationsStackManagerAdaptor(operationsStackManager.data()));
-    if (!connection->registerObject("/com/deepin/filemanager/service/OperationsStackManager",
+    if (!connection->registerObject("/org/deepin/filemanager/service/OperationsStackManager",
                                     operationsStackManager.data())) {
-        qWarning("Cannot register the \"/com/deepin/filemanager/service/OperationsStackManager\" object.\n");
+        qWarning("Cannot register the \"/org/deepin/filemanager/service/OperationsStackManager\" object.\n");
         operationsStackManager.reset(nullptr);
     }
 }
@@ -148,9 +148,9 @@ void DBusRegister::initVaultDBus(QDBusConnection *connection)
     // register object
     vaultManager.reset(new VaultManagerDBus);
     Q_UNUSED(new VaultManagerAdaptor(vaultManager.data()));
-    if (!connection->registerObject("/com/deepin/filemanager/service/VaultManager",
+    if (!connection->registerObject("/org/deepin/filemanager/service/VaultManager",
                                     vaultManager.data())) {
-        qWarning("Cannot register the \"/com/deepin/filemanager/service/VaultManager\" object.\n");
+        qWarning("Cannot register the \"/org/deepin/filemanager/service/VaultManager\" object.\n");
         vaultManager.reset(nullptr);
     }
 }

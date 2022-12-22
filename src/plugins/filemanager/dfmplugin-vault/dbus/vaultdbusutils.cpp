@@ -32,9 +32,9 @@ using namespace dfmplugin_vault;
 QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &vaule)
 {
     QVariant value;
-    QDBusInterface sessionManagerIface("com.deepin.filemanager.service",
-                                       "/com/deepin/filemanager/service/VaultManager",
-                                       "com.deepin.filemanager.service.VaultManager",
+    QDBusInterface sessionManagerIface("org.deepin.filemanager.service",
+                                       "/org/deepin/filemanager/service/VaultManager",
+                                       "org.deepin.filemanager.service.VaultManager",
                                        QDBusConnection::sessionBus());
 
     if (sessionManagerIface.isValid()) {
@@ -60,9 +60,9 @@ QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &
 
 int VaultDBusUtils::getVaultPolicy()
 {
-    QDBusInterface deepinSystemInfo("com.deepin.filemanager.daemon",
-                                    "/com/deepin/filemanager/daemon/AccessControlManager",
-                                    "com.deepin.filemanager.daemon.AccessControlManager",
+    QDBusInterface deepinSystemInfo("org.deepin.filemanager.daemon",
+                                    "/org/deepin/filemanager/daemon/AccessControlManager",
+                                    "org.deepin.filemanager.daemon.AccessControlManager",
                                     QDBusConnection::systemBus());
 
     int vaulthidestate = -1;
@@ -90,9 +90,9 @@ int VaultDBusUtils::getVaultPolicy()
 
 bool VaultDBusUtils::setVaultPolicyState(int policyState)
 {
-    QDBusInterface deepinSystemInfo("com.deepin.filemanager.daemon",
-                                    "/com/deepin/filemanager/daemon/AccessControlManager",
-                                    "com.deepin.filemanager.daemon.AccessControlManager",
+    QDBusInterface deepinSystemInfo("org.deepin.filemanager.daemon",
+                                    "/org/deepin/filemanager/daemon/AccessControlManager",
+                                    "org.deepin.filemanager.daemon.AccessControlManager",
                                     QDBusConnection::systemBus());
 
     auto response = deepinSystemInfo.call("FileManagerReply", QVariant::fromValue(policyState));
@@ -120,9 +120,9 @@ bool VaultDBusUtils::setVaultPolicyState(int policyState)
 void VaultDBusUtils::lockEventTriggered(QObject *obj, const char *cslot)
 {
     QDBusConnection::sessionBus().connect(
-            "com.deepin.filemanager.service",
-            "/com/deepin/filemanager/service/VaultManager",
-            "com.deepin.filemanager.service.VaultManager",
+            "org.deepin.filemanager.service",
+            "/org/deepin/filemanager/service/VaultManager",
+            "org.deepin.filemanager.service.VaultManager",
             "lockEventTriggered",
             obj,
             cslot);
@@ -130,9 +130,9 @@ void VaultDBusUtils::lockEventTriggered(QObject *obj, const char *cslot)
 
 int VaultDBusUtils::getLeftoverErrorInputTimes()
 {
-    QDBusInterface VaultManagerdbus("com.deepin.filemanager.service",
-                                    "/com/deepin/filemanager/service/VaultManager",
-                                    "com.deepin.filemanager.service.VaultManager",
+    QDBusInterface VaultManagerdbus("org.deepin.filemanager.service",
+                                    "/org/deepin/filemanager/service/VaultManager",
+                                    "org.deepin.filemanager.service.VaultManager",
                                     QDBusConnection::sessionBus());
 
     int leftChance = -1;
@@ -151,9 +151,9 @@ int VaultDBusUtils::getLeftoverErrorInputTimes()
 
 void VaultDBusUtils::leftoverErrorInputTimesMinusOne()
 {
-    QDBusInterface VaultManagerdbus("com.deepin.filemanager.service",
-                                    "/com/deepin/filemanager/service/VaultManager",
-                                    "com.deepin.filemanager.service.VaultManager",
+    QDBusInterface VaultManagerdbus("org.deepin.filemanager.service",
+                                    "/org/deepin/filemanager/service/VaultManager",
+                                    "org.deepin.filemanager.service.VaultManager",
                                     QDBusConnection::sessionBus());
 
     if (VaultManagerdbus.isValid()) {
@@ -166,9 +166,9 @@ void VaultDBusUtils::leftoverErrorInputTimesMinusOne()
 
 void VaultDBusUtils::startTimerOfRestorePasswordInput()
 {
-    QDBusInterface VaultManagerdbus("com.deepin.filemanager.service",
-                                    "/com/deepin/filemanager/service/VaultManager",
-                                    "com.deepin.filemanager.service.VaultManager",
+    QDBusInterface VaultManagerdbus("org.deepin.filemanager.service",
+                                    "/org/deepin/filemanager/service/VaultManager",
+                                    "org.deepin.filemanager.service.VaultManager",
                                     QDBusConnection::sessionBus());
 
     if (VaultManagerdbus.isValid()) {
@@ -181,9 +181,9 @@ void VaultDBusUtils::startTimerOfRestorePasswordInput()
 
 int VaultDBusUtils::getNeedWaitMinutes()
 {
-    QDBusInterface VaultManagerdbus("com.deepin.filemanager.service",
-                                    "/com/deepin/filemanager/service/VaultManager",
-                                    "com.deepin.filemanager.service.VaultManager",
+    QDBusInterface VaultManagerdbus("org.deepin.filemanager.service",
+                                    "/org/deepin/filemanager/service/VaultManager",
+                                    "org.deepin.filemanager.service.VaultManager",
                                     QDBusConnection::sessionBus());
 
     int result = 100;
@@ -201,9 +201,9 @@ int VaultDBusUtils::getNeedWaitMinutes()
 
 void VaultDBusUtils::restoreNeedWaitMinutes()
 {
-    QDBusInterface VaultManagerdbus("com.deepin.filemanager.service",
-                                    "/com/deepin/filemanager/service/VaultManager",
-                                    "com.deepin.filemanager.service.VaultManager",
+    QDBusInterface VaultManagerdbus("org.deepin.filemanager.service",
+                                    "/org/deepin/filemanager/service/VaultManager",
+                                    "org.deepin.filemanager.service.VaultManager",
                                     QDBusConnection::sessionBus());
 
     if (VaultManagerdbus.isValid()) {
@@ -216,9 +216,9 @@ void VaultDBusUtils::restoreNeedWaitMinutes()
 
 void VaultDBusUtils::restoreLeftoverErrorInputTimes()
 {
-    QDBusInterface VaultManagerdbus("com.deepin.filemanager.service",
-                                    "/com/deepin/filemanager/service/VaultManager",
-                                    "com.deepin.filemanager.service.VaultManager",
+    QDBusInterface VaultManagerdbus("org.deepin.filemanager.service",
+                                    "/org/deepin/filemanager/service/VaultManager",
+                                    "org.deepin.filemanager.service.VaultManager",
                                     QDBusConnection::sessionBus());
 
     if (VaultManagerdbus.isValid()) {
