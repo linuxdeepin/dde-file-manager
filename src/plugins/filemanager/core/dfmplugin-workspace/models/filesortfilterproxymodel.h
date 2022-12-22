@@ -101,6 +101,7 @@ protected:
 private:
     bool passFileFilters(const AbstractFileInfoPointer &info) const;
     bool passNameFilters(const AbstractFileInfoPointer &info) const;
+    bool isDefaultHiddenFile(const AbstractFileInfoPointer &info) const;
 
     FileViewModel *viewModel() const;
 

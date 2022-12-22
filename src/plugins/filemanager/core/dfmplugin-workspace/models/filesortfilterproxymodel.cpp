@@ -29,6 +29,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 
 #include <QTimer>
 
@@ -392,8 +393,12 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
                 return leftInfo->size() < rightInfo->size();
             }
         } else {
-            qint64 sizel = leftInfo->isAttributes(OptInfoType::kIsDir) && rightInfo->isAttributes(OptInfoType::kIsDir) ? qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile() : leftInfo->isAttributes(OptInfoType::kIsDir) ? 0 : leftInfo->size();
-            qint64 sizer = leftInfo->isAttributes(OptInfoType::kIsDir) && rightInfo->isAttributes(OptInfoType::kIsDir) ? qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile() : rightInfo->isAttributes(OptInfoType::kIsDir) ? 0 : rightInfo->size();
+            qint64 sizel = leftInfo->isAttributes(OptInfoType::kIsDir) && rightInfo->isAttributes(OptInfoType::kIsDir)
+                    ? qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile()
+                    : (leftInfo->isAttributes(OptInfoType::kIsDir) ? 0 : leftInfo->size());
+            qint64 sizer = leftInfo->isAttributes(OptInfoType::kIsDir) && rightInfo->isAttributes(OptInfoType::kIsDir)
+                    ? qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile()
+                    : (rightInfo->isAttributes(OptInfoType::kIsDir) ? 0 : rightInfo->size());
             return sizel < sizer;
         }
     default:
@@ -438,6 +443,8 @@ bool FileSortFilterProxyModel::passFileFilters(const AbstractFileInfoPointer &fi
         return false;
 
     if (!(filters & QDir::Hidden) && fileInfo->isAttributes(OptInfoType::kIsHidden))
+        return false;
+    if (!(filters & QDir::Hidden) && isDefaultHiddenFile(fileInfo))
         return false;
 
     if ((filters & QDir::Readable) && !fileInfo->isAttributes(OptInfoType::kIsReadable))
@@ -484,6 +491,25 @@ bool FileSortFilterProxyModel::passNameFilters(const AbstractFileInfoPointer &in
 
     nameFiltersMatchResultMap[fileUrl] = true;
     return true;
+}
+
+bool FileSortFilterProxyModel::isDefaultHiddenFile(const AbstractFileInfoPointer &info) const
+{
+    static QSet<QUrl> defaultHiddenUrls;
+    static std::once_flag flg;
+    std::call_once(flg, [&] {
+        using namespace GlobalServerDefines;
+        auto systemBlks = DevProxyMng->getAllBlockIds(DeviceQueryOption::kSystem | DeviceQueryOption::kMounted);
+        for (const auto &blk : systemBlks) {
+            auto blkInfo = DevProxyMng->queryBlockInfo(blk);
+            QStringList mountPoints = blkInfo.value(DeviceProperty::kMountPoints).toStringList();
+            for (const auto &mpt : mountPoints) {
+                defaultHiddenUrls.insert(QUrl::fromLocalFile(mpt + (mpt == "/" ? "root" : "/root")));
+                defaultHiddenUrls.insert(QUrl::fromLocalFile(mpt + (mpt == "/" ? "lost+found" : "/lost+found")));
+            }
+        }
+    });
+    return defaultHiddenUrls.contains(info->urlOf(UrlInfoType::kUrl));
 }
 
 FileViewModel *FileSortFilterProxyModel::viewModel() const
