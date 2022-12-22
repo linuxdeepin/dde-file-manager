@@ -47,7 +47,7 @@ void KeyValueLabel::initUI()
     rightValueLabel->setMinimumWidth(130);
     glayout = new QGridLayout;
     glayout->setMargin(0);
-    glayout->addWidget(leftValueLabel, 0, 0, 1, 2);
+    glayout->addWidget(leftValueLabel, 0, 0, 1, 2, Qt::AlignLeft);
     glayout->addWidget(rightValueLabel, 0, 1, 1, 5);
     glayout->setColumnStretch(0, 2);
     glayout->setColumnStretch(1, 3);
