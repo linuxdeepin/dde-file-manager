@@ -41,9 +41,10 @@ PropertyDialogManager &PropertyDialogManager::instance()
 bool PropertyDialogManager::registerExtensionView(CustomViewExtensionView viewCreator, const QString &name, int index)
 {
     qInfo() << "Model " << name << " register to property dialog, index at " << index;
-    if (creatorOptions.keys().contains(index) && index != -1) {
-        qInfo() << "The current index has registered the associated construction class";
-        return false;
+    while (creatorOptions.keys().contains(index) && index != -1) {   // FIXME(whoever): using a number passed by user as the key is not reliable, refact the mechanism.
+        qInfo() << "The current index has registered the associated construction class" << index << name;
+        index++;   // NOTE(xust): this is a temp solution to solve the issue that the share control widget not shown in property dialog.
+        //        return false;
     }
 
     // 1. Different models have different `viewCreator`, `name` and `index`;
