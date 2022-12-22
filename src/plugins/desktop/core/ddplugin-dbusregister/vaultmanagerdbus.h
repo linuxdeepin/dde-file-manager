@@ -1,78 +1,12 @@
 #ifndef VAULTMANAGERDBUS_H
 #define VAULTMANAGERDBUS_H
 
+#include "private/vaultclock.h"
+
 #include <QObject>
-#include <QTimer>
 #include <QMap>
 #include <QDBusMessage>
 #include <QDBusContext>
-
-/**
- * @brief The VaultClock class
- */
-class VaultClock : public QObject
-{
-    Q_OBJECT
-public:
-    explicit VaultClock(QObject *parent = nullptr);
-    ~VaultClock();
-    static QString vaultBasePath();
-
-public slots:
-    /**
-     * @brief setRefreshTime 设置保险箱刷新时间
-     * @param time
-     */
-    void SetRefreshTime(quint64 time);
-
-    /**
-     * @brief getLastestTime 获取保险柜计时
-     * @return
-     */
-    quint64 GetLastestTime() const;
-
-    /**
-     * @brief getSelfTime 获取自定义时间
-     * @return
-     */
-    quint64 GetSelfTime() const;
-
-    /**
-     * @brief isLockEventTriggered 是否存在已触发的锁定事件
-     * @return
-     */
-    bool IsLockEventTriggered() const;
-
-    /**
-     * @brief triggerLockEvent 触发锁定事件
-     */
-    void TriggerLockEvent();
-
-    /**
-     * @brief clearLockEvent 清除锁定事件
-     */
-    void ClearLockEvent();
-
-    /**
-     * @brief addTickTime 增加时钟
-     * @param seconds
-     */
-    void AddTickTime(qint64 seconds);
-
-protected slots:
-    /**
-     * @brief tick 秒针
-     */
-    void Tick();
-
-private:
-    quint64 lastestTime { 0 };   // latest time
-
-    QTimer selfTimer;
-    quint64 selfTime { 0 };
-
-    bool isLockEventTriggerd { false };
-};
 
 class VaultManagerDBus : public QObject, public QDBusContext
 {

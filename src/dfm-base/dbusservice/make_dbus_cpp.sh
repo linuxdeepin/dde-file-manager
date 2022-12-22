@@ -13,7 +13,7 @@ qdbusxml2cpp -c OperationsStackManagerInterface -p dbus_interface/operationsstac
 echo "-->make adaptor and interface of FileManager1DBus"
 qdbusxml2cpp -i $INTERFACES_PATH/filemanager1dbus.h -c FileManager1Adaptor -l FileManager1DBus -a $INTERFACES_PATH/dbus_adaptor/filemanager1dbus_adaptor filemanager1dbus.xml
 
-#echo "-->make adaptor and interface of VaultManagerDBus"
-#qdbusxml2cpp -i $INTERFACES_PATH/vaultmanagerdbus.h -c VaultManagerAdaptor -l VaultManagerDBus -a $INTERFACES_PATH/dbus_adaptor/vaultmanagerdbus_adaptor vaultmanagerdbus.xml
-#qdbusxml2cpp -c VaultManagerInterface -p dbus_interface/vaultmanagerdbus_interface vaultmanagerdbus.xml
+echo "-->make adaptor and interface of VaultManagerDBus"
+qdbusxml2cpp -i $INTERFACES_PATH/vaultmanagerdbus.h -c VaultManagerAdaptor -l VaultManagerDBus -a $INTERFACES_PATH/dbus_adaptor/vaultmanagerdbus_adaptor vaultmanagerdbus.xml
+qdbusxml2cpp -c VaultManagerInterface -p dbus_interface/vaultmanagerdbus_interface vaultmanagerdbus.xml
 

@@ -23,21 +23,19 @@
 /*
  * Proxy class for interface org.deepin.filemanager.service.VaultManager
  */
-class VaultManagerInterface : public QDBusAbstractInterface
+class VaultManagerInterface: public QDBusAbstractInterface
 {
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    {
-        return "org.deepin.filemanager.service.VaultManager";
-    }
+    { return "org.deepin.filemanager.service.VaultManager"; }
 
 public:
     VaultManagerInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~VaultManagerInterface();
 
-public Q_SLOTS:   // METHODS
+public Q_SLOTS: // METHODS
     inline QDBusPendingReply<> ClearLockEvent()
     {
         QList<QVariant> argumentList;
@@ -131,20 +129,17 @@ public Q_SLOTS:   // METHODS
         return asyncCallWithArgumentList(QStringLiteral("TriggerLockEvent"), argumentList);
     }
 
-Q_SIGNALS:   // SIGNALS
+Q_SIGNALS: // SIGNALS
     void lockEventTriggered(const QString &user);
 };
 
-namespace com {
-namespace deepin {
-namespace filemanager {
-namespace service {
-typedef ::VaultManagerInterface VaultManager;
-}
-}
-}
-}
-namespace local {
-typedef ::VaultManagerInterface VaultClock;
+namespace org {
+  namespace deepin {
+    namespace filemanager {
+      namespace service {
+        typedef ::VaultManagerInterface VaultManager;
+      }
+    }
+  }
 }
 #endif

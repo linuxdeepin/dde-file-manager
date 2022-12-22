@@ -35,84 +35,85 @@ VaultManagerAdaptor::~VaultManagerAdaptor()
 
 void VaultManagerAdaptor::ClearLockEvent()
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.ClearLockEvent
+    // handle method call org.deepin.filemanager.service.VaultManager.ClearLockEvent
     parent()->ClearLockEvent();
 }
 
 void VaultManagerAdaptor::ComputerSleep(bool bSleep)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.ComputerSleep
+    // handle method call org.deepin.filemanager.service.VaultManager.ComputerSleep
     parent()->ComputerSleep(bSleep);
 }
 
 qulonglong VaultManagerAdaptor::GetLastestTime()
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.GetLastestTime
+    // handle method call org.deepin.filemanager.service.VaultManager.GetLastestTime
     return parent()->GetLastestTime();
 }
 
 int VaultManagerAdaptor::GetLeftoverErrorInputTimes(int userID)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.GetLeftoverErrorInputTimes
+    // handle method call org.deepin.filemanager.service.VaultManager.GetLeftoverErrorInputTimes
     return parent()->GetLeftoverErrorInputTimes(userID);
 }
 
 int VaultManagerAdaptor::GetNeedWaitMinutes(int userID)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.GetNeedWaitMinutes
+    // handle method call org.deepin.filemanager.service.VaultManager.GetNeedWaitMinutes
     return parent()->GetNeedWaitMinutes(userID);
 }
 
 qulonglong VaultManagerAdaptor::GetSelfTime()
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.GetSelfTime
+    // handle method call org.deepin.filemanager.service.VaultManager.GetSelfTime
     return parent()->GetSelfTime();
 }
 
 bool VaultManagerAdaptor::IsLockEventTriggered()
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.IsLockEventTriggered
+    // handle method call org.deepin.filemanager.service.VaultManager.IsLockEventTriggered
     return parent()->IsLockEventTriggered();
 }
 
 void VaultManagerAdaptor::LeftoverErrorInputTimesMinusOne(int userID)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.LeftoverErrorInputTimesMinusOne
+    // handle method call org.deepin.filemanager.service.VaultManager.LeftoverErrorInputTimesMinusOne
     parent()->LeftoverErrorInputTimesMinusOne(userID);
 }
 
 void VaultManagerAdaptor::RestoreLeftoverErrorInputTimes(int userID)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.RestoreLeftoverErrorInputTimes
+    // handle method call org.deepin.filemanager.service.VaultManager.RestoreLeftoverErrorInputTimes
     parent()->RestoreLeftoverErrorInputTimes(userID);
 }
 
 void VaultManagerAdaptor::RestoreNeedWaitMinutes(int userID)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.RestoreNeedWaitMinutes
+    // handle method call org.deepin.filemanager.service.VaultManager.RestoreNeedWaitMinutes
     parent()->RestoreNeedWaitMinutes(userID);
 }
 
 void VaultManagerAdaptor::SetRefreshTime(qulonglong time)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.SetRefreshTime
+    // handle method call org.deepin.filemanager.service.VaultManager.SetRefreshTime
     parent()->SetRefreshTime(time);
 }
 
 void VaultManagerAdaptor::StartTimerOfRestorePasswordInput(int userID)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.StartTimerOfRestorePasswordInput
+    // handle method call org.deepin.filemanager.service.VaultManager.StartTimerOfRestorePasswordInput
     parent()->StartTimerOfRestorePasswordInput(userID);
 }
 
 void VaultManagerAdaptor::SysUserChanged(const QString &curUser)
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.SysUserChanged
+    // handle method call org.deepin.filemanager.service.VaultManager.SysUserChanged
     parent()->SysUserChanged(curUser);
 }
 
 void VaultManagerAdaptor::TriggerLockEvent()
 {
-    // handle method call com.deepin.filemanager.service.VaultManager.TriggerLockEvent
+    // handle method call org.deepin.filemanager.service.VaultManager.TriggerLockEvent
     parent()->TriggerLockEvent();
 }
+

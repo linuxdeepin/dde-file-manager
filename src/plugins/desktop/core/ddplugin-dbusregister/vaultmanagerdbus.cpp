@@ -6,7 +6,6 @@
 
 #include <QDateTime>
 #include <QTimer>
-#include <QDir>
 #include <QFileInfo>
 #include <QTimerEvent>
 #include <QDBusContext>
@@ -25,65 +24,6 @@ constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
 
 DFMBASE_USE_NAMESPACE
 
-VaultClock::VaultClock(QObject *parent)
-    : QObject(parent)
-{
-    connect(&selfTimer, &QTimer::timeout, this, &VaultClock::Tick);
-    selfTimer.setInterval(1000);
-    selfTimer.start();
-}
-
-VaultClock::~VaultClock()
-{
-    selfTimer.stop();
-}
-
-void VaultClock::SetRefreshTime(quint64 time)
-{
-    lastestTime = time;
-}
-
-quint64 VaultClock::GetLastestTime() const
-{
-    return lastestTime;
-}
-
-quint64 VaultClock::GetSelfTime() const
-{
-    return selfTime;
-}
-
-bool VaultClock::IsLockEventTriggered() const
-{
-    return isLockEventTriggerd;
-}
-
-void VaultClock::TriggerLockEvent()
-{
-    isLockEventTriggerd = true;
-}
-
-void VaultClock::ClearLockEvent()
-{
-    isLockEventTriggerd = false;
-}
-
-void VaultClock::AddTickTime(qint64 seconds)
-{
-    selfTime += static_cast<quint64>(seconds);
-}
-
-QString VaultClock::vaultBasePath()
-{
-    static QString path = QString(QDir::homePath() + QString("/.config/Vault"));   //!! 获取保险箱创建的目录地址
-    return path;
-}
-
-void VaultClock::Tick()
-{
-    selfTime++;
-}
-
 VaultManagerDBus::VaultManagerDBus(QObject *parent)
     : QObject(parent)
 {
@@ -91,7 +31,7 @@ VaultManagerDBus::VaultManagerDBus(QObject *parent)
     currentUser = GetCurrentUser();
     mapUserClock.insert(currentUser, curVaultClock);
 
-    UniversalUtils::userChange(this, SLOT(sysUserChanged(QString)));
+    UniversalUtils::userChange(this, SLOT(SysUserChanged(QString)));
 
     UniversalUtils::prepareForSleep(this, SLOT(computerSleep(bool)));
 
@@ -128,32 +68,32 @@ void VaultManagerDBus::SysUserChanged(const QString &curUser)
 
 void VaultManagerDBus::SetRefreshTime(quint64 time)
 {
-    curVaultClock->SetRefreshTime(time);
+    curVaultClock->setRefreshTime(time);
 }
 
 quint64 VaultManagerDBus::GetLastestTime() const
 {
-    return curVaultClock->GetLastestTime();
+    return curVaultClock->getLastestTime();
 }
 
 quint64 VaultManagerDBus::GetSelfTime() const
 {
-    return curVaultClock->GetSelfTime();
+    return curVaultClock->getSelfTime();
 }
 
 bool VaultManagerDBus::IsLockEventTriggered() const
 {
-    return curVaultClock->IsLockEventTriggered();
+    return curVaultClock->isLockEventTriggered();
 }
 
 void VaultManagerDBus::TriggerLockEvent()
 {
-    curVaultClock->TriggerLockEvent();
+    curVaultClock->triggerLockEvent();
 }
 
 void VaultManagerDBus::ClearLockEvent()
 {
-    curVaultClock->ClearLockEvent();
+    curVaultClock->clearLockEvent();
 }
 
 void VaultManagerDBus::ComputerSleep(bool bSleep)
@@ -166,7 +106,7 @@ void VaultManagerDBus::ComputerSleep(bool bSleep)
             for (auto key : mapUserClock.keys()) {
                 VaultClock *vaultClock = mapUserClock.value(key);
                 if (vaultClock) {
-                    vaultClock->AddTickTime(diffTime);
+                    vaultClock->addTickTime(diffTime);
                 }
             }
         }

@@ -23,3 +23,4 @@ VaultManagerInterface::VaultManagerInterface(const QString &service, const QStri
 VaultManagerInterface::~VaultManagerInterface()
 {
 }
+

@@ -17,10 +17,8 @@
 #include "../../plugins/desktop/core/ddplugin-dbusregister/vaultmanagerdbus.h"
 QT_BEGIN_NAMESPACE
 class QByteArray;
-template<class T>
-class QList;
-template<class Key, class Value>
-class QMap;
+template<class T> class QList;
+template<class Key, class Value> class QMap;
 class QString;
 class QStringList;
 class QVariant;
@@ -29,68 +27,66 @@ QT_END_NAMESPACE
 /*
  * Adaptor class for interface org.deepin.filemanager.service.VaultManager
  */
-class VaultManagerAdaptor : public QDBusAbstractAdaptor
+class VaultManagerAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.deepin.filemanager.service.VaultManager")
     Q_CLASSINFO("D-Bus Introspection", ""
-                                       "  <interface name=\"org.deepin.filemanager.service.VaultManager\">\n"
-                                       "    <signal name=\"lockEventTriggered\">\n"
-                                       "      <arg direction=\"out\" type=\"s\" name=\"user\"/>\n"
-                                       "    </signal>\n"
-                                       "    <method name=\"SysUserChanged\">\n"
-                                       "      <arg direction=\"in\" type=\"s\" name=\"curUser\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"SetRefreshTime\">\n"
-                                       "      <arg direction=\"in\" type=\"t\" name=\"time\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"GetLastestTime\">\n"
-                                       "      <arg direction=\"out\" type=\"t\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"GetSelfTime\">\n"
-                                       "      <arg direction=\"out\" type=\"t\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"IsLockEventTriggered\">\n"
-                                       "      <arg direction=\"out\" type=\"b\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"TriggerLockEvent\"/>\n"
-                                       "    <method name=\"ClearLockEvent\"/>\n"
-                                       "    <method name=\"ComputerSleep\">\n"
-                                       "      <arg direction=\"in\" type=\"b\" name=\"bSleep\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"GetLeftoverErrorInputTimes\">\n"
-                                       "      <arg direction=\"out\" type=\"i\"/>\n"
-                                       "      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"LeftoverErrorInputTimesMinusOne\">\n"
-                                       "      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"RestoreLeftoverErrorInputTimes\">\n"
-                                       "      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"StartTimerOfRestorePasswordInput\">\n"
-                                       "      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"GetNeedWaitMinutes\">\n"
-                                       "      <arg direction=\"out\" type=\"i\"/>\n"
-                                       "      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
-                                       "    </method>\n"
-                                       "    <method name=\"RestoreNeedWaitMinutes\">\n"
-                                       "      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
-                                       "    </method>\n"
-                                       "  </interface>\n"
-                                       "")
+"  <interface name=\"org.deepin.filemanager.service.VaultManager\">\n"
+"    <signal name=\"lockEventTriggered\">\n"
+"      <arg direction=\"out\" type=\"s\" name=\"user\"/>\n"
+"    </signal>\n"
+"    <method name=\"SysUserChanged\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"curUser\"/>\n"
+"    </method>\n"
+"    <method name=\"SetRefreshTime\">\n"
+"      <arg direction=\"in\" type=\"t\" name=\"time\"/>\n"
+"    </method>\n"
+"    <method name=\"GetLastestTime\">\n"
+"      <arg direction=\"out\" type=\"t\"/>\n"
+"    </method>\n"
+"    <method name=\"GetSelfTime\">\n"
+"      <arg direction=\"out\" type=\"t\"/>\n"
+"    </method>\n"
+"    <method name=\"IsLockEventTriggered\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"    </method>\n"
+"    <method name=\"TriggerLockEvent\"/>\n"
+"    <method name=\"ClearLockEvent\"/>\n"
+"    <method name=\"ComputerSleep\">\n"
+"      <arg direction=\"in\" type=\"b\" name=\"bSleep\"/>\n"
+"    </method>\n"
+"    <method name=\"GetLeftoverErrorInputTimes\">\n"
+"      <arg direction=\"out\" type=\"i\"/>\n"
+"      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
+"    </method>\n"
+"    <method name=\"LeftoverErrorInputTimesMinusOne\">\n"
+"      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
+"    </method>\n"
+"    <method name=\"RestoreLeftoverErrorInputTimes\">\n"
+"      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
+"    </method>\n"
+"    <method name=\"StartTimerOfRestorePasswordInput\">\n"
+"      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
+"    </method>\n"
+"    <method name=\"GetNeedWaitMinutes\">\n"
+"      <arg direction=\"out\" type=\"i\"/>\n"
+"      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
+"    </method>\n"
+"    <method name=\"RestoreNeedWaitMinutes\">\n"
+"      <arg direction=\"in\" type=\"i\" name=\"userID\"/>\n"
+"    </method>\n"
+"  </interface>\n"
+        "")
 public:
     VaultManagerAdaptor(VaultManagerDBus *parent);
     virtual ~VaultManagerAdaptor();
 
     inline VaultManagerDBus *parent() const
-    {
-        return static_cast<VaultManagerDBus *>(QObject::parent());
-    }
+    { return static_cast<VaultManagerDBus *>(QObject::parent()); }
 
-public:   // PROPERTIES
-public Q_SLOTS:   // METHODS
+public: // PROPERTIES
+public Q_SLOTS: // METHODS
     void ClearLockEvent();
     void ComputerSleep(bool bSleep);
     qulonglong GetLastestTime();
@@ -105,7 +101,7 @@ public Q_SLOTS:   // METHODS
     void StartTimerOfRestorePasswordInput(int userID);
     void SysUserChanged(const QString &curUser);
     void TriggerLockEvent();
-Q_SIGNALS:   // SIGNALS
+Q_SIGNALS: // SIGNALS
     void lockEventTriggered(const QString &user);
 };
 
