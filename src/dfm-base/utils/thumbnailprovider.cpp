@@ -220,7 +220,7 @@ int ThumbnailProvider::hasThumbnailFast(const QString &mime) const
         return 0;
 
     if (Q_LIKELY(mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppCRRMedia
-                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf)
+                 || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf || mime == DFMGLOBAL_NAMESPACE::Mime::kTypeAppPdf)
         && !Application::instance()->genericAttribute(Application::kPreviewDocumentFile).toBool()) {
         return 0;
     }

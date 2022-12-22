@@ -23,7 +23,6 @@
 
 DPUTILS_USE_NAMESPACE
 
-
 void VirtualVaultHelperPlugin::initialize()
 {
     eventReceiver->initEventConnect();
@@ -31,5 +30,5 @@ void VirtualVaultHelperPlugin::initialize()
 
 bool VirtualVaultHelperPlugin::start()
 {
-
+    return true;
 }

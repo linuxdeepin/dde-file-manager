@@ -129,7 +129,7 @@ void Core::onWindowOpened(quint64 windd)
 {
     Q_UNUSED(windd)
 
-    std::once_flag flag;
+    static std::once_flag flag;
     std::call_once(flag, []() {
         const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
         std::for_each(list.begin(), list.end(), [](const QString &name) {
