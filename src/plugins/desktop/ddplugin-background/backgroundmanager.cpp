@@ -33,7 +33,6 @@
 #include <QImageReader>
 
 DFMBASE_USE_NAMESPACE
-DGUI_USE_NAMESPACE
 DDP_BACKGROUND_USE_NAMESPACE
 
 #define CanvasCoreSubscribe(topic, func) \
@@ -64,14 +63,11 @@ static QMap<QString, QWidget *> rootMap()
 BackgroundManagerPrivate::BackgroundManagerPrivate(BackgroundManager *qq)
     : QObject(qq)
     , q(qq)
-    , windowManagerHelper(DWindowManagerHelper::instance())
 {
 }
 
 BackgroundManagerPrivate::~BackgroundManagerPrivate()
-{       
-    windowManagerHelper = nullptr;
-
+{
     backgroundWidgets.clear();
     backgroundPaths.clear();
 }
@@ -104,11 +100,6 @@ BackgroundManager::~BackgroundManager()
 
 void BackgroundManager::init()
 {
-    connect(d->windowManagerHelper, &DWindowManagerHelper::windowManagerChanged,
-            this, &BackgroundManager::onRestBackgroundManager);
-    connect(d->windowManagerHelper, &DWindowManagerHelper::hasCompositeChanged,
-            this, &BackgroundManager::onRestBackgroundManager);
-
     onRestBackgroundManager();
 
     CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);

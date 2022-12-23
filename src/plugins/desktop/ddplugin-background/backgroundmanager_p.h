@@ -26,8 +26,6 @@
 
 #include <com_deepin_wm.h>
 
-#include <DWindowManagerHelper>
-
 #include <QObject>
 
 DDP_BACKGROUND_BEGIN_NAMESPACE
@@ -48,7 +46,6 @@ public:
 public:
     BackgroundManager *const q = nullptr;
     BackgroundService *service = nullptr;
-    Dtk::Gui::DWindowManagerHelper* windowManagerHelper = nullptr;
     QMap<QString, DFMBASE_NAMESPACE::BackgroundWidgetPointer> backgroundWidgets;
     QMap<QString, QString> backgroundPaths;
     bool enableBackground = true;
