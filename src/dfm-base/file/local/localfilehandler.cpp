@@ -196,8 +196,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
 
     {   // check hidden name
         if (needCheck) {
-            auto toFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-            const QString &newName = toFileInfo->nameOf(NameInfoType::kFileName);
+            const QString &newName = newUrl.fileName();
             if (!doHiddenFileRemind(newName))
                 return true;
         }
