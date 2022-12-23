@@ -48,7 +48,6 @@ public:
     QUrl currentUrl() const;
     void moveCenter(const QPoint &cp);
     void installTitleBar(AbstractFrame *w);
-    void installTitleMenu(QMenu *menu);
     void installSideBar(AbstractFrame *w);
     void installWorkSpace(AbstractFrame *w);
     void installDetailView(AbstractFrame *w);
@@ -91,7 +90,6 @@ Q_SIGNALS:
     void reqShowHotkeyHelp();   // ctrl + shift + ?
 
     void titleBarInstallFinished();
-    void titleMenuInstallFinished();
     void sideBarInstallFinished();
     void workspaceInstallFinished();
     void detailViewInstallFinished();

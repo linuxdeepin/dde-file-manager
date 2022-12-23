@@ -200,16 +200,6 @@ void FileManagerWindow::installTitleBar(AbstractFrame *w)
     });
 }
 
-void FileManagerWindow::installTitleMenu(QMenu *menu)
-{
-    Q_ASSERT_X(menu, "FileManagerWindow", "Null Title Menu");
-    std::call_once(d->titleMenuFlag, [this, menu]() {
-        titlebar()->setMenu(menu);
-
-        emit this->titleMenuInstallFinished();
-    });
-}
-
 void FileManagerWindow::installSideBar(AbstractFrame *w)
 {
     Q_ASSERT_X(w, "FileManagerWindow", "Null setSideBar");

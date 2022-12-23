@@ -41,7 +41,7 @@ public:
     static void removeTitleBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
 
-    static QMenu *createSettingsMenu(quint64 id);
+    static void createSettingsMenu(quint64 id);
     static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
     static QList<CrumbData> tansToCrumbDataList(const QList<QVariantMap> &mapGroup);
     static bool displayIcon();

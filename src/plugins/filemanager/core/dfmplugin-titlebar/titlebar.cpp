@@ -75,7 +75,7 @@ void TitleBar::onWindowOpened(quint64 windId)
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     window->installTitleBar(GlobalPrivate::kTitleBar);
-    window->installTitleMenu(TitleBarHelper::createSettingsMenu(windId));
+    TitleBarHelper::createSettingsMenu(windId);
 
     Q_ASSERT(GlobalPrivate::kTitleBar->navWidget());
     connect(window, &FileManagerWindow::reqBack, GlobalPrivate::kTitleBar->navWidget(), &NavWidget::back);

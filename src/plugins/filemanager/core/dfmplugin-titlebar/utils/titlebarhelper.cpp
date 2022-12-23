@@ -38,6 +38,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <DTitlebar>
+
 #include <QGSettings>
 #include <QStandardPaths>
 #include <QStorageInfo>
@@ -77,7 +79,7 @@ quint64 TitleBarHelper::windowId(QWidget *sender)
     return FMWindowsIns.findWindowId(sender);
 }
 
-QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
+void TitleBarHelper::createSettingsMenu(quint64 id)
 {
     QMenu *menu = new QMenu();
 
@@ -112,7 +114,17 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
             handleSettingMenuTriggered(id, val);
     });
 
-    return menu;
+    auto window = FMWindowsIns.findWindowById(id);
+    Q_ASSERT_X(window, "TitleBar", "Cannot find window by id");
+    auto defaultMenu = window->titlebar()->menu();
+    if (defaultMenu && !defaultMenu->isEmpty()) {
+        for (auto *act : defaultMenu->actions()) {
+            act->setParent(menu);
+            menu->addAction(act);
+        }
+    }
+
+    window->titlebar()->setMenu(menu);
 }
 
 QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
