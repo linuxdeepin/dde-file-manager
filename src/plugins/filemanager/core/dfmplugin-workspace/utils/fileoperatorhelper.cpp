@@ -124,7 +124,6 @@ void FileOperatorHelper::renameFile(const FileView *view, const QUrl &oldUrl, co
 
 void FileOperatorHelper::copyFiles(const FileView *view)
 {
-
     QList<QUrl> selectedUrls = view->selectedUrlList();
     // trans url to local
     QList<QUrl> urls {};
@@ -171,6 +170,9 @@ void FileOperatorHelper::cutFiles(const FileView *view)
 void FileOperatorHelper::pasteFiles(const FileView *view)
 {
     qInfo() << " paste file by clipboard and currentUrl: " << view->rootUrl();
+    // trash dir can't paste files
+    if (FileUtils::isTrashFile(view->rootUrl()))
+        return;
     auto action = ClipBoard::instance()->clipboardAction();
     auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
