@@ -174,6 +174,18 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     AbstractFileInfoPointer toInfo = nullptr;
     if (doRenameFile(fromInfo, targetPathInfo, toInfo, &ok) || ok) {
         currentWriteSize += fromInfo->size();
+        if (fromInfo->isAttributes(OptInfoType::kIsFile)) {
+            currentWriteSize += (fromInfo->size() > 0 ? fromInfo->size() : FileUtils::getMemoryPageSize());
+            if (fromInfo->size() <= 0)
+                zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
+        } else {
+            // count size
+            SizeInfoPointer sizeInfo(new FileUtils::FilesSizeInfo);
+            FileOperationsUtils::statisticFilesSize(fromInfo->urlOf(UrlInfoType::kUrl), sizeInfo);
+            blockRenameWriteSize += sizeInfo->totalSize;
+            if (sizeInfo->totalSize <= 0)
+                zeroOrlinkOrDirWriteSize += dirSize;
+        }
         return true;
     }
 

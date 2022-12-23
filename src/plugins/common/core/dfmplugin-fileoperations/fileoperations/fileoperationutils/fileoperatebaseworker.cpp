@@ -1074,7 +1074,7 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     } else if (fromInfo->isAttributes(OptInfoType::kIsDir)) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, skip);
         if (result || skip)
-            zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
+            zeroOrlinkOrDirWriteSize += dirSize;
     } else {
         result = checkAndCopyFile(fromInfo, newTargetInfo, skip);
     }
@@ -1105,7 +1105,7 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
     if (fromInfo->size() <= 0) {
         // 对文件加权
         setTargetPermissions(fromInfo, toInfo);
-        zeroOrlinkOrDirWriteSize += dirSize;
+        zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, toInfo->urlOf(UrlInfoType::kUrl));
         return true;
     }
@@ -1301,7 +1301,7 @@ qint64 FileOperateBaseWorker::getWriteDataSize()
     } else if (CountWriteSizeType::kCustomizeType == countWriteType) {
         writeSize = currentWriteSize;
     } else if (CountWriteSizeType::kWriteBlockType == countWriteType) {
-        qint64 currentSectorsWritten = getSectorsWritten();
+        qint64 currentSectorsWritten = getSectorsWritten() + blockRenameWriteSize;
         if (currentSectorsWritten > targetDeviceStartSectorsWritten)
             writeSize = (currentSectorsWritten - targetDeviceStartSectorsWritten) * targetLogSecionSize;
     }
