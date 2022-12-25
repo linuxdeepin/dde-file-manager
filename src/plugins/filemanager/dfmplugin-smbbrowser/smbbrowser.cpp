@@ -76,11 +76,11 @@ void SmbBrowser::initialize()
     connect(SmbIntegrationManager::instance(), &SmbIntegrationManager::refreshToSmbIntegrationMode, this, &SmbBrowser::onWindowOpened);
     connect(SmbIntegrationManager::instance(), &SmbIntegrationManager::refreshToSmbSeperatedMode, this, &SmbBrowser::onRefreshToSmbSeperatedMode);
     dfmplugin_menu_util::menuSceneRegisterScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
-    bindScene("ComputerMenu");
     bindWindows();
     registerNetworkAccessPrehandler();
 
     dfmplugin_menu_util::menuSceneRegisterScene(SmbIntComputerMenuCreator::name(), new SmbIntComputerMenuCreator());
+    bindScene("ComputerMenu");
     SmbIntegrationManager::instance();
 }
 
@@ -199,7 +199,7 @@ void SmbBrowser::onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperated
 void SmbBrowser::bindScene(const QString &parentScene)
 {
     if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
-        dfmplugin_menu_util::menuSceneBind(SmbIntComputerMenuCreator::name(), "ComputerMenu");
+        dfmplugin_menu_util::menuSceneBind(SmbIntComputerMenuCreator::name(), parentScene);
     } else {
         waitToBind << parentScene;
         if (!eventSubscribed)

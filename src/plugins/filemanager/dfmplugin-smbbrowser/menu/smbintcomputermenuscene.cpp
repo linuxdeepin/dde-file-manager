@@ -25,6 +25,7 @@
 #include "dfmplugin_smbbrowser_global.h"
 #include "smbintegration/smbintegrationmanager.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_menu_defines.h"
 
 #include <QMenu>
@@ -69,15 +70,18 @@ bool SmbIntComputerMenuScene::create(QMenu *parent)
 
     quint64 windowId = d->windowId;
     QUrl url = d->selectFiles.first();
-    auto newWindowAct = menu->addAction(QObject::tr("Unmount"), [windowId, url]() {
+    QUrl temUrl;
+    temUrl.setScheme(Global::Scheme::kSmb);
+    temUrl.setHost(url.host());
+    auto newWindowAct = menu->addAction(QObject::tr("Unmount"), [windowId, url, temUrl]() {
         SmbIntegrationManager::instance()->umountAllProtocolDevice(windowId, url, false);
-        SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(url);
+        SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(temUrl);
     });
     newWindowAct->setEnabled(true);
 
-    auto newTabAct = menu->addAction(QObject::tr("Clear saved password and unmount"), [windowId, url]() {
+    auto newTabAct = menu->addAction(QObject::tr("Clear saved password and unmount"), [windowId, url, temUrl]() {
         SmbIntegrationManager::instance()->umountAllProtocolDevice(windowId, url, true);
-        SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(url);
+        SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(temUrl);
     });
     newTabAct->setEnabled(true);
 
