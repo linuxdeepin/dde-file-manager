@@ -130,9 +130,11 @@ void FileDataCacheThread::addChildren(const QList<QUrl> &urls)
 {
     int count = childrenCount();
 
-    for (const QUrl &url : urls) {
+    for (QUrl url : urls) {
         if (stoped)
             return;
+
+        url.setPath(url.path());
 
         if (containsChild(url))
             continue;
