@@ -25,6 +25,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/shortcut/shortcut.h"
 
@@ -211,7 +212,15 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     QString error;
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
-    QUrl showedUrl { url.isEmpty() ? Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow) : url };
+    QUrl showedUrl = Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow);
+    if (!url.isEmpty()) {
+        const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info && info->isAttributes(OptInfoType::kIsFile)) {
+            showedUrl = UrlRoute::urlParent(url);
+        } else {
+            showedUrl = url;
+        }
+    }
     if (!d->isValidUrl(showedUrl, &error)) {
         qWarning() << "Url: " << showedUrl << "is Invalid, error: " << error;
         // use home as showed url if default url is invalid
