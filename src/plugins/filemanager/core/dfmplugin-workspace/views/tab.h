@@ -90,6 +90,7 @@ protected:
 
 private:
     QPixmap toPixmap(bool drawBorder) const;
+    QString getDisplayNameByUrl(const QUrl &url) const;
 
     friend class TabPrivate;
     QSharedPointer<TabPrivate> d;

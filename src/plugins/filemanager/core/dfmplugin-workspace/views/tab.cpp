@@ -26,6 +26,7 @@
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/systempathutil.h"
 
 #include <DWidgetUtil>
 #include <DPalette>
@@ -65,9 +66,7 @@ void Tab::setCurrentUrl(const QUrl &url)
 
     FileModelManager::instance()->refRootData(d->url);
 
-    QString fileName = UrlRoute::isRootUrl(url)
-            ? UrlRoute::rootDisplayName(url.scheme())
-            : url.fileName();
+    QString fileName = getDisplayNameByUrl(url);
 
     setTabText(fileName);
 }
@@ -367,4 +366,15 @@ QPixmap Tab::toPixmap(bool drawBorder) const
     }
 
     return QPixmap::fromImage(img);
+}
+
+QString Tab::getDisplayNameByUrl(const QUrl &url) const
+{
+    if (UrlRoute::isRootUrl(url))
+        return UrlRoute::rootDisplayName(url.scheme());
+
+    if (SystemPathUtil::instance()->isSystemPath(url.path()))
+        return SystemPathUtil::instance()->systemPathDisplayNameByPath(url.path());
+
+    return url.fileName();
 }
