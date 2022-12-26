@@ -40,6 +40,10 @@ private:
     void updateMenu(QMenu *menu);
     bool openFileLocation(const QString &path);
     void disableSubScene(DFMBASE_NAMESPACE::AbstractMenuScene *scene, const QString &sceneName);
+    void updateSubMenu(QMenu *menu);
+    void updateSubMenuNormal(QMenu *menu);
+    void updateSubMenuTrash(QMenu *menu);
+    void updateSubMenuRecent(QMenu *menu);
 
 private:
     SearchMenuScene *q;
