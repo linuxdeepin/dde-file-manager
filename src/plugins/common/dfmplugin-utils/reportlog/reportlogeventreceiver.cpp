@@ -47,18 +47,20 @@ void ReportLogEventReceiver::bindEvents()
 
     // connect all the signal events of plugins which need report log.
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
-    dpfSignalDispatcher->subscribe("dfmplugin_search", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
-    dpfSignalDispatcher->subscribe("dfmplugin_vault", "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
 
     dpfSignalDispatcher->subscribe("ddplugin_canvas", "signal_CanvasView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
     dpfSignalDispatcher->subscribe("ddplugin_organizer", "signal_CollectionView_ReportMenuData", this, &ReportLogEventReceiver::handleMenuData);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
-    dpfSignalDispatcher->subscribe("dfmplugin_myshares", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
-    dpfSignalDispatcher->subscribe("dfmplugin_smbbrowser", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
-    dpfSignalDispatcher->subscribe("dfmplugin_vault", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
-    dpfSignalDispatcher->subscribe("dfmplugin_trash", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
-    dpfSignalDispatcher->subscribe("dfmplugin_recent", "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+
+    lazyBindCommitEvent("dfmplugin-search", "dfmplugin_search");
+    lazyBindCommitEvent("dfmplugin-vault", "dfmplugin_vault");
+
+    lazyBindMenuDataEvent("dfmplugin-myshares", "dfmplugin_myshares");
+    lazyBindMenuDataEvent("dfmplugin-smbbrowser", "dfmplugin_smbbrowser");
+    lazyBindMenuDataEvent("dfmplugin-vault", "dfmplugin_vault");
+    lazyBindMenuDataEvent("dfmplugin-trash", "dfmplugin_trash");
+    lazyBindMenuDataEvent("dfmplugin-recent", "dfmplugin_recent");
 }
 
 void ReportLogEventReceiver::handleMountNetworkResult(bool ret, dfmmount::DeviceError err, const QString &msg)
@@ -91,6 +93,36 @@ void ReportLogEventReceiver::handleMountNetworkResult(bool ret, dfmmount::Device
     }
 
     RLog::instance()->commit("Smb", data);
+}
+
+void ReportLogEventReceiver::lazyBindCommitEvent(const QString &plugin, const QString &space)
+{
+    auto pluginName { DPF_NAMESPACE::LifeCycle::pluginMetaObj(plugin) };
+    if (pluginName && pluginName->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        dpfSignalDispatcher->subscribe(space, "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
+    } else {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [=](const QString &iid, const QString &name) {
+            Q_UNUSED(iid)
+            if (name == plugin)
+                dpfSignalDispatcher->subscribe(space, "signal_ReportLog_Commit", this, &ReportLogEventReceiver::commit);
+        },
+                Qt::DirectConnection);
+    }
+}
+
+void ReportLogEventReceiver::lazyBindMenuDataEvent(const QString &plugin, const QString &space)
+{
+    auto pluginName { DPF_NAMESPACE::LifeCycle::pluginMetaObj(plugin) };
+    if (pluginName && pluginName->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        dpfSignalDispatcher->subscribe(space, "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+    } else {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [=](const QString &iid, const QString &name) {
+            Q_UNUSED(iid)
+            if (name == plugin)
+                dpfSignalDispatcher->subscribe(space, "signal_ReportLog_MenuData", this, &ReportLogEventReceiver::handleMenuData);
+        },
+                Qt::DirectConnection);
+    }
 }
 
 ReportLogEventReceiver::ReportLogEventReceiver(QObject *parent)

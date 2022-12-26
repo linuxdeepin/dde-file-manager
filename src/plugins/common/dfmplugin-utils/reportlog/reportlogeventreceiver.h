@@ -41,6 +41,10 @@ public:
 
 public Q_SLOTS:
     void handleMountNetworkResult(bool ret, DFMMOUNT::DeviceError err, const QString &msg);
+
+private:
+    void lazyBindCommitEvent(const QString &plugin, const QString &space);
+    void lazyBindMenuDataEvent(const QString &plugin, const QString &space);
 };
 }
 #endif   // REPORTLOGEVENTRECEIVER_H
