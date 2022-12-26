@@ -43,6 +43,7 @@ public slots:
     void handleEmptyTrash(const quint64 windowId = 0);
     bool cutFileFromTrash(const quint64 windowId, const QList<QUrl> sources,
                           const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool copyFromFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
 private:
     explicit TrashCoreEventReceiver(QObject *parent = nullptr);

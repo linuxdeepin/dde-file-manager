@@ -78,20 +78,6 @@ bool TrashFileHelper::copyFile(const quint64 windowId, const QList<QUrl> sources
     return true;
 }
 
-bool TrashFileHelper::copyFromFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const dfmbase::AbstractJobHandler::JobFlags flags)
-{
-    if (sources.isEmpty())
-        return false;
-
-    const QUrl &fromUrl = sources.first();
-    if (fromUrl.scheme() != scheme())
-        return false;
-
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopyFromTrash, windowId,
-                                 sources, target, flags, nullptr);
-    return true;
-}
-
 bool TrashFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(flags)

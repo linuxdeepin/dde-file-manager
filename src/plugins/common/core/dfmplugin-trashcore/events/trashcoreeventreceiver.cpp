@@ -67,3 +67,17 @@ bool TrashCoreEventReceiver::cutFileFromTrash(const quint64 windowId, const QLis
     return dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrash, windowId,
                                         sources, target, flags, nullptr);
 }
+
+bool TrashCoreEventReceiver::copyFromFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    if (sources.isEmpty())
+        return false;
+
+    const QUrl &fromUrl = sources.first();
+    if (fromUrl.scheme() != TrashCoreHelper::scheme())
+        return false;
+
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopyFromTrash, windowId,
+                                 sources, target, flags, nullptr);
+    return true;
+}

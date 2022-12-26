@@ -390,12 +390,13 @@ void FileOperatorProxy::callBackFunction(const CallbackArgus args)
     case FileOperatorProxyPrivate::CallBackFunc::kCallBackPasteFiles: {
         // paste files is async operation
         JobHandlePointer jobHandle = args->value(CallbackKey::kJobHandle).value<JobHandlePointer>();
-
-        if (jobHandle->currentState() != AbstractJobHandler::JobState::kStopState) {
-            connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, d.get(), &FileOperatorProxyPrivate::callBackPasteFiles);
-        } else {
-            JobInfoPointer infoPointer = jobHandle->getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyFinishedKey);
-            d->callBackPasteFiles(infoPointer);
+        if (jobHandle) {
+            if (jobHandle->currentState() != AbstractJobHandler::JobState::kStopState) {
+                connect(jobHandle.get(), &AbstractJobHandler::finishedNotify, d.get(), &FileOperatorProxyPrivate::callBackPasteFiles);
+            } else {
+                JobInfoPointer infoPointer = jobHandle->getTaskInfoByNotifyType(AbstractJobHandler::NotifyType::kNotifyFinishedKey);
+                d->callBackPasteFiles(infoPointer);
+            }
         }
     } break;
     case FileOperatorProxyPrivate::CallBackFunc::kCallBackRenameFiles: {

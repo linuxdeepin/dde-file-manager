@@ -40,6 +40,8 @@ void TrashCore::initialize()
     DFMBASE_NAMESPACE::UrlRoute::regScheme(TrashCoreHelper::scheme(), "/", TrashCoreHelper::icon(), true, tr("Trash"));
     // TODO(lanxs): 目前缓存存在问题，trash由于其特性，容易触发缓存更新问题，所以trash里面暂不使用缓存，等后期缓存完善再放开
     DFMBASE_NAMESPACE::InfoFactory::regClass<TrashFileInfo>(TrashCoreHelper::scheme(), DFMBASE_NAMESPACE::InfoFactory::kNoCache);
+
+    followEvents();
 }
 
 bool TrashCore::start()
@@ -51,8 +53,11 @@ bool TrashCore::start()
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
                          func, TrashCoreHelper::scheme());
 
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFromFile",
-                            TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::cutFileFromTrash);
-
     return true;
+}
+
+void TrashCore::followEvents()
+{
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFromFile", TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::copyFromFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFromFile", TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::cutFileFromTrash);
 }
