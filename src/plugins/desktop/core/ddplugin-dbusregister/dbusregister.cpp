@@ -38,6 +38,8 @@
 #include <QDBusConnection>
 #include <QtConcurrent>
 
+#include <dfmio_utils.h>
+
 DFMBASE_USE_NAMESPACE
 
 void DBusRegister::initialize()
@@ -45,6 +47,13 @@ void DBusRegister::initialize()
     QString errStr;
     UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
     dpfSignalDispatcher->subscribe("ddplugin_core", "signal_DesktopFrame_WindowShowed", this, &DBusRegister::onWindowShowed);
+
+    // NOTE(xust): this is used to launch GVolumeMonitor in main thread, this function obtained the GVolumeMonitor instance indirectly,
+    // a GVolumeMonitor instance must run in main thread to make sure the messages about device change can be send correctly,
+    // the GVolumeMonitor instance is expected to be initialized in DDeviceManager but the DDeviceManager is delay intialized when
+    // main window of desktop showed. So invoke the method here to make sure the instance is initialized in main thread.
+    // NOTE(xust): this may take 10ms when app launch, but no better way to solve the level-2 issue for now.
+    DFMIO::DFMUtils::fileIsRemovable(QUrl::fromLocalFile("/"));
 }
 
 bool DBusRegister::start()
