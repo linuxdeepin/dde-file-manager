@@ -330,7 +330,7 @@ QString IconItemDelegate::displayFileName(const QModelIndex &index) const
     QString str = index.data(kItemFileDisplayNameRole).toString();
     const QString &suffix = "." + index.data(kItemFileSuffixRole).toString();
 
-    if (!showSuffix && str.endsWith(suffix) && suffix != ".")
+    if (!showSuffix && str.endsWith(suffix) && suffix != "." && suffix != str)
         str = str.mid(0, str.length() - suffix.length());
 
     return str;
