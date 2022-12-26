@@ -45,6 +45,7 @@ class CollectionView : public QAbstractItemView
 public:
     explicit CollectionView(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent = nullptr);
     ~CollectionView() override;
+    QString id() const;
     void setCanvasModelShell(CanvasModelShell *sh);
     void setCanvasViewShell(CanvasViewShell *sh);
     void setCanvasGridShell(CanvasGridShell *sh);

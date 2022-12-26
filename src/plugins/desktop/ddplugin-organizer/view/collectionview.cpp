@@ -1126,6 +1126,11 @@ CollectionView::~CollectionView()
 {
 }
 
+QString CollectionView::id() const
+{
+    return d->id;
+}
+
 void CollectionView::setCanvasModelShell(CanvasModelShell *sh)
 {
     d->canvasModelShell = sh;

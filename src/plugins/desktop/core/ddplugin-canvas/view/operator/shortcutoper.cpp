@@ -264,13 +264,6 @@ void ShortcutOper::previewFiles()
     const QList<QUrl> urls = view->selectionModel()->selectedUrls();
     if (urls.isEmpty())
         return;
-
-    QList<QUrl> selectUrls;
-    QList<QUrl> currentDirUrls;
-    for (const QUrl &url : urls) {
-        selectUrls.append(UrlRoute::fromLocalFile(url.path()));
-        currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
-    }
-
-    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
+    auto currentDirUrls = view->model()->files();
+    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), urls, currentDirUrls);
 }

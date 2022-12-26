@@ -252,17 +252,11 @@ void FileOperator::undoFiles(const CollectionView *view)
 
 void FileOperator::previewFiles(const CollectionView *view)
 {
-    auto &&urls = d->getSelectedUrls(view);
-    if (urls.isEmpty())
+    auto selectUrls = d->getSelectedUrls(view);
+    if (selectUrls.isEmpty())
         return;
 
-    QList<QUrl> selectUrls;
-    QList<QUrl> currentDirUrls;
-    for (const QUrl &url : urls) {
-        selectUrls.append(UrlRoute::fromLocalFile(url.path()));
-        currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
-    }
-
+    QList<QUrl> currentDirUrls = view->dataProvider()->items(view->id());
     dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }
 

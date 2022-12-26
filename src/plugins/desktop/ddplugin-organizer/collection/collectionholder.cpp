@@ -39,8 +39,8 @@ CollectionHolderPrivate::CollectionHolderPrivate(const QString &uuid, Collection
 CollectionHolderPrivate::~CollectionHolderPrivate()
 {
     if (frame) {
-        frame->setParent(nullptr);
         delete frame;
+        frame = nullptr;
     }
 }
 

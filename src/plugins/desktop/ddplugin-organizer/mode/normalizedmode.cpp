@@ -44,7 +44,7 @@ NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq)
 
 NormalizedModePrivate::~NormalizedModePrivate()
 {
-    holders.clear();
+
 }
 
 QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height)
@@ -185,6 +185,8 @@ NormalizedMode::NormalizedMode(QObject *parent)
 
 NormalizedMode::~NormalizedMode()
 {
+    // delete all views first.
+    d->holders.clear();
     removeClassifier();
 }
 
