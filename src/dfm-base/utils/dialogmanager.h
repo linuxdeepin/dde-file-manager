@@ -85,7 +85,7 @@ public:
     int showClearTrashDialog(const quint64 &count);
     int showNormalDeleteConfirmDialog(const QList<QUrl> &urls);
 
-    void showRestoreFailedDialog(const QList<QUrl> &urlList);
+    void showRestoreFailedDialog(const int count);
 
     // rename
     int showRenameNameSameErrorDialog(const QString &name);

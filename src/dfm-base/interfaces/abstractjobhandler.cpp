@@ -34,7 +34,7 @@ AbstractJobHandler::AbstractJobHandler(QObject *parent)
     connect(this, &AbstractJobHandler::requestShowTipsDialog, this, [=](DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> urls) {
         switch (type) {
         case DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kRestoreFailed:
-            DialogManagerInstance->showRestoreFailedDialog(urls);
+            DialogManagerInstance->showRestoreFailedDialog(urls.count());
             break;
         case DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf:
             DialogManagerInstance->showCopyMoveToSelfDialog();

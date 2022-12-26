@@ -108,6 +108,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     if (!allFilesList.empty())
         urlsSource = allFilesList;
 
+    QList<QUrl> failUrls;
     for (const auto &url : urlsSource) {
         if (!stateCheck())
             return false;
@@ -176,7 +177,13 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             if (!completeTargetFiles.contains(restoreInfo->urlOf(UrlInfoType::kUrl)))
                 completeTargetFiles.append(restoreInfo->urlOf(UrlInfoType::kUrl));
             continue;
+        } else {
+            failUrls.append(url);
         }
+    }
+
+    if (failUrls.count() > 0) {
+        emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kRestoreFailed, failUrls);
         return false;
     }
 

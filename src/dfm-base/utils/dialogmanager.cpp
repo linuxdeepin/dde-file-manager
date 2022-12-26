@@ -487,14 +487,14 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     return d.exec();
 }
 
-void DialogManager::showRestoreFailedDialog(const QList<QUrl> &urlList)
+void DialogManager::showRestoreFailedDialog(const int count)
 {
     DDialog d;
     d.setTitle(tr("Operation failed!"));
-    if (urlList.count() == 1) {
+    if (count == 1) {
         d.setMessage(tr("Failed to restore %1 file, the target folder is read-only").arg(QString::number(1)));
-    } else if (urlList.count() > 1) {
-        d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(urlList.count())));
+    } else if (count > 1) {
+        d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(count)));
     }
     d.setIcon(warningIcon);
     d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
