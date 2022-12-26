@@ -57,7 +57,7 @@ public:
         kGroupDisks,
     };
 
-    void addDevice(const QString &groupName, const QUrl &url, int shape);
+    void addDevice(const QString &groupName, const QUrl &url, int shape, bool addToSidebar = false);
     void removeDevice(const QUrl &url);
 
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);

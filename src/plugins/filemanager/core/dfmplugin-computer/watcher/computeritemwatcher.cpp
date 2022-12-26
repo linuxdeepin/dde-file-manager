@@ -277,7 +277,7 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, 
 
     const QMap<QString, QString> &&stashedMounts = StashMountsUtils::stashedMounts();
 
-    auto isStashedSmbBeMounted = [](const QUrl &smbUrl) {   //TOOD(zhuangshu):do it out of computer plugin
+    auto isStashedSmbBeMounted = [](const QUrl &smbUrl) {   // TOOD(zhuangshu):do it out of computer plugin
         QUrl url(smbUrl);
         if (url.scheme() != Global::Scheme::kSmb)
             return false;
@@ -285,7 +285,7 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, 
         QString temPath = url.path();
         QStringList devs = DevProxyMng->getAllProtocolIds();
         for (const QString &dev : devs) {
-            if (dev.startsWith(Global::Scheme::kSmb)) {   //mounted by gvfs
+            if (dev.startsWith(Global::Scheme::kSmb)) {   // mounted by gvfs
                 if (UniversalUtils::urlEquals(url, QUrl(dev)))
                     return true;
             }
@@ -588,10 +588,10 @@ void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newN
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
 }
 
-void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, int shape)
+void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, int shape, bool addToSidebar)
 {
     int groupId = addGroup(groupName);
-    onDeviceAdded(url, groupId, static_cast<ComputerItemData::ShapeType>(shape), false);
+    onDeviceAdded(url, groupId, static_cast<ComputerItemData::ShapeType>(shape), addToSidebar);
 }
 
 void ComputerItemWatcher::removeDevice(const QUrl &url)
@@ -689,7 +689,7 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
             if (var.variant().toBool())
                 removeDevice(url);
             else
-                addDevice(diskGroup(), url, ComputerItemData::kLargeItem);
+                addDevice(diskGroup(), url, ComputerItemData::kLargeItem, true);
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
             if (propertyName == DeviceProperty::kOptical)

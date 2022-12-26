@@ -76,7 +76,7 @@ void SmbIntegrationManager::removeStashedSeperatedItem(const QUrl &url)
 
     dpfSlotChannel->push("dfmplugin_computer", "slot_RemoveDevice", stashedUrl);
 
-    //remove from config
+    // remove from config
     QSet<QString> keys = Application::genericSetting()->keys(kRemoteMounts);
     QString temId = id;
     if (id.endsWith("/"))
@@ -129,7 +129,7 @@ SmbIntegrationManager::SmbIntegrationManager(QObject *parent)
     connect(Application::instance(), &Application::genericAttributeChanged, this, &SmbIntegrationManager::onGenAttributeChanged);
     connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &SmbIntegrationManager::onProtocolDeviceUnmounted);
     QSet<QString> keys = Application::genericSetting()->keys(kGenericAttribute);   //
-    if (!keys.contains(kMergeTheEntriesOfSambaSharedFolders)) {   //it is the temporary solution, would be handled by settings dialog
+    if (!keys.contains(kMergeTheEntriesOfSambaSharedFolders)) {   // it is the temporary solution, would be handled by settings dialog
         Application::genericSetting()->setValue(kGenericAttribute, kMergeTheEntriesOfSambaSharedFolders, true);
         isSmbIntegrated = true;
     } else {
@@ -319,7 +319,7 @@ bool SmbIntegrationManager::isSmbShareDirMounted(const QUrl &url)
 
     QStringList devs = DevProxyMng->getAllProtocolIds();
     for (const QString &dev : devs) {
-        if (dev.startsWith(Global::Scheme::kSmb)) {   //mounted by gvfs
+        if (dev.startsWith(Global::Scheme::kSmb)) {   // mounted by gvfs
             if (UniversalUtils::urlEquals(url, QUrl(dev)))
                 return true;
         }
@@ -424,7 +424,7 @@ void SmbIntegrationManager::addIntegrationItemToComputer(const QUrl &hostUrl)
     devUrl.setScheme(Global::Scheme::kEntry);
     devUrl.setHost(hostUrl.host());
     devUrl.setPath(kSmbIntegrationPath);
-    dpfSlotChannel->push("dfmplugin_computer", "slot_AddDevice", tr("Disks"), devUrl, 1);
+    dpfSlotChannel->push("dfmplugin_computer", "slot_AddDevice", tr("Disks"), devUrl, 1, false);
 }
 
 void SmbIntegrationManager::doSwitchToSmbIntegratedMode(const QList<QUrl> &stashedUrls)
@@ -477,7 +477,7 @@ void SmbIntegrationManager::doSwitchToSmbIntegratedMode(const QList<QUrl> &stash
 
 void SmbIntegrationManager::doSwitchToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &stashedUrls)
 {
-    //get stashed smb info from `StashedSmbDevices/SmbIntegrations` and save to `smbIntegrationUrls`.
+    // get stashed smb info from `StashedSmbDevices/SmbIntegrations` and save to `smbIntegrationUrls`.
     const QStringList &smbIntegrations = Application::genericSetting()->value(kStashedSmbDevices, kSmbIntegrations).toStringList();
     QList<QUrl> smbIntegrationUrls;   // list format: smb://1.2.3.4
     for (const QString &smbIntegration : smbIntegrations)
@@ -498,7 +498,7 @@ void SmbIntegrationManager::doSwitchToSmbSeperatedMode(const QVariantMap &stashe
         Q_EMIT refreshToSmbSeperatedMode(stashedSeperatedData, stashedUrls);
     }
 
-    //3. Switch to computer view
+    // 3. Switch to computer view
     QUrl computerUrl;
     computerUrl.setScheme(Global::Scheme::kComputer);
     SmbBrowserEventCaller::sendChangeCurrentUrl(windowId, computerUrl);
@@ -567,7 +567,7 @@ void SmbIntegrationManager::addStashedSeperatedItemToComputer(const QList<QUrl> 
         QString encodecPath = QString("%1.%2").arg(QString(path)).arg(kProtodevstashed);
         stashedUrl.setPath(encodecPath);
 
-        dpfSlotChannel->push("dfmplugin_computer", "slot_AddDevice", tr("Disks"), stashedUrl, 1);
+        dpfSlotChannel->push("dfmplugin_computer", "slot_AddDevice", tr("Disks"), stashedUrl, 1, false);
     }
 }
 
