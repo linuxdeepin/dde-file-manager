@@ -50,6 +50,14 @@ private:
 
     DPF_EVENT_REG_SIGNAL(signal_CollectionView_ReportMenuData)
 
+    DPF_EVENT_REG_HOOK(hook_CollectionView_DropData)
+    DPF_EVENT_REG_HOOK(hook_CollectionView_KeyPress)
+    DPF_EVENT_REG_HOOK(hook_CollectionView_StartDrag)
+    DPF_EVENT_REG_HOOK(hook_CollectionView_DragMove)
+    DPF_EVENT_REG_HOOK(hook_CollectionView_KeyboardSearch)
+    DPF_EVENT_REG_HOOK(hook_CollectionView_DrawFile)
+    DPF_EVENT_REG_HOOK(hook_CollectionView_ShortcutKeyPress)
+
     // CollectionItemDelegate begin
     DPF_EVENT_REG_SLOT(slot_CollectionItemDelegate_IconRect)
 

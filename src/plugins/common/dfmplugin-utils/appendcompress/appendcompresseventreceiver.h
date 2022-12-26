@@ -48,6 +48,8 @@ public slots:
     bool handleDragDropCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool handleSetMouseStyleOnDesktop(int viewIndex, const QMimeData *mime, const QPoint &viewPos, void *extData);
     bool handleDragDropCompressOnDesktop(int viewIndex, const QMimeData *md, const QPoint &viewPos, void *extData);
+    bool handleSetMouseStyleOnOrganizer(const QString &viewId, const QMimeData *mime, const QPoint &viewPos, void *extData);
+    bool handleDragDropCompressOnOsrganizer(const QString &viewId, const QMimeData *md, const QPoint &viewPos, void *extData);
     bool handleIsDrop(const QUrl &toUrl);
 };
 

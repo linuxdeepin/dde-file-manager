@@ -357,12 +357,14 @@ int DodgeItemsOper::findEmptyBackward(int screenNum, int index, int targetAfterN
             return endIndex;
         }
 
-        int arrayPosition = emptyindexes.indexOf(endIndex);
-        if (Q_UNLIKELY(arrayPosition == emptyindexes.count())) {
+        const int nextPosition = emptyindexes.indexOf(endIndex) + 1;
+        if (Q_UNLIKELY(nextPosition >= emptyindexes.count())) {
             qWarning() << "Backward vacancy search error, insufficient empty!!!";
             break;
         }
-        endIndex = emptyindexes.at(++arrayPosition);
+
+        // next empty index
+        endIndex = emptyindexes.at(nextPosition);
     }
 
     auto lastPoint = QPoint(surfaces.value(screenNum).width(), surfaces.value(screenNum).height());

@@ -48,6 +48,12 @@ void AppendCompressEventReceiver::initEventConnect()
                             this, &AppendCompressEventReceiver::handleSetMouseStyleOnDesktop);
     dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_DropData",
                             this, &AppendCompressEventReceiver::handleDragDropCompressOnDesktop);
+
+    // organizer
+    dpfHookSequence->follow("ddplugin_organizer", "hook_CollectionView_DragMove",
+                            this, &AppendCompressEventReceiver::handleSetMouseStyleOnOrganizer);
+    dpfHookSequence->follow("ddplugin_organizer", "hook_CollectionView_DropData",
+                            this, &AppendCompressEventReceiver::handleDragDropCompressOnDesktop);
 }
 
 bool AppendCompressEventReceiver::handleSetMouseStyle(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *type)
@@ -82,6 +88,32 @@ bool AppendCompressEventReceiver::handleDragDropCompressOnDesktop(int viewIndex,
     Q_UNUSED(viewIndex)
     Q_UNUSED(viewPos)
 
+    QVariantHash *data = static_cast<QVariantHash *>(extData);
+    if (data) {
+        QUrl toUrl = data->value("dropUrl").toUrl();
+        QList<QUrl> fromUrls = md->urls();
+        return AppendCompressHelper::dragDropCompress(toUrl, fromUrls);
+    }
+
+    return false;
+}
+
+bool AppendCompressEventReceiver::handleSetMouseStyleOnOrganizer(const QString &viewId, const QMimeData *mime, const QPoint &viewPos, void *extData)
+{
+    QVariantHash *data = static_cast<QVariantHash *>(extData);
+    if (data) {
+        QUrl toUrl = data->value("hoverUrl").toUrl();
+        QList<QUrl> fromUrls = mime->urls();
+        Qt::DropAction *dropAction = reinterpret_cast<Qt::DropAction *>(data->value("dropAction").toLongLong());
+        if (dropAction) {
+            return AppendCompressHelper::setMouseStyle(toUrl, fromUrls, dropAction);
+        }
+    }
+    return false;
+}
+
+bool AppendCompressEventReceiver::handleDragDropCompressOnOsrganizer(const QString &viewId, const QMimeData *md, const QPoint &viewPos, void *extData)
+{
     QVariantHash *data = static_cast<QVariantHash *>(extData);
     if (data) {
         QUrl toUrl = data->value("dropUrl").toUrl();

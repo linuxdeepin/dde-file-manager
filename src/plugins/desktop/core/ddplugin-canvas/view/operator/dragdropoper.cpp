@@ -140,11 +140,12 @@ bool DragDropOper::drop(QDropEvent *event)
         ext.insert("QDropEvent", reinterpret_cast<qlonglong>(event));
         QUrl dropUrl;
         QModelIndex dropIndex = view->indexAt(event->pos());
-        if (dropIndex.isValid()) {
+        if (dropIndex.isValid())
             dropUrl = view->model()->fileUrl(dropIndex);
-        }
-        ext.insert("dropUrl", QVariant(dropUrl));
+        else
+            dropUrl = view->model()->rootUrl();
 
+        ext.insert("dropUrl", QVariant(dropUrl));
         if (view->d->hookIfs->dropData(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
             qDebug() << "droped by extend";
             return true;

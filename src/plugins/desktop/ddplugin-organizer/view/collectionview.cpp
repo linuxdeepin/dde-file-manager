@@ -27,6 +27,7 @@
 #include "interface/canvasgridshell.h"
 #include "interface/canvasmanagershell.h"
 #include "utils/fileoperator.h"
+#include "broker/collectionhookinterface.h"
 
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -489,8 +490,6 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     if (event->possibleActions().testFlag(defaultAction))
         event->setDropAction((defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction);
 
-    // todo,from vault???
-
     if (!itemInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction())) {
         QList<Qt::DropAction> actions { Qt::CopyAction, Qt::MoveAction, Qt::LinkAction };
         for (auto action : actions) {
@@ -500,8 +499,6 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
             }
         }
     }
-
-    // todo,from recent???
 
     event->setDropAction(defaultAction);
 }
@@ -520,7 +517,23 @@ void CollectionViewPrivate::handleMoveMimeData(QDropEvent *event, const QUrl &ur
 
 bool CollectionViewPrivate::drop(QDropEvent *event)
 {
-    // todo:从文管的桌面目录，同时拖拽集合与非集合的文件到集合中?
+    // extend
+    {
+        QVariantHash ext;
+        ext.insert("QDropEvent", reinterpret_cast<qlonglong>(event));
+        QUrl dropUrl;
+        QModelIndex dropIndex = q->indexAt(event->pos());
+        if (dropIndex.isValid())
+            dropUrl = q->model()->fileUrl(dropIndex);
+        else
+            dropUrl = q->model()->rootUrl();
+
+        ext.insert("dropUrl", QVariant(dropUrl));
+        if (CollectionHookInterface::dropData(id, event->mimeData(), event->pos(), &ext)) {
+            qDebug() << "droped by extend";
+            return true;
+        }
+    }
 
     // some special case
     if (dropFilter(event))
@@ -1620,7 +1633,8 @@ void CollectionView::paintEvent(QPaintEvent *event)
 
             option.rect = visualRect(index).marginsRemoved(d->cellMargins);
             painter.save();
-            itemDelegate()->paint(&painter, option, index);
+            if (!CollectionHookInterface::drawFile(id(), url, &painter, &option))
+                itemDelegate()->paint(&painter, option, index);
             painter.restore();
         }
 
@@ -1781,6 +1795,13 @@ void CollectionView::resizeEvent(QResizeEvent *event)
 
 void CollectionView::keyPressEvent(QKeyEvent *event)
 {
+    {
+        QVariantHash extData;
+        extData.insert("QKeyEvent", (qlonglong)event);
+        if (CollectionHookInterface::keyPress(id(), event->key(), event->modifiers(), &extData))
+            return;
+    }
+
     if (event->key() == Qt::Key_Shift) {
         // record the starting index of range selection
         d->currentSelectionStartIndex = currentIndex();
@@ -1939,6 +1960,11 @@ void CollectionView::startDrag(Qt::DropActions supportedActions)
     if (isPersistentEditorOpen(currentIndex()))
         closePersistentEditor(currentIndex());
 
+    if (CollectionHookInterface ::startDrag(id(), supportedActions)) {
+        qDebug() << "start drag by extend.";
+        return;
+    }
+
     QModelIndexList validIndexes = selectedIndexes();
     if (validIndexes.count() > 1) {
         QMimeData *data = model()->mimeData(validIndexes);
@@ -1990,6 +2016,21 @@ void CollectionView::dragMoveEvent(QDragMoveEvent *event)
     auto currentUrl = hoverIndex.isValid() ? model()->fileUrl(hoverIndex) : model()->fileUrl(model()->rootIndex());
     if (hoverIndex.isValid()) {
         if (auto fileInfo = model()->fileInfo(hoverIndex)) {
+            // hook
+            {
+                Qt::DropAction dropAction = Qt::IgnoreAction;
+                QVariantHash ext;
+                ext.insert("hoverUrl", QVariant(currentUrl));
+                ext.insert("dropAction", qlonglong(&dropAction));
+                if (CollectionHookInterface::dragMove(id(), event->mimeData(), event->pos(), &ext)) {
+                    if (dropAction != Qt::IgnoreAction) {
+                        event->setDropAction(dropAction);
+                        event->accept();
+                        return;
+                    }
+                }
+            }
+
             bool canDrop = !fileInfo->canAttributes(CanableInfoType::kCanDrop)
                     || (fileInfo->isAttributes(OptInfoType::kIsDir) && !fileInfo->isAttributes(OptInfoType::kIsWritable))
                     || !fileInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction());
@@ -2043,6 +2084,9 @@ bool CollectionView::edit(const QModelIndex &index, QAbstractItemView::EditTrigg
 void CollectionView::keyboardSearch(const QString &search)
 {
     if (search.isEmpty())
+        return;
+
+    if (CollectionHookInterface::keyboardSearch(id(), search))
         return;
 
     bool reverseOrder = qApp->keyboardModifiers() == Qt::ShiftModifier;
