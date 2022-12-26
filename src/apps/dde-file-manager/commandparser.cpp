@@ -43,7 +43,7 @@ CommandParser &CommandParser::instance()
 
 void CommandParser::bindEvents()
 {
-    dpfSignalDispatcher->subscribe("dfmplugin_core", "signal_StartApp", this, &CommandParser::openInUrls);
+    dpfSignalDispatcher->subscribe("dfmplugin_core", "signal_StartApp", this, &CommandParser::processCommand);
 }
 
 bool CommandParser::isSet(const QString &name) const
@@ -60,7 +60,7 @@ void CommandParser::processCommand()
 {
     // whether to add setQuitOnLastWindowClosed
     if (isSet("d"))
-        return;
+        ::exit(0);   // NOTE: daemon process not supported now
 
     if (isSet("e")) {
         // Todo(yanghao): event from json handle, the old filemanager does not seem to be used
