@@ -39,7 +39,7 @@ class DefaultItemManager : public QObject
 public:
     static DefaultItemManager *instance();
     void initDefaultItems();
-    void addPluginItem(const QVariantMap &args, bool notify = false);
+    void addPluginItem(const QVariantMap &args);
     QMap<QString, QUrl> defaultItemUrls();
     QList<BookmarkData> defaultItemInitOrder();
     QMap<QString, QVariantMap> pluginItemData();

@@ -113,7 +113,6 @@ QVariantList BookMarkUpgradeUnit::initData() const
     int index = 0;
     foreach (const BookmarkData &data, defItemInitOrder) {
         BookmarkData temData = data;
-        //        temData.url = DefaultItemManager::instance()->defaultItemUrls().value(temData.name);
         if (data.name.isEmpty())
             continue;
         temData.index = index++;

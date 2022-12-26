@@ -68,24 +68,17 @@ void DefaultItemManager::initDefaultItems()
     }
 }
 
-void DefaultItemManager::addPluginItem(const QVariantMap &args, bool notify)
+void DefaultItemManager::addPluginItem(const QVariantMap &args)
 {
     const QString &nameKey = args.value("Property_Key_NameKey").toString();
 
     if (args.contains("Property_Key_PluginItemData")) {
-        const QVariantMap &itemData = args.value("Property_Key_PluginItemData").toMap();
-        QVariantMap bookmarkData = d->pluginItemData.value(nameKey);
-        bookmarkData.insert("Property_Key_PluginItemData", itemData);
-        d->pluginItemData.insert(nameKey, bookmarkData);
-        if (notify)
-            Q_EMIT pluginItemDataAdded(bookmarkData.value("Property_Key_Url").toString(),
-                                       nameKey,
-                                       bookmarkData.value("Property_Key_IsDefaultItem").toBool(),
-                                       bookmarkData.value("Property_Key_Index").toInt());
-        return;
+        d->pluginItemData.insert(nameKey, args);
+        Q_EMIT pluginItemDataAdded(args.value("Property_Key_Url").toString(),
+                                   nameKey,
+                                   args.value("Property_Key_IsDefaultItem").toBool(),
+                                   args.value("Property_Key_Index").toInt());
     }
-
-    d->pluginItemData.insert(nameKey, args);
 }
 
 QMap<QString, QUrl> DefaultItemManager::defaultItemUrls()

@@ -45,8 +45,6 @@ void DefaultItemManager::initDefaultItems()
 {
     d->defaultItemInitOrder.clear();
     static QStringList defOrder = { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
-    d->defaultPluginItem << "Trash"
-                         << "Recent";
     for (int i = 0; i < defOrder.count(); i++) {
         const QString &nameKey = defOrder.at(i);
         const QString &displayName = SystemPathUtil::instance()->systemPathDisplayName(nameKey);
@@ -56,30 +54,6 @@ void DefaultItemManager::initDefaultItems()
         bookmarkData.index = i;
         bookmarkData.transName = displayName;
         d->defaultItemInitOrder.append(bookmarkData);
-    }
-
-    //Here plugin items are ready and add them as bookmark items
-    //Currently, plugin items are trash and recent plugin
-    QMapIterator<QString, QVariantMap> it(d->pluginItemData);
-    while (it.hasNext()) {
-        it.next();
-        const QVariantMap &args = it.value();
-        const QString &nameKey = args.value("Property_Key_NameKey").toString();
-        const QString &displayName = args.value("Property_Key_DisplayName").toString();
-        const QUrl &url = args.value("Property_Key_Url").toUrl();
-        int index = args.value("Property_Key_Index").toInt();
-        bool isDefaultItem = args.value("Property_Key_IsDefaultItem").toBool();
-        BookmarkData bookmarkData;
-        bookmarkData.name = nameKey;
-        bookmarkData.transName = displayName;
-        bookmarkData.url = url;
-        bookmarkData.index = index;
-        bookmarkData.isDefaultItem = isDefaultItem;
-
-        if (index < 0)
-            d->defaultItemInitOrder.append(bookmarkData);
-        else
-            d->defaultItemInitOrder.insert(0, bookmarkData);
     }
 }
 

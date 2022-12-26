@@ -59,11 +59,6 @@ void Recent::initialize()
     WatcherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
 
-    if (DPF_NAMESPACE::LifeCycle::isAllPluginsStarted())
-        onAllPluginsStarted();
-    else
-        connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Recent::onAllPluginsStarted);
-
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
 
     followEvents();
@@ -118,25 +113,30 @@ void Recent::onWindowOpened(quint64 windId)
 void Recent::addRecentItem()
 {
     ContextMenuCallback contextMenuCb { RecentManager::contenxtMenuHandle };
-
+    const QString &nameKey = "Recent";
+    const QString &displayName = tr("Recent");
     Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
     QVariantMap map {
         { "Property_Key_Group", "Group_Common" },
-        { "Property_Key_DisplayName", tr("Recent") },
+        { "Property_Key_DisplayName", displayName },
         { "Property_Key_Icon", RecentManager::icon() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         // use old config to hide it for compatibility
         //{ "Property_Key_VisiableControl", "recent" }
-        { "Property_Key_ReportName", "Recent" }
+        { "Property_Key_ReportName", nameKey }
     };
-    //    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
 
-    QVariantMap itemMap {
-        { "Property_Key_NameKey", "Recent" },
+    QVariantMap bookmarkMap {
+        { "Property_Key_NameKey", nameKey },
+        { "Property_Key_DisplayName", displayName },
+        { "Property_Key_Url", RecentManager::rootUrl() },
+        { "Property_Key_Index", -1 },
+        { "Property_Key_IsDefaultItem", true },
         { "Property_Key_PluginItemData", map }
     };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", itemMap);
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
 }
 
 void Recent::removeRecentItem()
@@ -175,22 +175,6 @@ void Recent::bindWindows()
 void Recent::regRecentCrumbToTitleBar()
 {
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentManager::scheme(), QVariantMap {});
-}
-
-void Recent::onAllPluginsStarted()
-{
-    const QString &nameKey = "Recent";
-    const QString &displayName = tr("Recent");
-
-    QVariantMap bookmarkMap {
-        { "Property_Key_NameKey", nameKey },
-        { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Url", RecentManager::rootUrl() },
-        { "Property_Key_Index", 0 },
-        { "Property_Key_IsDefaultItem", true },
-    };
-
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);
 }
 
 void Recent::installToSideBar()

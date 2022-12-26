@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     yanghao<yanghao@uniontech.com>
@@ -50,9 +50,6 @@ private:
     void addCustomTopWidget();
     void followEvents();
     void bindWindows();
-
-private slots:
-    void onAllPluginsStarted();
 };
 
 }
