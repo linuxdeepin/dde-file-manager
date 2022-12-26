@@ -483,6 +483,8 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
+    cancelThreadProcessingError();
+
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
         setSkipValue(skip, action);
         return false;
@@ -828,27 +830,12 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
 
 bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip)
 {
-    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
-    while (!checkDiskSpaceAvailable(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), targetStorageInfo, skip)) {
-        action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
-        if (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction) {
-            continue;
-        } else if (action == AbstractJobHandler::SupportAction::kSkipAction) {
-            cancelThreadProcessingError();
-            if (skip)
-                *skip = true;
-            skipWritSize += fromInfo->size() <= 0 ? dirSize : fromInfo->size();
-            return false;
-        }
-
-        if (action == AbstractJobHandler::SupportAction::kEnforceAction) {
-            break;
-        }
-        cancelThreadProcessingError();
+    if (!checkDiskSpaceAvailable(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), targetStorageInfo, skip)) {
+        if (skip && *skip)
+            skipWritSize += fromInfo->size();
         return false;
     }
-    cancelThreadProcessingError();
 
     if (isSourceFileLocal && isTargetFileLocal && fromInfo->size() < kBigFileSize) {
         qDebug() << "use pool copy, url from: " << fromInfo->urlOf(UrlInfoType::kUrl) << " url to: " << toInfo->urlOf(UrlInfoType::kUrl);

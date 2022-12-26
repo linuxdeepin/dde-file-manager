@@ -198,8 +198,11 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
 
     bool result = false;
     // check space
-    if (!checkDiskSpaceAvailable(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), targetStorageInfo, &result))
+    if (!checkDiskSpaceAvailable(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), targetStorageInfo, &result)) {
+        if (result)
+            skipWritSize += fromInfo->size();
         return result;
+    }
 
     if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, &result))
         return result;
