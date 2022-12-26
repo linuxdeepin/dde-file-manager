@@ -131,7 +131,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
         }
 
         const auto mimeType = focusFileInfo->nameOf(NameInfoType::kMimeTypeName);
-        QList<QVariant> supportedTypes = {"image/jpeg", "image/png", "image/bmp", "image/tiff", "image/gif"};
+        QList<QVariant> supportedTypes = { "image/jpeg", "image/png", "image/bmp", "image/tiff", "image/gif" };
         if (supportedTypes.contains(mimeType) && focusFileInfo->isAttributes(OptInfoType::kIsReadable)) {
             tempAction = parent->addAction(d->predicateName.value(ActionID::kSetAsWallpaper));
             d->predicateAction[ActionID::kSetAsWallpaper] = tempAction;
@@ -175,7 +175,11 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     d->focusFileInfo->refresh();
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
-        if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanDelete) || (!d->focusFileInfo->isAttributes(OptInfoType::kIsWritable) && !d->focusFileInfo->isAttributes(OptInfoType::kIsFile) && !d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink)))
+        if (!d->focusFileInfo->canAttributes(CanableInfoType::kCanDelete)
+            || (!d->focusFileInfo->isAttributes(OptInfoType::kIsWritable)
+                && !d->focusFileInfo->isAttributes(OptInfoType::kIsFile)
+                && !d->focusFileInfo->isAttributes(OptInfoType::kIsSymLink)
+                && d->focusFileInfo->countChildFile() > 0))
             delAction->setDisabled(true);
     }
 
