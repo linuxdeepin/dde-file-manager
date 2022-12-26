@@ -70,7 +70,7 @@ QVariant FileItemData::data(int role) const
 
     switch (role) {
     case kItemFilePathRole:
-        return info->displayOf(DisPlayInfoType::kFileDisplayName);
+        return info->displayOf(DisPlayInfoType::kFileDisplayPath);
     case kItemFileLastModifiedRole: {
         auto lastModified = info->timeOf(TimeInfoType::kLastModified).value<QDateTime>();
         return lastModified.isValid() ? lastModified.toString(FileUtils::dateTimeFormat()) : "-";
