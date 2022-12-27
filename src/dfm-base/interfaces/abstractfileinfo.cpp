@@ -340,6 +340,8 @@ QString dfmbase::AbstractFileInfo::displayOf(const DisPlayInfoType type) const
                                                         instance()
                                                                 ->displayNameToEnum(const_cast<AbstractFileInfo *>(this)->fileMimeType().name())))
                 .append(nameOf(FileNameInfoType::kSuffix));
+    case DisPlayInfoType::kFileDisplayPinyinName:
+        return Pinyin::Chinese2Pinyin(displayOf(kFileDisplayName));
     default:
         return QString();
     }
