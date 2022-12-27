@@ -141,10 +141,6 @@ bool BookMarkManager::removeBookMark(const QUrl &url)
     return result;
 }
 
-void BookMarkManager::updateBookMark(const QUrl &url, const BookmarkData &data)
-{
-}
-
 bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
 {
     int count = urls.size();
@@ -182,6 +178,14 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             QVariantList list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
             bookmarkData.index = list.count();
             list << bookmarkData.serialize();
+
+            for (int i = 0; i < list.count(); i++) {
+                QVariantMap map = list.at(i).toMap();
+                map.insert(kKeyIndex, i);
+                list.replace(i, map);
+                quickAccessDataMap[map.value(kKeyUrl).toString()].index = i;
+            }
+
             Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
             quickAccessDataMap[url] = bookmarkData;
             sortedUrls.removeOne(url);

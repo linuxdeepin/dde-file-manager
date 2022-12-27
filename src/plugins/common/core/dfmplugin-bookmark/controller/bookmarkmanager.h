@@ -61,7 +61,6 @@ public:
 
     bool addBookMark(const QList<QUrl> &urls);
     bool removeBookMark(const QUrl &url);
-    void updateBookMark(const QUrl &url, const BookmarkData &data);
 
     void addBookMarkItem(const QUrl &url, const QString &bookmarkName, bool isDefaultItem = false) const;
     void addQuickAccessItemsFromConfig();
