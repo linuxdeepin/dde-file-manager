@@ -32,6 +32,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QWindow>
+#include <QLabel>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
@@ -58,6 +59,11 @@ void UserSharePasswordSettingDialog::initializeUi()
     addContent(passwordEdit);
     setContentsMargins(0, 0, 0, 0);
     getButton(1)->setEnabled(false);
+    QLabel *notice = new QLabel(tr("Set a password on the shared folder for non-anonymous access"), this);
+    QPalette pe;
+    pe.setColor(QPalette::WindowText, QColor("red"));
+    notice->setPalette(pe);
+    insertContent(1, notice);
 
     connect(passwordEdit, &DPasswordEdit::textChanged, this, [this] {
         getButton(1)->setEnabled(!passwordEdit->text().isEmpty());
