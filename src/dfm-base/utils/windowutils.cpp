@@ -37,7 +37,7 @@ bool DFMBASE_NAMESPACE::WindowUtils::keyShiftIsPressed()
 
 bool DFMBASE_NAMESPACE::WindowUtils::keyCtrlIsPressed()
 {
-    return qApp->keyboardModifiers() == Qt::ControlModifier;
+    return qApp->queryKeyboardModifiers() == Qt::ControlModifier;
 }
 
 bool DFMBASE_NAMESPACE::WindowUtils::keyAltIsPressed()
