@@ -69,6 +69,7 @@ protected:
     // QWidget interface
     virtual void showEvent(QShowEvent *event) override;
     virtual void hideEvent(QHideEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
     ComputerModel *computerModel() const;
 
 private:

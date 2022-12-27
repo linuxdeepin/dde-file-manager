@@ -381,3 +381,17 @@ ComputerViewPrivate::ComputerViewPrivate(ComputerView *qq)
 }
 
 }
+
+void dfmplugin_computer::ComputerView::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->modifiers()) {
+    case Qt::AltModifier:
+    case Qt::AltModifier | Qt::KeypadModifier:
+        switch (event->key()) {
+        case Qt::Key_Left:
+        case Qt::Key_Right:
+            return QWidget::keyPressEvent(event);
+        }
+    }
+    return DListView::keyPressEvent(event);
+}
