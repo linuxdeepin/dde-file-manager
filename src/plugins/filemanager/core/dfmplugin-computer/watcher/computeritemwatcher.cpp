@@ -112,11 +112,17 @@ ComputerDataList ComputerItemWatcher::items()
         computerItems << item.url;
 
     qDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
-    dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemListFilter", &computerItems);
+    bool re = dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemListFilter", &computerItems);
     qDebug() << "computer: [LIST] items are filtered by external plugins: " << computerItems;
     for (int i = ret.count() - 1; i >= 0; --i) {
-        if (!computerItems.contains(ret[i].url))
+        if (!re) {
+            //if smbbrower plugin has not filtered the protocol devices, just remove protocol devices temporarily；
+            //when hook event is ready, would go here again and re = true;
+            if (ret[i].url.toString().endsWith(SuffixInfo::kStashedProtocol) || ret[i].url.toString().endsWith(SuffixInfo::kProtocol))
+                ret.removeAt(i);
+        } else if (!computerItems.contains(ret[i].url)) {
             ret.removeAt(i);
+        }
     }
 
     return ret;

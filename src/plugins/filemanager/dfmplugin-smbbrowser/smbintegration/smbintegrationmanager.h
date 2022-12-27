@@ -41,6 +41,7 @@ public:
     bool handleItemFilterOnAdd(const QUrl &devUrl);
     void setWindowId(quint64 winId);
     void switchIntegrationMode(bool value);
+    void addIntegrationItemToComputer(const QUrl &hostUrl);
 
 public Q_SLOTS:
     void computerOpenItem(quint64 winId, const QUrl &url);
@@ -52,7 +53,6 @@ Q_SIGNALS:
 private:
     explicit SmbIntegrationManager(QObject *parent = nullptr);
     void addIntegrationItemToSidebar(const QUrl &hostUrl, ContextMenuCallback contexMenu);
-    void addIntegrationItemToComputer(const QUrl &hostUrl);
     void doSwitchToSmbIntegratedMode(const QList<QUrl> &stashedUrls);
     void doSwitchToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &stashedUrls);
 

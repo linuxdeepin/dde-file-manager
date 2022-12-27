@@ -150,6 +150,7 @@ void Computer::bindEvents()
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_ContextMenu_SetEnable", ComputerEventReceiver::instance(), &ComputerEventReceiver::setContextMenuEnable);
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_AddDevice", ComputerItemWatcherInstance, &ComputerItemWatcher::addDevice);
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_RemoveDevice", ComputerItemWatcherInstance, &ComputerItemWatcher::removeDevice);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_ComputerView_Refresh", ComputerItemWatcherInstance, &ComputerItemWatcher::startQueryItems);
 }
 
 void Computer::followEvents()

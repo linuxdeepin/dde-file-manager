@@ -34,16 +34,19 @@
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 
 #include <QMenu>
+#include <QTimer>
 
 using namespace dfmplugin_smbbrowser;
 
@@ -52,6 +55,9 @@ DFMBASE_USE_NAMESPACE
 static constexpr char kSmbInteg[] = { "smbinteg" };
 static constexpr char kSmbIntegPath[] = { "/.smbinteg" };
 static constexpr char kProtodevstashed[] = { "protodevstashed" };
+static constexpr char kStashedSmbDevices[] = { "StashedSmbDevices" };
+static constexpr char kSmbIntegrations[] = { "SmbIntegrations" };
+
 void SmbBrowser::initialize()
 {
     UrlRoute::regScheme(Global::Scheme::kSmb, "/", SmbBrowserUtils::icon(), true);
@@ -82,6 +88,16 @@ void SmbBrowser::initialize()
     dfmplugin_menu_util::menuSceneRegisterScene(SmbIntComputerMenuCreator::name(), new SmbIntComputerMenuCreator());
     bindScene("ComputerMenu");
     SmbIntegrationManager::instance();
+
+    followEvents();
+    dpfSlotChannel->push("dfmplugin_computer", "slot_ComputerView_Refresh");
+    if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled()) {
+        QTimer::singleShot(0, this, [=]() {
+            QStringList smbRootUrls = Application::genericSetting()->value(kStashedSmbDevices, kSmbIntegrations).toStringList();
+            for (const QString &smbRootUrl : smbRootUrls)
+                SmbIntegrationManager::instance()->addIntegrationItemToComputer(smbRootUrl);
+        });
+    }
 }
 
 bool SmbBrowser::start()
@@ -95,11 +111,6 @@ bool SmbBrowser::start()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kFtp));
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSFtp));
     dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_Operation_OpenItem", SmbIntegrationManager::instance(), &SmbIntegrationManager::computerOpenItem);
-
-    followEvents();
-    // After followEvents, call switchIntegrationMode() to refresh the smb display mode.
-    //Because before call followEvents(), the hook events do not work.
-    SmbIntegrationManager::instance()->switchIntegrationMode(SmbIntegrationManager::instance()->isSmbIntegrationEnabled());
 
     return true;
 }

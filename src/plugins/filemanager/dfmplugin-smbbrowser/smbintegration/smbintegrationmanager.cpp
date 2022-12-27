@@ -575,11 +575,11 @@ bool SmbIntegrationManager::handleItemListFilter(QList<QUrl> *items)
 {
     static QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };   // TODO(xust) /media/$USER/smbmounts might be changed in the future.}
     auto isSamba = [](const QString &path, const QString &smbMatch) {
-        QRegularExpression re(path);
-        QRegularExpressionMatch match = re.match(smbMatch);
+        QRegularExpression re(smbMatch);
+        QRegularExpressionMatch match = re.match(path);
         return match.hasMatch();
     };
-
+    QList<QUrl> removeList;
     for (const QUrl &url : *items) {
         if (isSmbIntegrated) {
             if (url.path().endsWith(kProtodevstashed)) {
@@ -587,8 +587,7 @@ bool SmbIntegrationManager::handleItemListFilter(QList<QUrl> *items)
                 QString encodecId = url.path().remove(suffix);
                 const QString &id = QByteArray::fromBase64(encodecId.toUtf8());
                 if (id.startsWith(Global::Scheme::kSmb)) {
-                    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
-                    items->removeOne(url);
+                    removeList << url;
                 }
             }
             if (url.path().endsWith(kProtocol)) {
@@ -596,16 +595,19 @@ bool SmbIntegrationManager::handleItemListFilter(QList<QUrl> *items)
                 QString encodecId = url.path().remove(suffix);
                 const QString &id = QByteArray::fromBase64(encodecId.toUtf8());
                 if (id.startsWith(Global::Scheme::kSmb) || isSamba(QUrl(id).path(), smbMatch)) {
-                    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
-                    items->removeOne(url);
+                    removeList << url;
                 }
             }
         } else {
             if (url.path().endsWith(kSmbIntegrationSuffix))
-                items->removeOne(url);
+                removeList << url;
         }
     }
-
+    while (!removeList.isEmpty()) {
+        QUrl url = removeList.takeFirst();
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
+        items->removeOne(url);
+    }
     return true;
 }
 
