@@ -34,6 +34,12 @@ static constexpr char kDesktopService[] { "org.deepin.filemanager.service" };
 static constexpr char kDevMngPath[] { "/org/deepin/filemanager/service/DeviceManager" };
 static constexpr char kDevMngIFace[] { "org.deepin.filemanager.service.DeviceManager" };
 
+DeviceProxyManager *DeviceProxyManager::instance()
+{
+    static DeviceProxyManager ins;
+    return &ins;
+}
+
 const DeviceManagerInterface *DeviceProxyManager::getDBusIFace() const
 {
     return d->devMngDBus.data();

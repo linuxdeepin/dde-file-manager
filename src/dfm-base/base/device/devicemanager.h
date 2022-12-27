@@ -53,11 +53,7 @@ class DeviceManager : public QObject
     Q_DISABLE_COPY(DeviceManager)
 
 public:
-    inline static DeviceManager *instance()
-    {
-        static DeviceManager ins;
-        return &ins;
-    }
+    static DeviceManager *instance();
 
     // device infos
     QStringList getAllBlockDevID(GlobalServerDefines::DeviceQueryOptions opts = {});

@@ -31,6 +31,12 @@
 
 using namespace dfmbase;
 
+NetworkUtils *NetworkUtils::instance()
+{
+    static NetworkUtils s;
+    return &s;
+}
+
 bool NetworkUtils::checkNetConnection(const QString &host, const QString &port)
 {
     addrinfo *result;

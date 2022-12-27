@@ -37,11 +37,7 @@ class NetworkUtils : public QObject
     Q_OBJECT
 
 public:
-    inline static NetworkUtils *instance()
-    {
-        static NetworkUtils s;
-        return &s;
-    }
+    static NetworkUtils *instance();
 
     bool checkNetConnection(const QString &host, const QString &port);
     void doAfterCheckNet(const QString &host, const QString &port, std::function<void(bool)> callback = nullptr);

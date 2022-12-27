@@ -47,6 +47,12 @@ using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
 
+DeviceManager *DeviceManager::instance()
+{
+    static DeviceManager ins;
+    return &ins;
+}
+
 QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
 {
     auto ret { d->watcher->getDevIds(DeviceType::kBlockDevice) };

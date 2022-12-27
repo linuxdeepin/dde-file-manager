@@ -34,6 +34,12 @@
 using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
+AvfsEventHandler *AvfsEventHandler::instance()
+{
+    static AvfsEventHandler ins;
+    return &ins;
+}
+
 bool AvfsEventHandler::hookOpenFiles(quint64 winId, const QList<QUrl> &urls)
 {
     if (!AvfsUtils::archivePreviewEnabled())

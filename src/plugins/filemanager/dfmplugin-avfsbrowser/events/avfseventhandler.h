@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef AVFSEVENTHANDLER_H
 #define AVFSEVENTHANDLER_H
 
@@ -33,15 +33,11 @@ namespace dfmplugin_avfsbrowser {
 
 class AvfsEventHandler : public QObject
 {
-    AvfsEventHandler() {};
-    Q_DISABLE_COPY(AvfsEventHandler);
+    AvfsEventHandler() { }
+    Q_DISABLE_COPY(AvfsEventHandler)
 
 public:
-    inline static AvfsEventHandler *instance()
-    {
-        static AvfsEventHandler ins;
-        return &ins;
-    }
+    static AvfsEventHandler *instance();
 
     bool hookOpenFiles(quint64 winId, const QList<QUrl> &urls);
     bool hookEnterPressed(quint64 winId, const QList<QUrl> &urls);

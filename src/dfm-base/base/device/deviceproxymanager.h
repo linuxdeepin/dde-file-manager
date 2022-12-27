@@ -46,11 +46,7 @@ class DeviceProxyManager : public QObject
     Q_DISABLE_COPY(DeviceProxyManager)
 
 public:
-    inline static DeviceProxyManager *instance()
-    {
-        static DeviceProxyManager ins;
-        return &ins;
-    }
+    static DeviceProxyManager *instance();
 
     const DeviceManagerInterface *getDBusIFace() const;
 

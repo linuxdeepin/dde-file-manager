@@ -33,11 +33,7 @@ DAEMONPSHARECONTROL_BEGIN_NAMESPACE
 class PolicyKitHelper
 {
 public:
-    inline static PolicyKitHelper *instance()
-    {
-        static PolicyKitHelper instance;
-        return &instance;
-    }
+    static PolicyKitHelper *instance();
 
     bool checkAuthorization(const QString &actionId, qint64 applicationPid);
 

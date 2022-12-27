@@ -24,6 +24,12 @@
 
 DAEMONPAC_USE_NAMESPACE
 
+PolicyKitHelper *PolicyKitHelper::instance()
+{
+    static PolicyKitHelper instance;
+    return &instance;
+}
+
 bool PolicyKitHelper::checkAuthorization(const QString &actionId, qint64 applicationPid)
 {
     using namespace PolkitQt1;
