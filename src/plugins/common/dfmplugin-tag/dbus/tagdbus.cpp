@@ -183,10 +183,9 @@ void TagDBus::initconnect()
     connect(TagDbHandle::instance(), &TagDbHandle::untagFiles, this, &TagDBus::onUntagFiles);
 }
 
-void TagDBus::onAddNewTags(const QVariant &newTags)
+void TagDBus::onAddNewTags(const QVariantMap &newTags)
 {
-    QStringList tags = newTags.toStringList();
-    emit addedNewTags(tags);
+    emit addedNewTags(newTags.keys());
 }
 
 void TagDBus::onChangeTagColor(const QVariantMap &oldAndNewColor)
@@ -221,7 +220,7 @@ void TagDBus::onDeleteTags(const QVariant &deletedTags)
 
 void TagDBus::onFilesWereTagged(const QVariantMap &taggedFiles)
 {
-    QMap<QString, QList<QString>> fileAndTags {};
+    QMap<QString, QStringList> fileAndTags {};
     QMap<QString, QVariant>::const_iterator it = taggedFiles.begin();
     while (it != taggedFiles.end()) {
         fileAndTags[it.key()] = it.value().toStringList();
@@ -233,7 +232,7 @@ void TagDBus::onFilesWereTagged(const QVariantMap &taggedFiles)
 
 void TagDBus::onUntagFiles(const QVariantMap &untaggedFiles)
 {
-    QMap<QString, QList<QString>> fileAndTags {};
+    QMap<QString, QStringList> fileAndTags {};
     QMap<QString, QVariant>::const_iterator it = untaggedFiles.begin();
     while (it != untaggedFiles.end()) {
         fileAndTags[it.key()] = it.value().toStringList();

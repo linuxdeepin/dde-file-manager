@@ -161,6 +161,27 @@ QVariantMap TagDbHandle::getFilesByTag(const QStringList &tags)
     return allTagFiles;
 }
 
+QHash<QString, QStringList> TagDbHandle::getAllFileWithTags()
+{
+    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
+    finally.dismiss();
+
+    // query
+    const auto &beans = handle->query<FileTagInfo>().toBeans();
+
+    QHash<QString, QStringList> fileTagsMap;
+    for (auto &bean : beans) {
+        const auto &path = bean->getFilePath();
+        if (fileTagsMap.contains(path)) {
+            fileTagsMap[path].append(bean->getTagName());
+        } else {
+            fileTagsMap.insert(path, { bean->getTagName() });
+        }
+    }
+
+    return fileTagsMap;
+}
+
 bool TagDbHandle::addTagProperty(const QVariantMap &data)
 {
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
@@ -179,7 +200,7 @@ bool TagDbHandle::addTagProperty(const QVariantMap &data)
         }
     }
 
-    emit addedNewTags(QVariant { data.keys() });
+    emit addedNewTags(data);
     finally.dismiss();
     return true;
 }
@@ -243,6 +264,7 @@ bool TagDbHandle::removeTagsOfFiles(const QVariantMap &data)
         if (!removeSpecifiedTagOfFile(it.key(), it.value()))
             return false;
 
+    emit untagFiles(data);
     finally.dismiss();
     return true;
 }

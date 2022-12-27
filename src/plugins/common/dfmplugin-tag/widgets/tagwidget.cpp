@@ -125,7 +125,7 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
     loadTags(d->url);
 }
 
-void TagWidget::onTagChanged(const QMap<QString, QList<QString>> &fileAndTags)
+void TagWidget::onTagChanged(const QMap<QString, QStringList> &fileAndTags)
 {
     if (fileAndTags.contains(d->url.path()))
         loadTags(d->url);

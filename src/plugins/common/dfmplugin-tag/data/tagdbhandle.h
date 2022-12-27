@@ -43,6 +43,7 @@ public:
     QVariantMap getTagsByUrls(const QStringList &urlList);
     QVariant getSameTagsOfDiffUrls(const QStringList &urlList);
     QVariantMap getFilesByTag(const QStringList &tags);
+    QHash<QString, QStringList> getAllFileWithTags();
 
     bool addTagProperty(const QVariantMap &data);
     bool addTagsForFiles(const QVariantMap &data);
@@ -73,7 +74,7 @@ private:
     virtual ~TagDbHandle() = default;
 
 Q_SIGNALS:
-    void addedNewTags(const QVariant &newTags);
+    void addedNewTags(const QVariantMap &newTags);
     void deletedTags(const QVariant &beDeletedTags);
     void changedTagColor(const QVariantMap &oldAndNewColor);
     void changedTagName(const QVariantMap &oldAndNewName);

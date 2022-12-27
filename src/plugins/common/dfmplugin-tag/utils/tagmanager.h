@@ -62,16 +62,16 @@ public:
 
 Q_SIGNALS:
     void tagDeleted(const QString &tagName);
-    void filesTagged(const QMap<QString, QList<QString>> &fileAndTags);
-    void filesUntagged(const QMap<QString, QList<QString>> &fileAndTags);
+    void filesTagged(const QMap<QString, QStringList> &fileAndTags);
+    void filesUntagged(const QMap<QString, QStringList> &fileAndTags);
 
 public Q_SLOTS:
     void onTagAdded(const QStringList &tags);
     void onTagDeleted(const QStringList &tags);
     void onTagColorChanged(const QMap<QString, QString> &tagAndColorName);
     void onTagNameChanged(const QMap<QString, QString> &oldAndNew);
-    void onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags);
-    void onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags);
+    void onFilesTagged(const QMap<QString, QStringList> &fileAndTags);
+    void onFilesUntagged(const QMap<QString, QStringList> &fileAndTags);
 
 private:
     explicit TagManager(QObject *parent = nullptr);

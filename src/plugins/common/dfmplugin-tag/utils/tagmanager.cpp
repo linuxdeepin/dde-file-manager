@@ -12,6 +12,7 @@
 #include "widgets/tagcolorlistwidget.h"
 #include "files/tagfileinfo.h"
 #include "utils/anythingmonitorfilter.h"
+#include "utils/filetagcache.h"
 
 #include <dfm-framework/dpf.h>
 #include "dfm-base/base/schemefactory.h"
@@ -113,12 +114,11 @@ bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painte
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
         return false;
 
-    const auto &tags = getTagsByUrls({ url }, false).toMap();
+    const auto &tags = FileTagCacheController::instance().getCacheFileTags(url.path());
     if (tags.isEmpty())
         return false;
-    auto tempTags = TagHelper::instance()->displayTagNameConversion(tags.first().toStringList());
-    const auto &tagsColor = getTagsColor(tempTags);
 
+    const auto &tagsColor = FileTagCacheController::instance().getCacheTagsColor(tags);
     if (!tagsColor.isEmpty()) {
         QRectF boundingRect(0, 0, (tagsColor.size() + 1) * kTagDiameter / 2, kTagDiameter);
         boundingRect.moveCenter(rect->center());
@@ -140,12 +140,11 @@ bool TagManager::paintIconTagsHandle(int role, const QUrl &url, QPainter *painte
     if (role != kItemFileDisplayNameRole && role != kItemNameRole)
         return false;
 
-    const auto &fileTags = getTagsByUrls({ url }, false).toMap();
+    const auto &fileTags = FileTagCacheController::instance().getCacheFileTags(url.path());
     if (fileTags.isEmpty())
         return false;
 
-    QStringList tempTags = fileTags.first().toStringList();
-    const auto &tagsColor = getTagsColor(tempTags);
+    const auto &tagsColor = FileTagCacheController::instance().getCacheTagsColor(fileTags);
 
     if (!tagsColor.isEmpty()) {
         QRectF boundingRect(0, 0, (tagsColor.size() + 1) * kTagDiameter / 2, kTagDiameter);
@@ -622,7 +621,7 @@ void TagManager::onTagNameChanged(const QMap<QString, QString> &oldAndNew)
     }
 }
 
-void TagManager::onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags)
+void TagManager::onFilesTagged(const QMap<QString, QStringList> &fileAndTags)
 {
     if (!fileAndTags.isEmpty()) {
         TagEventCaller::sendFileUpdate(fileAndTags.firstKey());
@@ -630,7 +629,7 @@ void TagManager::onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags)
     emit filesTagged(fileAndTags);
 }
 
-void TagManager::onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags)
+void TagManager::onFilesUntagged(const QMap<QString, QStringList> &fileAndTags)
 {
     if (!fileAndTags.isEmpty()) {
         TagEventCaller::sendFileUpdate(fileAndTags.firstKey());

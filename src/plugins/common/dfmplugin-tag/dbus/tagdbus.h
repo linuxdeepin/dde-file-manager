@@ -43,11 +43,11 @@ Q_SIGNALS:
     void tagsDeleted(const QStringList &tags);
     void tagColorChanged(const QMap<QString, QString> &oldAndNew);
     void tagNameChanged(const QMap<QString, QString> &oldAndNew);
-    void filesTagged(const QMap<QString, QList<QString>> &fileAndTags);
-    void filesUntagged(const QMap<QString, QList<QString>> &fileAndTags);
+    void filesTagged(const QMap<QString, QStringList> &fileAndTags);
+    void filesUntagged(const QMap<QString, QStringList> &fileAndTags);
 
 private Q_SLOTS:
-    void onAddNewTags(const QVariant &newTags);
+    void onAddNewTags(const QVariantMap &newTags);
     void onChangeTagColor(const QVariantMap &oldAndNewColor);
     void onChangeTagName(const QVariantMap &oldAndNewName);
     void onDeleteTags(const QVariant &deletedTags);

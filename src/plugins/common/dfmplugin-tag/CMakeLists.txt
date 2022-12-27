@@ -19,6 +19,8 @@ FILE(GLOB TAG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbus/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbus/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbus/dbus_adaptor/*.h"

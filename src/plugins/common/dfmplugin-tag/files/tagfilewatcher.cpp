@@ -50,11 +50,11 @@ void TagFileWatcher::onTagRemoved(const QString &tagName)
         emit AbstractFileWatcher::fileDeleted(dptr->url);
 }
 
-void TagFileWatcher::onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags)
+void TagFileWatcher::onFilesTagged(const QMap<QString, QStringList> &fileAndTags)
 {
     QString tagName = TagHelper::instance()->getTagNameFromUrl(dptr->url);
 
-    QMap<QString, QList<QString>>::const_iterator iter = fileAndTags.begin();
+    QMap<QString, QStringList>::const_iterator iter = fileAndTags.begin();
     while (iter != fileAndTags.end()) {
         if (iter.value().contains(tagName)) {
             QUrl fileUrl = QUrl::fromLocalFile(iter.key());
@@ -66,11 +66,11 @@ void TagFileWatcher::onFilesTagged(const QMap<QString, QList<QString>> &fileAndT
     }
 }
 
-void TagFileWatcher::onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags)
+void TagFileWatcher::onFilesUntagged(const QMap<QString, QStringList> &fileAndTags)
 {
     QString tagName = TagHelper::instance()->getTagNameFromUrl(dptr->url);
 
-    QMap<QString, QList<QString>>::const_iterator iter = fileAndTags.begin();
+    QMap<QString, QStringList>::const_iterator iter = fileAndTags.begin();
     while (iter != fileAndTags.end()) {
         if (iter.value().contains(tagName)) {
             QUrl fileUrl = QUrl::fromLocalFile(iter.key());
