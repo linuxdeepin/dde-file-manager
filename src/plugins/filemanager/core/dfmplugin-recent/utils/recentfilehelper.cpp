@@ -66,7 +66,12 @@ void RecentFileHelper::removeRecent(const QList<QUrl> &urls)
     int code = dlg.exec();
     if (code == 1) {
         QStringList list;
+        auto originPath = RecentManager::instance()->getRecentOriginPaths();
         for (const QUrl &url : urls) {
+            if (originPath.contains(url)) {
+                list << originPath[url];
+                continue;
+            }
             //list << DUrl::fromLocalFile(url.path()).toString();
             //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
             QUrl newUrl = url;

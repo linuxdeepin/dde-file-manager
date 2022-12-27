@@ -76,6 +76,7 @@ public:
     static QUrl urlTransform(const QUrl &url);
 
     QMap<QUrl, AbstractFileInfoPointer> getRecentNodes() const;
+    QMap<QUrl, QString> getRecentOriginPaths() const;
     bool removeRecentFile(const QUrl &url);
 
     bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
@@ -97,7 +98,7 @@ private:
 
 private slots:
     void updateRecent();
-    void onUpdateRecentFileInfo(const QUrl &url, qint64 readTime);
+    void onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime);
     void onDeleteExistRecentUrls(QList<QUrl> &urls);
 
 private:
@@ -106,6 +107,7 @@ private:
     RecentIterateWorker *iteratorWorker { new RecentIterateWorker };   // free by QThread::finished
     AbstractFileWatcherPointer watcher;
     QMap<QUrl, AbstractFileInfoPointer> recentNodes;
+    QMap<QUrl, QString> recentOriginPaths;
 };
 }
 #endif   // RECENTMANAGER_H

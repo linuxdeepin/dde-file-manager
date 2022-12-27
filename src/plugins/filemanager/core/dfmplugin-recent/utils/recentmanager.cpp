@@ -131,10 +131,16 @@ QMap<QUrl, AbstractFileInfoPointer> RecentManager::getRecentNodes() const
     return recentNodes;
 }
 
+QMap<QUrl, QString> RecentManager::getRecentOriginPaths() const
+{
+    return recentOriginPaths;
+}
+
 bool RecentManager::removeRecentFile(const QUrl &url)
 {
     if (recentNodes.contains(url)) {
         recentNodes.remove(url);
+        recentOriginPaths.remove(url);
         return true;
     }
     return false;
@@ -296,10 +302,11 @@ void RecentManager::updateRecent()
     updateRecentTimer.start();
 }
 
-void RecentManager::onUpdateRecentFileInfo(const QUrl &url, qint64 readTime)
+void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime)
 {
     if (!recentNodes.contains(url)) {
         recentNodes[url] = InfoFactory::create<AbstractFileInfo>(url);
+        recentOriginPaths[url] = originPath;
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentManager::rootUrl());
         if (watcher) {
             emit watcher->subfileCreated(url);
