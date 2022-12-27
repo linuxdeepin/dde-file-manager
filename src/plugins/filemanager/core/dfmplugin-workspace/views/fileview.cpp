@@ -187,6 +187,10 @@ bool FileView::setRootUrl(const QUrl &url)
     updateListHeaderView();
     doSort();
 
+    // dir already traversal
+    if (model()->currentState() == ModelState::kIdle)
+        updateSelectedUrl();
+
     return true;
 }
 

@@ -151,6 +151,7 @@ void FileDataHelper::doTravers(const int rootIndex)
 
         info->traversal->start();
     } else {
+        info->canFetchMore = false;
         QApplication::restoreOverrideCursor();
     }
 }
