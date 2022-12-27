@@ -135,20 +135,20 @@ void FileOperator::setDataProvider(CollectionDataProvider *provider)
 void FileOperator::copyFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
+    d->filterDesktopFile(urls);
     if (urls.isEmpty())
         return;
 
-    d->filterDesktopFile(urls);
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
 
 void FileOperator::cutFiles(const CollectionView *view)
 {
     auto &&urls = d->getSelectedUrls(view);
+    d->filterDesktopFile(urls);
     if (urls.isEmpty())
         return;
 
-    d->filterDesktopFile(urls);
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
 }
 
@@ -169,7 +169,6 @@ void FileOperator::pasteFiles(const CollectionView *view)
     } else if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
         qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
         ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
-        return;
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << urls;
     }

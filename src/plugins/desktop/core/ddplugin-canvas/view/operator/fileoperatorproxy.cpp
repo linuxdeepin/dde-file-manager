@@ -206,6 +206,8 @@ void FileOperatorProxy::copyFiles(const CanvasView *view)
 {
     auto urls = view->selectionModel()->selectedUrls();
     d->filterDesktopFile(urls);
+    if (urls.isEmpty())
+        return;
 
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, urls);
 }
@@ -214,6 +216,8 @@ void FileOperatorProxy::cutFiles(const CanvasView *view)
 {
     auto urls = view->selectionModel()->selectedUrls();
     d->filterDesktopFile(urls);
+    if (urls.isEmpty())
+        return;
 
     dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, urls);
 }
@@ -223,10 +227,13 @@ void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)
     // feature:paste at pos
     Q_UNUSED(pos)
 
+    auto urls = ClipBoard::instance()->clipboardFileUrlList();
+    if (urls.isEmpty())
+        return;
+
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackPasteFiles, QVariant());
     QVariant custom = QVariant::fromValue(funcData);
 
-    auto urls = ClipBoard::instance()->clipboardFileUrlList();
     ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
     if (ClipBoard::kCopyAction == action) {
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
@@ -236,6 +243,9 @@ void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)
 
         // clear clipboard after cutting files from clipboard
         ClipBoard::instance()->clearClipboard();
+    } else if (ClipBoard::kRemoteCopiedAction == action) {   // 远程协助
+        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+        ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << urls;
     }
