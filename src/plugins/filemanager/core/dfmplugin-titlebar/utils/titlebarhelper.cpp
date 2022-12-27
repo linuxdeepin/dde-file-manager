@@ -182,8 +182,11 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
             QString displayText = oneUrl.fileName();
             // Check for possible display text.
             auto infoPointer = InfoFactory::create<DFMBASE_NAMESPACE::LocalFileInfo>(oneUrl);
-            if (infoPointer)
-                displayText = infoPointer->displayOf(DisPlayInfoType::kFileDisplayName);
+            if (infoPointer) {
+                const QString &displayName = infoPointer->displayOf(DisPlayInfoType::kFileDisplayName);
+                if (!displayName.isEmpty())
+                    displayText = displayName;
+            }
             CrumbData data(oneUrl, displayText);
             list.append(data);
         }
