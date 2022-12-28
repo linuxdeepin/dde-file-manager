@@ -1014,6 +1014,15 @@ void FileView::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::RightButton: {
+        bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
+
+        if (!isEmptyArea) {
+            const QModelIndex &index = indexAt(event->pos());
+            if (selectedIndexes().isEmpty() || !selectedIndexes().contains(index)) {
+                setCurrentIndex(index);
+            }
+        }
+
         break;
     }
     default:
