@@ -143,7 +143,7 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
         if (flag == FTS_D)
             sizeInfo->totalSize += FileUtils::getMemoryPageSize();
         else if (flag != FTS_DP)
-            sizeInfo->totalSize += fileSize;
+            sizeInfo->totalSize += (fileSize > 0 ? fileSize : FileUtils::getMemoryPageSize());
     }
     fts_close(fts);
 }
