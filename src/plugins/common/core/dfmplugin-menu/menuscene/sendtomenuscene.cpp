@@ -209,7 +209,7 @@ bool SendToMenuScene::triggered(QAction *action)
                 urlsTrans = urls;
 
             for (const QUrl &url : urlsTrans) {
-                QString linkName = FileUtils::nonExistSymlinkFileName(url);
+                QString linkName = FileUtils::nonExistSymlinkFileName(url, QUrl::fromLocalFile(desktopPath));
                 QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
                 dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, d->windowId, url, linkUrl, false, true);
             }

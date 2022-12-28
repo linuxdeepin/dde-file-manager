@@ -243,7 +243,7 @@ void FileOperatorHelper::createSymlink(const FileView *view, QUrl targetParent)
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     for (const QUrl &fileUrl : view->selectedUrlList()) {
-        QString linkName = FileUtils::nonExistSymlinkFileName(fileUrl);
+        QString linkName = FileUtils::nonExistSymlinkFileName(fileUrl, targetParent);
         QUrl linkUrl;
         linkUrl.setScheme(targetParent.scheme());
         linkUrl.setPath(targetParent.path() + "/" + linkName);
