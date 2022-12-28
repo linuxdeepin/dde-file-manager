@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "smbbrowsermenuscene.h"
 #include "smbintegration/smbintegrationmanager.h"
 #include "private/smbbrowsermenuscene_p.h"
@@ -122,11 +122,11 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
     quint64 winId = d->windowId;
     const QString &smbUrl = d->selectFiles.first().toString();
     if (actId == SmbBrowserActionId::kOpenSmb || actId == SmbBrowserActionId::kMountSmb || actId == SmbBrowserActionId::kOpenSmbInNewWin) {
-        DeviceManager::instance()->mountNetworkDeviceAsync(smbUrl, [actId, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
+        DeviceManager::instance()->mountNetworkDeviceAsync(smbUrl, [smbUrl, actId, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
             if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
                 DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
             } else {
-                QUrl u = QUrl::fromLocalFile(mntPath);
+                QUrl u = mntPath.isEmpty() ? QUrl(smbUrl) : QUrl::fromLocalFile(mntPath);
                 // If `smbUrl` is not mounted, the behavior of action `kMountSmb` is the same as `kOpenSmb`.
                 if (actId == SmbBrowserActionId::kOpenSmb || actId == SmbBrowserActionId::kMountSmb)
                     dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, u);

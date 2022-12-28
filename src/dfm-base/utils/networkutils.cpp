@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "networkutils.h"
 
 #include <QtConcurrent>
@@ -39,6 +39,9 @@ NetworkUtils *NetworkUtils::instance()
 
 bool NetworkUtils::checkNetConnection(const QString &host, const QString &port)
 {
+    if (host.isEmpty())
+        return true;
+
     addrinfo *result;
     addrinfo hints {};
     hints.ai_family = AF_UNSPEC;   // either IPv4 or IPv6

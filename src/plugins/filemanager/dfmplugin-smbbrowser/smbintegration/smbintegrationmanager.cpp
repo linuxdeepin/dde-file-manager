@@ -175,7 +175,7 @@ void SmbIntegrationManager::switchIntegrationMode(bool value)
  */
 void SmbIntegrationManager::addSmbIntegrationItem(const QUrl &hostUrl, ContextMenuCallback contexMenu)
 {
-    if (!hostUrl.isValid() || hostUrl.scheme() != Global::Scheme::kSmb)
+    if (!hostUrl.isValid() || hostUrl.host().isEmpty() || hostUrl.scheme() != Global::Scheme::kSmb)
         return;
 
     addIntegrationItemToSidebar(hostUrl, contexMenu);
