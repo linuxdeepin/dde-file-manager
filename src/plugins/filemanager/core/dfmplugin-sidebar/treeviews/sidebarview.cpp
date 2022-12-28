@@ -402,7 +402,10 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
 
     // convert destnation url to real path if it's a symbol link.
     if (dstInfo->isAttributes(OptInfoType::kIsSymLink))
-        dstUrl = dstInfo->pathOf(PathInfoType::kSymLinkTarget);
+        dstUrl = QUrl::fromLocalFile(dstInfo->pathOf(PathInfoType::kSymLinkTarget));
+
+    if (srcUrls.count() > 0)
+        action = FileUtils::isSameDevice(srcUrls[0], dstUrl) ? Qt::MoveAction : Qt::CopyAction;
 
     auto winId = SideBarHelper::windowId(qobject_cast<QWidget *>(parent()));
 
@@ -410,13 +413,15 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
     case Qt::CopyAction:
         // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
         QTimer::singleShot(0, const_cast<SideBarView *>(this), [=]() {
-            FileOperatorHelperIns->pasteFiles(winId, srcUrls, dstUrl, action);
+            if (srcUrls.count() > 0)
+                FileOperatorHelperIns->pasteFiles(winId, srcUrls, dstUrl, action);
         });
         break;
     case Qt::LinkAction:
         break;
     case Qt::MoveAction:
-        FileOperatorHelperIns->pasteFiles(winId, srcUrls, dstUrl, action);
+        if (srcUrls.count() > 0)
+            FileOperatorHelperIns->pasteFiles(winId, srcUrls, dstUrl, action);
         break;
     default:
         return false;

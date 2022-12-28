@@ -739,7 +739,7 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         return false;
 
     if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
-        targetFileUrl = itemInfo->pathOf(PathInfoType::kSymLinkTarget);
+        targetFileUrl = QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget));
     }
 
     if (d->hookIfs && d->hookIfs->dropMimeData(data, targetFileUrl, action)) {
@@ -757,11 +757,14 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         FileOperatorProxyIns->dropToApp(urlList, targetFileUrl.toLocalFile());
         return true;
     }
+    if (urlList.count() > 0)
+        action = FileUtils::isSameDevice(urlList[0], targetFileUrl) ? Qt::MoveAction : Qt::CopyAction;
 
     switch (action) {
     case Qt::CopyAction:
     case Qt::MoveAction:
-        FileOperatorProxyIns->dropFiles(action, targetFileUrl, urlList);
+        if (urlList.count() > 0)
+            FileOperatorProxyIns->dropFiles(action, targetFileUrl, urlList);
         break;
     case Qt::LinkAction:
         break;

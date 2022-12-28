@@ -552,7 +552,7 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     }
 
     if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
-        targetFileUrl = itemInfo->pathOf(PathInfoType::kSymLinkTarget);
+        targetFileUrl = QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget));
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
@@ -566,10 +566,14 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
         return true;
     }
 
+    if (urlList.count() > 0)
+        action = FileUtils::isSameDevice(urlList[0], targetFileUrl) ? Qt::MoveAction : Qt::CopyAction;
+
     switch (action) {
     case Qt::CopyAction:
     case Qt::MoveAction:
-        FileOperatorIns->dropFilesToCanvas(action, targetFileUrl, urlList);
+        if (urlList.count() > 0)
+            FileOperatorIns->dropFilesToCanvas(action, targetFileUrl, urlList);
         break;
     case Qt::LinkAction:
         break;

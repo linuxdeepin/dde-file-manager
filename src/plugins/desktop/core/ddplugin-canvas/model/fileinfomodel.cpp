@@ -450,7 +450,7 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
 
     if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
-        targetFileUrl = itemInfo->pathOf(PathInfoType::kSymLinkTarget);
+        targetFileUrl = QUrl::fromLocalFile(itemInfo->pathOf(PathInfoType::kSymLinkTarget));
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
@@ -463,15 +463,19 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList { targetFileUrl.toLocalFile() });
         return true;
     }
+    if (urlList.count() > 0)
+        action = FileUtils::isSameDevice(urlList[0], targetFileUrl) ? Qt::MoveAction : Qt::CopyAction;
 
     switch (action) {
     case Qt::CopyAction:
     case Qt::MoveAction: {
         if (action == Qt::MoveAction) {
-            dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+            if (urlList.count() > 0)
+                dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
             // default is copy file
-            dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+            if (urlList.count() > 0)
+                dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
     } break;
     case Qt::LinkAction:
