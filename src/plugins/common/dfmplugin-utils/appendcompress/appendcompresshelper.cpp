@@ -58,8 +58,14 @@ bool AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl>
             QString toFilePath = toUrl.toLocalFile();
             QStringList fromFilePath;
             int count = fromUrls.count();
+
             for (int i = 0; i < count; ++i) {
-                fromFilePath << fromUrls.at(i).toLocalFile();
+                const auto &info = InfoFactory::create<AbstractFileInfo>(fromUrls.at(i));
+                if (info && info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
+                    fromFilePath << info->urlOf(UrlInfoType::kRedirectedFileUrl).path();
+                } else {
+                    fromFilePath << fromUrls.at(i).toLocalFile();
+                }
             }
             return appendCompress(toFilePath, fromFilePath);
         }

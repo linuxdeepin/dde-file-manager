@@ -286,6 +286,8 @@ bool TrashFileInfo::canAttributes(const CanableInfoType type) const
         return FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
     case FileCanType::kCanHidden:
         return false;
+    case FileCanType::kCanRedirectionFileUrl:
+        return true;
     default:
         return AbstractFileInfo::canAttributes(type);
     }
