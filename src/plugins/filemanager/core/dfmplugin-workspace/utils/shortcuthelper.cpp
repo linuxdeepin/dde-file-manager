@@ -116,6 +116,14 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
     case Qt::Key_Escape:
         ClipBoard::clearClipboard();
         return true;
+    case Qt::Key_F2: {
+        const auto &urls = view->selectedUrlList();
+        for (const QUrl &url : urls) {
+            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            info->refresh();
+        }
+        break;
+    }
     default:
         break;
     }
