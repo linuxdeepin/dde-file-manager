@@ -46,6 +46,7 @@ public:
 class AvfsMenuScenePrivate;
 class AvfsMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit AvfsMenuScene(QObject *parent = nullptr);
     virtual ~AvfsMenuScene() override;

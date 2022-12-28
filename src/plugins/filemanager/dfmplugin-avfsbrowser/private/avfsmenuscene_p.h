@@ -32,6 +32,8 @@ namespace dfmplugin_avfsbrowser {
 class AvfsMenuScene;
 class AvfsMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
+
     friend class AvfsMenuScene;
 
     bool showOpenWith { false };
