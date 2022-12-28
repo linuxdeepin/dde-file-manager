@@ -32,6 +32,7 @@ namespace dfmplugin_smbbrowser {
 class SmbBrowserMenuScene;
 class SmbBrowserMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class SmbBrowserMenuScene;
 
 public:
