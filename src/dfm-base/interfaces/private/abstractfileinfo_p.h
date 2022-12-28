@@ -47,6 +47,7 @@ public:
     AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
     AbstractFileInfoPointer proxy { nullptr };
     QMap<ExtInfoType, QVariant> extendOtherCache;
+    QString pinyinName;
 
 private:
     QUrl getUrlByChildFileName(const QString &fileName) const;
