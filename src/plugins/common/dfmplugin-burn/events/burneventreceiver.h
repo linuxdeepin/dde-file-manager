@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef BURNEVENTRECEIVER_H
 #define BURNEVENTRECEIVER_H
 
@@ -46,7 +46,7 @@ public slots:
                                const QList<QUrl> &destUrls,
                                bool ok,
                                const QString &errMsg);
-    void handleMountImage(const QUrl &isoUrl);
+    void handleMountImage(quint64 winId, const QUrl &isoUrl);
 
 private:
     explicit BurnEventReceiver(QObject *parent = nullptr);

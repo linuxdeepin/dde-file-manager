@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "burneventreceiver.h"
 #include "dialogs/burnoptdialog.h"
 #include "dialogs/dumpisooptdialog.h"
@@ -169,7 +169,7 @@ void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const 
         BurnHelper::mapStagingFilesPath(srcUrls, destUrls);
 }
 
-void BurnEventReceiver::handleMountImage(const QUrl &isoUrl)
+void BurnEventReceiver::handleMountImage(quint64 winId, const QUrl &isoUrl)
 {
     qInfo() << "Mount image:" << isoUrl;
     QString archiveuri;
@@ -191,7 +191,14 @@ void BurnEventReceiver::handleMountImage(const QUrl &isoUrl)
         } else {
             QString doubleEncodedUri { QUrl::toPercentEncoding(isoUrl.toEncoded()) };
             doubleEncodedUri = QUrl::toPercentEncoding(doubleEncodedUri);
-            // TODO(zhangs): cd to mnt path
+            QString id = QString("archive://%1/").arg(doubleEncodedUri);
+            auto info = DevProxyMng->queryProtocolInfo(id);
+            if (info.size() != 0) {
+                QUrl mpt = QUrl::fromLocalFile(info.value(DeviceProperty::kMountPoint).toString());
+                dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, mpt);
+            } else {
+                qWarning() << "archive mount: cannot query mount info: " << doubleEncodedUri;
+            }
         }
         gioproc->deleteLater();
     });

@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "sendtodiscmenuscene.h"
 #include "sendtodiscmenuscene_p.h"
 #include "utils/burnhelper.h"
@@ -64,7 +64,7 @@ void SendToDiscMenuScenePrivate::actionStageFileForBurning(const QString &dev)
 
 void SendToDiscMenuScenePrivate::actionMountImage()
 {
-    BurnEventReceiver::instance()->handleMountImage(focusFile);
+    BurnEventReceiver::instance()->handleMountImage(windowId, focusFile);
 }
 
 void SendToDiscMenuScenePrivate::initDestDevices()
@@ -171,6 +171,7 @@ QString SendToDiscMenuScene::name() const
 
 bool SendToDiscMenuScene::initialize(const QVariantHash &params)
 {
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
