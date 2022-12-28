@@ -150,6 +150,7 @@ void SystemPathUtil::initialize()
     systemPathIconNamesMap["Trash"] = "user-trash";
     systemPathIconNamesMap["System Disk"] = "drive-harddisk-root";
     systemPathIconNamesMap["Recent"] = "document-open-recent";
+    systemPathIconNamesMap["Network"] = "network-workgroup";
 }
 
 void SystemPathUtil::mkPath(const QString &path)

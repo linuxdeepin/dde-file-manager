@@ -23,6 +23,7 @@
 
 #include "smbbrowser.h"
 #include "events/smbbrowsereventcaller.h"
+#include "events/smbbrowsereventreceiver.h"
 #include "utils/smbbrowserutils.h"
 #include "fileinfo/smbsharefileinfo.h"
 #include "iterator/smbshareiterator.h"
@@ -57,6 +58,8 @@ static constexpr char kSmbIntegPath[] = { "/.smbinteg" };
 static constexpr char kProtodevstashed[] = { "protodevstashed" };
 static constexpr char kStashedSmbDevices[] = { "StashedSmbDevices" };
 static constexpr char kSmbIntegrations[] = { "SmbIntegrations" };
+
+Q_DECLARE_METATYPE(QString *)
 
 void SmbBrowser::initialize()
 {
@@ -242,6 +245,7 @@ void SmbBrowser::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_computer", "hook_ComputerView_ItemListFilter", SmbIntegrationManager::instance(), &SmbIntegrationManager::handleItemListFilter);
     dpfHookSequence->follow("dfmplugin_computer", "hook_ComputerView_ItemFilterOnAdd", SmbIntegrationManager::instance(), &SmbIntegrationManager::handleItemFilterOnAdd);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::detailViewIcon);
 }
 
 void SmbBrowser::addNeighborToSidebar()

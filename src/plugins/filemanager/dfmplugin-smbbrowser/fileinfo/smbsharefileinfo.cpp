@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "smbsharefileinfo.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "private/smbsharefileinfo_p.h"
 #include "utils/smbbrowserutils.h"
 
@@ -51,6 +52,8 @@ QString SmbShareFileInfo::nameOf(const NameInfoType type) const
 
 QString SmbShareFileInfo::displayOf(const DisPlayInfoType type) const
 {
+    if (d->url.toString() == QString("%1:/").arg(Global::Scheme::kNetwork))
+        return QObject::tr("Computers in LAN");
     if (DisPlayInfoType::kFileDisplayName == type)
         return d->fileName();
     return AbstractFileInfo::displayOf(type);
