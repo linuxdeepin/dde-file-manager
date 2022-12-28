@@ -159,7 +159,8 @@ void DumpISOOptDialog::onFileChoosed(const QString &fileName)
 {
     Q_ASSERT(!curDiscName.isEmpty());
 
-    auto info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(fileName + "/" + curDiscName + ".iso"));
+    QString localPath { fileName + "/" + curDiscName + ".iso" };
+    auto info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(localPath));
     if (!info)
         return;
 
@@ -173,11 +174,12 @@ void DumpISOOptDialog::onFileChoosed(const QString &fileName)
             return;
         }
         QString discName { curDiscName + "(" + QString::number(serial) + ")" };
+        localPath = fileName + "/" + discName + ".iso";
         ++serial;
-        info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(fileName + "/" + discName + ".iso"));
+        info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(localPath));
     }
 
-    fileChooser->setText(info->pathOf(PathInfoType::kAbsoluteFilePath));
+    fileChooser->setText(localPath);
 }
 
 void DumpISOOptDialog::onPathChanged(const QString &path)
