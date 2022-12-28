@@ -124,11 +124,15 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         emitCurrentTaskNotify(url, targetUrl);
 
+        const QString &completeBaseName = fileInfo->nameOf(NameInfoType::kCompleteBaseName);
+        const QString &suffix = fileInfo->nameOf(NameInfoType::kSuffix);
+        const QUrl &trashUrl = buildTrashUrl(completeBaseName, suffix);
+
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
         bool trashSucc = fileHandler.trashFile(url);
         if (trashSucc) {
             completeFilesCount++;
-            completeTargetFiles.append(url);
+            completeTargetFiles.append(trashUrl);
             emitProgressChangedNotify(completeFilesCount);
             completeSourceFiles.append(url);
             continue;
@@ -165,4 +169,30 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     }
 
     return true;
+}
+
+QUrl DoMoveToTrashFilesWorker::buildTrashUrl(const QString &completeBaseName, const QString &suffix)
+{
+    QUrl url;
+    url.setScheme("trash");
+
+    int i = 1;
+    while (1) {
+        if (i > 1000000)
+            break;
+
+        QString path;
+        if (i == 1)
+            path = "/" + completeBaseName + "." + suffix;
+        else
+            path = QString("/" + completeBaseName + "." + "%1" + "." + suffix).arg(i);
+        url.setPath(path);
+
+        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        if (fileInfo->exists())
+            ++i;
+        else
+            break;
+    }
+    return url;
 }
