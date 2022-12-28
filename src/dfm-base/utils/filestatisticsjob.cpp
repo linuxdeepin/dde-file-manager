@@ -551,6 +551,10 @@ void FileStatisticsJob::statistcsExtFileSystem()
             } else if (flag != FTS_DP) {
                 // other error
                 continue;
+            } else if (QString::fromLocal8Bit(ent->fts_path) == "/proc/kcore"
+                       || QString::fromLocal8Bit(ent->fts_path) == "/dev/core"
+                       || (ent->fts_link && (QString::fromLocal8Bit(ent->fts_link->fts_path) == "/dev/core" || QString::fromLocal8Bit(ent->fts_link->fts_path) == "/proc/kcore"))) {
+                continue;
             }
 
             // total size
