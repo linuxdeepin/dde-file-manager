@@ -24,6 +24,7 @@
 #include "utils/titlebarhelper.h"
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
+#include "utils/searchhistroymanager.h"
 #include "views/titlebarwidget.h"
 #include "events/titlebareventreceiver.h"
 
@@ -125,4 +126,6 @@ void TitleBar::bindEvents()
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleWindowForward);
     dpfSlotChannel->connect(curSpace, "slot_SharePasswordSettingsDialog_Show",
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleShowSharePasswordSettingsDialog);
+    dpfSlotChannel->connect(curSpace, "slot_ServerDialog_RemoveHistory",
+                            SearchHistroyManager::instance(), &SearchHistroyManager::removeSearchHistory);
 }

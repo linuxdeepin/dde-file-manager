@@ -268,13 +268,13 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
     if (!kSupportedSchemes.contains(scheme))
         return;
 
-    DevMngIns->mountNetworkDeviceAsync(url.toString(), [after, winId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
-        auto makeSmbRootUrl = [](const QUrl &url) {
-            QUrl smbRootUrl;
-            smbRootUrl.setScheme(url.scheme());
-            smbRootUrl.setHost(url.host());
-            return smbRootUrl;
-        };
+    auto makeSmbRootUrl = [](const QUrl &url) {
+        QUrl smbRootUrl;
+        smbRootUrl.setScheme(url.scheme());
+        smbRootUrl.setHost(url.host());
+        return smbRootUrl;
+    };
+    auto callBackMnt = [after, winId, url, makeSmbRootUrl](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         if (!mpt.isEmpty()) {
             dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, QUrl::fromLocalFile(mpt));
 
@@ -292,10 +292,11 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
         } else {
             DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
             qDebug() << DeviceUtils::errMessage(err);
+            //dont save failed access to history
+            dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", url.toString());
         }
-    } /*,
-                                        10000*/
-    );
+    };
+    DevMngIns->mountNetworkDeviceAsync(url.toString(), callBackMnt /*,10000*/);
 }
 
 QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node)

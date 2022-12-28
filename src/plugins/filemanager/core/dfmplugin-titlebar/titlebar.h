@@ -50,6 +50,7 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Navigator_Forward)
     DPF_EVENT_REG_SLOT(slot_Navigator_Backward)
     DPF_EVENT_REG_SLOT(slot_SharePasswordSettingsDialog_Show)
+    DPF_EVENT_REG_SLOT(slot_ServerDialog_RemoveHistory)
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_Crumb_Seprate)

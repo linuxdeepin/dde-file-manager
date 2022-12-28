@@ -113,12 +113,19 @@ bool SearchHistroyManager::removeSearchHistory(QString keyword)
 
     bool ret = false;
     QStringList list = getSearchHistroy();
-    if (list.removeOne(keyword)) {
-        Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
-        ret = true;
-    } else {
-        qWarning() << keyword << "not exist in history";
+    ret = list.removeOne(keyword);
+    if (!ret) {
+        QString keywordNoSlash = keyword;
+        if (keywordNoSlash.endsWith("/")) {
+            keywordNoSlash.chop(1);
+            ret = list.removeOne(keywordNoSlash);
+        }
     }
+    if (ret)
+        Application::appObtuselySetting()->setValue(kConfigGroupName, kConfigSearchHistroy, list);
+    else
+        qWarning() << keyword << "not exist in history";
+
     return ret;
 }
 
