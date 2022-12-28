@@ -50,6 +50,7 @@ public:
 
 private:
     QString findSceneName(QAction *act) const;
+    void filterAction(QMenu *parent, bool isSubMenu);
 
 private:
     AbstractMenuScene *workspaceScene { nullptr };
