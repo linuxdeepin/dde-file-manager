@@ -25,6 +25,7 @@
 
 #include <QDebug>
 #include <QUrl>
+#include <QCoreApplication>
 
 DPFILEOPERATIONS_USE_NAMESPACE
 /*!
@@ -62,6 +63,10 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
         connect(this, &AbstractJob::startWork, doWorker, &AbstractWorker::doWork);
         connect(doWorker, &AbstractWorker::finishedNotify, this, &AbstractJob::deleteLater);
         connect(doWorker, &AbstractWorker::requestShowTipsDialog, this, &AbstractJob::requestShowTipsDialog);
+        connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
+            thread.quit();
+            thread.wait();
+        });
     }
 }
 
