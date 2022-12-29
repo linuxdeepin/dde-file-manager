@@ -374,9 +374,8 @@ void FileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int ne
     // sync data to config file.
     Application::appObtuselySetting()->sync();
 
-    // refresh
-    updateListHeaderView();
-    update();
+    // each views should refresh
+    dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", rootUrl);
 }
 
 void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidden)
@@ -935,6 +934,15 @@ void FileView::onFileHiddenChanged(quint64, const QList<QUrl> &hiddenFiles)
             reloadView();
             return;
         }
+    }
+}
+
+void FileView::onHeaderViewSectionChanged(const QUrl &url)
+{
+    if (UniversalUtils::urlEquals(url, rootUrl()) && viewMode() == ViewMode::ListMode) {
+        // refresh
+        updateListHeaderView();
+        update();
     }
 }
 
@@ -1561,6 +1569,7 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kHideFiles, this, &FileView::onFileHiddenChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
 }
 
 void FileView::updateStatusBar()
