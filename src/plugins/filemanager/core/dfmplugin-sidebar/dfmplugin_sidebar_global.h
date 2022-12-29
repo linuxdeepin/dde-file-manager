@@ -29,6 +29,8 @@
 #define DPSIDEBAR_END_NAMESPACE }
 #define DPSIDEBAR_USE_NAMESPACE using namespace DPSIDEBAR_NAMESPACE;
 
+#include <dfm-framework/event/eventhelper.h>
+
 #include <QUrl>
 #include <QIcon>
 #include <QString>
@@ -113,10 +115,10 @@ struct ItemInfo
           isEjectable { map[PropertyKey::kIsEjectable].toBool() },
           visiableControlKey({ map[PropertyKey::kVisiableControlKey].toString() }),
           reportName({ map[PropertyKey::kReportName].toString() }),
-          clickedCb { qvariant_cast<ItemClickedActionCallback>(map[PropertyKey::kCallbackItemClicked]) },
-          contextMenuCb { qvariant_cast<ContextMenuCallback>(map[PropertyKey::kCallbackContextMenu]) },
-          renameCb { qvariant_cast<RenameCallback>(map[PropertyKey::kCallbackRename]) },
-          findMeCb { qvariant_cast<FindMeCallback>(map[PropertyKey::kCallbackFindMe]) }
+          clickedCb { DPF_NAMESPACE::paramGenerator<ItemClickedActionCallback>(map[PropertyKey::kCallbackItemClicked]) },
+          contextMenuCb { DPF_NAMESPACE::paramGenerator<ContextMenuCallback>(map[PropertyKey::kCallbackContextMenu]) },
+          renameCb { DPF_NAMESPACE::paramGenerator<RenameCallback>(map[PropertyKey::kCallbackRename]) },
+          findMeCb { DPF_NAMESPACE::paramGenerator<FindMeCallback>(map[PropertyKey::kCallbackFindMe]) }
     {
     }
 

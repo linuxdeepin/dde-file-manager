@@ -27,6 +27,8 @@
 #define DPWORKSPACE_USE_NAMESPACE using namespace dfmplugin_workspace;
 #define DPWORKSPACE_NAMESPACE dfmplugin_workspace
 
+#include <dfm-framework/event/eventhelper.h>
+
 #include <QList>
 #include <QDir>
 #include <QVariantMap>
@@ -96,8 +98,8 @@ struct CustomTopWidgetInfo
     inline CustomTopWidgetInfo(const QVariantMap &map)
         : scheme { map[PropertyKey::kScheme].toString() },
           keepShow { map[PropertyKey::kKeepShow].toBool() },
-          createTopWidgetCb { qvariant_cast<CreateTopWidgetCallback>(map[PropertyKey::kCreateTopWidgetCallback]) },
-          showTopWidgetCb { qvariant_cast<ShowTopWidgetCallback>(map[PropertyKey::kShowTopWidgetCallback]) }
+          createTopWidgetCb { DPF_NAMESPACE::paramGenerator<CreateTopWidgetCallback>(map[PropertyKey::kCreateTopWidgetCallback]) },
+          showTopWidgetCb { DPF_NAMESPACE::paramGenerator<ShowTopWidgetCallback>(map[PropertyKey::kShowTopWidgetCallback]) }
     {
     }
 };

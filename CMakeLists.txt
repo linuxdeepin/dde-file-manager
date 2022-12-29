@@ -15,6 +15,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wl,--as-need -fPIE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all")
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -z noexecstack -z relro")
+    add_definitions(-D ARCH_MIPSEL)
 endif()
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)

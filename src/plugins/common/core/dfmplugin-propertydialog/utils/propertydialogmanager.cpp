@@ -21,6 +21,8 @@
 #include "propertydialogmanager.h"
 #include "utils/computerpropertyhelper.h"
 
+#include <dfm-framework/event/eventhelper.h>
+
 #include <QDebug>
 #include <QMetaEnum>
 #include <QUrl>
@@ -86,13 +88,13 @@ QMap<int, QWidget *> PropertyDialogManager::createExtensionView(const QUrl &url,
             } else {
                 if (option.value(kOption_Key_Name).toString() == data.value(kOption_Key_Name).toString()) {
                     showViewOption = option;
-                    viewInitCallback = qvariant_cast<ViewIntiCallback>(option.value(kOption_Key_ViewInitCalback));
+                    viewInitCallback = DPF_NAMESPACE::paramGenerator<ViewIntiCallback>(option.value(kOption_Key_ViewInitCalback));
                 } else {
                     showViewOption = data;
                 }
             }
 
-            CustomViewExtensionView creatorCallback = showViewOption.value(kOption_Key_CreatorCalback).value<CustomViewExtensionView>();
+            CustomViewExtensionView creatorCallback = DPF_NAMESPACE::paramGenerator<CustomViewExtensionView>(showViewOption.value(kOption_Key_CreatorCalback));
             if (!creatorCallback)
                 continue;
 

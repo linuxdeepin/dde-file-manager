@@ -388,7 +388,7 @@ void WorkspaceEventReceiver::handleSetCustomFilterData(quint64 windowID, const Q
 
 void WorkspaceEventReceiver::handleSetCustomFilterCallback(quint64 windowID, const QUrl &url, const QVariant callback)
 {
-    auto filterCallback = qvariant_cast<FileViewFilterCallback>(callback);
+    auto filterCallback = DPF_NAMESPACE::paramGenerator<FileViewFilterCallback>(callback);
     WorkspaceHelper::instance()->setFilterCallback(windowID, url, filterCallback);
 }
 

@@ -213,6 +213,8 @@ void operator,(T &&value, const ApplyReturnValue<U> &container)
     }
 }
 
+#define REMOVE_CONST_REF(T) typename std::remove_const<typename std::remove_reference<T>::type>::type
+
 template<class Result>
 inline QVariant resultGenerator()
 {
@@ -225,10 +227,26 @@ inline QVariant resultGenerator<void>()
     return QVariant();
 }
 
+template<class T>
+inline REMOVE_CONST_REF(T) paramGenerator(const QVariant &param)
+{
+// NOTE: Defining a std::function type using Q_DECLARE_METATYPE
+// in a different header file for the MIPS platform will result
+// in a different `MetaTypeId`, which will cause `qvariant_cast<T>` to fail
+#ifdef ARCH_MIPSEL
+    if constexpr (std::is_class_v<REMOVE_CONST_REF(T)> && !std::is_base_of<QObject, REMOVE_CONST_REF(T)>::value
+                  && !std::is_null_pointer_v<REMOVE_CONST_REF(T)>) {
+        auto rawPtr { reinterpret_cast<const REMOVE_CONST_REF(T) *>(param.constData()) };
+        const QString &name { typeid(T).name() };
+        if (name.contains("function") && !param.isNull() && param.isValid() && rawPtr)
+            return *rawPtr;
+    }
+#endif
+    return param.value<REMOVE_CONST_REF(T)>();
+}
+
 template<class Handler>
 struct EventHelper;
-
-#define REMOVE_CONST_REF(T) typename std::remove_const<typename std::remove_reference<T>::type>::type
 
 template<class Result, class T>
 struct EventHelper<Result (T::*)(void)>
@@ -260,7 +278,7 @@ struct EventHelper<Result (T::*)(Arg1)>
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 1) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
@@ -281,8 +299,8 @@ struct EventHelper<Result (T::*)(Arg1, Arg2)>
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 2) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
-                        args.at(1).value<REMOVE_CONST_REF(Arg2)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0)),
+                        paramGenerator<Arg2>(args.at(1))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
@@ -303,9 +321,9 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3)>
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 3) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
-                        args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
-                        args.at(2).value<REMOVE_CONST_REF(Arg3)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0)),
+                        paramGenerator<Arg2>(args.at(1)),
+                        paramGenerator<Arg3>(args.at(2))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
@@ -326,10 +344,10 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4)>
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 4) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
-                        args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
-                        args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
-                        args.at(3).value<REMOVE_CONST_REF(Arg4)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0)),
+                        paramGenerator<Arg2>(args.at(1)),
+                        paramGenerator<Arg3>(args.at(2)),
+                        paramGenerator<Arg4>(args.at(3))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
@@ -350,11 +368,11 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5)>
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 5) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
-                        args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
-                        args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
-                        args.at(3).value<REMOVE_CONST_REF(Arg4)>(),
-                        args.at(4).value<REMOVE_CONST_REF(Arg5)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0)),
+                        paramGenerator<Arg2>(args.at(1)),
+                        paramGenerator<Arg3>(args.at(2)),
+                        paramGenerator<Arg4>(args.at(3)),
+                        paramGenerator<Arg5>(args.at(4))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
@@ -375,12 +393,12 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 6) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
-                        args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
-                        args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
-                        args.at(3).value<REMOVE_CONST_REF(Arg4)>(),
-                        args.at(4).value<REMOVE_CONST_REF(Arg5)>(),
-                        args.at(5).value<REMOVE_CONST_REF(Arg6)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0)),
+                        paramGenerator<Arg2>(args.at(1)),
+                        paramGenerator<Arg3>(args.at(2)),
+                        paramGenerator<Arg4>(args.at(3)),
+                        paramGenerator<Arg5>(args.at(4)),
+                        paramGenerator<Arg6>(args.at(5))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
@@ -401,13 +419,13 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 7) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
-                        args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
-                        args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
-                        args.at(3).value<REMOVE_CONST_REF(Arg4)>(),
-                        args.at(4).value<REMOVE_CONST_REF(Arg5)>(),
-                        args.at(5).value<REMOVE_CONST_REF(Arg6)>(),
-                        args.at(6).value<REMOVE_CONST_REF(Arg7)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0)),
+                        paramGenerator<Arg2>(args.at(1)),
+                        paramGenerator<Arg3>(args.at(2)),
+                        paramGenerator<Arg4>(args.at(3)),
+                        paramGenerator<Arg5>(args.at(4)),
+                        paramGenerator<Arg6>(args.at(5)),
+                        paramGenerator<Arg7>(args.at(6))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
@@ -428,14 +446,14 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 8) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
-                        args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
-                        args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
-                        args.at(3).value<REMOVE_CONST_REF(Arg4)>(),
-                        args.at(4).value<REMOVE_CONST_REF(Arg5)>(),
-                        args.at(5).value<REMOVE_CONST_REF(Arg6)>(),
-                        args.at(6).value<REMOVE_CONST_REF(Arg7)>(),
-                        args.at(7).value<REMOVE_CONST_REF(Arg8)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0)),
+                        paramGenerator<Arg2>(args.at(1)),
+                        paramGenerator<Arg3>(args.at(2)),
+                        paramGenerator<Arg4>(args.at(3)),
+                        paramGenerator<Arg5>(args.at(4)),
+                        paramGenerator<Arg6>(args.at(5)),
+                        paramGenerator<Arg7>(args.at(6)),
+                        paramGenerator<Arg8>(args.at(7))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
@@ -456,15 +474,15 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
     {
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 9) {
-            emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
-                        args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
-                        args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
-                        args.at(3).value<REMOVE_CONST_REF(Arg4)>(),
-                        args.at(4).value<REMOVE_CONST_REF(Arg5)>(),
-                        args.at(5).value<REMOVE_CONST_REF(Arg6)>(),
-                        args.at(6).value<REMOVE_CONST_REF(Arg7)>(),
-                        args.at(7).value<REMOVE_CONST_REF(Arg8)>(),
-                        args.at(8).value<REMOVE_CONST_REF(Arg9)>()),
+            emit(s->*f)(paramGenerator<Arg1>(args.at(0)),
+                        paramGenerator<Arg2>(args.at(1)),
+                        paramGenerator<Arg3>(args.at(2)),
+                        paramGenerator<Arg4>(args.at(3)),
+                        paramGenerator<Arg5>(args.at(4)),
+                        paramGenerator<Arg6>(args.at(5)),
+                        paramGenerator<Arg7>(args.at(6)),
+                        paramGenerator<Arg8>(args.at(7)),
+                        paramGenerator<Arg9>(args.at(8))),
                     ApplyReturnValue<Result>(ret.data());
         }
         return ret;
