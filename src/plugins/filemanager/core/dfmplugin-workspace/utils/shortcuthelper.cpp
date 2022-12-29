@@ -28,6 +28,7 @@
 #include "utils/workspacehelper.h"
 #include "events/workspaceeventcaller.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
 
@@ -235,6 +236,11 @@ void ShortcutHelper::cutFiles()
 
 void ShortcutHelper::pasteFiles()
 {
+    const auto &currentFileInfo = InfoFactory::create<AbstractFileInfo>(view->rootUrl());
+    if (currentFileInfo && currentFileInfo->isAttributes(OptInfoType::kIsDir) && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
+        qInfo() << "current dir is not writable!!!!!!!!";
+        return;
+    }
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
     if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PasteFiles", windowId, sourceUrls, view->rootUrl()))
