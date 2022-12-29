@@ -99,14 +99,6 @@ public:
 
     ~DBusDock();
 
-    Q_PROPERTY(uint ActiveWindow READ activeWindow NOTIFY ActiveWindowChanged)
-    inline uint activeWindow() const
-    { return qvariant_cast< uint >(property("ActiveWindow")); }
-
-    Q_PROPERTY(QList<QDBusObjectPath> Entries READ entries NOTIFY EntriesChanged)
-    inline QList<QDBusObjectPath> entries() const
-    { return qvariant_cast< QList<QDBusObjectPath> >(property("Entries")); }
-
     Q_PROPERTY(int DisplayMode READ displayMode WRITE setDisplayMode NOTIFY DisplayModeChanged)
     inline int displayMode() const
     { return int(qvariant_cast< int >(property("DisplayMode"))); }
@@ -128,16 +120,6 @@ public:
     { return int(qvariant_cast< int >(property("Position"))); }
     inline void setPosition(int value)
     { setProperty("Position", QVariant::fromValue(int(value))); }
-
-    Q_PROPERTY(quint32 IconSize READ iconSize WRITE setIconSize NOTIFY IconSizeChanged)
-    inline quint32 iconSize() const
-    { return qvariant_cast< quint32 >(property("IconSize")); }
-    inline void setIconSize(quint32 value)
-    { setProperty("IconSize", QVariant::fromValue(value)); }
-
-    Q_PROPERTY(quint32 ShowTimeout READ showTimeout NOTIFY ShowTimeoutChanged)
-    inline quint32 showTimeout() const
-    { return qvariant_cast< quint32 >(property("ShowTimeout")); }
 
     Q_PROPERTY(DockRect FrontendWindowRect READ frontendWindowRect NOTIFY FrontendWindowRectChanged)
     inline DockRect frontendWindowRect() const
@@ -212,28 +194,12 @@ public Q_SLOTS: // METHODS
     }
 
 Q_SIGNALS: // SIGNALS
-    void EntryAdded(const QDBusObjectPath &entryPath, const int index);
-    void EntryRemoved(const QString &entryId);
-    void ServiceRestarted();
     // begin property changed signals
-    void ActiveWindowChanged();
     void DisplayModeChanged();
-    void EntriesChanged();
     void HideModeChanged();
     void HideStateChanged();
     void PositionChanged();
-    void IconSizeChanged();
-    void ShowTimeoutChanged();
     void FrontendWindowRectChanged();
 };
 
-namespace com {
-  namespace deepin {
-    namespace dde {
-      namespace daemon {
-        typedef ::DBusDock Dock;
-      }
-    }
-  }
-}
 #endif

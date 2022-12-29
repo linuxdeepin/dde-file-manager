@@ -20,7 +20,7 @@
  */
 
 #include "screenqt.h"
-#include "dbus-private/dockhelper.h"
+#include "dbus-private/dbushelper.h"
 
 #include <qpa/qplatformscreen.h>
 #include <QDebug>

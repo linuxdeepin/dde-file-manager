@@ -75,20 +75,6 @@ public:
 
     ~DBusDock();
 
-    Q_PROPERTY(int DisplayMode READ displayMode WRITE setDisplayMode)
-    inline int displayMode() const
-    { return qvariant_cast< int >(property("DisplayMode")); }
-    inline void setDisplayMode(int value)
-    { setProperty("DisplayMode", QVariant::fromValue(value)); }
-
-    Q_PROPERTY(QStringList DockedApps READ dockedApps)
-    inline QStringList dockedApps() const
-    { return qvariant_cast< QStringList >(property("DockedApps")); }
-
-    Q_PROPERTY(QList<QDBusObjectPath> Entries READ entries)
-    inline QList<QDBusObjectPath> entries() const
-    { return qvariant_cast< QList<QDBusObjectPath> >(property("Entries")); }
-
     Q_PROPERTY(DockRect FrontendWindowRect READ frontendWindowRect NOTIFY FrontendWindowRectChanged)
     inline DockRect frontendWindowRect() const
     { return qvariant_cast< DockRect >(property("FrontendWindowRect")); }
@@ -103,53 +89,11 @@ public:
     inline int hideState() const
     { return qvariant_cast< int >(property("HideState")); }
 
-    Q_PROPERTY(uint HideTimeout READ hideTimeout WRITE setHideTimeout)
-    inline uint hideTimeout() const
-    { return qvariant_cast< uint >(property("HideTimeout")); }
-    inline void setHideTimeout(uint value)
-    { setProperty("HideTimeout", QVariant::fromValue(value)); }
-
-    Q_PROPERTY(uint IconSize READ iconSize WRITE setIconSize)
-    inline uint iconSize() const
-    { return qvariant_cast< uint >(property("IconSize")); }
-    inline void setIconSize(uint value)
-    { setProperty("IconSize", QVariant::fromValue(value)); }
-
-    Q_PROPERTY(double Opacity READ opacity WRITE setOpacity)
-    inline double opacity() const
-    { return qvariant_cast< double >(property("Opacity")); }
-    inline void setOpacity(double value)
-    { setProperty("Opacity", QVariant::fromValue(value)); }
-
     Q_PROPERTY(int Position READ position WRITE setPosition)
     inline int position() const
     { return qvariant_cast< int >(property("Position")); }
     inline void setPosition(int value)
     { setProperty("Position", QVariant::fromValue(value)); }
-
-    Q_PROPERTY(uint ShowTimeout READ showTimeout WRITE setShowTimeout)
-    inline uint showTimeout() const
-    { return qvariant_cast< uint >(property("ShowTimeout")); }
-    inline void setShowTimeout(uint value)
-    { setProperty("ShowTimeout", QVariant::fromValue(value)); }
-
-    Q_PROPERTY(uint WindowSize READ windowSize WRITE setWindowSize)
-    inline uint windowSize() const
-    { return qvariant_cast< uint >(property("WindowSize")); }
-    inline void setWindowSize(uint value)
-    { setProperty("WindowSize", QVariant::fromValue(value)); }
-
-    Q_PROPERTY(uint WindowSizeEfficient READ windowSizeEfficient WRITE setWindowSizeEfficient)
-    inline uint windowSizeEfficient() const
-    { return qvariant_cast< uint >(property("WindowSizeEfficient")); }
-    inline void setWindowSizeEfficient(uint value)
-    { setProperty("WindowSizeEfficient", QVariant::fromValue(value)); }
-
-    Q_PROPERTY(uint WindowSizeFashion READ windowSizeFashion WRITE setWindowSizeFashion)
-    inline uint windowSizeFashion() const
-    { return qvariant_cast< uint >(property("WindowSizeFashion")); }
-    inline void setWindowSizeFashion(uint value)
-    { setProperty("WindowSizeFashion", QVariant::fromValue(value)); }
 
 public Q_SLOTS: // METHODS
     inline QDBusPendingReply<> ActivateWindow(uint in0)

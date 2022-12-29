@@ -25,8 +25,6 @@
 
 #include "interfaces/screen/abstractscreenproxy.h"
 
-class DBusDisplay;
-
 DDPCORE_BEGIN_NAMESPACE
 
 class ScreenProxyDBus : public DFMBASE_NAMESPACE::AbstractScreenProxy
@@ -53,7 +51,6 @@ private:
     void disconnectScreen(DFMBASE_NAMESPACE::ScreenPointer);
 private:
     QMap<QString, DFMBASE_NAMESPACE::ScreenPointer> screenMap; //dbus-path - screen
-    DBusDisplay *display = nullptr;
 };
 
 DDPCORE_END_NAMESPACE

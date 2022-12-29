@@ -18,11 +18,19 @@ if (COMPLIE_ON_V23)
     set(RM_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusmonitor.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusmonitor.cpp"
     )
 else ()
     set(RM_SRC
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay1.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay1.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusmonitor1.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusmonitor1.cpp"
     )
 endif()
 list(REMOVE_ITEM SCREEN_FILES ${RM_SRC})

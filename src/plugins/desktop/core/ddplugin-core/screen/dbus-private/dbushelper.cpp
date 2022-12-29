@@ -19,26 +19,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "dockhelper.h"
+#include "dbushelper.h"
 
 DDPCORE_USE_NAMESPACE
 
-DockHelper::DockHelper(QObject *parent)
+DBusHelper::DBusHelper(QObject *parent)
     : QObject{parent}
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     m_dock = new DBusDock(this);
+    m_display = new DBusDisplay(this);
 }
 
-DockHelper *DockHelper::ins()
+DBusHelper *DBusHelper::ins()
 {
-    static DockHelper ins;
+    static DBusHelper ins;
     return  &ins;
 }
 
-DBusDock *DockHelper::dock() const
+DBusDock *DBusHelper::dock() const
 {
     return m_dock;
+}
+
+DBusDisplay *DBusHelper::display() const
+{
+    return m_display;
+}
+
+DBusMonitor *DBusHelper::createMonitor(const QString &path)
+{
+    return new DBusMonitor(path);
 }
 
 QDBusArgument &operator<<(QDBusArgument &argument, const DockRect &rect)
@@ -58,6 +69,29 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, DockRect &rect)
 }
 
 QDebug operator<<(QDebug deg, const DockRect &rect)
+{
+    qDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
+
+    return deg;
+}
+
+QDBusArgument &operator<<(QDBusArgument &argument, const DisplayRect &rect)
+{
+    argument.beginStructure();
+    argument << rect.x << rect.y << rect.width << rect.height;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, DisplayRect &rect)
+{
+    argument.beginStructure();
+    argument >> rect.x >> rect.y >> rect.width >> rect.height;
+    argument.endStructure();
+    return argument;
+}
+
+QDebug operator<<(QDebug deg, const DisplayRect &rect)
 {
     qDebug() << "x:" << rect.x << "y:" << rect.y << "width:" << rect.width << "height:" << rect.height;
 

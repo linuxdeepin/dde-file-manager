@@ -43,10 +43,6 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
-typedef QMap<QString, double> BrightnessMap;
-
-Q_DECLARE_METATYPE(BrightnessMap)
-
 struct DisplayRect {
     qint16 x;
     qint16 y;
@@ -110,18 +106,6 @@ public:
     explicit DBusDisplay(QObject *parent = nullptr);
 
     ~DBusDisplay();
-
-    Q_PROPERTY(BrightnessMap Brightness READ brightness NOTIFY BrightnessChanged)
-    inline BrightnessMap brightness() const
-    {
-        return qvariant_cast< BrightnessMap >(property("Brightness"));
-    }
-
-    Q_PROPERTY(QDBusObjectPath BuiltinOutput READ builtinOutput NOTIFY BuiltinOutputChanged)
-    inline QDBusObjectPath builtinOutput() const
-    {
-        return qvariant_cast< QDBusObjectPath >(property("BuiltinOutput"));
-    }
 
     Q_PROPERTY(uchar DisplayMode READ displayMode NOTIFY DisplayModeChanged)
     inline short displayMode() const
@@ -272,10 +256,6 @@ public Q_SLOTS: // METHODS
     }
 
 Q_SIGNALS: // SIGNALS
-    //void PrimaryChanged(const QRect &in0);
-// begin property changed signals
-    void BrightnessChanged();
-    void BuiltinOutputChanged();
     void DisplayModeChanged();
     void HasChangedChanged();
     void MonitorsChanged();
@@ -285,48 +265,4 @@ Q_SIGNALS: // SIGNALS
     void ScreenWidthChanged();
 };
 
-//system("qdbus --literal com.deepin.SessionManager /com/deepin/XSettings com.deepin.XSettings.GetScaleFactor > /tmp/123");
-
-class DBusAppearance: public QDBusAbstractInterface
-{
-    Q_OBJECT
-
-    Q_SLOT void __propertyChanged__(const QDBusMessage &msg)
-    {
-        QList<QVariant> arguments = msg.arguments();
-        if (3 != arguments.count())
-            return;
-        QString interfaceName = msg.arguments().at(0).toString();
-        if (interfaceName != "com.deepin.XSettings")
-            return;
-        QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
-        QStringList keys = changedProps.keys();
-        foreach (const QString &prop, keys) {
-            const QMetaObject *self = metaObject();
-            for (int i = self->propertyOffset(); i < self->propertyCount(); ++i) {
-                QMetaProperty p = self->property(i);
-                if (p.name() == prop) {
-                    Q_EMIT p.notifySignal().invoke(this);
-                }
-            }
-        }
-    }
-public:
-    explicit DBusAppearance(QObject *parent = nullptr);
-
-    ~DBusAppearance();
-public:
-    static inline const char *staticInterfaceName()
-    { return "com.deepin.XSettings"; }
-    static inline const char *staticServiceName()
-    { return "com.deepin.SessionManager"; }
-    static inline const char *staticObjectPath()
-    { return "/com/deepin/XSettings"; }
-public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<double> GetScaleFactor()
-    {
-        QList<QVariant> argumentList;
-        return asyncCallWithArgumentList(QStringLiteral("GetScaleFactor"), argumentList);
-    }
-};
 #endif

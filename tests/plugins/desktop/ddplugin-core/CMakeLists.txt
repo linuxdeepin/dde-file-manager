@@ -20,11 +20,19 @@ if (COMPLIE_ON_V23)
     set(RM_SRC
         "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock.h"
         "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock.cpp"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay.h"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay.cpp"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusmonitor.h"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusmonitor.cpp"
     )
 else ()
     set(RM_SRC
         "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock1.h"
         "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock1.cpp"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay1.h"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay1.cpp"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusmonitor1.h"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusmonitor1.cpp"
     )
 endif()
 list(REMOVE_ITEM SRC_FILES ${RM_SRC})

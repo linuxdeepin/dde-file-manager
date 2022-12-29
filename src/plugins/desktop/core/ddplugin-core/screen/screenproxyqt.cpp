@@ -22,8 +22,7 @@
 #include "screenproxyqt.h"
 #include "screenqt.h"
 
-#include "dbus-private/dockhelper.h"
-#include "dbus-private/dbusdisplay.h"
+#include "dbus-private/dbushelper.h"
 
 #include <QDebug>
 #include <QScreen>
@@ -158,13 +157,6 @@ void ScreenProxyQt::reset()
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
 
-    if (display) {
-        delete display;
-        display = nullptr;
-    }
-
-    display = new DBusDisplay(this);
-
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenProxyQt::onScreenAdded);
     connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenProxyQt::onScreenRemoved);
 
@@ -174,7 +166,7 @@ void ScreenProxyQt::reset()
      * 但是屏幕对象返回的名字已经发生了变化，而Qt暂时没有提供屏幕名字改变的信号，导致程序中通过屏幕名字判断的逻辑都会出现问题。
      * 该bug就是由于画布中保存的名字没有更新，调用显示壁纸屏保设置界面后，找不到对应的屏幕，从而导致位置校正错误。
     */
-    connect(display, &DBusDisplay::PrimaryChanged, this, &ScreenProxyQt::onPrimaryChanged);
+    connect(DisplayInfoIns, &DBusDisplay::PrimaryChanged, this, &ScreenProxyQt::onPrimaryChanged);
     connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this]() {
         this->appendEvent(kScreen);
     });

@@ -20,9 +20,8 @@
  */
 #include "screenproxydbus.h"
 #include "screendbus.h"
-#include "dbus-private/dbusdisplay.h"
-#include "dbus-private/dbusmonitor.h"
-#include "dbus-private/dockhelper.h"
+
+#include "dbus-private/dbushelper.h"
 
 #include <QApplication>
 #include <QScreen>
@@ -42,7 +41,7 @@ ScreenProxyDBus::ScreenProxyDBus(QObject *parent)
 
 ScreenPointer ScreenProxyDBus::primaryScreen()
 {
-    QString primaryName = display->primary();
+    QString primaryName = DisplayInfoIns->primary();
     if (primaryName.isEmpty())
         qCritical() << "get primary name failed";
 
@@ -61,7 +60,7 @@ ScreenPointer ScreenProxyDBus::primaryScreen()
 QVector<ScreenPointer> ScreenProxyDBus::screens() const
 {
     QVector<ScreenPointer> order;
-    for (const QDBusObjectPath &path : display->monitors()) {
+    for (const QDBusObjectPath &path : DisplayInfoIns->monitors()) {
         if (screenMap.contains(path.path())) {
             ScreenPointer sp = screenMap.value(path.path());
             ScreenDBus *screen = SCREENOBJECT(sp.data());
@@ -80,12 +79,12 @@ QVector<ScreenPointer> ScreenProxyDBus::screens() const
 QVector<ScreenPointer> ScreenProxyDBus::logicScreens() const
 {
     QVector<ScreenPointer> order;
-    QString primaryName = display->primary();
+    QString primaryName = DisplayInfoIns->primary();
     if (primaryName.isEmpty())
         qCritical() << "get primary name failed";
 
     //调整主屏幕到第一
-    for (const QDBusObjectPath &path : display->monitors()) {
+    for (const QDBusObjectPath &path : DisplayInfoIns->monitors()) {
         if (path.path().isEmpty()) {
             qWarning() << "monitor: QDBusObjectPath is empty";
             continue;
@@ -135,11 +134,11 @@ qreal ScreenProxyDBus::devicePixelRatio() const
 
 DisplayMode ScreenProxyDBus::displayMode() const
 {
-    auto pending = display->GetRealDisplayMode();
+    auto pending = DisplayInfoIns->GetRealDisplayMode();
     pending.waitForFinished();
     if (pending.isError()) {
         qWarning() << "Display GetRealDisplayMode Error:" << pending.error().name() << pending.error().message();
-        DisplayMode ret = DisplayMode(display->displayMode());
+        DisplayMode ret = DisplayMode(DisplayInfoIns->displayMode());
         return ret;
     } else {
         /*
@@ -159,35 +158,29 @@ DisplayMode ScreenProxyDBus::displayMode() const
 
 void ScreenProxyDBus::reset()
 {
-    if (display) {
-        delete display;
-        display = nullptr;
-    }
-
-    display = new DBusDisplay(this);
     screenMap.clear();
 
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenProxyDBus::onMonitorChanged);
-    connect(display, &DBusDisplay::MonitorsChanged, this, &ScreenProxyDBus::onMonitorChanged);
-    connect(display, &DBusDisplay::PrimaryChanged, this, [this]() {
+    connect(DisplayInfoIns, &DBusDisplay::MonitorsChanged, this, &ScreenProxyDBus::onMonitorChanged);
+    connect(DisplayInfoIns, &DBusDisplay::PrimaryChanged, this, [this]() {
         this->appendEvent(kScreen);
     });
 
-    connect(display, &DBusDisplay::DisplayModeChanged, this, &ScreenProxyDBus::onModeChanged);
+    connect(DisplayInfoIns, &DBusDisplay::DisplayModeChanged, this, &ScreenProxyDBus::onModeChanged);
 
     //使用PrimaryRectChanged信号作为拆分/合并信号
-    connect(display, &DBusDisplay::PrimaryRectChanged, this, &ScreenProxyDBus::onModeChanged);
+    connect(DisplayInfoIns, &DBusDisplay::PrimaryRectChanged, this, &ScreenProxyDBus::onModeChanged);
 
-    lastMode = static_cast<DisplayMode>(display->GetRealDisplayMode().value());
+    lastMode = static_cast<DisplayMode>(DisplayInfoIns->GetRealDisplayMode().value());
 
     //dock区处理
     connect(DockInfoIns, &DBusDock::FrontendWindowRectChanged, this, &ScreenProxyDBus::onDockChanged);
     connect(DockInfoIns, &DBusDock::HideModeChanged, this, &ScreenProxyDBus::onDockChanged);
 
     //初始化屏幕
-    for (auto objectPath : display->monitors()) {
+    for (auto objectPath : DisplayInfoIns->monitors()) {
         const QString path = objectPath.path();
-        ScreenPointer sp(new ScreenDBus(new DBusMonitor(path)));
+        ScreenPointer sp(new ScreenDBus(DBusHelper::ins()->createMonitor(path)));
         screenMap.insert(path, sp);
         connectScreen(sp);
     }
@@ -211,7 +204,7 @@ void ScreenProxyDBus::onMonitorChanged()
 {
     QStringList monitors;
     //检查新增的屏幕
-    for (auto objectPath : display->monitors()) {
+    for (auto objectPath : DisplayInfoIns->monitors()) {
         QString path = objectPath.path();
         if (path.isEmpty()) {
             qWarning() << "get monitor path is empty from display";
@@ -252,12 +245,12 @@ void ScreenProxyDBus::onScreenGeometryChanged(const QRect &rect)
 
     //fix wayland下切换合并/拆分，当主屏的geometry在合并拆分前后没有改变时，不会发送PrimaryRectChanged，而在主线能发送出来。
     //这导致没法判断到显示模式改变，这里补充触发
-    emit display->PrimaryRectChanged();
+    emit DisplayInfoIns->PrimaryRectChanged();
 }
 
 void ScreenProxyDBus::onModeChanged()
 {
-    DisplayMode mode = static_cast<DisplayMode>(display->GetRealDisplayMode().value());
+    DisplayMode mode = static_cast<DisplayMode>(DisplayInfoIns->GetRealDisplayMode().value());
     qInfo() << "deal display mode/primary rect changed " << mode;
     if (lastMode == mode)
         return;

@@ -20,8 +20,7 @@
  */
 
 #include "screendbus.h"
-#include "dbus-private/dockhelper.h"
-#include "dbus-private/dbusmonitor.h"
+#include "dbus-private/dbushelper.h"
 
 #include <QGuiApplication>
 #include <QScreen>

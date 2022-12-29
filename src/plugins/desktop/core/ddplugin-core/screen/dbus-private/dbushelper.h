@@ -26,27 +26,35 @@
 
 #ifdef COMPILE_ON_V23
 #include "dbusdock1.h"
+#include "dbusdisplay1.h"
+#include "dbusmonitor1.h"
 #else
 #include "dbusdock.h"
+#include "dbusmonitor.h"
+#include "dbusdisplay.h"
 #endif
 
 #include <QObject>
 
 DDPCORE_BEGIN_NAMESPACE
 
-class DockHelper : public QObject
+class DBusHelper : public QObject
 {
     Q_OBJECT
 public:
-    static DockHelper *ins();
+    static DBusHelper *ins();
     DBusDock *dock() const;
+    DBusDisplay *display() const;
+    DBusMonitor *createMonitor(const QString &path);
 private:
-    explicit DockHelper(QObject *parent = nullptr);
+    explicit DBusHelper(QObject *parent = nullptr);
     DBusDock *m_dock = nullptr;
+    DBusDisplay *m_display = nullptr;
 };
 
 DDPCORE_END_NAMESPACE
 
-#define DockInfoIns ddplugin_core::DockHelper::ins()->dock()
+#define DockInfoIns ddplugin_core::DBusHelper::ins()->dock()
+#define DisplayInfoIns ddplugin_core::DBusHelper::ins()->display()
 
 #endif // DOCKHELPER_H
