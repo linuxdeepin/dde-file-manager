@@ -322,6 +322,8 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
 
             cdTo(id, u, winId, act);
         } else {
+            if (err == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
+                return;
             qDebug() << "mount device failed: " << id << err;
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         }
@@ -430,6 +432,8 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                             qInfo() << "lock device failed: " << devId << err;
                     });
                 } else {
+                    if (err == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
+                        return;
                     qInfo() << "unmount cleartext device failed: " << cleartextId << err;
                     DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
                 }
@@ -437,6 +441,8 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         } else {
             DevMngIns->unmountBlockDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
                 if (!ok) {
+                    if (err == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
+                        return;
                     qInfo() << "unmount device failed: " << devId << err;
                     DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
                 }
