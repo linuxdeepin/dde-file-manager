@@ -68,6 +68,20 @@ bool MyShareMenuScene::create(QMenu *parent)
 {
     d->createFileMenu(parent);
     AbstractMenuScene::create(parent);
+    QList<QAction *> list = parent->actions();
+    QAction *actPinToQuickAccess = nullptr;
+    QAction *actProperty = nullptr;
+    for (QAction *act : list) {
+        if (act->property(ActionPropertyKey::kActionID).toString() == "add-bookmark")
+            actPinToQuickAccess = act;
+        if (act->property(ActionPropertyKey::kActionID).toString() == MySharesActionId::kShareProperty)
+            actProperty = act;
+    }
+    if (actPinToQuickAccess && actProperty) {
+        list.removeOne(actPinToQuickAccess);
+        parent->insertAction(actProperty, actPinToQuickAccess);
+    }
+
     return true;
 }
 

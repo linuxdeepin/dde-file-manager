@@ -59,6 +59,7 @@ void MyShares::initialize()
     WatcherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
     dfmplugin_menu_util::menuSceneRegisterScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
     beMySubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
+    beMySubScene("BookmarkMenu");
 
     followEvents();
     bindWindows();
