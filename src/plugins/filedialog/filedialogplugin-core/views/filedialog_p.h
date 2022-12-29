@@ -51,6 +51,7 @@ public:
     void handleSaveAcceptBtnClicked();
     void handleOpenAcceptBtnClicked();
     void handleOpenNewWindow(const QUrl &url);
+    bool checkFileSuffix(const QString &filename, QString &suffix);
 
 private:
     static constexpr int kDefaultWindowWidth { 960 };

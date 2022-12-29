@@ -84,7 +84,13 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
         return;
 
     QString fileName = q->statusBar()->lineEdit()->text();   //文件名
-    // TODO(zhangs): 检查是否要补充后缀
+    // Check whether the suffix needs to be added
+    QString suffix { "" };
+    if (checkFileSuffix(fileName, suffix)) {
+        fileName.append('.' + suffix);
+        q->setCurrentInputName(fileName);
+    }
+
     if (!fileName.isEmpty()) {
         if (fileName.startsWith(".") && CoreHelper::askHiddenFile(q))
             return;
@@ -157,6 +163,54 @@ void FileDialogPrivate::handleOpenNewWindow(const QUrl &url)
 {
     if (url.isValid() && !url.isEmpty() && !UniversalUtils::urlEquals(url, q->currentUrl()))
         dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, q->internalWinId(), url);
+}
+
+bool FileDialogPrivate::checkFileSuffix(const QString &filename, QString &suffix)
+{
+    bool suffixCheck = false;
+    for (QString nameFilterList : nameFilters) {
+        for (QString nameFilter : QPlatformFileDialogHelper::cleanFilterList(nameFilterList)) {
+            QRegExp re(nameFilter, Qt::CaseInsensitive, QRegExp::Wildcard);
+            if (re.exactMatch(filename)) {
+                suffixCheck = true;
+                break;
+            }
+        }
+        if (suffixCheck) {
+            break;
+        }
+    }
+
+    // query matched suffix
+    if (!suffixCheck && !nameFilters.isEmpty()) {
+        QMimeDatabase mdb;
+        // get current selected suffix
+        int index = q->selectedNameFilterIndex();
+        QString filter = nameFilters[index];
+        QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(filter);
+        if (!newNameFilters.isEmpty()) {
+            for (const QString &newFilter : newNameFilters) {
+                suffix = mdb.suffixForFileName(newFilter);
+                // If the suffix is not found, use the regular expression to query again
+                if (suffix.isEmpty()) {
+                    QRegExp regExp(newFilter.mid(2), Qt::CaseInsensitive, QRegExp::Wildcard);
+                    mdb.allMimeTypes().first().suffixes().first();
+                    for (QMimeType m : mdb.allMimeTypes()) {
+                        for (QString suffixe : m.suffixes()) {
+                            if (regExp.exactMatch(suffixe)) {
+                                suffix = suffixe;
+                                return true;
+                            }
+                        }
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 /*!
