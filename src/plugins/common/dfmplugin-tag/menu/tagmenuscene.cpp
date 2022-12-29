@@ -164,7 +164,8 @@ bool TagMenuScene::triggered(QAction *action)
         iconRect = TagEventCaller::getItemRect(d->windowId, d->focusFile, DFMGLOBAL_NAMESPACE::kItemIconRole);
     }
 
-    TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles);
+
+    TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles, (d->currentDir.scheme() == TagManager::scheme()));
 
     return AbstractMenuScene::triggered(action);
 }

@@ -28,8 +28,8 @@
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
-TagEditor::TagEditor(QWidget *const parent)
-    : DArrowRectangle { DArrowRectangle::ArrowTop, parent }
+TagEditor::TagEditor(QWidget *const parent, bool inTagDir)
+    : DArrowRectangle { DArrowRectangle::ArrowTop, parent }, isShowInTagDir(inTagDir)
 {
     initializeWidgets();
     initializeParameters();
@@ -125,6 +125,7 @@ void TagEditor::initializeParameters()
     setBorderColor(QColor { "#ffffff" });
     setBackgroundColor(QColor { "#ffffff" });
     setWindowFlags(Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void TagEditor::initializeLayout()
@@ -143,10 +144,12 @@ void TagEditor::initializeConnect()
 {
     QObject::connect(this, &TagEditor::windowDeactivate, this, &TagEditor::onFocusOut);
 
-    QObject::connect(crumbEdit, &DCrumbEdit::crumbListChanged, this, [=] {
-        if (!crumbEdit->property("updateCrumbsColor").toBool())
-            processTags();
-    });
+    if (!isShowInTagDir) {
+        QObject::connect(crumbEdit, &DCrumbEdit::crumbListChanged, this, [=] {
+            if (!crumbEdit->property("updateCrumbsColor").toBool())
+                processTags();
+        });
+    }
 }
 
 void TagEditor::processTags()

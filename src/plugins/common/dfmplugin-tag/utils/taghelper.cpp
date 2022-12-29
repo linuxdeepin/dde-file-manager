@@ -265,9 +265,9 @@ QVariantMap TagHelper::createSidebarItemInfo(const QString &tag)
     return infoMap;
 }
 
-void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList)
+void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList, bool showInTagDir)
 {
-    TagEditor *editor = new TagEditor();
+    TagEditor *editor = new TagEditor(nullptr, showInTagDir);
 
     editor->setBaseSize(160, 160);
     editor->setFilesForTagging(fileList);

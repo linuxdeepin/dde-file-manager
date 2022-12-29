@@ -41,7 +41,7 @@ class TagEditor final : public DTK_WIDGET_NAMESPACE::DArrowRectangle
 {
     Q_OBJECT
 public:
-    explicit TagEditor(QWidget *const parent = nullptr);
+    explicit TagEditor(QWidget *const parent = nullptr, bool inTagDir = false);
     virtual ~TagEditor() override = default;
     TagEditor(const TagEditor &other) = delete;
     TagEditor &operator=(const TagEditor &other) = delete;
@@ -78,6 +78,7 @@ private:
     std::atomic<bool> flagForShown { false };
 
     bool isSettingDefault = false;
+    bool isShowInTagDir { false };
 };
 
 }

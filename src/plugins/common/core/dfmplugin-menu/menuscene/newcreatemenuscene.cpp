@@ -180,13 +180,9 @@ void NewCreateMenuScene::updateState(QMenu *parent)
 
 bool NewCreateMenuScene::triggered(QAction *action)
 {
-    // TODO(Lee or others):
-
     QString id = d->predicateAction.key(action);
-    if (id.isEmpty()) {
-        if (!d->newActionSubScene->triggered(action))
-            return AbstractMenuScene::triggered(action);
-    } else {
-        return AbstractMenuScene::triggered(action);
-    }
+    if (id.isEmpty())
+        return d->newActionSubScene->triggered(action) ? true : AbstractMenuScene::triggered(action);
+
+    return AbstractMenuScene::triggered(action);
 }
