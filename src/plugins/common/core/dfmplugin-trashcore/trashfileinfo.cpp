@@ -202,6 +202,21 @@ bool TrashFileInfo::exists() const
             || FileUtils::isTrashRootFile(urlOf(UrlInfoType::kUrl));
 }
 
+Qt::DropActions TrashFileInfo::supportedOfAttributes(const AbstractFileInfo::SupportType type) const
+{
+    switch (type) {
+    case AbstractFileInfo::SupportType::kDrop: {
+        const QString &path = d->url.path();
+
+        return path.isEmpty() || path == "/" ? Qt::MoveAction : Qt::IgnoreAction;
+    }
+    case AbstractFileInfo::SupportType::kDrag:
+        return Qt::CopyAction | Qt::MoveAction;
+    default:
+        return AbstractFileInfo::supportedOfAttributes(type);
+    }
+}
+
 void TrashFileInfo::refresh()
 {
     AbstractFileInfo::refresh();

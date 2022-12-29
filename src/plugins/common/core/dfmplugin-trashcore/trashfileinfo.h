@@ -43,7 +43,7 @@ public:
     virtual QUrl urlOf(const FileUrlInfoType type) const override;
     virtual bool exists() const override;
     virtual bool canAttributes(const FileCanType type) const override;
-
+    virtual Qt::DropActions supportedOfAttributes(const SupportType type) const override;
     virtual bool isAttributes(const FileIsType type) const override;
     virtual QFile::Permissions permissions() const override;
     virtual QIcon fileIcon() override;

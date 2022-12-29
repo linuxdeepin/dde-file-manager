@@ -54,7 +54,7 @@ protected:
     bool dropDirectSaveMode(QDropEvent *event) const;
     bool dropMimeData(QDropEvent *event) const;
     void handleMoveMimeData(QDropEvent *event, const QUrl &url);
-    bool isSameUser(const QMimeData *data) const;
+
 private:
     void updatePrepareDodgeValue(QEvent *event);
     void tryDodge(QDragMoveEvent *event);
@@ -62,8 +62,8 @@ private:
 
 protected:
     CanvasView *view;
-    QUrl m_target; //must be file:///
+    QUrl m_target;   //must be file:///
 };
 
 }
-#endif // DRAGDROPOPER_H
+#endif   // DRAGDROPOPER_H

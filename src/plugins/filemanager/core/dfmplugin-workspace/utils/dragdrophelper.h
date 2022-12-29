@@ -58,7 +58,6 @@ private:
     QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> fileInfoAtPos(const QPoint &pos);
 
     bool checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl> &urls) const;
-    bool isSameUser(const QMimeData *data);
     Qt::DropAction checkAction(Qt::DropAction srcAction, bool sameUser);
 
     FileView *view { nullptr };

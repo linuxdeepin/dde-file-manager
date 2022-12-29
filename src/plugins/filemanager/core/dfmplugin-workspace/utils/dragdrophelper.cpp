@@ -285,7 +285,7 @@ bool DragDropHelper::handleDFileDrag(const QMimeData *data, const QUrl &url)
 
 void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
 {
-    const bool sameUser = isSameUser(event->mimeData());
+    const bool sameUser = SysInfoUtils::isSameUser(event->mimeData());
 
     auto checkEventCustom = [this, sameUser](QDropEvent *event, const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action) {
         if (WorkspaceEventSequence::instance()->doCheckDragTarget(urls, urlTo, action)) {
@@ -364,17 +364,6 @@ bool DragDropHelper::checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl
         event->setDropAction(Qt::IgnoreAction);
         event->ignore();
         return true;
-    }
-
-    return false;
-}
-
-bool DragDropHelper::isSameUser(const QMimeData *data)
-{
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey)) {
-        const QString &userID = data->data(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey);
-        const QString &sysID = QString::number(SysInfoUtils::getUserId());
-        return userID == sysID;
     }
 
     return false;

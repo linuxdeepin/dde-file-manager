@@ -214,7 +214,7 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
             }
         }
 
-        const bool sameUser = isSameUser(event->mimeData());
+        const bool sameUser = SysInfoUtils::isSameUser(event->mimeData());
         if (event->possibleActions().testFlag(defaultAction))
             event->setDropAction((defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction);
 
@@ -508,16 +508,6 @@ void DragDropOper::handleMoveMimeData(QDropEvent *event, const QUrl &url)
     } else {
         event->accept();
     }
-}
-
-bool DragDropOper::isSameUser(const QMimeData *data) const
-{
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey)) {
-        QString userID = data->data(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey);
-        return userID == QString::number(SysInfoUtils::getUserId());
-    }
-
-    return false;
 }
 
 void DragDropOper::updatePrepareDodgeValue(QEvent *event)

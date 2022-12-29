@@ -34,6 +34,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/sysinfoutils.h"
 #include "events/sidebareventcaller.h"
 
 #include <dfm-framework/dpf.h>
@@ -594,6 +595,9 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     if ((action == Qt::MoveAction) && qApp->keyboardModifiers() == Qt::ControlModifier) {
         action = Qt::CopyAction;
     }
+
+    if (!SysInfoUtils::isSameUser(data) && FileUtils::isTrashFile(targetItemUrl))
+        action = Qt::IgnoreAction;
 
     return action;
 }
