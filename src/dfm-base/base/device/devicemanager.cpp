@@ -46,6 +46,7 @@
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
+static constexpr char kSavePasswd[] = { "savePasswd" };
 
 DeviceManager *DeviceManager::instance()
 {
@@ -647,7 +648,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                                    // 'device busy' error.
+                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -734,7 +735,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() { }
+DeviceManager::~DeviceManager() {}
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -820,6 +821,11 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     QApplication::restoreOverrideCursor();
     if (dlg.exec() == QDialog::Accepted) {
         QJsonObject loginInfo = dlg.getLoginData();
+        if (!uri.startsWith(Global::Scheme::kSmb)) {
+            if (loginInfo.value(kSavePasswd).toInt() == 1)   //ftp mount with auth one time mode
+                loginInfo.insert(kSavePasswd, 0);   //set to never save password
+        }
+
         auto data = loginInfo.toVariantMap();
         using namespace GlobalServerDefines::NetworkMountParamKey;
         if (data.contains(kAnonymous) && data.value(kAnonymous).toBool()) {
