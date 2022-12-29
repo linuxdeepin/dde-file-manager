@@ -46,6 +46,7 @@ public:
     QUrl getCurrentUrl() const;
     void setCurrentUrl(const QUrl &url);
     void setTabText(const QString &text);
+    void setTabAlias(const QString &alias);
 
     bool isChecked() const;
     void setChecked(const bool check);

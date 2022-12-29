@@ -28,6 +28,8 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DWidgetUtil>
 #include <DPalette>
 #include <DApplicationHelper>
@@ -68,12 +70,21 @@ void Tab::setCurrentUrl(const QUrl &url)
 
     QString fileName = getDisplayNameByUrl(url);
 
+    d->tabAlias.clear();
+    dpfHookSequence->run("dfmplugin_workspace", "hook_Tab_SetTabName", url, &d->tabAlias);
+
     setTabText(fileName);
 }
 
 void Tab::setTabText(const QString &text)
 {
     d->tabText = text;
+    update();
+}
+
+void Tab::setTabAlias(const QString &alias)
+{
+    d->tabAlias = alias;
     update();
 }
 
@@ -171,7 +182,8 @@ void Tab::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidg
 
     painter->setFont(font);
     QFontMetrics fm(font);
-    QString str = fm.elidedText(d->tabText, Qt::ElideRight, d->width - 10);
+    QString tabName = d->tabAlias.isEmpty() ? d->tabText : d->tabAlias;
+    QString str = fm.elidedText(tabName, Qt::ElideRight, d->width - 10);
 
     DPalette pal = DApplicationHelper::instance()->palette(widget);
     QColor color;
@@ -345,7 +357,8 @@ QPixmap Tab::toPixmap(bool drawBorder) const
     font.setPixelSize(12);
     painter.setFont(font);
     QFontMetrics fm(font);
-    QString str = fm.elidedText(d->tabText, Qt::ElideRight, 300 - 10);
+    QString tabName = d->tabAlias.isEmpty() ? d->tabText : d->tabAlias;
+    QString str = fm.elidedText(tabName, Qt::ElideRight, 300 - 10);
 
     // draw backgound
     color.setNamedColor("#FFFFFF");

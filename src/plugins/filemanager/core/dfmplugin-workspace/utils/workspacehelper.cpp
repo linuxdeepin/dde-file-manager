@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "workspacehelper.h"
 #include "views/fileview.h"
 #include "views/workspacewidget.h"
@@ -154,6 +154,14 @@ void WorkspaceHelper::closeTab(const QUrl &url)
     for (auto iter = kWorkspaceMap.cbegin(); iter != kWorkspaceMap.cend(); ++iter) {
         if (iter.value())
             iter.value()->closeTab(iter.key(), url);
+    }
+}
+
+void WorkspaceHelper::setTabAlias(const QUrl &url, const QString &newName)
+{
+    for (auto iter = kWorkspaceMap.cbegin(); iter != kWorkspaceMap.cend(); ++iter) {
+        if (iter.value())
+            iter.value()->setTabAlias(url, newName);
     }
 }
 

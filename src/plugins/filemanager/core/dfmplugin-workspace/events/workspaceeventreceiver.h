@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef WORKSPACEEVENTRECEIVER_H
 #define WORKSPACEEVENTRECEIVER_H
 
@@ -50,6 +50,7 @@ public slots:
     void handleShowCustomTopWidget(quint64 windowId, const QString &scheme, bool visible);
     bool handleTabAddable(quint64 windowId);
     void handleCloseTabs(const QUrl &url);
+    void handleSetTabAlias(const QUrl &url, const QString &name);
     void handleSelectFiles(quint64 windowId, const QList<QUrl> &files);
     void handleSelectAll(quint64 windowId);
     void handleSetSort(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);

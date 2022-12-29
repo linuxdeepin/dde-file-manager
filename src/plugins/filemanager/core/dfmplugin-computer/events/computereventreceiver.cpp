@@ -19,11 +19,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "computereventreceiver.h"
 #include "computereventcaller.h"
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
+
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QDebug>
 
@@ -65,6 +69,24 @@ bool ComputerEventReceiver::handleSortItem(const QString &group, const QString &
         return false;
 
     return ComputerUtils::sortItem(a, b);
+}
+
+bool ComputerEventReceiver::handleSetTabName(const QUrl &url, QString *tabName)
+{
+    // if the url is the mount point of inner disk, set it to alias if alias if not empty.
+    auto devs = DevProxyMng->getAllBlockIds(GlobalServerDefines::kMounted | GlobalServerDefines::kSystem);
+    for (const auto &dev : devs) {
+        auto devInfo = DevProxyMng->queryBlockInfo(dev);
+        auto mpt = QUrl::fromLocalFile(devInfo.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString());
+        if (UniversalUtils::urlEquals(mpt, url)) {
+            auto info = InfoFactory::create<EntryFileInfo>(ComputerUtils::makeBlockDevUrl(dev));
+            if (info) {
+                *tabName = info->displayName();
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void ComputerEventReceiver::setContextMenuEnable(bool enable)

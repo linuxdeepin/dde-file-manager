@@ -39,7 +39,8 @@
 
 using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
-Q_DECLARE_METATYPE(QList<QVariantMap> *);
+Q_DECLARE_METATYPE(QList<QVariantMap> *)
+Q_DECLARE_METATYPE(QString *)
 
 DFMBASE_USE_NAMESPACE
 
@@ -90,22 +91,27 @@ void Computer::onWindowOpened(quint64 winId)
     if (window->workSpace())
         ComputerItemWatcherInstance->startQueryItems();
     else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::workspaceInstallFinished,
+                this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
 
     if (window->sideBar())
         addComputerToSidebar();
     else
-        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
+        connect(
+                window, &FileManagerWindow::sideBarInstallFinished,
+                this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
 
     auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
     if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
         regComputerToSearch();
     } else {
-        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
-            Q_UNUSED(iid)
-            if (name == "dfmplugin-search")
-                regComputerToSearch();
-        },
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-search")
+                        regComputerToSearch();
+                },
                 Qt::DirectConnection);
     }
 
@@ -157,6 +163,7 @@ void Computer::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", ComputerEventReceiver::instance(), &ComputerEventReceiver::handleSepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Group_Sort", ComputerEventReceiver::instance(), &ComputerEventReceiver::handleSortItem);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Tab_SetTabName", ComputerEventReceiver::instance(), &ComputerEventReceiver::handleSetTabName);
 }
 
 void Computer::bindWindows()

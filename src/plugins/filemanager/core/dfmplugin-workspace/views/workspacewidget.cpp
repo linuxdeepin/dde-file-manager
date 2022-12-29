@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "workspacewidget.h"
 #include "fileview.h"
 #include "tabbar.h"
@@ -32,6 +32,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <DIconButton>
@@ -145,6 +146,17 @@ void WorkspaceWidget::closeTab(quint64 winId, const QUrl &url)
 {
     if (tabBar)
         tabBar->closeTab(winId, url);
+}
+
+void WorkspaceWidget::setTabAlias(const QUrl &url, const QString &newName)
+{
+    if (tabBar) {
+        for (int i = 0; i < tabBar->count(); ++i) {
+            auto tab = tabBar->tabAt(i);
+            if (tab && UniversalUtils::urlEquals(url, tab->getCurrentUrl()))
+                tab->setTabAlias(newName);
+        }
+    }
 }
 
 void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visible)

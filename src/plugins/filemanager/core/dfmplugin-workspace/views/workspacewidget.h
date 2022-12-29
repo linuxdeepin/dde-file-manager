@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef WORKSPACEWIDGET_H
 #define WORKSPACEWIDGET_H
 
@@ -71,6 +71,7 @@ public:
     void openNewTab(const QUrl &url);
     bool canAddNewTab();
     void closeTab(quint64 winId, const QUrl &url);
+    void setTabAlias(const QUrl &url, const QString &newName);
     void setCustomTopWidgetVisible(const QString &scheme, bool visible);
     bool getCustomTopWidgetVisible(const QString &scheme);
 

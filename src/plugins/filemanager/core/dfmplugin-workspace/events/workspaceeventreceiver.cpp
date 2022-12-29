@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "workspaceeventreceiver.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
@@ -83,6 +83,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTabAddable);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Tab_Close",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Tab_SetAlias",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetTabAlias);
 
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetVisualGeometry",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetVisualGeometry);
@@ -174,6 +176,11 @@ bool WorkspaceEventReceiver::handleTabAddable(quint64 windowId)
 void WorkspaceEventReceiver::handleCloseTabs(const QUrl &url)
 {
     WorkspaceHelper::instance()->closeTab(url);
+}
+
+void WorkspaceEventReceiver::handleSetTabAlias(const QUrl &url, const QString &name)
+{
+    WorkspaceHelper::instance()->setTabAlias(url, name);
 }
 
 void WorkspaceEventReceiver::handleSelectFiles(quint64 windowId, const QList<QUrl> &files)
@@ -333,7 +340,9 @@ void WorkspaceEventReceiver::handleRegisterCustomTopWidget(const QVariantMap &da
     }
 
     WorkspaceHelper::instance()->registerTopWidgetCreator(info.scheme, [=]() {
-        CustomTopWidgetInterface *interface { new CustomTopWidgetInterface };
+        CustomTopWidgetInterface *interface {
+            new CustomTopWidgetInterface
+        };
         interface->setKeepShow(info.keepShow);
         interface->registeCreateTopWidgetCallback(info.createTopWidgetCb);
         interface->registeCreateTopWidgetCallback(info.showTopWidgetCb);

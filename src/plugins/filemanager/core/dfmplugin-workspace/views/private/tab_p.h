@@ -46,6 +46,7 @@ public:
     QDrag *dragObject = nullptr;
     QVariant tabData;
     QString tabText;
+    QString tabAlias;
     QUrl url;
     QPointF originPos;
 

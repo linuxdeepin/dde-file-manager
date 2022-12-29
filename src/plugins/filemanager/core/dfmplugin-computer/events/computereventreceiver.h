@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef COMPUTEREVENTRECEIVER_H
 #define COMPUTEREVENTRECEIVER_H
 
@@ -41,6 +41,7 @@ public Q_SLOTS:
     void handleItemEject(const QUrl &url);
     bool handleSepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool handleSortItem(const QString &group, const QString &subGroup, const QUrl &a, const QUrl &b);
+    bool handleSetTabName(const QUrl &url, QString *tabName);
     void setContextMenuEnable(bool enable);
 
 private:

@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DETAILSPACEHELPER_H
 #define DETAILSPACEHELPER_H
 
@@ -72,6 +72,7 @@ public:
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QUrl &url);
+    void setTabAlias(const QUrl &url, const QString &newName);
     void addWorkspace(quint64 windowId, WorkspaceWidget *workspace);
     void removeWorkspace(quint64 windowId);
     quint64 windowId(const QWidget *sender);

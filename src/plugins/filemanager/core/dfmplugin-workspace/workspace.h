@@ -60,6 +60,7 @@ class Workspace : public dpf::Plugin
 
     DPF_EVENT_REG_SLOT(slot_Tab_Addable)
     DPF_EVENT_REG_SLOT(slot_Tab_Close)
+    DPF_EVENT_REG_SLOT(slot_Tab_SetAlias)
 
     DPF_EVENT_REG_SLOT(slot_View_GetVisualGeometry)
     DPF_EVENT_REG_SLOT(slot_View_GetViewItemRect)
@@ -91,6 +92,8 @@ class Workspace : public dpf::Plugin
     // hook events
     DPF_EVENT_REG_HOOK(hook_SendOpenWindow)
     DPF_EVENT_REG_HOOK(hook_SendChangeCurrentUrl)
+
+    DPF_EVENT_REG_HOOK(hook_Tab_SetTabName)
 
     DPF_EVENT_REG_HOOK(hook_DragDrop_CheckDragDropAction)
     DPF_EVENT_REG_HOOK(hook_DragDrop_FileDragMove)
