@@ -24,10 +24,6 @@
 
 namespace dfmbase {
 
-namespace GlobalPrivate {
-static bool dfmioIsInit = DFMIO::dfmio_init();
-}
-
 InfoFactory *InfoFactory::ins { nullptr };
 ViewFactory *ViewFactory::ins { nullptr };
 WatcherFactory *WatcherFactory::ins { nullptr };

@@ -76,7 +76,6 @@ using namespace dfmbase;
 LocalFileHandler::LocalFileHandler()
     : d(new LocalFileHandlerPrivate(this))
 {
-    dfmio::dfmio_init();
 }
 
 LocalFileHandler::~LocalFileHandler()

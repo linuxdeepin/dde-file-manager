@@ -38,6 +38,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <dfm-io/dfmio_register.h>
+
 #include <iostream>
 #include <algorithm>
 #include <unistd.h>
@@ -214,6 +216,8 @@ int main(int argc, char *argv[])
     }
 
     checkUpgrade(&a);
+
+    DFMIO::dfmio_init();
 
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";

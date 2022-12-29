@@ -63,6 +63,7 @@ private:
     qint8 isSameDisk { -1 };   // the source file and trash files is in same disk
     QString trashLocalDir;   // the trash file locak dir
     QSharedPointer<StorageInfo> trashStorageInfo { nullptr };   // target file's device infor
+    QMap<QString, QString> fstabMap;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

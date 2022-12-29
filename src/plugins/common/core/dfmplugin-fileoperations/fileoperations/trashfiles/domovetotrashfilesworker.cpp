@@ -28,6 +28,7 @@
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/base/device/deviceutils.h"
 
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/core/diofactory.h>
@@ -49,6 +50,7 @@ DoMoveToTrashFilesWorker::DoMoveToTrashFilesWorker(QObject *parent)
     : FileOperateBaseWorker(parent)
 {
     jobType = AbstractJobHandler::JobType::kMoveToTrashType;
+    fstabMap = DeviceUtils::fstabBindInfo();
 }
 
 DoMoveToTrashFilesWorker::~DoMoveToTrashFilesWorker()
@@ -92,29 +94,39 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
     bool result = false;
     // 总大小使用源文件个数
     for (const auto &url : sourceUrls) {
+        QUrl urlSource = url;
+        if (!fstabMap.empty()) {
+            for (const auto &device : fstabMap.keys()) {
+                if (urlSource.path().startsWith(device)) {
+                    urlSource.setPath(urlSource.path().replace(0, device.size(), fstabMap[device]));
+                    break;
+                }
+            }
+        }
+
         if (!stateCheck())
             return false;
 
-        if (FileUtils::isTrashFile(url)) {
+        if (FileUtils::isTrashFile(urlSource)) {
             completeFilesCount++;
-            completeSourceFiles.append(url);
+            completeSourceFiles.append(urlSource);
             continue;
         }
 
         // url是否可以删除 canrename
-        if (!isCanMoveToTrash(url, &result)) {
+        if (!isCanMoveToTrash(urlSource, &result)) {
             if (result) {
                 completeFilesCount++;
-                completeSourceFiles.append(url);
+                completeSourceFiles.append(urlSource);
                 continue;
             }
             return false;
         }
 
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(urlSource);
         if (!fileInfo) {
             // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
+            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(urlSource, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
                 completeFilesCount++;
@@ -122,19 +134,19 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             }
         }
 
-        emitCurrentTaskNotify(url, targetUrl);
+        emitCurrentTaskNotify(urlSource, targetUrl);
 
         const QString &completeBaseName = fileInfo->nameOf(NameInfoType::kCompleteBaseName);
         const QString &suffix = fileInfo->nameOf(NameInfoType::kSuffix);
         const QUrl &trashUrl = buildTrashUrl(completeBaseName, suffix);
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool trashSucc = fileHandler.trashFile(url);
+        bool trashSucc = fileHandler.trashFile(urlSource);
         if (trashSucc) {
             completeFilesCount++;
             completeTargetFiles.append(trashUrl);
             emitProgressChangedNotify(completeFilesCount);
-            completeSourceFiles.append(url);
+            completeSourceFiles.append(urlSource);
             continue;
         }
         return false;
@@ -173,12 +185,15 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
 
 QUrl DoMoveToTrashFilesWorker::buildTrashUrl(const QString &completeBaseName, const QString &suffix)
 {
+    // gio trash no trash url return, so build trash url before trash
+    // file:///aaa/bbb/ccc.txt -> trash:///ccc.txt, if trash:///ccc.txt exists, return trash:///ccc.2.txt
+
     QUrl url;
     url.setScheme("trash");
 
     int i = 1;
     while (1) {
-        if (i > 1000000)
+        if (i > 1000000)   // to avoid endless loop
             break;
 
         QString path;
