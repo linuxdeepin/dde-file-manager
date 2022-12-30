@@ -494,7 +494,7 @@ bool DoCopyFileWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, cons
 
     checkRetry();
 
-    if (actionOperating(actionForWrite, fromInfo->size() - (currentPos + readSize - surplusSize), skip))
+    if (!actionOperating(actionForWrite, fromInfo->size() - (currentPos + readSize - surplusSize), skip))
         return false;
 
     if (workData->needSyncEveryRW && sizeWrite > 0) {
