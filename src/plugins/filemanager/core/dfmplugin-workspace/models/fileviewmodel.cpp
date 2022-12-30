@@ -125,6 +125,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     const QModelIndex &index = rootIndex(url);
 
     if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme())) {
+        root->canFetchByForce = true;
         Q_EMIT traverPrehandle(url, index);
     } else {
         root->canFetchMore = true;
@@ -158,6 +159,10 @@ QModelIndex FileViewModel::findChildIndex(const QUrl &url) const
 void FileViewModel::doFetchMore(const QModelIndex &rootIndex)
 {
     auto rootInfo = fileDataHelper->findRootInfo(rootIndex.row());
+    if (!rootInfo->canFetchByForce)
+        return;
+
+    rootInfo->canFetchByForce = false;
     rootInfo->canFetchMore = true;
     rootInfo->needTraversal = true;
 

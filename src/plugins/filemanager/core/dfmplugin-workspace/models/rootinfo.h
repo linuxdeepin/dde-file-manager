@@ -79,6 +79,7 @@ public:
     int rowIndex;
     bool canFetchMore;
     bool needTraversal;
+    bool canFetchByForce = false;
     QUrl url;
     QUrl hiddenFileUrl;
     AbstractFileWatcherPointer watcher;
