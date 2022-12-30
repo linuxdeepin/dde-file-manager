@@ -46,5 +46,16 @@ bool SmbBrowserEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
     return false;
 }
 
+bool SmbBrowserEventReceiver::cancelDelete(quint64, const QList<QUrl> &urls)
+{
+    if (urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSmb
+        && urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kFtp
+        && urls.first().scheme() != DFMBASE_NAMESPACE::Global::Scheme::kSFtp) {
+        qDebug() << "SmbBrowser could't delete";
+        return false;
+    }
+    return true;
+}
+
 SmbBrowserEventReceiver::SmbBrowserEventReceiver(QObject *parent)
     : QObject(parent) {}

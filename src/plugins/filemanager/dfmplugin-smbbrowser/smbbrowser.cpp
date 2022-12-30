@@ -246,6 +246,7 @@ void SmbBrowser::followEvents()
     dpfHookSequence->follow("dfmplugin_computer", "hook_ComputerView_ItemListFilter", SmbIntegrationManager::instance(), &SmbIntegrationManager::handleItemListFilter);
     dpfHookSequence->follow("dfmplugin_computer", "hook_ComputerView_ItemFilterOnAdd", SmbIntegrationManager::instance(), &SmbIntegrationManager::handleItemFilterOnAdd);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelDelete);
 }
 
 void SmbBrowser::addNeighborToSidebar()
