@@ -21,6 +21,7 @@
 
 #include "vaultremoveprogressview.h"
 #include "utils/vaultdefine.h"
+#include "utils/vaultautolock.h"
 #include "dfm-base/base/application/settings.h"
 
 #include <DWaterProgress>
@@ -82,6 +83,7 @@ void VaultRemoveProgressView::removeVault(const QString &vaultLockPath, const QS
                         //! 清除保险箱所有时间
                         Settings setting(kVaultTimeConfigFile);
                         setting.removeGroup(QString("VaultTime"));
+                        VaultAutoLock::instance()->resetConfig();
                     } else {
                         emit removeFinished(false);
                     }
