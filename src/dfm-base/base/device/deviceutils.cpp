@@ -373,7 +373,7 @@ bool DeviceUtils::checkDiskEncrypted()
     // TODO (liuzhangjian) check disk encrypted on v23
 #elif COMPILE_ON_V20
         QSettings settings("/etc/deepin/deepin-user-experience", QSettings::IniFormat);
-        isEncrypted = settings.value("FullDiskEncrypt", false).toBool();
+        isEncrypted = settings.value("ExperiencePlan/FullDiskEncrypt", false).toBool();
 #endif
     });
 

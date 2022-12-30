@@ -273,29 +273,29 @@ void Utils::loadVaultPolicy(VaultPolicyType *vaultPolicies)
     qDebug() << "loaded policy: " << *vaultPolicies;
 }
 
-DPCErrorCode Utils::checkDiskPassword(crypt_device *cd, const char *pwd, const char *device)
+DPCErrorCode Utils::checkDiskPassword(crypt_device **cd, const char *pwd, const char *device)
 {
-    int r = crypt_init(&cd, device);
+    int r = crypt_init(cd, device);
     if (r < 0) {
         qInfo("crypt_init failed,code is:%d", r);
         return kInitFailed;
     }
 
-    r = crypt_load(cd, /* crypt context */
+    r = crypt_load(*cd, /* crypt context */
                    CRYPT_LUKS2, /* requested type */
                    nullptr); /* additional parameters (not used) */
 
     if (r < 0) {
-        qInfo("crypt_load failed on device %s.\n", crypt_get_device_name(cd));
-        crypt_free(cd);
+        qInfo("crypt_load failed on device %s.\n", crypt_get_device_name(*cd));
+        crypt_free(*cd);
         return kDeviceLoadFailed;
     }
 
-    r = crypt_activate_by_passphrase(cd, nullptr, CRYPT_ANY_SLOT,
+    r = crypt_activate_by_passphrase(*cd, nullptr, CRYPT_ANY_SLOT,
                                      pwd, strlen(pwd), CRYPT_ACTIVATE_ALLOW_UNBOUND_KEY);
     if (r < 0) {
-        qInfo("crypt_activate_by_passphrase failed on device %s.\n", crypt_get_device_name(cd));
-        crypt_free(cd);
+        qInfo("crypt_activate_by_passphrase failed on device %s.\n", crypt_get_device_name(*cd));
+        crypt_free(*cd);
         return kPasswordWrong;
     }
 

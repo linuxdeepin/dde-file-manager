@@ -236,7 +236,7 @@ void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString 
     QStringList successList;
     for (int i = 0; i < devList.size(); ++i) {
         struct crypt_device *cd = nullptr;
-        ret = Utils::checkDiskPassword(cd, tmpOldPwd.data(), devList[i].toLocal8Bit().data());
+        ret = Utils::checkDiskPassword(&cd, tmpOldPwd.data(), devList[i].toLocal8Bit().data());
 
         if (ret == kPasswordWrong && i == 0) {
             emit DiskPasswordChecked(kPasswordWrong);
@@ -263,7 +263,7 @@ void AccessControlDBus::ChangeDiskPassword(const QString &oldPwd, const QString 
     if (ret != kNoError && !successList.isEmpty()) {
         for (const auto &device : successList) {
             struct crypt_device *cd = nullptr;
-            Utils::checkDiskPassword(cd, tmpNewPwd.data(), device.toLocal8Bit().data());
+            Utils::checkDiskPassword(&cd, tmpNewPwd.data(), device.toLocal8Bit().data());
             Utils::changeDiskPassword(cd, tmpNewPwd.data(), tmpOldPwd.data());
         }
     }

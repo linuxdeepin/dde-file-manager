@@ -54,6 +54,7 @@ find_package(Qt5 COMPONENTS
 
 target_link_libraries(${PROJECT_NAME}
     DFM::framework
+    DFM::base
     PkgConfig::dfm-mount
     PkgConfig::dfm-io
     PkgConfig::crypt

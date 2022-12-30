@@ -78,7 +78,7 @@ public:
     static void saveVaultPolicy(const QVariantMap &policy);
     static void loadVaultPolicy(VaultPolicyType *vaultPolicies);
 
-    static DPCErrorCode checkDiskPassword(crypt_device *cd, const char *pwd, const char *device);
+    static DPCErrorCode checkDiskPassword(crypt_device **cd, const char *pwd, const char *device);
     static DPCErrorCode changeDiskPassword(crypt_device *cd, const char *oldPwd, const char *newPwd);
 };
 
