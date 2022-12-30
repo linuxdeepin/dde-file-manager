@@ -215,7 +215,7 @@ QString TagHelper::getColorNameByTag(const QString &tagName) const
 bool TagHelper::isDefualtTag(const QString &tagName) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [tagName](const TagColorDefine &define) {
-        return define.colorName == tagName;
+        return define.displayName == tagName;
     });
 
     return ret != colorDefines.cend();

@@ -164,7 +164,6 @@ bool TagMenuScene::triggered(QAction *action)
         iconRect = TagEventCaller::getItemRect(d->windowId, d->focusFile, DFMGLOBAL_NAMESPACE::kItemIconRole);
     }
 
-
     TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles, (d->currentDir.scheme() == TagManager::scheme()));
 
     return AbstractMenuScene::triggered(action);
@@ -202,10 +201,10 @@ void TagMenuScene::onColorClicked(const QColor &color)
         QList<QColor> colors = tagWidget->checkedColorList();
         if (colors.contains(color)) {
             //add checked tag
-            TagManager::instance()->addTagsForFiles({ TagHelper::instance()->qureyColorNameByColor(color) }, d->selectFiles);
+            TagManager::instance()->addTagsForFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, d->selectFiles);
         } else {
             // delete checked tag
-            TagManager::instance()->removeTagsOfFiles({ TagHelper::instance()->qureyColorNameByColor(color) }, d->selectFiles);
+            TagManager::instance()->removeTagsOfFiles({ TagHelper::instance()->qureyDisplayNameByColor(color) }, d->selectFiles);
         }
     }
 }
@@ -244,10 +243,11 @@ QAction *TagMenuScene::createColorListAction() const
     QList<QColor> colors;
 
     for (const QString &tag : tags) {
+        // The tag name of the database is the display name of the tag
         if (!TagHelper::instance()->isDefualtTag(tag))
             continue;
 
-        const QColor &color = TagHelper::instance()->qureyColorByColorName(tag);
+        const QColor &color = TagHelper::instance()->qureyColorByDisplayName(tag);
 
         if (Q_LIKELY(color.isValid()))
             colors << color;

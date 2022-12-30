@@ -140,7 +140,7 @@ QWidget *Tag::createTagWidget(const QUrl &url)
 void Tag::installToSideBar()
 {
     auto tagsMap = TagManager::instance()->getAllTags();
-    auto tagNames = TagHelper::instance()->displayTagNameConversion(tagsMap.keys());
+    auto tagNames = tagsMap.keys();
     auto orders = Application::genericSetting()->value(kSidebarOrder, kTagOrderKey).toStringList();
     for (const auto &item : orders) {
         QUrl u(item);

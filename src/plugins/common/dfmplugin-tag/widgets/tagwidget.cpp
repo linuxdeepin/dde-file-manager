@@ -109,11 +109,11 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
 
     QStringList newTagNames;
     for (const QColor &color : checkedColors) {
-        QString tagName = TagHelper::instance()->qureyColorNameByColor(color);
-        if (tagName.isEmpty())
+        QString colorName = TagHelper::instance()->qureyDisplayNameByColor(color);
+        if (colorName.isEmpty())
             continue;
 
-        newTagNames << tagName;
+        newTagNames << colorName;
     }
 
     for (const QString &tagName : tagNameList) {

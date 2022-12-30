@@ -216,13 +216,9 @@ QString TagManager::getTagIconName(const QString &tag) const
     if (tag.isEmpty())
         return QString();
 
-    QStringList tagLst = TagHelper::instance()->dbTagNameConversion({ tag });
-    if (tagLst.isEmpty())
-        return QString();
-
-    const auto &dataMap = getTagsColorName({ tagLst.first() });
-    if (dataMap.contains(tagLst.first()))
-        return TagHelper::instance()->qureyIconNameByColor(QColor(dataMap.value(tagLst.first())));
+    const auto &dataMap = getTagsColorName({ tag });
+    if (dataMap.contains(tag))
+        return TagHelper::instance()->qureyIconNameByColor(QColor(dataMap.value(tag)));
 
     return QString();
 }
@@ -249,7 +245,7 @@ TagManager::TagColorMap TagManager::getTagsColor(const QStringList &tags) const
         return {};
 
     auto var = tagDbus->Query(static_cast<std::size_t>(TagActionType::kGetTagsColor), tags);
-    if (var.isNull())
+    if (var.isNull() || !var.isValid())
         return {};
 
     const auto &dataMap = var.toMap();
@@ -342,12 +338,10 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
     if (tags.isEmpty() || files.isEmpty())
         return false;
 
-    auto tempTags = TagHelper::instance()->dbTagNameConversion(tags);
-
-    // add Tag Property
+    // tag --- color
     QMap<QString, QVariant> tagWithColor {};
     for (const QString &tagName : tags) {
-        QString colorName = tagColorMap.contains(tagName) ? tagColorMap[tagName] : TagHelper::instance()->qureyColorByColorName(tagName).name();
+        QString colorName = tagColorMap.contains(tagName) ? tagColorMap[tagName] : TagHelper::instance()->qureyColorByDisplayName(tagName).name();
         tagWithColor[tagName] = QVariant { QList<QString> { colorName } };
     }
 
@@ -356,7 +350,7 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
     if (checkTagResult.toBool()) {
         QVariantMap infos;
         for (const auto &f : files)
-            infos[f.path()] = QVariant(tempTags);
+            infos[f.path()] = QVariant(tags);
 
         QVariant ret = tagDbus->Insert(static_cast<std::size_t>(TagActionType::kMakeFilesTags), infos);
         if (ret.toBool())
