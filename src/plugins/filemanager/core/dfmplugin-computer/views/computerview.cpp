@@ -137,6 +137,8 @@ void ComputerView::showEvent(QShowEvent *event)
 
 void ComputerView::hideEvent(QHideEvent *event)
 {
+    auto selectionModel = this->selectionModel();
+    selectionModel->clearSelection();
     DListView::hideEvent(event);
 }
 
@@ -389,7 +391,12 @@ void dfmplugin_computer::ComputerView::keyPressEvent(QKeyEvent *event)
     case Qt::AltModifier | Qt::KeypadModifier:
         switch (event->key()) {
         case Qt::Key_Left:
+            [[fallthrough]];
         case Qt::Key_Right:
+            [[fallthrough]];
+        case Qt::Key_Up:
+            [[fallthrough]];
+        case Qt::Key_Down:
             return QWidget::keyPressEvent(event);
         }
     }
