@@ -27,6 +27,7 @@
 #include <QTextCodec>
 
 #include <dfm-framework/dpf.h>
+#include <dfm-io/dfmio_register.h>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -162,6 +163,7 @@ int main(int argc, char *argv[])
 
     DPF_NAMESPACE::backtrace::installStackTraceHandler();
     initLog();
+    DFMIO::dfmio_init();
 
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";
