@@ -1125,7 +1125,7 @@ QRect FileView::visualRect(const QModelIndex &index) const
         rect.setTop(index.row() * (itemSize.height() + kListViewSpacing * 2) + kListViewSpacing);
         rect.setHeight(itemSize.height());
 
-        if (d->allowedAdjustColumnSize) {
+        if (d->allowedAdjustColumnSize && d->headerView) {
             rect.setWidth(d->headerView->length());
         }
     } else {
