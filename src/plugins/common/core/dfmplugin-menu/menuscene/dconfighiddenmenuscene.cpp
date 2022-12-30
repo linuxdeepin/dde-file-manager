@@ -44,7 +44,7 @@ void DConfigHiddenMenuScene::updateActionHidden(QMenu *parent)
         { "dde-desktop", "dd.menu.action.hidden" },
         { "dde-select-dialog-x11", "dfd.menu.action.hidden" },
         { "dde-select-dialog-wayland", "dfd.menu.action.hidden" },
-        { "dde-select-dialog", "dfd.menu.action.hidden" },
+        { "dde-file-dialog", "dfd.menu.action.hidden" },
     };
 
     auto hiddenActions = DConfigManager::instance()->value(kDefaultCfgPath, appKeyMap.value(qApp->applicationName())).toStringList();
