@@ -56,6 +56,7 @@ public slots:
     void handleHotkeyCtrlF();
     void handleHotkeyCtrlL();
     void handleHotketSwitchViewMode(int mode);
+    void onUrlChanged(const QUrl &url);
 
 private:
     void initializeUi();
@@ -85,6 +86,7 @@ private:
     OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
     CrumbBar *crumbBar { nullptr };   // 面包屑
     bool searchButtonSwitchState { false };
+    bool isHideSearchBtn { false };
 };
 
 }

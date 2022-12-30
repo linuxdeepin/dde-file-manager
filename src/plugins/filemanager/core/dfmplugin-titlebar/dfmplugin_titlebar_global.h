@@ -46,6 +46,7 @@ inline constexpr char kKeepAddressBar[] { "Property_Key_KeepAddressBar" };
 inline constexpr char kHideListViewBtn[] { "Property_Key_HideListViewBtn" };
 inline constexpr char kHideIconViewBtn[] { "Property_Key_HideIconViewBtn" };
 inline constexpr char kHideDetailSpaceBtn[] { "Property_Key_HideDetailSpaceBtn" };
+inline constexpr char kHideHideSearchBtn[] { "Property_Key_HideSearchBtn" };
 }   // namespace CustomKey
 
 // Setting menu action list

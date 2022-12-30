@@ -198,6 +198,11 @@ void SmbBrowser::onWindowOpened(quint64 winId)
                 },
                 Qt::DirectConnection);
     }
+
+    if (window->titleBar())
+        regToTitleBar();
+    else
+        connect(window, &FileManagerWindow::titleBarInstallFinished, this, &SmbBrowser::regToTitleBar, Qt::DirectConnection);
 }
 
 void SmbBrowser::onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &urls)
@@ -247,6 +252,17 @@ void SmbBrowser::followEvents()
     dpfHookSequence->follow("dfmplugin_computer", "hook_ComputerView_ItemFilterOnAdd", SmbIntegrationManager::instance(), &SmbIntegrationManager::handleItemFilterOnAdd);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::cancelDelete);
+}
+
+void SmbBrowser::regToTitleBar()
+{
+    QVariantMap property;
+    property["Property_Key_HideSearchBtn"] = true;
+
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kSmb), property);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kFtp), property);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kSFtp), property);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", SmbBrowserUtils::networkScheme(), property);
 }
 
 void SmbBrowser::addNeighborToSidebar()
