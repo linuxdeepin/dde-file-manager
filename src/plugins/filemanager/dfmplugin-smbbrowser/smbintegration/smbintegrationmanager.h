@@ -39,6 +39,7 @@ public:
     void addStashedSeperatedItemToComputer(const QList<QUrl> &urlList);
     bool handleItemListFilter(QList<QUrl> *items);
     bool handleItemFilterOnAdd(const QUrl &devUrl);
+    bool handleItemFilterOnRemove(const QUrl &devUrl);
     void setWindowId(quint64 winId);
     void switchIntegrationMode(bool value);
     void addIntegrationItemToComputer(const QUrl &hostUrl);
@@ -55,6 +56,8 @@ private:
     void addIntegrationItemToSidebar(const QUrl &hostUrl, ContextMenuCallback contexMenu);
     void doSwitchToSmbIntegratedMode(const QList<QUrl> &stashedUrls);
     void doSwitchToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &stashedUrls);
+    bool existSmbMount(const QString &host);
+    void stashSmbMount(const QString &id);
 
     void clearPasswd(const QUrl &url);
     QString parseServer(const QString &uri);

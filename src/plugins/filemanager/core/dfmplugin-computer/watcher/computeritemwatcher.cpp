@@ -283,7 +283,7 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, 
 
     const QMap<QString, QString> &&stashedMounts = StashMountsUtils::stashedMounts();
 
-    auto isStashedSmbBeMounted = [](const QUrl &smbUrl) {   // TOOD(zhuangshu):do it out of computer plugin
+    auto isStashedSmbBeMounted = [](const QUrl &smbUrl) {   // TODO(zhuangshu):do it out of computer plugin
         QUrl url(smbUrl);
         if (url.scheme() != Global::Scheme::kSmb)
             return false;
@@ -725,6 +725,8 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
     } else if (ga == Application::GenericAttribute::kHiddenSystemPartition) {
         Q_EMIT hideNativeDisks(value.toBool());
     } else if (ga == Application::GenericAttribute::kAlwaysShowOfflineRemoteConnections) {
+        if (StashMountsUtils::isSmbIntegrationEnabled())   // can not write `RemoteMounts` field with smb integration mode
+            return;
         if (!value.toBool()) {
             QStringList mounts = StashMountsUtils::stashedMounts().keys();
             for (const auto &mountUrl : mounts) {
@@ -780,7 +782,7 @@ void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QStri
     Q_UNUSED(mntPath)
     auto url = ComputerUtils::makeProtocolDevUrl(id);
 
-    if (DeviceUtils::isSamba(QUrl(id))) {
+    if (DeviceUtils::isSamba(QUrl(id)) || id.startsWith(Global::Scheme::kSmb)) {
         const QVariantHash &newMount = StashMountsUtils::makeStashedSmbDataById(id);
         const QUrl &stashedUrl = StashMountsUtils::makeStashedSmbMountUrl(newMount);
         removeDevice(stashedUrl);   // Before adding mounted smb item, removing its stashed item firstly.

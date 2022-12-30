@@ -210,14 +210,25 @@ QUrl StashMountsUtils::makeStashedSmbMountUrl(const QVariantHash &stashedData)
 
 QVariantHash StashMountsUtils::makeStashedSmbDataById(const QString &id)
 {
-    const QUrl &url = QUrl::fromPercentEncoding(id.toUtf8());
-    const QString &path = url.path();
-    int pos = path.lastIndexOf("/");
-    const QString &displayName = path.mid(pos + 1);
-    const QString &host = displayName.section("on", 1, 1).trimmed();
-    const QString &shareName = displayName.section("on", 0, 0).trimmed();
-
+    QString displayName;
+    QString host;
+    QString shareName;
     QVariantHash newMount;
+    if (DeviceUtils::isSamba(QUrl(id))) {
+        const QUrl &url = QUrl::fromPercentEncoding(id.toUtf8());
+        const QString &path = url.path();
+        int pos = path.lastIndexOf("/");
+        displayName = path.mid(pos + 1);
+        host = displayName.section(" on ", 1, 1);
+        shareName = displayName.section(" on ", 0, 0);
+    } else if (id.startsWith(Global::Scheme::kSmb)) {
+        host = QUrl(id).host();
+        shareName = QUrl(id.endsWith("/") ? id.chopped(1) : id).fileName();
+        displayName = QString("%1 on %2").arg(shareName).arg(host);
+    }
+    if (host.isEmpty() || shareName.isEmpty() || displayName.isEmpty())
+        return newMount;
+
     newMount.insert(StashedMountsKeys::kHostKey, host);
     newMount.insert(StashedMountsKeys::kShareKey, shareName);
     newMount.insert(StashedMountsKeys::kProtocolKey, Global::Scheme::kSmb);
@@ -241,15 +252,20 @@ void StashMountsUtils::stashMountedMounts()
 {
     QStringList &&ids = DevProxyMng->getAllProtocolIds();
     for (auto id : ids) {
+        QVariantHash newMount;
         if (id.startsWith(Global::Scheme::kSmb)) {
             DFMEntryFileInfoPointer info(new EntryFileInfo(ComputerUtils::makeProtocolDevUrl(id)));
             QString displayName = info->displayName();
-            if (!displayName.isEmpty()) {
+            if (!displayName.isEmpty())
                 cfgSettings()->setValue(StashedMountsKeys::kJsonGroup, id, displayName);
-            }
+
+            newMount = makeStashedSmbDataById(id);
+            if (!newMount.isEmpty())
+                StashMountsUtils::stashSmbMount(newMount);
         } else if (DeviceUtils::isSamba(QUrl(id))) {
-            const QVariantHash &newMount = makeStashedSmbDataById(id);
-            StashMountsUtils::stashSmbMount(newMount);
+            newMount = makeStashedSmbDataById(id);
+            if (!newMount.isEmpty())
+                StashMountsUtils::stashSmbMount(newMount);
         }
     }
 }

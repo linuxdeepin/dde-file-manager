@@ -34,6 +34,7 @@ static constexpr char kSmbIntegrations[] = { "SmbIntegrations" };
 static constexpr char kGenericAttribute[] = { "GenericAttribute" };
 static constexpr char kRemoteMounts[] = { "RemoteMounts" };
 static constexpr char kMergeTheEntriesOfSambaSharedFolders[] = { "MergeTheEntriesOfSambaSharedFolders" };
+static constexpr char kAlwaysShowOfflineRemoteConnections[] = { "AlwaysShowOfflineRemoteConnections" };
 
 static constexpr char kHostKey[] = { "host" };
 static constexpr char kNameKey[] = { "name" };
@@ -135,6 +136,8 @@ SmbIntegrationManager::SmbIntegrationManager(QObject *parent)
     } else {
         isSmbIntegrated = Application::genericSetting()->value(kGenericAttribute, kMergeTheEntriesOfSambaSharedFolders).toBool();
     }
+
+    isSmbStashMountsEnabled = Application::genericSetting()->value(kGenericAttribute, kAlwaysShowOfflineRemoteConnections).toBool();
 }
 
 void SmbIntegrationManager::switchIntegrationMode(bool value)
@@ -268,7 +271,6 @@ void SmbIntegrationManager::umountAllProtocolDevice(quint64 windowId, const QUrl
     QStringList devs = DevProxyMng->getAllProtocolIds();
     if (entryUrl.path() == kSmbIntegrationPath) {   // TODO(zhuangshu):to handle gvfs mount
         for (const auto &devId : devs) {
-            qInfo() << "dev = " << devId;
             QUrl compareUrl;
             compareUrl.setScheme(Global::Scheme::kFile);
             compareUrl.setPath(QString("/media/%1/smbmounts/").arg(SysInfoUtils::getUser()));
@@ -349,8 +351,15 @@ QStringList SmbIntegrationManager::getSmbMountPathsByUrl(const QUrl &url)
     QStringList smbMountPaths;
     QStringList devs = DevProxyMng->getAllProtocolIds();
     for (const QString &dev : devs) {
-        if (dev.startsWith(Global::Scheme::kSmb) || DeviceUtils::isSamba(dev))
-            smbMountPaths << dev;
+        if (dev.startsWith(Global::Scheme::kSmb)) {
+            if (dev == url.toString() + "/")   // dev like: smb://1.2.3.4/share_dir/
+                smbMountPaths << dev;
+        } else if (DeviceUtils::isSamba(dev)) {
+            if (url.fileName() == QUrl(dev).fileName().section(" on ", 0, 0)) {
+                if (url.host() == QUrl(dev).fileName().section(" on ", 1, 1))
+                    smbMountPaths << dev;
+            }
+        }
     }
 
     return smbMountPaths;
@@ -430,18 +439,30 @@ void SmbIntegrationManager::addIntegrationItemToComputer(const QUrl &hostUrl)
 void SmbIntegrationManager::doSwitchToSmbIntegratedMode(const QList<QUrl> &stashedUrls)
 {
     // 1. remove the stashed separated smb mount
-    if (isStashMountsEnabled()) {
-        for (const QUrl &url : stashedUrls) {
-            const QString &id = url.toString();
-            QUrl stashedUrl;
-            stashedUrl.setScheme(Global::Scheme::kEntry);
-            auto path = id.toUtf8().toBase64();
-            QString encodecPath = QString("%1.%2").arg(QString(path)).arg(kProtodevstashed);
-            stashedUrl.setPath(encodecPath);
+    QStringList smbRootUrls;
 
-            dpfSlotChannel->push("dfmplugin_computer", "slot_RemoveDevice", stashedUrl);
-        }
+    for (const QUrl &url : stashedUrls) {
+        const QString &id = url.toString();
+        QUrl stashedUrl;
+        stashedUrl.setScheme(Global::Scheme::kEntry);
+        auto path = id.toUtf8().toBase64();
+        QString encodecPath = QString("%1.%2").arg(QString(path)).arg(kProtodevstashed);
+        stashedUrl.setPath(encodecPath);
+
+        dpfSlotChannel->push("dfmplugin_computer", "slot_RemoveDevice", stashedUrl);
+        const QString &smbRoot = url.toString(QUrl::RemovePath);
+        if (!smbRoot.isEmpty())
+            smbRootUrls.append(smbRoot);
     }
+
+    if (!smbRootUrls.isEmpty()) {
+        //`smbRootUrls` which is from field `RemoteMounts` is saved to field `SmbIntegrations` when switch to smb integration mode
+        QStringList list = Application::genericSetting()->value(kStashedSmbDevices, kSmbIntegrations).toStringList();
+        list.append(smbRootUrls);
+        list.removeDuplicates();
+        Application::genericSetting()->setValue(kStashedSmbDevices, kSmbIntegrations, list);
+    }
+
     // 2. remove the mounted separated smb mount
     QStringList devs = DevProxyMng->getAllProtocolIds();
     QStringList unmountList;
@@ -502,6 +523,74 @@ void SmbIntegrationManager::doSwitchToSmbSeperatedMode(const QVariantMap &stashe
     QUrl computerUrl;
     computerUrl.setScheme(Global::Scheme::kComputer);
     SmbBrowserEventCaller::sendChangeCurrentUrl(windowId, computerUrl);
+}
+
+/**
+ * @brief SmbIntegrationManager::existSmbMount
+ * To check whether exist smb mount under host
+ * @param host
+ * @return exist or not exist smb mount under host
+ */
+bool SmbIntegrationManager::existSmbMount(const QString &host)
+{
+    QStringList devs = DevProxyMng->getAllProtocolIds();
+
+    for (const QString &dev : devs) {
+        if (dev.startsWith(Global::Scheme::kSmb)) {
+            if (QUrl(dev).host() == host)   // dev like: smb://1.2.3.4/share_dir/
+                return true;
+        } else if (DeviceUtils::isSamba(dev)) {
+            const QUrl &url = QUrl::fromPercentEncoding(dev.toUtf8());
+            const QString &path = url.path();
+            int pos = path.lastIndexOf("/");
+            const QString &displayName = path.mid(pos + 1);
+            const QString &temHost = displayName.section("on", 1, 1).trimmed();
+            if (temHost == host)
+                return true;
+        }
+    }
+
+    return false;
+}
+
+void SmbIntegrationManager::stashSmbMount(const QString &id)
+{
+    if (!isStashMountsEnabled()) {
+        qDebug() << "stash mounts is disabled";
+        return;
+    }
+    QVariantHash newMount;
+    QString host;
+    QString shareName;
+    QString displayName;
+    if (DeviceUtils::isSamba(QUrl(id))) {
+        const QUrl &url = QUrl::fromPercentEncoding(id.toUtf8());
+        const QString &path = url.path();
+        int pos = path.lastIndexOf("/");
+        displayName = path.mid(pos + 1);
+        host = displayName.section(" on ", 1, 1);
+        shareName = displayName.section(" on ", 0, 0);
+    } else if (id.startsWith(Global::Scheme::kSmb)) {
+        host = QUrl(id).host();
+        shareName = QUrl(id.endsWith("/") ? id.chopped(1) : id).fileName();
+        displayName = QString("%1 on %2").arg(shareName).arg(host);
+    } else {
+        return;
+    }
+    if (host.isEmpty() || shareName.isEmpty() || displayName.isEmpty())
+        return;
+    newMount.insert(kHostKey, host);
+    newMount.insert(kShareKey, shareName);
+    newMount.insert(kProtocolKey, Global::Scheme::kSmb);
+    newMount.insert(kNameKey, displayName);
+    const QString &key = QString("%1/smb-share:server=%2,share=%3")
+                                 .arg(SysInfoUtils::isRootUser()
+                                              ? QString("/root/.gvfs")
+                                              : QString("/run/user/%1/gvfs").arg(SysInfoUtils::getUserId()))
+                                 .arg(newMount.value(kHostKey).toString())
+                                 .arg(newMount.value(kShareKey).toString());
+
+    Application::genericSetting()->setValue(kRemoteMounts, key, newMount);
 }
 
 void SmbIntegrationManager::clearPasswd(const QUrl &url)
@@ -613,21 +702,18 @@ bool SmbIntegrationManager::handleItemListFilter(QList<QUrl> *items)
 
 bool SmbIntegrationManager::handleItemFilterOnAdd(const QUrl &devUrl)
 {
-    if (!isSmbIntegrated)
-        return false;
-
     static QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };   // TODO(xust) /media/$USER/smbmounts might be changed in the future.}
     auto isSamba = [](const QString &path, const QString &smbMatch) {
         QRegularExpression re(smbMatch);
         QRegularExpressionMatch match = re.match(path);
         return match.hasMatch();
     };
+    DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
+    if (!info->exists())
+        return false;
+
     if (isSmbIntegrated) {
         if (devUrl.path() == kSmbIntegrationPath)
-            return false;
-
-        DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
-        if (!info->exists())
             return false;
 
         if (info->nameOf(AbstractFileInfo::FileNameInfoType::kSuffix) == kProtocol) {
@@ -651,7 +737,72 @@ bool SmbIntegrationManager::handleItemFilterOnAdd(const QUrl &devUrl)
                 return true;
             }
         }
+    } else {
+        if (info->nameOf(AbstractFileInfo::FileNameInfoType::kSuffix) == kProtocol) {
+            QUrl protocalUrl = info->urlOf(AbstractFileInfo::FileUrlInfoType::kUrl);
+            QString suffix = QString(".%1").arg(kProtocol);
+            QString encodecId = protocalUrl.path().remove(suffix);
+            QString id = QByteArray::fromBase64(encodecId.toUtf8());
+
+            stashSmbMount(id);   // add smb stashed info to `RemoteMounts` of config
+        }
     }
+
+    return false;
+}
+
+bool SmbIntegrationManager::handleItemFilterOnRemove(const QUrl &devUrl)
+{
+    if (!devUrl.path().endsWith(kProtocol))
+        return false;
+
+    const QString &suffix = QString(".%1").arg(kProtocol);
+    const QString encodecId = devUrl.path().remove(suffix);
+    const QString &id = QByteArray::fromBase64(encodecId.toUtf8());
+    QString smbHost;
+    QString shareName;
+    if (DeviceUtils::isSamba(QUrl(id))) {
+        const QUrl &temUrl = QUrl::fromPercentEncoding(id.toUtf8());
+        const QString &path = temUrl.path();
+        int pos = path.lastIndexOf("/");
+        const QString &displayName = path.mid(pos + 1);
+        smbHost = displayName.section(" on ", 1, 1);
+        shareName = displayName.section(" on ", 0, 0);
+    } else if (id.startsWith(Global::Scheme::kSmb)) {
+        smbHost = QUrl(id).host();
+        shareName = QUrl(id.chopped(1)).fileName();
+    } else {
+        return false;
+    }
+
+    if (smbHost.isEmpty() || shareName.isEmpty())
+        return false;
+    bool re = existSmbMount(smbHost);
+    if (!re) {   //When all smb share folders are unmounted
+        //1. remove password
+        QUrl clearPasswordUrl;
+        clearPasswordUrl.setScheme(Global::Scheme::kSmb);
+        clearPasswordUrl.setHost(smbHost);
+        clearPasswordUrl.setPath("/" + shareName + "/");
+        this->clearPasswd(clearPasswordUrl);
+        //2. if isSmbStashMountsEnabled = false, and all the smb shared folders are unmounted, then
+        //remove the smb ingtegration item from sidebar and computer view
+        if (!isSmbStashMountsEnabled) {
+            QUrl url;
+            url.setScheme(Global::Scheme::kEntry);
+            url.setHost(smbHost);
+            url.setPath(kSmbIntegrationPath);
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
+            dpfSlotChannel->push("dfmplugin_computer", "slot_RemoveDevice", url);
+            url.setScheme(Global::Scheme::kSmb);
+            url.setHost(smbHost);
+            SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(url.toString());
+            QUrl computerUrl;
+            computerUrl.setScheme(Global::Scheme::kComputer);
+            SmbBrowserEventCaller::sendChangeCurrentUrl(windowId, computerUrl);
+        }
+    }
+
     return false;
 }
 

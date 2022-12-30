@@ -135,7 +135,7 @@ void Recent::addRecentItem()
         { "Property_Key_IsDefaultItem", true },
         { "Property_Key_PluginItemData", map }
     };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);//push item data to bookmark plugin as cache
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
 }
 

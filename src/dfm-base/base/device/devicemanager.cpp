@@ -28,6 +28,8 @@
 #include "private/discdevicescanner.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/networkutils.h"
@@ -656,7 +658,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                                    // 'device busy' error.
+                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -743,7 +745,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() { }
+DeviceManager::~DeviceManager() {}
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -829,9 +831,10 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     QApplication::restoreOverrideCursor();
     if (dlg.exec() == QDialog::Accepted) {
         QJsonObject loginInfo = dlg.getLoginData();
-        if (!uri.startsWith(Global::Scheme::kSmb)) {
-            if (loginInfo.value(kSavePasswd).toInt() == 1)   // ftp mount with auth one time mode
-                loginInfo.insert(kSavePasswd, 0);   // set to never save password
+        bool smbIntegrationEnabled = Application::genericAttribute(Application::GenericAttribute::kMergeTheEntriesOfSambaSharedFolders).toBool();
+        if (!uri.startsWith(Global::Scheme::kSmb) || !smbIntegrationEnabled) {
+            if (loginInfo.value(kSavePasswd).toInt() == 1)   //ftp mount with auth one time mode
+                loginInfo.insert(kSavePasswd, 0);   //set to never save password
         }
 
         auto data = loginInfo.toVariantMap();
