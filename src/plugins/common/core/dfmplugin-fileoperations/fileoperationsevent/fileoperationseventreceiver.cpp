@@ -74,7 +74,7 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
         baseName = QObject::tr("New Folder");
         break;
     case CreateFileType::kCreateFileTypeText:
-        baseName = QObject::tr("Text");
+        baseName = QObject::tr("New Text");
         suffixex = "txt";
         break;
     case CreateFileType::kCreateFileTypeWord:
