@@ -285,15 +285,12 @@ QStringList TagManager::getFilesByTag(const QString &tag)
     if (tag.isEmpty())
         return {};
 
-    QString tagName = TagHelper::instance()->qureyColorNameByDisplayName(tag);
-    if (tagName.isEmpty())
-        tagName = tag;
-    auto var = tagDbus->Query(static_cast<std::size_t>(TagActionType::kGetFilesThroughTag), { tagName });
+    auto var = tagDbus->Query(static_cast<std::size_t>(TagActionType::kGetFilesThroughTag), { tag });
     if (var.isNull())
         return {};
 
-    auto files = var.toMap().value(tagName);
-    return var.toMap().value(tagName).toStringList();
+    auto files = var.toMap().value(tag);
+    return var.toMap().value(tag).toStringList();
 }
 
 bool TagManager::setTagsForFiles(const QStringList &tags, const QList<QUrl> &files)
