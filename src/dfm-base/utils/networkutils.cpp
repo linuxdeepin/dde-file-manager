@@ -97,14 +97,24 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
     static QRegularExpression cifsMptPref { "^/media/[\\s\\S]*/smbmounts/" };   // TODO(xust) smb mount point may be changed.
     if (s.contains(gvfsPref)) {
         s.remove(gvfsPref);   // -> ftp:host=1.2.3.4  smb-share:server=1.2.3.4,share=draw
-        static QRegularExpression ftpRex { "^s?ftp:host=(.*)" };
+        static QRegularExpression ftpRex { "^s?ftp:" };
         static QRegularExpression smbRex { "^smb.*:server=(.*)," };
         auto match = ftpRex.match(s);
         if (match.hasMatch()) {
-            ip = match.captured(1);
-            port = kFtpPort;
-            if (s.startsWith("s"))
-                port = kSftpPort;
+            bool isSftp = s.startsWith("s");
+            s.remove(ftpRex);   // -> host=1.2.3.4,port=1234
+            auto params = s.split(",");   // { "host=1.2.3.4", "port=1234" }
+            for (const auto &param : params) {
+                auto kv = param.split("=");   // { "host", "1.2.3.4" }
+                if (kv.count() < 2)
+                    continue;
+                if (kv[0] == "host")
+                    ip = kv[1];
+                else if (kv[0] == "port")
+                    port = kv[1];
+            }
+            if (port.isEmpty())
+                port = isSftp ? kSftpPort : kFtpPort;
             return true;
         } else {
             match = smbRex.match(s);
