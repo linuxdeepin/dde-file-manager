@@ -84,7 +84,6 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
     bool hideListViewBtn { properties.value(CustomKey::kHideListViewBtn).toBool() };
     bool hideIconViewBtn { properties.value(CustomKey::kHideIconViewBtn).toBool() };
     bool hideDetailSpaceBtn { properties.value(CustomKey::kHideDetailSpaceBtn).toBool() };
-    bool hideHideSearchBtn { properties.value(CustomKey::kHideHideSearchBtn).toBool() };
 
     int state { OptionButtonManager::kDoNotHide };
     if (hideListViewBtn)
@@ -93,8 +92,6 @@ bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QV
         state |= OptionButtonManager::kHideIconViewBtn;
     if (hideDetailSpaceBtn)
         state |= OptionButtonManager::kHideDetailSpaceBtn;
-    if (hideHideSearchBtn)
-        state |= OptionButtonManager::kHideHideSearchBtn;
     if (state != OptionButtonManager::kDoNotHide)
         OptionButtonManager::instance()->setOptBtnVisibleState(scheme, static_cast<OptionButtonManager::OptBtnVisibleState>(state));
 

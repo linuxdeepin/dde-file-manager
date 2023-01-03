@@ -25,7 +25,6 @@
 #include "events/titlebareventcaller.h"
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
-#include "utils/optionbuttonmanager.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
@@ -89,23 +88,6 @@ void TitleBarWidget::handleHotketSwitchViewMode(int mode)
         TitleBarEventCaller::sendViewMode(this, ViewMode::kListMode);
 }
 
-void TitleBarWidget::onUrlChanged(const QUrl &url)
-{
-    if (OptionButtonManager::instance()->hasVsibleState(url.scheme())) {
-        auto state = OptionButtonManager::instance()->optBtnVisibleState(url.scheme());
-        if (state == OptionButtonManager::kHideHideSearchBtn) {
-            if (searchButton)
-                searchButton->setHidden(true);
-            isHideSearchBtn = true;
-        }
-
-    } else {
-        if (searchButton)
-            searchButton->setHidden(false);
-        isHideSearchBtn = true;
-    }
-}
-
 void TitleBarWidget::initializeUi()
 {
     setFocusPolicy(Qt::NoFocus);
@@ -162,7 +144,6 @@ void TitleBarWidget::initializeUi()
 void TitleBarWidget::initConnect()
 {
     connect(searchButton, &QToolButton::clicked, this, &TitleBarWidget::onSearchButtonClicked);
-    connect(this, &TitleBarWidget::currentUrlChanged, this, &TitleBarWidget::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, curNavWidget, &NavWidget::onUrlChanged);
@@ -306,12 +287,10 @@ void TitleBarWidget::onAddressBarJump()
 
 void TitleBarWidget::searchBarActivated()
 {
-    if (!isHideSearchBtn)
-        toggleSearchButtonState(true);
+    toggleSearchButtonState(true);
 }
 
 void TitleBarWidget::searchBarDeactivated()
 {
-    if (!isHideSearchBtn)
-        toggleSearchButtonState(false);
+    toggleSearchButtonState(false);
 }

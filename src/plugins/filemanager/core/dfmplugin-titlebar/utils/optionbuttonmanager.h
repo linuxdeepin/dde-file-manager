@@ -41,7 +41,6 @@ public:
         kHideListViewBtn = 0x01,
         kHideIconViewBtn = 0x02,
         kHideDetailSpaceBtn = 0x04,
-        kHideHideSearchBtn = 0x05
     };
 
     using Scheme = QString;

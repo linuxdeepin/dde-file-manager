@@ -50,7 +50,6 @@ public:
 protected Q_SLOTS:
     void onWindowOpened(quint64 windd);
     void onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &urls);
-    void regToTitleBar();
 
 private:
     void bindScene(const QString &parentScene);
