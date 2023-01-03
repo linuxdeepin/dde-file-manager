@@ -33,6 +33,7 @@
 
 #include <QUrl>
 #include <QDBusInterface>
+#include <QDBusPendingCall>
 
 Q_DECLARE_METATYPE(const char *)
 

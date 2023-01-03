@@ -407,6 +407,10 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     if (showSize) {
         sizeUsage = index.data(ComputerModel::kSizeUsageRole).toLongLong();
         sizeTotal = index.data(ComputerModel::kSizeTotalRole).toLongLong();
+        if (sizeUsage > sizeTotal) {
+            qWarning() << "size overflow!!!";
+            sizeUsage = 0;
+        }
         auto usage = DFMBASE_NAMESPACE::FileUtils::formatSize(sizeUsage);
         auto total = DFMBASE_NAMESPACE::FileUtils::formatSize(sizeTotal);
         QString sizeText;

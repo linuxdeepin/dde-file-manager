@@ -49,6 +49,7 @@
 #include <QMenu>
 #include <QTimer>
 #include <QDBusInterface>
+#include <QDBusPendingCall>
 
 using namespace dfmplugin_smbbrowser;
 
