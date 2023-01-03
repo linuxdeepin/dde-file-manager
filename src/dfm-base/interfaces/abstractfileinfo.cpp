@@ -60,7 +60,6 @@ AbstractFileInfo::AbstractFileInfo(const QUrl &url)
     : dptr(new AbstractFileInfoPrivate(url, this))
 {
     Q_UNUSED(type_id)
-    qRegisterMetaType<QMap<dfmio::DFileInfo::AttributeExtendID, QVariant>>("QMap<dfmio::DFileInfo::AttributeExtendID, QVariant>");
 }
 
 void DFMBASE_NAMESPACE::AbstractFileInfo::setProxy(const AbstractFileInfoPointer &proxy)

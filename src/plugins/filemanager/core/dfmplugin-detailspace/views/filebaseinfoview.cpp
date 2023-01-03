@@ -251,22 +251,27 @@ void FileBaseInfoView::basicFill(const QUrl &url)
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight << DFileInfo::AttributeExtendID::kExtendMediaDuration;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::videoExtenInfo);
-            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList);
+            const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList);
+            if (!mediaAttributes.isEmpty())
+                videoExtenInfo(url, mediaAttributes);
         } break;
         case MimeDatabase::FileType::kImages: {
             fileType->setRightValue(tr("Images"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::imageExtenInfo);
-            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList);
-
+            const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList);
+            if (!mediaAttributes.isEmpty())
+                imageExtenInfo(url, mediaAttributes);
         } break;
         case MimeDatabase::FileType::kAudios: {
             fileType->setRightValue(tr("Audio"), Qt::ElideNone, Qt::AlignLeft, true);
             QList<DFileInfo::AttributeExtendID> extenList;
             extenList << DFileInfo::AttributeExtendID::kExtendMediaDuration;
             connect(&FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished, this, &FileBaseInfoView::audioExtenInfo);
-            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList);
+            const QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> &mediaAttributes = localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList);
+            if (!mediaAttributes.isEmpty())
+                audioExtenInfo(url, mediaAttributes);
         } break;
         case MimeDatabase::FileType::kExecutable:
             fileType->setRightValue(tr("Executable"), Qt::ElideNone, Qt::AlignLeft, true);

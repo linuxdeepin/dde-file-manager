@@ -30,6 +30,7 @@ InfoDataFuture::InfoDataFuture(DFileFuture *future, QObject *parent)
     : QObject(parent), future(future)
 {
     if (future) {
+        qRegisterMetaType<QMap<DFileInfo::AttributeExtendID, QVariant>>("QMap<DFileInfo::AttributeExtendID, QVariant>");
         connect(future, &DFileFuture::infoMedia, this, &InfoDataFuture::infoMedia);
         connect(this, &InfoDataFuture::infoMediaAttributes, &FileInfoHelper::instance(), &FileInfoHelper::mediaDataFinished);
     }
