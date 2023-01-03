@@ -202,6 +202,18 @@ void SmbBrowser::onWindowOpened(quint64 winId)
                 },
                 Qt::DirectConnection);
     }
+
+    auto searchPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-search") };
+    if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
+        registerNetworkToSearch();
+    } else {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+            Q_UNUSED(iid)
+            if (name == "dfmplugin-search")
+                registerNetworkToSearch();
+        },
+                Qt::DirectConnection);
+    }
 }
 
 void SmbBrowser::onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &urls)
@@ -280,6 +292,14 @@ void SmbBrowser::registerNetworkAccessPrehandler()
         qWarning() << "sftp's prehandler has been registered";
     if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kFtp), handler).toBool())
         qWarning() << "ftp's prehandler has been registered";
+}
+
+void SmbBrowser::registerNetworkToSearch()
+{
+    QVariantMap property;
+    property["Property_Key_DisableSearch"] = true;
+    dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", QString(Global::Scheme::kSmb), property);
+    dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", QString(Global::Scheme::kNetwork), property);
 }
 
 void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after)

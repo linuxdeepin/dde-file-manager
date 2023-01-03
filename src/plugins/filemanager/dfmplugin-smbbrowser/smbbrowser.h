@@ -60,6 +60,7 @@ private:
 private:
     void addNeighborToSidebar();
     void registerNetworkAccessPrehandler();
+    void registerNetworkToSearch();
     static void networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
     static void smbAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
 
