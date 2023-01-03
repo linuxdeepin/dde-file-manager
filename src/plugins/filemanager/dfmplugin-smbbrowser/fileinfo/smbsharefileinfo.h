@@ -42,6 +42,7 @@ public:
     virtual QIcon fileIcon() override;
     virtual bool isAttributes(const FileIsType type) const override;
     virtual bool canAttributes(const FileCanType type) const override;
+    virtual bool exists() const override;
 };
 
 }

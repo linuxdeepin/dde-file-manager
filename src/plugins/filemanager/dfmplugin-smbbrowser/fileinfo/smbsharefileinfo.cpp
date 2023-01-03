@@ -65,6 +65,11 @@ QIcon SmbShareFileInfo::fileIcon()
     return QIcon::fromTheme(dp->node.iconType);
 }
 
+bool SmbShareFileInfo::exists() const
+{
+    return true;
+}
+
 bool SmbShareFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
