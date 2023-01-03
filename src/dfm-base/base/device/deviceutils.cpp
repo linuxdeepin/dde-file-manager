@@ -29,6 +29,7 @@
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <QVector>
 #include <QDebug>
@@ -197,6 +198,11 @@ bool DeviceUtils::isFtp(const QUrl &url)
 {
     static const QString smbMatch { "(^/run/user/\\d+/gvfs/s?ftp|^/root/\\.gvfs/s?ftp)" };
     return hasMatch(url.path(), smbMatch);
+}
+
+bool DeviceUtils::isExternalBlock(const QUrl &url)
+{
+    return DeviceProxyManager::instance()->isFileOfExternalBlockMounts(url.path());
 }
 
 QMap<QString, QString> DeviceUtils::fstabBindInfo()

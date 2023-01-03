@@ -85,27 +85,36 @@ void AbstractJob::operateAation(AbstractJobHandler::SupportActions actions)
     if (actions.testFlag(AbstractJobHandler::SupportAction::kStartAction)) {
         emit doWorker->startWork();
     } else {
+        if (actions.testFlag(AbstractJobHandler::SupportAction::kStopAction) || actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction)) {
+            errorQueue.clear();
+            return doWorker->stopAllThread();
+        }
+
         // 处理当前的错误
         if (errorQueue.size() > 0) {
-            auto isRetry = actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction);
+            auto isRetry = actions.testFlag(AbstractJobHandler::SupportAction::kRetryAction);
             auto error = errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
-            auto id = errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt();
+            auto id = errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>();
             if (!isRetry)
                 errorQueue.dequeue();
             doWorker->doOperateWork(actions, error, id);
             // not retry,dealing next error
             if (!isRetry && errorQueue.size() > 0) {
                 emit errorNotify(errorQueue.head());
-            } else {
-                //start all thread
-                doWorker->resumeAllThread();
+            } else if (!actions.testFlag(AbstractJobHandler::SupportAction::kStopAction)
+                       && !actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction)
+                       && !actions.testFlag(AbstractJobHandler::SupportAction::kResumAction)) {
+                //no error thread resume
+                QList<quint64> errorIds;
+                for (const auto &info : errorQueue) {
+                    errorIds.append(info->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>());
+                }
+                doWorker->resumeThread(errorIds);
             }
 
         } else {
             doWorker->doOperateWork(actions);
         }
-        if (actions.testFlag(AbstractJobHandler::SupportAction::kSkipAction) || actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction))
-            errorQueue.clear();
     }
 }
 
@@ -114,8 +123,8 @@ void AbstractJob::handleError(const JobInfoPointer jobInfo)
     doWorker->pauseAllThread();
     // retry error
     if (errorQueue.size() > 0
-        && errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt()
-                == jobInfo->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt()) {
+        && errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>()
+                == jobInfo->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>()) {
 
         if (errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>()
             != jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>())
@@ -135,8 +144,8 @@ void AbstractJob::handleError(const JobInfoPointer jobInfo)
 void AbstractJob::handleRetryErrorSuccess(const quint64 Id)
 {
     // retry error dealing success and dealing next error
-    if (errorQueue.size() < 0 || errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt() != Id) {
-        if (errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).toUInt() != Id)
+    if (errorQueue.size() <= 0 || errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>() != Id) {
+        if (errorQueue.size() > 0 && errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer).value<quint64>() != Id)
             qCritical() << "error current error thread id = " << Id << " error Queue error id = " << errorQueue.head()->value(AbstractJobHandler::NotifyInfoKey::kWorkerPointer);
         return;
     }

@@ -523,10 +523,9 @@ bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromI
         if (!stateCheck())
             return false;
 
-        emit threadCopy[threadInfoVectorSize % FileUtils::getCpuProcessCount()]->worker->copyFile(fromInfo, toInfo, nullptr);
+        emit threadCopy[threadInfoVectorSize % FileUtils::getCpuProcessCount()]->worker->copyFile(fromInfo, toInfo);
 
         threadInfoVectorSize++;
-
         return true;
     }
     initSignalCopyWorker();
@@ -893,6 +892,7 @@ void FileOperateBaseWorker::determineCountProcessType()
 
     if (targetStorageInfo->isLocalDevice()) {
         isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetUrl);
+        isTargetFileExBlock = DeviceUtils::isExternalBlock(targetUrl);
 
         const bool isFileSystemTypeExt = targetStorageInfo->fileSystemType().startsWith("ext");
         if (!isFileSystemTypeExt) {
@@ -943,11 +943,14 @@ void FileOperateBaseWorker::determineCountProcessType()
         workData->signalThread = sourceFilesCount > 1 && FileUtils::getCpuProcessCount() > 4
                 ? false
                 : true;
-        workData->signalThread = true;
     }
 
     if (DeviceUtils::isSamba(targetUrl) || DeviceUtils::isFtp(targetUrl))
         countWriteType = CountWriteSizeType::kCustomizeType;
+
+    if (!workData->signalThread) {
+        initThreadCopy();
+    }
 
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }

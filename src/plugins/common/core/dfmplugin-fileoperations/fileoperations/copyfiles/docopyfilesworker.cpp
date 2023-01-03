@@ -134,6 +134,13 @@ bool DoCopyFilesWorker::initArgs()
 
 void DoCopyFilesWorker::endWork()
 {
+    while (!isStopped() && threadCopy.size() > 0 && workData->completeFileCount != threadInfoVectorSize) {
+        QThread::msleep(10);
+    }
+    for (auto const &thread : threadCopy) {
+        thread->thread->quit();
+        thread->thread->wait();
+    }
     // deal target files
     for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
         const QUrl &url = info->urlOf(UrlInfoType::kUrl);

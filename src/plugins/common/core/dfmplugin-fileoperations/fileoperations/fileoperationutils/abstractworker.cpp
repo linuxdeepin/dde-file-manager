@@ -84,9 +84,9 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
 
     // dealing error thread
     if (workData->signalThread) {
-        resume();
         if (copyFileWorker)
             copyFileWorker->operateAction(currentAction);
+        resume();
         return;
     }
 
@@ -97,6 +97,7 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
     for (auto worker : threadCopy) {
         if (id == quintptr(worker->worker.data())) {
             worker->worker->operateAction(currentAction);
+            return;
         }
     }
 }
@@ -117,6 +118,7 @@ void AbstractWorker::stop()
         updateProgressThread->quit();
         updateProgressThread->wait();
     }
+    waitCondition.wakeAll();
 }
 /*!
  * \brief AbstractWorker::pause paused task
@@ -139,6 +141,7 @@ void AbstractWorker::resume()
 
 void AbstractWorker::getAction(AbstractJobHandler::SupportActions actions)
 {
+    retry = false;
     if (actions.testFlag(AbstractJobHandler::SupportAction::kCancelAction)) {
         currentAction = AbstractJobHandler::SupportAction::kCancelAction;
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kCoexistAction)) {
@@ -266,12 +269,6 @@ void AbstractWorker::endWork()
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteCustomInfosKey, QVariant::fromValue(completeCustomInfos));
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
 
-    for (auto const &thread : threadCopy) {
-        thread->worker->stop();
-        thread->thread->quit();
-        thread->thread->wait();
-    }
-
     saveOperations();
 
     emit finishedNotify(info);
@@ -347,7 +344,7 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
     emit errorNotify(info);
 
     qDebug() << "work error, job: " << jobType << " job error: " << error << " url from: " << from << " url to: " << to
-             << " error msg: " << errorMsg;
+             << " error msg: " << errorMsg << id;
 }
 
 AbstractJobHandler::SupportActions AbstractWorker::supportActions(const AbstractJobHandler::JobErrorType &error)
@@ -456,6 +453,16 @@ void AbstractWorker::resumeAllThread()
     }
 }
 
+void AbstractWorker::resumeThread(const QList<quint64> &errorIds)
+{
+    if (!errorIds.contains(quintptr(this)) && (!copyFileWorker || !errorIds.contains(quintptr(copyFileWorker.data()))))
+        resume();
+    for (auto worker : threadCopy) {
+        if (!errorIds.contains(quintptr(worker->worker.data())))
+            worker->worker->resume();
+    }
+}
+
 void AbstractWorker::pauseAllThread()
 {
     pause();
@@ -468,13 +475,13 @@ void AbstractWorker::pauseAllThread()
 
 void AbstractWorker::stopAllThread()
 {
-    stop();
     if (copyFileWorker)
         copyFileWorker->stop();
     for (auto worker : threadCopy) {
-        worker->thread->quit();
         worker->worker->stop();
+        worker->thread->quit();
     }
+    stop();
 }
 
 void AbstractWorker::checkRetry()
@@ -629,7 +636,7 @@ void AbstractWorker::initHandleConnects(const JobHandlePointer handle)
     }
     connect(this, &AbstractWorker::progressChangedNotify, handle.get(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);
     connect(this, &AbstractWorker::stateChangedNotify, handle.get(), &AbstractJobHandler::onStateChanged, Qt::QueuedConnection);
-    connect(this, &AbstractWorker::currentTaskNotify, handle.get(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
     connect(this, &AbstractWorker::finishedNotify, handle.get(), &AbstractJobHandler::onFinished, Qt::QueuedConnection);
     connect(this, &AbstractWorker::speedUpdatedNotify, handle.get(), &AbstractJobHandler::onSpeedUpdated, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::currentTaskNotify, handle.get(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
 }

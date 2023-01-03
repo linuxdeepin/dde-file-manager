@@ -19,6 +19,7 @@ public:
     QAtomicInteger<qint64> zeroOrlinkOrDirWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory
     QAtomicInteger<qint64> blockRenameWriteSize { 0 };   // The copy size is 0. The write statistics size of the linked file and directory
     QAtomicInteger<qint64> skipWriteSize { 0 };   // 跳过的文件大
+    QAtomicInteger<qint64> completeFileCount { 0 };   // copy complete file count
     std::atomic_bool signalThread { true };
 };
 DPFILEOPERATIONS_END_NAMESPACE

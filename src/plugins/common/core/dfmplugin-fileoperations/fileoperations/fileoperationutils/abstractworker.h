@@ -98,7 +98,6 @@ signals:
      * \brief finishedNotify 任务完成
      */
     void finishedNotify(const JobInfoPointer jobInfo);
-
     /*!
      * \brief speedUpdatedNotify 速度更新信号，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
@@ -149,6 +148,7 @@ protected:
     bool isStopped();
     JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to);
     void resumeAllThread();
+    void resumeThread(const QList<quint64> &errorIds);
     void pauseAllThread();
     void stopAllThread();
     void checkRetry();
@@ -185,6 +185,7 @@ public:
     QList<AbstractFileInfoPointer> precompleteTargetFileInfo;   // list prepare complete target file info
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
+    bool isTargetFileExBlock { false };   // target file on extra block device
     bool isConvert { false };   // is convert operation
     QSharedPointer<WorkerData> workData { nullptr };
     QSharedPointer<DoCopyFileWorker> copyFileWorker { nullptr };

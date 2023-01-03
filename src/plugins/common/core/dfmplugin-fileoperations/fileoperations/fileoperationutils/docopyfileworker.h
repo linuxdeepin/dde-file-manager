@@ -58,18 +58,19 @@ public:
     void resume();
     void stop();
     void operateAction(const AbstractJobHandler::SupportAction action);
+    bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo,
+                               bool *skip);
 
 signals:
     void ErrorFinished();
     void CompleteSize(const int size);
     void currentTask(const QUrl source, const QUrl target);
-    void errorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
+    void errorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType error,
                      const quint64 id, const QString &errorMsg = QString());
     void retryErrSuccess(const quint64 id);
-    void copyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
+    void copyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
 public slots:
-    bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo,
-                               bool *skip);
+    void doFileCopy(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
 
 private:
     bool stateCheck();
@@ -104,6 +105,7 @@ private:
                              const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                              QSharedPointer<DFMIO::DFile> &toFile);
     void checkRetry();
+    bool isStoped();
 
 private:
     QSharedPointer<QWaitCondition> waitCondition { nullptr };

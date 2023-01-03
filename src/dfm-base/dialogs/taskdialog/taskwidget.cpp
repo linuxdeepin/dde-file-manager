@@ -320,6 +320,8 @@ void TaskWidget::onHandlerTaskStateChange(const JobInfoPointer JobInfo)
  */
 void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
 {
+    if (isShowError)
+        return;
     QString source = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
     QString target = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
     lbSrcPath->setText(source);

@@ -173,6 +173,16 @@ bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
     return false;
 }
 
+bool DeviceProxyManager::isFileOfExternalBlockMounts(const QString &filePath)
+{
+    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    for (auto iter = d->externalMounts.constKeyValueBegin(); iter != d->externalMounts.constKeyValueEnd(); ++iter) {
+        if (iter.base().key().startsWith(kBlockDeviceIdPrefix) && path.startsWith(iter.base().value()))
+            return true;
+    }
+    return false;
+}
+
 bool DeviceProxyManager::isFileFromOptical(const QString &filePath)
 {
     QString path = filePath.endsWith("/") ? filePath : filePath + "/";

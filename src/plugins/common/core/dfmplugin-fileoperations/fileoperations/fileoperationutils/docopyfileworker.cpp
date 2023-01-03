@@ -48,7 +48,7 @@ DoCopyFileWorker::DoCopyFileWorker(const QSharedPointer<WorkerData> &data, QObje
     waitCondition.reset(new QWaitCondition);
     mutex.reset(new QMutex);
     localFileHandler.reset(new LocalFileHandler);
-    connect(this, &DoCopyFileWorker::copyFile, this, &DoCopyFileWorker::doCopyFilePractically, Qt::QueuedConnection);
+    connect(this, &DoCopyFileWorker::copyFile, this, &DoCopyFileWorker::doFileCopy, Qt::QueuedConnection);
 }
 
 DoCopyFileWorker::~DoCopyFileWorker()
@@ -74,14 +74,20 @@ void DoCopyFileWorker::stop()
 // main thread using
 void DoCopyFileWorker::operateAction(const AbstractJobHandler::SupportAction action)
 {
-    if (!workData->signalThread && AbstractJobHandler::SupportAction::kRetryAction == action)
-        retry = true;
+    retry = !workData->signalThread && AbstractJobHandler::SupportAction::kRetryAction == action;
     currentAction = action;
     resume();
+}
+void DoCopyFileWorker::doFileCopy(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo)
+{
+    doCopyFilePractically(fromInfo, toInfo, nullptr);
+    workData->completeFileCount++;
 }
 // copy thread using
 bool DoCopyFileWorker::doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip)
 {
+    if (isStoped())
+        return false;
     // emit current task url
     emit currentTask(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));
     // read ahead source file
@@ -165,7 +171,7 @@ void DoCopyFileWorker::workerWait()
 
 bool DoCopyFileWorker::actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip)
 {
-    if (state == kStoped)
+    if (isStoped())
         return false;
 
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
@@ -200,7 +206,7 @@ AbstractJobHandler::SupportAction DoCopyFileWorker::doHandleErrorAndWait(const Q
         return currentAction;
     }
 
-    if (state == kStoped)
+    if (isStoped())
         return AbstractJobHandler::SupportAction::kCancelAction;
 
     // 发送错误处理 阻塞自己
@@ -208,7 +214,7 @@ AbstractJobHandler::SupportAction DoCopyFileWorker::doHandleErrorAndWait(const Q
     emit errorNotify(urlFrom, urlTo, error, quintptr(this), errorMsgAll);
     workerWait();
 
-    if (state == kStoped)
+    if (isStoped())
         return AbstractJobHandler::SupportAction::kCancelAction;
 
     return currentAction;
@@ -252,7 +258,7 @@ bool DoCopyFileWorker::createFileDevice(const AbstractFileInfoPointer &fromInfo,
             qCritical() << "create dfm io factory failed! url = " << url;
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDfmIoError);
         }
-    } while (state != kStoped && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStoped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     checkRetry();
 
@@ -265,7 +271,7 @@ bool DoCopyFileWorker::createFileDevice(const AbstractFileInfoPointer &fromInfo,
             qCritical() << "create dfm io dfile failed! url = " << url;
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kDfmIoError);
         }
-    } while (state != kStoped && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStoped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     checkRetry();
 
@@ -341,7 +347,7 @@ bool DoCopyFileWorker::openFile(const AbstractFileInfoPointer &fromInfo, const A
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kOpenError, lastError.errorMsg());
         }
-    } while (state != kStoped && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStoped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     checkRetry();
 
@@ -358,7 +364,7 @@ bool DoCopyFileWorker::resizeTargetFile(const AbstractFileInfoPointer &fromInfo,
         if (!file->write(QByteArray())) {
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kResizeError, file->lastError().errorMsg());
         }
-    } while (state != kStoped && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStoped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     if (!actionOperating(action, fromInfo->size() <= 0 ? workData->dirSize : fromInfo->size(), skip))
         return false;
     return true;
@@ -424,7 +430,7 @@ bool DoCopyFileWorker::doReadFile(const AbstractFileInfoPointer &fromInfo, const
                 }
             }
         }
-    } while (state != kStoped && actionForRead == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStoped() && actionForRead == AbstractJobHandler::SupportAction::kRetryAction);
     checkRetry();
 
     if (!actionOperating(actionForRead, fromInfo->size() - currentPos, skip))
@@ -490,7 +496,7 @@ bool DoCopyFileWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, cons
                 return false;
             }
         }
-    } while (state != kStoped && actionForWrite == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStoped() && actionForWrite == AbstractJobHandler::SupportAction::kRetryAction);
 
     checkRetry();
 
@@ -530,7 +536,7 @@ bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong 
 
             QString errorstr = QObject::tr("File integrity was damaged, cause: %1").arg("some error occ!");
             AbstractJobHandler::SupportAction actionForCheckRead = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kIntegrityCheckingError, errorstr);
-            if (state != kStoped && AbstractJobHandler::SupportAction::kRetryAction == actionForCheckRead) {
+            if (!isStoped() && AbstractJobHandler::SupportAction::kRetryAction == actionForCheckRead) {
                 continue;
             } else {
                 checkRetry();
@@ -566,6 +572,11 @@ void DoCopyFileWorker::checkRetry()
         retry = false;
         emit retryErrSuccess(quintptr(this));
     }
+}
+
+bool DoCopyFileWorker::isStoped()
+{
+    return state == kStoped;
 }
 
 /*!
