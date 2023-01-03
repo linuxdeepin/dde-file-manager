@@ -370,17 +370,8 @@ void FileStatisticsJob::run()
     d->totalSize = 0;
     d->filesCount = 0;
     d->directoryCount = 0;
-    if (!d->sourceUrlList.isEmpty()) {
-        const QUrl &urlFirst = d->sourceUrlList.first();
-        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(urlFirst);
-        d->isExtFileSystem = fsType.startsWith("ext");
-    }
 
-    if (d->isExtFileSystem) {
-        statistcsExtFileSystem();
-    } else {
-        statistcsOtherFileSystem();
-    }
+    statistcsOtherFileSystem();
 }
 
 void FileStatisticsJob::setSizeInfo()
@@ -487,90 +478,6 @@ void FileStatisticsJob::statistcsOtherFileSystem()
         }
     }
     setSizeInfo();
-    d->setState(kStoppedState);
-}
-
-void FileStatisticsJob::statistcsExtFileSystem()
-{
-    const bool excludeSources = d->fileHints.testFlag(kExcludeSourceFile);
-    const bool singleDepth = d->fileHints.testFlag(kSingleDepth);
-    const bool followLink = !d->fileHints.testFlag(kNoFollowSymlink);
-
-    for (auto url : d->sourceUrlList) {
-        if (!d->stateCheck()) {
-            d->setState(kStoppedState);
-            return;
-        }
-        char *paths[2] = { nullptr, nullptr };
-        paths[0] = strdup(url.path().toUtf8().toStdString().data());
-        FTS *fts = fts_open(paths, followLink ? FTS_LOGICAL : FTS_PHYSICAL, nullptr);
-        if (paths[0])
-            free(paths[0]);
-
-        while (1) {
-            // 停止就退出
-            if (!d->stateCheck()) {
-                d->setState(kStoppedState);
-                setSizeInfo();
-                break;
-            }
-
-            FTSENT *ent = fts_read(fts);
-            if (ent == nullptr) {
-                break;
-            }
-
-            if (excludeSources) {
-                const QUrl &currentUrl = QUrl::fromLocalFile(QString::fromLocal8Bit(ent->fts_path));
-                if (url == currentUrl)
-                    continue;
-            }
-
-            const short level = ent->fts_level;
-
-            if (singleDepth && level == 1) {
-                int ret = fts_set(fts, ent, FTS_SKIP);
-                if (-1 == ret)
-                    qWarning() << "skip sub dir failed, current url: " << ent->fts_path;
-            }
-
-            unsigned short flag = ent->fts_info;
-
-            if (level > 1 && (flag == FTS_SL || flag == FTS_SLNONE))
-                continue;
-
-            if (flag == FTS_F || flag == FTS_SL || flag == FTS_SLNONE || flag == FTS_DEFAULT) {
-                // file counted
-                d->filesCount++;
-            } else if (flag == FTS_D || flag == FTS_DNR) {
-                // dir counted
-                d->directoryCount++;
-            } else if (flag == FTS_DC) {
-                // cycle folder
-                continue;
-            } else if (flag != FTS_DP) {
-                // other error
-                continue;
-            } else if (QString::fromLocal8Bit(ent->fts_path) == "/proc/kcore"
-                       || QString::fromLocal8Bit(ent->fts_path) == "/dev/core"
-                       || (ent->fts_link && (QString::fromLocal8Bit(ent->fts_link->fts_path) == "/dev/core" || QString::fromLocal8Bit(ent->fts_link->fts_path) == "/proc/kcore"))) {
-                continue;
-            }
-
-            // total size
-            if (flag == FTS_D) {
-                d->totalSize += FileUtils::getMemoryPageSize();
-                d->totalProgressSize += FileUtils::getMemoryPageSize();
-                d->emitSizeChanged();
-            } else if (flag != FTS_DP) {
-                d->totalSize += ent->fts_statp->st_size;
-                d->totalProgressSize += ent->fts_statp->st_size;
-                d->emitSizeChanged();
-            }
-        }
-        setSizeInfo();
-        fts_close(fts);
-    }
     d->setState(kStoppedState);
 }
 

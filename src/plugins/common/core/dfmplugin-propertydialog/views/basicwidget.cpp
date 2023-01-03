@@ -266,7 +266,12 @@ void BasicWidget::basicFill(const QUrl &url)
         if (type == AbstractFileInfo::FileType::kDirectory && fileCount && fileCount->RightValue().isEmpty()) {
             fileCount->setVisible(true);
             fileCount->setRightValue(tr("%1 item").arg(0), Qt::ElideNone, Qt::AlignVCenter, true);
-            fileCalculationUtils->start(QList<QUrl>() << url);
+            if (info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
+                fileCalculationUtils->start(QList<QUrl>() << info->urlOf(UrlInfoType::kRedirectedFileUrl));
+            } else {
+                fileCalculationUtils->start(QList<QUrl>() << url);
+            }
+
             connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
         }
     }

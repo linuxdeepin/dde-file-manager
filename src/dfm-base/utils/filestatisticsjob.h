@@ -100,7 +100,6 @@ private:
 
 private:
     void setSizeInfo();
-    void statistcsExtFileSystem();
     void statistcsOtherFileSystem();
 };
 

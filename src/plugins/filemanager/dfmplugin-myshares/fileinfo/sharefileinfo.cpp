@@ -90,6 +90,8 @@ bool ShareFileInfo::canAttributes(const CanableInfoType type) const
         [[fallthrough]];
     case FileCanType::kCanDrag:
         return false;
+    case FileCanType::kCanRedirectionFileUrl:
+        return true;
     default:
         return AbstractFileInfo::canAttributes(type);
     }
