@@ -26,9 +26,9 @@
 #include "loadinglabel.h"
 #include "wallaperpreview.h"
 #include "dbus/screensaver_interface.h"
+#include "dbus/dbussessionmanager.h"
 
 #include <com_deepin_wm.h>
-#include <com_deepin_sessionmanager.h>
 
 #ifdef COMPILE_ON_V23
 #    include "dbus/appearance_interface.h"
@@ -52,7 +52,7 @@ DWIDGET_USE_NAMESPACE
 namespace ddplugin_wallpapersetting {
 using WMInter = com::deepin::wm;
 using AppearanceIfs = APPEARANCE_NAME;
-using SessionIfs = com::deepin::SessionManager;
+using SessionIfs = DBusSessionManager;
 using ScreenSaverIfs = com::deepin::ScreenSaver;
 
 class WallpaperSettingsPrivate : public QObject

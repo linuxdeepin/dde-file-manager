@@ -104,15 +104,13 @@ WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
                                         QDBusConnection::sessionBus(), q);
     qInfo() << "end com.deepin.daemon.ScreenSaver.";
 
-    qInfo() << "create com.deepin.SessionManager.";
-    sessionIfs = new SessionIfs("com.deepin.SessionManager",
-                                "/com/deepin/SessionManager",
-                                QDBusConnection::sessionBus(), this);
-    connect(sessionIfs, &SessionIfs::LockedChanged, this, [this](bool locked) {
-        if (locked)
+    qInfo() << "create" << SessionIfs::staticInterfaceName();
+    sessionIfs = new SessionIfs(this);
+    qInfo() << "end" << SessionIfs::staticInterfaceName();
+    connect(sessionIfs, &SessionIfs::LockedChanged, this, [this]() {
+        if (sessionIfs->locked())
             q->hide();
     });
-    qInfo() << "end com.deepin.SessionManager.";
 
     reloadTimer.setSingleShot(true);
     connect(&reloadTimer, &QTimer::timeout, q, &WallpaperSettings::refreshList);
