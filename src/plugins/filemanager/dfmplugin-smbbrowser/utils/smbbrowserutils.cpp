@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "smbbrowserutils.h"
 
 #include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/smbreportdata.h"
@@ -32,6 +32,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QUrl>
+#include <QDBusInterface>
 
 Q_DECLARE_METATYPE(const char *)
 
@@ -88,4 +89,50 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls)
         }
     });
     return true;
+}
+
+/*!
+ * \brief SmbBrowserUtils::isServiceRuning
+ * \param service: options { "smb" | "nmb" }
+ * \return
+ */
+bool SmbBrowserUtils::isServiceRuning(const QString &service)
+{
+    if (service.isEmpty() || (service != "smb" && service != "nmb"))
+        return false;
+
+    QDBusInterface iface("org.freedesktop.systemd1",
+                         QString("/org/freedesktop/systemd1/unit/%1d_2eservice").arg(service),
+                         "org.freedesktop.systemd1.Unit",
+                         QDBusConnection::systemBus());
+
+    if (iface.isValid()) {
+        const QVariant &variantStatus = iface.property("SubState");   // 获取属性 SubState，等同于 systemctl status smbd 结果 Active 值
+        if (variantStatus.isValid())
+            return "running" == variantStatus.toString();
+    }
+    return false;
+}
+
+/*!
+ * \brief SmbBrowserUtils::startService
+ * \param service: options { "smb" | "nmb" }
+ * \return
+ */
+bool SmbBrowserUtils::startService(const QString &service)
+{
+    if (service.isEmpty() || (service != "smb" && service != "nmb"))
+        return false;
+
+    qDebug() << QString("activate smbd: construct %1d interface").arg(service);
+    QDBusInterface iface("org.freedesktop.systemd1",
+                         QString("/org/freedesktop/systemd1/unit/%1d_2eservice").arg(service),
+                         "org.freedesktop.systemd1.Unit",
+                         QDBusConnection::systemBus());
+    qDebug() << QString("activate smbd: constructed %1d interface").arg(service);
+
+    QDBusPendingCall call = iface.asyncCall("Start", "replace");
+    call.waitForFinished();
+    qDebug() << QString("activate smbd: calling the %1d::Start method: ").arg(service) << call.isValid();
+    return call.isValid();
 }

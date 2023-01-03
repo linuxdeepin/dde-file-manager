@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef SMBBROWSER_H
 #define SMBBROWSER_H
 
@@ -61,6 +61,7 @@ private:
     void addNeighborToSidebar();
     void registerNetworkAccessPrehandler();
     static void networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
+    static void smbAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
 
 private:
     QSet<QString> waitToBind;

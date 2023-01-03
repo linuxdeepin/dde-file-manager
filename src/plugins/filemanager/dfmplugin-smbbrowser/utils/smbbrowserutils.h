@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef SMBBROWSERUTILS_H
 #define SMBBROWSERUTILS_H
 
@@ -44,6 +44,9 @@ public:
     static QIcon icon();
 
     bool mountSmb(const quint64 windowId, const QList<QUrl> urls);
+
+    bool isServiceRuning(const QString &service);
+    bool startService(const QString &service);
 
 public:
     static QMutex mutex;

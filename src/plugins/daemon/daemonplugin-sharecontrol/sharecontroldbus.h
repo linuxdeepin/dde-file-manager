@@ -39,7 +39,7 @@ public:
 public slots:
     bool CloseSmbShareByShareName(const QString &name, bool show);
     bool SetUserSharePassword(const QString &name, const QString &passwd);
-    bool CreateShareLinkFile();
+    bool EnableSmbServices();
     bool IsUserSharePasswordSet(const QString &username);
 
 protected:

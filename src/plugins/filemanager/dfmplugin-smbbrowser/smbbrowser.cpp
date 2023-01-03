@@ -48,6 +48,7 @@
 
 #include <QMenu>
 #include <QTimer>
+#include <QDBusInterface>
 
 using namespace dfmplugin_smbbrowser;
 
@@ -180,7 +181,8 @@ void SmbBrowser::onWindowOpened(quint64 winId)
         addNeighborToSidebar();
         SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle);
     } else {
-        connect(window, &FileManagerWindow::sideBarInstallFinished,
+        connect(
+                window, &FileManagerWindow::sideBarInstallFinished,
                 this, [this, ctxMenuHandle] {
                     addNeighborToSidebar();
                     SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle);
@@ -191,7 +193,8 @@ void SmbBrowser::onWindowOpened(quint64 winId)
     if (window->workSpace()) {
         SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle, false);
     } else {
-        connect(window, &FileManagerWindow::workspaceInstallFinished,
+        connect(
+                window, &FileManagerWindow::workspaceInstallFinished,
                 this, [this, ctxMenuHandle] {
                     addNeighborToSidebar();
                     SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle, false);
@@ -206,7 +209,7 @@ void SmbBrowser::onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperated
     ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
     SmbIntegrationManager::instance()->addStashedSeperatedItemToSidebar(stashedSeperatedData, ctxMenuHandle);
 
-    //add items to computer view
+    // add items to computer view
     SmbIntegrationManager::instance()->addStashedSeperatedItemToComputer(urls);
 }
 
@@ -269,7 +272,8 @@ void SmbBrowser::addNeighborToSidebar()
 void SmbBrowser::registerNetworkAccessPrehandler()
 {
     Prehandler handler { SmbBrowser::networkAccessPrehandler };
-    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSmb), handler).toBool())
+    Prehandler smbHanlder { SmbBrowser::smbAccessPrehandler };
+    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSmb), smbHanlder).toBool())
         qWarning() << "smb's prehandler has been registered";
     if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSFtp), handler).toBool())
         qWarning() << "sftp's prehandler has been registered";
@@ -308,11 +312,43 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
         } else {
             DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
             qDebug() << DeviceUtils::errMessage(err);
-            //dont save failed access to history
+            // dont save failed access to history
             dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", url.toString());
         }
     };
     DevMngIns->mountNetworkDeviceAsync(url.toString(), callBackMnt /*,10000*/);
+}
+
+void SmbBrowser::smbAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after)
+{
+    bool enableRequired = false;
+    auto checkAndStartService = [winId, &enableRequired](const QString &serv) {
+        if (!SmbBrowserUtils::instance()->isServiceRuning(serv)) {
+            if (!SmbBrowserUtils::instance()->startService(serv)) {
+                dpfSlotChannel->push("dfmplugin_titlebar", "slot_Navigator_Backward", winId);   // if failed/cancelled, back to previous page.
+                return false;
+            }
+            enableRequired = true;
+        }
+        return true;
+    };
+
+    QStringList validateService { "smb", "nmb" };
+    for (const auto &serv : validateService) {
+        if (!checkAndStartService(serv))
+            return;
+    }
+
+    networkAccessPrehandler(winId, url, after);
+
+    // set smbd auto start ASYNC
+    if (enableRequired) {
+        QDBusInterface iface("com.deepin.filemanager.daemon",
+                             "/com/deepin/filemanager/daemon/UserShareManager",
+                             "com.deepin.filemanager.daemon.UserShareManager",
+                             QDBusConnection::systemBus());
+        iface.asyncCall("EnableSmbServices");
+    }
 }
 
 QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node)

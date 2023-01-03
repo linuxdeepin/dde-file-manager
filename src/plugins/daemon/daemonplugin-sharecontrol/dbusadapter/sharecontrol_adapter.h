@@ -45,7 +45,7 @@ class ShareControlAdapter : public QDBusAbstractAdaptor
                                        "      <arg direction=\"in\" type=\"s\" name=\"name\"/>\n"
                                        "      <arg direction=\"in\" type=\"s\" name=\"passwd\"/>\n"
                                        "    </method>\n"
-                                       "    <method name=\"CreateShareLinkFile\">\n"
+                                       "    <method name=\"EnableSmbServices\">\n"
                                        "      <arg direction=\"out\" type=\"b\"/>\n"
                                        "    </method>\n"
                                        "    <method name=\"IsUserSharePasswordSet\">\n"
@@ -66,7 +66,7 @@ public:
 public:   // PROPERTIES
 public Q_SLOTS:   // METHODS
     bool CloseSmbShareByShareName(const QString &name, bool show);
-    bool CreateShareLinkFile();
+    bool EnableSmbServices();
     bool IsUserSharePasswordSet(const QString &username);
     bool SetUserSharePassword(const QString &name, const QString &passwd);
 Q_SIGNALS:   // SIGNALS

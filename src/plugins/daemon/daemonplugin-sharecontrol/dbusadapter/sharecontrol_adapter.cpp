@@ -39,10 +39,10 @@ bool ShareControlAdapter::CloseSmbShareByShareName(const QString &name, bool sho
     return parent()->CloseSmbShareByShareName(name, show);
 }
 
-bool ShareControlAdapter::CreateShareLinkFile()
+bool ShareControlAdapter::EnableSmbServices()
 {
-    // handle method call com.deepin.filemanager.daemon.UserShareManager.CreateShareLinkFile
-    return parent()->CreateShareLinkFile();
+    // handle method call com.deepin.filemanager.daemon.UserShareManager.EnableSmbServices
+    return parent()->EnableSmbServices();
 }
 
 bool ShareControlAdapter::IsUserSharePasswordSet(const QString &username)

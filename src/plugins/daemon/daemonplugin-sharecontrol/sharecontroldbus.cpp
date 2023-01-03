@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "sharecontroldbus.h"
 #include "polkit/policykithelper.h"
 #include "dbusadapter/sharecontrol_adapter.h"
@@ -62,11 +62,11 @@ bool ShareControlDBus::CloseSmbShareByShareName(const QString &name, bool show)
     suid = c.interface()->serviceUid(message().service()).value();   //获取调用总线进程属主
 
     QString sharePath = "/var/lib/samba/usershares/";
-    QString filePath = QString("%1%2").arg(sharePath).arg(name.toLower());//文件名小写
+    QString filePath = QString("%1%2").arg(sharePath).arg(name.toLower());   //文件名小写
     QFileInfo info(filePath);
-    if ((suid != 0 && suid != info.ownerId())  //对比文件属主与调用总线进程属主;
-            || info.isSymLink()      //禁止使用符合链接
-            || !info.absoluteFilePath().startsWith(sharePath)) {   //禁止使用../等
+    if ((suid != 0 && suid != info.ownerId())   //对比文件属主与调用总线进程属主;
+        || info.isSymLink()   //禁止使用符合链接
+        || !info.absoluteFilePath().startsWith(sharePath)) {   //禁止使用../等
         qDebug() << "invoker doesn't own the file: " << info.path();
         return false;
     }
@@ -103,17 +103,22 @@ bool ShareControlDBus::SetUserSharePassword(const QString &name, const QString &
     return ret;
 }
 
-bool ShareControlDBus::CreateShareLinkFile()
+bool ShareControlDBus::EnableSmbServices()
 {
     // 创建链接文件之前已经提权了 这里就不需要再次判断权限了
     /*if (!checkAuthentication()) {
-        qDebug() << "createShareLinkFile";
+        qDebug() << "EnableSmbServices";
         return false;
     }*/
 
     QProcess sh;
     sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
     auto ret = sh.waitForFinished();
+    qInfo() << "enable smbd: " << ret;
+
+    sh.start("ln -sf /lib/systemd/system/nmbd.service /etc/systemd/system/multi-user.target.wants/nmbd.service");
+    ret &= sh.waitForFinished();
+    qInfo() << "enable nmbd: " << ret;
     return ret;
 }
 

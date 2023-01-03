@@ -56,7 +56,7 @@ static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon.Use
 static constexpr char kFuncIsPasswordSet[] { "IsUserSharePasswordSet" };
 static constexpr char kFuncSetPasswd[] { "SetUserSharePassword" };
 static constexpr char kFuncCloseShare[] { "CloseSmbShareByShareName" };
-static constexpr char kFuncCreateShareLinkFile[] { "CreateShareLinkFile" };
+static constexpr char kFuncEnableSmbServices[] { "EnableSmbServices" };
 }   // namespace DBusINterfaceInfo
 
 namespace ShareConfig {
@@ -555,7 +555,7 @@ QPair<bool, QString> UserShareHelper::startSmbService()
 
 bool UserShareHelper::setSmbdAutoStart()
 {
-    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncCreateShareLinkFile);
+    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncEnableSmbServices);
     return reply.value();
 }
 

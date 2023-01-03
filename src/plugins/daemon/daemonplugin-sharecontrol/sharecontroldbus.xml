@@ -11,7 +11,7 @@
       <arg name="name" type="s" direction="in"/>
       <arg name="passwd" type="s" direction="in"/>
     </method>
-    <method name="CreateShareLinkFile">
+    <method name="EnableSmbServices">
       <arg type="b" direction="out"/>
     </method>
     <method name="IsUserSharePasswordSet">
