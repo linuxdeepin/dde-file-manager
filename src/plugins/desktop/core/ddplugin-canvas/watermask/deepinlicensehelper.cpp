@@ -105,7 +105,7 @@ void DeepinLicenseHelper::getLicenseState(DeepinLicenseHelper *self)
     Q_ASSERT(self);
     Q_ASSERT(self->licenseInterface);
     qInfo() << "get active state from com.deepin.license.Info";
-    int state = self->licenseInterface->AuthorizationState();
+    int state = self->licenseInterface->authorizationState();
     int prop = -1;
     {
         // 不直接使用AuthorizationProperty接口，需要通过QVariant是否有效判断接口是否存在

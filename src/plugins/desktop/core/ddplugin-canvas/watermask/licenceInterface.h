@@ -59,9 +59,13 @@ public:
 
     ~ComDeepinLicenseInterface();
 
-    Q_PROPERTY(int AuthorizationState READ AuthorizationState)
-    inline int AuthorizationState() const
+    Q_PROPERTY(int AuthorizationState READ authorizationState)
+    inline int authorizationState() const
     { return qvariant_cast< int >(property("AuthorizationState")); }
+
+    Q_PROPERTY(uint AuthorizationProperty READ authorizationProperty)
+    inline uint authorizationProperty() const
+    { return qvariant_cast< uint >(property("AuthorizationProperty")); }
 
 Q_SIGNALS: // SIGNALS
     void LicenseStateChange();
