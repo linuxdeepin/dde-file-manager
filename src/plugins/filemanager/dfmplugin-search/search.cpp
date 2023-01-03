@@ -83,11 +83,6 @@ void Search::onWindowOpened(quint64 windId)
         regSearchCrumbToTitleBar();
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Search::regSearchCrumbToTitleBar, Qt::DirectConnection);
-
-    if (window->detailView())
-        regSearchToDetailView();
-    else
-        connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Search::regSearchToDetailView, Qt::DirectConnection);
 }
 
 void Search::regSearchCrumbToTitleBar()
@@ -95,6 +90,10 @@ void Search::regSearchCrumbToTitleBar()
     QVariantMap property;
     property["Property_Key_KeepAddressBar"] = true;
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", SearchHelper::scheme(), property);
+
+    QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
+                         SearchHelper::scheme(), filtes);
 }
 
 void Search::regSearchToWorkspace()
@@ -114,13 +113,6 @@ void Search::regSearchToWorkspace()
     };
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
-}
-
-void Search::regSearchToDetailView()
-{
-    QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
-    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
-                         SearchHelper::scheme(), filtes);
 }
 
 void Search::bindEvents()

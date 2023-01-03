@@ -77,6 +77,17 @@ qint64 SearchFileInfo::size() const
     return AbstractFileInfo::size();
 }
 
+QString SearchFileInfo::displayOf(const AbstractFileInfo::DisplayInfoType type) const
+{
+    if (DisPlayInfoType::kFileDisplayName == type) {
+        if (UrlRoute::isRootUrl(dptr->url)) {
+            return QObject::tr("Search");
+        }
+    }
+
+    return AbstractFileInfo::displayOf(type);
+}
+
 QString SearchFileInfo::nameOf(const NameInfoType type) const
 {
     switch (type) {

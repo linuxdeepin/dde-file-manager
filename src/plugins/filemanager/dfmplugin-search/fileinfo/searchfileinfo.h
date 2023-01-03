@@ -38,6 +38,7 @@ public:
     virtual bool isAttributes(const FileIsType type) const override;
     virtual qint64 size() const override;
     virtual QString nameOf(const FileNameInfoType type) const override;
+    QString displayOf(const DisplayInfoType type) const override;
 
     // property for view
     virtual QString viewOfTip(const ViewType type) const override;
