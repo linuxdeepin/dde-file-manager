@@ -51,15 +51,6 @@ bool DetailManager::registerExtensionView(CustomViewExtensionView view, int inde
 }
 
 /*!
- * /brief Cancel widget extension registration
- * /param index position to insert
- */
-void DetailManager::unregisterExtensionView(int index)
-{
-    constructList.remove(index);
-}
-
-/*!
  * /brief Create widgets based on registered schemes and function pointers
  * /param url file url
  * /return Returns a mapping table of widgets and display positions
@@ -88,8 +79,8 @@ QMap<int, QWidget *> DetailManager::createExtensionView(const QUrl &url)
  */
 bool DetailManager::registerBasicViewExtension(const QString &scheme, BasicViewFieldFunc func)
 {
-    if (!basicViewFieldFuncHash.contains(scheme)) {
-        basicViewFieldFuncHash.insert(scheme, func);
+    if (!basicViewFieldFuncHashNormal.contains(scheme)) {
+        basicViewFieldFuncHashNormal.insert(scheme, func);
         return true;
     }
 
@@ -97,13 +88,15 @@ bool DetailManager::registerBasicViewExtension(const QString &scheme, BasicViewF
     return false;
 }
 
-/*!
- * /brief Cancel the basic information control extension registration
- * /param scheme url format
- */
-void DetailManager::unregisterBasicViewExtension(const QString &scheme)
+bool DetailManager::registerBasicViewExtensionRoot(const QString &scheme, BasicViewFieldFunc func)
 {
-    basicViewFieldFuncHash.remove(scheme);
+    if (!basicViewFieldFuncHashRoot.contains(scheme)) {
+        basicViewFieldFuncHashRoot.insert(scheme, func);
+        return true;
+    }
+
+    qInfo() << "The current scheme has registered the associated construction class";
+    return false;
 }
 
 /*!
@@ -114,7 +107,12 @@ void DetailManager::unregisterBasicViewExtension(const QString &scheme)
 QMap<BasicExpandType, BasicExpandMap> DetailManager::createBasicViewExtensionField(const QUrl &url)
 {
     QMap<BasicExpandType, BasicExpandMap> expandField {};
-    BasicViewFieldFunc func { basicViewFieldFuncHash.value(url.scheme()) };
+
+    BasicViewFieldFunc func = nullptr;
+    if (url.path() == "/")
+        func = basicViewFieldFuncHashRoot.value(url.scheme());
+    else
+        func = basicViewFieldFuncHashNormal.value(url.scheme());
     if (func != nullptr) {
         auto &&fields { func(url) };
         if (!fields.isEmpty()) {
@@ -151,8 +149,8 @@ QMap<BasicExpandType, BasicExpandMap> DetailManager::createBasicViewExtensionFie
  */
 bool DetailManager::addBasicFiledFiltes(const QString &scheme, DetailFilterType filters)
 {
-    if (!detailFilterHash.contains(scheme)) {
-        detailFilterHash.insert(scheme, filters);
+    if (!detailFilterHashNormal.contains(scheme)) {
+        detailFilterHashNormal.insert(scheme, filters);
         return true;
     }
 
@@ -160,13 +158,15 @@ bool DetailManager::addBasicFiledFiltes(const QString &scheme, DetailFilterType 
     return false;
 }
 
-/*!
- * /brief Unregister widget or basic information field filtering
- * /param scheme url format
- */
-void DetailManager::removeBasicFiledFilters(const QString &scheme)
+bool DetailManager::addRootBasicFiledFiltes(const QString &scheme, DetailFilterType filters)
 {
-    detailFilterHash.remove(scheme);
+    if (!detailFilterHashRoot.contains(scheme)) {
+        detailFilterHashRoot.insert(scheme, filters);
+        return true;
+    }
+
+    qInfo() << "The current scheme has registered the associated construction class";
+    return false;
 }
 
 /*!
@@ -176,15 +176,18 @@ void DetailManager::removeBasicFiledFilters(const QString &scheme)
  */
 DetailFilterType DetailManager::basicFiledFiltes(const QUrl &url)
 {
-    if (detailFilterHash.isEmpty()) {
+    if (url.path() == "/" && detailFilterHashRoot.count(url.scheme()) > 0)
+        return detailFilterHashRoot.value(url.scheme());
+
+    if (detailFilterHashNormal.isEmpty()) {
         return kNotFilter;
-    } else if (!detailFilterHash.contains(url.scheme())) {
-        if (detailFilterHash.contains(url.path())) {
-            return detailFilterHash.value(url.path());
+    } else if (!detailFilterHashNormal.contains(url.scheme())) {
+        if (detailFilterHashNormal.contains(url.path())) {
+            return detailFilterHashNormal.value(url.path());
         }
         return kNotFilter;
     } else {
-        return detailFilterHash.value(url.scheme());
+        return detailFilterHashNormal.value(url.scheme());
     }
 }
 

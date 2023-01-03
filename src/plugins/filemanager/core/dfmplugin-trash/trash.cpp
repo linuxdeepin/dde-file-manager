@@ -134,6 +134,14 @@ void Trash::addFileOperations()
     QStringList &&filtes { "kPermission" };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",
                          TrashHelper::scheme(), filtes);
+
+    QStringList &&detailFiltes { "kFileSizeField" };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Root_Add",
+                         TrashHelper::scheme(), detailFiltes);
+
+    BasicViewFieldFunc detailFunc { TrashHelper::detailExtensionFunc };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Register",
+                         detailFunc, TrashHelper::scheme());
 }
 
 void Trash::addCustomTopWidget()

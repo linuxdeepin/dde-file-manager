@@ -28,6 +28,7 @@
 #include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QCoreApplication>
 
@@ -55,7 +56,6 @@ public:
     QSharedPointer<DFileInfo> dAncestorsFileInfo { nullptr };
     QUrl targetUrl;
     QUrl originalUrl;
-    QUrl trashAncestors;
 };
 
 TrashFileInfoPrivate::~TrashFileInfoPrivate()
@@ -64,9 +64,13 @@ TrashFileInfoPrivate::~TrashFileInfoPrivate()
 
 QUrl TrashFileInfoPrivate::initTarget()
 {
-    targetUrl = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
+    QVariant attributeTargetUri = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri);
+    if (!attributeTargetUri.toString().isEmpty())
+        targetUrl = dFileInfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
+
     originalUrl = QUrl::fromUserInput(dFileInfo->attribute(DFileInfo::AttributeID::kTrashOrigPath).toString());
-    if (!targetUrl.isValid() && !UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), url)) {
+    const bool urlIsRoot = UniversalUtils::urlEquals(TrashCoreHelper::rootUrl(), url);
+    if (!targetUrl.isValid() && !urlIsRoot) {
         QUrl ancestors = url;
         while (TrashCoreHelper::rootUrl().isParentOf(ancestors)) {
             QUrl urlPre = ancestors;
@@ -82,8 +86,6 @@ QUrl TrashFileInfoPrivate::initTarget()
         if (fileinfo->initQuerier()) {
             const QUrl &ancestorsTargetUrl = fileinfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
             if (ancestorsTargetUrl.isValid()) {
-                trashAncestors = ancestors;
-
                 QString localRootPath = ancestorsTargetUrl.toString();
                 const QString &fileSuffix = url.path().mid(url.path().indexOf("/", 1));
                 const QUrl &urlReal = localRootPath + fileSuffix;
@@ -95,7 +97,18 @@ QUrl TrashFileInfoPrivate::initTarget()
                 return urlReal;
             }
         }
+    } else if (urlIsRoot) {
+        const QUrl &urlTrashFiles = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashLocalFilesPath));
+        auto factory = produceQSharedIOFactory(urlTrashFiles.scheme(), static_cast<QUrl>(urlTrashFiles));
+        auto fileinfo = factory->createFileInfo();
+        if (fileinfo->initQuerier()) {
+            targetUrl = urlTrashFiles;
+            originalUrl = QUrl();
+            dAncestorsFileInfo = fileinfo;
+            return targetUrl;
+        }
     }
+
     return targetUrl;
 }
 
@@ -133,8 +146,12 @@ QDateTime TrashFileInfoPrivate::lastRead() const
     QDateTime time;
     bool success = false;
     uint64_t data = dFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, &success).value<uint64_t>();
-    if (success)
+    if (success) {
         time = QDateTime::fromTime_t(static_cast<uint>(data));
+    } else {
+        if (dAncestorsFileInfo)
+            time = QDateTime::fromTime_t(static_cast<uint>(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, &success).value<uint64_t>()));
+    }
     return time;
 }
 
@@ -146,8 +163,12 @@ QDateTime TrashFileInfoPrivate::lastModified() const
     QDateTime time;
     bool success = false;
     uint64_t data = dFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, &success).value<uint64_t>();
-    if (success)
+    if (success) {
         time = QDateTime::fromTime_t(static_cast<uint>(data));
+    } else {
+        if (dAncestorsFileInfo)
+            time = QDateTime::fromTime_t(static_cast<uint>(dAncestorsFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, &success).value<uint64_t>()));
+    }
     return time;
 }
 
@@ -416,9 +437,9 @@ QVariant TrashFileInfo::timeOf(const TimeInfoType type) const
     case TimeInfoType::kLastRead:
         return d->lastRead();
     case TimeInfoType::kLastModified:
-        return d->lastRead();
+        return d->lastModified();
     case TimeInfoType::kDeletionTime:
-        return d->lastRead();
+        return d->deletionTime();
     default:
         return AbstractFileInfo::timeOf(type);
     }

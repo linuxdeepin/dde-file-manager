@@ -39,13 +39,9 @@ public:
 
     void handleShowPropertyDialog(const QList<QUrl> &urls, const QVariantHash &option);
     bool handleViewExtensionRegister(CustomViewExtensionView view, const QString &name, int index);
-    void handleViewExtensionUnregister(int index);
     bool handleCustomViewRegister(CustomViewExtensionView view, const QString &scheme);
-    void handleCustomViewUnregister(const QString &scheme);
     bool handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme);
-    void handleBasicViewExtensionUnregister(const QString &scheme);
     bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
-    void handleBasicFiledFilterRemove(const QString &scheme);
 };
 }
 #endif   // PROPERTYDIALOGEVENTRECEIVER_H

@@ -104,6 +104,8 @@ void VaultVisibleManager::pluginServiceRegister()
         BasicViewFieldFunc detailViewFunc { ServiceManager::detailViewFieldFunc };
         dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Register",
                              detailViewFunc, VaultHelper::instance()->scheme());
+        dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Root_Register",
+                             detailViewFunc, VaultHelper::instance()->scheme());
 
         QStringList &&filters { kPermission };
         dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",

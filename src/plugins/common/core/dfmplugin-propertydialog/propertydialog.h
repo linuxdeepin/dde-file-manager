@@ -37,13 +37,9 @@ class PropertyDialog : public dpf::Plugin
     // slot events
     DPF_EVENT_REG_SLOT(slot_PropertyDialog_Show)
     DPF_EVENT_REG_SLOT(slot_ViewExtension_Register)
-    DPF_EVENT_REG_SLOT(slot_ViewExtension_Unregister)
     DPF_EVENT_REG_SLOT(slot_CustomView_Register)
-    DPF_EVENT_REG_SLOT(slot_CustomView_UnRegister)
     DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Register)
-    DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Unregister)
     DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Add)
-    DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Remove)
 
 public:
     virtual void initialize() override;

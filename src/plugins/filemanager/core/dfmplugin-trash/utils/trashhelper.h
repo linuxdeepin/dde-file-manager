@@ -73,6 +73,7 @@ public:
     static bool isTrashRootFile(const QUrl &url);
     static void emptyTrash(const quint64 windowId = 0);
     static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
+    static ExpandFieldMap detailExtensionFunc(const QUrl &url);
     static JobHandlePointer restoreFromTrashHandle(const quint64 windowId,
                                                    const QList<QUrl> urls,
                                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);

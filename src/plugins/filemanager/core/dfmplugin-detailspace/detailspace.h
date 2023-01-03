@@ -39,11 +39,10 @@ class DetailSpace : public dpf::Plugin
     // slot events
     DPF_EVENT_REG_SLOT(slot_DetailView_Show)
     DPF_EVENT_REG_SLOT(slot_ViewExtension_Register)
-    DPF_EVENT_REG_SLOT(slot_ViewExtension_Unregister)
     DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Register)
-    DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Unregister)
+    DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Root_Register)
     DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Add)
-    DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Remove)
+    DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Root_Add)
 
     // hook evetns
     DPF_EVENT_REG_HOOK(hook_Icon_Fetch)

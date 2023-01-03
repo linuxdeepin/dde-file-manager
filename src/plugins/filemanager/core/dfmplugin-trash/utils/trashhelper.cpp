@@ -201,6 +201,22 @@ TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
     return map;
 }
 
+TrashHelper::ExpandFieldMap TrashHelper::detailExtensionFunc(const QUrl &url)
+{
+    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+
+    ExpandFieldMap map;
+    {
+        // source path
+        BasicExpand expand;
+        const QString &sourcePath = info->urlOf(UrlInfoType::kOriginalUrl).path();
+        expand.insert("kFileChangeTIme", qMakePair(QObject::tr("Source path"), sourcePath));
+        map["kFieldInsert"] = expand;
+    }
+
+    return map;
+}
+
 JobHandlePointer TrashHelper::restoreFromTrashHandle(const quint64 windowId, const QList<QUrl> urls, const AbstractJobHandler::JobFlags flags)
 {
     dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrash,

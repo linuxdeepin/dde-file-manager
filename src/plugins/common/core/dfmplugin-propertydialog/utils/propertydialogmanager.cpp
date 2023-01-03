@@ -68,11 +68,6 @@ bool PropertyDialogManager::registerExtensionView(CustomViewExtensionView viewCr
     return true;
 }
 
-void PropertyDialogManager::unregisterExtensionView(int index)
-{
-    creatorOptions.remove(index);
-}
-
 QMap<int, QWidget *> PropertyDialogManager::createExtensionView(const QUrl &url, const QVariantHash &option)
 {
     QMap<int, QWidget *> temp {};
@@ -122,11 +117,6 @@ bool PropertyDialogManager::registerCustomView(CustomViewExtensionView view, con
     return true;
 }
 
-void PropertyDialogManager::unregisterCustomView(const QString &scheme)
-{
-    viewCreateFunctionHash.remove(scheme);
-}
-
 QWidget *PropertyDialogManager::createCustomView(const QUrl &url)
 {
     for (auto creator : viewCreateFunctionHash.values()) {
@@ -148,11 +138,6 @@ bool PropertyDialogManager::registerBasicViewExtension(BasicViewFieldFunc func, 
 
     qInfo() << "The current scheme has registered the associated construction class";
     return false;
-}
-
-void PropertyDialogManager::unregisterBasicViewExtension(const QString &scheme)
-{
-    basicViewFieldFuncHash.remove(scheme);
 }
 
 QMap<BasicExpandType, BasicExpandMap> PropertyDialogManager::createBasicViewExtensionField(const QUrl &url)
@@ -198,11 +183,6 @@ bool PropertyDialogManager::addBasicFiledFiltes(const QString &scheme, PropertyF
 
     qInfo() << "The current scheme has registered the associated construction class";
     return false;
-}
-
-void PropertyDialogManager::removeBasicFiledFilters(const QString &scheme)
-{
-    filePropertyFilterHash.remove(scheme);
 }
 
 PropertyFilterType PropertyDialogManager::basicFiledFiltes(const QUrl &url)

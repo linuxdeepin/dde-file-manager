@@ -44,11 +44,10 @@ public slots:
     void handleTileBarShowDetailView(quint64 windowId, bool checked);
     void handleSetSelect(quint64 windowId, const QUrl &url);
     bool handleViewExtensionRegister(CustomViewExtensionView view, int index);
-    void handleViewExtensionUnregister(int index);
     bool handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme);
-    void handleBasicViewExtensionUnregister(const QString &scheme);
+    bool handleBasicViewExtensionRootRegister(BasicViewFieldFunc func, const QString &scheme);
     bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
-    void handleBasicFiledFilterRemove(const QString &scheme);
+    bool handleBasicFiledFilterRootAdd(const QString &scheme, const QStringList &enums);
 
     // worksapce
     void handleViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);

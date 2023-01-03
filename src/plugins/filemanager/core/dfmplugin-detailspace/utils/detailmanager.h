@@ -36,15 +36,14 @@ public:
     static DetailManager &instance();
 
     bool registerExtensionView(CustomViewExtensionView view, int index = -1);
-    void unregisterExtensionView(int index);
     QMap<int, QWidget *> createExtensionView(const QUrl &url);
 
     bool registerBasicViewExtension(const QString &scheme, BasicViewFieldFunc func);
-    void unregisterBasicViewExtension(const QString &scheme);
+    bool registerBasicViewExtensionRoot(const QString &scheme, BasicViewFieldFunc func);
     QMap<BasicExpandType, BasicExpandMap> createBasicViewExtensionField(const QUrl &url);
 
     bool addBasicFiledFiltes(const QString &scheme, DetailFilterType filters);
-    void removeBasicFiledFilters(const QString &scheme);
+    bool addRootBasicFiledFiltes(const QString &scheme, DetailFilterType filters);
     DetailFilterType basicFiledFiltes(const QUrl &url);
 
 private:
@@ -52,8 +51,10 @@ private:
 
 private:
     QMultiHash<int, CustomViewExtensionView> constructList {};
-    QHash<QString, DetailFilterType> detailFilterHash {};
-    QHash<QString, BasicViewFieldFunc> basicViewFieldFuncHash {};
+    QHash<QString, DetailFilterType> detailFilterHashNormal {};
+    QHash<QString, DetailFilterType> detailFilterHashRoot {};
+    QHash<QString, BasicViewFieldFunc> basicViewFieldFuncHashNormal {};
+    QHash<QString, BasicViewFieldFunc> basicViewFieldFuncHashRoot {};
 };
 
 }   // namespace dfmplugin_detailspace

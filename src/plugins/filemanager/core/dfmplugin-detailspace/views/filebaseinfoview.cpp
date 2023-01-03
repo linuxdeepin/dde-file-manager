@@ -147,7 +147,9 @@ void FileBaseInfoView::basicFieldFilter(const QUrl &url)
     if (ok && !urls.isEmpty())
         filterUrl = urls.first();
 
-    auto fieldFilters { DetailManager::instance().basicFiledFiltes(filterUrl) };
+    DetailFilterType fieldFilters = DetailFilterType::kNotFilter;
+    fieldFilters = DetailManager::instance().basicFiledFiltes(filterUrl);
+
     if (fieldFilters & DetailFilterType::kFileNameField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileName);
         fileName->deleteLater();

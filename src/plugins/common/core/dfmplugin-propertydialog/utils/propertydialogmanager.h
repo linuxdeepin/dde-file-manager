@@ -36,18 +36,14 @@ public:
     static PropertyDialogManager &instance();
 
     bool registerExtensionView(CustomViewExtensionView viewCreator, const QString &name, int index = -1);
-    void unregisterExtensionView(int index);
     QMap<int, QWidget *> createExtensionView(const QUrl &url, const QVariantHash &option = QVariantHash());
     bool registerCustomView(CustomViewExtensionView view, const QString &scheme);
-    void unregisterCustomView(const QString &scheme);
     QWidget *createCustomView(const QUrl &url);
 
     bool registerBasicViewExtension(BasicViewFieldFunc func, const QString &scheme);
-    void unregisterBasicViewExtension(const QString &scheme);
     QMap<BasicExpandType, BasicExpandMap> createBasicViewExtensionField(const QUrl &url);
 
     bool addBasicFiledFiltes(const QString &scheme, PropertyFilterType filters);
-    void removeBasicFiledFilters(const QString &scheme);
     PropertyFilterType basicFiledFiltes(const QUrl &url);
 
     void addComputerPropertyDialog();
