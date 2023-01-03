@@ -23,6 +23,7 @@
 #include "burnjob.h"
 #include "utils/burnhelper.h"
 #include "utils/burnsignalmanager.h"
+#include "utils/burncheckstrategy.h"
 #include "events/burneventcaller.h"
 
 #include "dfm-base/base/application/application.h"
@@ -91,6 +92,11 @@ void AbstractBurnJob::addTask()
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, 100);
         emit jobHandlePtr->proccessChangedNotify(info);
     }
+}
+
+bool AbstractBurnJob::fileSystemLimitsValid()
+{
+    return true;
 }
 
 void AbstractBurnJob::updateMessage(JobInfoPointer ptr)
@@ -402,6 +408,30 @@ BurnISOFilesJob::BurnISOFilesJob(const QString &dev, const JobHandlePointer hand
 {
 }
 
+bool BurnISOFilesJob::fileSystemLimitsValid()
+{
+    auto stagingurl { curProperty[PropertyType::KStagingUrl].toUrl() };
+    auto opts { qvariant_cast<DFMBURN::BurnOptions>(curProperty[PropertyType::kBurnOpts]) };
+
+    // filesystem limits check
+    BurnCheckStrategy *checkStrategy { nullptr };
+    if (opts.testFlag(DFMBURN::BurnOption::kISO9660Only))
+        checkStrategy = new ISO9660CheckStrategy(stagingurl.path(), this);
+    else if (opts.testFlag(DFMBURN::BurnOption::kJolietSupport))
+        checkStrategy = new JolietCheckStrategy(stagingurl.path(), this);
+    else
+        checkStrategy = new RockRidgeCheckStrategy(stagingurl.path(), this);
+
+    if (checkStrategy && !checkStrategy->check()) {
+        qWarning() << "Check Failed: " << checkStrategy->lastError();
+        emit requestErrorMessageDialog(tr("The file name or the path is too long. Please shorten the file name or the path and try again."),
+                                       checkStrategy->lastInvalidName());
+        return false;
+    }
+
+    return true;
+}
+
 void BurnISOFilesJob::writeFunc(int progressFd, int checkFd)
 {
     auto url { curProperty[PropertyType::KStagingUrl].toUrl() };
@@ -428,6 +458,8 @@ void BurnISOFilesJob::work()
 {
     qInfo() << "Start burn ISO files: " << curDev;
     firstJobType = curJobType = JobType::kOpticalBurn;
+    if (!fileSystemLimitsValid())
+        return;
     if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
@@ -477,6 +509,22 @@ BurnUDFFilesJob::BurnUDFFilesJob(const QString &dev, const JobHandlePointer hand
 {
 }
 
+bool BurnUDFFilesJob::fileSystemLimitsValid()
+{
+    auto stagingurl { curProperty[PropertyType::KStagingUrl].toUrl() };
+
+    // filesystem limits check
+    BurnCheckStrategy *checkStrategy { new UDFCheckStrategy(stagingurl.path(), this) };
+    if (!checkStrategy->check()) {
+        qWarning() << "Check Failed: " << checkStrategy->lastError();
+        emit requestErrorMessageDialog(tr("The file name or the path is too long. Please shorten the file name or the path and try again."),
+                                       checkStrategy->lastInvalidName());
+        return false;
+    }
+
+    return true;
+}
+
 void BurnUDFFilesJob::writeFunc(int progressFd, int checkFd)
 {
     Q_UNUSED(checkFd);
@@ -497,6 +545,8 @@ void BurnUDFFilesJob::work()
 {
     qInfo() << "Start burn UDF files: " << curDev;
     firstJobType = curJobType = JobType::kOpticalBurn;
+    if (!fileSystemLimitsValid())
+        return;
     if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});

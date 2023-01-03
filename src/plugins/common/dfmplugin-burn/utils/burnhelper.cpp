@@ -31,6 +31,7 @@
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <DDialog>
+
 #include <QObject>
 #include <QDebug>
 #include <QCoreApplication>
@@ -251,4 +252,30 @@ bool BurnHelper::burnIsOnLocalStaging(const QUrl &url)
         return true;
 
     return false;
+}
+
+QFileInfoList BurnHelper::localFileInfoList(const QString &path)
+{
+    QDir dir(path);
+    if (!dir.exists() || dir.isEmpty())
+        return {};
+
+    return dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+}
+
+QFileInfoList BurnHelper::localFileInfoListRecursive(const QString &path, QDir::Filters filters)
+{
+    QDir dir(path);
+    if (!dir.exists() || dir.isEmpty())
+        return {};
+
+    QFileInfoList fileList { dir.entryInfoList(filters) };
+    const QFileInfoList &folderList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    for (const QFileInfo &info : folderList) {
+        const QFileInfoList &childFileList = localFileInfoListRecursive(info.absoluteFilePath(), filters);
+        fileList.append(childFileList);
+    }
+
+    return fileList;
 }

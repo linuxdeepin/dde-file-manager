@@ -22,6 +22,7 @@
 */
 
 #include "auditlogjob.h"
+#include "utils/burnhelper.h"
 
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/fileutils.h"
@@ -41,32 +42,6 @@ using namespace GlobalServerDefines;
 AbstractAuditLogJob::AbstractAuditLogJob(QObject *parent)
     : QThread(parent)
 {
-}
-
-QFileInfoList AbstractAuditLogJob::localFileInfoList(const QString &path) const
-{
-    QDir dir(path);
-    if (!dir.exists() || dir.isEmpty())
-        return {};
-
-    return dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
-}
-
-QFileInfoList AbstractAuditLogJob::localFileInfoListRecursive(const QString &path) const
-{
-    QDir dir(path);
-    if (!dir.exists() || dir.isEmpty())
-        return {};
-
-    QFileInfoList fileList { dir.entryInfoList(QDir::Files | QDir::NoSymLinks) };
-    const QFileInfoList &folderList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-    for (const QFileInfo &info : folderList) {
-        const QFileInfoList &childFileList = localFileInfoList(info.absoluteFilePath());
-        fileList.append(childFileList);
-    }
-
-    return fileList;
 }
 
 void AbstractAuditLogJob::run()
@@ -112,7 +87,7 @@ void CopyFromDiscAuditLog::doLog(QDBusInterface &interface)
 
         auto fileInfo { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(srcPath)) };
         if (fileInfo->isAttributes(OptInfoType::kIsDir)) {
-            for (const QFileInfo &subInfo : localFileInfoListRecursive(srcPath))
+            for (const QFileInfo &subInfo : BurnHelper::localFileInfoListRecursive(srcPath))
                 writeLog(interface, subInfo.absoluteFilePath(), destPath);
         } else {
             writeLog(interface, srcPath, destPath);
@@ -157,7 +132,7 @@ void BurnFilesAuditLogJob::doLog(QDBusInterface &interface)
         QString nativePath { pathMap.contains(discPath) ? pathMap.value(discPath).toString() : discPath };
 
         if (info.isDir()) {
-            for (const QFileInfo &subInfo : localFileInfoListRecursive(info.absoluteFilePath())) {
+            for (const QFileInfo &subInfo : BurnHelper::localFileInfoListRecursive(info.absoluteFilePath())) {
                 QString subNativePath { subInfo.absoluteFilePath() };
                 subNativePath = subNativePath.replace(nativePath, nativePath);
                 writeLog(interface, subInfo.absoluteFilePath(), subNativePath, subInfo.size());
@@ -202,7 +177,7 @@ QFileInfoList BurnFilesAuditLogJob::burnedFileInfoList() const
         burnedFileInfoGroup.append(info);
 
     if (info.isDir())   // data files
-        burnedFileInfoGroup = localFileInfoList(info.absoluteFilePath());
+        burnedFileInfoGroup = BurnHelper::localFileInfoList(info.absoluteFilePath());
 
     return burnedFileInfoGroup;
 }

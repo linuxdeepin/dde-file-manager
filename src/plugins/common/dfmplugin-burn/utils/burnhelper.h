@@ -26,7 +26,9 @@
 #include "dfmplugin_burn_global.h"
 
 #include <QUrl>
+#include <QDir>
 #include <QVariantMap>
+#include <QFileInfo>
 
 namespace dfmplugin_burn {
 
@@ -52,8 +54,10 @@ public:
     static void mapStagingFilesPath(const QList<QUrl> &srcList, const QList<QUrl> &targetList);
     static bool isBurnEnabled();
     static bool burnIsOnLocalStaging(const QUrl &url);
+    static QFileInfoList localFileInfoList(const QString &path);
+    static QFileInfoList localFileInfoListRecursive(const QString &path, QDir::Filters filters = (QDir::Files | QDir::NoSymLinks));
 };
 
-}
+}   // namespace dfmplugin_burn
 
 #endif   // BURNHELPER_H

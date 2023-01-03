@@ -71,6 +71,7 @@ public:
     void addTask();
 
 protected:
+    virtual bool fileSystemLimitsValid();
     virtual void updateMessage(JobInfoPointer ptr);
     virtual void updateSpeed(JobInfoPointer ptr, DFMBURN::JobStatus status, const QString &speed);
     virtual void readFunc(int progressFd, int checkFd);
@@ -132,6 +133,7 @@ public:
     virtual ~BurnISOFilesJob() override {}
 
 protected:
+    virtual bool fileSystemLimitsValid() override;
     virtual void writeFunc(int progressFd, int checkFd) override;
     virtual void work() override;
 };
@@ -158,6 +160,7 @@ public:
     virtual ~BurnUDFFilesJob() override {}
 
 protected:
+    virtual bool fileSystemLimitsValid() override;
     virtual void writeFunc(int progressFd, int checkFd) override;
     virtual void work() override;
 };

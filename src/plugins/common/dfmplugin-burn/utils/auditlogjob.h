@@ -43,9 +43,6 @@ public:
 protected:
     void run() override;
     virtual void doLog(QDBusInterface &interface) = 0;
-
-    QFileInfoList localFileInfoList(const QString &path) const;
-    QFileInfoList localFileInfoListRecursive(const QString &path) const;
 };
 
 class CopyFromDiscAuditLog : public AbstractAuditLogJob
