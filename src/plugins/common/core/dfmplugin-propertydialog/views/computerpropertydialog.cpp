@@ -280,7 +280,7 @@ QString ComputerInfoThread::edition() const
                     uint authorizedInfo = deepinLicenseInfo.property("AuthorizationProperty").toUInt();
                     qInfo() << "End call Dbus com.deepin.license AuthorizationProperty";
                     if (kGovernment == authorizedInfo) {
-                        return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Government").arg(DSysInfo::minorVersion()));
+                        return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Government")).arg(DSysInfo::minorVersion());
                     } else if (kEnterprise == authorizedInfo) {
                         return QString("%1(%2)(%3)").arg(DSysInfo::uosEditionName()).arg(tr("For Enterprise")).arg(DSysInfo::minorVersion());
                     } else {
