@@ -4,23 +4,23 @@
     <message>
         <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="57"/>
         <source>Invalid args</source>
-        <translation type="unfinished"/>
+        <translation>Səhv arqumentlər</translation>
     </message>
     <message>
         <location filename="../src/plugins/daemon/daemonplugin-accesscontrol/accesscontroldbus.cpp" line="58"/>
         <source>Invalid invoker</source>
-        <translation type="unfinished"/>
+        <translation>Yalnız çağırıcı</translation>
     </message>
 </context>
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="233"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="235"/>
         <source>File Manager</source>
         <translation>Fayl Meneceri</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="237"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="239"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Fayl Meneceri, axtarmaq, kopyalamaq, zibil qutusu, sıxmaq/aşmaq, fayl xüsusiyyətləri və digər faydalı funksiyaları ilə hazırlanmış, faylları rahat idarə etmək üçün güclü vasitədir.</translation>
     </message>
@@ -45,7 +45,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="169"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="181"/>
         <source>Desktop</source>
         <translation>İş Masası</translation>
     </message>
@@ -55,7 +55,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="160"/>
         <source>Cannot access %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 girişi mümkün deyil</translation>
     </message>
 </context>
 <context>
@@ -121,7 +121,7 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="228"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="243"/>
         <source>Trash</source>
         <translation>Səbət</translation>
     </message>
@@ -131,18 +131,18 @@
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="43"/>
         <source>File Manager will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation type="unfinished"/>
+        <translation>Fayl meneceri yeni versiyaya yenilənəcək və bu zaman icra olunan tapşırıqların icra olunması ləğv ediləcək. İndi yeniləmək istəyirsən?</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="45"/>
         <source>The desktop services will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>
-        <translation type="unfinished"/>
+        <translation>İş masası xidmətləri yeni veriyaya yenilənəcək və bu zaman tapşırıqların icrası ləğv ediləcək. İndi yeniləmək istəyirsən?</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="46"/>
         <source>Update</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Yenilə</translation>
     </message>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="47"/>
@@ -154,32 +154,33 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="804"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="811"/>
         <source>need authorization to access</source>
-        <translation type="unfinished"/>
+        <translation>Giriş üçün kimlik doğrulaması tələb olunur</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="853"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="866"/>
         <source>Can&apos;t verify the identity of %1.</source>
-        <translation type="unfinished"/>
+        <translation>%1 kimliyini doğrulamaq mümkün olmadı.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="854"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="867"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Bu, siz kompyuterə ilk dəfə daxil olduğunuz zaman baş verir</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="855"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="868"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Uzaq kompyuter tərəfindən göndərilən kimlik</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="857"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="870"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Davam etmənin təhlükəsiz olduğundan tamamilə əmin olmaq istəyirsinizsə, sistem administratoru ilə əlaqə saxlayın.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="247"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="59"/>
         <source>System Disk</source>
         <translation>Sistem diski</translation>
     </message>
@@ -226,12 +227,12 @@
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="261"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"/>
+        <translation>Ayrıla bilmədi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="261"/>
         <source>Cannot stop scanning device</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz axtarışı dayandırıla biulməz</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="218"/>
@@ -347,34 +348,34 @@
         <translation>%1 element</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="307"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="305"/>
         <source>Unable to find the original file</source>
         <translation>Orijinal faylı tapmaq mümkün olmadı</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="577"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="579"/>
         <source>File has been moved or deleted</source>
         <translation>Fayl silinib və ya köçürülüb</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="579"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="581"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="127"/>
         <source>You do not have permission to access this folder</source>
         <translation>Bu qovluğa girməniz üçün icazəniz yoxdur</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="582"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="584"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Onun daxilindəki fayllara keçid etməyə icazəniz yoxdur</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="471"/>
+        <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="480"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="177"/>
         <source>Folder is empty</source>
         <translation>Qovluq boşdur</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="473"/>
+        <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="482"/>
         <source>Loading...</source>
         <translation>Yüklənir...</translation>
     </message>
@@ -410,7 +411,6 @@
     </message>
     <message>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="113"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="77"/>
         <source>Text</source>
         <translation>Mətn</translation>
     </message>
@@ -466,7 +466,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="12"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="12"/>
         <source>Built-in disks</source>
-        <translation type="unfinished"/>
+        <translation>Daxili disklər</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="13"/>
@@ -479,6 +479,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="14"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="14"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="14"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/fileinfo/smbsharefileinfo.cpp" line="56"/>
         <source>Computers in LAN</source>
         <translation>LAN-dakı kompyuterlər</translation>
     </message>
@@ -487,49 +488,49 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="19"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="19"/>
         <source>Loop partitions</source>
-        <translation type="unfinished"/>
+        <translation>Dairəvi bölmələr</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="20"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="20"/>
         <source>Mounted sharing folders</source>
-        <translation type="unfinished"/>
+        <translation>Qoşulmuş paylaşım qovluqları</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="22"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="22"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="22"/>
         <source>My shares</source>
-        <translation type="unfinished"/>
+        <translation>Mənim paylaşımlarım</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
         <source>Network</source>
-        <translation type="unfinished"/>
+        <translation>Şəbəkə</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="24"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="24"/>
         <source>Mounted partitions and discs</source>
-        <translation type="unfinished"/>
+        <translation>Qoşulmuş bölmələr və disklər</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
         <source>Partitions</source>
-        <translation type="unfinished"/>
+        <translation>Bölmələr</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
         <source>Quick access</source>
-        <translation type="unfinished"/>
+        <translation>Cəld giriş</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
@@ -543,14 +544,14 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="30"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="30"/>
         <source>Added tags</source>
-        <translation type="unfinished"/>
+        <translation>Etiketlər əlavə olundu</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="32"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="32"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="32"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>Seyf</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="34"/>
@@ -578,21 +579,21 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="39"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="39"/>
         <source>Hide built-in disks on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>Kompyuter səhifəsində daxili diskləri gizlətmək</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="40"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="40"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="40"/>
         <source>Hide loop partitions on the Computer page</source>
-        <translation type="unfinished"/>
+        <translation>Kompyuter səhifəsinə dairəvi diskləri gizlətmək</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="41"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="41"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="41"/>
         <source>Show crumb bar clickable area</source>
-        <translation type="unfinished"/>
+        <translation>İdarə panelinin ümumi sahəsini göstərmək</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="42"/>
@@ -602,242 +603,249 @@
         <translation>Disk nişanında fayl sistemini göstərmək</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="43"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="44"/>
         <source>Compressed file preview</source>
         <translation>Sıxılmış fayllara öncədən baxış</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="43"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="44"/>
-        <source>Document preview</source>
-        <translation>Sənədə öncədən baxış</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="45"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="44"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="45"/>
-        <source>Image preview</source>
-        <translation>Şəkilə öncədən baxış</translation>
+        <source>Document preview</source>
+        <translation>Sənədə öncədən baxış</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="46"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="45"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="46"/>
-        <source>Text preview</source>
-        <translation>Mətnə öncədən baxış</translation>
+        <source>Image preview</source>
+        <translation>Şəkilə öncədən baxış</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="46"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="47"/>
-        <source>Video preview</source>
-        <translation>Videoya öncədən baxış</translation>
+        <source>Text preview</source>
+        <translation>Mətnə öncədən baxış</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
-        <source>Show hidden files in search results</source>
-        <translation>Axtarış nəticələrində gizli faylları göstərmək</translation>
+        <source>Video preview</source>
+        <translation>Videoya öncədən baxış</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="43"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="43"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="43"/>
+        <source>Music preview</source>
+        <translation>Musiqiyə önbaxış</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="49"/>
-        <source>Default size:</source>
-        <translation>Standart ölçü:</translation>
+        <source>Show hidden files in search results</source>
+        <translation>Axtarış nəticələrində gizli faylları göstərmək</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
-        <source>Extra small</source>
-        <translation>Çox kiçik</translation>
+        <source>Default size:</source>
+        <translation>Standart ölçü:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="50"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="51"/>
-        <source>Small</source>
-        <translation>Kiçik</translation>
+        <source>Extra small</source>
+        <translation>Çox kiçik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
-        <source>Medium</source>
-        <translation>Orta</translation>
+        <source>Small</source>
+        <translation>Kiçik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
-        <source>Large</source>
-        <translation>Geniş</translation>
+        <source>Medium</source>
+        <translation>Orta</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="54"/>
-        <source>Extra large</source>
-        <translation>Çox böyük</translation>
+        <source>Large</source>
+        <translation>Geniş</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="55"/>
-        <source>Mix sorting of files and folders</source>
-        <translation>Faylların və qovluqların qarışıq çeşidlənməsi</translation>
+        <source>Extra large</source>
+        <translation>Çox böyük</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="56"/>
-        <source>Default view:</source>
-        <translation>Standart baxış:</translation>
+        <source>Mix sorting of files and folders</source>
+        <translation>Faylların və qovluqların qarışıq çeşidlənməsi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
-        <source>Show hidden files</source>
-        <translation>Gizli faylları göstərmək</translation>
+        <source>Default view:</source>
+        <translation>Standart baxış:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
-        <source>Show file extensions</source>
-        <translation>Fayl uzantılarını göstərmək</translation>
+        <source>Show hidden files</source>
+        <translation>Gizli faylları göstərmək</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="59"/>
-        <source>Open from default window:</source>
-        <translation>Standart pəncərədən açmaq:</translation>
+        <source>Show file extensions</source>
+        <translation>Fayl uzantılarını göstərmək</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="60"/>
-        <source>Open in new tab:</source>
-        <translation>Yeni vərəqdə açmaq:</translation>
+        <source>Open from default window:</source>
+        <translation>Standart pəncərədən açmaq:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
-        <source>Always open folder in new window</source>
-        <translation>Qovluğu həmişə yeni pəncərədə açmaq</translation>
+        <source>Open in new tab:</source>
+        <translation>Yeni vərəqdə açmaq:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="62"/>
-        <source>Open file:</source>
-        <translation>Faylı açmaq:</translation>
+        <source>Always open folder in new window</source>
+        <translation>Qovluğu həmişə yeni pəncərədə açmaq</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="63"/>
-        <source>Click</source>
-        <translation>Klik</translation>
+        <source>Open file:</source>
+        <translation>Faylı açmaq:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="64"/>
-        <source>Double click</source>
-        <translation>Cüt klik</translation>
+        <source>Click</source>
+        <translation>Klik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="65"/>
-        <source>Advanced</source>
-        <translation>Təkmil</translation>
+        <source>Double click</source>
+        <translation>Cüt klik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="66"/>
-        <source>Dialog</source>
-        <translation>Dialoq</translation>
+        <source>Advanced</source>
+        <translation>Təkmil</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
-        <source>Index</source>
-        <translation>İndeksləmə</translation>
+        <source>Dialog</source>
+        <translation>Dialoq</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="68"/>
-        <source>Items on sidebar pane</source>
-        <translation type="unfinished"/>
+        <source>Index</source>
+        <translation>İndeksləmə</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="69"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="180"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="39"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="134"/>
-        <source>Mount</source>
-        <translation>Qöşmaq</translation>
+        <source>Items on sidebar pane</source>
+        <translation>Yan panel elementləri</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
-        <source>Other</source>
-        <translation>Digər</translation>
+        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="39"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="148"/>
+        <source>Mount</source>
+        <translation>Qöşmaq</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="71"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
-        <source>Preview</source>
-        <translation>Öncədən baxış</translation>
+        <source>Other</source>
+        <translation>Digər</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
-        <source>Basic</source>
-        <translation>Əsas</translation>
+        <source>Preview</source>
+        <translation>Öncədən baxış</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="72"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="73"/>
-        <source>View</source>
-        <translation>Baxış</translation>
+        <source>Basic</source>
+        <translation>Əsas</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="74"/>
-        <source>Hidden files</source>
-        <translation>Gizli fayllar</translation>
+        <source>View</source>
+        <translation>Baxış</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="75"/>
-        <source>New window and tab</source>
-        <translation>Yeni pəncərə və vərəq</translation>
+        <source>Hidden files</source>
+        <translation>Gizli fayllar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="76"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="76"/>
+        <source>New window and tab</source>
+        <translation>Yeni pəncərə və vərəq</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="77"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="76"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="77"/>
         <source>Open behavior</source>
         <translation>Açılış əməli</translation>
     </message>
@@ -868,7 +876,7 @@
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="90"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="121"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="57"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="276"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="118"/>
         <source>Cancel</source>
         <comment>button</comment>
@@ -887,16 +895,16 @@
         <translation>Qısayol</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1217"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1223"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation>(kopyala)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1218"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1224"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
-        <translation type="unfinished"/>
+        <translation>(%1 kopyala)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/universalutils.cpp" line="62"/>
@@ -933,34 +941,34 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="25"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="497"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="496"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="31"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="84"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="146"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="405"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="84"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="128"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="246"/>
         <source>Open in new window</source>
         <translation>Yeni pəncərədə açmaq</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="28"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="501"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="500"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="35"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="88"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="150"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="409"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="85"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="131"/>
         <source>Open in new tab</source>
         <translation>Yeni vərəqdə açmaq</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="35"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="510"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="509"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="47"/>
         <source>Rename</source>
         <translation>Yenidən adlandırmaq</translation>
@@ -968,7 +976,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="40"/>
         <source>Remove from quick access</source>
-        <translation type="unfinished"/>
+        <translation>Cəld girişdən silin</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="45"/>
@@ -980,78 +988,58 @@
         <translation>Tərcihlər</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="410"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="428"/>
         <source>Copying %1</source>
         <translation>%1 kopyalanır</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="411"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="416"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="419"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="422"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="429"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="434"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="437"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="440"/>
         <source>to %1</source>
         <translation>%1 üzərinə</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="413"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="424"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="431"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="442"/>
         <source>Deleting %1</source>
         <translation>%1 silinir</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="415"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="433"/>
         <source>Moving %1</source>
         <translation>%1 köçürülür</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="418"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="436"/>
         <source>Trashing %1</source>
         <translation>%1 təmizlənir</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="421"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="439"/>
         <source>Restoring %1</source>
         <translation>%1 bərpa olunur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="160"/>
-        <source>create dfm io factory failed!</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="175"/>
-        <source>create dfm io dfile failed!</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="328"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="410"/>
         <source>Failed to read the file, cause: %1</source>
         <translation>Fayl oxuna bilmədi, səbəbi: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="403"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="481"/>
         <source>Failed to write the file, cause: %1</source>
         <translation>Fayl yazıla bilmədi, səbəbi: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="704"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="900"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="392"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="513"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Simvolik keçid yaradıla bilmədi, səbəbi: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="929"/>
-        <source>create dir&apos;s iterator failed, case : %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1201"/>
-        <source>resize file failed!</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1231"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="1257"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="531"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/docopyfileworker.cpp" line="555"/>
         <source>File integrity was damaged, cause: %1</source>
         <translation>Faylın bütövlüyü pozulub, səbəbi: %1</translation>
     </message>
@@ -1059,6 +1047,11 @@
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="74"/>
         <source>New Folder</source>
         <translation>Yeni qovluq</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="77"/>
+        <source>New Text</source>
+        <translation>Yeni mətn</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="81"/>
@@ -1078,7 +1071,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="93"/>
         <source>New File</source>
-        <translation type="unfinished"/>
+        <translation>Yeni fayl</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sendtomenuscene.cpp" line="193"/>
@@ -1162,7 +1155,7 @@
         <translation>Çıxartmaq</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="179"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="180"/>
         <source>Add to disc</source>
         <translation>Diskə əlavə etmək</translation>
     </message>
@@ -1227,7 +1220,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="152"/>
         <source>Invalid volume name</source>
-        <translation type="unfinished"/>
+        <translation>Səhv tutum adı</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="155"/>
@@ -1309,9 +1302,9 @@
         <translation>Boz</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="514"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="513"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="155"/>
         <source>Remove</source>
         <translation>Silmək</translation>
     </message>
@@ -1347,8 +1340,8 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="43"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbintcomputermenuscene.cpp" line="72"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="122"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbintcomputermenuscene.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="136"/>
         <source>Unmount</source>
         <translation>Ayırmaq</translation>
     </message>
@@ -1364,8 +1357,8 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="71"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbintcomputermenuscene.cpp" line="78"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbintcomputermenuscene.cpp" line="82"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="142"/>
         <source>Clear saved password and unmount</source>
         <translation>Saxlanılmış şifrələri təmizləyin və ayırın</translation>
     </message>
@@ -1383,12 +1376,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="278"/>
         <source>Cannot access</source>
-        <translation type="unfinished"/>
+        <translation>Giriş mümkün deyil</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="322"/>
         <source>User directory</source>
-        <translation type="unfinished"/>
+        <translation>İstifadəçi qovluğu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="326"/>
@@ -1433,26 +1426,26 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="58"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="271"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="277"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Silmək</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="61"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="274"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="280"/>
         <source>Do you want to remove this item?</source>
         <translation>Bu elementi silmək istıyirsiniz?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="63"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="276"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="282"/>
         <source>Do yout want to remove %1 items?</source>
         <translation>%1 elementi silmək istəyirsiniz?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentfilehelper.cpp" line="64"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="277"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="283"/>
         <source>It does not delete the original files</source>
         <translation>Bu, orijinal faylları silmir</translation>
     </message>
@@ -1463,32 +1456,32 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="111"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="198"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="190"/>
         <source>Source path</source>
         <translation>Mənbə yolu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="86"/>
         <source>New window</source>
         <translation>Yeni pəncərə</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="92"/>
         <source>Connect to Server</source>
         <translation>Serverə bağlantı</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="96"/>
         <source>Set share password</source>
         <translation>Paylaşım şifrəsi təyin etmək</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="99"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="101"/>
         <source>Change disk password</source>
         <translation>Disk şifrəsini dəyişin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="106"/>
         <source>Settings</source>
         <translation>Ayarlar</translation>
     </message>
@@ -1503,7 +1496,7 @@
         <translation>Ünvanlara düzəliş</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashfilehelper.cpp" line="144"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashfilehelper.cpp" line="130"/>
         <source>Unable to open items in the trash, please restore it first</source>
         <translation>Elementi səbətdə açmaq mümkün deyil, lütfən öncə geri qaytarın</translation>
     </message>
@@ -1513,7 +1506,7 @@
         <translation>Səbəti boşaltmaq</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="197"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="90"/>
         <source>Location</source>
         <translation>Yer</translation>
@@ -1619,7 +1612,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="238"/>
         <source>Create Vault</source>
-        <translation type="unfinished"/>
+        <translation>Seyf yarat</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="241"/>
@@ -1819,7 +1812,7 @@
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="112"/>
         <source>Before file name</source>
-        <translation type="unfinished"/>
+        <translation>Fayl adından əvvəl</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="112"/>
@@ -1885,17 +1878,17 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="140"/>
         <source>Collection size</source>
-        <translation type="unfinished"/>
+        <translation>Kolleksiyanın ölçüsü</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="147"/>
         <source>Large area</source>
-        <translation type="unfinished"/>
+        <translation>Geniş sahə</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="159"/>
         <source>Small area</source>
-        <translation type="unfinished"/>
+        <translation>Kiçik sahə</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/view/collectiontitlebar.cpp" line="172"/>
@@ -1913,7 +1906,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/custommode.cpp" line="345"/>
         <source>New Collection</source>
-        <translation type="unfinished"/>
+        <translation>Yeni kolleksiya</translation>
     </message>
 </context>
 <context>
@@ -1921,22 +1914,22 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="357"/>
         <source>Organize desktop</source>
-        <translation type="unfinished"/>
+        <translation>İş masasını nizamla</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="358"/>
         <source>Desktop options</source>
-        <translation type="unfinished"/>
+        <translation>İş masası seçimləri</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="359"/>
         <source>Organize by</source>
-        <translation type="unfinished"/>
+        <translation>Buna görə nizamla: </translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="362"/>
         <source>Custom collection</source>
-        <translation type="unfinished"/>
+        <translation>Xüsusi kolleksiya</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="363"/>
@@ -1961,27 +1954,27 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="368"/>
         <source>Create a collection</source>
-        <translation type="unfinished"/>
+        <translation>Kolleksiya yarat</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="372"/>
         <source>Display Size</source>
-        <translation type="unfinished"/>
+        <translation>Ekran ölçüsü</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="373"/>
         <source>Smaller</source>
-        <translation type="unfinished"/>
+        <translation>Kiçik</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="374"/>
         <source>Normal</source>
-        <translation type="unfinished"/>
+        <translation>Normal</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/menus/extendcanvasscene.cpp" line="375"/>
         <source>Larger</source>
-        <translation type="unfinished"/>
+        <translation>Geniş</translation>
     </message>
 </context>
 <context>
@@ -2005,12 +1998,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="107"/>
         <source>Desktop options</source>
-        <translation type="unfinished"/>
+        <translation>İş masası seçimləri</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="129"/>
         <source>Auto arrange icons</source>
-        <translation type="unfinished"/>
+        <translation>Nişanların avtomatik düzülüşü</translation>
     </message>
 </context>
 <context>
@@ -2018,12 +2011,12 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="53"/>
         <source>Organize desktop</source>
-        <translation type="unfinished"/>
+        <translation>İş masasını nizamla</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/organizationgroup.cpp" line="68"/>
         <source>Organize by</source>
-        <translation type="unfinished"/>
+        <translation>Buna görə nizamla: </translation>
     </message>
 </context>
 <context>
@@ -2092,7 +2085,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="112"/>
         <source>Before file name</source>
-        <translation type="unfinished"/>
+        <translation>Fayl adından əvvəl</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="112"/>
@@ -2115,7 +2108,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="107"/>
         <source>Display size</source>
-        <translation type="unfinished"/>
+        <translation>Ekran ölçüsü</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/sizeslider.cpp" line="119"/>
@@ -2128,7 +2121,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="74"/>
         <source>Apps</source>
-        <translation type="unfinished"/>
+        <translation>Tətbiqlər</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="75"/>
@@ -2153,7 +2146,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="79"/>
         <source>Folders</source>
-        <translation type="unfinished"/>
+        <translation>Qovluqlar</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/mode/normalized/type/typeclassifier.cpp" line="80"/>
@@ -2166,7 +2159,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="38"/>
         <source>Apps</source>
-        <translation type="unfinished"/>
+        <translation>Tətbiqlər</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="39"/>
@@ -2191,29 +2184,29 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/methodgroup/typemethodgroup.cpp" line="43"/>
         <source>Folders</source>
-        <translation type="unfinished"/>
+        <translation>Qovluqlar</translation>
     </message>
 </context>
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1038"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1042"/>
         <source>Loading wallpapers...</source>
         <translation>Divar kağızları yüklənir...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1040"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1044"/>
         <source>Loading screensavers...</source>
         <translation>Ekran şəkilləri yüklənir</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1100"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1104"/>
         <source>Custom Screensaver</source>
         <translation>Fərdi ekran qoruyucusu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1101"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1103"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1105"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1107"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Tətbiq etmək</translation>
@@ -2232,49 +2225,49 @@
         <translation>Ekran şəkli</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="379"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="383"/>
         <source>Desktop</source>
         <comment>button</comment>
         <translation>İş Masası</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="380"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="384"/>
         <source>Lock Screen</source>
         <comment>button</comment>
         <translation>Kilid ekranı</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="381"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="385"/>
         <source>Both</source>
         <translation>Hər ikisi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="558"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="562"/>
         <source>Wallpaper Slideshow</source>
         <translation>Divar kağızları slaydı</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="599"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="603"/>
         <source>When login</source>
         <translation>Daxil oduqda</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="601"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="605"/>
         <source>When wakeup</source>
         <translation>Oyandıqda</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="639"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="643"/>
         <source>Require a password on wakeup</source>
         <translation>Oyatmaq üçün şifrə tələb olunur</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="671"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="675"/>
         <source>Never</source>
         <translation>Heç vaxt</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="673"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="677"/>
         <source>Wait:</source>
         <translation>Gözləmək:</translation>
     </message>
@@ -2294,12 +2287,12 @@
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="196"/>
         <source>Target file already exists</source>
-        <translation type="unfinished"/>
+        <translation>Hədəf faylı artıq mövcuddur</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="198"/>
         <source>Target directory already exists</source>
-        <translation type="unfinished"/>
+        <translation>Hədəf qovluq artıq mövcuddur</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/abstractjobhandler.cpp" line="200"/>
@@ -2435,67 +2428,67 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="100"/>
         <source>Operating failed</source>
-        <translation type="unfinished"/>
+        <translation>Əməliyyat baş tutmadı</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="101"/>
         <source>Mount failed</source>
-        <translation type="unfinished"/>
+        <translation>Qoşulma alınmadı</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="102"/>
         <source>Unmount failed</source>
-        <translation type="unfinished"/>
+        <translation>Ayrıla bilmədi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="107"/>
         <source>Unmounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz indi ayrılır...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="110"/>
         <source>Mounting device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz indi qoşulur...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="113"/>
         <source>Erasing device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz indi çıxarılır...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="116"/>
         <source>Making filesystem for device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz üçün fayl sistemi indi yaradılır...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="119"/>
         <source>Locking device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz indi kilidlənir...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="122"/>
         <source>Unlocking device now...</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz indi kiliddən çıxarılır...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="146"/>
         <source>The device is busy now</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz indi məşğuldur...</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="155"/>
         <source>Anonymous mount is not allowed</source>
-        <translation type="unfinished"/>
+        <translation>Anonim qoşulmaya icazə verilmir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="158"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Səhv şirə</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
         <source>Error occured while mounting device</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz qoşulan zaman xəta baş verdi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="168"/>
@@ -2535,7 +2528,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="298"/>
         <source>Need password to unlock device</source>
-        <translation type="unfinished"/>
+        <translation>Cihazı kiliddən çıxarmaq üçün şifrətələb olunur</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="306"/>
@@ -3255,18 +3248,23 @@
         <source>System Disk</source>
         <translation>Sistem diski</translation>
     </message>
+    <message>
+        <location filename="../src/dfm-base/utils/systempathutil.cpp" line="141"/>
+        <source>Recent</source>
+        <translation>Sonuncu</translation>
+    </message>
 </context>
 <context>
     <name>dfmbase::TaskWidget</name>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="216"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"/>
+        <translation>Ziddiyət haqqında məlumatın göstərilməsi funksiyasında %1 Info mənbə faylı yaratmaq mümkün olmadı!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="226"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
-        <translation type="unfinished"/>
+        <translation>Ziddiyyət haqqında məlumatın göstərilməsi finksiyasında %1 Info hədəf faylı ayartmaq mümkün olmadı!</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="242"/>
@@ -3374,18 +3372,18 @@
 <context>
     <name>dfmplugin_bookmark::BookMarkManager</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="369"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="379"/>
         <source>Sorry, unable to locate your bookmark directory, remove it?</source>
         <translation>Təəsüf ki, əlfəcinlər qovluğu tapılmadı, o silinsin?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="371"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="381"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>İmtina</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="372"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="382"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Silmək</translation>
@@ -3396,12 +3394,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="72"/>
         <source>Pin to quick access</source>
-        <translation type="unfinished"/>
+        <translation>Cəld girişə sancaqla</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/menu/bookmarkmenuscene.cpp" line="73"/>
         <source>Remove from quick access</source>
-        <translation type="unfinished"/>
+        <translation>Cəld girişdən sil</translation>
     </message>
 </context>
 <context>
@@ -3645,8 +3643,8 @@
 <context>
     <name>dfmplugin_computer::Computer</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="122"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="57"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/computer.cpp" line="128"/>
         <source>Computer</source>
         <translation>Kompyuter</translation>
     </message>
@@ -3654,30 +3652,30 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="270"/>
         <source>Unlock device failed</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz kiliddən çıxarıla bilmədi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="269"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="270"/>
         <source>Wrong password</source>
-        <translation type="unfinished"/>
+        <translation>Səhv şirə</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="628"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="635"/>
         <source>Mount error</source>
-        <translation type="unfinished"/>
+        <translation>Qoşulma xətası</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="628"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="635"/>
         <source>Cannot access %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 girişi mümkün deyil</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="54"/>
         <source>Computer</source>
         <translation>Kompyuter</translation>
     </message>
@@ -3685,12 +3683,12 @@
 <context>
     <name>dfmplugin_computer::ComputerItemWatcher</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="406"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="412"/>
         <source>My Directories</source>
         <translation>Mənim qovluğum</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.cpp" line="417"/>
         <source>Disks</source>
         <translation>Disklər</translation>
     </message>
@@ -3700,7 +3698,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="47"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Əsas məlumatlar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/deviceproperty/devicebasicwidget.cpp" line="55"/>
@@ -3768,12 +3766,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="70"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Daxil oldu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="74"/>
         <source>Modified</source>
-        <translation type="unfinished"/>
+        <translation>Dəyişdirildi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="244"/>
@@ -3793,12 +3791,12 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="257"/>
         <source>Images</source>
-        <translation type="unfinished"/>
+        <translation>Surətlər</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="265"/>
         <source>Audio</source>
-        <translation type="unfinished"/>
+        <translation>Səs</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="272"/>
@@ -3808,7 +3806,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="275"/>
         <source>Archives</source>
-        <translation type="unfinished"/>
+        <translation>Arxivlər</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="278"/>
@@ -4145,7 +4143,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="153"/>
         <source>Share</source>
-        <translation type="unfinished"/>
+        <translation>Paylaşım</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-menu/menuscene/sharemenuscene.cpp" line="154"/>
@@ -4156,27 +4154,27 @@
 <context>
     <name>dfmplugin_myshares::MyShareMenuScenePrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="113"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="127"/>
         <source>Open</source>
         <translation>Açmaq</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="114"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="128"/>
         <source>Open in new window</source>
         <translation>Yeni pəncərədə açmaq</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="115"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="129"/>
         <source>Open in new tab</source>
         <translation>Yeni vərəqdə açmaq</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="116"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="130"/>
         <source>Cancel sharing</source>
         <translation>Paylaşımı ləğv etmək</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="131"/>
         <source>Properties</source>
         <translation>Tərcihlər</translation>
     </message>
@@ -4239,7 +4237,7 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="60"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Əsas məlumatlar</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="68"/>
@@ -4282,58 +4280,13 @@
         <translation>Bu faylı gizlətmək</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="274"/>
-        <source>Directory</source>
-        <translation>Qovluq</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="277"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="352"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="268"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="315"/>
         <source>%1 item</source>
         <translation>%1 element</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="283"/>
-        <source>Documents</source>
-        <translation>Sənədlər</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="286"/>
-        <source>Videos</source>
-        <translation>Videolar</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="289"/>
-        <source>Images</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="292"/>
-        <source>Audio</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="295"/>
-        <source>Executable</source>
-        <translation>İcra ediləbilən</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="298"/>
-        <source>Archives</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="301"/>
-        <source>Application</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="304"/>
-        <source>Unknown</source>
-        <translation>Naməlum</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="352"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="315"/>
         <source>%1 items</source>
         <translation>%1 element</translation>
     </message>
@@ -4487,8 +4440,7 @@
     <name>dfmplugin_recent::Recent</name>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="125"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="183"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/recent.cpp" line="117"/>
         <source>Recent</source>
         <translation>Sonuncu</translation>
     </message>
@@ -4496,17 +4448,17 @@
 <context>
     <name>dfmplugin_recent::RecentManager</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="170"/>
         <source>Path</source>
         <translation>Yol</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="169"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="175"/>
         <source>Last access</source>
         <translation>Sonuncu giriş</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="199"/>
         <source>Recent</source>
         <translation>Sonuncu</translation>
     </message>
@@ -4681,58 +4633,78 @@
 <context>
     <name>dfmplugin_search::SearchMenuScene</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="130"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="226"/>
         <source>Open file location</source>
         <translation>Fayl yerini açmaq</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="131"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="227"/>
         <source>Select all</source>
         <translation>Hamısını seçmək</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="228"/>
+        <source>Source path</source>
+        <translation>Mənbə yolu</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="229"/>
+        <source>Time deleted</source>
+        <translation>Silinmə vaxtı</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="230"/>
+        <source>Time read</source>
+        <translation>Oxunma vaxtı</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="231"/>
+        <source>Path</source>
+        <translation>Yol</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="304"/>
         <source>Quick access</source>
-        <translation type="unfinished"/>
+        <translation>Cəld giriş</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="305"/>
+        <source>Partitions</source>
+        <translation>Bölmələr</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="306"/>
+        <source>Network</source>
+        <translation>Şəbəkə</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="307"/>
-        <source>Partitions</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="308"/>
-        <source>Network</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="309"/>
         <source>Tag</source>
         <translation>Etiket</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="308"/>
         <source>Bookmark</source>
-        <translation type="unfinished"/>
+        <translation>Əlfəcin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="311"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="309"/>
         <source>Other</source>
         <translation>Digər</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="310"/>
         <source>Unknown Group</source>
-        <translation type="unfinished"/>
+        <translation>Naməlum qrup</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_smbbrowser::SmbBrowser</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="242"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="257"/>
         <source>Computers in LAN</source>
         <translation>LAN-dakı kompyuterlər</translation>
     </message>
@@ -4772,7 +4744,7 @@
 <context>
     <name>dfmplugin_tag::Tag</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/tag.cpp" line="63"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/tag.cpp" line="64"/>
         <source>Tag</source>
         <translation>Etiket</translation>
     </message>
@@ -4801,7 +4773,7 @@
         <translation>Etiket məlumatları</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="190"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="191"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>&quot;%1&quot; etiketi əlavə edin</translation>
     </message>
@@ -4982,21 +4954,26 @@
 <context>
     <name>dfmplugin_titlebar::UserSharePasswordSettingDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="44"/>
         <source>Enter a password to protect shared folders</source>
         <translation>Paylaşılan qovluqları qorumaq üçün şifrə daxil edin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="52"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>İmtina</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="53"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Tədiqləmək</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/usersharepasswordsettingdialog.cpp" line="62"/>
+        <source>Set a password on the shared folder for non-anonymous access</source>
+        <translation>Anonim olmayan giriş üçün paylaşım qovluqlarına şifrə təyin edin</translation>
     </message>
 </context>
 <context>
@@ -5018,22 +4995,14 @@
     </message>
 </context>
 <context>
-    <name>dfmplugin_trash::Trash</name>
-    <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/trash.cpp" line="110"/>
-        <source>Trash</source>
-        <translation>Səbət</translation>
-    </message>
-</context>
-<context>
     <name>dfmplugin_trash::TrashHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="281"/>
         <source>Source Path</source>
         <translation>Mənbə yolu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="294"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="286"/>
         <source>Time deleted</source>
         <translation>Silinmə vaxtı</translation>
     </message>
@@ -5053,7 +5022,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="210"/>
         <source>Empty trash</source>
-        <translation type="unfinished"/>
+        <translation>Səbəti boşalt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/menus/trashmenuscene.cpp" line="211"/>
@@ -5077,22 +5046,22 @@
 <context>
     <name>dfmplugin_trashcore::TrashPropertyDialog</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="46"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="48"/>
         <source>Trash</source>
         <translation>Səbət</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="93"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="95"/>
         <source>item</source>
         <translation>Element</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="95"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="97"/>
         <source>items</source>
         <translation>Elementlər</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="97"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/views/trashpropertydialog.cpp" line="99"/>
         <source>Contains %1 %2</source>
         <translation>Tərkibi %1 %2</translation>
     </message>
@@ -5268,7 +5237,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="52"/>
         <source>Sending files now, please try later.</source>
-        <translation type="unfinished"/>
+        <translation>İndi fayllar göndərilir, lütfən sonra cəhd edin.</translation>
     </message>
 </context>
 <context>
@@ -5276,7 +5245,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="54"/>
         <source>Basic info</source>
-        <translation type="unfinished"/>
+        <translation>Əsas məlumatlar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/vaultpropertyview/basicwidget.cpp" line="62"/>
@@ -5621,17 +5590,17 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="56"/>
         <source>Encryption method</source>
-        <translation type="unfinished"/>
+        <translation>Şifrələmə üsulu</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="59"/>
         <source>Key encryption</source>
-        <translation type="unfinished"/>
+        <translation>Açar şifrələməsi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="59"/>
         <source>Transparent encryption</source>
-        <translation type="unfinished"/>
+        <translation>Şəffaf şifrələmə</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="70"/>
@@ -5667,7 +5636,7 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="107"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
-        <translation type="unfinished"/>
+        <translation>Fayl seyfi ona şifrəsiz giriş cəhdi zamanı kilidlənəcək. Ondakı fayllar başqa hesablar üçün əlçatmaz olacaq.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="117"/>
@@ -5722,12 +5691,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="182"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>Seyf</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/events/vaulteventreceiver.cpp" line="182"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"/>
+        <translation>Seyf əlçatan deyil, çünki &quot;cryfs&quot; quraşdırılmayıb</translation>
     </message>
 </context>
 <context>
@@ -5736,17 +5705,17 @@
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="153"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="478"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>Seyf</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="153"/>
         <source>Vault not available because cryfs not installed!</source>
-        <translation type="unfinished"/>
+        <translation>Seyf əlçatan deyil, çünki &quot;cryfs&quot; quraşdırılmayıb</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="478"/>
         <source>A task is in progress, so it cannot perform your operation</source>
-        <translation type="unfinished"/>
+        <translation>Tapşırıq icra olunur, ona görə də əməliyyatınızı icra edə bilmir</translation>
     </message>
 </context>
 <context>
@@ -5871,28 +5840,28 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="145"/>
         <source>Vault</source>
-        <translation type="unfinished"/>
+        <translation>Seyf</translation>
     </message>
 </context>
 <context>
     <name>dfmplugin_workspace::FileSortFilterProxyModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="503"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="529"/>
         <source>Name</source>
         <translation>Ad</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="505"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="531"/>
         <source>Time modified</source>
         <translation>Dəyişilmə Vaxtı</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="507"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="533"/>
         <source>Size</source>
         <translation>Ölçüsü</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="509"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="535"/>
         <source>Type</source>
         <translation>Növ</translation>
     </message>
@@ -5975,7 +5944,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="836"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="890"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Saxlamaq</translation>
@@ -6030,112 +5999,112 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="287"/>
         <source>Available sizes: </source>
-        <translation type="unfinished"/>
+        <translation>Əlçatan ölçülər:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="289"/>
         <source>Custom Size</source>
-        <translation type="unfinished"/>
+        <translation>İstifadəçi ölçüsü</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="316"/>
         <source>Device Pixel Ratio: </source>
-        <translation type="unfinished"/>
+        <translation>Cihazın piksel nisbəti:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="338"/>
         <source>Theme: </source>
-        <translation type="unfinished"/>
+        <translation>Mövzu:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="340"/>
         <source>Light</source>
-        <translation type="unfinished"/>
+        <translation>İşıqlanma</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="340"/>
         <source>Dark</source>
-        <translation type="unfinished"/>
+        <translation>Qaranlıq</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="344"/>
         <source>Mode: </source>
-        <translation type="unfinished"/>
+        <translation>Rejim:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Normal</source>
-        <translation type="unfinished"/>
+        <translation>Normal</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Disabled</source>
-        <translation type="unfinished"/>
+        <translation>Söndürülüb</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Hovered</source>
-        <translation type="unfinished"/>
+        <translation>Üzərində</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="346"/>
         <source>Pressed</source>
-        <translation type="unfinished"/>
+        <translation>Sıxılmış</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="350"/>
         <source>Palette</source>
-        <translation type="unfinished"/>
+        <translation>Palitra</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="352"/>
         <source>Current mode icon does not support the palette</source>
-        <translation type="unfinished"/>
+        <translation>Cari rejimin nişanı palitranı dəstəkləmir</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="371"/>
         <source>Foreground:</source>
-        <translation type="unfinished"/>
+        <translation>Ön plan:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="386"/>
         <source>Background:</source>
-        <translation type="unfinished"/>
+        <translation>Arxa plan:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="399"/>
         <source>Highlight:</source>
-        <translation type="unfinished"/>
+        <translation>Rəngli seçim</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="411"/>
         <source>HighlightForeground:</source>
-        <translation type="unfinished"/>
+        <translation>Ön plan fərqlənməsi</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="427"/>
         <source>Background Color: </source>
-        <translation type="unfinished"/>
+        <translation>Arxa fon rəngi:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="429"/>
         <source>White</source>
-        <translation type="unfinished"/>
+        <translation>Ağ</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="429"/>
         <source>Black</source>
-        <translation type="unfinished"/>
+        <translation>Qara</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="429"/>
         <source>Transparent</source>
-        <translation type="unfinished"/>
+        <translation>Şəffaf</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="429"/>
         <source>Custom</source>
-        <translation type="unfinished"/>
+        <translation>Fərdi</translation>
     </message>
 </context>
 <context>
@@ -6143,7 +6112,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="53"/>
         <source>Encrypted file, please enter the password</source>
-        <translation type="unfinished"/>
+        <translation>Fayl şirələnib, lütfən şifrəni daxil edin</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="59"/>
@@ -6167,22 +6136,22 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="60"/>
         <source>Artist:</source>
-        <translation type="unfinished"/>
+        <translation>İfaçı:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="66"/>
         <source>Album:</source>
-        <translation type="unfinished"/>
+        <translation>Albom:</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="153"/>
         <source>unknown artist</source>
-        <translation type="unfinished"/>
+        <translation>naməlum ifaçı</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/music-preview/musicmessageview.cpp" line="157"/>
         <source>unknown album</source>
-        <translation type="unfinished"/>
+        <translation>naməlum albom</translation>
     </message>
 </context>
 </TS>
