@@ -687,6 +687,11 @@ void FileView::setReadOnly(const bool readOnly)
     model()->setReadOnly(readOnly);
 }
 
+void FileView::updateRootInfo(const QList<QUrl> &urls)
+{
+    model()->updateRootInfo(urls);
+}
+
 void FileView::onSelectAndEdit(const QUrl &url)
 {
     selectionModel()->clear();

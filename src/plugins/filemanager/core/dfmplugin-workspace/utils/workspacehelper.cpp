@@ -334,6 +334,18 @@ void WorkspaceHelper::fileUpdate(const QUrl &url)
     emit requestFileUpdate(url);
 }
 
+void WorkspaceHelper::updateRootFile(const QList<QUrl> urls)
+{
+    QMutexLocker locker(&WorkspaceHelper::mutex());
+    for (const auto &wind : kWorkspaceMap) {
+        if (wind) {
+            FileView *view = dynamic_cast<FileView *>(wind->currentView());
+            if (view)
+                view->updateRootInfo(urls);
+        }
+    }
+}
+
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)
 {
     WorkspaceWidget *widget = nullptr;

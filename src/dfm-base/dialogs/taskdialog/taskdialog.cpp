@@ -30,6 +30,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QMutex>
+#include <QKeyEvent>
 
 using namespace dfmbase;
 
@@ -90,6 +91,7 @@ void TaskDialog::initUI()
 
     setWindowFlags((windowFlags() & ~Qt::WindowSystemMenuHint & ~Qt::Dialog) | Qt::Window
                    | Qt::WindowMinMaxButtonsHint);
+    setWindowIcon(QIcon::fromTheme("dde-file-manager"));
     setFixedWidth(kDefaultWidth);
     titlebar = new DTitlebar(this);
     titlebar->layout()->setContentsMargins(0, 0, 0, 0);
@@ -250,6 +252,15 @@ void TaskDialog::closeEvent(QCloseEvent *event)
     emit closed();
 
     DAbstractDialog::closeEvent(event);
+}
+
+void TaskDialog::keyPressEvent(QKeyEvent *event)
+{
+    //handle escape key press event for emitting close event
+    if (event->key() == Qt::Key_Escape) {
+        emit close();
+    }
+    QDialog::keyPressEvent(event);
 }
 
 TaskDialog::~TaskDialog() {}

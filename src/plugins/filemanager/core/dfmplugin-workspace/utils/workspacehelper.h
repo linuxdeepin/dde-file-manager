@@ -104,6 +104,7 @@ public:
     void laterRequestSelectFiles(const QList<QUrl> &urls);
 
     void fileUpdate(const QUrl &url);
+    void updateRootFile(const QList<QUrl> urls);
 
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.

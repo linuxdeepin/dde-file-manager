@@ -89,6 +89,7 @@ public:
     void setIndexActive(const QModelIndex &index, bool enable);
 
     void cleanDataCacheByUrl(const QUrl &url);
+    void updateRoot(const QList<QUrl> urls);
 
 public Q_SLOTS:
     void onFilesUpdated();

@@ -484,6 +484,13 @@ void FileViewModel::cleanDataCacheByUrl(const QUrl &url)
     fileDataHelper->clear(url);
 }
 
+void FileViewModel::updateRoot(const QList<QUrl> urls)
+{
+    for (const auto &url : urls) {
+        fileDataHelper->updateRootInfoStatus(QString(), url.path());
+    }
+}
+
 void FileViewModel::onFilesUpdated()
 {
     FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());

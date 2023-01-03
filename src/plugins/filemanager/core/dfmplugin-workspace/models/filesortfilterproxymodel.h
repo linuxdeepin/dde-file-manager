@@ -79,6 +79,7 @@ public:
     void stopWork();
 
     void setActive(const QModelIndex &index, bool enable = true);
+    void updateRootInfo(const QList<QUrl> &urls);
 
     ModelState currentState() const;
     void initMixDirAndFile();

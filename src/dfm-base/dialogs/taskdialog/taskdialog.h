@@ -64,6 +64,7 @@ private Q_SLOTS:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     QListWidget *taskListWidget { nullptr };

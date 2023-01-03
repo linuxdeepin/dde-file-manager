@@ -270,6 +270,11 @@ void FileSortFilterProxyModel::setActive(const QModelIndex &index, bool enable)
     viewModel()->setIndexActive(sourceIndex, enable);
 }
 
+void FileSortFilterProxyModel::updateRootInfo(const QList<QUrl> &urls)
+{
+    viewModel()->updateRoot(urls);
+}
+
 ModelState FileSortFilterProxyModel::currentState() const
 {
     return state;

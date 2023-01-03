@@ -60,7 +60,7 @@ public:
 
     void setFileActive(const int rootIndex, const int childIndex, bool active);
 
-protected slots:
+public slots:
     void updateRootInfoStatus(const QString &, const QString &mountPoint);
 
 private:

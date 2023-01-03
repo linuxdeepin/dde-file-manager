@@ -147,6 +147,10 @@ void WorkspaceEventReceiver::initConnection()
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRenameFileResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult,
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult,
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
 }
 
 void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, int mode)
@@ -256,6 +260,22 @@ void WorkspaceEventReceiver::handlePasteFileResult(const QList<QUrl> &srcUrls, c
 
     if (!destUrls.isEmpty())
         WorkspaceHelper::instance()->laterRequestSelectFiles(destUrls);
+}
+
+void WorkspaceEventReceiver::handleDeleteFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(destUrls)
+    Q_UNUSED(errMsg)
+    if (ok && !srcUrls.isEmpty())
+        WorkspaceHelper::instance()->updateRootFile(srcUrls);
+}
+
+void WorkspaceEventReceiver::handleMoveToTrashFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(destUrls)
+    Q_UNUSED(errMsg)
+    if (ok && !srcUrls.isEmpty())
+        WorkspaceHelper::instance()->updateRootFile(srcUrls);
 }
 
 void WorkspaceEventReceiver::handleRenameFileResult(const quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg)

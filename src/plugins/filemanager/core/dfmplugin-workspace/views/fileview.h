@@ -133,6 +133,7 @@ public:
     QDir::Filters getFilters();
 
     void setReadOnly(const bool readOnly);
+    void updateRootInfo(const QList<QUrl> &urls);
 
     using DListView::edit;
     using DListView::updateGeometries;
