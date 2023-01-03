@@ -85,12 +85,11 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
         return currentAction;
     }
 
-    setStat(AbstractJobHandler::JobState::kPauseState);
-
     // 发送错误处理 阻塞自己
     const QString &errorMsgAll = errorMsg.isEmpty() ? AbstractJobHandler::errorToString(error) : (AbstractJobHandler::errorToString(error) + ": " + errorMsg);
     emitErrorNotify(urlFrom, urlTo, error, quintptr(this), errorMsgAll);
     pause();
+    waitCondition.wait(&mutex);
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
 
