@@ -195,7 +195,7 @@ AbstractJobHandler::SupportAction DoCopyFileWorker::doHandleErrorAndWait(const Q
     if (workData->errorOfAction.contains(error))
         return workData->errorOfAction.value(error);
 
-    if (FileUtils::isSameFile(urlFrom, urlTo)) {
+    if (FileUtils::isSameFile(urlFrom, urlTo, false)) {
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
         return currentAction;
     }

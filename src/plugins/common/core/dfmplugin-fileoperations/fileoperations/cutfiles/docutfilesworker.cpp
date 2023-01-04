@@ -258,7 +258,7 @@ bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
     DecoratorFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
 
     if (newFileInfo.url() == fileInfo->urlOf(UrlInfoType::kUrl)
-        || (FileUtils::isSameFile(fileInfo->urlOf(UrlInfoType::kUrl), newFileInfo.url()) && !fileInfo->isAttributes(OptInfoType::kIsSymLink))) {
+        || (FileUtils::isSameFile(fileInfo->urlOf(UrlInfoType::kUrl), newFileInfo.url(), false) && !fileInfo->isAttributes(OptInfoType::kIsSymLink))) {
         return true;
     }
     return false;

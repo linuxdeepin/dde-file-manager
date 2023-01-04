@@ -46,6 +46,7 @@ public:
 
     QUrl initTarget();
     QString fileName() const;
+    QString copyName() const;
     QString mimeTypeName();
     QDateTime lastRead() const;
     QDateTime lastModified() const;
@@ -125,6 +126,21 @@ QString TrashFileInfoPrivate::fileName() const
     }
 
     return dFileInfo->attribute(DFileInfo::AttributeID::kStandardName).toString();
+}
+
+QString TrashFileInfoPrivate::copyName() const
+{
+    if (!dFileInfo)
+        return QString();
+
+    if (targetUrl.isValid()) {
+        if (FileUtils::isDesktopFile(targetUrl)) {
+            DesktopFileInfo dfi(targetUrl);
+            return dfi.nameOf(NameInfoType::kFileCopyName);
+        }
+    }
+
+    return dFileInfo->attribute(DFileInfo::AttributeID::kStandardCopyName).toString();
 }
 
 QString TrashFileInfoPrivate::mimeTypeName()
@@ -248,8 +264,14 @@ QString TrashFileInfo::nameOf(const NameInfoType type) const
     switch (type) {
     case NameInfoType::kFileName:
         return d->fileName();
-    case NameInfoType::kFileCopyName:
+    case NameInfoType::kFileCopyName: {
+        if (d->targetUrl.isValid()) {
+            if (FileUtils::isDesktopFile(d->targetUrl)) {
+                return d->copyName();
+            }
+        }
         return displayOf(DisPlayInfoType::kFileDisplayName);
+    }
     case NameInfoType::kMimeTypeName:
         return const_cast<TrashFileInfoPrivate *>(d)->mimeTypeName();
     default:

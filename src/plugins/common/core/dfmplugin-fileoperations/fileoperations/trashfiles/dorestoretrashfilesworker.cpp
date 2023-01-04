@@ -133,11 +133,12 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
                 continue;
             }
         } else {
+
             restoreFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
-                                                            fileInfo->displayOf(DisPlayInfoType::kFileDisplayName).toStdString().c_str(), nullptr);
+                                                            fileInfo->nameOf(NameInfoType::kFileCopyName).toStdString().c_str(), nullptr);
         }
 
-        const AbstractFileInfoPointer &restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl);
+        const AbstractFileInfoPointer &restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl, false);
         if (!restoreInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {

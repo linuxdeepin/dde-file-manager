@@ -333,6 +333,8 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
 
 bool FileUtils::isDesktopFile(const QUrl &url)
 {
+    if (Q_UNLIKELY(FileUtils::isTrashFile(url)))
+        return url.toString().endsWith(".desktop");
     return url.toLocalFile().endsWith(".desktop");
 }
 
@@ -375,13 +377,13 @@ bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
     return url1.host() == url2.host() && url1.port() == url1.port();
 }
 
-bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2)
+bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2, const bool infoCache)
 {
     if (UniversalUtils::urlEquals(url1, url2))
         return true;
 
-    auto info1 = InfoFactory::create<AbstractFileInfo>(url1);
-    auto info2 = InfoFactory::create<AbstractFileInfo>(url2);
+    auto info1 = InfoFactory::create<AbstractFileInfo>(url1, infoCache);
+    auto info2 = InfoFactory::create<AbstractFileInfo>(url2, infoCache);
     if (!info1 || !info2)
         return false;
 

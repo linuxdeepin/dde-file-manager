@@ -80,7 +80,7 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
         return currentAction;
     }
 
-    if (FileUtils::isSameFile(urlFrom, urlTo)) {
+    if (FileUtils::isSameFile(urlFrom, urlTo, false)) {
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
         return currentAction;
     }
@@ -615,7 +615,6 @@ QUrl FileOperateBaseWorker::createNewTargetUrl(const AbstractFileInfoPointer &to
 
 bool FileOperateBaseWorker::createNewTargetInfo(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo, const QUrl &fileNewUrl, bool *skip, bool isCountSize)
 {
-
     newTargetInfo.reset();
 
     QString error;
