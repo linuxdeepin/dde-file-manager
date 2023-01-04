@@ -331,7 +331,7 @@
         <translation>Buka selepas auto lekap</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="167"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="169"/>
         <source>%1 tasks in progress</source>
         <translation>%1 tugas sedang diproses</translation>
     </message>
@@ -369,13 +369,13 @@
         <translation>Anda tiada keizinan untuk rentas fail di dalamnya</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="480"/>
+        <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="479"/>
         <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="177"/>
         <source>Folder is empty</source>
         <translation>Folder kosong</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="482"/>
+        <location filename="../src/dfm-base/interfaces/abstractfileinfo.cpp" line="481"/>
         <source>Loading...</source>
         <translation>Memuatkan...</translation>
     </message>
@@ -796,7 +796,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="181"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="39"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="150"/>
         <source>Mount</source>
         <translation>Lekap</translation>
     </message>
@@ -869,8 +869,8 @@
         <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="250"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="125"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="74"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="53"/>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="79"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="54"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="80"/>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="345"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="345"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="90"/>
@@ -941,34 +941,34 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="25"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="496"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="487"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="31"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="84"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="146"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="405"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="85"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="130"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="246"/>
         <source>Open in new window</source>
         <translation>Buka dalam tetingkap baharu</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="28"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="500"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="491"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="35"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="88"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="150"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="409"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="85"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="88"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="131"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="133"/>
         <source>Open in new tab</source>
         <translation>Buka dalam tab baharu</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="35"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="509"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="500"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="47"/>
         <source>Rename</source>
         <translation>Nama Semula</translation>
@@ -1032,8 +1032,8 @@
         <translation>Gagal menulis fail, sebab: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="392"/>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="513"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="391"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="512"/>
         <source>Fail to create symlink, cause: %1</source>
         <translation>Gagal mencipta pautan simbolik, sebab: %1</translation>
     </message>
@@ -1160,70 +1160,70 @@
         <translation>Tambah ke cakera</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="51"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="52"/>
         <source>Are you sure you want to erase all data on the disc?</source>
         <translation>Anda pasti mahu memadam semua data di dalam cakera?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="54"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="55"/>
         <source>Erase</source>
         <comment>button</comment>
         <translation>Padam</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="63"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="64"/>
         <source>This action cannot be undone</source>
         <translation>Tindakan ini tidak boleh dipulihkan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="77"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="78"/>
         <source>How do you want to use this disc?</source>
         <translation>Bagaimanakah anda mahu gunakan cakera ini?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="80"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="81"/>
         <source>Burn image</source>
         <comment>button</comment>
         <translation>Rakam imej</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="81"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="82"/>
         <source>Burn files</source>
         <comment>button</comment>
         <translation>Rakam fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="136"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="137"/>
         <source>%1 is a duplicate file.</source>
         <translation>%1 merupakan fail pendua.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="139"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="140"/>
         <source>Insufficient disc space.</source>
         <translation>Ruang cakera tidak mencukupi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="142"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="143"/>
         <source>Lost connection to drive.</source>
         <translation>Sambungan ke pemacu telah terputus.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="145"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="146"/>
         <source>The CD/DVD drive is not ready. Try another disc.</source>
         <translation>Pemacu CD/DVD tidak sedia. Cuba cakera yang lain.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="149"/>
         <source>The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.</source>
         <translation>Pemacu CD/DVD masih sibuk. Keluar program menggunakan pemacu, dan sisip pemacu sekali lagi.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="152"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="153"/>
         <source>Invalid volume name</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="155"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="156"/>
         <source>Unknown error</source>
         <translation>Ralat tidak diketahui</translation>
     </message>
@@ -1302,9 +1302,9 @@
         <translation>Kelabu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="513"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="504"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="155"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="157"/>
         <source>Remove</source>
         <translation>Buang</translation>
     </message>
@@ -1341,7 +1341,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="43"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbintcomputermenuscene.cpp" line="76"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="138"/>
         <source>Unmount</source>
         <translation>Tanggal</translation>
     </message>
@@ -1358,7 +1358,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="71"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbintcomputermenuscene.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="142"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="144"/>
         <source>Clear saved password and unmount</source>
         <translation>Kosongkan kata laluan tersimpan dan tanggalkan</translation>
     </message>
@@ -1590,17 +1590,18 @@
         <translation>Ruang Bebas %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="96"/>
         <source>Search</source>
         <translation>Gelintar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="96"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="107"/>
         <source>No results</source>
         <translation>Tiada keputusan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/fileinfo/searchfileinfo.cpp" line="109"/>
         <source>Searching...</source>
         <translation>Menggelintar...</translation>
     </message>
@@ -2190,23 +2191,23 @@
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1042"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1040"/>
         <source>Loading wallpapers...</source>
         <translation>Memuatkan kertas dinding...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1044"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1042"/>
         <source>Loading screensavers...</source>
         <translation>Memuatkan penyelamat skrin...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1104"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1102"/>
         <source>Custom Screensaver</source>
         <translation type="unfinished"/>
     </message>
     <message>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1103"/>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1105"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1107"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Laksana</translation>
@@ -2215,59 +2216,59 @@
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettingsPrivate</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="156"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="154"/>
         <source>Wallpaper</source>
         <translation>Kertas Dinding</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="166"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="164"/>
         <source>Screensaver</source>
         <translation>Penyelamat Skrin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="383"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="381"/>
         <source>Desktop</source>
         <comment>button</comment>
         <translation>Atas Meja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="384"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="382"/>
         <source>Lock Screen</source>
         <comment>button</comment>
         <translation>Kunci Skrin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="385"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="383"/>
         <source>Both</source>
         <translation>Kedua-duanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="562"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="560"/>
         <source>Wallpaper Slideshow</source>
         <translation>Paparan Slaid Kertas Dinding</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="603"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="601"/>
         <source>When login</source>
         <translation>Bila daftar masuk</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="605"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="603"/>
         <source>When wakeup</source>
         <translation>Bila bangun</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="643"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="641"/>
         <source>Require a password on wakeup</source>
         <translation>Perlukan kata laluan ketika bangun</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="675"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="673"/>
         <source>Never</source>
         <translation>Tidak Sesekali</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="677"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="675"/>
         <source>Wait:</source>
         <translation>Tunggu:</translation>
     </message>
@@ -3405,38 +3406,38 @@
 <context>
     <name>dfmplugin_burn::AbstractBurnJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="100"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="106"/>
         <source>Burning disc %1, please wait...</source>
         <translation>Merakam cakera %1, tunggu sebentar...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="101"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="107"/>
         <source>Writing data...</source>
         <translation>Menulis data...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="104"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="110"/>
         <source>Verifying data...</source>
         <translation>Mengesahkan data...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="178"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="184"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="190"/>
         <source>Data verification successful.</source>
         <translation>Pengesahan data berjaya.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="186"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="192"/>
         <source>Burn process completed</source>
         <translation>Proses rakaman selesai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="232"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="238"/>
         <source>The device was not safely unmounted</source>
         <translation>Peranti masih tidak selamat dinyahlekapkan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="232"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="238"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Cakera sibuk, tidak dapat ditanggalkan sekarang</translation>
     </message>
@@ -3457,19 +3458,27 @@
 <context>
     <name>dfmplugin_burn::BurnFilesAuditLogJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="174"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="149"/>
         <source>ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9</source>
         <translation>ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="177"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="152"/>
         <source>Success</source>
         <translation>Berjaya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="177"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/auditlogjob.cpp" line="152"/>
         <source>Failed</source>
         <translation>Gagal</translation>
+    </message>
+</context>
+<context>
+    <name>dfmplugin_burn::BurnISOFilesJob</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="427"/>
+        <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3588,14 +3597,22 @@
     </message>
 </context>
 <context>
+    <name>dfmplugin_burn::BurnUDFFilesJob</name>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
+        <source>The file name or the path is too long. Please shorten the file name or the path and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dfmplugin_burn::DumpISOImageJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="519"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="569"/>
         <source>Creating an ISO image</source>
         <translation>Mencipta satu imej ISO</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="520"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="570"/>
         <source>to %1</source>
         <translation>ke %1</translation>
     </message>
@@ -3627,7 +3644,7 @@
 <context>
     <name>dfmplugin_burn::EraseJob</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="368"/>
+        <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="374"/>
         <source>Erasing disc %1, please wait...</source>
         <translation>Memadam cakera %1, tunggu sebentar...</translation>
     </message>
@@ -3789,32 +3806,32 @@
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="257"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="259"/>
         <source>Images</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="268"/>
         <source>Audio</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="272"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="277"/>
         <source>Executable</source>
         <translation>Bolehlaku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="275"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="280"/>
         <source>Archives</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="278"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="283"/>
         <source>Unknown</source>
         <translation>Tidak diketahui</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="281"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-detailspace/views/filebaseinfoview.cpp" line="286"/>
         <source>Application</source>
         <translation>Aplikasi</translation>
     </message>
@@ -4281,12 +4298,12 @@
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="268"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="315"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="320"/>
         <source>%1 item</source>
         <translation>%1 item</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="315"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="320"/>
         <source>%1 items</source>
         <translation>%1 item</translation>
     </message>
@@ -4704,7 +4721,7 @@
 <context>
     <name>dfmplugin_smbbrowser::SmbBrowser</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="257"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="274"/>
         <source>Computers in LAN</source>
         <translation>Komputer dalam LAN</translation>
     </message>
@@ -4773,7 +4790,7 @@
         <translation>Maklumat tag</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="191"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="190"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Tambah tag &quot;%1&quot;</translation>
     </message>
@@ -5846,22 +5863,22 @@
 <context>
     <name>dfmplugin_workspace::FileSortFilterProxyModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="529"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="534"/>
         <source>Name</source>
         <translation>Nama</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="531"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="536"/>
         <source>Time modified</source>
         <translation>Masa diubahsuai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="533"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="538"/>
         <source>Size</source>
         <translation>Saiz</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="535"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/filesortfilterproxymodel.cpp" line="540"/>
         <source>Type</source>
         <translation>Jenis</translation>
     </message>
