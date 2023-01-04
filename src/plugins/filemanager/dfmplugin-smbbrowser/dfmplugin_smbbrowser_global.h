@@ -43,10 +43,12 @@ struct SmbShareNode
 namespace SmbBrowserActionId {
 inline constexpr char kOpenSmb[] { "open-smb" };
 inline constexpr char kOpenSmbInNewWin[] { "open-smb-in-new-win" };
+inline constexpr char kOpenSmbInNewTab[] { "open-smb-in-new-tab" };
 inline constexpr char kMountSmb[] { "mount-smb" };
 inline constexpr char kUnmountSmb[] { "umount-smb" };
 inline constexpr char kUnmountAllSmb[] { "umount-all-smb" };
 inline constexpr char kLogoutAndUnmountAllSmb[] { "logout-umount-all-smb" };
+inline constexpr char kProperties[] { "properties-smb" };
 }
 
 DPSMBBROWSER_END_NAMESPACE

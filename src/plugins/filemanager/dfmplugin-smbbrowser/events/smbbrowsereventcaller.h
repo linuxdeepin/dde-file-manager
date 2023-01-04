@@ -38,6 +38,7 @@ public:
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static bool sendCheckTabAddable(quint64 windowId);
     static void sendChangeCurrentUrl(quint64 windowId, const QUrl &url);
+    static void sendShowPropertyDialog(const QUrl &url);
 };
 
 DPSMBBROWSER_END_NAMESPACE

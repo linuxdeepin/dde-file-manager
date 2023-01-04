@@ -39,6 +39,7 @@ public:
     explicit SmbBrowserMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
 
 private:
+    QUrl url;
 };
 
 }

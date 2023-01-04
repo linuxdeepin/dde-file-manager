@@ -22,6 +22,7 @@
  */
 #include "smbbrowsermenuscene.h"
 #include "smbintegration/smbintegrationmanager.h"
+#include "events/smbbrowsereventcaller.h"
 #include "private/smbbrowsermenuscene_p.h"
 #include "utils/smbbrowserutils.h"
 
@@ -66,6 +67,8 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
     if (d->selectFiles.count() != 1 || d->isEmptyArea)
         return false;
 
+    d->url = d->selectFiles.first();
+
     auto subScenes = subscene();
     if (auto filterScene = dfmplugin_menu_util::menuSceneCreateScene("DConfigMenuFilter"))
         subScenes << filterScene;
@@ -88,16 +91,29 @@ bool SmbBrowserMenuScene::create(QMenu *parent)
     act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kOpenSmbInNewWin);
     d->predicateAction[SmbBrowserActionId::kOpenSmbInNewWin] = act;
 
-    const QString &smbUrl = d->selectFiles.first().toString();
-    if (SmbIntegrationManager::instance()->isSmbShareDirMounted(QUrl(smbUrl))) {
-        act = parent->addAction(d->predicateName[SmbBrowserActionId::kUnmountSmb]);
-        act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kUnmountSmb);
-        d->predicateAction[SmbBrowserActionId::kUnmountSmb] = act;
-    } else {
-        act = parent->addAction(d->predicateName[SmbBrowserActionId::kMountSmb]);
-        act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kMountSmb);
-        d->predicateAction[SmbBrowserActionId::kMountSmb] = act;
+    act = parent->addAction(d->predicateName[SmbBrowserActionId::kOpenSmbInNewTab]);
+    act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kOpenSmbInNewTab);
+    d->predicateAction[SmbBrowserActionId::kOpenSmbInNewTab] = act;
+
+    if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled()) {
+        const QString &smbUrl = d->selectFiles.first().toString();
+        if (SmbIntegrationManager::instance()->isSmbShareDirMounted(QUrl(smbUrl))) {
+            act = parent->addAction(d->predicateName[SmbBrowserActionId::kUnmountSmb]);
+            act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kUnmountSmb);
+            d->predicateAction[SmbBrowserActionId::kUnmountSmb] = act;
+        } else {
+            act = parent->addAction(d->predicateName[SmbBrowserActionId::kMountSmb]);
+            act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kMountSmb);
+            d->predicateAction[SmbBrowserActionId::kMountSmb] = act;
+        }
     }
+
+    act = parent->addAction(d->predicateName[SmbBrowserActionId::kProperties]);
+    act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kProperties);
+    d->predicateAction[SmbBrowserActionId::kProperties] = act;
+
+    const QStringList &list = SmbIntegrationManager::instance()->getSmbMountPathsByUrl(d->url);
+    act->setEnabled(list.count() > 0);
 
     return true;
 }
@@ -137,6 +153,12 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
     } else if (actId == SmbBrowserActionId::kUnmountSmb) {
         const QStringList &smbMountPaths = SmbIntegrationManager::instance()->getSmbMountPathsByUrl(smbUrl);
         SmbIntegrationManager::instance()->actUmount(d->windowId, smbMountPaths);
+    } else if (actId == SmbBrowserActionId::kOpenSmbInNewTab) {
+        SmbBrowserEventCaller::sendOpenTab(winId, smbUrl);
+    } else if (actId == SmbBrowserActionId::kProperties) {
+        const QStringList &list = SmbIntegrationManager::instance()->getSmbMountPathsByUrl(smbUrl);
+        if (list.count() > 0)
+            SmbBrowserEventCaller::sendShowPropertyDialog(list.first());
     }
 
     return AbstractMenuScene::triggered(action);
@@ -158,6 +180,10 @@ SmbBrowserMenuScenePrivate::SmbBrowserMenuScenePrivate(AbstractMenuScene *qq)
 {
     predicateName[SmbBrowserActionId::kOpenSmb] = tr("Open");
     predicateName[SmbBrowserActionId::kOpenSmbInNewWin] = tr("Open in new window");
-    predicateName[SmbBrowserActionId::kMountSmb] = tr("Mount");
-    predicateName[SmbBrowserActionId::kUnmountSmb] = tr("Unmount");
+    predicateName[SmbBrowserActionId::kOpenSmbInNewTab] = tr("Open in new tab");
+    predicateName[SmbBrowserActionId::kProperties] = tr("Properties");
+    if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled()) {
+        predicateName[SmbBrowserActionId::kMountSmb] = tr("Mount");
+        predicateName[SmbBrowserActionId::kUnmountSmb] = tr("Unmount");
+    }
 }

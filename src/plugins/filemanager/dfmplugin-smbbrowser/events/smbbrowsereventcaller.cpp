@@ -53,3 +53,10 @@ void SmbBrowserEventCaller::sendChangeCurrentUrl(quint64 windowId, const QUrl &u
 {
     dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }
+
+void SmbBrowserEventCaller::sendShowPropertyDialog(const QUrl &url)
+{
+    QList<QUrl> urls;
+    urls << url;
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
+}
