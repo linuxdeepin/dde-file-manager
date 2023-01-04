@@ -86,17 +86,6 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
     } else {
         // check url permission
         QList<QUrl> urlsCanTrash = sources;
-        auto it = urlsCanTrash.begin();
-        while (it != urlsCanTrash.end()) {
-            auto info = InfoFactory::create<AbstractFileInfo>(*it);
-            if (!info || !info->canAttributes(CanableInfoType::kCanTrash))
-                it = urlsCanTrash.erase(it);
-            else
-                ++it;
-        }
-
-        if (urlsCanTrash.isEmpty())
-            return nullptr;
 
         if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
             if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
