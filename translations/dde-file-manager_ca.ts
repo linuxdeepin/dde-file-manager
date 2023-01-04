@@ -127,7 +127,7 @@
     </message>
 </context>
 <context>
-    <name>ProcessDialog</name>
+    <name>dfm_upgrade::ProcessDialog</name>
     <message>
         <location filename="../src/tools/upgrade/dialog/processdialog.cpp" line="43"/>
         <source>File Manager will be updated to a new version, during which the tasks in progress will be terminated. Do you want to update now?</source>

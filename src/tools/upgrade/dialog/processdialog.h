@@ -23,6 +23,7 @@
 
 #include <DDialog>
 
+namespace dfm_upgrade {
 class ProcessDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
@@ -37,10 +38,11 @@ protected:
 private:
     QString targetExe(const QString &proc);
     int targetUid(const QString &proc);
+    bool isEqual(const QString &link, QString match) const;
 private:
     int accept = -1;
     bool onDesktop = false;
     bool killed = false;
 };
-
+}
 #endif // PROCESSDIALOG_H

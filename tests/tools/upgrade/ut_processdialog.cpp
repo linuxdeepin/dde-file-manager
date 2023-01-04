@@ -29,6 +29,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace dfm_upgrade;
+
 TEST(ProcessDialog, initialize_fm)
 {
     ProcessDialog dlg;

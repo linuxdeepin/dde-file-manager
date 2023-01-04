@@ -29,6 +29,7 @@
 #include <signal.h>
 
 DWIDGET_USE_NAMESPACE
+using namespace dfm_upgrade;
 
 ProcessDialog::ProcessDialog(QWidget *parent)
     : DDialog(parent)
@@ -91,7 +92,7 @@ QList<int> ProcessDialog::queryProcess(const QString &exec)
             continue;
 
         auto exePath = targetExe(info.absoluteFilePath());
-        if (exePath == exec) {
+        if (isEqual(exePath, exec)) {
             int tuid = targetUid(info.absoluteFilePath());
             if (tuid == currentUser) {
                 qInfo() << "find active process:" << exePath << pid << "user" << tuid;
@@ -134,4 +135,20 @@ int ProcessDialog::targetUid(const QString &proc)
     }
 
     return ret;
+}
+
+bool ProcessDialog::isEqual(const QString &link, QString match) const
+{
+    if (link == match)
+        return true;
+
+    // the exePath will contain suffix (deleted) like /usr/bin/dde-desktop (deleted) after upgrading.
+    //! It is not sure that the suffix '(deleted)' is stable.
+    match.append(" (deleted)");
+    if (link == match) {
+        qWarning() << "unstable match:" << match;
+        return true;
+    }
+
+    return false;
 }
