@@ -175,7 +175,7 @@ private:
         return kExtendToDFile;
     }
     QString sizeFormat() const;
-    QVariant attribute(DFileInfo::AttributeID key) const;
+    QVariant attribute(DFileInfo::AttributeID key, bool *ok = nullptr) const;
     QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> mediaInfo(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids);
     bool canThumb() const;
 };

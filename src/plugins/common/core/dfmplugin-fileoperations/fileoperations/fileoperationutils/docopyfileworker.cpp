@@ -127,7 +127,7 @@ bool DoCopyFileWorker::doCopyFilePractically(const AbstractFileInfoPointer fromI
             sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
         }
 
-        toInfo->refresh(DFMIO::DFileInfo::AttributeID::kStandardSize, toDevice->size());
+        toInfo->cacheAttribute(DFMIO::DFileInfo::AttributeID::kStandardSize, toDevice->size());
 
     } while (fromDevice->pos() != fromInfo->size());
 

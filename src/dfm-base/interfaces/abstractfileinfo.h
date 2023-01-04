@@ -247,7 +247,7 @@ public:
     virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr);
     virtual bool exists() const;
     virtual void refresh();
-    virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
+    virtual void cacheAttribute(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
     virtual QString nameOf(const FileNameInfoType type) const;
     virtual QString pathOf(const FilePathInfoType type) const;
     virtual QString displayOf(const DisplayInfoType type) const;

@@ -146,9 +146,9 @@ void AbstractFileInfo::refresh()
     CALL_PROXY(refresh());
 }
 
-void DFMBASE_NAMESPACE::AbstractFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
+void dfmbase::AbstractFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
 {
-    CALL_PROXY(refresh(id, value));
+    CALL_PROXY(cacheAttribute(id, value));
 }
 /*!
   * \brief 获取文件名称，默认是获取文件的全名称带suffix，此接口不会实现异步，全部使用Qurl去

@@ -53,7 +53,7 @@ public:
     virtual void initQuerierAsync(int ioPriority = 0, initQuerierAsyncCallback func = nullptr, void *userData = nullptr) override;
     virtual bool exists() const override;
     virtual void refresh() override;
-    virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant()) override;
+    virtual void cacheAttribute(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant()) override;
     virtual QString nameOf(const FileNameInfoType type) const override;
     virtual QString pathOf(const FilePathInfoType type) const override;
     virtual QUrl urlOf(const FileUrlInfoType type) const override;

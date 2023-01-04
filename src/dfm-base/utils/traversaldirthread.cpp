@@ -91,12 +91,15 @@ void TraversalDirThread::run()
     qInfo() << "dir query start, url: " << dirUrl;
 
     dirIterator->cacheBlockIOAttribute();
+    qInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timer.elapsed();
 
     if (stopFlag)
         return;
 
     while (dirIterator->hasNext()) {
         // dirIterator init finish
+        if (!iteratorValid)
+            qInfo() << "dirIterator finished, url: " << dirUrl << " elapsed: " << timer.elapsed();
         iteratorValid = true;
 
         if (stopFlag)

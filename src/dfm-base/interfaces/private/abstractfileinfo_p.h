@@ -48,6 +48,7 @@ public:
     AbstractFileInfoPointer proxy { nullptr };
     QMap<ExtInfoType, QVariant> extendOtherCache;
     QString pinyinName;
+    QMap<DFMIO::DFileInfo::AttributeID, QVariant> cacheAttributes;
 
 private:
     QUrl getUrlByChildFileName(const QString &fileName) const;
