@@ -86,7 +86,7 @@ void ComputerPropertyDialog::iniUI()
     computerVersionNum = new KeyValueLabel(this);
     computerVersionNum->setLeftValue(tr("Version"));
     computerEdition = new KeyValueLabel(this);
-    computerEdition->setLeftValue(tr("Edition"));
+    computerEdition->setLeftValue(tr("Edition"), Qt::ElideNone, Qt::AlignLeft | Qt::AlignVCenter);
     computerOSBuild = new KeyValueLabel(this);
     computerOSBuild->setLeftValue(tr("OS build"));
     computerType = new KeyValueLabel(this);
@@ -143,8 +143,11 @@ void ComputerPropertyDialog::computerProcess(QMap<ComputerInfoItem, QString> com
         computerName->setRightValue(computerInfo[ComputerInfoItem::kName]);
     if (computerInfo.contains(ComputerInfoItem::kVersion))
         computerVersionNum->setRightValue(computerInfo[ComputerInfoItem::kVersion]);
-    if (computerInfo.contains(ComputerInfoItem::kEdition))
+    if (computerInfo.contains(ComputerInfoItem::kEdition)) {
         computerEdition->setRightValue(computerInfo[ComputerInfoItem::kEdition]);
+        computerEdition->setRightWordWrap(true);
+        computerEdition->adjustHeight();
+    }
     if (computerInfo.contains(ComputerInfoItem::kOSBuild))
         computerOSBuild->setRightValue(computerInfo[ComputerInfoItem::kOSBuild]);
     if (computerInfo.contains(ComputerInfoItem::kType))
