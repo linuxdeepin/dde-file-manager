@@ -27,6 +27,7 @@
 #include <QWidgetAction>
 
 Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DPTAG_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -74,31 +75,23 @@ QUrl TagManager::rootUrl()
 bool TagManager::canTagFile(const QUrl &url) const
 {
     // TODO(perf) costs when first painting (while loading files)
+    if (!url.isValid())
+        return false;
+
+    QUrl localUrl;
     if (url.scheme() == Global::Scheme::kFile) {
-        auto &&fileInfo { InfoFactory::create<AbstractFileInfo>(url) };
-        if (!fileInfo)
-            return false;
-
-        if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl).toLocalFile()))
-            return false;
-
-        const QString filePath { fileInfo->pathOf(AbstractFileInfo::FilePathInfoType::kFilePath) };
-        const QString &compressPath { QDir::homePath() + "/.avfs/" };
-        if (filePath.startsWith(compressPath))
-            return false;
-
-        const QString &parentPath { fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl).path() };
-        if (parentPath == "/home" || parentPath == FileUtils::bindPathTransform("/home", true))
-            return false;
-
-        if (FileUtils::isDesktopFile(url)) {
-            auto desktopInfo { dynamic_cast<DesktopFileInfo *>(fileInfo.data()) };
-            if (desktopInfo)
-                return desktopInfo->canTag();
+        localUrl = url;
+    } else {
+        QList<QUrl> transUrls {};
+        QList<QUrl> srcUrls { url };
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", srcUrls, &transUrls);
+        if (ok && !transUrls.isEmpty()) {
+            localUrl = transUrls.first();
         }
-
-        return !SystemPathUtil::instance()->isSystemPath(filePath);
     }
+
+    if (!localUrl.isEmpty() && localUrl.scheme() == Global::Scheme::kFile)
+        return localFileCanTagFilter(localUrl);
 
     if (dpfHookSequence->run("dfmplugin_tag", "hook_CanTag", url))
         return true;
@@ -477,6 +470,33 @@ bool TagManager::deleteTagData(const QStringList &data, const uint8_t &type)
     // Just to make sure the interface parameters are consistent, we only care about the values
     tagDelMap["deleteTagData"] = QVariant { data };
     return tagDbus->Delete(type, tagDelMap);
+}
+
+bool TagManager::localFileCanTagFilter(const QUrl &url) const
+{
+    auto &&fileInfo { InfoFactory::create<AbstractFileInfo>(url) };
+    if (!fileInfo)
+        return false;
+
+    if (!AnythingMonitorFilter::instance().whetherFilterCurrentPath(fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl).toLocalFile()))
+        return false;
+
+    const QString filePath { fileInfo->pathOf(AbstractFileInfo::FilePathInfoType::kFilePath) };
+    const QString &compressPath { QDir::homePath() + "/.avfs/" };
+    if (filePath.startsWith(compressPath))
+        return false;
+
+    const QString &parentPath { fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl).path() };
+    if (parentPath == "/home" || parentPath == FileUtils::bindPathTransform("/home", true))
+        return false;
+
+    if (FileUtils::isDesktopFile(url)) {
+        auto desktopInfo { dynamic_cast<DesktopFileInfo *>(fileInfo.data()) };
+        if (desktopInfo)
+            return desktopInfo->canTag();
+    }
+
+    return !SystemPathUtil::instance()->isSystemPath(filePath);
 }
 
 void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)

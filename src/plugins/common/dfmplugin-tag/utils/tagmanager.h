@@ -80,6 +80,7 @@ private:
 
     QMap<QString, QString> getTagsColorName(const QStringList &tags) const;
     bool deleteTagData(const QStringList &data, const uint8_t &type);
+    bool localFileCanTagFilter(const QUrl &url) const;
 
 private:
     QMap<QString, QString> tagColorMap;   // tag--color
