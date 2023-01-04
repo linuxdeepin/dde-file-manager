@@ -70,6 +70,11 @@ void TagEditor::onFocusOut()
     }
 }
 
+void TagEditor::filterInput()
+{
+    TagHelper::instance()->crumbEditInputFilter(crumbEdit);
+}
+
 void TagEditor::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
@@ -143,6 +148,7 @@ void TagEditor::initializeLayout()
 void TagEditor::initializeConnect()
 {
     QObject::connect(this, &TagEditor::windowDeactivate, this, &TagEditor::onFocusOut);
+    QObject::connect(crumbEdit, &QTextEdit::textChanged, this, &TagEditor::filterInput);
 
     if (!isShowInTagDir) {
         QObject::connect(crumbEdit, &DCrumbEdit::crumbListChanged, this, [=] {

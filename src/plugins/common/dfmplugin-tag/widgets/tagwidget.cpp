@@ -130,11 +130,17 @@ void TagWidget::onTagChanged(const QMap<QString, QStringList> &fileAndTags)
         loadTags(d->url);
 }
 
+void TagWidget::filterInput()
+{
+    TagHelper::instance()->crumbEditInputFilter(d->crumbEdit);
+}
+
 void TagWidget::initConnection()
 {
     if (!d->crumbEdit || !d->colorListWidget)
         return;
 
+    connect(d->crumbEdit, &QTextEdit::textChanged, this, &TagWidget::filterInput);
     connect(d->crumbEdit, &DCrumbEdit::crumbListChanged, this, &TagWidget::onCrumbListChanged);
     connect(d->colorListWidget, &TagColorListWidget::checkedColorChanged, this, &TagWidget::onCheckedColorChanged);
 

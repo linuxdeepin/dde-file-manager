@@ -52,6 +52,7 @@ public:
 
 public slots:
     void onFocusOut();
+    void filterInput();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

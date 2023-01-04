@@ -5,6 +5,8 @@
 #ifndef TAGHELPER_H
 #define TAGHELPER_H
 
+#include <DCrumbEdit>
+
 #include <QObject>
 #include <QColor>
 
@@ -68,6 +70,7 @@ public:
 
     static QUrl redirectTagUrl(const QUrl &url);
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+    void crumbEditInputFilter(DTK_WIDGET_NAMESPACE::DCrumbEdit *edit);
 
 private:
     explicit TagHelper(QObject *parent = nullptr);

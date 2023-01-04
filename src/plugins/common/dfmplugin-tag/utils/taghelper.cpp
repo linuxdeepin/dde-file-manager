@@ -309,6 +309,29 @@ bool TagHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
     return true;
 }
 
+void TagHelper::crumbEditInputFilter(DCrumbEdit *edit)
+{
+    if (!edit)
+        return;
+
+    QString srcTcxt = edit->toPlainText().remove(QChar::ObjectReplacementCharacter);
+    QRegExp rx("[\\\\/\':\\*\\?\"<>|%&]");
+    if (!srcTcxt.isEmpty() && srcTcxt.contains(rx)) {
+        edit->textCursor().document()->setPlainText(srcTcxt.remove(rx));
+        const auto &tagsColors = TagManager::instance()->getTagsColor(edit->crumbList());
+        edit->setProperty("updateCrumbsColor", true);
+
+        for (auto it = tagsColors.begin(); it != tagsColors.end(); ++it) {
+            DCrumbTextFormat format = edit->makeTextFormat();
+            format.setText(it.key());
+            format.setBackground(QBrush(it.value()));
+            format.setBackgroundRadius(5);
+            edit->insertCrumb(format, 0);
+        }
+        edit->setProperty("updateCrumbsColor", false);
+    }
+}
+
 void TagHelper::initTagColorDefines()
 {
     colorDefines << TagColorDefine("Orange", "dfm_tag_orange", QObject::tr("Orange"), "#ffa503")

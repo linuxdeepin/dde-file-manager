@@ -57,6 +57,7 @@ public slots:
     void onCrumbListChanged();
     void onCheckedColorChanged(const QColor &color);
     void onTagChanged(const QMap<QString, QStringList> &fileAndTags);
+    void filterInput();
 
 protected:
     void initConnection();
