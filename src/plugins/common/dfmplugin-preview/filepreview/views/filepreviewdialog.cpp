@@ -355,18 +355,16 @@ void FilePreviewDialog::switchToPage(int index)
     separator->setVisible(view->showStatusBarSeparator());
     preview = view;
 
-    QTimer::singleShot(0, this, [this] {
-        updateTitle();
-        playCurrentPreviewFile();
-        statusBar->openButton()->setFocus();
-        this->adjustSize();
-        preview->contentWidget()->adjustSize();
-        int newPerviewWidth = preview->contentWidget()->size().width();
-        int newPerviewHeight = preview->contentWidget()->size().height();
-        resize(newPerviewWidth, newPerviewHeight + statusBar->height());
+    updateTitle();
+    playCurrentPreviewFile();
+    statusBar->openButton()->setFocus();
+    this->adjustSize();
+    preview->contentWidget()->adjustSize();
+    int newPerviewWidth = preview->contentWidget()->size().width();
+    int newPerviewHeight = preview->contentWidget()->size().height();
+    resize(newPerviewWidth, newPerviewHeight + statusBar->height());
 
-        moveToCenter();
-    });
+    moveToCenter();
 }
 
 void FilePreviewDialog::previousPage()
