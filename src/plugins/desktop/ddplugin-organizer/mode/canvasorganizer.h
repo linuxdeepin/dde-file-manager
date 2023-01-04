@@ -57,7 +57,7 @@ public:
     virtual void setCanvasViewShell(CanvasViewShell *sh);
     virtual void setCanvasGridShell(CanvasGridShell *sh);
     virtual void setCanvasManagerShell(CanvasManagerShell *sh);
-    virtual void setSurfaces(QList<SurfacePointer> surfaces);
+    virtual void setSurfaces(const QList<SurfacePointer> &surfaces);
     virtual void reset();
 
 signals:

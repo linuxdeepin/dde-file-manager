@@ -68,9 +68,13 @@
 #ifdef COMPILE_ON_V23
 #    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
 #    define APPEARANCE_PATH "/org/deepin/dde/Appearance1"
+#    define DISPLAY_SERVICE "org.deepin.dde.Display1"
+#    define DISPLAY_PATH "/org/deepin/dde/Display1"
 #else
 #    define APPEARANCE_SERVICE "com.deepin.daemon.Appearance"
 #    define APPEARANCE_PATH "/com/deepin/daemon/Appearance"
+#    define DISPLAY_SERVICE "com.deepin.daemon.Display"
+#    define DISPLAY_PATH "/com/deepin/daemon/Display"
 #endif
 
 namespace dfmbase {
@@ -1186,9 +1190,9 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
                                                               APPEARANCE_SERVICE,
                                                               "SetMonitorBackground");
             if (WindowUtils::isWayLand()) {
-                QDBusInterface interface("com.deepin.daemon.Display",
-                                         "/com/deepin/daemon/Display",
-                                         "com.deepin.daemon.Display");
+                QDBusInterface interface(DISPLAY_SERVICE,
+                                         DISPLAY_PATH,
+                                         DISPLAY_SERVICE);
                 QString screenname = qvariant_cast<QString>(interface.property("Primary"));
                 msg.setArguments({ screenname, pictureFilePath });
             } else {

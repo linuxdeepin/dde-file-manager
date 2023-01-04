@@ -128,9 +128,9 @@ void CanvasOrganizer::setCanvasManagerShell(CanvasManagerShell *sh)
         return;
 }
 
-void CanvasOrganizer::setSurfaces(QList<SurfacePointer> surfaces)
+void CanvasOrganizer::setSurfaces(const QList<SurfacePointer> &surface)
 {
-    this->surfaces = surfaces;
+    this->surfaces = surface;
 }
 
 void CanvasOrganizer::reset()

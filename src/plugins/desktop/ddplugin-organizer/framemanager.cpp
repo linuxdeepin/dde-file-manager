@@ -130,6 +130,19 @@ void FrameManagerPrivate::buildOrganizer()
     q->switchMode(CfgPresenter->mode());
 }
 
+QList<SurfacePointer> FrameManagerPrivate::surfaces() const
+{
+    QList<SurfacePointer> ret;
+    for (QWidget *root : ddplugin_desktop_util::desktopFrameRootWindows()) {
+        const QString screenName = root->property(DesktopFrameProperty::kPropScreenName).toString();
+        auto sur = surfaceWidgets.value(screenName);
+        if (!sur.isNull())
+            ret.append(sur);
+    }
+
+    return ret;
+}
+
 void FrameManagerPrivate::refeshCanvas()
 {
     if (canvas)
@@ -307,7 +320,7 @@ void FrameManager::switchMode(OrganizerMode mode)
 
     // initialize to create collection widgets
     if (!d->surfaceWidgets.isEmpty())
-        d->organizer->setSurfaces(d->surfaceWidgets.values());
+        d->organizer->setSurfaces(d->surfaces());
 
     d->organizer->setCanvasModelShell(d->canvas->canvasModel());
     d->organizer->setCanvasViewShell(d->canvas->canvasView());
@@ -391,7 +404,7 @@ void FrameManager::onBuild()
     d->buildSurface();
 
     if (d->organizer) {
-        d->organizer->setSurfaces(d->surfaceWidgets.values());
+        d->organizer->setSurfaces(d->surfaces());
         d->organizer->layout();
     } else {
         d->buildOrganizer();
