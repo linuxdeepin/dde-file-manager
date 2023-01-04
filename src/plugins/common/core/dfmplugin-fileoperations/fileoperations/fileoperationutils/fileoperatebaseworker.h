@@ -94,22 +94,53 @@ public:
     bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
     bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
 
+protected:
+    void waitThreadPoolOver();
+    void initCopyWay();
+
 private:
     void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
     void initThreadCopy();
     void initSignalCopyWorker();
+    bool actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip);
     bool createNewTargetInfo(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                              AbstractFileInfoPointer &newTargetInfo, const QUrl &fileNewUrl,
                              bool *skip, bool isCountSize = false);
     QUrl createNewTargetUrl(const AbstractFileInfoPointer &toInfo, QString &fileNewName);
+    bool doCopyLocalFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
+    bool doCopyExBlockFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
+    bool doCopyOtherFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
+    bool doCopyLocalBigFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
+
+private:   // do copy local big file
+    bool doCopyLocalBigFileResize(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, int toFd, bool *skip);
+    char *doCopyLocalBigFileMap(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, int fd, const int per, bool *skip);
+    void memcpyLocalBigFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, char *fromPoint, char *toPoint);
+    void doCopyLocalBigFileClear(const size_t size, const int fromFd,
+                                 const int toFd, char *fromPoint, char *toPoint);
+    int doOpenFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, const bool isTo,
+                   const int openFlag, bool *skip);
+
+private:   // do copy extra block file
+    void createExBlockFileCopyInfo(const AbstractFileInfoPointer fromInfo,
+                                   const AbstractFileInfoPointer toInfo,
+                                   const qint64 currentPos,
+                                   const bool closeFlag,
+                                   const qint64 size,
+                                   char *buffer = nullptr,
+                                   const bool isDir = false,
+                                   const QFileDevice::Permissions permission = QFileDevice::Permission::ReadOwner);
+    void startBlockFileCopy();
 
 protected Q_SLOTS:
     void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                          const quint64 id, const QString &errorMsg = QString()) override;
     virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to) override;
+    void skipMemcpyBigFile(const QUrl url);
 
 private:
-    QVariant checkLinkAndSameUrl(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
+    QVariant
+    checkLinkAndSameUrl(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
     QVariant doActionReplace(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
     QVariant doActionMerge(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize);
 
@@ -125,7 +156,7 @@ protected:
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
     DirPermissonList dirPermissonList;   // dir set Permisson list
 
-    std::atomic_int threadInfoVectorSize { 0 };
+    std::atomic_int threadCopyFileCount { 0 };
 };
 DPFILEOPERATIONS_END_NAMESPACE
 

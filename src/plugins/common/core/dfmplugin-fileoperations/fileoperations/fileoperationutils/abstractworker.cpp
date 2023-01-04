@@ -43,6 +43,8 @@
 
 DPFILEOPERATIONS_USE_NAMESPACE
 
+std::atomic_bool AbstractWorker::bigFileCopy { false };
+
 /*!
  * \brief setWorkArgs 设置当前任务的参数
  * \param args 参数
@@ -84,8 +86,8 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
 
     // dealing error thread
     if (workData->signalThread) {
-        if (copyFileWorker)
-            copyFileWorker->operateAction(currentAction);
+        if (copyOtherFileWorker)
+            copyOtherFileWorker->operateAction(currentAction);
         resume();
         return;
     }
@@ -94,9 +96,9 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions, A
         return resume();
     }
 
-    for (auto worker : threadCopy) {
-        if (id == quintptr(worker->worker.data())) {
-            worker->worker->operateAction(currentAction);
+    for (auto worker : threadCopyWorker) {
+        if (id == quintptr(worker.data())) {
+            worker->operateAction(currentAction);
             return;
         }
     }
@@ -446,40 +448,40 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
 void AbstractWorker::resumeAllThread()
 {
     resume();
-    if (copyFileWorker)
-        copyFileWorker->resume();
-    for (auto worker : threadCopy) {
-        worker->worker->resume();
+    if (copyOtherFileWorker)
+        copyOtherFileWorker->resume();
+    for (auto worker : threadCopyWorker) {
+        worker->resume();
     }
 }
 
 void AbstractWorker::resumeThread(const QList<quint64> &errorIds)
 {
-    if (!errorIds.contains(quintptr(this)) && (!copyFileWorker || !errorIds.contains(quintptr(copyFileWorker.data()))))
+    if (!errorIds.contains(quintptr(this)) && (!copyOtherFileWorker || !errorIds.contains(quintptr(copyOtherFileWorker.data()))))
         resume();
-    for (auto worker : threadCopy) {
-        if (!errorIds.contains(quintptr(worker->worker.data())))
-            worker->worker->resume();
+
+    for (auto worker : threadCopyWorker) {
+        if (!errorIds.contains(quintptr(worker.data())))
+            worker->resume();
     }
 }
 
 void AbstractWorker::pauseAllThread()
 {
     pause();
-    if (copyFileWorker)
-        copyFileWorker->pause();
-    for (auto worker : threadCopy) {
-        worker->worker->pause();
+    if (copyOtherFileWorker)
+        copyOtherFileWorker->pause();
+    for (auto worker : threadCopyWorker) {
+        worker->pause();
     }
 }
 
 void AbstractWorker::stopAllThread()
 {
-    if (copyFileWorker)
-        copyFileWorker->stop();
-    for (auto worker : threadCopy) {
-        worker->worker->stop();
-        worker->thread->quit();
+    if (copyOtherFileWorker)
+        copyOtherFileWorker->stop();
+    for (auto worker : threadCopyWorker) {
+        worker->stop();
     }
     stop();
 }

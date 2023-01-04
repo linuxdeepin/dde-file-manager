@@ -48,6 +48,7 @@
 #include <zlib.h>
 #include <syscall.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 
 constexpr uint32_t kBigFileSize { 300 * 1024 * 1024 };
 
@@ -169,7 +170,7 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
 
         if (FileOperationsUtils::isFilesSizeOutLimit(fromUrl, freeBytes))
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     checkRetry();
 
@@ -203,7 +204,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
         if (!ret) {
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, localFileHandler->errorString());
         }
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     if (workContinue)
         *workContinue = action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kNoAction;
@@ -300,7 +301,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
 
         FileUtils::cacheCopyingFileUrl(url);
         initSignalCopyWorker();
-        ok = copyFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
+        ok = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
         if (ok)
             ok = deleteFile(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), skip);
         FileUtils::removeCopyingFileUrl(url);
@@ -430,7 +431,7 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
             return true;
         }
         actionForlink = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(localFileHandler->errorString()));
-    } while (!isStopped() && actionForlink == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (actionForlink == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
     checkRetry();
     setSkipValue(skip, actionForlink);
     return false;
@@ -519,23 +520,24 @@ bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromI
     }
     checkRetry();
     if (isSourceFileLocal && isTargetFileLocal && !workData->signalThread) {
-        qDebug() << "use pool copy, url from: " << fromInfo->urlOf(UrlInfoType::kUrl) << " url to: " << toInfo->urlOf(UrlInfoType::kUrl);
-        if (!stateCheck())
-            return false;
-
-        emit threadCopy[threadInfoVectorSize % FileUtils::getCpuProcessCount()]->worker->copyFile(fromInfo, toInfo);
-
-        threadInfoVectorSize++;
-        return true;
+        while (bigFileCopy && !isStopped()) {
+            QThread::msleep(10);
+        }
+        if (fromInfo->size() > kBigFileSize) {
+            bigFileCopy = true;
+            auto result = doCopyLocalBigFile(fromInfo, toInfo, skip);
+            bigFileCopy = false;
+            return result;
+        }
+        return doCopyLocalFile(fromInfo, toInfo);
     }
-    initSignalCopyWorker();
-    const QString &targetUrl = toInfo->urlOf(UrlInfoType::kUrl).toString();
+    // copy block files
+    if (!isTargetFileLocal && isTargetFileExBlock) {
+        return doCopyExBlockFile(fromInfo, toInfo);
+    }
 
-    FileUtils::cacheCopyingFileUrl(targetUrl);
-    bool ok = copyFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
-    FileUtils::removeCopyingFileUrl(targetUrl);
-
-    return ok;
+    // copy other file or cut file
+    return doCopyOtherFile(fromInfo, toInfo, skip);
 }
 
 bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip)
@@ -574,7 +576,9 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
     }
 
     if (fromInfo->countChildFile() <= 0) {
-        localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
+        //权限为0000时，源文件已经被删除，无需修改新建的文件的权限为0000
+        if (permissions != 0000)
+            localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
         return true;
     }
     // 遍历源文件，执行一个一个的拷贝
@@ -599,16 +603,65 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
             return false;
         }
     }
+
     if (isTargetFileLocal && isSourceFileLocal) {
         DirPermsissonPointer dirinfo(new DirSetPermissonInfo);
         dirinfo->target = toInfo->urlOf(UrlInfoType::kUrl);
         dirinfo->permission = permissions;
         dirPermissonList.appendByLock(dirinfo);
+    } else if (isTargetFileExBlock) {
+        createExBlockFileCopyInfo(fromInfo, toInfo, 0, false, 0, nullptr, true, permissions);
+        startBlockFileCopy();
     } else {
         localFileHandler->setPermissions(toInfo->urlOf(UrlInfoType::kUrl), permissions);
     }
 
     return true;
+}
+
+void FileOperateBaseWorker::waitThreadPoolOver()
+{
+    // wait all thread start
+    if (!isStopped() && threadPool) {
+        QThread::msleep(10);
+    }
+    bool isExBlockWriteOverFlag = false;
+    // wait thread pool copy local file or copy big file over
+    while (!isStopped() && threadPool && threadPool->activeThreadCount() > 0) {
+        if (isTargetFileExBlock && workData->blockCopyInfoQueue.size() == 0 && threadPool->activeThreadCount() == 1 && !isExBlockWriteOverFlag) {
+            // do last block file write
+            isExBlockWriteOverFlag = true;
+            createExBlockFileCopyInfo(nullptr, nullptr, 0, true, -1);
+        }
+        QThread::msleep(10);
+    }
+}
+
+void FileOperateBaseWorker::initCopyWay()
+{
+    // local file useing least 8 thread
+    if (isSourceFileLocal && isTargetFileLocal) {
+        countWriteType = CountWriteSizeType::kCustomizeType;
+        workData->signalThread = (sourceFilesCount > 1 || sourceFilesTotalSize > kBigFileSize) && FileUtils::getCpuProcessCount() > 4
+                ? false
+                : true;
+        if (!workData->signalThread)
+            threadCount = FileUtils::getCpuProcessCount() >= 8 ? FileUtils::getCpuProcessCount() : 8;
+    }
+    // copy to extra block device use 2 thread
+    if (isTargetFileExBlock) {
+        threadCount = 2;
+        workData->signalThread = false;
+    }
+
+    if (DeviceUtils::isSamba(targetUrl) || DeviceUtils::isFtp(targetUrl))
+        countWriteType = CountWriteSizeType::kCustomizeType;
+
+    if (!workData->signalThread) {
+        initThreadCopy();
+    }
+
+    copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }
 
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)
@@ -619,26 +672,26 @@ void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::Support
 
 void FileOperateBaseWorker::initThreadCopy()
 {
-    for (int i = 0; i < FileUtils::getCpuProcessCount(); i++) {
-        QSharedPointer<CopyFileThread> copy(new CopyFileThread);
+    for (int i = 0; i < threadCount; i++) {
+        QSharedPointer<DoCopyFileWorker> copy(new DoCopyFileWorker(workData));
         // todo init new
-        copy->worker.reset(new DoCopyFileWorker(workData));
-        copy->thread.reset(new QThread);
-        copy->worker->moveToThread(copy->thread.data());
-        connect(copy->worker.data(), &DoCopyFileWorker::errorNotify, this, &FileOperateBaseWorker::emitErrorNotify, Qt::DirectConnection);
-        connect(copy->worker.data(), &DoCopyFileWorker::currentTask, this, &FileOperateBaseWorker::emitCurrentTaskNotify, Qt::DirectConnection);
-        connect(copy->worker.data(), &DoCopyFileWorker::retryErrSuccess, this, &FileOperateBaseWorker::retryErrSuccess, Qt::DirectConnection);
-        copy->thread->start();
-        threadCopy.append(copy);
+        connect(copy.data(), &DoCopyFileWorker::errorNotify, this, &FileOperateBaseWorker::emitErrorNotify, Qt::DirectConnection);
+        connect(copy.data(), &DoCopyFileWorker::currentTask, this, &FileOperateBaseWorker::emitCurrentTaskNotify, Qt::DirectConnection);
+        connect(copy.data(), &DoCopyFileWorker::retryErrSuccess, this, &FileOperateBaseWorker::retryErrSuccess, Qt::DirectConnection);
+        connect(copy.data(), &DoCopyFileWorker::skipCopyLocalBigFile, this, &FileOperateBaseWorker::skipMemcpyBigFile, Qt::DirectConnection);
+        threadCopyWorker.append(copy);
     }
+
+    threadPool.reset(new QThreadPool);
+    threadPool->setMaxThreadCount(threadCount);
 }
 
 void FileOperateBaseWorker::initSignalCopyWorker()
 {
-    if (!copyFileWorker) {
-        copyFileWorker.reset(new DoCopyFileWorker(workData));
-        connect(copyFileWorker.data(), &DoCopyFileWorker::errorNotify, this, &FileOperateBaseWorker::emitErrorNotify);
-        connect(copyFileWorker.data(), &DoCopyFileWorker::currentTask, this, &FileOperateBaseWorker::emitCurrentTaskNotify);
+    if (!copyOtherFileWorker) {
+        copyOtherFileWorker.reset(new DoCopyFileWorker(workData));
+        connect(copyOtherFileWorker.data(), &DoCopyFileWorker::errorNotify, this, &FileOperateBaseWorker::emitErrorNotify);
+        connect(copyOtherFileWorker.data(), &DoCopyFileWorker::currentTask, this, &FileOperateBaseWorker::emitCurrentTaskNotify);
     }
 }
 
@@ -651,6 +704,250 @@ QUrl FileOperateBaseWorker::createNewTargetUrl(const AbstractFileInfoPointer &to
     const QString &newPath = DFMIO::DFMUtils::buildFilePath(newTargetPath.toStdString().c_str(), fileNewName.toStdString().c_str(), nullptr);
     newTargetUrl.setPath(newPath);
     return newTargetUrl;
+}
+
+bool FileOperateBaseWorker::doCopyLocalFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo)
+{
+    if (!stateCheck())
+        return false;
+
+    QtConcurrent::run(threadPool.data(), threadCopyWorker[threadCopyFileCount % threadCount].data(),
+                      static_cast<void (DoCopyFileWorker::*)(const AbstractFileInfoPointer, const AbstractFileInfoPointer)>(&DoCopyFileWorker::doFileCopy),
+                      fromInfo, toInfo);
+
+    threadCopyFileCount++;
+    return true;
+}
+
+bool FileOperateBaseWorker::doCopyLocalBigFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip)
+{
+    waitThreadPoolOver();
+    // open file
+    auto fromFd = doOpenFile(fromInfo, toInfo, false, O_RDONLY, skip);
+    if (fromFd < 0)
+        return false;
+    auto toFd = doOpenFile(fromInfo, toInfo, true, O_CREAT | O_RDWR, skip);
+    if (toFd < 0) {
+        close(fromFd);
+        return false;
+    }
+    // resize target file
+    if (!doCopyLocalBigFileResize(fromInfo, toInfo, toFd, skip)) {
+        close(fromFd);
+        close(toFd);
+        return false;
+    }
+    // mmap file
+    auto fromPoint = doCopyLocalBigFileMap(fromInfo, toInfo, fromFd, PROT_READ, skip);
+    if (!fromPoint) {
+        close(fromFd);
+        close(toFd);
+        return false;
+    }
+    auto toPoint = doCopyLocalBigFileMap(fromInfo, toInfo, toFd, PROT_WRITE, skip);
+    if (!toPoint) {
+        close(fromFd);
+        close(toFd);
+        return false;
+    }
+    // memcpy file in other thread
+    memcpyLocalBigFile(fromInfo, toInfo, fromPoint, toPoint);
+    // wait copy
+    waitThreadPoolOver();
+    // clear
+    doCopyLocalBigFileClear(static_cast<size_t>(fromInfo->size()), fromFd, toFd, fromPoint, toPoint);
+    // set permissions
+    setTargetPermissions(fromInfo, toInfo);
+    return true;
+}
+
+bool FileOperateBaseWorker::doCopyLocalBigFileResize(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, int toFd, bool *skip)
+{
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
+    do {
+        __off_t length = fromInfo->size();
+        if (-1 == ftruncate(toFd, length)) {
+            auto lastError = strerror(errno);
+            qWarning() << "file resize error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+                       << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << O_RDONLY
+                       << " error code: " << errno << " error msg: " << lastError;
+
+            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+                                          AbstractJobHandler::JobErrorType::kResizeError, lastError);
+        }
+    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
+
+    checkRetry();
+
+    if (!actionOperating(action, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip))
+        return false;
+
+    return true;
+}
+
+char *FileOperateBaseWorker::doCopyLocalBigFileMap(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, int fd, const int per, bool *skip)
+{
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
+    void *point = nullptr;
+    do {
+        point = mmap(nullptr, static_cast<size_t>(fromInfo->size()),
+                     per, MAP_SHARED, fd, 0);
+        if (!point || point == MAP_FAILED) {
+            auto lastError = strerror(errno);
+            qWarning() << "file mmap error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+                       << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl)
+                       << " error code: " << errno << " error msg: " << lastError;
+
+            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+                                          AbstractJobHandler::JobErrorType::kOpenError, lastError);
+        }
+    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
+
+    checkRetry();
+
+    if (!actionOperating(action, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip))
+        return nullptr;
+
+    return static_cast<char *>(point);
+}
+
+void FileOperateBaseWorker::memcpyLocalBigFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, char *fromPoint, char *toPoint)
+{
+    auto offset = fromInfo->size() / threadCount;
+    char *fromPointStart = fromPoint;
+    char *toPointStart = toPoint;
+    for (int i = 0; i < threadCount; i++) {
+        offset = (i == (threadCount - 1) ? fromInfo->size() - (threadCount - 1) * offset : offset);
+
+        char *tempfFromPointStart = fromPointStart;
+        char *tempfToPointStart = toPointStart;
+        size_t tempOffet = static_cast<size_t>(offset);
+        QtConcurrent::run(threadPool.data(), threadCopyWorker[i].data(),
+                          static_cast<void (DoCopyFileWorker::*)(const AbstractFileInfoPointer fromInfo,
+                                                                 const AbstractFileInfoPointer toInfo,
+                                                                 char *dest, char *source, size_t size)>(&DoCopyFileWorker::doMemcpyLocalBigFile),
+                          fromInfo, toInfo, tempfToPointStart, tempfFromPointStart, tempOffet);
+
+        fromPointStart += offset;
+        toPointStart += offset;
+    }
+}
+
+void FileOperateBaseWorker::doCopyLocalBigFileClear(const size_t size,
+                                                    const int fromFd, const int toFd, char *fromPoint, char *toPoint)
+{
+    munmap(fromPoint, size);
+    munmap(toPoint, size);
+    close(fromFd);
+    close(toFd);
+}
+
+bool FileOperateBaseWorker::doCopyExBlockFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo)
+{
+    if (!stateCheck())
+        return false;
+
+    if (isStopped())
+        return false;
+
+    QtConcurrent::run(threadPool.data(), threadCopyWorker[0].data(),
+                      static_cast<void (DoCopyFileWorker::*)(const AbstractFileInfoPointer fromInfo,
+                                                             const AbstractFileInfoPointer toInfo)>(&DoCopyFileWorker::readExblockFile),
+                      fromInfo, toInfo);
+
+    startBlockFileCopy();
+
+    return true;
+}
+
+int FileOperateBaseWorker::doOpenFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, const bool isTo, const int openFlag, bool *skip)
+{
+    AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
+    emitCurrentTaskNotify(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl));
+    int fd = -1;
+    do {
+        QUrl url = isTo ? toInfo->urlOf(UrlInfoType::kUrl) : fromInfo->urlOf(UrlInfoType::kUrl);
+        std::string path = url.path().toStdString();
+        fd = open(path.c_str(), openFlag, 0666);
+        if (fd < 0) {
+            auto lastError = strerror(errno);
+            qWarning() << "file open error, url from: " << fromInfo->urlOf(UrlInfoType::kUrl)
+                       << " url to: " << fromInfo->urlOf(UrlInfoType::kUrl) << " open flag: " << openFlag
+                       << " error code: " << errno << " error msg: " << lastError;
+
+            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+                                          AbstractJobHandler::JobErrorType::kOpenError, lastError);
+        }
+    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
+
+    checkRetry();
+
+    if (!actionOperating(action, fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size(), skip)) {
+        if (fd >= 0)
+            close(fd);
+        return -1;
+    }
+
+    return fd;
+}
+
+bool FileOperateBaseWorker::doCopyOtherFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip)
+{
+    initSignalCopyWorker();
+    const QString &targetUrl = toInfo->urlOf(UrlInfoType::kUrl).toString();
+
+    FileUtils::cacheCopyingFileUrl(targetUrl);
+    bool ok = copyOtherFileWorker->doCopyFilePractically(fromInfo, toInfo, skip);
+    FileUtils::removeCopyingFileUrl(targetUrl);
+
+    return ok;
+}
+
+bool FileOperateBaseWorker::actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip)
+{
+    if (isStopped())
+        return false;
+
+    if (action != AbstractJobHandler::SupportAction::kNoAction) {
+        if (action == AbstractJobHandler::SupportAction::kSkipAction) {
+            if (skip)
+                *skip = true;
+            workData->skipWriteSize += size;
+        }
+        return false;
+    }
+
+    return true;
+}
+
+void FileOperateBaseWorker::createExBlockFileCopyInfo(const AbstractFileInfoPointer fromInfo,
+                                                      const AbstractFileInfoPointer toInfo,
+                                                      const qint64 currentPos,
+                                                      const bool closeFlag,
+                                                      const qint64 size,
+                                                      char *buffer,
+                                                      const bool isDir,
+                                                      const QFileDevice::Permissions permission)
+{
+    BlockFileCopyInfoPointer tmpinfo(new WorkerData::BlockFileCopyInfo());
+    tmpinfo->closeflag = closeFlag;
+    tmpinfo->frominfo = fromInfo;
+    tmpinfo->toinfo = toInfo;
+    tmpinfo->currentpos = currentPos;
+    tmpinfo->buffer = buffer;
+    tmpinfo->size = size;
+    tmpinfo->isdir = isDir;
+    tmpinfo->permission = permission;
+    workData->blockCopyInfoQueue.enqueue(tmpinfo);
+}
+
+void FileOperateBaseWorker::startBlockFileCopy()
+{
+    if (!exblockThreadStarted) {
+        exblockThreadStarted = true;
+        QtConcurrent::run(threadPool.data(), threadCopyWorker[1].data(),
+                          static_cast<void (DoCopyFileWorker::*)()>(&DoCopyFileWorker::writeExblockFile));
+    }
 }
 
 bool FileOperateBaseWorker::createNewTargetInfo(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo, const QUrl &fileNewUrl, bool *skip, bool isCountSize)
@@ -683,6 +980,13 @@ void FileOperateBaseWorker::emitErrorNotify(const QUrl &from, const QUrl &to, co
 void FileOperateBaseWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
 {
     AbstractWorker::emitCurrentTaskNotify(from, to);
+}
+
+void FileOperateBaseWorker::skipMemcpyBigFile(const QUrl url)
+{
+    for (const auto &worker : threadCopyWorker) {
+        worker->skipMemcpyBigFile(url);
+    }
 }
 
 QVariant FileOperateBaseWorker::checkLinkAndSameUrl(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &newTargetInfo, const bool isCountSize)
@@ -938,21 +1242,6 @@ void FileOperateBaseWorker::determineCountProcessType()
         }
         qDebug("targetIsRemovable = %d", bool(targetIsRemovable));
     }
-    if (isSourceFileLocal && isTargetFileLocal) {
-        countWriteType = CountWriteSizeType::kCustomizeType;
-        workData->signalThread = sourceFilesCount > 1 && FileUtils::getCpuProcessCount() > 4
-                ? false
-                : true;
-    }
-
-    if (DeviceUtils::isSamba(targetUrl) || DeviceUtils::isFtp(targetUrl))
-        countWriteType = CountWriteSizeType::kCustomizeType;
-
-    if (!workData->signalThread) {
-        initThreadCopy();
-    }
-
-    copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
 }
 
 void FileOperateBaseWorker::syncFilesToDevice()

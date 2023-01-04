@@ -66,6 +66,9 @@ bool DoCopyFilesWorker::doWork()
     // check progress notify type
     determineCountProcessType();
 
+    // init copy file ways
+    initCopyWay();
+
     // do main process
     if (!copyFiles()) {
         endWork();
@@ -84,7 +87,7 @@ bool DoCopyFilesWorker::doWork()
 void DoCopyFilesWorker::stop()
 {
     // clean muilt thread copy file info queue
-    threadInfoVectorSize = 0;
+    threadCopyFileCount = 0;
 
     FileOperateBaseWorker::stop();
 }
@@ -134,13 +137,8 @@ bool DoCopyFilesWorker::initArgs()
 
 void DoCopyFilesWorker::endWork()
 {
-    while (!isStopped() && threadCopy.size() > 0 && workData->completeFileCount != threadInfoVectorSize) {
-        QThread::msleep(10);
-    }
-    for (auto const &thread : threadCopy) {
-        thread->thread->quit();
-        thread->thread->wait();
-    }
+    waitThreadPoolOver();
+
     // deal target files
     for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
         const QUrl &url = info->urlOf(UrlInfoType::kUrl);

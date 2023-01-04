@@ -31,9 +31,11 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
+#include <dfm-io/core/dfile.h>
+
 #include <QObject>
 
-#include <dfm-io/core/dfile.h>
+#include <fcntl.h>
 
 class QWaitCondition;
 class QMutex;
@@ -57,10 +59,14 @@ public:
     void pause();
     void resume();
     void stop();
+    void skipMemcpyBigFile(const QUrl url);
     void operateAction(const AbstractJobHandler::SupportAction action);
     bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo,
                                bool *skip);
-
+    void doFileCopy(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
+    void readExblockFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
+    void writeExblockFile();
+    void doMemcpyLocalBigFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, char *dest, char *source, size_t size);
 signals:
     void ErrorFinished();
     void CompleteSize(const int size);
@@ -68,11 +74,9 @@ signals:
     void errorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType error,
                      const quint64 id, const QString &errorMsg = QString());
     void retryErrSuccess(const quint64 id);
-    void copyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
-public slots:
-    void doFileCopy(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
+    void skipCopyLocalBigFile(const QUrl fromUrl);
 
-private:
+private:   // file copy
     bool stateCheck();
     void workerWait();
     bool actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip);
@@ -105,7 +109,26 @@ private:
                              const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                              QSharedPointer<DFMIO::DFile> &toFile);
     void checkRetry();
-    bool isStoped();
+    bool isStopped();
+
+private:   // block file copy
+    //清理当前拷贝信息
+    void releaseCopyInfo(const BlockFileCopyInfoPointer &info);
+    bool writeBlockFile(const BlockFileCopyInfoPointer &info, bool *skip);
+    void syncBlockFile(const BlockFileCopyInfoPointer &info);
+    bool doWriteBlockFileCopy(const BlockFileCopyInfoPointer blockFileInfo);
+    int doOpenFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, const bool isTo,
+                   const int openFlag, bool *skip);
+    BlockFileCopyInfoPointer doReadExBlockFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo,
+                                               const int fd, bool *skip);
+    void createExBlockFileCopyInfo(const AbstractFileInfoPointer fromInfo,
+                                   const AbstractFileInfoPointer toInfo,
+                                   const qint64 currentPos,
+                                   const bool closeFlag,
+                                   const qint64 size,
+                                   char *buffer = nullptr,
+                                   const bool isDir = false,
+                                   const QFileDevice::Permissions permission = QFileDevice::Permission::ReadOwner);
 
 private:
     QSharedPointer<QWaitCondition> waitCondition { nullptr };
@@ -115,6 +138,9 @@ private:
     AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // current action
     QSharedPointer<WorkerData> workData { nullptr };
     std::atomic_bool retry { false };
+    int blockFileFd { -1 };
+    QList<QUrl> skipUrls;
+    QUrl memcpySkipUrl;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 #endif   // DOCOPYFILEWORKER_H

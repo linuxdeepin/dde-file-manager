@@ -40,6 +40,7 @@
 #include <QMutex>
 #include <QSharedPointer>
 #include <QTime>
+#include <QThreadPool>
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -51,13 +52,6 @@ class AbstractWorker : public QObject
     Q_OBJECT
     virtual void setWorkArgs(const JobHandlePointer handle, const QList<QUrl> &sourceUrls, const QUrl &targetUrl = QUrl(),
                              const AbstractJobHandler::JobFlags &flags = AbstractJobHandler::JobFlag::kNoHint);
-
-protected:
-    struct CopyFileThread
-    {
-        QSharedPointer<QThread> thread { nullptr };
-        QSharedPointer<DoCopyFileWorker> worker { nullptr };
-    };
 
 public:
     enum class CountWriteSizeType : quint8 {
@@ -188,13 +182,17 @@ public:
     bool isTargetFileExBlock { false };   // target file on extra block device
     bool isConvert { false };   // is convert operation
     QSharedPointer<WorkerData> workData { nullptr };
-    QSharedPointer<DoCopyFileWorker> copyFileWorker { nullptr };
+    QSharedPointer<DoCopyFileWorker> copyOtherFileWorker { nullptr };
+    std::atomic_bool exblockThreadStarted { false };
     QTime timeElapsed;
 
     QWaitCondition waitCondition;
     QMutex mutex;
-    QVector<QSharedPointer<CopyFileThread>> threadCopy;
+    QVector<QSharedPointer<DoCopyFileWorker>> threadCopyWorker;
+    int threadCount { 8 };
     std::atomic_bool retry { false };
+    QSharedPointer<QThreadPool> threadPool { nullptr };
+    static std::atomic_bool bigFileCopy;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 
