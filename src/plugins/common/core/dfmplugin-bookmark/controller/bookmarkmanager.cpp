@@ -455,7 +455,8 @@ void BookMarkManager::addQuickAccessDataFromConfig(const QVariantList &dataList)
             bookmarkData.index = bookMarkMap.value(kKeyIndex).toInt();
             quickAccessDataMap[bookmarkData.url] = bookmarkData;
             sortedUrls.removeOne(bookmarkData.url);   // plugin is responsible for adding plugin item
-            continue;
+            if (bookmarkData.index < 0)
+                continue;
         } else {
             bookmarkData.isDefaultItem = false;
         }

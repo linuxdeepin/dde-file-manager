@@ -106,10 +106,9 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return false;
 
-    SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
-
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
+        SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
         auto sidebar = allSideBar.first();
         if (item) {
@@ -131,10 +130,11 @@ bool SideBarEventReceiver::handleItemAdd(const QUrl &url, const QVariantMap &pro
 
 bool SideBarEventReceiver::handleItemRemove(const QUrl &url)
 {
-    SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
-    if (!allSideBar.isEmpty())
+    if (!allSideBar.isEmpty()) {
+        SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
         return allSideBar.first()->removeItem(url);
+    }
 
     return false;
 }
@@ -196,10 +196,10 @@ bool SideBarEventReceiver::handleItemInsert(int index, const QUrl &url, const QV
     ItemInfo info { url, properties };
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return false;
-    SideBarInfoCacheMananger::instance()->insertItemInfoCache(index, info);
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     if (!allSideBar.isEmpty()) {
+        SideBarInfoCacheMananger::instance()->insertItemInfoCache(index, info);
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
         auto sidebar = allSideBar.first();
         if (item) {
