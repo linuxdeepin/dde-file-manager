@@ -331,6 +331,8 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
                 SmbIntegrationManager::instance()->addSmbIntegrationItem(makeSmbRootUrl(url), ctxMenuHandle);
             }
         } else {
+            if (err == DFMMOUNT::DeviceError::kUserErrorNetworkWrongPasswd)   // fix bug:#180869
+                err = DFMMOUNT::DeviceError::kUnhandledError;
             DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
             qDebug() << DeviceUtils::errMessage(err);
             // dont save failed access to history
