@@ -405,9 +405,6 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
     if (dstInfo->isAttributes(OptInfoType::kIsSymLink))
         dstUrl = QUrl::fromLocalFile(dstInfo->pathOf(PathInfoType::kSymLinkTarget));
 
-    if (srcUrls.count() > 0)
-        action = FileUtils::isSameDevice(srcUrls[0], dstUrl) ? Qt::MoveAction : Qt::CopyAction;
-
     auto winId = SideBarHelper::windowId(qobject_cast<QWidget *>(parent()));
 
     switch (action) {
@@ -578,22 +575,27 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
     }
 
     Qt::DropAction action = Qt::IgnoreAction;
-    const Qt::DropActions support_actions = itemInfo->supportedOfAttributes(SupportedType::kDrop) & actions;
+    const Qt::DropActions supportActions = itemInfo->supportedOfAttributes(SupportedType::kDrop) & actions;
 
-    if (support_actions.testFlag(Qt::CopyAction)) {
+    if (supportActions.testFlag(Qt::CopyAction)) {
         action = Qt::CopyAction;
     }
 
-    if (support_actions.testFlag(Qt::MoveAction)) {
+    if (supportActions.testFlag(Qt::MoveAction)) {
         action = Qt::MoveAction;
     }
 
-    if (support_actions.testFlag(Qt::LinkAction)) {
+    if (supportActions.testFlag(Qt::LinkAction)) {
         action = Qt::LinkAction;
     }
 
-    if ((action == Qt::MoveAction) && qApp->keyboardModifiers() == Qt::ControlModifier) {
-        action = Qt::CopyAction;
+    if (qApp->keyboardModifiers() == Qt::AltModifier) {
+        action = Qt::MoveAction;
+    } else if (qApp->keyboardModifiers() == Qt::ControlModifier) {
+        if (action == Qt::MoveAction)
+            action = Qt::CopyAction;
+    } else if (FileUtils::isSameDevice(urls.first(), targetItemUrl)) {
+        action = Qt::MoveAction;
     }
 
     if (!SysInfoUtils::isSameUser(data) && FileUtils::isTrashFile(targetItemUrl))
