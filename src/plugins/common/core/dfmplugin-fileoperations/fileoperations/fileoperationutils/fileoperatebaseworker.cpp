@@ -158,6 +158,9 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
                                                     QSharedPointer<StorageInfo> targetStorageInfo,
                                                     bool *skip)
 {
+    if (!targetStorageInfo)
+        return true;
+
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
     do {
@@ -230,6 +233,44 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bo
     }
     succ = deleteFile(fromUrl, toUrl, skip, force);
     return succ;
+}
+
+bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl &urlTarget, DFile::CopyFlag flag)
+{
+    auto fileinfo = InfoFactory::create<AbstractFileInfo>(urlSource);
+    if (fileinfo->isAttributes(OptInfoType::kIsDir)) {
+        if (!DecoratorFile(urlTarget).exists()) {
+            DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+            if (!fileHandler.mkdir(urlTarget))
+                return false;
+        }
+
+        QString error;
+        const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(urlSource, &error);
+        if (!iterator)
+            return false;
+        while (iterator->hasNext()) {
+            const QUrl &url = iterator->next();
+            auto fileinfoNext = InfoFactory::create<AbstractFileInfo>(url);
+            if (fileinfoNext->isAttributes(OptInfoType::kIsDir)) {
+                bool succ = copyFileFromTrash(url, DFMIO::DFMUtils::buildFilePath(urlTarget.toString().toLocal8Bit().data(), fileinfoNext->nameOf(NameInfoType::kFileCopyName).toLocal8Bit().data(), nullptr), flag);
+                if (!succ)
+                    return false;
+            } else {
+                DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+                bool trashSucc = fileHandler.copyFile(url,
+                                                      DFMIO::DFMUtils::buildFilePath(urlTarget.toString().toLocal8Bit().data(), fileinfoNext->nameOf(NameInfoType::kFileCopyName).toLocal8Bit().data(), nullptr),
+                                                      flag);
+                if (!trashSucc)
+                    return false;
+            }
+        }
+        return true;
+    } else {
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        bool trashSucc = fileHandler.copyFile(urlSource, urlTarget, flag);
+        return trashSucc;
+    }
 }
 /*!
  * \brief FileOperateBaseWorker::doCopyFile Copy to a new file and delete the source file

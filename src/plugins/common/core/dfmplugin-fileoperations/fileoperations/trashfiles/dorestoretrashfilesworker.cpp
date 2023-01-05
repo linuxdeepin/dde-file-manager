@@ -179,7 +179,17 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
                 completeTargetFiles.append(restoreInfo->urlOf(UrlInfoType::kUrl));
             continue;
         } else {
-            failUrls.append(url);
+            auto errorCode = fileHandler.errorCode();
+            switch (errorCode) {
+            case DFMIOErrorCode::DFM_IO_ERROR_WOULD_MERGE: {
+                trashSucc = this->mergeDir(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
+                break;
+            };
+            default:
+                break;
+            }
+            if (!trashSucc)
+                failUrls.append(url);
         }
     }
 
@@ -227,4 +237,14 @@ QString DoRestoreTrashFilesWorker::readTrashInfo(const QUrl &url)
 {
     DecoratorFile file(url);
     return file.readAll();
+}
+
+bool DoRestoreTrashFilesWorker::mergeDir(const QUrl &urlSource, const QUrl &urlTarget, DFile::CopyFlag flag)
+{
+    const bool succ = this->copyFileFromTrash(urlSource, urlTarget, flag);
+    if (succ) {
+        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+        return fileHandler.deleteFile(urlSource);
+    }
+    return false;
 }

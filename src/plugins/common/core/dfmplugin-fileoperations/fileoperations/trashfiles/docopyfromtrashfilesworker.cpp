@@ -137,7 +137,7 @@ bool DoCopyFromTrashFilesWorker::doOperate()
         if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok))
             continue;
 
-        bool copySucc = this->copyFile(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
+        bool copySucc = this->copyFileFromTrash(url, newTargetInfo->urlOf(UrlInfoType::kUrl), DFMIO::DFile::CopyFlag::kOverwrite);
         if (copySucc) {
             completeFilesCount++;
             if (!completeSourceFiles.contains(url)) {
@@ -183,38 +183,4 @@ bool DoCopyFromTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &
     }
 
     return true;
-}
-
-bool DoCopyFromTrashFilesWorker::copyFile(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag)
-{
-    auto fileinfo = InfoFactory::create<AbstractFileInfo>(urlSource);
-    if (fileinfo->isAttributes(OptInfoType::kIsDir)) {
-        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        if (!fileHandler.mkdir(urlTarget))
-            return false;
-
-        QString error;
-        const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(urlSource, &error);
-        if (!iterator)
-            return false;
-        while (iterator->hasNext()) {
-            const QUrl &url = iterator->next();
-            auto fileinfoNext = InfoFactory::create<AbstractFileInfo>(url);
-            if (fileinfoNext->isAttributes(OptInfoType::kIsDir)) {
-                return copyFile(url, DFMIO::DFMUtils::buildFilePath(urlTarget.toString().toLocal8Bit().data(), fileinfoNext->nameOf(NameInfoType::kFileCopyName).toLocal8Bit().data(), nullptr), flag);
-            } else {
-                DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-                bool trashSucc = fileHandler.copyFile(url,
-                                                      DFMIO::DFMUtils::buildFilePath(urlTarget.toString().toLocal8Bit().data(), fileinfoNext->nameOf(NameInfoType::kFileCopyName).toLocal8Bit().data(), nullptr),
-                                                      flag);
-                if (!trashSucc)
-                    return false;
-            }
-        }
-
-    } else {
-        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool trashSucc = fileHandler.copyFile(urlSource, urlTarget, flag);
-        return trashSucc;
-    }
 }

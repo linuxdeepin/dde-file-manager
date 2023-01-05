@@ -58,6 +58,7 @@ protected:
 
 private:
     QString readTrashInfo(const QUrl &url);
+    bool mergeDir(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag);
 
 private:
     QAtomicInteger<qint64> completeFilesCount { 0 };   // move to trash success file count

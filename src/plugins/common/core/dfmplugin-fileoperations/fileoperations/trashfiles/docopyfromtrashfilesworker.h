@@ -50,7 +50,6 @@ protected:
 protected:
     bool doOperate();
     bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, AbstractFileInfoPointer &targetFileInfo, bool *result);
-    bool copyFile(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag);
 
 private:
     QAtomicInteger<qint64> completeFilesCount { 0 };
