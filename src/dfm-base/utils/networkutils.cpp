@@ -92,38 +92,40 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
     static constexpr char kSmbPort[] { "139" };
     static constexpr char kFtpPort[] { "21" };
     static constexpr char kSftpPort[] { "22" };
+
     auto s(mpt);
     static QRegularExpression gvfsPref { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)" };
     static QRegularExpression cifsMptPref { "^/media/[\\s\\S]*/smbmounts/" };   // TODO(xust) smb mount point may be changed.
     if (s.contains(gvfsPref)) {
         s.remove(gvfsPref);   // -> ftp:host=1.2.3.4  smb-share:server=1.2.3.4,share=draw
-        static QRegularExpression ftpRex { "^s?ftp:" };
-        static QRegularExpression smbRex { "^smb.*:server=(.*)," };
-        auto match = ftpRex.match(s);
+        bool isFtp = s.startsWith("ftp");
+        bool isSftp = s.startsWith("sftp");
+        bool isSmb = s.startsWith("smb");
+
+        // ftp:host=1.2.3.4,port=123  smb-share:port=321,server=1.2.3.4,share=draw
+        static QRegularExpression hostAndPortRegx(R"(([:,]port=(?<port0>\d*))?[,:](server|host)=(?<host>[^/:,]+)(,port=(?<port1>\d*))?)");
+        // --------------------------------------------------forward PORT ---|--------------------- ip/host ---|--- backward PORT ---|, PORT is optional
+        auto match = hostAndPortRegx.match(s);
         if (match.hasMatch()) {
-            bool isSftp = s.startsWith("s");
-            s.remove(ftpRex);   // -> host=1.2.3.4,port=1234
-            auto params = s.split(",");   // { "host=1.2.3.4", "port=1234" }
-            for (const auto &param : params) {
-                auto kv = param.split("=");   // { "host", "1.2.3.4" }
-                if (kv.count() < 2)
-                    continue;
-                if (kv[0] == "host")
-                    ip = kv[1];
-                else if (kv[0] == "port")
-                    port = kv[1];
-            }
-            if (port.isEmpty())
-                port = isSftp ? kSftpPort : kFtpPort;
-            return true;
-        } else {
-            match = smbRex.match(s);
-            if (match.hasMatch()) {
-                ip = match.captured(1);
+            auto capturedPort = match.captured("port0");
+            if (capturedPort.isEmpty())
+                capturedPort = match.captured("port1");
+
+            if (!capturedPort.isEmpty())
+                port = capturedPort;
+            else if (isSmb)
                 port = kSmbPort;
-                return true;
-            }
+            else if (isFtp)
+                port = kFtpPort;
+            else if (isSftp)
+                port = kSftpPort;
+            else
+                port = kSmbPort;
+
+            ip = match.captured("host");
+            return true;
         }
+
     } else if (s.contains(cifsMptPref)) {
         s.remove(cifsMptPref);   // shareFolder on host[_idx]
         port = kSmbPort;
