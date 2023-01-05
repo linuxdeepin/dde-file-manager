@@ -280,6 +280,8 @@ void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, co
     int showPosX = static_cast<int>(iconRect.center().x());
     int showPosY = static_cast<int>(iconRect.bottom());
 
+    showPosX = qMax(showPosX, static_cast<int>((parentRect.left() + 10)));
+
     auto subValue = parentRect.bottom() - showPosY;
     if (subValue < editor->height()) {
         editor->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
