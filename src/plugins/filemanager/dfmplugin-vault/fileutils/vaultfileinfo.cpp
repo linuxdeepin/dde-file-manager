@@ -308,7 +308,7 @@ QString VaultFileInfo::displayOf(const DisPlayInfoType type) const
         }
         if (d->proxy)
             return d->proxy->displayOf(DisPlayInfoType::kFileDisplayName);
-    } else if (DisPlayInfoType::kFileDisplayName == type) {
+    } else if (DisPlayInfoType::kFileDisplayPath == type) {
         return d->fileDisplayPath();
     }
 
