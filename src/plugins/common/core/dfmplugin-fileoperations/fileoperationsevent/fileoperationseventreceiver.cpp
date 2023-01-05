@@ -451,24 +451,23 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const CreateFileType fileType, const QString suffix,
                                                           const QVariant custom, OperatorCallback callbackImmediately)
 {
+    const QString newPath = newDocmentName(url.path(), suffix, fileType);
+    if (newPath.isEmpty())
+        return newPath;
+
+    QUrl urlNew;
+    urlNew.setScheme(url.scheme());
+    urlNew.setPath(newPath);
+
+    if (callbackImmediately) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
+        args->insert(CallbackKey::kCustom, custom);
+        callbackImmediately(args);
+    }
     if (url.isLocalFile()) {
-        const QString newPath = newDocmentName(url.path(), suffix, fileType);
-        if (newPath.isEmpty())
-            return newPath;
-
-        QUrl urlNew;
-        urlNew.setScheme(url.scheme());
-        urlNew.setPath(newPath);
-
-        if (callbackImmediately) {
-            CallbackArgus args(new QMap<CallbackKey, QVariant>);
-            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
-            args->insert(CallbackKey::kCustom, custom);
-            callbackImmediately(args);
-        }
-
         return doTouchFilePractically(windowId, urlNew) ? newPath : QString();
     } else {
         QString error;
