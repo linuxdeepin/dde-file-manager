@@ -22,6 +22,7 @@
 #define VAULTHELPERRECEIVER_H
 
 #include "dfmplugin_utils_global.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QObject>
 #include <QDBusMessage>
@@ -80,7 +81,9 @@ public slots:
     bool handleConnectLockScreenDBus();
     bool handleTransparentUnlockVault();
     QString handlePasswordFromKeyring();
-    bool hanleSavePasswordToKeyring(const QString &password);
+    bool handleSavePasswordToKeyring(const QString &password);
+    bool handlemoveToTrash(const quint64 windowId, const QList<QUrl> sources,
+                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
 private slots:
     void responseLockScreenDBus(const QDBusMessage &msg);

@@ -25,9 +25,9 @@
 #include <QDir>
 
 namespace dfmplugin_utils {
-inline const QString kVaultBasePath(QDir::homePath() + QString("/.config/Vault"));
-inline constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
-inline constexpr char kVaultEncrypyDirName[] { "vault_encrypted" };
+inline const QString kVaultConfigPath(QDir::homePath() + QString("/.config/Vault"));
+inline constexpr char kVaultMountDirName[] { "vault_unlocked" };
+inline constexpr char kVaultBaseDirName[] { "vault_encrypted" };
 inline constexpr char kCryfsConfigFileName[] { "cryfs.config" };
 inline constexpr char kCryfsType[] { "fuse.cryfs" };
 inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };

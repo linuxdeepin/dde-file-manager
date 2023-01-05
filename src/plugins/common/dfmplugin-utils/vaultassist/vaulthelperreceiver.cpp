@@ -21,11 +21,12 @@
 #include "vaulthelperreceiver.h"
 #include "vaulthelper_global.h"
 #include "vaultconfigoperator.h"
+#include "vaultassitcontrol.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/dpf.h>
 #include <dfmio_utils.h>
-
 #include <QDBusConnection>
 #include <QDBusArgument>
 #include <QFile>
@@ -55,7 +56,10 @@ void VaultHelperReceiver::initEventConnect()
     dpfSlotChannel->connect("dfmplugin_utils", "slot_VaultHelper_PasswordFromKeyring",
                             this, &VaultHelperReceiver::handlePasswordFromKeyring);
     dpfSlotChannel->connect("dfmplugin_utils", "slot_VaultHelper_SavePasswordToKeyring",
-                            this, &VaultHelperReceiver::hanleSavePasswordToKeyring);
+                            this, &VaultHelperReceiver::handleSavePasswordToKeyring);
+
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash",
+                            this, &VaultHelperReceiver::handlemoveToTrash);
 }
 
 bool VaultHelperReceiver::handleConnectLockScreenDBus()
@@ -106,7 +110,7 @@ QString VaultHelperReceiver::handlePasswordFromKeyring()
     return result;
 }
 
-bool VaultHelperReceiver::hanleSavePasswordToKeyring(const QString &password)
+bool VaultHelperReceiver::handleSavePasswordToKeyring(const QString &password)
 {
     qInfo() << "Vault: start store password to keyring!";
 
@@ -140,6 +144,22 @@ bool VaultHelperReceiver::hanleSavePasswordToKeyring(const QString &password)
     return true;
 }
 
+bool VaultHelperReceiver::handlemoveToTrash(const quint64 windowId,
+                                            const QList<QUrl> sources,
+                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
+{
+    if (sources.isEmpty())
+        return false;
+    if (!VaultAssitControl::instance()->isVaultFile(sources.first()))
+        return false;
+
+    QList<QUrl> localFileUrls = VaultAssitControl::instance()->transUrlsToLocal(sources);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles,
+                                 windowId,
+                                 localFileUrls, flags, nullptr);
+    return true;
+}
+
 void VaultHelperReceiver::responseLockScreenDBus(const QDBusMessage &msg)
 {
     const QList<QVariant> &arguments = msg.arguments();
@@ -164,10 +184,7 @@ void VaultHelperReceiver::responseLockScreenDBus(const QDBusMessage &msg)
 
 bool VaultHelperReceiver::transparentUnlockVault()
 {
-    const QString &encryptDir = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(),
-                                                            kVaultEncrypyDirName,
-                                                            nullptr);
-    VaultHelperReceiver::VaultState st = state(encryptDir);
+    VaultHelperReceiver::VaultState st = state(VaultAssitControl::instance()->vaultBaseDirLocalPath());
     if (st != VaultHelperReceiver::VaultState::kEncrypted) {
         qWarning() << "Vault: Unlock vault failed, current state is " << st;
         return false;
@@ -182,16 +199,11 @@ bool VaultHelperReceiver::transparentUnlockVault()
             return false;
         }
 
-        const QString &basedirPath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(),
-                                                                    kVaultEncrypyDirName,
-                                                                    nullptr);
-        const QString &mountdirPath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(),
-                                                                     kVaultDecryptDirName,
-                                                                     nullptr);
+        const QString &mountdirPath = VaultAssitControl::instance()->vaultMountDirLocalPath();
         if (!QFile::exists(mountdirPath)) {
             QDir().mkpath(mountdirPath);
         }
-        int result = unlockVault(basedirPath, mountdirPath, passwd);
+        int result = unlockVault(VaultAssitControl::instance()->vaultBaseDirLocalPath(), mountdirPath, passwd);
         if (!result) {
             qInfo() << "Vault: Unlock vault success!";
             syncGroupPolicyAlgoName();
@@ -221,8 +233,8 @@ VaultHelperReceiver::VaultState VaultHelperReceiver::state(const QString &encryp
 
     QString cryfsConfigFilePath { "" };
     if (encryptDir.isEmpty()) {
-        cryfsConfigFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(),
-                                                             kVaultEncrypyDirName,
+        cryfsConfigFilePath = DFMIO::DFMUtils::buildFilePath(kVaultConfigPath.toStdString().c_str(),
+                                                             kVaultBaseDirName,
                                                              kCryfsConfigFileName,
                                                              nullptr);
     } else {
@@ -232,10 +244,7 @@ VaultHelperReceiver::VaultState VaultHelperReceiver::state(const QString &encryp
     }
 
     if (QFile::exists(cryfsConfigFilePath)) {
-        QUrl baseDirUrl = QUrl::fromLocalFile(DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(),
-                                                                             kVaultDecryptDirName,
-                                                                             nullptr));
-        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(baseDirUrl);
+        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(VaultAssitControl::instance()->vaultMountDirLocalPath());
         if (fsType == QString(kCryfsType)) {
             return VaultState::kUnlocked;
         }

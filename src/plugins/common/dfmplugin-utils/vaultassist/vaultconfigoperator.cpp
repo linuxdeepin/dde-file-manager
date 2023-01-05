@@ -31,7 +31,7 @@ VaultConfigOperator::VaultConfigOperator(const QString &filePath)
     : currentFilePath(filePath)
 {
     if (filePath.isEmpty()) {
-        currentFilePath = DFMIO::DFMUtils::buildFilePath(kVaultBasePath.toStdString().c_str(),
+        currentFilePath = DFMIO::DFMUtils::buildFilePath(kVaultConfigPath.toStdString().c_str(),
                                                          kVaultConfigFileName, nullptr);
     }
     setting = new QSettings(currentFilePath, QSettings::IniFormat);
