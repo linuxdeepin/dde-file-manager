@@ -26,6 +26,7 @@
 #include "private/smbbrowsermenuscene_p.h"
 #include "utils/smbbrowserutils.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -35,6 +36,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QMenu>
+#include <QDir>
 
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
@@ -95,9 +97,14 @@ bool SmbBrowserMenuScene::create(QMenu *parent)
     act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kOpenSmbInNewTab);
     d->predicateAction[SmbBrowserActionId::kOpenSmbInNewTab] = act;
 
-    if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled()) {
-        const QString &smbUrl = d->selectFiles.first().toString();
-        if (SmbIntegrationManager::instance()->isSmbShareDirMounted(QUrl(smbUrl))) {
+    const QUrl &smbUrl = d->selectFiles.first();
+    QString path = smbUrl.path();
+    if (path.endsWith(QDir::separator()))
+        path.chop(1);
+    if (smbUrl.scheme() == Global::Scheme::kSmb
+        && SmbIntegrationManager::instance()->isSmbIntegrationEnabled()
+        && path.startsWith('/') && path.count("/") == 1) {
+        if (SmbIntegrationManager::instance()->isSmbShareDirMounted(smbUrl)) {
             act = parent->addAction(d->predicateName[SmbBrowserActionId::kUnmountSmb]);
             act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kUnmountSmb);
             d->predicateAction[SmbBrowserActionId::kUnmountSmb] = act;
