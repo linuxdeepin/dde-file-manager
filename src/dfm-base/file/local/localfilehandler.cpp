@@ -1170,7 +1170,7 @@ bool LocalFileHandler::doHiddenFileRemind(const QString &name, bool *checkRule)
 
     // show dialog
     auto result = DialogManagerInstance->showRenameNameDotBeginDialog();
-    return result == 0;
+    return result == 1;
 }
 /*!
  * \brief LocalFileHandler::errorString 获取错误信息

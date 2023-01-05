@@ -538,7 +538,15 @@ int DialogManager::showRenameNameDotBeginDialog()
 
     d.setDefaultButton(0);
     d.setIcon(warningIcon);
-    return d.exec();
+
+    int ret = -1;
+    connect(&d, &DDialog::buttonClicked, this, [=, &ret](int index, const QString &text) {
+        Q_UNUSED(text)
+        if (index == 0)
+            ret = 1;
+    });
+    d.exec();
+    return ret;
 }
 
 DFMBASE_NAMESPACE::GlobalEventType DialogManager::showBreakSymlinkDialog(const QString &targetName, const QUrl &linkfile)
