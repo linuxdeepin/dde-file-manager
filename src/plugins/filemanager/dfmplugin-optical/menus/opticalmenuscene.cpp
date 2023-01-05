@@ -29,6 +29,7 @@
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QMenu>
 
@@ -188,6 +189,11 @@ QString OpticalMenuScenePrivate::findSceneName(QAction *act) const
 bool OpticalMenuScenePrivate::enablePaste() const
 {
     if (!OpticalHelper::isBurnEnabled())
+        return false;
+
+    const QString &dev { OpticalHelper::burnDestDevice(currentDir) };
+    const QUrl &rootUrl { OpticalHelper::discRoot(dev) };
+    if (!UniversalUtils::urlEquals(rootUrl, currentDir))
         return false;
 
     auto &&clipboard { ClipBoard::instance() };
