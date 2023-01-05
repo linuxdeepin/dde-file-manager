@@ -101,6 +101,16 @@ Qt::DropActions FileSortFilterProxyModel::supportedDropActions() const
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
+int FileSortFilterProxyModel::columnCount(const QModelIndex &parent) const
+{
+    if (!parent.isValid()) {
+        const QModelIndex &index = viewModel()->findRootIndex(rootUrl);
+        return sourceModel()->columnCount(index);
+    }
+
+    return QSortFilterProxyModel::columnCount(parent);
+}
+
 QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
     rootUrl = url;

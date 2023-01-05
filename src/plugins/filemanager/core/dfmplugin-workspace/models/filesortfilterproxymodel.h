@@ -45,6 +45,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     Qt::DropActions supportedDragActions() const override;
     Qt::DropActions supportedDropActions() const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     QModelIndex setRootUrl(const QUrl &url);
     QUrl currentRootUrl() const;
