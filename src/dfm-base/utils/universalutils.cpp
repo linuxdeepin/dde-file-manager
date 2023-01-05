@@ -35,6 +35,7 @@
 #include <QFile>
 #include <QProcess>
 #include <QDBusConnectionInterface>
+#include <QRegularExpression>
 
 #ifdef COMPILE_ON_V23
 #    define APP_MANAGER_SERVICE "org.deepin.dde.Application1.Manager"
@@ -412,6 +413,14 @@ void UniversalUtils::prepareForSleep(QObject *obj, const char *cslot)
             "PrepareForSleep",
             obj,
             cslot);
+}
+
+bool UniversalUtils::isSambaMountPath(const QUrl &url)
+{
+    static const QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };
+    QRegularExpression re(smbMatch);
+    QRegularExpressionMatch match = re.match(url.path());
+    return match.hasMatch();
 }
 
 }

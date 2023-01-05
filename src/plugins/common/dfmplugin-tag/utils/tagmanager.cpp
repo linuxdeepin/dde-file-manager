@@ -21,6 +21,7 @@
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 
 #include <QMenu>
@@ -495,6 +496,9 @@ bool TagManager::localFileCanTagFilter(const QUrl &url) const
         if (desktopInfo)
             return desktopInfo->canTag();
     }
+
+    if (UniversalUtils::isSambaMountPath(url))
+        return false;
 
     return !SystemPathUtil::instance()->isSystemPath(filePath);
 }
