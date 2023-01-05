@@ -27,10 +27,12 @@
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "events/workspaceeventcaller.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <dfm-framework/dpf.h>
 #include <dfm-io/dfmio_utils.h>
@@ -91,8 +93,7 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
                 break;
         }
 
-        const auto mode = dirCount > 1 ? DirOpenMode::kOpenNewWindow : view->currentDirOpenMode();
-        openAction(urls, mode);
+        openAction(urls, view->currentDirOpenMode());
         return true;
     }
     case Qt::Key_Backspace: {
@@ -197,7 +198,7 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
             return true;
         }
         case Qt::Key_Home:
-            openAction(view->selectedUrlList());
+            openAction({ QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kHomePath)) });
             return true;
         }
         break;
@@ -338,7 +339,8 @@ void ShortcutHelper::previewFiles()
 
 void ShortcutHelper::openAction(const QList<QUrl> &urls, const DirOpenMode openMode)
 {
-    FileOperatorHelperIns->openFilesByMode(view, urls, openMode);
+    const auto mode = urls.count() > 1 ? DirOpenMode::kOpenNewWindow : openMode;
+    FileOperatorHelperIns->openFilesByMode(view, urls, mode);
 }
 
 void ShortcutHelper::openInTerminal()
