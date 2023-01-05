@@ -52,11 +52,13 @@ void DevicePropertyDialog::iniUI()
 
     deviceName = new DLabel(this);
     deviceName->setAlignment(Qt::AlignCenter);
+    deviceName->setContentsMargins(0, 0, 0, 25);
 
     QFrame *basicInfoFrame = new QFrame(this);
 
     basicInfo = new KeyValueLabel(this);
-    basicInfo->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
+    basicInfo->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::DemiBold);
+
     devicesProgressBar = new DColoredProgressBar();
     devicesProgressBar->addThreshold(0, QColor(0xFF0080FF));
     devicesProgressBar->addThreshold(7000, QColor(0xFFFFAE00));
@@ -161,6 +163,7 @@ void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize, boo
         basicInfo->setRightValue(sizeFreeStr + QString("/") + sizeTotalStr, Qt::ElideNone, Qt::AlignRight, true);
     else
         basicInfo->setRightValue(sizeTotalStr, Qt::ElideNone, Qt::AlignRight, true);
+    basicInfo->setRightFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::DemiBold);
 
     // 在浅色模式下，手动设置进度条背景色
     if (DGuiApplicationHelper::LightType == DGuiApplicationHelper::instance()->themeType()) {
