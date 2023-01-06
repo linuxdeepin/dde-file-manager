@@ -347,24 +347,8 @@ QString ComputerInfoThread::cpuInfo() const
 
 QString ComputerInfoThread::memoryInfo() const
 {
-    quint64 memoryAvailableSize = static_cast<quint64>(DSysInfo::memoryTotalSize());
-    quint64 memoryInstalledSize;
-    QDBusInterface interface("com.deepin.system.SystemInfo",
-                             "/com/deepin/system/SystemInfo",
-                             "com.deepin.system.SystemInfo",
-                             QDBusConnection::systemBus());
-    interface.setTimeout(1000);
-    if (interface.isValid()) {
-        qInfo() << "Start call com.deepin.system.SystemInfo MemorySize";
-        memoryInstalledSize = interface.property("MemorySize").toULongLong();
-        qInfo() << "End call Dbus com.deepin.system.SystemInfo MemorySize";
-        qInfo() << "Get memoryInstalledSize from dbus!";
-    } else {
-        memoryInstalledSize = static_cast<quint64>(DSysInfo::memoryInstalledSize());
-        qInfo() << "Get memoryInstalledSize from dtk!";
-    }
     return QString("%1 (%2 %3)")
-            .arg(formatCap(memoryInstalledSize, 1024, 0))
-            .arg(formatCap(memoryAvailableSize))
+            .arg(formatCap(DSysInfo::memoryInstalledSize(), 1024, 0))
+            .arg(formatCap(DSysInfo::memoryTotalSize()))
             .arg(tr("Available"));
 }
