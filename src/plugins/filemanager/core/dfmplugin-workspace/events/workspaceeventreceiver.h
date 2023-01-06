@@ -69,8 +69,7 @@ public slots:
     void handleSetReadOnly(const quint64 windowId, const bool readOnly);
 
     void handlePasteFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
-    void handleDeleteFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
-    void handleMoveToTrashFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
+    void handleMoveToTrashFileResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg);
     void handleRenameFileResult(const quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg);
     void handleFileUpdate(const QUrl &url);
     DFMBASE_NAMESPACE::Global::ItemRoles handleCurrentSortRole(quint64 windowId);
