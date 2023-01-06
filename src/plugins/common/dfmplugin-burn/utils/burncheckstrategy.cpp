@@ -56,7 +56,7 @@ QString BurnCheckStrategy::lastError() const
 
 QString BurnCheckStrategy::lastInvalidName() const
 {
-    return invalidName;
+    return autoFeed(invalidName);
 }
 
 bool BurnCheckStrategy::validFile(const QFileInfo &info)
@@ -96,6 +96,21 @@ bool BurnCheckStrategy::validFile(const QFileInfo &info)
 
     invalidName = "";
     return true;
+}
+
+QString BurnCheckStrategy::autoFeed(const QString &text) const
+{
+    QString name { text };
+    int c = name.length();
+
+    if (c > 50) {
+        for (int i = 1; i <= c / 50; i++) {
+            int n = i * 50;
+            name.insert(n, "\n");
+        }
+    }
+
+    return name;
 }
 
 bool BurnCheckStrategy::validCommonFileNameBytes(const QString &fileName)

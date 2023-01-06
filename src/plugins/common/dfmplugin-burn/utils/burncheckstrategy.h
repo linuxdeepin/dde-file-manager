@@ -22,6 +22,7 @@ public:
 
 private:
     bool validFile(const QFileInfo &info);
+    QString autoFeed(const QString &text) const;
 
 protected:
     bool validCommonFileNameBytes(const QString &fileName);
