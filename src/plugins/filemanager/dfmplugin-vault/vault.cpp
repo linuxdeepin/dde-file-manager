@@ -21,7 +21,6 @@
 #include "vault.h"
 #include "utils/vaultvisiblemanager.h"
 #include "utils/vaulthelper.h"
-#include "utils/vaultfilehelper.h"
 #include "events/vaulteventreceiver.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
@@ -40,29 +39,12 @@ void Vault::initialize()
 {
     VaultVisibleManager::instance()->infoRegister();
     VaultEventReceiver::instance()->connectEvent();
-
+    VaultVisibleManager::instance()->pluginServiceRegister();
     bindWindows();
 }
 
 bool Vault::start()
 {
-    VaultVisibleManager::instance()->pluginServiceRegister();
-    // follow event
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", VaultHelper::instance(), &VaultHelper::urlsToLocal);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", VaultFileHelper::instance(), &VaultFileHelper::cutFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", VaultFileHelper::instance(), &VaultFileHelper::copyFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", VaultFileHelper::instance(), &VaultFileHelper::deleteFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", VaultFileHelper::instance(), &VaultFileHelper::openFileInPlugin);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFile", VaultFileHelper::instance(), &VaultFileHelper::renameFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MakeDir", VaultFileHelper::instance(), &VaultFileHelper::makeDir);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchFile", VaultFileHelper::instance(), &VaultFileHelper::touchFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchCustomFile", VaultFileHelper::instance(), &VaultFileHelper::touchFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", VaultFileHelper::instance(), &VaultFileHelper::writeUrlsToClipboard);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFiles", VaultFileHelper::instance(), &VaultFileHelper::renameFiles);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultFileHelper::instance(), &VaultFileHelper::renameFilesAddText);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", VaultFileHelper::instance(), &VaultFileHelper::checkDragDropAction);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", VaultFileHelper::instance(), &VaultFileHelper::handleDropFiles);
-
     return true;
 }
 

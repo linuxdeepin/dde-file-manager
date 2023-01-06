@@ -60,6 +60,7 @@ public:
     bool renameFilesAddText(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> replacePair);
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);
+    bool openFileByApp(const quint64 windowId, const QList<QUrl> urls, const QList<QString> apps);
 
 private:
     QList<QUrl> transUrlsToLocal(const QList<QUrl> &urls);

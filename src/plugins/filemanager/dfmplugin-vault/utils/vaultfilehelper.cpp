@@ -18,14 +18,13 @@
  */
 #include "vaultfilehelper.h"
 #include "vaulthelper.h"
-
 #include "events/vaulteventcaller.h"
-
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/desktopfile.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/event/event.h>
-
 #include <QUrl>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -239,6 +238,47 @@ bool VaultFileHelper::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &t
     }
 
     return false;
+}
+
+bool VaultFileHelper::openFileByApp(const quint64 windowId, const QList<QUrl> urls, const QList<QString> apps)
+{
+    if (urls.isEmpty())
+        return false;
+
+    const QUrl &url = urls.at(0);
+    if (!VaultHelper::isVaultFile(url))
+        return false;
+
+    if (apps.isEmpty())
+        return false;
+
+    const QString &desktopFile = apps.at(0);
+    if (desktopFile.isEmpty())
+        return false;
+
+    DFMBASE_NAMESPACE::DesktopFile d(desktopFile);
+    if (d.desktopExec().contains("dde-file-manager") || d.desktopExec().contains("file-manager.sh")) {
+        QStringList filePathsStr {};
+        for (const auto &url : urls)
+            filePathsStr << url.toString();
+        if (DFMBASE_NAMESPACE::UniversalUtils::checkLaunchAppInterface()) {
+            DFMBASE_NAMESPACE::UniversalUtils::launchAppByDBus(desktopFile, filePathsStr);
+        } else {
+            int count = urls.size();
+            for (int i = 0; i < count; ++i) {
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, urls.at(i));
+            }
+        }
+    } else {
+        QList<QUrl> localUrls;
+        if (VaultHelper::instance()->urlsToLocal(urls, &localUrls)) {
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByApp, 0, localUrls, apps);
+        } else {
+            qCritical() << "the list has no vault url!";
+        }
+    }
+
+    return true;
 }
 
 QList<QUrl> VaultFileHelper::transUrlsToLocal(const QList<QUrl> &urls)

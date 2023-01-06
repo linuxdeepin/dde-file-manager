@@ -1,6 +1,7 @@
 #include "vaulteventreceiver.h"
 #include "utils/pathmanager.h"
 #include "utils/vaulthelper.h"
+#include "utils/vaultfilehelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -39,17 +40,27 @@ void VaultEventReceiver::connectEvent()
     dpfSignalDispatcher->subscribe(GlobalEventType::kHideFilesResult, VaultEventReceiver::instance(), &VaultEventReceiver::handleHideFilesResult);
     dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &VaultEventReceiver::changeUrlEventFilter);
 
-    dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit",
-                            VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
-    dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DragMoveData",
-                            VaultEventReceiver::instance(), &VaultEventReceiver::handleSideBarItemDragMoveData);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", this, &VaultEventReceiver::handleShortCutPasteFiles);
-
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_Url_FetchPathtoVirtual", this, &VaultEventReceiver::handlePathtoVirtual);
-
-    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", this, &VaultEventReceiver::detailViewIcon);
-
+    dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit", VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", VaultHelper::instance(), &VaultHelper::urlsToLocal);
+    dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DragMoveData", VaultEventReceiver::instance(), &VaultEventReceiver::handleSideBarItemDragMoveData);
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DropData", this, &VaultEventReceiver::fileDropHandleWithAction);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", VaultFileHelper::instance(), &VaultFileHelper::checkDragDropAction);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", VaultFileHelper::instance(), &VaultFileHelper::handleDropFiles);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", this, &VaultEventReceiver::handleShortCutPasteFiles);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Url_FetchPathtoVirtual", this, &VaultEventReceiver::handlePathtoVirtual);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", this, &VaultEventReceiver::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", VaultFileHelper::instance(), &VaultFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", VaultFileHelper::instance(), &VaultFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", VaultFileHelper::instance(), &VaultFileHelper::deleteFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", VaultFileHelper::instance(), &VaultFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFile", VaultFileHelper::instance(), &VaultFileHelper::renameFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MakeDir", VaultFileHelper::instance(), &VaultFileHelper::makeDir);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchFile", VaultFileHelper::instance(), &VaultFileHelper::touchFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchCustomFile", VaultFileHelper::instance(), &VaultFileHelper::touchFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", VaultFileHelper::instance(), &VaultFileHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFiles", VaultFileHelper::instance(), &VaultFileHelper::renameFiles);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultFileHelper::instance(), &VaultFileHelper::renameFilesAddText);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileByApp", VaultFileHelper::instance(), &VaultFileHelper::openFileByApp);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)

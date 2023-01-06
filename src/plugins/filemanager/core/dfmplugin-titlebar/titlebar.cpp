@@ -38,10 +38,6 @@
 
 using namespace dfmplugin_titlebar;
 
-namespace GlobalPrivate {
-static TitleBarWidget *kTitleBar { nullptr };
-}   // namespace GlobalPrivate
-
 void TitleBar::initialize()
 {
     DFMBASE_USE_NAMESPACE
@@ -65,8 +61,7 @@ bool TitleBar::start()
 
 void TitleBar::onWindowCreated(quint64 windId)
 {
-    GlobalPrivate::kTitleBar = new TitleBarWidget;
-    TitleBarHelper::addTileBar(windId, GlobalPrivate::kTitleBar);
+    TitleBarHelper::addTileBar(windId, new TitleBarWidget);
 }
 
 void TitleBar::onWindowOpened(quint64 windId)
@@ -75,18 +70,21 @@ void TitleBar::onWindowOpened(quint64 windId)
 
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
-    window->installTitleBar(GlobalPrivate::kTitleBar);
+    TitleBarWidget *titleBarWidget = TitleBarHelper::findTileBarByWindowId(windId);
+    Q_ASSERT_X(titleBarWidget, "SideBar", "Cannot find titlebar widget by id");
+    window->installTitleBar(titleBarWidget);
     TitleBarHelper::createSettingsMenu(windId);
 
-    Q_ASSERT(GlobalPrivate::kTitleBar->navWidget());
-    connect(window, &FileManagerWindow::reqBack, GlobalPrivate::kTitleBar->navWidget(), &NavWidget::back);
-    connect(window, &FileManagerWindow::reqForward, GlobalPrivate::kTitleBar->navWidget(), &NavWidget::forward);
+    NavWidget *navWidget = titleBarWidget->navWidget();
+    Q_ASSERT(navWidget);
+    connect(window, &FileManagerWindow::reqBack, navWidget, &NavWidget::back);
+    connect(window, &FileManagerWindow::reqForward, navWidget, &NavWidget::forward);
     // First window's tab created before first url changed in titlebar
-    connect(window, &FileManagerWindow::workspaceInstallFinished, GlobalPrivate::kTitleBar->navWidget(),
+    connect(window, &FileManagerWindow::workspaceInstallFinished, navWidget,
             &NavWidget::onNewWindowOpended);
-    connect(window, &FileManagerWindow::reqSearchCtrlF, GlobalPrivate::kTitleBar, &TitleBarWidget::handleHotkeyCtrlF);
-    connect(window, &FileManagerWindow::reqSearchCtrlL, GlobalPrivate::kTitleBar, &TitleBarWidget::handleHotkeyCtrlL);
-    connect(window, &FileManagerWindow::reqTriggerActionByIndex, GlobalPrivate::kTitleBar, &TitleBarWidget::handleHotketSwitchViewMode);
+    connect(window, &FileManagerWindow::reqSearchCtrlF, titleBarWidget, &TitleBarWidget::handleHotkeyCtrlF);
+    connect(window, &FileManagerWindow::reqSearchCtrlL, titleBarWidget, &TitleBarWidget::handleHotkeyCtrlL);
+    connect(window, &FileManagerWindow::reqTriggerActionByIndex, titleBarWidget, &TitleBarWidget::handleHotketSwitchViewMode);
 }
 
 void TitleBar::onWindowClosed(quint64 windId)
