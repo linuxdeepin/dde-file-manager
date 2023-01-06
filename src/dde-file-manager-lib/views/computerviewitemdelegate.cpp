@@ -1,22 +1,6 @@
-/*
- * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
- *               2019 ~ 2019 Chris Xiong
- *
- * Author:     Chris Xiong<chirs241097@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -24,8 +8,10 @@
 #include <sys/stat.h>
 #include <QLineEdit>
 
+#include "app/define.h"
 #include "models/computermodel.h"
 #include "shutil/fileutils.h"
+#include "shutil/smbintegrationswitcher.h"
 #include "computerviewitemdelegate.h"
 #include "dfmapplication.h"
 
@@ -128,14 +114,14 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 
         painter->setFont(par->font());
-        painter->setPen(qApp->palette().color((option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::BrightText  : QPalette::ColorRole::Text));
+        painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
         painter->drawText(option.rect.x() + (option.rect.width() - fstw) / 2, option.rect.y() + topmargin + iconsize + text_topmargin, elided_text);
         return;
     }
 
     //设备绘制
     QRect nameLabelRect = option.rect;
-    const int iconsize = par->view()->iconSize().width();
+    const int iconsize = 64 /*par->view()->iconSize().width()*/;
 
     const int text_max_width = sizeHint(option,index).width()
             - ICON_LEFT_MARGIN
@@ -163,7 +149,7 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     ComputerModelItemData* itemData = static_cast<ComputerModelItemData *>(index.internalPointer());
     QString smbHost;
     bool isSmbHost = false;
-    if(itemData && FileUtils::isSmbRelatedUrl(itemData->url,smbHost)){
+    if(smbIntegrationSwitcher->isIntegrationMode() && itemData && FileUtils::isSmbRelatedUrl(itemData->url,smbHost)){
         text = smbHost;//SMB设备只显示host
         isSmbHost = true;
     }
@@ -356,12 +342,12 @@ QWidget *ComputerViewItemDelegate::createEditor(QWidget *parent, const QStyleOpt
     connect(le, &QLineEdit::textChanged, this, [le, maxLenInBytes](const QString &txt) {
         if (!le)
             return;
-        if (txt.toUtf8().length() > maxLenInBytes) {
-            const QSignalBlocker blocker(le);
-            QString newLabel = txt;
+
+        auto newLabel = txt;
+        const QSignalBlocker blocker(le);
+        while (newLabel.toUtf8().length() > maxLenInBytes)
             newLabel.chop(1);
-            le->setText(newLabel);
-        }
+        le->setText(newLabel);
     });
 
     connect(le, &QLineEdit::destroyed, this, [this, le] {

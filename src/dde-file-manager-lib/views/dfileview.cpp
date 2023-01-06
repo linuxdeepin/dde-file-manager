@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfileview_p.h"
 #include "dfileview.h"
@@ -120,7 +101,6 @@ DWIDGET_USE_NAMESPACE
 #define BOX_LINE_WIDTH 2
 
 static const int kMinMoveLenght { 5 };
-
 SelectWork::SelectWork(QObject *parent)
     : QThread(parent), m_pModel(nullptr), m_bStop(false)
 {
@@ -268,7 +248,7 @@ void DFileView::setItemDelegate(DFMStyledItemDelegate *delegate)
 
     DListView::setItemDelegate(delegate);
 
-    connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, delegate, &DFMStyledItemDelegate::setIconSizeByIconSizeLevel);
+    connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, delegate, &DFMStyledItemDelegate::setIconSizeByIconSizeLevel);
 
     if (isIconViewMode()) {
         d->statusBar->scalingSlider()->setMinimum(delegate->minimumIconSizeLevel());
@@ -924,6 +904,18 @@ int DFileView::verticalOffset() const
     return DListView::verticalOffset();
 }
 
+void DFileView::cancelDrag()
+{
+    auto allDragObjs =  this->findChildren<QDrag*>();
+    if (allDragObjs.isEmpty())
+        return;
+
+    for(auto tempDrag : allDragObjs) {
+        if (tempDrag)
+            tempDrag->cancel();
+    }
+}
+
 void DFileView::setFilters(QDir::Filters filters)
 {
     model()->setFilters(filters);
@@ -1018,8 +1010,10 @@ void DFileView::onRowCountChanged()
 
 void DFileView::wheelEvent(QWheelEvent *event)
 {
-    // 左键按下则不响应滚轮事件，解决87504Bug，完善框选未定义行为
-    if (event->buttons().testFlag(Qt::LeftButton)) {
+    // 1. 文管界面左键按下则不响应滚轮事件，解决87504Bug，完善框选未定义行为
+    // 2. 文件选择框界面左键与Ctrl同时按下则不响应滚轮事件，解决bug163975
+    if ((event->buttons().testFlag(Qt::LeftButton) && !g_isFileDialogMode)
+            || (event->buttons().testFlag(Qt::LeftButton) && g_isFileDialogMode && DFMGlobal::keyCtrlIsPressed())) {
         return;
     }
 
@@ -1444,7 +1438,7 @@ void DFileView::updateModelActiveIndex()
         if (fileInfo) {
             fileInfo->makeToActive();
 
-            if (!fileInfo->exists()) {
+            if (!fileInfo->exists() && fileInfo->filePath().isEmpty()) {
                 m_isRemovingCase = true;
                 model()->removeRow(i, rootIndex());
             } else if (fileWatcher) {
@@ -1856,10 +1850,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
     //由于普通用户无法访问root用户的共享内存，跨用户的情况使用从mimedata中取url的方式
     bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
-    if (sameUser) {
-        if (!fetchDragEventUrlsFromSharedMemory())
-            return;
-    } else {
+    if (!sameUser || !fetchDragEventUrlsFromSharedMemory()) {
         m_urlsForDragEvent = event->mimeData()->urls();
     }
 
@@ -2628,7 +2619,7 @@ void DFileView::initUI()
 
     d->statusBar = new DStatusBar(this);
     d->statusBar->scalingSlider()->setPageStep(1);
-    d->statusBar->scalingSlider()->setTickInterval(1);
+    d->statusBar->scalingSlider()->slider()->setTickInterval(1);
 
     addFooterWidget(d->statusBar);
 
@@ -2712,7 +2703,7 @@ void DFileView::initConnects()
         }
     });
 
-    connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
+    connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, this, &DFileView::viewStateChanged);
     connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);
     connect(this, &DFileView::viewStateChanged, this, &DFileView::saveViewState);
 
@@ -2789,7 +2780,7 @@ void DFileView::keyboardSearch(const QString &search)
 {
     D_D(DFileView);
 
-    if (search.isEmpty())
+    if (search.isEmpty() || search.data()->isNull())
         return;
 
     d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
@@ -3733,6 +3724,10 @@ void DFileView::onModelStateChanged(int state)
         if (d->headerView) {
             d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents);
         }
+
+        if (rootUrl().scheme() == FILE_SCHEME)
+            d->statusBar->preSetContainsCount(rootUrl());
+
     } else if (state == DFileSystemModel::Idle) {
         d->statusBar->setLoadingIncatorVisible(state == DFileSystemModel::Busy);
 

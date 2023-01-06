@@ -1,31 +1,16 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmvaultactivefinishedview.h"
 #include "operatorcenter.h"
 #include "../../controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
+#include "vault/vaultconfig.h"
 #include "app/define.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "rlog/rlog.h"
+#include "rlog/datas/vaultreportdata.h"
 
 #include <DLabel>
 #include <DDialog>
@@ -166,6 +151,11 @@ void DFMVaultActiveFinishedView::slotEncryptComplete(int nState)
         // 保险箱初始化操作
         VaultController::ins()->restoreLeftoverErrorInputTimes();
         VaultController::ins()->restoreNeedWaitMinutes();
+
+        // 上报保险箱创建成功日志
+        QVariantMap data;
+        data.insert("mode", VaultReportData::Created);
+        rlog->commit("Vault", data);
     } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }
@@ -215,13 +205,29 @@ void DFMVaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Autho
 
                 std::thread t([]() {
                     // 调用创建保险箱接口
-                    // 拿到密码
-                    QString strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
+                    // 获取加密方式
+                    VaultConfig config;
+                    QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+                    if (encryptionMethod == "NoExit") {
+                        qWarning() << "Get encryption method failed!";
+                        return;
+                    }
+
+                    QString strPassword { "" };
+                    if (encryptionMethod == CONFIG_METHOD_VALUE_KEY) {
+                        // 拿到密码
+                        strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
+                    } else if (encryptionMethod == CONFIG_METHOD_VALUE_TRANSPARENT) {
+                        strPassword = OperatorCenter::getInstance()->getPasswordFromKeyring();
+                    } else {
+                        qWarning() << "Get encryption method failed, can not create vault!";
+                    }
                     if (!strPassword.isEmpty()) {
                         VaultController::ins()->createVault(strPassword);
                         OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
-                    } else
-                        qDebug() << "获取cryfs密码为空，创建保险箱失败！";
+                    } else {
+                        qWarning() << "Get password is empty, failed to create the vault!";
+                    }
                 });
                 t.detach();
             }

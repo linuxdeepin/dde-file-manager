@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmsidebartagitemhandler.h"
 
@@ -42,6 +24,7 @@ DFMSideBarItem *DFMSideBarTagItemHandler::createItem(const DUrl &url)
     QString iconName = TagManager::instance()->getTagIconName(url.fileName());
     QIcon icon = QIcon::fromTheme(iconName);
     DFMSideBarItem * item = new DFMSideBarItem(icon, url.fileName(), url);
+    item->setReportName("Tag");
 
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsEditable);
     item->setData(SIDEBAR_ID_TAG, DFMSideBarItem::ItemUseRegisteredHandlerRole);

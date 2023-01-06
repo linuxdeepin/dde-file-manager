@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef FILEPREVIEWDIALOG_H
 #define FILEPREVIEWDIALOG_H
@@ -101,6 +83,7 @@ public slots:
 private:
     void childEvent(QChildEvent *event) override;
     void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -112,6 +95,9 @@ private:
 
     void updateTitle();
 
+    void updateDialog();
+    bool canNextOrPre();
+
     DUrlList m_fileList;
     DUrlList m_entryUrlList;
 
@@ -122,6 +108,8 @@ private:
     bool m_playingVideo = false;
     bool m_firstEnterSwitchToPage = false;
     int m_currentPageIndex = -1;
+    QAtomicInteger<qint64> keyPressTime = {0};
+    QAtomicInteger<bool> m_isSwitch = false;
     DFMFilePreview *m_preview = nullptr;
 
 };

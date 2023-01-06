@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef DFMVAULTSETUNLOCKMETHODVIEW_H
 #define DFMVAULTSETUNLOCKMETHODVIEW_H
@@ -36,9 +18,9 @@ class QPushButton;
 class QCheckBox;
 class QLabel;
 class OperatorCenter;
-class QSlider;
 class QComboBox;
 class QGridLayout;
+class QVBoxLayout;
 QT_END_NAMESPACE
 
 DWIDGET_BEGIN_NAMESPACE
@@ -53,6 +35,7 @@ class DFMVaultActiveSetUnlockMethodView : public QWidget
     Q_OBJECT
 public:
     explicit DFMVaultActiveSetUnlockMethodView(QWidget *parent = nullptr);
+    ~DFMVaultActiveSetUnlockMethodView();
     void clearText();
 
 signals:
@@ -74,12 +57,8 @@ private slots:
     void slotNextBtnClicked();
     // 类型切换
     void slotTypeChanged(int index);
-    // 随即密码长度改变
-//    void slotLengthChanged(int length);
     // 限制密码的长度
     void slotLimiPasswordLength(const QString &password);
-    // 随即生成密码按钮点击
-//    void slotGeneratePasswordBtnClicked();
 
 private:
     // 校验密码是否符合规则
@@ -103,18 +82,12 @@ private:
     DLabel              *m_pPasswordHintLabel;
     QLineEdit           *m_pTips;
 
+    DLabel              *TransparentEncryptionText;
+    QVBoxLayout         *textLay;
+
     QPushButton         *m_pNext;
 
     QGridLayout         *play1;
-
-//    QLabel              *m_pLengthLabel;
-//    QSlider             *m_pLengthSlider;
-//    QLineEdit           *m_pLengthEdit;
-//    QLabel              *m_pStrengthLabel;
-//    QLabel              *m_pResultLabel;
-//    QLineEdit           *m_pResultEdit;
-//    QCheckBox           *m_pOtherMethod;
-//    QPushButton         *m_pGenerateBtn;
 };
 
 #endif // DFMVAULTSETUNLOCKMETHODVIEW_H

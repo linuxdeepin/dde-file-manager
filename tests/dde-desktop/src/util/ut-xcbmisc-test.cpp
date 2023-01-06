@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include <QApplication>
@@ -9,7 +13,7 @@
 
 TEST(xcb,set_window_type_dock)
 {
-    QWidget w;
+    QWidget w(nullptr);
     w.winId();
     EXPECT_NE(nullptr,w.windowHandle());
 

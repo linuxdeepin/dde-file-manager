@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmevent.h"
 #include "views/windowmanager.h"
@@ -477,11 +458,12 @@ QSharedPointer<DFMWriteUrlsToClipboardEvent> DFMWriteUrlsToClipboardEvent::fromJ
     return event;
 }
 
-DFMRenameEvent::DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent)
+DFMRenameEvent::DFMRenameEvent(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent, const bool checkHide)
     : DFMEvent(RenameFile, sender)
 {
     setData(QPair<DUrl, DUrl>(from, to));
     setProperty(QT_STRINGIFY(DFMRenameEvent::silent), silent);
+    setProperty(QT_STRINGIFY(DFMRenameEvent::checkHide), checkHide);
 }
 
 DUrlList DFMRenameEvent::handleUrlList() const
@@ -494,6 +476,11 @@ DUrlList DFMRenameEvent::handleUrlList() const
 bool DFMRenameEvent::silent() const
 {
     return property(QT_STRINGIFY(DFMRenameEvent::silent), false);
+}
+
+bool DFMRenameEvent::checkHide() const
+{
+    return property(QT_STRINGIFY(DFMRenameEvent::checkHide), true);
 }
 
 QSharedPointer<DFMRenameEvent> DFMRenameEvent::fromJson(const QJsonObject &json)

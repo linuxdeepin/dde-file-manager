@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dtoolbar.h"
 #include "dfmcrumbbar.h"
@@ -156,7 +136,7 @@ void DToolBar::initAddressToolBar()
     m_searchButton->setFocusPolicy(Qt::NoFocus);
     m_searchButton->setFlat(true);
     m_searchButton->setIcon(QIcon::fromTheme("search"));
-    m_searchButton->setIconSize(iconSize);
+    m_searchButton->setIconSize(QSize(30, 30));
 
 
     backForwardLayout->addWidget(buttonBox);
@@ -196,7 +176,7 @@ void DToolBar::initContollerToolBar()
     m_contollerToolBar->setFrameShape(QFrame::NoFrame);
     m_contollerToolBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_contollerToolBarContentLayout = new QHBoxLayout(m_contollerToolBar);
-    m_contollerToolBarContentLayout->setContentsMargins(14, 1, 14, 1);
+    m_contollerToolBarContentLayout->setContentsMargins(14, 0, 14, 0);
     m_contollerToolBarContentLayout->setSpacing(20);
 }
 
@@ -416,6 +396,15 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setFlat(true);
         m_searchButtonAsbState = true;
+        if (DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window())) {
+            if (dfmWindow->isViewShowAdvanceSearchBar()) {
+                m_searchButton->setDown(true);
+                dfmWindow->toggleAdvanceSearchBar(true, false, false);
+            }
+        }
+        else {
+            qCritical() << "window() is null or faile to cast to DFileManagerWindow.";
+        }
     } else {
         m_searchButton->setHidden(false);
         m_searchButton->style()->unpolish(m_searchButton);
@@ -424,7 +413,7 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->setDown(false);
         m_searchButtonAsbState = false;
         if (DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window())) {
-            dfmWindow->toggleAdvanceSearchBar(false);
+            dfmWindow->toggleAdvanceSearchBar(false, false, false);
         }
         else {
             qCritical() << "window() is null or faile to cast to DFileManagerWindow.";

@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "searchhistroymanager.h"
 #include "dfmapplication.h"
@@ -70,10 +51,20 @@ bool SearchHistroyManager::removeSearchHistory(QString keyword)
     return ret;
 }
 
-void SearchHistroyManager::clearHistory()
+void SearchHistroyManager::clearHistory(const QStringList &schemeFilters)
 {
-    QStringList list;
+    if (schemeFilters.isEmpty()) {
+        QStringList list;
+        DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+    } else {
+        QStringList historyList = DFMApplication::appObtuselySetting()->value("Cache", "SearchHistroy").toStringList();
+        for (const QString &data : historyList) {
+            QUrl url(data);
+            if (url.isValid() && schemeFilters.startsWith(url.scheme()))
+                historyList.removeOne(data);
 
-    DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", list);
+        }
+        DFMApplication::appObtuselySetting()->setValue("Cache", "SearchHistroy", historyList);
+    }
 }
 

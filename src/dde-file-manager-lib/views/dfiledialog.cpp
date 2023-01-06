@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "private/dfiledialog_p.h"
 #include "dfiledialog.h"
@@ -38,6 +20,7 @@
 #include <DDialog>
 #include <DPlatformWindowHandle>
 #include <dwidgetutil.h>
+#include <DSuggestButton>
 
 #include <QEventLoop>
 #include <QPointer>
@@ -147,7 +130,6 @@ DFileDialog::DFileDialog(QWidget *parent)
 {
     d_ptr->view = qobject_cast<DFileView *>(DFileManagerWindow::getFileView()->widget());
     if (d_ptr->view) {
-        d_ptr->view->setAlwaysOpenInCurrentWindow(true);    // 文件对话框只能在本窗口打开新目录
         connect(d_ptr->view, &DFileView::clicked, this, &DFileDialog::listViewItemClicked);
         DFileSystemModel *model = d_ptr->view->model();
         if (model) {
@@ -180,7 +162,7 @@ DFileDialog::DFileDialog(QWidget *parent)
 
     DFMEventDispatcher::instance()->installEventFilter(this);
 
-    connect(statusBar()->acceptButton(), &QPushButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
+    connect(statusBar()->acceptButton(), &DSuggestButton::clicked, this, &DFileDialog::onAcceptButtonClicked);
     connect(statusBar()->rejectButton(), &QPushButton::clicked, this, &DFileDialog::onRejectButtonClicked);
     connect(getFileView(), &DFileView::fileDialogRename, this, &DFileDialog::disableOpenBtn);
     connect(statusBar()->comboBox(),
@@ -231,7 +213,8 @@ void DFileDialog::setDirectoryUrl(const DUrl &directory)
             url.setPath(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first());
         }
     }
-    getFileView()->cd(url);
+    curUrl = directory;
+    isChanged = true;
 }
 
 QUrl DFileDialog::directoryUrl() const
@@ -915,6 +898,11 @@ void DFileDialog::listViewItemClicked(const QModelIndex &index)
 
 void DFileDialog::showEvent(QShowEvent *event)
 {
+    if (getFileView() && isChanged) {
+        getFileView()->cd(curUrl);
+        isChanged = false;
+    }
+
     if (!event->spontaneous() && !testAttribute(Qt::WA_Moved)) {
         Qt::WindowStates  state = windowState();
         adjustPosition(parentWidget());
@@ -1128,6 +1116,7 @@ void DFileDialog::handleNewView(DFMBaseView *view)
     }
 
     d->view = fileView;
+    d_ptr->view->setAlwaysOpenInCurrentWindow(true);    // 文件对话框只能在本窗口打开新目录
 
     QSet<DFMGlobal::MenuAction> whitelist;
 
@@ -1291,11 +1280,11 @@ void DFileDialog::onAcceptButtonClicked()
                 DDialog dialog(this);
 
                 dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-                dialog.setTitle(tr("This file will be hidden if the file name starts with a dot (.). Do you want to hide it?"));
+                dialog.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
+                dialog.addButton(tr("Hide","button"), false, DDialog::ButtonWarning);
                 dialog.addButton(tr("Cancel","button"), true);
-                dialog.addButton(tr("Confirm","button"), false, DDialog::ButtonWarning);
 
-                if (dialog.exec() != DDialog::Accepted) {
+                if (dialog.exec() != 0) {
                     return;
                 }
             }

@@ -1,29 +1,14 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     zhangyu<zhangyub@uniontech.com>
- *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
- *             wangchunlin<wangchunlin@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "util/dde/ddesession.h"
 #include "config/config.h"
 #include "desktop.h"
 #include "view/canvasgridview.h"
+#include "daemonplugin.h"
+#include "app/define.h"
+#include "rlog/rlog.h"
 
 #include <controllers/appcontroller.h>
 #include <dfmglobal.h>
@@ -145,6 +130,7 @@ int main(int argc, char *argv[])
 
     bool preload = false;
     bool fileDialogOnly = false;
+    bool noGrandSearch = false;
     for (const QString &arg : app.arguments()) {
         if (arg == "--preload") {
             preload = true;
@@ -155,6 +141,9 @@ int main(int argc, char *argv[])
             break;
         }
     }
+
+    if (app.arguments().contains("--no-grandsearch"))
+        noGrandSearch = true;
 
     //因bug#46452，--file-dialog-only不再判断root
 //    if (fileDialogOnly && getuid() != 0) {
@@ -169,6 +158,7 @@ int main(int argc, char *argv[])
     app.setApplicationDisplayName(app.translate("DesktopMain", "Desktop"));
     app.setApplicationVersion(DApplication::buildVersion((GIT_VERSION)));
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    app.setProductIcon(QIcon::fromTheme("deepin-toggle-desktop"));
 
     const QString logFormat = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
     DFMLogManager::setLogFormat(logFormat);
@@ -232,6 +222,26 @@ int main(int argc, char *argv[])
     } else {
         if (!fileDialogOnly) {
             Desktop::instance()->loadView();
+
+            if (!noGrandSearch) {
+                // 4s后启动全局搜索
+                QTimer::singleShot(4000, Desktop::instance(), []() {
+                   qInfo() << "try to start grand search daemon...";
+                    GrandSearch::DaemonPlugin *srv = new GrandSearch::DaemonPlugin(qApp);
+                    if (srv->initialize()) {
+                        if (srv->start()) {
+                            QObject::connect(qApp, &DApplication::aboutToQuit, srv, &GrandSearch::DaemonPlugin::stop);
+                            qInfo() << "grand search daemo started successfully.";
+                            return;
+                        } else {
+                            qCritical() << "started grand search failed.";
+                        }
+                    } else {
+                        qWarning() << "initialize grand search failed.";
+                    }
+                    delete srv;
+                });
+            }
         }
     }
 
@@ -249,10 +259,17 @@ int main(int argc, char *argv[])
         DFMGlobal::initBluetoothManager();
         DFMGlobal::initRootFileManager();
         DFMGlobal::setInitAppOver();
+        DFMGlobal::initVaultDbusResponse();
+        DFMGlobal::initRlogManager();
     });
     DFMGlobal::initEmblemPluginManagerConnection();
 
     DFMGlobal::IsFileManagerDiloagProcess = true; // for compatibility.
+
+    qInfo() << "RLog init start!";
+    rlog->init();
+    qInfo() << "RLog init finished!";
+
     int ret = app.exec();
     qInfo() << "exit: " << ret << "pid:" << getpid();
     return ret;

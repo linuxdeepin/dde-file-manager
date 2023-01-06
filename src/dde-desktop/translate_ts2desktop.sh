@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 DESKTOP_COMPUTER_TEMP_FILE=data/applications/dde-computer.desktop.tmp
 DESKTOP_COMPUTER_FILE=data/applications/dde-computer.desktop
 DESKTOP_COMPUTER_TS_DIR=translations/dde-computer-desktop/

@@ -1,23 +1,7 @@
-/*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
- *
- * Author:     liqiang<liqianga@uniontech.com>
- *
- * Maintainer: liqiang<liqianga@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef GROUPPOLICY_H
 #define GROUPPOLICY_H
 
@@ -42,12 +26,17 @@ public:
     QVariant getValue(const QString &key, const QVariant &fallback = QVariant());
     void setValue(const QString &key, const QVariant &value);
 
+    using SyncFunc = std::function<void(const QVariant&)>;
+    bool addSyncFunc(const QString &key, SyncFunc func);
+    bool isConfigSetted(const QString &key, QVariant *settedValue = nullptr);
+
 signals:
     void valueChanged(const QString &key);
 
 protected:
     explicit GroupPolicy(QObject *parent = nullptr);
 private:
+    QMap<QString, SyncFunc> m_synchorinizers;
 
 #if (DTK_POLICY_SUPPORT)
     Dtk::Core::DConfig *m_config;

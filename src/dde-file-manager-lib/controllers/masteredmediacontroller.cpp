@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     xushitong<xushitong@uniontech.com>
- *
- * Maintainer: dengkeyun<dengkeyun@uniontech.com>
- *             max-lv<lvwujun@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "masteredmediacontroller.h"
 #include "dfmevent.h"
@@ -35,6 +16,8 @@
 #include "dialogs/dialogmanager.h"
 #include "dialogs/burnoptdialog.h"
 #include "interfaces/dfileproxywatcher.h"
+#include "interfaces/dfmapplication.h"
+#include "interfaces/dfmsettings.h"
 #include "private/dabstractfilewatcher_p.h"
 #include "disomaster.h"
 #include "shutil/fileutils.h"
@@ -533,4 +516,32 @@ QFileDevice::Permissions MasteredMediaController::getPermissionsCopyToLocal()
                                                                 | QFileDevice::WriteGroup | QFileDevice::ReadGroup
                                                                 | QFileDevice::ReadOther);
     return permissionsToLocal;
+}
+
+void MasteredMediaController::mapStagingFilesPath(const DUrlList &srcList, const DUrlList &targetList)
+{
+    if (srcList.size() != targetList.size()) {
+        qWarning() << "Src url size != targt url size";
+        return;
+    }
+
+    QString firsDestPath {targetList[0].path()};
+    static QRegularExpression reg("_dev_sr[0-9]*");
+    QRegularExpressionMatch match;
+    if (!firsDestPath.contains(reg, &match)) {
+        qWarning() << "Cannot map _dev_sr[0-9]";
+        return;
+    }
+    QString dev { match.captured().replace("_", "/")};
+    if (dev.isEmpty()) {
+        qWarning() << "Empty dev";
+        return;
+    }
+
+    QVariantMap map {DFMApplication::dataPersistence()->value("StagingMap", dev).toMap()};
+    for (int i = 0; i != srcList.size(); ++i)
+        map[targetList.at(i).path()] = srcList.at(i).path();
+
+    DFMApplication::dataPersistence()->setValue("StagingMap", dev, map);
+    DFMApplication::dataPersistence()->sync();
 }

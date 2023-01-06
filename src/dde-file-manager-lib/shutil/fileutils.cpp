@@ -1,30 +1,11 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     max-lv<lvwujun@uniontech.com>
- *
- * Maintainer: dengkeyun<dengkeyun@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-//fixed:CD display size error
 #include "gvfs/gvfsmountmanager.h"
 
 #include "fileutils.h"
+#include "smbintegrationswitcher.h"
 
 #include "views/windowmanager.h"
 
@@ -230,10 +211,41 @@ int FileUtils::filesCount(const QString &dir)
     return entryList.size();
 }
 
-QStringList FileUtils::filesList(const QString &dir)
+QFileInfoList FileUtils::fileInfoList(const QString &path)
+{
+    QDir dir(path);
+    if (!dir.exists() || dir.isEmpty())
+        return {};
+
+    return dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+}
+
+/*!
+ * \brief 递归获取目录下所有文件列表，主线程中谨慎使用（文件过多卡死主线程）
+ * \param path
+ * \return
+ */
+QFileInfoList FileUtils::fileInfoListRecursive(const QString &path)
+{
+    QDir dir(path);
+    if (!dir.exists() || dir.isEmpty())
+        return {};
+
+    QFileInfoList fileList {dir.entryInfoList(QDir::Files | QDir::NoSymLinks)};
+    const QFileInfoList &folderList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    for(const QFileInfo &info : folderList) {
+         const QFileInfoList &childFileList = fileInfoListRecursive(info.absoluteFilePath());
+         fileList.append(childFileList);
+    }
+
+    return fileList;
+}
+
+QStringList FileUtils::filesList(const QString &path)
 {
     QStringList appNames;
-    QDirIterator it(dir,
+    QDirIterator it(path,
                     QDir::Files | QDir::NoDotAndDotDot,
                     QDirIterator::Subdirectories);
     while (it.hasNext()) {
@@ -514,6 +526,34 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app,
 
     // Default icon
     return defaultIcon;
+}
+
+QString FileUtils::formatOpticalMediaType(const QString &media)
+{
+    static std::initializer_list<std::pair<QString, QString>> opticalmediakeys {
+        {"optical",                "Optical"},
+        {"optical_cd",             "CD-ROM"},
+        {"optical_cd_r",           "CD-R"},
+        {"optical_cd_rw",          "CD-RW"},
+        {"optical_dvd",            "DVD-ROM"},
+        {"optical_dvd_r",          "DVD-R"},
+        {"optical_dvd_rw",         "DVD-RW"},
+        {"optical_dvd_ram",        "DVD-RAM"},
+        {"optical_dvd_plus_r",     "DVD+R"},
+        {"optical_dvd_plus_rw",    "DVD+RW"},
+        {"optical_dvd_plus_r_dl",  "DVD+R/DL"},
+        {"optical_dvd_plus_rw_dl", "DVD+RW/DL"},
+        {"optical_bd",             "BD-ROM"},
+        {"optical_bd_r",           "BD-R"},
+        {"optical_bd_re",          "BD-RE"},
+        {"optical_hddvd",          "HD DVD-ROM"},
+        {"optical_hddvd_r",        "HD DVD-R"},
+        {"optical_hddvd_rw",       "HD DVD-RW"},
+        {"optical_mo",             "MO"}
+    };
+    static QMap<QString, QString> opticalmediamap(opticalmediakeys);
+
+    return opticalmediamap.value(media);
 }
 //---------------------------------------------------------------------------
 
@@ -1180,15 +1220,15 @@ bool FileUtils::isFileManagerSelf(const QString &desktopFile)
 QString FileUtils::defaultTerminalPath()
 {
     const static QString dde_daemon_default_term = QStringLiteral("/usr/lib/deepin-daemon/default-terminal");
-    const static QString debian_x_term_emu = QStringLiteral("/usr/bin/x-terminal-emulator");
+    const static QString debian_x_term_emu = QStandardPaths::findExecutable("x-terminal-emulator");
 
     if (QFileInfo::exists(dde_daemon_default_term)) {
         return dde_daemon_default_term;
-    } else if (QFileInfo::exists(debian_x_term_emu)) {
+    } else if (!debian_x_term_emu.isEmpty()) {
         return debian_x_term_emu;
+    } else {
+	return QStandardPaths::findExecutable("xterm");
     }
-
-    return QStandardPaths::findExecutable("xterm");
 }
 
 bool FileUtils::setBackground(const QString &pictureFilePath)
@@ -1747,14 +1787,14 @@ bool FileUtils::writeJsonnArrayFile(const QString &filePath, const QJsonArray &a
 void FileUtils::mountAVFS()
 {
     QProcess p;
-    p.start("/usr/bin/umountavfs");
+    p.start("umountavfs", QStringList{});
     p.waitForFinished();
-    QProcess::startDetached("/usr/bin/mountavfs");
+    QProcess::startDetached("mountavfs", {});
 }
 
 void FileUtils::umountAVFS()
 {
-    QProcess::startDetached("/usr/bin/umountavfs");
+    QProcess::startDetached("umountavfs", {});
 }
 
 void FileUtils::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
@@ -1947,6 +1987,9 @@ bool FileUtils::isSmbPath(const QString &localPath)
  */
 bool FileUtils::isSmbShareFolder(const DUrl &url)
 {
+    if(!smbIntegrationSwitcher->isIntegrationMode())
+        return false;
+
     DUrl temUrl = url;
     if(url.scheme() == DFMROOT_SCHEME){
         QString urlString = url.toString();
@@ -1954,10 +1997,10 @@ bool FileUtils::isSmbShareFolder(const DUrl &url)
         temUrl = DUrl(urlString);
     }
     QString path = temUrl.path();
-    if(path.endsWith('/') || path.endsWith('\\')){
+    if(path.endsWith('/') || path.endsWith('\\'))
         path.chop(1);
-    }
-    bool result = temUrl.scheme() == SMB_SCHEME && !path.isEmpty() && path.startsWith('/') && path.count("/") == 1;
+
+    bool result = temUrl.scheme() == SMB_SCHEME && path.startsWith('/') && path.count("/") == 1;
     return result;
 }
 
@@ -2003,6 +2046,7 @@ bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
 
 /**
  * @brief FileUtils::isSmbHostOnly 判断url格式是否为smb://host或者smb://domain格式
+ *
  * @param url
  * @return
  */
@@ -2252,6 +2296,30 @@ QList<QStringList> FileUtils::catFstabFileInfo(const QString &grepData)
     process.terminate();
 
     return listMountInfo;
+}
+
+bool FileUtils::isArchiveByMimetype(const QString &mimetype)
+{
+    return mimeTypeDisplayManager->supportArchiveMimetypes().contains(mimetype);
+}
+
+int FileUtils::maxLabelLengthOfFileSystem(const QString &fs)
+{
+    const static QMap<QString, int> limits {
+        {"vfat", 11},   // man 8 mkfs.fat
+        {"ext2", 16},   // man 8 mke2fs
+        {"ext3", 16},   // man 8 mke2fs
+        {"ext4", 16},   // man 8 mke2fs
+        {"btrfs", 255}, // https://btrfs.wiki.kernel.org/index.php/Manpage/btrfs-filesystem
+        {"f2fs", 512},  // https://www.kernel.org/doc/Documentation/filesystems/f2fs.txt    https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/tree/mkfs/f2fs_format_main.c
+        {"jfs", 16},    // jfsutils/mkfs/mkfs.c:730
+        {"exfat", 15},  // man 8 mkexfatfs
+        {"nilfs2", 80}, // man 8 mkfs.nilfs2
+        {"ntfs", 32},   // https://docs.microsoft.com/en-us/dotnet/api/system.io.driveinfo.volumelabel?view=netframework-4.8
+        {"reiserfs", 15},// man 8 mkreiserfs said its max length is 16, but after tested, only 15 chars are accepted.
+        {"xfs", 12}     // https://github.com/edward6/reiser4progs/blob/master/include/reiser4/types.h fs_hint_t
+    };
+    return limits.value(fs, 11);
 }
 
 //优化苹果文件不卡显示，存在判断错误的可能，只能临时优化，需系统提升ios传输效率

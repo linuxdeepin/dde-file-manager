@@ -66,5 +66,7 @@
         <file>icons/deepin/builtin/light/icons/collect.svg</file>
         <file>icons/deepin/builtin/dark/icons/collect_cancel.svg</file>
         <file>icons/deepin/builtin/dark/icons/collect.svg</file>
+        <file>icons/deepin/builtin/light/icons/dfm_success_128px.svg</file>
+        <file>icons/deepin/builtin/light/icons/dfm_fail_128px.svg</file>
     </qresource>
 </RCC>

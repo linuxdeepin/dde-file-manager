@@ -21,6 +21,10 @@ HEADERS += \
     $$PWD/../../dde-file-manager-lib/interfaces/durl.h \
     $$PWD/../../dde-file-manager-lib/interfaces/defenderinterface.h \
     $$PWD/../../dde-file-manager-lib/interfaces/dumountmanager.h \
+    $$PWD/../../utils/rlog/rlog.h \
+    $$PWD/../../utils/rlog/committhread.h \
+    $$PWD/../../utils/rlog/datas/reportdatainterface.h \
+    $$PWD/../../utils/rlog/datas/blockmountreportdata.h \
 
 SOURCES += \
     $$PWD/diskmountplugin.cpp \
@@ -35,5 +39,8 @@ SOURCES += \
     $$PWD/../../dde-file-manager-lib/interfaces/durl.cpp \
     $$PWD/../../dde-file-manager-lib/interfaces/defenderinterface.cpp \
     $$PWD/../../dde-file-manager-lib/interfaces/dumountmanager.cpp \
-    $$PWD/dattacheddeviceinterface.cpp
+    $$PWD/dattacheddeviceinterface.cpp \
+    $$PWD/../../utils/rlog/rlog.cpp \
+    $$PWD/../../utils/rlog/committhread.cpp \
+    $$PWD/../../utils/rlog/datas/blockmountreportdata.cpp \
 

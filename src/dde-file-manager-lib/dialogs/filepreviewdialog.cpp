@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filepreviewdialog.h"
 #include "dfileservices.h"
@@ -143,6 +125,10 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     m_nameLabel->setObjectName("NameLabel");
     m_nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_nameLabel->setWordWrap(true);
+    QFont bold(m_nameLabel->font());
+    bold.setWeight(70);
+    bold.setPointSize(14);
+    m_nameLabel->setFont(bold);
     m_sizeLabel = new QLabel(m_contentWidget);
     m_sizeLabel->setObjectName("SizeLabel");
     m_sizeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -267,7 +253,9 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
 
 FilePreviewDialog::~FilePreviewDialog()
 {
+    m_isSwitch = false;
     emit signalCloseEvent();
+
     if (m_preview) {
         m_preview->deleteLater();
         m_preview = nullptr;
@@ -312,8 +300,31 @@ void FilePreviewDialog::showEvent(QShowEvent *event)
     return DAbstractDialog::showEvent(event);
 }
 
+void FilePreviewDialog::hideEvent(QHideEvent *event)
+{
+    m_isSwitch = false;
+    emit signalCloseEvent();
+    if (m_preview) {
+        m_preview->contentWidget()->hide();
+        m_preview->stop();
+        disconnect(m_preview, &DFMFilePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
+        m_preview->contentWidget()->setVisible(false);
+        static_cast<QVBoxLayout *>(layout())->removeWidget(m_preview->contentWidget());
+        static_cast<QHBoxLayout *>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
+        if (DFMGlobal::isWayLand()) {
+            m_preview->DoneCurrent();
+        } else {
+            m_preview->deleteLater();
+            m_preview = nullptr;
+        }
+    }
+
+    return DAbstractDialog::hideEvent(event);
+}
+
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
+    m_isSwitch = false;
     emit signalCloseEvent();
     if (m_preview) {
         m_preview->contentWidget()->hide();
@@ -335,6 +346,7 @@ void FilePreviewDialog::resizeEvent(QResizeEvent *event)
     QTimer::singleShot(50, this, [=]() {   //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
         repaint();   //通过重绘来解决调整大小前的窗口残留的问题
     });
+    updateTitle();
 }
 
 bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
@@ -344,15 +356,17 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
         if (!e->isAutoRepeat()) {
             switch (e->key()) {
             case Qt::Key_Left:
-            case Qt::Key_Up:
-                if (!e->isAutoRepeat())
+            case Qt::Key_Up:{
+                if (canNextOrPre() && !e->isAutoRepeat())
                     previousPage();
                 break;
+            }
             case Qt::Key_Right:
-            case Qt::Key_Down:
-                if (!e->isAutoRepeat())
+            case Qt::Key_Down: {
+                if (canNextOrPre() && !e->isAutoRepeat())
                     nextPage();
                 break;
+            }
             case Qt::Key_Escape:
             case Qt::Key_Space: {
                 // 视频预览的前一秒禁止再次播放
@@ -460,6 +474,12 @@ static QString generalKey(const QString &key)
 
 void FilePreviewDialog::switchToPage(int index)
 {
+    if (m_isSwitch) {
+        return;
+    } else {
+        m_isSwitch = true;
+    }
+
     if (m_preview) {
         m_preview->stop();
     }
@@ -472,6 +492,8 @@ void FilePreviewDialog::switchToPage(int index)
 
     if (!info) {
         m_fileList.removeAt(index);
+
+        m_isSwitch = false;
 
         if (m_fileList.isEmpty())
             return;
@@ -492,16 +514,8 @@ void FilePreviewDialog::switchToPage(int index)
 
         if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key) || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
-                m_preview->contentWidget()->updateGeometry();
-                updateTitle();
-                this->setFocus();
-                m_preview->contentWidget()->adjustSize();
-                int newPerviewWidth = m_preview->contentWidget()->size().width();
-                int newPerviewHeight = m_preview->contentWidget()->size().height();
-                resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
-
-                playCurrentPreviewFile();
-                moveToCenter();
+                updateDialog();
+                m_isSwitch = false;
                 return;
             }
         }
@@ -524,10 +538,12 @@ void FilePreviewDialog::switchToPage(int index)
             }
         }
     }
+
     if (!preview) {
         if (qobject_cast<UnknowFilePreview *>(m_preview)) {
             m_preview->setFileUrl(m_fileList.at(index));
             m_statusBar->openButton()->setFocus();
+            m_isSwitch = false;
             return;
         } else {
             preview = new UnknowFilePreview(this);
@@ -535,6 +551,11 @@ void FilePreviewDialog::switchToPage(int index)
             preview->setFileUrl(m_fileList.at(index));
         }
     }
+
+    bool isUpdateDialog = true;
+    if (m_preview && preview && m_preview->metaObject()->className() == QStringLiteral("VideoPreview") &&
+            preview->metaObject()->className() != QStringLiteral("VideoPreview"))
+        isUpdateDialog = false;
 
     if (m_preview)
         disconnect(m_preview, &DFMFilePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
@@ -557,20 +578,16 @@ void FilePreviewDialog::switchToPage(int index)
     m_separator->setVisible(preview->showStatusBarSeparator());
     m_preview = preview;
 
+    if (m_preview && isUpdateDialog)
+        updateDialog();
+
     QTimer::singleShot(0, this, [this] {
         if (m_preview && m_statusBar) {
-            updateTitle();
-            playCurrentPreviewFile();
-            this->setFocus();
-            this->adjustSize();
-            m_preview->contentWidget()->adjustSize();
-            int newPerviewWidth = m_preview->contentWidget()->size().width();
-            int newPerviewHeight = m_preview->contentWidget()->size().height();
-            resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
-
-            moveToCenter();
+            updateDialog();
         }
     });
+
+    m_isSwitch = false;
 }
 
 void FilePreviewDialog::setEntryUrlList(const DUrlList &entryUrlList)
@@ -666,6 +683,27 @@ void FilePreviewDialog::updateTitle()
     }
     m_statusBar->title()->setText(elidedText);
     m_statusBar->title()->setHidden(m_statusBar->title()->text().isEmpty());
+}
+
+void FilePreviewDialog::updateDialog()
+{
+    updateTitle();
+    playCurrentPreviewFile();
+    this->setFocus();
+    this->adjustSize();
+    m_preview->contentWidget()->adjustSize();
+    int newPerviewWidth = m_preview->contentWidget()->size().width();
+    int newPerviewHeight = m_preview->contentWidget()->size().height();
+    resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
+    moveToCenter();
+}
+
+bool FilePreviewDialog::canNextOrPre()
+{
+    qint64 cur = QDateTime::currentMSecsSinceEpoch();
+    qint64 old = keyPressTime;
+    keyPressTime = cur;
+    return cur - 50 > old;
 }
 
 DFM_END_NAMESPACE

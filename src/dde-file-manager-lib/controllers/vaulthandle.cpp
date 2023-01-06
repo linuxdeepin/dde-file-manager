@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaulthandle.h"
 #include "vaulterrorcode.h"
@@ -28,6 +9,8 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "singleton.h"
+#include "utils/grouppolicy.h"
+#include "vault/vaultconfig.h"
 
 #include <QStandardPaths>
 #include <QProcess>
@@ -70,7 +53,7 @@ void CryFsHandle::createVault(QString lockBaseDir, QString unlockFileDir, QStrin
 {
     m_mutex->lock();
     m_activeState.insert(1, static_cast<int>(ErrorCode::Success));
-    int flg = runVaultProcess(lockBaseDir, unlockFileDir,passWord);
+    int flg = runVaultProcess(lockBaseDir, unlockFileDir,passWord, true);
     if(m_activeState.value(1) != static_cast<int>(ErrorCode::Success))
         emit signalCreateVault(m_activeState.value(1));
     else{
@@ -88,7 +71,7 @@ void CryFsHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QStrin
     m_mutex->lock();
     m_activeState.insert(3, static_cast<int>(ErrorCode::Success));
     qDebug() << "CryFsHandle::unlockVault:" << QThread::currentThread();
-    int flg = runVaultProcess(lockBaseDir, unlockFileDir, passWord);
+    int flg = runVaultProcess(lockBaseDir, unlockFileDir, passWord, false);
     if(m_activeState.value(3) != static_cast<int>(ErrorCode::Success))
         emit signalUnlockVault(m_activeState.value(3));
     else
@@ -120,13 +103,25 @@ void CryFsHandle::lockVault(QString unlockFileDir)
     m_mutex->unlock();
 }
 
-int CryFsHandle::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString passWord)
+int CryFsHandle::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString passWord, bool isCreate)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) return static_cast<int>(ErrorCode::CryfsNotExist);
 
     QStringList arguments;
-    arguments << lockBaseDir << unlockFileDir;
+    if (isCreate) {
+        const QString &algoName = encryptAlgoNameOfGroupPolicy();
+        arguments << QString("--cipher") << algoName << lockBaseDir << unlockFileDir;
+        // 组策略同步设置保险箱加密算法
+        GroupPolicy::instance()->setValue(GROUP_POLICY_VAULT_ALGO_NAME, algoName);
+        // 记录当前保险箱使用的加密算法,用于同步组策略信息
+        VaultConfig config;
+        config.set(CONFIG_NODE_NAME, CONFIG_KEY_ALGONAME, QVariant(algoName));
+    } else {
+        arguments << lockBaseDir << unlockFileDir;
+        // 每次开锁时，同步组策略中保险箱加密算法
+        syncGroupPolicyAlgoName();
+    }
 
     m_process->setEnvironment({"CRYFS_FRONTEND=noninteractive"});
     m_process->start(cryfsBinary, arguments);
@@ -165,6 +160,69 @@ int CryFsHandle::lockVaultProcess(QString unlockFileDir)
     } else {
         return -1;
     }
+}
+
+bool CryFsHandle::isSupportAlgoName(const QString &algoName)
+{
+    static QStringList algoNames = algoNameOfSupport();
+    if (algoNames.contains(algoName))
+        return true;
+    return false;
+}
+
+void CryFsHandle::syncGroupPolicyAlgoName()
+{
+    if (DTK_POLICY_SUPPORT) {
+        VaultConfig config;
+        const QString &algoName = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ALGONAME, QVariant("NoExist")).toString();
+        if (algoName == "NoExist") {
+            // 字段不存在，引入国密之前的保险箱，默认算法为aes-256-gcm
+            GroupPolicy::instance()->setValue(GROUP_POLICY_VAULT_ALGO_NAME, DEFAULT_AES_ALGO_NAME);
+        } else {
+            if (!algoName.isEmpty())
+                GroupPolicy::instance()->setValue(GROUP_POLICY_VAULT_ALGO_NAME, algoName);
+        }
+    }
+}
+
+QStringList CryFsHandle::algoNameOfSupport()
+{
+    QStringList result { "" };
+    QString cryfsProgram = QStandardPaths::findExecutable("cryfs");
+    if (cryfsProgram.isEmpty()) {
+        qWarning() << "cryfs is not exist!";
+        return result;
+    }
+
+    QProcess process;
+    process.setEnvironment({"CRYFS_FRONTEND=noninteractive", "CRYFS_NO_UPDATE_CHECK=false"});
+    process.start(cryfsProgram, { "--show-ciphers" });
+    process.waitForStarted();
+    process.waitForFinished();
+    QString output = QString::fromLocal8Bit(process.readAllStandardError());
+    result = output.split('\n', QString::SkipEmptyParts);
+
+    return result;
+}
+
+QString CryFsHandle::encryptAlgoNameOfGroupPolicy()
+{
+    QString algoName { DEFAULT_SM4_ALGO_NAME };
+    if (DTK_POLICY_SUPPORT) {
+        if (GroupPolicy::instance()->containKey(GROUP_POLICY_VAULT_ALGO_NAME)) {
+            algoName = GroupPolicy::instance()->getValue(GROUP_POLICY_VAULT_ALGO_NAME, QVariant("NoExist")).toString();
+            if (algoName == "NoExist" || algoName.isEmpty())
+                algoName = DEFAULT_SM4_ALGO_NAME;
+        }
+    }
+
+    if (!isSupportAlgoName(algoName)) {
+        algoName = DEFAULT_SM4_ALGO_NAME;
+        if (!isSupportAlgoName(algoName))
+            algoName = DEFAULT_AES_ALGO_NAME;
+    }
+
+    return algoName;
 }
 
 void CryFsHandle::slotReadError()

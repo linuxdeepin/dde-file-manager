@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfilemenumanager.h"
 #include "dfmglobal.h"
@@ -41,6 +21,7 @@
 #include "shutil/fileutils.h"
 #include "shutil/mimesappsmanager.h"
 #include "shutil/danythingmonitorfilter.h"
+#include "shutil/smbintegrationswitcher.h"
 #include "controllers/pathmanager.h"
 #include "plugins/pluginmanager.h"
 #include "dde-file-manager-plugins/plugininterfaces/menu/menuinterface.h"
@@ -68,6 +49,7 @@
 #include "extensionimpl/dfmextmendefine.h"
 #include "extensionimpl/private/dfmextmenuimpl_p.h"
 #include "utils/grouppolicy.h"
+#include "rlog/rlog.h"
 
 #include <dgiomount.h>
 #include <dgiofile.h>
@@ -86,10 +68,15 @@
 #include <QDebug>
 #include <QPushButton>
 #include <QWidgetAction>
+#include <QApplication>
 
 #include <dgiosettings.h>
 #include <unistd.h>
 
+
+#define DFM_MENU_ACTION_HIDDEN "dfm.menu.action.hidden"
+#define DD_MENU_ACTION_HIDDEN "dd.menu.action.hidden"
+#define DFD_MENU_ACTION_HIDDEB "dfd.menu.action.hidden"
 
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
 
@@ -187,6 +174,11 @@ DFileMenu *DFileMenuManager::createToolBarSettingsMenu(const QSet<MenuAction> &d
                << MenuAction::SetUserSharePassword
                << MenuAction::Settings;
 
+    QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
+    QString cryptInfo = settings.value("DI_CRYPT_INFO").toString();
+    if (!cryptInfo.isEmpty())
+        actionKeys.insert(actionKeys.indexOf(MenuAction::Settings), MenuAction::ChangeDiskPassword);
+
     DFileMenu *menu = genereteMenuByKeys(actionKeys, disableList, false, subMenuKeys, false);
     menu->setAccessibleInfo(AC_FILE_MENU_TOOLBAR_SEETINGS);
     return menu;
@@ -222,29 +214,28 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     DUrlList redirectedUrlList;
     if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
-        ///此处需要判断currentUrl是否形如：smb://xx.xx.xx.xx/<share_folder>
-        bool isSmbSharedDir = FileUtils::isSmbShareFolder(currentUrl);
-        if (isSmbSharedDir) {
-            bool isMounted = false;
+        bool isMounted = false;
+        if (FileUtils::isSmbShareFolder(currentUrl)) {
             for (auto gvfsmp : DGioVolumeManager::getMounts()) {//遍历当前挂载
                 auto rootFile = gvfsmp->getRootFile();
                 if (!rootFile)
                     continue;
 
                 bool isSmb = FileUtils::isSmbPath(rootFile->path());
-                if(isSmb){
-                    DUrl mountUrl;
-                    QString shareName = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kShareName);
-                    QString shareHost = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kServer);
-                    QString name = currentUrl.path().toLower();//共享文件夹名称转小写
-                    QString host = currentUrl.host();
-                    if(name.startsWith("/"))
-                        name = name.mid(1);
-                    if(name == shareName && host == shareHost){
-                        isMounted =  true;
-                        break;
-                    }
+                if(!isSmb)
+                    continue;
+                DUrl mountUrl;
+                QString shareName = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kShareName);
+                QString shareHost = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kServer);
+                QString name = currentUrl.path().toLower();//共享文件夹名称转小写
+                QString host = currentUrl.host();
+                if(name.startsWith("/"))
+                    name = name.mid(1);
+                if(name == shareName && host == shareHost){
+                    isMounted =  true;
+                    break;
                 }
+
             }
             if (isMounted) {//Menu show unmount item
                 actions << MenuAction::Unmount;
@@ -466,7 +457,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             action->setIcon(FileUtils::searchAppIcon(desktopFile));
             action->setProperty("app", app);
             if (urls.length() == 1) {
-                action->setProperty("url", QVariant::fromValue(info->redirectedFileUrl()));
+                action->setProperty("url", QVariant::fromValue(info->fileUrl()));
             } else {
 #if 0       // fix bug202007010011 优化文件判断效率，提升右键菜单响应速度
                 DUrlList redirectedUrlList;
@@ -730,6 +721,11 @@ DFileMenu *DFileMenuManager::createVaultMenu(QWidget *topWidget, const QObject *
         });
     }
 
+    if (menu->actions().isEmpty()) {
+        menu->deleteLater();
+        return nullptr;
+    }
+
     return menu;
 }
 
@@ -918,6 +914,7 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::Vault] = QObject::tr("File Vault");
     actionKeys[MenuAction::ConnectToServer] = QObject::tr("Connect to Server");
     actionKeys[MenuAction::SetUserSharePassword] = QObject::tr("Set share password");
+    actionKeys[MenuAction::ChangeDiskPassword] = QObject::tr("Change disk password");
     actionKeys[MenuAction::FormatDevice] = QObject::tr("Format");
     actionKeys[MenuAction::OpticalBlank] = QObject::tr("Erase");
 
@@ -966,9 +963,6 @@ void DFileMenuData::initData()
         actionIcons[MenuAction::Property] = QIcon::fromTheme("document-properties");
     }
 
-    // fix #bug140633,原新建文本菜单项不支持icon，与产品和UI沟通，建文本菜单项新增icon且不纳入DGioSettings
-    actionIcons[MenuAction::NewText] = QIcon::fromTheme("text-plain");
-
     actionKeys[MenuAction::RemoveStashedRemoteConn] = QObject::tr("Remove");
     actionKeys[MenuAction::UnmountAllSmbMount] = QObject::tr("Unmount");
     actionKeys[MenuAction::RefreshView] = QObject::tr("Refresh");
@@ -976,93 +970,40 @@ void DFileMenuData::initData()
 
     // action predicate
     actionPredicate[MenuAction::Open] =  "Open";
-    actionPredicate[MenuAction::OpenDisk] =  "OpenDisk";
+    actionPredicate[MenuAction::OpenWith] =  "OpenWith";
+    actionPredicate[MenuAction::OpenFileLocation] =  "OpenFileLocation";
+    actionPredicate[MenuAction::StageFileForBurning] =  "StageFileForBurning";
     actionPredicate[MenuAction::OpenInNewWindow] =  "OpenInNewWindow";
     actionPredicate[MenuAction::OpenInNewTab] =  "OpenInNewTab";
-    actionPredicate[MenuAction::OpenDiskInNewWindow] =  "OpenDiskInNewWindow";
-    actionPredicate[MenuAction::OpenDiskInNewTab] =  "OpenDiskInNewTab";
     actionPredicate[MenuAction::OpenAsAdmin] =  "OpenAsAdmin";
-    actionPredicate[MenuAction::OpenWith] =  "OpenWith";
-    actionPredicate[MenuAction::OpenWithCustom] =  "OpenWithCustom";
-    actionPredicate[MenuAction::OpenFileLocation] = "OpenFileLocation";
-    actionPredicate[MenuAction::Compress] = "Compress";
-    actionPredicate[MenuAction::Decompress] = "Decompress";
-    actionPredicate[MenuAction::DecompressHere] = "DecompressHere";
     actionPredicate[MenuAction::Cut] = "Cut";
     actionPredicate[MenuAction::Copy] = "Copy";
     actionPredicate[MenuAction::Paste] = "Paste";
-    actionPredicate[MenuAction::Rename] = "Rename";
-    actionPredicate[MenuAction::BookmarkRename] = "BookmarkRename";
-    actionPredicate[MenuAction::BookmarkRemove] = "BookmarkRemove";
-    actionPredicate[MenuAction::CreateSymlink] = "CreateSymlink";
-    actionPredicate[MenuAction::SendToDesktop] = "SendToDesktop";
-    actionPredicate[MenuAction::SendToRemovableDisk] = "SendToRemovableDisk";
-    actionPredicate[MenuAction::SendToBluetooth] = "SendToBluetooth";
-    actionPredicate[MenuAction::AddToBookMark] = "AddToBookMark";
-    actionPredicate[MenuAction::Delete] = "Delete";
-    actionPredicate[MenuAction::Property] = "Property";
-    actionPredicate[MenuAction::NewFolder] = "NewFolder";
-    actionPredicate[MenuAction::NewWindow] = "NewWindow";
     actionPredicate[MenuAction::SelectAll] = "SelectAll";
-    actionPredicate[MenuAction::Separator] = "Separator";
-    actionPredicate[MenuAction::ClearRecent] = "ClearRecent";
-    actionPredicate[MenuAction::ClearTrash] = "ClearTrash";
-    actionPredicate[MenuAction::DisplayAs] = "DisplayAs";
-    actionPredicate[MenuAction::SortBy] = "SortBy";
-    actionPredicate[MenuAction::NewDocument] = "NewDocument";
-    actionPredicate[MenuAction::NewWord] = "NewWord";
-    actionPredicate[MenuAction::NewExcel] = "NewExcel";
-    actionPredicate[MenuAction::NewPowerpoint] = "NewPowerpoint";
-    actionPredicate[MenuAction::NewText] = "NewText";
-    actionPredicate[MenuAction::OpenInTerminal] = "OpenInTerminal";
+    actionPredicate[MenuAction::Rename] = "Rename";
+    actionPredicate[MenuAction::Delete] = "Delete"; // 删除/移除/还原
+    actionPredicate[MenuAction::CompleteDeletion] = "CompleteDeletion";// 彻底删除
+    actionPredicate[MenuAction::ClearTrash] =  "ClearTrash";
     actionPredicate[MenuAction::Restore] = "Restore";
     actionPredicate[MenuAction::RestoreAll] = "RestoreAll";
-    actionPredicate[MenuAction::CompleteDeletion] = "CompleteDeletion";
     actionPredicate[MenuAction::Mount] = "Mount";
-    actionPredicate[MenuAction::Unmount] = "Unmount";
-    actionPredicate[MenuAction::Eject] = "Eject";
-    actionPredicate[MenuAction::SafelyRemoveDrive] = "SafelyRemoveDrive";
-    actionPredicate[MenuAction::Name] = "Name";
-    actionPredicate[MenuAction::Size] = "Size";
-    actionPredicate[MenuAction::Type] = "Type";
-    actionPredicate[MenuAction::CreatedDate] = "CreatedDate";
-    actionPredicate[MenuAction::LastModifiedDate] = "LastModifiedDate";
-    actionPredicate[MenuAction::LastRead] = "LastRead";
-    actionPredicate[MenuAction::DeletionDate] = "DeletionDate";
-    actionPredicate[MenuAction::SourcePath] = "SourcePath";
-    actionPredicate[MenuAction::AbsolutePath] = "AbsolutePath";
-    actionPredicate[MenuAction::Settings] = "Settings";
-    actionPredicate[MenuAction::Exit] = "Exit";
-    actionPredicate[MenuAction::IconView] = "IconView";
-    actionPredicate[MenuAction::ListView] = "ListView";
-    actionPredicate[MenuAction::ExtendView] = "ExtendView";
-    actionPredicate[MenuAction::SetAsWallpaper] = "SetAsWallpaper";
-    actionPredicate[MenuAction::ForgetPassword] = "ForgetPassword";
     actionPredicate[MenuAction::Share] = "Share";
     actionPredicate[MenuAction::UnShare] = "UnShare";
-    actionPredicate[MenuAction::SetUserSharePassword] = "SetUserSharePassword";
-    actionPredicate[MenuAction::FormatDevice] = "FormatDevice";
-    actionPredicate[MenuAction::OpticalBlank] = "OpticalBlank";
-    actionPredicate[MenuAction::Vault] = "Vault";
+    actionPredicate[MenuAction::CreateSymlink] = "CreateSymlink";
+    actionPredicate[MenuAction::AddToBookMark] = "AddToBookMark";
+    actionPredicate[MenuAction::BookmarkRemove] = "BookmarkRemove";
     actionPredicate[MenuAction::TagInfo] = "TagInfo";
     actionPredicate[MenuAction::TagFilesUseColor] = "TagFilesUseColor";
-    actionPredicate[MenuAction::ChangeTagColor] = "ChangeTagColor";
-    actionPredicate[MenuAction::DeleteTags] = "DeleteTags";
-    actionPredicate[MenuAction::RenameTag] = "RenameTag";
-    actionPredicate[MenuAction::RemoveFromRecent] = "RemoveFromRecent";
-    actionPredicate[MenuAction::MountImage] = "MountImage";
-    actionPredicate[MenuAction::StageFileForBurning] = "StageFileForBurning";
-    actionPredicate[MenuAction::LockNow] = "LockNow";
-    actionPredicate[MenuAction::AutoLock] = "AutoLock";
-    actionPredicate[MenuAction::Never] = "Never";
-    actionPredicate[MenuAction::FiveMinutes] = "FiveMinutes";
-    actionPredicate[MenuAction::TenMinutes] = "TenMinutes";
-    actionPredicate[MenuAction::TwentyMinutes] = "TwentyMinutes";
-    actionPredicate[MenuAction::DeleteVault] = "DeleteVault";
-    actionPredicate[MenuAction::UnLock] = "UnLock";
-    actionPredicate[MenuAction::UnLockByKey] = "UnLockByKey";
-    actionPredicate[MenuAction::RemoveStashedRemoteConn] = "RemoveStashedRemoteConn";
+    actionPredicate[MenuAction::SendToDesktop] = "SendToDesktop";
+    actionPredicate[MenuAction::SendToRemovableDisk] = "SendToRemovableDisk"; // 发送到/发送到可移动磁盘
+    actionPredicate[MenuAction::SetAsWallpaper] =  "SetAsWallpaper";
+    actionPredicate[MenuAction::OpenInTerminal] = "OpenInTerminal";
+    actionPredicate[MenuAction::NewFolder] = "NewFolder";
+    actionPredicate[MenuAction::NewDocument] = "NewDocument";
+    actionPredicate[MenuAction::DisplayAs] =  "DisplayAs";
+    actionPredicate[MenuAction::SortBy] =  "SortBy";
     actionPredicate[MenuAction::RefreshView] = "RefreshView";
+    actionPredicate[MenuAction::Property] = "Property";
 }
 
 void DFileMenuData::initActions()
@@ -1109,7 +1050,10 @@ void DFileMenuData::initActions()
 
         QAction *action = new QAction(actionIcons.value(key), actionKeys.value(key), nullptr);
         action->setData(key);
-        action->setProperty("predicate", actionPredicate.value(key));
+
+        if (actionPredicate.contains(key))
+            action->setProperty("predicate", actionPredicate.value(key));
+
         actions.insert(key, action);
         actionToMenuAction.insert(action, key);
     }
@@ -1149,6 +1093,15 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
         actions_initialized = true;
         DFileMenuData::initData();
         DFileMenuData::initActions();
+
+        // 菜单项策略若清空隐藏项后需要重置成显示
+        if (DTK_POLICY_SUPPORT)
+            connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, [](const QString &key){
+                if (key == DFM_MENU_ACTION_HIDDEN || key == DD_MENU_ACTION_HIDDEN || key == DFD_MENU_ACTION_HIDDEB) {
+                    if (GroupPolicy::instance()->getValue(key).toList().isEmpty())
+                        DFileMenuManager::resetAllActionVisibility(true);
+                }
+            });
     }
 
     if (!isUseCachedAction) {
@@ -1241,6 +1194,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             action->setMenu(subMenu);
         }
     }
+
     return menu;
 }
 
@@ -1395,6 +1349,7 @@ void DFileMenuManager::extensionPluginCustomMenu(DFileMenu *menu,
         return;
 
     DFMGlobal::autoInitExtPluginManager();
+    DFMExtPluginManager::instance().monitorPlugins();
 
     std::string newCurrentUrl = currentUrl.toString().toStdString();
     std::string newFocusUrl = focusFile.toString().toStdString();
@@ -1628,6 +1583,53 @@ QString DFileMenuManager::getActionPredicateByType(MenuAction type)
     return DFileMenuData::actionPredicate.value(type);
 }
 
+void DFileMenuManager::resetAllActionVisibility(bool visible)
+{
+    for(const auto temp : DFileMenuData::actions)
+        temp->setVisible(visible);
+}
+
+void DFileMenuManager::commitReportData(QAction *action, DFileMenu *menu)
+{
+    QString appName = QApplication::applicationName();
+    if (appName != "dde-file-manager" && appName != "dde-desktop")
+        return;
+
+    QString itemName("");
+    QString location("");
+    QStringList types {};
+
+    if (action->property(DCustomActionDefines::kCustomActionFlag).isValid()) {
+        itemName = "Extended menu";
+    } else {
+        itemName = action->text();
+    }
+
+    DUrlList selected = menu->property(DCustomActionDefines::kCustomActionDataSelectedFiles).value<DUrlList>();
+    int count = selected.count();
+    if (count > 0) {
+        location = "File";
+    } else {
+        location = "Workspace";
+    }
+
+    for (int i = 0; i < count; ++i) {
+        const DUrl &u = selected.at(i);
+        DAbstractFileInfoPointer info = fileService->createFileInfo(nullptr, u);
+        if (info) {
+            QString type = info->mimeTypeName();
+            if (!types.contains(type))
+                types << type;
+        }
+    }
+
+    QVariantMap data;
+    data.insert("item_name", itemName);
+    data.insert("location", location);
+    data.insert("type", types);
+    rlog->commit("FileMenu", data);
+}
+
 void DFileMenuManager::actionTriggered(QAction *action)
 {
     qDebug() << action << action->data().isValid();
@@ -1635,6 +1637,8 @@ void DFileMenuManager::actionTriggered(QAction *action)
     if (!(menu->property("ToolBarSettingsMenu").isValid() && menu->property("ToolBarSettingsMenu").toBool())) {
         disconnect(menu, &DFileMenu::triggered, fileMenuManger, &DFileMenuManager::actionTriggered);
     }
+
+    commitReportData(action, menu);
 
     //扩展菜单
     if (action->property(DCustomActionDefines::kCustomActionFlag).isValid()) {

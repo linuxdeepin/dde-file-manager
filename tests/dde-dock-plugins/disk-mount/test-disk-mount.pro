@@ -7,7 +7,8 @@ SRC_FOLDER = $$PWD/../../../src
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$SRC_FOLDER/dde-file-manager-lib/interfaces \
-               $$SRC_FOLDER/dde-file-manager-lib
+               $$SRC_FOLDER/dde-file-manager-lib \
+               $$SRC_FOLDER/utils \
 
 
 TARGET = test-dde-disk-mount-plugin

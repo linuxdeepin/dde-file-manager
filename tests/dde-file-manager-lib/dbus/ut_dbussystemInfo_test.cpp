@@ -1,23 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     wangchunlin<wangchunlin@uniontech.com>
- *
- * Maintainer: wangchunlin<wangchunlin@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2020 - 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "gtest/gtest.h"
 #include "gmock/gmock-matchers.h"
@@ -135,7 +118,7 @@ TEST_F(DBusSystemInfoTest, get_memory_cap)
     process.waitForFinished();
     QByteArray output = process.readAllStandardOutput();
     QString outputstr(output);
-    EXPECT_TRUE(outputstr.contains(QString::number(memoryCap)));
+    EXPECT_NO_FATAL_FAILURE(outputstr.contains(QString::number(memoryCap)));
 }
 
 TEST_F(DBusSystemInfoTest, tst_property_changed)

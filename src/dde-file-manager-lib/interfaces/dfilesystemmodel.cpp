@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfilesystemmodel.h"
 #include "dabstractfileinfo.h"
@@ -1504,7 +1485,7 @@ QVariant DFileSystemModel::data(const QModelIndex &index, int role) const
             if (rect.left() <= cursor_pos.x() && rect.right() >= cursor_pos.x()) {
                 const QString &tooltip = data(index, columnActiveRole(i - 1)).toString();
 
-                if (option.fontMetrics.width(tooltip, -1, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt())) > rect.width()) {
+                if (option.fontMetrics.width(tooltip, -1, static_cast<int>(Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()))) > rect.width()) {
                     return tooltip;
                 } else {
                     break;
@@ -3075,6 +3056,21 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
             }, event)
 
             emit newFileByInternal(fileUrl);
+        } else if (AppController::selectionFile.first == fileUrl) {
+            quint64 windowId = AppController::selectionFile.second;
+
+            if (windowId != parent()->windowId()) {
+                return;
+            }
+
+            AppController::selectionFile = qMakePair(DUrl(), 0);
+            DFMUrlListBaseEvent event(parent()->parent(), DUrlList() << fileUrl);
+            event.setWindowId(windowId);
+
+            TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel *>(this), 100, {
+                emit fileSignalManager->requestSelectFile(event);
+                emit this->requestSelectFiles(event.urlList());
+            }, event, this)
         }
     } else if (AppController::selectionAndRenameFile.first == fileUrl) {
         quint64 windowId = AppController::selectionAndRenameFile.second;
@@ -3196,7 +3192,8 @@ bool DFileSystemModel::releaseJobController()
             QPointer<DFileSystemModel> me = this;
             d->eventLoop = &eventLoop;
 
-            connect(d->jobController, &JobController::destroyed, &eventLoop, &QEventLoop::quit);
+            connect(d->jobController.data(), &JobController::finished, &eventLoop, &QEventLoop::quit);
+            connect(d->jobController.data(), &JobController::destroyed, &eventLoop, &QEventLoop::quit);
 
             d->jobController->stopAndDeleteLater();
 
@@ -3207,14 +3204,6 @@ bool DFileSystemModel::releaseJobController()
             d->eventLoop = Q_NULLPTR;
 
             if (code != 0) {
-                //                if (d->jobController) { //有时候d->jobController已销毁，会导致崩溃
-                //fix bug 33007 在释放d->jobController时，eventLoop退出异常，
-                //此时d->jobController有可能已经在析构了，不能调用terminate
-                //                    d->jobController->terminate();
-                //                    d->jobController->quit();
-                //                    d->jobController.clear();
-                //                    d->jobController->stopAndDeleteLater();
-                //                }
                 return false;
             }
 

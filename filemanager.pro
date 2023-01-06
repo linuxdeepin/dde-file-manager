@@ -20,7 +20,7 @@ SUBDIRS  += \
     dde-file-manager-extension
 
 
-!CONFIG(DISABLE_ANYTHING) {
+CONFIG(ENABLE_ANYTHING) {
     message("Deepin Anything server plugin enabled for" $$ARCH)
     SUBDIRS += deepin-anything-server-plugins
 }

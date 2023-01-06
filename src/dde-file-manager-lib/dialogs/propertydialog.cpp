@@ -1,26 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-//fixed:CD display size error
 #include "views/dfmopticalmediawidget.h"
 
 #include "propertydialog.h"
@@ -487,7 +468,7 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
         m_expandGroup = addExpandWidget(titleList);
         m_expandGroup.at(0)->setContent(m_basicInfoFrame);
 
-        if (fileInfo->isDir()) {
+        if (fileInfo->isDir() && !FileUtils::isArchiveByMimetype(fileInfo->mimeTypeName())) {
             if (fileInfo->canShare()) {
                 m_shareinfoFrame = createShareInfoFrame(fileInfo);
                 m_expandGroup.at(1)->setContent(m_shareinfoFrame);
@@ -532,6 +513,12 @@ PropertyDialog::PropertyDialog(const DFMEvent &event, const DUrl url, QWidget *p
     m_expandGroup.first()->setExpand(true);
 
     initConnect();
+}
+
+PropertyDialog::~PropertyDialog()
+{
+    emit aboutToClosed(m_url);
+    emit closed(m_url);
 }
 
 void PropertyDialog::initUI()
@@ -998,7 +985,7 @@ void PropertyDialog::raise()
     emit raised();
 }
 
-void PropertyDialog::hideEvent(QHideEvent *event)
+void PropertyDialog::closeEvent(QCloseEvent *event)
 {
     if (m_xani) {
         m_xani->stop();
@@ -1011,11 +998,11 @@ void PropertyDialog::hideEvent(QHideEvent *event)
     if (m_aniLabel)
         delete  m_aniLabel;
     emit aboutToClosed(m_url);
-    DDialog::hideEvent(event);
     emit closed(m_url);
     if (m_sizeWorker) {
         m_sizeWorker->stop();
     }
+    DDialog::closeEvent(event);
 }
 
 void PropertyDialog::resizeEvent(QResizeEvent *event)
@@ -1243,7 +1230,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
     layout->setVerticalSpacing(16);
     layout->setLabelAlignment(Qt::AlignRight);
 
-    if (info->isDir()) {
+    if (info->isDir() && !FileUtils::isArchiveByMimetype(info->mimeTypeName())) {
         SectionKeyLabel *fileAmountSectionLabel = new SectionKeyLabel(QObject::tr("Contains"));
         layout->addRow(sizeSectionLabel, m_folderSizeLabel);
         layout->addRow(fileAmountSectionLabel, m_containSizeLabel);
@@ -1270,7 +1257,7 @@ QFrame *PropertyDialog::createBasicInfoWidget(const DAbstractFileInfoPointer &in
         locationPathLabel = new SectionValueLabel();
         QString absoluteFilePath = info->absoluteFilePath();
         //! 在属性窗口中不显示保险箱中的文件真实路径
-        if (info->fileUrl().isVaultFile()) {
+        if (info->fileUrl().isVaultFile() || (info->fileUrl().isSearchFile() && info->fileUrl().fragment().startsWith(DFMVAULT_SCHEME))) {
             absoluteFilePath = VaultController::pathToVirtualPath(absoluteFilePath);
         }
         locationPathLabel->setText(absoluteFilePath);
@@ -1588,13 +1575,15 @@ QFrame *PropertyDialog::createAuthorityManagementWidget(const DAbstractFileInfoP
     QFrame *widget = new QFrame;
     QFormLayout *layout = new QFormLayout;
 
+    QPalette peMenuBg;
+    QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
+    peMenuBg.setColor(QPalette::Window, color);
     QComboBox *ownerBox = new QComboBox;
+    ownerBox->setPalette(peMenuBg);
     QComboBox *groupBox = new QComboBox;
+    groupBox->setPalette(peMenuBg);
     QComboBox *otherBox = new QComboBox;
-
-    ownerBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    groupBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
-    otherBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    otherBox->setPalette(peMenuBg);
 
     DUrl parentUrl = info->parentUrl();
     DStorageInfo storageInfo(parentUrl.toLocalFile());

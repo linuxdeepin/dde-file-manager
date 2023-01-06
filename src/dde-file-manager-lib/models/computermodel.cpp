@@ -1,27 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     lanxuesong<lanxuesong@uniontech.com>
- *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-//fixed:CD display size error
 #include "views/dfmopticalmediawidget.h"
 #include "gvfs/gvfsmountmanager.h"
 
@@ -43,6 +23,7 @@
 
 #include "views/computerview.h"
 #include "shutil/fileutils.h"
+#include "shutil/smbintegrationswitcher.h"
 #include "vault/vaulthelper.h"
 #include "computermodel.h"
 #include "utils.h"
@@ -82,6 +63,7 @@ ComputerModel::ComputerModel(QObject *parent)
                     addItem(chi->fileUrl());
                 } else {
                     //跳过smb挂载或缓存项，后面单独创建聚合项
+                if(smbIntegrationSwitcher->isIntegrationMode()){
                     QString smbIp;
                     FileUtils::isSmbRelatedUrl(chi->fileUrl(),smbIp);
                     if (!smbIp.isEmpty()){
@@ -92,6 +74,7 @@ ComputerModel::ComputerModel(QObject *parent)
                             continue;
                         }
                     }
+                }
 
                     addRootItem(chi);
                     if (chi->fileUrl().path().contains("sr"))
@@ -100,10 +83,12 @@ ComputerModel::ComputerModel(QObject *parent)
             }
 
             //最后添加smb聚合设备
-            QStringList m_smbDevices = RemoteMountsStashManager::stashedSmbDevices();
-            foreach(const QString &smbDevice, m_smbDevices){
-                DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(smbDevice));
-                addRootItem(fi);
+            if (smbIntegrationSwitcher->isIntegrationMode()) {
+                QStringList m_smbDevices = RemoteMountsStashManager::stashedSmbDevices();
+                foreach(const QString &smbDevice, m_smbDevices){
+                    DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(smbDevice));
+                    addRootItem(fi);
+                }
             }
 
             if (!m_isQueryRootFileFinshed) {
@@ -194,20 +179,21 @@ ComputerModel::ComputerModel(QObject *parent)
         m_watcher = DRootFileManager::instance()->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this, addComputerItem](const DUrl &url) {
-            QString smbIp;
-            FileUtils::isSmbRelatedUrl(url,smbIp);
-            if (!smbIp.isEmpty()){
-                DUrl smbDevice(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
-                if(isSmbItemExisted(smbDevice))//smb device is already added
-                    return;
-                else{
-                    //DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(url));//如果url的scheme是smb，则使用的是NetworkController::createFileInfo
-                    //addRootItem(fi);
-                    addComputerItem(smbDevice);
-                    return;
+            if(smbIntegrationSwitcher->isIntegrationMode()){
+                QString smbIp;
+                FileUtils::isSmbRelatedUrl(url,smbIp);
+                if (!smbIp.isEmpty()){
+                    DUrl smbDevice(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
+                    if(isSmbItemExisted(smbDevice))//smb device is already added
+                        return;
+                    else{
+                        //DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(url));//如果url的scheme是smb，则使用的是NetworkController::createFileInfo
+                        //addRootItem(fi);
+                        addComputerItem(smbDevice);
+                        return;
+                    }
                 }
             }
-
             addComputerItem(url);
             if (url.path().contains("sr"))
                 emit opticalChanged();
@@ -431,7 +417,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
             if(scheme == SMB_SCHEME){
                 av.clear();
                 av.append(MenuAction::UnmountAllSmbMount);
-                av.append(MenuAction::ForgetAllSmbPassword);
+                av.append(smbIntegrationSwitcher->isIntegrationMode() ? MenuAction::ForgetAllSmbPassword : MenuAction::ForgetPassword);
                 av.append(MenuAction::OpenDisk);
             }
             return QVariant::fromValue(av);
@@ -521,12 +507,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == DataRoles::EditorLengthRole) {
         if (pitmdata->fi) {
-            // 普通文件系统限制最长输入字符为 40, vfat exfat 由于文件系统的原因，只能输入 11 个字节
-            // todo: ext filesystems only allow 16 bytes/charactors for label length, and vfat is 11, ntfs is 32,
-            // make a static map to storage it, do it later...
             const QString &fs = pitmdata->fi->extraProperties()["fsType"].toString().toLower();
-            return fs.endsWith("fat") ? 11 : 40;
+            return FileUtils::maxLabelLengthOfFileSystem(fs);
         }
+        return 11;
     }
 
     if (role == DataRoles::AppEntryDescription) {
@@ -737,7 +721,7 @@ void ComputerModel::onOpticalChanged()
 bool ComputerModel::isSmbItemExisted(const DUrl &smbDevice)
 {
     int index = findItem(smbDevice);
-    return index >=0;
+    return index >=0 && smbIntegrationSwitcher->isIntegrationMode();
 }
 
 void ComputerModel::getRootFile()
@@ -837,8 +821,10 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
         data.widget = w;
     } else {
         //这里不用去创建fileinfo，已经缓存了rootfileinfo //get root file info cache
-//        if (url.toString().endsWith(SUFFIX_GVFSMP))
-        if (url.toString().startsWith("smb://"))
+        bool condition = smbIntegrationSwitcher->isIntegrationMode() ?
+                    url.toString().startsWith(QString("%1://").arg(SMB_SCHEME)) :
+                    url.toString().endsWith(SUFFIX_GVFSMP);
+        if (condition)
         {
             const DAbstractFileInfoPointer &info = DRootFileManager::getFileInfo(url);
             if (info) {

@@ -1,29 +1,10 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "durl.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "app/define.h"
 
 #include <utility>
 
@@ -374,6 +355,19 @@ bool DUrl::burnIsOnDisc() const
         return false;
     }
     return m.captured(2) == BURN_SEG_ONDISC;
+}
+
+bool DUrl::burnIsOnLocalStaging() const
+{
+    if (!path().contains(DISCBURN_CACHE_MID_PATH))
+        return false;
+
+    static QRegularExpression reg("/_dev_sr[0-9]*/");
+    QRegularExpressionMatch match = reg.match(path());
+    if (match.hasMatch())
+        return true;
+
+    return false;
 }
 
 DUrl DUrl::parentUrl() const

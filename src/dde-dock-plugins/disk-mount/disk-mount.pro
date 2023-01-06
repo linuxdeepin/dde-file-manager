@@ -6,7 +6,8 @@ PKGCONFIG       += dtkwidget gio-qt udisks2-qt5
 
 INCLUDEPATH += /usr/include/dde-dock
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib/interfaces \
-               $$PWD/../../dde-file-manager-lib
+               $$PWD/../../dde-file-manager-lib \
+               $$PWD/../../utils \
 
 TARGET          = $$qtLibraryTarget(dde-disk-mount-plugin)
 DESTDIR          = $$_PRO_FILE_PWD_/../
@@ -26,6 +27,13 @@ TR_EXCLUDE += $$PWD/../../dde-file-manager-lib/configure/*
 CONFIG(release, debug|release) {
     !system($$PWD/../../dde-file-manager-lib/generate_translations.sh): error("Failed to generate translation")
 #    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
+#安全加固
+QMAKE_CXXFLAGS += -fstack-protector-all
+QMAKE_LFLAGS += -z now -fPIC
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
+    QMAKE_LFLAGS += -z noexecstack -z relro
 }
 
 gschema.path = $${PREFIX}/share/glib-2.0/schemas

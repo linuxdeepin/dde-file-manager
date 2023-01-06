@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "vaultcontroller.h"
 #include "models/vaultfileinfo.h"
@@ -1142,15 +1124,11 @@ void VaultController::unlockVault(const DSecureString &password, QString lockBas
     } else {
         strPath = unlockFileDir;
     }
-    if (QFile::exists(strPath)) {   // 如果存在,则清空目录
+    if (QFile::exists(strPath)) {   // 如果存在
         QDir dir(strPath);
         if (!dir.isEmpty()) {
-            QDirIterator dirsIterator(strPath, QDir::AllEntries | QDir::NoDotAndDotDot);
-            while (dirsIterator.hasNext()) {
-                if (!dir.remove(dirsIterator.next())) {
-                    QDir(dirsIterator.filePath()).removeRecursively();
-                }
-            }
+            qWarning() << "Unlock vault failed, mount dir is not empty!";
+            return;
         }
     } else {   // 如果不存在,则创建目录
         QDir().mkpath(strPath);

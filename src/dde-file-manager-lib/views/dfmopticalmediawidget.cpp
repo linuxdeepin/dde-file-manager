@@ -1,10 +1,14 @@
-//fix: 设置光盘容量属性
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "interfaces/dfmstandardpaths.h"
 
 #include "dfmopticalmediawidget.h"
 #include "disomaster.h"
 #include "shutil/fileutils.h"
 #include "dialogs/burnoptdialog.h"
+#include "dialogs/dumpisooptdialog.h"
 #include "dialogs/dialogmanager.h"
 #include "dfilestatisticsjob.h"
 #include "dfileview.h"
@@ -33,6 +37,8 @@
 #include <QProcess>
 #include <QFile>
 #include <glob.h>
+#include <ddiskmanager.h>
+#include <dblockdevice.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -68,6 +74,7 @@ private:
     QLabel *lb_available = nullptr;
     QLabel *lb_udsupport = nullptr;
     DPushButton *pb_burn = nullptr;
+    DPushButton *pb_dump = nullptr;
     QSvgWidget *icon_caution = nullptr;
 
     QHBoxLayout *layout = nullptr;
@@ -91,6 +98,8 @@ DFMOpticalMediaWidget::DFMOpticalMediaWidget(QWidget *parent) :
     //fix: 根据光盘选择文件状态实时更新状态
     DFMOpticalMediaWidget::g_selectBurnFilesSize = 0;
     DFMOpticalMediaWidget::g_selectBurnDirFileCount = 0;
+
+    connect(d->pb_dump, &DPushButton::clicked, this, &DFMOpticalMediaWidget::onDumpBtnClicked);
 
     connect(d->pb_burn, &DPushButton::clicked, this, [ = ] {
         if (m_pStatisticWorker->isRunning())
@@ -261,6 +270,39 @@ void DFMOpticalMediaWidget::selectBurnFilesOptionUpdate()
     }
 }
 
+void DFMOpticalMediaWidget::onDumpBtnClicked()
+{
+    Q_D(DFMOpticalMediaWidget);
+
+    const QString &volTag = d->getVolTag();
+    CdStatusInfo &statusInfo = DFMOpticalMediaWidget::g_mapCdStatusInfo[volTag];
+    statusInfo.bReadyToBurn = true;
+
+    QString strKey = d->getVolTag();
+
+    QString discName;
+    if (d->defaultDiscName.isEmpty()) {
+        const QString &strKey = d->getVolTag();
+        const QStringList &nodes =  DDiskManager::resolveDeviceNode(d->getCurrentDevice(), {});
+        if (nodes.isEmpty()) {
+            discName = qApp->translate("DeepinStorage", "%1 Volume").
+                    arg(FileUtils::formatSize(static_cast<qint64>(DFMOpticalMediaWidget::g_mapCdStatusInfo[strKey].nUsage)));
+        } else {
+            const QString &udiskspath = nodes.first();
+            QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+            discName = qApp->translate("DeepinStorage", "%1 Volume").
+                    arg(FileUtils::formatSize(static_cast<qint64>(blkdev->size())));
+        }
+    } else {
+        discName = d->defaultDiscName;
+    }
+    QScopedPointer<DumpISOOptDialog> dlg(new DumpISOOptDialog(d->getCurrentDevice(), discName, this));
+    dlg->setJobWindowId(this->window()->winId());
+    dlg->exec();
+
+    statusInfo.bReadyToBurn = false;
+}
+
 QString DFMOpticalMediaWidget::getVolTag(const DUrl &fileUrl)
 {
     QString strVolTag = fileUrl.path().split("/", QString::SkipEmptyParts).count() >= 2
@@ -306,8 +348,10 @@ void DFMOpticalMediaWidgetPrivate::setupUi()
     layout->addWidget(lb_mediatype = new QLabel("<Media Type>"));
     layout->addWidget(lb_available = new QLabel("<Space Available>"));
     layout->addWidget(lb_udsupport = new QLabel(QObject::tr("It does not support burning %1 discs").arg(QString("U/D/F").remove("/"))));
+    layout->addWidget(pb_dump = new DPushButton());
     layout->addWidget(pb_burn = new DPushButton());
     layout->addWidget(icon_caution = new QSvgWidget());
+    pb_dump->setText(QObject::tr("Save as Image File"));
     pb_burn->setText(QObject::tr("Burn"));
     lb_udsupport->setVisible(false);
     icon_caution->setVisible(false);
@@ -387,6 +431,9 @@ void DFMOpticalMediaWidgetPrivate::setCurrentDevice(const QString &dev)
     }
     if (dp.avail == 0) // fix while available is zero, the button is still enable
         pb_burn->setEnabled(false);
+
+    if (dp.formatted)
+        pb_dump->setEnabled(false);
 
     QString tempMediaAddr = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 

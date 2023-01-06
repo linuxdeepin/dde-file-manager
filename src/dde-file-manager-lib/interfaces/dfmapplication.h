@@ -1,25 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DFMAPPLICATION_H
 #define DFMAPPLICATION_H
 
@@ -69,6 +51,7 @@ public:
         GA_AutoMountAndOpen, // 自动挂载并打开硬盘设备
         GA_MTPShowBottomInfo, // mtp 挂载时显示底部数据统计
         GA_AlwaysShowOfflineRemoteConnections, // 始终显示离线的远程挂载（目前只包括 smb 挂载常驻）
+        GA_MergeTheEntriesOfSambaSharedFolders, // 合并显示Samba共享目录入口
         GA_OverrideFileChooserDialog, // 将DDE文件管理器作为应用选择文件时的对话框
         GA_ShowedHiddenOnSearch, // 搜索时显示隐藏文件
         GA_ShowedHiddenFiles, // 显示隐藏文件
@@ -103,6 +86,7 @@ public:
 
     static DFMSettings *genericObtuselySetting();
     static DFMSettings *appObtuselySetting();
+    static DFMSettings *dataPersistence();
 
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);

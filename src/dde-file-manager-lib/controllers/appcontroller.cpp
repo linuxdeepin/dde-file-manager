@@ -1,27 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-//fix:修正临时拷贝文件到光盘的路径问题，不是挂载目录，而是临时缓存目录
 #include "dfilemenumanager.h"
 
 #include "appcontroller.h"
@@ -92,7 +72,8 @@
 #include "tag/tagutil.h"
 #include "tag/tagmanager.h"
 #include "shutil/shortcut.h"
-//#include "views/dbookmarkitem.h"
+#include "shutil/smbintegrationswitcher.h"
+
 #include "models/desktopfileinfo.h"
 #include "models/dfmrootfileinfo.h"
 #include "controllers/tagmanagerdaemoncontroller.h"
@@ -117,7 +98,7 @@ using iterator = typename QList<Ty>::iterator;
 template<typename Ty>
 using citerator = typename QList<Ty>::const_iterator;
 
-const char *empty_recent_file =
+static const char *empty_recent_file =
     R"|(<?xml version="1.0" encoding="UTF-8"?>
         <xbel version="1.0"
         xmlns:bookmark="http://www.freedesktop.org/standards/desktop-bookmarks"
@@ -174,7 +155,7 @@ void AppController::actionOpen(const QSharedPointer<DFMUrlListBaseEvent> &event,
         return;
     }
 
-    if (urls.size() > 1 || DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool()) {
+    if (urls.size() > 1 || (DFMApplication::instance()->appAttribute(DFMApplication::AA_AllwayOpenOnNewWindow).toBool() && !g_isFileDialogMode)) {
         // 选择多文件打开的时候调用函数 openFiles，单文件打开调用 openFile，部分 controller 没有实现 openFiles 函数，因此在这里转换成 file:// 的 url，
         // 通过 fileController 来进行打开调用
         DUrlList lstUrls;
@@ -240,7 +221,7 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
         }
     }else{
         QString ip;
-        if(FileUtils::isSmbRelatedUrl(fileUrl,ip)){
+        if (smbIntegrationSwitcher->isIntegrationMode() && FileUtils::isSmbRelatedUrl(fileUrl,ip)) {
             QWidget *p = WindowManager::getWindowById(event->windowId());
             if (p) {
                 DUrl url;
@@ -519,13 +500,7 @@ void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event
 {
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
 
-    DUrl newUrl = FileUtils::newDocumentUrl(info, tr("New Folder"), QString());
-    fileService->mkdir(event->sender(), newUrl);
-
-    // fix bug#126693
-    // 剪贴状态下，如果新建的文件夹inode已经存在于剪贴板，则清除
-    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction)
-        DFMGlobal::instance()->removeClipboardFileInode(newUrl.toLocalFile());
+    fileService->mkdir(event->sender(), FileUtils::newDocumentUrl(info, tr("New Folder"), QString()));
 }
 
 void AppController::actionSelectAll(quint64 winId)
@@ -826,15 +801,13 @@ void AppController::doActionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event
         }
     }else if (fileUrl.scheme() == SMB_SCHEME && FileUtils::isSmbShareFolder(fileUrl)) {///处理对smb设备根目录下共享文件夹的卸载操作 - start
         //todo(zhuangshu):对于相同的远端共享目录，采用不同的参数去挂载，会在/run/user/1000/gvfs/下面生成多个映射目录，
-        //而此处只能卸载其中的一个(除非用户选择卸载所有)，所以此处需要考虑把gvfs目录下面的所有远端共享目录都卸载，
+        //而此处只能卸载其中的一个(除非用户选择卸载所有)，所以此处需要考虑把gvfs目录下面该IP的所有远端共享目录都卸载，
         //而且不能仅通过ip和username判断，因为用域名也可以挂载
         QString path = fileUrl.path();
         path = path.startsWith('/') ? path.mid(1) : path;
         path = path.toLower();
-        QString tPath = fileUrl.scheme() + "://" + fileUrl.host() + "/" +path;
         path = fileUrl.scheme() + "://" + fileUrl.host() + "/" + QUrl::toPercentEncoding(path,"{$}") + "/";
         deviceListener->unmount(path);
-        doRemoveStashedMount(tPath);//这里需要移除缓存
         return;
         ///处理对smb设备根目录下共享文件夹的卸载操作 - end
     }else if (fileUrl.query().length()) {
@@ -881,7 +854,7 @@ void AppController::actionEject(const QSharedPointer<DFMUrlBaseEvent> &event)
                         QMetaObject::invokeMethod(dialogManager, "showErrorDialog", Qt::QueuedConnection, Q_ARG(QString, tr("The device was not ejected")),  Q_ARG(QString, tr("Disk is busy, cannot eject now")));
                         return;
                     }
-                  
+
                     if (lastError.type() == QDBusError::Other) { // bug 27164, 取消 应该直接退出操作
                         qDebug() << "blk action has been canceled";
                         return;
@@ -1133,6 +1106,11 @@ void AppController::actionSetUserSharePassword(quint64 winId)
     dialogManager->showUserSharePasswordSettingDialog(winId);
 }
 
+void AppController::actionChangeDiskPassword(quint64 winId)
+{
+    dialogManager->showChangeDiskPasswordDialog(winId);
+}
+
 void AppController::actionSettings(quint64 winId)
 {
     dialogManager->showGlobalSettingsDialog(winId);
@@ -1151,6 +1129,19 @@ void AppController::actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &ev
     }
 
     QSharedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(info->extraProperties()["udisksblk"].toString()));
+    if (!blkdev)
+        return;
+
+    if (blkdev->mountPoints().count() > 0) {
+        // do unmount before format.
+        blkdev->unmount({});
+        if (blkdev->lastError().type() != QDBusError::NoError) {
+            qInfo() << "unmount before format failed: " << blkdev->lastError() << blkdev->lastError().message();
+            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showFormatDeviceBusyErrDialog, *event.data());
+            return;
+        }
+    }
+
     QString devicePath = blkdev->device();
 
     QString cmd = "dde-device-formatter";
@@ -1201,6 +1192,7 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
 void AppController::actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     auto path = event->url().path(); // something like "/smb://host/shared-folder.remote"
+    path = RemoteMountsStashManager::normalizeConnUrl(path);
     doRemoveStashedMount(path);
 }
 
@@ -1238,7 +1230,7 @@ void AppController::doRemoveStashedMount(const QString &path)
 void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
     DUrlList urlList = event->urlList();
-    DUrlList list;//保存需要卸载的smb挂载url
+    DUrlList smbUnmountlist;//保存需要卸载的smb挂载url
     if(urlList.count() <= 0){
         qInfo()<<"When unmount all, the urlList is empty.";
         return;
@@ -1255,17 +1247,21 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
     foreach (DAbstractFileInfoPointer r, filist) {
         QString temIp;
         bool isSmbRelated = FileUtils::isSmbRelatedUrl(r->fileUrl(),temIp);
-        if ( (!isSmbRelated) || (!r->fileUrl().toString().contains(host)))//!isSmbRelated:排除ftp挂载
-            continue;
-
-        if (r->fileUrl().toString().endsWith(QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted(r->fileUrl())){
-            list << r->fileUrl();
+        if (smbIntegrationSwitcher->isIntegrationMode()){
+            if ((!isSmbRelated) || (!r->fileUrl().toString().contains(host)))//!isSmbRelated:排除ftp挂载
+                continue;
+        } else {
+            if ((!isSmbRelated))
+                continue;
         }
+        if (r->fileUrl().toString().endsWith(QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted(r->fileUrl()))
+            smbUnmountlist << r->fileUrl();
     }
     //设置批量移除smb挂载标志，用途：最后一个卸载后才刷新、跳转到计算机界面
-    deviceListener->setBatchedRemovingSmbMount(true);
+    if (smbIntegrationSwitcher->isIntegrationMode())
+        deviceListener->setBatchedRemovingSmbMount(true);
     //若侧边栏有SMB挂载子项，但并没有已挂载的SMB文件夹
-    foreach (DUrl url, list) {
+    for (DUrl url : smbUnmountlist) {
         QString smbLocalPath = QString("/run/user/%1/gvfs").arg(getuid())+QUrl::fromPercentEncoding(url.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
         QString smbUser = FileUtils::smbAttribute(smbLocalPath,FileUtils::SmbAttribute::kUser);
         QString smbDomain = FileUtils::smbAttribute(smbLocalPath,FileUtils::SmbAttribute::kDomain);
@@ -1285,19 +1281,26 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
         QUrl temUrl(unmountPath);
         unmountPath = temUrl.toEncoded(QUrl::PrettyDecoded);//这种编码方式会保留$、把空格编码为%20、把中文也编码（而toPercentEncoding会把$也编码，导致卸载问题）
         deviceListener->unmount(unmountPath);
-        unmountPath.chop(1);
-        doRemoveStashedMount(unmountPath);//这里需要移除缓存
     }
-    //如果list.isEmpty()，则下面需主动从侧边栏移除SMB挂载子项
-    DFileManagerWindow* managerWindow = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(event->windowId()));
-    if (managerWindow && list.isEmpty()) {
-        QTimer::singleShot(125, [=]() {
-        //如果前面没有smb目录卸载操作，在这里主动跳转到计算机页面;（场景：用户只是在地址栏输入了smb host，但是没有做目录挂载操作）
-        //反之则在侧边栏的fileDeleted中槽函数中触发界面跳转
-        //如果上述没有发生挂载目录的卸载操作，则不会触发卸载通知，因此在这里主动移除smb挂载聚合项
-            RemoteMountsStashManager::removeStashedSmbDevice(eventUrl.toString());
+    //如果smbUnmountlist.isEmpty()，则下面需从侧边栏移除SMB聚合子项
+    if (smbUnmountlist.isEmpty()) {
+        QTimer::singleShot(125,this,[=]() {
+            //如果上述没有卸载的smb目录(用户从侧边栏卸载smbip时，该ip下没有任何挂载)，这里复原批量卸载标志。fix bug:#170475
+            //批量卸载：指用户从侧边栏smb聚合项卸载，在该标志为true时，当前ip最后一个挂载目录被卸载后，无论是否勾选smb常驻，都要从侧边栏移除；
+            //在该标志为false时，表示用户在单个卸载目录，当前ip最后一个挂载目录被卸载后，如果勾选了smb常驻，则不会移除侧边栏聚合项，否则要移除。
+            deviceListener->setBatchedRemovingSmbMount(false);
+
+            //若smbUnmountlist为空，则没有执行上述代码的smb目录卸载操作，这里需主动跳转到计算机页面，
+            //对应场景：用户只是在地址栏输入了smb://x.x.x.x，但是没有做目录挂载操作；
+            if(smbIntegrationSwitcher->isIntegrationMode())
+                RemoteMountsStashManager::removeStashedSmbDevice(eventUrl.toString());
+            // 因桌面和文管都会使用appcontroller类，当从smb聚合切换到分离时，调用此函数卸载smb设备时，
+            // 桌面rootFileManager->rootFileWather()可能为空，会导致桌面崩溃，因此这里需作判断。
+            // (此时不发送后续信号并无影响,侧边栏smb聚合项会随smbIntegrationModeChanged信号而移除，
+            // 当切换完成时，别处会发送刷新计算机界面信号。
+            if (!rootFileManager->rootFileWather())
+                return;
             emit rootFileManager->rootFileWather()->fileDeleted(eventUrl);//多个打开的窗口同步移除smb挂载聚合项
-            managerWindow->getLeftSideBar()->jumpToItem(DUrl(COMPUTER_ROOT));
             emit DFMApplication::instance()->reloadComputerModel();//刷新计算机界面上的smb聚合设备
         });
     }
@@ -1314,7 +1317,6 @@ void AppController::actionForgetAllSmbPassword(const QSharedPointer<DFMUrlListBa
     //1、取消记住密码
     foreach (DUrl url, urlList) {
         if(FileUtils::isSmbRelatedUrl(url,smbIp)){
-//            DUrl temUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
             secretManager->clearPassworkBySmbHost(url);
             break;
         }
@@ -1655,11 +1657,6 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
 
     if (DFileService::instance()->touchFile(WindowManager::getWindowById(windowId), DUrl::fromLocalFile(targetFile))) {
         QFile target(targetFile);
-
-        // fix bug#126693
-        // 剪贴状态下，如果新建的文件inode已经存在于剪贴板，则清除
-        if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction)
-            DFMGlobal::instance()->removeClipboardFileInode(targetFile);
 
         if (!target.open(QIODevice::WriteOnly)) {
             return QString();

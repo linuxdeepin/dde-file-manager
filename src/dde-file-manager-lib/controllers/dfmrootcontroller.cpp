@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmrootcontroller.h"
 #include "dfmevent.h"
@@ -36,6 +17,7 @@
 #include "utils.h"
 #include "utils/grouppolicy.h"
 #include "app/define.h"
+#include "shutil/smbintegrationswitcher.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -80,48 +62,24 @@ private:
 
 static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice> blk, QSharedPointer<DDiskDevice> drv)
 {
-    bool isOptical = drv->mediaCompatibility().join(",").contains("optical");
-    if (!blk->hasFileSystem() && blk->size() < 1024 && !isOptical) {   // a super block is at least 1024 bytes, a full filesystem always have a superblock.
-        qWarning() << "block device is ignored cause it's size is less than 1024" << blkPath;
-        return true;
-    }
-
-    // 过滤snap产生的loop设备
-    if(blk->isLoopDevice()){ // loop devices' display status only determind by GA_HideLoopPartitions property.
-        if (DFMApplication::genericAttribute(DFMApplication::GA_HideLoopPartitions).toBool()) {
-            qDebug()  << "block device is ignored by loop device:"  << blkPath;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    // the ignore controls everything.
     if (blk->hintIgnore()) {
-        qWarning()  << "block device is ignored by hintIgnore:"  << blkPath;
+        qInfo() << "Ignored by HintIgnore: " << blkPath;
         return true;
     }
 
-    if (!blk->hasFileSystem() && !isOptical && !blk->isEncrypted()) {
-        if (!drv->removable()){ // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
-            qWarning()  << "block device is ignored by wrong removeable set for system disk:"  << blkPath;
-            return true;
-        }
-    }
+    // optical drive is always visiable even no medium in.
+    if (drv->mediaCompatibility().join(",").contains("optical"))
+        return false;
 
-    if (blk->cryptoBackingDevice().length() > 1) {
-        qWarning()  << "block device is ignored by crypted back device:"  << blkPath;
-        return true;
-    }
+    // encrypted shell device is always visiable.
+    if (blk->isEncrypted())
+        return false;
 
-    // 是否是设备根节点，设备根节点无须记录
-    if(blk->hasPartitionTable()){ // 替换 FileUtils::deviceShouldBeIgnore
-        qDebug()  << "block device is ignored by parent node:"  << blkPath;
-        return true;
-    }
-
-    if(blk->hasPartition()){
-        QSharedPointer<DBlockPartition> partition(DDiskManager::createBlockPartition(blkPath));
-        if(!partition.isNull()){
+    // some types of partition should be hide.
+    if (blk->hasPartition()) {
+        QScopedPointer<DBlockPartition> partition(DDiskManager::createBlockPartition(blkPath));
+        if (partition) {
             DBlockPartition::Type type = partition->eType();
             switch (type) {
             //Extended partition with CHS addressing. It must reside within the first physical 8 GB of disk, else use 0Fh instead (see 0Fh, 85h, C5h, D5h)
@@ -130,16 +88,49 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
             case DBlockPartition::DRDOS_sec_extend:
             case DBlockPartition::Multiuser_DOS_extend:
             case DBlockPartition::Extended:{
-                    qWarning()  << "block device is ignored by partion type:"  << partition->type() <<","<< blkPath;
-                    return true;
-                }
+                qInfo() << "Ignored by Partition type: " << blkPath << "Type: " << type;
+                return true;
+            }
             default:
                 break;
             }
         }
     }
+
+    // a block which have a filesystem interface ought to be shown but there are some exceptions
+    if (blk->hasFileSystem()) {
+        if (blk->isLoopDevice()) {
+            bool hideLoop = DFMApplication::genericAttribute(DFMApplication::GA_HideLoopPartitions).toBool();
+            qInfo() << "Ignored depends on HideLoop: " << blkPath << hideLoop;
+            return hideLoop;
+        }
+
+        // the clearText device is proxied by it's shell device
+        if (blk->cryptoBackingDevice().length() > 1) {
+            qInfo() << "Ignored by ClearTextDevice, proxied by it's crypto backing device: " << blkPath;
+            return true;
+        }
+    } else {
+        if (blk->hasPartitionTable()) {
+            qInfo() << "Ignored by HasPartitionTable: " << blkPath;
+            return true;
+        }
+
+        if (!drv->removable()) {
+            qInfo() << "Ignored by Unremovable internal disk: " << blkPath;
+            return true;
+        }
+
+        // avoid 0B partitions shown
+        if (blk->size() < 1024) {
+            qInfo() << "Ignored by Size < 1024: " << blkPath;
+            return true;
+        }
+    }
+
     return false;
 }
+
 
 DFMRootController::DFMRootController(QObject *parent) : DAbstractFileController(parent)
 {
@@ -165,6 +156,15 @@ bool DFMRootController::renameFile(const QSharedPointer<DFMRenameEvent> &event) 
     const QString &destName = event->toUrl().path();
     if (curName == destName)
         return true;
+
+    if (blk->mountPoints().count() > 0) {
+        // do unmount before rename
+        blk->unmount({});
+        if (blk->lastError().type() != QDBusError::NoError) {
+            qInfo() << "unmount before rename failed: " << blk->lastError() << blk->lastError().message();
+            return false;
+        }
+    }
 
     blk->setLabel(destName, {});
     if (blk->lastError().type() != QDBusError::NoError) {
@@ -326,21 +326,18 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
                 qWarning() << "protocol or host is empty: " << mount;
                 continue;
             }
-            //考虑到用户升级到有smb挂载项聚合功能的版本后的兼容性，把配置中缓存的.remote挂载信息移到StashedSmbDevices字段中
-            //以smb://x.x.x.x格式保存
-            if(protocol == SMB_SCHEME){
-                RemoteMountsStashManager::insertStashedSmbDevice(QString("%1://%2").arg(protocol).arg(host));
-            }
-            /*smb挂载项聚合功能中，这里不再对缓存的挂载目录创建DFMRootFileInfo对象（请保留此部分注释）
-            QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
-            path.append(QString(".%1").arg(SUFFIX_STASHED_REMOTE));
-            path.prepend(DFMROOT_ROOT);
-            qDebug() << "get stashed remote connection: " << path;
 
-            auto stashedMountInfo = new DFMRootFileInfo(DUrl::fromPercentEncoding(path.toUtf8()));
-            DAbstractFileInfoPointer fp(stashedMountInfo);
-            ret.push_back(fp);
-            */
+            //非smb挂载项聚合模式中，对缓存的挂载目录创建DFMRootFileInfo对象
+            if(!smbIntegrationSwitcher->isIntegrationMode()){
+                QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
+                path.append(QString(".%1").arg(SUFFIX_STASHED_REMOTE));
+                path.prepend(DFMROOT_ROOT);
+                qDebug() << "get stashed remote connection: " << path;
+
+                auto stashedMountInfo = new DFMRootFileInfo(DUrl::fromPercentEncoding(path.toUtf8()));
+                DAbstractFileInfoPointer fp(stashedMountInfo);
+                ret.push_back(fp);
+            }
         }
     }
 
@@ -641,8 +638,10 @@ bool DFMRootFileWatcherPrivate::start()
         qDebug() << path;
         url.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
         QString uri = mnt->getRootFile()->uri();
+      if (smbIntegrationSwitcher->isIntegrationMode()) {
         wpar->setProperty("isBathUnmuntSmb",deviceListener->isBatchedRemovingSmbMount());
         wpar->setProperty("remainUnmuntSmb",deviceListener->getCountOfMountedSmb(DUrl(uri).host()));
+      }
         Q_EMIT wpar->fileDeleted(url);
         emit fileSignalManager->requestRemoveRecentFile(path);
         qDebug() << uri << "mount removed";

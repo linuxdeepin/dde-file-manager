@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     dengkeyun<dengkeyun@uniontech.com>
- *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmrootfileinfo.h"
 #include "shutil/fileutils.h"
@@ -222,9 +203,6 @@ bool DFMRootFileInfo::canRename() const
     if (extraProperties()["fsType"].toString().toLower() == "swap")
         return false;
 
-    if (d->mps.size() > 0)
-        return canSetAlias();
-
     return true;
 }
 
@@ -366,7 +344,7 @@ QString DFMRootFileInfo::iconName() const
                 return "media-optical";
             }
             if (static_cast<ItemType>(fileType()) == ItemType::UDisksRemovable) {
-                return QString("drive-removable-media") + (d->encrypted ? "-encrypted" : "");
+                return QString("drive-removable-media") + (d->encrypted ? "-encrypted" : "-usb");
             }
             if (d->mps.contains(QByteArray("/\0", 2))) {
                 return "drive-harddisk-root";
@@ -430,12 +408,15 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
 
     // swap 是特殊的分区，不能重命名
     QString &&fs = extraProperties()["fsType"].toString().toLower();
-    if (suffix() == SUFFIX_UDISKS && blk && blk->mountPoints().empty()) {
-        ret.push_back(MenuAction::Mount);
+    if (suffix() == SUFFIX_UDISKS && blk) {
+        if (blk->mountPoints().isEmpty())
+            ret.push_back(MenuAction::Mount);
+
         if (!blk->readOnly()) {
             if (fs != "swap")
                 ret.push_back(MenuAction::Rename);
-            ret.push_back(MenuAction::FormatDevice);
+            if (drv->removable())
+                ret.push_back(MenuAction::FormatDevice);
         }
         if (drv->optical() && drv->media().contains(QRegularExpression("_r(w|e)"))) {
             ret.push_back(MenuAction::OpticalBlank);

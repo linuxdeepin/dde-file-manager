@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "fileeventprocessor.h"
 #include "dfmevent.h"
@@ -356,6 +337,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::SetUserSharePassword:
         AppController::instance()->actionSetUserSharePassword(event->windowId());
         break;
+    case DFMGlobal::ChangeDiskPassword:
+        AppController::instance()->actionChangeDiskPassword(event->windowId());
+        break;
     case DFMGlobal::FormatDevice:
         AppController::instance()->actionFormatDevice(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
@@ -396,22 +380,22 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
                 serverIP = url.host();
             } else {
                 QString path = QUrl::fromPercentEncoding(url.path().toUtf8());
-                if(FileUtils::isSmbPath(path)){
+                if (FileUtils::isSmbPath(path)){
                     serverIP = FileUtils::smbAttribute(path,FileUtils::SmbAttribute::kServer);
-                }else if(url.scheme() == FILE_SCHEME){
-                    if(path.contains("ftp:host")){
-                        serverIP = path.section("ftp:host=",-1);
-                        serverIP = serverIP.section("/",0,0);
-                        port = 21;
-                    }else if(path.contains("sftp:host")){
+                }else if (url.scheme() == FILE_SCHEME){
+                    if (path.contains("sftp:host")){ // `sftp` must be judged firstly than `ftp`
                         serverIP = path.section("sftp:host=",-1);
                         serverIP = serverIP.section("/",0,0);
                         port = 22;
+                    } else if (path.contains("ftp:host")){
+                        serverIP = path.section("ftp:host=",-1);
+                        serverIP = serverIP.section("/",0,0);
+                        port = 21;
                     }
                 }
             }
             bool re = CheckNetwork::isHostAndPortConnectV2(serverIP,port);
-            if(!serverIP.isEmpty() && !re){
+            if (!serverIP.isEmpty() && !re){
                 WindowManager::instance()->showNewWindow(DUrl(COMPUTER_ROOT), e->force());
                 continue;
             }

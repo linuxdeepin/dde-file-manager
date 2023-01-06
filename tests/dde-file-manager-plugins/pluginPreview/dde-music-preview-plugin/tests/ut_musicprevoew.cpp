@@ -1,24 +1,6 @@
-/*
-
- * Copyright (C) 2020 ~ 2020 Deepin Technology Co., Ltd.
-
- *
-
- * Author:     lixiang
-
- *
-
- * Maintainer: lixianga@uniontech.com
-
- *
-
- * brief:
-
- *
-
- * date:    2020-08-26
-
- */
+// SPDX-FileCopyrightText: 2020 - 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <gtest/gtest.h>
 

@@ -1,30 +1,13 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filejob.h"
 
 #include "shutil/fileutils.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "interfaces/dfmapplication.h"
+#include "interfaces/dfmsettings.h"
 #include "../deviceinfo/udiskdeviceinfo.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../app/define.h"
@@ -44,7 +27,7 @@
 #include "controllers/vaultcontroller.h"
 #include "controllers/masteredmediacontroller.h"
 #include "dialogs/dialogmanager.h"
-
+#include "log/auditlog.h"
 #include "tag/tagmanager.h"
 
 #ifdef SW_LABEL
@@ -775,6 +758,8 @@ void FileJob::doUDBurn(const DUrl &device, const QString &volname, int speed, co
     QString udiskspath = devicePaths.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    m_curDriveMedia = drive->media();
+
     if (drive->opticalBlank()) {
         QString filePath = device.path() + "/" BURN_SEG_STAGING;
         qDebug() << "ghostSignal path" << filePath;
@@ -917,6 +902,7 @@ void FileJob::doUDBurn(const DUrl &device, const QString &volname, int speed, co
         QByteArray ba(result + 1);
 
         bool ok = result[0] == '0';
+        doDiscAuditLog(device, stagingurl.path(), ok);
         if (ok) { // burn success
             for (int i = 0; i < 20; i++) { // must show 100%
                 opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
@@ -1038,6 +1024,7 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
     QString udiskspath = devicePaths.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    m_curDriveMedia = drive->media();
 
     if (drive->opticalBlank()) {
         QString filePath = device.path() + "/" BURN_SEG_STAGING;
@@ -1073,7 +1060,7 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
     int badPipefd[2];
     if (pipe(badPipefd) < 0)
         return;
-    double globalBad;
+    double globalBad = 0;
 /////////////////////////////
 
     m_isOpticalJob = true;
@@ -1236,6 +1223,7 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
         DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false; // 刻录结束，把刻录标志置位false
 
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+            doDiscAuditLog(device, stagingurl.path(), false);
             //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
             QThread::msleep(1000);
@@ -1252,6 +1240,7 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
                 emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
             }
         } else {
+            doDiscAuditLog(device, stagingurl.path(), true);
             if (checkDatas) {
                 // 校验必须成功
                 emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
@@ -1293,6 +1282,8 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
     QString udiskspath = nodes.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    m_curDriveMedia = drive->media();
+
     if (drive->opticalBlank()) {
         QString filePath = device.path() + "/" BURN_SEG_STAGING;
         qDebug() << "ghostSignal path" << filePath;
@@ -1313,7 +1304,7 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
     int badPipefd[2];
     if (pipe(badPipefd) < 0)
         return;
-    double globalBad;
+    double globalBad = 0;
 /////////////////////////////
 
     m_isOpticalJob = true;
@@ -1479,6 +1470,7 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
         DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false;
 
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+            doDiscAuditLog(device, image.path(), false);
             // 刻录失败提示
             //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
@@ -1496,6 +1488,7 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
                 emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
             }
         } else {
+            doDiscAuditLog(device, image.path(), true);
             if (checkDatas) {
                 // 校验必须成功
                 emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
@@ -1515,6 +1508,227 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
     }
 }
 
+void FileJob::doISODump(const DUrl &device, const DUrl &image)
+{
+    Q_ASSERT(image.isValid());
+    Q_ASSERT(device.isValid());
+
+    if (device.path().isEmpty()) {
+        qWarning() << "devpath is empty";
+        return;
+    }
+    const QStringList &nodes = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (nodes.isEmpty()) {
+        qWarning() << "break the process that caused by can't get the node list from: " << device.path();
+        return;
+    }
+    m_tarPath = device.path();
+    m_dumpIsoPath = image.path();
+    const QString &udiskspath = nodes.first();
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    // set status
+    m_isOpticalJob = true;
+    if (drive->opticalBlank()) {
+        QString filePath = device.path() + "/" BURN_SEG_STAGING;
+        qDebug() << "ghostSignal path" << filePath;
+        DAbstractFileWatcher::ghostSignal(DUrl::fromBurnFile(filePath), &DAbstractFileWatcher::fileDeleted, DUrl());
+    } else {
+        blkdev->unmount({});
+    }
+    emit fileSignalManager->stopCdScanTimer(m_tarPath);
+    DFMOpticalMediaWidget::g_mapCdStatusInfo[m_tarPath.mid(5)].bBurningOrErasing = true;
+    m_opticalOpSpeed.clear();
+    jobPrepared();
+
+    // do dump job in child process
+    constexpr int BUFFERSIZE = 4096;
+    int progressPipefd[2];
+    if (pipe(progressPipefd) < 0)
+        return;
+
+    pid_t pid = fork();
+    if (pid == 0) {   // child process: dump iso image
+        close(progressPipefd[0]);
+
+        DISOMasterNS::DISOMaster *jobIsomaster = new DISOMasterNS::DISOMaster(this);
+        connect(jobIsomaster, &DISOMasterNS::DISOMaster::jobStatusChanged, [&](int status, int progress) mutable {
+            QJsonObject obj;
+            obj["phase"] = m_opticalJobPhase;
+            obj["status"] = status;
+            obj["progress"] = progress;
+            obj["speed"] = jobIsomaster->getCurrentSpeed();
+            obj["msg"] = QJsonArray::fromStringList(jobIsomaster->getInfoMessages());
+            QByteArray bytes = QJsonDocument(obj).toJson();
+            if (bytes.size() < BUFFERSIZE) {
+                char progressBuf[BUFFERSIZE + 1] = { 0 };
+                strncpy(progressBuf, bytes.data(), BUFFERSIZE);
+                write(progressPipefd[1], progressBuf, strlen(progressBuf) + 1);
+            }
+        });
+
+        jobIsomaster->acquireDevice(device.path());
+        jobIsomaster->getDeviceProperty();
+        jobIsomaster->dumpISO(image);
+        jobIsomaster->releaseDevice();
+
+        close(progressPipefd[1]);
+        _exit(0);
+    } else if (pid > 0) {   // parent process: wait and notify
+        close(progressPipefd[1]);
+
+        int status;
+        waitpid(-1, &status, WNOHANG);
+        qDebug() << "start read child process data";
+        QThread::msleep(1000);
+
+        // read progress
+        while (true) {
+            char buf[BUFFERSIZE] = { 0 };
+            if (read(progressPipefd[0], buf, BUFFERSIZE) <= 0) {
+                qDebug() << "progressPipefd[0] break";
+                break;
+            } else {
+                QByteArray bufByes(buf);
+                qDebug() << "dump image, read bytes json:" << bufByes;
+                QJsonParseError jsonError;
+                const QJsonObject &obj = QJsonDocument::fromJson(bufByes, &jsonError).object();
+                if (jsonError.error == QJsonParseError::NoError) {
+                    m_opticalJobPhase = obj["phase"].toInt();
+                    int stat = obj["status"].toInt();
+                    int progress = obj["progress"].toInt();
+                    QString speed = obj["speed"].toString();
+                    QJsonArray jsonArray = obj["msg"].toArray();
+                    QStringList msgList;
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        msgList.append(jsonArray[i].toString());
+                    }
+                    opticalJobUpdatedByParentProcess(stat, progress, speed, msgList);
+                }
+            }
+
+            if (!drive->mediaChangeDetected()) {
+                m_lastError = TR_CONN_ERROR;
+                m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Failed;
+                break;
+            }
+        }
+
+        // must show %100
+        if (m_opticalJobStatus != DISOMasterNS::DISOMaster::JobStatus::Failed) {
+            for (int i = 0; i < 20; i++) {
+                m_opticalJobProgress = 100;
+                QThread::msleep(100);
+            }
+        }
+
+        // restore status
+        DFMOpticalMediaWidget::g_mapCdStatusInfo[m_tarPath.mid(5)].bBurningOrErasing = false;
+        ISOMaster->nullifyDevicePropertyCache(device.path());
+        if (m_isJobAdded)
+            jobRemoved();
+        emit finished();
+        m_isOpticalJob = false;
+
+        // last dialog
+        if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+            // show failed dialog
+            emit requestOpticalDumpISOFailedDialog();
+        } else {
+            // show success dialog
+            emit requestOpticalDumpISOSuccessDialog(m_dumpIsoPath);
+        }
+
+        emit fileSignalManager->restartCdScanTimer(m_tarPath);
+        m_opticalJobStatus = DISOMasterNS::DISOMaster::JobStatus::Finished;
+
+        close(progressPipefd[0]);
+    } else {
+        perror("fork()");
+        return;
+    }
+}
+
+void FileJob::doDiscAuditLog(const DUrl &device, const QString &stagePath, bool success)
+{
+    static qint64 index {0};
+    static qint64 baseID {QDateTime::currentSecsSinceEpoch()};
+
+    qInfo() << "Create D-Bus Auditd interface object start";
+    QDBusInterface auditd("org.deepin.PermissionManager.Auditd",
+                          "/org/deepin/PermissionManager/Auditd",
+                          "org.deepin.PermissionManager.Auditd",
+                          QDBusConnection::systemBus());
+    auditd.setTimeout(500);
+    if (!auditd.isValid()) {
+        qWarning() << "Invalid Auditd D-Bus interface";
+        return;
+    }
+    qInfo() << "Create D-Bus Auditd interface object end";
+
+    const QStringList &devicePaths = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (devicePaths.isEmpty()) {
+        qWarning() << "devicePaths isempty";
+        return;
+    }
+
+    const QString &udiskspath = devicePaths.first();
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    QFileInfoList burnedFileInfoGroup;
+    QFileInfo info {stagePath};
+    if (info.isFile())  // image file
+        burnedFileInfoGroup.append(info);
+
+    if (info.isDir()) // data files
+        burnedFileInfoGroup = FileUtils::fileInfoList(info.absoluteFilePath());
+
+    // save log
+    static const QString logKey {"cdrecord"};
+    static QString logTemplate {tr("ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9")};
+    QString &&result {success ? tr("Success") : tr("Failed")};
+    QString &&burner {drive->id()};
+    auto &&pathMap = DFMApplication::dataPersistence()->value("StagingMap", device.path()).toMap();
+    qInfo() << "Call D-Bus WriteLog start";
+    for (const QFileInfo &info : burnedFileInfoGroup) {
+        if (!info.exists())
+            continue;
+        QString curLog;
+        QString &&dateTime {QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")};
+        QString &&absPath {info.absoluteFilePath()};
+        QString &&nativePath {pathMap.contains(absPath) ? pathMap.value(absPath).toString() : absPath};
+
+        if (info.isDir()) {
+            QFileInfoList &&dirFileInfoGroup {FileUtils::fileInfoListRecursive(info.absoluteFilePath())};
+            for (const QFileInfo &subInfo : dirFileInfoGroup) {
+                qint64 &&id {baseID + (index++)};
+                auto fmInfo {DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(subInfo.absoluteFilePath()))};
+                QString &&fileType {fmInfo ? fmInfo->mimeTypeDisplayName() : ""};
+                QString subNativePath {subInfo.absoluteFilePath()};
+                subNativePath = subNativePath.replace(absPath, nativePath);
+                curLog = logTemplate.arg(id).arg(dateTime).arg(burner).arg(FileUtils::formatOpticalMediaType(m_curDriveMedia)).arg(result).arg(DFMGlobal::getUser())
+                        .arg(subNativePath).arg(FileUtils::formatSize(subInfo.size())).arg(fileType);
+                auditd.callWithArgumentList(QDBus::Block, "WriteLog", {logKey, curLog});
+            }
+        } else {
+            qint64 &&id {baseID + (index++)};
+            auto fmInfo {DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(absPath))};
+            QString &&fileType {fmInfo ? fmInfo->mimeTypeDisplayName() : ""};
+            curLog = logTemplate.arg(id).arg(dateTime).arg(burner).arg(FileUtils::formatOpticalMediaType(m_curDriveMedia)).arg(result).arg(DFMGlobal::getUser())
+                    .arg(nativePath).arg(FileUtils::formatSize(info.size())).arg(fileType);
+            auditd.callWithArgumentList(QDBus::Block, "WriteLog", {logKey, curLog});
+        }
+    }
+    qInfo() << "Call D-Bus WriteLog end";
+
+    if (success) {
+        DFMApplication::dataPersistence()->remove("StagingMap", device.path());
+        DFMApplication::dataPersistence()->sync();
+    }
+}
+
 void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress)
 {
     m_opticalJobStatus = status;
@@ -1522,7 +1736,7 @@ void FileJob::opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, i
         m_opticalJobProgress = progress;
     if (status == DISOMasterNS::DISOMaster::JobStatus::Failed && jobisom) {
         QStringList msg = jobisom->getInfoMessages();
-        qDebug() << "ISOMaster failed:" << msg;
+        qWarning() << "ISOMaster failed:" << msg;
         emit requestOpticalJobFailureDialog(m_jobType, FileJob::getXorrisoErrorMsg(msg), msg);
         return;
     }
@@ -1605,13 +1819,14 @@ void FileJob::jobUpdated()
 
     QMap<QString, QString> jobDataDetail;
 
-    if (m_jobType >= OpticalBurn && m_jobType <= OpticalImageBurn) {
+    if (m_jobType >= OpticalBurn && m_jobType <= OpticalDumpImage) {
         jobDataDetail["optical_op_type"] = QString::number(m_jobType);
         jobDataDetail["optical_op_status"] = QString::number(m_opticalJobStatus);
         jobDataDetail["optical_op_progress"] = QString::number(m_opticalJobProgress);
         jobDataDetail["optical_op_phase"] = QString::number(m_opticalJobPhase);
         jobDataDetail["optical_op_speed"] = m_opticalOpSpeed;
         jobDataDetail["optical_op_dest"] = m_tarPath;
+        jobDataDetail["optical_op_dump_path"] = m_dumpIsoPath;
     } else if (m_jobType == Restore && m_isInSameDisk) {
         jobDataDetail.insert("type", "restore");
         jobDataDetail.insert("file", m_restoreFileName);

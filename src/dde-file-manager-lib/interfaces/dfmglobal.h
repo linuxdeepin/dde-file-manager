@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef DFMGLOBAL_H
 #define DFMGLOBAL_H
@@ -229,6 +210,7 @@ public:
         OpticalBlank,
         Vault,
         ConnectToServer,
+        ChangeDiskPassword,
 
         ///###: tag protocol.
         TagInfo,
@@ -319,8 +301,11 @@ public:
     static void initBluetoothManager();
     static void initRootFileManager();
     static void initEmblemPluginManagerConnection();
+    static void initVaultDbusResponse();
+    static void initRlogManager();
 
     static QString getUser();
+    static QString hostName();
     static int getUserId();
     static bool isRootUser();
     static bool isServerSys();
@@ -345,9 +330,7 @@ public:
     static bool isWayLand();
 
     QList<QUrl> clipboardFileUrlList() const;
-    void removeClipboardFileUrl(const QUrl &url);
     QList<quint64> clipboardFileInodeList() const;
-    void removeClipboardFileInode(const QString &localPath);
     ClipboardAction clipboardAction() const;
     QIcon standardIcon(Icon iconType) const;
 

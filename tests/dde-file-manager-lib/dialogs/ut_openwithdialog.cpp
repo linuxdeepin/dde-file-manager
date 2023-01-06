@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2020 - 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <gtest/gtest.h>
 #include <QIcon>
@@ -26,6 +8,7 @@
 #include <QRect>
 #include <QPaintEvent>
 #include <QFileDialog>
+#include <QScroller>
 
 #include "stub.h"
 #include "dfmglobal.h"
@@ -102,6 +85,16 @@ namespace  {
     public:
         void SetUp() override
         {
+#ifdef __arm__
+            void(*stub_grabGesture)(QObject *target, QScroller::ScrollerGestureType scrollGestureType)
+                    = [](QObject *target, QScroller::ScrollerGestureType scrollGestureType  = QScroller::ScrollerGestureType::TouchGesture)->void{
+                Q_UNUSED(target)
+                Q_UNUSED(scrollGestureType)
+                return ;
+            };
+            Stub stu2;
+            stu2.set(ADDR(QScroller, grabGesture), stub_grabGesture);
+#endif
             DUrl url("file:///test3");
             m_pTester = new OpenWithDialog(url);
             std::cout << "start TestOpenWithDialog";
@@ -139,7 +132,16 @@ TEST_F(TestOpenWithDialog, testInit3)
     };
     Stub stu;
     stu.set(ADDR(DFMGlobal, isWayLand), stub_isWayLand);
-
+#ifdef __arm__
+    void(*stub_grabGesture)(QObject *target, QScroller::ScrollerGestureType scrollGestureType)
+            = [](QObject *target, QScroller::ScrollerGestureType scrollGestureType  = QScroller::ScrollerGestureType::TouchGesture)->void{
+        Q_UNUSED(target)
+        Q_UNUSED(scrollGestureType)
+        return ;
+    };
+    Stub stu2;
+    stu2.set(ADDR(QScroller, grabGesture), stub_grabGesture);
+#endif
     DUrl url("file:///test3");
     OpenWithDialog  dlg(url);
     QString str = dlg.m_url.toString();

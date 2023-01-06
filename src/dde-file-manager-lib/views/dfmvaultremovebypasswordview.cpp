@@ -1,28 +1,11 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmvaultremovebypasswordview.h"
 #include "interfaceactivevault.h"
 #include "accessibility/ac-lib-file-manager.h"
+#include "vault/vaultconfig.h"
 
 #include <DToolTip>
 #include <DPasswordEdit>
@@ -40,6 +23,7 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     AC_SET_ACCESSIBLE_NAME(m_pwdEdit, AC_VAULT_DELETE_PASSWORD_EDIT);
     m_pwdEdit->lineEdit()->setPlaceholderText(tr("Password"));
     m_pwdEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
+    m_pwdEdit->setVisible(false);
 
     // 提示按钮
     m_tipsBtn = new QPushButton(this);
@@ -47,7 +31,12 @@ DFMVaultRemoveByPasswordView::DFMVaultRemoveByPasswordView(QWidget *parent)
     m_tipsBtn->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     QHBoxLayout *layout = new QHBoxLayout();
-    layout->addWidget(m_pwdEdit);
+    VaultConfig config;
+    QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+    if (encryptionMethod != CONFIG_METHOD_VALUE_TRANSPARENT) {
+        layout->addWidget(m_pwdEdit);
+        m_pwdEdit->setVisible(true);
+    }
     layout->addWidget(m_tipsBtn);
     layout->setContentsMargins(0, 15, 0, 0);
     this->setLayout(layout);

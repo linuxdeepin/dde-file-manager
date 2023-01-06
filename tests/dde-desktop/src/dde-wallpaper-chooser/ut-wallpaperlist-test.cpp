@@ -1,24 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     wangchunlin<wangchunlin@uniontech.com>
- *
- * Maintainer: wangchunlin<wangchunlin@uniontech.com>
- *             xinglinkun<xinglinkun@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2020 - 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include <QTest>
@@ -27,11 +10,8 @@
 #include <QVBoxLayout>
 #include <QAbstractAnimation>
 #include <qabstractslider.h>
-
-#define private public
-#define protected public
-
 #include <QWidget>
+#include <QScrollBar>
 #include "../dde-wallpaper-chooser/wallpaperitem.h"
 #include "../dde-wallpaper-chooser/frame.h"
 #include "../dde-wallpaper-chooser/wallpaperlist.h"
@@ -292,6 +272,13 @@ TEST_F(WallpaperlistTest, test_setcurrentindex)
     EXPECT_TRUE(m_list->m_index == 0);
     EXPECT_TRUE(isslideup);
     EXPECT_TRUE(isslidedown);
+
+    {
+        int start = m_list->scrollAnimation.startValue().toInt();
+        int end = m_list->scrollAnimation.endValue().toInt();
+        int current = m_list->horizontalScrollBar()->value();
+        EXPECT_GE((start - end) * (current - start), 0);
+    }
 }
 
 TEST_F(WallpaperlistTest, test_showDeleteButtonForItem)

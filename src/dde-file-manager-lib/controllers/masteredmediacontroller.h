@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef MASTEREDMEDIACONTROLLER_H
 #define MASTEREDMEDIACONTROLLER_H
 
@@ -56,6 +60,7 @@ public:
     static DUrl getStagingFile(DUrl dst);
     static DUrl getStagingFile(QString dev/* = "/dev/sr0"*/);
     static QFileDevice::Permissions getPermissionsCopyToLocal();
+    static void mapStagingFilesPath(const DUrlList &srcList, const DUrlList &targetList);
 };
 
 #endif // MASTEREDMEDIACONTROLLER_H

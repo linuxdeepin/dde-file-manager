@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filecontroller.h"
 #include "dfileservices.h"
@@ -67,6 +48,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/masteredmediacontroller.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
@@ -607,6 +589,11 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
     const DAbstractFileInfoPointer &oldfilePointer = DFileService::instance()->createFileInfo(this, oldUrl);
     const DAbstractFileInfoPointer &newfilePointer = DFileService::instance()->createFileInfo(this, newUrl);
 
+    const QString &newFileName = newfilePointer->fileName();
+    // do hidden name remind
+    if(event->checkHide() && !FileController::doHiddenFileRemind(newFileName))
+        return true;
+
     bool result(false);
 
     if (oldfilePointer->isDesktopFile() && !oldfilePointer->isSymLink()) {
@@ -673,14 +660,6 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
 
         if (result) {
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRenameEvent>(nullptr, newUrl, oldUrl));
-
-            // fix bug#126693
-            // 剪贴状态下，重命名成功后，假如新文件存在剪贴记录，则清除
-            if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-                    && DFMGlobal::instance()->clipboardFileUrlList().contains(newUrl)
-                    && newUrl != oldUrl) {
-                DFMGlobal::instance()->removeClipboardFileUrl(newUrl);
-            }
 
             //重命名成功时需要判断该文件原路径是否被添加到了剪贴版，如果是，就需要替换剪贴板路径。
             QList<QUrl> clipUrls = DFMGlobal::fetchUrlsFromClipboard();
@@ -980,10 +959,7 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
         }
         //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
         this->dealpasteEnd(targetUrlList, event);
-        //! 判断目标目录是否是保险箱目录如果是，发送信号激活计算保险大小的线程
-        if(!targetUrlList.isEmpty() && targetUrlList.at(0).toLocalFile().contains(VaultController::makeVaultLocalPath())) {
-            emit VaultController::ins()->sigFinishedCopyFile();
-        }
+        this->dealpasteEndV2(thisJob->sourceUrlList(), targetUrlList, event);
     });
 
     return job->targetUrlList();
@@ -1021,6 +997,23 @@ void FileController::dealpasteEnd(const DUrlList &list, const QSharedPointer<DFM
 
     //到dfileservice里面作处理
     DFileService::instance()->dealPasteEnd(event, list);
+}
+
+void FileController::dealpasteEndV2(const DUrlList &srcUrlList, const DUrlList &targetUrlList, const QSharedPointer<DFMPasteEvent> &event) const
+{
+    Q_UNUSED(event)
+
+    // 判断目标目录是否是保险箱目录如果是，发送信号激活计算保险大小的线程
+    if(!targetUrlList.isEmpty() && targetUrlList.at(0).toLocalFile().contains(VaultController::makeVaultLocalPath()))
+        emit VaultController::ins()->sigFinishedCopyFile();
+
+    // 光盘缓存文件映射
+    if (!targetUrlList.isEmpty() && targetUrlList.at(0).burnIsOnLocalStaging())
+        MasteredMediaController::mapStagingFilesPath(srcUrlList, targetUrlList);
+
+    // audit log
+    if (!targetUrlList.isEmpty() && srcUrlList.size() >= targetUrlList.size())
+        DFileService::instance()->dealPastedAudit(srcUrlList, targetUrlList);
 }
 
 /**
@@ -1551,6 +1544,21 @@ DUrl FileController::handleTagFileUrl(const DUrl &url) const
         newUrl.setPath(url.path().remove(0, sizeof("/data") - 1));
 
     return newUrl;
+}
+
+bool FileController::doHiddenFileRemind(const QString &name, bool *checkRule /*= nullptr*/)
+{
+    if(!name.startsWith("."))
+        return true;
+    if(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool())
+        return true;
+
+    if(checkRule)
+        *checkRule = true;
+
+    // show dialog
+    auto result = dialogManager->showRenameNameDotBeginDialog();
+    return result == 0;
 }
 
 FileDirIterator::FileDirIterator(const QString &path, const QStringList &nameFilters,

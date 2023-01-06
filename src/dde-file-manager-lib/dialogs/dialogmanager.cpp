@@ -1,26 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-//fix:一旦刻录失败，必须清楚磁盘临时缓存的数据文件，否则下次刻录操作等就会报一些错误，不能正常进行操作流程
 #include "qfile.h"
 #include "dfilemenumanager.h"
 #include "disomaster.h"
@@ -37,6 +18,7 @@
 #include "filepreviewdialog.h"
 #include "dfmsettingdialog.h"
 #include "connecttoserverdialog.h"
+#include "diskpwdmanager/diskpwdchangedialog.h"
 
 #include "app/define.h"
 #include "app/filesignalmanager.h"
@@ -88,6 +70,7 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QScreen>
+#include <QLabel>
 #include <DSysInfo>
 #include <ddiskdevice.h>
 
@@ -288,6 +271,8 @@ void DialogManager::addJob(QSharedPointer<FileJob> job)
     connect(job.data(), &FileJob::requestCanNotMoveToTrashDialogShowed, this, &DialogManager::showMoveToTrashConflictDialog);
     connect(job.data(), &FileJob::requestOpticalJobFailureDialog, this, &DialogManager::showOpticalJobFailureDialog);
     connect(job.data(), &FileJob::requestOpticalJobCompletionDialog, this, &DialogManager::showOpticalJobCompletionDialog);
+    connect(job.data(), &FileJob::requestOpticalDumpISOFailedDialog, this, &DialogManager::showOpticalDumpISOFailedDialog);
+    connect(job.data(), &FileJob::requestOpticalDumpISOSuccessDialog, this, &DialogManager::showOpticalDumpISOSuccessDialog);
 }
 
 
@@ -494,35 +479,32 @@ int DialogManager::showRenameNameSameErrorDialog(const QString &name, const DFME
     return code;
 }
 
+int DialogManager::showRenameNameDotBeginDialog()
+{
+    DDialog d;
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("This file will be hidden if the file name starts with '.'. Do you want to hide it?"));
+    d.addButton(tr("Hide"), true, DDialog::ButtonWarning);
+    d.addButton(tr("Cancel"));
+
+    d.setDefaultButton(0);
+    d.setIcon(m_dialogWarningIcon);
+    return d.exec();
+}
+
 int DialogManager::showRenameNameDotDotErrorDialog(const DFMEvent &event)
 {
-    // 获取父对话框字体特性
-    DDialog d(WindowManager::getWindowById(event.windowId()));
-    QFontMetrics fm(d.font());
-    d.setTitle(tr("The file name must not contain two dots (..)"));
-    QStringList buttonTexts;
-    buttonTexts.append(tr("Confirm","button"));
-    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
-    d.setDefaultButton(0);
-    // 设置对话框icon
-    d.setIcon(m_dialogWarningIcon);
-    int code = d.exec();
-    return code;
+    return execCommonMessageDialog(event, tr("The file name must not contain two dots (..)"));
 }
 
 void DialogManager::showRenameBusyErrDialog(const DFMEvent &event)
 {
-    // 获取父对话框字体特性
-    DDialog d(WindowManager::getWindowById(event.windowId()));
-    QFontMetrics fm(d.font());
-    d.setTitle(tr("Device or resource busy"));
-    QStringList buttonTexts;
-    buttonTexts.append(tr("Confirm","button"));
-    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
-    d.setDefaultButton(0);
-    // 设置对话框icon
-    d.setIcon(m_dialogWarningIcon);
-    d.exec();
+    execCommonMessageDialog(event, tr("Device or resource busy"));
+}
+
+void DialogManager::showFormatDeviceBusyErrDialog(const DFMEvent &event)
+{
+    execCommonMessageDialog(event, tr("The device is busy and cannot be formatted now"));
 }
 
 int DialogManager::showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event)
@@ -597,6 +579,8 @@ void DialogManager::showOpticalJobFailureDialog(int type, const QString &err, co
     case FileJob::OpticalCheck:
         failure_type = tr("Data verification failed");
         break;
+    case FileJob::OpticalDumpImage: // dump iso don't show detail error info
+        return;
     }
     QString failure_str = QString(tr("%1: %2")).arg(failure_type).arg(err);
     d.setTitle(failure_str);
@@ -643,6 +627,84 @@ void DialogManager::showOpticalJobCompletionDialog(const QString &msg, const QSt
     d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.setDefaultButton(0);
     d.getButton(0)->setFocus();
+    d.exec();
+}
+
+void DialogManager::showOpticalDumpISOSuccessDialog(const QString &path)
+{
+    DDialog d;
+    d.setFixedSize(400, 242);
+    d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
+    d.addButton(QObject::tr("Close", "button"));
+    d.addButton(QObject::tr("View Image File", "button"), true, DDialog::ButtonType::ButtonRecommend);
+    connect(&d, &DDialog::buttonClicked, this, [path](int index, const QString &text) {
+        qInfo() << "button clicked" << text;
+        if (index == 1) {
+            if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" <<  path << "--raw"))
+                return;
+
+            QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" <<  path << "--raw");
+        }
+    });
+
+    QFrame *contentFrame = new QFrame;
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(0);
+    contentFrame->setLayout(mainLayout);
+    d.addContent(contentFrame);
+
+    // add textlabel
+    QLabel *textLabel = new QLabel;
+    textLabel->setText(QObject::tr("Image successfully created"));
+    textLabel->setAlignment(Qt::AlignHCenter);
+    QFont font = textLabel->font();
+    font.setPixelSize(14);
+    font.setWeight(QFont::Medium);
+    font.setFamily("SourceHanSansSC");
+    textLabel->setFont(font);
+    mainLayout->addWidget(textLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    // add icon label
+    QLabel *iconLabel = new QLabel;
+    iconLabel->setPixmap(QIcon::fromTheme("dialog-ok").pixmap(96, 96));
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    d.moveToCenter();
+    d.exec();
+}
+
+void DialogManager::showOpticalDumpISOFailedDialog()
+{
+    DDialog d;
+    d.setFixedSize(400, 242);
+    d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
+    d.addButton(QObject::tr("Close", "button"));
+
+    QFrame *contentFrame = new QFrame;
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(0);
+    contentFrame->setLayout(mainLayout);
+    d.addContent(contentFrame);
+
+    // add textlabel
+    QLabel *textLabel = new QLabel;
+    textLabel->setText(QObject::tr("Image creation failed"));
+    textLabel->setAlignment(Qt::AlignHCenter);
+    QFont font = textLabel->font();
+    font.setPixelSize(14);
+    font.setWeight(QFont::Medium);
+    font.setFamily("SourceHanSansSC");
+    textLabel->setFont(font);
+    mainLayout->addWidget(textLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    // add icon label
+    QLabel *iconLabel = new QLabel;
+    iconLabel->setPixmap(QIcon::fromTheme("dialog-error").pixmap(96, 96));
+    mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
+
+    d.moveToCenter();
     d.exec();
 }
 
@@ -807,6 +869,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                 if (m_propertyDialogs.contains(url)) {
                     dialog = m_propertyDialogs.value(url);
                     dialog->raise();
+                    dialog->activateWindow();
                 } else {
                     dialog = new PropertyDialog(event, url);
                     dialog->setWindowFlags(dialog->windowFlags() & ~ Qt::FramelessWindowHint);
@@ -819,6 +882,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
                         dialog->move(pos);
                     }
                     dialog->show();
+                    dialog->activateWindow();
 
                     connect(dialog, &PropertyDialog::closed, this, &DialogManager::removePropertyDialog);
                     //                connect(dialog, &PropertyDialog::raised, this, &DialogManager::raiseAllPropertyDialog);
@@ -832,6 +896,7 @@ void DialogManager::showPropertyDialog(const DFMUrlListBaseEvent &event)
         m_multiFilesPropertyDialog->show();
         m_multiFilesPropertyDialog->moveToCenter();
         m_multiFilesPropertyDialog->raise();
+        m_multiFilesPropertyDialog->activateWindow();
     }
 }
 
@@ -841,15 +906,14 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
     showPropertyDialog(event);
     if (m_propertyDialogs.contains(url)) {
         PropertyDialog *dialog = m_propertyDialogs.value(url);
+        dialog->activateWindow();
         if (dialog->expandGroup().count() > 1) {
             dialog->expandGroup().at(0)->setAnimationDuration(0);
             dialog->expandGroup().at(1)->setAnimationDuration(0);
             dialog->expandGroup().at(0)->setExpand(false);
             dialog->expandGroup().at(1)->setExpand(true);
-            QTimer::singleShot(0, this, [=]() {
-                dialog->expandGroup().at(0)->setAnimationDuration(250);
-                dialog->expandGroup().at(1)->setAnimationDuration(250);
-            });
+            dialog->expandGroup().at(0)->setAnimationDuration(250);
+            dialog->expandGroup().at(1)->setAnimationDuration(250);
         }
     }
 }
@@ -867,10 +931,13 @@ void DialogManager::showTrashPropertyDialog(const DFMEvent &event)
     QPoint pos = getPerportyPos(m_trashDialog->size().width(), m_trashDialog->size().height(), 1, 0);
     m_trashDialog->move(pos);
     m_trashDialog->show();
+    m_trashDialog->activateWindow();
 
     TIMER_SINGLESHOT(100, {
-        if (m_trashDialog)
+        if (m_trashDialog) {
             m_trashDialog->raise();
+            m_trashDialog->activateWindow();
+        }
     }, this)
 }
 
@@ -880,15 +947,18 @@ void DialogManager::showComputerPropertyDialog()
         m_computerDialog->updateComputerInfo();
         m_computerDialog->show();
         m_computerDialog->raise();
+        m_computerDialog->activateWindow();
         return;
     }
     m_computerDialog = new ComputerPropertyDialog;
     QPoint pos = getPerportyPos(m_computerDialog->size().width(), m_computerDialog->size().height(), 1, 0);
     m_computerDialog->show();
     m_computerDialog->move(pos);
+    m_computerDialog->activateWindow();
 
     TIMER_SINGLESHOT(100, {
         m_computerDialog->raise();
+        m_computerDialog->activateWindow();
     },
     this)
 }
@@ -899,6 +969,7 @@ void DialogManager::showDevicePropertyDialog(const DFMEvent &event)
     if (w) {
         PropertyDialog *dialog = new PropertyDialog(event, event.fileUrl());
         dialog->show();
+        dialog->activateWindow();
     }
 }
 
@@ -1014,6 +1085,21 @@ void DialogManager::showSharePasswordSettingDialog(QFrame *parent)
     parent->setProperty("UserSharePwdSettingDialogShown", true);
     connect(dialog, &UserSharePasswordSettingDialog::closed, [=] {
         parent->setProperty("UserSharePwdSettingDialogShown", false);
+    });
+}
+
+void DialogManager::showChangeDiskPasswordDialog(quint64 winId)
+{
+    QWidget *w = WindowManager::getWindowById(winId);
+    if (!w || w->property("ChangeDiskPasswordDialog").toBool()) {
+        return;
+    }
+
+    DiskPwdChangeDialog *dialog = new DiskPwdChangeDialog(w);
+    dialog->show();
+    w->setProperty("ChangeDiskPasswordDialog", true);
+    connect(dialog, &DiskPwdChangeDialog::closed, [=] {
+        w->setProperty("ChangeDiskPasswordDialog", false);
     });
 }
 
@@ -1544,6 +1630,21 @@ int DialogManager::showStopScanningDialog()
     return dlg.exec();
 }
 
+int DialogManager::execCommonMessageDialog(const DFMEvent &event, const QString &message)
+{
+    // 获取父对话框字体特性
+    DDialog d(WindowManager::getWindowById(event.windowId()));
+    QFontMetrics fm(d.font());
+    d.setTitle(message);
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Confirm","button"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    // 设置对话框icon
+    d.setIcon(m_dialogWarningIcon);
+    return d.exec();
+}
+
 bool DialogManager::DUrlListCompare(DUrlList urls)
 {
     if (urls.size() != m_urlList.size()) {
@@ -1642,4 +1743,3 @@ int DialogManager::showPrivilegeDialog_SW(int nRet, const QString &srcfilename)
 }
 
 #endif
-

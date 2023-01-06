@@ -1,25 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DFILECOPYMOVEJOB_P_H
 #define DFILECOPYMOVEJOB_P_H
 
@@ -249,6 +231,11 @@ public:
                                const QSharedPointer<DFileDevice> &toDevice);
     // 初始化优化状态
     void initRefineState();
+
+    void saveCopyFileUrl(const DUrl &url);
+    void removeCopyFileUrl(const DUrl &url);
+
+public:
     //! 剪切回收站文件路径
     QQueue<QString> m_fileNameList;
 
@@ -385,6 +372,9 @@ public:
     QList<QSharedPointer<DirSetPermissonInfo>> m_dirPermissonList;
 
     qint64 m_gvfsFileInnvliadProgress = 0;
+
+    static DUrlList copyingFiles;
+    static QMutex copyingFilesMutex;
 
     Q_DECLARE_PUBLIC(DFileCopyMoveJob)
 };

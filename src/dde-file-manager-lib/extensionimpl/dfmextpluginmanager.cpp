@@ -1,24 +1,7 @@
-/*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     zhangyu<zhangyub@uniontech.com>
- *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
- *             huangyu<zhangyub@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "private/dfmextpluginmanager_p.h"
 #include "dfmextpluginmanager.h"
 #include "dfmstandardpaths.h"
@@ -111,22 +94,23 @@ bool DFMExtPluginManager::initPlugins()
 
 bool DFMExtPluginManager::monitorPlugins()
 {
-    std::call_once(d->watcherFlag, [this]() {
-        // Watcher must init in main thread!
-        DThreadUtil::runInMainThread([this] {
-            d->extensionWathcer = new DFileSystemWatcher(this);
-            if (!d->extensionWathcer)
-                return false;
+    // Watcher must init in main thread!
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
 
-            connect(d->extensionWathcer, &DFileSystemWatcher::fileDeleted, d, &DFMExtPluginManagerPrivate::onExtensionFileDeleted, Qt::DirectConnection);
-            connect(d->extensionWathcer, &DFileSystemWatcher::fileCreated, d,
-                    [this](const QString &path, const QString &name) {
-                        d->onExtensionFileCreatedLater(path, name, DFMExtPluginManagerPrivate::kDefaultWatiTime);
-                    },
-                    Qt::DirectConnection);
-            connect(d->extensionWathcer, &DFileSystemWatcher::fileMoved, d, &DFMExtPluginManagerPrivate::onExtensionFileMoved, Qt::DirectConnection);
-            return d->extensionWathcer->addPath(d->pluginDefaultPath);
-        });
+    std::call_once(d->watcherFlag, [this]() {
+        d->extensionWathcer = new DFileSystemWatcher(this);
+        if (!d->extensionWathcer)
+            return false;
+
+        connect(d->extensionWathcer, &DFileSystemWatcher::fileDeleted, d, &DFMExtPluginManagerPrivate::onExtensionFileDeleted, Qt::DirectConnection);
+        connect(d->extensionWathcer, &DFileSystemWatcher::fileCreated, d,
+                [this](const QString &path, const QString &name) {
+                    d->onExtensionFileCreatedLater(path, name, DFMExtPluginManagerPrivate::kDefaultWatiTime);
+                },
+                Qt::DirectConnection);
+        connect(d->extensionWathcer, &DFileSystemWatcher::fileMoved, d, &DFMExtPluginManagerPrivate::onExtensionFileMoved, Qt::DirectConnection);
+        qInfo() << "Monitor plugins success";
+        return d->extensionWathcer->addPath(d->pluginDefaultPath);
     });
     return true;
 }

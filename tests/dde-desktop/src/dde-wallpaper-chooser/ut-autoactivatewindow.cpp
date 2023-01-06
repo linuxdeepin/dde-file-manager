@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <gtest/gtest.h>
 #include <stubext.h>
 #include <QTest>
@@ -12,7 +16,7 @@
 
 TEST(AutoActivateWindow, test_setWatch)
 {
-    AutoActivateWindow act;
+    AutoActivateWindow act(nullptr);
     ASSERT_EQ(act.d->m_watchedWidget, nullptr);
     ASSERT_FALSE(act.d->m_run);
 

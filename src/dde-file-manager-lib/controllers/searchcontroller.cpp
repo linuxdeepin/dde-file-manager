@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "searchcontroller.h"
 #include "dfileservices.h"
@@ -155,6 +136,7 @@ void SearchFileWatcher::removeWatcher(const DUrl &url)
         return;
     }
 
+    watcher->stopWatcher();
     watcher->deleteLater();
 }
 
@@ -180,9 +162,13 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
 {
     DUrl newFromUrl = fileUrl();
     newFromUrl.setSearchedFileUrl(fromUrl);
-
     DUrl newToUrl = toUrl;
-    if (fileUrl().searchTargetUrl().scheme() == toUrl.scheme() && toUrl.path().startsWith(fileUrl().searchTargetUrl().path())) {
+
+    DUrl targetUrl = fileUrl().searchTargetUrl();
+    if (targetUrl.isComputerFile())
+        targetUrl = DUrl::fromLocalFile("/");
+
+    if (targetUrl.scheme() == toUrl.scheme() && toUrl.path().startsWith(targetUrl.path())) {
         QString keywordPattern = DFMRegularExpression::checkWildcardAndToRegularExpression(fileUrl().searchKeyword());
         const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, toUrl);
 
@@ -196,8 +182,11 @@ void SearchFileWatcher::onFileMoved(const DUrl &fromUrl, const DUrl &toUrl)
             if (toUrl.path().contains("/.local/share/Trash/files", Qt::CaseSensitive)) {
                 return;
             } else {
-                /*fix bug 44187 修改搜索结果名称，文件夹会从搜索结果消失，因为watcher里面增加的是真实路径不是搜索路径*/
-                addWatcher(newToUrl);
+                // Need to remove the watcher of fromUrl first,
+                // otherwise, the watcher of toUrl may fail to listen to it's parent dir,
+                // causing the file to disappear after renamed
+                removeWatcher(fromUrl);
+                addWatcher(toUrl);
             }
         }
     }
@@ -248,12 +237,14 @@ SearchDiriterator::SearchDiriterator(const DUrl &url, const QStringList &nameFil
     , DDirIterator()
     , parent(parent)
     , rootUrl(url)
-    , targetUrl(url.searchTargetUrl())
     , keyword(url.searchKeyword())
 {
     Q_UNUSED(nameFilters)
     Q_UNUSED(filter)
     Q_UNUSED(flags)
+
+    const DUrl &tmpUrl = url.searchTargetUrl();
+    targetUrl = tmpUrl.isComputerFile() ? DUrl::fromLocalFile("/") : tmpUrl;
 
     initConnect();
     doSearch();

@@ -1,31 +1,13 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfileinfo.h"
 #include "private/dfileinfo_p.h"
 #include "app/define.h"
 
 #include "shutil/fileutils.h"
+#include "io/dfilecopymovejob.h"
 
 #include "controllers/pathmanager.h"
 #include "controllers/filecontroller.h"
@@ -135,13 +117,11 @@ RequestEP::~RequestEP()
 void RequestEP::run()
 {
     forever {
-        requestEPFilesLock.lockForRead();
+        requestEPFilesLock.lockForWrite();
         if (requestEPFiles.isEmpty()) {
             requestEPFilesLock.unlock();
             return;
         }
-        requestEPFilesLock.unlock();
-        requestEPFilesLock.lockForWrite();
         auto file_info = requestEPFiles.dequeue();
         requestEPFilesLock.unlock();
 
@@ -407,7 +387,10 @@ QList<QIcon> DFileInfo::additionalIcon() const
     bool needEmblem = true;
     // wayland TASK-38720 修复重命名文件时，文件图标有小锁显示的问题，
     // 当为快捷方式时，有源文件文件不存在的情况，所以增加特殊判断
-    if (!isSymLink() && !exists()) {
+    // 注意：此处将exits()替换成QFileInfo::exists()原因在于重命名时，原始文件的QFileinfo对象没有及时刷新，
+    // exits()判断的结果仍然是true（错误结果），反而静态函数QFileInfo::exits()判断的结果为false（正确结果）,
+    // 所以此处使用QFileInfo::exits()判断文件信息
+    if (!isSymLink() && !QFileInfo::exists(filePath())) {
         return icons;
     }
 
@@ -981,10 +964,13 @@ QIcon DFileInfo::fileIcon() const
     if (!d->icon.isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->icon.name().isEmpty())) {
         return d->icon;
     }
+    const DUrl &fileUrl = this->fileUrl();
+
+    if(DFileCopyMoveJob::isCopyingFile(fileUrl))
+        return DFileIconProvider::globalProvider()->icon(*this);
 
     d->iconFromTheme = false;
 
-    const DUrl &fileUrl = this->fileUrl();
 
 #ifdef DFM_MINIMUM
     d->hasThumbnail = 0;
@@ -1001,7 +987,7 @@ QIcon DFileInfo::fileIcon() const
     if (d->needThumbnail || d->hasThumbnail > 0) {
         d->needThumbnail = true;
 
-        const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(d->fileInfo, DThumbnailProvider::Large));
+        const QIcon icon(DThumbnailProvider::instance()->thumbnailPixmap(d->fileInfo, DThumbnailProvider::Large));
 
         if (!icon.isNull()) {
             QPixmap pixmap = icon.pixmap(DThumbnailProvider::Large, DThumbnailProvider::Large);
@@ -1114,19 +1100,18 @@ QVariantHash DFileInfo::extraProperties() const
             d->getEPTimer->setSingleShot(true);
             d->getEPTimer->moveToThread(qApp->thread());
             d->getEPTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
+
+            QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url] {
+                d->requestEP = RequestEP::instance();
+
+                //线程run之前先确保fileinfo未被析构时request不会被取消
+                d->requestEP->requestEPCancelLock.lock();
+                d->requestEP->isCanceled = false;
+                d->requestEP->requestEPCancelLock.unlock();
+
+                d->requestEP->requestEP(url, const_cast<DFileInfoPrivate *>(d));
+            });
         }
-
-        QObject::connect(d->getEPTimer, &QTimer::timeout, d->getEPTimer, [d, url] {
-            d->requestEP = RequestEP::instance();
-
-            //线程run之前先确保fileinfo未被析构时request不会被取消
-            d->requestEP->requestEPCancelLock.lock();
-            d->requestEP->isCanceled = false;
-            d->requestEP->requestEPCancelLock.unlock();
-
-            d->requestEP->requestEP(url, const_cast<DFileInfoPrivate *>(d));
-            d->getEPTimer->deleteLater();
-        });
 
         QMetaObject::invokeMethod(d->getEPTimer, "start", Qt::QueuedConnection);
     }

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DFMOPTICALMEDIAWIDGET_H
 #define DFMOPTICALMEDIAWIDGET_H
 
@@ -72,6 +76,7 @@ public:
     //fix: 动态更新光驱磁盘状态
 private slots:
     void selectBurnFilesOptionUpdate();
+    void onDumpBtnClicked();
 
 private:
     QScopedPointer<DFMOpticalMediaWidgetPrivate> d_ptr;

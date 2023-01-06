@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmsidebarview.h"
 #include "dfmsidebaritem.h"
@@ -29,6 +11,7 @@
 #include "accessibility/ac-lib-file-manager.h"
 #include "plugins/schemepluginmanager.h"
 #include "shutil/fileutils.h"
+#include "rlog/rlog.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
@@ -90,6 +73,21 @@ void DFMSideBarView::mousePressEvent(QMouseEvent *event)
     DListView::mousePressEvent(event);
 }
 
+void DFMSideBarView::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (QApplication::applicationName() == "dde-file-manager") {
+        QModelIndex index = indexAt(event->pos());
+        if (index.isValid() && index.data(DFMSideBarItem::ItemTypeRole) == DFMSideBarItem::SidebarItem) {
+            QString reportName = index.data(DFMSideBarItem::ItemReportNameRole).toString();
+            QVariantMap data;
+            data.insert("sidebar_item", reportName);
+            rlog->commit("Sidebar", data);
+        }
+    }
+
+    DListView::mouseReleaseEvent(event);
+}
+
 void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 {
     // Fix bug#106858
@@ -147,9 +145,7 @@ void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
         m_urlsForDragEvent.clear();
     } else {
         bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
-        if (sameUser) {
-            fetchDragEventUrlsFromSharedMemory();
-        } else {
+        if (!sameUser || !fetchDragEventUrlsFromSharedMemory()) {
             m_urlsForDragEvent = event->mimeData()->urls();
         }
     }
@@ -449,6 +445,9 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         if (item->url().isTaggedFile() && !fileInfo->canTag()) {
             return Qt::IgnoreAction;
         }
+
+        if (item->url().isSMBFile())
+            return Qt::IgnoreAction;
     }
 
     if (!info || !info->canDrop()) {

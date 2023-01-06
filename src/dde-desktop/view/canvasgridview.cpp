@@ -1,23 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     wangchunlin<wangchunlin@uniontech.com>
- *
- * Maintainer: wangchunlin<wangchunlin@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "canvasgridview.h"
 
@@ -1102,7 +1085,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             }
             break;
         case Qt::Key_F5:
-            Refresh();
+            Refresh(false);
             return;
         case Qt::Key_Delete:
             if (canDeleted && !selectUrlsMap.contains(rootUrl.toString()) && !selectUrls.isEmpty()) {
@@ -1273,7 +1256,7 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         CanvasGridView *view = dynamic_cast<CanvasGridView *>(event->source());
         if (view && event->mimeData()) {
             //拖拽复制时，不做让位处理
-            if (!GridManager::instance()->shouldArrange() && !DFMGlobal::keyCtrlIsPressed()) {
+            if (!DFMGlobal::keyCtrlIsPressed()) {
                 d->startDodge = true;
             }
         }
@@ -1282,9 +1265,7 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 
     //由于普通用户无法访问root用户的共享内存，跨用户的情况使用从mimedata中取url的方式
     bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
-    if (sameUser) {
-        fetchDragEventUrlsFromSharedMemory();
-    } else {
+    if (!sameUser || !fetchDragEventUrlsFromSharedMemory()) {
         m_urlsForDragEvent = event->mimeData()->urls();
     }
 
@@ -1340,14 +1321,25 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
         const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(hoverIndex);
         CanvasGridView *view = dynamic_cast<CanvasGridView *>(event->source());
         if (fileInfo) {
-            if (view && !DFMGlobal::keyCtrlIsPressed()) {
-                event->setDropAction(Qt::MoveAction);
+            bool moveOnSelf = false;
+            if (view) {
+                if (!DFMGlobal::keyCtrlIsPressed())
+                    event->setDropAction(Qt::MoveAction);
+
+                // hover on self.
+                if (hoverIndex == itemDelegate()->expandedIndex()) {
+                     QPoint gridPos = gridAt(pos);
+                     // the gridPos that cursor is on is empty. and file can be move to this gridpos.
+                     moveOnSelf = GridManager::instance()->isEmpty(m_screenNum, gridPos.x(), gridPos.y());
+                 }
             }
 
             if (!fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
                     !fileInfo->supportedDropActions().testFlag(event->dropAction())) {
-                // not support drag
-                event->ignore();
+                if (moveOnSelf)
+                    event->accept(); // just move
+                else
+                    event->ignore(); // not support drag
             } else {
                 if (DFileDragClient::checkMimeData(event->mimeData())) {
                     event->acceptProposedAction();
@@ -1850,6 +1842,11 @@ void CanvasGridView::focusInEvent(QFocusEvent *event)
 
     /// set menu actions filter
     setMenuActionsFilter();
+
+    // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::focusInEvent
+    // Set WA_InputMethodEnabled to enbale using input method on desktop no matter whether the current index is valid or not.
+    if (!testAttribute(Qt::WA_InputMethodEnabled))
+        setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void CanvasGridView::focusOutEvent(QFocusEvent *event)
@@ -1986,6 +1983,15 @@ void CanvasGridView::keyboardSearch(const QString &search)
         return;
 
     d->fileViewHelper->keyboardSearch(search.toLocal8Bit().at(0));
+}
+
+QVariant CanvasGridView::inputMethodQuery(Qt::InputMethodQuery query) const
+{
+    // When no item is selected, return input method area where the current mouse is located
+    if (query == Qt::ImCursorRectangle && !currentIndex().isValid())
+        return QRect(mapFromGlobal(QCursor::pos()), iconSize());
+
+    return QAbstractItemView::inputMethodQuery(query);
 }
 
 QPixmap CanvasGridView::renderToPixmap(const QModelIndexList &indexes) const
@@ -2216,8 +2222,12 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         bool findOldPos = false;
         QPoint oldPos = QPoint(-1, -1);
 
-        if (GridManager::instance()->contains(m_screenNum, oriUrl.toString()) && !oriUrl.fileName().isEmpty()) {
-            oldPos = GridManager::instance()->position(m_screenNum, oriUrl.toString());
+        QPair<int, QPoint> oriUrlPos;
+        QPair<int, QPoint> dstUrlPos;
+        auto findOld = GridManager::instance()->find(oriUrl.toString(), oriUrlPos);
+
+        if (findOld && !oriUrl.fileName().isEmpty()) {
+            oldPos = oriUrlPos.second;
             findOldPos = true;
         }
 
@@ -2226,7 +2236,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             findNewPos = true;
         }
 
-        findNewPos &= !GridManager::instance()->contains(m_screenNum, dstUrl.toString());
+        findNewPos &= !GridManager::instance()->find(dstUrl.toString(), dstUrlPos);
 
         if (!findNewPos) {
             Q_EMIT itemDeleted(oriUrl);
@@ -2244,7 +2254,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
                     if (GridManager::instance()->autoArrange())
                         this->delayArrage();
                 } else
-                    GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
+                    GridManager::instance()->add(oriUrlPos.first, oldPos, dstUrl.toString());
 
                 if (GridManager::instance()->autoMerge())
                     this->delayModelRefresh();
@@ -2521,6 +2531,16 @@ void CanvasGridView::onRefreshFinished()
     }
 }
 
+void CanvasGridView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    QAbstractItemView::currentChanged(current, previous);
+
+    // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::currentChanged
+    // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
+    if (!testAttribute(Qt::WA_InputMethodEnabled))
+        setAttribute(Qt::WA_InputMethodEnabled, true);
+}
+
 void CanvasGridView::EnableUIDebug(bool enable)
 {
     d->_debug_log = enable;
@@ -2563,9 +2583,14 @@ QString CanvasGridView::DumpPos(qint32 x, qint32 y)
     return QJsonDocument(debug).toJson();
 }
 
-void CanvasGridView::Refresh()
+void CanvasGridView::Refresh(bool silent)
 {
-    d->fileViewHelper->viewFlicker();
+    if (silent) {
+        if (auto m = model())
+            m->refresh();
+    } else {
+        d->fileViewHelper->viewFlicker();
+    }
 }
 
 void CanvasGridView::initUI()
@@ -2631,9 +2656,7 @@ void CanvasGridView::initUI()
     }
 
     m_canvasOwnActions.insert("DisplaySettings", ContextMenuAction::DisplaySettings);
-    m_canvasOwnActions.insert("CornerSettings", ContextMenuAction::CornerSettings);
     m_canvasOwnActions.insert("WallpaperSettings", ContextMenuAction::WallpaperSettings);
-    m_canvasOwnActions.insert("FileManagerProperty", ContextMenuAction::FileManagerProperty);
     m_canvasOwnActions.insert("AutoMerge", ContextMenuAction::AutoMerge);
     m_canvasOwnActions.insert("AutoSort", ContextMenuAction::AutoSort);
     m_canvasOwnActions.insert("IconSize", ContextMenuAction::IconSize);
@@ -3626,7 +3649,10 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         unusedList << MenuAction::OpenInNewWindow
                    << MenuAction::OpenInNewTab
                    << MenuAction::SendToDesktop
-                   << MenuAction::AddToBookMark;
+                   << MenuAction::AddToBookMark
+
+                   // #bug154317, Based on product requirements, bookmarks are not displayed in the right menu of the desktop
+                   << MenuAction::BookmarkRemove;
     } else {
         unusedList << MenuAction::SendToDesktop;
     }

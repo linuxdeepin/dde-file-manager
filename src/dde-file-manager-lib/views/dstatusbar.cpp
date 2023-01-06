@@ -1,28 +1,7 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
-//fix: 动态获取刻录选中文件的字节大小
 #include "dfmopticalmediawidget.h"
 
 #include "dstatusbar.h"
@@ -93,10 +72,9 @@ void DStatusBar::initUI()
     m_loadingIndicator->setSpeed(20);
     m_loadingIndicator->hide();
 
-    m_scaleSlider = new QSlider(this);
+    m_scaleSlider = new DSlider(Qt::Horizontal, this);
     AC_SET_OBJECT_NAME(m_scaleSlider, AC_COMPUTER_STATUS_BAR_SCALE_SLIDER);
     AC_SET_ACCESSIBLE_NAME(m_scaleSlider, AC_COMPUTER_STATUS_BAR_SCALE_SLIDER);
-    m_scaleSlider->setOrientation(Qt::Horizontal);
     m_scaleSlider->adjustSize();
     m_scaleSlider->setFixedWidth(120);
 
@@ -238,7 +216,7 @@ void DStatusBar::setComBoxItems(const QStringList &filters)
     m_comboBoxLabel->setVisible(m_comboBox->isVisible());
 }
 
-QSlider *DStatusBar::scalingSlider() const
+DSlider *DStatusBar::scalingSlider() const
 {
     return m_scaleSlider;
 }
@@ -267,7 +245,7 @@ QSize DStatusBar::sizeHint() const
 {
     QSize size = QFrame::sizeHint();
 
-    size.setHeight(qMax(25, size.height()));
+    size.setHeight(qMax(32, size.height()));
 
     return size;
 }
@@ -315,6 +293,44 @@ QVariantList DStatusBar::calcFolderAndFile(const DUrlList &urllist)
         }
     }
     return QVariantList{folderCount, folderContains, fileCount, fileSize};
+}
+
+void DStatusBar::preSetContainsCount(const DUrl &url)
+{
+    if (m_preSetJob && m_preSetJob->isRunning()) {
+        m_preSetJob->disconnect();
+        m_preSetJob->stop();
+        m_preSetJob->wait();
+    }
+
+    if (m_fileStatisticsJob && m_fileStatisticsJob->isRunning()) {
+        m_fileStatisticsJob->stop();
+        m_fileStatisticsJob->wait();
+    }
+
+    m_preSetJob = new DFileStatisticsJob(this);
+    m_preSetJob->setFileHints(DFileStatisticsJob::ExcludeSourceFile | DFileStatisticsJob::SingleDepth);
+
+    m_fileCount = 0;
+    auto onFoundFile = [this] {
+        if (!sender())
+            return;
+
+        ++m_fileCount;
+        m_label->setText(m_counted.arg(QString::number(m_fileCount)));
+    };
+
+    connect(m_preSetJob, &DFileStatisticsJob::finished, this,
+    [this] {
+        m_fileCount = m_preSetJob->filesCount() + m_preSetJob->directorysCount();
+
+        m_loadingIndicator->hide();
+        m_label->setText(m_counted.arg(QString::number(m_fileCount)));
+    });
+    connect(m_preSetJob, &DFileStatisticsJob::fileFound, this, onFoundFile);
+    connect(m_preSetJob, &DFileStatisticsJob::directoryFound, this, onFoundFile);
+
+    m_preSetJob->start({url});
 }
 
 void DStatusBar::initJobConnection()
@@ -667,11 +683,8 @@ void DStatusBar::setLoadingIncatorVisible(bool visible, const QString &tipText)
     if (!m_label)
         return;
 
-    if (visible) {
+    if (visible)
         m_label->setText(tipText.isEmpty() ? tr("Loading...") : tipText);
-    } else {
-        m_label->setText(QString());
-    }
 }
 
 bool DStatusBar::eventFilter(QObject *watched, QEvent *event)

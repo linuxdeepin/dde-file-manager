@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "computerpropertydialog.h"
 #include "ddiskmanager.h"
@@ -29,20 +11,21 @@
 
 #include <DPlatformWindowHandle>
 #include <DSpinner>
+#include <DGraphicsClipEffect>
+#include <DSysInfo>
+#include <DTitlebar>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <DSysInfo>
-#include <DTitlebar>
 #include <QGridLayout>
 #include <QPixmap>
 #include <QProcess>
 #include <QDebug>
 #include <QRegularExpression>
 #include <QPainter>
-#include <DGraphicsClipEffect>
 #include <QWindow>
+#include <QImageReader>
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -75,6 +58,45 @@ static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision
     }
 
     return "";
+}
+
+static QString editionInfo()
+{
+    QString edition {""};
+    // 专业版
+    if (DSysInfo::UosEdition::UosProfessional == DSysInfo::uosEditionType()) {
+        // 是否激活
+        QDBusInterface deepinLicenseInfo("com.deepin.license",
+                                         "/com/deepin/license/Info",
+                                         "com.deepin.license.Info",
+                                         QDBusConnection::systemBus());
+        deepinLicenseInfo.setTimeout(1000);
+        if (!deepinLicenseInfo.isValid()) {
+            qWarning() << "Dbus com.deepin.license is not valid";
+            return "";
+        }
+        qInfo() << "Start call Dbus com.deepin.license AuthorizationState";
+        int activeInfo = deepinLicenseInfo.property("AuthorizationState").toInt();
+        qInfo() << "End call Dbus com.deepin.license AuthorizationState";
+        if (activeInfo == 1) {
+            // 政务授权、企业授权、原始授权
+            qInfo() << "Start call Dbus com.deepin.license AuthorizationProperty";
+            uint authorizedInfo = deepinLicenseInfo.property("AuthorizationProperty").toUInt();
+            qInfo() << "End call Dbus com.deepin.license AuthorizationProperty";
+            if (authorizedInfo == 1) {
+                edition = DSysInfo::uosEditionName() + "(" + QObject::tr("For Government") + ")" + "(" + DSysInfo::minorVersion() + ")";
+            } else if (authorizedInfo == 2) {
+                edition = DSysInfo::uosEditionName() + "(" + QObject::tr("For Enterprise") + ")" + "(" + DSysInfo::minorVersion() + ")";
+            } else {
+                edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+            }
+        } else {
+            edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+        }
+    } else {
+        edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+    }
+    return edition;
 }
 
 GetInfoWork::GetInfoWork(QObject *parent)
@@ -173,7 +195,9 @@ void GetInfoWork::run()
                 if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
                     Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
                 } else {
-                    Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+                    Edition = editionInfo();
+                    if (Edition.isEmpty())
+                        qWarning() << "get edition info failed";
                 }
             }
             // 获取系统版本号
@@ -259,8 +283,6 @@ ComputerPropertyDialog::~ComputerPropertyDialog()
 
 void ComputerPropertyDialog::initUI()
 {
-    QLabel *iconLabel = new QLabel(this);
-
     if(DFMGlobal::isWayLand())
     {
         //设置对话框窗口最大最小化按钮隐藏
@@ -269,18 +291,17 @@ void ComputerPropertyDialog::initUI()
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
-        this->setFixedSize(320, 420);
     }
 
+    QLabel *iconLabel = new QLabel(this);
     QString distributerLogoPath = DSysInfo::distributionOrgLogo();
-    QIcon logoIcon;
+    QPixmap logoPix;
     if (!distributerLogoPath.isEmpty() && QFile::exists(distributerLogoPath)) {
-        logoIcon = QIcon(distributerLogoPath);
+        iconLabel->setPixmap(getClearPixmap(distributerLogoPath));
     } else {
-        logoIcon = QIcon::fromTheme("dfm_deepin_logo");
+        iconLabel->setPixmap(QIcon::fromTheme("dfm_deepin_logo").pixmap(152, 39));
     }
 
-    iconLabel->setPixmap(logoIcon.pixmap(152, 39));
     QLabel *nameLabel = new QLabel(tr("Computer"), this);
     auto pt = nameLabel->palette();
     pt.setColor(QPalette::Text, palette().color(QPalette::Normal, QPalette::Text));
@@ -464,7 +485,9 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
             Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
         } else {
-            Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+            Edition = editionInfo();
+            if (Edition.isEmpty())
+                qWarning() << "get edition info failed";
         }
         //! 获取系统版本号
         version = DSysInfo::majorVersion();
@@ -537,6 +560,26 @@ void ComputerPropertyDialog::slotSetInfo(QMap<QString, QString> mapNewDatas)
         }
     }
     adjustSize();
+}
+
+QPixmap ComputerPropertyDialog::getClearPixmap(const QString &path)
+{
+    qreal ratio = 1.0;
+    QPixmap pixmap;
+    const qreal devicePixelRatio = qApp->devicePixelRatio();
+    if (!qFuzzyCompare(ratio, devicePixelRatio)) {
+        QImageReader reader;
+        reader.setFileName(qt_findAtNxFile(path, devicePixelRatio, &ratio));
+        if (reader.canRead()) {
+            reader.setScaledSize(reader.size() * (devicePixelRatio / ratio));
+            pixmap = QPixmap::fromImage(reader.read());
+            pixmap.setDevicePixelRatio(devicePixelRatio);
+        }
+    } else {
+        pixmap.load(path);
+    }
+
+    return pixmap;
 }
 
 void ComputerPropertyDialog::hideEvent(QHideEvent *event)

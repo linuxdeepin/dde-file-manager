@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef FILEJOB_H
 #define FILEJOB_H
@@ -69,6 +50,7 @@ public:
         OpticalBurn,
         OpticalBlank,
         OpticalImageBurn,
+        OpticalDumpImage,
         OpticalCheck
     };
     Q_ENUM(JobType)
@@ -165,6 +147,8 @@ signals:
 
     void requestOpticalJobFailureDialog(int type, const QString &err, const QStringList &details);
     void requestOpticalJobCompletionDialog(const QString &msg, const QString &icon);
+    void requestOpticalDumpISOSuccessDialog(const QString &path);
+    void requestOpticalDumpISOFailedDialog();
 
     void progressPercent(int value);
     void error(QString content);
@@ -186,6 +170,8 @@ public slots:
     void doISOBurn(const DUrl &device, QString volname, int speed, DISOMasterNS::BurnOptions opts); // fork
     void doDiscBlank(const DUrl &device);
     void doISOImageBurn(const DUrl &device, const DUrl &image, int speed, DISOMasterNS::BurnOptions opts); // fork
+    void doISODump(const DUrl &device, const DUrl &image);
+    void doDiscAuditLog(const DUrl &device, const QString &stagePath, bool success);
     void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress);
     void opticalJobUpdatedByParentProcess(int status, int progress, const QString &speed, const QStringList &msgs);
 
@@ -232,6 +218,8 @@ private:
     QString m_tarDirName;
     QString m_srcPath;
     QString m_tarPath;
+    QString m_dumpIsoPath;
+    QString m_curDriveMedia;
     bool m_restoreWithNewName = false;
     QElapsedTimer m_timer;
     qint64 m_lastMsec = 0;

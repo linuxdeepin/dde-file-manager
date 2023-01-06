@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmglobal.h"
 #include "chinese2pinyin.h"
@@ -56,6 +37,16 @@
 #include "plugins/schemepluginmanager.h"
 #include "extensionimpl/dfmextpluginmanager.h"
 #include "plugins/pluginemblemmanager.h"
+#include "vault/vaultdbusresponse.h"
+
+#include "utils/rlog/rlog.h"
+#include "utils/rlog/datas/blockmountreportdata.h"
+#include "utils/rlog/datas/smbreportdata.h"
+#include "utils/rlog/datas/vaultreportdata.h"
+#include "utils/rlog/datas/searchreportdata.h"
+#include "utils/rlog/datas/sidebarreportdata.h"
+#include "utils/rlog/datas/filemenureportdata.h"
+#include "utils/rlog/datas/appstartupreportdata.h"
 
 #include <DArrowRectangle>
 
@@ -263,7 +254,7 @@ void DFMGlobal::setUrlsToClipboard(const QList<QUrl> &list, DFMGlobal::Clipboard
                          DFileIconProvider::globalProvider()->icon(info->toQFileInfo());
             DAbstractFileInfo::FileType fileType = mimeTypeDisplayManager->displayNameToEnum(info->mimeTypeName());
             if (list.size() == 1 && fileType == DAbstractFileInfo::FileType::Images) {
-                QIcon thumb(DThumbnailProvider::instance()->thumbnailFilePath(info->toQFileInfo(), DThumbnailProvider::Large));
+                QIcon thumb(DThumbnailProvider::instance()->thumbnailPixmap(info->toQFileInfo(), DThumbnailProvider::Large));
                 if (thumb.isNull()) {
                     //qWarning() << "thumbnail file faild " << fileInfo->absoluteFilePath();
                 } else {
@@ -581,11 +572,50 @@ void DFMGlobal::initEmblemPluginManagerConnection()
             fileSignalManager, &FileSignalManager::requestUpdateAllFileView);
 }
 
+void DFMGlobal::initVaultDbusResponse()
+{
+    VaultDbusResponse::instance()->connectLockScreenDBus();
+    // 解锁保险箱
+    VaultDbusResponse::instance()->transparentUnlockVault();
+}
+
+void DFMGlobal::initRlogManager()
+{
+    QList<ReportDataInterface *> datas {
+        new BlockMountReportData,
+        new SmbReportData,
+        new SidebarReportData,
+        new SearchReportData,
+        new VaultReportData,
+        new FileMenuReportData,
+        new AppStartupReportData
+    };
+
+    std::for_each(datas.cbegin(), datas.cend(), [](ReportDataInterface *dat) { rlog->registerLogData(dat->type(), dat); });
+}
+
 QString DFMGlobal::getUser()
 {
     static QString user = QString::fromLocal8Bit(qgetenv("USER"));
 
     return user;
+}
+
+QString DFMGlobal::hostName()
+{
+    static QString name;
+    if (!name.isEmpty())
+        return name;
+
+#if (_XOPEN_SOURCE >= 500) || (_POSIX_C_SOURCE >= 200112L)
+    char buf[256] {0};
+    if (::gethostname(buf, sizeof (buf)) == 0) {
+        name = QString(buf);
+        return name;
+    }
+#endif
+
+    return {};
 }
 
 int DFMGlobal::getUserId()
@@ -645,26 +675,9 @@ QList<QUrl> DFMGlobal::clipboardFileUrlList() const
     return GlobalData::clipboardFileUrls;
 }
 
-void DFMGlobal::removeClipboardFileUrl(const QUrl &url)
-{
-    GlobalData::clipboardFileUrls.removeAll(url);
-}
-
 QList<quint64> DFMGlobal::clipboardFileInodeList() const
 {
     return  GlobalData::clipbordFileinode;
-}
-
-void DFMGlobal::removeClipboardFileInode(const QString &localPath)
-{
-    struct stat statinfo;
-    QByteArray pathArry = localPath.toUtf8();
-    std::string pathStd = pathArry.toStdString();
-    if (stat(pathStd.c_str(), &statinfo) == 0) {
-        if (GlobalData::clipbordFileinode.contains(statinfo.st_ino)) {
-            GlobalData::clipbordFileinode.removeAll(statinfo.st_ino);
-        }
-    }
 }
 
 DFMGlobal::ClipboardAction DFMGlobal::clipboardAction() const
@@ -1208,6 +1221,11 @@ bool DFMGlobal::fileNameCorrection(const QByteArray &filePath)
 
 bool DFMGlobal::autoInitExtPluginManager()
 {
+    static QMutex mutex;
+    if (!mutex.tryLock())
+        return false;
+
+
     if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Invalid) {
         qInfo() << "extPluginPath:" << DFMExtPluginManager::instance().pluginPaths();
         DFMExtPluginManager::instance().scanPlugins();
@@ -1225,14 +1243,13 @@ bool DFMGlobal::autoInitExtPluginManager()
     }
 
     if (DFMExtPluginManager::instance().state() == DFMExtPluginManager::State::Initialized) {
-       if (!DFMExtPluginManager::instance().monitorPlugins()) {
-           qWarning() << "init plugin monitor failed!";
-           return false;
-       }
         qInfo() << "extPlugin initialization has been successful!";
+        mutex.unlock();
+        return true;
     }
 
-    return true;
+    mutex.unlock();
+    return false;
 }
 
 bool DFMGlobal::isDesktopFile(const DUrl &url)

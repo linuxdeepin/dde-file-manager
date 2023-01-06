@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     wangchunlin<wangchunlin@uniontech.com>
- *
- * Maintainer: wangchunlin<wangchunlin@uniontech.com>
- *             xinglinkun<xinglinkun@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "wallpaperlist.h"
 #include "wallpaperitem.h"
@@ -355,6 +337,19 @@ void WallpaperList::setCurrentIndex(int index)
     int nextIndex = m_items.indexOf(qobject_cast<WallpaperItem *>(itemAt(width() - ItemWidth / 2, ItemHeight / 2)),0);
     scrollAnimation.setStartValue(((prevIndex+nextIndex)/2-visualCount/2) * (ItemWidth+m_contentLayout->spacing()));
     scrollAnimation.setEndValue((index-visualCount/2) * (ItemWidth+m_contentLayout->spacing()));
+
+    //the starting direction is opposite to the target direction
+    {
+        int start = scrollAnimation.startValue().toInt();
+        int end = scrollAnimation.endValue().toInt();
+        int current = horizontalScrollBar()->value();
+        if (((start - end) * (current - start)) < 0) {
+            qDebug() << "the starting direction is opposite to the target direction"
+                     << start << end << current << horizontalScrollBar()->maximum();
+            scrollAnimation.setStartValue(current);
+        }
+    }
+
     scrollAnimation.start();
     m_index = m_items.indexOf(item, 0);
 }

@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dtaskdialog.h"
 #include "utils.h"
@@ -225,7 +205,8 @@ void DTaskDialog::addTask(const QMap<QString, QString> &jobDetail)
         FileJob *job = qobject_cast<FileJob *>(sender());
         if (job) {
             QList<FileJob::JobType> opticalTypes{FileJob::JobType::OpticalBurn, FileJob::JobType::OpticalBlank,
-                                                 FileJob::JobType::OpticalImageBurn, FileJob::JobType::Trash, FileJob::JobType::Restore};
+                                                 FileJob::JobType::OpticalImageBurn, FileJob::JobType::OpticalDumpImage,
+                                                 FileJob::JobType::Trash, FileJob::JobType::Restore};
             auto curType = job->jobType();
             if (opticalTypes.contains(curType)) {
                 wid->setHoverEnable(false);
@@ -348,7 +329,6 @@ void DTaskDialog::showVaultDeleteDialog(DFMTaskWidget *wid)
     m_jobIdItems.insert(wid->taskId(), item);
 
     wid->progressStart();
-    m_titlebar->setTitle(tr("Removing file vault, please try later"));
     QString acMark = QString("%1_%2").arg(AC_TASK_DLG_TASK_LIST_ITEM).arg(m_taskListWidget->count());
     AC_SET_OBJECT_NAME(wid, acMark);
     AC_SET_ACCESSIBLE_NAME(wid, acMark);
@@ -726,6 +706,7 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
                 ? tr("Erasing disc %1, please wait...")
                 : tr("Burning disc %1, please wait...")).arg(data["optical_op_dest"]);
         msg2 = "";
+
         if (data["optical_op_type"] != QString::number(FileJob::JobType::OpticalBlank)) {
             const QHash<QString, QString> msg2map = {
                 {"0", ""}, // unused right now
@@ -734,8 +715,16 @@ void DTaskDialog::updateData(DFMTaskWidget *wid, const QMap<QString, QString> &d
             };
             msg2 = msg2map.value(data["optical_op_phase"], "");
         }
+
+        QString speedText { data["optical_op_speed"] };
+        if (data["optical_op_type"] == QString::number(FileJob::JobType::OpticalDumpImage)) {
+            msg1 = tr("Creating an ISO image");
+            msg2 = tr("to %1").arg(data["optical_op_dump_path"]);
+            speedText = "";
+        }
+
         wid->setMsgText(msg1, msg2);
-        wid->setSpeedText(data["optical_op_speed"], "");
+        wid->setSpeedText(speedText, "");
 
         if (status == QString::number(DISOMasterNS::DISOMaster::JobStatus::Stalled)) {
             wid->setProgressValue(-1);// stop

@@ -1,4 +1,6 @@
-
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <thread>
 #include <chrono>
@@ -23,18 +25,6 @@
 #include <QDebug>
 #include <QVariant>
 #include <QStorageInfo>
-
-#ifndef DDE_ANYTHINGMONITOR
-static QString randomColor() noexcept
-{
-    std::random_device device{};
-
-    ///###: Choose a random mean between 0 and 6
-    std::default_random_engine engine(device());
-    std::uniform_int_distribution<int> uniform_dist(0, 6);
-    return  Tag::ColorName[uniform_dist(engine)];
-}
-#endif
 
 TagManager::TagManager()
     : QObject{ nullptr }
@@ -190,6 +180,16 @@ QSet<QString> TagManager::allTagOfDefaultColors() const
     return tags;
 }
 
+QString TagManager::randomColor() const
+{
+    std::random_device device{};
+
+    ///###: Choose a random mean between 0 and 6
+    std::default_random_engine engine(device());
+    std::uniform_int_distribution<int> uniform_dist(0, 6);
+    return  Tag::ColorName[uniform_dist(engine)];
+}
+
 bool TagManager::makeFilesTags(const QList<QString> &tags, const QList<DUrl> &files)
 {
     bool result{ true };
@@ -209,7 +209,7 @@ bool TagManager::makeFilesTags(const QList<QString> &tags, const QList<DUrl> &fi
             }
 
             if (color_name.isEmpty()) {
-                color_name = randomColor();
+                color_name = tagColorMap.contains(tag_name) ? tagColorMap[tag_name] : randomColor();
             }
 
             tag_and_file[tag_name] = QVariant{QList<QString>{ color_name }};
@@ -472,6 +472,23 @@ bool TagManager::makeFilesTagThroughColor(const QString &color, const QList<DUrl
     }
 
     return result;
+}
+
+bool TagManager::registerTagColor(const QString &tagName, const QString &color)
+{
+    if (tagColorMap.contains(tagName)) {
+        qInfo() << "This tag name has registed: " << tagName;
+        return false;
+    }
+
+    auto iter = std::find_if(Tag::ColorName.begin(), Tag::ColorName.end(), [&color](const QString &c){ return color == c;});
+    if (iter == Tag::ColorName.end()) {
+        qInfo() << "The color must be included in Tag::ColorName";
+        return false;
+    }
+
+    tagColorMap[tagName] = color;
+    return true;
 }
 #endif
 

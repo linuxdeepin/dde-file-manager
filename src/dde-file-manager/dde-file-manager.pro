@@ -61,7 +61,8 @@ SOURCES += \
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
                $$PWD/../utils \
-               $$PWD/../dde-file-manager-lib/interfaces
+               $$PWD/../dde-file-manager-lib/interfaces \
+               $$PWD/../../3rdparty/dbusservice
 
 BINDIR = $$PREFIX/bin
 DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
@@ -69,7 +70,7 @@ DEFINES += APPSHAREDIR=\\\"$$PREFIX/share/$$TARGET\\\"
 target.path = $$BINDIR
 
 desktop.path = $${PREFIX}/share/applications/
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) | isEqual(ARCH, riscv64) {
     desktop.files = $$PWD/mips/$${TARGET}.desktop \
                     dde-open.desktop
 }else{
@@ -91,7 +92,7 @@ manual.path = /usr/share/deepin-manual/manual-assets/application
 
 INSTALLS += target desktop policy pkexec propertyDialogShell manual
 
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) {
+isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) | isEqual(ARCH, riscv64) {
     dde-mips-shs.path = $$BINDIR
     dde-mips-shs.files = $$PWD/mips/dde-computer.sh \
                          $$PWD/mips/dde-trash.sh \
@@ -110,11 +111,18 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-li
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
 else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager \
                    -L$$OUT_PWD/../dde-file-manager-extension -ldfm-extension \
-                   -lKF5Codecs \
+                   -lKF5Codecs
 
 CONFIG(debug, debug|release) {
     DEPENDPATH += $$PWD/../dde-file-manager-lib $$PWD/../dde-file-manager-extension
     unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib $$OUT_PWD/../dde-file-manager-extension
+}
+
+#安全加固
+QMAKE_CXXFLAGS += -fstack-protector-all
+QMAKE_LFLAGS += -z now -pie -fPIE
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
+    QMAKE_LFLAGS += -z noexecstack -z relro
 }
 
 HEADERS += \

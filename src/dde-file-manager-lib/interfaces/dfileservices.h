@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef FILESERVICES_H
 #define FILESERVICES_H
@@ -124,7 +105,7 @@ public:
     bool decompressFile(const QObject *sender, const DUrlList &list) const;
     bool decompressFileHere(const QObject *sender, const DUrlList &list) const;
     bool writeFilesToClipboard(const QObject *sender, DFMGlobal::ClipboardAction action, const DUrlList &list) const;
-    bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false) const;
+    bool renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false, const bool checkHide = true) const;
     bool multiFilesReplaceName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const;
     bool multiFilesAddStrToName(const QList<DUrl> &urls, const QPair<QString, DFileService::AddTextFlags> &pair)const;
     bool multiFilesCustomName(const QList<DUrl> &urls, const QPair<QString, QString> &pair)const;
@@ -186,6 +167,7 @@ public:
     void setDoClearTrashState(const bool bdoing);
     //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
     void dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUrlList &result);
+    void dealPastedAudit(const DUrlList &srcUrlList, const DUrlList &targetUrlList);
     //判断当前的可访问的smb和ftp中是否包含某个url
     bool isSmbFtpContain(const DUrl &url);
 

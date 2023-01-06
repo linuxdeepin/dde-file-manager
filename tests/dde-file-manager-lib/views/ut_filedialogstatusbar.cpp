@@ -1,23 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     zhangyu<zhangyub@uniontech.com>
- *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2020 - 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
@@ -32,7 +15,7 @@
 
 TEST(FileDialogStatusBarTest,init)
 {
-    FileDialogStatusBar w;
+    FileDialogStatusBar w(nullptr);
     EXPECT_NE(nullptr,w.m_contentLayout);
     EXPECT_NE(nullptr,w.m_titleLabel);
     EXPECT_NE(nullptr,w.m_fileNameLabel);
@@ -204,14 +187,18 @@ TEST(FileDialogStatusBarTest,begin_add_customwidget)
 
 TEST(FileDialogStatusBarTest,updateLayout_delete_layout)
 {
-    FileDialogStatusBar w;
+    FileDialogStatusBar w(nullptr);
     QHBoxLayout *lay = new QHBoxLayout;
     w.m_contentLayout->addLayout(lay);
     w.m_mode = FileDialogStatusBar::Save;
 
     w.updateLayout();
-    for (int i = 0; i < w.m_contentLayout->count(); ++i)
-        EXPECT_FALSE(w.m_contentLayout->itemAt(i) == lay);
+    QHBoxLayout *layout = w.m_contentLayout;
+    if(layout){
+        for (int i = 0; i < layout->count(); ++i)
+            EXPECT_FALSE(w.m_contentLayout->itemAt(i) == lay);
+    }
+
 }
 
 TEST(FileDialogStatusBarTest,updateLayout_save)
@@ -224,18 +211,21 @@ TEST(FileDialogStatusBarTest,updateLayout_save)
     bool fileNameEdit = false;
     bool acceptButton = false;
     bool rejectButton = false;
-
-    for (int i = 0; i < w.m_contentLayout->count(); ++i) {
-        auto wid = w.m_contentLayout->itemAt(i)->widget();
-        if (wid == w.m_fileNameEdit)
-            fileNameEdit = true;
-        else if (wid == w.m_fileNameLabel)
-            fileNameLabel = true;
-        else if (wid == (QWidget *)w.m_acceptButton)
-            acceptButton = true;
-        else if (wid == (QWidget *)w.m_rejectButton)
-            rejectButton = true;
+    QHBoxLayout *layout = w.m_contentLayout;
+    if(layout){
+        for (int i = 0; i < layout->count(); ++i) {
+            auto wid = w.m_contentLayout->itemAt(i)->widget();
+            if (wid == w.m_fileNameEdit)
+                fileNameEdit = true;
+            else if (wid == w.m_fileNameLabel)
+                fileNameLabel = true;
+            else if (wid == (QWidget *)w.m_acceptButton)
+                acceptButton = true;
+            else if (wid == (QWidget *)w.m_rejectButton)
+                rejectButton = true;
+        }
     }
+
     EXPECT_TRUE(fileNameLabel);
     EXPECT_TRUE(fileNameEdit);
     EXPECT_TRUE(acceptButton);

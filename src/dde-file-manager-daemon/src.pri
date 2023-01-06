@@ -4,7 +4,9 @@
 #
 #-------------------------------------------------
 
-INCLUDEPATH += $$PWD
+3RD_DBUSSERVICE = $$PWD/../../3rdparty/dbusservice
+INCLUDEPATH += $$PWD \
+               $$3RD_DBUSSERVICE
 
 HEADERS += \
     $$PWD/app/filemanagerdaemon.h \
@@ -12,10 +14,6 @@ HEADERS += \
     $$PWD/app/global.h \
     $$PWD/controllers/fileoperation.h \
     $$PWD/fileoperationjob/renamejob.h \
-    $$PWD/dbusservice/dbusadaptor/fileoperation_adaptor.h \
-    $$PWD/dbusservice/dbusadaptor/renamejob_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/fileoperation_interface.h \
-    $$PWD/dbusservice/dbusinterface/renamejob_interface.h \
     $$PWD/client/filemanagerclient.h \
     $$PWD/dbusservice/dbustype/dbusinforet.h \
     $$PWD/app/policykithelper.h \
@@ -25,45 +23,49 @@ HEADERS += \
     $$PWD/fileoperationjob/movejob.h \
     $$PWD/fileoperationjob/copyjob.h \
     $$PWD/fileoperationjob/deletejob.h \
-    $$PWD/dbusservice/dbusadaptor/copyjob_adaptor.h \
-    $$PWD/dbusservice/dbusadaptor/createfolderjob_adaptor.h \
-    $$PWD/dbusservice/dbusadaptor/createtemplatefilejob_adaptor.h \
-    $$PWD/dbusservice/dbusadaptor/deletejob_adaptor.h \
-    $$PWD/dbusservice/dbusadaptor/movejob_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/copyjob_interface.h \
-    $$PWD/dbusservice/dbusinterface/createfolderjob_interface.h \
-    $$PWD/dbusservice/dbusinterface/createtemplatefilejob_interface.h \
-    $$PWD/dbusservice/dbusinterface/deletejob_interface.h \
-    $$PWD/dbusservice/dbusinterface/movejob_interface.h \
     $$PWD/usershare/usersharemanager.h \
-    $$PWD/dbusservice/dbusadaptor/usershare_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/usershare_interface.h \
-    $$PWD/dbusservice/dbusinterface/usbformatter_interface.h \
     $$PWD/tag/tagmanagerdaemon.h \
-    $$PWD/dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.h \
     $$PWD/accesscontrol/accesscontrolmanager.h \
-    $$PWD/dbusservice/dbusadaptor/accesscontrol_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/accesscontrol_interface.h \
     $$PWD/vault/vaultmanager.h \
-    $$PWD/dbusservice/dbusadaptor/vault_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/vault_interface.h \
     $$PWD/vault/vaultclock.h \
     $$PWD/revocation/revocationmanager.h \
-    $$PWD/dbusservice/dbusadaptor/revocationmgr_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/revocationmgr_interface.h \
     $$PWD/vault/vaultbruteforceprevention.h \
-    $$PWD/dbusservice/dbusadaptor/vaultbruteforceprevention_adaptor.h \
-    $$PWD/dbusservice/dbusinterface/vaultbruteforceprevention_interface.h
+    $$PWD/anything/anything.h \
+    $$PWD/disk/diskmanager.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/accesscontrol_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/copyjob_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/createfolderjob_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/createtemplatefilejob_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/deletejob_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/disk_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/fileoperation_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/movejob_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/renamejob_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/revocationmgr_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/tagmanagerdaemon_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/usershare_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/vault_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusadaptor/vaultbruteforceprevention_adaptor.h \
+    $$3RD_DBUSSERVICE/dbusinterface/accesscontrol_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/copyjob_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/createfolderjob_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/createtemplatefilejob_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/deletejob_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/disk_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/fileoperation_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/movejob_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/renamejob_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/revocationmgr_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/usbformatter_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/usershare_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/vault_interface.h \
+    $$3RD_DBUSSERVICE/dbusinterface/vaultbruteforceprevention_interface.h
 
 SOURCES += \
     $$PWD/app/filemanagerdaemon.cpp \
     $$PWD/controllers/appcontroller.cpp \
     $$PWD/controllers/fileoperation.cpp \
     $$PWD/fileoperationjob/renamejob.cpp \
-    $$PWD/dbusservice/dbusadaptor/fileoperation_adaptor.cpp \
-    $$PWD/dbusservice/dbusadaptor/renamejob_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/fileoperation_interface.cpp \
-    $$PWD/dbusservice/dbusinterface/renamejob_interface.cpp \
     $$PWD/client/filemanagerclient.cpp \
     $$PWD/dbusservice/dbustype/dbusinforet.cpp \
     $$PWD/app/policykithelper.cpp \
@@ -73,32 +75,40 @@ SOURCES += \
     $$PWD/fileoperationjob/movejob.cpp \
     $$PWD/fileoperationjob/copyjob.cpp \
     $$PWD/fileoperationjob/deletejob.cpp \
-    $$PWD/dbusservice/dbusadaptor/copyjob_adaptor.cpp \
-    $$PWD/dbusservice/dbusadaptor/createfolderjob_adaptor.cpp \
-    $$PWD/dbusservice/dbusadaptor/createtemplatefilejob_adaptor.cpp \
-    $$PWD/dbusservice/dbusadaptor/deletejob_adaptor.cpp \
-    $$PWD/dbusservice/dbusadaptor/movejob_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/copyjob_interface.cpp \
-    $$PWD/dbusservice/dbusinterface/createfolderjob_interface.cpp \
-    $$PWD/dbusservice/dbusinterface/createtemplatefilejob_interface.cpp \
-    $$PWD/dbusservice/dbusinterface/deletejob_interface.cpp \
-    $$PWD/dbusservice/dbusinterface/movejob_interface.cpp \
     $$PWD/usershare/usersharemanager.cpp \
-    $$PWD/dbusservice/dbusadaptor/usershare_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/usershare_interface.cpp \
-    $$PWD/dbusservice/dbusinterface/usbformatter_interface.cpp \
     $$PWD/tag/tagmanagerdaemon.cpp \
-    $$PWD/dbusservice/dbusadaptor/tagmanagerdaemon_adaptor.cpp \
     $$PWD/accesscontrol/accesscontrolmanager.cpp \
-    $$PWD/dbusservice/dbusadaptor/accesscontrol_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/accesscontrol_interface.cpp \
     $$PWD/vault/vaultmanager.cpp \
-    $$PWD/dbusservice/dbusadaptor/vault_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/vault_interface.cpp \
     $$PWD/vault/vaultclock.cpp \
     $$PWD/revocation/revocationmanager.cpp \
-    $$PWD/dbusservice/dbusadaptor/revocationmgr_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/revocationmgr_interface.cpp \
     $$PWD/vault/vaultbruteforceprevention.cpp \
-    $$PWD/dbusservice/dbusadaptor/vaultbruteforceprevention_adaptor.cpp \
-    $$PWD/dbusservice/dbusinterface/vaultbruteforceprevention_interface.cpp
+    $$PWD/anything/anything.cpp \
+    $$PWD/disk/diskmanager.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/accesscontrol_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/copyjob_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/createfolderjob_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/createtemplatefilejob_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/deletejob_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/disk_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/fileoperation_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/movejob_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/renamejob_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/revocationmgr_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/tagmanagerdaemon_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/usershare_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/vault_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusadaptor/vaultbruteforceprevention_adaptor.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/accesscontrol_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/copyjob_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/createfolderjob_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/createtemplatefilejob_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/deletejob_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/disk_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/fileoperation_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/movejob_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/renamejob_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/revocationmgr_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/usbformatter_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/usershare_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/vault_interface.cpp \
+    $$3RD_DBUSSERVICE/dbusinterface/vaultbruteforceprevention_interface.cpp

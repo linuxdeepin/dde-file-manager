@@ -28,6 +28,10 @@ isEmpty(DDE_FILE_MANAGER_LIB_DIR){
     DDE_FILE_MANAGER_LIB_DIR = $$PWD/../../dde-file-manager-lib
 }
 
+isEmpty(DDE_3RD_DBUSSERVER_DIR) {
+    DDE_3RD_DBUSSERVER_DIR = $$PWD/../../../3rdparty/dbusservice
+}
+
 isEmpty(DDE_FILE_MANAGER_DIR){
     DDE_FILE_MANAGER_DIR = $$PWD/../..
 }
@@ -39,7 +43,8 @@ PKGCONFIG += deepin-anything-server-lib
 INCLUDEPATH += $$PWD/../../dde-file-manager-lib \
                $$PWD/../../dde-file-manager-lib/interfaces \
                $$PWD/../../dde-file-manager-lib/shutil \
-               $$PWD/../../utils
+               $$PWD/../../utils \
+               $$DDE_3RD_DBUSSERVER_DIR
 
 unix{
       PKG_CONFIG = pkg-config
@@ -47,6 +52,12 @@ unix{
       INSTALLS += target
 }
 
+#安全加固
+QMAKE_CXXFLAGS += -fstack-protector-all
+QMAKE_LFLAGS += -z now -fPIC
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
+    QMAKE_LFLAGS += -z noexecstack -z relro
+}
 
 #DESTDIR = $$[QT_INSTALL_PLUGINS]/generic
 
@@ -65,7 +76,7 @@ SOURCES += \
     $$DDE_FILE_MANAGER_LIB_DIR/tag/tagmanager.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/shutil/danythingmonitorfilter.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/controllers/tagmanagerdaemoncontroller.cpp \
-    $$DDE_FILE_MANAGER_LIB_DIR/controllers/interface/tagmanagerdaemon_interface.cpp \
+    $$DDE_3RD_DBUSSERVER_DIR/dbusinterface/tagmanagerdaemon_interface.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/durl.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmstandardpaths.cpp \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmapplication.cpp \
@@ -79,7 +90,7 @@ HEADERS += \
     $$DDE_FILE_MANAGER_LIB_DIR/tag/tagmanager.h \
     $$DDE_FILE_MANAGER_LIB_DIR/shutil/danythingmonitorfilter.h \
     $$DDE_FILE_MANAGER_LIB_DIR/controllers/tagmanagerdaemoncontroller.h \
-    $$DDE_FILE_MANAGER_LIB_DIR/controllers/interface/tagmanagerdaemon_interface.h \
+    $$DDE_3RD_DBUSSERVER_DIR/dbusinterface/tagmanagerdaemon_interface.h \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/durl.h \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmstandardpaths.h \
     $$DDE_FILE_MANAGER_LIB_DIR/interfaces/dfmapplication.h \

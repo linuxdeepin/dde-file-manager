@@ -1,26 +1,9 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     lixiang<lixianga@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             lixiang<lixianga@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "musicmessageview.h"
+#include "cover.h"
 
 #include <QLabel>
 #include <QHBoxLayout>
@@ -54,20 +37,38 @@ void MusicMessageView::initUI()
 
     m_titleLabel = new QLabel(this);
     m_titleLabel->setObjectName("Title");
+    QFont titleFont = m_titleLabel->font();
+    titleFont.setPixelSize(18);
+    m_titleLabel->setFont(titleFont);
+    QPalette titlePe;
+    titlePe.setColor(QPalette::WindowText, QColor("#101010"));
+    m_titleLabel->setPalette(titlePe);
 
     m_artistLabel = new QLabel(this);
     m_artistLabel->setObjectName("Artist");
     m_artistLabel->setText(tr("Artist:"));
+    QFont artistLabelFont = m_artistLabel->font();
+    artistLabelFont.setPixelSize(12);
+    m_artistLabel->setFont(artistLabelFont);
     m_artistValue = new QLabel(this);
     m_artistValue->setObjectName("artistValue");
+    QFont artistValueFont = m_artistValue->font();
+    artistValueFont.setPixelSize(12);
+    m_artistValue->setFont(artistValueFont);
 
     m_albumLabel = new QLabel(this);
     m_albumLabel->setObjectName("Album");
     m_albumLabel->setText(tr("Album:"));
+    QFont albumLabelFont = m_albumLabel->font();
+    albumLabelFont.setPixelSize(12);
+    m_albumLabel->setFont(albumLabelFont);
     m_albumValue = new QLabel(this);
     m_albumValue->setObjectName("albumValue");
+    QFont albumLValueFont = m_albumValue->font();
+    albumLValueFont.setPixelSize(12);
+    m_albumValue->setFont(albumLValueFont);
 
-    m_imgLabel = new QLabel(this);
+    m_imgLabel = new Cover(this);
     m_imgLabel->setFixedSize(QSize(240, 240));
 
     m_player = new QMediaPlayer(this);
@@ -102,28 +103,6 @@ void MusicMessageView::initUI()
     mainLayout->addStretch();
 
     setLayout(mainLayout);
-
-    setStyleSheet("QLabel#Title{"
-                  "font-size: 18px;"
-                  "font:demibold;"
-                  "}"
-                  "QLabel#Artist{"
-                  "color: #5b5b5b;"
-                  "font-size: 12px;"
-                  "}"
-                  "QLabel#Album{"
-                  "color: #5b5b5b;"
-                  "font-size: 12px;"
-                  "}"
-                  "QLabel#artistValue{"
-                  "color: #5b5b5b;"
-                  "font-size: 12px;"
-                  "}"
-                  "QLabel#albumValue{"
-                  "color: #5b5b5b;"
-                  "font-size: 12px;"
-                  "}");
-
 }
 
 void MusicMessageView::updateElidedText()
@@ -161,7 +140,7 @@ void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
         if (img.isNull()) {
             img = QImage(":/icons/icons/default_music_cover.png");
         }
-        m_imgLabel->setPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
+        m_imgLabel->setCoverPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
 
         m_player->deleteLater();
 

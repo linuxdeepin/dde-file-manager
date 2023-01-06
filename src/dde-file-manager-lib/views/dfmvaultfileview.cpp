@@ -1,28 +1,17 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/vaulterrorcode.h"
+#include "vault/vaultconfig.h"
+#include "vault/operatorcenter.h"
+#include "vault/vaultdbusresponse.h"
 #include "vault/vaultlockmanager.h"
+#include "vault/vaultconfig.h"
+#include "vault/operatorcenter.h"
+#include "vault/vaultdbusresponse.h"
 #include "dfmsettings.h"
 #include "views/dfmvaultunlockpages.h"
 #include "views/dfmvaultrecoverykeypages.h"
@@ -34,6 +23,8 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "singleton.h"
+#include "dialogs/dtaskdialog.h"
+#include "dialogs/dialogmanager.h"
 
 #include <QDrag>
 
@@ -60,7 +51,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     if (enState != VaultController::Unlocked) {
         switch (enState) {
         case VaultController::NotAvailable: {
-            qDebug() << "cryfs not installed!";
+            qWarning() << "Vault: cryfs not installed!";
             break;
         }
         case VaultController::NotExisted: {
@@ -68,10 +59,18 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
             break;
         }
         case VaultController::Encrypted: {
-            if (url.host() == "certificate") {
-                page = qobject_cast<DFMVaultRecoveryKeyPages *>(new DFMVaultRecoveryKeyPages(wndPtr));
+            // 如果是透明加密方式，直接开锁
+            VaultConfig config;
+            QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+            if (encryptionMethod == CONFIG_METHOD_VALUE_TRANSPARENT) {
+                if (!VaultDbusResponse::instance()->transparentUnlockVault())
+                    return false;
             } else {
-                page = qobject_cast<DFMVaultUnlockPages *>(new DFMVaultUnlockPages(wndPtr));
+                if (url.host() == "certificate") {
+                    page = qobject_cast<DFMVaultRecoveryKeyPages *>(new DFMVaultRecoveryKeyPages(wndPtr));
+                } else {
+                    page = qobject_cast<DFMVaultUnlockPages *>(new DFMVaultUnlockPages(wndPtr));
+                }
             }
             break;
         }
@@ -80,6 +79,13 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
         }
     } else {
         if (url.host() == "delete") {
+            DTaskDialog *pTaskDlg = dialogManager->taskDialog();
+            if (pTaskDlg) {
+                if (pTaskDlg->haveNotCompletedVaultTask()) {
+                    dialogManager->showErrorDialog("", tr("A task is in progress, and you cannot delete the vault"));
+                    return false;
+                }
+            }
             page = qobject_cast<DFMVaultRemovePages *>(new DFMVaultRemovePages(wndPtr));
         }
 
@@ -103,7 +109,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
 
 void DFMVaultFileView::onLeaveVault(int state)
 {
-    if (state == 0 || state == 1) {
+    if (state == 0 || state == 1 || state == static_cast<int>(ErrorCode::MountdirEncrypted)) {
         this->cd(DUrl(COMPUTER_ROOT));
         VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     }

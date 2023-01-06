@@ -1,32 +1,13 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "drootfilemanager.h"
 #include "dfileservices.h"
 #include "dabstractfileinfo.h"
 #include "dabstractfilewatcher.h"
 #include "dfiledevice.h"
+#include "dfmapplication.h"
 
 #include "app/filesignalmanager.h"
 #include "app/define.h"
@@ -43,6 +24,7 @@
 #include "plugins/schemepluginmanager.h"
 #include "utils/grouppolicy.h"
 #include "controllers/dfmrootcontroller.h"
+#include "shutil/smbintegrationswitcher.h"
 
 #include <ddiskmanager.h>
 #include <dblockdevice.h>
@@ -75,8 +57,29 @@ DRootFileManager::DRootFileManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DRootFileManagerPrivate())
 {
-    if (DTK_POLICY_SUPPORT)
+    if (DTK_POLICY_SUPPORT) {
         connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, this, &DRootFileManager::policyHideSystemPartition);
+        connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::settingHideSystemPartition);
+
+        {
+            auto syncSambaPermanent = [](const QVariant &var) {
+                DFMApplication::setGenericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections, var);
+            };
+
+            static constexpr char SambaPermanentKey[] { "dfm.samba.permanent" };
+            GroupPolicy::instance()->addSyncFunc(SambaPermanentKey, syncSambaPermanent);
+//            QVariant var;
+//            bool confSetted = GroupPolicy::instance()->isConfigSetted(SambaPermanentKey, &var);
+//            bool showOffline = DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool();
+//            if (!confSetted) {
+//                GroupPolicy::instance()->setValue(SambaPermanentKey, showOffline);
+//            } else {
+//                auto currDConf = GroupPolicy::instance()->getValue(SambaPermanentKey).toBool();
+//                if (currDConf != showOffline) // 以组策略的值优先
+//                    syncSambaPermanent(currDConf);
+//            }
+        }
+    }
 
     connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::hideSystemPartition);
     connect(DFMApplication::instance(), &DFMApplication::reloadComputerModel, this, &DRootFileManager::hideSystemPartition);
@@ -137,12 +140,11 @@ void DRootFileManager::changeRootFile(const DUrl &fileurl, const bool bcreate)
             }
         }
     } else {
-        qDebug() << "  remove   " << d_ptr->rootfilelist;
         bool isRemoded = false;
         if (d_ptr->rootfilelist.contains(fileurl)) {
             isRemoded = d_ptr->rootfilelist.remove(fileurl)>=1;
         }
-        if(!isRemoded){//当配置成smb常驻时，d_ptr->rootfilelist中保存的是：dfmroot:///smb://host/share_folder.remote
+        if(smbIntegrationSwitcher->isIntegrationMode() && !isRemoded){//当配置成smb常驻时，d_ptr->rootfilelist中保存的是：dfmroot:///smb://host/share_folder.remote
             QString path = QUrl::fromPercentEncoding(fileurl.path().toUtf8());
             if (path.contains(QString(".%1").arg(SUFFIX_GVFSMP)) && path.contains("gvfs/smb-share:server=") && path.contains(",share=")) {
                 QString host = path.section("server=",-1).section(",",0,0);
@@ -290,7 +292,7 @@ bool DRootFileManager::isRootFileContainSmb(const DUrl &smburl)
     DUrl temUrl = smburl;
     if(smburl.scheme() == "smb")
         temUrl = DUrl(QString("%1%2").arg(DFMROOT_ROOT).arg(smburl.toString()));
-    const QString &smburlPath = temUrl.path();//smburl.path();
+    const QString &smburlPath = smbIntegrationSwitcher->isIntegrationMode() ? temUrl.path() : smburl.path();
     if(!FileUtils::isSmbPath(smburlPath))
         return false;
 
@@ -312,6 +314,61 @@ bool DRootFileManager::isRootFileContainSmb(const DUrl &smburl)
 // and i think this function called reloadComputerModel could be better.
 void DRootFileManager::hideSystemPartition()
 {
+    QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
+            getChildren(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
+    d_ptr->rootfileMtx.lock();
+    d_ptr->rootfilelist.clear();
+    d_ptr->rootfileMtx.unlock();
+    changRootFile(fileist);
+
+    emit serviceHideSystemPartition();
+}
+
+void DRootFileManager::policyHideSystemPartition(const QString &key)
+{
+    if (DTK_POLICY_SUPPORT) {
+        if (key != DISK_HIDDEN)
+            return;
+        QStringList policyList = GroupPolicy::instance()->getValue(DISK_HIDDEN).toStringList();
+        bool isHidden = DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool();
+
+        if (0 == policyList.count() && !isHidden)
+            return;
+
+        QStringList systemDisks = DFMRootController::systemDiskList();
+        bool allHidden = true;
+        for (auto dk : systemDisks){
+            if (!policyList.contains(dk)) {
+                allHidden = false;
+                break;
+            }
+        }
+
+        if (allHidden && isHidden)
+            return;
+
+        if (allHidden && !isHidden)
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, true);
+
+        if (!allHidden && isHidden)
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, false);
+
+
+        QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
+                getChildren(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
+        d_ptr->rootfileMtx.lock();
+        d_ptr->rootfilelist.clear();
+        d_ptr->rootfileMtx.unlock();
+        changRootFile(fileist);
+
+        emit serviceHideSystemPartition();
+    }
+}
+
+void DRootFileManager::settingHideSystemPartition(bool isHide)
+{
+    Q_UNUSED(isHide)
+
     if (DTK_POLICY_SUPPORT) {
         bool isSetPolicy = GroupPolicy::instance()->containKey(DISK_HIDDEN);
         if (isSetPolicy) {
@@ -335,47 +392,5 @@ void DRootFileManager::hideSystemPartition()
                     GroupPolicy::instance()->setValue(DISK_HIDDEN, QVariantList());
             }
         }
-    }
-
-    QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
-            getChildren(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
-    d_ptr->rootfileMtx.lock();
-    d_ptr->rootfilelist.clear();
-    d_ptr->rootfileMtx.unlock();
-    changRootFile(fileist);
-
-    emit serviceHideSystemPartition();
-}
-
-void DRootFileManager::policyHideSystemPartition(const QString &key)
-{
-    if (DTK_POLICY_SUPPORT) {
-        if (key != DISK_HIDDEN)
-            return;
-        QStringList policyList = GroupPolicy::instance()->getValue(DISK_HIDDEN).toStringList();
-        QStringList systemDisks = DFMRootController::systemDiskList();
-        bool allHidden = true;
-        for (auto dk : systemDisks){
-            if (!policyList.contains(dk)) {
-                allHidden = false;
-                break;
-            }
-        }
-
-        bool isHidden = DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool();
-        if (allHidden && !isHidden)
-            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, true);
-        if (!allHidden && isHidden)
-            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, false);
-
-
-        QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
-                getChildren(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
-        d_ptr->rootfileMtx.lock();
-        d_ptr->rootfilelist.clear();
-        d_ptr->rootfileMtx.unlock();
-        changRootFile(fileist);
-
-        emit serviceHideSystemPartition();
     }
 }

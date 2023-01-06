@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
@@ -115,7 +119,7 @@ TEST_F(TestCryFsHandle, tst_unlockVault)
 
 TEST_F(TestCryFsHandle, tst_runVaultProcess)
 {
-    int exitCode = m_controller->runVaultProcess("", "", "");
+    int exitCode = m_controller->runVaultProcess("", "", "", false);
     if(exitCode == 0)
         EXPECT_EQ(0, exitCode);
 }

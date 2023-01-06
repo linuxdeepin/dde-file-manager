@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     zhangyu<zhangyub@uniontech.com>
- *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
- *             wangchunlin<wangchunlin@uniontech.com>
- *             liqiang<liqianga@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef CANVASGRIDVIEW_H
 #define CANVASGRIDVIEW_H
@@ -106,6 +87,8 @@ public:
     virtual void rowsInserted(const QModelIndex &parent, int first, int last) override;
     virtual void keyboardSearch(const QString &search) override;
 
+    QVariant inputMethodQuery(Qt::InputMethodQuery query) const override;
+
 #if QT_CONFIG(draganddrop)
     virtual void startDrag(Qt::DropActions supportedActions) override;
 #endif
@@ -168,13 +151,14 @@ public slots:
     virtual void selectAll() override;
 protected slots:
     void onRefreshFinished();
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 // Debug interface
 public Q_SLOTS:
     Q_SCRIPTABLE void EnableUIDebug(bool enable);
     Q_SCRIPTABLE QString Size();
     Q_SCRIPTABLE QString Dump();
     Q_SCRIPTABLE QString DumpPos(qint32 x, qint32 y);
-    Q_SCRIPTABLE void Refresh(); // 刷新桌面图标
+    Q_SCRIPTABLE void Refresh(bool silent); // 刷新桌面图标
 protected:
     void delayAutoMerge(int ms = 50);
     void delayArrage(int ms = 50);

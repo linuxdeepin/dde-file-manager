@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <sys/stat.h>
 #include "vaultfileinfo.h"
@@ -26,6 +8,7 @@
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
 #include "dfilesystemmodel.h"
+#include "vault/vaultconfig.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -198,16 +181,27 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
 
             QVector<MenuAction> actions;
             if (vaultState == VaultController::Unlocked) {
-
-                actions << MenuAction::Open
-                        << MenuAction::OpenInNewWindow
-                        << MenuAction::Separator
-                        << MenuAction::LockNow
-                        << MenuAction::AutoLock
-                        << MenuAction::Separator
-                        << MenuAction::DeleteVault
-                        << MenuAction::Separator
-                        << MenuAction::Property;
+                // 透明加密方式下，移除【立即上锁】【自动上锁】选项
+                VaultConfig config;
+                QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+                if (encryptionMethod == CONFIG_METHOD_VALUE_TRANSPARENT) {
+                    actions << MenuAction::Open
+                            << MenuAction::OpenInNewWindow
+                            << MenuAction::Separator
+                            << MenuAction::DeleteVault
+                            << MenuAction::Separator
+                            << MenuAction::Property;
+                } else {
+                    actions << MenuAction::Open
+                            << MenuAction::OpenInNewWindow
+                            << MenuAction::Separator
+                            << MenuAction::LockNow
+                            << MenuAction::AutoLock
+                            << MenuAction::Separator
+                            << MenuAction::DeleteVault
+                            << MenuAction::Separator
+                            << MenuAction::Property;
+                }
             } else if (vaultState == VaultController::Encrypted) {
                 actions << MenuAction::UnLock;
                 if(!VaultController::getVaultVersion())

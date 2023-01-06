@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets multimedia
+QT       += core gui widgets multimedia dtkwidget
 
 TARGET = dde-music-preview-plugin
 TEMPLATE = lib
@@ -25,5 +25,12 @@ DESTDIR = $$top_srcdir/plugins/previews
 unix {
     target.path = $$PLUGIN_INSTALL_DIR
     INSTALLS += target
+}
+
+#安全加固
+QMAKE_CXXFLAGS += -fstack-protector-all
+QMAKE_LFLAGS += -z now -fPIC
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
+    QMAKE_LFLAGS += -z noexecstack -z relro
 }
 

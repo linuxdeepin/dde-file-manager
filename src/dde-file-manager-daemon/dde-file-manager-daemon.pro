@@ -12,7 +12,7 @@ TARGET = dde-file-manager-daemon
 CONFIG   += console
 CONFIG   -= app_bundle
 
-PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 udisks2-qt5
+PKGCONFIG += x11 polkit-agent-1 polkit-qt5-1 udisks2-qt5 libcryptsetup
 CONFIG(release, release|debug) {
     PKGCONFIG += dtkwidget
 } else {
@@ -40,6 +40,13 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib $$PWD/.. \
                $$PWD/../dde-file-manager-lib/shutil
 
 DEFINES += QT_MESSAGELOGCONTEXT
+
+#安全加固
+QMAKE_CXXFLAGS += -fstack-protector-all
+QMAKE_LFLAGS += -z now -pie -fPIE
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
+    QMAKE_LFLAGS += -z noexecstack -z relro
+}
 
 include(src.pri)
 SOURCES += \

@@ -1,25 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "dfmapplication.h"
 #include "private/dfmapplication_p.h"
 #if QT_HAS_INCLUDE("anything_interface.h")
@@ -33,10 +15,15 @@
 #include "dfmsettings.h"
 #include "utils.h"
 #include "searchservice/searchservice.h"
+#include "rlog/rlog.h"
+#include "shutil/smbintegrationswitcher.h"
+#include "app/define.h"
+#include "rlog/datas/searchreportdata.h"
 
 #include <QCoreApplication>
 #include <QMetaEnum>
 #include <QtConcurrent>
+#include <QTimer>
 
 DFM_BEGIN_NAMESPACE
 
@@ -46,6 +33,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, asGlobal, ("deepin/dde-file-manager/dde-f
 
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gosGlobal, ("deepin/dde-file-manager.obtusely", DFMSettings::GenericConfig))
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("deepin/dde-file-manager/dde-file-manager.obtusely", DFMSettings::GenericConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, dpGlobal, ("deepin/dde-file-manager/dde-file-manager.dp", DFMSettings::GenericConfig))
+
 //Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("dde-file-manager.obtusely", DFMSettings::AppConfig))
 
 // blumia: since dde-desktop now also do show file selection dialog job, thus dde-desktop should share the same config file
@@ -110,22 +99,44 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
             break;
         case DFMApplication::GA_AlwaysShowOfflineRemoteConnections:
-            gsGlobal->sync(); // cause later invocations may update the config file, so sync the config before.
+            gsGlobal->sync();   // cause later invocations may update the config file, so sync the config before.
             //smb挂载聚合功能实现后，这里无需刷新计算机界面以及调用stashCurrentMounts();
             //因为现在smb挂载项是否常驻的区别在于：最后一个挂载项移除之后，是否移除smb聚合项
-            if (value.toBool()) { // stash all mounted remote connections
-            //RemoteMountsStashManager::stashCurrentMounts();
-            } else { // remove all stashed remote connections
-                RemoteMountsStashManager::clearRemoteMounts();
+            if (!smbIntegrationSwitcher->isIntegrationMode()) {
+                if (value.toBool()) {// stash all mounted remote connections
+                    RemoteMountsStashManager::stashCurrentMounts();
+                }
+                else {// remove all stashed remote connections
+                    RemoteMountsStashManager::clearRemoteMounts();
+                    Q_EMIT DFMApplication::instance()->reloadComputerModel();
+                }
             }
-            //Q_EMIT self->reloadComputerModel();
             break;
+        case DFMApplication::GA_MergeTheEntriesOfSambaSharedFolders: {
+            // 响应用户手动设置smb聚合/分离模式
+            smbIntegrationSwitcher->switchIntegrationMode(value.toBool());
+            Q_EMIT smbIntegrationSwitcher->smbIntegrationModeChanged(value.toBool());
+            QTimer::singleShot(150,[=]() {
+                smbIntegrationSwitcher->switchComplate();
+                Q_EMIT self->reloadComputerModel(); // reload computer model must be done after all above aperations.
+            });
+        } break;
         case DFMApplication::GA_HideLoopPartitions:
             Q_EMIT self->reloadComputerModel();
             break;
         case DFMApplication::GA_IndexFullTextSearch:
-            if (value.toBool() && qAppName() == "dde-file-manager")
-                searchServ->createFullTextIndex();
+            if (qAppName() == "dde-file-manager") {
+                if (value.toBool()) {
+                    QVariantMap data;
+                    data.insert("mode", SearchReportData::TurnOn);
+                    RLog::instance()->commit("Search", data);
+                    searchServ->createFullTextIndex();
+                } else {
+                    QVariantMap data;
+                    data.insert("mode", SearchReportData::TurnOff);
+                    RLog::instance()->commit("Search", data);
+                }
+            }
             break;
         default:
             break;
@@ -149,7 +160,6 @@ DFMApplication::DFMApplication(QObject *parent)
 
 DFMApplication::~DFMApplication()
 {
-
 }
 
 QVariant DFMApplication::appAttribute(DFMApplication::ApplicationAttribute aa)
@@ -323,6 +333,18 @@ DFMSettings *DFMApplication::appObtuselySetting()
     }
 
     return aosGlobal;
+}
+
+DFMSettings *DFMApplication::dataPersistence()
+{
+    if (!dpGlobal.exists()) {
+        dpGlobal->setAutoSync(true);
+#ifndef DFM_NO_FILE_WATCHER
+        dpGlobal->setWatchChanges(true);
+#endif
+    }
+
+    return dpGlobal;
 }
 
 DFMApplication::DFMApplication(DFMApplicationPrivate *dd, QObject *parent)

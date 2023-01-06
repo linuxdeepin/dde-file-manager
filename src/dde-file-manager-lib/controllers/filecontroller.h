@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef FILECONTROLLER_H
 #define FILECONTROLLER_H
@@ -76,6 +57,7 @@ public:
 
     static bool customHiddenFileMatch(const QString &absolutePath, const QString &fileName);
     static bool privateFileMatch(const QString &absolutePath, const QString &fileName);
+    static bool doHiddenFileRemind(const QString &name, bool *checkRule = nullptr);
 
     bool setFileTags(const QSharedPointer<DFMSetFileTagsEvent> &event) const override;
     bool removeTagsOfFile(const QSharedPointer<DFMRemoveTagsOfFileEvent> &event) const override;
@@ -88,6 +70,7 @@ private:
     DUrlList pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event, DFMGlobal::ClipboardAction action, const DUrlList &list, const DUrl &target, bool slient = false, bool force = false, bool bold = false) const;
     //处理复制、粘贴和剪切(拷贝)结束后操作 fix bug 35855
     void dealpasteEnd(const DUrlList &lsit, const QSharedPointer<DFMPasteEvent> &event) const;
+    void dealpasteEndV2(const DUrlList &srcUrlList, const DUrlList &targetUrlList, const QSharedPointer<DFMPasteEvent> &event) const;
     bool isExtDeviceJobCase(void *curJob, const DUrl &url) const;
     bool isDiscburnJobCase(void *curJob, const DUrl &url) const;
     bool fileAdded(const DUrl &url) const;

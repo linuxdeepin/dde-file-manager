@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfilewatcher.h"
 #include "private/dabstractfilewatcher_p.h"
@@ -113,6 +95,7 @@ bool DFileWatcherPrivate::start()
 
     started = true;
 
+    bool pathAdded = false;
     foreach (const QString &path, parentPathList(this->path)) {
         if (watchFileList.contains(path))
             continue;
@@ -127,15 +110,20 @@ bool DFileWatcherPrivate::start()
                 }
                 if (shouldAddToPath && !watcher_file_private->addPath(path)) {
                     qWarning() << Q_FUNC_INFO << "start watch failed, file path =" << path;
-                    q->stopWatcher();
-                    started = false;
-                    return false;
+                    continue;
                 }
             }
         }
 
+        pathAdded = true;
         watchFileList << path;
         filePathToWatcherCount[path] = filePathToWatcherCount.value(path, 0) + 1;
+    }
+
+    if(!pathAdded) {
+        q->stopWatcher();
+        started = false;
+        return false;
     }
 
     q->connect(watcher_file_private, &DFileSystemWatcher::fileDeleted,

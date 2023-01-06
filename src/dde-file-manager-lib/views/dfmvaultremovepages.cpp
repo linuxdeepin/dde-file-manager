@@ -1,30 +1,12 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmvaultremovepages.h"
 #include "vault/interfaceactivevault.h"
 #include "vault/vaultlockmanager.h"
 #include "vault/vaulthelper.h"
+#include "vault/vaultconfig.h"
 #include "controllers/vaultcontroller.h"
 #include "app/define.h"
 #include "dfmvaultremoveprogressview.h"
@@ -32,6 +14,8 @@
 #include "dfmvaultremovebyrecoverykeyview.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "vaulthelper.h"
+#include "rlog/rlog.h"
+#include "rlog/datas/vaultreportdata.h"
 
 #include <DLabel>
 #include <QFrame>
@@ -201,13 +185,17 @@ void DFMVaultRemovePages::onButtonClicked(int index)
         }
     case 2: { // 删除
         if (m_stackedWidget->currentIndex() == 0) {
-            // 密码验证
-            QString strPwd = m_passwordView->getPassword();
-            QString strCipher("");
+            VaultConfig config;
+            QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+            if (encryptionMethod != CONFIG_METHOD_VALUE_TRANSPARENT) {
+                // 密码验证
+                QString strPwd = m_passwordView->getPassword();
+                QString strCipher("");
 
-            if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
-                m_passwordView->showToolTip(tr("Wrong password"), 3000, DFMVaultRemoveByPasswordView::EN_ToolTip::Warning);
-                return;
+                if (!InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
+                    m_passwordView->showToolTip(tr("Wrong password"), 3000, DFMVaultRemoveByPasswordView::EN_ToolTip::Warning);
+                    return;
+                }
             }
         } else {
             // 密钥验证
@@ -306,6 +294,10 @@ void DFMVaultRemovePages::onLockVault(int state)
 void DFMVaultRemovePages::onVualtRemoveFinish(bool result)
 {
     if (result) {
+        // 上报保险箱删除成功日志
+        QVariantMap data;
+        data.insert("mode", VaultReportData::Deleted);
+        rlog->commit("Vault", data);
         setInfo(tr("Deleted successfully"));
     } else {
         setInfo(tr("Failed to delete"));

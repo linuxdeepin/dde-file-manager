@@ -1,32 +1,13 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef DSTATUSBAR_H
 #define DSTATUSBAR_H
 
 #include <dpicturesequenceview.h>
 #include <dslider.h>
+#include <DSlider>
 
 #include <QStatusBar>
 #include <QHBoxLayout>
@@ -51,8 +32,11 @@ DFM_BEGIN_NAMESPACE
 class DFileStatisticsJob;
 DFM_END_NAMESPACE
 
-DFM_USE_NAMESPACE
+DWIDGET_BEGIN_NAMESPACE
+class DSlider;
+DWIDGET_END_NAMESPACE
 
+DFM_USE_NAMESPACE
 
 class DFMElidLabel : public QLabel
 {
@@ -99,7 +83,7 @@ public:
     void setMode(Mode mode);
     void setComBoxItems(const QStringList &filters);
 
-    QSlider *scalingSlider() const;
+    DTK_WIDGET_NAMESPACE::DSlider *scalingSlider() const;
     QPushButton *acceptButton() const;
     QPushButton *rejectButton() const;
     QLineEdit *lineEdit() const;
@@ -111,6 +95,8 @@ public:
     int computerFolderContains(const DUrlList &urllist);
     // 计算目录和文件的个数及大小
     QVariantList calcFolderAndFile(const DUrlList &urllist);
+
+    void preSetContainsCount(const DUrl &url);
 
 signals:
     void modeChanged();
@@ -159,7 +145,7 @@ private:
     DPictureSequenceView *m_loadingIndicator;
     bool m_loadingIndicatorInited = false;
 
-    QSlider *m_scaleSlider;
+    DTK_WIDGET_NAMESPACE::DSlider *m_scaleSlider;
 
     QPushButton *m_acceptButton = Q_NULLPTR;
     QPushButton *m_rejectButton = Q_NULLPTR;
@@ -168,6 +154,7 @@ private:
     QLabel *m_lineEditLabel = Q_NULLPTR;
     QLabel *m_comboBoxLabel = Q_NULLPTR;
     DFileStatisticsJob *m_fileStatisticsJob = nullptr;
+    DFileStatisticsJob *m_preSetJob = nullptr;
     bool m_isjobDisconnect = true;
 
     Mode m_mode = Normal;

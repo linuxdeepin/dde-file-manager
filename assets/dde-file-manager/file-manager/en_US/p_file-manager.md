@@ -90,7 +90,7 @@ File Manager is featured with the basic functions as a file manager, you can eas
 
 ![1|batch_rename](fig/p_rename.png)
 
-### View files
+### View Files
 
 Click ![icon_view](../common/icon_view.svg) and ![list_view](../common/list_view.svg) on the interface to switch icon view and list view.
 
@@ -129,7 +129,7 @@ You can check **Mix sorting of files and folders** in **Main menu** > **Settings
 
 
 
-### Hide files
+### Hide Files
 
 1. On File Manager, right-click the file you want to hide.
 2. Select **Properties**, check **Hide this file**.
@@ -180,7 +180,7 @@ In Properties of files, you can view the basic info, open with list, and permiss
 
 > ![notes](../common/notes.svg) Notes: If you check the properties of multiple files at a time, the total size and quantities will be displayed. If you check the properties of a shortcut, the source file location will be displayed in addition. You can use shortcuts **Ctrl + I** to view the properties as well.
 
-### Virus scan
+### Virus Scan
 
 1. On File Manager interface, right-click a file(folder). 
 2. Select **Virus scan**, the **Virus Scan** interface of Security Center pops up, so you can scan the file(folder) for virus. Refer to [Virus Scan](dman:///deepin-defender#Virus Scan) of Security Center for detailed operations.
@@ -210,7 +210,7 @@ By clicking the search icon, or right-click the file path and select **Edit addr
 
 - The inputting box can identify smartly. You can input keywords or an address and press **Enter**, the system will identify automatically and search or visit.
 
-### Search files
+### Search Files
 
 File Manager supports multiple search methods, including both general search by file name and file content, and advanced search by file type, creation time, and so on, which is helpful to improve efficiency and facilitate file management.
 
@@ -274,7 +274,7 @@ By adding tags on file/folder, you can classify and manage your files better.
 
 You can add tag to multiple files/folders at a time, or add multiple tags to a single file/folder. The tag appears in the left panel.
 
-##### By Tag information
+##### By Tag Information
 
 1. Right-click a file/folder, select **Tag information**.
 2. Input tag name. Use comma to separate tags in case of multiple tags.
@@ -381,7 +381,7 @@ Users on the LAN can access the shared files through the network path provided b
 
 ![1|viewshare](fig/visitshare.png)
 
-#### Cancel sharing
+#### Cancel Sharing
 
 When all shared files are cancelled, "My Shares" is removed from the left panel, and you can cancel local shared files in one of the following ways. 
 
@@ -389,7 +389,7 @@ When all shared files are cancelled, "My Shares" is removed from the left panel,
 - Right-click the shared folder and select **Properties**, uncheck **Share this folder** in the "sharing" part of the properties window.
 
 
-### Open as admin
+### Open as Admin
 
 Prerequisite: Please enable **Developer Mode** from Control Center > General Settings.
 
@@ -397,7 +397,7 @@ Prerequisite: Please enable **Developer Mode** from Control Center > General Set
 2. Select **Open as admin**, input your login password in the pop-up window and click **Confirm**.
 3. The file will be opened in a new window, in which you can operate with admin permissions. And you will exit admin permissions when you close this window.
 
-### Open in terminal
+### Open in Terminal
 
 1. Right-click in the blank area on File Manager. 
 2. Select **Open in terminal**, Terminal will be opened, and its directory will be the current one.
@@ -436,7 +436,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 </table>
 
 
-#### Duplicate local files
+#### Duplicate Local Files
 
 1. Open File Manager and click the CD Icon in the left panel to enter the burning interface.
 
@@ -458,6 +458,18 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 2. Select **Unmount**, right-click the disc icon again and select **Erase**.
 3. Click **Erase** in the pop-up prompt box.
 
+#### Save as Image File
+
+1. Open File Manager and click the CD Icon in the left panel to enter the CD interface.
+
+![cd](fig/cd_save_as_iso.png)
+
+2. Click **Save as Image File** in the top right corner.
+
+![cd](fig/cd_create_iso.png)
+
+3. In the pop-up window, select a save path, and click **Create ISO Image** to save files as an ISO image file.
+
 ### Create Link
 
 1. On File Manager interface, right-click the item to create a link for.
@@ -467,7 +479,7 @@ You can copy music, video, pictures, or mirror files to a CD or DVD through the 
 
 > ![tips](../common/tips.svg) Tips: By selecting **Send to desktop** for an item, you can create a link on desktop with one click.
 
-### Send To Other Device
+### Send To Other Devices
 
 When there is an external device inserted, you can directly send file/folder to it.
 
@@ -476,7 +488,7 @@ When there is an external device inserted, you can directly send file/folder to 
 3. Select the device you want to send to.
 4. File/folder will be copied to the device.
 
-### Send to bluetooth
+### Send to Bluetooth
 If your computer is equipped with Bluetooth module, you can transfer files in short distance through Bluetooth.
 
 Prerequisite: The Bluetooth devices of sender and receiver have been paired and connected successfully. Refer to [Connect to a Bluetooth Device](dman:///dde#Connect to a Bluetooth Device) for details.
@@ -516,9 +528,9 @@ There are three ways to log in UnionTech OS Assistant, including: cell phone qui
 Use the "Discovery Settings" function to set how your phone and computer are discovered. In the UnionTech OS Assistant screen, click **Discovery Settings** in the upper right corner; on the computer system tray, right-click the icon ![icon](../common/found.svg) and select **Discovery Settings**, you can choose:
 
 - **Discoverable for everyone**: Within the LAN, all devices that are on the same network and in the same network segment are allowed to discover this phone or computer.
-- **Discoverable for the same Union ID only**: Within the LAN, only devices logged into the same Union ID are allowed to discover this phone or computer.
+- **Discoverable for the same UOS ID only**: Within the LAN, only devices logged into the same UOS ID are allowed to discover this phone or computer.
 - **Undiscoverable**: All devices are not allowed to discover this phone or computer.
-- **Discoverable for remote devices with the same Union ID** (computer side): Remote devices logged into the same Union ID are allowed to discover this computer.
+- **Discoverable for remote devices with the same UOS ID** (computer side): Remote devices logged into the same UOS ID are allowed to discover this computer.
 
  
 
@@ -538,7 +550,7 @@ After the network connection is successful, then perform the following steps.
 
 #### Search Computer
 
-Prerequisite: The phone and the computer are on the same wireless network and in the same network segment (sending files to each other is supported, instead of viewing and editing files), or they have logged into the same Union ID; the phone and computer are discoverable.
+Prerequisite: The phone and the computer are on the same wireless network and in the same network segment (sending files to each other is supported, instead of viewing and editing files), or they have logged into the same UOS ID; the phone and computer are discoverable.
 
 1. In UnionTech OS Assistant interface on your phone, click "Search Computer".
 
@@ -564,14 +576,14 @@ After the connection between the mobile phone and PC is successful, files can be
 
 - **By wireless delivery**
 
-   When the devices are logged into the same Union ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
+   When the devices are logged into the same UOS ID or in the same wireless network and in the same network segment, and are discoverable, you can transfer files from one device to another through wireless delivery.
    1. On the computer, right-click the file you want to deliver and select **Wireless Deliver**. 
 
    2. In the pop-up window, select the phone or computer you want to deliver to.
 
    >![icon](../common/notes.svg) Notes:
    >- You need to install UnionTech OS Assistant on the cell phone and log in to your account to receive the files delivered from the computer.
-   >- After logging in to the same Union ID, you can perform the remote delivery.
+   >- After logging in to the same UOS ID, you can perform the remote delivery.
 
 
 #### View/Edit Files
@@ -588,7 +600,7 @@ You can assign an icon file to a file or folder icon through the command line an
 >- The corner marker files support formats such as svg, jpg, png, bmp, and gif, but not bigger than 100KB.
 >- The corner marker could not be added to files in USB disks and CD-ROM disks.
 
-### Add single corner marker
+### Add a Single Corner Marker
 
 1. Open Terminal, input **gio set xxx(file path)  -t stringv metadata::emblems "xxx(icon path)"**, which means to add a corner marker in the lower right corner of the file/folder icon by default.
 
@@ -600,7 +612,7 @@ For example, to add a corner marker to the upper left corner, you have to input:
 
 ![mark](fig/single.png)
 
-### Add multiple corner markers
+### Add Multiple Corner Markers
 
 To add 2~4 corner markers to a file/folder, you can input "|" in the command to separate multiple paths of the corner marker files. Only one corner marker can be added to the same corner, but you can replace it.
 
@@ -609,24 +621,34 @@ For example, to add 4 corner markers to a file/folder icon, you can input:
 
 ![mark](fig/multi.png)
 
-### Cancel corner markers
+### Cancel Corner Markers
 
 Open Terminal, input **gio set xxx(file path) -t stringv metadata::emblems ""** to cancel all corner markers on the file/folder icon. 
 
 ## File Vault
 
-File Vault is designed to  create a special safe space for you and protect your privacy. With the advanced encryption technology and convenient operations, it's quite easy to use.
+File Vault is designed to create a secure space for your files and protect your privacy. With the advanced encryption technology and convenient operations, it's quite easy to use.
 
-### Set vault password
+### Set Vault Password
 
-You will have to set a password when you use File Vault for the first time as follows:
+You have to encrypt File Vault when you use it for the first time. File Vault provides two encryption methods, namely **key encryption** and **transparent encryption**. The newly added **transparent encryption** allows you to directly access File Vault without setting and entering the password.
 
-1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** in the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
-2. Set the "Method", "Password", "Repeat password" and "Hint", click **Next**. 
+#### Transparent Encryption
 
-![0|password](fig/password.png)
+1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
 
-> ![notes](../common/notes.svg) Notes: the password must contain upper case letters, lower case letters,  Arabic numbers and special symbols at the same time and no less than 8 digits. Otherwise, you are not able to go to the next step.
+2. Set the "Encryption method" to **Transparent encryption**, click **Next** to encrypt the File Vault directly.
+
+   ![0|encrypt](fig/transparent_encryption.png)
+
+#### Key Encryption
+
+1. Click ![file_vault](../common/file_vault.svg) in the left panel or double-click **My Vault** on the **Computer** interface, and then click **Create** in the pop-up dialogue box.  
+2. The "Encryption method" is set to **key encryption** by default. After setting a password and a password hint, Click **Next**. 
+
+![0|encrypt](fig/key_encryption.png)
+
+> ![notes](../common/notes.svg) Notes: The password must contain uppercase letters, lowercase letters,  Arabic numbers and special symbols at the same time and no less than 8 digits. Otherwise, you are not able to go to the next step.
 
 3. In the pop up window, set the storage location of the key file, which helps you to retrieve password if you forget it. Click **Next**. 
 

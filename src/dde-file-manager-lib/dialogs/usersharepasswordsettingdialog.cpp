@@ -1,27 +1,9 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "usersharepasswordsettingdialog.h"
-#include "../dbusinterface/usershare_interface.h"
+#include "dbusinterface/usershare_interface.h"
 #include "../app/define.h"
 #include "singleton.h"
 #include "usershare/usersharemanager.h"
@@ -85,6 +67,11 @@ void UserSharePasswordSettingDialog::initUI()
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
         this->setFixedSize(QSize(390, 210));
     }
+
+    // The default first tab focus is window close button;
+    // The second one is m_passwordEdit, then the third one is eyes button;
+    // the last tab focus is cancel button(this->getButton(0));
+    QWidget::setTabOrder(m_passwordEdit, this->getButton(0));
 }
 
 void UserSharePasswordSettingDialog::onButtonClicked(const int &index)

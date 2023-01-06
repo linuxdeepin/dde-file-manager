@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfileservices.h"
 #include "dabstractfilecontroller.h"
@@ -59,6 +40,7 @@
 #include "execinfo.h"
 #include "math.h"
 #include "gvfs/networkmanager.h"
+#include "log/auditlog.h"
 
 #include <QUrl>
 #include <QDebug>
@@ -582,9 +564,9 @@ bool DFileService::writeFilesToClipboard(const QObject *sender, DFMGlobal::Clipb
     return DFMEventDispatcher::instance()->processEvent(dMakeEventPointer<DFMWriteUrlsToClipboardEvent>(sender, action, list)).toBool();
 }
 
-bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent) const
+bool DFileService::renameFile(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent, const bool checkHide /*= true*/) const
 {
-    bool ok = DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to, silent).toBool();
+    bool ok = DFMEventDispatcher::instance()->processEvent<DFMRenameEvent>(sender, from, to, silent, checkHide).toBool();
 
     return ok;
 }
@@ -622,15 +604,18 @@ DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) 
     {
         QList<QUrl> org = DFMGlobal::instance()->clipboardFileUrlList();
         DFMGlobal::ClipboardAction action = DFMGlobal::instance()->clipboardAction();
+        bool isRemoved { false };
         if (!org.isEmpty() && action != DFMGlobal::UnknowAction) {
             for (const DUrl &nd : list) {
                 if (org.isEmpty())
                     break;
-                org.removeAll(nd);
+                int count = org.removeAll(nd);
+                if (count != 0)
+                    isRemoved = true;
             }
             if (org.isEmpty()) //没有文件则清空剪切板
                 DFMGlobal::clearClipboard();
-            else
+            else if (isRemoved)
                 DFMGlobal::setUrlsToClipboard(org, action);
         }
     }
@@ -1164,6 +1149,37 @@ void DFileService::dealPasteEnd(const QSharedPointer<DFMEvent> &event, const DUr
             QString strStagingPath = strFilePath.mid(0, strFilePath.indexOf(strTag) + strTag.length());
             QProcess::execute("chmod -R u+w " + strStagingPath); // 之前尝试使用 DLocalFileHandler 去处理权限问题但是会失败，因此这里采用命令去更改权限
         }
+    }
+}
+
+void DFileService::dealPastedAudit(const DUrlList &srcUrlList, const DUrlList &targetUrlList)
+{
+    Q_ASSERT(!srcUrlList.isEmpty());
+
+    DUrlList srcDiscUrlList;
+    DUrlList destDiscUrlList;
+
+    const QString &srcParentUrlPath { srcUrlList.first().parentUrl().toLocalFile() };
+
+    // find all urls copy from disc
+    std::for_each(targetUrlList.begin(), targetUrlList.end(),
+                  [srcParentUrlPath, &srcDiscUrlList, &destDiscUrlList] (const DUrl &targetUrl) {
+        if (!targetUrl.isValid())
+            return;
+
+        DUrl srcUrl { DUrl::fromLocalFile(srcParentUrlPath + "/" + targetUrl.fileName()) };
+        if (srcUrl.isValid() && deviceListener->isFileFromDisc(srcUrl.toLocalFile())) {
+            srcDiscUrlList.push_back(srcUrl);
+            destDiscUrlList.push_back(targetUrl);
+        }
+    });
+
+    // only audit log for copy from disc
+    if (!srcDiscUrlList.isEmpty() && srcDiscUrlList.size() == destDiscUrlList.size()) {
+        QtConcurrent::run([=] {
+            AuditLog::doCopyFromDiscAuditLog(srcDiscUrlList, destDiscUrlList);
+        });
+        return;
     }
 }
 

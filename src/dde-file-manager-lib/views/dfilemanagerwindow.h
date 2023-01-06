@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef DFILEMANAGERWINDOW_H
 #define DFILEMANAGERWINDOW_H
@@ -103,7 +83,7 @@ public:
     void requestToSelectUrls();
     bool isAdvanceSearchBarVisible();
     void updateAdvanceSearchBarValue(const FileFilter *filter);
-    void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true);
+    void toggleAdvanceSearchBar(bool visible = true, bool resetForm = true, bool clicked = true);
     void showFilterButton();
     //获取能否析构
     bool getCanDestruct() const;
@@ -113,6 +93,8 @@ public:
      * @return
      */
     void clearActions();
+    //获取当前的view的AdvanceSearchBar是否可以显示
+    bool isViewShowAdvanceSearchBar() const;
 
 signals:
     void aboutToClose();

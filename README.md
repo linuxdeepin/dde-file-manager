@@ -7,51 +7,61 @@ Deepin File Manager is a file management tool independently developed by Deepin 
 ### Build dependencies
 
 _The **master** branch is current development branch, build dependencies may changes without update README.md, refer to `./debian/control` for a working build depends list_
- 
+
 * pkg-config
-* dh-systemd
-* libxcb1-dev
-* libxcb-ewmh-dev
-* libxcb-util0-dev
-* libx11-dev
-* libgsettings-qt-dev
+* qt5-qmake
+* qtbase5-dev
+* qtbase5-private-dev
+* libqt5x11extras5-dev
+* libjemalloc-dev
+* libqt5svg5-dev
+* libmagic-dev
 * libsecret-1-dev
 * libpoppler-cpp-dev
 * libpolkit-agent-1-dev
 * libpolkit-qt5-1-dev
-* libjemalloc-dev
-* libmagic-dev
+* qtmultimedia5-dev
+* libffmpegthumbnailer-dev
 * libtag1-dev
-* libdmr-dev
+* libdtkwidget-dev
+* libdtkgui-dev
+* libxcb1-dev
 * x11proto-core-dev
+* libx11-dev
+* qttools5-dev-tools
+* libglib2.0-dev
+* dde-dock-dev(>=4.8.4.1)
+* libxcb-ewmh-dev
+* libxcb-shape0-dev
 * libdframeworkdbus-dev
-* dde-dock-dev(>=4.0.5)
+* libxcb-util0-dev
+* qtdeclarative5-dev
 * deepin-gettext-tools
+* libkf5codecs-dev
 * libdtkcore-dev
-* libudisks2-qt5-dev
-* libdisomaster-dev
-* libgio-qt-dev
-* libqt5xdg-dev
-* libmediainfo-dev
-* libdde-file-manager-dev
+* libdtkcore5-bin
+* libdmr-dev
+* deepin-anything-dev[i386 amd64]
+* deepin-anything-server-dev[i386 amd64]
+* libudisks2-qt5-dev(>=5.0.6)
+* libxrender-dev
+* libmtdev-dev
+* libfontconfig1-dev
+* libfreetype6-dev
+* libegl1-mesa-dev
+* libglibmm-2.4-dev
+* libgio-qt-dev(>=0.0.11)
+* libdisomaster-dev(>=5.0.7)
 * libssl-dev
-* ffmpeg module(s):
-  - libffmpegthumbnailer-dev
-* Qt5(>= 5.6) with modules:
-  - qtbase5-dev
-  - qtbase5-private-dev
-  - libqt5x11extras5-dev
-  - qt5-qmake
-  - libqt5svg5-dev
-  - qttools5-dev-tools
-  - qtmultimedia5-dev
-  - qtdeclarative5-dev
-  - libkf5codecs-dev
-* Deepin-tool-kit(>=2.0) with modules:
-  - libdtkwidget-dev
-* deepin-anything with modules:
-  - deepin-anything-dev
-  - deepin-anything-server-dev
+* libmediainfo-dev
+* libqt5xdg-dev
+* libicu-dev
+* liblucene++-dev
+* libgsf-1-dev
+* libboost-filesystem-dev
+* libdocparser-dev
+* deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
+* libpcre3-dev
 
 ## Installation
 
@@ -110,4 +120,4 @@ We encourage you to report issues and contribute changes
 
 ## License
 
-dde-file-manager is licensed under [GPLv3](LICENSE)
+dde-file-manager is licensed under [GPL-3.0-or-later](LICENSE.txt)

@@ -269,6 +269,12 @@
                             "text": qsTranslate("GenerateSettingTranslate", "Keep showing the mounted Samba shares"),
                             "type": "checkbox",
                             "default": true
+                        },
+                        {
+                            "key": "merge_the_entries_of_samba_shared_folders",
+                            "text": qsTranslate("GenerateSettingTranslate", "Merge the entries of Samba shared folders"),
+                            "type": "checkBoxWithMessage",
+                            "default": true
                         }
                     ]
                 },
@@ -296,7 +302,7 @@
                     "options": [
                         {
                             "key": "hide_system_partition",
-                            "text": qsTranslate("GenerateSettingTranslate", "Hide system disk"),
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide built-in disks"),
                             "type": "checkbox",
                             "default": false
                         },

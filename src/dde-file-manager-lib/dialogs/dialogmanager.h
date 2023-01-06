@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef DIALOGMANAGER_H
 #define DIALOGMANAGER_H
@@ -103,13 +85,17 @@ public slots:
     int showRunExcutableFileDialog(const DUrl &url, quint64 winId);
     int showAskIfAddExcutableFlagAndRunDialog(const DUrl &url, quint64 winId);
     int showRenameNameSameErrorDialog(const QString &name, const DFMEvent &event);
+    int showRenameNameDotBeginDialog();
     // 重命名文件时，如果文件名为..，则弹出警告对话框
     int showRenameNameDotDotErrorDialog(const DFMEvent &event);
     void showRenameBusyErrDialog(const DFMEvent &event);
+    void showFormatDeviceBusyErrDialog(const DFMEvent &event);
     int showOpticalBlankConfirmationDialog(const DFMUrlBaseEvent &event);
     int showOpticalImageOpSelectionDialog(const DFMUrlBaseEvent &event);
     void showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details);
     void showOpticalJobCompletionDialog(const QString &msg, const QString &icon);
+    void showOpticalDumpISOSuccessDialog(const QString &path);
+    void showOpticalDumpISOFailedDialog();
     int showDeleteFilesClearTrashDialog(const DFMUrlListBaseEvent &event);
     //! 显示普通删除确认对话框
     int showNormalDeleteConfirmDialog(const DFMUrlListBaseEvent &event);
@@ -126,6 +112,7 @@ public slots:
     void showConnectToServerDialog(quint64 winId);
     void showUserSharePasswordSettingDialog(quint64 winId);
     void showSharePasswordSettingDialog(QFrame *parent = nullptr);
+    void showChangeDiskPasswordDialog(quint64 winId);
     void showGlobalSettingsDialog(quint64 winId);
     void showDiskSpaceOutOfUsedDialogLater();
     void showDiskSpaceOutOfUsedDialog();
@@ -156,6 +143,7 @@ public slots:
 
     void showFormatDialog(const QString &devId); // sp3 feat 接入usb设备不能读取文件系统、存储信息、或是无法解锁的加密设备时，提示用户格式化
     int showStopScanningDialog();              // 显示设备正在被扫描的提示
+    int execCommonMessageDialog(const DFMEvent &event, const QString &message);
 
     /**
     * DUrlListCompare 用于判断传入url列表是否与m_urlList一样

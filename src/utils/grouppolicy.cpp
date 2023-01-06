@@ -1,27 +1,15 @@
-/*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
- *
- * Author:     liqiang<liqianga@uniontech.com>
- *
- * Maintainer: liqiang<liqianga@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "grouppolicy.h"
 
 #include <QDebug>
 #include <QApplication>
+#include <QFile>
+#include <QStandardPaths>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 class GroupPolicyGlobal : public GroupPolicy{};
 Q_GLOBAL_STATIC(GroupPolicyGlobal, groupPolicyGlobal)
@@ -49,6 +37,8 @@ GroupPolicy::GroupPolicy(QObject *parent) : QObject(parent)
 
     connect(m_config, &Dtk::Core::DConfig::valueChanged, this, [this](const QString &key){
         emit this->valueChanged(key);
+        if (auto sync = m_synchorinizers.value(key, nullptr))
+            sync(getValue(key));
     });
 #endif
 }
@@ -102,3 +92,63 @@ void GroupPolicy::setValue(const QString &key, const QVariant &value)
 #endif
 }
 
+/*!
+ * \brief GroupPolicy::addSyncFunc: this is used to add callback functions when DConfig's value changed, normally the function is used to sync config to dsettings.
+ * \param key
+ * \param func: how the config sync to dsetting.
+ * \return the synchornizer is added.
+ */
+bool GroupPolicy::addSyncFunc(const QString &key, SyncFunc func)
+{
+    if (!m_synchorinizers.contains(key)) {
+        m_synchorinizers.insert(key, func);
+        return true;
+    } else {
+        qWarning() << "key: " << key << " is already binded a synchronizer";
+        return false;
+    }
+}
+
+/*!
+ * \brief GroupPolicy::isConfigSetted: this function is for checking whether a dconfig item is setted by user, and returns it's value if it was setted.
+ * \param key
+ * \param settedValuej: if the key existed then the value will be setted to its current value.
+ * \return true if item is setted
+ */
+bool GroupPolicy::isConfigSetted(const QString &key, QVariant *settedValue)
+{
+    auto confPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+    qDebug() << "user config path: " << confPath;
+    confPath += "/dsg/configs/org.deepin.dde.file-manager/org.deepin.dde.file-manager.json";
+
+    QFile f(confPath);
+    qDebug() << "user config exists at? " << confPath << f.exists();
+    if (!f.exists())
+        return false;
+
+    f.open(QIODevice::ReadOnly);
+    QJsonParseError err;
+    auto doc = QJsonDocument::fromJson(f.readAll(), &err);
+    f.close();
+
+    if (err.error != QJsonParseError::NoError) {
+        qWarning() << "cannot parse user config: " << confPath << err.errorString();
+        return false;
+    }
+
+    auto obj = doc.object();
+    if (obj.isEmpty()) {
+        qWarning() << "no contents in config: " << confPath;
+        return false;
+    }
+
+    auto contents = obj.value("contents").toObject();
+    if (contents.contains(key)) {
+        if (settedValue) {
+            auto item = contents.value(key).toObject();
+            *settedValue = item.value("value").toVariant();
+        }
+        return true;
+    }
+    return false;
+}

@@ -1,26 +1,10 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     xushitong<xushitong@uniontech.com>
- *
- * Maintainer: dengkeyun<dengkeyun@uniontech.com>
- *             max-lv<lvwujun@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "rlog/rlog.h"
+#include "rlog/datas/blockmountreportdata.h"
+#include "rlog/datas/smbreportdata.h"
 //fix: 设置光盘容量属性
 #include "../views/dfmopticalmediawidget.h"
 
@@ -38,6 +22,7 @@
 #include "mountsecretdiskaskpassworddialog.h"
 #include "app/filesignalmanager.h"
 #include "shutil/fileutils.h"
+#include "shutil/smbintegrationswitcher.h"
 #include "utils.h"
 
 #include "networkmanager.h"
@@ -607,11 +592,18 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
         g_free(path);
         g_object_unref(root);
         emit fileSignalManager->requestCloseTab(durl);
-
-        //smb挂载项聚合显示在侧边栏和计算机界面后，这里无需再reloadComputerModel()。请保留此处注释
-        if (!qMount.mounted_root_uri().startsWith("smb://")) {//非smb卸载才刷新计算机界面
+        bool isNotSmbRemoved = !qMount.mounted_root_uri().startsWith(QString("%1://").arg(SMB_SCHEME));
+        //smb挂载项聚合显示在侧边栏和计算机界面后，这里无需再reloadComputerModel()。
+        if (smbIntegrationSwitcher->isIntegrationMode()) {
+            if (isNotSmbRemoved && DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
+                emit DFMApplication::instance()->reloadComputerModel();//smb聚合模式下，其它ftp挂载需要reloadComputerModel()
+        } else {
+            if(smbIntegrationSwitcher->isSwitching()){
+                qInfo()<<"Now is smb integration switching...";
+                return; // 卸载smb挂载本不耗时，但reloadComputerModel非常耗时，切换完成后再reloadComputerModel。
+            }
             if (DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
-                emit DFMApplication::instance()->reloadComputerModel();//通过smb聚合项右键菜单批量卸载时，这里会导致卸载卡顿
+                emit DFMApplication::instance()->reloadComputerModel();
         }
 
     }
@@ -938,6 +930,11 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     m_obj.insert("password", default_password);
     m_obj.insert("GAskPasswordFlags", flags);
     m_obj.insert("passwordSave", passwordSave);//传给对话框的
+    if (!smbIntegrationSwitcher->isIntegrationMode()) { // smb分离模式，清空登录缓存，弹出鉴权对话框
+        while (!m_loginObj.isEmpty()) {
+            m_loginObj.take(m_loginObj.keys().first());
+        }
+    }
     if (m_loginObj.isEmpty() && MountTimerHash.contains(op) && MountEventHash.value(op)) {
         m_loginObj = DThreadUtil::runInMainThread(requestPasswordDialog,
                                                 MountEventHash.value(op)->windowId(),
@@ -953,18 +950,17 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         QString domain = m_loginObj.value("domain").toString();
         QString password = m_loginObj.value("password").toString();
         GPasswordSave passwordsaveFlag =  static_cast<GPasswordSave>(m_loginObj.value("passwordSave").toInt());
-        bool savePasswordChecked = false;
         if(!anonymous){
-            if(m_mountScheme == SMB_SCHEME && passwordsaveFlag != GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY){//没有勾选记住密码
-                passwordsaveFlag = GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION;//G_PASSWORD_SAVE_PERMANENTLY;
-                m_loginObj.insert("passwordSave",passwordsaveFlag);
-            }else {//勾选了记住密码
-                savePasswordChecked = true;
+            if (m_mountScheme == SMB_SCHEME) { // 如果是smb挂载，需要调整记住密码的方式
+                if(passwordsaveFlag != GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY){// 没有勾选记住密码
+                    if (smbIntegrationSwitcher->isIntegrationMode()) {// smb聚合模式，按单次会话记住密码的方式访问smb服务
+                        passwordsaveFlag = GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION;
+                        m_loginObj.insert("passwordSave",int(GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION));
+                    }
+                }
             }
         }
-        m_loginObj.insert("savePasswordChecked",savePasswordChecked);
         SMBLoginObjHash.insert(op,new QJsonObject(m_loginObj));
-
 
         if ((flags & G_ASK_PASSWORD_ANONYMOUS_SUPPORTED) && anonymous) {
             g_mount_operation_set_anonymous(op, TRUE);
@@ -1023,13 +1019,10 @@ void GvfsMountManager::ask_disk_password_cb(GMountOperation *op, const char *mes
     bool anonymous = g_mount_operation_get_anonymous(op);
     GPasswordSave passwordSave = g_mount_operation_get_password_save(op);
 
-    const char *default_password = g_mount_operation_get_password(op);
-
     qCDebug(mountManager()) << "anonymous" << anonymous;
     qCDebug(mountManager()) << "message" << message;
     qCDebug(mountManager()) << "username" << default_user;
     qCDebug(mountManager()) << "domain" << default_domain;
-    qCDebug(mountManager()) << "password" << default_password;
     qCDebug(mountManager()) << "GAskPasswordFlags" << flags;
     qCDebug(mountManager()) << "passwordSave" << passwordSave;
 
@@ -1054,7 +1047,6 @@ void GvfsMountManager::ask_disk_password_cb(GMountOperation *op, const char *mes
         if (code == 0) {
             p.clear();
         }
-        qCDebug(mountManager()) << "password is:" << p;
         std::string pstd = p.toStdString();
         g_mount_operation_set_password(op, pstd.c_str());
         mountSecretDiskAskPasswordDialog->deleteLater();
@@ -1571,11 +1563,11 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     if (MountTimerHash.contains(op))
         MountTimerHash.value(op)->stop();
 
-    if (askPasswordDialogHash.value(op)) {
+    if (askPasswordDialogHash.value(op)) {//挂载成功或者出现bug #149389时，没有回调ask_password_cb，会走此分支
         askPasswordDialogHash.value(op)->deleteLater();
         askPasswordDialogHash.remove(op);
     } else {
-        bshow = false;
+        bshow = false;//用户名或者密码错误，即：回调了ask_password_cb，不再走上面分支
     }
     gboolean succeeded;
     GError *error = nullptr;
@@ -1585,7 +1577,6 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     succeeded = g_file_mount_enclosing_volume_finish(G_FILE(object), res, &error);
 
     DUrl rootUri = DUrl(g_file_get_uri(G_FILE (object)));
-
     if (!succeeded) {
         Q_ASSERT(error->domain == G_IO_ERROR);
         emit fileSignalManager->requestRemoveSmbUrl(rootUri);
@@ -1595,6 +1586,11 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         case G_IO_ERROR_FAILED:
             if (AskingPasswordHash.value(op)) {
                 status = MOUNT_PASSWORD_WRONG;
+                if (bshow){//fix bug:#149389
+                    status = MOUNT_CANCEL;//为避免networkmanager.cpp中陷入挂载死循环
+                    clearLoginData();
+                }
+                qInfo()<<"G_IO_ERROR_FAILED, error message: "<<error->message;
             } else {
                 showWarnDlg = true;
             }
@@ -1613,21 +1609,35 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
 //            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
 //                                         tr("Mounting device error"), QString(error->message));
 //        }
+        QString errorUiMsg = tr("Wrong username or password");
+        bool userCanceled = false;
         if (showWarnDlg) {
+            errorUiMsg = tr("Mounting device error");
             DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                          tr("Mounting device error"), QString());
             qInfo() << "Mounting device error: " << QString(error->message);
         } else {
             //fix 22749 修复输入秘密错误了后，2到3次才弹提示框
             if (status == MOUNT_PASSWORD_WRONG && bshow) {
+                errorUiMsg = tr("Wrong username or password");
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr("Wrong username or password"));
             } else if (status == MOUNT_CANCEL && bshow) {
+                userCanceled = true;
+                errorUiMsg = tr(error->message);
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
                                              tr("Mounting device error"), tr(error->message));
             }
 
         }
+
+        QVariantMap args;
+        args.insert("result", false);
+        args.insert("errorId",userCanceled ? SmbReportData::UserCancel_Error : SmbReportData::Mount_Error);//Here do not use error->code, since error->code always 0 here
+        args.insert("errorSysMsg", error->message);
+        args.insert("errorUiMsg", userCanceled ? "User cancel mount dialog." : errorUiMsg);
+        rlog->commit("Smb", args);
+
         qCDebug(mountManager()) << "g_file_mount_enclosing_volume_finish" << succeeded << error;
         qCDebug(mountManager()) << "username" << g_mount_operation_get_username(op) << error->message;
     } else {
@@ -1635,10 +1645,16 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         if (AskingPasswordHash.value(op) && SMBLoginObjHash.value(op)) {
             SMBLoginObjHash.value(op)->insert("id", rootUri.toString());
             int saveType = SMBLoginObjHash.value(op)->value("passwordSave").toInt();
-            if ( saveType == int(GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY) || (m_mountScheme == SMB_SCHEME && saveType == int(GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION))) {
+            if (saveType == int(GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY)) { // 勾选了记住密码(smb、ftp、sftp)
                 SMBLoginObjHash.value(op)->remove("password");
-                emit fileSignalManager->requsetCacheLoginData(*SMBLoginObjHash.value(op));
+                emit fileSignalManager->requsetCacheLoginData(*SMBLoginObjHash.value(op)); // 缓存smb登录数据
+            } else if (m_mountScheme == SMB_SCHEME) {
+                if (saveType == int(GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION)) { // smb聚合模式设置的单次会话记住密码
+                    SMBLoginObjHash.value(op)->remove("password");
+                    emit fileSignalManager->requsetCacheLoginData(*SMBLoginObjHash.value(op));// 缓存smb登录数据
+                }
             }
+
             delete SMBLoginObjHash.value(op);
             SMBLoginObjHash.remove(op);
         } else {
@@ -1760,8 +1776,11 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
     succeeded = g_volume_mount_finish(volume, res, &error);
     QVolume qVolume = gVolumeToqVolume(volume);
 
+    bool mounted = true;
+
     // 返回false 的情况，如果有挂载点也算成功，此时要看看 gio 相关流程是否存在bug
     if (!succeeded && !try_to_get_mounted_point(volume)) {
+        mounted = false;
         qCDebug(mountManager()) << "Error mounting: " << g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE)
                                 << error->message << user_data << error->code;
 
@@ -1778,6 +1797,16 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
         default:
             break;
         }
+
+        if (QString(error->message).contains("Operation not permitted.")) {
+            format = false;
+            dialogManager->showMessageDialog(DialogManager::msgWarn,
+                                             tr("Mount failed"),
+                                             tr("The device has been blocked and you do not have permission to access it. "
+                                                "Please configure its connection policy in Security Center or contact your administrator."),
+                                             tr("Confirm"));
+        }
+
         if (AskedPasswordWhileMountDisk) { // 显示过密码框的设备，说明该设备可解锁，但密码不一定正确或取消了，不需要提示用户格式化
             if (!user_data && !errorCodeNeedSilent(error->code)) {
                 fileSignalManager->requestShowErrorDialog(err, QString(" "));
@@ -1789,6 +1818,8 @@ void GvfsMountManager::mount_with_device_file_cb(GObject *object, GAsyncResult *
         }
     }
     AskedPasswordWhileMountDisk = false;
+
+    BlockMountReportData::report({{"dev", qVolume.unix_device()}, {"result", mounted}});
 }
 
 void GvfsMountManager::unmount(const QDiskInfo &diskInfo)

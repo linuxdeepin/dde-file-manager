@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DTAGEDIT_H
 #define DTAGEDIT_H
 
@@ -47,6 +51,8 @@ private:
     void initializeConnect();
 
     void processTags();
+    void updateCrumbsColor(const QMap<QString, QColor> &tagsColor);
+    QMap<QString, QColor> tagsColor(const QStringList &tagList);
 
     void onPressESC() noexcept;
 
@@ -59,7 +65,6 @@ private:
 
     std::atomic<bool> m_flagForShown{ false };
 
-    bool m_isSettingDefault = false;
     QTimer m_waitForMoreCrumbChanged;   //用于等待短时间内的多次CrumbChanged
 };
 

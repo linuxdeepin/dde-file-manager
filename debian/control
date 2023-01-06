@@ -37,8 +37,8 @@ Build-Depends:
  libdtkcore-dev,
  libdtkcore5-bin,
  libdmr-dev,
- deepin-anything-dev[i386 amd64],
- deepin-anything-server-dev[i386 amd64],
+ deepin-anything-dev[i386 amd64 arm64],
+ deepin-anything-server-dev[i386 amd64 arm64],
  libudisks2-qt5-dev(>=5.0.6),
  libxrender-dev,
  libmtdev-dev,
@@ -56,7 +56,9 @@ Build-Depends:
  libgsf-1-dev,
  libboost-filesystem-dev,
  libdocparser-dev,
- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
+ deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
+ libpcre3-dev,
+ libcryptsetup-dev
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
@@ -68,7 +70,7 @@ Depends:
  libdde-file-manager( =${binary:Version}),
  socat,
  cryfs,
- deepin-anything-dkms[i386 amd64],
+ deepin-anything-dkms[i386 amd64 arm64],
  libblockdev-crypto2,
  dde-device-formatter
 Conflicts: dde-file-manager-oem
@@ -113,7 +115,7 @@ Depends:
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends(>=1.27.3),
  cryptsetup,
- deepin-anything-libs[i386 amd64],
+ deepin-anything-libs[i386 amd64 arm64],
  libdfm-extension( =${binary:Version})
 Recommends:
  libudfburn

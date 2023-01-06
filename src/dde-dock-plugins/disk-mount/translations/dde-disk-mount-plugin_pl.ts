@@ -7,7 +7,7 @@
     </message>
     <message>
         <source>Disk is busy, cannot unmount now</source>
-        <translation>Dysk jest zajęty, nie można teraz odmontować</translation>
+        <translation>Dysk jest zajęty, nie można go teraz odmontować</translation>
     </message>
     <message>
         <source>Disk is busy, cannot eject now</source>
@@ -26,7 +26,7 @@
     <name>DeepinStorage</name>
     <message>
         <source>%1 Volume</source>
-        <translation>Volumen %1</translation>
+        <translation>Wolumin %1</translation>
     </message>
 </context>
 <context>
@@ -79,7 +79,7 @@
     </message>
     <message>
         <source>Eject all</source>
-        <translation>Usuń wszystko</translation>
+        <translation>Wysuń wszystkie</translation>
     </message>
 </context>
 <context>
@@ -98,7 +98,7 @@
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
-        <translation>Skanowanie urządzenia, czy chcesz zatrzymać?</translation>
+        <translation>Skanowanie urządzenia, zatrzymać?</translation>
     </message>
     <message>
         <source>Confirm</source>

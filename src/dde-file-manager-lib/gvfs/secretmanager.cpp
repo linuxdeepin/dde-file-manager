@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     zhangsheng<zhangsheng@uniontech.com>
- *
- * Maintainer: dengkeyun<dengkeyun@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
- *             max-lv<lvwujun@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "secretmanager.h"
 
@@ -250,7 +231,7 @@ bool SecretManager::userCheckedRememberPassword(const DUrl &smbDevice)
     for (auto key : m_smbLoginObjs.keys()){
         if (key.startsWith(temSmbDevice.toString())) {
             QJsonObject smbObj = m_smbLoginObjs.value(key).toObject();
-            savePasswordChecked = smbObj.value("savePasswordChecked").toBool();
+            savePasswordChecked = smbObj.value("passwordSave").toInt() == 2; // 用户勾选过记住密码
             if(savePasswordChecked)
                 break;
         }

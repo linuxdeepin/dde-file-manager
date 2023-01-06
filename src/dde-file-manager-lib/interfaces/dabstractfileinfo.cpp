@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     yanghao<yanghao@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *             hujianzhong<hujianzhong@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "gio/gio.h"
 
@@ -972,11 +953,8 @@ QVector<MenuAction> DAbstractFileInfo::menuActionList(DAbstractFileInfo::MenuTyp
                            << MenuAction::OpenInTerminal
                            << MenuAction::Separator;
             } else if (isFile()) {
-                if (mimeTypeName().startsWith("image") && isReadable()
-//                        && !mimeTypeName().endsWith("gif")
-                        && !mimeTypeName().endsWith("svg+xml")
-                        && !mimeTypeName().endsWith("raf")
-                        && !mimeTypeName().endsWith("crw")) {
+                QList<QVariant> supportedTypes = {"image/jpeg", "image/png", "image/bmp", "image/tiff", "image/gif"};
+                if (supportedTypes.contains(mimeTypeName()) && isReadable()) {
                     actionKeys << MenuAction::SetAsWallpaper
                                << MenuAction::Separator;
                 }
@@ -1676,7 +1654,14 @@ QMap<MenuAction, QVector<MenuAction> > DAbstractFileInfo::subMenuActionList(Menu
 
 
     QVector<MenuAction> docmentMenuActionKeys;
+#ifdef DFM_MINIMUM
     docmentMenuActionKeys << MenuAction::NewText;
+#else
+    docmentMenuActionKeys << MenuAction::NewWord
+                          << MenuAction::NewExcel
+                          << MenuAction::NewPowerpoint
+                          << MenuAction::NewText;
+#endif
 
     static const QList<QAction *> template_file_list = getTemplateFileList();
     static const QVector<MenuAction> action_type_list = getMenuActionTypeListByAction(template_file_list);

@@ -1,26 +1,9 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     xushitong<xushitong@uniontech.com>
- *
- * Maintainer: dengkeyun<dengkeyun@uniontech.com>
- *             max-lv<lvwujun@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "rlog/rlog.h"
+#include "rlog/datas/smbreportdata.h"
 #include "networkmanager.h"
 #include "dfmeventdispatcher.h"
 #include "dfileservices.h"
@@ -33,6 +16,7 @@
 
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
+#include "shutil/smbintegrationswitcher.h"
 #include "../controllers/searchhistroymanager.h"
 #include "utils/utils.h"
 
@@ -215,13 +199,11 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             }
         }
         qDebug() << error->message;
-        QString test = event->fileUrl().toString();
+        const QString &mountUrl = event->fileUrl().toString();
         MountStatus status = gvfsMountManager->mount_sync(*event);
-        if(status == MountStatus::MOUNT_SUCCESS){
-            bool re = FileUtils::isSmbShareFolder(DUrl(test));
-            if(re){
-                RemoteMountsStashManager::insertStashedSmbDevice("smb://"+DUrl(test).host());//挂载成功后，添加smb聚合设备到配置中
-            }
+        if(smbIntegrationSwitcher->isIntegrationMode() && status == MountStatus::MOUNT_SUCCESS){
+            if (FileUtils::isSmbShareFolder(DUrl(mountUrl)))
+                RemoteMountsStashManager::insertStashedSmbDevice("smb://"+DUrl(mountUrl).host());//挂载成功后，添加smb聚合设备到配置文件中
         }
         g_clear_error(&error);
         if(status == MOUNT_SUCCESS){
@@ -243,6 +225,12 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             if (eventLoop) {
                 eventLoop->exit(EventLoopCode::FetchFailed);
             }
+            QVariantMap args;
+            args.insert("result",false);
+            args.insert("errorId",SmbReportData::Fetch_Error);
+            args.insert("errorSysMsg","enumerator is null");
+            args.insert("errorUiMsg","enumerator is null");
+            rlog->commit("Smb",args);
 
             return;
         }
@@ -269,6 +257,12 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
     if (error) {
         if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
             qWarning("Failed to fetch network locations: %s", error->message);//指定的位置未挂载
+            QVariantMap args;
+            args.insert("result",false);
+            args.insert("errorId",SmbReportData::NotMount);
+            args.insert("errorSysMsg",error->message);
+            args.insert("errorUiMsg",error->message);
+            rlog->commit("Smb",args);
             DFMEvent *event = static_cast<DFMEvent *>(user_data);
             if (event->fileUrl() == DUrl::fromNetworkFile("/")) {
                 NetworkManager::restartGVFSD();
@@ -356,6 +350,22 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     NetworkNodes.insert(neturl, nodeList);
 
     addSmbServerToHistory(neturl);
+    bool result = true;
+
+    if (smbIntegrationSwitcher->isIntegrationMode() && FileUtils::isSmbHostOnly(neturl) && nodeList.isEmpty()) {
+        result = false;//此处如果neturl为smb://x.x.x.x格式 且 没有获取到共享目录，则为远端断网超时，作失败处理
+        qDebug() << "request NetworkNodeList failed, maybe the remove device disconnect network.";
+    }
+
+    QVariantMap args;
+    args.insert("result", result);
+    if (!result) {
+        args.insert("errorId", SmbReportData::ShareFoldList_Error);
+        args.insert("errorSysMsg", "Get shared folders failed");
+        args.insert("errorUiMsg", "Get shared folders failed");
+    }
+    rlog->commit("Smb", args);
+
     qDebug() << "request NetworkNodeList successfully";
 }
 
@@ -400,23 +410,38 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
     UDiskDeviceInfoPointer p2 = deviceListener->getDeviceByMountPointFilePath(fullPath);
 
     qDebug() << path << fullPath << p1 << p2;
-
+    bool doChangeCurrentUrl = false;
     if (p1) {
+        //下面这种情况，虽然DUrl(path) != p1->getMountPointUrl(), 但是他们都表示同一个共享目录test33,一个是网络路径，一个是本地路径，
+        //不用再执行ChangeCurrentUrl：
+        //DUrl(path) = DUrl("smb://x.x.x.x/test33")
+        //p1->getMountPointUrl() = DUrl("file:///run/user/1000/gvfs/smb-share:server=x.x.x.x,share=test33")
+        //不用赋值doChangeCurrentUrl = true去再次重复执行DFMChangeCurrentUrlEvent事件，
+        //否则会引起函数QModelIndex DFileSystemModel::setRootUrl(const DUrl &fileUrl)进入时，上一个d->jobController未结束，
+        //调用setParent函数时遇父子线程不一致，槽函数_q_onFileCreated()与watcher的连接失效，导致响应不到subfileCreated信号，
+        //导致界面不能及时刷新（fix bug:#145465）。
+        QString temPath = DUrl(path).path();
+        temPath = temPath.mid(1);
+        const QString& shareName = FileUtils::smbAttribute(p1->getMountPointUrl().path(),FileUtils::SmbAttribute::kShareName);
+        if (temPath != shareName)
+            doChangeCurrentUrl = true;
+    }
+    if (doChangeCurrentUrl) {
         e->setData(p1->getMountPointUrl());
         if (DUrl(path) != p1->getMountPointUrl()) {
             DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, e->fileUrl(), WindowManager::getWindowById(e->windowId()));
         } else {
             qWarning() << p1->getMountPointUrl() << "can't get data";
         }
-    } else {
+    } else { // 当出现bug #145465时，网络路径和本地路径相同时走此分支
         std::string stdPath = path.toStdString();
         gchar *url = const_cast<gchar *>(stdPath.c_str());
 
         if (fetch_networks(url, e)) {
             bool re = FileUtils::isSmbHostOnly(e->fileUrl());
             if(re){
-                RemoteMountsStashManager::insertStashedSmbDevice("smb://"+e->fileUrl().host());//当进行smb地址访问时，添加smb聚合设备到配置中
-                addSmbServerToHistory(e->fileUrl());//通知侧边栏和计算机界面显示smb挂载聚合项
+                RemoteMountsStashManager::insertStashedSmbDevice(QString("%1://").arg(SMB_SCHEME)+e->fileUrl().host()); //当进行smb地址访问时，添加smb聚合设备到配置中
+                addSmbServerToHistory(e->fileUrl()); //通知侧边栏和计算机界面显示smb挂载聚合项
                 emit addSmbMountIntegration(e->fileUrl());
             }
             QWidget *main_window = WindowManager::getWindowById(e->windowId());
@@ -436,9 +461,10 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
                  }
             });
         }
+        if(!e->property("success").toBool()){//挂载失败
+            emit mountFailed(fileUrl);
+        }
     }
-    if(!e->property("success").toBool())//挂载失败
-        emit mountFailed(fileUrl);
     delete e;
 }
 

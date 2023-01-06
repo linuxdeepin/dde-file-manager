@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     luzhen<luzhen@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             luzhen<luzhen@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmsidebardeviceitemhandler.h"
 
@@ -38,8 +20,11 @@
 #include "models/dfmrootfileinfo.h"
 #include "interfaces/drootfilemanager.h"
 #include "shutil/fileutils.h"
+#include "dblockdevice.h"
 
 #include <QAction>
+
+#define REPORT_SHARE_DIR "Sharing Folders"
 
 DFM_BEGIN_NAMESPACE
 
@@ -85,6 +70,11 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     }
     QString displayName = infoPointer->fileDisplayName();
     QString iconName = infoPointer->iconName() + "-symbolic";
+
+    // always show usb icon for removable disks.
+    if (static_cast<DFMRootFileInfo::ItemType>(infoPointer->fileType()) == DFMRootFileInfo::ItemType::UDisksRemovable)
+        iconName = "drive-removable-media-symbolic";
+
     if(url.scheme() == SMB_SCHEME){
         if (displayName.isEmpty()) {
             displayName = url.host();
@@ -93,7 +83,9 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
             iconName = "folder-remote-symbolic";
         }
     }
+
     DFMSideBarItem *item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
+    item->setReportName(reportName(url));
 
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
 
@@ -184,6 +176,45 @@ void DFMSideBarDeviceItemHandler::rename(const DFMSideBarItem *item, QString nam
         newUrl.setPath(name); // 直接构造 URL 会忽略掉一些特殊符号，因此使用 setPath
         DFileService::instance()->renameFile(this, item->url(), newUrl);
     }
+}
+
+QString DFMSideBarDeviceItemHandler::reportName(const DUrl &url)
+{
+    if (url.scheme() == SMB_SCHEME) {
+        return REPORT_SHARE_DIR;
+    } else if (url.scheme() == DFMROOT_SCHEME) {
+        QString strPath = url.path();
+        if (strPath.endsWith(SUFFIX_UDISKS)) {
+            // 截获盘符名
+            int startIndex = strPath.indexOf("/");
+            int endIndex = strPath.indexOf(".");
+            int count = endIndex - startIndex - 1;
+            QString result = strPath.mid(startIndex + 1, count);
+            // 组装盘符绝对路径
+            QString localPath = "/dev/" + result;
+            // 获得块设备路径
+            QStringList devicePaths = DDiskManager::resolveDeviceNode(localPath, {});
+            if (!devicePaths.isEmpty()) {
+                QString devicePath = devicePaths.first();
+                // 获得块设备对象
+                DBlockDevice *blDev = DDiskManager::createBlockDevice(devicePath);
+                // 获得块设备挂载点
+                QByteArrayList mounts = blDev->mountPoints();
+                if (!mounts.isEmpty()) {
+                    QString mountPath = mounts.first();
+                    // 如果挂载点为"/"，则为系统盘
+                    if (mountPath == "/") {
+                        return "System Disk";
+                    } else {    // 数据盘
+                        return "Data Disk";
+                    }
+                }
+            }
+        } else if (strPath.endsWith(SUFFIX_GVFSMP)) {
+            return REPORT_SHARE_DIR;
+        }
+    }
+    return "unknow disk";
 }
 
 DFM_END_NAMESPACE

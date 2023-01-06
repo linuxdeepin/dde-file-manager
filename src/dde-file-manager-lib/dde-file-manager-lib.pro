@@ -49,7 +49,7 @@ isEqual(BUILD_MINIMUM, YES){
     DEFINES += DFM_MINIMUM
 }
 
-CONFIG(DISABLE_ANYTHING) {
+!CONFIG(ENABLE_ANYTHING) {
     message("Quick search and tag support disabled dut to Anything support disabled.")
     DEFINES += DISABLE_QUICK_SEARCH
     DEFINES += DISABLE_TAG_SUPPORT
@@ -81,7 +81,8 @@ include(extensionimpl/extensionimpl.pri)
 
 include(searchservice/searchservice.pri)
 TR_EXCLUDE += /usr/include/boost/ \
-          $$PWD/searchservice/*
+              $$PWD/searchservice/* \
+              $$PWD/../../3rdparty/fulltext/*
 
 isEqual(ARCH, sw_64){
     DEFINES += SW_LABEL
@@ -92,6 +93,13 @@ include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
 include(interfaces/customization/customization.pri)
 include(src.pri)
+
+#安全加固
+QMAKE_CXXFLAGS += -fstack-protector-all
+QMAKE_LFLAGS += -z now -fPIC
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
+    QMAKE_LFLAGS += -z noexecstack -z relro
+}
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps

@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "shareinfoframe.h"
 #include "propertydialog.h"
@@ -102,7 +84,10 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission"));
     permissionLabel->setFixedWidth(labelWidth);
     m_permissoComBox = new QComboBox(this);
-    m_permissoComBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    QPalette peMenuBg;
+    QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
+    peMenuBg.setColor(QPalette::Window, color);
+    m_permissoComBox->setPalette(peMenuBg);
     m_permissoComBox->setFixedWidth(fieldWidth);
     QStringList permissions;
     permissions << tr("Read and write") << tr("Read only");
@@ -111,7 +96,7 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel *anonymityLabel = new SectionKeyLabel(tr("Anonymous"));
     anonymityLabel->setFixedWidth(labelWidth);
     m_anonymityCombox = new QComboBox(this);
-    m_anonymityCombox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    m_anonymityCombox->setPalette(peMenuBg);
     m_anonymityCombox->setFixedWidth(fieldWidth);
     QStringList anonymityChoices;
     anonymityChoices << tr("Not allow") << tr("Allow");
@@ -234,8 +219,13 @@ void ShareInfoFrame::initUI()
         clipboard->setText(m_netScheme->text() + m_networkAddrLabel->text());
     });
     QHBoxLayout *schemeLayout = new QHBoxLayout;
+    schemeLayout->setSpacing(0);
+    m_netScheme->setContentsMargins(0,0,0,0);
+    m_networkAddrLabel->setContentsMargins(0,0,0,0);
     schemeLayout->addWidget(m_netScheme);
     schemeLayout->addWidget(m_networkAddrLabel);
+    schemeLayout->setStretch(0,0);
+    schemeLayout->setStretch(1,10);
     networkAddrLayout->addItem(schemeLayout);
     networkAddrLayout->addWidget(copyNetAddr);
     networkAddrLayout->setStretch(0, 1);

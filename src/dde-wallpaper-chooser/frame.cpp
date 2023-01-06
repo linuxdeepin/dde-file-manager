@@ -1,24 +1,7 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     wangchunlin<wangchunlin@uniontech.com>
- *
- * Maintainer: wangchunlin<wangchunlin@uniontech.com>
- *             xinglinkun<xinglinkun@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "frame.h"
 #include "checkbox.h"
 #include "constants.h"
@@ -64,6 +47,7 @@
 #define SCREENSAVER_BUTTON_ID "screensaver"
 #define SessionManagerService "com.deepin.SessionManager"
 #define SessionManagerPath "/com/deepin/SessionManager"
+#define CUSTOMSCREENSAVER_BUTTON_ID "custom-screensaver"
 
 
 #define BUTTON_NARROW_WIDTH     79
@@ -424,17 +408,6 @@ void Frame::keyPressEvent(QKeyEvent *event)
         DBlurEffectWidget::keyPressEvent(event);
         break;
     }
-}
-
-void Frame::paintEvent(QPaintEvent *event)
-{
-    DBlurEffectWidget::paintEvent(event);
-
-    QPainter pa(this);
-
-    pa.setCompositionMode(QPainter::CompositionMode_SourceOut);
-    pa.setPen(QPen(QColor(255, 255, 255, 20), 1));
-    pa.drawLine(QPoint(0, 0), QPoint(width(), 0));
 }
 
 bool Frame::event(QEvent *event)
@@ -1077,7 +1050,8 @@ void Frame::refreshList()
                                                                   QDBusConnection::sessionBus(), this);
         }
 
-        const QStringList &saverNameList = m_dbusScreenSaver->allScreenSaver();
+        const QStringList &screensaverConfigurableItems = m_dbusScreenSaver->ConfigurableItems();
+        QStringList saverNameList = m_dbusScreenSaver->allScreenSaver();
         const QString &currentScreensaver = m_dbusScreenSaver->currentScreenSaver();
         if (saverNameList.isEmpty() && !m_dbusScreenSaver->isValid()) {
             qWarning() << "com.deepin.ScreenSaver allScreenSaver fail. retry";
@@ -1093,19 +1067,36 @@ void Frame::refreshList()
             m_itemwait = nullptr;
         }
 
+        // 支持多个屏保程序参数配置
+        int customSaverCount = 0;
+        for (const QString &name : saverNameList) {
+            // 置顶具有参数配置的屏保程序
+            if (screensaverConfigurableItems.contains(name)) {
+                saverNameList.move(saverNameList.indexOf(name), customSaverCount);
+                customSaverCount++;
+            }
+        }
+
         bool isPressed = false; //记录当前设置的屏保是否已被选中
         for (const QString &name : saverNameList) {
             if("flurry" == name){
                 continue;//临时屏蔽名字为flurry的屏保
             }
-
             const QString &coverPath = m_dbusScreenSaver->GetScreenSaverCover(name);
 
             WallpaperItem *item = m_wallpaperList->addWallpaper(coverPath);
             item->setData(name);
             item->setUseThumbnailManager(false);
             item->setDeletable(false);
-            item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+            // 确保具有参数配置界面，才添加配置按钮
+            if (screensaverConfigurableItems.contains(name)) {
+                item->setEntranceIconOfSettings(CUSTOMSCREENSAVER_BUTTON_ID);
+                item->addButton(CUSTOMSCREENSAVER_BUTTON_ID, tr("Custom Screensaver"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+                item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"), BUTTON_WIDE_WIDTH, 1, 0, 1, 2);
+            } else {
+                item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+            }
+
             item->show();
             connect(item, &WallpaperItem::tab, this, [=]() {
                 if (m_mode == WallpaperMode) {
@@ -1185,6 +1176,8 @@ void Frame::onItemButtonClicked(const QString &buttonID)
 #ifndef DISABLE_SCREENSAVER
     else if (buttonID == SCREENSAVER_BUTTON_ID) {
         m_dbusScreenSaver->setCurrentScreenSaver(item->data());
+    } else if (buttonID == CUSTOMSCREENSAVER_BUTTON_ID) {
+        m_dbusScreenSaver->StartCustomConfig(item->data());
     }
 #endif
 

@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     xushitong<xushitong@uniontech.com>
- *
- * Maintainer: dengkeyun<dengkeyun@uniontech.com>
- *             max-lv<lvwujun@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "diskcontrolwidget.h"
 #include "diskcontrolitem.h"
@@ -28,6 +9,7 @@
 #include "models/dfmrootfileinfo.h"
 #include "interfaces/dumountmanager.h"
 #include "diskglobal.h"
+#include "rlog/datas/blockmountreportdata.h"
 
 #include <dgiovolumemanager.h>
 #include <dgiomount.h>
@@ -561,6 +543,8 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
     if (!blkDev->hasFileSystem()) return;
 
     QString mountPoint = blkDev->mount({});
+    BlockMountReportData::report({{"dev", blkDev->device()},
+                                  {"result", !mountPoint.isEmpty()}});
 
     if (mountPoint.isEmpty() || blkDev->lastError().type() != QDBusError::NoError) {
         qDebug() << "auto mount error: " << blkDev->lastError().type() << blkDev->lastError().message();
@@ -646,10 +630,12 @@ void DiskControlWidget::refreshDesktop()
 {
     qDebug() << "call desktop.canvas.reFresh";
     // call desktop.canvas.reFresh
-    DDBusSender()
-            .service("com.deepin.dde.desktop")
-            .path("/com/deepin/dde/desktop")
-            .interface("com.deepin.dde.desktop")
-            .method(QString("Refresh"))
-            .call();
+    QTimer::singleShot(100, nullptr, []{
+        DDBusSender()
+                .service("com.deepin.dde.desktop")
+                .path("/com/deepin/dde/desktop")
+                .interface("com.deepin.dde.desktop")
+                .method(QString("Refresh"))
+                .call();
+    });
 }

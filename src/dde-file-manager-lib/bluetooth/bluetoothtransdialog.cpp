@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     xushitong<xushitong@uniontech.com>
- *
- * Maintainer: dengkeyun<dengkeyun@uniontech.com>
- *             max-lv<lvwujun@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "bluetoothtransdialog.h"
 #include "dguiapplicationhelper.h"
@@ -46,6 +27,7 @@
 #include <QPalette>
 #include <QSvgWidget>
 #include <QUuid>
+#include <QTimer>
 
 #define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
 #define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
@@ -154,8 +136,24 @@ QString BluetoothTransDialog::humanizedStrOfObexErrMsg(const QString &msg)
         return tr("File sending request timed out");
     } else if (msg.contains("0x53")) {
         return tr("The service is busy and unable to process the request");
+    } else if (msg.contains("device not connected")) {
+        return TXT_ERROR_REASON;
     } else { // ...TO BE CONTINUE
         return msg;
+    }
+}
+
+void BluetoothTransDialog::setNextButtonEnable(bool enable)
+{
+    if (m_stack->currentIndex() != Page::SelectDevicePage) {
+        for (auto btn: getButtons())
+            btn->setEnabled(true);
+        return;
+    }
+
+    auto btns = getButtons();
+    if (btns.count() == 2) {
+        btns[1]->setEnabled(enable);
     }
 }
 
@@ -230,8 +228,10 @@ void BluetoothTransDialog::initConn()
                 item->setCheckState(Qt::Checked);
                 m_selectedDevice = item->text();
                 m_selectedDeviceId = item->data(DevIdRole).toString();
-            } else
+                setNextButtonEnable(true);  // when an item is selected, the next button should be enable.
+            } else {
                 item->setCheckState(Qt::Unchecked);
+            }
         }
     });
 
@@ -325,8 +325,9 @@ void BluetoothTransDialog::initConn()
             m_stack->setCurrentIndex(SelectDevicePage);
         else
             m_stack->setCurrentIndex(NoneDevicePage);
-
-        dialogManager->showErrorDialog(TITLE_BT_TRANS_FAIL, humanizedStrOfObexErrMsg(errMsg));
+        QTimer::singleShot(150, this, [=]{
+            dialogManager->showErrorDialog(TITLE_BT_TRANS_FAIL, humanizedStrOfObexErrMsg(errMsg));
+        });
     });
 }
 
@@ -631,6 +632,10 @@ void BluetoothTransDialog::removeDevice(const QString &id)
 {
     for (int i = 0; i < m_devModel->rowCount(); i++) {
         if (m_devModel->data(m_devModel->index(i, 0), DevIdRole).toString() == id) {
+            auto item = m_devModel->item(i);
+            if (item && item->checkState() == Qt::Checked)
+                setNextButtonEnable(false); // set the next button disable when the selected item is removed.
+
             m_devModel->removeRow(i);
             if (m_devModel->rowCount() == 0 && m_stack->currentIndex() == SelectDevicePage)
                 m_stack->setCurrentIndex(NoneDevicePage);
@@ -754,6 +759,14 @@ void BluetoothTransDialog::onPageChagned(const int &nIdx)
     case SelectDevicePage:
         addButton(TXT_CANC);
         addButton(TXT_NEXT, true, ButtonType::ButtonRecommend);
+        setNextButtonEnable(false);
+        for (int i = 0; i < m_devModel->rowCount(); ++i) {
+            auto item = m_devModel->item(i);
+            if (item && item->checkState() == Qt::Checked) {
+                setNextButtonEnable(true);
+                break;
+            }
+        }
         break;
     case NoneDevicePage:
     case WaitForRecvPage:

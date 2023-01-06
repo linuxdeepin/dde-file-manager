@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "computerview.h"
 #include "dfilemenu.h"
@@ -50,6 +30,7 @@
 #include "controllers/vaultcontroller.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "../shutil/fileutils.h"
+#include "../shutil/smbintegrationswitcher.h"
 #include "views/dtoolbar.h"
 #include "drootfilemanager.h"
 #include "utils.h"
@@ -125,7 +106,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     m_statusbar = new DStatusBar(this);
     m_statusbar->scalingSlider()->setMaximum(iconsizes.count() - 1);
     m_statusbar->scalingSlider()->setMinimum(0);
-    m_statusbar->scalingSlider()->setTickInterval(1);
+    m_statusbar->scalingSlider()->slider()->setTickInterval(1);
     m_statusbar->scalingSlider()->setPageStep(1);
     m_statusbar->scalingSlider()->hide();
     m_statusbar->setMaximumHeight(22);
@@ -197,24 +178,6 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
                 return;
             }
         }
-        //!点击计算机页面中的SMB设备时，如果是SMB设备，则进入smb://<host>目录
-        //! dfmroot:///smb://<host>/<share_folder>.remote
-        //! dfmroot:///smb://xxxxxxxxxxxxxxxxxx.gvfsmp
-        QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
-        localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
-        bool isGvfsFile = FileUtils::isGvfsMountFile(localFilePath);
-        if(isGvfsFile || FileUtils::isSmbShareFolder(url)){
-            QString smbIp;
-            bool re = FileUtils::isSmbRelatedUrl(url,smbIp);
-            if (re) {
-                QWidget *p = WindowManager::getWindowById(window()->internalWinId());
-                if (p) {
-                    DUrl temUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
-                    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, temUrl, p);
-                    return;
-                }
-            }
-        }
         // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
         if (url.path().endsWith(SUFFIX_STASHED_REMOTE)) {
             DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
@@ -224,7 +187,25 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
                 return;
             }
         }
-
+        //!点击计算机页面中的SMB设备时，如果是SMB设备，则进入smb://<host>目录
+        //! dfmroot:///smb://<host>/<share_folder>.remote
+        //! dfmroot:///smb://xxxxxxxxxxxxxxxxxx.gvfsmp
+        QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
+        localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
+        bool isGvfsFile = FileUtils::isGvfsMountFile(localFilePath);
+        if (isGvfsFile) {
+            QString smbIp;
+            bool re = FileUtils::isSmbRelatedUrl(url, smbIp);
+            if (re) {
+                QWidget *p = WindowManager::getWindowById(window()->internalWinId());
+                if (p) {
+                    //localFilePath like: /run/user/1000/gvfs/smb-share:server=x.x.x.x,share=share_dir.gvfsmp
+                    DUrl temUrl = FileUtils::durlFromLocalPath(localFilePath.remove(".gvfsmp"));
+                    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, temUrl, p);
+                    return;
+                }
+            }
+        }
         //判断网络文件是否可以到达
         // fix bug 63803 这里是鼠标事件进入后，checkGvfsMountfileBusy需要很长时间，所以鼠标事件没有结束
         // 切换到其他界面，就析构了自己，当这个checkGvfsMountfileBusy退出，qt处理鼠标事件就崩溃了。
@@ -311,7 +292,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     connect(m_view, &QAbstractItemView::doubleClicked, std::bind(enterfunc, std::placeholders::_1, 1));
     connect(m_view, &QAbstractItemView::clicked, std::bind(enterfunc, std::placeholders::_1, 0));
     connect(re, &ViewReturnEater::entered, std::bind(enterfunc, std::placeholders::_1, -1));
-    connect(m_statusbar->scalingSlider(), &QSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
+    connect(m_statusbar->scalingSlider(), &DSlider::valueChanged, this, [this] {m_view->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));});
     connect(fileSignalManager, &FileSignalManager::requestRename, this, &ComputerView::onRenameRequested);
 
     connect(&DeviceInfoParser::Instance(), SIGNAL(loadFinished()), this, SLOT(repaint()));
@@ -407,7 +388,7 @@ void ComputerView::contextMenu(const QPoint &pos)
         if(scheme == SMB_SCHEME){
             QVector<MenuAction> actionValue;
             actionValue << MenuAction::UnmountAllSmbMount
-                        << MenuAction::ForgetAllSmbPassword;
+                        << (smbIntegrationSwitcher->isIntegrationMode() ? MenuAction::ForgetAllSmbPassword : MenuAction::ForgetPassword);
             menu = DFileMenuManager::genereteMenuByKeys(actionValue, disabled);
         }else{
             menu = DFileMenuManager::genereteMenuByKeys(av, disabled);

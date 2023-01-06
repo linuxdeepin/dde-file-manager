@@ -9,6 +9,8 @@ include($$PWD/util/util.pri)
 include($$PWD/dbus/dbus.pri)
 
 include($$PWD/../dde-wallpaper-chooser/dde-wallpaper-chooser.pri)
+include($$PWD/../grandsearchdaemon/grandsearchdaemon.pri)
+
 # 集成测试标签
 include($$PWD/../../3rdparty/accessibility/accessibility-suite.pri)
 #无热区设置
@@ -40,7 +42,8 @@ INCLUDEPATH += $$PWD/../dde-file-manager-lib\
                $$PWD/../utils \
                $$PWD/../dde-file-manager-lib/interfaces \
                $$PWD/../dde-file-manager-lib/interfaces/plugins \
-               $$PWD/../dde-file-manager-lib/io
+               $$PWD/../dde-file-manager-lib/io \
+               $$PWD/../../3rdparty/dbusservice
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/release -ldde-file-manager
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
@@ -50,6 +53,13 @@ else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager \
 CONFIG(debug, debug|release) {
     DEPENDPATH += $$PWD/../dde-file-manager-lib $$PWD/../dde-file-manager-extension
     unix:QMAKE_RPATHDIR += $$OUT_PWD/../dde-file-manager-lib $$OUT_PWD/../dde-file-manager-extension
+}
+
+#安全加固
+QMAKE_CXXFLAGS += -fstack-protector-all
+QMAKE_LFLAGS += -z now -pie -fPIE
+isEqual(ARCH, mips64) | isEqual(ARCH, mips32){
+    QMAKE_LFLAGS += -z noexecstack -z relro
 }
 
 SOURCES += \

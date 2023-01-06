@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 #include <QTest>
@@ -22,7 +26,7 @@
 
 TEST(DfileSelectionModelTest, dfile_selection_model)
 {
-    DFileSelectionModel dfile;
+    DFileSelectionModel dfile(nullptr);
     DFileSelectionModel dfile1(nullptr, nullptr);
     EXPECT_EQ(true, dfile.m_timer.isSingleShot());
     EXPECT_TRUE(dfile1.m_timer.isSingleShot());

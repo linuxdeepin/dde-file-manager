@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef DFMSETTINGDIALOG_P_H
 #define DFMSETTINGDIALOG_P_H
@@ -126,6 +108,7 @@ private:
         {"advance.mount.auto_mount_and_open", DFMApplication::GA_AutoMountAndOpen},
         {"advance.mount.mtp_show_bottom_info", DFMApplication::GA_MTPShowBottomInfo},
         {"advance.mount.always_show_offline_remote_connection", DFMApplication::GA_AlwaysShowOfflineRemoteConnections},
+        {"advance.mount.merge_the_entries_of_samba_shared_folders", DFMApplication::GA_MergeTheEntriesOfSambaSharedFolders},
         {"advance.dialog.default_chooser_dialog", DFMApplication::GA_OverrideFileChooserDialog},
         {"advance.dialog.delete_confirmation_dialog", DFMApplication::GA_ShowDeleteConfirmDialog},
         {"advance.other.hide_system_partition", DFMApplication::GA_HiddenSystemPartition},

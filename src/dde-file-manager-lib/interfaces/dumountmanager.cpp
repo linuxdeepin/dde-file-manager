@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     dengkeyun<dengkeyun@uniontech.com>
- *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "interfaces/dumountmanager.h"
 #include "interfaces/defenderinterface.h"
@@ -31,6 +12,7 @@
 #include <QUrl>
 #include <QScopedPointer>
 #include <QDebug>
+#include <QThread>
 
 DUMountManager::DUMountManager(QObject *parent)
     :QObject(parent)
@@ -45,6 +27,11 @@ DUMountManager::~DUMountManager()
 QString DUMountManager::getDriveName(const QString &blkName)
 {
     QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blkName));
+    auto backingDev = blkd->cryptoBackingDevice();
+    if (backingDev.length() > 1) {
+        auto backingBlk = DDiskManager::createBlockDevice(backingDev);
+        return backingBlk ? backingBlk->drive() : "";
+    }
     return blkd ? blkd->drive() : QString();
 }
 
@@ -147,7 +134,11 @@ bool DUMountManager::umountBlocksOnDrive(const QString &driveName)
     qInfo() << "start umount blocks on drive:" << driveName;
     for (const QString &blkStr : DDiskManager::blockDevices({})) {
         QScopedPointer<DBlockDevice> blkd(DDiskManager::createBlockDevice(blkStr));
-        if (blkd && blkd->drive() == driveName) {
+        auto drvName = blkd ? blkd->drive() : "";
+        if (blkd->cryptoBackingDevice().length() > 1)
+            drvName = getDriveName(blkd->path());
+
+        if (drvName == driveName) {
             if (!umountBlock(blkStr)) {
                 qWarning() << "umountBlock failed: drive = " << driveName << ", block str = " << blkStr;
                 errorMsg = "umount block failed";
@@ -193,6 +184,7 @@ bool DUMountManager::removeDrive(const QString &driveName)
     umountBlocksOnDrive(driveName);
 
     qInfo() << "start remove drive:" << driveName;
+    QThread::msleep(500); // make a short delay to make sure that the resource is already released.
     if (drv->canPowerOff()) {
         drv->powerOff({});
 

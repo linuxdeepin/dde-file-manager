@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     max-lv<lvwujun@uniontech.com>
- *
- * Maintainer: dengkeyun<dengkeyun@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
@@ -62,7 +43,9 @@ public:
     static void recurseFolder(const QString &path, const QString &parent,
                               QStringList *list);
     static int filesCount(const QString &dir);
-    static QStringList filesList(const QString &dir);
+    static QFileInfoList fileInfoList(const QString &path);
+    static QFileInfoList fileInfoListRecursive(const QString &path);
+    static QStringList filesList(const QString &path);
     static qint64 singleDirSize(const DUrl &url);
     static qint64 totalSize(const QString &targetFile);
     static qint64 totalSize(const DUrlList &files);
@@ -79,6 +62,7 @@ public:
                                 const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
     static QIcon searchAppIcon(const DesktopFile &app,
                                const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
+    static QString formatOpticalMediaType(const QString &media);
     static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
     static QString diskUsageString(quint64 &usedSize, quint64 &totalSize, QString strVolTag = "");
     static QString defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize);
@@ -184,6 +168,9 @@ public:
     static QList<QStringList> bindPathInfo(const QString &grepData);
 
     static QList<QStringList> catFstabFileInfo(const QString &mountPoint);
+    static bool isArchiveByMimetype(const QString &mimetype);
+
+    static int maxLabelLengthOfFileSystem(const QString &fs);
 };
 
 #endif // FILEUTILS_H

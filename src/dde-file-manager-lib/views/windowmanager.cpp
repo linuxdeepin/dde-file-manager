@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
- *               2016 ~ 2018 dragondjf
- *
- * Author:     dragondjf<dingjiangfeng@deepin.com>
- *
- * Maintainer: dragondjf<dingjiangfeng@deepin.com>
- *             zccrs<zhangjide@deepin.com>
- *             Tangtong<tangtong@deepin.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "windowmanager.h"
 #include "dfilemanagerwindow.h"
@@ -36,6 +16,8 @@
 #include "fileoperations/filejob.h"
 
 #include "dialogs/dialogmanager.h"
+
+#include "utils/rlog/rlog.h"
 
 #include "qobjecthelper.h"
 
@@ -102,6 +84,11 @@ void WindowManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestOpenNewWindowByUrl, this, &WindowManager::showNewWindow);
     connect(fileSignalManager, &FileSignalManager::aboutToCloseLastActivedWindow, this, &WindowManager::onLastActivedWindowClosed);
     connect(qApp, &QApplication::aboutToQuit, this, [ = ]() {
+        // report quit
+        QVariantMap data;
+        data.insert("type", false);
+        rlog->commit("AppStartup", data);
+
         fileSignalManager->requestCloseListen();
         DFMGlobal::setAppQuiting();
         qInfo() << "app quiting !";

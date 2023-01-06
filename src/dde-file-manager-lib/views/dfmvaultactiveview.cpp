@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmvaultactiveview.h"
 #include "dfmvaultactivestartview.h"
@@ -27,6 +9,7 @@
 #include "dfmvaultactivefinishedview.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "controllers/vaultcontroller.h"
+#include "vault/vaultconfig.h"
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -47,6 +30,7 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
 {
     AC_SET_ACCESSIBLE_NAME(this, AC_VAULT_ACTIVE_WIDGET);
     this->setIcon(QIcon::fromTheme("dfm_vault"));
+    this->setAttribute(Qt::WA_DeleteOnClose, true);
 
     // 初始化试图容器
     m_pStackedWidget = new QStackedWidget(this);
@@ -80,6 +64,11 @@ DFMVaultActiveView::DFMVaultActiveView(QWidget *parent)
     connect(VaultController::ins(), &VaultController::sigCloseWindow, this, &DFMVaultActiveView::close);
 }
 
+DFMVaultActiveView::~DFMVaultActiveView()
+{
+    VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
+}
+
 void DFMVaultActiveView::setBeginingState()
 {
     m_pStackedWidget->setCurrentIndex(0);
@@ -92,6 +81,7 @@ void DFMVaultActiveView::closeEvent(QCloseEvent *event)
 {
     VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     setBeginingState();
+
     // 响应基类关闭事件
     DFMVaultPageBase::closeEvent(event);
 }
@@ -108,8 +98,19 @@ void DFMVaultActiveView::slotNextWidget()
         int nIndex = m_pStackedWidget->currentIndex();
         int nCount = m_pStackedWidget->count();
         if (nIndex < nCount - 1) {
-            int nNextIndex = nIndex + 1;
-            m_pStackedWidget->setCurrentIndex(nNextIndex);
+            if (nIndex == 1) {  // 设置加密方式界面
+                VaultConfig config;
+                QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+                if (encryptionMethod == CONFIG_METHOD_VALUE_KEY) {
+                    m_pStackedWidget->setCurrentIndex(nIndex + 1);
+                } else if (encryptionMethod == CONFIG_METHOD_VALUE_TRANSPARENT) {
+                    m_pStackedWidget->setCurrentIndex(nIndex + 2);
+                } else if (encryptionMethod == "NoExist") {
+                    qWarning() << "Get encryption method failed, cant not next!";
+                }
+                return;
+            }
+            m_pStackedWidget->setCurrentIndex(nIndex + 1);
         } else {
             setBeginingState();   // 控件文本恢复初值
             emit accept();

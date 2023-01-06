@@ -78,6 +78,28 @@
             "description[zh_CN]": "隐藏文件对话框指定菜单项",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "dfm.vault.algo.name": {
+            "value": "sm4-128-ecb",
+            "serial": 0,
+            "flags": [],
+            "name": "保险箱加密算法",
+            "name[zh_CN]": "保险箱加密算法",
+            "description": "保险箱加密算法，默认为国密算法(sm4-128-ecb),可选国际算法(aes-256-gcm)",
+            "description[zh_CN]": "保险箱加密算法，默认为国密算法(sm4-128-ecb),可选国际算法(aes-256-gcm)",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "dfm.samba.permanent": {
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"Samba共享端常驻显示挂载入口",
+            "name[zh_CN]":"Samba共享端常驻显示挂载入口",
+            "description[zh_CN]":"该配置项用于控制是否常驻显示Samba的挂在入口，即便其没有挂载",
+            "description":"该配置项用于控制是否常驻显示Samba的挂载入口，即便其没有挂载",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

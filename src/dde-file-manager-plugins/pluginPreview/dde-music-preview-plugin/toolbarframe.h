@@ -1,37 +1,27 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     lixiang<lixianga@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             lixiang<lixianga@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #ifndef TOOLBARFRAME_H
 #define TOOLBARFRAME_H
 
+#include <dtkwidget_global.h>
+
 #include <QFrame>
 #include <QMediaPlayer>
 
-
+QT_BEGIN_NAMESPACE
 class QPushButton;
 class QSlider;
 class QLabel;
 class QMediaPlayer;
 class QTimer;
+QT_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DSlider;
+DWIDGET_END_NAMESPACE
+
 class ToolBarFrame : public QFrame
 {
     Q_OBJECT
@@ -61,7 +51,7 @@ private:
 private:
     QMediaPlayer *m_player;
     QPushButton *m_playControlButton;
-    QSlider *m_progressSlider;
+    DTK_WIDGET_NAMESPACE::DSlider *m_progressSlider;
     QLabel *m_durationLabel;
     QTimer *m_updateProgressTimer;
 };

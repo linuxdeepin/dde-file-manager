@@ -1,25 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     dengkeyun<dengkeyun@uniontech.com>
- *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "networkfileinfo.h"
 
@@ -30,6 +11,7 @@
 #include "controllers/pathmanager.h"
 
 #include "views/dfileview.h"
+#include "shutil/fileutils.h"
 
 #include <QIcon>
 
@@ -113,11 +95,20 @@ DUrl NetworkFileInfo::parentUrl() const
 
 QString NetworkFileInfo::fileDisplayName() const
 {
-
     if (systemPathManager->isSystemPath(fileUrl().toString()))
         return systemPathManager->getSystemPathDisplayNameByPath(fileUrl().toString());
 
-    return m_networkNode.displayName();
+    const QString &name = m_networkNode.displayName();
+    if(!name.isEmpty())
+        return name;
+
+    if(fileUrl().isValid()) {
+        const QString &host = fileUrl().host();
+        if(!host.isEmpty())
+            return host;
+    }
+
+    return QString();
 }
 
 //QString NetworkFileInfo::mimeTypeName(QMimeDatabase::MatchMode mode) const

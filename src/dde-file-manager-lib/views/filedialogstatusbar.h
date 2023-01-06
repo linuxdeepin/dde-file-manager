@@ -1,13 +1,11 @@
-/**
- * Copyright (C) 2017 Deepin Technology Co., Ltd.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- **/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef FILEDIALOGSTATUSBAR_H
 #define FILEDIALOGSTATUSBAR_H
+
+#include <dtkwidget_global.h>
 
 #include <QFrame>
 
@@ -18,6 +16,10 @@ class QLineEdit;
 class QComboBox;
 class QPushButton;
 QT_END_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DSuggestButton;
+DWIDGET_END_NAMESPACE
 
 class FileDialogStatusBar : public QFrame
 {
@@ -38,7 +40,7 @@ public:
 
     QLineEdit *lineEdit() const;
 
-    QPushButton *acceptButton() const;
+    Dtk::Widget::DSuggestButton *acceptButton() const;
     QPushButton *rejectButton() const;
 
     void addLineEdit(QLabel *label, QLineEdit *edit);
@@ -59,6 +61,7 @@ private:
 
     void updateLayout();
     void onWindowTitleChanged(const QString &title);
+    void updateComboxWidth();
 
     Mode m_mode = Unknow;
 
@@ -71,7 +74,7 @@ private:
     QLineEdit *m_fileNameEdit;
     QComboBox *m_filtersComboBox;
 
-    QPushButton *m_acceptButton;
+    DTK_WIDGET_NAMESPACE::DSuggestButton *m_acceptButton;
     QPushButton *m_rejectButton;
 
     QList<QPair<QLabel *, QLineEdit *>> m_customLineEditList;

@@ -1,24 +1,6 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     gongheng<gongheng@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             gongheng<gongheng@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfmsettingdialog.h"
 #include "dfmglobal.h"
@@ -28,6 +10,8 @@
 #include "app/filesignalmanager.h"
 #include "dfmsettings.h"
 #include "private/dfmsettingdialog_p.h"
+#include "grouppolicy.h"
+#include "settingscontrols/checkboxwithmessage.h"
 
 #include <QCheckBox>
 #include <QFrame>
@@ -80,7 +64,6 @@ QVariant SettingBackend::getOption(const QString &key) const
 
 void SettingBackend::doSync()
 {
-
 }
 
 void SettingBackend::doSetOption(const QString &key, const QVariant &value)
@@ -103,6 +86,10 @@ void SettingBackend::doSetOption(const QString &key, const QVariant &value)
     //fix bug 39785 【专业版 sp3】【文件管理器】【5.2.0.8-1】文管菜单设置隐藏系统盘，关闭所有文管窗口，再打开新文管窗口，系统盘没有隐藏
     if (key == QString("advance.other.hide_system_partition")) {
         fileSignalManager->requestHideSystemPartition(value.toBool());
+    }
+
+    if (key == QString("advance.mount.always_show_offline_remote_connection")) {
+        GroupPolicy::instance()->setValue("dfm.samba.permanent", value);
     }
 }
 
@@ -262,12 +249,14 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
 
 QPointer<QCheckBox> DFMSettingDialog::AutoMountCheckBox = nullptr;
 QPointer<QCheckBox> DFMSettingDialog::AutoMountOpenCheckBox = nullptr;
+QPointer<QCheckBox> DFMSettingDialog::MergeSmbCheckBox = nullptr;
 
 DFMSettingDialog::DFMSettingDialog(QWidget *parent):
     DSettingsDialog(parent)
 {
     widgetFactory()->registerWidget("mountCheckBox", &DFMSettingDialog::createAutoMountCheckBox);
     widgetFactory()->registerWidget("openCheckBox", &DFMSettingDialog::createAutoMountOpenCheckBox);
+    widgetFactory()->registerWidget("checkBoxWithMessage", &DFMSettingDialog::createCheckBoxWithMessage);
 
 #ifdef DISABLE_COMPRESS_PREIVEW
     //load temlate
@@ -374,4 +363,36 @@ QPair<QWidget *, QWidget *> DFMSettingDialog::createAutoMountOpenCheckBox(QObjec
     });
 
     return qMakePair(openCheckBox, nullptr);
+}
+
+QPair<QWidget *, QWidget *> DFMSettingDialog::createCheckBoxWithMessage(QObject *opt)
+{
+    auto option = qobject_cast<Dtk::Core::DSettingsOption *>(opt);
+    const QString &text = option->data("text").toString();
+    const QString &message = option->data("message").toString();
+
+    CheckBoxWithMessage *checkBoxWithMsg = new CheckBoxWithMessage;
+    checkBoxWithMsg->setText(qApp->translate("GenerateSettingTranslate", text.toStdString().c_str()));
+    checkBoxWithMsg->setMessage(qApp->translate("GenerateSettingTranslate", message.toStdString().c_str()));
+
+    DFMSettingDialog::MergeSmbCheckBox = checkBoxWithMsg->checkBox();
+
+    checkBoxWithMsg->checkBox()->setChecked(option->value().toBool());
+
+    QObject::connect(checkBoxWithMsg->checkBox(),
+                     &QCheckBox::stateChanged,
+                     option,
+    [ = ](int state) {
+        if (state == 0) {
+            option->setValue(false);
+        } else if (state == 2) {
+            option->setValue(true);
+        }
+    });
+
+    QObject::connect(option, &DSettingsOption::valueChanged, checkBoxWithMsg->checkBox(), [ = ](QVariant value) {
+        checkBoxWithMsg->checkBox()->setChecked(value.toBool());
+    });
+
+    return qMakePair(checkBoxWithMsg, nullptr);
 }

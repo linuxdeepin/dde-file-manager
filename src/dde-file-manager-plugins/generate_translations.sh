@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # this file is used to auto-generate .qm file from .ts file.
 # author: shibowen at linuxdeepin.com
 

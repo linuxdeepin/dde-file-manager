@@ -1,26 +1,6 @@
-/*
-* Copyright (C) 2016 ~ 2018 Deepin Technology Co., Ltd.
-*               2016 ~ 2018 dragondjf
-*
-* Author:     dragondjf<dingjiangfeng@deepin.com>
-*
-* Maintainer: dragondjf<dingjiangfeng@deepin.com>
-*             zccrs<zhangjide@deepin.com>
-*             Tangtong<tangtong@deepin.com>
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dfilemanagerwindow_p.h"
 #include "dfilemanagerwindow.h"
@@ -74,7 +54,7 @@
 #include "controllers/vaultcontroller.h"
 #include "views/dfmvaultactiveview.h"
 #include "vault/vaultglobaldefine.h"
-#include "dde-file-manager-daemon/dbusservice/dbusinterface/usershare_interface.h"
+#include "dbusinterface/usershare_interface.h"
 #include "plugins/pluginemblemmanager.h"
 
 #include <DPlatformWindowHandle>
@@ -373,11 +353,16 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
             bool ret = view->setRootUrl(realUrl);
             delete view;
             view = nullptr;
-            return ret;
+            if (!ret)
+                return ret;
         }
     }
 
     if (!current_view || !DFMViewManager::instance()->isSuited(fileUrl, current_view)) {
+        DFileView *fv = dynamic_cast<DFileView *>(currentView);
+        if (fv)
+            fv->cancelDrag();
+
         DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
         if (view) {
             viewStackLayout->addWidget(view->widget());
@@ -401,16 +386,11 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
 
             if (!fileInfo || !fileInfo->exists()) {
                 DUrl searchUrl = current_view ? current_view->rootUrl() : DUrl::fromLocalFile(QDir::homePath());
-
-                if (searchUrl.isComputerFile()) {
-                    searchUrl = DUrl::fromLocalFile("/");
-                }
-
                 if (searchUrl.isSearchFile()) {
                     searchUrl = searchUrl.searchTargetUrl();
                 }
 
-                if (!q_ptr->isCurrentUrlSupportSearch(searchUrl)) {
+                if (!searchUrl.isComputerFile() && !q_ptr->isCurrentUrlSupportSearch(searchUrl)) {
                     return false;
                 }
 
@@ -497,7 +477,7 @@ void DFileManagerWindowPrivate::initAdvanceSearchBar()
     // fix bug 59215 挤压导致界面异常，使用QScrollArea处理
     advanceSearchArea = new QScrollArea(q);
     advanceSearchArea->setWidget(advanceSearchBar);
-    advanceSearchArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//隐藏横向滚动条
+    advanceSearchArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);//显示横向滚动条
     advanceSearchArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//隐藏竖向滚动条
     rightViewLayout->insertWidget(advanceSearchBarInsertTo, advanceSearchArea);
 
@@ -708,6 +688,11 @@ void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainSt
     }
 
     DFMBaseView *view = tab->fileView();
+
+    d->isAdvanceSearchView.removeAll(view);
+    if (d->advanceSearchBar && d->isAdvanceSearchBarVisible()) {
+        d->advanceSearchBar->resetForm(true);
+    }
 
     d->viewStackLayout->removeWidget(view->widget());
     view->deleteLater();
@@ -1021,6 +1006,7 @@ void DFileManagerWindow::switchToView(DFMBaseView *view)
     D_D(DFileManagerWindow);
 
     if (d->currentView == view) {
+        d->currentView->widget()->setFocus(Qt::FocusReason::OtherFocusReason);
         return;
     }
 
@@ -1740,11 +1726,20 @@ void DFileManagerWindow::updateAdvanceSearchBarValue(const FileFilter *filter)
         d->advanceSearchBar->updateFilterValue(filter);
 }
 
-void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm)
+void DFileManagerWindow::toggleAdvanceSearchBar(bool visible, bool resetForm, bool clicked)
 {
     Q_D(DFileManagerWindow);
 
     if (!d->currentView) return;
+
+    if (clicked) {
+        if (visible) {
+            d->isAdvanceSearchView.append(d->currentView);
+        }
+        else {
+            d->isAdvanceSearchView.removeAll(d->currentView);
+        }
+    }
 
     if (d->isAdvanceSearchBarVisible() != visible) {
         d->setAdvanceSearchBarVisible(visible);
@@ -1777,5 +1772,12 @@ void DFileManagerWindow::clearActions()
 {
     if (fileMenuManger)
         fileMenuManger->clearActions();
+}
+
+bool DFileManagerWindow::isViewShowAdvanceSearchBar() const
+{
+    Q_D(const DFileManagerWindow);
+
+    return d->isAdvanceSearchView.contains(d->currentView);
 }
 

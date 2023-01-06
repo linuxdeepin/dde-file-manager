@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "dfmevent.h"
 #include "gvfs/qdiskinfo.h"
 #include "stub.h"
@@ -440,7 +444,8 @@ TEST_F(TestDialogManager, testShowRenameNameSameErrorDialog)
 
     int code = m_pTester->showRenameNameSameErrorDialog(name, event);
     EXPECT_EQ(code, 0);
-    m_pTester->showRenameBusyErrDialog(event);
+    EXPECT_NO_FATAL_FAILURE(m_pTester->showRenameBusyErrDialog(event));
+    EXPECT_NO_FATAL_FAILURE(m_pTester->showFormatDeviceBusyErrDialog(event));
 }
 
 // 测试文件命名为“..”时，弹出提示框
