@@ -194,7 +194,7 @@ bool ExtensionEmblemManager::onFetchCustomEmblems(const QUrl &url, QList<QIcon> 
                 emblems->push_back(QIcon());
 
             // repalce
-            for (int i = 0; i < std::min(group.size(), lastSapce); ++i) {
+            for (int i = 0; i < group.size(); ++i) {
                 int pos { group[i].second };
                 if (Q_UNLIKELY(pos >= kMaxEmblemCount))
                     continue;
