@@ -157,7 +157,8 @@ void FileDataCacheThread::addChildren(const QList<QUrl> &urls)
 
 void FileDataCacheThread::removeChildren(const QList<QUrl> &urls)
 {
-    for (const QUrl &url : urls) {
+    for (QUrl url : urls) {
+        url.setPath(url.path());
         int childIndex = -1;
         {
             QReadLocker lk(&childrenLock);
