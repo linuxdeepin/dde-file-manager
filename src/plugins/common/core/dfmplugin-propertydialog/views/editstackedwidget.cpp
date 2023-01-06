@@ -292,6 +292,7 @@ void EditStackedWidget::showTextShowFrame()
 
         initTextShowFrame(newName);
         dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, this->topLevelWidget()->winId(), oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+        filerUrl = newUrl;
         emit selectUrlRenamed(newUrl);
     }
 }

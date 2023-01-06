@@ -217,6 +217,9 @@ void FilePropertyDialog::onSelectUrlRenamed(const QUrl &url)
 {
     if (permissionManagerWidget)
         permissionManagerWidget->updateFileUrl(url);
+
+    if (basicWidget)
+        basicWidget->updateFileUrl(url);
 }
 
 void FilePropertyDialog::mousePressEvent(QMouseEvent *event)

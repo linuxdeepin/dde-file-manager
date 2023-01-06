@@ -313,6 +313,11 @@ int BasicWidget::getFileCount()
     return fCount;
 }
 
+void BasicWidget::updateFileUrl(const QUrl &url)
+{
+    currentUrl = url;
+}
+
 void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount)
 {
     fSize = size;

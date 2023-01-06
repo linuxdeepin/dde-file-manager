@@ -51,10 +51,9 @@ private:
 
 public:
     void selectFileUrl(const QUrl &url);
-
     qint64 getFileSize();
-
     int getFileCount();
+    void updateFileUrl(const QUrl &url);
 
 public slots:
 
