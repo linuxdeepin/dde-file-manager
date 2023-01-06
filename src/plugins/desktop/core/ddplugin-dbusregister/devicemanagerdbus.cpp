@@ -111,12 +111,12 @@ void DeviceManagerDBus::initConnection()
         emit BlockDeviceMounted(id, mpt);
         refreshDesktop("onBlockDevMounted");
     });
-    connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, [this, refreshDesktop](const QString &id) {
-        emit BlockDeviceUnmounted(id);
+    connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, [this, refreshDesktop](const QString &id, const QString &oldMpt) {
+        emit BlockDeviceUnmounted(id, oldMpt);
         refreshDesktop("onBlockDevUnmounted");
     });
-    connect(DevMngIns, &DeviceManager::blockDevRemoved, this, [this, refreshDesktop](const QString &id) {
-        emit BlockDeviceRemoved(id);
+    connect(DevMngIns, &DeviceManager::blockDevRemoved, this, [this, refreshDesktop](const QString &id, const QString &oldMpt) {
+        emit BlockDeviceRemoved(id, oldMpt);
         refreshDesktop("onBlockDevRemoved");
     });
 }

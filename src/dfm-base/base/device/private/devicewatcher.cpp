@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "devicewatcher.h"
 #include "devicewatcher_p.h"
 #include "devicehelper.h"
@@ -249,11 +249,13 @@ void DeviceWatcher::onBlkDevAdded(const QString &id)
 void DeviceWatcher::onBlkDevRemoved(const QString &id)
 {
     qDebug() << "block device removed: " << id;
+    QString oldMpt;
     {
         QMutexLocker lk(&d->blkMtx);
+        oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
         d->allBlockInfos.remove(id);
     }
-    emit DevMngIns->blockDevRemoved(id);
+    emit DevMngIns->blockDevRemoved(id, oldMpt);
 }
 
 void DeviceWatcher::onBlkDevMounted(const QString &id, const QString &mpt)
@@ -264,7 +266,13 @@ void DeviceWatcher::onBlkDevMounted(const QString &id, const QString &mpt)
 
 void DeviceWatcher::onBlkDevUnmounted(const QString &id)
 {
-    emit DevMngIns->blockDevUnmounted(id);
+    QString oldMpt;
+    {
+        QMutexLocker lk(&d->blkMtx);
+        oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
+        d->allBlockInfos[id][DeviceProperty::kMountPoint] = QString();
+    }
+    emit DevMngIns->blockDevUnmounted(id, oldMpt);
 }
 
 void DeviceWatcher::onBlkDevLocked(const QString &id)
@@ -319,8 +327,11 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
             {
                 QMutexLocker lk(&d->blkMtx);
                 item[name] = var;
+
+                // NOTE: when device's mountpoints changed to empty, do not update the cache immediatly, update it in blockDeviceUnmounted function
+                // to report the unmounted path to subscribers.
                 if (name == DeviceProperty::kMountPoints)
-                    item[DeviceProperty::kMountPoint] = var.toStringList().isEmpty() ? "" : var.toStringList().first();
+                    item[DeviceProperty::kMountPoint] = var.toStringList().isEmpty() ? item[DeviceProperty::kMountPoint] : var.toStringList().first();
                 if (name == DeviceProperty::kOptical && !var.toBool()) {
                     item[DeviceProperty::kOpticalMediaType] = "";
                     item[DeviceProperty::kOpticalWriteSpeed] = QStringList();
@@ -349,12 +360,14 @@ void DeviceWatcher::onProtoDevAdded(const QString &id)
 
 void DeviceWatcher::onProtoDevRemoved(const QString &id)
 {
+    QString oldMpt;
     qDebug() << "protocol device removed: " << id;
     {
         QMutexLocker lk(&d->protoMtx);
+        oldMpt = d->allProtocolInfos.value(id).value(DeviceProperty::kMountPoint).toString();
         d->allProtocolInfos.remove(id);
     }
-    emit DevMngIns->protocolDevRemoved(id);
+    emit DevMngIns->protocolDevRemoved(id, oldMpt);
 }
 
 void DeviceWatcher::onProtoDevMounted(const QString &id, const QString &mpt)
@@ -375,9 +388,10 @@ void DeviceWatcher::onProtoDevUnmounted(const QString &id)
     //    if (dev)
     //        d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
     //    else
+    QString oldMpt = d->allProtocolInfos.value(id).value(DeviceProperty::kMountPoint).toString();
     d->allProtocolInfos.remove(id);
 
-    emit DevMngIns->protocolDevUnmounted(id);
+    emit DevMngIns->protocolDevUnmounted(id, oldMpt);
 }
 
 QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType type, bool reload)

@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DEVICEPROXYMANAGER_H
 #define DEVICEPROXYMANAGER_H
 
@@ -81,18 +81,18 @@ Q_SIGNALS:
     void blockDriveAdded();
     void blockDriveRemoved();
     void blockDevAdded(const QString &id);
-    void blockDevRemoved(const QString &id);
+    void blockDevRemoved(const QString &id, const QString &oldMpt);
     void blockDevMounted(const QString &id, const QString &mpt);
-    void blockDevUnmounted(const QString &id);
+    void blockDevUnmounted(const QString &id, const QString &oldMpt);
     void blockDevLocked(const QString &id);
     void blockDevUnlocked(const QString &id, const QString &cleartextId);
     void blockDevFsAdded(const QString &id);
     void blockDevFsRemoved(const QString &id);
 
     void protocolDevAdded(const QString &id);
-    void protocolDevRemoved(const QString &id);
+    void protocolDevRemoved(const QString &id, const QString &oldMpt);
     void protocolDevMounted(const QString &id, const QString &mpt);
-    void protocolDevUnmounted(const QString &id);
+    void protocolDevUnmounted(const QString &id, const QString &oldMpt);
 
     void devMngDBusRegistered();
     void devMngDBusUnregistered();

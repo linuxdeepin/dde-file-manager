@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DEVICEMANAGERDBUS_H
 #define DEVICEMANAGERDBUS_H
 
@@ -44,19 +44,19 @@ signals:
     void BlockDriveAdded();
     void BlockDriveRemoved();
     void BlockDeviceAdded(QString id);
-    void BlockDeviceRemoved(QString id);
+    void BlockDeviceRemoved(QString id, const QString &oldMpt);
     void BlockDeviceFilesystemAdded(QString id);
     void BlockDeviceFilesystemRemoved(QString id);
     void BlockDeviceMounted(QString id, QString mountPoint);
-    void BlockDeviceUnmounted(QString id);
+    void BlockDeviceUnmounted(QString id, const QString &oldMpt);
     void BlockDevicePropertyChanged(QString id, QString property, QDBusVariant value);
     void BlockDeviceUnlocked(QString id, QString clearDeviceId);
     void BlockDeviceLocked(QString id);
 
     void ProtocolDeviceAdded(QString id);
-    void ProtocolDeviceRemoved(QString id);
+    void ProtocolDeviceRemoved(QString id, const QString &oldMpt);
     void ProtocolDeviceMounted(QString id, QString mountPoint);
-    void ProtocolDeviceUnmounted(QString id);
+    void ProtocolDeviceUnmounted(QString id, const QString &oldMpt);
 
 public slots:
     bool IsMonotorWorking();

@@ -18,6 +18,7 @@
     </signal>
     <signal name="BlockDeviceRemoved">
       <arg name="id" type="s" direction="out"/>
+      <arg name="oldMpt" type="s" direction="out"/>
     </signal>
     <signal name="BlockDeviceFilesystemAdded">
       <arg name="id" type="s" direction="out"/>
@@ -31,6 +32,7 @@
     </signal>
     <signal name="BlockDeviceUnmounted">
       <arg name="id" type="s" direction="out"/>
+      <arg name="oldMpt" type="s" direction="out"/>
     </signal>
     <signal name="BlockDevicePropertyChanged">
       <arg name="id" type="s" direction="out"/>
@@ -49,6 +51,7 @@
     </signal>
     <signal name="ProtocolDeviceRemoved">
       <arg name="id" type="s" direction="out"/>
+      <arg name="oldMpt" type="s" direction="out"/>
     </signal>
     <signal name="ProtocolDeviceMounted">
       <arg name="id" type="s" direction="out"/>
@@ -56,6 +59,7 @@
     </signal>
     <signal name="ProtocolDeviceUnmounted">
       <arg name="id" type="s" direction="out"/>
+      <arg name="oldMpt" type="s" direction="out"/>
     </signal>
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
