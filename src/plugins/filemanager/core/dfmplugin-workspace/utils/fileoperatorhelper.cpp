@@ -170,10 +170,10 @@ void FileOperatorHelper::cutFiles(const FileView *view)
 void FileOperatorHelper::pasteFiles(const FileView *view)
 {
     qInfo() << " paste file by clipboard and currentUrl: " << view->rootUrl();
-    // trash dir can't paste files
-    if (FileUtils::isTrashFile(view->rootUrl()))
-        return;
     auto action = ClipBoard::instance()->clipboardAction();
+    // trash dir can't paste files for copy
+    if (ClipBoard::kCopyAction == action && FileUtils::isTrashFile(view->rootUrl()))
+        return;
     auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
