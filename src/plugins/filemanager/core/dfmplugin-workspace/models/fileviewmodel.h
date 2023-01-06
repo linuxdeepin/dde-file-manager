@@ -44,6 +44,7 @@ namespace dfmplugin_workspace {
 
 class FileItemData;
 class FileDataHelper;
+class FileView;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -67,7 +68,7 @@ public:
     QUrl rootUrl(const QModelIndex &rootIndex) const;
     QModelIndex rootIndex(const QUrl &rootUrl) const;
 
-    QModelIndex setRootUrl(const QUrl &url);
+    QModelIndex setRootUrl(const QUrl &url, FileView *view);
 
     void clear(const QUrl &rootUrl);
     void update(const QUrl &rootUrl);
@@ -104,7 +105,7 @@ Q_SIGNALS:
     void childrenUpdated(const QUrl &url);
     void selectAndEditFile(const QUrl &rootUrl, const QUrl &url);
     void updateFiles();
-    void traverPrehandle(const QUrl &url, const QModelIndex &index);
+    void traverPrehandle(const QUrl &url, const QModelIndex &index, FileView *view);
     void reloadView();
 
 private:

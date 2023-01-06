@@ -21,6 +21,7 @@
  */
 #include "filemodelmanager.h"
 
+#include "views/fileview.h"
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
 
@@ -67,7 +68,7 @@ void FileModelManager::derefRootData(const QUrl &url)
     if (dataRefMap.contains(url)) {
         int refCount = dataRefMap[url];
         if (--refCount <= 0) {
-            //do clean cache data
+            // do clean cache data
             sourceDataModel->cleanDataCacheByUrl(url);
 
             dataRefMap.remove(url);

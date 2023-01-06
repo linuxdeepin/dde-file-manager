@@ -98,7 +98,7 @@ QModelIndex FileViewModel::rootIndex(const QUrl &rootUrl) const
     return createIndex(info->rowIndex, 0, info->data);
 }
 
-QModelIndex FileViewModel::setRootUrl(const QUrl &url)
+QModelIndex FileViewModel::setRootUrl(const QUrl &url, FileView *view)
 {
     if (!url.isValid())
         return QModelIndex();
@@ -126,7 +126,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
     if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme())) {
         root->canFetchByForce = true;
-        Q_EMIT traverPrehandle(url, index);
+        Q_EMIT traverPrehandle(url, index, view);
     } else {
         root->canFetchMore = true;
         fetchMore(index);

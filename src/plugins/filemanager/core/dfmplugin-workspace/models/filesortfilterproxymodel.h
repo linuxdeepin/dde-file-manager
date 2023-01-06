@@ -34,6 +34,7 @@
 namespace dfmplugin_workspace {
 
 class FileViewModel;
+class FileView;
 class FileSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -92,7 +93,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void onChildrenUpdate(const QUrl &url);
-    void onTraverPrehandle(const QUrl &url, const QModelIndex &index);
+    void onTraverPrehandle(const QUrl &url, const QModelIndex &index, const FileView *view);
     void onStateChanged(const QUrl &url, ModelState state);
     void onSelectAndEditFile(const QUrl &rootUrl, const QUrl &url);
 

@@ -116,7 +116,9 @@ QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
     rootUrl = url;
 
     workStoped = false;
-    const QModelIndex &rootIndex = viewModel()->setRootUrl(url);
+
+    auto view = qobject_cast<FileView *>(parent());
+    const QModelIndex &rootIndex = viewModel()->setRootUrl(url, view);
     resetFilter();
 
     return mapFromSource(rootIndex);
@@ -301,9 +303,9 @@ void FileSortFilterProxyModel::onChildrenUpdate(const QUrl &url)
         Q_EMIT modelChildrenUpdated();
 }
 
-void FileSortFilterProxyModel::onTraverPrehandle(const QUrl &url, const QModelIndex &index)
+void FileSortFilterProxyModel::onTraverPrehandle(const QUrl &url, const QModelIndex &index, const FileView *view)
 {
-    if (UniversalUtils::urlEquals(url, rootUrl)) {
+    if (UniversalUtils::urlEquals(url, rootUrl) && view == parent()) {
         auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
         if (prehandler) {
             isPrehandling = true;
