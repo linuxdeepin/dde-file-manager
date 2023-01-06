@@ -425,7 +425,10 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
     bool progressVisiable = index.data(ComputerModel::kProgressVisiableRole).toBool();
     if (progressVisiable) {
         const int TextMaxWidth = sizeHint(option, index).width() - IconSize - kIconLeftMargin - kIconLabelSpacing - kContentRightMargin;
-        double usedRate = sizeTotal == 0 ? 0 : sizeUsage * 1.0 / sizeTotal;
+        double usedRate = (sizeTotal == 0) ? 0 : (sizeUsage * 1.0 / sizeTotal);
+        if (usedRate > 1)
+            usedRate = 1.0;   // avoid overflow.
+
         QRect totalRect(QPoint(detailRect.x(), option.rect.y() + 64), QSize(TextMaxWidth, 6));
         QRect usedRect = totalRect;
         usedRect.setRight(usedRect.left() + usedRect.width() * usedRate);
