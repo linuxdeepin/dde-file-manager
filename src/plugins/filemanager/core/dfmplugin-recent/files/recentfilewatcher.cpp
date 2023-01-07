@@ -61,6 +61,7 @@ void RecentFileWatcherPrivate::initConnect()
     connect(proxy.data(), &AbstractFileWatcher::fileDeleted, q, &AbstractFileWatcher::fileDeleted);
     connect(proxy.data(), &AbstractFileWatcher::fileAttributeChanged, q, &AbstractFileWatcher::fileAttributeChanged);
     connect(proxy.data(), &AbstractFileWatcher::subfileCreated, q, &AbstractFileWatcher::subfileCreated);
+    connect(proxy.data(), &AbstractFileWatcher::fileRename, q, &AbstractFileWatcher::fileRename);
 
     auto onParentDeleted = [=](const QString &, const QString &deletedPath) {
         if (path.startsWith(deletedPath) && !deletedPath.isEmpty()) {
@@ -106,11 +107,11 @@ void RecentFileWatcher::addWatcher(const QUrl &url)
     AbstractFileWatcherPointer watcher = WatcherFactory::create<AbstractFileWatcher>(url);
     if (!watcher)
         return;
-
-    watcher->moveToThread(this->thread());
+    watcher->moveToThread(qApp->thread());
 
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentFileWatcher::onFileAttributeChanged);
     connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &RecentFileWatcher::onFileDeleted);
+    connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &RecentFileWatcher::onFileRename);
 
     dptr->urlToWatcherMap[url] = watcher;
 
@@ -128,9 +129,24 @@ void RecentFileWatcher::removeWatcher(const QUrl &url)
     }
 }
 
-void RecentFileWatcher::onFileDeleted(const QUrl &url)
+QUrl RecentFileWatcher::getRealUrl(const QUrl &url)
 {
     QUrl newUrl = QUrl::fromLocalFile(url.path());
+    if (url.scheme() == Global::Scheme::kFtp || url.scheme() == Global::Scheme::kSmb) {
+        for (const auto &watcher : dptr->urlToWatcherMap) {
+            if (watcher.data() == sender()) {
+                newUrl = watcher->url();
+                return newUrl;
+            }
+        }
+    }
+
+    return newUrl;
+}
+
+void RecentFileWatcher::onFileDeleted(const QUrl &url)
+{
+    QUrl newUrl = getRealUrl(url);
     newUrl.setScheme(RecentManager::scheme());
     removeWatcher(newUrl);
     RecentManager::instance()->removeRecentFile(newUrl);
@@ -140,10 +156,19 @@ void RecentFileWatcher::onFileDeleted(const QUrl &url)
 
 void RecentFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
-    QUrl newUrl = url;
+    QUrl newUrl = getRealUrl(url);
     newUrl.setScheme(RecentManager::scheme());
-
     emit fileAttributeChanged(newUrl);
 }
 
+void RecentFileWatcher::onFileRename(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    Q_UNUSED(newUrl);
+    QUrl newOldUrl = QUrl::fromLocalFile(oldUrl.path());
+    newOldUrl.setScheme(RecentManager::scheme());
+    removeWatcher(newOldUrl);
+    RecentManager::instance()->removeRecentFile(newOldUrl);
+
+    emit fileRename(newOldUrl, newUrl);
+}
 }

@@ -69,7 +69,6 @@ void RootInfo::startWatcher()
                 this, &RootInfo::doFileUpdated);
         connect(watcher.data(), &AbstractFileWatcher::fileRename,
                 this, &RootInfo::dofileMoved);
-
         watcher->startWatcher();
     }
 }
@@ -109,6 +108,9 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
     AbstractFileInfoPointer info = InfoCacheController::instance().getCacheInfo(toUrl);
     if (info)
         info->refresh();
+
+    if (toUrl.scheme() != url.scheme())
+        return;
 
     if (!fileCache->containsChild(toUrl)) {
         {
