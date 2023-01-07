@@ -140,7 +140,8 @@ protected:
     QString formatFileName(const QString &fileName);
     void saveOperations();
     bool isStopped();
-    JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to);
+    JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError);
+    void errorSrcAndDestString(const QUrl &from, const QUrl &to, QString *sorceMsg, QString *toMsg, const AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError);
     void resumeAllThread();
     void resumeThread(const QList<quint64> &errorIds);
     void pauseAllThread();

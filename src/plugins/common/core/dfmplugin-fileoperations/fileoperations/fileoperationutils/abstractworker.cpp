@@ -335,7 +335,7 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
  */
 void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const quint64 id, const QString &errorMsg)
 {
-    JobInfoPointer info = createCopyJobInfo(from, to);
+    JobInfoPointer info = createCopyJobInfo(from, to, error);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(error));
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey, QVariant::fromValue(errorMsg));
@@ -416,7 +416,7 @@ bool AbstractWorker::isStopped()
  * \param to from url
  * \return signal agruments information
  */
-JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &to)
+JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType error)
 {
     JobInfoPointer info(new QMap<quint8, QVariant>);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
@@ -426,11 +426,13 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
     if (AbstractJobHandler::JobType::kCopyType == jobType) {
         fromMsg = QString(QObject::tr("Copying %1")).arg(from.toString());
         toMsg = QString(QObject::tr("to %1")).arg(to.toString());
+        errorSrcAndDestString(from, to, &fromMsg, &toMsg, error);
     } else if (AbstractJobHandler::JobType::kDeleteTpye == jobType) {
         fromMsg = QString(QObject::tr("Deleting %1")).arg(from.toString());
     } else if (AbstractJobHandler::JobType::kCutType == jobType) {
         fromMsg = QString(QObject::tr("Moving %1")).arg(from.toString());
         toMsg = QString(QObject::tr("to %1")).arg(to.toString());
+        errorSrcAndDestString(from, to, &fromMsg, &toMsg, error);
     } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType) {
         fromMsg = QString(QObject::tr("Trashing %1")).arg(from.toString());
         toMsg = QString(QObject::tr("to %1")).arg(to.toString());
@@ -443,6 +445,24 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, QVariant::fromValue(fromMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));
     return info;
+}
+
+void AbstractWorker::errorSrcAndDestString(const QUrl &from, const QUrl &to,
+                                           QString *sorceMsg, QString *toMsg,
+                                           const AbstractJobHandler::JobErrorType error)
+{
+    if (error == AbstractJobHandler::JobErrorType::kNoError)
+        return;
+    if (error == AbstractJobHandler::JobErrorType::kFileExistsError
+        || error == AbstractJobHandler::JobErrorType::kDirectoryExistsError) {
+        *sorceMsg = QString(tr("%1 already exists in target folder")).arg(from.fileName());
+        auto fromInfo = InfoFactory::create<AbstractFileInfo>(from);
+        auto toInfo = InfoFactory::create<AbstractFileInfo>(to);
+        if (!fromInfo || !toInfo)
+            return;
+        *toMsg = QString(tr("Original path %1    Target path %2")).arg(fromInfo->pathOf(PathInfoType::kAbsoluteFilePath), toInfo->pathOf(PathInfoType::kAbsoluteFilePath));
+    }
+    return;
 }
 
 void AbstractWorker::resumeAllThread()
