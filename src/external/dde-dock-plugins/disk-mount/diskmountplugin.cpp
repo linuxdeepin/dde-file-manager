@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "diskmountplugin.h"
 #include "tipswidget.h"
 #include "diskpluginitem.h"
@@ -205,3 +205,20 @@ std::once_flag &DiskMountPlugin::onceFlag()
     static std::once_flag flag;
     return flag;
 }
+
+#ifndef COMPILE_ON_V20
+QIcon DiskMountPlugin::icon(const DockPart &dockPart, DGuiApplicationHelper::ColorType)
+{
+    if (dockPart == DockPart::SystemPanel) {
+        diskPluginItem->updateIcon();
+        return diskPluginItem->getIcon();
+    }
+    return QIcon();
+}
+
+PluginFlags DiskMountPlugin::flags() const
+{
+    return PluginFlag::Type_Tray | PluginFlag::Attribute_CanDrag | PluginFlag::Attribute_CanInsert;
+}
+
+#endif

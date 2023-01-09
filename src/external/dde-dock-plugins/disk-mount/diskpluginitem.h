@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DISKPLUGINITEM_H
 #define DISKPLUGINITEM_H
 
@@ -37,6 +37,7 @@ public:
 public slots:
     void setDockDisplayMode(const Dock::DisplayMode mode);
     void updateIcon();
+    QIcon getIcon();
 
 protected:
     void paintEvent(QPaintEvent *e) override;

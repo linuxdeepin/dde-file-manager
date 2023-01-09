@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "diskpluginitem.h"
 
 #include <QPainter>
@@ -65,6 +65,11 @@ void DiskPluginItem::updateIcon()
     icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap(static_cast<int>(16 * qApp->devicePixelRatio()), static_cast<int>(16 * qApp->devicePixelRatio()));
     icon.setDevicePixelRatio(qApp->devicePixelRatio());
     update();
+}
+
+QIcon DiskPluginItem::getIcon()
+{
+    return QIcon(icon);
 }
 
 void DiskPluginItem::paintEvent(QPaintEvent *e)

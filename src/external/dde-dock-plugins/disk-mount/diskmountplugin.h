@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DISKMOUNTPLUGIN_H
 #define DISKMOUNTPLUGIN_H
 
@@ -50,6 +50,11 @@ public:
     int itemSortKey(const QString &itemKey) override;
     void setSortKey(const QString &itemKey, const int order) override;
     void refreshIcon(const QString &itemKey) override;
+
+#ifndef COMPILE_ON_V20
+    QIcon icon(const DockPart &dockPart, DGuiApplicationHelper::ColorType themeType = DGuiApplicationHelper::instance()->themeType()) override;
+    PluginFlags flags() const override;
+#endif
 
 public slots:
     void diskCountChanged(const int count);
