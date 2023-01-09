@@ -119,7 +119,7 @@ void TitleBarWidget::initializeUi()
     searchButton->setFocusPolicy(Qt::NoFocus);
     searchButton->setFlat(true);
     searchButton->setIcon(QIcon::fromTheme("search"));
-    searchButton->setIconSize({ 16, 16 });
+    searchButton->setIconSize({ 30, 30 });
     titleBarLayout->addWidget(searchButton);
 
     // search filter button
@@ -249,6 +249,7 @@ void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
         searchButton->setHidden(true);
         searchButton->setObjectName("filterButton");
         searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
+        searchButton->setIconSize({ 16, 16 });
         searchButton->style()->unpolish(searchButton);
         searchButton->style()->polish(searchButton);
         searchButton->setFlat(true);
@@ -259,6 +260,7 @@ void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
         searchButton->style()->unpolish(searchButton);
         searchButton->style()->polish(searchButton);
         searchButton->setIcon(QIcon::fromTheme("search"));
+        searchButton->setIconSize({ 30, 30 });
         searchButton->setDown(false);
         searchButtonSwitchState = false;
         // TODO(zhangs): workspace->toggleAdvanceSearchBar(false);
