@@ -35,6 +35,8 @@
 #include <sys/types.h>
 #include <sys/unistd.h>
 
+Q_DECLARE_METATYPE(bool *)
+
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
@@ -113,7 +115,10 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     // 置灰：
     // 1. 本身用户无权限
     // 2. 所属文件系统无权限机制
-    if (info->extendAttributes(ExtInfoType::kOwnerId).toUInt() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType)) {
+    // 3. Plugin-in signal event requirements grayed out
+    bool pluginAshResult { false };
+    dpfHookSequence->run("dfmplugin_propertydialog", "hook_PermissionView_Ash", url, &pluginAshResult);
+    if (info->extendAttributes(ExtInfoType::kOwnerId).toUInt() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType) || pluginAshResult) {
         ownerComboBox->setDisabled(true);
         groupComboBox->setDisabled(true);
         otherComboBox->setDisabled(true);

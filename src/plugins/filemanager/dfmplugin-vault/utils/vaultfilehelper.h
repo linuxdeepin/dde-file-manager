@@ -27,6 +27,7 @@
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
+#include <QFileDevice>
 
 DPVAULT_BEGIN_NAMESPACE
 
@@ -61,6 +62,11 @@ public:
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool openFileByApp(const quint64 windowId, const QList<QUrl> urls, const QList<QString> apps);
+    bool setPermision(const quint64 windowId,
+                      const QUrl url,
+                      const QFileDevice::Permissions permissions,
+                      bool *ok,
+                      QString *error);
 
 private:
     QList<QUrl> transUrlsToLocal(const QList<QUrl> &urls);

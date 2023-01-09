@@ -17,6 +17,8 @@
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QString *)
+Q_DECLARE_METATYPE(QFileDevice::Permissions)
+Q_DECLARE_METATYPE(bool *)
 
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -61,6 +63,8 @@ void VaultEventReceiver::connectEvent()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFiles", VaultFileHelper::instance(), &VaultFileHelper::renameFiles);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultFileHelper::instance(), &VaultFileHelper::renameFilesAddText);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileByApp", VaultFileHelper::instance(), &VaultFileHelper::openFileByApp);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", VaultFileHelper::instance(), &VaultFileHelper::setPermision);
+    dpfHookSequence->follow("dfmplugin_propertydialog", "hook_PermissionView_Ash", this, &VaultEventReceiver::handlePermissionViewAsh);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -234,4 +238,14 @@ bool VaultEventReceiver::fileDropHandleWithAction(const QList<QUrl> &fromUrls, c
         }
     }
     return false;
+}
+
+bool VaultEventReceiver::handlePermissionViewAsh(const QUrl &url, bool *isAsh)
+{
+    if (!VaultHelper::isVaultFile(url))
+        return false;
+
+    *isAsh = true;
+
+    return true;
 }

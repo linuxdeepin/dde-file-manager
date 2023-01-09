@@ -41,6 +41,9 @@ class PropertyDialog : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_BasicViewExtension_Register)
     DPF_EVENT_REG_SLOT(slot_BasicFiledFilter_Add)
 
+    // hook events
+    DPF_EVENT_REG_HOOK(hook_PermissionView_Ash)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

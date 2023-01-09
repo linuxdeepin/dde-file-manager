@@ -23,6 +23,7 @@
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 #include <dfm-framework/event/event.h>
 #include <QUrl>
@@ -277,6 +278,30 @@ bool VaultFileHelper::openFileByApp(const quint64 windowId, const QList<QUrl> ur
             qCritical() << "the list has no vault url!";
         }
     }
+
+    return true;
+}
+
+bool VaultFileHelper::setPermision(const quint64 windowId,
+                                   const QUrl url,
+                                   const QFileDevice::Permissions permissions,
+                                   bool *ok,
+                                   QString *error)
+{
+    if (VaultHelper::instance()->scheme() != url.scheme())
+        return false;
+
+    const QList<QUrl> &localUrls = transUrlsToLocal(QList<QUrl>() << url);
+    if (localUrls.isEmpty())
+        return false;
+
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    bool succ = fileHandler.setPermissions(localUrls.at(0), permissions);
+    if (!succ && error)
+        *error = fileHandler.errorString();
+
+    if (ok)
+        *ok = succ;
 
     return true;
 }

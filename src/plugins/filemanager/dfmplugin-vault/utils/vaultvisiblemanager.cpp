@@ -107,9 +107,6 @@ void VaultVisibleManager::pluginServiceRegister()
         dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicViewExtension_Root_Register",
                              detailViewFunc, VaultHelper::instance()->scheme());
 
-        QStringList &&filters { kPermission };
-        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",
-                             VaultHelper::instance()->scheme(), filters);
         QStringList &&filtes { kFileChangeTimeField, kFileSizeField };
         dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
                              VaultHelper::instance()->sourceRootUrlWithSlash().path(), filtes);

@@ -28,6 +28,7 @@ public slots:
     bool handlePathtoVirtual(const QList<QUrl> files, QList<QUrl> *virtualFiles);
     bool detailViewIcon(const QUrl &url, QString *iconName);
     bool fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action);
+    bool handlePermissionViewAsh(const QUrl &url, bool *isAsh);
 };
 }
 #endif   // VAULTEVENTRECEIVER_H
