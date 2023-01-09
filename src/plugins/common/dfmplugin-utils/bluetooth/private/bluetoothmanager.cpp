@@ -35,9 +35,9 @@
 #    define BluetoothPath "/com/deepin/daemon/Bluetooth"
 #    define BluetoothInterface "com.deepin.daemon.Bluetooth"
 #else
-#    define BluetoothService "org.deepin.daemon.Bluetooth1"
-#    define BluetoothPath "/org/deepin/daemon/Bluetooth1"
-#    define BluetoothInterface "org.deepin.daemon.Bluetooth1"
+#    define BluetoothService "org.deepin.dde.Bluetooth1"
+#    define BluetoothPath "/org/deepin/dde/Bluetooth1"
+#    define BluetoothInterface "org.deepin.dde.Bluetooth1"
 #endif
 
 #define BluetoothPage "bluetooth"
