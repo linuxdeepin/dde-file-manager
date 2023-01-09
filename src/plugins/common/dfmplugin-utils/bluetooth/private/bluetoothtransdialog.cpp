@@ -173,8 +173,15 @@ QString BluetoothTransDialog::humanizeObexErrMsg(const QString &msg)
         return tr("File sending request timed out");
     } else if (msg.contains("0x53")) {
         return tr("The service is busy and unable to process the request");
+    } else if (msg.contains("Unable to find service record")) {
+        return TXT_NO_DEV_FOUND;
+    } else if (msg.contains("device not connected")
+               || msg.contains("Connection refused")
+               || msg.contains("Connection reset by peer")) {
+        return TXT_ERROR_REASON;
     } else {   // ...TO BE CONTINUE
-        return msg;
+        qWarning() << "bluetooth error message: " << msg;
+        return "";
     }
 }
 
