@@ -182,12 +182,31 @@ AbstractMenuScene *TagMenuScene::scene(QAction *action) const
 
 void TagMenuScene::onHoverChanged(const QColor &color)
 {
-    TagColorListWidget *tagWidget = getMenuListWidget();
+    if (!d->selectFiles.isEmpty()) {
 
-    if (tagWidget) {
-        if (color.isValid()) {
+        const auto &tagNames = TagManager::instance()->getTagsByUrls(d->selectFiles, true).toStringList();
+        const auto &colorInfos = TagManager::instance()->getTagsColor(tagNames);
+        if (colorInfos.isEmpty())
+            return;
+
+        QList<QColor> sameColors;
+        QMap<QString, QColor>::const_iterator dataIt = colorInfos.begin();
+        for (; dataIt != colorInfos.end(); ++dataIt) {
+            if (Q_LIKELY(dataIt.value().isValid()))
+                sameColors << dataIt.value();
+        }
+
+        TagColorListWidget *tagWidget = getMenuListWidget();
+        if (!tagWidget)
+            return;
+
+        if (Q_LIKELY(color.isValid())) {
             const QString &tagName = TagHelper::instance()->qureyDisplayNameByColor(color);
-            tagWidget->setToolTipText(tr("Add tag \"%1\"").arg(tagName));
+            if (sameColors.contains(color))
+                tagWidget->setToolTipText(tr("Remove tag \"%1\"").arg(tagName));
+            else
+                tagWidget->setToolTipText(tr("Add tag \"%1\"").arg(tagName));
+
         } else {
             tagWidget->clearToolTipText();
         }
