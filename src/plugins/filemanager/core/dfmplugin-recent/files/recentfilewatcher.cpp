@@ -23,6 +23,7 @@
 #include "utils/recentmanager.h"
 #include "private/recentfilewatcher_p.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 
 DFMBASE_USE_NAMESPACE
 
@@ -57,10 +58,20 @@ void RecentFileWatcherPrivate::initFileWatcher()
 
 void RecentFileWatcherPrivate::initConnect()
 {
-
     connect(proxy.data(), &AbstractFileWatcher::fileDeleted, q, &AbstractFileWatcher::fileDeleted);
     connect(proxy.data(), &AbstractFileWatcher::fileAttributeChanged, q, &AbstractFileWatcher::fileAttributeChanged);
     connect(proxy.data(), &AbstractFileWatcher::subfileCreated, q, &AbstractFileWatcher::subfileCreated);
+
+    auto onParentDeleted = [=](const QString &, const QString &deletedPath) {
+        if (path.startsWith(deletedPath) && !deletedPath.isEmpty()) {
+            qDebug() << "recent: watched: " << path << ", deleted: " << deletedPath;
+            Q_EMIT q->fileDeleted(QUrl::fromLocalFile(path));
+        }
+    };
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, onParentDeleted);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, onParentDeleted);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, onParentDeleted);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, onParentDeleted);
 }
 
 RecentFileWatcher::RecentFileWatcher(const QUrl &url, QObject *parent)
