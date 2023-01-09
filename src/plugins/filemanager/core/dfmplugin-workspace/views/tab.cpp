@@ -389,5 +389,10 @@ QString Tab::getDisplayNameByUrl(const QUrl &url) const
     if (SystemPathUtil::instance()->isSystemPath(url.path()))
         return SystemPathUtil::instance()->systemPathDisplayNameByPath(url.path());
 
+    if (url.fileName().isEmpty()) {
+        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        return info->nameOf(DFMBASE_NAMESPACE::AbstractFileInfo::FileNameInfoType::kFileName);
+    }
+
     return url.fileName();
 }
