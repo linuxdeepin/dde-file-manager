@@ -70,24 +70,6 @@ private:
 
     void initTextShowFrame(QString fileName);
 
-    void elideText(QTextLayout *layout, const QSizeF &size,
-                   QTextOption::WrapMode wordWrap,
-                   Qt::TextElideMode mode, qreal lineHeight,
-                   int flags = 0, QStringList *lines = nullptr,
-                   QPainter *painter = nullptr, QPointF offset = QPoint(0, 0),
-                   const QColor &shadowColor = QColor(),
-                   const QPointF &shadowOffset = QPointF(0, 1),
-                   const QBrush &background = QBrush(Qt::NoBrush),
-                   qreal backgroundRadius = 4,
-                   QList<QRectF> *boundingRegion = nullptr);
-
-    QString elideText(const QString &text, const QSizeF &size,
-                      QTextOption::WrapMode wordWrap,
-                      const QFont &font,
-                      Qt::TextElideMode mode,
-                      qreal lineHeight,
-                      qreal flags = 0);
-
 public slots:
     void renameFile();
 

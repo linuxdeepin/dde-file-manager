@@ -20,6 +20,7 @@
  */
 #include "devicepropertydialog.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/elidetextlayout.h"
 
 #include <DDrawer>
 #include <denhancedwidget.h>
@@ -50,9 +51,9 @@ void DevicePropertyDialog::iniUI()
     deviceIcon = new DLabel(this);
     deviceIcon->setFixedHeight(128);
 
-    deviceName = new DLabel(this);
-    deviceName->setAlignment(Qt::AlignCenter);
-    deviceName->setContentsMargins(0, 0, 0, 25);
+    deviceNameLayout = new QVBoxLayout(this);
+    deviceNameLayout->setMargin(0);
+    deviceNameLayout->setContentsMargins(0, 0, 0, 0);
 
     QFrame *basicInfoFrame = new QFrame(this);
 
@@ -79,7 +80,7 @@ void DevicePropertyDialog::iniUI()
     vlayout1->setMargin(0);
     vlayout1->setSpacing(0);
     vlayout1->addWidget(deviceIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
-    vlayout1->addWidget(deviceName, 0, Qt::AlignHCenter | Qt::AlignTop);
+    vlayout1->addLayout(deviceNameLayout);
     vlayout1->addWidget(basicInfoFrame);
 
     QFrame *frame = new QFrame(this);
@@ -124,7 +125,7 @@ int DevicePropertyDialog::contentHeight() const
 #define DIALOG_TITLEBAR_HEIGHT 50
     return (DIALOG_TITLEBAR_HEIGHT
             + deviceIcon->height()
-            + deviceName->height()
+            + deviceNameFrame->height()
             + basicInfo->height()
             + devicesProgressBar->height()
             + expandsHeight
@@ -137,7 +138,7 @@ void DevicePropertyDialog::setSelectDeviceInfo(const DeviceInfo &info)
 {
     currentFileUrl = info.deviceUrl;
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));
-    deviceName->setText(info.deviceName);
+    setFileName(info.deviceName);
     deviceBasicWidget->selectFileInfo(info);
     basicInfo->setLeftValue(info.deviceName, Qt::ElideMiddle, Qt::AlignLeft, true);
     setProgressBar(info.totalCapacity, info.availableSpace, !info.mountPoint.isEmpty());
@@ -183,6 +184,38 @@ void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize, boo
             DApplicationHelper::instance()->setPalette(devicesProgressBar, palette);
         }
     });
+}
+
+void DevicePropertyDialog::setFileName(const QString &filename)
+{
+    if (deviceNameFrame)
+        delete deviceNameFrame;
+
+    deviceNameFrame = new QFrame(this);
+
+    QRect rect(QPoint(0, 0), QSize(200, 66));
+    QStringList labelTexts;
+    ElideTextLayout layout(filename);
+    layout.layout(rect, Qt::ElideMiddle, nullptr, Qt::NoBrush, &labelTexts);
+
+    int textHeight = 0;
+    QVBoxLayout *nameLayout = new QVBoxLayout;
+    for (const auto &labelText : labelTexts) {
+        DLabel *fileNameLabel = new DLabel(labelText, deviceNameFrame);
+        fileNameLabel->setAlignment(Qt::AlignHCenter);
+        textHeight += fileNameLabel->fontInfo().pixelSize() + 10;
+        nameLayout->addWidget(fileNameLabel, 0, Qt::AlignHCenter);
+
+        if (fileNameLabel->fontMetrics().horizontalAdvance(labelText) > (rect.width() - 10))
+            fileNameLabel->setFixedWidth(rect.width());
+    }
+
+    nameLayout->setContentsMargins(0, 0, 0, 0);
+    nameLayout->setSpacing(0);
+    deviceNameFrame->setLayout(nameLayout);
+    nameLayout->addStretch(1);
+    deviceNameFrame->setFixedHeight(textHeight + 15);
+    deviceNameLayout->addWidget(deviceNameFrame);
 }
 
 void DevicePropertyDialog::insertExtendedControl(int index, QWidget *widget)

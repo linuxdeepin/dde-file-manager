@@ -47,7 +47,7 @@ public:
     virtual ~ElideTextLayout();
     void setText(const QString &text);
     QString text() const;
-    QList<QRectF> layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter = nullptr, const QBrush &background = Qt::NoBrush);
+    QList<QRectF> layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter = nullptr, const QBrush &background = Qt::NoBrush, QStringList *textLines = nullptr);
 public:
     inline QTextDocument *documentHandle() {
         return document;

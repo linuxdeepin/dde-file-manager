@@ -24,6 +24,7 @@
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/utils/elidetextlayout.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -173,9 +174,10 @@ void EditStackedWidget::initUI()
 
 void EditStackedWidget::initTextShowFrame(QString fileName)
 {
-    QString t = elideText(fileName, fileNameEdit->size(), QTextOption::WrapAtWordBoundaryOrAnywhere, fileNameEdit->font(), Qt::ElideMiddle, 0);
-    QStringList labelTexts = t.split("\n");
-    const int maxLineCount = 3;
+    QRect rect(QPoint(0, 0), QSize(200, 66));
+    QStringList labelTexts;
+    ElideTextLayout layout(fileName);
+    layout.layout(rect, Qt::ElideMiddle, nullptr, Qt::NoBrush, &labelTexts);
 
     int textHeight = 0;
 
@@ -196,39 +198,22 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
     connect(nameEditIcon, &QPushButton::clicked, this, &EditStackedWidget::renameFile);
 
     QVBoxLayout *textShowLayout = new QVBoxLayout;
-
-    for (int i = 0; i < labelTexts.length(); i++) {
-        if (i > (maxLineCount - 1)) {
-            break;
-        }
-        QString labelText = labelTexts.at(i);
+    for (const auto &labelText : labelTexts) {
         DLabel *fileNameLabel = new DLabel(labelText, textShowFrame);
         fileNameLabel->setAlignment(Qt::AlignHCenter);
-        QHBoxLayout *hLayout = new QHBoxLayout;
-
         textHeight += fileNameLabel->fontInfo().pixelSize() + 10;
 
+        QHBoxLayout *hLayout = new QHBoxLayout;
         hLayout->addStretch(1);
         hLayout->addWidget(fileNameLabel);
-        if (i < (labelTexts.length() - 1) && i != (maxLineCount - 1)) {
-            if (fileNameLabel->fontMetrics().horizontalAdvance(labelText) > (fileNameEdit->width() - 10)) {
-                fileNameLabel->setFixedWidth(fileNameEdit->width());
-            }
-        } else {
-            // the final line of file name label, with a edit btn.
-            if (labelTexts.length() >= maxLineCount) {
-                for (int idx = i + 1; idx < labelTexts.length(); idx++) {
-                    labelText += labelTexts.at(idx);
-                }
-            }
 
-            if (fileNameLabel->fontMetrics().horizontalAdvance(labelText) > (fileNameEdit->width() - 2 * nameEditIcon->width()) && labelTexts.length() >= maxLineCount) {
-                labelText = fileNameLabel->fontMetrics().elidedText(labelText, Qt::ElideMiddle, fileNameEdit->width() - nameEditIcon->width());
-            }
-            fileNameLabel->setText(labelText);
+        if (labelText == labelTexts.last()) {
             hLayout->addSpacing(2);
             hLayout->addWidget(nameEditIcon);
+        } else if (fileNameLabel->fontMetrics().horizontalAdvance(labelText) > (rect.width() - 10)) {
+            fileNameLabel->setFixedWidth(rect.width());
         }
+
         textShowLayout->addLayout(hLayout);
         hLayout->addStretch(1);
     }
@@ -309,181 +294,6 @@ void EditStackedWidget::selectFile(const QUrl &url)
             nameEditIcon->show();
         }
     }
-}
-
-void EditStackedWidget::elideText(QTextLayout *layout, const QSizeF &size,
-                                  QTextOption::WrapMode wordWrap,
-                                  Qt::TextElideMode mode, qreal lineHeight,
-                                  int flags, QStringList *lines,
-                                  QPainter *painter, QPointF offset,
-                                  const QColor &shadowColor,
-                                  const QPointF &shadowOffset,
-                                  const QBrush &background,
-                                  qreal backgroundRadius,
-                                  QList<QRectF> *boundingRegion)
-{
-    qreal height = 0;
-    bool drawBackground = background.style() != Qt::NoBrush;
-    bool drawShadow = shadowColor.isValid();
-
-    QString text = layout->formats().isEmpty() ? layout->text() : layout->preeditAreaText();
-    QTextOption &text_option = *const_cast<QTextOption *>(&layout->textOption());
-
-    text_option.setWrapMode(wordWrap);
-
-    if (flags & Qt::AlignRight)
-        text_option.setAlignment(Qt::AlignRight);
-    else if (flags & Qt::AlignHCenter)
-        text_option.setAlignment(Qt::AlignHCenter);
-
-    if (painter) {
-        text_option.setTextDirection(painter->layoutDirection());
-        layout->setFont(painter->font());
-    }
-
-    auto naturalTextRect = [&](const QRectF rect) {
-        QRectF new_rect = rect;
-
-        new_rect.setHeight(lineHeight);
-
-        return new_rect;
-    };
-
-    auto drawShadowFun = [&](const QTextLine &line) {
-        const QPen pen = painter->pen();
-
-        painter->setPen(shadowColor);
-        line.draw(painter, shadowOffset);
-
-        // restore
-        painter->setPen(pen);
-    };
-
-    layout->beginLayout();
-
-    QTextLine line = layout->createLine();
-    QRectF lastLineRect;
-
-    while (line.isValid()) {
-        height += lineHeight;
-        if (height + lineHeight > size.height()) {
-            layout->endLayout();
-            layout->setText(text);
-
-            text_option.setWrapMode(QTextOption::NoWrap);
-            layout->beginLayout();
-            line = layout->createLine();
-            line.setLineWidth(size.width() - 1);
-        } else {
-            line.setLineWidth(size.width());
-        }
-
-        line.setPosition(offset);
-
-        const QRectF rect = naturalTextRect(line.naturalTextRect());
-
-        if (painter) {
-            if (drawBackground) {
-                const QMarginsF margins(backgroundRadius, 0, backgroundRadius, 0);
-                QRectF backBounding = rect;
-                QPainterPath path;
-
-                if (lastLineRect.isValid()) {
-                    if (qAbs(rect.width() - lastLineRect.width()) < backgroundRadius * 2) {
-                        backBounding.setWidth(lastLineRect.width());
-                        backBounding.moveCenter(rect.center());
-                        path.moveTo(lastLineRect.x() - backgroundRadius, lastLineRect.bottom() - backgroundRadius);
-                        path.lineTo(lastLineRect.x(), lastLineRect.bottom() - 1);
-                        path.lineTo(lastLineRect.right(), lastLineRect.bottom() - 1);
-                        path.lineTo(lastLineRect.right() + backgroundRadius, lastLineRect.bottom() - backgroundRadius);
-                        path.lineTo(lastLineRect.right() + backgroundRadius, backBounding.bottom() - backgroundRadius);
-                        path.arcTo(backBounding.right() - backgroundRadius, backBounding.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 0, -90);
-                        path.lineTo(backBounding.x(), backBounding.bottom());
-                        path.arcTo(backBounding.x() - backgroundRadius, backBounding.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 270, -90);
-                        lastLineRect = backBounding;
-                    } else if (lastLineRect.width() > rect.width()) {
-                        backBounding += margins;
-                        path.moveTo(backBounding.x() - backgroundRadius, backBounding.y() - 1);
-                        path.arcTo(backBounding.x() - backgroundRadius * 2, backBounding.y() - 1, backgroundRadius * 2, backgroundRadius * 2 + 1, 90, -90);
-                        path.lineTo(backBounding.x(), backBounding.bottom() - backgroundRadius);
-                        path.arcTo(backBounding.x(), backBounding.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 180, 90);
-                        path.lineTo(backBounding.right() - backgroundRadius, backBounding.bottom());
-                        path.arcTo(backBounding.right() - backgroundRadius * 2, backBounding.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 270, 90);
-                        path.lineTo(backBounding.right(), backBounding.top() + backgroundRadius);
-                        path.arcTo(backBounding.right(), backBounding.top() - 1, backgroundRadius * 2, backgroundRadius * 2 + 1, 180, -90);
-                        path.closeSubpath();
-                        lastLineRect = rect;
-                    } else {
-                        backBounding += margins;
-                        path.moveTo(lastLineRect.x() - backgroundRadius * 2, lastLineRect.bottom());
-                        path.arcTo(lastLineRect.x() - backgroundRadius * 3, lastLineRect.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 270, 90);
-                        path.lineTo(lastLineRect.x(), lastLineRect.bottom() - 1);
-                        path.lineTo(lastLineRect.right(), lastLineRect.bottom() - 1);
-                        path.lineTo(lastLineRect.right() + backgroundRadius, lastLineRect.bottom() - backgroundRadius * 2);
-                        path.arcTo(lastLineRect.right() + backgroundRadius, lastLineRect.bottom() - backgroundRadius * 2, backgroundRadius * 2, backgroundRadius * 2, 180, 90);
-
-                        path.addRoundedRect(backBounding, backgroundRadius, backgroundRadius);
-                        lastLineRect = rect;
-                    }
-                } else {
-                    lastLineRect = backBounding;
-                    path.addRoundedRect(backBounding + margins, backgroundRadius, backgroundRadius);
-                }
-
-                bool a = painter->testRenderHint(QPainter::Antialiasing);
-                qreal o = painter->opacity();
-
-                painter->setRenderHint(QPainter::Antialiasing, true);
-                painter->setOpacity(1);
-                painter->fillPath(path, background);
-                painter->setRenderHint(QPainter::Antialiasing, a);
-                painter->setOpacity(o);
-            }
-
-            if (drawShadow) {
-                drawShadowFun(line);
-            }
-
-            line.draw(painter, QPointF(0, 0));
-        }
-
-        if (boundingRegion) {
-            boundingRegion->append(rect);
-        }
-
-        offset.setY(offset.y() + lineHeight);
-
-        // find '\n'
-        int textLengthLine = line.textLength();
-        for (int start = line.textStart(); start < line.textStart() + textLengthLine; ++start) {
-            if (text.at(start) == '\n')
-                height += lineHeight;
-        }
-
-        if (lines) {
-            lines->append(text.mid(line.textStart(), line.textLength()));
-        }
-
-        if (height + lineHeight > size.height())
-            break;
-
-        line = layout->createLine();
-    }
-
-    layout->endLayout();
-}
-
-QString EditStackedWidget::elideText(const QString &text, const QSizeF &size, QTextOption::WrapMode wordWrap, const QFont &font, Qt::TextElideMode mode, qreal lineHeight, qreal flags)
-{
-    QTextLayout textLayout(text);
-
-    textLayout.setFont(font);
-
-    QStringList lines;
-
-    elideText(&textLayout, size, wordWrap, mode, lineHeight, static_cast<int>(flags), &lines);
-
-    return lines.join('\n');
 }
 
 void EditStackedWidget::mouseProcess(QMouseEvent *event)

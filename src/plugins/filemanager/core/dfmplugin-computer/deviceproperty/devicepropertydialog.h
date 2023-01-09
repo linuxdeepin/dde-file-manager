@@ -66,6 +66,8 @@ private:
 
     void setProgressBar(qint64 totalSize, qint64 freeSize, bool mounted);
 
+    void setFileName(const QString &filename);
+
 public slots:
     void setSelectDeviceInfo(const DeviceInfo &info);
 
@@ -84,10 +86,11 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    DTK_WIDGET_NAMESPACE::DLabel *deviceName { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *deviceIcon { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *basicInfo { nullptr };
     DTK_WIDGET_NAMESPACE::DColoredProgressBar *devicesProgressBar { nullptr };
+    QFrame *deviceNameFrame { nullptr };
+    QVBoxLayout *deviceNameLayout { nullptr };
     DeviceBasicWidget *deviceBasicWidget { nullptr };
     QScrollArea *scrollArea { nullptr };
     QList<QWidget *> extendedControl {};

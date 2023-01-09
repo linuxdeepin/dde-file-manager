@@ -59,7 +59,7 @@ QString ElideTextLayout::text() const
     return document->toPlainText();
 }
 
-QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter, const QBrush &background)
+QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elideMode, QPainter *painter, const QBrush &background, QStringList *textLines)
 {
     QList<QRectF> ret;
     QTextLayout *lay = document->firstBlock().layout();
@@ -77,12 +77,17 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     // for draw background.
     QRectF lastLineRect;
     QString elideText;
+    QString curText = text();
 
-    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight](QTextLine &line){
+    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines](QTextLine &line){
         QRectF lRect = line.naturalTextRect();
         lRect.setHeight(textLineHeight);
 
         ret.append(lRect);
+        if (textLines) {
+            const auto &t = curText.mid(line.textStart(), line.textLength());
+            textLines->append(t);
+        }
 
         // draw
         if (painter) {
@@ -111,6 +116,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
                     // elide current line.
                     QFontMetrics fm(lay->font());
                     elideText = fm.elidedText(text().mid(line.textStart()), elideMode, qRound(size.width()));
+                    curText = elideText;
                     break;
                 }
                 // next line is empty.
@@ -138,6 +144,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
             // restore
             setAttribute(kWrapMode, oldWrap);
         }
+
         newlay.setText(elideText);
         newlay.beginLayout();
         auto line = newlay.createLine();
