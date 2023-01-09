@@ -243,6 +243,8 @@ bool VaultFileHelper::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &t
 
 bool VaultFileHelper::openFileByApp(const quint64 windowId, const QList<QUrl> urls, const QList<QString> apps)
 {
+    Q_UNUSED(windowId)
+
     if (urls.isEmpty())
         return false;
 
@@ -259,15 +261,18 @@ bool VaultFileHelper::openFileByApp(const quint64 windowId, const QList<QUrl> ur
 
     DFMBASE_NAMESPACE::DesktopFile d(desktopFile);
     if (d.desktopExec().contains("dde-file-manager") || d.desktopExec().contains("file-manager.sh")) {
-        QStringList filePathsStr {};
-        for (const auto &url : urls)
-            filePathsStr << url.toString();
-        if (DFMBASE_NAMESPACE::UniversalUtils::checkLaunchAppInterface()) {
-            DFMBASE_NAMESPACE::UniversalUtils::launchAppByDBus(desktopFile, filePathsStr);
-        } else {
-            int count = urls.size();
-            for (int i = 0; i < count; ++i) {
+        int count = urls.size();
+        if (count > 1) {
+            for (int i = 0; i < count; ++i)
                 dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, urls.at(i));
+        } else {
+            if (DFMBASE_NAMESPACE::UniversalUtils::checkLaunchAppInterface()) {
+                QStringList filePathsStr {};
+                for (const auto &url : urls)
+                    filePathsStr << url.toString();
+                DFMBASE_NAMESPACE::UniversalUtils::launchAppByDBus(desktopFile, filePathsStr);
+            } else {
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, urls.at(0));
             }
         }
     } else {
