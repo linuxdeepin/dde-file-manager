@@ -107,6 +107,7 @@ void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
     freeSize->setRightValue(sizeFreeStr);
     freeSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 
+    fileCalculationUtils->setFileHints(FileStatisticsJob::kExcludeSourceFile);
     fileCalculationUtils->start(QList<QUrl>() << info.mountPoint);
 }
 
