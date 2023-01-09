@@ -322,8 +322,10 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
 
             cdTo(id, u, winId, act);
         } else {
-            if (err == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed)
+            if (err == DFMMOUNT::DeviceError::kUDisksErrorNotAuthorizedDismissed) {
+                ComputerUtils::setCursorState();
                 return;
+            }
             qDebug() << "mount device failed: " << id << err;
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         }
