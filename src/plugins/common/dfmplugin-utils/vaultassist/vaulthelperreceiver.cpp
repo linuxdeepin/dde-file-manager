@@ -23,6 +23,7 @@
 #include "vaultconfigoperator.h"
 #include "vaultassitcontrol.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/dpf.h>
@@ -32,10 +33,11 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QProcess>
+#include <QDateTime>
 
 #undef signals
 extern "C" {
-    #include <libsecret/secret.h>
+#include <libsecret/secret.h>
 }
 #define signals public
 
@@ -44,7 +46,6 @@ DPUTILS_USE_NAMESPACE
 VaultHelperReceiver::VaultHelperReceiver(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 void VaultHelperReceiver::initEventConnect()
@@ -65,11 +66,11 @@ void VaultHelperReceiver::initEventConnect()
 bool VaultHelperReceiver::handleConnectLockScreenDBus()
 {
     return QDBusConnection::sessionBus().connect(
-                "com.deepin.SessionManager",
-                "/com/deepin/SessionManager",
-                "org.freedesktop.DBus.Properties",
-                "PropertiesChanged", "sa{sv}as",
-                this, SLOT(responseLockScreenDBus(QDBusMessage)));
+            "com.deepin.SessionManager",
+            "/com/deepin/SessionManager",
+            "org.freedesktop.DBus.Properties",
+            "PropertiesChanged", "sa{sv}as",
+            this, SLOT(responseLockScreenDBus(QDBusMessage)));
 }
 
 bool VaultHelperReceiver::handleTransparentUnlockVault()
@@ -95,7 +96,7 @@ QString VaultHelperReceiver::handlePasswordFromKeyring()
 
     SecretValue *value_read = secret_service_lookup_sync(service, NULL, attributes, NULL, &error);
     gsize length;
-    const gchar* passwd = secret_value_get(value_read, &length);
+    const gchar *passwd = secret_value_get(value_read, &length);
     if (length > 0) {
         qInfo() << "Vault: Read password not empty!";
         result = QString(passwd);
@@ -177,6 +178,11 @@ void VaultHelperReceiver::responseLockScreenDBus(const QDBusMessage &msg)
             bool isLocked = changedProps[prop].toBool();
             if (!isLocked) {
                 transparentUnlockVault();
+            } else {
+                lockVault(VaultAssitControl::instance()->vaultMountDirLocalPath(), true);
+
+                DFMBASE_NAMESPACE::Settings setting(kVaultTimeConfigFilePath);
+                setting.setValue(QString("VaultTime"), QString("LockTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
             }
         }
     }
@@ -216,7 +222,6 @@ bool VaultHelperReceiver::transparentUnlockVault()
                 } else {
                     qWarning() << "Vault: fusemount failed!";
                 }
-
             }
             qWarning() << "Vault: Unlock vault failed, error code: " << result;
         }
@@ -346,10 +351,10 @@ void VaultHelperReceiver::syncGroupPolicyAlgoName()
     VaultConfigOperator config;
     const QString &algoName = config.get(kConfigNodeName, kConfigKeyAlgoName, QVariant(kConfigKeyNotExist)).toString();
     if (algoName == QString(kConfigKeyNotExist)) {
-        dfmbase::DConfigManager::instance()->setValue( dfmbase::kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, QVariant("aes-256-gcm"));
+        dfmbase::DConfigManager::instance()->setValue(dfmbase::kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, QVariant("aes-256-gcm"));
     } else {
         if (!algoName.isEmpty())
-            dfmbase::DConfigManager::instance()->setValue( dfmbase::kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
+            dfmbase::DConfigManager::instance()->setValue(dfmbase::kDefaultCfgPath, kGroupPolicyKeyVaultAlgoName, algoName);
     }
 }
 

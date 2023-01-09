@@ -37,10 +37,9 @@ VaultManagerDBus::VaultManagerDBus(QObject *parent)
 
     dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_ConnectLockScreenDBus");
     dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_TransparentUnlockVault");
-
-    sessionManagerDBusConnect();
 }
 
+// TODO(gongheng): Temporarily reserved, after the test has no problems, it will be deleted
 void VaultManagerDBus::sessionManagerDBusConnect()
 {
     QDBusConnection::sessionBus().connect(
