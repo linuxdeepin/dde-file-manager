@@ -93,6 +93,11 @@ void TypeMethodGroup::onChenged(bool on)
             if (value > kCatNone && value <= kCatEnd) {
                 auto flag = static_cast<ItemCategory>(value);
                 auto flags = CfgPresenter->enabledTypeCategories();
+                //! the flags may be -1 that can not to perform bit operation.
+                //! so we need to cover it to kCatAll.
+                if (OrganizerUtils::isAllItemCategory(flags))
+                    flags = kCatAll;
+
                 bool apply = false;
                 if (on) {
                     if (!flags.testFlag(flag)) {
@@ -108,7 +113,7 @@ void TypeMethodGroup::onChenged(bool on)
 
                 if (apply) {
                     if (OrganizerUtils::isAllItemCategory(flags))
-                        flags = kCatAll;
+                        flags = kCatDefault;
 
                     CfgPresenter->setEnabledTypeCategories(flags);
                     // using switch signal to reset the collection.

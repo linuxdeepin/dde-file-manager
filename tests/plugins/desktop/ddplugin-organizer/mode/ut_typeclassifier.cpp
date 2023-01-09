@@ -42,13 +42,13 @@ public:
     virtual void TearDown() override { stub.clear(); }
 
     stub_ext::StubExt stub;
-    ItemCategories categories = kCatAll;
+    ItemCategories categories = kCatDefault;
 };
 
 TEST_F(TypeClassifierTest, classes_all)
 {
     TypeClassifier obj;
-    ASSERT_EQ(obj.d->categories, ItemCategories(kCatAll));
+    ASSERT_EQ(obj.d->categories, ItemCategories(kCatDefault));
 
     auto list = obj.classes();
     QStringList expList = {QString("Type_Apps"),QString("Type_Documents"),

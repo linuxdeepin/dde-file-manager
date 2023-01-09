@@ -52,15 +52,9 @@ int OrganizerUtils::covertIconLevel(int lv, bool toDisplay)
     return ret;
 }
 
-bool OrganizerUtils::isAllItemCategory(ItemCategories flags)
+bool OrganizerUtils::isAllItemCategory(const ItemCategories &flags)
 {
-    if (flags.testFlag(kCatAll))
-        return true;
-
-    return flags == ItemCategories(kCatApplication
-                                   | kCatDocument | kCatPicture
-                                   | kCatVideo | kCatMusic | kCatFloder
-                                   );
+    return flags == kCatDefault || flags == kCatAll;
 }
 
 OrganizerUtils::OrganizerUtils()

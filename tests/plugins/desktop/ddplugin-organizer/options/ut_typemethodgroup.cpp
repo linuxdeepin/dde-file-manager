@@ -68,7 +68,7 @@ TEST(TypeMethodGroup, build_all)
 {
     TypeMethodGroup type;
     stub_ext::StubExt stub;
-    ItemCategories enabled(kCatAll);
+    ItemCategories enabled(kCatDefault);
     stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [&enabled]()
     {
         return enabled;

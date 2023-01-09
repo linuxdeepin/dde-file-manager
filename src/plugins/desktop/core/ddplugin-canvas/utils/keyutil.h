@@ -23,17 +23,19 @@
 
 #include "ddplugin_canvas_global.h"
 
+#include "utils/windowutils.h"
+
 #include <QWidget>
 #include <QApplication>
 
 namespace ddplugin_canvas {
 
 inline bool isCtrlPressed() {
-    return qApp->keyboardModifiers() == Qt::ControlModifier;
+    return DFMBASE_NAMESPACE::WindowUtils::keyCtrlIsPressed();
 }
 
 inline bool isShiftPressed() {
-    return qApp->keyboardModifiers() == Qt::ShiftModifier;
+    return DFMBASE_NAMESPACE::WindowUtils::keyShiftIsPressed();
 }
 
 inline bool isCtrlOrShiftPressed() {
@@ -41,7 +43,7 @@ inline bool isCtrlOrShiftPressed() {
 }
 
 inline bool isAltPressed() {
-    return qApp->keyboardModifiers() == Qt::AltModifier;
+    return DFMBASE_NAMESPACE::WindowUtils::keyAltIsPressed();
 }
 
 }

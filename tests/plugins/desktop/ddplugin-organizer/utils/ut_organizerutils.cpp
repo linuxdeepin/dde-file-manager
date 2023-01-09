@@ -49,7 +49,7 @@ TEST(OrganizerUtils, isAllItemCategory)
     }
 
     EXPECT_FALSE(OrganizerUtils::isAllItemCategory(kCatNone));
-    EXPECT_TRUE(OrganizerUtils::isAllItemCategory(kCatAll));
+    EXPECT_TRUE(OrganizerUtils::isAllItemCategory(kCatDefault));
     auto all = ItemCategories(kCatApplication| kCatDocument | kCatPicture | kCatVideo | kCatMusic | kCatFloder);
     EXPECT_TRUE(OrganizerUtils::isAllItemCategory(all));
 }

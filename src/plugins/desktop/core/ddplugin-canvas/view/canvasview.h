@@ -69,6 +69,7 @@ public:
     virtual void keyboardSearch(const QString &search) override;
     virtual void setSelectionModel(QItemSelectionModel *selectionModel) override;
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
+    QVariant inputMethodQuery(Qt::InputMethodQuery query) const override;
     WId winId() const;
 
 public:
@@ -85,7 +86,8 @@ public Q_SLOTS:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
     void refresh(bool silent);
     void selectAll() override;
-
+protected Q_SLOTS:
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 protected:
     QRect itemRect(const QModelIndex &index) const;
 
@@ -103,6 +105,7 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
 private:
     QScopedPointer<CanvasViewPrivate> d;

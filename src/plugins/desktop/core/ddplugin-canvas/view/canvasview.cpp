@@ -267,6 +267,15 @@ QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
     return itemDelegate()->paintGeomertys(option, index);
 }
 
+QVariant CanvasView::inputMethodQuery(Qt::InputMethodQuery query) const
+{
+    // When no item is selected, return input method area where the current mouse is located
+    if (query == Qt::ImCursorRectangle && !currentIndex().isValid())
+        return QRect(mapFromGlobal(QCursor::pos()), iconSize());
+
+    return QAbstractItemView::inputMethodQuery(query);
+}
+
 WId CanvasView::winId() const
 {
     // If it not the top widget and QAbstractItemView::winId() is called,that will cause errors in window system coordinates and graphics.
@@ -393,6 +402,16 @@ void CanvasView::dropEvent(QDropEvent *event)
         return;
     }
     QAbstractItemView::dropEvent(event);
+}
+
+void CanvasView::focusInEvent(QFocusEvent *event)
+{
+    QAbstractItemView::focusInEvent(event);
+
+    // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::focusInEvent
+    // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
+    if (!testAttribute(Qt::WA_InputMethodEnabled))
+        setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
 void CanvasView::focusOutEvent(QFocusEvent *event)
@@ -543,6 +562,16 @@ void CanvasView::selectAll()
 #endif
 }
 
+void CanvasView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    QAbstractItemView::currentChanged(current, previous);
+
+    // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::currentChanged
+    // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
+    if (!testAttribute(Qt::WA_InputMethodEnabled))
+        setAttribute(Qt::WA_InputMethodEnabled, true);
+}
+
 QRect CanvasView::itemRect(const QModelIndex &index) const
 {
     return d->itemRect(model()->fileUrl(index).toString());
@@ -646,6 +675,7 @@ void CanvasView::initUI()
 {
     setRootIndex(model()->rootIndex());
     setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_InputMethodEnabled);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
     setFrameShape(QFrame::NoFrame);

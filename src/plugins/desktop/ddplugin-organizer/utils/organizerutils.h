@@ -30,7 +30,7 @@ class OrganizerUtils
 {
 public:
     static int covertIconLevel(int lv, bool toDisplay);
-    static bool isAllItemCategory(ItemCategories flags);
+    static bool isAllItemCategory(const ItemCategories &flags);
 private:
     OrganizerUtils();
 };

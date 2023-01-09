@@ -69,9 +69,12 @@ public:
     QModelIndex indexAt(const QPoint &point) const override;
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
     void keyboardSearch(const QString &search) override;
+    QVariant inputMethodQuery(Qt::InputMethodQuery query) const override;
     void sort(int role);
 
     using QAbstractItemView::selectedIndexes;
+protected Q_SLOTS:
+    void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
 protected:
     QModelIndex moveCursor(CursorAction cursorAction,
                                    Qt::KeyboardModifiers modifiers) override;
@@ -99,6 +102,7 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
 
     void scrollContentsBy(int dx, int dy) override;
 private:

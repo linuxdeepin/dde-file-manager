@@ -54,7 +54,8 @@ enum ItemCategory {
     kCatFloder = 0x20,
 
     kCatEnd = kCatFloder,
-    kCatAll = -1
+    kCatAll = kCatApplication | kCatDocument | kCatPicture | kCatVideo | kCatMusic | kCatFloder,
+    kCatDefault = -1
 };
 Q_DECLARE_FLAGS(ItemCategories, ItemCategory)
 

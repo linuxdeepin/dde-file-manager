@@ -73,6 +73,7 @@ CollectionViewPrivate::~CollectionViewPrivate()
 void CollectionViewPrivate::initUI()
 {
     q->setAttribute(Qt::WA_TranslucentBackground);
+    q->setAttribute(Qt::WA_InputMethodEnabled);
 
     q->viewport()->setAttribute(Qt::WA_TranslucentBackground);
     q->viewport()->setAutoFillBackground(false);
@@ -442,7 +443,10 @@ bool CollectionViewPrivate::checkProhibitPaths(QDragEnterEvent *event) const
 
 void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &targetUrl) const
 {
-    if (!event || event->mimeData()->urls().isEmpty())
+    //! event->mimeData()->urls() may change to be empty after checking empty.
+    //! so the following code must use variable urls instead of event->mimeData()->urls().
+    auto urls = event->mimeData()->urls();
+    if (!event || urls.isEmpty())
         return;
 
     // in collection
@@ -460,7 +464,6 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     }
 
     auto defaultAction = Qt::CopyAction;
-    auto urls = event->mimeData()->urls();
     const QUrl from = urls.first();
 
     // using MoveAction if alt key is pressed.
@@ -776,10 +779,11 @@ bool CollectionViewPrivate::dropDirectSaveMode(QDropEvent *event) const
 
 bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
 {
-    if (WindowUtils::keyCtrlIsPressed() || event->mimeData()->urls().isEmpty())
+    auto urls = event->mimeData()->urls();
+    if (WindowUtils::keyCtrlIsPressed() || urls.isEmpty())
         return false;
 
-    auto firstUrl = event->mimeData()->urls().first();
+    auto firstUrl = urls.first();
     auto firstIndex = q->model()->index(firstUrl);
     if (!firstIndex.isValid()) {
         // source file does not belong to collection
@@ -810,7 +814,6 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
         }
     }
 
-    auto urls = event->mimeData()->urls();
     auto index = posToNode(dropPos);
     provider->moveUrls(urls, id, index);
 
@@ -819,10 +822,11 @@ bool CollectionViewPrivate::dropBetweenCollection(QDropEvent *event) const
 
 bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
 {
-    if (WindowUtils::keyCtrlIsPressed() || event->mimeData()->urls().isEmpty())
+    auto urls = event->mimeData()->urls();
+    if (WindowUtils::keyCtrlIsPressed() || urls.isEmpty())
         return false;
 
-    auto firstUrl = event->mimeData()->urls().first();
+    auto firstUrl = urls.first();
     auto firstIndex = q->model()->index(firstUrl);
     if (firstIndex.isValid()) {
         qWarning() << "source file belong collection:" << firstUrl;
@@ -847,7 +851,6 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
         return false;
     }
 
-    auto urls = event->mimeData()->urls();
     QPoint viewPoint(event->pos().x() + q->horizontalOffset(), event->pos().y() + q->verticalOffset());
     auto dropPos = pointToPos(viewPoint);
     auto index = posToNode(dropPos);
@@ -2067,6 +2070,16 @@ void CollectionView::dropEvent(QDropEvent *event)
     QAbstractItemView::dropEvent(event);
 }
 
+void CollectionView::focusInEvent(QFocusEvent *event)
+{
+    QAbstractItemView::focusInEvent(event);
+
+    // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::focusInEvent
+    // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
+    if (!testAttribute(Qt::WA_InputMethodEnabled))
+        setAttribute(Qt::WA_InputMethodEnabled, true);
+}
+
 void CollectionView::scrollContentsBy(int dx, int dy)
 {
     // scroll the viewport to let the editor scrolled with item.
@@ -2102,6 +2115,15 @@ void CollectionView::keyboardSearch(const QString &search)
     d->searchTimer->start();
 }
 
+QVariant CollectionView::inputMethodQuery(Qt::InputMethodQuery query) const
+{
+    // When no item is selected, return input method area where the current mouse is located
+    if (query == Qt::ImCursorRectangle && !currentIndex().isValid())
+        return QRect(mapFromGlobal(QCursor::pos()), iconSize());
+
+    return QAbstractItemView::inputMethodQuery(query);
+}
+
 void CollectionView::sort(int role)
 {
     // toggle order if resort
@@ -2122,3 +2144,14 @@ void CollectionView::sort(int role)
     d->provider->sorted(d->id, items);
     return;
 }
+
+void CollectionView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    QAbstractItemView::currentChanged(current, previous);
+
+    // WA_InputMethodEnabled will be set to false if current index is invalid in QAbstractItemView::currentChanged
+    // To enable WA_InputMethodEnabled no matter whether the current index is valid or not.
+    if (!testAttribute(Qt::WA_InputMethodEnabled))
+        setAttribute(Qt::WA_InputMethodEnabled, true);
+}
+

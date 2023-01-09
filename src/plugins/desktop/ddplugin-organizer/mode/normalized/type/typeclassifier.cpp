@@ -124,7 +124,7 @@ QStringList TypeClassifier::classes() const
     QStringList usedKey;
     if (d->categories == kCatNone) {
         // nothing to do.
-    } else if (d->categories == kCatAll) {
+    } else if (d->categories == kCatDefault) {
         // append category in order.
         usedKey.append(kTypeKeyApp);
         usedKey.append(kTypeKeyDoc);
