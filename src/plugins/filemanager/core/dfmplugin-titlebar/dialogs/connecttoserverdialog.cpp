@@ -271,11 +271,23 @@ void ConnectToServerDialog::initializeUi()
     contentFrame->setLayout(contentLayout);
     addContent(contentFrame);
 
-    QStringList historyList = SearchHistroyManager::instance()->getSearchHistroy();
-    for (const QString &data : historyList) {
-        QUrl url(data);
-        if (!url.isValid() || !supportedSchemes.contains(schemeWithSlash(url.scheme())))
-            historyList.removeOne(data);
+    QStringList temHistoryList = SearchHistroyManager::instance()->getSearchHistroy();
+    QStringList historyList;
+    for (const QString &data : temHistoryList) {
+        QString text = data;
+        QString scheme = text.section("://", 0, 0);
+        if (scheme.isEmpty())
+            continue;
+        if (supportedSchemes.contains(schemeWithSlash(scheme))) {
+            historyList.append(text);
+        } else {
+            const QString &schemeLower = scheme.toLower();
+            if (supportedSchemes.contains(schemeWithSlash(schemeLower))) {
+                text.remove(0, scheme.length());
+                text.prepend(schemeLower);
+                historyList.append(text);
+            }
+        }
     }
 
     static int maxHistoryItems = 10;
