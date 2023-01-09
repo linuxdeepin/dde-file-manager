@@ -121,46 +121,67 @@ QVariantList BookMarkUpgradeUnit::initData() const
     }
 
     const QVariant &bookmarkOrderFromConfig = configObject.value(kBookmarkOrder).toObject().value(kBookmark).toArray().toVariantList();
+    // `bookmarkOrderList` is the bookmark sort data from config.
     QStringList bookmarkOrderList = bookmarkOrderFromConfig.toStringList();
-
+    // `bookmarkDataList` is the bookmark raw data from config, without sort.
     const QVariantList &bookmarkDataList = configObject.value(kConfigGroupBookmark).toObject().value(kConfigKeyName).toArray().toVariantList();
+    // 1. prepare a `bookmarkDataMap` from `bookmarkDataList`
     QVariantMap bookmarkDataMap;
     for (const QVariant &var : bookmarkDataList) {
         const QUrl &url = var.toHash().value(kKeyUrl).toUrl();
-        const QString &urlString = url.toString();
-        const QString &fileName = urlString.mid(urlString.lastIndexOf("/") + 1);
-        if (var.toHash().value(kKeyName).toString().isEmpty() || fileName.isEmpty())
+        const QString &bookmarkName = var.toHash().value(kKeyName).toString();
+        if (url.isEmpty() || bookmarkName.isEmpty())   // check the bookmark raw data
             continue;
-        const QString &compareName = QString("%1:%2#%3").arg(kBookmark).arg(urlString).arg(fileName);
-        if (!url.isValid() && bookmarkOrderList.contains(compareName)) {
-            bookmarkOrderList.removeOne(compareName);
-            qInfo() << "bookmark url is invalid but it is included in the bookmark order : " << url;
-            continue;
-        }
+
         const QVariantHash &item = var.toHash();
         bookmarkDataMap.insert(url.toString(), item);
     }
 
-    auto getUrlFromOrder = [](const QString &src, const QString &start, const QString &end) {
+    auto parseUrlFromOrderData = [](const QString &src, const QString &start, const QString &end) {
         int startIndex = src.indexOf(start, 0) + 1;
         int endIndex = src.indexOf(end, startIndex);
-        const QString &subStr = src.mid(startIndex, endIndex - startIndex);
-        return subStr;
+        const QString &urlString = src.mid(startIndex, endIndex - startIndex);
+        return urlString;
     };
+    // 2. sort the bookmark data to `sortedBookmarkOrderList` according to `bookmarkDataList`
+    QVariantList sortedBookmarkOrderList;
+    int increasedIndex = quickAccessItemList.count();
     while (bookmarkOrderList.count() > 0) {
         const QString &var = bookmarkOrderList.takeFirst();
-        const QString &fileName = var.mid(var.lastIndexOf("#"));
-        const QString &middleString = getUrlFromOrder(var, ":", fileName);
-        QVariantHash item = bookmarkDataMap.value(middleString).toHash();
-        if (item.value("name").toString().isEmpty())
-            continue;
-        item.insert(kIndex, quickAccessItemList.count());
-        item.insert(kKeydefaultItem, false);
-        quickAccessItemList.append(item);
+        const QString &suffixName = var.section("#", -1, -1);
+        const QString &splitter = var.section(suffixName, -1, -1, QString::SectionSkipEmpty);   // currently,splitter maybe `?#` or `#`
+        const QString &end = var.mid(var.lastIndexOf(splitter));
+        const QString &urlString = parseUrlFromOrderData(var, ":", end);
+        QVariantHash item = bookmarkDataMap.value(urlString).toHash();
+        if (!item.value("name").toString().isEmpty()) {
+            item.insert(kIndex, increasedIndex++);
+            item.insert(kKeydefaultItem, false);
+            sortedBookmarkOrderList.append(item);
+        }
+    }
+    // 3. if do not get the `sortedBookmarkOrderList` for some reason, also fill it with unsort bookmark data from `bookmarkDataMap`
+    if (sortedBookmarkOrderList.isEmpty()) {
+        increasedIndex = quickAccessItemList.count();
+        for (const QVariant &var : bookmarkDataMap.values()) {
+            QVariantHash item = var.toHash();
+            item.insert(kIndex, increasedIndex++);
+            item.insert(kKeydefaultItem, false);
+            sortedBookmarkOrderList.append(item);
+        }
+        qInfo() << "sortedBookmarkOrderList.count = " << sortedBookmarkOrderList.count();
+        qInfo() << "Warning: Do not get the bookmark order data from config, so transfer the bookmark raw data without sort as well.";
     }
 
+    qInfo() << "before: quickAccessItemList.count = " << quickAccessItemList.count();
+    // 4. append the final sort data to `quickAccessItemList` which is for writting to config in field `QuickAccess`
+    for (const QVariant &item : sortedBookmarkOrderList) {
+        quickAccessItemList.append(item);
+        qInfo() << "Bookmark raw data is sorded to quickAccessItemList";
+    }
+    qInfo() << "after: quickAccessItemList.count = " << quickAccessItemList.count();
     return quickAccessItemList;
 }
+
 bool BookMarkUpgradeUnit::doUpgrade(const QVariantList &quickAccessDatas)
 {
     QFile file(kConfigurationPath);
