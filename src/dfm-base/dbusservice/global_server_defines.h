@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef GLOBAL_SERVER_DEFINES_H
 #define GLOBAL_SERVER_DEFINES_H
@@ -98,6 +98,7 @@ inline constexpr char kDisplayName[] { "DisplayName" };
 inline constexpr char kDeviceIcon[] { "DeviceIcon" };
 inline constexpr char kConnectionBus[] { "connectBus" };
 inline constexpr char kUDisks2Size[] { "UDisks2Size" };
+inline constexpr char kDriveModel[] { "DriveModel" };
 }   // namespace DeviceProperty
 
 /*!

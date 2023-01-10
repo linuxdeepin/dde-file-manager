@@ -282,7 +282,7 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window)
  * \brief DialogService::askPasswordForLockedDevice
  * \return the password user inputed.
  */
-QString DialogManager::askPasswordForLockedDevice()
+QString DialogManager::askPasswordForLockedDevice(const QString &devName)
 {
     // NOTE: in both x11 and wayland, if dialog's parent is setted  , the dialog.exec blocks all
     // visiable windows, which means you cannot do operations in an idle file manager window
@@ -295,7 +295,7 @@ QString DialogManager::askPasswordForLockedDevice()
     // "dialogs' layer can be switched when exec in wayland" is a known BUG, says that there is no
     // concept of dialogs in wayland, but only the 'popup' menu.
     QWidget *parent = WindowUtils::isWayLand() ? qApp->activeWindow() : nullptr;
-    MountSecretDiskAskPasswordDialog dialog(tr("Need password to unlock device"), parent);
+    MountSecretDiskAskPasswordDialog dialog(tr("The passphrase is needed to access encrypted data on %1.").arg(devName), parent);
     return dialog.exec() == QDialog::Accepted ? dialog.getUerInputedPassword() : "";
 }
 

@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "devicehelper.h"
 #include "defendercontroller.h"
 
@@ -125,6 +125,7 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevPtr &dev)
     datas[kOpticalDrive] = dev->mediaCompatibility().join(", ").contains("optical");
     datas[kCleartextDevice] = getNullStrIfNotValid(Property::kEncryptedCleartextDevice);
     datas[kConnectionBus] = getNullStrIfNotValid(Property::kDriveConnectionBus);
+    datas[kDriveModel] = getNullStrIfNotValid(Property::kDriveModel);
 
     if (dev->optical())
         datas[kUDisks2Size] = dev->sizeTotal();

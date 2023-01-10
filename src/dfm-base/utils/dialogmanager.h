@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DIALOGMANAGER_H
 #define DIALOGMANAGER_H
 
@@ -76,7 +76,7 @@ public:
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
 
     bool askForFormat();
-    QString askPasswordForLockedDevice();
+    QString askPasswordForLockedDevice(const QString &devName);
 
     int showRunExcutableScriptDialog(const QUrl &url);
     int showRunExcutableFileDialog(const QUrl &url);

@@ -236,6 +236,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     QString shellId = ComputerUtils::getBlockDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
     bool hasFileSystem = info->extraProperty(DeviceProperty::kHasFileSystem).toBool();
     bool isOpticalDrive = info->extraProperty(DeviceProperty::kOpticalDrive).toBool();
+    QString driveName = info->extraProperty(DeviceProperty::kDriveModel).toString();
 
     bool needAskForFormat = info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock
             && !hasFileSystem
@@ -254,7 +255,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     if (isEncrypted) {
         if (!isUnlocked) {
             ComputerUtils::setCursorState();
-            QString passwd = DialogManagerInstance->askPasswordForLockedDevice();
+            QString passwd = DialogManagerInstance->askPasswordForLockedDevice(driveName);
             if (passwd.isEmpty()) {
                 ComputerUtils::setCursorState();
                 return;
