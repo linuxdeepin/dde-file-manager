@@ -119,7 +119,6 @@ QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 
     auto view = qobject_cast<FileView *>(parent());
     const QModelIndex &rootIndex = viewModel()->setRootUrl(url, view);
-    resetFilter();
 
     return mapFromSource(rootIndex);
 }
@@ -442,6 +441,9 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
 bool FileSortFilterProxyModel::passFileFilters(const AbstractFileInfoPointer &fileInfo) const
 {
     if (!fileInfo)
+        return false;
+
+    if (FileUtils::checkFtpOrSmbBusy(fileInfo->urlOf(UrlInfoType::kUrl), false))
         return false;
 
     if (filterCallback && !filterCallback(fileInfo.data(), filterData))

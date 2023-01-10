@@ -35,6 +35,7 @@
 #include "dfm-base/base/configs/configsynchronizer.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dialogs/settingsdialog/settingdialog.h"
 
 #include <dfm-framework/dpf.h>
@@ -148,6 +149,8 @@ void SideBarHelper::defaultContextMenu(quint64 windowId, const QUrl &url, const 
     });
 
     auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
+        if (FileUtils::checkFtpOrSmbBusy(url))
+            return;
         SideBarEventCaller::sendOpenTab(windowId, url);
     });
 

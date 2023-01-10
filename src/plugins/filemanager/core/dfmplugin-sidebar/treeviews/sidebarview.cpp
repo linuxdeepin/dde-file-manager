@@ -490,6 +490,10 @@ void SideBarView::setCurrentUrl(const QUrl &url)
     }
 
     this->setCurrentIndex(index);
+    d->current = index;
+    if (!d->previous.isValid()) {
+        d->previous = index;
+    }
 }
 
 QUrl SideBarView::currentUrl() const
@@ -537,6 +541,11 @@ bool SideBarView::isDraggingUrlSelected()
 QModelIndex SideBarView::previousIndex() const
 {
     return d->previous;
+}
+
+void SideBarView::setPreviousIndex(const QModelIndex &index)
+{
+    d->previous = index;
 }
 
 Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const

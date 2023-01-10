@@ -33,6 +33,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
@@ -241,6 +242,21 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
 
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::kItemUrlRole)) };
+    if (FileUtils::checkFtpOrSmbBusy(url)) {
+        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+        auto preIndex = sidebarView->previousIndex();
+        if (!preIndex.isValid()) {
+            sidebarView->setPreviousIndex(preIndex);
+            return;
+        }
+        SideBarItem *preItem = kSidebarModelIns->itemFromIndex(preIndex);
+        if (!preItem || dynamic_cast<SideBarItemSeparator *>(preItem))
+            return;
+        setCurrentUrl(qvariant_cast<QUrl>(preItem->data(SideBarItem::Roles::kItemUrlRole)));
+        sidebarView->setPreviousIndex(preIndex);
+        return;
+    }
+
     SideBarManager::instance()->runCd(item, SideBarHelper::windowId(this));
     sidebarView->update(sidebarView->previousIndex());
     sidebarView->update(sidebarView->currentIndex());

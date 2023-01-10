@@ -91,6 +91,7 @@ public:
     int showRenameNameSameErrorDialog(const QString &name);
     void showRenameBusyErrDialog();
     int showRenameNameDotBeginDialog();
+    int showUnableToVistDir(const QString &dir);
 
     // link file not exist
     DFMBASE_NAMESPACE::GlobalEventType showBreakSymlinkDialog(const QString &targetName, const QUrl &linkfile);

@@ -54,6 +54,7 @@ public:
     QVariantMap groupExpandState() const;
     bool isDraggingUrlSelected();
     QModelIndex previousIndex() const;
+    void setPreviousIndex(const QModelIndex &index);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

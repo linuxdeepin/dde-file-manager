@@ -97,6 +97,9 @@ public:
     static QString bindPathTransform(const QString &path, bool toDevice);
     static int dirFfileCount(const QUrl &url);
     static qreal pixmapDevicePixelRatio(qreal displayDevicePixelRatio, const QSize &requestedSize, const QSize &actualSize);
+    // check smb/sftp and ftp remove file canable visit
+    static bool getFtpOrSmbHostAndPort(const QUrl &url, QString *host, QString *port);
+    static bool checkFtpOrSmbBusy(const QUrl &url, const bool show = true);
 
 private:
     static QMutex cacheCopyingMutex;

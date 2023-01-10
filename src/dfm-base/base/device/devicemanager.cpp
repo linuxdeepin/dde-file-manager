@@ -600,17 +600,18 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     auto wrappedCb = [=](bool ok, DeviceError err, const QString &msg) {
         Q_EMIT mountNetworkDeviceResult(ok, err, msg);
         if (cb) cb(ok, err, msg);
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
     };
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
         if (ok) {
             DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice,
                                                 wrappedCb, timeout);
         } else {
             wrappedCb(false, DeviceError::kUserErrorTimedOut, "");
+            QApplication::setOverrideCursor(Qt::ArrowCursor);
             qDebug() << "cannot access network " << host << ":" << port;
         }
     });
