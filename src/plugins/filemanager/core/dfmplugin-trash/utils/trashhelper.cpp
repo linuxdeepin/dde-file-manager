@@ -246,7 +246,7 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     } else if (toIsTrash && !toIsTrashRoot) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (!fromIsTrash || !toIsTrash) {
+    } else if (fromIsTrash || toIsTrash) {
         *action = Qt::MoveAction;
         return true;
     }

@@ -557,7 +557,6 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         return Qt::IgnoreAction;
     }
 
-    // TODO(zhangs): impl me!
     QUrl targetItemUrl;
     if (!item->itemInfo().finalUrl.isEmpty()) {
         targetItemUrl = item->itemInfo().finalUrl;
