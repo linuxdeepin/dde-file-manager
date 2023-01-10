@@ -428,6 +428,8 @@ void ComputerItemDelegate::drawDeviceDetail(QPainter *painter, const QStyleOptio
         double usedRate = (sizeTotal == 0) ? 0 : (sizeUsage * 1.0 / sizeTotal);
         if (usedRate > 1)
             usedRate = 1.0;   // avoid overflow.
+        if (usedRate < 0)
+            usedRate = 0;
 
         QRect totalRect(QPoint(detailRect.x(), option.rect.y() + 64), QSize(TextMaxWidth, 6));
         QRect usedRect = totalRect;
