@@ -424,23 +424,23 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey, QVariant::fromValue(to));
     QString fromMsg, toMsg;
     if (AbstractJobHandler::JobType::kCopyType == jobType) {
-        fromMsg = QString(QObject::tr("Copying %1")).arg(from.toString());
-        toMsg = QString(QObject::tr("to %1")).arg(to.toString());
+        fromMsg = QString(QObject::tr("Copying %1")).arg(from.path());
+        toMsg = QString(QObject::tr("to %1")).arg(UrlRoute::urlParent(to).path());
         errorSrcAndDestString(from, to, &fromMsg, &toMsg, error);
     } else if (AbstractJobHandler::JobType::kDeleteType == jobType) {
-        fromMsg = QString(QObject::tr("Deleting %1")).arg(from.toString());
+        fromMsg = QString(QObject::tr("Deleting %1")).arg(from.path());
     } else if (AbstractJobHandler::JobType::kCutType == jobType) {
-        fromMsg = QString(QObject::tr("Moving %1")).arg(from.toString());
-        toMsg = QString(QObject::tr("to %1")).arg(to.toString());
+        fromMsg = QString(QObject::tr("Moving %1")).arg(from.path());
+        toMsg = QString(QObject::tr("to %1")).arg(UrlRoute::urlParent(to).path());
         errorSrcAndDestString(from, to, &fromMsg, &toMsg, error);
     } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType) {
-        fromMsg = QString(QObject::tr("Trashing %1")).arg(from.toString());
-        toMsg = QString(QObject::tr("to %1")).arg(to.toString());
+        fromMsg = QString(QObject::tr("Trashing %1")).arg(from.path());
+        toMsg = QString(QObject::tr("to %1")).arg(UrlRoute::urlParent(to).path());
     } else if (AbstractJobHandler::JobType::kRestoreType == jobType) {
-        fromMsg = QString(QObject::tr("Restoring %1")).arg(from.toString());
-        toMsg = QString(QObject::tr("to %1")).arg(to.toString());
+        fromMsg = QString(QObject::tr("Restoring %1")).arg(from.path());
+        toMsg = QString(QObject::tr("to %1")).arg(UrlRoute::urlParent(to).path());
     } else if (AbstractJobHandler::JobType::kCleanTrashType == jobType) {
-        fromMsg = QString(QObject::tr("Deleting %1")).arg(from.toString());
+        fromMsg = QString(QObject::tr("Deleting %1")).arg(from.path());
     }
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, QVariant::fromValue(fromMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));
@@ -460,7 +460,7 @@ void AbstractWorker::errorSrcAndDestString(const QUrl &from, const QUrl &to,
         auto toInfo = InfoFactory::create<AbstractFileInfo>(to);
         if (!fromInfo || !toInfo)
             return;
-        *toMsg = QString(tr("Original path %1    Target path %2")).arg(fromInfo->pathOf(PathInfoType::kAbsoluteFilePath), toInfo->pathOf(PathInfoType::kAbsoluteFilePath));
+        *toMsg = QString(tr("Original path %1    Target path %2")).arg(fromInfo->pathOf(PathInfoType::kAbsoluteFilePath), toInfo->urlOf(UrlInfoType::kParentUrl).path());
     }
     return;
 }
