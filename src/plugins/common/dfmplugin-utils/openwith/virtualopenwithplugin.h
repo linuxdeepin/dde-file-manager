@@ -37,6 +37,8 @@ class VirtualOpenWithPlugin : public dpf::Plugin
 
     DPF_EVENT_REG_SLOT(slot_OpenWith_ShowDialog)
 
+    DPF_EVENT_REG_HOOK(hook_OpenWith_DisabledOpenWithWidget)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

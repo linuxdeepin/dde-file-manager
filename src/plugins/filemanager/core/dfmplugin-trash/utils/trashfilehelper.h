@@ -50,6 +50,7 @@ public:
                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
     bool blockPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
+    bool disableOpenWidgetWidget(const QUrl &url, bool *result);
 
 private:
     explicit TrashFileHelper(QObject *parent = nullptr);

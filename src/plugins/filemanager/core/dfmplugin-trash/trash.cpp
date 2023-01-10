@@ -45,6 +45,7 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(BasicViewFieldFunc)
 Q_DECLARE_METATYPE(QString *);
 Q_DECLARE_METATYPE(QVariant *)
+Q_DECLARE_METATYPE(bool *)
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trash;
@@ -121,7 +122,7 @@ void Trash::installToSideBar()
         { "Property_Key_IsDefaultItem", true },
         { "Property_Key_PluginItemData", map }
     };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);//push item data to bookmark plugin as cache
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);   //push item data to bookmark plugin as cache
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", TrashHelper::rootUrl(), map);
 }
 
@@ -174,6 +175,8 @@ void Trash::followEvents()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", TrashFileHelper::instance(), &TrashFileHelper::moveToTrash);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", TrashFileHelper::instance(), &TrashFileHelper::deleteFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TrashFileHelper::instance(), &TrashFileHelper::openFileInPlugin);
+
+    dpfHookSequence->follow("dfmplugin_utils", "hook_OpenWith_DisabledOpenWithWidget", TrashFileHelper::instance(), &TrashFileHelper::disableOpenWidgetWidget);
 }
 
 void Trash::bindWindows()

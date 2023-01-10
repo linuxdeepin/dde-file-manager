@@ -146,3 +146,13 @@ bool TrashFileHelper::blockPaste(quint64 winId, const QList<QUrl> &fromUrls, con
     }
     return false;
 }
+
+bool TrashFileHelper::disableOpenWidgetWidget(const QUrl &url, bool *result)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    *result = true;
+
+    return true;
+}

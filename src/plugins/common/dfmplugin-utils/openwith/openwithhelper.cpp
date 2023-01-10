@@ -23,6 +23,10 @@
 
 #include "dfm-base/base/schemefactory.h"
 
+#include <dfm-framework/dpf.h>
+
+Q_DECLARE_METATYPE(bool *)
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_utils;
 OpenWithHelper::OpenWithHelper(QObject *parent)
@@ -37,6 +41,10 @@ QWidget *OpenWithHelper::createOpenWithWidget(const QUrl &url)
         if (fileInfo.isNull())
             return nullptr;
         if (fileInfo->isAttributes(OptInfoType::kIsDir))
+            return nullptr;
+        bool pluginDisabledResult { false };
+        dpfHookSequence->run("dfmplugin_utils", "hook_OpenWith_DisabledOpenWithWidget", url, &pluginDisabledResult);
+        if (pluginDisabledResult)
             return nullptr;
         OpenWithWidget *openWidget = new OpenWithWidget;
         openWidget->selectFileUrl(url);
