@@ -50,6 +50,8 @@
 #include <QTimer>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <QHostAddress>
+#include <QNetworkInterface>
 
 using namespace dfmplugin_smbbrowser;
 
@@ -207,11 +209,12 @@ void SmbBrowser::onWindowOpened(quint64 winId)
     if (searchPlugin && searchPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted) {
         registerNetworkToSearch();
     } else {
-        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
-            Q_UNUSED(iid)
-            if (name == "dfmplugin-search")
-                registerNetworkToSearch();
-        },
+        connect(
+                DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginStarted, this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-search")
+                        registerNetworkToSearch();
+                },
                 Qt::DirectConnection);
     }
 }
@@ -357,10 +360,19 @@ void SmbBrowser::smbAccessPrehandler(quint64 winId, const QUrl &url, std::functi
         return true;
     };
 
-    QStringList validateService { "smb", "nmb" };
-    for (const auto &serv : validateService) {
-        if (!checkAndStartService(serv))
-            return;
+    QStringList hostList;
+    auto addrs = QNetworkInterface::allAddresses();
+    for (const auto &addr : addrs)
+        hostList << addr.toString();
+    hostList << "localhost";
+
+    QString targetHost = url.host();
+    if (hostList.contains(targetHost)) {   // only check service when access local shares
+        QStringList validateService { "smb", "nmb" };
+        for (const auto &serv : validateService) {
+            if (!checkAndStartService(serv))
+                return;
+        }
     }
 
     networkAccessPrehandler(winId, url, after);
