@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "universalutils.h"
 #include "dfm_event_defines.h"
 
@@ -41,10 +41,42 @@
 #    define APP_MANAGER_SERVICE "org.deepin.dde.Application1.Manager"
 #    define APP_MANAGER_PATH "/org/deepin/dde/Application1/Manager"
 #    define APP_MANAGER_INTERFACE "org.deepin.dde.Application1.Manager"
+
+#    define SYSTEM_SYSTEMINFO_SERVICE "org.deepin.dde.SystemInfo1"
+#    define SYSTEM_SYSTEMINFO_PATH "/org/deepin/dde/SystemInfo1"
+#    define SYSTEM_SYSTEMINFO_INTERFACE "org.deepin.dde.SystemInfo1"
+
+#    define DEAMON_SYSTEMINFO_SERVICE "org.deepin.daemon.SystemInfo1"
+#    define DEAMON_SYSTEMINFO_PATH "/org/deepin/daemon/SystemInfo1"
+#    define DEAMON_SYSTEMINFO_INTERFACE "org.deepin.daemon.SystemInfo1"
+
+#    define DEAMON_DOCK_SERVICE "org.deepin.dde.daemon.Dock1"
+#    define DEAMON_DOCK_PATH "/org/deepin/dde/daemon/Dock1"
+#    define DEAMON_DOCK_INTERFACE "org.deepin.dde.daemon.Dock1"
+
+#    define DDE_LOCKSERVICE_SERVICE "org.deepin.dde.LockService1"
+#    define DDE_LOCKSERVICE_PATH "/org/deepin/dde/LockService1"
+#    define DDE_LOCKSERVICE_INTERFACE "org.deepin.dde.LockService1"
 #else
 #    define APP_MANAGER_SERVICE "com.deepin.SessionManager"
 #    define APP_MANAGER_PATH "/com/deepin/StartManager"
 #    define APP_MANAGER_INTERFACE "com.deepin.StartManager"
+
+#    define SYSTEM_SYSTEMINFO_SERVICE "com.deepin.system.SystemInfo"
+#    define SYSTEM_SYSTEMINFO_PATH "/com/deepin/system/SystemInfo"
+#    define SYSTEM_SYSTEMINFO_INTERFACE "com.deepin.system.SystemInfo"
+
+#    define DEAMON_SYSTEMINFO_SERVICE "com.deepin.daemon.SystemInfo"
+#    define DEAMON_SYSTEMINFO_PATH "/com/deepin/daemon/SystemInfo"
+#    define DEAMON_SYSTEMINFO_INTERFACE "com.deepin.daemon.SystemInfo"
+
+#    define DEAMON_DOCK_SERVICE "com.deepin.dde.daemon.Dock"
+#    define DEAMON_DOCK_PATH "/com/deepin/dde/daemon/Dock"
+#    define DEAMON_DOCK_INTERFACE "com.deepin.dde.daemon.Dock"
+
+#    define DDE_LOCKSERVICE_SERVICE "com.deepin.dde.LockService"
+#    define DDE_LOCKSERVICE_PATH "/com/deepin/dde/LockService"
+#    define DDE_LOCKSERVICE_INTERFACE "com.deepin.dde.LockService"
 #endif
 
 namespace dfmbase {
@@ -155,9 +187,9 @@ void UniversalUtils::blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay)
 qint64 UniversalUtils::computerMemory()
 {
     //! 从com.deepin.system.SystemInfo中获取实际安装的内存的大小
-    QDBusInterface deepinSystemInfo("com.deepin.system.SystemInfo",
-                                    "/com/deepin/system/SystemInfo",
-                                    "com.deepin.system.SystemInfo",
+    QDBusInterface deepinSystemInfo(SYSTEM_SYSTEMINFO_SERVICE,
+                                    SYSTEM_SYSTEMINFO_PATH,
+                                    SYSTEM_SYSTEMINFO_INTERFACE,
                                     QDBusConnection::systemBus());
     // 部分数据优先从dbus读取
     // 获取安装的内存总量
@@ -169,9 +201,9 @@ qint64 UniversalUtils::computerMemory()
 
 void UniversalUtils::computerInformation(QString &cpuinfo, QString &systemType, QString &edition, QString &version)
 {
-    QDBusInterface systemInfo("com.deepin.daemon.SystemInfo",
-                              "/com/deepin/daemon/SystemInfo",
-                              "com.deepin.daemon.SystemInfo",
+    QDBusInterface systemInfo(DEAMON_SYSTEMINFO_SERVICE,
+                              DEAMON_SYSTEMINFO_PATH,
+                              DEAMON_SYSTEMINFO_INTERFACE,
                               QDBusConnection::sessionBus());
 
     if (systemInfo.isValid()) {
@@ -302,9 +334,9 @@ bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, con
 
 int UniversalUtils::dockHeight()
 {
-    QDBusInterface deepinDockInfo("com.deepin.dde.daemon.Dock",
-                                  "/com/deepin/dde/daemon/Dock",
-                                  "com.deepin.dde.daemon.Dock",
+    QDBusInterface deepinDockInfo(DEAMON_DOCK_SERVICE,
+                                  DEAMON_DOCK_PATH,
+                                  DEAMON_DOCK_INTERFACE,
                                   QDBusConnection::sessionBus());
 
     int dockHeight = 0;
@@ -376,9 +408,9 @@ QString UniversalUtils::getCurrentUser()
 {
     QString user;
 
-    QDBusInterface sessionManagerIface("com.deepin.dde.LockService",
-                                       "/com/deepin/dde/LockService",
-                                       "com.deepin.dde.LockService",
+    QDBusInterface sessionManagerIface(DDE_LOCKSERVICE_SERVICE,
+                                       DDE_LOCKSERVICE_PATH,
+                                       DDE_LOCKSERVICE_INTERFACE,
                                        QDBusConnection::systemBus());
 
     if (sessionManagerIface.isValid()) {
@@ -396,9 +428,9 @@ QString UniversalUtils::getCurrentUser()
 void UniversalUtils::userChange(QObject *obj, const char *cslot)
 {
     QDBusConnection::systemBus().connect(
-            "com.deepin.dde.LockService",
-            "/com/deepin/dde/LockService",
-            "com.deepin.dde.LockService",
+            DDE_LOCKSERVICE_SERVICE,
+            DDE_LOCKSERVICE_PATH,
+            DDE_LOCKSERVICE_INTERFACE,
             "UserChanged",
             obj,
             cslot);
