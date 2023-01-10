@@ -332,6 +332,12 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
     if (sources.isEmpty())
         return nullptr;
 
+    // cut file to file current dir
+    if (FileUtils::isSameFile(UrlRoute::urlParent(sources[0]), target)) {
+        qWarning() << "cut file to same dir!!!!!!!!!";
+        return nullptr;
+    }
+
     QList<QUrl> sourcesTrans = sources;
     QList<QUrl> urls {};
     bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", sourcesTrans, &urls);
