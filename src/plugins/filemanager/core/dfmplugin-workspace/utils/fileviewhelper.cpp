@@ -247,6 +247,10 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
         if (!rect.contains(pos))
             return true;
 
+        // if the item can not be selected, return true
+        if (!(index.flags() & Qt::ItemIsSelectable))
+            return true;
+
         QStyleOptionViewItem option = parent()->viewOptions();
         option.rect = rect;
 
