@@ -32,7 +32,7 @@ public:
     explicit PreviewFileOperation(QObject *parent = nullptr);
 
 public:
-    static void openFileHandle(quint64 winID, const QUrl &url);
+    static bool openFileHandle(quint64 winID, const QUrl &url);
 };
 }
 #endif   // PREVIEWFILEOPERATION_H

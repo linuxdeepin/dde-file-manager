@@ -49,7 +49,7 @@ void FileOperationsEventHandler::publishJobResultEvent(AbstractJobHandler::JobTy
     case AbstractJobHandler::JobType::kCutType:
         dpfSignalDispatcher->publish(GlobalEventType::kCutFileResult, srcUrls, destUrls, ok, errMsg);
         break;
-    case AbstractJobHandler::JobType::kDeleteTpye:
+    case AbstractJobHandler::JobType::kDeleteType:
         dpfSignalDispatcher->publish(GlobalEventType::kDeleteFilesResult, srcUrls, ok, errMsg);
         break;
     case AbstractJobHandler::JobType::kMoveToTrashType:

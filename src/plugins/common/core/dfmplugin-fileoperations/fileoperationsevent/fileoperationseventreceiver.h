@@ -87,8 +87,8 @@ public slots:
                                 const QVariant custom,
                                 DFMBASE_NAMESPACE::Global::OperatorCallback callback);
 
-    bool handleOperationOpenFiles(const quint64 windowId,
-                                  const QList<QUrl> urls);
+    bool handleOperationOpenFiles(const quint64 windowId, const QList<QUrl> urls);
+    bool handleOperationOpenFiles(const quint64 windowId, const QList<QUrl> urls, bool *ok);
     void handleOperationOpenFiles(const quint64 windowId,
                                   const QList<QUrl> urls,
                                   const QVariant custom,

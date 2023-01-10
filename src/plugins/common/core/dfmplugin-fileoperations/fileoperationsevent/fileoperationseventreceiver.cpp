@@ -573,7 +573,7 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
     auto handle = doDeleteFile(windowId, sources, flags, handleCallback);
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteTpye, handle);
+    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteType, handle);
 }
 
 void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
@@ -632,7 +632,7 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
         args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
-    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteTpye, handle);
+    FileOperationsEventHandler::instance()->handleJobResult(AbstractJobHandler::JobType::kDeleteType, handle);
 }
 
 bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId, const QList<QUrl> urls)
@@ -640,7 +640,6 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
     if (urls.isEmpty())
         return false;
 
-    bool ok = false;
     QString error;
     if (!urls.isEmpty() && !urls.first().isLocalFile()) {
         // hook events
@@ -654,7 +653,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
         return true;
 
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.openFiles(urls);
+    bool ok = fileHandler.openFiles(urls);
     if (!ok) {
         DFMBASE_NAMESPACE::GlobalEventType lastEvent = fileHandler.lastEventType();
         if (lastEvent != DFMBASE_NAMESPACE::GlobalEventType::kUnknowType) {
@@ -670,6 +669,24 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
     }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
     return ok;
+}
+
+bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId, const QList<QUrl> urls, bool *ok)
+{
+    if (urls.isEmpty())
+        return false;
+
+    QString error;
+    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+        // hook events
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", windowId, urls)) {
+            if (ok)
+                *ok = false;
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, true, error);
+            return true;
+        }
+    }
+    return handleOperationOpenFiles(windowId, urls);
 }
 
 void FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId,

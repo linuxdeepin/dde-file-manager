@@ -30,7 +30,7 @@ DPFILEOPERATIONS_USE_NAMESPACE
 DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)
     : AbstractWorker(parent)
 {
-    jobType = AbstractJobHandler::JobType::kDeleteTpye;
+    jobType = AbstractJobHandler::JobType::kDeleteType;
 }
 
 DoDeleteFilesWorker::~DoDeleteFilesWorker()

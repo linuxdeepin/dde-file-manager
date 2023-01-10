@@ -427,7 +427,7 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
         fromMsg = QString(QObject::tr("Copying %1")).arg(from.toString());
         toMsg = QString(QObject::tr("to %1")).arg(to.toString());
         errorSrcAndDestString(from, to, &fromMsg, &toMsg, error);
-    } else if (AbstractJobHandler::JobType::kDeleteTpye == jobType) {
+    } else if (AbstractJobHandler::JobType::kDeleteType == jobType) {
         fromMsg = QString(QObject::tr("Deleting %1")).arg(from.toString());
     } else if (AbstractJobHandler::JobType::kCutType == jobType) {
         fromMsg = QString(QObject::tr("Moving %1")).arg(from.toString());
@@ -636,7 +636,7 @@ void AbstractWorker::saveOperations()
             values.insert("event", QVariant::fromValue(static_cast<uint16_t>(operatorType)));
             values.insert("sources", QUrl::toStringList(completeTargetFiles));
             values.insert("targets", QUrl::toStringList({ targetUrl }));
-            if (jobType != AbstractJobHandler::JobType::kDeleteTpye)
+            if (jobType != AbstractJobHandler::JobType::kDeleteType)
                 dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
         }
     }

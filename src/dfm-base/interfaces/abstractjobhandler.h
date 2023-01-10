@@ -108,7 +108,7 @@ public:
     enum class JobType : uint8_t {
         kCopyType = 0,   // 拷贝任务
         kCutType = 1,   // 剪切任务
-        kDeleteTpye = 2,   // 删除任务
+        kDeleteType = 2,   // 删除任务
         kMoveToTrashType = 3,   //移动到回收站
         kRestoreType = 4,   // 从回收站还原
         kCleanTrashType = 5,   // 清理回收站

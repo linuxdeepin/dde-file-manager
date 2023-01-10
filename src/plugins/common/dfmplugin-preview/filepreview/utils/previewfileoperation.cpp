@@ -28,6 +28,8 @@
 
 #include <QUrl>
 
+Q_DECLARE_METATYPE(bool *)
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_filepreview;
 PreviewFileOperation::PreviewFileOperation(QObject *parent)
@@ -35,9 +37,12 @@ PreviewFileOperation::PreviewFileOperation(QObject *parent)
 {
 }
 
-void PreviewFileOperation::openFileHandle(quint64 winID, const QUrl &url)
+bool PreviewFileOperation::openFileHandle(quint64 winID, const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, winID, urls);
+    bool ok = true;
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, winID, urls, &ok);
+
+    return ok;
 }

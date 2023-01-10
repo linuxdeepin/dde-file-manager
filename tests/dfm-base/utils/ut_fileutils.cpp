@@ -45,29 +45,20 @@ public:
     }
 };
 
-TEST_F(UT_FileUtils, test_mkdir)
-{
-    UrlRoute::regScheme(Global::Scheme::kFile, "/");
-    qInfo() << UrlRoute::pathToReal("/funningTest/");
-    FileUtils::mkdir(UrlRoute::pathToReal("/"), "test");
-    qInfo() << StandardPaths::location(StandardPaths::kHomePath);
-    FileUtils::mkdir(QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kHomePath)), "test");
-}
-
 TEST_F(UT_FileUtils, testIsContainProhibitPath)
 {
     QList<QUrl> pathUrls;
     pathUrls << QUrl(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
 
-    EXPECT_EQ(true ,FileUtils::isContainProhibitPath(pathUrls));
+    EXPECT_EQ(true, FileUtils::isContainProhibitPath(pathUrls));
 
     QList<QUrl> tempUrls;
     tempUrls << QUrl("/usr/test");
-    EXPECT_EQ(false ,FileUtils::isContainProhibitPath(tempUrls));
+    EXPECT_EQ(false, FileUtils::isContainProhibitPath(tempUrls));
 
     tempUrls << QUrl("/usr/test")
              << QUrl(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
-    EXPECT_EQ(true ,FileUtils::isContainProhibitPath(tempUrls));
+    EXPECT_EQ(true, FileUtils::isContainProhibitPath(tempUrls));
 }
 
 #endif

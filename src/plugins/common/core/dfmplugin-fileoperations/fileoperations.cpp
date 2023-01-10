@@ -29,6 +29,8 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm_global_defines.h"
 
+Q_DECLARE_METATYPE(bool *)
+
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
@@ -135,6 +137,11 @@ void FileOperations::initEventHandle()
                                    FileOperationsEventReceiver::instance(),
                                    static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
                                                                                      const QList<QUrl>)>(&FileOperationsEventReceiver::handleOperationOpenFiles));
+    dpfSignalDispatcher->subscribe(GlobalEventType::kOpenFiles,
+                                   FileOperationsEventReceiver::instance(),
+                                   static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
+                                                                                     const QList<QUrl>,
+                                                                                     bool *ok)>(&FileOperationsEventReceiver::handleOperationOpenFiles));
     dpfSignalDispatcher->subscribe(GlobalEventType::kOpenFilesByApp,
                                    FileOperationsEventReceiver::instance(),
                                    static_cast<bool (FileOperationsEventReceiver::*)(const quint64,

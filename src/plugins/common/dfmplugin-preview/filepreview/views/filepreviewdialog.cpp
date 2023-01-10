@@ -131,8 +131,9 @@ void FilePreviewDialog::playCurrentPreviewFile()
 void FilePreviewDialog::openFile()
 {
 
-    PreviewFileOperation::openFileHandle(currentWinID, fileList.at(currentPageIndex));
-    close();
+    bool succ = PreviewFileOperation::openFileHandle(currentWinID, fileList.at(currentPageIndex));
+    if (succ)
+        close();
 }
 
 void FilePreviewDialog::childEvent(QChildEvent *event)
