@@ -61,6 +61,13 @@ void OperState::selectionChanged()
 
         if (contBegin.isValid() && !model->isSelected(contBegin))
             contBegin = QModelIndex();
+
+        // automatically set the first selected index to current index .
+        if (!focus.isValid() && !model->selectedIndexesCache().isEmpty()) {
+            setCurrent(model->selectedIndexesCache().first());
+            if (!contBegin.isValid())
+                contBegin = current();
+        }
     }
 
     //! when selection changed, we need to update all view.

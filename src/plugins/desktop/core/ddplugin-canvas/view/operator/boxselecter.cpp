@@ -212,8 +212,14 @@ void BoxSelecter::updateCurrentIndex()
         } else {
             // there is no item at end pos. reset all focus index.
             // we maybe need to find a greater method to process it.
-            view->d->operState().setCurrent(QModelIndex());
-            view->d->operState().setContBegin(QModelIndex());
+            auto sels =  view->selectionModel()->selectedIndexesCache();
+            if (sels.size() == 1) { // single, set it to current index.
+                view->d->operState().setCurrent(sels.first());
+                view->d->operState().setContBegin(sels.first());
+            } else {
+                view->d->operState().setCurrent(QModelIndex());
+                view->d->operState().setContBegin(QModelIndex());
+            }
         }
     }
 }
