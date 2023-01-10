@@ -39,18 +39,6 @@ VaultManagerDBus::VaultManagerDBus(QObject *parent)
     dpfSlotChannel->push("dfmplugin_utils", "slot_VaultHelper_TransparentUnlockVault");
 }
 
-// TODO(gongheng): Temporarily reserved, after the test has no problems, it will be deleted
-void VaultManagerDBus::sessionManagerDBusConnect()
-{
-    QDBusConnection::sessionBus().connect(
-            "com.deepin.SessionManager",
-            "/com/deepin/SessionManager",
-            "org.freedesktop.DBus.Properties",
-            "PropertiesChanged", "sa{sv}as",
-            this,
-            SLOT(lockScreenVaultLock(QDBusMessage)));
-}
-
 void VaultManagerDBus::SysUserChanged(const QString &curUser)
 {
     if (currentUser != curUser) {
@@ -158,46 +146,6 @@ void VaultManagerDBus::RestoreNeedWaitMinutes(int userID)
     if (!IsValidInvoker())
         return;
     mapNeedMinutes[userID] = kTotalWaitTime;
-}
-
-void VaultManagerDBus::lockScreenVaultLock(const QDBusMessage &msg)
-{
-    QList<QVariant> arguments = msg.arguments();
-    if (3 != arguments.count())
-        return;
-
-    QString interfaceName = msg.arguments().at(0).toString();
-    if (interfaceName != "com.deepin.SessionManager")
-        return;
-
-    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
-    QStringList keys = changedProps.keys();
-    for (const QString &prop : keys) {
-        if (prop == "Locked") {
-            bool bLocked = changedProps[prop].toBool();
-            if (bLocked) {
-                char *loginUser = getlogin();
-                QString user = loginUser ? loginUser : "";
-                emit lockEventTriggered(user);
-
-                char buf[512] = { 0 };
-                FILE *cmd_pipe = popen("pidof -s dde-file-manager", "r");
-
-                fgets(buf, 512, cmd_pipe);
-                pid_t pid = static_cast<pid_t>(strtoul(buf, nullptr, 10));
-
-                if (pid == 0) {
-                    QString umountCmd = "fusermount -zu " + VaultClock::vaultBasePath() + "/" + kVaultDecryptDirName;
-                    QByteArray umountCmdBytes = umountCmd.toUtf8();
-                    system(umountCmdBytes.data());
-                    //! 记录保险箱上锁时间
-                    Settings setting(kVaultTimeConfigFile);
-                    setting.setValue(QString("VaultTime"), QString("LockTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-                }
-                pclose(cmd_pipe);
-            }
-        }
-    }
 }
 
 void VaultManagerDBus::timerEvent(QTimerEvent *event)

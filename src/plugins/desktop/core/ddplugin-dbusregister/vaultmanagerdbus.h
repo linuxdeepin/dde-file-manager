@@ -15,8 +15,6 @@ class VaultManagerDBus : public QObject, public QDBusContext
 public:
     explicit VaultManagerDBus(QObject *parent = nullptr);
 
-    void sessionManagerDBusConnect();
-
 public slots:
     /*!
      * \brief  用户切换槽函数
@@ -96,13 +94,6 @@ public slots:
      * \brief  保险箱再次输入密码的等待分钟数还原
      */
     void RestoreNeedWaitMinutes(int userID);
-
-private slots:
-    /**
-     * @brief lockPropertyChanged 锁屏改变事件
-     * @param msg
-     */
-    void lockScreenVaultLock(const QDBusMessage &msg);
 
 signals:
     /**

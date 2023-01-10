@@ -1,23 +1,23 @@
 /*
-* Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
-*
-* Author:     gongheng <gongheng@uniontech.com>
-*
-* Maintainer: zhengyouge <zhengyouge@uniontech.com>
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     gongheng <gongheng@uniontech.com>
+ *
+ * Maintainer: zhengyouge <zhengyouge@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #ifndef VAULTHELPER_GLOBAL_H
 #define VAULTHELPER_GLOBAL_H
 
@@ -34,5 +34,13 @@ inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
 inline constexpr char kGroupPolicyKeyVaultAlgoName[] { "dfm.vault.algo.name" };
 inline constexpr char kVaultTimeConfigFilePath[] { "/../dde-file-manager/vaultTimeConfig" };
 }
+
+#ifdef COMPILE_ON_V23
+#    define APP_SESSION_SERVICE "org.deepin.dde.SessionManager1"
+#    define APP_SESSION_PATH "/org/deepin/dde/SessionManager1"
+#else
+#    define APP_SESSION_SERVICE "com.deepin.SessionManager"
+#    define APP_SESSION_PATH "/com/deepin/SessionManager"
+#endif
 
 #endif   // VAULTHELPER_GLOBAL_H
