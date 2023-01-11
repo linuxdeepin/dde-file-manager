@@ -375,7 +375,9 @@ void SmbBrowser::smbAccessPrehandler(quint64 winId, const QUrl &url, std::functi
         }
     }
 
-    networkAccessPrehandler(winId, url, after);
+    QTimer::singleShot(100, qApp, [=] {
+        networkAccessPrehandler(winId, url, after);
+    });
 
     // set smbd auto start ASYNC
     if (enableRequired) {
