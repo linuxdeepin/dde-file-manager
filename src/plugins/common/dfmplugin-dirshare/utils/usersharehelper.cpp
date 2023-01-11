@@ -468,8 +468,9 @@ int UserShareHelper::runNetCmd(const QStringList &args, int wait, QString *err)
 
 void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) const
 {
+    // when shared dir is sys、bin、the same as current user ..., show the notice
     if (err.contains("is already a valid system user name")) {
-        //        emit fileSignalManager->requestShowAddUserShareFailedDialog(_info.path());
+        DialogManagerInstance->showErrorDialog(tr("Share folder can't be named after the current username"), "");
         return;
     }
 
