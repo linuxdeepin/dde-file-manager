@@ -42,6 +42,7 @@ public:
     bool isLast();
     int size();
     void removeAt(int i);
+    void removeUrl(const QUrl &url);
     int currentIndex();
 
     // TODO(zhangs): check network exists

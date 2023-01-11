@@ -23,6 +23,8 @@
 #include "views/navwidget.h"
 #include "events/titlebareventcaller.h"
 
+#include "dfm-base/base/device/deviceproxymanager.h"
+
 #include <QAbstractButton>
 
 using namespace dfmplugin_titlebar;
@@ -85,6 +87,19 @@ void NavWidget::forward()
     if (!url.isEmpty()) {
         d->updateBackForwardButtonsState();
         TitleBarEventCaller::sendCd(this, url);
+    }
+}
+
+void NavWidget::onDevUnmounted(const QString &id, const QString &oldMpt)
+{
+    Q_UNUSED(id)
+
+    auto mpt = QUrl::fromLocalFile(oldMpt);
+    if (!mpt.isEmpty()) {
+        for (auto stack : d->allNavStacks)
+            stack->removeUrl(mpt);
+
+        d->updateBackForwardButtonsState();
     }
 }
 
@@ -167,4 +182,9 @@ void NavWidget::initConnect()
 
     connect(d->navBackButton, &QAbstractButton::clicked, this, &NavWidget::back);
     connect(d->navForwardButton, &QAbstractButton::clicked, this, &NavWidget::forward);
+
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &NavWidget::onDevUnmounted);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &NavWidget::onDevUnmounted);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, &NavWidget::onDevUnmounted);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, &NavWidget::onDevUnmounted);
 }

@@ -55,6 +55,8 @@ public slots:
     void back();
     void forward();
 
+    void onDevUnmounted(const QString &id, const QString &oldMpt);
+
 private:
     void initializeUi();
     void initConnect();

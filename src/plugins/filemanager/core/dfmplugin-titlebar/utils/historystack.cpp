@@ -25,6 +25,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QDebug>
 #include <QProcess>
@@ -150,6 +151,33 @@ int HistoryStack::size()
 void HistoryStack::removeAt(int i)
 {
     list.removeAt(i);
+}
+
+void HistoryStack::removeUrl(const QUrl &url)
+{
+    if (list.isEmpty() || index < 0 || index >= list.length())
+        return;
+
+    const QUrl &curUrl = list.at(index);
+    if (UniversalUtils::urlEquals(url, curUrl))
+        return;
+
+    QString removePath = url.path();
+
+    if (list.contains(url)) {
+        int removeIndex = list.indexOf(url);
+        if (index < removeIndex) {
+            QList<QUrl> newList = list.mid(0, removeIndex);
+            list = newList;
+        }
+
+        if (index > removeIndex) {
+            QList<QUrl> newList = list.mid(0, removeIndex);
+            newList.append(curUrl);
+            list = newList;
+            index = newList.length() - 1;
+        }
+    }
 }
 
 int HistoryStack::currentIndex()
