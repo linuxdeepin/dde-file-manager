@@ -102,6 +102,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
     static const QString kUnmountFailed = tr("Unmount failed");
 
     DFM_MOUNT_USE_NS
+
     switch (err) {
     case DeviceError::kUDisksBusyFileSystemUnmounting:
         showErrorDialog(kOpFailed, tr("Unmounting device now..."));
@@ -149,26 +150,30 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
         break;
     }
 
+    QString errMsg = "", title = "";
     if (type == OperateType::kMount) {
-        switch (err) {
-        case DeviceError::kUserErrorNetworkAnonymousNotAllowed:
-            showErrorDialog(kMountFailed, tr("Anonymous mount is not allowed"));
-            return;
-        case DeviceError::kUserErrorNetworkWrongPasswd:
-            showErrorDialog(kMountFailed, tr("Wrong password"));
-            return;
-        case DeviceError::kUserErrorUserCancelled:
-            return;
-        default:
-            qWarning() << "mount device failed: " << err;
-            showErrorDialog(kMountFailed, tr("Error occured while mounting device"));
-            return;
-        }
+        title = kMountFailed;
+        qWarning() << "mount device failed: " << err;
+
+        if (err == DeviceError::kUserErrorNetworkAnonymousNotAllowed)
+            errMsg = tr("Anonymous mount is not allowed");
+        else if (err == DeviceError ::kUserErrorNetworkWrongPasswd)
+            errMsg = tr("Wrong password");
+        else if (err == DeviceError::kUserErrorUserCancelled)
+            errMsg.clear();
+        else if (static_cast<int>(err) == EACCES)
+            errMsg = tr("Permission denied");
+        else if (static_cast<int>(err) == ENOENT)
+            errMsg = tr("No such file or directory");
+        else
+            errMsg = tr("Error occured while mounting device");
     } else if (type == OperateType::kRemove || type == OperateType::kUnmount) {
-        showErrorDialog(kUnmountFailed, tr("The device is busy, cannot remove now"));
-        return;
+        title = kUnmountFailed;
+        errMsg = tr("The device is busy, cannot remove now");
     }
-    return;
+
+    if (!errMsg.isEmpty())
+        showErrorDialog(title, errMsg);
 }
 
 void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)

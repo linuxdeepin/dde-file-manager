@@ -2,7 +2,8 @@
 <node>
   <interface name="com.deepin.filemanager.daemon.MountControl">
     <method name="Mount">
-      <arg type="s" direction="out"/>
+      <arg type="a{sv}" direction="out"/>
+      <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
       <arg name="path" type="s" direction="in"/>
       <arg name="opts" type="a{sv}" direction="in"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.In1" value="QVariantMap"/>

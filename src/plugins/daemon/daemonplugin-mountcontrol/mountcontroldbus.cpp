@@ -41,6 +41,16 @@
 static constexpr char kMountControlObjPath[] { "/com/deepin/filemanager/daemon/MountControl" };
 static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
 
+static constexpr char kRetMountPoint[] { "mountPoint" };
+static constexpr char kRetMountErrorCode[] { "errno" };
+static constexpr char kRetMountErrorMessage[] { "errMsg" };
+
+enum MountErrorCode {
+    kNotSupportedScheme = -1,
+    kCannotGenerateMountPath = -2,
+    kCannotMkdirMountPoint = -3,
+};
+
 DAEMONPMOUNTCONTROL_USE_NAMESPACE
 
 MountControlDBus::MountControlDBus(QObject *parent)
@@ -49,16 +59,20 @@ MountControlDBus::MountControlDBus(QObject *parent)
     // NOTE: A PROBLEM cannot be resolved in short time.
     // if samba is mounted via CIFS and network disconnected between server and client
     // any invokation on the mounted samba file will be blocked forever.
+    QFile switcher("/etc/deepin/disable_dfm_daemon_mount");
+    if (switcher.exists())   // if the config file exist then DISABLE daemon mount.
+        return;
+
     QDBusConnection::systemBus().registerObject(kMountControlObjPath, this);
 }
 
 MountControlDBus::~MountControlDBus() { }
 
-QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
+QVariantMap MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
 {
     if (!path.startsWith("smb://")) {
         qWarning() << "can only mount samba for now.";
-        return "";
+        return { { kRetMountPoint, "" }, { kRetMountErrorCode, kNotSupportedScheme } };
     }
 
     QString aPath = path;
@@ -68,23 +82,25 @@ QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
     int ret = d->checkMount(aPath, mpt);
     if (ret == MountControlDBusPrivate::kAlreadyMounted) {
         qDebug() << path << "is already mounted at" << mpt;
-        return mpt;
+        return { { kRetMountPoint, mpt }, { kRetMountErrorCode, 0 } };
     }
 
     auto mntPath = d->genMntPath(path);
     if (mntPath.isEmpty())
-        return "";
+        return { { kRetMountPoint, "" }, { kRetMountErrorCode, kCannotGenerateMountPath } };
 
     qDebug() << "try to mkdir: " << mntPath;
     if (!d->mkdir(mntPath)) {
         qDebug() << "cannot mkdir for" << path;
-        return "";
+        return { { kRetMountPoint, "" }, { kRetMountErrorCode, kCannotMkdirMountPoint } };
     } else {
         qDebug() << "try to mount" << path << "on" << mntPath;
     }
 
     auto params(opts);
 
+    int errNum = 0;
+    QString errMsg;
     while (true) {
         auto arg = d->convertArg(params);
         static QRegularExpression regxLocalhost("^//localhost/");
@@ -100,7 +116,7 @@ QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
                       arg.c_str());
 
         if (ret == 0) {
-            return mntPath;
+            return { { kRetMountPoint, mntPath }, { kRetMountErrorCode, 0 } };
         } else {
             // if params contains 'timeout', remove and retry.
             if (params.contains(MountOpts::kTimeout)) {
@@ -108,7 +124,9 @@ QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
                 qInfo() << "mount: remove timeout param and remount...";
                 continue;
             } else {
-                qWarning() << "mount: failed: " << path << strerror(errno) << errno;
+                errNum = errno;
+                errMsg = strerror(errno);
+                qWarning() << "mount: failed: " << path << errNum << errMsg;
                 qInfo() << "mount: clean dir" << mntPath;
                 d->rmdir(mntPath);
                 break;
@@ -116,7 +134,7 @@ QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
         }
     }
 
-    return "";
+    return { { kRetMountPoint, "" }, { kRetMountErrorCode, errNum }, { kRetMountErrorMessage, errMsg } };
 }
 
 bool MountControlDBus::Unmount(const QString &path)

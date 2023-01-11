@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MOUNTCONTROLDBUS_H
 #define MOUNTCONTROLDBUS_H
 
@@ -42,7 +42,7 @@ public:
     ~MountControlDBus();
 
 public slots:
-    QString Mount(const QString &path, const QVariantMap &opts);
+    QVariantMap Mount(const QString &path, const QVariantMap &opts);
     bool Unmount(const QString &path);
 
 private:
