@@ -18,6 +18,7 @@ static constexpr char kFileDialogActionHidden[] { "dfd.menu.action.hidden" };
 static constexpr char kDesktopActionHidden[] { "dd.menu.action.hidden" };
 
 static constexpr char kSambaPermanent[] { "dfm.samba.permanent" };
+static constexpr char kDiskHidden[] { "dfm.disk.hidden" };
 }   // namespace DConfigKeys
 
 DConfigUpgradeUnit::DConfigUpgradeUnit()
@@ -40,6 +41,9 @@ bool DConfigUpgradeUnit::upgrade()
     bool ret = true;
     ret &= upgradeMenuConfigs();
     ret &= upgradeSmbConfigs();
+
+    clearDiskHidden();
+
     return ret;
 }
 
@@ -161,4 +165,9 @@ bool DConfigUpgradeUnit::upgradeSmbConfigs()
     DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKeys::kSambaPermanent, alwaysShowSamba);
     qDebug() << "upgrade: set samba permanent to dconfig, value:" << alwaysShowSamba;
     return true;
+}
+
+void DConfigUpgradeUnit::clearDiskHidden()
+{
+    DConfigManager::instance()->setValue(kDefaultCfgPath, DConfigKeys::kDiskHidden, QStringList());
 }
