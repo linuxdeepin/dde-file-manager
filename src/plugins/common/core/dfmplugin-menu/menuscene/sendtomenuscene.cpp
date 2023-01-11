@@ -189,7 +189,7 @@ bool SendToMenuScene::triggered(QAction *action)
             bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << d->focusFile, &urls);
             if (ok && !urls.isEmpty())
                 localUrl = urls.at(0);
-            const QString &linkName = FileUtils::nonExistSymlinkFileName(localUrl);
+            const QString &linkName = FileUtils::nonExistSymlinkFileName(localUrl, QUrl::fromLocalFile(QDir::currentPath()));
             QString linkPath { QFileDialog::getSaveFileName(nullptr, QObject::tr("Create symlink"), linkName) };
             if (!linkPath.isEmpty()) {
                 dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
