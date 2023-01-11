@@ -47,7 +47,7 @@ public:
     RootInfo *findRootInfo(const QUrl &url);
     RootInfo *findRootInfo(const int rowIndex);
     FileItemData *findFileItemData(const int rootIndex, const int childIndex);
-    QPair<int, int> getChildIndexByUrl(const QUrl &url);
+    QPair<int, int> getChildIndexByUrl(const QUrl &rootUrl, const QUrl &url);
 
     int rootsCount();
     int filesCount(const int rootIndex);

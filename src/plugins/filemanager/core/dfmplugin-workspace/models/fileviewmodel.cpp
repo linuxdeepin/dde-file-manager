@@ -144,9 +144,9 @@ QModelIndex FileViewModel::findRootIndex(const QUrl &url) const
     return QModelIndex();
 }
 
-QModelIndex FileViewModel::findChildIndex(const QUrl &url) const
+QModelIndex FileViewModel::findChildIndex(const QUrl &rootUrl, const QUrl &url) const
 {
-    auto indexPair = fileDataHelper->getChildIndexByUrl(url);
+    auto indexPair = fileDataHelper->getChildIndexByUrl(rootUrl, url);
 
     if (indexPair.first < 0 || indexPair.second < 0)
         return QModelIndex();
@@ -503,7 +503,8 @@ void FileViewModel::onFilesUpdated()
 
 void FileViewModel::onFileUpdated(const QUrl &url)
 {
-    const QModelIndex &index = findChildIndex(url);
+    const QUrl &rootUrl = UrlRoute::urlParent(url);
+    const QModelIndex &index = findChildIndex(rootUrl, url);
     if (index.isValid()) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
         if (info)

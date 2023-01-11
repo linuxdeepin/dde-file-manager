@@ -154,7 +154,7 @@ AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex
 
 QModelIndex FileSortFilterProxyModel::getIndexByUrl(const QUrl &url) const
 {
-    const QModelIndex &sourceIndex = viewModel()->findChildIndex(url);
+    const QModelIndex &sourceIndex = viewModel()->findChildIndex(rootUrl, url);
     const QModelIndex &proxyIndex = mapFromSource(sourceIndex);
 
     if (proxyIndex.isValid())

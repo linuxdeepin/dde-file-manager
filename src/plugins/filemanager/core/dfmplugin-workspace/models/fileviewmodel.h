@@ -79,7 +79,7 @@ public:
     QList<QUrl> getChildrenUrls(const QUrl &rootUrl) const;
 
     QModelIndex findRootIndex(const QUrl &url) const;
-    QModelIndex findChildIndex(const QUrl &url) const;
+    QModelIndex findChildIndex(const QUrl &rootUrl, const QUrl &url) const;
 
     void doFetchMore(const QModelIndex &rootIndex);
     void traversRootDir(const QModelIndex &rootIndex);

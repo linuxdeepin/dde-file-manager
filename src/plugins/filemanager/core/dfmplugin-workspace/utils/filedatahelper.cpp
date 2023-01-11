@@ -87,14 +87,13 @@ FileItemData *FileDataHelper::findFileItemData(const int rootIndex, const int ch
     return nullptr;
 }
 
-QPair<int, int> FileDataHelper::getChildIndexByUrl(const QUrl &url)
+QPair<int, int> FileDataHelper::getChildIndexByUrl(const QUrl &rootUrl, const QUrl &url)
 {
-    if (!url.isValid())
+    if (!rootUrl.isValid() || !url.isValid())
         return QPair<int, int>(-1, -1);
 
-    const QUrl &parentUrl = UrlRoute::urlParent(url);
-    if (rootInfoMap.contains(parentUrl))
-        return QPair<int, int>(rootInfoMap[parentUrl]->rowIndex, rootInfoMap[parentUrl]->childIndex(url));
+    if (rootInfoMap.contains(rootUrl))
+        return QPair<int, int>(rootInfoMap[rootUrl]->rowIndex, rootInfoMap[rootUrl]->childIndex(url));
 
     return QPair<int, int>(-1, -1);
 }
