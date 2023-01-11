@@ -48,6 +48,8 @@ public:
         : q_ptr(qq) {}
 
     QPointer<FileDialog> dialog;
+    QStringList lastFilterGroup;
+    QString lastFilter;
 
     FileDialogHandle *q_ptr;
 
@@ -76,6 +78,16 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
             this, &FileDialogHandle::currentUrlChanged);
     connect(d_func()->dialog, &FileDialog::selectedNameFilterChanged,
             this, &FileDialogHandle::selectedNameFilterChanged);
+
+    auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(d_func()->dialog->internalWinId()));
+    if (window) {
+        QObject::connect(window, &FileDialog::initialized, this, [this]() {
+            if (!d_func()->lastFilterGroup.isEmpty())
+                d_func()->dialog->setNameFilters(d_func()->lastFilterGroup);
+            if (!d_func()->lastFilter.isEmpty())
+                d_func()->dialog->selectNameFilter(d_func()->lastFilter);
+        });
+    }
 }
 
 FileDialogHandle::~FileDialogHandle()
@@ -196,11 +208,16 @@ void FileDialogHandle::setNameFilters(const QStringList &filters)
 {
     D_D(FileDialogHandle);
 
-    CoreHelper::delayInvokeProxy(
-            [d, filters] {
-                d->dialog->setNameFilters(filters);
-            },
-            d->dialog->internalWinId(), this);
+    auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(d->dialog->internalWinId()));
+    Q_ASSERT(window);
+
+    if (window->workSpace()) {
+        if (d->dialog)
+            d->dialog->setNameFilters(filters);
+        d->lastFilterGroup.clear();
+    } else {
+        d->lastFilterGroup = filters;
+    }
 }
 
 QStringList FileDialogHandle::nameFilters() const
@@ -216,12 +233,16 @@ void FileDialogHandle::selectNameFilter(const QString &filter)
 {
     D_D(FileDialogHandle);
 
-    CoreHelper::delayInvokeProxy(
-            [d, filter] {
-                if (d->dialog)
-                    d->dialog->selectNameFilter(filter);
-            },
-            d->dialog->internalWinId(), this);
+    auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(d->dialog->internalWinId()));
+    Q_ASSERT(window);
+
+    if (window->workSpace()) {
+        if (d->dialog)
+            d->dialog->selectNameFilter(filter);
+        d->lastFilter.clear();
+    } else {
+        d->lastFilter = filter;
+    }
 }
 
 QString FileDialogHandle::selectedNameFilter() const
