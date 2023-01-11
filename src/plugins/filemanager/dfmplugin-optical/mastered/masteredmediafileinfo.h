@@ -50,6 +50,6 @@ public:
     QString viewOfTip(const ViewType type = ViewType::kEmptyDir) const override;
 };
 
-}
+}   // namepsace dfmplugin_optical
 
 #endif   // MASTEREDMEDIAFILEINFO_H

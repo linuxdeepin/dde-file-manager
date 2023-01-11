@@ -114,6 +114,22 @@ bool OpticalEventReceiver::handleDropFiles(const QList<QUrl> &fromUrls, const QU
     return false;
 }
 
+bool OpticalEventReceiver::handleBlockShortcutPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to)
+{
+    Q_UNUSED(winId)
+    Q_UNUSED(fromUrls)
+
+    if (to.scheme() == OpticalHelper::scheme()) {
+        const QString &dev { OpticalHelper::burnDestDevice(to) };
+        const QUrl &rootUrl { OpticalHelper::discRoot(dev) };
+        // only root url enable paste
+        if (rootUrl.isValid() && !UniversalUtils::urlEquals(to, rootUrl))
+            return true;
+    }
+
+    return false;
+}
+
 bool OpticalEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
 {
     if (url.scheme() == OpticalHelper::scheme()) {

@@ -245,11 +245,16 @@ void ShortcutHelper::cutFiles()
 
 void ShortcutHelper::pasteFiles()
 {
-    const auto &currentFileInfo = InfoFactory::create<AbstractFileInfo>(view->rootUrl());
-    if (currentFileInfo && currentFileInfo->isAttributes(OptInfoType::kIsDir) && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
-        qInfo() << "current dir is not writable!!!!!!!!";
-        return;
+    const QUrl &rootUrl { view->rootUrl() };
+    // Use `hook_ShortCut_PasteFiles` if url isn't local
+    if (rootUrl.scheme() == Global::Scheme::kFile) {
+        const auto &currentFileInfo = InfoFactory::create<AbstractFileInfo>(rootUrl);
+        if (currentFileInfo && currentFileInfo->isAttributes(OptInfoType::kIsDir) && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
+            qInfo() << "current dir is not writable!!!!!!!!";
+            return;
+        }
     }
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
     if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PasteFiles", windowId, sourceUrls, view->rootUrl()))

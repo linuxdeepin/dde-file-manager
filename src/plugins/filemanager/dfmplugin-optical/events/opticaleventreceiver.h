@@ -42,6 +42,7 @@ public slots:
     bool handleCheckDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);
+    bool handleBlockShortcutPaste(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
     bool detailViewIcon(const QUrl &url, QString *iconName);
 
 public:
