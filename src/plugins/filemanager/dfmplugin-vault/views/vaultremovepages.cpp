@@ -302,7 +302,7 @@ void VaultRemovePages::onVualtRemoveFinish(bool result)
         QVariantMap data;
         data.insert("mode", VaultReportData::kDeleted);
 
-        dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", "Vault", data);
+        dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
 
         setInfo(tr("Deleted successfully"));
     } else {

@@ -56,6 +56,8 @@ SideBarItem::SideBarItem(const QIcon &icon, const QString &text, const QString &
     setText(text);
     setGroup(group);
     setUrl(url);
+
+    setData(kSidebarItem, kItemTypeRole);
 }
 
 QUrl SideBarItem::url() const
