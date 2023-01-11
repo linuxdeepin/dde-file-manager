@@ -58,7 +58,7 @@ void VaultEventReceiver::connectEvent()
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFile", VaultFileHelper::instance(), &VaultFileHelper::renameFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MakeDir", VaultFileHelper::instance(), &VaultFileHelper::makeDir);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchFile", VaultFileHelper::instance(), &VaultFileHelper::touchFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchCustomFile", VaultFileHelper::instance(), &VaultFileHelper::touchFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchCustomFile", VaultFileHelper::instance(), &VaultFileHelper::touchCustomFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", VaultFileHelper::instance(), &VaultFileHelper::writeUrlsToClipboard);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFiles", VaultFileHelper::instance(), &VaultFileHelper::renameFiles);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultFileHelper::instance(), &VaultFileHelper::renameFilesAddText);

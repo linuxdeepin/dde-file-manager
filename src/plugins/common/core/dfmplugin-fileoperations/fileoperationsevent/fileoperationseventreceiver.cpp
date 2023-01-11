@@ -516,7 +516,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
         return doTouchFilePractically(windowId, urlNew, tempUrl) ? newPath : QString();
     } else {
         QString error;
-        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchFile", windowId, url, tempUrl, &error)) {
+        if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_TouchCustomFile", windowId, url, tempUrl, &error)) {
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
                                          windowId, QList<QUrl>() << url, true, error);
             return url.path();
