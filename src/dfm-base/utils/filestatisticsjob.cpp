@@ -73,7 +73,7 @@ public:
     QAtomicInt filesCount { 0 };
     QAtomicInt directoryCount { 0 };
     SizeInfoPointer sizeInfo { nullptr };
-    bool isExtFileSystem { true };
+    QList<QUrl> fileStatistics;
 };
 
 FileStatisticsJobPrivate::FileStatisticsJobPrivate(FileStatisticsJob *qq)
@@ -161,6 +161,15 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
 
     if (info->isAttributes(OptInfoType::kIsFile)) {
         do {
+            auto isSyslink = info->isAttributes(OptInfoType::kIsSymLink);
+            if (isSyslink) {
+                const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
+                if (sizeInfo->allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
+                    return;
+                }
+                fileStatistics << symLinkTargetUrl;
+            }
+
             // ###(zccrs): skip the file,os file
             if (UniversalUtils::urlEquals(info->urlOf(UrlInfoType::kUrl), QUrl::fromLocalFile("/proc/kcore"))
                 || UniversalUtils::urlEquals(info->urlOf(UrlInfoType::kUrl), QUrl::fromLocalFile("/dev/core"))) {
@@ -203,7 +212,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
             // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
             // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
             // 判断文件是否是链接文件
-            totalProgressSize += (size <= 0 || info->isAttributes(OptInfoType::kIsSymLink)) ? FileUtils::getMemoryPageSize() : size;
+            totalProgressSize += (size <= 0 || isSyslink) ? FileUtils::getMemoryPageSize() : size;
         } while (false);
 
         ++filesCount;
@@ -224,6 +233,12 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
                 ++directoryCount;
                 return;
             }
+
+            const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
+            if (sizeInfo->allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
+                return;
+            }
+            fileStatistics << symLinkTargetUrl;
         }
 
         ++directoryCount;
@@ -396,6 +411,10 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 setSizeInfo();
                 return;
             }
+            // The files counted are not counted
+            if (d->sizeInfo->allFiles.contains(url))
+                continue;
+
             d->sizeInfo->allFiles << url;
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 
@@ -415,11 +434,18 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                     continue;
                 }
 
-                info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget)));
+                const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
+                // The files counted are not counted
+                if (d->fileStatistics.contains(symLinkTargetUrl) || d->sizeInfo->allFiles.contains(symLinkTargetUrl))
+                    continue;
+
+                info = InfoFactory::create<AbstractFileInfo>(symLinkTargetUrl);
 
                 if (info->isAttributes(OptInfoType::kIsSymLink)) {
                     continue;
                 }
+
+                d->fileStatistics << symLinkTargetUrl;
             }
 
             if (info->isAttributes(OptInfoType::kIsDir)) {
@@ -437,8 +463,8 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             // 选择的列表中包含avfsd/proc挂载路径时禁用过滤
             FileHints save_file_hints = d->fileHints;
             d->fileHints = d->fileHints | kDontSkipAVFSDStorage | kDontSkipPROCStorage;
-            d->sizeInfo->allFiles << url;
             d->processFile(url, followLink, directory_queue);
+            d->sizeInfo->allFiles << url;
             d->fileHints = save_file_hints;
 
             if (!d->stateCheck()) {
@@ -467,8 +493,12 @@ void FileStatisticsJob::statistcsOtherFileSystem()
         }
         while (iterator->hasNext()) {
             QUrl url = iterator->next();
-            d->sizeInfo->allFiles << url;
+            // The files counted are not counted
+            if (d->sizeInfo->allFiles.contains(url))
+                continue;
+
             d->processFile(url, followLink, directory_queue);
+            d->sizeInfo->allFiles << url;
 
             if (!d->stateCheck()) {
                 d->setState(kStoppedState);
