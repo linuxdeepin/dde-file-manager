@@ -1288,6 +1288,7 @@ void DFileManagerWindow::initRightView()
     f.setBold(true);
     trashLabel->setFont(f);
     QPushButton *emptyTrashButton = new QPushButton{ this };
+    emptyTrashButton->setFocusPolicy(Qt::NoFocus);
     emptyTrashButton->setContentsMargins(0, 0, 0, 0);
     emptyTrashButton->setObjectName("EmptyTrashButton");
     AC_SET_ACCESSIBLE_NAME(emptyTrashButton, AC_DM_RIGHT_VIEW_EMPTY_TRASH_BUTTON);

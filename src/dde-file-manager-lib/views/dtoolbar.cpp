@@ -392,6 +392,7 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->setHidden(true);
         m_searchButton->setObjectName("filterButton");
         m_searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
+        m_searchButton->setIconSize(iconSize);
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setFlat(true);
@@ -410,6 +411,7 @@ void DToolBar::toggleSearchButtonState(bool asb)
         m_searchButton->style()->unpolish(m_searchButton);
         m_searchButton->style()->polish(m_searchButton);
         m_searchButton->setIcon(QIcon::fromTheme("search"));
+        m_searchButton->setIconSize(QSize(30, 30));
         m_searchButton->setDown(false);
         m_searchButtonAsbState = false;
         if (DFileManagerWindow *dfmWindow = qobject_cast<DFileManagerWindow *>(window())) {
