@@ -46,6 +46,7 @@ public:
     QSharedPointer<FileInfoHelperUeserData> fileMimeTypeAsync(const QUrl &url, const QMimeDatabase::MatchMode mode,
                                                               const QString &inod, const bool isGvfs);
     QSharedPointer<FileInfoHelperUeserData> fileThumbAsync(const QUrl &url, ThumbnailProvider::Size size);
+    void fileRefreshAsync(const QUrl &url, const QSharedPointer<dfmio::DFileInfo> dfileInfo);
 
 private:
     explicit FileInfoHelper(QObject *parent = nullptr);
@@ -64,6 +65,7 @@ Q_SIGNALS:
     void fileMimeType(const QUrl &url, const QMimeDatabase::MatchMode mode, const QString &inod,
                       const bool isGvfs, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileThumb(const QUrl &url, ThumbnailProvider::Size size, const QSharedPointer<FileInfoHelperUeserData> data);
+    void fileInfoRefresh(const QUrl &url, QSharedPointer<dfmio::DFileInfo> dfileInfo);
 private Q_SLOTS:
     void aboutToQuit();
 

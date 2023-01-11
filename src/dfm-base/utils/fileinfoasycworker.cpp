@@ -77,6 +77,12 @@ void FileInfoAsycWorker::fileThumb(const QUrl &url, ThumbnailProvider::Size size
     }
 }
 
+void FileInfoAsycWorker::fileRefresh(const QUrl &url, const QSharedPointer<dfmio::DFileInfo> dfileInfo)
+{
+    if (dfileInfo && FileUtils::checkFtpOrSmbBusy(url, false))
+        dfileInfo->refresh();
+}
+
 dfmbase::FileInfoAsycWorker::~FileInfoAsycWorker()
 {
 }

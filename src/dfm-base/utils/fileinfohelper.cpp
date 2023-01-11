@@ -43,6 +43,7 @@ void FileInfoHelper::init()
     connect(this, &FileInfoHelper::fileCount, worker.data(), &FileInfoAsycWorker::fileConutAsync, Qt::QueuedConnection);
     connect(worker.data(), &FileInfoAsycWorker::fileConutAsyncFinish, this, &FileInfoHelper::fileCountFinished, Qt::QueuedConnection);
     connect(this, &FileInfoHelper::fileMimeType, worker.data(), &FileInfoAsycWorker::fileMimeType, Qt::QueuedConnection);
+    connect(this, &FileInfoHelper::fileInfoRefresh, worker.data(), &FileInfoAsycWorker::fileRefresh, Qt::QueuedConnection);
     connect(worker.data(), &FileInfoAsycWorker::fileMimeTypeFinished, this, &FileInfoHelper::fileMimeTypeFinished, Qt::QueuedConnection);
     connect(this, &FileInfoHelper::fileThumb, worker.data(), &FileInfoAsycWorker::fileThumb, Qt::QueuedConnection);
     connect(worker.data(), &FileInfoAsycWorker::createThumbnailFinished,
@@ -86,6 +87,14 @@ QSharedPointer<FileInfoHelperUeserData> FileInfoHelper::fileThumbAsync(const QUr
     });
 
     return data;
+}
+
+void FileInfoHelper::fileRefreshAsync(const QUrl &url, const QSharedPointer<dfmio::DFileInfo> dfileInfo)
+{
+    if (stoped)
+        return;
+
+    emit fileInfoRefresh(url, dfileInfo);
 }
 
 FileInfoHelper::~FileInfoHelper()

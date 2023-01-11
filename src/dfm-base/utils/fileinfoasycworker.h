@@ -28,6 +28,8 @@
 #include "dfm_global_defines.h"
 #include "thumbnailprovider.h"
 
+#include <dfm-io/core/dfileinfo.h>
+
 #include <QObject>
 #include <QMimeDatabase>
 
@@ -66,6 +68,7 @@ private Q_SLOTS:
     void fileConutAsync(const QUrl &url, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileMimeType(const QUrl &url, const QMimeDatabase::MatchMode mode, const QString &inod, const bool isGvfs, const QSharedPointer<FileInfoHelperUeserData> data);
     void fileThumb(const QUrl &url, ThumbnailProvider::Size size, const QSharedPointer<FileInfoHelperUeserData> data);
+    void fileRefresh(const QUrl &url, const QSharedPointer<dfmio::DFileInfo> dfileInfo);
 
 private:
     std::atomic_bool stoped { false };

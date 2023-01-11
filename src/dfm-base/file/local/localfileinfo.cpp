@@ -135,7 +135,11 @@ bool LocalFileInfo::exists() const
 void LocalFileInfo::refresh()
 {
     QWriteLocker locker(&d->lock);
-    d->dfmFileInfo->refresh();
+    if (FileUtils::isGvfsFile(d->url)) {
+        FileInfoHelper::instance().fileRefreshAsync(d->url, d->dfmFileInfo);
+    } else {
+        d->dfmFileInfo->refresh();
+    }
     d->fileCountFuture.reset(nullptr);
     d->fileMimeTypeFuture.reset(nullptr);
     d->iconFuture.reset(nullptr);
