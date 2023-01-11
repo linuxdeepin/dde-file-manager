@@ -211,7 +211,9 @@ if (EXISTS ${DTK_SETTINGS_TOOLS_EXECUTABLE})
     endforeach()
 
 #    message(">>>> cpp source files for translating are generated: ${TRANS_OF_SETTINGS_CPP}")
-    list(APPEND TRANS_OF_SETTINGS_CPP ${CMAKE_CURRENT_SOURCE_DIR}/qrc/configure/global-setting-template-manully-trans.cpp)
+    list(APPEND TRANS_OF_SETTINGS_CPP
+        ${CMAKE_CURRENT_SOURCE_DIR}/qrc/configure/global-setting-template-manully-trans.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/qrc/configure/global-setting-template-dfmio-trans.cpp)
 endif()
 
 add_library(${PROJECT_NAME}

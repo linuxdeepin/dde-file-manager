@@ -444,7 +444,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
     ok = fileHandler.mkdir(urlNew);
     if (!ok) {
         error = fileHandler.errorString();
-        dialogManager->showErrorDialog("make dir error", error);
+        dialogManager->showErrorDialog(AbstractJobHandler::tr("Failed to create the directory"), error);
     }
     targetUrl = urlNew;
 
