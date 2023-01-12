@@ -250,7 +250,8 @@ void ShortcutHelper::pasteFiles()
     if (rootUrl.scheme() == Global::Scheme::kFile) {
         const auto &currentFileInfo = InfoFactory::create<AbstractFileInfo>(rootUrl);
         if (currentFileInfo && currentFileInfo->isAttributes(OptInfoType::kIsDir) && !currentFileInfo->isAttributes(OptInfoType::kIsWritable)) {
-            qInfo() << "current dir is not writable!!!!!!!!";
+            // show error tip message
+            DialogManager::instance()->showNoPermissionDialog(QList<QUrl>() << rootUrl);
             return;
         }
     }
