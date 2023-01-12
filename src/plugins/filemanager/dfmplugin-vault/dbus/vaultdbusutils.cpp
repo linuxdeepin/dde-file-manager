@@ -60,9 +60,9 @@ QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &
 
 int VaultDBusUtils::getVaultPolicy()
 {
-    QDBusInterface deepinSystemInfo("org.deepin.filemanager.daemon",
-                                    "/org/deepin/filemanager/daemon/AccessControlManager",
-                                    "org.deepin.filemanager.daemon.AccessControlManager",
+    QDBusInterface deepinSystemInfo("com.deepin.filemanager.daemon",
+                                    "/com/deepin/filemanager/daemon/AccessControlManager",
+                                    "com.deepin.filemanager.daemon.AccessControlManager",
                                     QDBusConnection::systemBus());
 
     int vaulthidestate = -1;
@@ -90,9 +90,9 @@ int VaultDBusUtils::getVaultPolicy()
 
 bool VaultDBusUtils::setVaultPolicyState(int policyState)
 {
-    QDBusInterface deepinSystemInfo("org.deepin.filemanager.daemon",
-                                    "/org/deepin/filemanager/daemon/AccessControlManager",
-                                    "org.deepin.filemanager.daemon.AccessControlManager",
+    QDBusInterface deepinSystemInfo("com.deepin.filemanager.daemon",
+                                    "/com/deepin/filemanager/daemon/AccessControlManager",
+                                    "com.deepin.filemanager.daemon.AccessControlManager",
                                     QDBusConnection::systemBus());
 
     auto response = deepinSystemInfo.call("FileManagerReply", QVariant::fromValue(policyState));
