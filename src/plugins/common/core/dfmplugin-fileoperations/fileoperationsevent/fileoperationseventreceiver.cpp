@@ -113,8 +113,8 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir, const QSt
         if (QFile(filePath).exists()) {
             ++i;
             filePath = suffix.isEmpty()
-                    ? QString("%1/%2 %3").arg(targetdir, baseName, QString::number(i))
-                    : QString("%1/%2 %3.%4").arg(targetdir, baseName, QString::number(i), suffix);
+                    ? QString("%1/%2%3").arg(targetdir, baseName, QString::number(i))
+                    : QString("%1/%2%3.%4").arg(targetdir, baseName, QString::number(i), suffix);
         } else {
             return filePath;
         }

@@ -1139,7 +1139,7 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     }
 
     const QString &copySuffix = QObject::tr(" (copy)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
-    const QString &copySuffix2 = QObject::tr(" (copy %1)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
+    const QString &copySuffix2 = QObject::tr(" (copy%1)", "this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese");
 
     QString fileBaseName = fromInfo->nameOf(NameInfoType::kCompleteBaseName);
     QString suffix = fromInfo->nameOf(NameInfoType::kSuffix);
