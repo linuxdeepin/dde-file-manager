@@ -41,7 +41,7 @@ PropertyDialogUtil::PropertyDialogUtil(QObject *parent)
     closeIndicatorTimer->setInterval(1000);
     closeAllDialog = new CloseAllDialog;
     closeAllDialog->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-    connect(closeAllDialog, &CloseAllDialog::allClosed, this, &PropertyDialogUtil::closeAllFilePropertyDialog);
+    connect(closeAllDialog, &CloseAllDialog::allClosed, this, &PropertyDialogUtil::closeAllPropertyDialog);
     connect(&FMWindowsIns, &FileManagerWindowsManager::lastWindowClosed, this, &PropertyDialogUtil::closeAllPropertyDialog);
     connect(closeIndicatorTimer, &QTimer::timeout, this, &PropertyDialogUtil::updateCloseIndicator);
 }
