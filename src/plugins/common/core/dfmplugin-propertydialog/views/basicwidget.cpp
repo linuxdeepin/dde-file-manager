@@ -33,6 +33,7 @@
 #include <QDateTime>
 #include <QApplication>
 #include <QSet>
+#include <QDBusInterface>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -234,7 +235,20 @@ void BasicWidget::basicFill(const QUrl &url)
                 const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
                 QUrl parentUrl = fileInfo->urlOf(UrlInfoType::kParentUrl);
                 parentUrl.setQuery("selectUrl=" + url.toString());
-                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
+
+                QDBusInterface interface("org.freedesktop.FileManager1",
+                                         "/org/freedesktop/FileManager1",
+                                         "org.freedesktop.FileManager1",
+                                         QDBusConnection::sessionBus());
+                interface.setTimeout(1000);
+                if (interface.isValid()) {
+                    qInfo() << "Start call dbus org.freedesktop.FileManager1 ShowItems!";
+                    interface.call("ShowItems", QStringList() << url.toString(), "dfmplugin-propertydialog");
+                    qInfo() << "End call dbus org.freedesktop.FileManager1 ShowItems!";
+                } else {
+                    qWarning() << "dbus org.freedesktop.fileManager1 not vailid!";
+                    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
+                }
             });
         }
     }
