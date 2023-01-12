@@ -64,10 +64,11 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
         return nullptr;
 
     auto info = InfoFactory::create<AbstractFileInfo>(url);
-    if (!UserShareHelper::canShare(info))
+    bool disableWidget = UserShareHelper::needDisableShareWidget(info);
+    if (!disableWidget && !UserShareHelper::canShare(info))
         return nullptr;
 
-    return new ShareControlWidget(url);
+    return new ShareControlWidget(url, disableWidget);
 }
 
 void DirShare::bindScene(const QString &parentScene)

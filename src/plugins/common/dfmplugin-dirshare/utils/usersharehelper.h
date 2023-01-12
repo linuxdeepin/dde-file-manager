@@ -51,6 +51,7 @@ public:
     virtual ~UserShareHelper() override;
 
     static bool canShare(AbstractFileInfoPointer info);
+    static bool needDisableShareWidget(AbstractFileInfoPointer info);
 
     bool share(const QVariantMap &info);
     bool isUserSharePasswordSet(const QString &username);

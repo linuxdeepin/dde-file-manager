@@ -47,12 +47,12 @@ class ShareControlWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
 public:
-    explicit ShareControlWidget(const QUrl &url, QWidget *parent = nullptr);
+    explicit ShareControlWidget(const QUrl &url, bool disableState = false, QWidget *parent = nullptr);
     virtual ~ShareControlWidget() override;
     static void setOption(QWidget *w, const QVariantHash &option);
 
 protected:
-    void setupUi();
+    void setupUi(bool disableState = false);
     void setupNetworkPath();
     void setupUserName();
     void setupSharePassword();

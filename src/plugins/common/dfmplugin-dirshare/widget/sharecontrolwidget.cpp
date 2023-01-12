@@ -81,10 +81,10 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
 
-ShareControlWidget::ShareControlWidget(const QUrl &url, QWidget *parent)
+ShareControlWidget::ShareControlWidget(const QUrl &url, bool disableState, QWidget *parent)
     : DArrowLineDrawer(parent), url(url)
 {
-    setupUi();
+    setupUi(disableState);
     init();
     initConnection();
 }
@@ -111,7 +111,7 @@ void ShareControlWidget::setOption(QWidget *w, const QVariantHash &option)
     }
 }
 
-void ShareControlWidget::setupUi()
+void ShareControlWidget::setupUi(bool disableState)
 {
     const QString &userName = getpwuid(getuid())->pw_name;
     isSharePasswordSet = UserShareHelperInstance->isUserSharePasswordSet(userName);
@@ -120,6 +120,7 @@ void ShareControlWidget::setupUi()
     setSeparatorVisible(false);
 
     QFrame *frame = new QFrame(this);
+    frame->setDisabled(disableState);
     QGridLayout *gridLayout = new QGridLayout(frame);
     gridLayout->setContentsMargins(0, 0, 0, 0);
     setContent(frame);

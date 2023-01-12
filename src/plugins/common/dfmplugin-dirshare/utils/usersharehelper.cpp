@@ -293,6 +293,11 @@ bool UserShareHelper::canShare(AbstractFileInfoPointer info)
     return true;
 }
 
+bool UserShareHelper::needDisableShareWidget(AbstractFileInfoPointer info)
+{
+    return (info && info->extendAttributes(ExtInfoType::kOwnerId).toUInt() != static_cast<uint>(SysInfoUtils::getUserId()) && !SysInfoUtils::isRootUser());
+}
+
 bool UserShareHelper::isUserSharePasswordSet(const QString &username)
 {
     QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncIsPasswordSet, username);
