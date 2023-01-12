@@ -145,6 +145,19 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
     return false;
 }
 
+bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
+{
+    QString host, port;
+    if (!parseIp(url.path(), host, port))
+        return false;
+
+    auto busy = !checkNetConnection(host, port);
+    if (busy)
+        qInfo() << "can not connect url = " << url << " host =  " << host << " port = " << port;
+
+    return busy;
+}
+
 NetworkUtils::NetworkUtils(QObject *parent)
     : QObject(parent)
 {

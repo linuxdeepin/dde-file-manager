@@ -38,7 +38,6 @@
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/networkutils.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 
 #include <KCodecs>
@@ -1215,51 +1214,6 @@ qreal FileUtils::pixmapDevicePixelRatio(qreal displayDevicePixelRatio, const QSi
     QSize targetSize = requestedSize * displayDevicePixelRatio;
     qreal scale = 0.5 * (qreal(actualSize.width()) / qreal(targetSize.width()) + qreal(actualSize.height() / qreal(targetSize.height())));
     return qMax(qreal(1.0), displayDevicePixelRatio * scale);
-}
-
-bool FileUtils::getFtpOrSmbHostAndPort(const QUrl &url, QString *host, QString *port)
-{
-    if (DeviceUtils::isSamba(url)) {
-        static const QString gvfssmbMatch { "(^/run/user/\\d+/gvfs/smb)" };
-        QRegularExpression re(gvfssmbMatch);
-        QRegularExpressionMatch match = re.match(url.path());
-        auto isGvfs = match.hasMatch();
-        static QString smbPort(QString::number(139));
-        *port = isGvfs ? (url.path().contains(",port=") ? (url.path().section("/port=", -1).section(",", 0, 0)).section("/", 0, 0) : smbPort) : smbPort;
-        *host = isGvfs ? url.path().section("server=", -1).section(",", 0, 0) : url.path().section("on ", -1).section("/", 0, 0);
-        return true;
-    }
-
-    if (DeviceUtils::isFtp(url)) {
-        static const QString sftpMatch { "(^/run/user/\\d+/gvfs/sftp|^/root/\\.gvfs/sftp)" };
-        QRegularExpression re(sftpMatch);
-        QRegularExpressionMatch match = re.match(url.path());
-        auto isSftp = match.hasMatch();
-        static QString sftpPort(QString::number(22)), ftpPort(QString::number(21));
-        *port = url.path().contains(",port=") ? (url.path().section("/port=", -1).section(",", 0, 0))
-                                              : (isSftp ? sftpPort : ftpPort);
-        *host = isSftp ? url.path().section("/sftp:host=", -1).section(",", 0, 0).section("/", 0, 0)
-                       : url.path().section("/ftp:host=", -1).section(",", 0, 0).section("/", 0, 0);
-        return true;
-    }
-
-    return false;
-}
-// smb or ftp can vist return false
-bool FileUtils::checkFtpOrSmbBusy(const QUrl &url, const bool show)
-{
-    QString host, port;
-    if (!getFtpOrSmbHostAndPort(url, &host, &port))
-        return false;
-
-    auto busy = !NetworkUtils::instance()->checkNetConnection(host, port);
-    if (busy)
-        qInfo() << "can not connect url = " << url << " host =  " << host << " port = " << port;
-
-    if (busy && show)
-        DialogManager::instance()->showUnableToVistDir(url.path());
-
-    return busy;
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

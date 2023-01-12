@@ -47,7 +47,8 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/networkutils.h"
+#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QResizeEvent>
@@ -186,7 +187,7 @@ bool FileView::setRootUrl(const QUrl &url)
 
     resetSelectionModes();
     updateListHeaderView();
-    model()->resetFilter();
+
     doSort();
 
     // dir already traversal
@@ -1261,8 +1262,10 @@ void FileView::keyboardSearch(const QString &search)
 
 void FileView::contextMenuEvent(QContextMenuEvent *event)
 {
-    if (FileUtils::checkFtpOrSmbBusy(rootUrl()))
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
+        DialogManager::instance()->showUnableToVistDir(rootUrl().path());
         return;
+    }
     const QModelIndex &index = indexAt(event->pos());
     if (itemDelegate()->editingIndex().isValid() && itemDelegate()->editingIndex() == index)
         setFocus(Qt::FocusReason::OtherFocusReason);
@@ -1792,9 +1795,12 @@ void FileView::openIndex(const QModelIndex &index)
 
     if (!info)
         return;
-    if (!FileUtils::checkFtpOrSmbBusy(info->urlOf(UrlInfoType::kUrl))) {
-        FileOperatorHelperIns->openFiles(this, { info->urlOf(UrlInfoType::kUrl) });
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(info->urlOf(UrlInfoType::kUrl))) {
+        DialogManager::instance()->showUnableToVistDir(info->urlOf(UrlInfoType::kUrl).path());
+        return;
     }
+
+    FileOperatorHelperIns->openFiles(this, { info->urlOf(UrlInfoType::kUrl) });
 }
 
 void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)

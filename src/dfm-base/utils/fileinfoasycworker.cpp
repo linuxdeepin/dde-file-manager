@@ -23,6 +23,7 @@
 
 #include "fileinfoasycworker.h"
 #include "fileutils.h"
+#include "networkutils.h"
 #include "mimetype/dmimedatabase.h"
 
 namespace dfmbase {
@@ -79,7 +80,7 @@ void FileInfoAsycWorker::fileThumb(const QUrl &url, ThumbnailProvider::Size size
 
 void FileInfoAsycWorker::fileRefresh(const QUrl &url, const QSharedPointer<dfmio::DFileInfo> dfileInfo)
 {
-    if (dfileInfo && FileUtils::checkFtpOrSmbBusy(url, false))
+    if (dfileInfo && NetworkUtils::instance()->checkFtpOrSmbBusy(url))
         dfileInfo->refresh();
 }
 
