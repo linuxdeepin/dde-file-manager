@@ -238,7 +238,7 @@ RecentManager::~RecentManager()
     if (watcher)
         watcher->stopWatcher();
     workerThread.quit();
-    workerThread.wait();
+    workerThread.wait(3000);
 }
 
 void RecentManager::init()
