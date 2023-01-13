@@ -58,9 +58,14 @@ void DiskPluginItem::updateIcon()
 {
     QString &&iconName = "drive-removable-dock-symbolic";
 
+#ifndef COMPILE_ON_V20
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+        iconName.append(PLUGIN_MIN_ICON_NAME);
+#else
     // defines from `constan.h`
     if (height() <= PLUGIN_BACKGROUND_MIN_SIZE && DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
         iconName.append(PLUGIN_MIN_ICON_NAME);
+#endif
 
     icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap(static_cast<int>(16 * qApp->devicePixelRatio()), static_cast<int>(16 * qApp->devicePixelRatio()));
     icon.setDevicePixelRatio(qApp->devicePixelRatio());
