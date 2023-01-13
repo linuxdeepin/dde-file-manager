@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
 <context>
     <name>AbstractJobHandler</name>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="447"/>
         <source>Failed to create the directory</source>
-        <translation type="unfinished">Failed to create the directory</translation>
+        <translation>Failed to create the directory</translation>
     </message>
 </context>
 <context>
@@ -14,12 +12,12 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="458"/>
         <source>%1 already exists in target folder</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 already exists in target folder</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/abstractworker.cpp" line="463"/>
         <source>Original path %1    Target path %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Original path %1    Target path %2</translation>
     </message>
 </context>
 <context>
@@ -865,7 +863,7 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="47"/>
         <source>Switching the entry display may lead to failed mounting</source>
-        <translation type="unfinished"></translation>
+        <translation>Switching the entry display may lead to failed mounting</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="60"/>
@@ -1664,262 +1662,262 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="9"/>
         <source>No error</source>
-        <translation type="unfinished"></translation>
+        <translation>No error</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="10"/>
         <source>File not found</source>
-        <translation type="unfinished"></translation>
+        <translation>File not found</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="11"/>
         <source>File already exists</source>
-        <translation type="unfinished"></translation>
+        <translation>File already exists</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="12"/>
         <source>File is a directory</source>
-        <translation type="unfinished"></translation>
+        <translation>File is a directory</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="13"/>
         <source>File is not a directory</source>
-        <translation type="unfinished"></translation>
+        <translation>File is not a directory</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="14"/>
         <source>File is a directory that isn&apos;t empty</source>
-        <translation type="unfinished"></translation>
+        <translation>File is a directory that isn&apos;t empty</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="15"/>
         <source>File is not a regular file</source>
-        <translation type="unfinished"></translation>
+        <translation>File is not a regular file</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="16"/>
         <source>File is not a symbolic link</source>
-        <translation type="unfinished"></translation>
+        <translation>File is not a symbolic link</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="17"/>
         <source>File cannot be mounted</source>
-        <translation type="unfinished"></translation>
+        <translation>File cannot be mounted</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="18"/>
         <source>Filename is too many characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filename is too many characters</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="19"/>
         <source>Filename is invalid or contains invalid characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filename is invalid or contains invalid characters</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="20"/>
         <source>File contains too many symbolic links</source>
-        <translation type="unfinished"></translation>
+        <translation>File contains too many symbolic links</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="21"/>
         <source>No space left on drive</source>
-        <translation type="unfinished"></translation>
+        <translation>No space left on drive</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="22"/>
         <source>Invalid argument</source>
-        <translation type="unfinished"></translation>
+        <translation>Invalid argument</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="23"/>
         <source>Permission denied</source>
-        <translation type="unfinished"></translation>
+        <translation>Permission denied</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="24"/>
         <source>Operation (or one of its parameters) not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>Operation (or one of its parameters) not supported</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="25"/>
         <source>File isn&apos;t mounted</source>
-        <translation type="unfinished"></translation>
+        <translation>File isn&apos;t mounted</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="26"/>
         <source>File is already mounted</source>
-        <translation type="unfinished"></translation>
+        <translation>File is already mounted</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="27"/>
         <source>File was closed</source>
-        <translation type="unfinished"></translation>
+        <translation>File was closed</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="28"/>
         <source>Operation was cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Operation was cancelled</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="29"/>
         <source>Operations are still pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Operations are still pending</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="30"/>
         <source>File is read only</source>
-        <translation type="unfinished"></translation>
+        <translation>File is read only</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="31"/>
         <source>Backup couldn&apos;t be created</source>
-        <translation type="unfinished"></translation>
+        <translation>Backup couldn&apos;t be created</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="32"/>
         <source>File&apos;s Entity Tag was incorrect</source>
-        <translation type="unfinished"></translation>
+        <translation>File&apos;s Entity Tag was incorrect</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="33"/>
         <source>Operation timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>Operation timed out</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="34"/>
         <source>Operation would be recursive</source>
-        <translation type="unfinished"></translation>
+        <translation>Operation would be recursive</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="35"/>
         <source>File is busy</source>
-        <translation type="unfinished"></translation>
+        <translation>File is busy</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="36"/>
         <source>Operation would block</source>
-        <translation type="unfinished"></translation>
+        <translation>Operation would block</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="37"/>
         <source>Host couldn&apos;t be found (remote operations)</source>
-        <translation type="unfinished"></translation>
+        <translation>Host couldn&apos;t be found (remote operations)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="38"/>
         <source>Operation would merge files</source>
-        <translation type="unfinished"></translation>
+        <translation>Operation would merge files</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="39"/>
         <source>Operation failed and a helper program has already interacted with the user. Do not display any error dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Operation failed and a helper program has already interacted with the user. Do not display any error dialog</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="40"/>
         <source>The current process has too many files open and can&apos;t open any more. Duplicate descriptors do count toward this limit</source>
-        <translation type="unfinished"></translation>
+        <translation>The current process has too many files open and can&apos;t open any more. Duplicate descriptors do count toward this limit</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="41"/>
         <source>The object has not been initialized</source>
-        <translation type="unfinished"></translation>
+        <translation>The object has not been initialized</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="42"/>
         <source>The requested address is already in use</source>
-        <translation type="unfinished"></translation>
+        <translation>The requested address is already in use</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="43"/>
         <source>Need more input to finish operation</source>
-        <translation type="unfinished"></translation>
+        <translation>Need more input to finish operation</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="44"/>
         <source>The input data was invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>The input data was invalid</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="45"/>
         <source>A remote object generated an error(dbus)</source>
-        <translation type="unfinished"></translation>
+        <translation>A remote object generated an error(dbus)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="46"/>
         <source>Host unreachable</source>
-        <translation type="unfinished"></translation>
+        <translation>Host unreachable</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="47"/>
         <source>Network unreachable</source>
-        <translation type="unfinished"></translation>
+        <translation>Network unreachable</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="48"/>
         <source>Connection refused</source>
-        <translation type="unfinished"></translation>
+        <translation>Connection refused</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="49"/>
         <source>Connection to proxy server failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Connection to proxy server failed</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="50"/>
         <source>Proxy authentication failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy authentication failed</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="51"/>
         <source>Proxy server needs authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy server needs authentication</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="52"/>
         <source>Proxy connection is not allowed by ruleset</source>
-        <translation type="unfinished"></translation>
+        <translation>Proxy connection is not allowed by ruleset</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="53"/>
         <source>Broken pipe</source>
-        <translation type="unfinished"></translation>
+        <translation>Broken pipe</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="54"/>
         <source>Connection closed by peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Connection closed by peer</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="55"/>
         <source>Transport endpoint is not connected</source>
-        <translation type="unfinished"></translation>
+        <translation>Transport endpoint is not connected</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="56"/>
         <source>Message too large</source>
-        <translation type="unfinished"></translation>
+        <translation>Message too large</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="57"/>
         <source>Generic error condition for when an operation fails and no more specific DFMIOErrorEnum value is defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Generic error condition for when an operation fails and no more specific DFMIOErrorEnum value is defined</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="58"/>
         <source>File open failed</source>
-        <translation type="unfinished"></translation>
+        <translation>File open failed</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="59"/>
         <source>File open flag error</source>
-        <translation type="unfinished"></translation>
+        <translation>File open flag error</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="60"/>
         <source>File info has no attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>File info has no attribute</translation>
     </message>
 </context>
 <context>
@@ -2781,12 +2779,12 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
         <source>Permission denied</source>
-        <translation type="unfinished"></translation>
+        <translation>Permission denied</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="167"/>
         <source>No such file or directory</source>
-        <translation type="unfinished"></translation>
+        <translation>No such file or directory</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="169"/>
@@ -2831,7 +2829,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="303"/>
         <source>The passphrase is needed to access encrypted data on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>The passphrase is needed to access encrypted data on %1.</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="311"/>
@@ -2985,7 +2983,7 @@
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="565"/>
         <source>Unable to access %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unable to access %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="582"/>
@@ -4303,7 +4301,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="478"/>
         <source>Share folder can&apos;t be named after the current username</source>
-        <translation type="unfinished"></translation>
+        <translation>Share folder can&apos;t be named after the current username</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/utils/usersharehelper.cpp" line="484"/>
@@ -5053,12 +5051,12 @@
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="190"/>
         <source>Open in new tab</source>
-        <translation type="unfinished">Open in new tab</translation>
+        <translation>Open in new tab</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="191"/>
         <source>Properties</source>
-        <translation type="unfinished">Properties</translation>
+        <translation>Properties</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.cpp" line="193"/>
@@ -5114,7 +5112,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="206"/>
         <source>Remove tag &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Remove tag &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagmenuscene.cpp" line="208"/>
