@@ -311,10 +311,8 @@ QPair<QWidget *, QWidget *> SettingDialog::createCheckBoxWithMessage(QObject *op
     const QString &message = option->data("message").toString();
 
     CheckBoxWithMessage *checkBoxWithMsg = new CheckBoxWithMessage;
-    checkBoxWithMsg->setText(qApp->translate("SettingDialog", text.toStdString().c_str()));
-    checkBoxWithMsg->setMessage(qApp->translate("SettingDialog", message.toStdString().c_str()));
-    checkBoxWithMsg->setText(text);
-    checkBoxWithMsg->setMessage(message);
+    checkBoxWithMsg->setText(qApp->translate("QObject", text.toStdString().c_str()));
+    checkBoxWithMsg->setMessage(qApp->translate("QObject", message.toStdString().c_str()));
 
     SettingDialog::kMergeSmbCheckBox = checkBoxWithMsg->getCheckBox();
 

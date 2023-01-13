@@ -44,8 +44,10 @@ void global_setting_template_manully_trans()
     auto base_default_view_icon_modeValue2 = QObject::tr("List");
 
     auto base_new_tab_windows_new_tab_pathValue1 = QObject::tr("Current Directory");
+    auto switching_the_entry_display_may_lead_to_failed_mounting = QObject::tr("Switching the entry display may lead to failed mounting");
 
     Q_UNUSED(base_default_view_icon_modeValue1);
     Q_UNUSED(base_default_view_icon_modeValue2);
     Q_UNUSED(base_new_tab_windows_new_tab_pathValue1);
+    Q_UNUSED(switching_the_entry_display_may_lead_to_failed_mounting);
 }

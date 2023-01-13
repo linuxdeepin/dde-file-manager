@@ -272,6 +272,7 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     }
 
     pos = findItem(data.url);
+    qInfo() << "devUrl = " << data.url << ",pos = " << pos;   // log for bug:#182939
     if (pos > 0) {   // update the item
         onItemUpdated(data.url);
     } else {
