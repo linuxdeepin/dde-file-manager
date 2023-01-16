@@ -238,7 +238,7 @@ RecentManager::~RecentManager()
     if (watcher)
         watcher->stopWatcher();
     workerThread.quit();
-    workerThread.wait(3000);
+    workerThread.wait(15000);
 }
 
 void RecentManager::init()
@@ -248,15 +248,15 @@ void RecentManager::init()
     connect(this, &RecentManager::asyncHandleFileChanged, iteratorWorker, &RecentIterateWorker::doWork);
 
     connect(iteratorWorker, &RecentIterateWorker::updateRecentFileInfo, this,
-            &RecentManager::onUpdateRecentFileInfo, Qt::BlockingQueuedConnection);
+            &RecentManager::onUpdateRecentFileInfo);
     connect(iteratorWorker, &RecentIterateWorker::deleteExistRecentUrls, this,
-            &RecentManager::onDeleteExistRecentUrls, Qt::BlockingQueuedConnection);
+            &RecentManager::onDeleteExistRecentUrls);
 
     workerThread.start();
 
     emit asyncHandleFileChanged();
     updateRecentTimer.setSingleShot(true);
-    updateRecentTimer.setInterval(300);
+    updateRecentTimer.setInterval(2000);
     updateRecentTimer.moveToThread(qApp->thread());
 
     connect(&updateRecentTimer, &QTimer::timeout, this, &RecentManager::asyncHandleFileChanged);
