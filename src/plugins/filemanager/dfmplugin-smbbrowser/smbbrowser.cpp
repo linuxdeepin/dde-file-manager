@@ -139,13 +139,20 @@ void SmbBrowser::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
     } else if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled() && url.path() == kSmbIntegPath) {
         auto newWindowAct = menu->addAction(QObject::tr("Unmount"), [windowId, url]() {
             SmbIntegrationManager::instance()->umountAllProtocolDevice(windowId, url, false);
-            SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(url);
+            // format of url is : entry://x.x.x.x/.smbinteg
+            QUrl smbUrl;
+            smbUrl.setScheme(Global::Scheme::kSmb);
+            smbUrl.setHost(url.host());
+            SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(smbUrl);
         });
         newWindowAct->setEnabled(true);
 
         auto newTabAct = menu->addAction(QObject::tr("Clear saved password and unmount"), [windowId, url]() {
             SmbIntegrationManager::instance()->umountAllProtocolDevice(windowId, url, true);
-            SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(url);
+            QUrl smbUrl;
+            smbUrl.setScheme(Global::Scheme::kSmb);
+            smbUrl.setHost(url.host());
+            SmbIntegrationManager::instance()->removeStashedIntegrationFromConfig(smbUrl);
         });
         newTabAct->setEnabled(true);
     } else if (!SmbIntegrationManager::instance()->isSmbIntegrationEnabled() && url.path().endsWith(kProtodevstashed)) {
