@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "sidebarwidget.h"
 #include "sidebarmodel.h"
 #include "sidebarview.h"
@@ -145,9 +145,9 @@ int SideBarWidget::findItem(const QUrl &url) const
 
     return -1;
 }
-//zhuangshu: Currently, function findItemIndex can only support to find out the sub item of group,
-//so it can not find out the top item (group item),
-//but do not effect our function.
+// zhuangshu: Currently, function findItemIndex can only support to find out the sub item of group,
+// so it can not find out the top item (group item),
+// but do not effect our function.
 QModelIndex SideBarWidget::findItemIndex(const QUrl &url) const
 {
     return sidebarView->findItemIndex(url);
@@ -170,8 +170,8 @@ void SideBarWidget::setItemVisiable(const QUrl &url, bool visible)
     qInfo() << "url = " << url << ",visible = " << visible;
 
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    //find out the item index by url
-    const QModelIndex index = this->findItemIndex(url);   //ps: currently,findItemIndex can only find the sub item
+    // find out the item index by url
+    const QModelIndex index = this->findItemIndex(url);   // ps: currently,findItemIndex can only find the sub item
     if (!index.isValid()) {
         qInfo() << "index is invalid";
         return;
@@ -245,7 +245,7 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
     QUrl url { qvariant_cast<QUrl>(item->data(SideBarItem::Roles::kItemUrlRole)) };
     if (NetworkUtils::instance()->checkFtpOrSmbBusy(url)) {
         DialogManager::instance()->showUnableToVistDir(url.path());
-        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+        QApplication::restoreOverrideCursor();
         auto preIndex = sidebarView->previousIndex();
         if (!preIndex.isValid()) {
             sidebarView->setPreviousIndex(preIndex);
@@ -259,6 +259,7 @@ void SideBarWidget::onItemActived(const QModelIndex &index)
         return;
     }
 
+    QApplication::restoreOverrideCursor();
     SideBarManager::instance()->runCd(item, SideBarHelper::windowId(this));
     sidebarView->update(sidebarView->previousIndex());
     sidebarView->update(sidebarView->currentIndex());
@@ -344,7 +345,7 @@ void SideBarWidget::initDefaultModel()
         }
     });
 
-    //The following code is moved to bookmark plugin.
+    // The following code is moved to bookmark plugin.
     /*
      //create defualt items
         static std::once_flag flag;

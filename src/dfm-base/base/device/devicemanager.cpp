@@ -600,18 +600,17 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
     auto wrappedCb = [=](bool ok, DeviceError err, const QString &msg) {
         Q_EMIT mountNetworkDeviceResult(ok, err, msg);
         if (cb) cb(ok, err, msg);
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
+        QApplication::restoreOverrideCursor();
     };
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
+        QApplication::restoreOverrideCursor();
         if (ok) {
             DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice,
                                                 wrappedCb, timeout);
         } else {
             wrappedCb(false, DeviceError::kUserErrorTimedOut, "");
-            QApplication::setOverrideCursor(Qt::ArrowCursor);
             qDebug() << "cannot access network " << host << ":" << port;
         }
     });
@@ -659,7 +658,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                    // 'device busy' error.
+                                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -746,7 +745,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() {}
+DeviceManager::~DeviceManager() { }
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -834,8 +833,8 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
         QJsonObject loginInfo = dlg.getLoginData();
         bool smbIntegrationEnabled = Application::genericAttribute(Application::GenericAttribute::kMergeTheEntriesOfSambaSharedFolders).toBool();
         if (!uri.startsWith(Global::Scheme::kSmb) || !smbIntegrationEnabled) {
-            if (loginInfo.value(kSavePasswd).toInt() == 1)   //ftp mount with auth one time mode
-                loginInfo.insert(kSavePasswd, 0);   //set to never save password
+            if (loginInfo.value(kSavePasswd).toInt() == 1)   // ftp mount with auth one time mode
+                loginInfo.insert(kSavePasswd, 0);   // set to never save password
         }
 
         auto data = loginInfo.toVariantMap();
