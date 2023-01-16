@@ -94,7 +94,7 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
     static constexpr char kSftpPort[] { "22" };
 
     auto s(mpt);
-    static QRegularExpression gvfsPref { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)" };
+    static QRegularExpression gvfsPref { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/run/user/\\d+/gvfs/s?ftp|^/root/\\.gvfs/s?ftp)" };
     static QRegularExpression cifsMptPref { "^/media/[\\s\\S]*/smbmounts/" };   // TODO(xust) smb mount point may be changed.
     if (s.contains(gvfsPref)) {
         s.remove(gvfsPref);   // -> ftp:host=1.2.3.4  smb-share:server=1.2.3.4,share=draw
@@ -137,6 +137,7 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
         if (frags.count() < 2)
             return false;
         ip = frags[1];
+        ip = ip.section("/", 0, 0);
         int splitIdx = ip.lastIndexOf("_");
         if (splitIdx > 0)
             ip = ip.mid(0, splitIdx);
