@@ -41,8 +41,7 @@ static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<df
     const QString &suffix = fileInfo->nameOf(NameInfoType::kSuffix);
     if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop
         || fileInfo->urlOf(UrlInfoType::kParentUrl).path() == StandardPaths::location(StandardPaths::StandardLocation::kDesktopPath)) {
-        static DMimeDatabase mimedata;
-        const QMimeType &mt = mimedata.mimeTypeForFile(fileInfo);
+        const QMimeType &mt = fileInfo->fileMimeType();
         if (mt.name() == "application/x-desktop"
             && mt.suffixes().contains(DFMBASE_NAMESPACE::Global::Scheme::kDesktop, Qt::CaseInsensitive)) {
             const QUrl &url = fileInfo->urlOf(UrlInfoType::kUrl);

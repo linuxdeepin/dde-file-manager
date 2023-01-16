@@ -839,7 +839,12 @@ QString LocalFileInfoPrivate::iconName() const
 
 QString LocalFileInfoPrivate::mimeTypeName() const
 {
-    return this->attribute(DFileInfo::AttributeID::kStandardContentType).toString();
+    // At present, there is no dfmio library code. For temporary repair
+    // local file use the method on v20 to obtain mimeType
+    if (FileUtils::isGvfsFile(url)) {
+        return this->attribute(DFileInfo::AttributeID::kStandardContentType).toString();
+    }
+    return q->fileMimeType().name();
 }
 
 /*!
