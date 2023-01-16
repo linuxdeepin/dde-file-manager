@@ -19,11 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "appendcompresshelper.h"
-
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceutils.h"
 
 #include <dfm-framework/event/event.h>
-
 #include <QProcess>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -93,7 +92,7 @@ bool AppendCompressHelper::appendCompress(const QString &toFilePath, const QStri
 
 bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl)
 {
-    if (!toUrl.isValid())
+    if (!toUrl.isValid() || fromUrls.isEmpty())
         return false;
 
     QUrl localUrl = toUrl;
@@ -104,6 +103,9 @@ bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const 
 
     QString toFilePath = localUrl.toLocalFile();
     if (toFilePath.isEmpty())
+        return false;
+
+    if (DeviceUtils::isFtp(fromUrls.at(0)) || DeviceUtils::isFtp(toUrl))
         return false;
 
     if (dpfHookSequence->run("dfmplugin_utils", "hook_AppendCompress_Prohibit", fromUrls, toUrl)) {
