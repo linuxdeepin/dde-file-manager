@@ -825,6 +825,8 @@ QString LocalFileInfoPrivate::completeSuffix() const
 
 QString LocalFileInfoPrivate::iconName() const
 {
+    if (!FileUtils::isGvfsFile(url))
+        return q->fileMimeType().iconName();
     QString iconNameValue;
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
         iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(filePath());
