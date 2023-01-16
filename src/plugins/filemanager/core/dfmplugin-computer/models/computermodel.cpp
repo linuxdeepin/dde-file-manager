@@ -29,6 +29,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/device/deviceutils.h"
 
 #include <dfm-framework/event/event.h>
@@ -216,7 +217,7 @@ Qt::ItemFlags ComputerModel::flags(const QModelIndex &index) const
 int ComputerModel::findItem(const QUrl &target)
 {
     auto iter = std::find_if(items.cbegin(), items.cend(), [=](const ComputerItemData &item) {
-        return item.url == target;
+        return UniversalUtils::urlEquals(item.url, target);
     });
     if (iter != items.cend())
         return iter - items.cbegin();
