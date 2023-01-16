@@ -24,7 +24,9 @@
 #include "detailview.h"
 #include "utils/detailspacehelper.h"
 
+#include <dpf.h>
 #include <QHBoxLayout>
+#include <QApplication>
 
 using namespace dfmplugin_detailspace;
 
@@ -38,7 +40,13 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
     DetailSpaceHelper::resetSelectedUrl();
-    setCurrentUrl(url, 0);
+
+    const QList<QUrl> &urls { dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", QApplication::activeWindow()->internalWinId()).value<QList<QUrl>>() };
+    if (urls.isEmpty()) {
+        setCurrentUrl(url, 0);
+    } else {
+        setCurrentUrl(urls.first(), 0);
+    }
 }
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url, int widgetFilter)
