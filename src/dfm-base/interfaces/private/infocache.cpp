@@ -22,6 +22,7 @@
 #include "infocache.h"
 #include "interfaces/private/infocache_p.h"
 #include "base/schemefactory.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 
 #include <dfm-io/core/dfileinfo.h>
 
@@ -340,7 +341,8 @@ CacheWorker::~CacheWorker()
 void CacheWorker::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    InfoCache::instance().cacheInfo(url, info);
+    if (DecoratorFile(url.path()).exists())
+        InfoCache::instance().cacheInfo(url, info);
 }
 
 void CacheWorker::removeCaches(const QList<QUrl> urls)

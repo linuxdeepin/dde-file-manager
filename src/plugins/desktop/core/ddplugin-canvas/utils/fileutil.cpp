@@ -28,7 +28,9 @@
 DFMBASE_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
-class DesktopFileCreatorGlogal : public DesktopFileCreator{};
+class DesktopFileCreatorGlogal : public DesktopFileCreator
+{
+};
 Q_GLOBAL_STATIC(DesktopFileCreatorGlogal, desktopFileCreatorGlogal)
 
 DesktopFileCreator *DesktopFileCreator::instance()
@@ -39,7 +41,7 @@ DesktopFileCreator *DesktopFileCreator::instance()
 DFMLocalFileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, bool cache)
 {
     QString errString;
-    auto itemInfo =  InfoFactory::create<LocalFileInfo>(url, cache, &errString);
+    auto itemInfo = InfoFactory::create<LocalFileInfo>(url, cache, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qInfo() << "create LocalFileInfo error: " << errString << url;
         return nullptr;
@@ -50,5 +52,4 @@ DFMLocalFileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, bool
 
 DesktopFileCreator::DesktopFileCreator()
 {
-
 }
