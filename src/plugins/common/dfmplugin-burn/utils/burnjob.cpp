@@ -342,7 +342,7 @@ void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString
         BurnHelper::updateBurningStateToPersistence(curDevId, curDev, true);
 
     // update progress
-    if (progress > 0 && progress <= 100 && progress > lastProgress) {
+    if (progress > 0 && progress <= 100 && progress >= lastProgress) {
         lastProgress = progress;
         info->insert(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey, progress);
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, 100);

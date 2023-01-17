@@ -38,6 +38,7 @@ class LocalFileIconProvider : public QFileIconProvider
 public:
     LocalFileIconProvider();
     ~LocalFileIconProvider() override;
+    using QFileIconProvider::icon;
 
     static LocalFileIconProvider *globalProvider();
 
