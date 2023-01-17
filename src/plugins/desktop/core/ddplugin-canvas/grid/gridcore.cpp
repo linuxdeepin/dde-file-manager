@@ -67,22 +67,22 @@ bool GridCore::applay(GridCore *core)
     return true;
 }
 
-void GridCore::insert(int index, const QPoint &pos, const QString &item)
+void GridCore::insert(int index, const QPoint &pos, const QString &it)
 {
-    itemPos[index].insert(item, pos);
-    posItem[index].insert(pos, item);
+    itemPos[index].insert(it, pos);
+    posItem[index].insert(pos, it);
 }
 
-void GridCore::remove(int index, const QString &item)
+void GridCore::remove(int index, const QString &it)
 {
-    auto pos = itemPos[index].take(item);
+    auto pos = itemPos[index].take(it);
     posItem[index].remove(pos);
 }
 
 void GridCore::remove(int index, const QPoint &pos)
 {
-    auto item = posItem[index].take(pos);
-    itemPos[index].remove(item);
+    QString it = posItem[index].take(pos);
+    itemPos[index].remove(it);
 }
 
 QList<QPoint> GridCore::voidPos(int index) const
@@ -133,14 +133,14 @@ bool GridCore::isFull(int index) const
     return itemCount >= size.width() * size.height();
 }
 
-bool GridCore::position(const QString &item, GridPos &pos) const
+bool GridCore::position(const QString &it, GridPos &pos) const
 {
     bool find = false;
     for (auto itor = itemPos.begin(); itor != itemPos.end(); ++itor) {
-        if (itor.value().contains(item)) {
+        if (itor.value().contains(it)) {
             find = true;
             pos.first = itor.key();
-            pos.second = itor.value().value(item);
+            pos.second = itor.value().value(it);
             break;
         }
     }
@@ -156,13 +156,13 @@ QString GridCore::item(const GridPos &pos) const
 void GridCore::removeAll(const QStringList &items)
 {
     for (int index : itemPos.keys()) {
-        for (const QString &item : items) {
+        for (const QString &it : items) {
 
-            overload.removeAll(item);
+            overload.removeAll(it);
 
-            if (!itemPos[index].contains(item))
+            if (!itemPos[index].contains(it))
                 continue;
-            auto pos = itemPos[index].take(item);
+            auto pos = itemPos[index].take(it);
             posItem[index].remove(pos);
         }
     }
@@ -213,24 +213,24 @@ void MoveGridOper::calcDestination(const QStringList &orgItems, const GridPos &r
                                    QHash<QString, QPoint> &dest, QStringList &invalid)
 {
     GridPos tempPos;
-    for (const QString &item : orgItems) {
+    for (const QString &it : orgItems) {
 
-        if (Q_UNLIKELY(item.isEmpty()))
+        if (Q_UNLIKELY(it.isEmpty()))
             continue;
 
-        if (position(item, tempPos)) {
+        if (position(it, tempPos)) {
             // not from one surface
             if (tempPos.first != ref.first) {
-                invalid.append(item);
+                invalid.append(it);
             } else {
                 auto target = tempPos.second - ref.second + focus;
                 if (isValid(ref.first, target))
-                    dest.insert(item, target);
+                    dest.insert(it, target);
                 else // invalid pos
-                    invalid.append(item);
+                    invalid.append(it);
             }
         } else { // origin pos is invalid.
-            invalid.append(item);
+            invalid.append(it);
         }
     }
 }
@@ -290,8 +290,8 @@ void AppendOper::append(QStringList items)
             if (items.isEmpty())
                 return;
 
-            QString &&item = items.takeFirst();
-            insert(idx, pos, item);
+            QString &&it = items.takeFirst();
+            insert(idx, pos, it);
         }
     }
 

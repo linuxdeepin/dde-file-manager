@@ -697,22 +697,22 @@ QStringList CanvasProxyModel::mimeTypes() const
 
 QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
 {
-    QMimeData *data = new QMimeData();
+    QMimeData *mimedt = new QMimeData();
     QList<QUrl> urls;
 
     for (const QModelIndex &idx : indexes)
         urls << fileUrl(idx);
 
-    if (d->hookIfs && d->hookIfs->mimeData(urls, data)) {
+    if (d->hookIfs && d->hookIfs->mimeData(urls, mimedt)) {
         qDebug() << "using extend mimeData.";
     } else {
-        data->setUrls(urls);
+        mimedt->setUrls(urls);
     }
 
     // set user id
-    data->setData(QString(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
+    mimedt->setData(QString(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
 
-    return data;
+    return mimedt;
 }
 
 bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)

@@ -475,7 +475,7 @@ void CanvasView::updateGrid()
     update();
 }
 
-bool CanvasView::showGrid(bool v) const
+void CanvasView::showGrid(bool v) const
 {
     d->showGrid = v;
 }

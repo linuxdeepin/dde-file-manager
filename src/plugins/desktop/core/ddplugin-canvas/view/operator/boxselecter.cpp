@@ -89,7 +89,7 @@ QRect BoxSelecter::validRect(CanvasView *w) const
     selectRect.setBottomRight(w->mapFromGlobal(rect.bottomRight()));
 
     // clip area out of widget.
-    return clipRect(selectRect, w->geometry());
+    return clipRect(selectRect, innerGeometry(w));
 }
 
 QRect BoxSelecter::globalRect() const
@@ -125,7 +125,8 @@ bool BoxSelecter::isBeginFrom(CanvasView *w)
     if (!w)
         return false;
 
-    return w->geometry().contains(w->mapFromGlobal(begin));
+    // the topleft point must be 0x0 after w->mapFromGlobal
+    return innerGeometry(w).contains(w->mapFromGlobal(begin));
 }
 
 void BoxSelecter::endSelect()
@@ -175,6 +176,11 @@ bool BoxSelecter::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QObject::eventFilter(watched, event);
+}
+
+QRect BoxSelecter::innerGeometry(QWidget *w) const
+{
+    return QRect(QPoint(0, 0), w->size());
 }
 
 void BoxSelecter::updateSelection()

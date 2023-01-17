@@ -267,6 +267,7 @@ void CollectionHolder::setHiddableTitleBar(const bool hiddable)
 bool CollectionHolder::hiddableTitleBar() const
 {
     // todo
+    return false;
 }
 
 void CollectionHolder::setHiddableView(const bool hiddable)
@@ -277,6 +278,7 @@ void CollectionHolder::setHiddableView(const bool hiddable)
 bool CollectionHolder::hiddableView() const
 {
     // todo
+    return false;
 }
 
 void CollectionHolder::setRenamable(const bool renamable)

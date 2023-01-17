@@ -58,6 +58,7 @@ protected:
     virtual void updateCurrentIndex();
 private:
     void selection(QItemSelection *newSelection);
+    QRect innerGeometry(QWidget *w) const;
 signals:
     void changed();
 public slots:
