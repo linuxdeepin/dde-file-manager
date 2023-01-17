@@ -15,7 +15,7 @@
                       "computer":true,
                       "vault":true,
                       "builtin_disks":true,
-                      "loop_dev":true,
+                      "loop_dev":false,
                       "other_disks":true,
                       "computers_in_lan":true,
                       "my_shares":true,
