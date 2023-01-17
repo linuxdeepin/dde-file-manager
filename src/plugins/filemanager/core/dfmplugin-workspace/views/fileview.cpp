@@ -1498,6 +1498,7 @@ void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int en
             selectionModel()->select(index, QItemSelectionModel::Clear);
             if (index == currentIdx) {
                 clearSelection();
+                setCurrentIndex(QModelIndex());
             }
         }
     }
