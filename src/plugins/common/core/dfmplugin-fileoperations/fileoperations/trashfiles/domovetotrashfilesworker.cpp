@@ -136,9 +136,15 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         emitCurrentTaskNotify(urlSource, targetUrl);
 
-        const QString &completeBaseName = fileInfo->nameOf(NameInfoType::kCompleteBaseName);
-        const QString &suffix = fileInfo->nameOf(NameInfoType::kSuffix);
-        const QUrl &trashUrl = buildTrashUrl(completeBaseName, suffix);
+        // if a file names test.tar.gz
+        // using baseName test and complete suffix tar.gz to build ulr like test.2.tag.gz
+        const QString &baseName = fileInfo->nameOf(NameInfoType::kBaseName);
+        const QString &completeSuffix = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
+
+        //! the trash url builed there must same as one fileHandler.trashFile created.
+        //! the trash url should be returned by fileHandler.trashFile instead of using same algorihm on two place
+        //! to keep same url. todo(lyg)
+        const QUrl &trashUrl = buildTrashUrl(baseName, completeSuffix);
 
         DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
         bool trashSucc = fileHandler.trashFile(urlSource);
@@ -183,7 +189,7 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     return true;
 }
 
-QUrl DoMoveToTrashFilesWorker::buildTrashUrl(const QString &completeBaseName, const QString &suffix)
+QUrl DoMoveToTrashFilesWorker::buildTrashUrl(const QString &baseName, const QString &completeSuffix)
 {
     // gio trash no trash url return, so build trash url before trash
     // file:///aaa/bbb/ccc.txt -> trash:///ccc.txt, if trash:///ccc.txt exists, return trash:///ccc.2.txt
@@ -198,9 +204,12 @@ QUrl DoMoveToTrashFilesWorker::buildTrashUrl(const QString &completeBaseName, co
 
         QString path;
         if (i == 1)
-            path = "/" + completeBaseName + "." + suffix;
+            path = "/" + baseName ;
         else
-            path = QString("/" + completeBaseName + "." + "%1" + "." + suffix).arg(i);
+            path = QString("/" + baseName + "." + "%1").arg(i);
+
+        if (!completeSuffix.isEmpty())
+            path = path + "." + completeSuffix;
         url.setPath(path);
 
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);

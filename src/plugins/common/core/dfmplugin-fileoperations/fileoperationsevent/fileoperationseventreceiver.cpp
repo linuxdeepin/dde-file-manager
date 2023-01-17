@@ -145,7 +145,6 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
     QList<QUrl> sources = QUrl::fromStringList(ret.value("sources").toStringList());
     QList<QUrl> targets = QUrl::fromStringList(ret.value("targets").toStringList());
     for (const auto &url : sources) {
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!DecoratorFile(url).exists()) {
             // Their sizes are equal, indicating that the current operation is many-to-many.
             // So files that do not exist in sources need to be deleted in targets as well
