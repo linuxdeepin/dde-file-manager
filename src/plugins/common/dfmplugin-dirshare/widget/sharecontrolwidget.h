@@ -71,6 +71,7 @@ protected Q_SLOTS:
 
 private:
     void showMoreInfo(bool showMore);
+    void userShareOperation(bool checked);
 
 private:
     QFormLayout *mainLay { nullptr };

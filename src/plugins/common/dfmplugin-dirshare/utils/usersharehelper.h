@@ -68,8 +68,6 @@ public:
     bool isSambaServiceRunning();
     void startSambaServiceAsync(StartSambaFinished onFinished);
     QString sharedIP() const;
-    bool handleRestoreViewCreationState();
-    bool shareDrawerExpand();
 
 Q_SIGNALS:
     void shareCountChanged(int count);
@@ -117,7 +115,6 @@ private:
     QMap<QString, QStringList> sharePathToShareName {};
 
     ShareWatcherManager *watcherManager { nullptr };
-    bool initExpandState { false };
 };
 }
 

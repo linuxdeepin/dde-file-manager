@@ -260,18 +260,6 @@ QString UserShareHelper::sharedIP() const
     return selfIp;
 }
 
-bool UserShareHelper::handleRestoreViewCreationState()
-{
-    initExpandState = false;
-
-    return false;
-}
-
-bool UserShareHelper::shareDrawerExpand()
-{
-    return initExpandState;
-}
-
 UserShareHelper::~UserShareHelper()
 {
 }

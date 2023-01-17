@@ -255,8 +255,6 @@ void ShareControlWidget::setupSharePassword()
     QObject::connect(setPasswordBt, &QPushButton::clicked, [=]() {
         if (FMWindowsIns.windowIdList().count() <= 0)
             return;
-        // TODO(zhuangshu):when all windows are closed, the property dialog is still shown, in this
-        // condition, the changing share password dialog can not be popup (because no parent winId), it is a bug.
         dpfSlotChannel->push("dfmplugin_titlebar", "slot_SharePasswordSettingsDialog_Show", FMWindowsIns.windowIdList().first());
     });
     hBoxLine3->addWidget(setPasswordBt);
@@ -328,16 +326,7 @@ void ShareControlWidget::init()
 void ShareControlWidget::initConnection()
 {
     connect(shareSwitcher, &QCheckBox::clicked, this, [this](bool checked) {
-        sharePermissionSelector->setEnabled(checked);
-        shareAnonymousSelector->setEnabled(checked);
-        shareSwitcher->setEnabled(false);
-        timer->start();
-        if (checked)
-            this->shareFolder();
-        else
-            this->unshareFolder();
-
-        showMoreInfo(checked);
+        this->userShareOperation(checked);
     });
 
     connect(shareAnonymousSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ShareControlWidget::updateShare);
@@ -560,6 +549,27 @@ void ShareControlWidget::showMoreInfo(bool showMore)
         else
             refreshIp->stop();
     }
+}
+
+void ShareControlWidget::userShareOperation(bool checked)
+{
+    if (!isSharePasswordSet && checked) {
+        if (FMWindowsIns.windowIdList().count() <= 0)
+            return;
+        // here just popup password settings dialog via titlebar plugin and this way is unreasonable,
+        // this dialog should be implemented in dialogmanager in the future.
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_SharePasswordSettingsDialog_Show", FMWindowsIns.windowIdList().first());
+    }
+    sharePermissionSelector->setEnabled(checked);
+    shareAnonymousSelector->setEnabled(checked);
+    shareSwitcher->setEnabled(false);
+    timer->start();
+    if (checked)
+        this->shareFolder();
+    else
+        this->unshareFolder();
+
+    showMoreInfo(checked);
 }
 
 #include "sharecontrolwidget.moc"
