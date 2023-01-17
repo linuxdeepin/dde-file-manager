@@ -28,11 +28,16 @@ public Q_SLOTS:
     void onClearCache();
 
 private:
+    // method 2
     bool parseLocationEmblemIcons(const QString &path, int count, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin> plugin);
+    // method 1
     void parseEmblemIcons(const QString &path, int count, QSharedPointer<DFMEXT::DFMExtEmblemIconPlugin> plugin);
 
     void makeLayoutGroup(const std::vector<DFMEXT::DFMExtEmblemIconLayout> &layouts, QList<QPair<QString, int>> *group);
     void makeNormalGroup(const std::vector<std::string> &icons, int count, QList<QPair<QString, int>> *group);
+    void mergeGroup(const QList<QPair<QString, int>> &oldGroup,
+                    const QList<QPair<QString, int>> &newGroup,
+                    QList<QPair<QString, int>> *group);
 
 private:
     QMap<QString, QList<QPair<QString, int>>> embelmCaches;

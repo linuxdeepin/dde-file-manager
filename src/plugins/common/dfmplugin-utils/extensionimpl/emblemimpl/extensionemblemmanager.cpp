@@ -85,14 +85,17 @@ bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, 
         QList<QPair<QString, int>> newGroup;
         makeLayoutGroup(layouts, &newGroup);
         if (newGroup != oldGroup) {
-            embelmCaches[path] = newGroup;
-            emit emblemIconChanged(path, newGroup);
+            QList<QPair<QString, int>> mergedGroup;
+            mergeGroup(oldGroup, newGroup, &mergedGroup);
+            embelmCaches[path] = mergedGroup;
+            emit emblemIconChanged(path, mergedGroup);
             return true;
         }
     } else {   // save to cache
         QList<QPair<QString, int>> group;
         makeLayoutGroup(layouts, &group);
         emit emblemIconChanged(path, group);
+        embelmCaches.insert(path, group);
         return true;
     }
 
@@ -113,8 +116,10 @@ void EmblemIconWorker::parseEmblemIcons(const QString &path, int count, QSharedP
         QList<QPair<QString, int>> newGroup;
         makeNormalGroup(icons, count, &newGroup);
         if (newGroup != oldGroup) {
-            embelmCaches[path] = newGroup;
-            emit emblemIconChanged(path, newGroup);
+            QList<QPair<QString, int>> mergedGroup;
+            mergeGroup(oldGroup, newGroup, &mergedGroup);
+            embelmCaches[path] = mergedGroup;
+            emit emblemIconChanged(path, mergedGroup);
         }
     } else {   // save to cache
         QList<QPair<QString, int>> group;
@@ -147,6 +152,28 @@ void EmblemIconWorker::makeNormalGroup(const std::vector<std::string> &icons, in
             group->push_back({ QString(iconPath.data()), pos });
             ++index;
         }
+    });
+}
+
+void EmblemIconWorker::mergeGroup(const QList<QPair<QString, int>> &oldGroup,
+                                  const QList<QPair<QString, int>> &newGroup,
+                                  QList<QPair<QString, int>> *group)
+{
+    Q_ASSERT(group);
+
+    *group = oldGroup;
+    if (oldGroup.size() >= kMaxEmblemCount)
+        return;
+
+    // other plugins canot override first plugin's emblem icon
+    QList<int> posSpace { 0, 1, 2, 3 };
+    std::for_each(oldGroup.begin(), oldGroup.end(), [&posSpace](const QPair<QString, int> &pair) {
+        posSpace.removeOne(pair.second);
+    });
+
+    std::for_each(newGroup.begin(), newGroup.end(), [posSpace, group](const QPair<QString, int> &pair) {
+        if (posSpace.contains(pair.second))
+            group->push_back(pair);
     });
 }
 
