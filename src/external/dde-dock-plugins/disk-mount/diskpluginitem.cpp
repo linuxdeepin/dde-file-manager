@@ -67,7 +67,8 @@ void DiskPluginItem::updateIcon()
         iconName.append(PLUGIN_MIN_ICON_NAME);
 #endif
 
-    icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap(static_cast<int>(16 * qApp->devicePixelRatio()), static_cast<int>(16 * qApp->devicePixelRatio()));
+    static const int kWidth = PLUGIN_BACKGROUND_MIN_SIZE * 0.8;
+    icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap(kWidth, kWidth);
     icon.setDevicePixelRatio(qApp->devicePixelRatio());
     update();
 }
