@@ -21,8 +21,8 @@
 #ifndef DFMEMBLEMICON_H
 #define DFMEMBLEMICON_H
 
-#include "dfm-extension-global.h"
-#include "dfmextemblem.h"
+#include <dfm-extension/dfm-extension-global.h>
+#include <dfm-extension/emblemicon/dfmextemblem.h>
 
 #include <functional>
 #include <vector>

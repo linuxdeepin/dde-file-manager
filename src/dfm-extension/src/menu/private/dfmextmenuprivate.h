@@ -22,8 +22,8 @@
 #ifndef DFMEXTMENUPRIVATE_H
 #define DFMEXTMENUPRIVATE_H
 
-#include "dfm-extension-global.h"
-#include "menu/dfmextmenu.h"
+#include <dfm-extension/dfm-extension-global.h>
+#include <dfm-extension/menu/dfmextmenu.h>
 
 #include <string>
 #include <list>
@@ -34,6 +34,7 @@ class DFMExtAction;
 class DFMExtMenuPrivate
 {
     friend class DFMExtMenu;
+
 public:
     explicit DFMExtMenuPrivate();
     virtual ~DFMExtMenuPrivate();
@@ -49,6 +50,7 @@ public:
 
     virtual DFMExtAction *menuAction() const = 0;
     virtual std::list<DFMExtAction *> actions() const = 0;
+
 protected:
     DFMExtMenu::TriggeredFunc triggeredFunc;
     DFMExtMenu::HoveredFunc hoveredFunc;
@@ -57,4 +59,4 @@ protected:
 
 END_DFMEXT_NAMESPACE
 
-#endif // DFMEXTMENUPRIVATE_H
+#endif   // DFMEXTMENUPRIVATE_H

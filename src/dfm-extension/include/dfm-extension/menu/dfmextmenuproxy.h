@@ -23,7 +23,7 @@
 #ifndef DFMEXTMENUPROXY_H
 #define DFMEXTMENUPROXY_H
 
-#include "dfm-extension-global.h"
+#include <dfm-extension/dfm-extension-global.h>
 
 #include <string>
 #include <functional>

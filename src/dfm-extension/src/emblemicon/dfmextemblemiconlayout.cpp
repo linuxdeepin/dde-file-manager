@@ -18,8 +18,9 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "emblemicon/dfmextemblemiconlayout.h"
 #include "private/dfmextemblemiconlayoutprivate.h"
+
+#include <dfm-extension/emblemicon/dfmextemblemiconlayout.h>
 
 USING_DFMEXT_NAMESPACE
 

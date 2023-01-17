@@ -18,8 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "menu/dfmextaction.h"
 #include "private/dfmextactionprivate.h"
+
+#include <dfm-extension/menu/dfmextaction.h>
 
 #include <assert.h>
 

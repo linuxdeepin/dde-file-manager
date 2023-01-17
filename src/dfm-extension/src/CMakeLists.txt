@@ -4,13 +4,13 @@ file(GLOB_RECURSE SRCS
 )
 
 file(GLOB LIB_HEADER
-    ${CMAKE_CURRENT_LIST_DIR}/../include/*.h
+    ${CMAKE_CURRENT_LIST_DIR}/../include/dfm-extension/*.h
 )
 file(GLOB LIB_MENU_HEADER
-    ${CMAKE_CURRENT_LIST_DIR}/../include/menu/*.h
+    ${CMAKE_CURRENT_LIST_DIR}/../include/dfm-extension/menu/*.h
 )
 file(GLOB LIB_EMBLEMICON_HEADER
-    ${CMAKE_CURRENT_LIST_DIR}/../include/emblemicon/*.h
+    ${CMAKE_CURRENT_LIST_DIR}/../include/dfm-extension/emblemicon/*.h
 )
 
 add_library(${BIN_NAME} SHARED

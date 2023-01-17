@@ -20,8 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "menu/dfmextmenu.h"
 #include "private/dfmextmenuprivate.h"
+
+#include <dfm-extension/menu/dfmextmenu.h>
 
 #include <assert.h>
 

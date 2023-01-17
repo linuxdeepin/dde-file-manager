@@ -21,8 +21,8 @@
 #ifndef DFMEXTACTIONPRIVATE_H
 #define DFMEXTACTIONPRIVATE_H
 
-#include "dfm-extension-global.h"
-#include "menu/dfmextaction.h"
+#include <dfm-extension/dfm-extension-global.h>
+#include <dfm-extension/menu/dfmextaction.h>
 
 #include <functional>
 #include <string>
@@ -33,6 +33,7 @@ class DFMExtMenu;
 class DFMExtActionPrivate
 {
     friend class DFMExtAction;
+
 public:
     explicit DFMExtActionPrivate();
     virtual ~DFMExtActionPrivate();
@@ -60,6 +61,7 @@ public:
 
     virtual void setEnabled(bool) = 0;
     virtual bool isEnabled() const = 0;
+
 protected:
     DFMExtAction::TriggeredFunc triggeredFunc;
     DFMExtAction::HoveredFunc hoveredFunc;
@@ -67,4 +69,4 @@ protected:
 };
 
 END_DFMEXT_NAMESPACE
-#endif // DFMEXTACTIONPRIVATE_H
+#endif   // DFMEXTACTIONPRIVATE_H

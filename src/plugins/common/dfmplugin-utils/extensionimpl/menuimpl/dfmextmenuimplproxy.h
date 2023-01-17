@@ -7,7 +7,7 @@
 
 #include "dfmplugin_utils_global.h"
 
-#include <menu/dfmextmenuproxy.h>
+#include <dfm-extension/menu/dfmextmenuproxy.h>
 #include <QtCore>
 
 DPUTILS_BEGIN_NAMESPACE

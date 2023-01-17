@@ -21,8 +21,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "menu/dfmextmenuproxy.h"
 #include "private/dfmextmenuproxyprivate.h"
+
+#include <dfm-extension/menu/dfmextmenuproxy.h>
 
 #include <assert.h>
 

@@ -21,7 +21,7 @@
 #ifndef DFMEXTMENUPLUGIN_H
 #define DFMEXTMENUPLUGIN_H
 
-#include "dfm-extension-global.h"
+#include <dfm-extension/dfm-extension-global.h>
 
 #include <string>
 #include <list>

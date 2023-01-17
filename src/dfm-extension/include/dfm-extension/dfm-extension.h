@@ -23,8 +23,8 @@
 #ifndef DFMEXTENSION_H
 #define DFMEXTENSION_H
 
-#include "menu/dfmextmenuplugin.h"
-#include "emblemicon/dfmextemblemiconplugin.h"
+#include <dfm-extension/menu/dfmextmenuplugin.h>
+#include <dfm-extension/emblemicon/dfmextemblemiconplugin.h>
 
 BEGEN_DFMEXT_NAMESPACE
 

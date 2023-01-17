@@ -21,8 +21,8 @@
 #ifndef DFMEXTMENUPROXYPRIVATE_H
 #define DFMEXTMENUPROXYPRIVATE_H
 
-#include "dfm-extension-global.h"
-#include "menu/dfmextmenuproxy.h"
+#include <dfm-extension/dfm-extension-global.h>
+#include <dfm-extension/menu/dfmextmenuproxy.h>
 
 BEGEN_DFMEXT_NAMESPACE
 
@@ -41,4 +41,4 @@ public:
 
 END_DFMEXT_NAMESPACE
 
-#endif // DFMEXTMENUPROXYPRIVATE_H
+#endif   // DFMEXTMENUPROXYPRIVATE_H

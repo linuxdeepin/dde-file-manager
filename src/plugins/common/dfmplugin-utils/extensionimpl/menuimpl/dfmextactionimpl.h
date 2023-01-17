@@ -7,7 +7,7 @@
 
 #include "dfmplugin_utils_global.h"
 
-#include <menu/dfmextaction.h>
+#include <dfm-extension/menu/dfmextaction.h>
 
 class QAction;
 

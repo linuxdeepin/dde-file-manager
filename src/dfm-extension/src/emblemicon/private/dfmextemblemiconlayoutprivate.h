@@ -21,22 +21,20 @@
 #ifndef DFMEXTEMBLEMICONLAYOUTPRIVATE_H
 #define DFMEXTEMBLEMICONLAYOUTPRIVATE_H
 
-#include "dfm-extension-global.h"
-#include "emblemicon/dfmextemblemiconlayout.h"
+#include <dfm-extension/dfm-extension-global.h>
+#include <dfm-extension/emblemicon/dfmextemblemiconlayout.h>
 
 #include <string>
 
 BEGEN_DFMEXT_NAMESPACE
 
-class DFMExtEmblemIconLayoutPrivate {
+class DFMExtEmblemIconLayoutPrivate
+{
 public:
     DFMExtEmblemIconLayoutPrivate(DFMExtEmblemIconLayout::LocationType type,
                                   const std::string &iconPath,
                                   int x = 0, int y = 0)
-        : curType(type)
-        , curIconPath(iconPath)
-        , xPos(x)
-        , yPos(y)
+        : curType(type), curIconPath(iconPath), xPos(x), yPos(y)
     {
     }
     DFMExtEmblemIconLayout::LocationType curType { DFMExtEmblemIconLayout::LocationType::BottomRight };
@@ -47,4 +45,4 @@ public:
 
 END_DFMEXT_NAMESPACE
 
-#endif // DFMEXTEMBLEMICONLAYOUTPRIVATE_H
+#endif   // DFMEXTEMBLEMICONLAYOUTPRIVATE_H

@@ -21,7 +21,7 @@
 #ifndef DFMEXTEMBLEMICONLAYOUT_H
 #define DFMEXTEMBLEMICONLAYOUT_H
 
-#include "dfm-extension-global.h"
+#include <dfm-extension/dfm-extension-global.h>
 
 #include <string>
 #include <memory>

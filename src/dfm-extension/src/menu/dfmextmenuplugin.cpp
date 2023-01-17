@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "menu/dfmextmenuplugin.h"
+#include <dfm-extension/menu/dfmextmenuplugin.h>
 
 BEGEN_DFMEXT_NAMESPACE
 class DFMExtMenuPluginPrivate

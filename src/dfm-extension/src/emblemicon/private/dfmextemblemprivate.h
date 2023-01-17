@@ -21,8 +21,8 @@
 #ifndef DFMEXTEMBLEMPRIVATE_H
 #define DFMEXTEMBLEMPRIVATE_H
 
-#include "dfm-extension-global.h"
-#include "emblemicon/dfmextemblem.h"
+#include <dfm-extension/dfm-extension-global.h>
+#include <dfm-extension/emblemicon/dfmextemblem.h>
 
 BEGEN_DFMEXT_NAMESPACE
 
@@ -44,4 +44,4 @@ private:
 
 END_DFMEXT_NAMESPACE
 
-#endif // DFMEXTEMBLEMPRIVATE_H
+#endif   // DFMEXTEMBLEMPRIVATE_H

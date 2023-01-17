@@ -7,7 +7,7 @@
 
 #include "dfmplugin_utils_global.h"
 
-#include <menu/dfmextmenu.h>
+#include <dfm-extension/menu/dfmextmenu.h>
 
 class QMenu;
 

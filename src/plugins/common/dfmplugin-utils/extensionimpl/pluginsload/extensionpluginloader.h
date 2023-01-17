@@ -8,8 +8,8 @@
 #include "dfmplugin_utils_global.h"
 
 // dfm-extension
-#include <menu/dfmextmenuplugin.h>
-#include <emblemicon/dfmextemblemiconplugin.h>
+#include <dfm-extension/menu/dfmextmenuplugin.h>
+#include <dfm-extension/emblemicon/dfmextemblemiconplugin.h>
 
 #include <QObject>
 #include <QLibrary>

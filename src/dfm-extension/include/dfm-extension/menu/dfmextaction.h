@@ -21,8 +21,8 @@
 #ifndef DFMEXTACTION_H
 #define DFMEXTACTION_H
 
-#include "dfm-extension-global.h"
-#include "dfmextmenuproxy.h"
+#include <dfm-extension/dfm-extension-global.h>
+#include <dfm-extension/menu/dfmextmenuproxy.h>
 
 #include <functional>
 #include <string>

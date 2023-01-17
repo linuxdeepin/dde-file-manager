@@ -21,8 +21,8 @@
 #ifndef DFMEXTEMBLEM_H
 #define DFMEXTEMBLEM_H
 
-#include "dfm-extension-global.h"
-#include "dfmextemblemiconlayout.h"
+#include <dfm-extension/dfm-extension-global.h>
+#include <dfm-extension/emblemicon/dfmextemblemiconlayout.h>
 
 #include <vector>
 
@@ -32,6 +32,7 @@ class DFMExtEmblemPrivate;
 class DFMExtEmblem
 {
     friend class DFMExtEmblemPrivate;
+
 public:
     explicit DFMExtEmblem();
     ~DFMExtEmblem();
@@ -46,4 +47,4 @@ private:
 
 END_DFMEXT_NAMESPACE
 
-#endif // DFMEXTEMBLEM_H
+#endif   // DFMEXTEMBLEM_H
