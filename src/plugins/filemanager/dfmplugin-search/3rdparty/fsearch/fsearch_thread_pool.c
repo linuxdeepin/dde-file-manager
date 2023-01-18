@@ -20,6 +20,8 @@
 
 #include "fsearch_thread_pool.h"
 #include <sys/time.h>
+#include <unistd.h>
+
 struct _FsearchThreadPool {
     GList *threads;
     uint32_t num_threads;
