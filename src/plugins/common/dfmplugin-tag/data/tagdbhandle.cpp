@@ -72,8 +72,9 @@ QVariantMap TagDbHandle::getTagsColor(const QStringList &tags)
     QVariantMap tagColorsMap;
     for (auto &tag : tags) {
         const auto &beanList = handle->query<TagProperty>().where(field("tagName") == tag).toBeans();
-        const auto &color = beanList.isEmpty() ? QVariant() : beanList.first()->getTagColor();
-        tagColorsMap.insert(tag, QVariant { QVariant { color } });
+        const auto &color = beanList.isEmpty() ? "" : beanList.first()->getTagColor();
+        if (!color.isEmpty())
+            tagColorsMap.insert(tag, QVariant { QVariant { color } });
     }
 
     finally.dismiss();
@@ -200,7 +201,7 @@ bool TagDbHandle::addTagProperty(const QVariantMap &data)
         }
     }
 
-    emit addedNewTags(data);
+    emit newTagsAdded(data);
     finally.dismiss();
     return true;
 }
@@ -264,7 +265,7 @@ bool TagDbHandle::removeTagsOfFiles(const QVariantMap &data)
         if (!removeSpecifiedTagOfFile(it.key(), it.value()))
             return false;
 
-    emit untagFiles(data);
+    emit filesUntagged(data);
     finally.dismiss();
     return true;
 }
@@ -291,7 +292,7 @@ bool TagDbHandle::deleteTags(const QStringList &tags)
             return ret;
     }
 
-    emit deletedTags(tags);
+    emit tagsDeleted(tags);
     finally.dismiss();
     return ret;
 }
@@ -332,7 +333,7 @@ bool TagDbHandle::changeTagColors(const QVariantMap &data)
             return ret;
     }
 
-    emit changedTagColor(data);
+    emit tagColorChanged(data);
     finally.dismiss();
     return ret;
 }
@@ -354,7 +355,7 @@ bool TagDbHandle::changeTagNames(const QVariantMap &data)
             return ret;
     }
 
-    emit changedTagName(data);
+    emit tagNameChanged(data);
     finally.dismiss();
     return ret;
 }

@@ -74,12 +74,12 @@ private:
     virtual ~TagDbHandle() = default;
 
 Q_SIGNALS:
-    void addedNewTags(const QVariantMap &newTags);
-    void deletedTags(const QVariant &beDeletedTags);
-    void changedTagColor(const QVariantMap &oldAndNewColor);
-    void changedTagName(const QVariantMap &oldAndNewName);
+    void newTagsAdded(const QVariantMap &newTags);
+    void tagsDeleted(const QStringList &beDeletedTags);
+    void tagColorChanged(const QVariantMap &oldAndNewColor);
+    void tagNameChanged(const QVariantMap &oldAndNewName);
     void filesWereTagged(const QVariantMap &filesWereTagged);
-    void untagFiles(const QVariantMap &delTagsOfFile);
+    void filesUntagged(const QVariantMap &delTagsOfFile);
 
 private:
     SqliteHandle *handle { nullptr };

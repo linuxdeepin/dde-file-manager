@@ -40,8 +40,8 @@ public:
 
 public slots:
     void onTagRemoved(const QString &tagName);
-    void onFilesTagged(const QMap<QString, QStringList> &fileAndTags);
-    void onFilesUntagged(const QMap<QString, QStringList> &fileAndTags);
+    void onFilesTagged(const QVariantMap &fileAndTags);
+    void onFilesUntagged(const QVariantMap &fileAndTags);
 
 private:
     void addWatcher(const QUrl &url);

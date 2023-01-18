@@ -8,8 +8,9 @@
 #include <QObject>
 #include <QPainter>
 #include <QMap>
+#include <QDBusVariant>
 
-class TagDBus;
+class TagDBusInterface;
 
 namespace dfmplugin_tag {
 
@@ -62,16 +63,16 @@ public:
 
 Q_SIGNALS:
     void tagDeleted(const QString &tagName);
-    void filesTagged(const QMap<QString, QStringList> &fileAndTags);
-    void filesUntagged(const QMap<QString, QStringList> &fileAndTags);
+    void filesTagged(const QVariantMap &fileAndTags);
+    void filesUntagged(const QVariantMap &fileAndTags);
 
 public Q_SLOTS:
-    void onTagAdded(const QStringList &tags);
+    void onTagAdded(const QVariantMap &tags);
     void onTagDeleted(const QStringList &tags);
-    void onTagColorChanged(const QMap<QString, QString> &tagAndColorName);
-    void onTagNameChanged(const QMap<QString, QString> &oldAndNew);
-    void onFilesTagged(const QMap<QString, QStringList> &fileAndTags);
-    void onFilesUntagged(const QMap<QString, QStringList> &fileAndTags);
+    void onTagColorChanged(const QVariantMap &tagAndColorName);
+    void onTagNameChanged(const QVariantMap &oldAndNew);
+    void onFilesTagged(const QVariantMap &fileAndTags);
+    void onFilesUntagged(const QVariantMap &fileAndTags);
 
 private:
     explicit TagManager(QObject *parent = nullptr);
@@ -81,10 +82,11 @@ private:
     QMap<QString, QString> getTagsColorName(const QStringList &tags) const;
     bool deleteTagData(const QStringList &data, const uint8_t &type);
     bool localFileCanTagFilter(const QUrl &url) const;
+    QVariant transformQueryData(const QDBusVariant &var) const;
 
 private:
     QMap<QString, QString> tagColorMap;   // tag--color
-    TagDBus *tagDbus { nullptr };
+    TagDBusInterface *tagDbusInterface { nullptr };
 };
 
 }

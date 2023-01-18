@@ -32,7 +32,7 @@
 
 DPTAG_BEGIN_NAMESPACE
 
-enum class TagActionType : uint8_t {
+enum class TagActionType : uint32_t {
     kGetAllTags = 1,
     kGetTagsThroughFile,
     kGetSameTagsOfDiffFiles,

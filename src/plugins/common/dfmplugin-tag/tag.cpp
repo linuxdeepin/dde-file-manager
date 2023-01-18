@@ -73,7 +73,6 @@ void Tag::initialize()
         connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Tag::onAllPluginsStarted, Qt::DirectConnection);
 
     TagManager::instance();
-    FileTagCacheController::instance();
 
     bindEvents();
     followEvents();
@@ -237,7 +236,7 @@ void Tag::initServiceDBusInterfaces(QDBusConnection *connection)
     static std::once_flag flag;
     std::call_once(flag, [&connection, this]() {
         // add our D-Bus interface and connect to D-Bus
-        if (!connection->registerService("org.deepin.filemanager.tag")) {
+        if (!connection->registerService("org.deepin.filemanager.service")) {
             qWarning("Cannot register the \"org.deepin.filemanager.tag\" service.\n");
             return;
         }

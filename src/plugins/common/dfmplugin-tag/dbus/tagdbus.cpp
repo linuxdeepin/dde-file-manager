@@ -21,31 +21,38 @@ TagDBus::~TagDBus()
 {
 }
 
-QVariant TagDBus::Query(const quint8 &type, const QStringList value)
+QDBusVariant TagDBus::Query(const quint32 &type, const QStringList value)
 {
     if (0 == type || (type > 1 && value.isEmpty())) {
         lastErr = "input parameter is empty!";
         return {};
     }
 
+    QDBusVariant dbusVar {};
     switch (TagActionType(type)) {
     case TagActionType::kGetAllTags:
-        return getAllTags();
+        dbusVar.setVariant(getAllTags());
+        break;
     case TagActionType::kGetTagsThroughFile:
-        return getTagsThroughFile(value);
+        dbusVar.setVariant(getTagsThroughFile(value));
+        break;
     case TagActionType::kGetSameTagsOfDiffFiles:
-        return getSameTagsOfDiffFiles(value);
+        dbusVar.setVariant(getSameTagsOfDiffFiles(value));
+        break;
     case TagActionType::kGetFilesThroughTag:
-        return getFilesThroughTag(value);
+        dbusVar.setVariant(getFilesThroughTag(value));
+        break;
     case TagActionType::kGetTagsColor:
-        return getTagsColor(value);
-    default: {
-        return {};
+        dbusVar.setVariant(getTagsColor(value));
+        break;
+    default:
+        break;
     }
-    }
+
+    return dbusVar;
 }
 
-bool TagDBus::Insert(const quint8 &type, const QVariantMap value)
+bool TagDBus::Insert(const quint32 &type, const QVariantMap value)
 {
     if (value.isEmpty() || (type == 0)) {
         lastErr = "input parameter is empty!";
@@ -63,7 +70,7 @@ bool TagDBus::Insert(const quint8 &type, const QVariantMap value)
     }
 }
 
-bool TagDBus::Delete(const quint8 &type, const QVariantMap value)
+bool TagDBus::Delete(const quint32 &type, const QVariantMap value)
 {
     if (value.isEmpty() || (type == 0)) {
         lastErr = "input parameter is empty!";
@@ -83,7 +90,7 @@ bool TagDBus::Delete(const quint8 &type, const QVariantMap value)
     }
 }
 
-bool TagDBus::Update(const quint8 &type, const QVariantMap value)
+bool TagDBus::Update(const quint32 &type, const QVariantMap value)
 {
     if (value.isEmpty() || (type == 0)) {
         lastErr = "input parameter is empty!";
@@ -175,69 +182,10 @@ bool TagDBus::deleteFileTags(const QVariantMap value)
 
 void TagDBus::initconnect()
 {
-    connect(TagDbHandle::instance(), &TagDbHandle::addedNewTags, this, &TagDBus::onAddNewTags);
-    connect(TagDbHandle::instance(), &TagDbHandle::deletedTags, this, &TagDBus::onDeleteTags);
-    connect(TagDbHandle::instance(), &TagDbHandle::changedTagColor, this, &TagDBus::onChangeTagColor);
-    connect(TagDbHandle::instance(), &TagDbHandle::changedTagName, this, &TagDBus::onChangeTagName);
-    connect(TagDbHandle::instance(), &TagDbHandle::filesWereTagged, this, &TagDBus::onFilesWereTagged);
-    connect(TagDbHandle::instance(), &TagDbHandle::untagFiles, this, &TagDBus::onUntagFiles);
-}
-
-void TagDBus::onAddNewTags(const QVariantMap &newTags)
-{
-    emit addedNewTags(newTags.keys());
-}
-
-void TagDBus::onChangeTagColor(const QVariantMap &oldAndNewColor)
-{
-    QMap<QString, QString> tagToNewColorName {};
-    QMap<QString, QVariant>::const_iterator it = oldAndNewColor.begin();
-    while (it != oldAndNewColor.end()) {
-        tagToNewColorName[it.key()] = it.value().toString();
-        ++it;
-    }
-
-    emit tagColorChanged(tagToNewColorName);
-}
-
-void TagDBus::onChangeTagName(const QVariantMap &oldAndNewName)
-{
-    QMap<QString, QString> oldToNewTagName {};
-    QMap<QString, QVariant>::const_iterator it = oldAndNewName.begin();
-    while (it != oldAndNewName.end()) {
-        oldToNewTagName[it.key()] = it.value().toString();
-        ++it;
-    }
-
-    emit tagNameChanged(oldToNewTagName);
-}
-
-void TagDBus::onDeleteTags(const QVariant &deletedTags)
-{
-    QStringList tags = deletedTags.toStringList();
-    emit tagsDeleted(tags);
-}
-
-void TagDBus::onFilesWereTagged(const QVariantMap &taggedFiles)
-{
-    QMap<QString, QStringList> fileAndTags {};
-    QMap<QString, QVariant>::const_iterator it = taggedFiles.begin();
-    while (it != taggedFiles.end()) {
-        fileAndTags[it.key()] = it.value().toStringList();
-        ++it;
-    }
-
-    emit filesTagged(fileAndTags);
-}
-
-void TagDBus::onUntagFiles(const QVariantMap &untaggedFiles)
-{
-    QMap<QString, QStringList> fileAndTags {};
-    QMap<QString, QVariant>::const_iterator it = untaggedFiles.begin();
-    while (it != untaggedFiles.end()) {
-        fileAndTags[it.key()] = it.value().toStringList();
-        ++it;
-    }
-
-    emit filesUntagged(fileAndTags);
+    connect(TagDbHandle::instance(), &TagDbHandle::newTagsAdded, this, &TagDBus::NewTagsAdded);
+    connect(TagDbHandle::instance(), &TagDbHandle::tagsDeleted, this, &TagDBus::TagsDeleted);
+    connect(TagDbHandle::instance(), &TagDbHandle::tagColorChanged, this, &TagDBus::TagColorChanged);
+    connect(TagDbHandle::instance(), &TagDbHandle::tagNameChanged, this, &TagDBus::TagNameChanged);
+    connect(TagDbHandle::instance(), &TagDbHandle::filesWereTagged, this, &TagDBus::FilesTagged);
+    connect(TagDbHandle::instance(), &TagDbHandle::filesUntagged, this, &TagDBus::FilesUntagged);
 }

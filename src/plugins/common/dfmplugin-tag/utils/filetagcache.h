@@ -5,6 +5,8 @@
 #include <QThread>
 #include <QSharedPointer>
 
+class TagDBusInterface;
+
 namespace dfmplugin_tag {
 
 class FileTagCachePrivate;
@@ -79,6 +81,7 @@ private:
 private:
     QSharedPointer<QThread> updateThread { nullptr };
     QSharedPointer<FileTagCacheWorker> cacheWorker { nullptr };
+    TagDBusInterface *tagDbusInterface { nullptr };
 };
 }
 

@@ -2,6 +2,7 @@
 
 #include "dfmplugin_tag_global.h"
 #include "data/tagdbhandle.h"
+#include "dbus/dbus_interface/tagdbus_interface.h"
 
 DPTAG_USE_NAMESPACE
 
@@ -91,8 +92,24 @@ void FileTagCache::addTags(const QVariantMap &tags)
 
 void FileTagCache::deletedTags(const QStringList &tags)
 {
-    for (const QString &tag : tags)
+    QVariantMap map {};
+    for (const QString &tag : tags) {
         d->tagProperty.remove(tag);
+
+        auto iter = d->fileTagsCache.begin();
+        while (iter != d->fileTagsCache.end()) {
+            if (iter.value().contains(tag)) {
+                QStringList fileTags = map[iter.key()].toStringList();
+                fileTags.append(tag);
+                map[iter.key()] = fileTags;
+            }
+
+            ++iter;
+        }
+    }
+
+    if (!map.isEmpty())
+        untaggedFiles(map);
 }
 
 void FileTagCache::changedTagColor(const QVariantMap &tagAndColorName)
@@ -207,18 +224,21 @@ FileTagCacheController::~FileTagCacheController()
 FileTagCacheController::FileTagCacheController(QObject *parent)
     : QObject(parent), updateThread(new QThread), cacheWorker(new FileTagCacheWorker)
 {
+    tagDbusInterface = new TagDBusInterface("org.deepin.filemanager.service",
+                                            "/org/deepin/filemanager/Tag",
+                                            QDBusConnection::sessionBus(), this);
     init();
 }
 
 void FileTagCacheController::init()
 {
     connect(this, &FileTagCacheController::initLoadTagInfos, cacheWorker.data(), &FileTagCacheWorker::loadFileTagsFromDatabase);
-    connect(TagDbHandle::instance(), &TagDbHandle::addedNewTags, cacheWorker.data(), &FileTagCacheWorker::onTagAdded);
-    connect(TagDbHandle::instance(), &TagDbHandle::deletedTags, cacheWorker.data(), &FileTagCacheWorker::onTagDeleted);
-    connect(TagDbHandle::instance(), &TagDbHandle::changedTagColor, cacheWorker.data(), &FileTagCacheWorker::onTagColorChanged);
-    connect(TagDbHandle::instance(), &TagDbHandle::changedTagName, cacheWorker.data(), &FileTagCacheWorker::onTagNameChanged);
-    connect(TagDbHandle::instance(), &TagDbHandle::filesWereTagged, cacheWorker.data(), &FileTagCacheWorker::onFilesTagged);
-    connect(TagDbHandle::instance(), &TagDbHandle::untagFiles, cacheWorker.data(), &FileTagCacheWorker::onFilesUntagged);
+    connect(tagDbusInterface, &TagDBusInterface::NewTagsAdded, cacheWorker.data(), &FileTagCacheWorker::onTagAdded);
+    connect(tagDbusInterface, &TagDBusInterface::TagsDeleted, cacheWorker.data(), &FileTagCacheWorker::onTagDeleted);
+    connect(tagDbusInterface, &TagDBusInterface::TagColorChanged, cacheWorker.data(), &FileTagCacheWorker::onTagColorChanged);
+    connect(tagDbusInterface, &TagDBusInterface::TagNameChanged, cacheWorker.data(), &FileTagCacheWorker::onTagNameChanged);
+    connect(tagDbusInterface, &TagDBusInterface::FilesTagged, cacheWorker.data(), &FileTagCacheWorker::onFilesTagged);
+    connect(tagDbusInterface, &TagDBusInterface::FilesUntagged, cacheWorker.data(), &FileTagCacheWorker::onFilesUntagged);
 
     cacheWorker->moveToThread(updateThread.data());
     updateThread->start();

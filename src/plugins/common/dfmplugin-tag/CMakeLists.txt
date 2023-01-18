@@ -25,6 +25,8 @@ FILE(GLOB TAG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dbus/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbus/dbus_adaptor/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbus/dbus_adaptor/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dbus/dbus_interface/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dbus/dbus_interface/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/beans/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/beans/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/data/*.h"
