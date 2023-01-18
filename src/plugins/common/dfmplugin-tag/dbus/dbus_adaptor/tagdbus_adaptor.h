@@ -40,11 +40,11 @@ class TagDBusAdaptor: public QDBusAbstractAdaptor
 "    <signal name=\"TagsDeleted\">\n"
 "      <arg direction=\"out\" type=\"as\" name=\"tags\"/>\n"
 "    </signal>\n"
-"    <signal name=\"TagColorChanged\">\n"
+"    <signal name=\"TagsColorChanged\">\n"
 "      <arg direction=\"out\" type=\"a{sv}\" name=\"oldAndNew\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "    </signal>\n"
-"    <signal name=\"TagNameChanged\">\n"
+"    <signal name=\"TagsNameChanged\">\n"
 "      <arg direction=\"out\" type=\"a{sv}\" name=\"oldAndNew\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "    </signal>\n"
@@ -127,9 +127,9 @@ Q_SIGNALS: // SIGNALS
     void FilesTagged(const QVariantMap &fileAndTags);
     void FilesUntagged(const QVariantMap &fileAndTags);
     void NewTagsAdded(const QVariantMap &tags);
-    void TagColorChanged(const QVariantMap &oldAndNew);
-    void TagNameChanged(const QVariantMap &oldAndNew);
+    void TagsColorChanged(const QVariantMap &oldAndNew);
     void TagsDeleted(const QStringList &tags);
+    void TagsNameChanged(const QVariantMap &oldAndNew);
 };
 
 #endif

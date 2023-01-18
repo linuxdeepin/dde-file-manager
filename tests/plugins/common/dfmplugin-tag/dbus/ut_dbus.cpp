@@ -127,27 +127,27 @@ TEST_F(UT_TagDBus, Update)
     bool in = false;
     QVariantMap map;
     map.insert("testKey", QVariant("testValue"));
-    stub.set_lamda(&TagDBus::changeTagColor, [&in] {
+    stub.set_lamda(&TagDBus::changeTagColors, [&in] {
         in = true;
         return in;
     });
-    tagDbus.Update(static_cast<quint8>(TagActionType::kChangeTagColor), map);
+    tagDbus.Update(static_cast<quint8>(TagActionType::kChangeTagsColor), map);
     EXPECT_TRUE(in);
 
     in = false;
-    stub.set_lamda(&TagDBus::changeTagName, [&in] {
+    stub.set_lamda(&TagDBus::changeTagNamesWithFiles, [&in] {
         in = true;
         return in;
     });
-    tagDbus.Update(static_cast<quint8>(TagActionType::kChangeTagName), map);
+    tagDbus.Update(static_cast<quint8>(TagActionType::kChangeTagsNameWithFiles), map);
     EXPECT_TRUE(in);
 
     in = false;
-    stub.set_lamda(&TagDBus::changeFilesName, [&in] {
+    stub.set_lamda(&TagDBus::changeFilePaths, [&in] {
         in = true;
         return in;
     });
-    tagDbus.Update(static_cast<quint8>(TagActionType::kChangeFilesName), map);
+    tagDbus.Update(static_cast<quint8>(TagActionType::kChangeFilesePaths), map);
     EXPECT_TRUE(in);
 }
 

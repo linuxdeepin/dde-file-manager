@@ -92,4 +92,3 @@ bool TagDBusAdaptor::Update(uint type, const QVariantMap &value)
     // handle method call org.deepin.filemanager.Tag.Update
     return parent()->Update(type, value);
 }
-

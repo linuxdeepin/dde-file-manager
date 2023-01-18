@@ -91,18 +91,6 @@ QString TagHelper::qureyColorNameByColor(const QColor &color) const
     return QString();
 }
 
-QString TagHelper::qureyDisplayNameByColorName(const QString &colorName) const
-{
-    auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [colorName](const TagColorDefine &define) {
-        return define.colorName == colorName;
-    });
-
-    if (ret != colorDefines.cend())
-        return ret->displayName;
-
-    return QString();
-}
-
 QString TagHelper::qureyIconNameByColorName(const QString &colorName) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [colorName](const TagColorDefine &define) {
@@ -149,38 +137,6 @@ QString TagHelper::qureyColorNameByDisplayName(const QString &name) const
         return ret->colorName;
 
     return QString();
-}
-
-QStringList TagHelper::displayTagNameConversion(const QStringList &dbTags) const
-{
-    QStringList defaultColorNames;
-    for (const TagColorDefine &define : colorDefines) {
-        defaultColorNames << define.colorName;
-    }
-
-    QStringList displayNames;
-    for (const auto &tag : dbTags)
-        if (defaultColorNames.contains(tag))
-            displayNames << qureyDisplayNameByColorName(tag);
-        else
-            displayNames << tag;
-    return displayNames;
-}
-
-QStringList TagHelper::dbTagNameConversion(const QStringList &tags) const
-{
-    QStringList defaultDisplayNames;
-    for (const TagColorDefine &define : colorDefines) {
-        defaultDisplayNames << define.displayName;
-    }
-
-    QStringList dbTagNames;
-    for (const auto &tag : tags)
-        if (defaultDisplayNames.contains(tag))
-            dbTagNames << qureyColorNameByDisplayName(tag);
-        else
-            dbTagNames << tag;
-    return dbTagNames;
 }
 
 QString TagHelper::getTagNameFromUrl(const QUrl &url) const

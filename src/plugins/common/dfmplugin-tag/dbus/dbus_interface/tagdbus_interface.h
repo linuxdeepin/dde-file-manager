@@ -109,9 +109,9 @@ Q_SIGNALS: // SIGNALS
     void FilesTagged(const QVariantMap &fileAndTags);
     void FilesUntagged(const QVariantMap &fileAndTags);
     void NewTagsAdded(const QVariantMap &tags);
-    void TagColorChanged(const QVariantMap &oldAndNew);
-    void TagNameChanged(const QVariantMap &oldAndNew);
+    void TagsColorChanged(const QVariantMap &oldAndNew);
     void TagsDeleted(const QStringList &tags);
+    void TagsNameChanged(const QVariantMap &oldAndNew);
 };
 
 namespace org {

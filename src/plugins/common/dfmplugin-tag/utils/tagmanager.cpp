@@ -52,8 +52,8 @@ void TagManager::initializeConnection()
 {
     connect(tagDbusInterface, &TagDBusInterface::NewTagsAdded, this, &TagManager::onTagAdded);
     connect(tagDbusInterface, &TagDBusInterface::TagsDeleted, this, &TagManager::onTagDeleted);
-    connect(tagDbusInterface, &TagDBusInterface::TagColorChanged, this, &TagManager::onTagColorChanged);
-    connect(tagDbusInterface, &TagDBusInterface::TagNameChanged, this, &TagManager::onTagNameChanged);
+    connect(tagDbusInterface, &TagDBusInterface::TagsColorChanged, this, &TagManager::onTagColorChanged);
+    connect(tagDbusInterface, &TagDBusInterface::TagsNameChanged, this, &TagManager::onTagNameChanged);
     connect(tagDbusInterface, &TagDBusInterface::FilesTagged, this, &TagManager::onFilesTagged);
     connect(tagDbusInterface, &TagDBusInterface::FilesUntagged, this, &TagManager::onFilesUntagged);
 }
@@ -225,7 +225,7 @@ TagManager::TagColorMap TagManager::getAllTags()
 
     const auto &dataMap = var.toMap();
     TagColorMap result;
-    QMap<QString, QVariant>::const_iterator it = dataMap.begin();
+    auto it = dataMap.begin();
 
     for (; it != dataMap.end(); ++it)
         result[it.key()] = it.value().value<QColor>();
@@ -245,7 +245,7 @@ TagManager::TagColorMap TagManager::getTagsColor(const QStringList &tags) const
 
     const auto &dataMap = var.toMap();
     TagColorMap result;
-    QMap<QString, QVariant>::const_iterator it = dataMap.begin();
+    auto it = dataMap.begin();
     for (; it != dataMap.end(); ++it)
         if (it.value().isValid())
             result[it.key()] = QColor(it.value().toString());
@@ -430,7 +430,7 @@ bool TagManager::changeTagColor(const QString &tagName, const QString &newTagCol
         return false;
 
     QVariantMap changeMap { { tagName, QVariant { QString(newTagColor) } } };
-    QDBusReply<bool> reply = tagDbusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeTagColor), changeMap);
+    QDBusReply<bool> reply = tagDbusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeTagsColor), changeMap);
 
     return reply.isValid() ? reply.value() : false;
 }
@@ -446,7 +446,7 @@ bool TagManager::changeTagName(const QString &tagName, const QString &newName)
     }
 
     QVariantMap oldAndNewName = { { tagName, QVariant { newName } } };
-    QDBusReply<bool> reply = tagDbusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeTagName), oldAndNewName);
+    QDBusReply<bool> reply = tagDbusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeTagsNameWithFiles), oldAndNewName);
 
     return reply.isValid() ? reply.value() : false;
 }
@@ -461,7 +461,7 @@ QMap<QString, QString> TagManager::getTagsColorName(const QStringList &tags) con
 
     const auto &dataMap = var.toMap();
     QMap<QString, QString> result;
-    QMap<QString, QVariant>::const_iterator it = dataMap.begin();
+    auto it = dataMap.begin();
     for (; it != dataMap.end(); ++it)
         result[it.key()] = it.value().toString();
 

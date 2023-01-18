@@ -22,8 +22,8 @@ public Q_SLOTS:
     void loadFileTagsFromDatabase();
     void onTagAdded(const QVariantMap &tags);
     void onTagDeleted(const QVariant &tags);
-    void onTagColorChanged(const QVariantMap &tagAndColorName);
-    void onTagNameChanged(const QVariantMap &oldAndNew);
+    void onTagsColorChanged(const QVariantMap &tagAndColorName);
+    void onTagsNameChanged(const QVariantMap &oldAndNew);
     void onFilesTagged(const QVariantMap &fileAndTags);
     void onFilesUntagged(const QVariantMap &fileAndTags);
 
@@ -51,11 +51,12 @@ private:
     void loadFileTagsFromDatabase();
 
     void addTags(const QVariantMap &tags);
-    void deletedTags(const QStringList &tags);
-    void changedTagColor(const QVariantMap &tagAndColorName);
-    void changedTagName(const QVariantMap &oldAndNew);
-    void taggedFiles(const QVariantMap &fileAndTags);
-    void untaggedFiles(const QVariantMap &fileAndTags);
+    void deleteTags(const QStringList &tags);
+    void changeTagColor(const QVariantMap &tagAndColorName);
+    void changeTagName(const QVariantMap &oldAndNew);
+    void changeFilesTagName(const QString &oldName, const QString &newName);
+    void taggeFiles(const QVariantMap &fileAndTags);
+    void untaggeFiles(const QVariantMap &fileAndTags);
 
 private:
     QScopedPointer<FileTagCachePrivate> d;

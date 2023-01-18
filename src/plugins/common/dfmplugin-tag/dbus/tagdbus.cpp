@@ -98,12 +98,12 @@ bool TagDBus::Update(const quint32 &type, const QVariantMap value)
     }
 
     switch (TagActionType(type)) {
-    case TagActionType::kChangeTagColor:
-        return changeTagColor(value);
-    case TagActionType::kChangeTagName:
-        return changeTagName(value);
-    case TagActionType::kChangeFilesName:
-        return changeFilesName(value);
+    case TagActionType::kChangeTagsColor:
+        return changeTagColors(value);
+    case TagActionType::kChangeTagsNameWithFiles:
+        return changeTagNamesWithFiles(value);
+    case TagActionType::kChangeFilesePaths:
+        return changeFilePaths(value);
     default: {
         return false;
     }
@@ -145,17 +145,17 @@ QVariantMap TagDBus::getTagsColor(const QStringList value)
     return TagDbHandle::instance()->getTagsColor(value);
 }
 
-bool TagDBus::changeTagColor(const QVariantMap value)
+bool TagDBus::changeTagColors(const QVariantMap value)
 {
     return TagDbHandle::instance()->changeTagColors(value);
 }
 
-bool TagDBus::changeTagName(const QVariantMap value)
+bool TagDBus::changeTagNamesWithFiles(const QVariantMap value)
 {
-    return TagDbHandle::instance()->changeTagNames(value);
+    return TagDbHandle::instance()->changeTagNamesWithFiles(value);
 }
 
-bool TagDBus::changeFilesName(const QVariantMap value)
+bool TagDBus::changeFilePaths(const QVariantMap value)
 {
     return TagDbHandle::instance()->changeFilePaths(value);
 }
@@ -184,8 +184,8 @@ void TagDBus::initconnect()
 {
     connect(TagDbHandle::instance(), &TagDbHandle::newTagsAdded, this, &TagDBus::NewTagsAdded);
     connect(TagDbHandle::instance(), &TagDbHandle::tagsDeleted, this, &TagDBus::TagsDeleted);
-    connect(TagDbHandle::instance(), &TagDbHandle::tagColorChanged, this, &TagDBus::TagColorChanged);
-    connect(TagDbHandle::instance(), &TagDbHandle::tagNameChanged, this, &TagDBus::TagNameChanged);
+    connect(TagDbHandle::instance(), &TagDbHandle::tagsColorChanged, this, &TagDBus::TagsColorChanged);
+    connect(TagDbHandle::instance(), &TagDbHandle::tagsNameChanged, this, &TagDBus::TagsNameChanged);
     connect(TagDbHandle::instance(), &TagDbHandle::filesWereTagged, this, &TagDBus::FilesTagged);
     connect(TagDbHandle::instance(), &TagDbHandle::filesUntagged, this, &TagDBus::FilesUntagged);
 }

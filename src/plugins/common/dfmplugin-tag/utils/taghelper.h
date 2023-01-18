@@ -48,14 +48,11 @@ public:
     QColor qureyColorByColorName(const QString &name) const;
     QColor qureyColorByDisplayName(const QString &name) const;
     QString qureyColorNameByColor(const QColor &color) const;
-    QString qureyDisplayNameByColorName(const QString &colorName) const;
     QString qureyIconNameByColorName(const QString &colorName) const;
     QString qureyIconNameByColor(const QColor &color) const;
     QString qureyDisplayNameByColor(const QColor &color) const;
     QString qureyColorNameByDisplayName(const QString &name) const;
 
-    QStringList displayTagNameConversion(const QStringList &dbTags) const;
-    QStringList dbTagNameConversion(const QStringList &tags) const;
     QString getTagNameFromUrl(const QUrl &url) const;
     QUrl makeTagUrlByTagName(const QString &tag) const;
 

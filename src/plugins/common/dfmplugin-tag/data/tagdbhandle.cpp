@@ -5,14 +5,14 @@
 #include "tagdbhandle.h"
 
 #include "dfmplugin_tag_global.h"
-#include "dfm-base/base/db/sqlitehandle.h"
-#include "dfm-base/base/db/sqlitehelper.h"
 #include "beans/filetaginfo.h"
 #include "beans/tagproperty.h"
 #include "beans/sqlitemaster.h"
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/base/db/sqlitehandle.h"
+#include "dfm-base/base/db/sqlitehelper.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -118,7 +118,7 @@ QVariant TagDbHandle::getSameTagsOfDiffUrls(const QStringList &urlList)
 
     QMap<QString, int> tagCount;
     const auto &allTags = getTagsByUrls(urlList);
-    QMap<QString, QVariant>::const_iterator it = allTags.begin();
+    auto it = allTags.begin();
     for (; it != allTags.end(); ++it) {
         const auto tempTags = it.value().toStringList();
         for (const auto &tagName : tempTags)
@@ -193,7 +193,7 @@ bool TagDbHandle::addTagProperty(const QVariantMap &data)
     }
 
     // insert tagProPerty
-    QMap<QString, QVariant>::const_iterator it = data.begin();
+    auto it = data.begin();
     for (; it != data.end(); ++it) {
         if (!checkTag(it.key())) {
             if (!insertTagProperty(it.key(), it.value()))
@@ -216,7 +216,7 @@ bool TagDbHandle::addTagsForFiles(const QVariantMap &data)
     }
 
     const auto &allTags = getTagsByUrls(data.keys());
-    QMap<QString, QVariant>::const_iterator it = allTags.begin();
+    auto it = allTags.begin();
     QMap<QString, QStringList> allMutualTags;
 
     for (; it != allTags.end(); ++it)
@@ -224,7 +224,7 @@ bool TagDbHandle::addTagsForFiles(const QVariantMap &data)
 
     // insert file--tags
     bool ret = true;
-    QMap<QString, QVariant>::const_iterator dataIt = data.begin();
+    auto dataIt = data.begin();
     for (; dataIt != data.end(); ++dataIt) {
         if (allMutualTags.keys().contains(dataIt.key())) {
             const auto &tmpList = dataIt.value().toStringList();
@@ -260,7 +260,7 @@ bool TagDbHandle::removeTagsOfFiles(const QVariantMap &data)
     }
 
     // remove file--tags
-    QMap<QString, QVariant>::const_iterator it = data.begin();
+    auto it = data.begin();
     for (; it != data.end(); ++it)
         if (!removeSpecifiedTagOfFile(it.key(), it.value()))
             return false;
@@ -325,7 +325,7 @@ bool TagDbHandle::changeTagColors(const QVariantMap &data)
         return false;
     }
 
-    QMap<QString, QVariant>::const_iterator it = data.begin();
+    auto it = data.begin();
     bool ret = true;
     for (; it != data.end(); ++it) {
         ret = changeTagColor(it.key(), it.value().toString());
@@ -333,12 +333,13 @@ bool TagDbHandle::changeTagColors(const QVariantMap &data)
             return ret;
     }
 
-    emit tagColorChanged(data);
+    emit tagsColorChanged(data);
+
     finally.dismiss();
     return ret;
 }
 
-bool TagDbHandle::changeTagNames(const QVariantMap &data)
+bool TagDbHandle::changeTagNamesWithFiles(const QVariantMap &data)
 {
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
 
@@ -347,16 +348,22 @@ bool TagDbHandle::changeTagNames(const QVariantMap &data)
         return false;
     }
 
-    QMap<QString, QVariant>::const_iterator it = data.begin();
+    auto it = data.begin();
+    QVariantMap updatedData;
     bool ret = true;
     for (; it != data.end(); ++it) {
-        ret = changeTagName(it.key(), it.value().toString());
-        if (!ret)
-            return ret;
+        if (changeTagNameWithFile(it.key(), it.value().toString()))
+            updatedData.insert(it.key(), it.value());
+        else
+            ret = false;
     }
 
-    emit tagNameChanged(data);
-    finally.dismiss();
+    if (!updatedData.isEmpty())
+        emit tagsNameChanged(updatedData);
+
+    if (ret)
+        finally.dismiss();
+
     return ret;
 }
 
@@ -369,7 +376,7 @@ bool TagDbHandle::changeFilePaths(const QVariantMap &data)
         return false;
     }
 
-    QMap<QString, QVariant>::const_iterator it = data.begin();
+    auto it = data.begin();
     for (; it != data.end(); ++it)
         if (!changeFilePath(it.key(), it.value().toString()))
             return false;
@@ -406,10 +413,10 @@ bool TagDbHandle::checkDatabase()
     db.close();
 
     handle = new SqliteHandle(dbFilePath);
-    if (!chechTable(kTagTableTagProperty))
+    if (!checkTableExists(kTagTableTagProperty))
         return false;
 
-    if (!chechTable(kTagTableFileTags))
+    if (!checkTableExists(kTagTableFileTags))
         return false;
 
     return true;
@@ -529,7 +536,7 @@ bool TagDbHandle::changeTagColor(const QString &tagName, const QString &newTagCo
     return true;
 }
 
-bool TagDbHandle::changeTagName(const QString &tagName, const QString &newName)
+bool TagDbHandle::changeTagNameWithFile(const QString &tagName, const QString &newName)
 {
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
 
@@ -538,14 +545,26 @@ bool TagDbHandle::changeTagName(const QString &tagName, const QString &newName)
         return false;
     }
 
-    const auto &field = Expression::Field<TagProperty>;
-    if (!handle->update<TagProperty>(field("tagName") = newName, field("tagName") == tagName)) {
-        lastErr = QString("Change tag name failed! tagName: %1, newName: %2").arg(tagName).arg(newName);
-        return false;
-    }
+    // update tagname and files tagname
+    bool ret = handle->transaction([tagName, newName, this]() -> bool {
+        if (!handle->update<TagProperty>(Expression::Field<TagProperty>("tagName") = newName,
+                                         Expression::Field<TagProperty>("tagName") == tagName)) {
+            lastErr = QString("Change tag name failed! tagName: %1, newName: %2").arg(tagName).arg(newName);
+            return false;
+        }
+        if (!handle->update<FileTagInfo>(Expression::Field<FileTagInfo>("tagName") = newName,
+                                         Expression::Field<FileTagInfo>("tagName") == tagName)) {
+            lastErr = QString("Change file tag name failed! tagName: %1, newName: %2").arg(tagName).arg(newName);
+            return false;
+        }
 
-    finally.dismiss();
-    return true;
+        return true;
+    });
+
+    if (ret)
+        finally.dismiss();
+
+    return ret;
 }
 
 bool TagDbHandle::changeFilePath(const QString &oldPath, const QString &newPath)
@@ -567,7 +586,7 @@ bool TagDbHandle::changeFilePath(const QString &oldPath, const QString &newPath)
     return true;
 }
 
-bool TagDbHandle::chechTable(const QString &tableName)
+bool TagDbHandle::checkTableExists(const QString &tableName)
 {
     if (tableName.isEmpty())
         return false;

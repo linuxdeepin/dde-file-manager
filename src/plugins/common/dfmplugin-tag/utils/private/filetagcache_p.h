@@ -11,8 +11,8 @@ class FileTagCachePrivate
     friend class FileTagCache;
     FileTagCache *const q;
 
-    QHash<QString, QStringList> fileTagsCache;
-    QHash<QString, QColor> tagProperty;
+    QHash<QString, QStringList> fileTagsCache;   // file path ->  tag name list
+    QHash<QString, QColor> tagProperty;   // tag name -> QColor
     QReadWriteLock lock;
 
 public:

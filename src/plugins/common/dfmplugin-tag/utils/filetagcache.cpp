@@ -27,27 +27,30 @@ void FileTagCacheWorker::onTagAdded(const QVariantMap &tags)
 
 void FileTagCacheWorker::onTagDeleted(const QVariant &tags)
 {
-    FileTagCache::instance().deletedTags(tags.toStringList());
+    FileTagCache::instance().deleteTags(tags.toStringList());
 }
 
-void FileTagCacheWorker::onTagColorChanged(const QVariantMap &tagAndColorName)
+void FileTagCacheWorker::onTagsColorChanged(const QVariantMap &tagAndColorName)
 {
-    FileTagCache::instance().changedTagColor(tagAndColorName);
+    FileTagCache::instance().changeTagColor(tagAndColorName);
 }
 
-void FileTagCacheWorker::onTagNameChanged(const QVariantMap &oldAndNew)
+void FileTagCacheWorker::onTagsNameChanged(const QVariantMap &oldAndNew)
 {
-    FileTagCache::instance().changedTagName(oldAndNew);
+    FileTagCache::instance().changeTagName(oldAndNew);
+    auto &&map { oldAndNew.toStdMap() };
+    for (auto [oldName, newName] : map)
+        FileTagCache::instance().changeFilesTagName(oldName, newName.toString());
 }
 
 void FileTagCacheWorker::onFilesTagged(const QVariantMap &fileAndTags)
 {
-    FileTagCache::instance().taggedFiles(fileAndTags);
+    FileTagCache::instance().taggeFiles(fileAndTags);
 }
 
 void FileTagCacheWorker::onFilesUntagged(const QVariantMap &fileAndTags)
 {
-    FileTagCache::instance().untaggedFiles(fileAndTags);
+    FileTagCache::instance().untaggeFiles(fileAndTags);
 }
 
 FileTagCachePrivate::FileTagCachePrivate(FileTagCache *qq)
@@ -75,14 +78,14 @@ void FileTagCache::loadFileTagsFromDatabase()
     // 加载数据库所有文件标记,和标记属性到缓存
     d->fileTagsCache = TagDbHandle::instance()->getAllFileWithTags();
     const auto &tagsColor = TagDbHandle::instance()->getAllTags();
-    QVariantMap::const_iterator it = tagsColor.begin();
+    auto it = tagsColor.begin();
     for (; it != tagsColor.end(); ++it)
         d->tagProperty.insert(it.key(), QColor(it.value().toString()));
 }
 
 void FileTagCache::addTags(const QVariantMap &tags)
 {
-    QVariantMap::const_iterator it = tags.begin();
+    auto it = tags.begin();
     for (; it != tags.end(); ++it) {
         if (d->tagProperty.contains(it.key()))
             continue;
@@ -90,7 +93,7 @@ void FileTagCache::addTags(const QVariantMap &tags)
     }
 }
 
-void FileTagCache::deletedTags(const QStringList &tags)
+void FileTagCache::deleteTags(const QStringList &tags)
 {
     QVariantMap map {};
     for (const QString &tag : tags) {
@@ -109,33 +112,46 @@ void FileTagCache::deletedTags(const QStringList &tags)
     }
 
     if (!map.isEmpty())
-        untaggedFiles(map);
+        untaggeFiles(map);
 }
 
-void FileTagCache::changedTagColor(const QVariantMap &tagAndColorName)
+void FileTagCache::changeTagColor(const QVariantMap &tagAndColorName)
 {
-    QVariantMap::const_iterator it = tagAndColorName.begin();
+    auto it = tagAndColorName.begin();
     for (; it != tagAndColorName.end(); ++it) {
         if (d->tagProperty.contains(it.key()))
             d->tagProperty[it.key()] = QColor(it.value().toString());
     }
 }
 
-void FileTagCache::changedTagName(const QVariantMap &oldAndNew)
+void FileTagCache::changeTagName(const QVariantMap &oldAndNew)
 {
-    QVariantMap::const_iterator it = oldAndNew.begin();
+    auto it = oldAndNew.begin();
     for (; it != oldAndNew.end(); ++it) {
-        if (d->tagProperty.contains(it.key())) {
-            const auto &temp = d->tagProperty.value(it.key());
-            d->tagProperty.remove(it.key());
-            d->tagProperty.insert(it.value().toString(), temp);
+        const QString &oldName { it.key() };
+        const QString &newName { it.value().toString() };
+        if (d->tagProperty.contains(oldName)) {
+            const auto &color { d->tagProperty.value(oldName) };
+            d->tagProperty.remove(oldName);
+            d->tagProperty.insert(newName, color);
         }
     }
 }
 
-void FileTagCache::taggedFiles(const QVariantMap &fileAndTags)
+void FileTagCache::changeFilesTagName(const QString &oldName, const QString &newName)
 {
-    QVariantMap::const_iterator it = fileAndTags.begin();
+    std::for_each(d->fileTagsCache.begin(), d->fileTagsCache.end(), [oldName, newName](QStringList &tagNames) {
+        auto result { std::find(tagNames.begin(), tagNames.end(), oldName) };
+        if (result != tagNames.end()) {
+            int index { result - tagNames.begin() };
+            tagNames.replace(index, newName);
+        }
+    });
+}
+
+void FileTagCache::taggeFiles(const QVariantMap &fileAndTags)
+{
+    auto it = fileAndTags.begin();
     for (; it != fileAndTags.end(); ++it) {
         if (!d->fileTagsCache.contains(it.key())) {
             d->fileTagsCache.insert(it.key(), it.value().toStringList());
@@ -151,9 +167,9 @@ void FileTagCache::taggedFiles(const QVariantMap &fileAndTags)
     }
 }
 
-void FileTagCache::untaggedFiles(const QVariantMap &fileAndTags)
+void FileTagCache::untaggeFiles(const QVariantMap &fileAndTags)
 {
-    QVariantMap::const_iterator it = fileAndTags.begin();
+    auto it = fileAndTags.begin();
     for (; it != fileAndTags.end(); ++it) {
         if (d->fileTagsCache.contains(it.key())) {
             const auto &lst = it.value().toStringList();
@@ -235,8 +251,8 @@ void FileTagCacheController::init()
     connect(this, &FileTagCacheController::initLoadTagInfos, cacheWorker.data(), &FileTagCacheWorker::loadFileTagsFromDatabase);
     connect(tagDbusInterface, &TagDBusInterface::NewTagsAdded, cacheWorker.data(), &FileTagCacheWorker::onTagAdded);
     connect(tagDbusInterface, &TagDBusInterface::TagsDeleted, cacheWorker.data(), &FileTagCacheWorker::onTagDeleted);
-    connect(tagDbusInterface, &TagDBusInterface::TagColorChanged, cacheWorker.data(), &FileTagCacheWorker::onTagColorChanged);
-    connect(tagDbusInterface, &TagDBusInterface::TagNameChanged, cacheWorker.data(), &FileTagCacheWorker::onTagNameChanged);
+    connect(tagDbusInterface, &TagDBusInterface::TagsColorChanged, cacheWorker.data(), &FileTagCacheWorker::onTagsColorChanged);
+    connect(tagDbusInterface, &TagDBusInterface::TagsNameChanged, cacheWorker.data(), &FileTagCacheWorker::onTagsNameChanged);
     connect(tagDbusInterface, &TagDBusInterface::FilesTagged, cacheWorker.data(), &FileTagCacheWorker::onFilesTagged);
     connect(tagDbusInterface, &TagDBusInterface::FilesUntagged, cacheWorker.data(), &FileTagCacheWorker::onFilesUntagged);
 

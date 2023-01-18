@@ -8,11 +8,11 @@
     <signal name="TagsDeleted">
       <arg name="tags" type="as" direction="out"/>
     </signal>
-    <signal name="TagColorChanged">
+    <signal name="TagsColorChanged">
       <arg name="oldAndNew" type="a{sv}" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </signal>
-    <signal name="TagNameChanged">
+    <signal name="TagsNameChanged">
       <arg name="oldAndNew" type="a{sv}" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
     </signal>

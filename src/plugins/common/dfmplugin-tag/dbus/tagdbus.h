@@ -32,9 +32,9 @@ private:
     QVariant getSameTagsOfDiffFiles(const QStringList value);
     QVariantMap getFilesThroughTag(const QStringList value);
     QVariantMap getTagsColor(const QStringList value);
-    bool changeTagColor(const QVariantMap value);
-    bool changeTagName(const QVariantMap value);
-    bool changeFilesName(const QVariantMap value);
+    bool changeTagColors(const QVariantMap value);
+    bool changeTagNamesWithFiles(const QVariantMap value);
+    bool changeFilePaths(const QVariantMap value);
     bool deleteTags(const QVariantMap value);
     bool deleteFiles(const QVariantMap value);
     bool deleteFileTags(const QVariantMap value);
@@ -44,8 +44,8 @@ private:
 Q_SIGNALS:
     void NewTagsAdded(const QVariantMap &tags);
     void TagsDeleted(const QStringList &tags);
-    void TagColorChanged(const QVariantMap &oldAndNew);
-    void TagNameChanged(const QVariantMap &oldAndNew);
+    void TagsColorChanged(const QVariantMap &oldAndNew);
+    void TagsNameChanged(const QVariantMap &oldAndNew);
     void FilesTagged(const QVariantMap &fileAndTags);
     void FilesUntagged(const QVariantMap &fileAndTags);
 

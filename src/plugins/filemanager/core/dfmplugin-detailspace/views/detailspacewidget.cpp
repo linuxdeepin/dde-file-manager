@@ -42,7 +42,10 @@ void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
     DetailSpaceHelper::resetSelectedUrl();
 
-    const QList<QUrl> &urls { dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", QApplication::activeWindow()->internalWinId()).value<QList<QUrl>>() };
+    auto window { QApplication::activeWindow() };
+    QList<QUrl> urls;
+    if (window)
+        urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", window->internalWinId()).value<QList<QUrl>>();
     if (urls.isEmpty()) {
         setCurrentUrl(url, 0);
     } else {

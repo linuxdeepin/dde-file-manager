@@ -44,9 +44,9 @@ enum class TagActionType : uint32_t {
     kRemoveTagsOfFiles,
     kDeleteTags,
     kDeleteFiles,
-    kChangeTagColor,
-    kChangeTagName,
-    kChangeFilesName
+    kChangeTagsColor,
+    kChangeTagsNameWithFiles,
+    kChangeFilesePaths
 };
 
 namespace TagActionId {

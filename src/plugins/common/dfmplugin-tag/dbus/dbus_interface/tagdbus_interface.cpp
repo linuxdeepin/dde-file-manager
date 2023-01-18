@@ -23,4 +23,3 @@ TagDBusInterface::TagDBusInterface(const QString &service, const QString &path, 
 TagDBusInterface::~TagDBusInterface()
 {
 }
-

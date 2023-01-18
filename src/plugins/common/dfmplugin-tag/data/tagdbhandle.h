@@ -51,11 +51,10 @@ public:
     bool deleteTags(const QStringList &tags);
     bool deleteFiles(const QStringList &urls);
     bool changeTagColors(const QVariantMap &data);
-    bool changeTagNames(const QVariantMap &data);
+    bool changeTagNamesWithFiles(const QVariantMap &data);
     bool changeFilePaths(const QVariantMap &data);
 
     QString lastError();
-    bool checkDatabase();
 
 private:
     bool checkTag(const QString &tag);
@@ -64,20 +63,21 @@ private:
     bool tagFile(const QString &file, const QVariant &tags);
     bool removeSpecifiedTagOfFile(const QString &url, const QVariant &val);
     bool changeTagColor(const QString &tagName, const QString &newTagColor);
-    bool changeTagName(const QString &tagName, const QString &newName);
+    bool changeTagNameWithFile(const QString &tagName, const QString &newName);
     bool changeFilePath(const QString &oldPath, const QString &newPath);
 
-    bool chechTable(const QString &tableName);
+    bool checkTableExists(const QString &tableName);
     bool createTable(const QString &tableName);
 
     explicit TagDbHandle(QObject *parent = nullptr);
     virtual ~TagDbHandle() = default;
+    bool checkDatabase();
 
 Q_SIGNALS:
     void newTagsAdded(const QVariantMap &newTags);
     void tagsDeleted(const QStringList &beDeletedTags);
-    void tagColorChanged(const QVariantMap &oldAndNewColor);
-    void tagNameChanged(const QVariantMap &oldAndNewName);
+    void tagsColorChanged(const QVariantMap &oldAndNewColor);
+    void tagsNameChanged(const QVariantMap &oldAndNewName);
     void filesWereTagged(const QVariantMap &filesWereTagged);
     void filesUntagged(const QVariantMap &delTagsOfFile);
 
