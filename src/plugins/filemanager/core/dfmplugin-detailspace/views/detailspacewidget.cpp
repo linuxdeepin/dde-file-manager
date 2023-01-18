@@ -24,7 +24,8 @@
 #include "detailview.h"
 #include "utils/detailspacehelper.h"
 
-#include <dpf.h>
+#include <dfm-framework/event/event.h>
+
 #include <QHBoxLayout>
 #include <QApplication>
 
