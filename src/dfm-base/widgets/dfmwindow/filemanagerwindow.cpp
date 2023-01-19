@@ -246,7 +246,6 @@ void FileManagerWindow::installDetailView(AbstractFrame *w)
         d->detailSpace->setFixedWidth(320);
         d->midLayout->addWidget(d->detailSpace, 1);
         d->detailSpace->setVisible(false);
-        d->detailSpace->setCurrentUrl(d->currentUrl);
     }
 
     emit this->detailViewInstallFinished();

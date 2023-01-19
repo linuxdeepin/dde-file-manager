@@ -37,17 +37,16 @@ class DetailSpaceHelper
 {
 public:
     static DetailSpaceWidget *findDetailSpaceByWindowId(quint64 windowId);
+    static quint64 findWindowIdByDetailSpace(DetailSpaceWidget *widget);
     static void addDetailSpace(quint64 windowId);
     static void removeDetailSpace(quint64 windowId);
     static void showDetailView(quint64 windowId, bool checked);
     static void setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url);
     static void setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url);
-    static void resetSelectedUrl();
 
 private:
     static QMutex &mutex();
     static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
-    static QUrl kLastSelectedUrl;
 };
 
 }   // namespace dfmplugin_detailspace

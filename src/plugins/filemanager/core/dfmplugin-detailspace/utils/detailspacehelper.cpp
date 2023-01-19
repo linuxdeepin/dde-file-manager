@@ -33,7 +33,6 @@ using namespace dfmplugin_detailspace;
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, DetailSpaceWidget *> DetailSpaceHelper::kDetailSpaceMap {};
-QUrl DetailSpaceHelper::kLastSelectedUrl {};
 
 DetailSpaceWidget *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId)
 {
@@ -41,6 +40,11 @@ DetailSpaceWidget *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId
         return nullptr;
 
     return kDetailSpaceMap[windowId];
+}
+
+quint64 DetailSpaceHelper::findWindowIdByDetailSpace(DetailSpaceWidget *widget)
+{
+    return kDetailSpaceMap.key(widget, 0);
 }
 
 void DetailSpaceHelper::addDetailSpace(quint64 windowId)
@@ -71,18 +75,15 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
     if (checked) {
         if (!w) {
             addDetailSpace(windowId);
-            showDetailView(windowId, checked);
-            return;
+            w = findDetailSpaceByWindowId(windowId);
+            if (!w) {
+                qCritical() << "Can't find the detail space!";
+                return;
+            }
         }
-
         w->setVisible(true);
-
-        if (!kLastSelectedUrl.isEmpty() && kLastSelectedUrl.isValid()) {
-            setDetailViewByUrl(w, kLastSelectedUrl);
-        } else {
-            auto window = FMWindowsIns.findWindowById(windowId);
-            setDetailViewByUrl(w, window->currentUrl());
-        }
+        auto window = FMWindowsIns.findWindowById(windowId);
+        setDetailViewByUrl(w, window->currentUrl());
     } else {
         if (w)
             w->setVisible(false);
@@ -91,10 +92,9 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
 
 void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url)
 {
-    kLastSelectedUrl = url;
-
     DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
-    setDetailViewByUrl(w, kLastSelectedUrl);
+    if (w)
+        setDetailViewByUrl(w, url);
 }
 
 void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url)
@@ -103,7 +103,7 @@ void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url
         if (!w->isVisible())
             return;
 
-        w->setCurrentUrl(url, 0);
+        w->setCurrentUrl(url);
         QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(url);
         if (!widgetMap.isEmpty()) {
             QList<int> indexs = widgetMap.keys();
@@ -112,11 +112,6 @@ void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url
             }
         }
     }
-}
-
-void DetailSpaceHelper::resetSelectedUrl()
-{
-    kLastSelectedUrl.clear();
 }
 
 QMutex &DetailSpaceHelper::mutex()

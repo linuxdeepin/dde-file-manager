@@ -40,17 +40,15 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
-    DetailSpaceHelper::resetSelectedUrl();
-
-    auto window { QApplication::activeWindow() };
-    QList<QUrl> urls;
-    if (window)
-        urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", window->internalWinId()).value<QList<QUrl>>();
-    if (urls.isEmpty()) {
-        setCurrentUrl(url, 0);
-    } else {
-        setCurrentUrl(urls.first(), 0);
+    quint64 winId = DetailSpaceHelper::findWindowIdByDetailSpace(this);
+    if (winId) {
+        QList<QUrl> urls = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", winId).value<QList<QUrl>>();
+        if (!urls.isEmpty()) {
+            setCurrentUrl(urls.first(), 0);
+            return;
+        }
     }
+    setCurrentUrl(url, 0);
 }
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url, int widgetFilter)
