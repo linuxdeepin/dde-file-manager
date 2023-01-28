@@ -106,7 +106,7 @@ private:
     bool createNewTargetInfo(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                              AbstractFileInfoPointer &newTargetInfo, const QUrl &fileNewUrl,
                              bool *skip, bool isCountSize = false);
-    QUrl createNewTargetUrl(const AbstractFileInfoPointer &toInfo, QString &fileNewName);
+    QUrl createNewTargetUrl(const AbstractFileInfoPointer &toInfo, const QString &fileName);
     bool doCopyLocalFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
     bool doCopyExBlockFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
     bool doCopyOtherFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);

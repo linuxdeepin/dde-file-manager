@@ -253,15 +253,30 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
         while (iterator->hasNext()) {
             const QUrl &url = iterator->next();
             auto fileinfoNext = InfoFactory::create<AbstractFileInfo>(url);
+
+            AbstractFileInfoPointer newTargetInfo(nullptr);
+            bool ok = false;
+            AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(urlTarget);
+            if (!toInfo) {
+                // pause and emit error msg
+                qCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (toInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);
+                const AbstractJobHandler::SupportAction action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
+                if (AbstractJobHandler::SupportAction::kSkipAction != action) {
+                    return false;
+                } else {
+                    continue;
+                }
+            }
+            if (!doCheckFile(fileinfoNext, toInfo, fileinfoNext->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok))
+                continue;
+
             if (fileinfoNext->isAttributes(OptInfoType::kIsDir)) {
-                bool succ = copyFileFromTrash(url, DFMIO::DFMUtils::buildFilePath(urlTarget.toString().toLocal8Bit().data(), fileinfoNext->nameOf(NameInfoType::kFileCopyName).toLocal8Bit().data(), nullptr), flag);
+                bool succ = copyFileFromTrash(url, newTargetInfo->urlOf(UrlInfoType::kUrl), flag);
                 if (!succ)
                     return false;
             } else {
                 DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-                bool trashSucc = fileHandler.copyFile(url,
-                                                      DFMIO::DFMUtils::buildFilePath(urlTarget.toString().toLocal8Bit().data(), fileinfoNext->nameOf(NameInfoType::kFileCopyName).toLocal8Bit().data(), nullptr),
-                                                      flag);
+                bool trashSucc = fileHandler.copyFile(url, newTargetInfo->urlOf(UrlInfoType::kUrl), flag);
                 if (!trashSucc)
                     return false;
             }
@@ -695,9 +710,9 @@ void FileOperateBaseWorker::initSignalCopyWorker()
     }
 }
 
-QUrl FileOperateBaseWorker::createNewTargetUrl(const AbstractFileInfoPointer &toInfo, QString &fileNewName)
+QUrl FileOperateBaseWorker::createNewTargetUrl(const AbstractFileInfoPointer &toInfo, const QString &fileName)
 {
-    fileNewName = formatFileName(fileNewName);
+    QString fileNewName = formatFileName(fileName);
     // 创建文件的名称
     QUrl newTargetUrl = toInfo->urlOf(UrlInfoType::kUrl);
     const QString &newTargetPath = newTargetUrl.path();
