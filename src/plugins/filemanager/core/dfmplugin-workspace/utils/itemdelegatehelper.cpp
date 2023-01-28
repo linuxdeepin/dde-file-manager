@@ -50,8 +50,8 @@ QPixmap ItemDelegateHelper::getIconPixmap(const QIcon &icon, const QSize &size, 
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    auto px = icon.pixmap(size * pixelRatio, mode, state);
-    px.setDevicePixelRatio(dfmbase::FileUtils::pixmapDevicePixelRatio(pixelRatio, size, px.size()));
+    auto px = icon.pixmap(size, mode, state);
+    px.setDevicePixelRatio(qApp->devicePixelRatio());
 
     return px;
 }

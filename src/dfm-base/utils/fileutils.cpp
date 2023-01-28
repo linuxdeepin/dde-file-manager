@@ -1209,13 +1209,6 @@ int FileUtils::dirFfileCount(const QUrl &url)
     return int(enumerator.fileCount());
 }
 
-qreal FileUtils::pixmapDevicePixelRatio(qreal displayDevicePixelRatio, const QSize &requestedSize, const QSize &actualSize)
-{
-    QSize targetSize = requestedSize * displayDevicePixelRatio;
-    qreal scale = 0.5 * (qreal(actualSize.width()) / qreal(targetSize.width()) + qreal(actualSize.height() / qreal(targetSize.height())));
-    return qMax(qreal(1.0), displayDevicePixelRatio * scale);
-}
-
 QUrl DesktopAppUrl::trashDesktopFileUrl()
 {
     static QUrl trash = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath) + "/dde-trash.desktop");

@@ -50,7 +50,7 @@ DWIDGET_USE_NAMESPACE
 
 static constexpr int kRadius = 8;
 static constexpr int kItemMargin = 10;
-static constexpr int kItemIconSize = 18;
+static constexpr int kItemIconSize = 19;
 static constexpr int kEjectIconSize = 16;
 
 namespace GlobalPrivate {
@@ -274,18 +274,23 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
 
 void SideBarItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const
 {
+    Q_UNUSED(iconMode);
     QSize iconSize(kItemIconSize, kItemIconSize);
     QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
     qreal iconDx = 2 * kItemMargin;
     qreal iconDy = (itemRect.height() - iconSize.height()) / 2 + 1;
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
     QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
-    icon.paint(painter, QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), Qt::AlignCenter, iconMode);
+    auto px = icon.pixmap(iconSize);
+    px.setDevicePixelRatio(qApp->devicePixelRatio());
+    painter->drawPixmap(QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), px);
     if (isEjectable) {
         QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
         QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
         QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
-        ejectIcon.paint(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignVCenter, iconMode);
+        auto px = ejectIcon.pixmap(iconSize);
+        px.setDevicePixelRatio(qApp->devicePixelRatio());
+        painter->drawPixmap(QRect(ejectIconTopLeft, ejectIconBottomRight), px);
     }
 }
 

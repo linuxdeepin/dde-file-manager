@@ -487,8 +487,6 @@ void CanvasItemDelegate::drawExpandText(QPainter *painter, const QStyleOptionVie
 QPixmap CanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size,
                                           qreal pixelRatio, QIcon::Mode mode, QIcon::State state)
 {
-    // TODO: 优化
-
     if (icon.isNull())
         return QPixmap();
 
@@ -496,8 +494,8 @@ QPixmap CanvasItemDelegate::getIconPixmap(const QIcon &icon, const QSize &size,
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    auto px = icon.pixmap(size * pixelRatio, mode, state);
-    px.setDevicePixelRatio(dfmbase::FileUtils::pixmapDevicePixelRatio(pixelRatio, size, px.size()));
+    auto px = icon.pixmap(size, mode, state);
+    px.setDevicePixelRatio(pixelRatio);
 
     return px;
 }

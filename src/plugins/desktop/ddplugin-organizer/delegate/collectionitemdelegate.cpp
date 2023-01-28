@@ -511,8 +511,8 @@ QPixmap CollectionItemDelegate::getIconPixmap(const QIcon &icon, const QSize &si
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    auto px = icon.pixmap(size * pixelRatio, mode, state);
-    px.setDevicePixelRatio(dfmbase::FileUtils::pixmapDevicePixelRatio(pixelRatio, size, px.size()));
+    auto px = icon.pixmap(size, mode, state);
+    px.setDevicePixelRatio(pixelRatio);
 
     return px;
 }
