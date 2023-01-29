@@ -22,7 +22,7 @@ add_executable(${PROJECT_NAME}
     ${SRC_FILES}
 )
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 

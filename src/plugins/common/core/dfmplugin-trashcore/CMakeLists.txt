@@ -17,7 +17,7 @@ FILE(GLOB CORE_FILES
     )
 
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED

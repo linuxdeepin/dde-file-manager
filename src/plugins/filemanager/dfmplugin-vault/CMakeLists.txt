@@ -16,7 +16,7 @@ FILE(GLOB VAULT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt5-1)
 pkg_check_modules(openssl REQUIRED libcrypto)

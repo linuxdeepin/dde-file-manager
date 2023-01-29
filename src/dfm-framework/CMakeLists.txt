@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(dfm-framework)
+set(BIN_NAME dfm-framework)
+
+project(${BIN_NAME}
+    LANGUAGES CXX
+    HOMEPAGE_URL https://github.com/linuxdeepin/dde-file-manager
+    DESCRIPTION "Framework library of dde-file-manager"
+    )
 
 if (NOT VERSION)
     set(VERSION "1.0.0")
@@ -42,8 +48,7 @@ FILE(GLOB FRAMEWORK_FEATURE_FILES
 
 find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
-find_package(Qt5 COMPONENTS Network REQUIRED)
-find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(Dtk COMPONENTS Core REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
     ${FRAMEWORK_GLOBAL_FILES}
@@ -59,8 +64,7 @@ target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Core
     Qt5::Concurrent
-    Qt5::Network
-    ${DtkWidget_LIBRARIES}
+    ${DtkCore_LIBRARIES}
 )
 
 add_library(DFM::framework ALIAS ${PROJECT_NAME})
@@ -69,7 +73,6 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC 
         ${CMAKE_CURRENT_SOURCE_DIR}/../
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${DtkWidget_INCLUDEDIRS}
 )
 
 # install library file

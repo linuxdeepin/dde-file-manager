@@ -14,7 +14,7 @@ FILE(GLOB DETAILSPCE_FILES
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../services/filemanager/)
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED

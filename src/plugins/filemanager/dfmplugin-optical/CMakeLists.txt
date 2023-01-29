@@ -20,7 +20,7 @@ FILE(GLOB OPTICAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/menus/*.cpp"
     )
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(Qt5 COMPONENTS Svg REQUIRED)
 
 add_library(${PROJECT_NAME}

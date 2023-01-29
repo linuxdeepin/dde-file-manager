@@ -21,7 +21,7 @@ add_executable(${PROJECT_NAME}
     ${CPP_STUB_SRC}
 )
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     "${PluginPath}")

@@ -12,7 +12,7 @@ set(SRCS
 )
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 

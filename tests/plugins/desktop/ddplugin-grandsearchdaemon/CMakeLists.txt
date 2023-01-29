@@ -24,7 +24,7 @@ add_executable(${PROJECT_NAME}
     ${SRC_FILES}
 )
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${DESKTOP_PLUGIN_DIR}

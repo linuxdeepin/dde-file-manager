@@ -7,7 +7,7 @@
 
 #include "dfmplugin_utils_global.h"
 
-#include <menu/private/dfmextactionprivate.h>
+#include <dfm-extension/menu/private/dfmextactionprivate.h>
 
 #include <QObject>
 

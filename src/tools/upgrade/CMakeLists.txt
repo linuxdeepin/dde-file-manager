@@ -4,7 +4,7 @@ project(dfm-upgrade)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"

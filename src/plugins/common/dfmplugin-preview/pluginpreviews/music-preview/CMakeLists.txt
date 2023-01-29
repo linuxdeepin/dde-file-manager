@@ -14,7 +14,7 @@ FILE(GLOB MUSICPREVIEW_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.qrc"
     "${GlobalFiles}"
     )
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 find_package(Qt5 COMPONENTS Multimedia REQUIRED)
 

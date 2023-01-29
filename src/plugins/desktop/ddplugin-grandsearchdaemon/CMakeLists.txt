@@ -20,7 +20,7 @@ add_definitions(-DGRANDSEARCHDAEMON_LIB_DIR="/usr/lib/${CMAKE_LIBRARY_ARCHITECTU
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
 

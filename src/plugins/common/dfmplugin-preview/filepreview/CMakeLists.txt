@@ -13,7 +13,7 @@ FILE(GLOB FILEPREVIEW_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_library(${PROJECT_NAME}
     SHARED

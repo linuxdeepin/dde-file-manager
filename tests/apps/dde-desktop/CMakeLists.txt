@@ -19,7 +19,7 @@ find_package(Qt5 COMPONENTS
     DBus
     REQUIRED)
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 add_executable(${BIN_NAME} ${SRCS} ${UT_SRC} ${CPP_STUB_SRC})
 

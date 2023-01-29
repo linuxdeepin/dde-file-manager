@@ -159,7 +159,7 @@ find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 find_package(Qt5 COMPONENTS DBus REQUIRED)
 find_package(Qt5 COMPONENTS Sql REQUIRED)
 find_package(Qt5 COMPONENTS X11Extras REQUIRED)
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(KF5Codecs REQUIRED)
 

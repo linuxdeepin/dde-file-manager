@@ -19,7 +19,8 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Qt5 COMPONENTS Network REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -27,9 +28,9 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
+    Qt5::Network
     DFM::base
     DFM::framework
-    
     ${DtkWidget_LIBRARIES}
 )
 

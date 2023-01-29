@@ -16,7 +16,7 @@ FILE(GLOB VIDEOPREVIEW_FILES
     "${GlobalFiles}"
     )
 
-find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Dtk COMPONENTS Widget REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 

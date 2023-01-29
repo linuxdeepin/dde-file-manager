@@ -7,7 +7,7 @@
 
 #include "dfmplugin_utils_global.h"
 
-#include <menu/private/dfmextmenuproxyprivate.h>
+#include <dfm-extension/menu/private/dfmextmenuproxyprivate.h>
 
 #include <QDebug>
 
