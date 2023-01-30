@@ -43,7 +43,7 @@ QString ErrorMessageAndAction::errorMsg(const QUrl &from, const QUrl &to, const 
 void ErrorMessageAndAction::srcAndDestString(const QUrl &from, const QUrl &to, QString *sorceMsg, QString *toMsg,
                                              const AbstractJobHandler::JobType jobType, const AbstractJobHandler::JobErrorType error)
 {
-    if (sorceMsg || toMsg)
+    if (!sorceMsg || !toMsg)
         return;
     if (AbstractJobHandler::JobType::kCopyType == jobType) {
         *sorceMsg = QString(tr("Copying %1")).arg(from.path());

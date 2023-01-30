@@ -2154,4 +2154,3 @@ void CollectionView::currentChanged(const QModelIndex &current, const QModelInde
     if (!testAttribute(Qt::WA_InputMethodEnabled))
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
-

@@ -566,9 +566,6 @@ bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
         return true;
     }
 
-    if (urlList.count() > 0)
-        action = FileUtils::isSameDevice(urlList[0], targetFileUrl) ? Qt::MoveAction : Qt::CopyAction;
-
     switch (action) {
     case Qt::CopyAction:
     case Qt::MoveAction:

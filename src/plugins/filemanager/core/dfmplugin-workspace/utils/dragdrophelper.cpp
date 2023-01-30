@@ -321,7 +321,10 @@ void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
         if (WindowUtils::keyAltIsPressed()) {
             defaultAction = Qt::MoveAction;
         } else if (!WindowUtils::keyCtrlIsPressed()
-                   && FileUtils::isSameDevice(currentDragUrls.first(), info->urlOf(UrlInfoType::kUrl))) {
+                   && FileUtils::isSameDevice(currentDragUrls.first(),
+                                              info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)
+                                                      ? info->urlOf(UrlInfoType::kRedirectedFileUrl)
+                                                      : info->urlOf(UrlInfoType::kUrl))) {
             defaultAction = Qt::MoveAction;
         }
 

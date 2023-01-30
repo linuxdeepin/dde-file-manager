@@ -757,8 +757,6 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         FileOperatorProxyIns->dropToApp(urlList, targetFileUrl.toLocalFile());
         return true;
     }
-    if (urlList.count() > 0)
-        action = FileUtils::isSameDevice(urlList[0], targetFileUrl) ? Qt::MoveAction : Qt::CopyAction;
 
     switch (action) {
     case Qt::CopyAction:

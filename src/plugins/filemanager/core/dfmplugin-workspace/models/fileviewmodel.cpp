@@ -410,8 +410,6 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     }
 
     bool ret { true };
-    if (dropUrls.count() > 0 && action != Qt::CopyAction)
-        action = FileUtils::isSameDevice(dropUrls[0], targetUrl) ? Qt::MoveAction : Qt::CopyAction;
 
     switch (action) {
     case Qt::CopyAction:

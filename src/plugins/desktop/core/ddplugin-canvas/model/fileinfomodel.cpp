@@ -463,8 +463,6 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList { targetFileUrl.toLocalFile() });
         return true;
     }
-    if (urlList.count() > 0 && action != Qt::CopyAction)
-        action = FileUtils::isSameDevice(urlList[0], targetFileUrl) ? Qt::MoveAction : Qt::CopyAction;
 
     switch (action) {
     case Qt::CopyAction:

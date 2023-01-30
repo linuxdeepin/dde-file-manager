@@ -604,11 +604,13 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
 
     if (qApp->keyboardModifiers() == Qt::AltModifier) {
         action = Qt::MoveAction;
-    } else if (qApp->keyboardModifiers() == Qt::ControlModifier) {
+    } else if (qApp->queryKeyboardModifiers() == Qt::ControlModifier) {
         if (action == Qt::MoveAction)
             action = Qt::CopyAction;
     } else if (FileUtils::isSameDevice(urls.first(), targetItemUrl)) {
         action = Qt::MoveAction;
+    } else if (action == Qt::MoveAction && !FileUtils::isSameDevice(urls.first(), targetItemUrl)) {
+        action = Qt::CopyAction;
     }
 
     if (!SysInfoUtils::isSameUser(data) && FileUtils::isTrashFile(targetItemUrl))
