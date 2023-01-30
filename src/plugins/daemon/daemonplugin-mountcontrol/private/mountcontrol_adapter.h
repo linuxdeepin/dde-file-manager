@@ -41,8 +41,11 @@ class MountControlAdapter: public QDBusAbstractAdaptor
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In1\"/>\n"
 "    </method>\n"
 "    <method name=\"Unmount\">\n"
-"      <arg direction=\"out\" type=\"b\"/>\n"
+"      <arg direction=\"out\" type=\"a{sv}\"/>\n"
+"      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
+"      <arg direction=\"in\" type=\"a{sv}\" name=\"opts\"/>\n"
+"      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In1\"/>\n"
 "    </method>\n"
 "  </interface>\n"
         "")
@@ -56,7 +59,7 @@ public:
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
     QVariantMap Mount(const QString &path, const QVariantMap &opts);
-    bool Unmount(const QString &path);
+    QVariantMap Unmount(const QString &path, const QVariantMap &opts);
 Q_SIGNALS: // SIGNALS
 };
 

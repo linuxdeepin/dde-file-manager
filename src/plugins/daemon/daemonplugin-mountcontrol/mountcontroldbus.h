@@ -43,7 +43,7 @@ public:
 
 public slots:
     QVariantMap Mount(const QString &path, const QVariantMap &opts);
-    bool Unmount(const QString &path);
+    QVariantMap Unmount(const QString &path, const QVariantMap &opts);
 
 private:
     QScopedPointer<DAEMONPMOUNTCONTROL_NAMESPACE::MountControlDBusPrivate> d;

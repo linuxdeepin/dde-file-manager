@@ -39,9 +39,9 @@ QVariantMap MountControlAdapter::Mount(const QString &path, const QVariantMap &o
     return parent()->Mount(path, opts);
 }
 
-bool MountControlAdapter::Unmount(const QString &path)
+QVariantMap MountControlAdapter::Unmount(const QString &path, const QVariantMap &opts)
 {
     // handle method call com.deepin.filemanager.daemon.MountControl.Unmount
-    return parent()->Unmount(path);
+    return parent()->Unmount(path, opts);
 }
 

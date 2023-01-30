@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DAEMONPLUGIN_MOUNTCONTROL_GLOBAL_H
 #define DAEMONPLUGIN_MOUNTCONTROL_GLOBAL_H
 
@@ -30,14 +30,40 @@
 
 DAEMONPMOUNTCONTROL_BEGIN_NAMESPACE
 
-namespace MountOpts {
+namespace MountOptionsField {
 inline constexpr char kUser[] { "user" };
 inline constexpr char kPasswd[] { "passwd" };
 inline constexpr char kDomain[] { "domain" };
-//inline constexpr char kFsType[] { "fsType" };
+inline constexpr char kFsType[] { "fsType" };
 inline constexpr char kMountName[] { "mntName" };
-inline constexpr char kTimeout[] {"timeout"};
+inline constexpr char kTimeout[] { "timeout" };
 }
+
+namespace MountReturnField {
+inline constexpr char kResult[] { "result" };
+inline constexpr char kMountPoint[] { "mountPoint" };
+inline constexpr char kErrorCode[] { "errno" };
+inline constexpr char kErrorMessage[] { "errMsg" };
+}
+
+namespace MountFstypeSupportedField {
+inline constexpr char kDlnFs[] { "dlnfs" };
+inline constexpr char kCifs[] { "cifs" };
+}
+
+enum MountErrorCode {   // NOTE(xust): use NAGATIVE value when return, avoid confusing with errno
+    kNotSupportedScheme = 1,
+    kCannotGenerateMountPath,
+    kCannotMkdirMountPoint,
+    kNoFsTypeSpecified,
+    kUnsupportedFsTypeOrProtocol,
+    kMountNotExist,
+    kNotOwnerOfMount,
+
+    kDlnFsProcessNotExists,
+    kDlnMountMounted,
+    kFusermountProcessNotExists
+};
 
 DAEMONPMOUNTCONTROL_END_NAMESPACE
 

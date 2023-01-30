@@ -19,11 +19,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef MOUNTCONTROLDBUS_P_H
 #define MOUNTCONTROLDBUS_P_H
 
 #include "daemonplugin_mountcontrol_global.h"
+
+#include "mounthelpers/abstractmounthelper.h"
 
 #include <QString>
 #include <QVariantMap>
@@ -37,38 +39,22 @@ class MountControlDBusPrivate
 {
     friend class ::MountControlDBus;
 
-    enum MntCheckErr {
-        kNoErr,
-        kAlreadyMounted = kNoErr,
-        kNotOwner,
-        kNotCifs,
-        kNotExist,
-        kNotMountByDaemon,
-    };
-
 public:
     explicit MountControlDBusPrivate(MountControlDBus *qq);
     ~MountControlDBusPrivate();
 
 private:
     // for remove the gerrit warning
-    MountControlDBusPrivate(const MountControlDBusPrivate &other) {}
+    MountControlDBusPrivate(const MountControlDBusPrivate &other) { }
     MountControlDBusPrivate &operator=(const MountControlDBusPrivate &other) { return *this; }
 
-    bool checkAuth();
-    MntCheckErr checkMount(const QString &path, QString &mpt);
-    QString genMntPath(const QString &address);
-    bool mkdir(const QString &path);
-    bool mkdirMntRoot();
-    bool rmdir(const QString &path);
-    uint invokerUid();
-    std::string convertArg(const QVariantMap &opts);
-    QString decryPasswd(const QString &passwd);
-    void clean();
-    bool isTimeoutSupported();
+    QVariantMap mountDlnfs(const QString &path, const QVariantMap &opts);
+    QVariantMap unmountDlnfs(const QString &path, const QVariantMap &opts);
 
+    bool checkDlnfsExist(const QString &path);
 
 private:
+    QMap<QString, AbstractMountHelper *> mountHelpers;
     MountControlDBus *q { nullptr };
     MountControlAdapter *adapter { nullptr };
 };
