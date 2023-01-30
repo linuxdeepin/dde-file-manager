@@ -26,7 +26,7 @@
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
 
-#include <dfm-framework/event/channel/eventchannel.h>
+#include <dfm-framework/dpf.h>
 
 #include <QUrl>
 

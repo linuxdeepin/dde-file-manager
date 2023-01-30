@@ -20,10 +20,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "event/channel/eventchannel.h"
 #include "testqobject.h"
 
 #include <dfm-framework/dpf.h>
+#include <dfm-framework/event/event.h>
 
 #include <gtest/gtest.h>
 

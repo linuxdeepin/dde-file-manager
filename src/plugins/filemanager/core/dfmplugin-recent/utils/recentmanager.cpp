@@ -31,6 +31,8 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <dfm-io/dfmio_utils.h>
 
 #include <DDialog>

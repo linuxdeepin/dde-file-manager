@@ -26,7 +26,7 @@
 #include "plugins/filemanager/dfmplugin-myshares/watcher/sharewatcher.h"
 #include "plugins/filemanager/dfmplugin-myshares/private/sharewatcher_p.h"
 
-#include <dfm-framework/event/dispatcher/eventdispatcher.h>
+#include <dfm-framework/event/eventdispatcher.h>
 
 #include <gtest/gtest.h>
 

@@ -21,7 +21,8 @@
 
 #include "stubext.h"
 #include "interface/canvasmanagershell.h"
-#include "dfm-framework/event/channel/eventchannel.h"
+
+#include <dfm-framework/event/eventchannel.h>
 
 #include <gtest/gtest.h>
 
@@ -38,18 +39,20 @@ public:
     stub_ext::StubExt stub;
 };
 
-TEST_F(CanvasManagerShellTest, initialize) {
+TEST_F(CanvasManagerShellTest, initialize)
+{
     CanvasManagerShell sh;
     bool resutl = sh.initialize();
 
     EXPECT_TRUE(resutl);
 }
 
-TEST_F(CanvasManagerShellTest, iconLevel) {
+TEST_F(CanvasManagerShellTest, iconLevel)
+{
     CanvasManagerShell sh;
     bool isCall = false;
 
-    stub.set_lamda((QVariant(EventChannelManager::*)(const QString &, const QString &))ADDR(EventChannelManager, push), [&] () {
+    stub.set_lamda((QVariant(EventChannelManager::*)(const QString &, const QString &))ADDR(EventChannelManager, push), [&]() {
         isCall = true;
         return QVariant(1);
     });
@@ -60,13 +63,14 @@ TEST_F(CanvasManagerShellTest, iconLevel) {
     EXPECT_EQ(level, 1);
 }
 
-TEST_F(CanvasManagerShellTest, setIconLevel) {
+TEST_F(CanvasManagerShellTest, setIconLevel)
+{
 
     typedef QVariant (EventChannelManager::*PushLevel)(const QString &, const QString &, int);
     auto pushLevel = static_cast<PushLevel>(&EventChannelManager::push);
 
     bool isCall = false;
-    stub.set_lamda(pushLevel, [&] () {
+    stub.set_lamda(pushLevel, [&]() {
         isCall = true;
         return QVariant();
     });

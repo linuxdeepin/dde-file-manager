@@ -26,7 +26,7 @@
 #include "plugins/filemanager/dfmplugin-myshares/private/sharefileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include <dfm-framework/event/channel/eventchannel.h>
+#include <dfm-framework/event/eventchannel.h>
 
 #include <gtest/gtest.h>
 

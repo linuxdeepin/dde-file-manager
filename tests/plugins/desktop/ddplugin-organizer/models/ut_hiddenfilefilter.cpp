@@ -21,7 +21,7 @@
 
 #include "models/filters/hiddenfilefilter.h"
 
-#include <dpf.h>
+#include <dfm-framework/dpf.h>
 
 #include "stubext.h"
 

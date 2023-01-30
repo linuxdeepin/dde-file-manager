@@ -27,16 +27,14 @@
 
 #include <QObject>
 
-#include <dfm-framework/event/event.h>
-
 namespace dfmbase {
 
 /*!
  * \brief The PublicEventType enum define Event type
  * that can be used in multiple plugins
  */
-enum GlobalEventType : DPF_NAMESPACE::EventType {
-    kUnknowType = DPF_NAMESPACE::EventTypeScope::kWellKnownEventBase,
+enum GlobalEventType {
+    kUnknowType = 0,   // DPF_NAMESPACE::EventTypeScope::kWellKnownEventBase
 
     kChangeCurrentUrl = 1,
     kOpenNewWindow,
@@ -84,7 +82,7 @@ enum GlobalEventType : DPF_NAMESPACE::EventType {
     kOpenInTerminalResult,
     kCleanTrashResult,
     kHideFilesResult,
-    kMaxEventType = DPF_NAMESPACE::EventTypeScope::kWellKnownEventTop
+    kMaxEventType = 10000,   // DPF_NAMESPACE::EventTypeScope::kWellKnownEventTo
 };
 }
 

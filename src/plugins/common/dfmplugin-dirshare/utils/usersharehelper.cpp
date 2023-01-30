@@ -29,6 +29,8 @@
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QDBusInterface>
 #include <QDBusConnection>
 #include <QDBusPendingCall>

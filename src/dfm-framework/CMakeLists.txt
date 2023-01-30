@@ -1,12 +1,33 @@
 cmake_minimum_required(VERSION 3.10)
 
+# If do't define version number, specify the version number
+set (VERSION "1.0.0" CACHE STRING "define project version")
+
 set(BIN_NAME dfm-framework)
 
-project(${BIN_NAME}
-    LANGUAGES CXX
-    HOMEPAGE_URL https://github.com/linuxdeepin/dde-file-manager
-    DESCRIPTION "Framework library of dde-file-manager"
-    )
+file(GLOB_RECURSE INCLUDE_FILES  CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/include/${BIN_NAME}/*")
+file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS
+    "./*.h"
+    "./*.cpp"
+)
+
+find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt5 COMPONENTS Concurrent REQUIRED)
+find_package(Dtk COMPONENTS Core REQUIRED)
+
+add_library(${BIN_NAME} SHARED
+    ${INCLUDE_FILES}
+    ${SRCS}
+)
+
+target_link_libraries(
+    ${BIN_NAME}
+    Qt5::Core
+    Qt5::Concurrent
+    ${DtkCore_LIBRARIES}
+)
+
+target_include_directories(${BIN_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/)
 
 if (NOT VERSION)
     set(VERSION "1.0.0")
@@ -16,77 +37,34 @@ if (NOT PROJECT_VERSION_MAJOR)
     set(PROJECT_VERSION_MAJOR 0)
 endif()
 
-FILE(GLOB FRAMEWORK_GLOBAL_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    )
-
-FILE(GLOB FRAMEWORK_FEATURE_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/backtrace/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/backtrace/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/dispatcher/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/dispatcher/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/channel/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/channel/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/sequence/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/sequence/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/private/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/listener/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/listener/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/listener/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/listener/private/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/log/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/log/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/log/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/log/private/*.cpp"
-    )
-
-find_package(Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt5 COMPONENTS Concurrent REQUIRED)
-find_package(Dtk COMPONENTS Core REQUIRED)
-
-add_library(${PROJECT_NAME} SHARED
-    ${FRAMEWORK_GLOBAL_FILES}
-    ${FRAMEWORK_FEATURE_FILES}
-)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${BIN_NAME} PROPERTIES
     VERSION ${VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
-target_link_libraries(
-    ${PROJECT_NAME}
-    Qt5::Core
-    Qt5::Concurrent
-    ${DtkCore_LIBRARIES}
-)
+add_library(DFM::framework ALIAS ${BIN_NAME})
 
-add_library(DFM::framework ALIAS ${PROJECT_NAME})
+target_compile_definitions(${BIN_NAME} PRIVATE VERSION="${CMAKE_PROJECT_VERSION}")
 
-target_include_directories(${PROJECT_NAME} 
-    PUBLIC 
-        ${CMAKE_CURRENT_SOURCE_DIR}/../
-        ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-# install library file
-install(TARGETS
-    ${PROJECT_NAME}
-    LIBRARY
-    DESTINATION
-    ${LIB_INSTALL_DIR}
-)
-
-# install head file
+# install dev
+install(TARGETS ${BIN_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/include/${BIN_NAME}
     DESTINATION include
     FILES_MATCHING PATTERN "*.h"
-    PATTERN "private" EXCLUDE
 )
+
+# for pc file config
+set(PC_LIBS_PRIVATE Qt${QT_VERSION_MAJOR}Core)
+set(PC_REQ_PRIVATE)
+set(PC_REQ_PUBLIC)
+
+# config pkgconfig file
+configure_file(${PROJECT_SOURCE_DIR}/misc/${BIN_NAME}/${BIN_NAME}.pc.in ${BIN_NAME}.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+# config cmake file
+configure_file(${PROJECT_SOURCE_DIR}/misc/${BIN_NAME}/${BIN_NAME}Config.cmake.in ${BIN_NAME}Config.cmake @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}Config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${BIN_NAME})
+
+

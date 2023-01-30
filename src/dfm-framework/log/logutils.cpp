@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "logutils.h"
+#include <dfm-framework/log/logutils.h>
 
 #include <QDateTime>
 #include <QMutex>

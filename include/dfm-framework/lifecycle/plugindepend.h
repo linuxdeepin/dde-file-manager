@@ -22,7 +22,7 @@
 #ifndef PLUGINDEPEND_H
 #define PLUGINDEPEND_H
 
-#include "dfm-framework/dfm_framework_global.h"
+#include <dfm-framework/dfm_framework_global.h>
 
 #include <QString>
 

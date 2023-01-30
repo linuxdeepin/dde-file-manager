@@ -22,7 +22,7 @@
 
 #include <dfm-base/utils/fileutils.h>
 
-#include <dpf.h>
+#include <dfm-framework/dpf.h>
 
 #include <QGSettings>
 

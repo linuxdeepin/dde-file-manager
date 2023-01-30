@@ -27,8 +27,8 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/event/channel/eventchannel.h>
-#include <dfm-framework/event/dispatcher/eventdispatcher.h>
+#include <dfm-framework/event/eventchannel.h>
+#include <dfm-framework/event/eventdispatcher.h>
 
 #include <gtest/gtest.h>
 

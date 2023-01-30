@@ -32,6 +32,8 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DDialog>
 #include <DPlatformWindowHandle>
 #include <DTitlebar>

@@ -9,6 +9,8 @@
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QMenu>
 #include <QUuid>
 

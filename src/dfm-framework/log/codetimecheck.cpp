@@ -19,9 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "codetimecheck.h"
-
-#include "dfm-framework/log/logutils.h"
+#include <dfm-framework/log/codetimecheck.h>
+#include <dfm-framework/log/logutils.h>
 
 //全局模块使能宏
 #ifndef DPF_NO_CHECK_TIME

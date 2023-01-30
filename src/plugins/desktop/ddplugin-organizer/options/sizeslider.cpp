@@ -25,7 +25,7 @@
 #include "config/configpresenter.h"
 #include "utils/organizerutils.h"
 
-#include <dpf.h>
+#include <dfm-framework/dpf.h>
 
 #include <DIconButton>
 

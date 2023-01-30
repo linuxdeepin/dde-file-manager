@@ -19,12 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "listener/listener.h"
+#include "pluginmetaobject_p.h"
 #include "pluginmanager_p.h"
-#include "lifecycle/private/pluginmetaobject_p.h"
-#include "lifecycle/plugin.h"
-#include "lifecycle/plugincreator.h"
-#include "log/codetimecheck.h"
+
+#include <dfm-framework/listener/listener.h>
+#include <dfm-framework/lifecycle/plugin.h>
+#include <dfm-framework/lifecycle/plugincreator.h>
+#include <dfm-framework/log/codetimecheck.h>
 
 DPF_BEGIN_NAMESPACE
 

@@ -26,9 +26,9 @@
 
 #include "dfm-base/dfm_global_defines.h"
 
-#include "dpf.h"
+#include <dfm-framework/dpf.h>
 
-#include "stubext.h"
+#include <stubext.h>
 
 #include <gtest/gtest.h>
 
@@ -39,7 +39,7 @@ TEST(NormalizedMode, removeClassifier)
     NormalizedMode mode;
     CollectionModel model;
     stub_ext::StubExt stub;
-    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, [](){
+    stub.set_lamda(&ConfigPresenter::enabledTypeCategories, []() {
         return ItemCategories(0);
     });
 

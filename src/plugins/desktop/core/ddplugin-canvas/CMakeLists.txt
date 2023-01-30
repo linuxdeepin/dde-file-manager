@@ -36,6 +36,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     DFM::base
+    DFM::framework
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}
 )

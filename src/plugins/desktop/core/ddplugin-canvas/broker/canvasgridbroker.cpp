@@ -21,23 +21,21 @@
 #include "canvasgridbroker.h"
 #include "grid/canvasgrid.h"
 
-#include <dfm-framework/dpf.h>
+#include <dfm-framework/event/event.h>
 
 Q_DECLARE_METATYPE(QPoint *)
 
 using namespace ddplugin_canvas;
 
 #define CanvasGridSlot(topic, args...) \
-            dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+    dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 #define CanvasGridDisconnect(topic) \
-            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
+    dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
 
 CanvasGridBroker::CanvasGridBroker(CanvasGrid *gridPtr, QObject *parent)
-    : QObject(parent)
-    , grid(gridPtr)
+    : QObject(parent), grid(gridPtr)
 {
-
 }
 
 CanvasGridBroker::~CanvasGridBroker()
@@ -83,4 +81,3 @@ void CanvasGridBroker::tryAppendAfter(const QStringList &items, int index, const
 {
     grid->tryAppendAfter(items, index, begin);
 }
-

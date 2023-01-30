@@ -29,6 +29,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DDialog>
 #include <DRecentManager>
 #include <DDesktopServices>

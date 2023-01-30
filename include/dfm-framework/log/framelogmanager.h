@@ -20,43 +20,50 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef FILTERAPPENDER_P_H
-#define FILTERAPPENDER_P_H
+#ifndef FRAMELOGMANAGER_H
+#define FRAMELOGMANAGER_H
 
 #include <dfm-framework/dfm_framework_global.h>
-#include <dfm-framework/log/filterappender.h>
 
-#include <QDateTime>
+#include <QObject>
+#include <QScopedPointer>
+
+namespace Dtk {
+namespace Core {
+class Logger;
+}
+}
 
 DPF_BEGIN_NAMESPACE
 
-class FilterAppenderPrivate
+class FilterAppender;
+class FrameLogManagerPrivate;
+class FrameLogManager : public QObject
 {
-public:
-    explicit FilterAppenderPrivate(FilterAppender *qq);
-
-    void rollOver();
-    void computeRollOverTime();
-    void computeFrequency();
-    void removeOldFiles();
-    void setDatePatternString(const QString &datePattern);
+    Q_OBJECT
+    Q_DISABLE_COPY(FrameLogManager)
 
 public:
-    QString datePatternString;
-    FilterAppender::DatePattern frequency;
+    static FrameLogManager *instance();
 
-    QDateTime rollOverTime;
-    QString rollOverSuffix;
-    int logFilesLimit;
-    qint64 logSizeLimit;
-    mutable QMutex rollingMutex;
+    void registerConsoleAppender();
+    void registerFileAppender();
+    QString logFilePath();
+    void setlogFilePath(const QString &logFilePath);
+    void setLogFormat(const QString &format);
+    Dtk::Core::Logger *dtkLogger();
+    FilterAppender *filterAppender();
 
-    QStringList keyFilters;
-    mutable QMutex filterMutex;
+private:
+    explicit FrameLogManager(QObject *parent = nullptr);
+    ~FrameLogManager();
 
-    FilterAppender *const q;
+private:
+    QScopedPointer<FrameLogManagerPrivate> d;
 };
 
 DPF_END_NAMESPACE
 
-#endif   // FILTERAPPENDER_P_H
+#define dpfLogManager ::DPF_NAMESPACE::FrameLogManager::instance()
+
+#endif   // LOGMANAGER_H

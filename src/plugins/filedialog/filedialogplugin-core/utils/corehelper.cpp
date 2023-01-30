@@ -27,6 +27,8 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <dfm-io/dfmio_utils.h>
 
 #include <DDialog>

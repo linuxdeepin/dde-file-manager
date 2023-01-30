@@ -24,7 +24,8 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dpf.h"
+
+#include <dfm-framework/event/event.h>
 
 using namespace dfmbase;
 using namespace dfmplugin_workspace;

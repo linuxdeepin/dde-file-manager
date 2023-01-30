@@ -27,6 +27,8 @@
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/fileutils.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QUrl>
 #include <QVariant>
 #include <QItemSelectionModel>

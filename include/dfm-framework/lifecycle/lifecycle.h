@@ -22,10 +22,10 @@
 #ifndef LIFECYCLE_H
 #define LIFECYCLE_H
 
-#include "dfm-framework/lifecycle/pluginmetaobject.h"
-#include "dfm-framework/lifecycle/plugin.h"
-#include "dfm-framework/lifecycle/plugincreator.h"
-#include "dfm-framework/dfm_framework_global.h"
+#include <dfm-framework/lifecycle/pluginmetaobject.h>
+#include <dfm-framework/lifecycle/plugin.h>
+#include <dfm-framework/lifecycle/plugincreator.h>
+#include <dfm-framework/dfm_framework_global.h>
 
 #include <QString>
 #include <QObject>

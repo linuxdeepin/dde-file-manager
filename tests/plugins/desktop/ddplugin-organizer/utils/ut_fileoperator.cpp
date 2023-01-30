@@ -24,9 +24,9 @@
 
 #include "dfm-base/dfm_event_defines.h"
 
-#include "dpf.h"
+#include <dfm-framework/dpf.h>
 
-#include "stubext.h"
+#include <stubext.h>
 
 #include <gtest/gtest.h>
 

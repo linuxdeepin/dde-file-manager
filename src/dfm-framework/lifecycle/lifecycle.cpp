@@ -19,9 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "lifecycle.h"
-#include "pluginmanager.h"
-#include "pluginmetaobject.h"
+#include <dfm-framework/lifecycle/lifecycle.h>
+#include <dfm-framework/lifecycle/pluginmanager.h>
+#include <dfm-framework/lifecycle/pluginmetaobject.h>
 
 DPF_BEGIN_NAMESPACE
 namespace LifeCycle {

@@ -21,7 +21,7 @@
 #include "canvasinterface_p.h"
 #include "fileinfomodelshell.h"
 
-#include <dpf.h>
+#include <dfm-framework/dpf.h>
 
 #include <QFileInfo>
 

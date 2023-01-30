@@ -19,7 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "bookmarkeventcaller.h"
+
 #include "dfm-base/dfm_event_defines.h"
+
+#include <dfm-framework/event/event.h>
 
 #include <QUrl>
 

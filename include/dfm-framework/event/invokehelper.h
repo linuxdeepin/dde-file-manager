@@ -23,7 +23,7 @@
 #ifndef INVOKEHELPER_H
 #define INVOKEHELPER_H
 
-#include "dfm-framework/dfm_framework_global.h"
+#include <dfm-framework/dfm_framework_global.h>
 
 #include <QVariantList>
 

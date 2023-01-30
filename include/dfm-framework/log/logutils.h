@@ -22,7 +22,7 @@
 #ifndef LOGUTILS_H
 #define LOGUTILS_H
 
-#include "dfm-framework/dfm_framework_global.h"
+#include <dfm-framework/dfm_framework_global.h>
 
 #include <QString>
 #include <QDateTime>

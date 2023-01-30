@@ -21,9 +21,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "testqobject.h"
-#include "event/sequence/eventsequence.h"
 
 #include <dfm-framework/dpf.h>
+#include <dfm-framework/event/event.h>
 
 #include <gtest/gtest.h>
 

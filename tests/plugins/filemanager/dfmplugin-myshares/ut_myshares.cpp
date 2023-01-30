@@ -32,7 +32,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-#include <dfm-framework/event/channel/eventchannel.h>
+#include <dfm-framework/event/eventchannel.h>
 
 #include <gtest/gtest.h>
 

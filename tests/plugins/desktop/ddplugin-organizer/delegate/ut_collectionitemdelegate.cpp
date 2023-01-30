@@ -27,7 +27,7 @@
 
 #include "dfm-base/dfm_global_defines.h"
 
-#include "dpf.h"
+#include <dfm-framework/dpf.h>
 
 #include "stubext.h"
 
@@ -50,19 +50,19 @@ public:
     stub_ext::StubExt stub;
 };
 
-
-TEST_F(CollectionItemDelegateTest, updateItemSizeHint) {
+TEST_F(CollectionItemDelegateTest, updateItemSizeHint)
+{
 
     CollectionView view(QString("testuuid"), nullptr);
     CollectionItemDelegate obj(&view);
 
     int height = 20;
-    stub.set_lamda(&QFontMetrics::height, [&height](){
+    stub.set_lamda(&QFontMetrics::height, [&height]() {
         return height;
     });
 
     QSize icon = QSize(50, 50);
-    stub.set_lamda(&CollectionView::iconSize, [&icon](){
+    stub.set_lamda(&CollectionView::iconSize, [&icon]() {
         return icon;
     });
 
@@ -86,18 +86,16 @@ TEST_F(CollectionItemDelegateTest, paintEmblems)
     QPainter *inpainter = nullptr;
     QRectF inRect;
     QUrl inurl;
-    stub.set_lamda((QVariant (EventChannelManager::*)(const QString &, const QString &
-                                                      , QPainter *, const QRectF &, const QUrl &))
-                   &EventChannelManager::push,
-                   [&](EventChannelManager *, const QString &space, const QString &topic
-                   , QPainter *p, const QRectF &r, const QUrl &url){
-        inspace = space;
-        intopic = topic;
-        inpainter = p;
-        inRect = r;
-        inurl = url;
-        return QVariant::fromValue(true);
-    });
+    stub.set_lamda((QVariant(EventChannelManager::*)(const QString &, const QString &, QPainter *, const QRectF &, const QUrl &))
+                           & EventChannelManager::push,
+                   [&](EventChannelManager *, const QString &space, const QString &topic, QPainter *p, const QRectF &r, const QUrl &url) {
+                       inspace = space;
+                       intopic = topic;
+                       inpainter = p;
+                       inRect = r;
+                       inurl = url;
+                       return QVariant::fromValue(true);
+                   });
 
     QPainter p;
     QRectF r(10, 10, 10, 10);
@@ -120,28 +118,27 @@ TEST_F(CollectionItemDelegateTest, paintLabel)
     CollectionItemDelegate delgate(&view);
 
     bool isHighlight = true;
-    stub.set_lamda(&CollectionItemDelegatePrivate::isHighlight, [&isHighlight](){
+    stub.set_lamda(&CollectionItemDelegatePrivate::isHighlight, [&isHighlight]() {
         return isHighlight;
     });
 
-    stub.set_lamda(&CollectionModel::fileUrl, [](){
+    stub.set_lamda(&CollectionModel::fileUrl, []() {
         return QUrl::fromLocalFile("/usr");
     });
 
     bool drawHighlightText = false;
-    stub.set_lamda(&CollectionItemDelegate::drawHighlightText, [&drawHighlightText](){
+    stub.set_lamda(&CollectionItemDelegate::drawHighlightText, [&drawHighlightText]() {
         drawHighlightText = true;
     });
 
     bool drawNormlText = false;
-    stub.set_lamda(&CollectionItemDelegate::drawNormlText, [&drawNormlText](){
+    stub.set_lamda(&CollectionItemDelegate::drawNormlText, [&drawNormlText]() {
         drawNormlText = true;
     });
 
     bool ret = true;
     QUrl inurl;
-    stub.set_lamda(&CollectionItemDelegate::extendPaintText, [&ret, &inurl](
-                   QPainter *painter, const QUrl &url, QRectF *rect){
+    stub.set_lamda(&CollectionItemDelegate::extendPaintText, [&ret, &inurl](QPainter *painter, const QUrl &url, QRectF *rect) {
         inurl = url;
         return ret;
     });
@@ -165,7 +162,6 @@ TEST_F(CollectionItemDelegateTest, paintLabel)
     EXPECT_EQ(inurl, QUrl::fromLocalFile("/usr"));
     EXPECT_TRUE(drawHighlightText);
     EXPECT_FALSE(drawNormlText);
-
 
     isHighlight = false;
     drawNormlText = false;
@@ -216,7 +212,7 @@ TEST_F(CollectionItemDelegateTest, paintLabel)
 
 TEST(CollectionItemDelegate, iconLevelRange)
 {
-    QList<int> iconSizes = {32, 48, 64, 96, 128};
+    QList<int> iconSizes = { 32, 48, 64, 96, 128 };
     ASSERT_EQ(CollectionItemDelegatePrivate::kIconSizes, iconSizes);
 
     EXPECT_EQ(CollectionItemDelegate::minimumIconLevel(), 0);
@@ -229,7 +225,7 @@ TEST(CollectionItemDelegatePrivate, needExpend)
     CollectionItemDelegate obj(&view);
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&CollectionItemDelegate::textPaintRect, [](){
+    stub.set_lamda(&CollectionItemDelegate::textPaintRect, []() {
         return QRect(100, 100, 100, 200);
     });
 

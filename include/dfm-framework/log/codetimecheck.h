@@ -22,7 +22,7 @@
 #ifndef CODETIMECHECK_H
 #define CODETIMECHECK_H
 
-#include "dfm-framework/dfm_framework_global.h"
+#include <dfm-framework/dfm_framework_global.h>
 
 #ifndef DPF_NO_CHECK_TIME   //make use
 

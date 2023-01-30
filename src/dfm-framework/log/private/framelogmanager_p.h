@@ -23,8 +23,8 @@
 #ifndef FRAMELOGMANAGER_P_H
 #define FRAMELOGMANAGER_P_H
 
-#include "dfm-framework/dfm_framework_global.h"
-#include "dfm-framework/log/framelogmanager.h"
+#include <dfm-framework/dfm_framework_global.h>
+#include <dfm-framework/log/framelogmanager.h>
 
 DPF_BEGIN_NAMESPACE
 

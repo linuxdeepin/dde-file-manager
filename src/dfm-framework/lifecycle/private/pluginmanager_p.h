@@ -22,8 +22,8 @@
 #ifndef PLUGINMANAGER_P_H
 #define PLUGINMANAGER_P_H
 
-#include "dfm-framework/dfm_framework_global.h"
-#include "dfm-framework/lifecycle/pluginmetaobject.h"
+#include <dfm-framework/dfm_framework_global.h>
+#include <dfm-framework/lifecycle/pluginmetaobject.h>
 
 #include <QQueue>
 #include <QStringList>

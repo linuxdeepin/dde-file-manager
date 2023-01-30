@@ -23,9 +23,9 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include "dfm-framework/event/dispatcher/eventdispatcher.h"
-#include "dfm-framework/event/sequence/eventsequence.h"
-#include "dfm-framework/event/channel/eventchannel.h"
+#include <dfm-framework/event/eventdispatcher.h>
+#include <dfm-framework/event/eventsequence.h>
+#include <dfm-framework/event/eventchannel.h>
 
 // ====== Event API Statement ======
 // usually the namespace of the plugin

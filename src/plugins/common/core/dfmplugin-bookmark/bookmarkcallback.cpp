@@ -7,6 +7,8 @@
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QApplication>
 #include <QUrl>
 #include <QFileInfo>

@@ -23,10 +23,10 @@
 
 #include <gtest/gtest.h>
 
-#define private public
-#include "lifecycle/private/pluginmanager_p.h"
-#include "lifecycle/private/pluginmetaobject_p.h"
-#include "lifecycle/pluginmetaobject.h"
+#include "dfm-framework/lifecycle/private/pluginmanager_p.h"
+#include "dfm-framework/lifecycle/private/pluginmetaobject_p.h"
+
+#include <dfm-framework/lifecycle/pluginmetaobject.h>
 
 DPF_USE_NAMESPACE
 class UT_PluginSort : public testing::Test

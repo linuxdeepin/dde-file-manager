@@ -22,9 +22,9 @@
 #ifndef PLUGINMETAOBJECT_P_H
 #define PLUGINMETAOBJECT_P_H
 
-#include "dfm-framework/dfm_framework_global.h"
-#include "dfm-framework/lifecycle/pluginmetaobject.h"
-#include "dfm-framework/lifecycle/plugincreator.h"
+#include <dfm-framework/dfm_framework_global.h>
+#include <dfm-framework/lifecycle/pluginmetaobject.h>
+#include <dfm-framework/lifecycle/plugincreator.h>
 
 #include <QString>
 #include <QStringList>

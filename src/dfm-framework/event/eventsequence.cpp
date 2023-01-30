@@ -20,24 +20,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef PLUGINCREATOR_H
-#define PLUGINCREATOR_H
+#include <dfm-framework/event/eventsequence.h>
 
-#include "dfm-framework/dfm_framework_global.h"
-#include "dfm-framework/lifecycle/plugin.h"
+DPF_USE_NAMESPACE
 
-#include <QObject>
-
-DPF_BEGIN_NAMESPACE
-
-class PluginCreator : public QObject
+bool EventSequence::traversal()
 {
-    Q_OBJECT
+    return traversal(QVariantList());
+}
 
-public:
-    virtual QSharedPointer<Plugin> create(const QString &pluginName) = 0;
-};
+bool EventSequence::traversal(const QVariantList &params)
+{
+    for (auto seq : list) {
+        if (seq.handler(params))
+            return true;
+    }
+    return false;
+}
 
-DPF_END_NAMESPACE
+bool EventSequenceManager::unfollow(const QString &space, const QString &topic)
+{
+    Q_ASSERT(topic.startsWith(kHookStrategePrefix));
+    return unfollow(EventConverter::convert(space, topic));
+}
 
-#endif   // PLUGINCREATOR_H
+bool EventSequenceManager::unfollow(EventType type)
+{
+    QWriteLocker guard(&rwLock);
+    if (sequenceMap.contains(type))
+        return sequenceMap.remove(type) > 0;
+
+    return false;
+}

@@ -22,9 +22,9 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
-#include "dfm-framework/dfm_framework_global.h"
-#include "dfm-framework/lifecycle/plugin.h"
-#include "dfm-framework/lifecycle/pluginmetaobject.h"
+#include <dfm-framework/dfm_framework_global.h>
+#include <dfm-framework/lifecycle/plugin.h>
+#include <dfm-framework/lifecycle/pluginmetaobject.h>
 
 #include <QPluginLoader>
 #include <QSettings>

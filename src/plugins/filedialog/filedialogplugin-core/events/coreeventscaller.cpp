@@ -26,6 +26,8 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QUrl>
 
 DFMBASE_USE_NAMESPACE

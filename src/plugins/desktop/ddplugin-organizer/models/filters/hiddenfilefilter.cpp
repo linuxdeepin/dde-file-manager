@@ -24,7 +24,7 @@
 #include "base/urlroute.h"
 #include "file/local/localfileinfo.h"
 
-#include <dpf.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDebug>
 

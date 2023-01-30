@@ -20,50 +20,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef FRAMELOGMANAGER_H
-#define FRAMELOGMANAGER_H
+#ifndef PLUGINCREATOR_H
+#define PLUGINCREATOR_H
 
-#include "dfm-framework/dfm_framework_global.h"
+#include <dfm-framework/dfm_framework_global.h>
+#include <dfm-framework/lifecycle/plugin.h>
 
 #include <QObject>
-#include <QScopedPointer>
-
-namespace Dtk {
-namespace Core {
-class Logger;
-}
-}
 
 DPF_BEGIN_NAMESPACE
 
-class FilterAppender;
-class FrameLogManagerPrivate;
-class FrameLogManager : public QObject
+class PluginCreator : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(FrameLogManager)
 
 public:
-    static FrameLogManager *instance();
-
-    void registerConsoleAppender();
-    void registerFileAppender();
-    QString logFilePath();
-    void setlogFilePath(const QString &logFilePath);
-    void setLogFormat(const QString &format);
-    Dtk::Core::Logger *dtkLogger();
-    FilterAppender *filterAppender();
-
-private:
-    explicit FrameLogManager(QObject *parent = nullptr);
-    ~FrameLogManager();
-
-private:
-    QScopedPointer<FrameLogManagerPrivate> d;
+    virtual QSharedPointer<Plugin> create(const QString &pluginName) = 0;
 };
 
 DPF_END_NAMESPACE
 
-#define dpfLogManager ::DPF_NAMESPACE::FrameLogManager::instance()
-
-#endif   // LOGMANAGER_H
+#endif   // PLUGINCREATOR_H

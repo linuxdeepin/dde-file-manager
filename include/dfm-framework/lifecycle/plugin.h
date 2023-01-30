@@ -22,7 +22,7 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
-#include "dfm-framework/dfm_framework_global.h"
+#include <dfm-framework/dfm_framework_global.h>
 
 #include <QObject>
 #include <QSharedData>

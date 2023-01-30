@@ -29,6 +29,8 @@
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QVBoxLayout>
 #include <QTextEdit>
 #include <QLabel>

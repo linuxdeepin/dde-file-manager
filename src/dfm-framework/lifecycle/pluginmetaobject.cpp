@@ -19,8 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "pluginmetaobject.h"
 #include "private/pluginmetaobject_p.h"
+
+#include <dfm-framework/lifecycle/pluginmetaobject.h>
 
 #include <QDebug>
 

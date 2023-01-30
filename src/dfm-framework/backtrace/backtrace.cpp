@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "backtrace.h"
+#include <dfm-framework/backtrace/backtrace.h>
 
 #include <qlogging.h>
 #include <QCoreApplication>

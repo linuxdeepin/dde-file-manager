@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     luzhen<luzhen@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: luzhen<luzhen@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,33 +17,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef LISTENER_H
-#define LISTENER_H
+*/
+#ifndef BACKTRACE_H
+#define BACKTRACE_H
 
-#include "dfm-framework/dfm_framework_global.h"
-
-#include <QObject>
+#include <dfm-framework/dfm_framework_global.h>
 
 DPF_BEGIN_NAMESPACE
+namespace backtrace {
 
-class Listener final : public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(Listener)
+void installStackTraceHandler();
 
-public:
-    explicit Listener(QObject *parent = nullptr);
-    static Listener *instance();
-
-Q_SIGNALS:
-    void pluginInitialized(const QString &iid, const QString &name);
-    void pluginStarted(const QString &iid, const QString &name);
-    void pluginsInitialized();
-    void pluginsStarted();
-};
-
+}
 DPF_END_NAMESPACE
-#define dpfListener ::DPF_NAMESPACE::Listener::instance()
-
-#endif   // LISTENER_H
+#endif   // BACKTRACE_H

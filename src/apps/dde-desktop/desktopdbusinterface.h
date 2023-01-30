@@ -21,7 +21,7 @@
 #ifndef DESKTOPDBUSINTERFACE_H
 #define DESKTOPDBUSINTERFACE_H
 
-#include <dpf.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDBusContext>
 #include <QObject>
@@ -47,4 +47,4 @@ public slots:
 };
 
 }
-#endif // DESKTOPDBUSINTERFACE_H
+#endif   // DESKTOPDBUSINTERFACE_H

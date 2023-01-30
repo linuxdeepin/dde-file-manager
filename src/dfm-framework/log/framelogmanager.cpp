@@ -21,7 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "private/framelogmanager_p.h"
-#include "filterappender.h"
+
+#include <dfm-framework/log/filterappender.h>
 
 #include <mutex>
 

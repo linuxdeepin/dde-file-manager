@@ -23,9 +23,9 @@
 #ifndef EVENTSEQUENCE_H
 #define EVENTSEQUENCE_H
 
-#include "dfm-framework/dfm_framework_global.h"
-#include "dfm-framework/event/eventhelper.h"
-#include "dfm-framework/event/invokehelper.h"
+#include <dfm-framework/dfm_framework_global.h>
+#include <dfm-framework/event/eventhelper.h>
+#include <dfm-framework/event/invokehelper.h>
 
 #include <QMutex>
 #include <QReadWriteLock>
