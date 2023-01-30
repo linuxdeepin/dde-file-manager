@@ -116,8 +116,8 @@ ComputerDataList ComputerItemWatcher::items()
     qDebug() << "computer: [LIST] items are filtered by external plugins: " << computerItems;
     for (int i = ret.count() - 1; i >= 0; --i) {
         if (!re) {
-            //if smbbrower plugin has not filtered the protocol devices, just remove protocol devices temporarily；
-            //when hook event is ready, would go here again and re = true;
+            // if smbbrower plugin has not filtered the protocol devices, just remove protocol devices temporarily；
+            // when hook event is ready, would go here again and re = true;
             if (ret[i].url.toString().endsWith(SuffixInfo::kStashedProtocol) || ret[i].url.toString().endsWith(SuffixInfo::kProtocol))
                 ret.removeAt(i);
         } else if (!computerItems.contains(ret[i].url)) {
@@ -501,9 +501,6 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     // additem to sidebar
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool()
             || info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kProtocol;
-    if (ComputerUtils::shouldSystemPartitionHide()
-        && info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kBlock && !removable)
-        return;
 
     ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
     ContextMenuCallback contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
