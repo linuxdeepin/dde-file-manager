@@ -122,13 +122,11 @@ void IconItemDelegate::paint(QPainter *painter,
 
     oldFont = opt.font;
 
-    int backgroundMargin = kIconModeColumnPadding;
+    const QPainterPath &path = paintItemBackgroundAndGeomerty(painter, opt, index, kIconModeColumnPadding);
 
-    QPainterPath path = paintItemBackgroundAndGeomerty(painter, opt, index, backgroundMargin);
+    const QRectF &iconRect = paintItemIcon(painter, opt, index);
 
-    QRectF iconRect = paintItemIcon(painter, opt, index);
-
-    paintItemFileName(painter, iconRect, path, backgroundMargin, opt, index);
+    paintItemFileName(painter, iconRect, path, kIconModeColumnPadding, opt, index);
 
     painter->setOpacity(1);
 }
@@ -192,9 +190,9 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
 
     geometries << iconRect;
 
-    QString str = index.data(Qt::DisplayRole).toString();
+    const QString &fileName = displayFileName(index);
 
-    if (str.isEmpty()) {
+    if (fileName.isEmpty()) {
         return geometries;
     }
 
@@ -207,20 +205,13 @@ QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option
 
     QStyleOptionViewItem opt = option;
 
-    bool isSelected = parent()->isSelected(index) && opt.showDecorationSelected;
     // if has selected show all file name else show elide file name.
+    bool isSelected = parent()->isSelected(index) && opt.showDecorationSelected;
     bool singleSelected = parent()->selectedIndexsCount() < 2;
 
-    QTextLayout textLayout;
-
-    textLayout.setFont(option.font);
-    textLayout.setText(str);
-
     bool elide = (!isSelected || !singleSelected);
-    QList<QRectF> lines = drawText(index, nullptr, str, QRect(labelRect.topLeft(), QSize(labelRect.width(), INT_MAX)),
-                                   kIconModeRectRadius, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
-                                   QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
-                                   Qt::AlignCenter);
+
+    QList<QRectF> lines = calFileNameRect(fileName, labelRect.adjusted(0, 0, 0, 99999), elide ? opt.textElideMode : Qt::ElideNone);
 
     labelRect = GlobalPrivate::boundingRect(lines).toRect();
     labelRect.setTop(iconRect.bottom());
@@ -336,6 +327,13 @@ QString IconItemDelegate::displayFileName(const QModelIndex &index) const
     return str;
 }
 
+QList<QRectF> IconItemDelegate::calFileNameRect(const QString &name, const QRectF &rect, Qt::TextElideMode elideMode) const
+{
+    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(name, QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                                d->textLineHeight, Qt::AlignCenter));
+    return layout->layout(rect, elideMode);
+}
+
 void IconItemDelegate::editorFinished()
 {
     FileViewHelper *viewHelper = parent();
@@ -351,12 +349,6 @@ void IconItemDelegate::editorFinished()
         return;
     QUrl url = fileview->model()->getUrlByIndex(d->editingIndex);
     WorkspaceEventCaller::sendRenameEndEdit(windowId, url);
-}
-
-void IconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
-{
-    Q_D(const IconItemDelegate);
-    // Todo(yanghao):initTextLayout
 }
 
 void IconItemDelegate::onTriggerEdit(const QModelIndex &index)
@@ -463,28 +455,29 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
         ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
-    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
-    WorkspaceEventSequence::instance()->doPaintIconItem(kItemIconRole, url, painter, &iconRect);
+    //    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+    //    WorkspaceEventSequence::instance()->doPaintIconItem(kItemIconRole, url, painter, &iconRect, );
 
     paintEmblems(painter, iconRect, index);
 
     return iconRect;
 }
 
-void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPainterPath path, int backgroundMargin, const QStyleOptionViewItem &opt, const QModelIndex &index) const
+void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPainterPath path,
+                                         int backgroundMargin, const QStyleOptionViewItem &opt, const QModelIndex &index) const
 {
     Q_D(const IconItemDelegate);
 
     if (index == d->editingIndex)
-        return;   // 正在编辑的item，不重绘text
+        return;
 
     bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
-    if (index == d->expandedIndex && !isDragMode
-        && d->expandedItem && d->expandedItem->getIndex() == index
-        && d->expandedItem->getOption().rect == opt.rect) {
-        // fixbug65053 屏幕数据变化后，桌面展开图标的文本位置错误
-        // 被展开的item，且rect未改变时，不重绘text
-        d->expandedItem->setOption(opt);
+
+    if (index == d->expandedIndex && !isDragMode) {
+        if (d->expandedItem && d->expandedItem->getIndex() == index
+            && d->expandedItem->getOption().rect == opt.rect) {
+            d->expandedItem->setOption(opt);
+        }
         return;
     }
 
@@ -495,11 +488,6 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     labelRect.moveLeft(labelRect.left() + kIconModeTextPadding + backgroundMargin + kIconModeBackRadius / 2);
     labelRect.setBottom(path.boundingRect().toRect().bottom());
 
-    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
-
-    if (WorkspaceEventSequence::instance()->doPaintIconItem(kItemFileDisplayNameRole, url, painter, &labelRect))
-        return;
-
     //文管窗口拖拽时的字体保持白色
     if (isDragMode) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
@@ -507,7 +495,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
         painter->setPen(opt.palette.color(QPalette::Text));
     }
 
-    QString displayName = displayFileName(index);
+    const QString &displayName = displayFileName(index);
 
     // if has selected show all file name else show elide file name.
     bool singleSelected = parent()->parent()->selectedIndexCount() < 2;
@@ -516,7 +504,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     if (isSelected && singleSelected) {
         const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();
         /// init file name text
-        const QList<QRectF> &lines = drawText(index, nullptr, displayName, labelRect.adjusted(0, 0, 0, 99999), 0, QBrush(Qt::NoBrush));
+        const QList<QRectF> &lines = calFileNameRect(displayName, labelRect.adjusted(0, 0, 0, 99999), opt.textElideMode);
         qreal height = GlobalPrivate::boundingRect(lines).height();
 
         if (height > labelRect.height()) {
@@ -549,9 +537,15 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     }
 
     //图标拖拽时保持活动色
-    auto tempBackground = isDragMode ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight)) : QBrush(Qt::NoBrush);
-    drawText(index, painter, displayName, labelRect, kIconModeRectRadius, tempBackground,
-             QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
+    auto background = isDragMode ? (opt.palette.brush(QPalette::Normal, QPalette::Highlight)) : QBrush(Qt::NoBrush);
+    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                                d->textLineHeight, Qt::AlignCenter, painter));
+
+    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+    if (WorkspaceEventSequence::instance()->doPaintIconItemText(url, labelRect, painter, layout.data()))
+        return;
+
+    layout->layout(labelRect, opt.textElideMode, painter, background);
 }
 
 QSize IconItemDelegate::iconSizeByIconSizeLevel() const

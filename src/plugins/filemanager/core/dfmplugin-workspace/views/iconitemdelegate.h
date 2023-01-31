@@ -68,12 +68,10 @@ public:
     QRectF itemIconRect(const QRectF &itemRect) const override;
 
     QString displayFileName(const QModelIndex &index) const;
+    QList<QRectF> calFileNameRect(const QString &name, const QRectF &rect, Qt::TextElideMode elideMode) const;
 
 private slots:
     void editorFinished();
-
-protected:
-    virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const override;
 
 private:
     void onTriggerEdit(const QModelIndex &index);

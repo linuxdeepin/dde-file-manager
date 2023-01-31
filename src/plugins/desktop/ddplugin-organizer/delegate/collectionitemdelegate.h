@@ -61,12 +61,12 @@ public:
     QRect iconRect(const QRect &paintRect) const;
     static QRect labelRect(const QRect &paintRect, const QRect &usedRect);
     QRect textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText, bool elide) const;
+
 protected:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     static QRect paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                            QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
     static QRectF paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url);
-    static bool extendPaintText(QPainter *painter, const QUrl &url, QRectF *rect);
     void paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const;
     void drawNormlText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rText) const;
     void drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText) const;

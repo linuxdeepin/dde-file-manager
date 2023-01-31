@@ -136,41 +136,19 @@ TEST_F(CollectionItemDelegateTest, paintLabel)
         drawNormlText = true;
     });
 
-    bool ret = true;
-    QUrl inurl;
-    stub.set_lamda(&CollectionItemDelegate::extendPaintText, [&ret, &inurl](QPainter *painter, const QUrl &url, QRectF *rect) {
-        inurl = url;
-        return ret;
-    });
-
     QPainter painter;
     QRect rect(10, 10, 100, 100);
     delgate.paintLabel(&painter, QStyleOptionViewItem(), QModelIndex(), rect);
 
-    EXPECT_EQ(inurl, QUrl::fromLocalFile("/usr"));
-    EXPECT_FALSE(drawHighlightText);
-    EXPECT_FALSE(drawNormlText);
-
-    isHighlight = true;
-    drawNormlText = false;
-    drawHighlightText = false;
-    ret = false;
-    inurl.clear();
-
-    delgate.paintLabel(&painter, QStyleOptionViewItem(), QModelIndex(), rect);
-
-    EXPECT_EQ(inurl, QUrl::fromLocalFile("/usr"));
     EXPECT_TRUE(drawHighlightText);
     EXPECT_FALSE(drawNormlText);
 
     isHighlight = false;
     drawNormlText = false;
     drawHighlightText = false;
-    inurl.clear();
 
     delgate.paintLabel(&painter, QStyleOptionViewItem(), QModelIndex(), rect);
 
-    EXPECT_EQ(inurl, QUrl::fromLocalFile("/usr"));
     EXPECT_FALSE(drawHighlightText);
     EXPECT_TRUE(drawNormlText);
 }

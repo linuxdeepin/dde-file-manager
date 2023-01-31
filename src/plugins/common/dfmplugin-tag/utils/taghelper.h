@@ -14,8 +14,6 @@ class QPainter;
 
 namespace dfmplugin_tag {
 
-inline constexpr int kTagDiameter { 10 };
-
 struct TagColorDefine
 {
     QString colorName;
@@ -30,6 +28,7 @@ public:
                    const QColor &color);
 };
 
+class TagPainter;
 class TagHelper : public QObject
 {
     Q_OBJECT

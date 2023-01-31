@@ -44,6 +44,7 @@
 #include <linux/limits.h>
 
 Q_DECLARE_METATYPE(QRectF *)
+Q_DECLARE_METATYPE(dfmbase::ElideTextLayout *)
 
 QT_BEGIN_NAMESPACE
 Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed = 0);
@@ -422,6 +423,10 @@ void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionView
         // create text Layout.
         QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, &p));
 
+        // extend layout paint
+        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileUrl(index), rText, painter, layout.data()))
+            return;
+
         // elide and draw
         layout->layout(QRectF(QPoint(0, 0), QSizeF(textImage.size()) / pixelRatio), option.textElideMode, &p);
         p.end();
@@ -463,6 +468,10 @@ void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOption
         QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, painter));
         layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
 
+        // extend layout paint
+        if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileUrl(index), rText, painter, layout.data()))
+            return;
+
         // elide and draw
         layout->layout(rText, option.textElideMode, painter, background);
         painter->restore();
@@ -478,6 +487,10 @@ void CanvasItemDelegate::drawExpandText(QPainter *painter, const QStyleOptionVie
     // create text Layout.
     QScopedPointer<ElideTextLayout> layout(d->createTextlayout(index, painter));
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconRectRadius);
+
+    // extend layout paint
+    if (dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", parent()->model()->fileUrl(index), rect, painter, layout.data()))
+        return;
 
     // elide and draw
     layout->layout(rect, option.textElideMode, painter, background);
@@ -734,20 +747,10 @@ QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, c
     return rect;
 }
 
-bool CanvasItemDelegate::extendPaintText(QPainter *painter, const QUrl &url, QRectF *rect)
-{
-    const int role = Global::ItemRoles::kItemFileDisplayNameRole;
-    return dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", role, url, painter, rect);
-}
-
 void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const
 {
     // draw text
     QRectF textRect = d->availableTextRect(rLabel);
-
-    // expend painting
-    if (extendPaintText(painter, parent()->model()->fileUrl(index), &textRect))
-        return;
 
     painter->save();
     if (d->isHighlight(option)) {

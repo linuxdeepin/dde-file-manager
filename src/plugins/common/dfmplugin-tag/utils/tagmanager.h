@@ -7,6 +7,8 @@
 
 #include "dfmplugin_tag_global.h"
 
+#include "dfm-base/utils/elidetextlayout.h"
+
 #include <QObject>
 #include <QPainter>
 #include <QMap>
@@ -14,6 +16,7 @@
 
 namespace dfmplugin_tag {
 
+class TagPainter;
 class TagManager final : public QObject
 {
     Q_OBJECT
@@ -34,7 +37,7 @@ public:
     bool canTagFile(const QUrl &url) const;
     bool pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to);
     bool paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
-    bool paintIconTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
+    bool paintIconTagsHandle(const QUrl &url, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout);
     bool fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool fileDropHandleWithAction(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *action);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
@@ -85,6 +88,9 @@ private:
     QVariant transformQueryData(const QDBusVariant &var) const;
 
 private:
+    int textObjectType;
+    TagPainter *tagPainter;
+
     QMap<QString, QString> tagColorMap;   // tag--color
 };
 

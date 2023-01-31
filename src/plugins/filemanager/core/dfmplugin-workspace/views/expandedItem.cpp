@@ -22,7 +22,13 @@
 #include "expandedItem.h"
 #include "iconitemdelegate.h"
 #include "utils/itemdelegatehelper.h"
+#include "utils/fileviewhelper.h"
+#include "views/fileview.h"
 #include "views/private/delegatecommon.h"
+#include "models/filesortfilterproxymodel.h"
+#include "events/workspaceeventsequence.h"
+
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QPainter>
 #include <QDebug>
@@ -30,6 +36,7 @@
 #include <cmath>
 
 using namespace dfmplugin_workspace;
+using namespace dfmbase;
 
 ExpandedItem::ExpandedItem(dfmplugin_workspace::IconItemDelegate *d, QWidget *parent)
     : QWidget(parent),
@@ -62,26 +69,27 @@ void ExpandedItem::paintEvent(QPaintEvent *)
     pa.setPen(option.palette.color(QPalette::BrightText));
     pa.setFont(option.font);
 
-    if (!iconPixmap.isNull()) {
-        pa.drawPixmap(iconGeometry().topLeft().toPoint(), iconPixmap);
-    }
-
     if (option.text.isEmpty())
         return;
 
     const QMargins &margins = contentsMargins();
 
-    QRect labelRect(kIconModeTextPadding + margins.left(),
-                    margins.top() + iconHeight + kIconModeTextPadding + kIconModeIconSpacing,
-                    width() - kIconModeTextPadding * 2 - margins.left() - margins.right(),
-                    INT_MAX);
+    QRectF labelRect(kIconModeTextPadding + margins.left(),
+                     margins.top() + iconHeight + kIconModeTextPadding + kIconModeIconSpacing,
+                     width() - kIconModeTextPadding * 2 - margins.left() - margins.right(),
+                     INT_MAX);
 
     QString str = delegate->displayFileName(index);
 
-    const QList<QRectF> lines = delegate->drawText(index, &pa, str, labelRect, kIconModeRectRadius,
-                                                   option.palette.brush(QPalette::Normal, QPalette::Highlight),
-                                                   QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                   option.textElideMode, Qt::AlignCenter);
+    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(str, QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                                pa.fontMetrics().lineSpacing(), Qt::AlignCenter, &pa));
+    layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
+
+    const QUrl &url = delegate->parent()->parent()->model()->getUrlByIndex(index);
+    if (WorkspaceEventSequence::instance()->doPaintIconItemText(url, labelRect, &pa, layout.data()))
+        return;
+
+    const QList<QRectF> lines = layout->layout(labelRect, option.textElideMode, &pa, option.palette.brush(QPalette::Normal, QPalette::Highlight));
 
     textBounding = GlobalPrivate::boundingRect(lines).toRect();
 }
@@ -186,8 +194,7 @@ QRectF ExpandedItem::textGeometry(int width) const
                         INT_MAX);
 
         QString str = delegate->displayFileName(index);
-        const QList<QRectF> &lines = delegate->drawText(index, nullptr, str, labelRect, kIconModeRectRadius, Qt::NoBrush,
-                                                        QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
+        const QList<QRectF> &lines = delegate->calFileNameRect(str, labelRect, option.textElideMode);
 
         textBounding = GlobalPrivate::boundingRect(lines);
     }

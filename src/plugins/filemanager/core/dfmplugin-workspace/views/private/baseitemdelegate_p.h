@@ -24,6 +24,8 @@
 
 #include "dfmplugin_workspace_global.h"
 
+#include "dfm-base/utils/elidetextlayout.h"
+
 #include <QModelIndex>
 #include <QSize>
 #include <QtGlobal>
@@ -43,6 +45,7 @@ public:
     virtual ~BaseItemDelegatePrivate();
 
     void init();
+    dfmbase::ElideTextLayout *createTextlayout(const QModelIndex &index, const QPainter *painter = nullptr) const;
 
     int textLineHeight { -1 };
     QSize itemSizeHint;

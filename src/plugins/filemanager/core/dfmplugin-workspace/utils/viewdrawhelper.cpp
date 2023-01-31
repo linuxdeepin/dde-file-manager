@@ -27,6 +27,7 @@
 
 #include <QPainter>
 
+using namespace dfmbase;
 using namespace dfmbase::Global;
 using namespace GlobalPrivate;
 using namespace dfmplugin_workspace;
@@ -149,22 +150,18 @@ void ViewDrawHelper::drawDragCount(QPainter *painter, const QModelIndex &topInde
 
 void ViewDrawHelper::drawDragText(QPainter *painter, const QModelIndex &index) const
 {
-    QString fileName = view->model()->data(index, ItemRoles::kItemFileDisplayNameRole).toString();
-
-    QTextLayout layout;
-    layout.setText(fileName);
-    layout.setFont(painter->font());
     painter->setPen(Qt::white);
 
+    QString fileName = view->model()->data(index, ItemRoles::kItemFileDisplayNameRole).toString();
     QRectF boundingRect((kListDragIconSize - kListDragTextWidth) / 2, kDragIconSize, kListDragTextWidth, kListDragTextHeight);
     QTextOption::WrapMode wordWrap(QTextOption::WrapAtWordBoundaryOrAnywhere);
     Qt::TextElideMode mode(Qt::ElideLeft);
     int textLineHeight = view->fontMetrics().lineSpacing();
     int flags = Qt::AlignHCenter;
-    QColor shadowColor;
     QBrush background(view->palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight));
 
-    ItemDelegateHelper::elideText(&layout, boundingRect.size(), wordWrap, mode, textLineHeight, flags, nullptr,
-                                  painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
-                                  background);
+    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(fileName, wordWrap, textLineHeight, flags, painter));
+    layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
+
+    layout->layout(boundingRect, mode, painter, background);
 }

@@ -24,6 +24,7 @@
 #include "dfmplugin_workspace_global.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/elidetextlayout.h"
 #include <dfm-framework/dpf.h>
 
 #include <QAbstractItemView>
@@ -39,7 +40,7 @@ public:
     static WorkspaceEventSequence *instance();
 
     bool doPaintListItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
-    bool doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
+    bool doPaintIconItemText(const QUrl &url, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout);
     bool doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool doFetchSelectionModes(const QUrl &url, QList<QAbstractItemView::SelectionMode> *modes);
     bool doFetchCustomColumnRoles(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);

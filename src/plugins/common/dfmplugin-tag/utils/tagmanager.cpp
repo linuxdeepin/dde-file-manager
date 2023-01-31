@@ -11,6 +11,8 @@
 #include "files/tagfileinfo.h"
 #include "utils/anythingmonitorfilter.h"
 #include "utils/filetagcache.h"
+#include "utils/tagpainter.h"
+#include "utils/tagtextformat.h"
 #include "data/tagproxyhandle.h"
 
 #include <dfm-framework/dpf.h>
@@ -25,6 +27,7 @@
 
 #include <QMenu>
 #include <QWidgetAction>
+#include <QAbstractTextDocumentLayout>
 
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -34,7 +37,9 @@ DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
 TagManager::TagManager(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      textObjectType(QTextFormat::UserObject + 1),
+      tagPainter(new TagPainter)
 {
     initializeConnection();
 }
@@ -120,12 +125,12 @@ bool TagManager::paintListTagsHandle(int role, const QUrl &url, QPainter *painte
     return false;
 }
 
-bool TagManager::paintIconTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect)
+bool TagManager::paintIconTagsHandle(const QUrl &url, const QRectF &rect, QPainter *painter, ElideTextLayout *layout)
 {
-    if (!canTagFile(url.toString()))
-        return false;
+    Q_UNUSED(rect)
+    Q_UNUSED(painter)
 
-    if (role != kItemFileDisplayNameRole && role != kItemNameRole)
+    if (!canTagFile(url.toString()))
         return false;
 
     const auto &fileTags = FileTagCacheController::instance().getCacheFileTags(url.path());
@@ -135,11 +140,15 @@ bool TagManager::paintIconTagsHandle(int role, const QUrl &url, QPainter *painte
     const auto &tagsColor = FileTagCacheController::instance().getCacheTagsColor(fileTags);
 
     if (!tagsColor.isEmpty()) {
-        QRectF boundingRect(0, 0, (tagsColor.size() + 1) * kTagDiameter / 2, kTagDiameter);
-        boundingRect.moveCenter(rect->center());
-        boundingRect.moveTop(rect->top());
-        TagHelper::instance()->paintTags(painter, boundingRect, tagsColor.values());
-        rect->setTop(boundingRect.bottom());
+        auto document = layout->documentHandle();
+        if (document) {
+            document->documentLayout()->registerHandler(textObjectType, tagPainter);
+            QTextCursor cursor(document);
+            TagTextFormat format(textObjectType, tagsColor.values(), Qt::white);
+
+            cursor.setPosition(0);
+            cursor.insertText(QString(QChar::ObjectReplacementCharacter), format);
+        }
     }
 
     return false;

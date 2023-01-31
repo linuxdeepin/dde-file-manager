@@ -34,6 +34,7 @@
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/utils/elidetextlayout.h"
 
 #include <DListView>
 #include <DArrowRectangle>
@@ -499,20 +500,17 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         Qt::TextElideMode elideMode = Qt::ElideRight;
 
         if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
-            cGroup = QPalette::Active;
-            elideMode = Qt::ElideMiddle;
             paintFileName(painter, opt, index, rol, columnRect, d->textLineHeight, url);
         } else {
             if (!isSelected)
                 painter->setPen(opt.palette.color(cGroup, QPalette::Text));
 
             if (data.canConvert<QString>()) {
-                QString displayString = ItemDelegateHelper::elideText(index.data(rol).toString().remove('\n'), columnRect.size(),
-                                                                      QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                                      option.font, elideMode,
-                                                                      d->textLineHeight);
-
-                painter->drawText(columnRect, index.data(Qt::TextAlignmentRole).toInt(), displayString);
+                QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(index.data(rol).toString().remove('\n'),
+                                                                                            QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                                            d->textLineHeight, index.data(Qt::TextAlignmentRole).toInt(),
+                                                                                            painter));
+                layout->layout(columnRect, elideMode, painter);
             }
         }
     }
@@ -524,8 +522,13 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
     bool drawBackground = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     const QVariant &data = index.data(role);
     painter->setPen(option.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
+
+    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout("", QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                                textLineHeight, index.data(Qt::TextAlignmentRole).toInt(),
+                                                                                painter));
+
     if (data.canConvert<QString>()) {
-        QString fileName;
+        QString fileName {};
 
         if (Q_LIKELY(!FileUtils::isDesktopFile(url))) {
             do {
@@ -543,11 +546,14 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 const QString &suffix = "." + index.data(kItemFileSuffixRole).toString();
                 if (suffix == ".")
                     break;
-                fileName = ItemDelegateHelper::elideText(index.data(kItemFileBaseNameRole).toString().remove('\n'),
-                                                         QSize(static_cast<int>(rect.width()) - option.fontMetrics.horizontalAdvance(suffix), static_cast<int>(rect.height())),
-                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                         option.font, Qt::ElideRight,
-                                                         d->textLineHeight);
+
+                QStringList textList {};
+                layout->setText(index.data(kItemFileBaseNameRole).toString().remove('\n'));
+                QRectF baseNameRect = rect;
+                baseNameRect.adjust(0, 0, -option.fontMetrics.horizontalAdvance(suffix), 0);
+                layout->layout(baseNameRect, Qt::ElideRight, nullptr, Qt::NoBrush, &textList);
+
+                fileName = textList.join('\n');
 
                 bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
                 if (showSuffix)
@@ -556,13 +562,17 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
         }
 
         if (fileName.isEmpty()) {
-            fileName = ItemDelegateHelper::elideText(index.data(role).toString().remove('\n'),
-                                                     rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                     option.font, Qt::ElideRight,
-                                                     textLineHeight);
-        }
+            QStringList textList {};
+            layout->setText(index.data(kItemFileBaseNameRole).toString().remove('\n'));
+            layout->layout(rect, Qt::ElideRight, nullptr, Qt::NoBrush, &textList);
 
-        painter->drawText(rect, static_cast<int>(Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt())), fileName);
+            fileName = fileName = textList.join('\n');
+        }
+        QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(fileName,
+                                                                                    QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                                    textLineHeight, index.data(Qt::TextAlignmentRole).toInt(),
+                                                                                    painter));
+        layout->layout(rect, Qt::ElideNone, painter);
     } else {
         // Todo(yanghao&liuyangming)???
         //         drawNotStringData(option, textLineHeight, rect, data, drawBackground, painter, 0);

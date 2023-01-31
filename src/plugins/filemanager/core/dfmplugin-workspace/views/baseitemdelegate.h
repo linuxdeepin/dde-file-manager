@@ -120,18 +120,6 @@ public:
 
     virtual QRectF itemIconRect(const QRectF &itemRect) const;
 
-    virtual QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
-                                   const QRectF &boundingRect, qreal radius, const QBrush &background,
-                                   QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                   Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
-                                   const QColor &shadowColor = QColor()) const;
-
-    QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, const QString &text,
-                           const QRectF &boundingRect, qreal radius, const QBrush &background,
-                           QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,
-                           Qt::TextElideMode mode = Qt::ElideMiddle, int flags = Qt::AlignCenter,
-                           const QColor &shadowColor = QColor()) const;
-
     QModelIndex editingIndex() const;
 
     QWidget *editingIndexWidget() const;
@@ -144,7 +132,6 @@ public:
 protected:
     explicit BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *parent);
 
-    virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
     virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
 
     QList<QRectF> getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const;

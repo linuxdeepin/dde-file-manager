@@ -49,6 +49,8 @@ enum class TagActionType : uint32_t {
     kChangeFilesPaths
 };
 
+inline constexpr int kTagDiameter { 10 };
+
 namespace TagActionId {
 inline constexpr char kActTagColorListKey[] { "tag-color-list" };
 inline constexpr char kActTagAddKey[] { "tag-add" };

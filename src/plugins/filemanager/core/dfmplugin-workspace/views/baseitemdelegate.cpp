@@ -44,12 +44,6 @@ BaseItemDelegate::BaseItemDelegate(BaseItemDelegatePrivate &dd, FileViewHelper *
     dd.init();
 }
 
-void BaseItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
-{
-    Q_UNUSED(index);
-    Q_UNUSED(layout);
-}
-
 void BaseItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
 {
     QStyledItemDelegate::initStyleOption(option, index);
@@ -165,30 +159,6 @@ void BaseItemDelegate::commitDataAndCloseActiveEditor()
 QRectF BaseItemDelegate::itemIconRect(const QRectF &itemRect) const
 {
     return QRectF(itemRect);
-}
-
-QList<QRectF> BaseItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout, const QRectF &boundingRect, qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
-{
-    initTextLayout(index, layout);
-
-    QList<QRectF> boundingRegion;
-
-    ItemDelegateHelper::elideText(layout, boundingRect.size(), wordWrap, mode, d_func()->textLineHeight, flags, nullptr,
-                                  painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
-                                  background, radius, &boundingRegion);
-    return boundingRegion;
-}
-
-QList<QRectF> BaseItemDelegate::drawText(const QModelIndex &index, QPainter *painter, const QString &text, const QRectF &boundingRect, qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
-{
-    QTextLayout layout;
-
-    layout.setText(text);
-
-    if (painter)
-        layout.setFont(painter->font());
-
-    return drawText(index, painter, &layout, boundingRect, radius, background, wordWrap, mode, flags, shadowColor);
 }
 
 FileViewHelper *BaseItemDelegate::parent() const

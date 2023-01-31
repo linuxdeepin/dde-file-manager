@@ -31,6 +31,7 @@ Q_DECLARE_METATYPE(QRectF *)
 Q_DECLARE_METATYPE(QPainter *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QAbstractItemView::SelectionMode> *)
+Q_DECLARE_METATYPE(dfmbase::ElideTextLayout *)
 
 DPF_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -49,9 +50,9 @@ bool WorkspaceEventSequence::doPaintListItem(int role, const QUrl &url, QPainter
     return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintListItem", role, url, painter, rect);
 }
 
-bool WorkspaceEventSequence::doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect)
+bool WorkspaceEventSequence::doPaintIconItemText(const QUrl &url, const QRectF &rect, QPainter *painter, dfmbase::ElideTextLayout *layout)
 {
-    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintIconItem", role, url, painter, rect);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_Delegate_PaintIconItem", url, rect, painter, layout);
 }
 
 bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)

@@ -28,13 +28,13 @@
 #include <QApplication>
 #include <QTextCodec>
 #include <QPainterPath>
-#include <private/qtextengine_p.h>
 
 #include <cmath>
 
 #define CEIL(x) (static_cast<int>(std::ceil(x)))
 
 using namespace dfmplugin_workspace;
+using namespace dfmbase;
 
 /*!
  * \brief getIconPixmap 获取icon的pixmap
@@ -80,17 +80,6 @@ void ItemDelegateHelper::paintIcon(QPainter *painter, const QIcon &icon, const Q
         x += (rect.size().width() - w) / 2.0;
 
     painter->drawPixmap(qRound(x), qRound(y), px);
-}
-
-QString ItemDelegateHelper::elideText(const QString &text, const QSizeF &size, QTextOption::WrapMode wordWrap, const QFont &font, Qt::TextElideMode mode, qreal lineHeight, qreal flags)
-{
-    QStringList lines;
-    QTextLayout textLayout(text);
-
-    textLayout.setFont(font);
-    elideText(&textLayout, size, wordWrap, mode, lineHeight, static_cast<int>(flags), &lines);
-
-    return lines.join('\n');
 }
 
 void ItemDelegateHelper::drawBackground(const qreal &backgroundRadius, const QRectF &rect, QRectF &lastLineRect, const QBrush &backgroundBrush, QPainter *painter)
@@ -149,93 +138,6 @@ void ItemDelegateHelper::drawBackground(const qreal &backgroundRadius, const QRe
     painter->setOpacity(painterOpacity);
 }
 
-void ItemDelegateHelper::elideText(QTextLayout *layout, const QSizeF &size, QTextOption::WrapMode wordWrap,
-                                   Qt::TextElideMode mode, qreal lineHeight, int flags, QStringList *lines,
-                                   QPainter *painter, QPointF offset, const QColor &shadowColor, const QPointF &shadowOffset,
-                                   const QBrush &background, qreal backgroundRadius, QList<QRectF> *boundingRegion)
-{
-    qreal height = 0;
-    bool drawShadow = shadowColor.isValid();
-
-    QString text = layout->engine()->hasFormats() ? layout->engine()->block.text() : layout->text();
-    QTextOption &textOption = *const_cast<QTextOption *>(&layout->textOption());
-
-    textOption.setWrapMode(wordWrap);
-
-    if (flags & Qt::AlignRight)
-        textOption.setAlignment(Qt::AlignRight);
-    else if (flags & Qt::AlignHCenter)
-        textOption.setAlignment(Qt::AlignHCenter);
-
-    if (painter) {
-        textOption.setTextDirection(painter->layoutDirection());
-        layout->setFont(painter->font());
-    } else {
-        // dont paint
-        layout->engine()->ignoreBidi = true;
-    }
-
-    layout->beginLayout();
-
-    QTextLine line = layout->createLine();
-    QRectF lastLineRect;
-    while (line.isValid()) {
-        height += lineHeight;
-        if (height + lineHeight > size.height()) {
-            const QString &endString = layout->engine()->elidedText(mode, qRound(size.width()), flags, line.textStart());
-
-            layout->endLayout();
-            layout->setText(endString);
-
-            if (layout->engine()->block.docHandle())
-                const_cast<QTextDocument *>(layout->engine()->block.document())->setPlainText(endString);
-
-            textOption.setWrapMode(QTextOption::NoWrap);
-            layout->beginLayout();
-            line = layout->createLine();
-            line.setLineWidth(size.width() - 1);
-            text = endString;
-        } else {
-            line.setLineWidth(size.width());
-        }
-
-        line.setPosition(offset);
-
-        const QRectF rect = QRectF(line.naturalTextRect().topLeft(), QSizeF(line.naturalTextRect().width(), lineHeight));
-
-        if (painter) {
-            if (background.style() != Qt::NoBrush)
-                drawBackground(backgroundRadius, rect, lastLineRect, background, painter);
-
-            if (drawShadow) {
-                const QPen pen = painter->pen();
-
-                painter->setPen(shadowColor);
-                line.draw(painter, shadowOffset);
-                // restore
-                painter->setPen(pen);
-            }
-
-            line.draw(painter, QPointF(0, 0));
-        }
-
-        if (boundingRegion)
-            boundingRegion->append(rect);
-
-        offset.setY(offset.y() + lineHeight);
-
-        if (lines)
-            lines->append(text.mid(line.textStart(), line.textLength()));
-
-        if (height + lineHeight > size.height())
-            break;
-
-        line = layout->createLine();
-    }
-
-    layout->endLayout();
-}
-
 void ItemDelegateHelper::hideTooltipImmediately()
 {
     QWidgetList qwl = QApplication::topLevelWidgets();
@@ -244,4 +146,21 @@ void ItemDelegateHelper::hideTooltipImmediately()
             qw->close();
         }
     }
+}
+
+ElideTextLayout *ItemDelegateHelper::createTextLayout(const QString &name, QTextOption::WrapMode wordWrap,
+                                                      qreal lineHeight, int alignmentFlag, QPainter *painter)
+{
+    ElideTextLayout *layout = new ElideTextLayout(name);
+
+    layout->setAttribute(ElideTextLayout::kWrapMode, wordWrap);
+    layout->setAttribute(ElideTextLayout::kLineHeight, lineHeight);
+    layout->setAttribute(ElideTextLayout::kAlignment, alignmentFlag);
+
+    if (painter) {
+        layout->setAttribute(ElideTextLayout::kFont, painter->font());
+        layout->setAttribute(ElideTextLayout::kTextDirection, painter->layoutDirection());
+    }
+
+    return layout;
 }

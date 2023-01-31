@@ -69,7 +69,6 @@ protected:
     static QRect paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                            QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);
     static QRectF paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url);
-    static bool extendPaintText(QPainter *painter, const QUrl &url, QRectF *rect);
     void paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const;
     void drawNormlText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &rText) const;
     void drawHighlightText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText) const;
