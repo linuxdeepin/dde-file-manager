@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "private/templatemenuscene_p.h"
-#include "templatemenu.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_menu_defines.h"
@@ -19,19 +18,27 @@ DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *TemplateMenuCreator::create()
 {
-    return new TemplateMenuScene();
+    std::call_once(loadFlag, [this]() {
+        templateMenu = new TemplateMenu(this);
+        templateMenu->loadTemplateFile();
+        qInfo() << "template menus *.* loaded.";
+    });
+
+    return new TemplateMenuScene(templateMenu);
 }
 
-TemplateMenuScenePrivate::TemplateMenuScenePrivate(AbstractMenuScene *qq)
+TemplateMenuScenePrivate::TemplateMenuScenePrivate(TemplateMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    templateActions = TemplateMenu::instance()->actionList();
+
 }
 
-TemplateMenuScene::TemplateMenuScene(QObject *parent)
+TemplateMenuScene::TemplateMenuScene(TemplateMenu *menu, QObject *parent)
     : AbstractMenuScene(parent),
       d(new TemplateMenuScenePrivate(this))
 {
+    Q_ASSERT(menu);
+    d->templateActions = menu->actionList();
 }
 
 QString TemplateMenuScene::name() const

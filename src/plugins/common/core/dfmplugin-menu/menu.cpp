@@ -207,9 +207,6 @@ void MenuHandle::createSubscene(AbstractSceneCreator *creator, AbstractMenuScene
 
 void Menu::initialize()
 {
-    CustomParserIns->delayRefresh();
-    OemMenu::instance()->loadDesktopFile();
-    TemplateMenu::instance()->loadTemplateFile();
     handle = new MenuHandle();
     handle->init();
 }

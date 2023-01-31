@@ -6,19 +6,18 @@
 #define TEMPLATEMENUSCENE_P_H
 
 #include "templatemenuscene/templatemenuscene.h"
+#include "templatemenuscene/templatemenu.h"
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
 namespace dfmplugin_menu {
-DFMBASE_USE_NAMESPACE
 
-class TemplateMenuScenePrivate : public AbstractMenuScenePrivate
+class TemplateMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
     Q_OBJECT
 public:
-    friend class TemplateMenuScene;
-    explicit TemplateMenuScenePrivate(AbstractMenuScene *qq);
-
+    explicit TemplateMenuScenePrivate(TemplateMenuScene *qq);
+public:
     QList<QAction *> templateActions;
 };
 

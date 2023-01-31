@@ -9,6 +9,7 @@
 #include "file/local/localfileinfo.h"
 
 #include <dfm-io/dfmio_utils.h>
+
 #include <DDesktopEntry>
 
 #include <QDir>
@@ -121,15 +122,10 @@ void TemplateMenuPrivate::traverseFolderToCreateActions(const QString &path, boo
     }
 }
 
-TemplateMenu *TemplateMenu::instance()
-{
-    static TemplateMenu ins;
-    return &ins;
-}
-
 TemplateMenu::TemplateMenu(QObject *parent)
     : QObject(parent), d(new TemplateMenuPrivate(this))
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
 }
 
 TemplateMenu::~TemplateMenu()

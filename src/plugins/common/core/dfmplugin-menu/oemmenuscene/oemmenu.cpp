@@ -65,11 +65,6 @@ static const char *const kMultiFileDirs = "MultiFileDirs";
 static const char *const kCommandKey = "Exec";
 static const char *const kCommandArg[] = { "%p", "%f", "%F", "%u", "%U" };
 
-class GlobalOemMenu : public OemMenu
-{
-};
-Q_GLOBAL_STATIC(GlobalOemMenu, globalOemMenu)
-
 OemMenuPrivate::OemMenuPrivate(OemMenu *qq)
     : q(qq)
 {
@@ -411,15 +406,11 @@ void OemMenuPrivate::appendParentMineType(const QStringList &parentmimeTypes, QS
 OemMenu::OemMenu(QObject *parent)
     : QObject(parent), d(new OemMenuPrivate(this))
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
 }
 
 OemMenu::~OemMenu()
 {
-}
-
-OemMenu *OemMenu::instance()
-{
-    return globalOemMenu;
 }
 
 void OemMenu::loadDesktopFile()

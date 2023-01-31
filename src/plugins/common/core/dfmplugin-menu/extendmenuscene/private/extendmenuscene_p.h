@@ -23,6 +23,7 @@
 
 #include "extendmenuscene/extendmenuscene.h"
 #include "extendmenuscene/extendmenu/dcustomactiondefine.h"
+#include "extendmenuscene/extendmenu/dcustomactionparser.h"
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
@@ -31,12 +32,12 @@ namespace dfmplugin_menu {
 class ExtendMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
 public:
-    friend class FileOperatorMenuScene;
     explicit ExtendMenuScenePrivate(ExtendMenuScene *qq);
     void menuVisiableControl(QMenu *parent);
-
     QList<QAction *> childActions(QAction *action);
 
+public:
+    DCustomActionParser *customParser = nullptr;
     QList<QAction *> extendActions;
     QList<QAction *> extendChildActions;
 

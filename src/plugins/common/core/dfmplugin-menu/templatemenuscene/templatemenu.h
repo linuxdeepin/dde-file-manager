@@ -16,15 +16,11 @@ class TemplateMenu : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(TemplateMenu)
 public:
-    static TemplateMenu *instance();
+    explicit TemplateMenu(QObject *parent = nullptr);
     ~TemplateMenu();
 
     void loadTemplateFile();
     QList<QAction *> actionList();
-
-protected:
-    explicit TemplateMenu(QObject *parent = nullptr);
-
 private:
     QScopedPointer<TemplateMenuPrivate> d;
 };

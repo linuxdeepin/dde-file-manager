@@ -26,8 +26,10 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-namespace dfmplugin_menu {
+#include <mutex>
 
+namespace dfmplugin_menu {
+class DCustomActionParser;
 class ExtendMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
@@ -36,13 +38,16 @@ public:
         return "ExtendMenu";
     }
     DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
+protected:
+    DCustomActionParser *customParser = nullptr;
+    std::once_flag loadFlag;
 };
 
 class ExtendMenuScenePrivate;
 class ExtendMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
 public:
-    explicit ExtendMenuScene(QObject *parent = nullptr);
+    explicit ExtendMenuScene(DCustomActionParser *parser, QObject *parent = nullptr);
     QString name() const override;
     bool initialize(const QVariantHash &params) override;
     AbstractMenuScene *scene(QAction *action) const override;

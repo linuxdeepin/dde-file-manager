@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "private/oemmenuscene_p.h"
-#include "oemmenu.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -36,7 +35,13 @@ DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *OemMenuCreator::create()
 {
-    return new OemMenuScene();
+    std::call_once(loadFlag, [this]() {
+        oemMenu = new OemMenu(this);
+        oemMenu->loadDesktopFile();
+        qInfo() << "oem menus *.desktop loaded.";
+    });
+
+    return new OemMenuScene(oemMenu);
 }
 
 OemMenuScenePrivate::OemMenuScenePrivate(OemMenuScene *qq)
@@ -59,10 +64,12 @@ QList<QAction *> OemMenuScenePrivate::childActions(QAction *action)
     return actions;
 }
 
-OemMenuScene::OemMenuScene(QObject *parent)
+OemMenuScene::OemMenuScene(OemMenu *oem, QObject *parent)
     : AbstractMenuScene(parent),
       d(new OemMenuScenePrivate(this))
 {
+    Q_ASSERT(oem);
+    d->oemMenu = oem;
 }
 
 QString OemMenuScene::name() const
@@ -115,9 +122,9 @@ bool OemMenuScene::create(QMenu *parent)
     d->oemChildActions.clear();
 
     if (d->isEmptyArea)
-        d->oemActions = OemMenu::instance()->emptyActions(d->currentDir, d->onDesktop);
+        d->oemActions = d->oemMenu->emptyActions(d->currentDir, d->onDesktop);
     else
-        d->oemActions = OemMenu::instance()->normalActions(d->selectFiles, d->onDesktop);
+        d->oemActions = d->oemMenu->normalActions(d->selectFiles, d->onDesktop);
 
     for (auto action : d->oemActions) {
         parent->addAction(action);
@@ -146,7 +153,7 @@ bool OemMenuScene::triggered(QAction *action)
     if (!d->oemActions.contains(action) && !d->oemChildActions.contains(action))
         return AbstractMenuScene::triggered(action);
 
-    QPair<QString, QStringList> runable = OemMenu::instance()->makeCommand(action, d->currentDir, d->focusFile, d->selectFiles);
+    QPair<QString, QStringList> runable = d->oemMenu->makeCommand(action, d->currentDir, d->focusFile, d->selectFiles);
     if (!runable.first.isEmpty())
         return UniversalUtils::runCommand(runable.first, runable.second);
 

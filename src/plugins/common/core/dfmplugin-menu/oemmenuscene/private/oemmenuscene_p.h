@@ -22,6 +22,7 @@
 #define OEMMENUSCENE_P_H
 
 #include "oemmenuscene/oemmenuscene.h"
+#include "oemmenuscene/oemmenu.h"
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
@@ -30,10 +31,12 @@ namespace dfmplugin_menu {
 class OemMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
 public:
-    friend class FileOperatorMenuScene;
     explicit OemMenuScenePrivate(OemMenuScene *qq);
 
     QList<QAction *> childActions(QAction *action);
+
+public:
+    OemMenu *oemMenu = nullptr;
 
     QList<QAction *> oemActions;
     QList<QAction *> oemChildActions;

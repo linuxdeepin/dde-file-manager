@@ -26,14 +26,10 @@
 #include <QDebug>
 #include <QSettings>
 #include <QFileSystemWatcher>
+#include <QApplication>
+#include <QThread>
 
 using namespace dfmplugin_menu;
-
-class GlobalDCustomActionParser : public DCustomActionParser
-{
-};
-Q_GLOBAL_STATIC(GlobalDCustomActionParser, globalDCustomActionParser)
-
 using namespace DCustomActionDefines;
 
 /*!
@@ -107,6 +103,8 @@ RegisterCustomFormat::RegisterCustomFormat()
 DCustomActionParser::DCustomActionParser(QObject *parent)
     : QObject(parent)
 {
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+
     //获取注册的自定义方式
     customFormat = RegisterCustomFormat::instance().customFormat();
     fileWatcher = new QFileSystemWatcher;
@@ -124,11 +122,6 @@ DCustomActionParser::DCustomActionParser(QObject *parent)
     connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &DCustomActionParser::delayRefresh);
 
     initHash();
-}
-
-DCustomActionParser *DCustomActionParser::instance()
-{
-    return globalDCustomActionParser;
 }
 
 DCustomActionParser::~DCustomActionParser()
@@ -568,14 +561,12 @@ void DCustomActionParser::delayRefresh()
     qDebug() << "create refresh timer" << this;
     refreshTimer = new QTimer;
     connect(refreshTimer, &QTimer::timeout, this, [this]() {
-        actionEntry.clear();
-
         refreshTimer->stop();
         refreshTimer->deleteLater();
         refreshTimer = nullptr;
 
         qInfo() << "loading custom menus" << this;
-        loadDir(menuPaths);
+        refresh();
     });
     refreshTimer->start(300);
 }

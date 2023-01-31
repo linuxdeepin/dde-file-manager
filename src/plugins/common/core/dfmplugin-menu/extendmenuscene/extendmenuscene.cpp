@@ -20,7 +20,6 @@
  */
 #include "private/extendmenuscene_p.h"
 #include "extendmenuscene/extendmenu/dcustomactionbuilder.h"
-#include "extendmenuscene/extendmenu/dcustomactionparser.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -36,7 +35,13 @@ DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *ExtendMenuCreator::create()
 {
-    return new ExtendMenuScene();
+    std::call_once(loadFlag, [this]() {
+        customParser = new DCustomActionParser(this);
+        customParser->refresh();
+        qInfo() << "custom menus *.conf loaded.";
+    });
+
+    return new ExtendMenuScene(customParser);
 }
 
 ExtendMenuScenePrivate::ExtendMenuScenePrivate(ExtendMenuScene *qq)
@@ -59,10 +64,12 @@ QList<QAction *> ExtendMenuScenePrivate::childActions(QAction *action)
     return actions;
 }
 
-ExtendMenuScene::ExtendMenuScene(QObject *parent)
-    : AbstractMenuScene(parent),
-      d(new ExtendMenuScenePrivate(this))
+ExtendMenuScene::ExtendMenuScene(DCustomActionParser *parser, QObject *parent)
+    : AbstractMenuScene(parent)
+    , d(new ExtendMenuScenePrivate(this))
 {
+    Q_ASSERT(parser);
+    d->customParser = parser;
 }
 
 QString ExtendMenuScene::name() const
@@ -116,7 +123,7 @@ bool ExtendMenuScene::create(QMenu *parent)
     d->cacheLocateActions.clear();
     d->cacheActionsSeparator.clear();
 
-    const QList<DCustomActionEntry> &rootEntry = CustomParserIns->getActionFiles(d->onDesktop);
+    const QList<DCustomActionEntry> &rootEntry = d->customParser->getActionFiles(d->onDesktop);
 
     qDebug() << "extendCustomMenu " << !d->isEmptyArea << d->currentDir << d->focusFile << "files" << d->selectFiles.size() << "entrys" << rootEntry.size();
 

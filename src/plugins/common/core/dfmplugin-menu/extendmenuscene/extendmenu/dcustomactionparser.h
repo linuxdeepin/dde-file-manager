@@ -32,6 +32,8 @@
 #include <QIODevice>
 #include <QSettings>
 
+#include <mutex>
+
 class QFileSystemWatcher;
 
 namespace dfmplugin_menu {
@@ -55,17 +57,20 @@ class DCustomActionParser : public QObject
 {
     Q_OBJECT
 public:
-    static DCustomActionParser *instance();
+    explicit DCustomActionParser(QObject *parent = nullptr);
     ~DCustomActionParser();
 
     QList<DCustomActionEntry> getActionFiles(bool onDesktop);
 
-public slots:
+    inline void refresh() {
+        actionEntry.clear();
+        loadDir(menuPaths);
+    }
+protected slots:
     void delayRefresh();
 
 signals:
     void customMenuChanged();
-
 private:
     bool loadDir(const QStringList &dirPaths);
     bool parseFile(QSettings &actionSetting);
@@ -80,9 +85,6 @@ private:
     bool comboPosForTopAction(QSettings &actionSetting, const QString &group, DCustomActionData &act);
     static bool isActionShouldShow(const QStringList &notShowInList, bool onDesktop);
 
-protected:
-    explicit DCustomActionParser(QObject *parent = nullptr);
-
 private:
     QTimer *refreshTimer = nullptr;
     QStringList menuPaths;
@@ -96,8 +98,6 @@ private:
     int hierarchyNum = 0;
     int topActionCount = 0;
 };
-
-#define CustomParserIns DPMENU_NAMESPACE::DCustomActionParser::instance()
 
 }
 

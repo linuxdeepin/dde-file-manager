@@ -70,6 +70,7 @@ public:
     QStringList urlListToString(const QList<QUrl> &files) const;
     void appendParentMineType(const QStringList &parentmimeTypes, QStringList &mimeTypes) const;
 
+public:
     QSharedPointer<QTimer> delayedLoadFileTimer;
     QSharedPointer<QObject> menuActionHolder;
     QMap<QString, QList<QAction *>> actionListByType;

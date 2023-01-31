@@ -10,8 +10,11 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
+#include <mutex>
+
 namespace dfmplugin_menu {
 
+class TemplateMenu;
 class TemplateMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
@@ -20,6 +23,9 @@ public:
         return "TemplateMenu";
     }
     DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
+protected:
+    TemplateMenu *templateMenu = nullptr;
+    std::once_flag loadFlag;
 };
 
 class TemplateMenuScenePrivate;
@@ -27,7 +33,7 @@ class TemplateMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
     Q_OBJECT
 public:
-    explicit TemplateMenuScene(QObject *parent = nullptr);
+    explicit TemplateMenuScene(TemplateMenu *menu, QObject *parent = nullptr);
     QString name() const override;
     bool initialize(const QVariantHash &params) override;
     AbstractMenuScene *scene(QAction *action) const override;

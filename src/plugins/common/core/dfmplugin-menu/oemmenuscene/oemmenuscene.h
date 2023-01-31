@@ -25,9 +25,11 @@
 
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
+#include <mutex>
 
 namespace dfmplugin_menu {
 
+class OemMenu;
 class OemMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
@@ -36,13 +38,16 @@ public:
         return "OemMenu";
     }
     DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
+protected:
+    OemMenu *oemMenu = nullptr;
+    std::once_flag loadFlag;
 };
 
 class OemMenuScenePrivate;
 class OemMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
 public:
-    explicit OemMenuScene(QObject *parent = nullptr);
+    explicit OemMenuScene(OemMenu *oem, QObject *parent = nullptr);
     QString name() const override;
     bool initialize(const QVariantHash &params) override;
     AbstractMenuScene *scene(QAction *action) const override;

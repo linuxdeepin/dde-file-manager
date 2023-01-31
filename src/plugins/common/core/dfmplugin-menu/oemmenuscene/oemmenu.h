@@ -34,16 +34,13 @@ class OemMenu : public QObject
 {
     Q_OBJECT
 public:
-    static OemMenu *instance();
+    explicit OemMenu(QObject *parent = nullptr);
     ~OemMenu();
 
     void loadDesktopFile();
     QList<QAction *> emptyActions(const QUrl &currentDir, bool onDesktop = false);
     QList<QAction *> normalActions(const QList<QUrl> &files, bool onDesktop = false);
     QPair<QString, QStringList> makeCommand(const QAction *action, const QUrl &dir, const QUrl &foucs, const QList<QUrl> &files);
-
-protected:
-    explicit OemMenu(QObject *parent = nullptr);
 
 private:
     QScopedPointer<OemMenuPrivate> d;
