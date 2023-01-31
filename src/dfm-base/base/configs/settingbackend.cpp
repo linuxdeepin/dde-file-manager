@@ -19,10 +19,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "settingbackend.h"
 #include "private/settingbackend_p.h"
+#include "dconfig/dconfigmanager.h"
 
 #include <QDebug>
 
@@ -73,6 +74,11 @@ SettingBackend::SettingBackend(QObject *parent)
 
     connect(Application::instance(), &Application::appAttributeEdited, this, &SettingBackend::onValueChanged);
     connect(Application::instance(), &Application::genericAttributeEdited, this, &SettingBackend::onValueChanged);
+
+    addSettingAccessor(
+            "advance.other.extend_file_name",
+            [] { return DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs"); },
+            [](const QVariant &var) { DConfigManager::instance()->setValue(kDefaultCfgPath, "dfm.mount.dlnfs", var); });
 }
 
 SettingBackend::~SettingBackend()

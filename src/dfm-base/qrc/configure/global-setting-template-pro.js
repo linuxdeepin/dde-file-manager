@@ -446,6 +446,13 @@
                             "text": "Show file system on disk icon",
                             "type": "checkbox",
                             "default": false
+                        },
+                        {
+                            "key": "extend_file_name",
+                            "text": "Extend filename characters",
+                            "message": "After opening, the file name will be expanded to support 255 Chinese characters, which may cause slow loading of the file directory or freeze the operation",
+                            "type": "checkBoxWithMessage",
+                            "default": false
                         }
                     ]
                 }

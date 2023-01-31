@@ -89,6 +89,17 @@
             "description":"该配置项用于控制是否常驻显示Samba的挂载入口，即便其没有挂载",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.mount.dlnfs": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Extend filename charactors",
+            "name[zh_CN]":"扩展文件名字符数",
+            "description[zh_CN]":"开启后文件名将扩展支持255个中文字符，可能会导致文件目录加载缓慢或操作卡顿。",
+            "description":"开启后文件名将扩展支持255个中文字符，可能会导致文件目录加载缓慢或操作卡顿。",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }

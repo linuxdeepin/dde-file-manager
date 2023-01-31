@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "settingdialog.h"
 #include "controls/checkboxwithmessage.h"
@@ -187,7 +187,6 @@ void SettingDialog::loadSettings(const QString &templateFile)
 
 QPointer<QCheckBox> SettingDialog::kAutoMountCheckBox = nullptr;
 QPointer<QCheckBox> SettingDialog::kAutoMountOpenCheckBox = nullptr;
-QPointer<QCheckBox> SettingDialog::kMergeSmbCheckBox = nullptr;
 QSet<QString> SettingDialog::kHiddenSettingItems {};
 
 SettingDialog::SettingDialog(QWidget *parent)
@@ -310,26 +309,22 @@ QPair<QWidget *, QWidget *> SettingDialog::createCheckBoxWithMessage(QObject *op
     const QString &text = option->data("text").toString();
     const QString &message = option->data("message").toString();
 
-    CheckBoxWithMessage *checkBoxWithMsg = new CheckBoxWithMessage;
-    checkBoxWithMsg->setText(qApp->translate("QObject", text.toStdString().c_str()));
-    checkBoxWithMsg->setMessage(qApp->translate("QObject", message.toStdString().c_str()));
+    CheckBoxWithMessage *cb = new CheckBoxWithMessage;
+    cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()),
+                       qApp->translate("QObject", message.toStdString().c_str()));
 
-    SettingDialog::kMergeSmbCheckBox = checkBoxWithMsg->getCheckBox();
+    cb->setChecked(option->value().toBool());
 
-    checkBoxWithMsg->getCheckBox()->setChecked(option->value().toBool());
-
-    QObject::connect(checkBoxWithMsg->getCheckBox(), &QCheckBox::stateChanged, option, [=](int state) {
+    QObject::connect(cb, &CheckBoxWithMessage::stateChanged, option, [=](int state) {
         if (state == 0)
             option->setValue(false);
         else if (state == 2)
             option->setValue(true);
     });
 
-    QObject::connect(option, &DSettingsOption::valueChanged, checkBoxWithMsg->getCheckBox(), [=](QVariant value) {
-        checkBoxWithMsg->getCheckBox()->setChecked(value.toBool());
-    });
+    QObject::connect(option, &DSettingsOption::valueChanged, cb, [=](QVariant value) { cb->setChecked(value.toBool()); });
 
-    return qMakePair(checkBoxWithMsg, nullptr);
+    return qMakePair(cb, nullptr);
 }
 
 void SettingDialog::mountCheckBoxStateChangedHandle(DSettingsOption *option, int state)

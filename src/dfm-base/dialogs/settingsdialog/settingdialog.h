@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef DFMSETTINGDIALOG_H
 #define DFMSETTINGDIALOG_H
@@ -60,7 +60,6 @@ private:
 private:
     static QPointer<QCheckBox> kAutoMountCheckBox;
     static QPointer<QCheckBox> kAutoMountOpenCheckBox;
-    static QPointer<QCheckBox> kMergeSmbCheckBox;
     static QSet<QString> kHiddenSettingItems;
     QPointer<DSettings> dtkSettings;
 };

@@ -11,43 +11,37 @@
 CheckBoxWithMessage::CheckBoxWithMessage(QWidget *parent)
     : QWidget(parent)
 {
-    widget = new QWidget(this);
+    auto widget = new QWidget(this);
     widget->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setMargin(0);
+    setLayout(layout);
+
     checkBox = new QCheckBox(widget);
     layout->addWidget(checkBox);
+
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setContentsMargins(30, 0, 0, 0);
+    layout->addLayout(hLayout);
+
     QPalette paletteText;
     QColor color("#526A7F");
     paletteText.setColor(QPalette::Text, color);
-    message = new QLabel(widget);
-    message->setPalette(paletteText);
-    QFontMetrics metricsLabel(widget->font());
-    if (metricsLabel.width(message->text()) > 380) {
-        message->setToolTip(message->text());
-        QString text = metricsLabel.elidedText(text, Qt::ElideRight, 380);
-        message->setText(text);
-    } else {
-        message->setToolTip(QString());
-    }
-    hLayout->addWidget(message);
-    layout->addLayout(hLayout);
-    setLayout(layout);
+    msgLabel = new QLabel(widget);
+    msgLabel->setPalette(paletteText);
+    msgLabel->setWordWrap(true);
+    hLayout->addWidget(msgLabel);
+
+    connect(checkBox, &QCheckBox::stateChanged, this, &CheckBoxWithMessage::stateChanged);
 }
 
-void CheckBoxWithMessage::setText(const QString &text)
+void CheckBoxWithMessage::setDisplayText(const QString &checkText, const QString &msg)
 {
-    checkBox->setText(text);
+    checkBox->setText(checkText);
+    msgLabel->setText(msg);
 }
 
-void CheckBoxWithMessage::setMessage(const QString &msg)
+void CheckBoxWithMessage::setChecked(bool checked)
 {
-    message->setText(msg);
-}
-
-QCheckBox *CheckBoxWithMessage::getCheckBox()
-{
-    return checkBox;
+    checkBox->setChecked(checked);
 }

@@ -14,14 +14,15 @@ class CheckBoxWithMessage : public QWidget
     Q_OBJECT
 public:
     explicit CheckBoxWithMessage(QWidget *parent = nullptr);
-    void setText(const QString &text);
-    void setMessage(const QString &msg);
-    QCheckBox *getCheckBox();
+    void setDisplayText(const QString &checkText, const QString &msg);
+    void setChecked(bool checked);
+
+Q_SIGNALS:
+    void stateChanged(int);
 
 private:
-    QWidget *widget = nullptr;
     QCheckBox *checkBox = nullptr;
-    QLabel *message = nullptr;
+    QLabel *msgLabel = nullptr;
 };
 
 #endif   // CHECKBOXWITHMESSAGE_H
