@@ -27,7 +27,7 @@ target_link_libraries(
     ${DtkCore_LIBRARIES}
 )
 
-target_include_directories(${BIN_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/)
+target_include_directories(${BIN_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/${BIN_NAME})
 
 if (NOT VERSION)
     set(VERSION "1.0.0")

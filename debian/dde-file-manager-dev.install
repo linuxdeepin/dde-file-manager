@@ -1,6 +1,5 @@
-usr/include/dfm-base/*.h
-usr/include/dfm-base/*/*.h
+usr/include/dfm-base/*
+usr/include/dfm-framework/*
 
-usr/include/dfm-framework/*.h
-usr/include/dfm-framework/*/*.h
-
+usr/lib/*/pkgconfig/dfm-framework.pc
+usr/lib/*/cmake/dfm-framework/*.cmake
