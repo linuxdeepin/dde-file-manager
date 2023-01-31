@@ -26,7 +26,6 @@
 #include <QDBusVariant>
 #include <QVariantMap>
 #include <QStack>
-#include <QMutex>
 #include <QObject>
 
 class OperationsStackManagerDbus : public QObject
@@ -44,7 +43,6 @@ public slots:
 
 private:
     QStack<QVariantMap> fileOperations;
-    QMutex lock;
 };
 
 #endif   // OPERATIONSSTACKMANAGERDBUS_H

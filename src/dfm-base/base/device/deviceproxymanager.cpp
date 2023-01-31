@@ -32,7 +32,6 @@
 using namespace dfmbase;
 static constexpr char kDesktopService[] { "org.deepin.filemanager.service" };
 static constexpr char kDevMngPath[] { "/org/deepin/filemanager/service/DeviceManager" };
-static constexpr char kDevMngIFace[] { "org.deepin.filemanager.service.DeviceManager" };
 
 DeviceProxyManager *DeviceProxyManager::instance()
 {

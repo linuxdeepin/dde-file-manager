@@ -22,8 +22,8 @@
  */
 #include "fileoperationseventreceiver.h"
 #include "trashfileeventreceiver.h"
-#include "fileoperations/filecopymovejob.h"
 #include "fileoperationsevent/fileoperationseventhandler.h"
+#include "fileoperations/operationsstackproxy.h"
 
 #include "dfm-base/utils/hidefilehelper.h"
 #include "dfm-base/base/urlroute.h"
@@ -57,10 +57,6 @@ DPFILEOPERATIONS_USE_NAMESPACE
 FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
     : QObject(parent), dialogManager(DialogManagerInstance)
 {
-    getServiceMutex.reset(new QMutex);
-    functionsMutex.reset(new QMutex);
-    copyMoveJob.reset(new FileCopyMoveJob);
-    initDBus();
 }
 
 QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
@@ -119,21 +115,6 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir, const QSt
             return filePath;
         }
     }
-}
-
-void FileOperationsEventReceiver::initDBus()
-{
-    qInfo() << "Start initilize dbus: `OperationsStackManagerInterface`";
-    // Note: the plugin depends on `dde-file-manager-server`!
-    // the plugin will not work if `dde-file-manager-server` not run.
-    static const QString kOperationsStackService = "org.deepin.filemanager.service";
-    static const QString kOperationsStackPath = "/org/deepin/filemanager/service/OperationsStackManager";
-
-    operationsStackDbus.reset(new OperationsStackManagerInterface(kOperationsStackService,
-                                                                  kOperationsStackPath,
-                                                                  QDBusConnection::sessionBus(),
-                                                                  this));
-    qInfo() << "Finish initilize dbus: `OperationsStackManagerInterface`";
 }
 
 bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVariantMap &ret,
@@ -1139,53 +1120,21 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     return ok;
 }
 
-bool FileOperationsEventReceiver::handleOperationSaveOperations(const QVariantMap values)
+void FileOperationsEventReceiver::handleOperationSaveOperations(const QVariantMap values)
 {
-    if (operationsStackDbus) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto &&reply = operationsStackDbus->SaveOperations(values);
-        reply.waitForFinished();
-        if (!reply.isValid()) {
-            qCritical() << "D-Bus reply is invalid " << reply.error();
-            return false;
-        }
-        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
-        return true;
-    }
-    return false;
+    OperationsStackProxy::instance().saveOperations(values);
 }
 
-bool FileOperationsEventReceiver::handleOperationCleanSaveOperationsStack()
+void FileOperationsEventReceiver::handleOperationCleanSaveOperationsStack()
 {
-    if (operationsStackDbus) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        operationsStackDbus->CleanOperations();
-        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
-        return true;
-    }
-    return false;
+    OperationsStackProxy::instance().cleanOperations();
 }
 
-bool FileOperationsEventReceiver::handleOperationRevocation(const quint64 windowId,
+void FileOperationsEventReceiver::handleOperationRevocation(const quint64 windowId,
                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle)
 {
-    QVariantMap ret;
-    if (operationsStackDbus) {
-        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        auto &&reply = operationsStackDbus->RevocationOperations();
-        reply.waitForFinished();
-        if (reply.isValid())
-            ret = reply.value();
-        else {
-            qCritical() << "D-Bus reply is invalid " << reply.error();
-            return false;
-        }
-        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
-
-        return revocation(windowId, ret, handle);
-    }
-
-    return false;
+    const QVariantMap &ret { OperationsStackProxy::instance().revocationOperations() };
+    revocation(windowId, ret, handle);
 }
 
 bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls)

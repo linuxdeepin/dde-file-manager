@@ -39,6 +39,10 @@ FileCopyMoveJob::FileCopyMoveJob(QObject *parent)
     getOperationsAndDialogServiceMutex.reset(new QMutex);
 }
 
+FileCopyMoveJob::~FileCopyMoveJob()
+{
+}
+
 bool FileCopyMoveJob::getOperationsAndDialogService()
 {
     operationsService.reset(new FileOperationsService(this));

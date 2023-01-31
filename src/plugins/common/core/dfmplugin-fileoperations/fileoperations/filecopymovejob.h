@@ -41,7 +41,7 @@ class FileCopyMoveJob : public QObject
     Q_OBJECT
 public:
     explicit FileCopyMoveJob(QObject *parent = nullptr);
-    ~FileCopyMoveJob() override = default;
+    ~FileCopyMoveJob() override;
 
     JobHandlePointer copy(const QList<QUrl> &sources, const QUrl &target,
                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);

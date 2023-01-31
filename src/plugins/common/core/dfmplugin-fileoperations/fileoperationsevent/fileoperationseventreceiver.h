@@ -25,8 +25,8 @@
 
 #include "dfmplugin_fileoperations_global.h"
 #include "fileoperations/fileoperationsservice.h"
+#include "fileoperations/filecopymovejob.h"
 
-#include "dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
@@ -35,6 +35,8 @@
 #include <QObject>
 #include <QPointer>
 #include <QFileDevice>
+
+#include <memory>
 
 Q_DECLARE_METATYPE(QFileDevice::Permissions)
 
@@ -190,9 +192,9 @@ public slots:
                                              QMimeData *data);
     bool handleOperationOpenInTerminal(const quint64 windowId,
                                        const QList<QUrl> urls);
-    bool handleOperationSaveOperations(const QVariantMap values);
-    bool handleOperationCleanSaveOperationsStack();
-    bool handleOperationRevocation(const quint64 windowId,
+    void handleOperationSaveOperations(const QVariantMap values);
+    void handleOperationCleanSaveOperationsStack();
+    void handleOperationRevocation(const quint64 windowId,
                                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
 
     bool handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls);
@@ -212,7 +214,6 @@ private:
     QString newDocmentName(QString targetdir,
                            const QString &baseName,
                            const QString &suffix);
-    void initDBus();
 
     bool revocation(const quint64 windowId, const QVariantMap &ret,
                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle);
@@ -248,11 +249,8 @@ private:
     QUrl checkTargetUrl(const QUrl &url);
 
 private:
-    QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };
-    QSharedPointer<QMutex> getServiceMutex { nullptr };
+    std::unique_ptr<FileCopyMoveJob> copyMoveJob { std::make_unique<FileCopyMoveJob>() };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
-    QSharedPointer<QMutex> functionsMutex { nullptr };
-    QSharedPointer<OperationsStackManagerInterface> operationsStackDbus;
 };
 
 DPFILEOPERATIONS_END_NAMESPACE
