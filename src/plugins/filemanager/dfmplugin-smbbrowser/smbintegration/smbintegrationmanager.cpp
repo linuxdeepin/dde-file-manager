@@ -486,10 +486,10 @@ void SmbIntegrationManager::doSwitchToSmbIntegratedMode(const QList<QUrl> &stash
             entryUrl.setPath(kSmbIntegrationPath);
             unmountList << entryUrl.toString();
         }
-        unmountList.removeDuplicates();
-        for (const QString &id : unmountList)
-            umountAllProtocolDevice(windowId, QUrl(id), true);
     }
+    unmountList.removeDuplicates();
+    for (const QString &id : unmountList)
+        umountAllProtocolDevice(windowId, QUrl(id), true);
 
     isSmbIntegrated = true;
     // 3. refresh the UI to smb integration mode
