@@ -54,6 +54,7 @@ protected:
     bool clearTrashFile(const AbstractFileInfoPointer &trashInfo);
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
                                                            const AbstractJobHandler::JobErrorType &error,
+                                                           const bool isTo = false,
                                                            const QString &errorMsg = QString());
 
 private:

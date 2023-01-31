@@ -71,8 +71,9 @@ signals:
     void ErrorFinished();
     void CompleteSize(const int size);
     void currentTask(const QUrl source, const QUrl target);
-    void errorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType error,
-                     const quint64 id, const QString &errorMsg = QString());
+    void errorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
+                     const bool isTo, const quint64 id, const QString &errorMsg,
+                     const bool allUsErrorMsg);
     void retryErrSuccess(const quint64 id);
     void skipCopyLocalBigFile(const QUrl fromUrl);
 
@@ -81,7 +82,9 @@ private:   // file copy
     void workerWait();
     bool actionOperating(const AbstractJobHandler::SupportAction action, const qint64 size, bool *skip);
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
-                                                           const AbstractJobHandler::JobErrorType &error, const QString &errorMsg = QString());
+                                                           const AbstractJobHandler::JobErrorType &error,
+                                                           const bool isTo = false,
+                                                           const QString &errorMsg = QString());
 
     void readAheadSourceFile(const AbstractFileInfoPointer &fileInfo);
     bool createFileDevices(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,

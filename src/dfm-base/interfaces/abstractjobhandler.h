@@ -263,7 +263,6 @@ public Q_SLOTS:
 
 public:
     void start();
-    static QString errorToString(const AbstractJobHandler::JobErrorType &error);
 
 private:
     QAtomicInteger<bool> isSignalConnectOver { false };

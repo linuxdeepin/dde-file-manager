@@ -172,7 +172,8 @@ bool DoCopyFromTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
             if (!fileHandler.mkdir(parentUrl))
                 // pause and emit error msg
-                action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kCreateParentDirError);
+                action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kCreateParentDirError,
+                                              true, fileHandler.errorString());
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         if (action != AbstractJobHandler::SupportAction::kNoAction) {

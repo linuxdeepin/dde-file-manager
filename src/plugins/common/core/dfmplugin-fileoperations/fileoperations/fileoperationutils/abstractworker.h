@@ -125,8 +125,8 @@ protected:
     virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to);
     virtual void emitProgressChangedNotify(const qint64 &writSize);
     virtual void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
-                                 const quint64 id = 0, const QString &errorMsg = QString());
-    virtual AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error);
+                                 const bool isTo = false, const quint64 id = 0, const QString &errorMsg = QString(),
+                                 const bool allUsErrorMsg = false);
 
 protected slots:
     virtual bool doWork();
@@ -140,8 +140,9 @@ protected:
     QString formatFileName(const QString &fileName);
     void saveOperations();
     bool isStopped();
-    JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError);
-    void errorSrcAndDestString(const QUrl &from, const QUrl &to, QString *sorceMsg, QString *toMsg, const AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError);
+    JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to,
+                                     const AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError);
+
     void resumeAllThread();
     void resumeThread(const QList<quint64> &errorIds);
     void pauseAllThread();

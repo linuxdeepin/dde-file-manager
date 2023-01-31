@@ -204,7 +204,7 @@ QUrl DoMoveToTrashFilesWorker::buildTrashUrl(const QString &baseName, const QStr
 
         QString path;
         if (i == 1)
-            path = "/" + baseName ;
+            path = "/" + baseName;
         else
             path = QString("/" + baseName + "." + "%1").arg(i);
 

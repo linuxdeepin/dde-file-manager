@@ -161,7 +161,8 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
         bool resultFile = deleteFile(fileUrl);
 
         if (!resultFile)
-            action = doHandleErrorAndWait(fileUrl, AbstractJobHandler::JobErrorType::kDeleteTrashFileError, localFileHandler->errorString());
+            action = doHandleErrorAndWait(fileUrl, AbstractJobHandler::JobErrorType::kDeleteTrashFileError,
+                                          false, localFileHandler->errorString());
 
     } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -177,10 +178,14 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
  * \param errorMsg error message
  * \return support action
  */
-AbstractJobHandler::SupportAction DoCleanTrashFilesWorker::doHandleErrorAndWait(const QUrl &from, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
+AbstractJobHandler::SupportAction
+DoCleanTrashFilesWorker::doHandleErrorAndWait(const QUrl &from,
+                                              const AbstractJobHandler::JobErrorType &error,
+                                              const bool isTo,
+                                              const QString &errorMsg)
 {
     setStat(AbstractJobHandler::JobState::kPauseState);
-    emitErrorNotify(from, QUrl(), error, 0, errorMsg);
+    emitErrorNotify(from, QUrl(), error, isTo, 0, errorMsg);
     waitCondition.wait(&mutex);
 
     return currentAction;

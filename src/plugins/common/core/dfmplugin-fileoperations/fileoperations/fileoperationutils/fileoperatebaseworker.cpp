@@ -73,8 +73,8 @@ FileOperateBaseWorker::~FileOperateBaseWorker()
  * \return AbstractJobHandler::SupportAction Current processing operation
  */
 AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(const QUrl &urlFrom, const QUrl &urlTo,
-                                                                              const AbstractJobHandler::JobErrorType &error,
-                                                                              const QString &errorMsg)
+                                                                              const AbstractJobHandler::JobErrorType &error, const bool isTo,
+                                                                              const QString &errorMsg, const bool errorMsgAll)
 {
     if (workData->errorOfAction.contains(error)) {
         currentAction = workData->errorOfAction.value(error);
@@ -87,8 +87,7 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
     }
 
     // 发送错误处理 阻塞自己
-    const QString &errorMsgAll = errorMsg.isEmpty() ? AbstractJobHandler::errorToString(error) : (AbstractJobHandler::errorToString(error) + ": " + errorMsg);
-    emitErrorNotify(urlFrom, urlTo, error, quintptr(this), errorMsgAll);
+    emitErrorNotify(urlFrom, urlTo, error, quintptr(this), isTo, errorMsg, errorMsgAll);
     pause();
     waitCondition.wait(&mutex);
     if (isStopped())
@@ -202,7 +201,8 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
             localFileHandler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
         ret = localFileHandler->deleteFile(fromUrl);
         if (!ret) {
-            action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, localFileHandler->errorString());
+            action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, false,
+                                          localFileHandler->errorString());
         }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
@@ -345,7 +345,8 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     // 检查源文件的文件信息
     if (!fromInfo) {
         qCritical() << " check file from file info is  nullpter !!!!!!!";
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(QUrl(), toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(QUrl(), toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl),
+                                                                        AbstractJobHandler::JobErrorType::kProrogramError);
         setSkipValue(skip, action);
         return false;
     }
@@ -356,7 +357,8 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl), errortype);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+                                                                        toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl), errortype);
 
         setSkipValue(skip, action);
         return false;
@@ -364,7 +366,8 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     // 检查目标文件的文件信息
     if (!toInfo) {
         qCritical() << " check file to file perant info is  nullpter !!!!!!!";
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), QUrl(),
+                                                                        AbstractJobHandler::JobErrorType::kProrogramError);
         setSkipValue(skip, action);
         return false;
     }
@@ -375,7 +378,8 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), errortype);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+                                                                        toInfo->urlOf(UrlInfoType::kUrl), errortype, true);
         setSkipValue(skip, action);
         return false;
     }
@@ -385,7 +389,9 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     case AbstractFileInfo::FileType::kBlockDevice:
     case AbstractFileInfo::FileType::kFIFOFile:
     case AbstractFileInfo::FileType::kSocketFile: {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kSpecialFileError);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+                                                                        toInfo->urlOf(UrlInfoType::kUrl),
+                                                                        AbstractJobHandler::JobErrorType::kSpecialFileError);
         setSkipValue(skip, action);
         if (skip && *skip)
             workData->skipWriteSize += fromInfo->size() <= 0 ? workData->dirSize : fromInfo->size();
@@ -445,7 +451,9 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
         if (localFileHandler->createSystemLink(newFromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl))) {
             return true;
         }
-        actionForlink = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(localFileHandler->errorString()));
+        actionForlink = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+                                             AbstractJobHandler::JobErrorType::kSymlinkError, false,
+                                             localFileHandler->errorString());
     } while (actionForlink == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
     checkRetry();
     setSkipValue(skip, actionForlink);
@@ -467,7 +475,9 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     if (createNewTargetInfo(fromInfo, toInfo, newTargetInfo, newTargetUrl, skip, isCountSize))
         return true;
     if (!workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->urlOf(UrlInfoType::kUrl), newTargetUrl)) {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kTargetIsSelfError);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+                                                                        toInfo->urlOf(UrlInfoType::kUrl),
+                                                                        AbstractJobHandler::JobErrorType::kTargetIsSelfError);
         if (AbstractJobHandler::SupportAction::kSkipAction == action) {
             setSkipValue(skip, action);
             if (skip && *skip)
@@ -487,7 +497,8 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     bool newTargetIsFile = newTargetInfo->isAttributes(OptInfoType::kIsFile) || newTargetInfo->isAttributes(OptInfoType::kIsSymLink);
     AbstractJobHandler::JobErrorType errortype = newTargetIsFile ? AbstractJobHandler::JobErrorType::kFileExistsError
                                                                  : AbstractJobHandler::JobErrorType::kDirectoryExistsError;
-    AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), newTargetInfo->urlOf(UrlInfoType::kUrl), errortype);
+    AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+                                                                    newTargetInfo->urlOf(UrlInfoType::kUrl), errortype, true);
     switch (action) {
     case AbstractJobHandler::SupportAction::kReplaceAction: {
         const QVariant &var = doActionReplace(fromInfo, newTargetInfo, isCountSize);
@@ -566,7 +577,9 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
             if (localFileHandler->mkdir(toInfo->urlOf(UrlInfoType::kUrl)))
                 break;
 
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kMkdirError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(localFileHandler->errorString()));
+            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
+                                          AbstractJobHandler::JobErrorType::kMkdirError, true,
+                                          localFileHandler->errorString());
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         checkRetry();
@@ -788,7 +801,7 @@ bool FileOperateBaseWorker::doCopyLocalBigFileResize(const AbstractFileInfoPoint
                        << " error code: " << errno << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
-                                          AbstractJobHandler::JobErrorType::kResizeError, lastError);
+                                          AbstractJobHandler::JobErrorType::kResizeError, true, lastError);
         }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
@@ -814,7 +827,7 @@ char *FileOperateBaseWorker::doCopyLocalBigFileMap(const AbstractFileInfoPointer
                        << " error code: " << errno << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
-                                          AbstractJobHandler::JobErrorType::kOpenError, lastError);
+                                          AbstractJobHandler::JobErrorType::kOpenError, fd == PROT_WRITE, lastError);
         }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
@@ -891,7 +904,7 @@ int FileOperateBaseWorker::doOpenFile(const AbstractFileInfoPointer fromInfo, co
                        << " error code: " << errno << " error msg: " << lastError;
 
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
-                                          AbstractJobHandler::JobErrorType::kOpenError, lastError);
+                                          AbstractJobHandler::JobErrorType::kOpenError, isTo, lastError);
         }
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
@@ -973,7 +986,11 @@ bool FileOperateBaseWorker::createNewTargetInfo(const AbstractFileInfoPointer &f
     newTargetInfo = InfoFactory::create<AbstractFileInfo>(fileNewUrl, false, &error);
 
     if (!newTargetInfo || !error.isEmpty()) {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl), AbstractJobHandler::JobErrorType::kProrogramError, error);
+        qWarning() << "newTargetInfo is null = " << !newTargetInfo << ", error message = " << error;
+        AbstractJobHandler::SupportAction action =
+                doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+                                     toInfo->urlOf(UrlInfoType::kUrl),
+                                     AbstractJobHandler::JobErrorType::kProrogramError);
         setSkipValue(skip, action);
         if (skip && *skip)
             workData->skipWriteSize += (isCountSize && (fromInfo->isAttributes(OptInfoType::kIsSymLink) || fromInfo->size() <= 0)) ? workData->dirSize : fromInfo->size();
@@ -987,9 +1004,11 @@ bool FileOperateBaseWorker::createNewTargetInfo(const AbstractFileInfoPointer &f
     return false;
 }
 
-void FileOperateBaseWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const quint64 id, const QString &errorMsg)
+void FileOperateBaseWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
+                                            const bool isTo, const quint64 id, const QString &errorMsg,
+                                            const bool allUsErrorMsg)
 {
-    AbstractWorker::emitErrorNotify(from, to, error, id, errorMsg);
+    AbstractWorker::emitErrorNotify(from, to, error, isTo, id, errorMsg, allUsErrorMsg);
 }
 
 void FileOperateBaseWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)

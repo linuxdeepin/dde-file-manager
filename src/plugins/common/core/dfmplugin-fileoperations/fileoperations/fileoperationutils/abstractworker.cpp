@@ -22,6 +22,7 @@
  */
 #include "abstractworker.h"
 #include "workerdata.h"
+#include "errormessageandaction.h"
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -163,6 +164,7 @@ void AbstractWorker::getAction(AbstractJobHandler::SupportActions actions)
         currentAction = AbstractJobHandler::SupportAction::kNoAction;
     }
 }
+
 /*!
  * \brief AbstractWorker::startCountProccess start update proccess timer
  */
@@ -333,13 +335,16 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
  * \param error task error type
  * \param errorMsg task error message
  */
-void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const quint64 id, const QString &errorMsg)
+void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const bool isTo,
+                                     const quint64 id, const QString &errorMsg, const bool allUsErrorMsg)
 {
     JobInfoPointer info = createCopyJobInfo(from, to, error);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(error));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey, QVariant::fromValue(errorMsg));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey, QVariant::fromValue(supportActions(error)));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey,
+                 QVariant::fromValue(ErrorMessageAndAction::errorMsg(from, to, error, isTo, errorMsg, allUsErrorMsg)));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey,
+                 QVariant::fromValue(ErrorMessageAndAction::supportActions(error)));
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
     quint64 emitId = id == 0 ? quintptr(this) : id;
     info->insert(AbstractJobHandler::NotifyInfoKey::kWorkerPointer, QVariant::fromValue(emitId));
@@ -349,59 +354,6 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
              << " error msg: " << errorMsg << id;
 }
 
-AbstractJobHandler::SupportActions AbstractWorker::supportActions(const AbstractJobHandler::JobErrorType &error)
-{
-    AbstractJobHandler::SupportActions support = AbstractJobHandler::SupportAction::kCancelAction;
-    switch (error) {
-    case AbstractJobHandler::JobErrorType::kPermissionError:
-    case AbstractJobHandler::JobErrorType::kOpenError:
-    case AbstractJobHandler::JobErrorType::kReadError:
-    case AbstractJobHandler::JobErrorType::kWriteError:
-    case AbstractJobHandler::JobErrorType::kSymlinkError:
-    case AbstractJobHandler::JobErrorType::kMkdirError:
-    case AbstractJobHandler::JobErrorType::kResizeError:
-    case AbstractJobHandler::JobErrorType::kRemoveError:
-    case AbstractJobHandler::JobErrorType::kRenameError:
-    case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
-    case AbstractJobHandler::JobErrorType::kNonexistenceError:
-    case AbstractJobHandler::JobErrorType::kDeleteFileError:
-    case AbstractJobHandler::JobErrorType::kDeleteTrashFileError:
-    case AbstractJobHandler::JobErrorType::kNoSourceError:
-    case AbstractJobHandler::JobErrorType::kCancelError:
-    case AbstractJobHandler::JobErrorType::kUnknowUrlError:
-    case AbstractJobHandler::JobErrorType::kNotSupportedError:
-    case AbstractJobHandler::JobErrorType::kPermissionDeniedError:
-    case AbstractJobHandler::JobErrorType::kSeekError:
-    case AbstractJobHandler::JobErrorType::kProrogramError:
-    case AbstractJobHandler::JobErrorType::kDfmIoError:
-    case AbstractJobHandler::JobErrorType::kMakeStandardTrashError:
-    case AbstractJobHandler::JobErrorType::kGetRestorePathError:
-    case AbstractJobHandler::JobErrorType::kIsNotTrashFileError:
-    case AbstractJobHandler::JobErrorType::kCreateParentDirError:
-    case AbstractJobHandler::JobErrorType::kUnknowError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction;
-    case AbstractJobHandler::JobErrorType::kSpecialFileError:
-        return AbstractJobHandler::SupportAction::kSkipAction;
-    case AbstractJobHandler::JobErrorType::kFileSizeTooBigError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
-    case AbstractJobHandler::JobErrorType::kNotEnoughSpaceError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction | AbstractJobHandler::SupportAction::kEnforceAction;
-    case AbstractJobHandler::JobErrorType::kFileExistsError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kReplaceAction | AbstractJobHandler::SupportAction::kCoexistAction;
-    case AbstractJobHandler::JobErrorType::kDirectoryExistsError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kMergeAction | AbstractJobHandler::SupportAction::kCoexistAction;
-    case AbstractJobHandler::JobErrorType::kTargetReadOnlyError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
-    case AbstractJobHandler::JobErrorType::kTargetIsSelfError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
-    case AbstractJobHandler::JobErrorType::kSymlinkToGvfsError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction;
-    default:
-        break;
-    }
-
-    return support;
-}
 /*!
  * \brief AbstractWorker::isStopped current task is stopped
  * \return current task is stopped
@@ -423,46 +375,10 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey, QVariant::fromValue(to));
     QString fromMsg, toMsg;
-    if (AbstractJobHandler::JobType::kCopyType == jobType) {
-        fromMsg = QString(QObject::tr("Copying %1")).arg(from.path());
-        toMsg = QString(QObject::tr("to %1")).arg(UrlRoute::urlParent(to).path());
-        errorSrcAndDestString(from, to, &fromMsg, &toMsg, error);
-    } else if (AbstractJobHandler::JobType::kDeleteType == jobType) {
-        fromMsg = QString(QObject::tr("Deleting %1")).arg(from.path());
-    } else if (AbstractJobHandler::JobType::kCutType == jobType) {
-        fromMsg = QString(QObject::tr("Moving %1")).arg(from.path());
-        toMsg = QString(QObject::tr("to %1")).arg(UrlRoute::urlParent(to).path());
-        errorSrcAndDestString(from, to, &fromMsg, &toMsg, error);
-    } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType) {
-        fromMsg = QString(QObject::tr("Trashing %1")).arg(from.path());
-        toMsg = QString(QObject::tr("to %1")).arg(UrlRoute::urlParent(to).path());
-    } else if (AbstractJobHandler::JobType::kRestoreType == jobType) {
-        fromMsg = QString(QObject::tr("Restoring %1")).arg(from.path());
-        toMsg = QString(QObject::tr("to %1")).arg(UrlRoute::urlParent(to).path());
-    } else if (AbstractJobHandler::JobType::kCleanTrashType == jobType) {
-        fromMsg = QString(QObject::tr("Deleting %1")).arg(from.path());
-    }
+    ErrorMessageAndAction::srcAndDestString(from, to, &fromMsg, &toMsg, jobType, error);
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey, QVariant::fromValue(fromMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey, QVariant::fromValue(toMsg));
     return info;
-}
-
-void AbstractWorker::errorSrcAndDestString(const QUrl &from, const QUrl &to,
-                                           QString *sorceMsg, QString *toMsg,
-                                           const AbstractJobHandler::JobErrorType error)
-{
-    if (error == AbstractJobHandler::JobErrorType::kNoError)
-        return;
-    if (error == AbstractJobHandler::JobErrorType::kFileExistsError
-        || error == AbstractJobHandler::JobErrorType::kDirectoryExistsError) {
-        *sorceMsg = QString(tr("%1 already exists in target folder")).arg(from.fileName());
-        auto fromInfo = InfoFactory::create<AbstractFileInfo>(from);
-        auto toInfo = InfoFactory::create<AbstractFileInfo>(to);
-        if (!fromInfo || !toInfo)
-            return;
-        *toMsg = QString(tr("Original path %1    Target path %2")).arg(fromInfo->pathOf(PathInfoType::kAbsoluteFilePath), toInfo->urlOf(UrlInfoType::kParentUrl).path());
-    }
-    return;
 }
 
 void AbstractWorker::resumeAllThread()

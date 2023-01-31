@@ -110,7 +110,7 @@ bool DoCutFilesWorker::initArgs()
 
     if (!DecoratorFile(targetUrl).exists()) {
         // pause and emit error msg
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
         return false;
     }
 

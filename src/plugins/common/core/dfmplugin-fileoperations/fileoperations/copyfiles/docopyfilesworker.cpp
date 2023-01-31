@@ -121,7 +121,7 @@ bool DoCopyFilesWorker::initArgs()
     if (!DecoratorFile(targetUrl).exists()) {
         // pause and emit error msg
         qCritical() << "target dir is not exists, url = " << targetUrl;
-        doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError);
+        doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
         return false;
     }
 

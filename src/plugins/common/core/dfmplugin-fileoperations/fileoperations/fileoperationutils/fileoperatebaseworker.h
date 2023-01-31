@@ -75,7 +75,10 @@ public:
     void readAheadSourceFile(const AbstractFileInfoPointer &fileInfo);
     void syncFilesToDevice();
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
-                                                           const AbstractJobHandler::JobErrorType &error, const QString &errorMsg = QString());
+                                                           const AbstractJobHandler::JobErrorType &error,
+                                                           const bool isTo = false,
+                                                           const QString &errorMsg = QString(),
+                                                           const bool errorMsgAll = false);
     // notify
     void emitSpeedUpdatedNotify(const qint64 &writSize);
 
@@ -134,7 +137,8 @@ private:   // do copy extra block file
 
 protected Q_SLOTS:
     void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
-                         const quint64 id, const QString &errorMsg = QString()) override;
+                         const bool isTo = false, const quint64 id = 0, const QString &errorMsg = QString(),
+                         const bool allUsErrorMsg = false) override;
     virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to) override;
     void skipMemcpyBigFile(const QUrl url);
 

@@ -89,7 +89,8 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         emitCurrentTaskNotify(url, QUrl());
         do {
             if (!localFileHandler->deleteFile(url)) {
-                action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, localFileHandler->errorString());
+                action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
+                                              localFileHandler->errorString());
             }
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -153,7 +154,8 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
     do {
         if (!localFileHandler->deleteFile(url)) {
-            action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, localFileHandler->errorString());
+            action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError,
+                                          localFileHandler->errorString());
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -227,10 +229,13 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
  * \param errorMsg error message
  * \return support action
  */
-AbstractJobHandler::SupportAction DoDeleteFilesWorker::doHandleErrorAndWait(const QUrl &from, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
+AbstractJobHandler::SupportAction
+DoDeleteFilesWorker::doHandleErrorAndWait(const QUrl &from,
+                                          const AbstractJobHandler::JobErrorType &error,
+                                          const QString &errorMsg)
 {
     setStat(AbstractJobHandler::JobState::kPauseState);
-    emitErrorNotify(from, QUrl(), error, 0, errorMsg);
+    emitErrorNotify(from, QUrl(), error, false, 0, errorMsg);
 
     waitCondition.wait(&mutex);
 
