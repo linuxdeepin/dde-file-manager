@@ -22,6 +22,7 @@
 */
 #include "searchhistroymanager.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
@@ -75,6 +76,16 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
 {
     if (keyword.isEmpty())
         return;
+
+    QUrl url(keyword);
+    if (keyword.startsWith(url.scheme())) {
+        if (keyword.startsWith(Global::Scheme::kSmb) || keyword.startsWith(Global::Scheme::kFtp) || keyword.startsWith(Global::Scheme::kSFtp)) {
+            if (!url.isValid()) {
+                qDebug() << "Url is invalid, do not write it to history.";
+                return;
+            }
+        }
+    }
 
     QStringList list = getSearchHistroy();
 
