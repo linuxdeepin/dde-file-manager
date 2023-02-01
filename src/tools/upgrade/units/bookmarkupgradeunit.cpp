@@ -137,10 +137,11 @@ QVariantList BookMarkUpgradeUnit::initData() const
         bookmarkDataMap.insert(url.toString(), item);
     }
 
-    auto parseUrlFromOrderData = [](const QString &src, const QString &start, const QString &end) {
-        int startIndex = src.indexOf(start, 0) + 1;
-        int endIndex = src.indexOf(end, startIndex);
-        const QString &urlString = src.mid(startIndex, endIndex - startIndex);
+    auto parseUrlFromOrderData = [](const QString &src) {
+        QString bookmarkOrderItem = src;
+        bookmarkOrderItem.remove(0, 9);   //remove `bookmark:`
+        QUrl url(bookmarkOrderItem);
+        QString urlString = url.toString(QUrl::RemoveFragment | QUrl::RemoveQuery);   //remove ?# or #
         return urlString;
     };
     // 2. sort the bookmark data to `sortedBookmarkOrderList` according to `bookmarkDataList`
@@ -148,14 +149,13 @@ QVariantList BookMarkUpgradeUnit::initData() const
     int increasedIndex = quickAccessItemList.count();
     while (bookmarkOrderList.count() > 0) {
         const QString &var = bookmarkOrderList.takeFirst();
-        const QString &suffixName = var.section("#", -1, -1);
-        const QString &splitter = var.section(suffixName, -1, -1, QString::SectionSkipEmpty);   // currently,splitter maybe `?#` or `#`
-        const QString &end = var.mid(var.lastIndexOf(splitter));
-        const QString &urlString = parseUrlFromOrderData(var, ":", end);
+        const QString &urlString = parseUrlFromOrderData(var);
         QVariantHash item = bookmarkDataMap.value(urlString).toHash();
         if (!item.value("name").toString().isEmpty()) {
             item.insert(kIndex, increasedIndex++);
             item.insert(kKeydefaultItem, false);
+            QString urlString = item.value("url").toUrl().toString();
+            item.insert("url", urlString);
             sortedBookmarkOrderList.append(item);
         }
     }
@@ -175,7 +175,10 @@ QVariantList BookMarkUpgradeUnit::initData() const
     qInfo() << "before: quickAccessItemList.count = " << quickAccessItemList.count();
     // 4. append the final sort data to `quickAccessItemList` which is for writting to config in field `QuickAccess`
     for (const QVariant &item : sortedBookmarkOrderList) {
-        quickAccessItemList.append(item);
+        QVariantHash data = item.toHash();
+        QString readableStr = data.value("url").toUrl().toString();   // convert url to human readable string.
+        data.insert("url", readableStr);
+        quickAccessItemList.append(data);
         qInfo() << "Bookmark raw data is sorded to quickAccessItemList";
     }
     qInfo() << "after: quickAccessItemList.count = " << quickAccessItemList.count();
