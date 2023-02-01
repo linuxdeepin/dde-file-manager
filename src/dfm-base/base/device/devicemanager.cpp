@@ -30,6 +30,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/networkutils.h"
@@ -40,6 +41,8 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <QDBusInterface>
+#include <QDBusMessage>
 #include <QApplication>
 
 #include <dfm-mount/dmount.h>
@@ -622,7 +625,10 @@ void DeviceManager::doAutoMountAtStart()
         return;
 
     static std::once_flag flg;
-    std::call_once(flg, &DeviceManagerPrivate::mountAllBlockDev, d);
+    std::call_once(flg, [this] {
+        d->mountAllBlockDev();
+        d->mountDlnfsOnHome();
+    });
 }
 
 void DeviceManager::detachAllRemovableBlockDevs()
@@ -796,6 +802,26 @@ void DeviceManagerPrivate::mountAllBlockDev()
     qDebug() << "start to mount block devs: " << devs;
     for (const auto &dev : devs)
         q->mountBlockDevAsync(dev, { { "auth.no_user_interaction", true } });   // avoid the auth dialog raising
+}
+
+void DeviceManagerPrivate::mountDlnfsOnHome()
+{
+    auto enableDlnfsMount = DConfigManager::instance()->value(kDefaultCfgPath, "").toBool();
+    if (!enableDlnfsMount)
+        return;
+
+    const QString &homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    qDebug() << "dlnfs: start mounting dlnfs on $HOME" << homePath;
+    static constexpr char kDaemonService[] { "com.deepin.filemanager.daemon" };
+    static constexpr char kDaemonPath[] { "/com/deepin/filemanager/daemon/MountControl" };
+    static constexpr char kDaemonInterface[] { "com.deepin.filemanager.daemon.MountControl" };
+
+    QDBusInterface iface(kDaemonService, kDaemonPath, kDaemonInterface, QDBusConnection::systemBus());
+    QDBusReply<QVariantMap> reply = iface.call("Mount", homePath, QVariantMap { { "fsType", "dlnfs" } });
+    const auto &ret = reply.value();
+    qDebug() << "dlnfs: mount $USER: " << ret;
+    if (!ret.value("result").toBool())
+        qWarning() << "dlnfs: mount $USER failed: " << ret;
 }
 
 MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,

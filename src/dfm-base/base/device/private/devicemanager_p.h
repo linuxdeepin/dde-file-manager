@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DEVICEMANAGER_P_H
 #define DEVICEMANAGER_P_H
 
@@ -47,6 +47,7 @@ public:
 private:
     // private operations
     void mountAllBlockDev();
+    void mountDlnfsOnHome();
 
     static DFMMOUNT::MountPassInfo askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault, const QString &domainDefault, const QString &uri);
     static int askForUserChoice(const QString &message, const QStringList &choices);

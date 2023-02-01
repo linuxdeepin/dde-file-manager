@@ -19,11 +19,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DCONFIGMANAGER_H
 #define DCONFIGMANAGER_H
 
-#include "dfm_base_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
 #include <QVariant>
