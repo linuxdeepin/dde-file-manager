@@ -258,7 +258,7 @@ void VaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
                 qDebug() << "Whether there are copying, clipping or compression tasks in the current safe, the vault cannot be deleted!";
             } else {
                 //! The verification is successful, first lock the vault
-                VaultHelper::instance()->lockVault(true);
+                VaultHelper::instance()->lockVault(false);
             }
             //! The button is grayed out to prevent users from operating indiscriminately
             if (btn)
@@ -281,13 +281,14 @@ void VaultRemovePages::onLockVault(int state)
             QString vaultUnlockPath = PathManager::vaultUnlockPath();
             progressView->removeVault(vaultLockPath, vaultUnlockPath);
         } else {
-            // error tips
-            QString errMsg = tr("Failed to delete file vault");
-            DDialog dialog(this);
-            dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-            dialog.setTitle(errMsg);
-            dialog.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
-            dialog.exec();
+            if (state != static_cast<int>(ErrorCode::kResourceBusy)) {
+                QString errMsg = tr("Failed to delete file vault");
+                DDialog dialog(this);
+                dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+                dialog.setTitle(errMsg);
+                dialog.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
+                dialog.exec();
+            }
         }
         removeVault = false;
     }

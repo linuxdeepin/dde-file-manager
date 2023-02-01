@@ -44,10 +44,8 @@ DFMBASE_USE_NAMESPACE
 FileEncryptHandle::FileEncryptHandle(QObject *parent)
     : QObject(parent), d(new FileEncryptHandlerPrivate(this))
 {
-    this->moveToThread(d->thread);
     connect(d->process, &QProcess::readyReadStandardError, this, &FileEncryptHandle::slotReadError);
     connect(d->process, &QProcess::readyReadStandardOutput, this, &FileEncryptHandle::slotReadOutput);
-    d->thread->start();
 }
 
 FileEncryptHandle::~FileEncryptHandle()
@@ -115,7 +113,6 @@ int FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, Q
 {
     d->mutex->lock();
     d->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
-    qDebug() << "VaultHandle::unlockVault:" << QThread::currentThread();
 
     d->syncGroupPolicyAlgoName();
 
@@ -242,7 +239,6 @@ FileEncryptHandlerPrivate::FileEncryptHandlerPrivate(FileEncryptHandle *qq)
 {
     process = new QProcess;
     mutex = new QMutex;
-    thread = new QThread();
     initEncryptType();
 }
 
@@ -256,11 +252,6 @@ FileEncryptHandlerPrivate::~FileEncryptHandlerPrivate()
     if (mutex) {
         delete mutex;
         mutex = nullptr;
-    }
-
-    if (thread) {
-        thread->quit();
-        thread->deleteLater();
     }
 }
 

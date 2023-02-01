@@ -85,7 +85,6 @@ private:
 private:
     QProcess *process { nullptr };
     QMutex *mutex { nullptr };
-    QThread *thread { nullptr };
     QMap<int, int> activeState;
     QMap<EncryptType, QString> encryptTypeMap;
     FileEncryptHandle *q { nullptr };
