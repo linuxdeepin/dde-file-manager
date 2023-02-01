@@ -5,15 +5,13 @@
 #include "tagmanager.h"
 
 #include "dfmplugin_tag_global.h"
-#include "dbus/tagdbus.h"
-#include "dbus/dbus_interface/tagdbus_interface.h"
-#include "data/tagdbhandle.h"
 #include "taghelper.h"
 #include "events/tageventcaller.h"
 #include "widgets/tagcolorlistwidget.h"
 #include "files/tagfileinfo.h"
 #include "utils/anythingmonitorfilter.h"
 #include "utils/filetagcache.h"
+#include "data/tagproxyhandle.h"
 
 #include <dfm-framework/dpf.h>
 #include "dfm-base/base/schemefactory.h"
@@ -38,9 +36,6 @@ DFMGLOBAL_USE_NAMESPACE
 TagManager::TagManager(QObject *parent)
     : QObject(parent)
 {
-    tagDbusInterface = new TagDBusInterface("org.deepin.filemanager.service",
-                                            "/org/deepin/filemanager/Tag",
-                                            QDBusConnection::sessionBus(), this);
     initializeConnection();
 }
 
@@ -50,12 +45,12 @@ TagManager::~TagManager()
 
 void TagManager::initializeConnection()
 {
-    connect(tagDbusInterface, &TagDBusInterface::NewTagsAdded, this, &TagManager::onTagAdded);
-    connect(tagDbusInterface, &TagDBusInterface::TagsDeleted, this, &TagManager::onTagDeleted);
-    connect(tagDbusInterface, &TagDBusInterface::TagsColorChanged, this, &TagManager::onTagColorChanged);
-    connect(tagDbusInterface, &TagDBusInterface::TagsNameChanged, this, &TagManager::onTagNameChanged);
-    connect(tagDbusInterface, &TagDBusInterface::FilesTagged, this, &TagManager::onFilesTagged);
-    connect(tagDbusInterface, &TagDBusInterface::FilesUntagged, this, &TagManager::onFilesUntagged);
+    connect(TagProxyHandleIns, &TagProxyHandle::newTagsAdded, this, &TagManager::onTagAdded);
+    connect(TagProxyHandleIns, &TagProxyHandle::tagsDeleted, this, &TagManager::onTagDeleted);
+    connect(TagProxyHandleIns, &TagProxyHandle::tagsColorChanged, this, &TagManager::onTagColorChanged);
+    connect(TagProxyHandleIns, &TagProxyHandle::tagsNameChanged, this, &TagManager::onTagNameChanged);
+    connect(TagProxyHandleIns, &TagProxyHandle::filesTagged, this, &TagManager::onFilesTagged);
+    connect(TagProxyHandleIns, &TagProxyHandle::filesUntagged, this, &TagManager::onFilesUntagged);
 }
 
 TagManager *TagManager::instance()
@@ -218,12 +213,7 @@ QString TagManager::getTagIconName(const QString &tag) const
 
 TagManager::TagColorMap TagManager::getAllTags()
 {
-    QDBusVariant dbusVar = tagDbusInterface->Query(static_cast<std::size_t>(TagActionType::kGetAllTags));
-    QVariant var = transformQueryData(dbusVar);
-    if (var.isNull())
-        return {};
-
-    const auto &dataMap = var.toMap();
+    const auto &dataMap = TagProxyHandleIns->getAllTags();
     TagColorMap result;
     auto it = dataMap.begin();
 
@@ -238,12 +228,7 @@ TagManager::TagColorMap TagManager::getTagsColor(const QStringList &tags) const
     if (tags.isEmpty())
         return {};
 
-    QDBusVariant dbusVar = tagDbusInterface->Query(static_cast<std::size_t>(TagActionType::kGetTagsColor), tags);
-    QVariant var = transformQueryData(dbusVar);
-    if (var.isNull() || !var.isValid())
-        return {};
-
-    const auto &dataMap = var.toMap();
+    const auto &dataMap = TagProxyHandleIns->getTagsColor(tags);
     TagColorMap result;
     auto it = dataMap.begin();
     for (; it != dataMap.end(); ++it)
@@ -271,9 +256,7 @@ QVariant TagManager::getTagsByUrls(const QList<QUrl> &filePaths, bool same) cons
         }
     }
 
-    auto type = same ? static_cast<std::uint8_t>(TagActionType::kGetSameTagsOfDiffFiles) : static_cast<std::uint8_t>(TagActionType::kGetTagsThroughFile);
-    QDBusVariant dbusVar = tagDbusInterface->Query(type, paths);
-    return transformQueryData(dbusVar);
+    return same ? TagProxyHandleIns->getSameTagsOfDiffFiles(paths) : TagProxyHandleIns->getTagsThroughFile(paths);
 }
 
 QStringList TagManager::getFilesByTag(const QString &tag)
@@ -281,13 +264,11 @@ QStringList TagManager::getFilesByTag(const QString &tag)
     if (tag.isEmpty())
         return {};
 
-    QDBusVariant dbusVar = tagDbusInterface->Query(static_cast<std::size_t>(TagActionType::kGetFilesThroughTag), { tag });
-    QVariant var = transformQueryData(dbusVar);
-    if (var.isNull())
+    const auto &dataMap = TagProxyHandleIns->getFilesThroughTag({ tag });
+    if (dataMap.isEmpty())
         return {};
 
-    auto files = var.toMap().value(tag);
-    return var.toMap().value(tag).toStringList();
+    return dataMap.value(tag).toStringList();
 }
 
 bool TagManager::setTagsForFiles(const QStringList &tags, const QList<QUrl> &files)
@@ -340,14 +321,13 @@ bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
     }
 
     // make tag for files
-    QVariant checkTagResult { tagDbusInterface->Insert(static_cast<std::size_t>(TagActionType::kAddTags), tagWithColor) };
+    QVariant checkTagResult { TagProxyHandleIns->addTags(tagWithColor) };
     if (checkTagResult.toBool()) {
         QVariantMap infos;
         for (const auto &f : files)
             infos[f.path()] = QVariant(tags);
 
-        QDBusReply<bool> ret = tagDbusInterface->Insert(static_cast<std::size_t>(TagActionType::kMakeFilesTags), infos);
-        if (ret.isValid() && ret.value())
+        if (TagProxyHandleIns->addTagsForFiles(infos))
             return true;
 
         qWarning() << "Create tags successfully! But failed to tag files";
@@ -373,8 +353,7 @@ bool TagManager::removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl>
         }
     }
 
-    QDBusReply<bool> ret = tagDbusInterface->Delete(static_cast<std::size_t>(TagActionType::kRemoveTagsOfFiles), fileWithTag);
-    return ret.isValid() ? ret.value() : false;
+    return TagProxyHandleIns->deleteFileTags(fileWithTag);
 }
 
 bool TagManager::pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const QUrl &to)
@@ -406,7 +385,7 @@ bool TagManager::pasteHandle(quint64 winId, const QList<QUrl> &fromUrls, const Q
 }
 void TagManager::deleteTags(const QStringList &tags)
 {
-    if (this->deleteTagData(tags, static_cast<std::size_t>(TagActionType::kDeleteTags))) {
+    if (this->deleteTagData(tags, TagActionType::kDeleteTags)) {
         for (const auto &tag : tags) {
             QUrl url = TagHelper::instance()->makeTagUrlByTagName(tag);
             dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
@@ -421,7 +400,7 @@ void TagManager::deleteFiles(const QList<QUrl> &urls)
     for (const auto &temp : urls)
         paths.append(temp.toString());
 
-    this->deleteTagData(paths, static_cast<std::size_t>(TagActionType::kDeleteFiles));
+    this->deleteTagData(paths,TagActionType::kDeleteFiles);
 }
 
 bool TagManager::changeTagColor(const QString &tagName, const QString &newTagColor)
@@ -430,9 +409,7 @@ bool TagManager::changeTagColor(const QString &tagName, const QString &newTagCol
         return false;
 
     QVariantMap changeMap { { tagName, QVariant { QString(newTagColor) } } };
-    QDBusReply<bool> reply = tagDbusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeTagsColor), changeMap);
-
-    return reply.isValid() ? reply.value() : false;
+    return TagProxyHandleIns->changeTagsColor(changeMap);
 }
 
 bool TagManager::changeTagName(const QString &tagName, const QString &newName)
@@ -446,9 +423,7 @@ bool TagManager::changeTagName(const QString &tagName, const QString &newName)
     }
 
     QVariantMap oldAndNewName = { { tagName, QVariant { newName } } };
-    QDBusReply<bool> reply = tagDbusInterface->Update(static_cast<std::size_t>(TagActionType::kChangeTagsNameWithFiles), oldAndNewName);
-
-    return reply.isValid() ? reply.value() : false;
+    return TagProxyHandleIns->changeTagNamesWithFiles(oldAndNewName);
 }
 
 QMap<QString, QString> TagManager::getTagsColorName(const QStringList &tags) const
@@ -456,10 +431,7 @@ QMap<QString, QString> TagManager::getTagsColorName(const QStringList &tags) con
     if (tags.isEmpty())
         return {};
 
-    QDBusVariant dbusVar = tagDbusInterface->Query(static_cast<std::size_t>(TagActionType::kGetTagsColor), tags);
-    QVariant var = transformQueryData(dbusVar);
-
-    const auto &dataMap = var.toMap();
+    const auto &dataMap = TagProxyHandleIns->getTagsColor(tags);
     QMap<QString, QString> result;
     auto it = dataMap.begin();
     for (; it != dataMap.end(); ++it)
@@ -468,7 +440,7 @@ QMap<QString, QString> TagManager::getTagsColorName(const QStringList &tags) con
     return result;
 }
 
-bool TagManager::deleteTagData(const QStringList &data, const uint8_t &type)
+bool TagManager::deleteTagData(const QStringList &data, const TagActionType &type)
 {
     if (data.isEmpty())
         return false;
@@ -477,9 +449,20 @@ bool TagManager::deleteTagData(const QStringList &data, const uint8_t &type)
 
     // Just to make sure the interface parameters are consistent, we only care about the values
     tagDelMap["deleteTagData"] = QVariant { data };
-    QDBusReply<bool> reply = tagDbusInterface->Delete(type, tagDelMap);
+    bool ret = false;
 
-    return reply.isValid() ? reply.value() : false;
+    switch (type) {
+    case TagActionType::kDeleteTags:
+        ret = TagProxyHandleIns->deleteTags(tagDelMap);
+        break;
+    case TagActionType::kDeleteFiles:
+        ret = TagProxyHandleIns->deleteFiles(tagDelMap);
+        break;
+    default:
+        break;
+    }
+
+    return ret;
 }
 
 bool TagManager::localFileCanTagFilter(const QUrl &url) const

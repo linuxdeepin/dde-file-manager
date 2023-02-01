@@ -5,12 +5,12 @@
 #ifndef TAGMANAGER_H
 #define TAGMANAGER_H
 
+#include "dfmplugin_tag_global.h"
+
 #include <QObject>
 #include <QPainter>
 #include <QMap>
 #include <QDBusVariant>
-
-class TagDBusInterface;
 
 namespace dfmplugin_tag {
 
@@ -80,13 +80,12 @@ private:
     void initializeConnection();
 
     QMap<QString, QString> getTagsColorName(const QStringList &tags) const;
-    bool deleteTagData(const QStringList &data, const uint8_t &type);
+    bool deleteTagData(const QStringList &data, const TagActionType &type);
     bool localFileCanTagFilter(const QUrl &url) const;
     QVariant transformQueryData(const QDBusVariant &var) const;
 
 private:
     QMap<QString, QString> tagColorMap;   // tag--color
-    TagDBusInterface *tagDbusInterface { nullptr };
 };
 
 }

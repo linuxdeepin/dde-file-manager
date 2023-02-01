@@ -31,6 +31,8 @@ FILE(GLOB TAG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/beans/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/data/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/data/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/data/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/data/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/private/*.h"

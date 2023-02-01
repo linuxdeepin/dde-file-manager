@@ -2,7 +2,7 @@
 
 #include "dfmplugin_tag_global.h"
 #include "data/tagdbhandle.h"
-#include "dbus/dbus_interface/tagdbus_interface.h"
+#include "data/tagproxyhandle.h"
 
 DPTAG_USE_NAMESPACE
 
@@ -240,21 +240,18 @@ FileTagCacheController::~FileTagCacheController()
 FileTagCacheController::FileTagCacheController(QObject *parent)
     : QObject(parent), updateThread(new QThread), cacheWorker(new FileTagCacheWorker)
 {
-    tagDbusInterface = new TagDBusInterface("org.deepin.filemanager.service",
-                                            "/org/deepin/filemanager/Tag",
-                                            QDBusConnection::sessionBus(), this);
     init();
 }
 
 void FileTagCacheController::init()
 {
     connect(this, &FileTagCacheController::initLoadTagInfos, cacheWorker.data(), &FileTagCacheWorker::loadFileTagsFromDatabase);
-    connect(tagDbusInterface, &TagDBusInterface::NewTagsAdded, cacheWorker.data(), &FileTagCacheWorker::onTagAdded);
-    connect(tagDbusInterface, &TagDBusInterface::TagsDeleted, cacheWorker.data(), &FileTagCacheWorker::onTagDeleted);
-    connect(tagDbusInterface, &TagDBusInterface::TagsColorChanged, cacheWorker.data(), &FileTagCacheWorker::onTagsColorChanged);
-    connect(tagDbusInterface, &TagDBusInterface::TagsNameChanged, cacheWorker.data(), &FileTagCacheWorker::onTagsNameChanged);
-    connect(tagDbusInterface, &TagDBusInterface::FilesTagged, cacheWorker.data(), &FileTagCacheWorker::onFilesTagged);
-    connect(tagDbusInterface, &TagDBusInterface::FilesUntagged, cacheWorker.data(), &FileTagCacheWorker::onFilesUntagged);
+    connect(TagProxyHandleIns, &TagProxyHandle::newTagsAdded, cacheWorker.data(), &FileTagCacheWorker::onTagAdded);
+    connect(TagProxyHandleIns, &TagProxyHandle::tagsDeleted, cacheWorker.data(), &FileTagCacheWorker::onTagDeleted);
+    connect(TagProxyHandleIns, &TagProxyHandle::tagsColorChanged, cacheWorker.data(), &FileTagCacheWorker::onTagsColorChanged);
+    connect(TagProxyHandleIns, &TagProxyHandle::tagsNameChanged, cacheWorker.data(), &FileTagCacheWorker::onTagsNameChanged);
+    connect(TagProxyHandleIns, &TagProxyHandle::filesTagged, cacheWorker.data(), &FileTagCacheWorker::onFilesTagged);
+    connect(TagProxyHandleIns, &TagProxyHandle::filesUntagged, cacheWorker.data(), &FileTagCacheWorker::onFilesUntagged);
 
     cacheWorker->moveToThread(updateThread.data());
     updateThread->start();

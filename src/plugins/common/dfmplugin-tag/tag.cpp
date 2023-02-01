@@ -33,6 +33,7 @@
 #include "dbus/tagdbus.h"
 #include "dbus/dbus_adaptor/tagdbus_adaptor.h"
 #include "events/tageventreceiver.h"
+#include "data/tagproxyhandle.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -125,6 +126,7 @@ void Tag::onAllPluginsStarted()
 
     if (qApp->applicationName() == "dde-desktop")
         initDbus();
+    TagProxyHandleIns->connectToService();
     emit FileTagCacheController::instance().initLoadTagInfos();
 }
 
@@ -237,7 +239,7 @@ void Tag::initServiceDBusInterfaces(QDBusConnection *connection)
     std::call_once(flag, [&connection, this]() {
         // add our D-Bus interface and connect to D-Bus
         if (!connection->registerService("org.deepin.filemanager.service")) {
-            qWarning("Cannot register the \"org.deepin.filemanager.tag\" service.\n");
+            qWarning("Cannot register the \"org.deepin.filemanager.service\" service.\n");
             return;
         }
 
@@ -246,7 +248,7 @@ void Tag::initServiceDBusInterfaces(QDBusConnection *connection)
         // register object
         tagDBus.reset(new TagDBus);
         Q_UNUSED(new TagDBusAdaptor(tagDBus.data()));
-        if (!connection->registerObject("/org/deepin/filemanager/Tag",
+        if (!connection->registerObject("/org/deepin/filemanager/service/Tag",
                                         tagDBus.data())) {
             qWarning("Cannot register the \"/org/deepin/filemanager/Tag\" object.\n");
             tagDBus.reset(nullptr);

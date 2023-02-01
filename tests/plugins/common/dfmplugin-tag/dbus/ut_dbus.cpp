@@ -147,7 +147,7 @@ TEST_F(UT_TagDBus, Update)
         in = true;
         return in;
     });
-    tagDbus.Update(static_cast<quint8>(TagActionType::kChangeFilesePaths), map);
+    tagDbus.Update(static_cast<quint8>(TagActionType::kChangeFilesPaths), map);
     EXPECT_TRUE(in);
 }
 

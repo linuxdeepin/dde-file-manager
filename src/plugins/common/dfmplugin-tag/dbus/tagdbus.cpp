@@ -102,7 +102,7 @@ bool TagDBus::Update(const quint32 &type, const QVariantMap value)
         return changeTagColors(value);
     case TagActionType::kChangeTagsNameWithFiles:
         return changeTagNamesWithFiles(value);
-    case TagActionType::kChangeFilesePaths:
+    case TagActionType::kChangeFilesPaths:
         return changeFilePaths(value);
     default: {
         return false;
