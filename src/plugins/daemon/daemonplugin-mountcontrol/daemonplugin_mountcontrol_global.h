@@ -62,7 +62,9 @@ enum MountErrorCode {   // NOTE(xust): use NAGATIVE value when return, avoid con
 
     kDlnFsProcessNotExists,
     kDlnMountMounted,
-    kFusermountProcessNotExists
+    kFusermountProcessNotExists,
+
+    kUnhandledError = 1000
 };
 
 DAEMONPMOUNTCONTROL_END_NAMESPACE

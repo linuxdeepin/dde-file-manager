@@ -19,6 +19,7 @@ public:
 
 private:
     bool checkDlnfsExist(const QString &path);
+    int parseErrorCodeByMsg(const QString &msg);
 };
 DAEMONPMOUNTCONTROL_END_NAMESPACE
 

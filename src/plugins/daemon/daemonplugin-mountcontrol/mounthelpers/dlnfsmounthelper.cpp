@@ -33,12 +33,15 @@ QVariantMap DlnfsMountHelper::mount(const QString &path, const QVariantMap &opts
                        path,
                        "--base",
                        path };
-    QProcess p;
-    int re = p.execute(kDlnfs, args);
-    auto rets = p.readAllStandardOutput();
-    qDebug() << "dlnfs: mount: " << rets;
 
-    return { { kResult, re == 0 }, { kErrorCode, re } };
+    QProcess p;
+    p.start(kDlnfs, args);
+    p.waitForFinished();
+    auto rets = p.readAllStandardError();
+    qDebug() << "dlnfs: mount: " << rets;
+    return { { kResult, rets.isEmpty() },
+             { kErrorMessage, QString(rets) },
+             { kErrorCode, parseErrorCodeByMsg(rets) } };
 }
 
 QVariantMap DlnfsMountHelper::unmount(const QString &path, const QVariantMap &opts)
@@ -62,10 +65,13 @@ QVariantMap DlnfsMountHelper::unmount(const QString &path, const QVariantMap &op
     // 3. do unmount dlnfs
     QStringList args { "-u", path };
     QProcess p;
-    int re = p.execute(kFusermount, args);
-    auto rets = p.readAllStandardOutput();
+    p.start(kFusermount, args);
+    p.waitForFinished();
+    auto rets = p.readAllStandardError();
     qDebug() << "dlnfs: unmount: " << rets;
-    return { { kResult, re == 0 }, { kErrorCode, re } };
+    return { { kResult, rets.isEmpty() },
+             { kErrorMessage, QString(rets) },
+             { kErrorCode, parseErrorCodeByMsg(rets) } };
 }
 
 bool DlnfsMountHelper::checkDlnfsExist(const QString &path)
@@ -90,4 +96,15 @@ bool DlnfsMountHelper::checkDlnfsExist(const QString &path)
 
     QString fsType = mnt_fs_get_fstype(fs);
     return fsType == "fuse.dlnfs";
+}
+
+int DlnfsMountHelper::parseErrorCodeByMsg(const QString &msg)
+{
+    if (msg.isEmpty())
+        return 0;
+    if (msg.contains("Device or resource busy"))
+        return EBUSY;
+    if (msg.contains("the underlying file system does not support"))
+        return -kUnsupportedFsTypeOrProtocol;
+    return -kUnhandledError;
 }
