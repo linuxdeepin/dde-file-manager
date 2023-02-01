@@ -55,6 +55,10 @@ QString BookmarkMenuScene::name() const
 
 bool BookmarkMenuScene::initialize(const QVariantHash &params)
 {
+    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    if (d->isEmptyArea)
+        return false;
+
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
 
     if (d->selectFiles.count() <= 0)
@@ -63,10 +67,9 @@ bool BookmarkMenuScene::initialize(const QVariantHash &params)
     d->showBookMarkMenu = true;
     const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
-
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->focusFile = d->selectFiles.first();
-    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     d->predicateName.insert(BookmarkActionId::kActAddBookmarkKey, tr("Pin to quick access"));
