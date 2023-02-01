@@ -30,11 +30,11 @@ private:
     bool checkOldDatabase();
     bool checkNewDatabase();
 
-    bool checkDatabaseFile(const QString &dbPath);
     bool chechTable(SqliteHandle *handle, const QString &tableName, bool newTable = false);
     bool createTableForNewDb(const QString &tableName);
 
     bool upgradeData();
+    QString getColorRGB(const QString &color);
 
 private:
     SqliteHandle *mainDbHandle { nullptr };

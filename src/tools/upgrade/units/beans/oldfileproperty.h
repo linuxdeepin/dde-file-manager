@@ -10,31 +10,22 @@
 class OldFileProperty : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("TableName", "file_property")
+    Q_CLASSINFO("TableName", "tag_with_file")
     Q_PROPERTY(QString file_name READ getFilePath WRITE setFilePath)
-    Q_PROPERTY(QString tag_1 READ getTag1 WRITE setTag1)
-    Q_PROPERTY(QString tag_2 READ getTag2 WRITE setTag2)
-    Q_PROPERTY(QString tag_3 READ getTag3 WRITE setTag3)
+    Q_PROPERTY(QString tag_name READ getTag WRITE setTag)
+
 public:
     explicit OldFileProperty(QObject *parent = nullptr);
 
     QString getFilePath() const;
     void setFilePath(const QString &value);
 
-    QString getTag1() const;
-    void setTag1(const QString &value);
-
-    QString getTag2() const;
-    void setTag2(const QString &value);
-
-    QString getTag3() const;
-    void setTag3(const QString &value);
+    QString getTag() const;
+    void setTag(const QString &value);
 
 private:
-    QString file_name{};
-    QString tag_1{};
-    QString tag_2{};
-    QString tag_3{};
+    QString file_name {};
+    QString tag_name {};
 };
 
-#endif // OLDFILEPROPERTY_H
+#endif   // OLDFILEPROPERTY_H

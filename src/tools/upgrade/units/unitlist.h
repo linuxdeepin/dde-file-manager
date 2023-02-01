@@ -27,6 +27,7 @@
 #include "headerunit.h"
 #include "dconfigupgradeunit.h"
 #include "bookmarkupgradeunit.h"
+#include "tagdbupgradeunit.h"
 
 // units end
 
@@ -43,7 +44,8 @@ inline QList<QSharedPointer<UpgradeUnit>> createUnits()
     return QList<QSharedPointer<UpgradeUnit>> {
         RegUnit(dfm_upgrade::HeaderUnit),
         RegUnit(dfm_upgrade::DConfigUpgradeUnit),
-        RegUnit(dfm_upgrade::BookMarkUpgradeUnit)
+        RegUnit(dfm_upgrade::BookMarkUpgradeUnit),
+        RegUnit(dfm_upgrade::TagDbUpgradeUnit)
     };
 }
 

@@ -4,10 +4,9 @@
 
 #include "oldfileproperty.h"
 
-
-OldFileProperty::OldFileProperty(QObject *parent) : QObject(parent)
+OldFileProperty::OldFileProperty(QObject *parent)
+    : QObject(parent)
 {
-
 }
 
 QString OldFileProperty::getFilePath() const
@@ -20,33 +19,12 @@ void OldFileProperty::setFilePath(const QString &value)
     file_name = value;
 }
 
-QString OldFileProperty::getTag1() const
+QString OldFileProperty::getTag() const
 {
-    return tag_1;
+    return tag_name;
 }
 
-void OldFileProperty::setTag1(const QString &value)
+void OldFileProperty::setTag(const QString &value)
 {
-    tag_1 = value;
+    tag_name = value;
 }
-
-QString OldFileProperty::getTag2() const
-{
-    return tag_2;
-}
-
-void OldFileProperty::setTag2(const QString &value)
-{
-    tag_2 = value;
-}
-
-QString OldFileProperty::getTag3() const
-{
-    return tag_3;
-}
-
-void OldFileProperty::setTag3(const QString &value)
-{
-    tag_3 = value;
-}
-

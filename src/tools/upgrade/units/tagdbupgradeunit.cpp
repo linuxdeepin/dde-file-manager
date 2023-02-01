@@ -74,13 +74,6 @@ bool TagDbUpgradeUnit::upgradeTagDb()
     return true;
 }
 
-bool TagDbUpgradeUnit::checkDatabaseFile(const QString &dbPath)
-{
-    QString errString;
-    auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(dbPath), false, &errString);
-    return fileInfo ? true : false;
-}
-
 bool TagDbUpgradeUnit::chechTable(SqliteHandle *handle, const QString &tableName, bool newTable)
 {
     // check table
@@ -136,11 +129,10 @@ bool TagDbUpgradeUnit::upgradeTagProperty()
     if (tagPropertyBean.isEmpty())
         return true;
 
-    QVariantMap tagPropertyMap;
     for (auto &bean : tagPropertyBean) {
         TagProperty temp;
         temp.setTagName(bean->getTagName());
-        temp.setTagColor(bean->getTagColor());
+        temp.setTagColor(getColorRGB(bean->getTagColor()));
         temp.setFuture("null");
         temp.setAmbiguity(1);
 
@@ -151,6 +143,21 @@ bool TagDbUpgradeUnit::upgradeTagProperty()
     return true;
 }
 
+QString TagDbUpgradeUnit::getColorRGB(const QString &color)
+{
+    QMap<QString, QString> colorMap;
+    colorMap["Orange"] = "#ffa503";
+    colorMap["Red"] = "#ff1c49";
+    colorMap["Purple"] = "#9023fc";
+    colorMap["Navy-blue"] = "#3468ff";
+    colorMap["Azure"] = "#00b5ff";
+    colorMap["Green"] = "#58df0a";
+    colorMap["Yellow"] = "#fef144";
+    colorMap["Gray"] = "#cccccc";
+
+    return colorMap[color];
+}
+
 bool TagDbUpgradeUnit::upgradeFileTag()
 {
     // read old table
@@ -158,31 +165,19 @@ bool TagDbUpgradeUnit::upgradeFileTag()
     if (filePropertyBean.isEmpty())
         return true;
 
-    QVariantMap tagPropertyMap;
-    QStringList tags;
     for (auto &bean : filePropertyBean) {
         const QString &path = bean->getFilePath();
         if (path.isEmpty())
             continue;
 
-        tags.clear();
-        tags.append(bean->getTag1());
-        tags.append(bean->getTag2());
-        tags.append(bean->getTag3());
+        FileTagInfo info;
+        info.setFilePath(bean->getFilePath());
+        info.setTagName(bean->getTag());
+        info.setTagOrder(0);
+        info.setFuture("null");
 
-        for (const QString &tag : tags) {
-            if (tag.isEmpty())
-                continue;
-
-            FileTagInfo info;
-            info.setFilePath(bean->getFilePath());
-            info.setTagName(tag);
-            info.setTagOrder(0);
-            info.setFuture("null");
-
-            if (-1 == newTagDbhandle->insert<FileTagInfo>(info))
-                qWarning() << QString("%1 upgrade failed !").arg(bean->getFilePath());
-        }
+        if (-1 == newTagDbhandle->insert<FileTagInfo>(info))
+            qWarning() << QString("%1 upgrade failed !").arg(bean->getFilePath());
     }
 
     return true;
@@ -195,10 +190,6 @@ bool TagDbUpgradeUnit::checkOldDatabase()
                                                   "/database",
                                                   kTagOldDbName1,
                                                   nullptr);
-
-    // chech database
-    if (!checkDatabaseFile(dbPath1))
-        return false;
 
     QSqlDatabase db1 { SqliteConnectionPool::instance().openConnection(dbPath1) };
     if (!db1.isValid() || db1.isOpenError())
@@ -233,7 +224,6 @@ bool TagDbUpgradeUnit::checkNewDatabase()
     using namespace dfmio;
     const auto &dbPath = DFMUtils::buildFilePath(StandardPaths::location(StandardPaths::kApplicationConfigPath).toLocal8Bit(),
                                                  "/deepin/dde-file-manager/database",
-                                                 kTagNewDbName,
                                                  nullptr);
 
     QDir dir(dbPath);
@@ -250,7 +240,7 @@ bool TagDbUpgradeUnit::checkNewDatabase()
     db.close();
 
     // check ".__tag.db" database table
-    newTagDbhandle = new SqliteHandle(dbPath);
+    newTagDbhandle = new SqliteHandle(dbFilePath);
     if (!chechTable(newTagDbhandle, kTagNewTableTagProperty, true))
         return false;
 
