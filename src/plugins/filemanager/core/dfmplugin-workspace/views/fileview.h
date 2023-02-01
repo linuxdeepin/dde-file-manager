@@ -76,6 +76,7 @@ public:
     QList<QAction *> toolBarActionList() const override;
     QList<QUrl> selectedUrlList() const override;
     void refresh() override;
+    void doItemsLayout() override;
 
     void setViewMode(DFMBASE_NAMESPACE::Global::ViewMode mode);
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode();

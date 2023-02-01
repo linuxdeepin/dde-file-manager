@@ -240,6 +240,12 @@ void FileView::refresh()
     model()->refresh();
 }
 
+void FileView::doItemsLayout()
+{
+    if (rootIndex().isValid())
+        DListView::doItemsLayout();
+}
+
 FileSortFilterProxyModel *FileView::model() const
 {
     return qobject_cast<FileSortFilterProxyModel *>(QAbstractItemView::model());
@@ -969,7 +975,8 @@ void FileView::resizeEvent(QResizeEvent *event)
     if (itemDelegate() && itemDelegate()->editingIndex().isValid())
         doItemsLayout();
 
-    updateModelActiveIndex();
+    if (rootIndex().isValid())
+        updateModelActiveIndex();
 }
 
 void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
@@ -1299,6 +1306,9 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
 
 QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
+    if (!rootIndex().isValid())
+        return QModelIndex();
+
     QModelIndex current = currentIndex();
 
     if (!current.isValid()) {

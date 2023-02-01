@@ -110,6 +110,7 @@ private:
 
 private:
     QUrl rootUrl;
+    QModelIndex currentSourceIndex;
 
     QVariant filterData;
     FileViewFilterCallback filterCallback;

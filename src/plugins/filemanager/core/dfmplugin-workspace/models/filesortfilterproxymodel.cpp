@@ -118,10 +118,10 @@ QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
     workStoped = false;
 
     auto view = qobject_cast<FileView *>(parent());
-    const QModelIndex &rootIndex = viewModel()->setRootUrl(url, view);
+    currentSourceIndex = viewModel()->setRootUrl(url, view);
     resetFilter();
 
-    return mapFromSource(rootIndex);
+    return mapFromSource(currentSourceIndex);
 }
 
 QUrl FileSortFilterProxyModel::currentRootUrl() const
@@ -256,7 +256,9 @@ void FileSortFilterProxyModel::resetFilter()
     } else {
         filters &= ~QDir::Hidden;
     }
-    invalidateFilter();
+
+    if (currentSourceIndex.isValid())
+        invalidateFilter();
 }
 
 void FileSortFilterProxyModel::toggleHiddenFiles()
@@ -434,6 +436,10 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     if (!sourceParent.isValid())
         return true;
 
+    // only filter current index rows
+    if (sourceParent != currentSourceIndex)
+        return false;
+
     const AbstractFileInfoPointer &fileInfo = viewModel()->fileInfo(rowIndex);
 
     return passFileFilters(fileInfo);
@@ -459,10 +465,10 @@ bool FileSortFilterProxyModel::passFileFilters(const AbstractFileInfoPointer &fi
     if ((filters & QDir::NoSymLinks) && fileInfo->isAttributes(OptInfoType::kIsSymLink))
         return false;
 
-    if (!(filters & QDir::Hidden) && fileInfo->isAttributes(OptInfoType::kIsHidden))
+    if (!(filters & QDir::Hidden)
+        && (fileInfo->isAttributes(OptInfoType::kIsHidden) || isDefaultHiddenFile(fileInfo))) {
         return false;
-    if (!(filters & QDir::Hidden) && isDefaultHiddenFile(fileInfo))
-        return false;
+    }
 
     if ((filters & QDir::Readable) && !fileInfo->isAttributes(OptInfoType::kIsReadable))
         return false;
