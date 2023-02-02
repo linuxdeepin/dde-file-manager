@@ -35,13 +35,17 @@ QVariantMap MountControlDBus::Mount(const QString &path, const QVariantMap &opts
     using namespace MountReturnField;
     auto fs = opts.value(kFsType, "").toString();
     if (fs.isEmpty())
-        return { { kResult, false }, { kErrorCode, -kNoFsTypeSpecified } };
+        return { { kResult, false },
+                 { kErrorCode, -kNoFsTypeSpecified },
+                 { kErrorMessage, "fsType filed must be specified." } };
 
     auto helper = d->mountHelpers.value(fs, nullptr);
     if (helper)
         return helper->mount(path, opts);
     else
-        return { { kResult, false }, { kErrorCode, -kUnsupportedFsTypeOrProtocol } };
+        return { { kResult, false },
+                 { kErrorCode, -kUnsupportedFsTypeOrProtocol },
+                 { kErrorMessage, "current fsType is not supported" } };
 }
 
 QVariantMap MountControlDBus::Unmount(const QString &path, const QVariantMap &opts)
@@ -50,13 +54,17 @@ QVariantMap MountControlDBus::Unmount(const QString &path, const QVariantMap &op
     using namespace MountReturnField;
     auto fs = opts.value(kFsType, "").toString();
     if (fs.isEmpty())
-        return { { kResult, false }, { kErrorCode, -kNoFsTypeSpecified } };
+        return { { kResult, false },
+                 { kErrorCode, -kNoFsTypeSpecified },
+                 { kErrorMessage, "fsType filed must be specified." } };
 
     auto helper = d->mountHelpers.value(fs, nullptr);
     if (helper)
         return helper->unmount(path, opts);
     else
-        return { { kResult, false }, { kErrorCode, -kUnsupportedFsTypeOrProtocol } };
+        return { { kResult, false },
+                 { kErrorCode, -kUnsupportedFsTypeOrProtocol },
+                 { kErrorMessage, "current fsType is not supported" } };
 }
 
 MountControlDBusPrivate::MountControlDBusPrivate(MountControlDBus *qq)

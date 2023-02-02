@@ -563,7 +563,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
 
         if (fileName.isEmpty()) {
             QStringList textList {};
-            layout->setText(index.data(kItemFileBaseNameRole).toString().remove('\n'));
+            layout->setText(index.data(role).toString().remove('\n'));
             layout->layout(rect, Qt::ElideRight, nullptr, Qt::NoBrush, &textList);
 
             fileName = fileName = textList.join('\n');

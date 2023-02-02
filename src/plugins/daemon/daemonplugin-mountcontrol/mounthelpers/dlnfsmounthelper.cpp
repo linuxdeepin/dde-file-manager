@@ -21,11 +21,15 @@ QVariantMap DlnfsMountHelper::mount(const QString &path, const QVariantMap &opts
 
     // 1. check if dlnfs at `path` is already exist.
     if (checkDlnfsExist(path))
-        return { { kResult, true }, { kErrorCode, -kDlnMountMounted } };
+        return { { kResult, true },
+                 { kErrorCode, -kDlnMountMounted },
+                 { kErrorMessage, QString("dlnfs is already mounted at %1").arg(path) } };
 
     // 2. check `dlnfs` process exist.
     if (QStandardPaths::findExecutable(kDlnfs).isEmpty())
-        return { { kResult, false }, { kErrorCode, -kDlnFsProcessNotExists } };
+        return { { kResult, false },
+                 { kErrorCode, -kDlnFsProcessNotExists },
+                 { kErrorMessage, "dlnfs do not exist" } };
 
     // 3. mount dlnfs on `path`
     QStringList args { "-o",
@@ -53,13 +57,17 @@ QVariantMap DlnfsMountHelper::unmount(const QString &path, const QVariantMap &op
     // 1. check if dlnfs is already mounted at `path`
     if (!checkDlnfsExist(path)) {
         qDebug() << "dlnfs: is not mounted at" << path;
-        return { { kResult, true }, { kErrorCode, -kMountNotExist } };
+        return { { kResult, true },
+                 { kErrorCode, -kMountNotExist },
+                 { kErrorMessage, QString("dlnfs is not mounted at %1").arg(path) } };
     }
 
     // 2. check `fusermount` process exists.
     if (QStandardPaths::findExecutable(kFusermount).isEmpty()) {
         qWarning() << "dlnfs: fusermount do not exist";
-        return { { kResult, false }, { kErrorCode, -kFusermountProcessNotExists } };
+        return { { kResult, false },
+                 { kErrorCode, -kFusermountProcessNotExists },
+                 { kErrorMessage, "fusermount do not exist" } };
     }
 
     // 3. do unmount dlnfs

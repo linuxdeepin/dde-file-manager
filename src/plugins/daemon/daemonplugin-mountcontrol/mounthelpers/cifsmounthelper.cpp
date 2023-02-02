@@ -30,7 +30,10 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     using namespace MountReturnField;
     if (!path.startsWith("smb://")) {
         qWarning() << "can only mount samba for now.";
-        return { { kMountPoint, "" }, { kResult, false }, { kErrorCode, -kNotSupportedScheme } };
+        return { { kMountPoint, "" },
+                 { kResult, false },
+                 { kErrorCode, -kNotSupportedScheme },
+                 { kErrorMessage, "smb is only supported scheme now" } };
     }
 
     QString aPath = path;
@@ -40,17 +43,26 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     int ret = checkMount(aPath, mpt);
     if (ret == kAlreadyMounted) {
         qDebug() << path << "is already mounted at" << mpt;
-        return { { kMountPoint, mpt }, { kResult, true }, { kErrorCode, 0 } };
+        return { { kMountPoint, mpt },
+                 { kResult, true },
+                 { kErrorCode, 0 },
+                 { kErrorMessage, QString("%1 is already mounted at %2").arg(path).arg(mpt) } };
     }
 
     auto mntPath = generateMountPath(path);
     if (mntPath.isEmpty())
-        return { { kMountPoint, "" }, { kResult, false }, { kErrorCode, -kCannotGenerateMountPath } };
+        return { { kMountPoint, "" },
+                 { kResult, false },
+                 { kErrorCode, -kCannotGenerateMountPath },
+                 { kErrorMessage, "cannot generate mount point" } };
 
     qDebug() << "try to mkdir: " << mntPath;
     if (!mkdir(mntPath)) {
         qDebug() << "cannot mkdir for" << path;
-        return { { kMountPoint, "" }, { kResult, false }, { kErrorCode, -kCannotMkdirMountPoint } };
+        return { { kMountPoint, "" },
+                 { kResult, false },
+                 { kErrorCode, -kCannotMkdirMountPoint },
+                 { kErrorMessage, "cannot create mount point" + mntPath } };
     } else {
         qDebug() << "try to mount" << path << "on" << mntPath;
     }
@@ -109,11 +121,15 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
     int ret = checkMount(aPath, mpt);
     if (ret == kNotExist) {
         qDebug() << "mount is not exist: " << path;
-        return { { kResult, false }, { kErrorCode, -kMountNotExist } };
+        return { { kResult, false },
+                 { kErrorCode, -kMountNotExist },
+                 { kErrorMessage, path + " is not mounted" } };
     }
     if (ret == kNotOwner && !checkAuth()) {
         qDebug() << "check auth failed: " << path;
-        return { { kResult, false }, { kErrorCode, -kNotOwnerOfMount } };
+        return { { kResult, false },
+                 { kErrorCode, -kNotOwnerOfMount },
+                 { kErrorMessage, "invoker is not the owner of mount" } };
     }
 
     ret = ::umount(mpt.toStdString().c_str());

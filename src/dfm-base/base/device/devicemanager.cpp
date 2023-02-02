@@ -806,7 +806,8 @@ void DeviceManagerPrivate::mountAllBlockDev()
 
 void DeviceManagerPrivate::mountDlnfsOnHome()
 {
-    auto enableDlnfsMount = DConfigManager::instance()->value(kDefaultCfgPath, "").toBool();
+    return;   // TODO(xust): release it later.
+    auto enableDlnfsMount = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs").toBool();
     if (!enableDlnfsMount)
         return;
 
