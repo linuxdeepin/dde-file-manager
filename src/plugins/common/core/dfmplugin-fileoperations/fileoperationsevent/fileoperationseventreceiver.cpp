@@ -75,15 +75,15 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
         break;
     case CreateFileType::kCreateFileTypeWord:
         baseName = QObject::tr("Document");
-        suffixex = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "wps" : "doc";
+        suffixex = "doc";
         break;
     case CreateFileType::kCreateFileTypeExcel:
         baseName = QObject::tr("Spreadsheet");
-        suffixex = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "et" : "xls";
+        suffixex = "xls";
         break;
     case CreateFileType::kCreateFileTypePowerpoint:
         baseName = QObject::tr("Presentation");
-        suffixex = DFMBASE_NAMESPACE::WindowUtils::isWayLand() ? "dps" : "ppt";
+        suffixex = "ppt";
         break;
     case CreateFileType::kCreateFileTypeDefault:
         baseName = QObject::tr("New File");
