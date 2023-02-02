@@ -507,7 +507,8 @@ void FilePreviewDialog::switchToPage(int index)
     QStringList key_list(mime_type.name());
 
     key_list.append(mime_type.aliases());
-    key_list.append(mime_type.allAncestors());
+    if (!info->isDesktopFile())
+        key_list.append(mime_type.allAncestors());
 
     for (const QString &key : key_list) {
         const QString &general_key = generalKey(key);
