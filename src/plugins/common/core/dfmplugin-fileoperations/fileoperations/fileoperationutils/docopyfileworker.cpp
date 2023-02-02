@@ -261,7 +261,6 @@ BlockFileCopyInfoPointer DoCopyFileWorker::doReadExBlockFile(const AbstractFileI
 
                 qWarning() << "read size <=0, size: " << readSize << " from file pos: " << currentPos << " from file info size: " << fromInfo->size();
 
-                fromInfo->refresh();
                 const bool fromInfoExist = fromInfo->exists();
                 AbstractJobHandler::JobErrorType errortype = fromInfoExist ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
                 QString errorstr = fromInfoExist ? laststr : QString();
@@ -667,8 +666,6 @@ bool DoCopyFileWorker::doReadFile(const AbstractFileInfoPointer &fromInfo, const
             }
 
             qWarning() << "read size <=0, size: " << readSize << " from file pos: " << fromFilePos << " from file info size: " << fromFileInfoSize;
-
-            fromInfo->refresh();
             const bool fromInfoExist = fromInfo->exists();
             AbstractJobHandler::JobErrorType errortype = fromInfoExist ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
             QString errorstr = fromInfoExist ? fromDevice->lastError().errorMsg() : QString();

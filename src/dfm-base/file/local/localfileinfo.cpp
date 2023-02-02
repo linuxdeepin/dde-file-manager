@@ -27,6 +27,7 @@
 #include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
@@ -117,13 +118,7 @@ void LocalFileInfo::initQuerierAsync(int ioPriority, AbstractFileInfo::initQueri
  */
 bool LocalFileInfo::exists() const
 {
-    bool exists = false;
-    if (d->dfmFileInfo) {
-        QReadLocker locker(&d->lock);
-        exists = d->dfmFileInfo->exists();
-    }
-
-    return exists;
+    return dfmbase::DecoratorFile(d->url.path()).exists();
 }
 /*!
  * \brief refresh 更新文件信息，清理掉缓存的所有的文件信息

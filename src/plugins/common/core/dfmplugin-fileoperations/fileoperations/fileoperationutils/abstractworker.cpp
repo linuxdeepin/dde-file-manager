@@ -313,7 +313,7 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
         || AbstractJobHandler::JobType::kCutType == jobType) {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceFilesTotalSize)));
     } else {
-        info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceFilesCount)));
+        info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(allFilesList.count())));
     }
     AbstractJobHandler::StatisticState state = AbstractJobHandler::StatisticState::kNoState;
     if (statisticsFilesSizeJob) {
