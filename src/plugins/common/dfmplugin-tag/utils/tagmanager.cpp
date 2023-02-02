@@ -419,7 +419,7 @@ bool TagManager::changeTagColor(const QString &tagName, const QString &newTagCol
     if (tagName.isEmpty() || newTagColor.isEmpty())
         return false;
 
-    QVariantMap changeMap { { tagName, QVariant { QString(newTagColor) } } };
+    QVariantMap changeMap { { tagName, QVariant { TagHelper::instance()->qureyColorByColorName(newTagColor).name() } } };
     return TagProxyHandleIns->changeTagsColor(changeMap);
 }
 
@@ -631,10 +631,11 @@ void TagManager::onTagColorChanged(const QVariantMap &tagAndColorName)
     auto it = tagAndColorName.begin();
     while (it != tagAndColorName.end()) {
         QUrl url = TagHelper::instance()->makeTagUrlByTagName(it.key());
-        QString iconName = TagHelper::instance()->qureyIconNameByColorName(it.value().toString());
+        QString iconName = TagHelper::instance()->qureyIconNameByColor(QColor(it.value().toString()));
         QIcon icon = QIcon::fromTheme(iconName);
         QVariantMap map {
-            { "Property_Key_Icon", icon }
+            { "Property_Key_Icon", icon },
+            { "Property_Key_Editable", true }
         };
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
         ++it;
