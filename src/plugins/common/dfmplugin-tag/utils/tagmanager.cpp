@@ -418,7 +418,7 @@ bool TagManager::changeTagColor(const QString &tagName, const QString &newTagCol
 {
     if (tagName.isEmpty() || newTagColor.isEmpty())
         return false;
-
+    emit tagDeleted(tagName);
     QVariantMap changeMap { { tagName, QVariant { TagHelper::instance()->qureyColorByColorName(newTagColor).name() } } };
     return TagProxyHandleIns->changeTagsColor(changeMap);
 }
@@ -434,6 +434,7 @@ bool TagManager::changeTagName(const QString &tagName, const QString &newName)
     }
 
     QVariantMap oldAndNewName = { { tagName, QVariant { newName } } };
+    emit tagDeleted(tagName);
     return TagProxyHandleIns->changeTagNamesWithFiles(oldAndNewName);
 }
 
