@@ -20,6 +20,8 @@
  */
 #include "basewindow.h"
 
+#include <QIcon>
+
 DDPCORE_USE_NAMESPACE
 
 BaseWindow::BaseWindow(QWidget *parent) : QWidget(parent)
@@ -31,4 +33,5 @@ void BaseWindow::init()
 {
     setAutoFillBackground(false);
     setAttribute(Qt::WA_TranslucentBackground);
+    setWindowIcon(QIcon::fromTheme("deepin-toggle-desktop"));
 }
