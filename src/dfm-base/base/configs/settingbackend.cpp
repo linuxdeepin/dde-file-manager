@@ -154,13 +154,16 @@ void SettingBackend::addToSerialDataKey(const QString &key)
 
 void SettingBackend::doSetOption(const QString &key, const QVariant &value)
 {
-    QSignalBlocker blocker(this);
-    if (d->serialDataKey.contains(key))
-        blocker.unblock();
-
-    d->saveAsAppAttr(key, value);
-    d->saveAsGenAttr(key, value);
-    d->saveByFunc(key, value);
+    if (d->serialDataKey.contains(key)) {
+        d->saveAsAppAttr(key, value);
+        d->saveAsGenAttr(key, value);
+        d->saveByFunc(key, value);
+    } else {
+        QSignalBlocker blocker(this);
+        d->saveAsAppAttr(key, value);
+        d->saveAsGenAttr(key, value);
+        d->saveByFunc(key, value);
+    }
 }
 
 void SettingBackend::onValueChanged(int attribute, const QVariant &value)
