@@ -104,7 +104,7 @@ void DetailSpaceHelper::setDetailViewByUrl(DetailSpaceWidget *w, const QUrl &url
             return;
 
         w->setCurrentUrl(url);
-        QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(url);
+        QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(w->currentUrl());
         if (!widgetMap.isEmpty()) {
             QList<int> indexs = widgetMap.keys();
             for (int &index : indexs) {
