@@ -56,7 +56,7 @@ private:
     void addIntegrationItemToSidebar(const QUrl &hostUrl, ContextMenuCallback contexMenu);
     void doSwitchToSmbIntegratedMode(const QList<QUrl> &stashedUrls);
     void doSwitchToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &stashedUrls);
-    bool existSmbMount(const QString &host);
+    bool smbMountExists(const QString &host);
     void stashSmbMount(const QString &id);
 
     void clearPasswd(const QUrl &url);

@@ -654,7 +654,8 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     if (info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kProtocol) {
         QString id = ComputerUtils::getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
         if (id.startsWith(Global::Scheme::kSmb)) {
-            StashMountsUtils::stashMount(info->urlOf(UrlInfoType::kUrl), info->displayName());
+            //The following line is moved to SmbIntegrationManager::handleItemFilterOnAdd(), but there is still saved as V1 format
+            //StashMountsUtils::stashMount(info->urlOf(UrlInfoType::kUrl), info->displayName());
             removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
     }
