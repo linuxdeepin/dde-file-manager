@@ -519,7 +519,7 @@ QModelIndex SideBarView::findItemIndex(const QUrl &url) const
                 if (!item)
                     continue;
                 bool foundByCb = item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), url);
-                if (foundByCb || (item->url().scheme() == url.scheme() && item->url().path() == url.path()))
+                if (foundByCb || UniversalUtils::urlEquals(item->url(), url))
                     return item->index();
             }
         }

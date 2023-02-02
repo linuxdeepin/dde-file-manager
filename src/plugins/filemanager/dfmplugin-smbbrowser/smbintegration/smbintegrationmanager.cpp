@@ -23,7 +23,10 @@ DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_smbbrowser;
 
 using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+using FindMeCallback = std::function<bool(const QUrl &itemUrl, const QUrl &targetUrl)>;
+
 Q_DECLARE_METATYPE(ItemClickedActionCallback);
+Q_DECLARE_METATYPE(FindMeCallback);
 
 static constexpr char kSmbIntegrationPath[] { "/.smbinteg" };
 static constexpr char kSmbIntegrationSuffix[] { "smbinteg" };
@@ -395,6 +398,12 @@ void SmbIntegrationManager::addIntegrationItemToSidebar(const QUrl &hostUrl, Con
         return;
 
     ItemClickedActionCallback cdCb = [this](quint64 winId, const QUrl &url) { this->onOpenItem(winId, url); };
+    FindMeCallback findMeCb = [](const QUrl &itemUrl, const QUrl &targetUrl) {
+        QUrl hostUrl;
+        hostUrl.setScheme(Global::Scheme::kSmb);   //change entry:// to smb://
+        hostUrl.setHost(itemUrl.host());   //remove /.smbinteg
+        return UniversalUtils::urlEquals(hostUrl, targetUrl);
+    };
     Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
     QVariantMap map {
         { "Property_Key_Group", "Group_Network" },
@@ -403,7 +412,8 @@ void SmbIntegrationManager::addIntegrationItemToSidebar(const QUrl &hostUrl, Con
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contexMenu) },
-        { "Property_Key_VisiableControl", "mounted_share_dirs" }
+        { "Property_Key_VisiableControl", "mounted_share_dirs" },
+        { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) },
     };
     QUrl url;
     url.setScheme(Global::Scheme::kEntry);
