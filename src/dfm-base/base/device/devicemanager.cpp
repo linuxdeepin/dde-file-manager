@@ -51,7 +51,9 @@
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
-static constexpr char kSavePasswd[] = { "savePasswd" };
+static constexpr char kSavePasswd[] { "savePasswd" };
+static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
+static constexpr char kSavedPasswordType[] { "SavedPasswordType" };
 
 DeviceManager *DeviceManager::instance()
 {
@@ -664,7 +666,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                                    // 'device busy' error.
+                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -751,7 +753,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() { }
+DeviceManager::~DeviceManager() {}
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -874,6 +876,16 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
             info.passwd = data.value(kPasswd).toString();
             info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(
                     data.value(kPasswdSaveMode).toInt());
+            if (uri.startsWith(Global::Scheme::kSmb)) {
+                QVariantHash pwTypeData = Application::genericSetting()->value(kStashedSmbDevices, kSavedPasswordType, QVariantHash()).toHash();
+                const QString &key = QUrl(uri).toString(QUrl::RemovePath);
+                int newPwType = int(info.savePasswd);
+                int savedPwType = pwTypeData.value(key, -1).toInt();
+                if (savedPwType != int(NetworkMountPasswdSaveMode::kSavePermanently)) {
+                    pwTypeData.insert(key, newPwType);
+                    Application::genericSetting()->setValue(kStashedSmbDevices, kSavedPasswordType, pwTypeData);
+                }
+            }
         }
     } else {
         info.cancelled = true;

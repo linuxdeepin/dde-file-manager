@@ -43,9 +43,9 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmbase;
 
 static constexpr int kMsgLabelWidth { 350 };
-static constexpr int kSpeedLabelWidth = { 100 };
-static constexpr uint8_t kVirtualValue = { 30 };
-static constexpr char kBtnPropertyActionName[] = { "btnType" };
+static constexpr int kSpeedLabelWidth { 100 };
+static constexpr uint8_t kVirtualValue { 30 };
+static constexpr char kBtnPropertyActionName[] { "btnType" };
 static constexpr AbstractJobHandler::JobState kPausedState = AbstractJobHandler::JobState::kPauseState;
 
 ElidedLable::ElidedLable(QWidget *parent)

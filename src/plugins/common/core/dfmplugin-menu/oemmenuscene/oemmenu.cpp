@@ -63,7 +63,7 @@ static const char *const kSingleDir = "SingleDir";
 static const char *const kMultiFileDirs = "MultiFileDirs";
 
 static const char *const kCommandKey = "Exec";
-static const char *const kCommandArg[] = { "%p", "%f", "%F", "%u", "%U" };
+static const char *const kCommandArg[] { "%p", "%f", "%F", "%u", "%U" };
 
 OemMenuPrivate::OemMenuPrivate(OemMenu *qq)
     : q(qq)

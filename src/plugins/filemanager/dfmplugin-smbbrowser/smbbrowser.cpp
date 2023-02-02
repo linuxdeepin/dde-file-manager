@@ -57,11 +57,11 @@ using namespace dfmplugin_smbbrowser;
 
 DFMBASE_USE_NAMESPACE
 
-static constexpr char kSmbInteg[] = { "smbinteg" };
-static constexpr char kSmbIntegPath[] = { "/.smbinteg" };
-static constexpr char kProtodevstashed[] = { "protodevstashed" };
-static constexpr char kStashedSmbDevices[] = { "StashedSmbDevices" };
-static constexpr char kSmbIntegrations[] = { "SmbIntegrations" };
+static constexpr char kSmbInteg[] { "smbinteg" };
+static constexpr char kSmbIntegPath[] { "/.smbinteg" };
+static constexpr char kProtodevstashed[] { "protodevstashed" };
+static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
+static constexpr char kSmbIntegrations[] { "SmbIntegrations" };
 
 Q_DECLARE_METATYPE(QString *)
 

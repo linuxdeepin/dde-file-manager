@@ -25,23 +25,24 @@ using namespace dfmplugin_smbbrowser;
 using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
 Q_DECLARE_METATYPE(ItemClickedActionCallback);
 
-static constexpr char kSmbIntegrationPath[] = { "/.smbinteg" };
-static constexpr char kSmbIntegrationSuffix[] = { "smbinteg" };
+static constexpr char kSmbIntegrationPath[] { "/.smbinteg" };
+static constexpr char kSmbIntegrationSuffix[] { "smbinteg" };
 static constexpr char kProtocol[] { "protodev" };
-static constexpr char kProtodevstashed[] = { "protodevstashed" };
-static constexpr char kStashedSmbDevices[] = { "StashedSmbDevices" };
-static constexpr char kSmbIntegrations[] = { "SmbIntegrations" };
-static constexpr char kGenericAttribute[] = { "GenericAttribute" };
-static constexpr char kRemoteMounts[] = { "RemoteMounts" };
-static constexpr char kMergeTheEntriesOfSambaSharedFolders[] = { "MergeTheEntriesOfSambaSharedFolders" };
-static constexpr char kAlwaysShowOfflineRemoteConnections[] = { "AlwaysShowOfflineRemoteConnections" };
+static constexpr char kProtodevstashed[] { "protodevstashed" };
+static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
+static constexpr char kSmbIntegrations[] { "SmbIntegrations" };
+static constexpr char kSavedPasswordType[] { "SavedPasswordType" };
+static constexpr char kGenericAttribute[] { "GenericAttribute" };
+static constexpr char kRemoteMounts[] { "RemoteMounts" };
+static constexpr char kMergeTheEntriesOfSambaSharedFolders[] { "MergeTheEntriesOfSambaSharedFolders" };
+static constexpr char kAlwaysShowOfflineRemoteConnections[] { "AlwaysShowOfflineRemoteConnections" };
 
-static constexpr char kHostKey[] = { "host" };
-static constexpr char kNameKey[] = { "name" };
-static constexpr char kProtocolKey[] = { "protocol" };
-static constexpr char kShareKey[] = { "share" };
+static constexpr char kHostKey[] { "host" };
+static constexpr char kNameKey[] { "name" };
+static constexpr char kProtocolKey[] { "protocol" };
+static constexpr char kShareKey[] { "share" };
 
-static constexpr char kGroupNetwork[] = { "Group_Network" };
+static constexpr char kGroupNetwork[] { "Group_Network" };
 
 SmbIntegrationManager *SmbIntegrationManager::instance()
 {
@@ -811,12 +812,25 @@ bool SmbIntegrationManager::handleItemFilterOnRemove(const QUrl &devUrl)
         return false;
     bool re = smbMountExists(smbHost);
     if (!re) {   //When all smb share folders are unmounted
-        //1. remove password
-        QUrl clearPasswordUrl;
-        clearPasswordUrl.setScheme(Global::Scheme::kSmb);
-        clearPasswordUrl.setHost(smbHost);
-        clearPasswordUrl.setPath("/" + shareName + "/");
-        this->clearPasswd(clearPasswordUrl);
+        QVariantHash pwTypeData = Application::genericSetting()->value(kStashedSmbDevices, kSavedPasswordType, QVariantHash()).toHash();
+        QUrl hostUrl;
+        hostUrl.setScheme(Global::Scheme::kSmb);
+        hostUrl.setHost(smbHost);
+        const QString &key = hostUrl.toString();
+        int savedPwType = pwTypeData.value(key).toInt();
+        //1. remove password according to the password type
+        bool needForgetPassword = savedPwType != 2;   // 2 means: the password saving type is `NetworkMountPasswdSaveMode::kSavePermanently`
+        if (needForgetPassword) {
+            // if user did not check `save password` when mount smb, `NetworkMountPasswdSaveMode::kSaveBeforeLogouthere` is used as default,
+            // so here need to forget this kind of password when all the smb mounts be unmounted.
+            QUrl clearPasswordUrl;
+            clearPasswordUrl.setScheme(Global::Scheme::kSmb);
+            clearPasswordUrl.setHost(smbHost);
+            clearPasswordUrl.setPath("/" + shareName + "/");
+            this->clearPasswd(clearPasswordUrl);
+            pwTypeData.remove(key);
+            Application::genericSetting()->setValue(kStashedSmbDevices, kSavedPasswordType, pwTypeData);
+        }
         //2. if isSmbStashMountsEnabled = false, and all the smb shared folders are unmounted, then
         //remove the smb ingtegration item from sidebar and computer view
         if (!isSmbStashMountsEnabled) {

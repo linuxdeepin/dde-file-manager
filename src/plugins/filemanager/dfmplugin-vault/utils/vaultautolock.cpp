@@ -13,7 +13,7 @@
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 constexpr char kVaultGroup[] = { "Vault/AutoLock" };
-constexpr char kVaultAutoLockKey[] = { "AutoLock" };
+constexpr char kVaultAutoLockKey[] { "AutoLock" };
 VaultAutoLock::VaultAutoLock(QObject *parent)
     : QObject(parent)
 {

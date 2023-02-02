@@ -58,8 +58,8 @@ static Settings *cfgSettings()
     return Application::genericSetting();
 }
 
-static constexpr char kStashedSmbDevices[] = { "StashedSmbDevices" };
-static constexpr char kSmbIntegrations[] = { "SmbIntegrations" };
+static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
+static constexpr char kSmbIntegrations[] { "SmbIntegrations" };
 
 bool StashMountsUtils::isSmbIntegrationEnabled()
 {

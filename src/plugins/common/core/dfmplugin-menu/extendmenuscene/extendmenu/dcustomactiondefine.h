@@ -74,7 +74,7 @@ enum ActionArg {
     kUrlPaths,   //%U 多个url
 };
 
-static const char *const kStrActionArg[] = { "%d", "%p", "%b", "%a", "%f", "%F", "%u", "%U" };
+static const char *const kStrActionArg[] { "%d", "%p", "%b", "%a", "%f", "%F", "%u", "%U" };
 
 template<typename Element, typename AddFunc, typename IsCount>
 void sortFunc(const QMap<int, QList<Element>> &locate, QList<Element> &orgin, AddFunc addfunc, IsCount countFunc)

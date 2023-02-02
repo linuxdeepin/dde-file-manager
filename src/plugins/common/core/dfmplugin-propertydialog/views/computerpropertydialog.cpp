@@ -175,7 +175,7 @@ void ComputerPropertyDialog::closeEvent(QCloseEvent *event)
 
 static QString formatCap(qulonglong cap, const int size = 1024, quint8 precision = 1)
 {
-    static QString type[] = { " B", " KB", " MB", " GB", " TB" };
+    static QString type[] { " B", " KB", " MB", " GB", " TB" };
 
     qulonglong lc = cap;
     double dc = cap;
