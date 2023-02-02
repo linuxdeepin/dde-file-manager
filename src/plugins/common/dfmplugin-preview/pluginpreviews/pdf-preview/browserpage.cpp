@@ -60,7 +60,7 @@ BrowserPage::~BrowserPage()
 
 QRectF BrowserPage::boundingRect() const
 {
-    return QRectF(0, 0, originSizeF.width() * currentScaleFactor, originSizeF.height() * currentScaleFactor);
+    return QRectF(0, 0, kImageBrowserWidth * currentScaleFactor, originSizeF.height() * (kImageBrowserWidth / originSizeF.width()) * currentScaleFactor);
 }
 
 QRectF BrowserPage::rect()
@@ -68,12 +68,12 @@ QRectF BrowserPage::rect()
     switch (currentRotation) {
     case kRotateBy90:
     case kRotateBy270:
-        return QRectF(0, 0, static_cast<double>(originSizeF.height() * currentScaleFactor), static_cast<double>(originSizeF.width() * currentScaleFactor));
+        return QRectF(0, 0, static_cast<double>(originSizeF.height() * (kImageBrowserWidth / originSizeF.width()) * currentScaleFactor), static_cast<double>(kImageBrowserWidth * currentScaleFactor));
     default:
         break;
     }
 
-    return QRectF(0, 0, static_cast<double>(originSizeF.width() * currentScaleFactor), static_cast<double>(originSizeF.height() * currentScaleFactor));
+    return QRectF(0, 0, static_cast<double>(kImageBrowserWidth * currentScaleFactor), static_cast<double>(originSizeF.height() * (kImageBrowserWidth / originSizeF.width()) * currentScaleFactor));
 }
 
 void BrowserPage::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)

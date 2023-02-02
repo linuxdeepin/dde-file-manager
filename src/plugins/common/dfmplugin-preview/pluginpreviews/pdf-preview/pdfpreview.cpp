@@ -50,7 +50,7 @@ bool PDFPreview::setFileUrl(const QUrl &url)
 
     if (pdfWidget == nullptr)
         pdfWidget = new PdfWidget();
-    pdfWidget->setFixedSize(800, 500);
+    pdfWidget->setFixedSize(kPdfWidgetWidth, kPdfWidgetHeight);
     pdfWidget->addFileAsync(url.toLocalFile());
     pageTitle = QFileInfo(url.toLocalFile()).fileName();
 
