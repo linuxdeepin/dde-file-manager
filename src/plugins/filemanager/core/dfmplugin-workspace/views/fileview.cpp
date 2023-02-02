@@ -120,6 +120,7 @@ void FileView::setViewMode(Global::ViewMode mode)
 
         d->initIconModeView();
         setMinimumWidth(0);
+        model()->setSortRole(d->currentSortRole);
         break;
     case Global::ViewMode::kListMode:
         setUniformItemSizes(true);
@@ -400,12 +401,15 @@ void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidde
 
 void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
-    model()->setSortRole(model()->getRoleByColumn(logicalIndex));
+    const ItemRoles &role = model()->getRoleByColumn(logicalIndex);
+    model()->setSortRole(role);
     model()->sort(logicalIndex, order);
+    d->currentSortRole = role;
+    d->currentSortOrder = order;
 
     const QUrl &url = rootUrl();
 
-    setFileViewStateValue(url, "sortRole", model()->getRoleByColumn(logicalIndex));
+    setFileViewStateValue(url, "sortRole", role);
     setFileViewStateValue(url, "sortOrder", static_cast<int>(order));
 }
 
