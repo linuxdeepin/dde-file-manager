@@ -99,7 +99,7 @@ private:
 private slots:
     void updateRecent();
     void onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime);
-    void onDeleteExistRecentUrls(QList<QUrl> &urls);
+    void onDeleteExistRecentUrls(const QList<QUrl> &urls);
 
 private:
     QTimer updateRecentTimer;

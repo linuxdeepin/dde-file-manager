@@ -40,7 +40,7 @@ public slots:
 
 signals:
     void updateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime);
-    void deleteExistRecentUrls(QList<QUrl> &urls);
+    void deleteExistRecentUrls(const QList<QUrl> &urls);
 };
 }
 #endif   // RECENTITERATEWORKER_H

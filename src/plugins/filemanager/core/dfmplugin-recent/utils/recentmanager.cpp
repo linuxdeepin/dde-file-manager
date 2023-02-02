@@ -319,7 +319,7 @@ void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString origin
     Q_UNUSED(readTime)
 }
 
-void RecentManager::onDeleteExistRecentUrls(QList<QUrl> &urls)
+void RecentManager::onDeleteExistRecentUrls(const QList<QUrl> &urls)
 {
     for (const auto &url : urls) {
         if (removeRecentFile(url)) {
