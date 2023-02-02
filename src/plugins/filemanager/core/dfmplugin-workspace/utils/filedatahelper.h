@@ -69,8 +69,10 @@ private:
     RootInfo *createRootInfo(const QUrl &url);
     AbstractFileWatcherPointer setWatcher(const QUrl &url);
     TraversalThreadPointer setTraversalThread(RootInfo *info);
+    void destroyTraversalThread(TraversalThreadPointer threadPtr);
 
     QMap<QUrl, RootInfo *> rootInfoMap;
+    QList<TraversalThreadPointer> waitToDestroyThread;
 };
 
 }

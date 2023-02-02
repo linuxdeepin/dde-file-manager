@@ -46,7 +46,8 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
 
 TraversalDirThread::~TraversalDirThread()
 {
-    stop();
+    quit();
+    wait();
 }
 
 void TraversalDirThread::stop()
@@ -57,10 +58,6 @@ void TraversalDirThread::stop()
     stopFlag = true;
     if (dirIterator)
         dirIterator->close();
-
-    // wait after the iterator really initialized
-    if (iteratorValid)
-        wait();
 }
 
 void TraversalDirThread::quit()
@@ -88,6 +85,7 @@ void TraversalDirThread::run()
 
     QElapsedTimer timer;
     timer.start();
+
     qInfo() << "dir query start, url: " << dirUrl;
 
     dirIterator->cacheBlockIOAttribute();
@@ -97,11 +95,6 @@ void TraversalDirThread::run()
         return;
 
     while (dirIterator->hasNext()) {
-        // dirIterator init finish
-        if (!iteratorValid)
-            qInfo() << "dirIterator finished, url: " << dirUrl << " elapsed: " << timer.elapsed();
-        iteratorValid = true;
-
         if (stopFlag)
             break;
 

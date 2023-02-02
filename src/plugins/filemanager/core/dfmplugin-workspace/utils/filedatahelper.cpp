@@ -122,7 +122,7 @@ void FileDataHelper::doTravers(const int rootIndex)
         info->canFetchMore = false;
         info->needTraversal = false;
 
-        info->traversal = setTraversalThread(info);
+        setTraversalThread(info);
 
         if (!info->fileCache.isNull()) {
             info->fileCache->stop();
@@ -264,18 +264,39 @@ AbstractFileWatcherPointer FileDataHelper::setWatcher(const QUrl &url)
 
 TraversalThreadPointer FileDataHelper::setTraversalThread(RootInfo *info)
 {
-    if (!info->traversal.isNull()) {
-        const TraversalThreadPointer &traversal = info->traversal;
-
-        traversal->disconnect();
-        traversal->stopAndDeleteLater();
-        traversal->setParent(nullptr);
-    }
+    destroyTraversalThread(info->traversal);
 
     TraversalThreadPointer traversal(new TraversalDirThread(
             info->url, QStringList(),
             QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
             QDirIterator::FollowSymlinks));
 
+    info->traversal = traversal;
     return traversal;
+}
+
+void FileDataHelper::destroyTraversalThread(TraversalThreadPointer threadPtr)
+{
+    if (threadPtr.isNull())
+        return;
+
+    threadPtr->disconnect();
+    threadPtr->setParent(nullptr);
+
+    if (threadPtr->isFinished()) {
+        threadPtr->deleteLater();
+        return;
+    }
+
+    // delete the thread ptr through remove last ref of it
+    // while it finished after called stop()
+    waitToDestroyThread.append(threadPtr);
+    connect(threadPtr.data(), &QThread::finished, this,
+            [=]() {
+                threadPtr->disconnect();
+                waitToDestroyThread.removeAll(threadPtr);
+            },
+            Qt::QueuedConnection);
+
+    threadPtr->quit();
 }
