@@ -25,6 +25,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
@@ -306,7 +307,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
                 return false;
             }
             const_cast<QUrl &>(fileUrl) = fileInfoLink->urlOf(UrlInfoType::kRedirectedFileUrl);
-            if (!DecoratorFile(fileInfoLink->pathOf(PathInfoType::kAbsoluteFilePath)).exists() && !d->isSmbUnmountedFile(fileUrl)) {
+            if (d->isInvalidSymlinkFile(fileUrl)) {
                 d->lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->nameOf(
                                                                                      NameInfoType::kFileName),
                                                                              fileInfo->urlOf(UrlInfoType::kUrl));
@@ -342,12 +343,6 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
     }
 
     if (!pathList.empty()) {
-        // todo lanxs, deal enter
-        /*if (event->isEnter()) {
-            result = FileUtils::openEnterFiles(pathList);
-        } else {
-            result = FileUtils::openFiles(pathList);
-        }*/
         result = d->doOpenFiles(pathList);
     } else {
         return true;
@@ -654,14 +649,6 @@ bool LocalFileHandlerPrivate::launchApp(const QString &desktopFilePath, const QS
         return true;
     }
 
-    if (isFileManagerSelf(desktopFilePath) && fileUrls.count() == 1) {
-        QUrl fileUrl(fileUrls[0]);
-        if (isSmbUnmountedFile(fileUrl)) {
-            newFileUrls.clear();
-            newFileUrls << smbFileUrl(fileUrls[0]).toString();
-        }
-    }
-
     // url path will be truncated at the index of '#', so replace it if it's real existed in url. (mostly it's for avfs archive paths)
     std::for_each(newFileUrls.begin(), newFileUrls.end(), [](QString &path) { path.replace("#", "%23"); });
     bool ok = launchAppByDBus(desktopFilePath, newFileUrls);
@@ -722,37 +709,17 @@ bool LocalFileHandlerPrivate::isFileManagerSelf(const QString &desktopFile)
     return d.desktopExec().contains("dde-file-manager") || d.desktopExec().contains("file-manager.sh");
 }
 
-bool LocalFileHandlerPrivate::isSmbUnmountedFile(const QUrl &url)
+bool LocalFileHandlerPrivate::isInvalidSymlinkFile(const QUrl &url)
 {
-    return url.path().startsWith("/run/user/")
-            && url.path().contains("/gvfs/smb-share:server=");
-    // TODO(lanxs) check gvfs busy
-    /*return url.path().startsWith("/run/user/")
-            && url.path().contains("/gvfs/smb-share:server=")
-            && DFileService::instance()->checkGvfsMountfileBusy(url, false);*/
-}
+    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(url) };
+    if (!info)
+        return true;
 
-QUrl LocalFileHandlerPrivate::smbFileUrl(const QString &filePath)
-{
-    static QRegularExpression regExp("file:///run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<path>.*)",
-                                     QRegularExpression::DotMatchesEverythingOption
-                                             | QRegularExpression::DontCaptureOption
-                                             | QRegularExpression::OptimizeOnFirstUsageOption);
+    const QString &path { info->pathOf(PathInfoType::kAbsoluteFilePath) };
+    if (!DecoratorFile(path).exists() && !DeviceUtils::isSamba(url))
+        return true;
 
-    const QRegularExpressionMatch &match = regExp.match(filePath, 0, QRegularExpression::NormalMatch,
-                                                        QRegularExpression::DontCheckSubjectStringMatchOption);
-
-    if (!match.hasMatch())
-        return QUrl::fromLocalFile(filePath);
-
-    const QString &host = match.captured("host");
-    const QString &path = match.captured("path");
-
-    QUrl newUrl;
-    newUrl.setScheme(Global::Scheme::kSmb);
-    newUrl.setHost(host);
-    newUrl.setPath("/" + path);
-    return newUrl;
+    return false;
 }
 
 QString LocalFileHandlerPrivate::getFileMimetypeFromGio(const QUrl &url)
@@ -1057,11 +1024,12 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
     } else {
         defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
         if (defaultDesktopFile.isEmpty()) {
-            if (isSmbUnmountedFile(fileUrl)) {
+            if (DeviceUtils::isSamba(fileUrl)) {
                 mimeType = QString("inode/directory");
                 defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
                 isOpenNow = true;
                 mimeType = QString();
+                transUrls.replace(transUrls.indexOf(fileUrl), DeviceUtils::getSambaFileUriFromNative(fileUrl));
             } else {
                 qDebug() << "no default application for" << fileUrl;
                 return false;
@@ -1098,7 +1066,7 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
             addRecentFile(filePath, df, mimeType);
         }
         return result;
-    } else if (isSmbUnmountedFile(transUrls[0])) {
+    } else if (DeviceUtils::isSamba(transUrls[0])) {
         return false;
     }
 

@@ -447,12 +447,4 @@ void UniversalUtils::prepareForSleep(QObject *obj, const char *cslot)
             cslot);
 }
 
-bool UniversalUtils::isSambaMountPath(const QUrl &url)
-{
-    static const QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };
-    QRegularExpression re(smbMatch);
-    QRegularExpressionMatch match = re.match(url.path());
-    return match.hasMatch();
-}
-
 }

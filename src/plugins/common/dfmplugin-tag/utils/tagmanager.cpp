@@ -15,15 +15,17 @@
 #include "utils/tagtextformat.h"
 #include "data/tagproxyhandle.h"
 
-#include <dfm-framework/dpf.h>
-#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QWidgetAction>
@@ -409,7 +411,7 @@ void TagManager::deleteFiles(const QList<QUrl> &urls)
     for (const auto &temp : urls)
         paths.append(temp.toString());
 
-    this->deleteTagData(paths,TagActionType::kDeleteFiles);
+    this->deleteTagData(paths, TagActionType::kDeleteFiles);
 }
 
 bool TagManager::changeTagColor(const QString &tagName, const QString &newTagColor)
@@ -498,7 +500,7 @@ bool TagManager::localFileCanTagFilter(const QUrl &url) const
             return desktopInfo->canTag();
     }
 
-    if (UniversalUtils::isSambaMountPath(url))
+    if (DeviceUtils::isSamba(url))
         return false;
 
     return !SystemPathUtil::instance()->isSystemPath(filePath);

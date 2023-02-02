@@ -23,6 +23,7 @@
 #include "commandparser.h"
 
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 
@@ -90,6 +91,7 @@ void CommandParser::process()
 
 void CommandParser::process(const QStringList &arguments)
 {
+    qDebug() << "App start args: " << arguments;
     commandParser->process(arguments);
 }
 
@@ -167,7 +169,7 @@ QStringList CommandParser::unknownOptionNames() const
 
 void CommandParser::showPropertyDialog()
 {
-    QStringList paths = positionalArguments();
+    const QStringList &paths = positionalArguments();
     QList<QUrl> urlList;
     for (const QString &path : paths) {
         QUrl url = QUrl::fromUserInput(path);
@@ -189,7 +191,7 @@ void CommandParser::showPropertyDialog()
 
 void CommandParser::openWithDialog()
 {
-    QStringList files = positionalArguments();
+    const QStringList &files = positionalArguments();
 
     QList<QUrl> urlList;
     for (const QString &path : files) {
@@ -242,7 +244,6 @@ void CommandParser::openInUrls()
 
         QUrl url = UrlRoute::fromUserInput(path);
 
-        //Todo(yanghao): 路径转换（回收站、保险箱）
         if (isSet("show-item")) {
             const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
             if (!fileInfo)
@@ -257,7 +258,24 @@ void CommandParser::openInUrls()
     if (argumentUrls.isEmpty())
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl());
     for (const QUrl &url : argumentUrls)
-        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isSet("n"));
+        openWindowWithUrl(url);
+}
+
+void CommandParser::openWindowWithUrl(const QUrl &url)
+{
+    // Some args must require the plugin to be started in advance
+    static const QMap<QString, QString> kSchemeMap {
+        { Global::Scheme::kSmb, "dfmplugin-smbbrowser" },
+        { Global::Scheme::kTrash, "dfmplugin-trash" }
+    };
+    if (Q_UNLIKELY(kSchemeMap.keys().contains(url.scheme()))) {
+        static std::once_flag flag;
+        std::call_once(flag, [url]() {
+            const QString &name { kSchemeMap.value(url.scheme()) };
+            dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, QStringList() << name);
+        });
+    }
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, isSet("n"));
 }
 
 CommandParser::CommandParser(QObject *parent)

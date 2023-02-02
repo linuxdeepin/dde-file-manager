@@ -25,8 +25,13 @@
 
 #include "dfm-base/base/urlroute.h"
 
+#include <dfm-framework/lifecycle/lifecycle.h>
+
 #include <QDebug>
 #include <QUrl>
+#include <QCoreApplication>
+#include <QThread>
+#include <QTimer>
 
 #include <functional>
 
@@ -61,4 +66,16 @@ void CoreEventReceiver::handleOpenWindow(const QUrl &url)
 void CoreEventReceiver::handleOpenWindow(const QUrl &url, const QVariant &opt)
 {
     CoreHelper::openNewWindow(url, opt);
+}
+
+void CoreEventReceiver::handleLoadPlugins(const QStringList &names)
+{
+    std::for_each(names.begin(), names.end(), [](const QString &name) {
+        Q_ASSERT(qApp->thread() == QThread::currentThread());
+        qInfo() << "About to load plugin:" << name;
+        auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
+        if (plugin)
+            qInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin)
+                    << "State: " << plugin->pluginState();
+    });
 }

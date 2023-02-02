@@ -50,6 +50,7 @@ class DeviceUtils
 public:
     static QString getBlockDeviceId(const QString &deviceDesc);
     static QString getMountInfo(const QString &in, bool lookForMpt = true);
+    static QUrl getSambaFileUriFromNative(const QUrl &url);
     static QString errMessage(DFMMOUNT::DeviceError err);
     static QString convertSuitableDisplayName(const QVariantMap &devInfo);
     static QString convertSuitableDisplayName(const QVariantHash &devInfo);

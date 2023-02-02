@@ -119,7 +119,7 @@ static bool pluginsLoad()
     static const QStringList kLazyLoadPluginNames { "dfmplugin-emblem", "dfmplugin-burn", "dfmplugin-dirshare",
                                                     "dfmplugin-tag", "dfmplugin-avfsbrowser", "dfmplugin-myshares",
                                                     "dfmplugin-smbbrowser", "dfmplugin-recent", "dfmplugin-search",
-                                                    "dfmplugin-vault", "dfmplugin-filepreview" };
+                                                    "dfmplugin-vault", "dfmplugin-filepreview", "dfmplugin-trash" };
     if (DTK_CORE_NAMESPACE::DSysInfo::isCommunityEdition())
         DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, { "dfmplugin-vault" }, kLazyLoadPluginNames);
     else

@@ -57,6 +57,7 @@ private:
     void openWithDialog();
     void openInHomeDirectory();
     void openInUrls();
+    void openWindowWithUrl(const QUrl &url);
 
 private:
     explicit CommandParser(QObject *parent = nullptr);

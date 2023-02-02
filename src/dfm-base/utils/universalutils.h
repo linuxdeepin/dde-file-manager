@@ -61,8 +61,6 @@ public:
     static void userChange(QObject *obj, const char *cslot = nullptr);
 
     static void prepareForSleep(QObject *obj, const char *cslot = nullptr);
-
-    static bool isSambaMountPath(const QUrl &url);
 };
 
 }

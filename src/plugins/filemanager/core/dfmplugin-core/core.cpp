@@ -39,7 +39,6 @@
 #include <dfm-mount/ddevicemanager.h>
 
 #include <QTimer>
-#include <QCoreApplication>
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
@@ -109,6 +108,8 @@ void Core::onAllPluginsInitialized()
                                    CoreEventReceiver::instance(), static_cast<void (CoreEventReceiver::*)(const QUrl &)>(&CoreEventReceiver::handleOpenWindow));
     dpfSignalDispatcher->subscribe(GlobalEventType::kOpenNewWindow,
                                    CoreEventReceiver::instance(), static_cast<void (CoreEventReceiver::*)(const QUrl &, const QVariant &)>(&CoreEventReceiver::handleOpenWindow));
+    dpfSignalDispatcher->subscribe(GlobalEventType::kLoadPlugins,
+                                   CoreEventReceiver::instance(), &CoreEventReceiver::handleLoadPlugins);
 }
 
 void Core::onAllPluginsStarted()
@@ -131,15 +132,9 @@ void Core::onWindowOpened(quint64 windd)
 
     static std::once_flag flag;
     std::call_once(flag, []() {
-        const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
-        std::for_each(list.begin(), list.end(), [](const QString &name) {
-            QTimer::singleShot(0, [name]() {
-                Q_ASSERT(qApp->thread() == QThread::currentThread());
-                qInfo() << "About to load plugin:" << name;
-                auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
-                if (plugin)
-                    qInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin);
-            });
+        QTimer::singleShot(0, []() {
+            const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
+            dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);
         });
     });
 }

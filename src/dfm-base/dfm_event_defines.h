@@ -44,6 +44,7 @@ enum GlobalEventType {
     kRevocation,
     kOpenAsAdmin,
     kSwitchViewMode,
+    kLoadPlugins,
 
     // request file operations
     kOpenFiles = 200,

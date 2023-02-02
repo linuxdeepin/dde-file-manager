@@ -80,6 +80,46 @@ QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
     return {};
 }
 
+QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
+{
+    Q_ASSERT(url.isValid());
+    if (!DeviceUtils::isSamba(url))
+        return url;
+
+    QUrl smbUrl;
+    smbUrl.setScheme(Global::Scheme::kSmb);
+    static constexpr char kGvfsMatch[] { "^/root/\\.gvfs/smb|^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb" };
+    static constexpr char kCifsMatch[] { "^/media/[\\s\\S]*/smbmounts/" };
+    QString filePath { url.path() };
+    if (hasMatch(filePath, kGvfsMatch)) {
+        static QRegularExpression kGvfsSMBRegExp("/run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<path>.*)",
+                                                 QRegularExpression::DotMatchesEverythingOption
+                                                         | QRegularExpression::DontCaptureOption
+                                                         | QRegularExpression::OptimizeOnFirstUsageOption);
+        const QRegularExpressionMatch &match { kGvfsSMBRegExp.match(filePath, 0, QRegularExpression::NormalMatch,
+                                                                    QRegularExpression::DontCheckSubjectStringMatchOption) };
+        const QString &host { match.captured("host") };
+        const QString &path { match.captured("path") };
+        smbUrl.setHost(host);
+        smbUrl.setPath("/" + path);
+    } else if (hasMatch(filePath, kCifsMatch)) {
+        static QRegularExpression cifsMptPref { kCifsMatch };
+        // mountRootDir like: `sharedir on 1.2.3.4`
+        QString mountRootDir { filePath.remove(cifsMptPref).section("/", 0, 0) };
+        const QString &shareDir { mountRootDir.section(" on ", 0, 0) };
+        const QString &host { mountRootDir.section(" on ", 1, 1) };
+
+        // subPath is after `sharedir on 1.2.3.4`
+        const QString &suffixPath { filePath.remove(mountRootDir) };
+        smbUrl.setHost(host);
+        smbUrl.setPath("/" + shareDir + suffixPath);   // like : smb://1.2.3.4/sharedir/suffixPath
+    } else {
+        return url;
+    }
+
+    return smbUrl;
+}
+
 QString DeviceUtils::errMessage(dfmmount::DeviceError err)
 {
     return DFMMOUNT::Utils::errorMessage(err);

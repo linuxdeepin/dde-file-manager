@@ -34,8 +34,7 @@ public:
     bool launchAppByGio(const QString &desktopFile, const QStringList &filePaths = {});
 
     bool isFileManagerSelf(const QString &desktopFile);
-    bool isSmbUnmountedFile(const QUrl &url);
-    QUrl smbFileUrl(const QString &filePath);
+    bool isInvalidSymlinkFile(const QUrl &url);
     QString getFileMimetypeFromGio(const QUrl &url);
     void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
     QString getFileMimetype(const QUrl &url);
