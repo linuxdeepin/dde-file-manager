@@ -966,7 +966,7 @@ void FileOperateBaseWorker::createExBlockFileCopyInfo(const AbstractFileInfoPoin
     tmpinfo->size = size;
     tmpinfo->isdir = isDir;
     tmpinfo->permission = permission;
-    workData->blockCopyInfoQueue.enqueue(tmpinfo);
+    workData->blockCopyInfoQueue.push_backByLock(tmpinfo);
 }
 
 void FileOperateBaseWorker::startBlockFileCopy()

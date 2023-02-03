@@ -3,6 +3,7 @@
 #include "dfmplugin_fileoperations_global.h"
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/interfaces/abstractfileinfo.h>
+#include <dfm-base/utils/threadcontainer.hpp>
 
 #include <QSharedPointer>
 #include <QQueue>
@@ -48,7 +49,7 @@ public:
     QAtomicInteger<qint64> skipWriteSize { 0 };   // 跳过的文件大
     QAtomicInteger<qint64> completeFileCount { 0 };   // copy complete file count
     std::atomic_bool signalThread { true };
-    QQueue<QSharedPointer<DPFILEOPERATIONS_NAMESPACE::WorkerData::BlockFileCopyInfo>> blockCopyInfoQueue;
+    DThreadList<QSharedPointer<DPFILEOPERATIONS_NAMESPACE::WorkerData::BlockFileCopyInfo>> blockCopyInfoQueue;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 using BlockFileCopyInfoPointer = QSharedPointer<DPFILEOPERATIONS_NAMESPACE::WorkerData::BlockFileCopyInfo>;

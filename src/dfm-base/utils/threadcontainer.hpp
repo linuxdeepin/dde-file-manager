@@ -200,12 +200,19 @@ public:
      *
      * \return T * 返回第一个地址
      */
-    inline T *first()
+    inline const T &first()
     {
         QMutexLocker lk(&mutex);
         if (myList->isEmpty())
             return nullptr;
-        return &(myList->first());
+        return myList->first();
+    }
+    inline T takeByLock()
+    {
+        QMutexLocker lk(&mutex);
+        if (myList->isEmpty())
+            return nullptr;
+        return myList->takeFirst();
     }
     /*!
      * \brief count 链表的总个数

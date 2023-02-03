@@ -97,7 +97,7 @@ void DoCopyFileWorker::writeExblockFile()
             return;
         if (workData->blockCopyInfoQueue.size() <= 0) {
             QThread::msleep(10);
-        } else if (!doWriteBlockFileCopy(workData->blockCopyInfoQueue.dequeue())) {
+        } else if (!doWriteBlockFileCopy(workData->blockCopyInfoQueue.takeByLock())) {
             return;
         }
     }
@@ -312,7 +312,9 @@ void DoCopyFileWorker::createExBlockFileCopyInfo(const AbstractFileInfoPointer f
     tmpinfo->size = size;
     tmpinfo->isdir = isDir;
     tmpinfo->permission = permission;
-    workData->blockCopyInfoQueue.enqueue(tmpinfo);
+    workData->blockCopyInfoQueue.push_backByLock(tmpinfo);
+    while(workData->blockCopyInfoQueue.count() > 500)
+        QThread::msleep(10);
 }
 
 // copy thread using
@@ -402,7 +404,7 @@ void DoCopyFileWorker::readExblockFile(const AbstractFileInfoPointer fromInfo, c
     if (isStopped())
         return;
 
-    workData->blockCopyInfoQueue.enqueue(info);
+    workData->blockCopyInfoQueue.push_backByLock(info);
 }
 
 bool DoCopyFileWorker::stateCheck()
