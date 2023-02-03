@@ -91,7 +91,7 @@
             "visibility":"private"
         },
         "dfm.mount.dlnfs": {
-            "value":true,
+            "value":false,
             "serial":0,
             "flags":[],
             "name":"Extend filename charactors",

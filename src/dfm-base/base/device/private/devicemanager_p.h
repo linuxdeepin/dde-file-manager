@@ -49,6 +49,10 @@ private:
     void mountAllBlockDev();
     void mountDlnfsOnHome();
 
+    static bool isDaemonMountRunning();
+
+    static void handleDlnfsMount(const QString &mpt, bool mount);
+
     static DFMMOUNT::MountPassInfo askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault, const QString &domainDefault, const QString &uri);
     static int askForUserChoice(const QString &message, const QStringList &choices);
 

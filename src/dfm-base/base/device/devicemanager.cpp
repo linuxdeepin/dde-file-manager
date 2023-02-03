@@ -42,6 +42,7 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QDBusInterface>
+#include <QDBusConnectionInterface>
 #include <QDBusMessage>
 #include <QApplication>
 
@@ -54,6 +55,13 @@ using namespace GlobalServerDefines;
 static constexpr char kSavePasswd[] { "savePasswd" };
 static constexpr char kStashedSmbDevices[] { "StashedSmbDevices" };
 static constexpr char kSavedPasswordType[] { "SavedPasswordType" };
+
+static constexpr char kDaemonService[] { "com.deepin.filemanager.daemon" };
+static constexpr char kDaemonPath[] { "/com/deepin/filemanager/daemon" };
+static constexpr char kDaemonMountPath[] { "/com/deepin/filemanager/daemon/MountControl" };
+static constexpr char kDaemonMountIface[] { "com.deepin.filemanager.daemon.MountControl" };
+static constexpr char kDaemonIntroIface[] { "org.freedesktop.DBus.Introspectable" };
+static constexpr char kDaemonIntroMethod[] { "Introspect" };
 
 DeviceManager *DeviceManager::instance()
 {
@@ -133,7 +141,10 @@ QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
 
     QString errMsg;
     if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {
-        return dev->mount(opts);
+        const QString &originalMpt = dev->mount(opts);
+        if (!originalMpt.isEmpty() && dev->removable() && !dev->optical())   // do dlnfs mount if it is removable disk.
+            d->handleDlnfsMount(originalMpt, true);
+        return originalMpt;
     } else {
         // TODO, handle optical
         qWarning() << "device is not mountable: " << errMsg << id;
@@ -169,7 +180,13 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
     } else {
         QString errMsg;
         if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {
-            dev->mountAsync(opts, cb);
+            auto callback = [cb](bool ok, DeviceError err, const QString &mpt) {
+                if (!mpt.isEmpty())
+                    DeviceManagerPrivate::handleDlnfsMount(mpt, true);
+                if (cb)
+                    cb(ok, err, mpt);
+            };
+            dev->mountAsync(opts, callback);
         } else {
             qWarning() << "device is not mountable: " << errMsg << id;
             if (cb)
@@ -202,6 +219,8 @@ bool DeviceManager::unmountBlockDev(const QString &id, const QVariantMap &opts)
             return true;
         if (!dev->hasFileSystem())
             return true;
+
+        DeviceManagerPrivate::handleDlnfsMount(mpt, false);
         return dev->unmount(opts);
     }
 }
@@ -240,6 +259,8 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
                 cb(ok, err);
         });
     } else {
+        DeviceManagerPrivate::handleDlnfsMount(mpt, false);
+
         dev->unmountAsync(opts, [cb, this, id](bool ok, DeviceError err) {
             if (cb)
                 cb(ok, err);
@@ -666,7 +687,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                    // 'device busy' error.
+                                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -753,7 +774,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() {}
+DeviceManager::~DeviceManager() { }
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -808,23 +829,60 @@ void DeviceManagerPrivate::mountAllBlockDev()
 
 void DeviceManagerPrivate::mountDlnfsOnHome()
 {
-    return;   // TODO(xust): release it later.
+    handleDlnfsMount(QStandardPaths::writableLocation(QStandardPaths::HomeLocation), true);
+}
+
+bool DeviceManagerPrivate::isDaemonMountRunning()
+{
+    auto systemBusIFace = QDBusConnection::systemBus().interface();
+    if (!systemBusIFace) {
+        qWarning() << "daemon mount is not available.";
+        return false;
+    }
+
+    if (!systemBusIFace->isServiceRegistered(kDaemonService)) {
+        qWarning() << "daemon service is not registered";
+        return false;
+    }
+
+    QDBusInterface daemonIface(kDaemonService, kDaemonPath, kDaemonIntroIface,
+                               QDBusConnection::systemBus());
+    QDBusReply<QString> reply = daemonIface.call(kDaemonIntroMethod);
+    qDebug() << reply.value();
+    return reply.value().contains("<node name=\"MountControl\"/>");
+}
+
+/*!
+ * \brief DeviceManagerPrivate::handleDlnfsMount
+ * \param mpt
+ * \param mount: TRUE for mount, FALSE for unmount
+ */
+void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
+{
     auto enableDlnfsMount = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs").toBool();
-    if (!enableDlnfsMount)
+    if (!enableDlnfsMount) {
+        qInfo() << "dlnfs: mount is disabled";
         return;
+    }
 
-    const QString &homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    qDebug() << "dlnfs: start mounting dlnfs on $HOME" << homePath;
-    static constexpr char kDaemonService[] { "com.deepin.filemanager.daemon" };
-    static constexpr char kDaemonPath[] { "/com/deepin/filemanager/daemon/MountControl" };
-    static constexpr char kDaemonInterface[] { "com.deepin.filemanager.daemon.MountControl" };
+    if (!isDaemonMountRunning()) {
+        qWarning() << "dlnfs: daemon mount is not working...";
+        return;
+    }
 
-    QDBusInterface iface(kDaemonService, kDaemonPath, kDaemonInterface, QDBusConnection::systemBus());
-    QDBusReply<QVariantMap> reply = iface.call("Mount", homePath, QVariantMap { { "fsType", "dlnfs" } });
+    QString method = mount ? "Mount" : "Unmount";
+
+    qDebug() << QString("dlnfs: start %1ing dlnfs on %2").arg(method).arg(mpt);
+
+    QDBusInterface iface(kDaemonService, kDaemonMountPath, kDaemonMountIface, QDBusConnection::systemBus());
+    QDBusReply<QVariantMap> reply = iface.call(method, mpt, QVariantMap { { "fsType", "dlnfs" } });
     const auto &ret = reply.value();
-    qDebug() << "dlnfs: mount $USER: " << ret;
+
+    QString msg = QString("dlnfs: %1 on %2, result:").arg(method).arg(mpt);
+
+    qDebug() << msg << ret;
     if (!ret.value("result").toBool())
-        qWarning() << "dlnfs: mount $USER failed: " << ret;
+        qWarning() << msg << ret;
 }
 
 MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,
