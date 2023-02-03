@@ -167,8 +167,8 @@ bool LocalFileHandler::rmdir(const QUrl &url)
         return false;
     }
 
-    bool success = oper->trashFile();
-    if (!success) {
+    QString targetTrash = oper->trashFile();
+    if (targetTrash.isEmpty()) {
         qWarning() << "trash file failed, url: " << url;
 
         d->setError(oper->lastError());
@@ -575,12 +575,10 @@ bool LocalFileHandler::trashFile(const QUrl &url)
         return false;
     }
 
-    bool success = dOperator->trashFile();
-    if (!success) {
+    QString targetTrash = dOperator->trashFile();
+    if (targetTrash.isEmpty()) {
         qWarning() << "trash file failed, url: " << url;
-
         d->setError(dOperator->lastError());
-
         return false;
     }
 
