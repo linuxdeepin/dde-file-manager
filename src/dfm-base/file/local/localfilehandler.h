@@ -62,7 +62,7 @@ public:
     bool setPermissionsRecursive(const QUrl &url, QFileDevice::Permissions permissions);
     bool moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
     bool copyFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
-    bool trashFile(const QUrl &url);
+    QString trashFile(const QUrl &url);
     bool deleteFile(const QUrl &file);
     bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
 

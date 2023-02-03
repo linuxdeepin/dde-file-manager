@@ -55,9 +55,6 @@ protected:
     bool isCanMoveToTrash(const QUrl &url, bool *result);
 
 private:
-    QUrl buildTrashUrl(const QString &completeBaseName, const QString &suffix);
-
-private:
     AbstractFileInfoPointer targetFileInfo { nullptr };   // target file information
     QAtomicInteger<qint64> completeFilesCount { 0 };   // move to trash success file count
     qint8 isSameDisk { -1 };   // the source file and trash files is in same disk

@@ -92,6 +92,8 @@ bool DoMoveToTrashFilesWorker::statisticsFilesSize()
 bool DoMoveToTrashFilesWorker::doMoveToTrash()
 {
     bool result = false;
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    static QString homeTrashFileDir = dfmbase::StandardPaths::location(StandardPaths::StandardLocation::kTrashLocalFilesPath);
     // 总大小使用源文件个数
     for (const auto &url : sourceUrls) {
         QUrl urlSource = url;
@@ -136,25 +138,35 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         emitCurrentTaskNotify(urlSource, targetUrl);
 
-        // if a file names test.tar.gz
-        // using baseName test and complete suffix tar.gz to build ulr like test.2.tag.gz
-        const QString &baseName = fileInfo->nameOf(NameInfoType::kBaseName);
-        const QString &completeSuffix = fileInfo->nameOf(NameInfoType::kCompleteSuffix);
+        AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+        do {
+            QString trashPath = fileHandler.trashFile(urlSource);
+            if (!trashPath.isEmpty()) {
+                completeFilesCount++;
+                QUrl trashUrl;
+                trashUrl.setScheme(dfmbase::Global::Scheme::kTrash);
+                if (!trashPath.startsWith(homeTrashFileDir))
+                    trashPath = "/" + trashPath.replace("/", "\\");
+                trashUrl.setPath(trashPath.replace(homeTrashFileDir, ""));
+                completeTargetFiles.append(trashUrl);
+                emitProgressChangedNotify(completeFilesCount);
+                completeSourceFiles.append(urlSource);
+                continue;
+            } else {
+                // pause and emit error msg
+                action = doHandleErrorAndWait(url, QUrl(),
+                                              AbstractJobHandler::JobErrorType::kPermissionDeniedError, false,
+                                              fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ?
+                                                "Unknown error" : fileHandler.errorString());
+            }
+        } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
-        //! the trash url builed there must same as one fileHandler.trashFile created.
-        //! the trash url should be returned by fileHandler.trashFile instead of using same algorihm on two place
-        //! to keep same url. todo(lyg)
-        const QUrl &trashUrl = buildTrashUrl(baseName, completeSuffix);
-
-        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool trashSucc = fileHandler.trashFile(urlSource);
-        if (trashSucc) {
+        if (action != AbstractJobHandler::SupportAction::kNoAction
+                && action == AbstractJobHandler::SupportAction::kSkipAction) {
             completeFilesCount++;
-            completeTargetFiles.append(trashUrl);
-            emitProgressChangedNotify(completeFilesCount);
-            completeSourceFiles.append(urlSource);
             continue;
         }
+
         return false;
     }
     return true;
@@ -179,7 +191,7 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
             // pause and emit error msg
             action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
 
-    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
         *result = action == AbstractJobHandler::SupportAction::kSkipAction;
@@ -187,36 +199,4 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     }
 
     return true;
-}
-
-QUrl DoMoveToTrashFilesWorker::buildTrashUrl(const QString &baseName, const QString &completeSuffix)
-{
-    // gio trash no trash url return, so build trash url before trash
-    // file:///aaa/bbb/ccc.txt -> trash:///ccc.txt, if trash:///ccc.txt exists, return trash:///ccc.2.txt
-
-    QUrl url;
-    url.setScheme("trash");
-
-    int i = 1;
-    while (1) {
-        if (i > 1000000)   // to avoid endless loop
-            break;
-
-        QString path;
-        if (i == 1)
-            path = "/" + baseName;
-        else
-            path = QString("/" + baseName + "." + "%1").arg(i);
-
-        if (!completeSuffix.isEmpty())
-            path = path + "." + completeSuffix;
-        url.setPath(path);
-
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-        if (fileInfo->exists())
-            ++i;
-        else
-            break;
-    }
-    return url;
 }

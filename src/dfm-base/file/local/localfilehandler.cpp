@@ -562,27 +562,26 @@ bool LocalFileHandler::copyFile(const QUrl &sourceUrl, const QUrl &destUrl, dfmi
     return true;
 }
 
-bool LocalFileHandler::trashFile(const QUrl &url)
+QString LocalFileHandler::trashFile(const QUrl &url)
 {
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
     if (!factory) {
         qWarning() << "create factory failed, url: " << url;
-        return false;
+        return QString();
     }
     QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
     if (!dOperator) {
         qWarning() << "create file operator failed, url: " << url;
-        return false;
+        return QString();
     }
 
     QString targetTrash = dOperator->trashFile();
     if (targetTrash.isEmpty()) {
         qWarning() << "trash file failed, url: " << url;
         d->setError(dOperator->lastError());
-        return false;
     }
 
-    return true;
+    return targetTrash;
 }
 /*!
  * \brief LocalFileHandler::deleteFile 删除文件使用系统c库
