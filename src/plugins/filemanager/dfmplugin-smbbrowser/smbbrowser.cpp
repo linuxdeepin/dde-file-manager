@@ -192,22 +192,17 @@ void SmbBrowser::onWindowOpened(quint64 winId)
         SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle);
     } else {
         connect(
-                window, &FileManagerWindow::sideBarInstallFinished,
-                this, [this, ctxMenuHandle] {
+                window, &FileManagerWindow::sideBarInstallFinished, this, [this, ctxMenuHandle] {
                     addNeighborToSidebar();
                     SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle);
                 },
                 Qt::DirectConnection);
     }
 
-    if (window->workSpace()) {
-        SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle, false);
-    } else {
+    if (!window->workSpace()) {
         connect(
-                window, &FileManagerWindow::workspaceInstallFinished,
-                this, [this, ctxMenuHandle] {
+                window, &FileManagerWindow::workspaceInstallFinished, this, [this, ctxMenuHandle] {
                     addNeighborToSidebar();
-                    SmbIntegrationManager::instance()->addSmbIntegrationFromConfig(ctxMenuHandle, false);
                 },
                 Qt::DirectConnection);
     }
