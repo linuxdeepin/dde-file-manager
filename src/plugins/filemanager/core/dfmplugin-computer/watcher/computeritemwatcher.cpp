@@ -440,6 +440,15 @@ void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
 {
     int insertAt = 0;
     bool foundGroup = false;
+    auto found = std::find_if(initedDatas.cbegin(), initedDatas.cend(),
+                              [in](const ComputerItemData &item) {
+                                  return in.url.isValid() && item.url.isValid() && UniversalUtils::urlEquals(in.url, item.url);
+                              });
+    if (found != initedDatas.cend()) {
+        qDebug() << "item already exists: " << in.url << in.itemName;
+        return;
+    }
+
     for (; insertAt < initedDatas.count(); insertAt++) {
         const auto &item = initedDatas.at(insertAt);
         if (item.groupId != in.groupId) {
