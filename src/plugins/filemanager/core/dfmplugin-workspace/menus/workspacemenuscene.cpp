@@ -175,11 +175,9 @@ bool WorkspaceMenuScene::create(QMenu *parent)
     Q_ASSERT(d->view);
 
     if (d->isEmptyArea) {
-        if (d->isRefreshOn()) {
-            auto tempAction = parent->addAction(d->predicateName.value(ActionID::kRefresh));
-            d->predicateAction[ActionID::kRefresh] = tempAction;
-            tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRefresh));
-        }
+        auto tempAction = parent->addAction(d->predicateName.value(ActionID::kRefresh));
+        d->predicateAction[ActionID::kRefresh] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRefresh));
     }
 
     // 创建子场景菜单

@@ -42,7 +42,6 @@
 
 #include <QMenu>
 #include <QVariant>
-#include <QGSettings>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
@@ -452,11 +451,9 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
     d->predicateAction[ActionID::kDisplaySettings] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySettings));
 
-    if (d->isRefreshOn()) {
-        tempAction = parent->addAction(d->predicateName.value(ActionID::kRefresh));
-        d->predicateAction[ActionID::kRefresh] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRefresh));
-    }
+    tempAction = parent->addAction(d->predicateName.value(ActionID::kRefresh));
+    d->predicateAction[ActionID::kRefresh] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRefresh));
 
     // todo update text when screensaver is disbale.
     tempAction = parent->addAction(d->predicateName.value(ActionID::kWallpaperSettings));

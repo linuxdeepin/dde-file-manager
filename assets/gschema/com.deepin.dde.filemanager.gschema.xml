@@ -112,10 +112,9 @@
 
   <key name='refresh' type='b'>
     <default>false</default>
-    <summary>Wether use 'Refresh' action on context menu</summary>
+    <summary>This Key is obsolete</summary>
     <description>
-      If enabled, 'Refresh' will display on the context menu.
-      If disabled, 'Refresh' will not display on the context menu.
+      Please switch to using Group Policy for control
     </description>
   </key>
 

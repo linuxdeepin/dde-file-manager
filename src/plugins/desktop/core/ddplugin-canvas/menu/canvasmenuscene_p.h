@@ -29,7 +29,6 @@
 
 #include <QMap>
 #include <QMultiHash>
-#include <QGSettings>
 
 namespace ddplugin_canvas {
 
@@ -80,21 +79,6 @@ public:
             dfmplugin_menu::ActionID::kOpenInTerminal
         };
         return actionRule;
-    }
-
-    inline bool isRefreshOn() const
-    {
-        // the gsetting control for refresh action
-        if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
-            const QGSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
-                                        "/com/deepin/dde/filemanager/contextmenu/");
-            if (menuSwitch.keys().contains("refresh")) {
-                auto showRefreh = menuSwitch.get("refresh");
-                if (showRefreh.isValid())
-                    return showRefreh.toBool();
-            }
-        }
-        return false;
     }
 
 public:
