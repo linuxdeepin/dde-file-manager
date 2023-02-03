@@ -41,14 +41,14 @@ void TrashCore::initialize()
     // TODO(lanxs): 目前缓存存在问题，trash由于其特性，容易触发缓存更新问题，所以trash里面暂不使用缓存，等后期缓存完善再放开
     DFMBASE_NAMESPACE::InfoFactory::regClass<TrashFileInfo>(TrashCoreHelper::scheme(), DFMBASE_NAMESPACE::InfoFactory::kNoCache);
 
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPTRASHCORE_NAMESPACE), "slot_TrashCore_EmptyTrash",
+                            TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::handleEmptyTrash);
+
     followEvents();
 }
 
 bool TrashCore::start()
 {
-    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPTRASHCORE_NAMESPACE), "slot_TrashCore_EmptyTrash",
-                            TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::handleEmptyTrash);
-
     CustomViewExtensionView func { TrashCoreHelper::createTrashPropertyDialog };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
                          func, TrashCoreHelper::scheme());

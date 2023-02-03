@@ -156,6 +156,7 @@ bool DeviceProxyManager::isDBusRuning()
 
 bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 {
+    d->initMounts();
     const QStringList &&mpts = d->externalMounts.values();
     QString path = filePath.endsWith("/") ? filePath : filePath + "/";
     auto ret = std::find_if(mpts.cbegin(), mpts.cend(), [path](const QString &mpt) { return path.startsWith(mpt); });
@@ -164,7 +165,8 @@ bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 
 bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
 {
-    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    d->initMounts();
+    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     for (auto iter = d->allMounts.constKeyValueBegin(); iter != d->allMounts.constKeyValueEnd(); ++iter) {
         if (!iter.base().key().startsWith(kBlockDeviceIdPrefix) && path.startsWith(iter.base().value()))
             return true;
@@ -174,7 +176,8 @@ bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
 
 bool DeviceProxyManager::isFileOfExternalBlockMounts(const QString &filePath)
 {
-    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    d->initMounts();
+    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     for (auto iter = d->externalMounts.constKeyValueBegin(); iter != d->externalMounts.constKeyValueEnd(); ++iter) {
         if (iter.base().key().startsWith(kBlockDeviceIdPrefix) && path.startsWith(iter.base().value()))
             return true;
@@ -184,7 +187,8 @@ bool DeviceProxyManager::isFileOfExternalBlockMounts(const QString &filePath)
 
 bool DeviceProxyManager::isFileFromOptical(const QString &filePath)
 {
-    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    d->initMounts();
+    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     for (auto iter = d->allMounts.constKeyValueBegin(); iter != d->allMounts.constKeyValueEnd(); ++iter) {
         if (iter.base().key().startsWith(QString(kBlockDeviceIdPrefix) + "sr") && path.startsWith(iter.base().value()))
             return true;
@@ -194,7 +198,8 @@ bool DeviceProxyManager::isFileFromOptical(const QString &filePath)
 
 bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
 {
-    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    d->initMounts();
+    const QString &path = filePath.endsWith("/") ? filePath : filePath + "/";
     id = d->allMounts.key(path, "");
     return !id.isEmpty();
 }
@@ -202,7 +207,6 @@ bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
 DeviceProxyManager::DeviceProxyManager(QObject *parent)
     : QObject(parent), d(new DeviceProxyManagerPrivate(this, parent))
 {
-    QTimer::singleShot(1000, this, [this] { d->initMounts(); });
 }
 
 DeviceProxyManager::~DeviceProxyManager()
@@ -243,25 +247,28 @@ void DeviceProxyManagerPrivate::initConnection()
 
 void DeviceProxyManagerPrivate::initMounts()
 {
-    using namespace GlobalServerDefines;
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        using namespace GlobalServerDefines;
 
-    auto func = [this](const QStringList &devs, std::function<QVariantMap(DeviceProxyManager *, const QString &, bool)> query) {
-        for (const auto &dev : devs) {
-            auto &&info = query(q, dev, false);
-            auto mpt = info.value(DeviceProperty::kMountPoint).toString();
-            if (!mpt.isEmpty()) {
-                mpt = mpt.endsWith("/") ? mpt : mpt + "/";
-                if (info.value(DeviceProperty::kRemovable).toBool())
-                    externalMounts.insert(dev, mpt);
-                allMounts.insert(dev, mpt);
+        auto func = [this](const QStringList &devs, std::function<QVariantMap(DeviceProxyManager *, const QString &, bool)> query) {
+            for (const auto &dev : devs) {
+                auto &&info = query(q, dev, false);
+                auto mpt = info.value(DeviceProperty::kMountPoint).toString();
+                if (!mpt.isEmpty()) {
+                    mpt = mpt.endsWith("/") ? mpt : mpt + "/";
+                    if (info.value(DeviceProperty::kRemovable).toBool())
+                        externalMounts.insert(dev, mpt);
+                    allMounts.insert(dev, mpt);
+                }
             }
-        }
-    };
+        };
 
-    auto blks = q->getAllBlockIds();
-    auto protos = q->getAllProtocolIds();
-    func(blks, &DeviceProxyManager::queryBlockInfo);
-    func(protos, &DeviceProxyManager::queryProtocolInfo);
+        auto blks = q->getAllBlockIds();
+        auto protos = q->getAllProtocolIds();
+        func(blks, &DeviceProxyManager::queryBlockInfo);
+        func(protos, &DeviceProxyManager::queryProtocolInfo);
+    });
 }
 
 void DeviceProxyManagerPrivate::connectToDBus()

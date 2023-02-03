@@ -68,9 +68,6 @@ bool AvfsBrowser::start()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", AvfsUtils::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", AvfsUtils::scheme(), AvfsMenuSceneCreator::name());
 
-    // follow event
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", AvfsUtils::instance(), &AvfsUtils::urlsToLocal);
-
     regCrumb();
     beMySubScene("SortAndDisplayMenu");   //  yours last second but it's mine now
     beMySubScene("OpenWithMenu");   //  yours last second but it's mine now
@@ -80,6 +77,7 @@ bool AvfsBrowser::start()
 
 void AvfsBrowser::followEvents()
 {
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", AvfsUtils::instance(), &AvfsUtils::urlsToLocal);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_OpenLocalFiles", AvfsEventHandler::instance(), &AvfsEventHandler::hookOpenFiles);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_EnterPressed", AvfsEventHandler::instance(), &AvfsEventHandler::hookEnterPressed);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", AvfsEventHandler::instance(), &AvfsEventHandler::sepateTitlebarCrumb);

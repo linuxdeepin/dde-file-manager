@@ -748,6 +748,8 @@ void DeviceManager::stopPollingDeviceUsage()
 
 void DeviceManager::startMonitor()
 {
+    if (isMonitoring())
+        return;
     d->watcher->startWatch();
     d->watcher->initDevDatas();
     d->isWatching = true;

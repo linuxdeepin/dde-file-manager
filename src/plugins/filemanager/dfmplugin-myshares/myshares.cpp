@@ -61,6 +61,9 @@ void MyShares::initialize()
     beMySubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
     beMySubScene("BookmarkMenu");
 
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
+
     followEvents();
     bindWindows();
 }
@@ -69,9 +72,6 @@ bool MyShares::start()
 {
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", ShareUtils::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", ShareUtils::scheme(), MyShareMenuCreator::name());
-
-    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
-    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
 
     return true;
 }

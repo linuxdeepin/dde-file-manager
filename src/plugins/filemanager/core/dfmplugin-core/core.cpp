@@ -101,6 +101,7 @@ void Core::stop()
 
 void Core::onAllPluginsInitialized()
 {
+    qInfo() << "All plugins initialized";
     // subscribe events
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
                                    CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
@@ -110,16 +111,18 @@ void Core::onAllPluginsInitialized()
                                    CoreEventReceiver::instance(), static_cast<void (CoreEventReceiver::*)(const QUrl &, const QVariant &)>(&CoreEventReceiver::handleOpenWindow));
     dpfSignalDispatcher->subscribe(GlobalEventType::kLoadPlugins,
                                    CoreEventReceiver::instance(), &CoreEventReceiver::handleLoadPlugins);
-}
 
-void Core::onAllPluginsStarted()
-{
     // dde-select-dialog also uses the core plugin, don't start filemanger window
     QString &&curAppName { qApp->applicationName() };
     if (curAppName == "dde-file-manager")
         dpfSignalDispatcher->publish(DPF_MACRO_TO_STR(DPCORE_NAMESPACE), "signal_StartApp");
     else
         qInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
+}
+
+void Core::onAllPluginsStarted()
+{
+    qInfo() << "All plugins started";
 }
 
 /*!
