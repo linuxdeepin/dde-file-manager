@@ -96,7 +96,6 @@ void DirShare::bindEvents()
 {
     dpfSlotChannel->connect(kEventSpace, "slot_Share_StartSmbd", UserShareHelperInstance, &UserShareHelper::startSambaServiceAsync);
     dpfSlotChannel->connect(kEventSpace, "slot_Share_IsSmbdRunning", UserShareHelperInstance, &UserShareHelper::isSambaServiceRunning);
-    dpfSlotChannel->connect(kEventSpace, "slot_Share_SetSmbPasswd", UserShareHelperInstance, &UserShareHelper::setSambaPasswd);
     dpfSlotChannel->connect(kEventSpace, "slot_Share_AddShare", UserShareHelperInstance, &UserShareHelper::share);
     dpfSlotChannel->connect(kEventSpace, "slot_Share_RemoveShare", UserShareHelperInstance, &UserShareHelper::removeShareByPath);
     dpfSlotChannel->connect(kEventSpace, "slot_Share_IsPathShared", UserShareHelperInstance, &UserShareHelper::isShared);
@@ -104,6 +103,7 @@ void DirShare::bindEvents()
     dpfSlotChannel->connect(kEventSpace, "slot_Share_ShareInfoOfFilePath", UserShareHelperInstance, &UserShareHelper::shareInfoByPath);
     dpfSlotChannel->connect(kEventSpace, "slot_Share_ShareInfoOfShareName", UserShareHelperInstance, &UserShareHelper::shareInfoByShareName);
     dpfSlotChannel->connect(kEventSpace, "slot_Share_ShareNameOfFilePath", UserShareHelperInstance, &UserShareHelper::shareNameByPath);
-    dpfSlotChannel->connect(kEventSpace, "slot_Share_CurrentUserName", UserShareHelperInstance, &UserShareHelper::currentUserName);
     dpfSlotChannel->connect(kEventSpace, "slot_Share_WhoSharedByShareName", UserShareHelperInstance, &UserShareHelper::whoShared);
+
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Share_SetPassword", UserShareHelperInstance, &UserShareHelper::handleSetPassword);
 }

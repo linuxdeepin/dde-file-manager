@@ -68,6 +68,7 @@ public:
     bool isSambaServiceRunning();
     void startSambaServiceAsync(StartSambaFinished onFinished);
     QString sharedIP() const;
+    void handleSetPassword(const QString &newPassword);
 
 Q_SIGNALS:
     void shareCountChanged(int count);

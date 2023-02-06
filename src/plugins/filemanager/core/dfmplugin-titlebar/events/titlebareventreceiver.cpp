@@ -67,11 +67,6 @@ void TitleBarEventReceiver::handleTabRemovd(quint64 windowId, int index)
     w->navWidget()->removeNavStackAt(index);
 }
 
-void TitleBarEventReceiver::handleShowSharePasswordSettingsDialog(quint64 windowId)
-{
-    TitleBarHelper::showUserSharePasswordSettingDialog(windowId);
-}
-
 bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QVariantMap &properties)
 {
     Q_ASSERT(!scheme.isEmpty());

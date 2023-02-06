@@ -210,6 +210,11 @@ QString UserShareHelper::currentUserName()
     return getpwuid(getuid())->pw_name;
 }
 
+void UserShareHelper::handleSetPassword(const QString &newPassword)
+{
+    setSambaPasswd(currentUserName(), newPassword);
+}
+
 bool UserShareHelper::isSambaServiceRunning()
 {
     QDBusInterface iface(SambaServiceIFace::kService, SambaServiceIFace::kPath, SambaServiceIFace::kInterface, QDBusConnection::systemBus());

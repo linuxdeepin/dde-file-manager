@@ -23,21 +23,24 @@
 #ifndef USERSHAREPASSWORDSETTINGDIALOG_H
 #define USERSHAREPASSWORDSETTINGDIALOG_H
 
-#include "dfmplugin_titlebar_global.h"
-
+#include "dfm-base/dfm_base_global.h"
 #include <DDialog>
 #include <DPasswordEdit>
 
-namespace dfmplugin_titlebar {
+#include <QAbstractButton>
+#include <QWindow>
+#include <QLabel>
 
+namespace dfmbase {
 class UserSharePasswordSettingDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
     explicit UserSharePasswordSettingDialog(QWidget *parent = nullptr);
     void initializeUi();
-
-public slots:
+Q_SIGNALS:
+    void inputPassword(const QString &password);
+public Q_SLOTS:
     void onButtonClicked(const int &index);
 
 private:

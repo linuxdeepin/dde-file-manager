@@ -39,7 +39,6 @@ class DirShare : public DPF_NAMESPACE::Plugin
     // slots
     DPF_EVENT_REG_SLOT(slot_Share_StartSmbd)
     DPF_EVENT_REG_SLOT(slot_Share_IsSmbdRunning)
-    DPF_EVENT_REG_SLOT(slot_Share_SetSmbPasswd)
     DPF_EVENT_REG_SLOT(slot_Share_AddShare)
     DPF_EVENT_REG_SLOT(slot_Share_RemoveShare)
     DPF_EVENT_REG_SLOT(slot_Share_IsPathShared)
@@ -47,7 +46,6 @@ class DirShare : public DPF_NAMESPACE::Plugin
     DPF_EVENT_REG_SLOT(slot_Share_ShareInfoOfFilePath)
     DPF_EVENT_REG_SLOT(slot_Share_ShareInfoOfShareName)
     DPF_EVENT_REG_SLOT(slot_Share_ShareNameOfFilePath)
-    DPF_EVENT_REG_SLOT(slot_Share_CurrentUserName)
     DPF_EVENT_REG_SLOT(slot_Share_WhoSharedByShareName)
 
     // signals

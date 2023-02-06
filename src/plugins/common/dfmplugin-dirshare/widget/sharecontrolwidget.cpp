@@ -29,6 +29,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -252,10 +253,8 @@ void ShareControlWidget::setupSharePassword()
     setPasswordBt->setContentsMargins(0, 0, 0, 0);
     setPasswordBt->setFlat(true);
     setPasswordBt->setToolTip(setPasswordBt->text());
-    QObject::connect(setPasswordBt, &QPushButton::clicked, [=]() {
-        if (FMWindowsIns.windowIdList().count() <= 0)
-            return;
-        dpfSlotChannel->push("dfmplugin_titlebar", "slot_SharePasswordSettingsDialog_Show", FMWindowsIns.windowIdList().first());
+    QObject::connect(setPasswordBt, &QPushButton::clicked, [this]() {
+        showSharePasswordSettingsDialog();
     });
     hBoxLine3->addWidget(setPasswordBt);
     hBoxLine3->setStretch(0, 1);
@@ -553,13 +552,9 @@ void ShareControlWidget::showMoreInfo(bool showMore)
 
 void ShareControlWidget::userShareOperation(bool checked)
 {
-    if (!isSharePasswordSet && checked) {
-        if (FMWindowsIns.windowIdList().count() <= 0)
-            return;
-        // here just popup password settings dialog via titlebar plugin and this way is unreasonable,
-        // this dialog should be implemented in dialogmanager in the future.
-        dpfSlotChannel->push("dfmplugin_titlebar", "slot_SharePasswordSettingsDialog_Show", FMWindowsIns.windowIdList().first());
-    }
+    if (!isSharePasswordSet && checked)
+        showSharePasswordSettingsDialog();
+
     sharePermissionSelector->setEnabled(checked);
     shareAnonymousSelector->setEnabled(checked);
     shareSwitcher->setEnabled(false);
@@ -570,6 +565,24 @@ void ShareControlWidget::userShareOperation(bool checked)
         this->unshareFolder();
 
     showMoreInfo(checked);
+}
+
+void ShareControlWidget::showSharePasswordSettingsDialog()
+{
+    if (this->property("UserSharePwdSettingDialogShown").toBool())
+        return;
+    UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(this);
+    dialog->show();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
+    this->setProperty("UserSharePwdSettingDialogShown", true);
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::inputPassword, [=](const QString &password) {
+        QString userName = UserShareHelperInstance->currentUserName();
+        UserShareHelperInstance->setSambaPasswd(userName, password);
+    });
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::closed, [=] {
+        this->setProperty("UserSharePwdSettingDialogShown", false);
+    });
 }
 
 #include "sharecontrolwidget.moc"

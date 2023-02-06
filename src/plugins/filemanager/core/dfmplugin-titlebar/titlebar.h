@@ -40,6 +40,7 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_Search_Stop)
     DPF_EVENT_REG_SIGNAL(signal_FilterView_Show)
     DPF_EVENT_REG_SIGNAL(signal_InputAdddressStr_Check)
+    DPF_EVENT_REG_SIGNAL(signal_Share_SetPassword)
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_Custom_Register)
@@ -49,7 +50,6 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_NewWindowAndTab_SetEnable)
     DPF_EVENT_REG_SLOT(slot_Navigator_Forward)
     DPF_EVENT_REG_SLOT(slot_Navigator_Backward)
-    DPF_EVENT_REG_SLOT(slot_SharePasswordSettingsDialog_Show)
     DPF_EVENT_REG_SLOT(slot_ServerDialog_RemoveHistory)
 
     // hook events

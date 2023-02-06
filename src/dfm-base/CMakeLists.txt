@@ -131,6 +131,8 @@ FILE (GLOB DIALOGS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/taskdialog/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/basedialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/basedialog/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/smbsharepasswddialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/smbsharepasswddialog/*.cpp"
 )
 
 FILE (GLOB DBUSSERVER_FILES

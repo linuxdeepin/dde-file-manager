@@ -43,7 +43,6 @@ public slots:
     void handleTabChanged(quint64 windowId, int index);
     void handleTabMoved(quint64 windowId, int from, int to);
     void handleTabRemovd(quint64 windowId, int index);
-    void handleShowSharePasswordSettingsDialog(quint64 windowId);
 
     // self slots
     bool handleCustomRegister(const QString &scheme, const QVariantMap &properties);

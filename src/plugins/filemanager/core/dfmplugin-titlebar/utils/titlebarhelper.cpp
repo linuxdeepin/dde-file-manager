@@ -23,10 +23,10 @@
 #include "titlebarhelper.h"
 #include "events/titlebareventcaller.h"
 #include "dialogs/connecttoserverdialog.h"
-#include "dialogs/usersharepasswordsettingdialog.h"
 #include "dialogs/diskpasswordchangingdialog.h"
 #include "views/titlebarwidget.h"
 
+#include "dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
@@ -296,6 +296,9 @@ void TitleBarHelper::showUserSharePasswordSettingDialog(quint64 windowId)
     dialog->show();
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::inputPassword, [=](const QString &password) {
+        dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Share_SetPassword", password);
+    });
     window->setProperty("UserSharePwdSettingDialogShown", true);
     QObject::connect(dialog, &UserSharePasswordSettingDialog::closed, [=] {
         window->setProperty("UserSharePwdSettingDialogShown", false);

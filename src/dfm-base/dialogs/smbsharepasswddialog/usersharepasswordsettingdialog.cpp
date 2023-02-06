@@ -21,21 +21,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "usersharepasswordsettingdialog.h"
-
 #include "dfm-base/utils/windowutils.h"
 
-#include <dfm-framework/event/event.h>
+//#include <dfm-framework/event/event.h>
 
+#include <dtkcore_global.h>
+
+#include <QObject>
 #include <QDebug>
 #include <QProcess>
 #include <QDBusReply>
 #include <QVBoxLayout>
 #include <QPushButton>
-#include <QWindow>
-#include <QLabel>
 
 DFMBASE_USE_NAMESPACE
-using namespace dfmplugin_titlebar;
+using namespace dfmbase;
 DWIDGET_USE_NAMESPACE
 
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent)
@@ -54,7 +54,7 @@ void UserSharePasswordSettingDialog::initializeUi()
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     setDefaultButton(1);
-    passwordEdit = new DPasswordEdit(this);
+    passwordEdit = new Dtk::Widget::DPasswordEdit(this);
     passwordEdit->setFocus();
     addContent(passwordEdit);
     setContentsMargins(0, 0, 0, 0);
@@ -65,7 +65,7 @@ void UserSharePasswordSettingDialog::initializeUi()
     notice->setPalette(pe);
     insertContent(1, notice);
 
-    connect(passwordEdit, &DPasswordEdit::textChanged, this, [this] {
+    connect(passwordEdit, &Dtk::Widget::DPasswordEdit::textChanged, this, [this] {
         getButton(1)->setEnabled(!passwordEdit->text().isEmpty());
     });
 
@@ -90,9 +90,7 @@ void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
             close();
             return;
         }
-
-        QString userName = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_CurrentUserName").toString();
-        dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_SetSmbPasswd", userName, password);
+        Q_EMIT inputPassword(password);
     }
     close();
 }
