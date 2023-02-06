@@ -155,7 +155,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             } else {
                 // pause and emit error msg
                 action = doHandleErrorAndWait(url, QUrl(),
-                                              AbstractJobHandler::JobErrorType::kPermissionDeniedError, false,
+                                              AbstractJobHandler::JobErrorType::kDeleteFileError, false,
                                               fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ?
                                                 "Unknown error" : fileHandler.errorString());
             }
