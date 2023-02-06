@@ -96,8 +96,8 @@
             "flags":[],
             "name":"Extend filename charactors",
             "name[zh_CN]":"扩展文件名字符数",
-            "description[zh_CN]":"开启后文件名将扩展支持255个中文字符，可能会导致文件目录加载缓慢或操作卡顿。",
-            "description":"开启后文件名将扩展支持255个中文字符，可能会导致文件目录加载缓慢或操作卡顿。",
+            "description[zh_CN]":"扩展文件名字符数需重启后才能生效",
+            "description":"扩展文件名字符数需重启后才能生效",
             "permissions":"readwrite",
             "visibility":"private"
         }
