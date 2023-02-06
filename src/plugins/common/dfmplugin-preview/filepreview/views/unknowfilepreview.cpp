@@ -41,6 +41,10 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     nameLabel->setObjectName("NameLabel");
     nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     nameLabel->setWordWrap(true);
+    QFont font;
+    font.setWeight(QFont::DemiBold);
+    font.setPointSize(12);
+    nameLabel->setFont(font);
     sizeLabel = new QLabel(contentView);
     sizeLabel->setObjectName("SizeLabel");
     sizeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
