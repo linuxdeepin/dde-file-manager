@@ -7,51 +7,46 @@ Deepin File Manager is a file management tool independently developed by Deepin 
 ### Build dependencies
 
 _The **master** branch is current development branch, build dependencies may changes without update README.md, refer to `./debian/control` for a working build depends list_
- 
-* pkg-config
-* dh-systemd
-* libxcb1-dev
-* libxcb-ewmh-dev
-* libxcb-util0-dev
-* libx11-dev
-* libgsettings-qt-dev
-* libsecret-1-dev
-* libpoppler-cpp-dev
-* libpolkit-agent-1-dev
-* libpolkit-qt5-1-dev
-* libjemalloc-dev
-* libmagic-dev
-* libtag1-dev
-* libdmr-dev
-* x11proto-core-dev
-* libdframeworkdbus-dev
-* dde-dock-dev(>=4.0.5)
-* deepin-gettext-tools
-* libdtkcore-dev
-* libudisks2-qt5-dev
-* libdisomaster-dev
-* libgio-qt-dev
-* libqt5xdg-dev
-* libmediainfo-dev
-* libdde-file-manager-dev
-* libssl-dev
-* ffmpeg module(s):
-  - libffmpegthumbnailer-dev
-* Qt5(>= 5.6) with modules:
-  - qtbase5-dev
-  - qtbase5-private-dev
-  - libqt5x11extras5-dev
-  - qt5-qmake
-  - libqt5svg5-dev
-  - qttools5-dev-tools
-  - qtmultimedia5-dev
-  - qtdeclarative5-dev
-  - libkf5codecs-dev
-* Deepin-tool-kit(>=2.0) with modules:
-  - libdtkwidget-dev
-* deepin-anything with modules:
-  - deepin-anything-dev
-  - deepin-anything-server-dev
+
+- cmake,
+- debhelper (>=9),
+- pkg-config,
+- dh-systemd,
+- qtbase5-dev,
+- qtbase5-private-dev,
+- qtmultimedia5-dev,
+- libffmpegthumbnailer-dev,
+- libqt5svg5-dev,
+- libpolkit-agent-1-dev, 
+- libpolkit-qt5-1-dev,
+- libdtkwidget-dev,
+- libdtkgui-dev,
+- libdtkcore-dev,
+- libdtkcore5-bin,
+- qttools5-dev-tools,
+- dde-dock-dev(>=4.8.4.1),
+- libdframeworkdbus-dev,
+- libtag1-dev,
+- libdmr-dev,
+- libicu-dev,
+- libdeepin-pdfium-dev,
+- libqt5xdg-dev,
+- libgio-qt-dev,
+- libdfm-io-dev,
+- libdfm-mount-dev,
+- libdfm-burn-dev,
+- libssl-dev,
+- libgtest-dev,
+- libgmock-dev,
+- libgsettings-qt-dev,
+- liblucene++-dev,
+- libdocparser-dev,
+- libboost-filesystem-dev,
+- libsecret-1-dev,
+- libkf5codecs-dev,
+- libpoppler-cpp-dev,
+- libcryptsetup-dev,
+- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 
 ## Installation
 
@@ -64,21 +59,20 @@ _Package name may be different between distros, if dde-file-manager is available
 Assume you are using [Deepin](https://distrowatch.com/table.php?distribution=deepin) or other debian-based distro which got dde-file-manager delivered:
 
 ``` shell
-$ apt build-dep dde-file-manager
+$ git clone https://github.com/linuxdeepin/dde-file-manager
+$ cd dde-file-manager
+$ sudo apt build-dep ./
 ```
 
 2. Build:
-```
-$ cd dde-file-manager
-$ mkdir Build
-$ cd Build
-$ qmake ..
-$ make
+```shell
+$ cmake -B build -DCMAKE_INSTALL_PREFIX=/usr
+$ cmake --build build
 ```
 
 3. Install:
-```
-$ sudo make install
+```shell
+$ sudo cmake --build build --target install
 ```
 
 The executable binary file could be found at `/usr/bin/dde-file-manager`
