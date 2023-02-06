@@ -15,6 +15,7 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 #include <dfm-framework/event/event.h>
@@ -323,9 +324,19 @@ void SmbIntegrationManager::umountAllProtocolDevice(quint64 windowId, const QUrl
     url.setPath(kSmbIntegrationPath);
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
     dpfSlotChannel->push("dfmplugin_computer", "slot_RemoveDevice", entryUrl);
-    QUrl computerUrl;
-    computerUrl.setScheme(Global::Scheme::kComputer);
-    SmbBrowserEventCaller::sendChangeCurrentUrl(windowId, computerUrl);
+
+    QList<quint64> windowIds = FMWindowsIns.windowIdList();
+    for (quint64 winId : windowIds) {
+        auto window = FMWindowsIns.findWindowById(winId);
+        if (!window)
+            continue;
+        const auto &curUrl = window->currentUrl();
+        if (curUrl.scheme() == Global::Scheme::kSmb && curUrl.host() == url.host()) {
+            QUrl computerUrl;
+            computerUrl.setScheme(Global::Scheme::kComputer);
+            SmbBrowserEventCaller::sendChangeCurrentUrl(winId, computerUrl);
+        }
+    }
 }
 
 bool SmbIntegrationManager::isSmbShareDirMounted(const QUrl &url)
