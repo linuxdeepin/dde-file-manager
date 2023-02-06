@@ -28,10 +28,11 @@
 
 #include <QObject>
 
-DPFILEOPERATIONS_BEGIN_NAMESPACE
+namespace dfmplugin_fileoperations {
 DFMBASE_USE_NAMESPACE
 class ErrorMessageAndAction : public QObject
 {
+    Q_OBJECT
 public:
     static QString errorMsg(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                             const bool isTo = false, const QString &errorMsg = QString(),
@@ -49,5 +50,5 @@ private:
     static void errorSrcAndDestString(const QUrl &from, const QUrl &to, QString *sorceMsg, QString *toMsg,
                                       const AbstractJobHandler::JobErrorType error = AbstractJobHandler::JobErrorType::kNoError);
 };
-DPFILEOPERATIONS_END_NAMESPACE
+}
 #endif   // ERRORMESSAGEANDACTION_H

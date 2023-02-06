@@ -40,7 +40,7 @@
 
 Q_DECLARE_METATYPE(QFileDevice::Permissions)
 
-DPFILEOPERATIONS_BEGIN_NAMESPACE
+namespace dfmplugin_fileoperations {
 class FileCopyMoveJob;
 class FileOperationsEventReceiver final : public QObject
 {
@@ -253,7 +253,7 @@ private:
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
 };
 
-DPFILEOPERATIONS_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(QSharedPointer<QList<QUrl>>)
 

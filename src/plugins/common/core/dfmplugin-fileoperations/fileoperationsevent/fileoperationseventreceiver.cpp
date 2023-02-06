@@ -52,7 +52,8 @@ Q_DECLARE_METATYPE(QFileDevice::Permission)
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPFILEOPERATIONS_USE_NAMESPACE
+
+namespace dfmplugin_fileoperations {
 
 FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
     : QObject(parent), dialogManager(DialogManagerInstance)
@@ -424,7 +425,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
     ok = fileHandler.mkdir(urlNew);
     if (!ok) {
         error = fileHandler.errorString();
-        dialogManager->showErrorDialog(AbstractJobHandler::tr("Failed to create the directory"), error);
+        dialogManager->showErrorDialog(tr("Failed to create the directory"), error);
     }
     targetUrl = urlNew;
 
@@ -917,7 +918,7 @@ bool FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId,
     bool ok = fileHandler.touchFile(url, tempUrl);
     if (!ok) {
         error = fileHandler.errorString();
-        dialogManager->showErrorDialog("touch file error", error);
+        dialogManager->showErrorDialog(tr("Failed to create the file"), error);
     }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
                                  windowId, QList<QUrl>() << url, ok, error);
@@ -1174,4 +1175,5 @@ void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
         args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
+}
 }

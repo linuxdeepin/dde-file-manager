@@ -27,8 +27,7 @@
 #include <QUrl>
 #include <QLabel>
 
-DPFILEOPERATIONS_USE_NAMESPACE
-
+namespace dfmplugin_fileoperations {
 QString ErrorMessageAndAction::errorMsg(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const bool isTo, const QString &errorMsg, const bool allUsErrorMsg)
 {
     if (errorMsg.isEmpty())
@@ -254,4 +253,5 @@ void ErrorMessageAndAction::errorSrcAndDestString(const QUrl &from,
                          .arg(from.path(), UrlRoute::urlParent(to).path());
     }
     return;
+}
 }
