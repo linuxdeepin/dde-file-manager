@@ -142,6 +142,16 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         isEjectable = info.isEjectable;
         QIcon icon = item->icon();
         drawIcon(painter, icon, itemRect, iconMode, isEjectable);
+        //notes: if draw eject icon with `DStyledItemDelegate::paint(painter, option, index)`,
+        //could not match the UI style of requirement, so here use `drawIcon()`, but this way would trigger the item-action-event
+        //as clicking the eject icon.
+        //need some research for this promblem.
+        /*
+        if (!isEjectable)
+            drawIcon(painter, icon, itemRect, iconMode, isEjectable);
+        else
+            return DStyledItemDelegate::paint(painter, option, index);
+        */
     }
 
     //Draw item text
@@ -245,6 +255,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                 QRect expandBtRect(option.rect.width() - 40, option.rect.topRight().y() + 4, 24, 24);
                 QRect ejectBtRect(option.rect.bottomRight() + QPoint(-28, -26), option.rect.bottomRight() + QPoint(-kItemMargin, -kItemMargin));
                 QPoint pos = e->pos();
+                SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
                 if (event->type() != QEvent::MouseButtonRelease && separatorItem && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
                     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
                     if (sidebarView)
@@ -259,8 +270,13 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
                         //onItemActived() slot function would be triggered with mouse clicking,
                         //in order to avoid mount device again, we set item action to disable state as a mark.
                         DViewItemActionList list = sidebarItem->actionList(Qt::RightEdge);
-                        if (list.count() > 0)
+                        if (list.count() > 0 && sidebarView) {
                             list.first()->setDisabled(true);
+                            //fix bug: #185137, save the current url and highlight it in `SideBarWidget::onItemActived`
+                            //that is triggered by cliking eject icon.
+                            //this is the temporary solution.
+                            list.first()->setProperty("currentItem", sidebarView->currentUrl());
+                        }
                     }
                     event->accept();
                     return true;
