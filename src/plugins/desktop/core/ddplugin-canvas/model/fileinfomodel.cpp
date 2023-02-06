@@ -322,6 +322,11 @@ void FileInfoModel::update()
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()), 0));
 }
 
+void FileInfoModel::updateFile(const QUrl &url)
+{
+    d->updateData(url);
+}
+
 QModelIndex FileInfoModel::parent(const QModelIndex &child) const
 {
     if (child != rootIndex() && child.isValid())

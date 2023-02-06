@@ -32,19 +32,17 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 using namespace ddplugin_canvas;
 
 #define FileInfoModelPublish(topic, args...) \
-            dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)
+    dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)
 
 #define FileInfoModelSlot(topic, args...) \
-            dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+    dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 #define FileInfoModelDisconnect(topic) \
-            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
+    dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
 
 FileInfoModelBroker::FileInfoModelBroker(FileInfoModel *m, QObject *parent)
-    : QObject(parent)
-    , model(m)
+    : QObject(parent), model(m)
 {
-
 }
 
 FileInfoModelBroker::~FileInfoModelBroker()
@@ -57,6 +55,7 @@ FileInfoModelBroker::~FileInfoModelBroker()
     FileInfoModelDisconnect(slot_FileInfoModel_FileInfo);
     FileInfoModelDisconnect(slot_FileInfoModel_Refresh);
     FileInfoModelDisconnect(slot_FileInfoModel_ModelState);
+    FileInfoModelDisconnect(slot_FileInfoModel_UpdateFile);
 }
 
 bool FileInfoModelBroker::init()
@@ -72,6 +71,7 @@ bool FileInfoModelBroker::init()
     FileInfoModelSlot(slot_FileInfoModel_FileInfo, &FileInfoModelBroker::fileInfo);
     FileInfoModelSlot(slot_FileInfoModel_Refresh, &FileInfoModelBroker::refresh);
     FileInfoModelSlot(slot_FileInfoModel_ModelState, &FileInfoModelBroker::modelState);
+    FileInfoModelSlot(slot_FileInfoModel_UpdateFile, &FileInfoModelBroker::updateFile);
 
     return true;
 }
@@ -116,8 +116,12 @@ int FileInfoModelBroker::modelState()
     return model->modelState();
 }
 
+void FileInfoModelBroker::updateFile(const QUrl &url)
+{
+    return model->updateFile(url);
+}
+
 void FileInfoModelBroker::onDataReplaced(const QUrl &oldUrl, const QUrl &newUrl)
 {
     FileInfoModelPublish(signal_FileInfoModel_DataReplaced, oldUrl, newUrl);
 }
-

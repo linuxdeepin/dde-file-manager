@@ -34,6 +34,7 @@ class FileInfoModel : public QAbstractItemModel
 {
     Q_OBJECT
     friend class FileInfoModelPrivate;
+
 public:
     explicit FileInfoModel(QObject *parent = nullptr);
     ~FileInfoModel();
@@ -49,8 +50,10 @@ public:
     Q_INVOKABLE QUrl fileUrl(const QModelIndex &index) const;
     Q_INVOKABLE QList<QUrl> files() const;
     Q_INVOKABLE void refresh(const QModelIndex &parent);
-    Q_INVOKABLE int modelState() const;  // 0 is uninitialized, 1 is ok, 2 is refreshing.
+    Q_INVOKABLE int modelState() const;   // 0 is uninitialized, 1 is ok, 2 is refreshing.
     Q_INVOKABLE void update();
+    Q_INVOKABLE void updateFile(const QUrl &url);
+
 public:
     QModelIndex index(int row, int column = 0,
                       const QModelIndex &parent = QModelIndex()) const override;
@@ -67,10 +70,11 @@ public:
 signals:
     //! the receiver must resolve the case that newurl has been existed if connecting with Qt::DirectConnection
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
+
 private:
     FileInfoModelPrivate *d;
 };
 
 }
 
-#endif // FILEINFOMODEL_H
+#endif   // FILEINFOMODEL_H

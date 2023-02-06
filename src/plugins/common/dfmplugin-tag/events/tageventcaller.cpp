@@ -56,6 +56,7 @@ void TagEventCaller::sendFileUpdate(const QString &path)
 {
     QUrl fileUrl = QUrl::fromLocalFile(path);
     dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_FileUpdate", fileUrl);
+    dpfSlotChannel->push("ddplugin_canvas", "slot_FileInfoModel_UpdateFile", fileUrl);
 }
 
 bool TagEventCaller::sendCheckTabAddable(quint64 windowId)

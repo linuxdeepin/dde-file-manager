@@ -47,12 +47,14 @@ public slots:
     DFMLocalFileInfoPointer fileInfo(const QModelIndex &index);
     void refresh(const QModelIndex &parent);
     int modelState();
+    void updateFile(const QUrl &url);
 private slots:
     void onDataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
+
 private:
     FileInfoModel *model = nullptr;
 };
 
 }
 
-#endif // FILEINFOMODELBROKER_H
+#endif   // FILEINFOMODELBROKER_H

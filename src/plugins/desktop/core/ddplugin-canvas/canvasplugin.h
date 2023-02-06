@@ -35,6 +35,7 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
+
 private:
     void registerDBus();
 
@@ -135,6 +136,7 @@ private:
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_FileInfo)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_Refresh)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_ModelState)
+    DPF_EVENT_REG_SLOT(slot_FileInfoModel_UpdateFile)
 
     // CanvasItemDelegate begin
     DPF_EVENT_REG_SLOT(slot_CanvasItemDelegate_IconRect)
