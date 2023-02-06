@@ -45,6 +45,7 @@
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
 #include <QMenu>
 #include <QTimer>
@@ -186,6 +187,9 @@ void SmbBrowser::onWindowOpened(quint64 winId)
     SmbIntegrationManager::instance()->setWindowId(winId);
 
     auto window = FMWindowsIns.findWindowById(winId);
+    if (!window)
+        return;
+
     ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
     if (window->sideBar()) {
         addNeighborToSidebar();
@@ -326,9 +330,29 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
         smbRootUrl.setHost(url.host());
         return smbRootUrl;
     };
+
     auto callBackMnt = [after, winId, url, makeSmbRootUrl](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         if (!mpt.isEmpty()) {
-            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, QUrl::fromLocalFile(mpt));
+            QString mountPoint = mpt;
+            QUrl accessUrl = QUrl::fromLocalFile(mpt);
+            bool isFile = false;
+
+            QString netPath = url.path();
+            if (netPath.startsWith("/"))
+                netPath.remove(0, 1);
+            QString levelOneDir = SmbBrowserUtils::getShareDirFromUrl(url);
+            if (!levelOneDir.isEmpty()) {
+                const QString &pathAfterLevelOneDir = netPath.remove(levelOneDir);
+                accessUrl = QUrl::fromLocalFile(mountPoint.append(pathAfterLevelOneDir));   // update accessUrl
+            }
+
+            AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(accessUrl);
+            if (fileInfo) {
+                isFile = fileInfo->isAttributes(AbstractFileInfo::FileIsType::kIsFile);
+                if (isFile)
+                    accessUrl = fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl);
+            }
+            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, accessUrl);
 
             if (SmbIntegrationManager::instance()->isSmbIntegrationEnabled()) {
                 ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
@@ -350,7 +374,16 @@ void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::fu
             dpfSlotChannel->push("dfmplugin_titlebar", "slot_ServerDialog_RemoveHistory", url.toString());
         }
     };
-    DevMngIns->mountNetworkDeviceAsync(url.toString(), callBackMnt /*,10000*/);
+
+    QString netAddr = url.toString();
+    QString shareDir = SmbBrowserUtils::getShareDirFromUrl(url);
+    if (!shareDir.isEmpty()) {
+        QUrl u(url);
+        shareDir.prepend("/");
+        u.setPath(shareDir);
+        netAddr = u.toString();
+    }
+    DevMngIns->mountNetworkDeviceAsync(netAddr, callBackMnt /*,10000*/);
 }
 
 void SmbBrowser::smbAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after)

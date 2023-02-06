@@ -42,6 +42,7 @@ public:
     static QString networkScheme();
     static QUrl netNeighborRootUrl();
     static QIcon icon();
+    static QString getShareDirFromUrl(const QUrl &url);
 
     bool mountSmb(const quint64 windowId, const QList<QUrl> urls);
 

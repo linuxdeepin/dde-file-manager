@@ -66,6 +66,21 @@ QIcon SmbBrowserUtils::icon()
     return QIcon::fromTheme("network-server-symbolic");
 }
 
+QString SmbBrowserUtils::getShareDirFromUrl(const QUrl &url)
+{
+    QUrl u(url);
+    QString path = u.path();
+    if (path.endsWith("/"))
+        path.chop(1);
+    if (path.startsWith("/"))
+        path = path.remove(0, 1);
+    if (path != u.fileName() && path.count("/") >= 1) {   // path = shareDir/dir2/file_or_dir
+        const QString &shareDir = path.section("/", 0, 0);
+        return shareDir;
+    }
+    return QString();
+}
+
 bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls)
 {
     if (urls.isEmpty())
