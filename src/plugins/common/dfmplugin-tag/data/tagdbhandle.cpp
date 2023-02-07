@@ -41,6 +41,14 @@ TagDbHandle::TagDbHandle(QObject *parent)
     checkDatabase();
 }
 
+TagDbHandle::~TagDbHandle()
+{
+    if (handle) {
+        delete handle;
+        handle = nullptr;
+    }
+}
+
 QVariantMap TagDbHandle::getAllTags()
 {
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { lastErr.clear(); });
@@ -399,12 +407,12 @@ bool TagDbHandle::checkDatabase()
 
     QDir dir(dbPath);
     if (!dir.exists())
-        dir.mkdir(dbPath);
+        dir.mkpath(dbPath);
 
     const auto &dbFilePath = DFMUtils::buildFilePath(dbPath.toLocal8Bit(),
                                                      kTagDbName,
                                                      nullptr);
-
+    handle = new SqliteHandle(dbFilePath);
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };
     if (!db.isValid() || db.isOpenError()) {
         qWarning() << "The tag database is invalid! open error";
@@ -412,7 +420,6 @@ bool TagDbHandle::checkDatabase()
     }
     db.close();
 
-    handle = new SqliteHandle(dbFilePath);
     if (!checkTableExists(kTagTableTagProperty))
         return false;
 

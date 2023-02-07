@@ -70,7 +70,7 @@ private:
     bool createTable(const QString &tableName);
 
     explicit TagDbHandle(QObject *parent = nullptr);
-    virtual ~TagDbHandle() = default;
+    virtual ~TagDbHandle();
     bool checkDatabase();
 
 Q_SIGNALS:
