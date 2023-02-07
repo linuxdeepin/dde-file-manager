@@ -101,9 +101,9 @@ bool ComputerMenuScene::create(QMenu *parent)
     addAct(kOpen);
     addSep();
 
-    addAct(kRename);
     addAct(kMount);
     addAct(kUnmount);
+    addAct(kRename);
     addAct(kFormat);
     addAct(kErase);
     addAct(kEject);
@@ -140,8 +140,8 @@ void ComputerMenuScene::updateState(QMenu *parent)
         break;
 
     case EntryFileInfo::kOrderRemovableDisks: {
-        keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kSafelyRemove, kProperty };
-        keeped << (d->info->targetUrl().isValid() ? QStringList(kUnmount) : QStringList({ kMount, kRename, kFormat }));
+        keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kSafelyRemove, kProperty, kRename, kFormat };
+        keeped << (d->info->targetUrl().isValid() ? QStringList { kUnmount } : QStringList { kMount });
     } break;
 
     case EntryFileInfo::kOrderOptical: {

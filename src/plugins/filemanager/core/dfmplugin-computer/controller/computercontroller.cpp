@@ -476,15 +476,33 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
         return;
     }
 
+    auto devUrl = info->urlOf(UrlInfoType::kUrl);
+    QPointer<ComputerController> controller(this);
+    auto triggerRename = [controller](quint64 winId, const QUrl &devUrl, bool fromSidebar) {
+        if (!controller)
+            return;
+        if (!fromSidebar)
+            Q_EMIT controller->requestRename(winId, devUrl);
+        else
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, devUrl);
+    };
+
     if (info->extraProperty(DeviceProperty::kRemovable).toBool() && info->targetUrl().isValid()) {
-        qWarning() << "cannot rename a mounted device! " << __FUNCTION__;
+        // renaming a mounted device, do unmount first.
+        qDebug() << "rename: do unmount device before rename:" << devUrl;
+        DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(devUrl), {},
+                                        [=](bool ok, DFMMOUNT::DeviceError err) {
+                                            if (ok) {
+                                                triggerRename(winId, devUrl, triggerFromSidebar);
+                                            } else {
+                                                qInfo() << "rename: cannot unmount device before rename: " << err;
+                                                DialogManager::instance()->showErrorDialog(tr("Rename failed"), tr("The device is busy and cannot be renamed now"));
+                                            }
+                                        });
         return;
     }
 
-    if (!triggerFromSidebar)
-        Q_EMIT requestRename(winId, info->urlOf(UrlInfoType::kUrl));
-    else
-        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, info->urlOf(UrlInfoType::kUrl));
+    triggerRename(winId, devUrl, triggerFromSidebar);
 }
 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
@@ -495,11 +513,25 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
     }
     auto url = info->urlOf(UrlInfoType::kUrl);
     QString devDesc = "/dev/" + url.path().remove("." + QString(SuffixInfo::kBlock));
-    qDebug() << devDesc;
+    qDebug() << "format: device:" << devDesc;
 
     QString cmd = "dde-device-formatter";
     QStringList args;
     args << "-m=" + QString::number(winId) << devDesc;
+
+    if (info->targetUrl().isValid()) {
+        qDebug() << "format: do unmount device before format." << url;
+        DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(url), {},
+                                        [=](bool ok, DFMMOUNT::DeviceError err) {
+                                            if (ok) {
+                                                QProcess::startDetached(cmd, args);
+                                            } else {
+                                                qInfo() << "format: cannot unmount device before format: " << err;
+                                                DialogManager::instance()->showErrorDialog(tr("Format failed"), tr("The device is busy and cannot be formatted now"));
+                                            }
+                                        });
+        return;
+    }
 
     QProcess::startDetached(cmd, args);
 }
