@@ -95,6 +95,11 @@ bool DoRestoreTrashFilesWorker::initArgs()
     isConvert = workData->jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
     return AbstractWorker::initArgs();
 }
+
+void DoRestoreTrashFilesWorker::onUpdateProgress()
+{
+    emitProgressChangedNotify(completeFilesCount);
+}
 /*!
  * \brief DoRestoreTrashFilesWorker::doRestoreTrashFiles Performing a recycle bin restore
  * \return Is the recycle bin restore successful

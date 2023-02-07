@@ -56,7 +56,6 @@ void ErrorMessageAndAction::srcAndDestString(const QUrl &from, const QUrl &to, Q
         errorSrcAndDestString(from, to, sorceMsg, toMsg, error);
     } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType) {
         *sorceMsg = QString(tr("Trashing %1")).arg(from.path());
-        *toMsg = QString(tr("to %1")).arg(UrlRoute::urlParent(to).path());
     } else if (AbstractJobHandler::JobType::kRestoreType == jobType) {
         *sorceMsg = QString(tr("Restoring %1")).arg(from.path());
         *toMsg = QString(tr("to %1")).arg(UrlRoute::urlParent(to).path());

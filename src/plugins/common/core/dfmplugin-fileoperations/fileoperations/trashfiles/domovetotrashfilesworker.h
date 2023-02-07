@@ -49,6 +49,7 @@ public:
 protected:
     bool doWork() override;
     bool statisticsFilesSize() override;
+    void onUpdateProgress() override;
 
 protected:
     bool doMoveToTrash();

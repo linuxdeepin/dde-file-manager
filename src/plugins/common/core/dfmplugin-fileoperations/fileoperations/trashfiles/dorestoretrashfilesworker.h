@@ -50,6 +50,7 @@ protected:
     bool doWork() override;
     bool statisticsFilesSize() override;
     bool initArgs() override;
+    void onUpdateProgress() override;
 
 protected:
     bool doRestoreTrashFiles();

@@ -85,6 +85,11 @@ bool DoMoveToTrashFilesWorker::statisticsFilesSize()
     targetUrl = FileUtils::trashRootUrl();
     return true;
 }
+
+void DoMoveToTrashFilesWorker::onUpdateProgress()
+{
+    emitProgressChangedNotify(completeFilesCount);
+}
 /*!
  * \brief DoMoveToTrashFilesWorker::doMoveToTrash do move to trash
  * \return move to trash success
@@ -142,7 +147,6 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
         do {
             QString trashPath = fileHandler.trashFile(urlSource);
             if (!trashPath.isEmpty()) {
-                completeFilesCount++;
                 QUrl trashUrl;
                 trashUrl.setScheme(dfmbase::Global::Scheme::kTrash);
                 if (!trashPath.startsWith(homeTrashFileDir))
@@ -161,8 +165,8 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             }
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
-        if (action != AbstractJobHandler::SupportAction::kNoAction
-                && action == AbstractJobHandler::SupportAction::kSkipAction) {
+        if (action == AbstractJobHandler::SupportAction::kNoAction
+                || action == AbstractJobHandler::SupportAction::kSkipAction) {
             completeFilesCount++;
             continue;
         }
