@@ -545,9 +545,10 @@ bool DFMCrumbBar::eventFilter(QObject *watched, QEvent *event)
         }
 
         bool isDragging = (pos - QCursor::pos()).manhattanLength() > QApplication::startDragDistance();
-        if (type == QEvent::MouseButtonRelease && me->button() == Qt::LeftButton && !isDragging) {
+        if (type == QEvent::MouseButtonRelease && me->button() == Qt::LeftButton) {
+            event->ignore();
             QModelIndex index = d->crumbListView.indexAt(me->pos());
-            if (index.isValid() && index != d->crumbListView.currentIndex()) {
+            if (index.isValid() && index != d->crumbListView.currentIndex() && !isDragging) {
                 d->crumbListView.clicked(index);
                 return true;
             }
