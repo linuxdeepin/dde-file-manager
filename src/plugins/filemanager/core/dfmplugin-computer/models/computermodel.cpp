@@ -31,6 +31,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -146,8 +147,25 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     case kUsedSizeVisiableRole:
         return item->info ? item->info->showUsedSize() : false;
 
-    case kDeviceNameMaxLengthRole:
-        return DFMBASE_NAMESPACE::FileUtils::supportedMaxLength(item->info ? item->info->extraProperty(DeviceProperty::kFileSystem).toString() : "");
+    case kDeviceNameMaxLengthRole: {
+        QString realFs;
+        if (auto inf = item->info) {
+            if (!inf->extraProperty(DeviceProperty::kIsEncrypted).toBool()) {
+                realFs = inf->extraProperty(DeviceProperty::kFileSystem).toString();
+            } else {
+                const auto &clearDevId = inf->extraProperty(DeviceProperty::kCleartextDevice).toString();
+                if (clearDevId != "/") {
+                    // NOTE(xust): this code block WILL/SHOULD only be invoked while renaming
+                    // and only once in every rename operation.
+                    // and will not deoptimize the performance.
+                    // and will only be invoked if device is encrypted.
+                    const auto &clearDevData = DevProxyMng->queryBlockInfo(clearDevId);
+                    realFs = clearDevData.value(DeviceProperty::kFileSystem).toString();
+                }
+            }
+        }
+        return DFMBASE_NAMESPACE::FileUtils::supportedMaxLength(realFs);
+    }
 
     case kItemShapeTypeRole:
         return item->shape;

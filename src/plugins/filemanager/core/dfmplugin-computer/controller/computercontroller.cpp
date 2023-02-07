@@ -490,7 +490,8 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
     if (info->extraProperty(DeviceProperty::kRemovable).toBool() && info->targetUrl().isValid()) {
         // renaming a mounted device, do unmount first.
         qDebug() << "rename: do unmount device before rename:" << devUrl;
-        DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(devUrl), {},
+        DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(devUrl),
+                                        { { OperateParamField::kUnmountWithoutLock, true } },
                                         [=](bool ok, DFMMOUNT::DeviceError err) {
                                             if (ok) {
                                                 triggerRename(winId, devUrl, triggerFromSidebar);
@@ -519,21 +520,29 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
     QStringList args;
     args << "-m=" + QString::number(winId) << devDesc;
 
+    auto callback = [=](bool ok, DFMMOUNT::DeviceError err) {
+        if (ok) {
+            QProcess::startDetached(cmd, args);
+        } else {
+            qInfo() << "format: cannot unmount/lock device before format: " << err;
+            DialogManager::instance()->showErrorDialog(tr("Format failed"), tr("The device is busy and cannot be formatted now"));
+        }
+    };
+
+    const QString &devId = ComputerUtils::getBlockDevIdByUrl(url);
     if (info->targetUrl().isValid()) {
         qDebug() << "format: do unmount device before format." << url;
-        DevMngIns->unmountBlockDevAsync(ComputerUtils::getBlockDevIdByUrl(url), {},
-                                        [=](bool ok, DFMMOUNT::DeviceError err) {
-                                            if (ok) {
-                                                QProcess::startDetached(cmd, args);
-                                            } else {
-                                                qInfo() << "format: cannot unmount device before format: " << err;
-                                                DialogManager::instance()->showErrorDialog(tr("Format failed"), tr("The device is busy and cannot be formatted now"));
-                                            }
-                                        });
-        return;
+        DevMngIns->unmountBlockDevAsync(devId, {}, callback);
+    } else if (info->extraProperty(DeviceProperty::kIsEncrypted).toBool()) {
+        const auto &clearDevId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
+        if (clearDevId != "/") {
+            // lock the device.
+            qDebug() << "format: do lock device before format." << url;
+            DevMngIns->lockBlockDevAsync(devId, {}, callback);
+        }
+    } else {
+        QProcess::startDetached(cmd, args);
     }
-
-    QProcess::startDetached(cmd, args);
 }
 
 void ComputerController::actRemove(DFMEntryFileInfoPointer info)

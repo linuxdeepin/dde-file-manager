@@ -35,6 +35,10 @@
 
 namespace dfmbase {
 
+namespace OperateParamField {
+inline constexpr char kUnmountWithoutLock[] { "unmount_without_lock" };
+}
+
 typedef DFMMOUNT::DeviceOperateCallbackWithMessage CallbackType1;
 typedef DFMMOUNT::DeviceOperateCallback CallbackType2;
 

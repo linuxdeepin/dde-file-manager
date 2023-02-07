@@ -210,10 +210,16 @@ bool DeviceManager::unmountBlockDev(const QString &id, const QVariantMap &opts)
         return false;
 
     if (dev->isEncrypted()) {
+        bool noLock = opts.value(OperateParamField::kUnmountWithoutLock, false).toBool();
+        auto options = opts;
+        options.remove(OperateParamField::kUnmountWithoutLock);
+
         QString cleartextId = dev->getProperty(Property::kEncryptedCleartextDevice).toString();
         if (cleartextId == "/")   // which means it's already unmounted and locked.
             return true;
-        return unmountBlockDev(cleartextId, opts) && dev->lock();   // otherwise unmount the decrypted device and lock the shell device.
+
+        return noLock ? unmountBlockDev(cleartextId, options)
+                      : unmountBlockDev(cleartextId, options) && dev->lock();
     } else {
         if (mpt.isEmpty() && dev->mountPoints().isEmpty())
             return true;
@@ -243,6 +249,10 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
         return;
 
     if (dev->isEncrypted()) {
+        bool noLock = opts.value(OperateParamField::kUnmountWithoutLock, false).toBool();
+        auto options = opts;
+        options.remove(OperateParamField::kUnmountWithoutLock);
+
         const QString &cleartextId = dev->getProperty(Property::kEncryptedCleartextDevice).toString();
         if (cleartextId == "/") {
             if (cb)
@@ -250,8 +260,8 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
             return;
         }
 
-        unmountBlockDevAsync(cleartextId, opts, [dev, cb, id, this](bool ok, DeviceError err) {
-            if (ok)
+        unmountBlockDevAsync(cleartextId, options, [=](bool ok, DeviceError err) {
+            if (ok && !noLock)
                 dev->lockAsync({});
             else
                 emit blockDevUnmountAsyncFailed(id, err);
@@ -491,6 +501,17 @@ void DeviceManager::renameBlockDevAsync(const QString &id, const QString &newNam
         qWarning() << "cannot create block device: " << id;
         if (cb)
             cb(false, DeviceError::kUnhandledError);
+        return;
+    }
+
+    if (dev->isEncrypted()) {
+        auto clearDevId = dev->getProperty(Property::kEncryptedCleartextDevice).toString();
+        if (clearDevId == "/") {   // the unlockded device's cleartext device's id is '/'
+            qInfo() << "rename: locked device cannot be renamed: " << id;
+            return;
+        }
+        qDebug() << "rename: redirect to cleartext device: " << clearDevId;
+        renameBlockDevAsync(clearDevId, newName, opts, cb);
         return;
     }
 

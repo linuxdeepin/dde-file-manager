@@ -142,6 +142,9 @@ void ComputerMenuScene::updateState(QMenu *parent)
     case EntryFileInfo::kOrderRemovableDisks: {
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kSafelyRemove, kProperty, kRename, kFormat };
         keeped << (d->info->targetUrl().isValid() ? QStringList { kUnmount } : QStringList { kMount });
+
+        if (!d->info->renamable())
+            disabled << kRename;
     } break;
 
     case EntryFileInfo::kOrderOptical: {

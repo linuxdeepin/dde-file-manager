@@ -218,6 +218,11 @@ bool BlockEntryFileEntity::renamable() const
 {
     if (datas.value(DeviceProperty::kOpticalDrive).toBool())
         return false;
+
+    if (datas.value(DeviceProperty::kIsEncrypted).toBool()
+        && datas.value(DeviceProperty::kCleartextDevice).toString() == "/")
+        return false;
+
     if (!datas.value(DeviceProperty::kRemovable).toBool()) {
         return true;
     } else {
