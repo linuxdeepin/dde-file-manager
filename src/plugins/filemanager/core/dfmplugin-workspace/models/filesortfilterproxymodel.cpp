@@ -147,6 +147,11 @@ void FileSortFilterProxyModel::refresh()
     viewModel()->refresh(rootUrl);
 }
 
+void FileSortFilterProxyModel::updateFile(const QUrl &url)
+{
+    viewModel()->updateFile(rootUrl, url);
+}
+
 AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex &index) const
 {
     const QModelIndex &sourceIndex = mapToSource(index);

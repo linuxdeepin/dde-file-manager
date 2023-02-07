@@ -92,6 +92,8 @@ public:
     void cleanDataCacheByUrl(const QUrl &url);
     void updateRoot(const QList<QUrl> urls);
 
+    void updateFile(const QUrl &root, const QUrl &url);
+
 public Q_SLOTS:
     void onFilesUpdated();
     void onFileUpdated(const QUrl &url);

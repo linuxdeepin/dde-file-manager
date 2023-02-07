@@ -57,7 +57,6 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
 
 {
     connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileUpdated);
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestFileUpdate, this, &FileViewModel::onFileUpdated);
 }
 
 FileViewModel::~FileViewModel()
@@ -489,6 +488,18 @@ void FileViewModel::updateRoot(const QList<QUrl> urls)
     }
 }
 
+void FileViewModel::updateFile(const QUrl &root, const QUrl &url)
+{
+    const QModelIndex &index = findChildIndex(root, url);
+    if (index.isValid()) {
+        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info)
+            info->refresh();
+
+        emit dataChanged(index, index);
+    }
+}
+
 void FileViewModel::onFilesUpdated()
 {
     FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
@@ -502,14 +513,7 @@ void FileViewModel::onFilesUpdated()
 void FileViewModel::onFileUpdated(const QUrl &url)
 {
     const QUrl &rootUrl = UrlRoute::urlParent(url);
-    const QModelIndex &index = findChildIndex(rootUrl, url);
-    if (index.isValid()) {
-        auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info)
-            info->refresh();
-
-        emit dataChanged(index, index);
-    }
+    updateFile(rootUrl, url);
 }
 
 void FileViewModel::onInsert(int rootIndex, int firstIndex, int count)

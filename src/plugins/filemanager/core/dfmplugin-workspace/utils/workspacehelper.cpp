@@ -331,7 +331,14 @@ void WorkspaceHelper::laterRequestSelectFiles(const QList<QUrl> &urls)
 
 void WorkspaceHelper::fileUpdate(const QUrl &url)
 {
-    emit requestFileUpdate(url);
+    for (const auto &wind : kWorkspaceMap) {
+        if (wind) {
+            FileView *view = dynamic_cast<FileView *>(wind->currentView());
+            if (view) {
+                view->model()->updateFile(url);
+            }
+        }
+    }
 }
 
 void WorkspaceHelper::updateRootFile(const QList<QUrl> urls)

@@ -55,6 +55,8 @@ public:
     void update();
     void refresh();
 
+    void updateFile(const QUrl &url);
+
     AbstractFileInfoPointer itemFileInfo(const QModelIndex &index) const;
 
     QModelIndex getIndexByUrl(const QUrl &url) const;

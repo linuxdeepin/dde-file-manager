@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     yanghao<yanghao@uniontech.com>
@@ -119,7 +119,6 @@ signals:
     void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback);
     void requestSelectFiles(const QList<QUrl> &urlList);
     void trashStateChanged();
-    void requestFileUpdate(const QUrl &url);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);
