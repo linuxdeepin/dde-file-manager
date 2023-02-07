@@ -237,7 +237,6 @@ QList<QUrl> FileView::selectedUrlList() const
 
 void FileView::refresh()
 {
-    model()->initMixDirAndFile();
     model()->refresh();
 }
 
@@ -820,6 +819,7 @@ void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const
     Q_UNUSED(value);
     switch (aa) {
     case Application::kFileAndDirMixedSort:
+        model()->initMixDirAndFile();
         d->currentSortOrder = model()->sortOrder();
         doSort();
         break;
@@ -1771,7 +1771,6 @@ void FileView::loadViewState(const QUrl &url)
 
 void FileView::doSort()
 {
-    model()->initMixDirAndFile();
     model()->sort(model()->getColumnByRole(d->currentSortRole), d->currentSortOrder);
 }
 

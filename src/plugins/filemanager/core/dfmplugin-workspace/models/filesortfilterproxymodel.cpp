@@ -42,6 +42,8 @@ FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
 {
     setDynamicSortFilter(true);
     resetFilter();
+
+    initMixDirAndFile();
 }
 
 FileSortFilterProxyModel::~FileSortFilterProxyModel()
@@ -144,6 +146,7 @@ void FileSortFilterProxyModel::refresh()
     if (state != ModelState::kIdle)
         return;
 
+    initMixDirAndFile();
     viewModel()->refresh(rootUrl);
 }
 
