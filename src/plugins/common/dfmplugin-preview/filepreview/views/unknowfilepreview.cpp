@@ -33,13 +33,13 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     : AbstractBasePreview(parent)
 {
     contentView = new QWidget();
-    contentView->setFixedSize(550, 200);
+    contentView->setFixedSize(590, 260);
     iconLabel = new QLabel(contentView);
     iconLabel->setObjectName("IconLabel");
     iconLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     nameLabel = new QLabel(contentView);
     nameLabel->setObjectName("NameLabel");
-    nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     nameLabel->setWordWrap(true);
     QFont font;
     font.setWeight(QFont::DemiBold);
@@ -50,18 +50,21 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     sizeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     typeLabel = new QLabel(contentView);
     typeLabel->setObjectName("TypeLabel");
-    typeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+    typeLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    typeLabel->adjustSize();
     QVBoxLayout *vlayout = new QVBoxLayout();
 
+    vlayout->setContentsMargins(0, 16, 0, 0);
     vlayout->addWidget(nameLabel);
+    vlayout->addSpacing(10);
     vlayout->addWidget(sizeLabel);
     vlayout->addWidget(typeLabel);
     vlayout->addStretch();
 
     QHBoxLayout *hlayout = new QHBoxLayout(contentView);
 
-    hlayout->setContentsMargins(30, 20, 20, 20);
+    hlayout->setContentsMargins(60, 60, 20, 20);
     hlayout->addWidget(iconLabel);
     hlayout->addSpacing(30);
     hlayout->addLayout(vlayout);
@@ -109,11 +112,11 @@ void UnknowFilePreview::setFileInfo(const AbstractFileInfoPointer &info)
 {
     const QIcon &icon = info->fileIcon();
 
-    iconLabel->setPixmap(icon.pixmap(150));
+    iconLabel->setPixmap(icon.pixmap(180));
 
     QFont font = nameLabel->font();
     QFontMetrics fm(font);
-    QString elidedText = fm.elidedText(info->nameOf(NameInfoType::kFileName), Qt::ElideMiddle, 300);
+    QString elidedText = fm.elidedText(info->nameOf(NameInfoType::kFileName), Qt::ElideMiddle, 800);
 
     nameLabel->setText(elidedText);
 

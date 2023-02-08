@@ -56,7 +56,7 @@ void MountAskPasswordDialog::initUI()
 
     QLabel *connectTypeLabel = new QLabel(tr("Log in as"));
     connectTypeLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    connectTypeLabel->setFixedWidth(80);
+    connectTypeLabel->setFixedWidth(95);
 
     DButtonBox *anonmymousButtonBox = new DButtonBox(this);
     anonmymousButtonBox->setEnabled(true);
@@ -82,7 +82,7 @@ void MountAskPasswordDialog::initUI()
 
     QLabel *usernameLable = new QLabel(tr("Username"));
     usernameLable->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    usernameLable->setFixedWidth(80);
+    usernameLable->setFixedWidth(95);
 
     usernameLineEdit = new QLineEdit;
     usernameLineEdit->setMinimumWidth(240);
@@ -90,7 +90,7 @@ void MountAskPasswordDialog::initUI()
 
     domainLabel = new QLabel(tr("Domain"));
     domainLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    domainLabel->setFixedWidth(80);
+    domainLabel->setFixedWidth(95);
 
     domainLineEdit = new QLineEdit;
     domainLineEdit->setMinimumWidth(240);
@@ -98,7 +98,7 @@ void MountAskPasswordDialog::initUI()
 
     QLabel *passwordLable = new QLabel(tr("Password"));
     passwordLable->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    passwordLable->setFixedWidth(80);
+    passwordLable->setFixedWidth(90);
 
     passwordLineEdit = new DPasswordEdit;
     passwordLineEdit->setMinimumWidth(240);
@@ -141,7 +141,7 @@ void MountAskPasswordDialog::initUI()
     mainLayout->addLayout(connectTypeLayout);
     mainLayout->addWidget(passwordFrame);
     mainLayout->setSpacing(10);
-    mainLayout->setContentsMargins(0, 0, 20, 0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     content->setLayout(mainLayout);
 
     addContent(content);
