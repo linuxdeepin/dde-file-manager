@@ -875,9 +875,6 @@ bool FileOperateBaseWorker::doCopyExBlockFile(const AbstractFileInfoPointer from
     if (!stateCheck())
         return false;
 
-    if (isStopped())
-        return false;
-
     QtConcurrent::run(threadPool.data(), threadCopyWorker[0].data(),
                       static_cast<void (DoCopyFileWorker::*)(const AbstractFileInfoPointer fromInfo,
                                                              const AbstractFileInfoPointer toInfo)>(&DoCopyFileWorker::readExblockFile),
@@ -971,7 +968,7 @@ void FileOperateBaseWorker::createExBlockFileCopyInfo(const AbstractFileInfoPoin
 
 void FileOperateBaseWorker::startBlockFileCopy()
 {
-    if (!exblockThreadStarted) {
+    if (!exblockThreadStarted && stateCheck()) {
         exblockThreadStarted = true;
         QtConcurrent::run(threadPool.data(), threadCopyWorker[1].data(),
                           static_cast<void (DoCopyFileWorker::*)()>(&DoCopyFileWorker::writeExblockFile));

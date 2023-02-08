@@ -313,7 +313,7 @@ void DoCopyFileWorker::createExBlockFileCopyInfo(const AbstractFileInfoPointer f
     tmpinfo->isdir = isDir;
     tmpinfo->permission = permission;
     workData->blockCopyInfoQueue.push_backByLock(tmpinfo);
-    while(workData->blockCopyInfoQueue.count() > 500)
+    while(workData->blockCopyInfoQueue.count() > 500 && !isStopped())
         QThread::msleep(10);
 }
 
@@ -401,7 +401,7 @@ void DoCopyFileWorker::readExblockFile(const AbstractFileInfoPointer fromInfo, c
 
     auto info = doReadExBlockFile(fromInfo, toInfo, fd, &skip);
 
-    if (isStopped())
+    if (!stateCheck())
         return;
 
     workData->blockCopyInfoQueue.push_backByLock(info);
@@ -833,7 +833,7 @@ bool DoCopyFileWorker::verifyFileIntegrity(const qint64 &blockSize, const ulong 
 
 void DoCopyFileWorker::checkRetry()
 {
-    if (!workData->signalThread && retry) {
+    if (!workData->signalThread && retry && !isStopped()) {
         retry = false;
         emit retryErrSuccess(quintptr(this));
     }
@@ -923,13 +923,11 @@ bool DoCopyFileWorker::writeBlockFile(const BlockFileCopyInfoPointer &info, bool
 
 void DoCopyFileWorker::syncBlockFile(const BlockFileCopyInfoPointer &info)
 {
-    if (workData->needSyncEveryRW && workData->isFsTypeVfat)
+    if (stateCheck())
         syncfs(blockFileFd);
 
     //关闭文件并加权
     if (info->closeflag) {
-        //异步执行同步
-        syncfs(blockFileFd);
         close(blockFileFd);
         blockFileFd = -1;
         QFileDevice::Permissions permissions = info->frominfo->permissions();

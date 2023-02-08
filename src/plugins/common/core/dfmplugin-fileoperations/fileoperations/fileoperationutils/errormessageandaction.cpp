@@ -224,7 +224,7 @@ void ErrorMessageAndAction::errorSrcAndDestString(const QUrl &from,
                                                   QString *sorceMsg, QString *toMsg,
                                                   const AbstractJobHandler::JobErrorType error)
 {
-    if (error == AbstractJobHandler::JobErrorType::kNoError || sorceMsg || toMsg)
+    if (error == AbstractJobHandler::JobErrorType::kNoError || !sorceMsg || !toMsg)
         return;
     if (error == AbstractJobHandler::JobErrorType::kFileExistsError
         || error == AbstractJobHandler::JobErrorType::kDirectoryExistsError) {
