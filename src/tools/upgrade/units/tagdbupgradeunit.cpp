@@ -36,6 +36,22 @@ TagDbUpgradeUnit::TagDbUpgradeUnit()
 {
 }
 
+TagDbUpgradeUnit::~TagDbUpgradeUnit()
+{
+    if (mainDbHandle) {
+        delete mainDbHandle;
+        mainDbHandle = nullptr;
+    }
+    if (deepinDbHandle) {
+        delete deepinDbHandle;
+        deepinDbHandle = nullptr;
+    }
+    if (newTagDbhandle) {
+        delete newTagDbhandle;
+        newTagDbhandle = nullptr;
+    }
+}
+
 QString dfm_upgrade::TagDbUpgradeUnit::name()
 {
     return "TagDbUpgradeUnit";
@@ -87,9 +103,6 @@ bool TagDbUpgradeUnit::chechTable(SqliteHandle *handle, const QString &tableName
 
 bool TagDbUpgradeUnit::createTableForNewDb(const QString &tableName)
 {
-    if (newTagDbhandle)
-        return false;
-
     bool ret = false;
     if (SqliteHelper::tableName<FileTagInfo>() == tableName) {
 
@@ -228,7 +241,7 @@ bool TagDbUpgradeUnit::checkNewDatabase()
 
     QDir dir(dbPath);
     if (!dir.exists())
-        dir.mkdir(dbPath);
+        dir.mkpath(dbPath);
 
     const auto &dbFilePath = DFMUtils::buildFilePath(dbPath.toLocal8Bit(),
                                                      kTagNewDbName,

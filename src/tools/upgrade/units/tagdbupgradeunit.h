@@ -16,6 +16,7 @@ class TagDbUpgradeUnit : public UpgradeUnit
 {
 public:
     TagDbUpgradeUnit();
+    ~TagDbUpgradeUnit();
 
     virtual QString name() override;
     virtual bool initialize(const QMap<QString, QString> &args) override;
