@@ -223,13 +223,7 @@ bool BlockEntryFileEntity::renamable() const
         && datas.value(DeviceProperty::kCleartextDevice).toString() == "/")
         return false;
 
-    if (!datas.value(DeviceProperty::kRemovable).toBool()) {
-        return true;
-    } else {
-        if (isAccessable() && datas.value(DeviceProperty::kMountPoint).toString().isEmpty())
-            return true;
-        return false;
-    }
+    return isAccessable();
 }
 
 QVariant BlockEntryFileEntity::getProperty(const char *const key) const
