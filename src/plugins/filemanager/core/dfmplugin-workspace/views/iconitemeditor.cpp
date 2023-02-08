@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "iconitemeditor.h"
 #include "private/iconitemeditor_p.h"
 #include "utils/itemdelegatehelper.h"
@@ -150,6 +150,12 @@ bool IconItemEditor::isEditReadOnly() const
 {
     Q_D(const IconItemEditor);
     return d->edit->isReadOnly();
+}
+
+void IconItemEditor::useCharCountLimit()
+{
+    Q_D(IconItemEditor);
+    d->useCharCountLimit = true;
 }
 
 void IconItemEditor::showAlertMessage(const QString &text, int duration)
@@ -450,12 +456,12 @@ bool IconItemEditor::processLength(QString &text, int &pos)
 {
     const QString srcText = text;
     int srcPos = pos;
-    int editTextCurrLen = srcText.toLocal8Bit().size();
+    int editTextCurrLen = textLength(srcText);
     int editTextRangeOutLen = editTextCurrLen - maxCharSize();
     if (editTextRangeOutLen > 0 && maxCharSize() != INT_MAX) {
         QVector<uint> list = srcText.toUcs4();
         QString tmp = srcText;
-        while (tmp.toLocal8Bit().size() > maxCharSize() && srcPos > 0) {
+        while (textLength(tmp) > maxCharSize() && srcPos > 0) {
             list.removeAt(--srcPos);
             tmp = QString::fromUcs4(list.data(), list.size());
         }
@@ -464,4 +470,10 @@ bool IconItemEditor::processLength(QString &text, int &pos)
         return srcText.size() != text.size();
     }
     return false;
+}
+
+int IconItemEditor::textLength(const QString &text)
+{
+    Q_D(IconItemEditor);
+    return d->useCharCountLimit ? text.size() : text.toLocal8Bit().size();
 }

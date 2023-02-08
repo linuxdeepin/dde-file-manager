@@ -127,12 +127,12 @@ bool ListItemEditor::processLength(QString &text, int &pos)
 {
     QString srcText = text;
     int srcPos = pos;
-    int editTextCurrLen = srcText.toLocal8Bit().size();
+    int editTextCurrLen = textLength(srcText);
     int editTextRangeOutLen = editTextCurrLen - theMaxCharSize;
     if (editTextRangeOutLen > 0 && theMaxCharSize != INT_MAX) {
         QVector<uint> list = srcText.toUcs4();
         QString tmp = srcText;
-        while (tmp.toLocal8Bit().size() > theMaxCharSize && srcPos > 0) {
+        while (textLength(tmp) > theMaxCharSize && srcPos > 0) {
             list.removeAt(--srcPos);
             tmp = QString::fromUcs4(list.data(), list.size());
         }
@@ -141,4 +141,9 @@ bool ListItemEditor::processLength(QString &text, int &pos)
         return srcText.size() != text.size();
     }
     return false;
+}
+
+int ListItemEditor::textLength(const QString &text)
+{
+    return useCharCount ? text.size() : text.toLocal8Bit().size();
 }

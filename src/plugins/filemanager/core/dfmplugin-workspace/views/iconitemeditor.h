@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef ICONITEMEDITOR_H
 #define ICONITEMEDITOR_H
 
@@ -64,6 +64,7 @@ public:
     QLabel *getIconLabel() const;
     QTextEdit *getTextEdit() const;
     bool isEditReadOnly() const;
+    void useCharCountLimit();
 
 public slots:
     void showAlertMessage(const QString &text, int duration = 3000);
@@ -91,6 +92,7 @@ private:
     void pushItemToEditTextStack(const QString &item);
     static DTK_WIDGET_NAMESPACE::DArrowRectangle *createTooltip();
     bool processLength(QString &text, int &pos);
+    int textLength(const QString &text);
 
     friend class IconItemDelegate;
     friend class FileView;

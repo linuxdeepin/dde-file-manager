@@ -35,6 +35,7 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/base/device/deviceutils.h"
 
 #include <DApplicationHelper>
 #include <DStyleOption>
@@ -676,6 +677,11 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
         return;
 
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
+    const QString &filePath = index.data(kItemFilePathRole).toString();
+
+    // if file is in dlnfs' path, use char count rather than byte count to limit the filename length
+    if (DeviceUtils::isSubpathOfDlnfs(filePath))
+        item->useCharCountLimit();
 
     QString suffix = index.data(kItemFileSuffixOfRenameRole).toString();
     qDebug() << "Display" << index.data(kItemFileDisplayNameRole).toString()

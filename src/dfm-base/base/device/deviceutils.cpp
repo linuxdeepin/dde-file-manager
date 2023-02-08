@@ -418,8 +418,8 @@ bool DeviceUtils::checkDiskEncrypted()
 #ifdef COMPILE_ON_V23
     // TODO (liuzhangjian) check disk encrypted on v23
 #elif COMPILE_ON_V20
-        QSettings settings("/etc/deepin/deepin-user-experience", QSettings::IniFormat);
-        isEncrypted = settings.value("ExperiencePlan/FullDiskEncrypt", false).toBool();
+                QSettings settings("/etc/deepin/deepin-user-experience", QSettings::IniFormat);
+                isEncrypted = settings.value("ExperiencePlan/FullDiskEncrypt", false).toBool();
 #endif
     });
 
@@ -435,20 +435,55 @@ QStringList DeviceUtils::encryptedDisks()
 #ifdef COMPILE_ON_V23
     // TODO (liuzhangjian) get encrypted disks on v23
 #elif COMPILE_ON_V20
-        QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
-        const QString &value = settings.value("DI_CRYPT_INFO", "").toString();
-        if (!value.isEmpty()) {
-            QStringList groupList = value.split(';');
-            for (const auto &group : groupList) {
-                QStringList device = group.split(':');
-                if (!device.isEmpty())
-                    deviceList << device.first();
-            }
-        }
+                QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
+                const QString &value = settings.value("DI_CRYPT_INFO", "").toString();
+                if (!value.isEmpty()) {
+                    QStringList groupList = value.split(';');
+                    for (const auto &group : groupList) {
+                        QStringList device = group.split(':');
+                        if (!device.isEmpty())
+                            deviceList << device.first();
+                    }
+                }
 #endif
     });
 
     return deviceList;
+}
+
+bool DeviceUtils::isSubpathOfDlnfs(const QString &path)
+{
+    libmnt_table *tab { mnt_new_table() };
+    libmnt_iter *iter = mnt_new_iter(MNT_ITER_BACKWARD);
+
+    FinallyUtil finally([=] {
+        if (tab) mnt_free_table(tab);
+        if (iter) mnt_free_iter(iter);
+    });
+    Q_UNUSED(finally);
+
+    int ret = mnt_table_parse_mtab(tab, nullptr);
+    if (ret != 0) {
+        qWarning() << "device: cannot parse mtab" << ret;
+        return false;
+    }
+
+    libmnt_fs *fs = nullptr;
+    while (mnt_table_next_fs(tab, iter, &fs) == 0) {
+        if (!fs)
+            continue;
+        if (strcmp("dlnfs", mnt_fs_get_source(fs)) == 0) {
+            QString target = mnt_fs_get_target(fs);
+            target.append("/");
+            QString subPath = path;
+            if (!subPath.endsWith("/"))
+                subPath += "/";
+            if (subPath.startsWith(target))
+                return true;
+        }
+    }
+
+    return false;
 }
 
 bool DeviceUtils::hasMatch(const QString &txt, const QString &rex)

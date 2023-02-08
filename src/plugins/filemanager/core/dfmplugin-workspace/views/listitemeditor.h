@@ -27,6 +27,11 @@ public:
         return theMaxCharSize;
     }
 
+    inline void useCharCountLimit()
+    {
+        useCharCount = true;
+    }
+
 signals:
     void inputFocusOut();
 
@@ -44,10 +49,12 @@ private slots:
 private:
     void init();
     bool processLength(QString &text, int &pos);
+    int textLength(const QString &text);
 
 private:
-    int theMaxCharSize = INT_MAX;
-    DTK_WIDGET_NAMESPACE::DArrowRectangle *tooltip = nullptr;
+    int theMaxCharSize { INT_MAX };
+    bool useCharCount { false };
+    DTK_WIDGET_NAMESPACE::DArrowRectangle *tooltip { nullptr };
 };
 }
 #endif   // LISTITEMEDITOR_H

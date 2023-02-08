@@ -34,6 +34,7 @@
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/elidetextlayout.h"
 
 #include <DListView>
@@ -587,6 +588,11 @@ bool ListItemDelegate::setEditorData(ListItemEditor *editor)
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
     const QString &suffix = d->editingIndex.data(kItemFileSuffixOfRenameRole).toString();
+    const QString &filePath = d->editingIndex.data(kItemFilePathRole).toString();
+
+    // if file is in dlnfs' path, use char count rather than byte count to limit the filename length
+    if (DeviceUtils::isSubpathOfDlnfs(filePath))
+        editor->useCharCountLimit();
 
     if (showSuffix) {
         QString name = d->editingIndex.data(kItemFileNameOfRenameRole).toString();

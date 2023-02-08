@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #ifndef DEVICEUTILS_H
 #define DEVICEUTILS_H
 
@@ -74,6 +74,8 @@ public:
 
     static bool checkDiskEncrypted();
     static QStringList encryptedDisks();
+
+    static bool isSubpathOfDlnfs(const QString &path);
 
 private:
     static bool hasMatch(const QString &txt, const QString &rex);
