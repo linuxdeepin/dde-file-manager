@@ -53,7 +53,16 @@ ProtocolEntryFileEntity::ProtocolEntryFileEntity(const QUrl &url)
 
 QString ProtocolEntryFileEntity::displayName() const
 {
-    return datas.value(DeviceProperty::kDisplayName).toString();
+    QString displayName = datas.value(DeviceProperty::kDisplayName).toString();
+    if (displayName.contains(" on ")) {
+        int pos = displayName.lastIndexOf(" on ");
+        const QString &shareName = displayName.left(pos);
+        const QString &hostName = displayName.right(displayName.length() - pos - 4);
+        if (!shareName.isEmpty() && !hostName.isEmpty())
+            displayName = QString("%1 %2 %3").arg(shareName).arg(QObject::tr("on")).arg(hostName);
+    }
+
+    return displayName;
 }
 
 QIcon ProtocolEntryFileEntity::icon() const

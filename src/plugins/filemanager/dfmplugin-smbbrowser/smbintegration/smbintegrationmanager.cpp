@@ -156,7 +156,14 @@ void SmbIntegrationManager::switchIntegrationMode(bool value)
             const QString &protocol = stashedSmbData.value(kProtocolKey).toString();
             const QString &host = stashedSmbData.value(kHostKey).toString();
             const QString &shareName = stashedSmbData.value(kShareKey).toString();
-            const QString &displayName = stashedSmbData.value(kNameKey).toString();
+            QString displayName = stashedSmbData.value(kNameKey).toString();
+            if (displayName.contains(" on ")) {
+                int pos = displayName.lastIndexOf(" on ");
+                const QString &shareName = displayName.left(pos);
+                const QString &hostName = displayName.right(displayName.length() - pos - 4);
+                if (!shareName.isEmpty() && !hostName.isEmpty())
+                    displayName = QString("%1 %2 %3").arg(shareName).arg(QObject::tr("on")).arg(hostName);
+            }
             QUrl url;
             url.setScheme(protocol);
             url.setHost(host);

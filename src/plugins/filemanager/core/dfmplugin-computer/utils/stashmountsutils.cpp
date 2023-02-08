@@ -34,6 +34,7 @@
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include <QObject>
 #include <QFile>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -120,8 +121,17 @@ QString StashMountsUtils::displayName(const QUrl &url)
         return QObject::tr("Unknown");
 
     const auto &&mounts = stashedMounts();
-    if (mounts.contains(urlPath))
-        return mounts.value(urlPath);
+    if (mounts.contains(urlPath)) {
+        QString displayName = mounts.value(urlPath);
+        if (displayName.contains(" on ")) {
+            int pos = displayName.lastIndexOf(" on ");
+            const QString &shareName = displayName.left(pos);
+            const QString &hostName = displayName.right(displayName.length() - pos - 4);
+            if (!shareName.isEmpty() && !hostName.isEmpty())
+                displayName = QString("%1 %2 %3").arg(shareName).arg(QObject::tr("on")).arg(hostName);
+        }
+        return displayName;
+    }
 
     return QObject::tr("Unknown");
 }
