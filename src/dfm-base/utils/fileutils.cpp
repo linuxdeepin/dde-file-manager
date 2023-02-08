@@ -412,6 +412,17 @@ bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)
     return false;
 }
 
+/*!
+ * \brief FileUtils::getFileNameLength, if the `url` is suburl of dlnfs mountpoint, then use char count rather than byte count to judge filename length.
+ * \param url
+ * \param name
+ * \return
+ */
+int FileUtils::getFileNameLength(const QUrl &url, const QString &name)
+{
+    return DeviceUtils::isSubpathOfDlnfs(url.path()) ? name.length() : name.toLocal8Bit().length();
+}
+
 QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
 {
     if (originUrls.isEmpty()) {
@@ -448,10 +459,8 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         }
 
         int maxLength = NAME_MAX - suffix.toLocal8Bit().size();
-
-        if (fileBaseName.toLocal8Bit().size() > maxLength) {
-            fileBaseName = cutString(fileBaseName, maxLength, QTextCodec::codecForLocale());
-        }
+        while (getFileNameLength(url, fileBaseName) > maxLength)
+            fileBaseName.chop(1);
 
         if (!isDesktopApp) {
             fileBaseName += suffix;
@@ -490,11 +499,10 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
         const QString &suffix = info->nameOf(NameInfoType::kSuffix).isEmpty()
                 ? QString()
                 : QString(".") + info->nameOf(NameInfoType::kSuffix);
-        int maxLength = NAME_MAX - info->nameOf(NameInfoType::kFileName).toLocal8Bit().size();
 
-        if (addText.toLocal8Bit().size() > maxLength) {
-            addText = cutString(addText, maxLength, QTextCodec::codecForLocale());
-        }
+        int maxLength = NAME_MAX - getFileNameLength(url, info->nameOf(NameInfoType::kFileName));
+        while (getFileNameLength(url, addText) > maxLength)
+            addText.chop(1);
 
         if (pair.second == AbstractJobHandler::FileNameAddFlag::kPrefix) {
             fileBaseName.insert(0, addText);
@@ -553,11 +561,10 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
         const QString &suffix = info->nameOf(NameInfoType::kSuffix).isEmpty()
                 ? QString()
                 : QString(".") + info->nameOf(NameInfoType::kSuffix);
-        int maxLength = NAME_MAX - indexString.toLocal8Bit().size() - suffix.toLocal8Bit().size();
+        int maxLength = NAME_MAX - getFileNameLength(url, indexString) - suffix.toLocal8Bit().size();
 
-        if (fileBaseName.toLocal8Bit().size() > maxLength) {
-            fileBaseName = cutString(fileBaseName, maxLength, QTextCodec::codecForLocale());
-        }
+        while (getFileNameLength(url, fileBaseName) > maxLength)
+            fileBaseName.chop(1);
 
         fileBaseName = isDesktopApp ? (fileBaseName + indexString) : (fileBaseName + indexString + suffix);
         QUrl beModifieddUrl = { info->getUrlByType(UrlInfoType::kGetUrlByNewFileName, fileBaseName) };
@@ -601,51 +608,6 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
     }
 
     return result;
-}
-
-QString FileUtils::cutString(const QString &text, int dataByteSize, const QTextCodec *codec)
-{
-    QString newText;
-    int bytes = 0;
-
-    for (int i = 0; i < text.size(); ++i) {
-        const QChar &ch = text.at(i);
-        QByteArray data;
-        QString fullChar;
-
-        if (ch.isSurrogate()) {
-            if ((++i) >= text.size())
-                break;
-
-            const QChar &nextCh = text.at(i);
-
-            if (!ch.isHighSurrogate() || !nextCh.isLowSurrogate())
-                break;
-
-            data = codec->fromUnicode(text.data() + i - 1, 2);
-            fullChar.setUnicode(text.data() + i - 1, 2);
-        } else {
-            data = codec->fromUnicode(text.data() + i, 1);
-            fullChar.setUnicode(text.data() + i, 1);
-        }
-
-        if (codec->toUnicode(data) != fullChar) {
-            qWarning() << "Failed convert" << fullChar << "to" << codec->name() << "coding";
-            continue;
-        }
-
-        bytes += data.size();
-
-        if (bytes > dataByteSize)
-            break;
-
-        newText.append(ch);
-
-        if (ch.isSurrogate())
-            newText.append(text.at(i));
-    }
-
-    return newText;
 }
 
 QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl)

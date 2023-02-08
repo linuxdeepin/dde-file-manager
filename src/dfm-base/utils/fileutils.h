@@ -50,7 +50,7 @@ public:
     static QString preprocessingFileName(QString name);
     static bool isContainProhibitPath(const QList<QUrl> &urls);
 
-    //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
+    // check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
     static bool isDesktopFile(const QUrl &url);
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
@@ -65,11 +65,11 @@ public:
     static bool isTrashFile(const QUrl &url);
     static bool isTrashRootFile(const QUrl &url);
     static bool isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare);
+    static int getFileNameLength(const QUrl &url, const QString &name);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
     static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair);
     static QMap<QUrl, QUrl> fileBatchCustomText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
-    static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
     static QString nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl = QUrl());
     static QString toUnicode(const QByteArray &data, const QString &fileName = QString());
     static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString {});

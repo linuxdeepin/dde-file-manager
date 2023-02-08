@@ -17,10 +17,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 #include "editstackedwidget.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -91,10 +92,9 @@ void NameTextEdit::slotTextChanged()
     text.remove('/');
     text.remove(QChar(0));
 
-    QVector<uint> list = text.toUcs4();
     int cursor_pos = this->textCursor().position() - text_length + text.length();
 
-    while (text.toLocal8Bit().count() > NAME_MAX) {
+    while (textLength(text) > NAME_MAX) {
         text.chop(1);
     }
 
@@ -236,7 +236,11 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
 
 void EditStackedWidget::renameFile()
 {
-    QFileInfo info(filerUrl.path());
+    QFileInfo info(fileUrl.path());
+
+    if (DeviceUtils::isSubpathOfDlnfs(fileUrl.path()))
+        fileNameEdit->useCharCountLimit();
+
     fileNameEdit->setPlainText(info.fileName());
     this->setCurrentIndex(0);
     fileNameEdit->setFixedHeight(textShowFrame->height());
@@ -262,7 +266,7 @@ void EditStackedWidget::showTextShowFrame()
     if (fileNameEdit->isCanceled())
         initTextShowFrame(newName);
     else {
-        QUrl oldUrl = filerUrl;
+        QUrl oldUrl = fileUrl;
         QList<QUrl> urls {};
         bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << oldUrl, &urls);
         if (ok && !urls.isEmpty())
@@ -277,14 +281,14 @@ void EditStackedWidget::showTextShowFrame()
 
         initTextShowFrame(newName);
         dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, this->topLevelWidget()->winId(), oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
-        filerUrl = newUrl;
+        fileUrl = newUrl;
         emit selectUrlRenamed(newUrl);
     }
 }
 
 void EditStackedWidget::selectFile(const QUrl &url)
 {
-    filerUrl = url;
+    fileUrl = url;
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (!info.isNull()) {
         initTextShowFrame(info->displayOf(DisPlayInfoType::kFileDisplayName));
