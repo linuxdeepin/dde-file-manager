@@ -53,6 +53,7 @@ static const char *const kActionIconMenuSceneName = "ActionIconManager";
 static const char *const kDConfigHiddenMenuSceneName = "DConfigMenuFilter";
 static const char *const kCanvasBaseSortMenuSceneName = "CanvasBaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
+static const char *const kTemplateMenuSceneName = "TemplateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
 static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
 static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
@@ -391,6 +392,12 @@ bool CanvasMenuScene::triggered(QAction *action)
                 FileOperatorProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
                 return true;
             }
+        }
+
+        // TemplateMenu scene
+        if (sceneName == kTemplateMenuSceneName) {
+            FileOperatorProxyIns->touchFile(d->view, d->gridPos, QUrl::fromLocalFile(action->data().toString()));
+            return true;
         }
 
         // FileOperatorMenu scene

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "private/templatemenuscene_p.h"
+#include "menuscene/action_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_menu_defines.h"
@@ -49,6 +50,9 @@ QString TemplateMenuScene::name() const
 bool TemplateMenuScene::initialize(const QVariantHash &params)
 {
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    if (!d->isEmptyArea)
+        return false;
+
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     return AbstractMenuScene::initialize(params);
@@ -67,16 +71,23 @@ AbstractMenuScene *TemplateMenuScene::scene(QAction *action) const
 
 bool TemplateMenuScene::create(QMenu *parent)
 {
+    // find new doc menu
+    auto actions = parent->actions();
+    auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac) {
+        return ac->property(ActionPropertyKey::kActionID).toString() == dfmplugin_menu::ActionID::kNewDoc;
+    });
 
-    if (!d->isEmptyArea)
-        return true;
-
-    for (const auto &act : d->templateActions) {
-        const auto &id = QUuid::createUuid().toString();
-        d->predicateAction[id] = act;
-        d->predicateName[id] = QString("%1-%2").arg(id).arg(act->text());
-        act->setProperty(ActionPropertyKey::kActionID, id);
-        parent->addAction(act);
+    if (actionIter != actions.end()) {
+        if (QMenu *pMenu = (*actionIter)->menu()) {
+            for (const auto &act : d->templateActions) {
+                QString id = QString("%1:%2").arg(TemplateMenuCreator::name())
+                        .arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
+                d->predicateAction[id] = act;
+                d->predicateName[id] = act->text();
+                act->setProperty(ActionPropertyKey::kActionID, id);
+                pMenu->addAction(act);
+            }
+        }
     }
 
     return AbstractMenuScene::create(parent);
@@ -91,13 +102,15 @@ void TemplateMenuScene::updateState(QMenu *parent)
 
 bool TemplateMenuScene::triggered(QAction *action)
 {
-    if (!d->templateActions.contains(action))
-        return AbstractMenuScene::triggered(action);
-    dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
-                                 d->windowId,
-                                 d->currentDir,
-                                 QUrl::fromLocalFile(action->data().toString()),
-                                 "");
+    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    if (d->predicateAction.value(actionId) == action) {
+        dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
+                                     d->windowId,
+                                     d->currentDir,
+                                     QUrl::fromLocalFile(action->data().toString()),
+                                     "");
+        return true;
+    }
 
     return AbstractMenuScene::triggered(action);
 }

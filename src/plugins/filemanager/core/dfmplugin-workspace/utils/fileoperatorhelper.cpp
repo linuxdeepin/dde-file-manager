@@ -65,6 +65,20 @@ void FileOperatorHelper::touchFiles(const FileView *view, const CreateFileType t
                                  callBack);
 }
 
+void FileOperatorHelper::touchFiles(const FileView *view, const QUrl &source)
+{
+    const quint64 windowId = WorkspaceHelper::instance()->windowId(view);
+    const QUrl &url = view->rootUrl();
+
+    dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
+                                 windowId,
+                                 url,
+                                 source,
+                                 QString(),
+                                 GlobalEventType::kTouchFile,
+                                 callBack);
+}
+
 void FileOperatorHelper::openFiles(const FileView *view)
 {
     openFiles(view, view->selectedUrlList());

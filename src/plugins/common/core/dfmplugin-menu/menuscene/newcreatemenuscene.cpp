@@ -27,6 +27,8 @@
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_menu_defines.h"
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <QMenu>
@@ -68,15 +70,19 @@ bool NewCreateMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->currentDir.isValid())
         return false;
 
-    d->newActionSubScene = dfmplugin_menu_util::menuSceneCreateScene(kTemplateMenuSceneName);
-    if (d->newActionSubScene) {
-        d->newActionSubScene->setParent(this);
-        d->newActionSubScene->initialize(params);
-    }
+    QList<AbstractMenuScene *> currentScene;
+
+    if (auto templateScene = dfmplugin_menu_util::menuSceneCreateScene(kTemplateMenuSceneName))
+        currentScene.append(templateScene);
+
+    // the scene added by binding must be initializeed after 'defalut scene'.
+    currentScene.append(subScene);
+    setSubscene(currentScene);
 
     return AbstractMenuScene::initialize(params);
 }
@@ -88,9 +94,6 @@ AbstractMenuScene *NewCreateMenuScene::scene(QAction *action) const
 
     if (d->predicateAction.values().contains(action))
         return const_cast<NewCreateMenuScene *>(this);
-
-    if (d->newActionSubScene->scene(action))
-        return d->newActionSubScene;
 
     return AbstractMenuScene::scene(action);
 }
@@ -128,9 +131,6 @@ bool NewCreateMenuScene::create(QMenu *parent)
     d->predicateAction[ActionID::kNewPlainText] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewPlainText));
 
-    // add action of template file
-    d->newActionSubScene->create(newDocSubMenu);
-
     return AbstractMenuScene::create(parent);
 }
 
@@ -160,9 +160,24 @@ void NewCreateMenuScene::updateState(QMenu *parent)
 
 bool NewCreateMenuScene::triggered(QAction *action)
 {
-    QString id = d->predicateAction.key(action);
-    if (id.isEmpty())
-        return d->newActionSubScene->triggered(action) ? true : AbstractMenuScene::triggered(action);
-
+    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    if (d->predicateAction.values().contains(action)) {
+        if (actionId == dfmplugin_menu::ActionID::kNewFolder) {
+            dpfSignalDispatcher->publish(GlobalEventType::kMkdir, d->windowId, d->currentDir);
+        } else if (actionId == dfmplugin_menu::ActionID::kNewOfficeText) {
+            dpfSignalDispatcher->publish(GlobalEventType::kTouchFile, d->windowId, d->currentDir,
+                                         DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord, QString());
+        } else if (actionId == dfmplugin_menu::ActionID::kNewSpreadsheets) {
+            dpfSignalDispatcher->publish(GlobalEventType::kTouchFile, d->windowId, d->currentDir,
+                                         DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel, QString());
+        } else if (actionId == dfmplugin_menu::ActionID::kNewPresentation) {
+            dpfSignalDispatcher->publish(GlobalEventType::kTouchFile, d->windowId, d->currentDir,
+                                         DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint, QString());
+        } else if (actionId == dfmplugin_menu::ActionID::kNewPlainText) {
+            dpfSignalDispatcher->publish(GlobalEventType::kTouchFile, d->windowId, d->currentDir,
+                                         DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText, QString());
+        }
+        return true;
+    }
     return AbstractMenuScene::triggered(action);
 }

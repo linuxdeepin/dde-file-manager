@@ -37,6 +37,7 @@ class FileOperatorProxy : public QObject
 public:
     static FileOperatorProxy *instance();
     void touchFile(const CanvasView *view, const QPoint pos, const DFMBASE_NAMESPACE::Global::CreateFileType type, QString suffix = "");
+    void touchFile(const CanvasView *view, const QPoint pos, const QUrl &source);
     void touchFolder(const CanvasView *view, const QPoint pos);
     void copyFiles(const CanvasView *view);
     void cutFiles(const CanvasView *view);

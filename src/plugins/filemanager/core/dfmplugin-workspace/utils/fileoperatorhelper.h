@@ -40,6 +40,7 @@ public:
     static FileOperatorHelper *instance();
     void touchFolder(const FileView *view);
     void touchFiles(const FileView *view, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString suffix = "");
+    void touchFiles(const FileView *view, const QUrl &source);
     void openFiles(const FileView *view);
     void openFiles(const FileView *view, const QList<QUrl> &urls);
     void openFilesByMode(const FileView *view, const QList<QUrl> &urls, const DirOpenMode mode = DirOpenMode::kOpenInCurrentWindow);

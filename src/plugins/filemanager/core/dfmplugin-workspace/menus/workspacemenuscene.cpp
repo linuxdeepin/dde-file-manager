@@ -45,6 +45,7 @@ static const char *const kActionIconMenuSceneName = "ActionIconManager";
 static const char *const kDConfigHiddenMenuSceneName = "DConfigMenuFilter";
 static const char *const kBaseSortMenuSceneName = "BaseSortMenu";
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
+static const char *const kTemplateMenuSceneName = "TemplateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
 static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
 static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
@@ -248,6 +249,12 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
             FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
             return true;
         }
+    }
+
+    // TemplateMenu scene
+    if (sceneName == kTemplateMenuSceneName) {
+        FileOperatorHelperIns->touchFiles(d->view, QUrl::fromLocalFile(action->data().toString()));
+        return true;
     }
 
     if (sceneName == WorkspaceMenuCreator::name()) {

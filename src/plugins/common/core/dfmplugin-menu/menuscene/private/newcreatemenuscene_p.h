@@ -33,9 +33,6 @@ class NewCreateMenuScenePrivate : public AbstractMenuScenePrivate
 public:
     friend class NewCreateMenuScene;
     explicit NewCreateMenuScenePrivate(NewCreateMenuScene *qq);
-
-public:
-    DFMBASE_NAMESPACE::AbstractMenuScene *newActionSubScene { nullptr };
 };
 
 }

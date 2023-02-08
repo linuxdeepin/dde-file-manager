@@ -191,6 +191,17 @@ void FileOperatorProxy::touchFile(const CanvasView *view, const QPoint pos, cons
     dpfSignalDispatcher->publish(GlobalEventType::kTouchFile, view->winId(), view->model()->rootUrl(), type, suffix, custom, d->callBack);
 }
 
+void FileOperatorProxy::touchFile(const CanvasView *view, const QPoint pos, const QUrl &source)
+{
+    QVariantMap data;
+    data.insert(KEY_SCREENNUMBER, view->screenNum());
+    data.insert(KEY_POINT, pos);
+    QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackTouchFile, data);
+    QVariant custom = QVariant::fromValue(funcData);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kTouchFile, view->winId(), view->model()->rootUrl(), source, QString(), custom, d->callBack);
+}
+
 void FileOperatorProxy::touchFolder(const CanvasView *view, const QPoint pos)
 {
     QVariantMap data;
