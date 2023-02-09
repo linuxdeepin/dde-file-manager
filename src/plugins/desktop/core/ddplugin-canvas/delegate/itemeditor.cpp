@@ -37,7 +37,8 @@
 DWIDGET_USE_NAMESPACE
 using namespace ddplugin_canvas;
 
-ItemEditor::ItemEditor(QWidget *parent) : QFrame(parent)
+ItemEditor::ItemEditor(QWidget *parent)
+    : QFrame(parent)
 {
     init();
 }
@@ -81,7 +82,7 @@ void ItemEditor::init()
     setContentsMargins(0, 0, 0, 0);
     textEditor = createEditor();
     textEditor->setParent(this);
-    textEditor->installEventFilter(textEditor); // for draw
+    textEditor->installEventFilter(textEditor);   // for draw
 
     connect(textEditor, &RenameEdit::textChanged, this, &ItemEditor::textChanged, Qt::UniqueConnection);
     QVBoxLayout *lay = new QVBoxLayout(this);
@@ -230,12 +231,12 @@ RenameEdit *ItemEditor::createEditor()
 
 bool ItemEditor::processLength(const QString &srcText, int srcPos, QString &dstText, int &dstPos)
 {
-    int editTextCurrLen = srcText.toLocal8Bit().size();
+    int editTextCurrLen = textLength(srcText);
     int editTextRangeOutLen = editTextCurrLen - maximumLength();
     if (editTextRangeOutLen > 0 && maximumLength() != INT_MAX) {
         QVector<uint> list = srcText.toUcs4();
         QString tmp = srcText;
-        while (tmp.toLocal8Bit().size() > maximumLength() && srcPos > 0) {
+        while (textLength(tmp) > maximumLength() && srcPos > 0) {
             list.removeAt(--srcPos);
             tmp = QString::fromUcs4(list.data(), list.size());
         }
@@ -292,7 +293,8 @@ void ItemEditor::textChanged()
         showAlertMessage(tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
 }
 
-RenameEdit::RenameEdit(QWidget *parent) : DTextEdit(parent)
+RenameEdit::RenameEdit(QWidget *parent)
+    : DTextEdit(parent)
 {
     adjustStyle();
 }
@@ -471,5 +473,3 @@ void RenameEdit::showEvent(QShowEvent *e)
     if (!isActiveWindow())
         activateWindow();
 }
-
-

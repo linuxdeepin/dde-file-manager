@@ -239,7 +239,7 @@ void EditStackedWidget::renameFile()
     QFileInfo info(fileUrl.path());
 
     if (DeviceUtils::isSubpathOfDlnfs(fileUrl.path()))
-        fileNameEdit->useCharCountLimit();
+        fileNameEdit->setCharCountLimit();
 
     fileNameEdit->setPlainText(info.fileName());
     this->setCurrentIndex(0);

@@ -180,8 +180,10 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
     } else {
         QString errMsg;
         if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {
-            auto callback = [cb](bool ok, DeviceError err, const QString &mpt) {
-                if (!mpt.isEmpty())
+            bool removable = dev->removable();
+            bool optical = dev->optical();
+            auto callback = [cb, removable, optical](bool ok, DeviceError err, const QString &mpt) {
+                if (!mpt.isEmpty() && removable && !optical)
                     DeviceManagerPrivate::handleDlnfsMount(mpt, true);
                 if (cb)
                     cb(ok, err, mpt);

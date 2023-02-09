@@ -462,6 +462,10 @@ bool DeviceUtils::isSubpathOfDlnfs(const QString &path)
     });
     Q_UNUSED(finally);
 
+    auto unifyPath = [](const QString &path) {
+        return path.endsWith("/") ? path : path + "/";
+    };
+
     int ret = mnt_table_parse_mtab(tab, nullptr);
     if (ret != 0) {
         qWarning() << "device: cannot parse mtab" << ret;
@@ -473,12 +477,8 @@ bool DeviceUtils::isSubpathOfDlnfs(const QString &path)
         if (!fs)
             continue;
         if (strcmp("dlnfs", mnt_fs_get_source(fs)) == 0) {
-            QString target = mnt_fs_get_target(fs);
-            target.append("/");
-            QString subPath = path;
-            if (!subPath.endsWith("/"))
-                subPath += "/";
-            if (subPath.startsWith(target))
+            QString target = unifyPath(mnt_fs_get_target(fs));
+            if (unifyPath(path).startsWith(target))
                 return true;
         }
     }

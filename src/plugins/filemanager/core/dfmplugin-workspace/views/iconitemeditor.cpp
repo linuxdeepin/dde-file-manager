@@ -152,7 +152,7 @@ bool IconItemEditor::isEditReadOnly() const
     return d->edit->isReadOnly();
 }
 
-void IconItemEditor::useCharCountLimit()
+void IconItemEditor::setCharCountLimit()
 {
     Q_D(IconItemEditor);
     d->useCharCountLimit = true;

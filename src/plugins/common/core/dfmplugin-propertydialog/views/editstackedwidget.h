@@ -42,7 +42,7 @@ public:
 
     bool isCanceled() const;
     void setIsCanceled(bool isCancele);
-    inline void useCharCountLimit() { useCharCount = true; }
+    inline void setCharCountLimit() { useCharCount = true; }
 
 signals:
     void editFinished();

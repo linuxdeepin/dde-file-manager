@@ -27,6 +27,7 @@
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -159,7 +160,7 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         // draw icon
         const QRect rIcon = iconRect(option.rect);
         paintIcon(painter, indexOption.icon, rIcon, Qt::AlignCenter,
-                  (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   //why Enabled?
+                  (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   // why Enabled?
 
         // paint emblems to icon
         paintEmblems(painter, rIcon, parent()->model()->fileUrl(index));
@@ -178,6 +179,8 @@ QWidget *CollectionItemDelegate::createEditor(QWidget *parent, const QStyleOptio
 {
     Q_UNUSED(index);
     auto editor = new ItemEditor(parent);
+    if (DeviceUtils::isSubpathOfDlnfs(this->parent()->model()->rootUrl().path()))
+        editor->setCharCountLimit();
     connect(editor, &ItemEditor::inputFocusOut, this, &CollectionItemDelegate::commitDataAndCloseEditor);
     editor->setOpacity(isTransparent(index) ? 0.3 : 1);
     return editor;
@@ -362,10 +365,10 @@ QList<QRect> CollectionItemDelegate::paintGeomertys(const QStyleOptionViewItem &
         text = textPaintRect(indexOption, index, d->availableTextRect(label), true);
     }
 
-    //identification area for mouse press
+    // identification area for mouse press
     {
         auto area = text;
-        //text rect spread upward to label.
+        // text rect spread upward to label.
         area.setTop(label.top());
         geometries << area;
     }
@@ -654,13 +657,13 @@ void CollectionItemDelegate::updateItemSizeHint() const
 
 void CollectionItemDelegate::commitDataAndCloseEditor()
 {
-    //todo 需观察editor不是currentIndex的情况
+    // todo 需观察editor不是currentIndex的情况
     auto view = parent();
     QModelIndex index = view->currentIndex();
     if (view->isPersistentEditorOpen(index)) {
         QWidget *editor = parent()->indexWidget(index);
         if (editor) {
-            //send to view and call method of the same name.
+            // send to view and call method of the same name.
             emit commitData(editor);
             emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
         } else {
@@ -671,7 +674,7 @@ void CollectionItemDelegate::commitDataAndCloseEditor()
 
 void CollectionItemDelegate::revertAndcloseEditor()
 {
-    //todo 需观察editor不是currentIndex的情况
+    // todo 需观察editor不是currentIndex的情况
     auto view = parent();
     QModelIndex index = view->currentIndex();
     if (view->isPersistentEditorOpen(index))
@@ -786,7 +789,7 @@ QRect CollectionItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 
 QRectF CollectionItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
 {
-    //todo(zy) uing extend painter by registering.
+    // todo(zy) uing extend painter by registering.
     if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, url).toBool()) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {

@@ -27,7 +27,7 @@ public:
         return theMaxCharSize;
     }
 
-    inline void useCharCountLimit()
+    inline void setCharCountLimit()
     {
         useCharCount = true;
     }

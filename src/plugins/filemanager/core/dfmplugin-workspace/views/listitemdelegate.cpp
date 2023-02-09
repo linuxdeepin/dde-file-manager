@@ -592,7 +592,7 @@ bool ListItemDelegate::setEditorData(ListItemEditor *editor)
 
     // if file is in dlnfs' path, use char count rather than byte count to limit the filename length
     if (DeviceUtils::isSubpathOfDlnfs(filePath))
-        editor->useCharCountLimit();
+        editor->setCharCountLimit();
 
     if (showSuffix) {
         QString name = d->editingIndex.data(kItemFileNameOfRenameRole).toString();

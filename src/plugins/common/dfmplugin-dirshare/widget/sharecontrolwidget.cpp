@@ -149,6 +149,15 @@ void ShareControlWidget::setupUi(bool disableState)
     peMenuBg.setColor(QPalette::Window, color);
 
     shareNameEditor = new QLineEdit(this);
+    connect(shareNameEditor, &QLineEdit::textChanged, this, [=](const QString &text) {
+        QString newText(text);
+        // daemon create the mountpoint of share: <name> on <host>, which occupied 255 bytes at most.
+        // and only 255 - 20 bytes for share name.
+        // the max length of folder name limited to 255 bytes in nativa file system.
+        while (newText.toLocal8Bit().length() > (NAME_MAX - 20))
+            newText.chop(1);
+        shareNameEditor->setText(newText);
+    });
     shareNameEditor->setFixedWidth(ConstDef::kWidgetFixedWidth);
     mainLay->addRow(new SectionKeyLabel(tr("Share name"), this), shareNameEditor);
     sharePermissionSelector = new QComboBox(this);

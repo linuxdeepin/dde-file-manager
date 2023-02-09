@@ -27,6 +27,7 @@
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
+#include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/utils/fileutils.h>
 
@@ -148,7 +149,7 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         // draw icon
         const QRect rIcon = iconRect(option.rect);
         paintIcon(painter, indexOption.icon, rIcon, Qt::AlignCenter,
-                  (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   //why Enabled?
+                  (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   // why Enabled?
 
         // paint emblems to icon
         paintEmblems(painter, rIcon, parent()->model()->fileUrl(index));
@@ -167,6 +168,8 @@ QWidget *CanvasItemDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 {
     Q_UNUSED(index);
     auto editor = new ItemEditor(parent);
+    if (DeviceUtils::isSubpathOfDlnfs(this->parent()->model()->rootUrl().path()))
+        editor->setCharCountLimit();
     connect(editor, &ItemEditor::inputFocusOut, this, &CanvasItemDelegate::commitDataAndCloseEditor);
     editor->setOpacity(isTransparent(index) ? 0.3 : 1);
     return editor;
@@ -347,10 +350,10 @@ QList<QRect> CanvasItemDelegate::paintGeomertys(const QStyleOptionViewItem &opti
         text = textPaintRect(indexOption, index, d->availableTextRect(label), true);
     }
 
-    //identification area for mouse press
+    // identification area for mouse press
     {
         auto area = text;
-        //text rect spread upward to label.
+        // text rect spread upward to label.
         area.setTop(label.top());
         geometries << area;
     }
@@ -605,13 +608,13 @@ void CanvasItemDelegate::updateItemSizeHint() const
 
 void CanvasItemDelegate::commitDataAndCloseEditor()
 {
-    //todo 需观察editor不是currentIndex的情况
+    // todo 需观察editor不是currentIndex的情况
     auto view = parent();
     QModelIndex index = view->currentIndex();
     if (view->isPersistentEditorOpen(index)) {
         QWidget *editor = parent()->indexWidget(index);
         if (editor) {
-            //send to view and call method of the same name.
+            // send to view and call method of the same name.
             emit commitData(editor);
             emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
         } else {
@@ -622,7 +625,7 @@ void CanvasItemDelegate::commitDataAndCloseEditor()
 
 void CanvasItemDelegate::revertAndcloseEditor()
 {
-    //todo 需观察editor不是currentIndex的情况
+    // todo 需观察editor不是currentIndex的情况
     auto view = parent();
     QModelIndex index = view->currentIndex();
     if (view->isPersistentEditorOpen(index))
@@ -737,7 +740,7 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 
 QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
 {
-    //todo(zy) uing extend painter by registering.
+    // todo(zy) uing extend painter by registering.
     if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, url).toBool()) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {

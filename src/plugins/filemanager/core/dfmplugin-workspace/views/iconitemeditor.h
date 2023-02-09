@@ -64,7 +64,7 @@ public:
     QLabel *getIconLabel() const;
     QTextEdit *getTextEdit() const;
     bool isEditReadOnly() const;
-    void useCharCountLimit();
+    void setCharCountLimit();
 
 public slots:
     void showAlertMessage(const QString &text, int duration = 3000);
