@@ -25,6 +25,7 @@
 #include "events/bookmarkeventcaller.h"
 #include "utils/bookmarkhelper.h"
 
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -73,6 +74,9 @@ static constexpr char kKeyName[] { "name" };
 static constexpr char kKeyUrl[] { "url" };
 static constexpr char kKeyIndex[] { "index" };
 static constexpr char kKeydefaultItem[] { "defaultItem" };
+
+static constexpr char kConfName[] { "org.deepin.dde.file-manager" };
+static constexpr char kconfBookmark[] { "bookmark" };
 
 void BookmarkData::resetData(const QVariantMap &map)
 {
@@ -140,6 +144,9 @@ bool BookMarkManager::removeBookMark(const QUrl &url)
     }
     sortItemsByOrder(sortedUrls);
 
+    // remove data from dconfig
+    removeBookmarkFromDConfig(url);
+
     return result;
 }
 
@@ -179,7 +186,8 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
 
             QVariantList list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
             bookmarkData.index = list.count();
-            list << bookmarkData.serialize();
+            QVariantMap newData = bookmarkData.serialize();
+            list << newData;   // append new bookmark data
 
             for (int i = 0; i < list.count(); i++) {
                 QVariantMap map = list.at(i).toMap();
@@ -193,6 +201,13 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             sortedUrls.removeOne(url);
             sortedUrls.append(url);
             addBookMarkItem(url, info.fileName());
+
+            //add data to dconfig
+            newData.remove(kKeydefaultItem);   // bookmark data in dconfig dont have keys : `defaultItem` and `index`
+            newData.remove(kKeyIndex);
+            newData.insert(kKeyUrl, url.toEncoded());   //here must be encoded and keep compatibility
+            newData.insert(kKeyLocateUrl, url.path().toUtf8().toBase64());
+            addBookmarkToDConfig(newData);
         }
     }
 
@@ -299,6 +314,7 @@ BookMarkManager::BookMarkManager(QObject *parent)
 
                     list.insert(index, quickAccessDataMap[url].serialize());
                     Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
+                    //plugin item is default item and dont need add to dconfig.
                 }
             });
 }
@@ -344,21 +360,20 @@ bool BookMarkManager::bookMarkRename(const QUrl &url, const QString &newName)
     if (!url.isValid() || newName.isEmpty() || !quickAccessDataMap.contains(url))
         return false;
 
-    const QVariantList &list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
-    QVariantList listTem;
+    QVariantList list = Application::genericSetting()->value(kConfigGroupQuickAccess, kConfigKeyName).toList();
     for (int i = 0; i < list.size(); ++i) {
         QVariantMap map = list.at(i).toMap();
         if (map.value(kKeyName).toString() == quickAccessDataMap[url].name) {
+            QString oldName = quickAccessDataMap[url].name;
             map[kKeyName] = newName;
             map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
-            listTem.append(map);
             quickAccessDataMap[url].name = newName;
-            if (i + 1 < list.count())
-                listTem.append(list.mid(i + 1));
-            Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, listTem);
+            list.replace(i, map);
+            Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
+
+            renameBookmarkToDConfig(oldName, newName);
+
             return true;
-        } else {
-            listTem.append(map);
         }
     }
 
@@ -468,6 +483,67 @@ void BookMarkManager::addQuickAccessDataFromConfig(const QVariantList &dataList)
     }
 }
 
+void BookMarkManager::removeBookmarkFromDConfig(const QUrl &url)
+{
+    QVariantList list = DConfigManager::instance()->value(kConfName, kconfBookmark).toList();
+    QVariantList removeList;
+    for (int i = 0; i < list.size(); ++i) {
+        const QVariantMap &map = list.at(i).toMap();
+        if (map.value(kKeyUrl).toString() == url.toEncoded())
+            removeList.append(map);
+    }
+
+    for (const QVariant &var : removeList)
+        list.removeOne(var);
+
+    if (!removeList.isEmpty())
+        DConfigManager::instance()->setValue(kConfName, kconfBookmark, list);
+}
+
+void BookMarkManager::addBookmarkToDConfig(const QVariantMap &data)
+{
+    QVariantList list = DConfigManager::instance()->value(kConfName, kconfBookmark).toList();
+    list.append(data);
+    DConfigManager::instance()->setValue(kConfName, kconfBookmark, list);
+}
+
+/**
+ * @brief BookMarkManager::renameBookmarkToDConfig
+ * update the name and don't effect the url
+ * @param oldName
+ * @param newName
+ */
+void BookMarkManager::renameBookmarkToDConfig(const QString &oldName, const QString &newName)
+{
+    QVariantList list = DConfigManager::instance()->value(kConfName, kconfBookmark).toList();
+    for (int i = 0; i < list.size(); ++i) {
+        QVariantMap map = list.at(i).toMap();
+        if (map.value(kKeyName).toString() == oldName) {
+            map[kKeyName] = newName;   //update name
+            map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
+            list.replace(i, map);
+            DConfigManager::instance()->setValue(kConfName, kconfBookmark, list);
+            break;
+        }
+    }
+}
+
+void BookMarkManager::updateBookmarkUrlToDconfig(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    QVariantList list = DConfigManager::instance()->value(kConfName, kconfBookmark).toList();
+    for (int i = 0; i < list.size(); ++i) {
+        QVariantMap map = list.at(i).toMap();
+        if (map.value(kKeyUrl).toString() == oldUrl.toEncoded()) {
+            map[kKeyUrl] = newUrl.toEncoded();   //update url, here must be encoded
+            map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
+            map[kKeyLocateUrl] = newUrl.path().toUtf8().toBase64();
+            list.replace(i, map);
+            DConfigManager::instance()->setValue(kConfName, kconfBookmark, list);
+            break;
+        }
+    }
+}
+
 bool BookMarkManager::isItemDuplicated(const BookmarkData &data)
 {
     QMapIterator<QUrl, BookmarkData> it(quickAccessDataMap);
@@ -490,6 +566,13 @@ void BookMarkManager::onFileEdited(const QString &group, const QString &key, con
     update(value);
 }
 
+/**
+ * @brief BookMarkManager::fileRenamed
+ * if the actual dir is renamed, would call this function.
+ * note: here only update the url and don't effect the bookmark name
+ * @param oldUrl
+ * @param newUrl
+ */
 void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     if (!oldUrl.isValid() || !quickAccessDataMap.contains(oldUrl))
@@ -521,6 +604,7 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
             Application::genericSetting()->setValue(kConfigGroupQuickAccess, kConfigKeyName, list);
             update(list);
 
+            updateBookmarkUrlToDconfig(oldUrl, newUrl);
             break;
         }
     }

@@ -86,6 +86,11 @@ private:
 
     void addQuickAccessDataFromConfig(const QVariantList &dataList = QVariantList());
 
+    void removeBookmarkFromDConfig(const QUrl &url);
+    void addBookmarkToDConfig(const QVariantMap &data);
+    void renameBookmarkToDConfig(const QString &oldName, const QString &newName);
+    void updateBookmarkUrlToDconfig(const QUrl &oldUrl, const QUrl &newUrl);
+
 private slots:
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);
 
