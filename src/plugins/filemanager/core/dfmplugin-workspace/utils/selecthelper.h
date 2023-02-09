@@ -55,6 +55,7 @@ private:
 
 private:
     FileView *view { nullptr };
+    QModelIndex lastPressedIndex;
     QModelIndex currentPressedIndex;
     QItemSelection currentSelection;
 };

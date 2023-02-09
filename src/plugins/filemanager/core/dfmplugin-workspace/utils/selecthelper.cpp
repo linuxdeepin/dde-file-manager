@@ -42,6 +42,7 @@ QModelIndex SelectHelper::getCurrentPressedIndex() const
 
 void SelectHelper::click(const QModelIndex &index)
 {
+    lastPressedIndex = index;
     currentPressedIndex = index;
 }
 
@@ -63,7 +64,7 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
 
     // select with shift
     if (WindowUtils::keyShiftIsPressed()) {
-        if (!currentPressedIndex.isValid()) {
+        if (!lastPressedIndex.isValid()) {
             QItemSelection oldSelection = currentSelection;
             caculateSelection(rect, &oldSelection);
             view->selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
@@ -87,7 +88,7 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
         QItemSelection oldSelection = currentSelection;
         view->selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 
-        if (!currentPressedIndex.isValid()) {
+        if (!lastPressedIndex.isValid()) {
             QItemSelection newSelection;
             caculateSelection(rect, &newSelection);
 
