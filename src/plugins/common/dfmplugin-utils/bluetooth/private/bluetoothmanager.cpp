@@ -76,11 +76,13 @@ void BluetoothManagerPrivate::init()
 
 void BluetoothManagerPrivate::initConnects()
 {
-    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(this);
-    watcher->setWatchedServices({ BluetoothService });
+    QDBusServiceWatcher *watcher = new QDBusServiceWatcher(BluetoothService, QDBusConnection::sessionBus(),
+                                                           QDBusServiceWatcher::WatchForRegistration, this);
     connect(watcher, &QDBusServiceWatcher::serviceRegistered, this, [=](const QString &service) {
-        if (service == BluetoothService)
+        if (service == BluetoothService) {
+            qDebug() << "bluetooth: service registered. ";
             this->onServiceValidChanged(true);
+        }
     });
 
     connectBluetoothDBusSignals("AdapterAdded", SLOT(onAdapterAdded(const QString &)));
@@ -390,7 +392,6 @@ void BluetoothManager::refresh()
         }
         watcher->deleteLater();
     });
-    //    watcher->waitForFinished();
 }
 
 bool BluetoothManager::hasAdapter()
