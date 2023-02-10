@@ -242,7 +242,14 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 {
     SideBarItem *item = itemAt(event->pos());
+    if (event->source() != this) {
+        QModelIndex index = indexAt(event->pos());
+        d->draggedUrl = urlAt(event->pos());
+        setCurrentIndex(index);
+    }
+
     const QList<QUrl> &urls = event->mimeData()->urls();
+
     if (item && !urls.isEmpty()) {
         Qt::DropAction action { Qt::CopyAction };
         if (dpfHookSequence->run("dfmplugin_sidebar", "hook_Item_DragMoveData", urls, item->url(), &action)) {
@@ -261,6 +268,13 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 
     if (event->source() != this)
         event->ignore();
+}
+
+void SideBarView::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    setCurrentIndex(d->current);
+    d->draggedUrl = QUrl("");
+    return DTreeView::dragLeaveEvent(event);
 }
 
 void SideBarView::dropEvent(QDropEvent *event)
@@ -517,11 +531,6 @@ QVariantMap SideBarView::groupExpandState() const
     return d->groupExpandState;
 }
 
-bool SideBarView::isDraggingUrlSelected()
-{
-    return !d->draggedUrl.isEmpty();
-}
-
 QModelIndex SideBarView::previousIndex() const
 {
     return d->previous;
@@ -723,22 +732,6 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
             setCurrentUrl(d->sidebarUrl);   // To make sure, when expand the group item, the current item is highlighted.
     }
     update(index);
-}
-
-void SideBarView::onItemAboutToBeRemoved(const QModelIndex &parent, int start, int end)
-{
-    Q_UNUSED(end)
-    if (isDraggingUrlSelected())
-        return;
-
-    if (!parent.isValid())
-        return;
-    const SideBarItem *item = model()->itemFromIndex(parent.child(start, 0));
-    if (!item)
-        return;
-    const QUrl &aboutToRemoveUrl = item->url();
-    if (UniversalUtils::urlEquals(currentUrl(), aboutToRemoveUrl))   // If the selected item be removed
-        d->sidebarUrl = QUrl("computer:///");
 }
 
 bool SideBarViewPrivate::fetchDragEventUrlsFromSharedMemory()

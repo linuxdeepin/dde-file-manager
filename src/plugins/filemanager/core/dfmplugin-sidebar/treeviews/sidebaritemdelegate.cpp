@@ -72,6 +72,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         widgetColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
 
     QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+
     if (!item)
         return DStyledItemDelegate::paint(painter, option, index);
     SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
@@ -82,12 +83,17 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QRect r(itemRect.topLeft() + dx, itemRect.bottomRight() + dw);
 
     SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
-    bool keepDrawingHighlighted = false;
-    bool isDraggingItemNotHighlighted = selected && sidebarView->isDraggingUrlSelected()
-            && !UniversalUtils::urlEquals(index.data(SideBarItem::kItemUrlRole).toUrl(), sidebarView->currentUrl());
 
-    if (sidebarView->isDraggingUrlSelected()
-        && UniversalUtils::urlEquals(index.data(SideBarItem::kItemUrlRole).toUrl(), sidebarView->currentUrl())) {
+    SideBarItem *subItem = dynamic_cast<SideBarItem *>(item);
+    bool keepDrawingHighlighted = false;
+    bool isUrlEqual = UniversalUtils::urlEquals(index.data(SideBarItem::kItemUrlRole).toUrl(), sidebarView->currentUrl());
+    if (!isUrlEqual && subItem) {
+        bool foundByCb = subItem->itemInfo().findMeCb && subItem->itemInfo().findMeCb(subItem->url(), sidebarView->currentUrl());
+        if (foundByCb || UniversalUtils::urlEquals(subItem->url(), sidebarView->currentUrl()))
+            isUrlEqual = true;
+    }
+    bool isDraggingItemNotHighlighted = selected && !isUrlEqual;
+    if (isUrlEqual) {
         // If the dragging and moving source item is not the current highlighted one,
         // the highlighted one must be keep its state.
         keepDrawingHighlighted = true;

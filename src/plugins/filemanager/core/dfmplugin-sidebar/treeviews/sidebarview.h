@@ -35,7 +35,6 @@ public:
     QUrl currentUrl() const;
     QModelIndex findItemIndex(const QUrl &url) const;
     QVariantMap groupExpandState() const;
-    bool isDraggingUrlSelected();
     QModelIndex previousIndex() const;
     void setPreviousIndex(const QModelIndex &index);
 
@@ -45,6 +44,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
     bool onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction action) const;
     Qt::DropAction canDropMimeData(SideBarItem *item, const QMimeData *data, Qt::DropActions actions) const;
@@ -56,7 +56,6 @@ private:
 public Q_SLOTS:
     void updateSeparatorVisibleState();
     void onChangeExpandState(const QModelIndex &index, bool expand);
-    void onItemAboutToBeRemoved(const QModelIndex &parent, int start, int end);
 
 Q_SIGNALS:
     void requestRemoveItem();
