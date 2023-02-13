@@ -73,7 +73,7 @@ bool ShareFileInfo::canAttributes(const CanableInfoType type) const
     case FileCanType::kCanDrag:
         return false;
     case FileCanType::kCanRedirectionFileUrl:
-        return true;
+        return dptr->proxy;
     default:
         return AbstractFileInfo::canAttributes(type);
     }

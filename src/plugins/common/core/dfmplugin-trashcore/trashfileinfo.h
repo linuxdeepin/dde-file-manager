@@ -13,7 +13,6 @@ namespace dfmplugin_trashcore {
 class TrashFileInfoPrivate;
 class TrashFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
-    Q_GADGET
     friend class TrashFileInfoPrivate;
 
 public:

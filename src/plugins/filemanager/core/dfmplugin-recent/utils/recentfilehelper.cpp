@@ -35,63 +35,6 @@ RecentFileHelper *RecentFileHelper::instance()
     return &instance;
 }
 
-void RecentFileHelper::removeRecent(const QList<QUrl> &urls)
-{
-    DDialog dlg;
-    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
-    dlg.addButton(QObject::tr("Cancel", "button"));
-    dlg.addButton(QObject::tr("Remove", "button"), true, DDialog::ButtonRecommend);
-
-    if (urls.size() == 1)
-        dlg.setTitle(QObject::tr("Do you want to remove this item?"));
-    else
-        dlg.setTitle(QObject::tr("Do yout want to remove %1 items?").arg(urls.size()));
-    dlg.setMessage(QObject::tr("It does not delete the original files"));
-
-    int code = dlg.exec();
-    if (code == 1) {
-        QStringList list;
-        auto originPath = RecentManager::instance()->getRecentOriginPaths();
-        for (const QUrl &url : urls) {
-            if (originPath.contains(url)) {
-                list << originPath[url];
-                continue;
-            }
-            //list << DUrl::fromLocalFile(url.path()).toString();
-            //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
-            QUrl newUrl = url;
-            newUrl.setScheme(Global::Scheme::kFile);
-            list << newUrl.toString();
-        }
-
-        DRecentManager::removeItems(list);
-    }
-}
-
-bool RecentFileHelper::openFileLocation(const QUrl &url)
-{
-
-    QUrl localUrl = url;
-    QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
-    if (ok && !urls.isEmpty())
-        localUrl = urls.first();
-
-    const auto &fileInfo { InfoFactory::create<AbstractFileInfo>(localUrl) };
-    QUrl parentUrl { fileInfo->urlOf(UrlInfoType::kParentUrl) };
-    parentUrl.setQuery("selectUrl=" + localUrl.toString());
-
-    return dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
-}
-
-void RecentFileHelper::openFileLocation(const QList<QUrl> &urls)
-{
-    foreach (const QUrl &url, urls) {
-        if (!openFileLocation(url))
-            qWarning() << "failed to open: " << url.path();
-    }
-}
-
 bool RecentFileHelper::setPermissionHandle(const quint64 windowId, const QUrl url, const QFileDevice::Permissions permissions, bool *ok, QString *error)
 {
     if (Global::Scheme::kRecent != url.scheme())
@@ -99,7 +42,7 @@ bool RecentFileHelper::setPermissionHandle(const quint64 windowId, const QUrl ur
 
     Q_UNUSED(windowId)
 
-    const QUrl &localUrl = RecentManager::urlTransform(url);
+    const QUrl &localUrl = RecentHelper::urlTransform(url);
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
 
     bool succ = fileHandler.setPermissions(localUrl, permissions);
@@ -118,25 +61,25 @@ bool RecentFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources
     Q_UNUSED(sources)
     Q_UNUSED(flags)
 
-    return target.scheme() == scheme();
+    return target.scheme() == RecentHelper::scheme();
 }
 
 bool RecentFileHelper::copyFile(const quint64, const QList<QUrl>, const QUrl target, const AbstractJobHandler::JobFlags)
 {
-    return target.scheme() == scheme();
+    return target.scheme() == RecentHelper::scheme();
 }
 
 bool RecentFileHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
 {
     if (sources.isEmpty())
         return false;
-    if (sources.first().scheme() != scheme())
+    if (sources.first().scheme() != RecentHelper::scheme())
         return false;
 
     Q_UNUSED(windowId)
     Q_UNUSED(flags)
 
-    removeRecent(sources);
+    RecentHelper::removeRecent(sources);
 
     return true;
 }
@@ -145,7 +88,7 @@ bool RecentFileHelper::openFileInPlugin(quint64 winId, QList<QUrl> urls)
 {
     if (urls.isEmpty())
         return false;
-    if (urls.first().scheme() != scheme())
+    if (urls.first().scheme() != RecentHelper::scheme())
         return false;
 
     QList<QUrl> redirectedFileUrls;
@@ -159,7 +102,7 @@ bool RecentFileHelper::openFileInPlugin(quint64 winId, QList<QUrl> urls)
 
 bool RecentFileHelper::linkFile(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence)
 {
-    if (url.scheme() != scheme())
+    if (url.scheme() != RecentHelper::scheme())
         return false;
 
     Q_UNUSED(windowId)
@@ -190,7 +133,7 @@ bool RecentFileHelper::linkFile(const quint64 windowId, const QUrl url, const QU
         urlValid = checkTargetUrl(link);
 
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    const QUrl &localUrl = RecentManager::urlTransform(url);
+    const QUrl &localUrl = RecentHelper::urlTransform(url);
     fileHandler.createSystemLink(localUrl, urlValid);
 
     return true;
@@ -200,7 +143,7 @@ bool RecentFileHelper::writeUrlsToClipboard(const quint64 windowId, const ClipBo
 {
     if (urls.isEmpty())
         return false;
-    if (urls.first().scheme() != scheme())
+    if (urls.first().scheme() != RecentHelper::scheme())
         return false;
     if (action == ClipBoard::ClipboardAction::kCutAction)
         return true;
@@ -218,7 +161,7 @@ bool RecentFileHelper::openFileInTerminal(const quint64 windowId, const QList<QU
 {
     if (urls.isEmpty())
         return false;
-    if (urls.first().scheme() != scheme())
+    if (urls.first().scheme() != RecentHelper::scheme())
         return false;
 
     Q_UNUSED(windowId);

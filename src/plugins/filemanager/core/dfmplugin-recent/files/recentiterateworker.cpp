@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "recentiterateworker.h"
+#include "utils/recentfilehelper.h"
 #include "utils/recentmanager.h"
 #include "files/recentfileinfo.h"
 
@@ -28,7 +29,7 @@ RecentIterateWorker::RecentIterateWorker()
 void RecentIterateWorker::doWork()
 {
 
-    QFile file(RecentManager::xbelPath());
+    QFile file(RecentHelper::xbelPath());
     QList<QUrl> urlList;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -49,7 +50,7 @@ void RecentIterateWorker::doWork()
                 if (info && DecoratorFile(url.path()).exists() && info->isAttributes(OptInfoType::kIsFile)) {
                     const auto &bindPath = FileUtils::bindPathTransform(info->pathOf(PathInfoType::kAbsoluteFilePath), false);
                     QUrl recentUrl = QUrl::fromLocalFile(bindPath);
-                    recentUrl.setScheme(RecentManager::scheme());
+                    recentUrl.setScheme(RecentHelper::scheme());
                     qint64 readTimeSecs = QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch();
                     urlList.append(recentUrl);
                     emit updateRecentFileInfo(recentUrl, location.toString(), readTimeSecs);

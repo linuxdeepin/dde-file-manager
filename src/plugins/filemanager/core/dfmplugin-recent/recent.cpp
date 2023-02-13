@@ -29,6 +29,7 @@ Q_DECLARE_METATYPE(QFlags<QFileDevice::Permission>)
 Q_DECLARE_METATYPE(BasicViewFieldFunc)
 Q_DECLARE_METATYPE(QString *);
 Q_DECLARE_METATYPE(QVariant *)
+Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DFMBASE_USE_NAMESPACE
 
@@ -36,11 +37,11 @@ namespace dfmplugin_recent {
 
 void Recent::initialize()
 {
-    UrlRoute::regScheme(RecentManager::scheme(), "/", RecentManager::icon(), true, tr("Recent"));
+    UrlRoute::regScheme(RecentHelper::scheme(), "/", RecentHelper::icon(), true, tr("Recent"));
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<RecentFileInfo>(RecentManager::scheme());
-    WatcherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
-    DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
+    InfoFactory::regClass<RecentFileInfo>(RecentHelper::scheme());
+    WatcherFactory::regClass<RecentFileWatcher>(RecentHelper::scheme());
+    DirIteratorFactory::regClass<RecentDirIterator>(RecentHelper::scheme());
 
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
 
@@ -56,10 +57,10 @@ bool Recent::start()
 
     QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
-                         RecentManager::scheme(), filtes);
+                         RecentHelper::scheme(), filtes);
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", RecentManager::scheme());
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", RecentManager::scheme(), RecentMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", RecentHelper::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", RecentHelper::scheme(), RecentMenuCreator::name());
 
     addFileOperations();
 
@@ -95,14 +96,14 @@ void Recent::onWindowOpened(quint64 windId)
 
 void Recent::addRecentItem()
 {
-    ContextMenuCallback contextMenuCb { RecentManager::contenxtMenuHandle };
+    ContextMenuCallback contextMenuCb { RecentHelper::contenxtMenuHandle };
     const QString &nameKey = "Recent";
     const QString &displayName = tr("Recent");
     Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled };
     QVariantMap map {
         { "Property_Key_Group", "Group_Common" },
         { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Icon", RecentManager::icon() },
+        { "Property_Key_Icon", RecentHelper::icon() },
         { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
         { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
         // use old config to hide it for compatibility
@@ -113,18 +114,18 @@ void Recent::addRecentItem()
     QVariantMap bookmarkMap {
         { "Property_Key_NameKey", nameKey },
         { "Property_Key_DisplayName", displayName },
-        { "Property_Key_Url", RecentManager::rootUrl() },
+        { "Property_Key_Url", RecentHelper::rootUrl() },
         { "Property_Key_Index", -1 },
         { "Property_Key_IsDefaultItem", true },
         { "Property_Key_PluginItemData", map }
     };
-    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);//push item data to bookmark plugin as cache
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentManager::rootUrl(), map);
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_AddPluginItem", bookmarkMap);   //push item data to bookmark plugin as cache
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", RecentHelper::rootUrl(), map);
 }
 
 void Recent::removeRecentItem()
 {
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", RecentManager::rootUrl());
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", RecentHelper::rootUrl());
 }
 
 void Recent::followEvents()
@@ -132,6 +133,8 @@ void Recent::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_CheckTransparent", RecentManager::instance(), &RecentManager::isTransparent);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", RecentManager::instance(), &RecentManager::checkDragDropAction);
+
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentManager::instance(), &RecentManager::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", RecentManager::instance(), &RecentManager::urlsToLocal);
@@ -157,7 +160,7 @@ void Recent::bindWindows()
 
 void Recent::regRecentCrumbToTitleBar()
 {
-    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentManager::scheme(), QVariantMap {});
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentHelper::scheme(), QVariantMap {});
 }
 
 void Recent::installToSideBar()
@@ -170,8 +173,8 @@ void Recent::installToSideBar()
 
 void Recent::addFileOperations()
 {
-    BasicViewFieldFunc func { RecentManager::propetyExtensionFunc };
+    BasicViewFieldFunc func { RecentHelper::propetyExtensionFunc };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
-                         func, RecentManager::scheme());
+                         func, RecentHelper::scheme());
 }
 }

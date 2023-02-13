@@ -17,46 +17,50 @@
 
 #include <QUrl>
 #include <QDebug>
-#include <QDir>
-#include <QIcon>
 #include <QFile>
 #include <QQueue>
 #include <QThread>
 #include <QTimer>
+#include <QDir>
 
 namespace dfmplugin_recent {
+
+using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
+using ExpandFieldMap = QMap<QString, BasicExpand>;
+
+namespace RecentHelper {
+inline QString scheme()
+{
+    return "recent";
+}
+
+inline QIcon icon()
+{
+    return QIcon::fromTheme("document-open-recent-symbolic");
+}
+
+inline QString xbelPath()
+{
+    return QDir::homePath() + "/.local/share/recently-used.xbel";
+}
+
+QUrl rootUrl();
+void removeRecent(const QList<QUrl> &urls);
+void clearRecent();
+bool openFileLocation(const QUrl &url);
+void openFileLocation(const QList<QUrl> &urls);
+void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
+ExpandFieldMap propetyExtensionFunc(const QUrl &url);
+QUrl urlTransform(const QUrl &url);
+}   // namespace RecentHelper
 
 class RecentManager final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(RecentManager)
-    using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
-    using ExpandFieldMap = QMap<QString, BasicExpand>;
 
 public:
     static RecentManager *instance();
-
-    inline static QString scheme()
-    {
-        return "recent";
-    }
-
-    inline static QIcon icon()
-    {
-        return QIcon::fromTheme("document-open-recent-symbolic");
-    }
-
-    inline static QString xbelPath()
-    {
-        return QDir::homePath() + "/.local/share/recently-used.xbel";
-    }
-
-    static QUrl rootUrl();
-
-    static void clearRecent();
-    static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
-    static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
-    static QUrl urlTransform(const QUrl &url);
 
     QMap<QUrl, AbstractFileInfoPointer> getRecentNodes() const;
     QMap<QUrl, QString> getRecentOriginPaths() const;
@@ -68,6 +72,7 @@ public:
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
     bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
+    bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
 
 signals:
     void asyncHandleFileChanged();
@@ -77,7 +82,6 @@ private:
     ~RecentManager() override;
 
     void init();
-    void removeRecent(const QList<QUrl> &urls);
 
 private slots:
     void updateRecent();

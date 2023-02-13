@@ -14,7 +14,6 @@ namespace dfmplugin_search {
 
 class SearchFileInfo : public AbstractFileInfo
 {
-    Q_GADGET
 public:
     explicit SearchFileInfo(const QUrl &url);
     ~SearchFileInfo() override;

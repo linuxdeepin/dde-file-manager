@@ -349,11 +349,12 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
     }
 
     QMimeData *data = new QMimeData();
+
     data->setUrls(urls);
 
     QByteArray userID;
     userID.append(QString::number(SysInfoUtils::getUserId()));
-    data->setData(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey, userID);
+    data->setData(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey, userID);
 
     return data;
 }
@@ -371,11 +372,7 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         return false;
     }
     QUrl targetUrl = targetFileInfo->urlOf(UrlInfoType::kUrl);
-    QList<QUrl> dropUrls = data->urls();
-    QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", dropUrls, &urls);
-    if (ok && !urls.isEmpty())
-        dropUrls = urls;
+    const QList<QUrl> &dropUrls = data->urls();
 
     if (targetFileInfo->isAttributes(OptInfoType::kIsSymLink))
         targetUrl = QUrl::fromLocalFile(targetFileInfo->pathOf(PathInfoType::kSymLinkTarget));

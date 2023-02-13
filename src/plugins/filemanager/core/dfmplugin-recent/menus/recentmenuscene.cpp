@@ -4,7 +4,7 @@
 
 #include "recentmenuscene.h"
 #include "private/recentmenuscene_p.h"
-#include "utils/recentfilehelper.h"
+#include "utils/recentmanager.h"
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"
@@ -136,10 +136,10 @@ bool RecentMenuScene::triggered(QAction *action)
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
         if (actId == RecentActionID::kRemove) {
-            RecentFileHelper::removeRecent(d->selectFiles);
+            RecentHelper::removeRecent(d->selectFiles);
             return true;
         } else if (actId == RecentActionID::kOpenFileLocation) {
-            RecentFileHelper::openFileLocation(d->selectFiles);
+            RecentHelper::openFileLocation(d->selectFiles);
             return true;
         } else if (actId == RecentActionID::kSortByPath) {
             dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFilePathRole);

@@ -12,7 +12,6 @@
 namespace dfmplugin_recent {
 class RecentFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
-    Q_GADGET
 public:
     explicit RecentFileInfo(const QUrl &url);
     ~RecentFileInfo() override;

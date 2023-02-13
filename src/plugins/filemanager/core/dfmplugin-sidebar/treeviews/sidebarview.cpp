@@ -329,6 +329,8 @@ void SideBarView::dropEvent(QDropEvent *event)
         if (action == Qt::IgnoreAction) {
             action = canDropMimeData(item, event->mimeData(), event->possibleActions());
         }
+        event->setDropAction(action);
+        action = event->dropAction();
 
         if (urls.size() > 0 && onDropData(urls, targetItemUrl, action)) {
             event->setDropAction(action);

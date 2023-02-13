@@ -48,6 +48,6 @@ private:
     QUrl currentHoverIndexUrl;
 };
 
-}
+}   // namespace dfmplugin_workspace
 
 #endif   // DRAGDROPHELPER_H

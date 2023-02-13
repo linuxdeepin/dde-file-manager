@@ -208,6 +208,8 @@ bool VaultFileInfo::canAttributes(const CanableInfoType type) const
         }
 
         return !d->proxy || d->proxy->canAttributes(type);
+    case FileCanType::kCanRedirectionFileUrl:
+        return !d->proxy || d->proxy->canAttributes(type);
     default:
         return AbstractFileInfo::canAttributes(type);
     }

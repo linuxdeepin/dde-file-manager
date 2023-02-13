@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "recentfilewatcher.h"
+#include "utils/recentfilehelper.h"
 #include "utils/recentmanager.h"
 #include "private/recentfilewatcher_p.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 
@@ -72,7 +74,7 @@ RecentFileWatcher::~RecentFileWatcher()
 
 void RecentFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
 {
-    if (subfileUrl.scheme() != RecentManager::scheme())
+    if (subfileUrl.scheme() != RecentHelper::scheme())
         return;
     if (enabled) {
         addWatcher(subfileUrl);
@@ -130,7 +132,7 @@ QUrl RecentFileWatcher::getRealUrl(const QUrl &url)
 void RecentFileWatcher::onFileDeleted(const QUrl &url)
 {
     QUrl newUrl = getRealUrl(url);
-    newUrl.setScheme(RecentManager::scheme());
+    newUrl.setScheme(RecentHelper::scheme());
     removeWatcher(newUrl);
     RecentManager::instance()->removeRecentFile(newUrl);
 
@@ -140,7 +142,7 @@ void RecentFileWatcher::onFileDeleted(const QUrl &url)
 void RecentFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
     QUrl newUrl = getRealUrl(url);
-    newUrl.setScheme(RecentManager::scheme());
+    newUrl.setScheme(RecentHelper::scheme());
     emit fileAttributeChanged(newUrl);
 }
 
@@ -148,7 +150,7 @@ void RecentFileWatcher::onFileRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     Q_UNUSED(newUrl);
     QUrl newOldUrl = QUrl::fromLocalFile(oldUrl.path());
-    newOldUrl.setScheme(RecentManager::scheme());
+    newOldUrl.setScheme(RecentHelper::scheme());
     removeWatcher(newOldUrl);
     RecentManager::instance()->removeRecentFile(newOldUrl);
 

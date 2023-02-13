@@ -16,8 +16,11 @@ class AvfsFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 public:
     explicit AvfsFileInfo(const QUrl &url);
     virtual ~AvfsFileInfo() override;
+
+    virtual QUrl urlOf(const FileUrlInfoType type) const override;
+    virtual bool canAttributes(const FileCanType type) const override;
 };
 
-}
+}   // namespace dfmplugin_avfsbrowser
 
 #endif   // AVFSFILEINFO_H

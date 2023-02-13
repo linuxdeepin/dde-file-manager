@@ -5,6 +5,7 @@
 #include "recentmanager.h"
 #include "files/recentfileinfo.h"
 #include "files/recentfilewatcher.h"
+#include "utils/recentfilehelper.h"
 #include "events/recenteventcaller.h"
 
 #include "dfm-base/base/schemefactory.h"
@@ -24,9 +25,13 @@
 #include <QMenu>
 #include <QCoreApplication>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 using namespace dfmplugin_recent;
 DPF_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
+DCORE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 static constexpr char kEmptyRecentFile[] =
         R"|(<?xml version="1.0" encoding="UTF-8"?>
@@ -40,74 +45,6 @@ RecentManager *RecentManager::instance()
 {
     static RecentManager instance;
     return &instance;
-}
-
-QUrl RecentManager::rootUrl()
-{
-    QUrl url;
-    url.setScheme(scheme());
-    url.setPath("/");
-    return url;
-}
-
-void RecentManager::clearRecent()
-{
-
-    QFile f(xbelPath());
-    if (f.open(QIODevice::WriteOnly)) {
-        f.write(kEmptyRecentFile);
-        f.close();
-    } else {
-        qWarning() << "open recent xbel file failed!!!";
-    }
-}
-
-void RecentManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
-{
-    QMenu *menu = new QMenu;
-    menu->addAction(QObject::tr("Open in new window"), [url]() {
-        RecentEventCaller::sendOpenWindow(url);
-    });
-
-    auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
-        RecentEventCaller::sendOpenTab(windowId, url);
-    });
-
-    newTabAct->setDisabled(!RecentEventCaller::sendCheckTabAddable(windowId));
-
-    menu->addSeparator();
-    menu->addAction(QObject::tr("Clear recent history"), [url]() {
-        RecentManager::clearRecent();
-    });
-    QAction *act = menu->exec(globalPos);
-    if (act) {
-        QList<QUrl> urls { url };
-        dpfSignalDispatcher->publish("dfmplugin_recent", "signal_ReportLog_MenuData", act->text(), urls);
-    }
-    delete menu;
-}
-
-RecentManager::ExpandFieldMap RecentManager::propetyExtensionFunc(const QUrl &url)
-{
-    BasicExpand expand;
-    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
-    const QString &sourcePath = info->urlOf(UrlInfoType::kRedirectedFileUrl).toLocalFile();
-    expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
-
-    ExpandFieldMap map;
-    map["kFieldInsert"] = expand;
-
-    return map;
-}
-
-QUrl RecentManager::urlTransform(const QUrl &url)
-{
-    if (UrlRoute::isRootUrl(url))
-        return url;
-
-    QUrl out { url };
-    out.setScheme(Global::Scheme::kFile);
-    return out;
 }
 
 QMap<QUrl, AbstractFileInfoPointer> RecentManager::getRecentNodes() const
@@ -132,7 +69,7 @@ bool RecentManager::removeRecentFile(const QUrl &url)
 
 bool RecentManager::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleList)
 {
-    if (rootUrl.scheme() == scheme()) {
+    if (rootUrl.scheme() == RecentHelper::scheme()) {
         roleList->append(kItemFileDisplayNameRole);
         roleList->append(kItemFilePathRole);
         roleList->append(kItemFileLastReadRole);
@@ -147,7 +84,7 @@ bool RecentManager::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *role
 
 bool RecentManager::customRoleDisplayName(const QUrl &url, const ItemRoles role, QString *displayName)
 {
-    if (url.scheme() != scheme())
+    if (url.scheme() != RecentHelper::scheme())
         return false;
 
     if (role == kItemFilePathRole) {
@@ -165,7 +102,7 @@ bool RecentManager::customRoleDisplayName(const QUrl &url, const ItemRoles role,
 
 bool RecentManager::detailViewIcon(const QUrl &url, QString *iconName)
 {
-    if (url == rootUrl()) {
+    if (url == RecentHelper::rootUrl()) {
         *iconName = SystemPathUtil::instance()->systemPathIconName("Recent");
         if (!iconName->isEmpty())
             return true;
@@ -177,11 +114,11 @@ bool RecentManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *map
 {
     Q_ASSERT(mapGroup);
 
-    if (url.scheme() == RecentManager::scheme()) {
+    if (url.scheme() == RecentHelper::scheme()) {
         QVariantMap map;
-        map["CrumbData_Key_Url"] = RecentManager::rootUrl();
+        map["CrumbData_Key_Url"] = RecentHelper::rootUrl();
         map["CrumbData_Key_DisplayText"] = tr("Recent");
-        map["CrumbData_Key_IconName"] = RecentManager::icon().name();
+        map["CrumbData_Key_IconName"] = RecentHelper::icon().name();
         mapGroup->push_back(map);
         return true;
     }
@@ -194,17 +131,33 @@ bool RecentManager::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
     if (!urls)
         return false;
     for (const QUrl &url : origins) {
-        if (url.scheme() != RecentManager::scheme())
+        if (url.scheme() != RecentHelper::scheme())
             return false;
-        (*urls).push_back(urlTransform(url));
+        (*urls).push_back(RecentHelper::urlTransform(url));
     }
     return true;
 }
 
 bool RecentManager::isTransparent(const QUrl &url, TransparentStatus *status)
 {
-    if (url.scheme() == RecentManager::scheme()) {
+    if (url.scheme() == RecentHelper::scheme()) {
         *status = TransparentStatus::kUntransparent;
+        return true;
+    }
+
+    return false;
+}
+
+bool RecentManager::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
+{
+    Q_UNUSED(urlTo)
+    Q_ASSERT(action);
+
+    if (urls.isEmpty())
+        return false;
+
+    if (urls.first().scheme() == RecentHelper::scheme()) {
+        *action = Qt::CopyAction;
         return true;
     }
 
@@ -245,7 +198,7 @@ void RecentManager::init()
 
     connect(&updateRecentTimer, &QTimer::timeout, this, &RecentManager::asyncHandleFileChanged);
 
-    watcher = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentManager::xbelPath()));
+    watcher = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentHelper::xbelPath()));
     connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &RecentManager::updateRecent);
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentManager::updateRecent);
     watcher->startWatcher();
@@ -253,7 +206,47 @@ void RecentManager::init()
     connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &RecentManager::updateRecent);
 }
 
-void RecentManager::removeRecent(const QList<QUrl> &urls)
+void RecentManager::updateRecent()
+{
+    updateRecentTimer.start();
+}
+
+void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime)
+{
+    if (!recentNodes.contains(url)) {
+        recentNodes[url] = InfoFactory::create<AbstractFileInfo>(url);
+        recentOriginPaths[url] = originPath;
+        QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
+        if (watcher) {
+            emit watcher->subfileCreated(url);
+        }
+    }
+
+    // ToDo(yanghao):update read time
+    Q_UNUSED(readTime)
+}
+
+void RecentManager::onDeleteExistRecentUrls(const QList<QUrl> &urls)
+{
+    for (const auto &url : urls) {
+        if (removeRecentFile(url)) {
+            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
+            if (watcher) {
+                emit watcher->fileDeleted(url);
+            }
+        }
+    }
+}
+
+QUrl RecentHelper::rootUrl()
+{
+    QUrl url;
+    url.setScheme(RecentHelper::scheme());
+    url.setPath("/");
+    return url;
+}
+
+void RecentHelper::removeRecent(const QList<QUrl> &urls)
 {
     DDialog dlg;
     dlg.setIcon(QIcon::fromTheme("dialog-warning"));
@@ -269,46 +262,101 @@ void RecentManager::removeRecent(const QList<QUrl> &urls)
     int code = dlg.exec();
     if (code == 1) {
         QStringList list;
+        auto originPath = RecentManager::instance()->getRecentOriginPaths();
         for (const QUrl &url : urls) {
+            if (originPath.contains(url)) {
+                list << originPath[url];
+                continue;
+            }
             // list << DUrl::fromLocalFile(url.path()).toString();
-            //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
+            // 通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
             QUrl newUrl = url;
             newUrl.setScheme(Global::Scheme::kFile);
             list << newUrl.toString();
         }
 
-        DTK_CORE_NAMESPACE::DRecentManager::removeItems(list);
+        DRecentManager::removeItems(list);
     }
 }
 
-void RecentManager::updateRecent()
+void RecentHelper::clearRecent()
 {
-    updateRecentTimer.start();
+    QFile f(RecentHelper::xbelPath());
+    if (f.open(QIODevice::WriteOnly)) {
+        f.write(kEmptyRecentFile);
+        f.close();
+    } else {
+        qWarning() << "open recent xbel file failed!!!";
+    }
 }
 
-void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime)
+bool RecentHelper::openFileLocation(const QUrl &url)
 {
-    if (!recentNodes.contains(url)) {
-        recentNodes[url] = InfoFactory::create<AbstractFileInfo>(url);
-        recentOriginPaths[url] = originPath;
-        QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentManager::rootUrl());
-        if (watcher) {
-            emit watcher->subfileCreated(url);
-        }
-    }
+    QUrl localUrl = url;
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+    if (ok && !urls.isEmpty())
+        localUrl = urls.first();
 
-    // ToDo(yanghao):update read time
-    Q_UNUSED(readTime)
+    const auto &fileInfo { InfoFactory::create<AbstractFileInfo>(localUrl) };
+    QUrl parentUrl { fileInfo->urlOf(UrlInfoType::kParentUrl) };
+    parentUrl.setQuery("selectUrl=" + localUrl.toString());
+
+    return dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, parentUrl);
 }
 
-void RecentManager::onDeleteExistRecentUrls(const QList<QUrl> &urls)
+void RecentHelper::openFileLocation(const QList<QUrl> &urls)
 {
-    for (const auto &url : urls) {
-        if (removeRecentFile(url)) {
-            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentManager::rootUrl());
-            if (watcher) {
-                emit watcher->fileDeleted(url);
-            }
-        }
+    for (const QUrl &url : urls) {
+        if (!openFileLocation(url))
+            qWarning() << "failed to open: " << url.path();
     }
+}
+
+void RecentHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
+{
+    QMenu *menu = new QMenu;
+    menu->addAction(QObject::tr("Open in new window"), [url]() {
+        RecentEventCaller::sendOpenWindow(url);
+    });
+
+    auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
+        RecentEventCaller::sendOpenTab(windowId, url);
+    });
+
+    newTabAct->setDisabled(!RecentEventCaller::sendCheckTabAddable(windowId));
+
+    menu->addSeparator();
+    menu->addAction(QObject::tr("Clear recent history"), [url]() {
+        RecentHelper::clearRecent();
+    });
+    QAction *act = menu->exec(globalPos);
+    if (act) {
+        QList<QUrl> urls { url };
+        dpfSignalDispatcher->publish("dfmplugin_recent", "signal_ReportLog_MenuData", act->text(), urls);
+    }
+    delete menu;
+}
+
+ExpandFieldMap RecentHelper::propetyExtensionFunc(const QUrl &url)
+{
+    BasicExpand expand;
+    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+    const QString &sourcePath = info->urlOf(UrlInfoType::kRedirectedFileUrl).toLocalFile();
+    expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
+
+    ExpandFieldMap map;
+    map["kFieldInsert"] = expand;
+
+    return map;
+}
+
+QUrl RecentHelper::urlTransform(const QUrl &url)
+{
+    if (UrlRoute::isRootUrl(url))
+        return url;
+
+    QUrl out { url };
+    out.setScheme(Global::Scheme::kFile);
+    return out;
 }

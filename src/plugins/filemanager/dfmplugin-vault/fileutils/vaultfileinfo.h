@@ -12,7 +12,6 @@ namespace dfmplugin_vault {
 class VaultFileInfoPrivate;
 class VaultFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
-    Q_GADGET
     friend class VaultFileInfoPrivate;
     VaultFileInfoPrivate *d;
 

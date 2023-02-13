@@ -202,7 +202,7 @@ bool VaultFileHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &u
 {
     Q_UNUSED(urls);
 
-    if (urlTo.scheme() != scheme())
+    if (!urlTo.isValid() || urlTo.scheme() != scheme())
         return false;
 
     if (*action == Qt::MoveAction) {

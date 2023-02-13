@@ -5,6 +5,8 @@
 #include "universalutils.h"
 #include "dfm_event_defines.h"
 
+#include "dfm-base/base/schemefactory.h"
+
 #include <DDBusSender>
 
 #include <QDir>
@@ -384,6 +386,24 @@ bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
     if (url1.scheme() == url2.scheme() && path1 == path2 && url1.host() == url2.host())
         return true;
     return false;
+}
+
+bool UniversalUtils::urlsTransform(const QList<QUrl> &sourceUrls, QList<QUrl> *targetUrls)
+{
+    Q_ASSERT(targetUrls);
+    bool ret { false };
+
+    for (const auto &url : sourceUrls) {
+        auto info { InfoFactory::create<AbstractFileInfo>(url) };
+        if (info && info->canAttributes(AbstractFileInfo::FileCanType::kCanRedirectionFileUrl)) {
+            ret = true;
+            targetUrls->append(info->urlOf(UrlInfoType::kRedirectedFileUrl));
+        } else {
+            targetUrls->append(url);
+        }
+    }
+
+    return ret;
 }
 
 QString UniversalUtils::getCurrentUser()

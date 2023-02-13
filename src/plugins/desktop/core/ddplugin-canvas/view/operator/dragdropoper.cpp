@@ -217,13 +217,6 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
                 }
             }
         }
-
-        //        // is from recent file
-        //        if (from.isRecentFile()) {
-        //            defaultAction = isToTrash ? Qt::MoveAction : Qt::CopyAction;
-        //            event->setDropAction(defaultAction);
-        //        }
-
         event->setDropAction(defaultAction);
     }
 }
@@ -442,6 +435,9 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
 
 bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
 {
+    // NOTE: The following code sets the properties that will be used
+    // in the project `linuxdeepin/qt5platform-plugins`.
+    // The purpose is to support dragging a file from a archive to extract it to the dde-filemanager
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
         event->setDropAction(Qt::CopyAction);
         const QModelIndex &index = view->indexAt(event->pos());

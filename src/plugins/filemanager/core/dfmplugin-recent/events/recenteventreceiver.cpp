@@ -10,6 +10,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QDir>
+#include <QTimer>
 
 Q_DECLARE_METATYPE(QDir::Filters);
 Q_DECLARE_METATYPE(QString *)
@@ -33,15 +34,15 @@ void RecentEventReceiver::handleAddressInputStr(quint64 winId, QString *str)
 {
     Q_UNUSED(winId)
 
-    if (str->startsWith(RecentManager::scheme())) {
+    if (str->startsWith(RecentHelper::scheme())) {
         str->clear();
-        str->append(RecentManager::scheme() + ":/");
+        str->append(RecentHelper::scheme() + ":/");
     }
 }
 
 void RecentEventReceiver::handleWindowUrlChanged(quint64 winId, const QUrl &url)
 {
-    if (url.scheme() == RecentManager::scheme()) {
+    if (url.scheme() == RecentHelper::scheme()) {
         QTimer::singleShot(0, this, [=] {
             QDir::Filters f = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
             dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetFilter", winId, f);

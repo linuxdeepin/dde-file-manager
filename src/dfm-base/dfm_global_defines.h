@@ -133,7 +133,8 @@ inline constexpr char kTypeImageVDjvu[] { "image/vnd.djvu" };
 inline constexpr char kTypeImageSvgXml[] { "image/svg+xml" };
 inline constexpr char kTypeAudioFlac[] { "audio/flac" };
 
-inline constexpr char kMimeDataUserIDKey[] { "userid_for_drag" };
+// custom
+inline constexpr char kDataUserIDKey[] { "userid_for_drag" };
 }   // namespace Mime
 
 namespace Scheme {

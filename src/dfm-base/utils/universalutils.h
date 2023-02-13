@@ -37,6 +37,7 @@ public:
     static QVariantHash convertFromQMap(const QVariantMap map);
 
     static bool urlEquals(const QUrl &url1, const QUrl &url2);
+    static bool urlsTransform(const QList<QUrl> &sourceUrls, QList<QUrl> *targetUrls);
 
     static QString getCurrentUser();
 

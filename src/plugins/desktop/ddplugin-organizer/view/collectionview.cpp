@@ -742,6 +742,9 @@ bool CollectionViewPrivate::dropClientDownload(QDropEvent *event) const
 
 bool CollectionViewPrivate::dropDirectSaveMode(QDropEvent *event) const
 {
+    // NOTE: The following code sets the properties that will be used
+    // in the project `linuxdeepin/qt5platform-plugins`.
+    // The purpose is to support dragging a file from a archive to extract it to the dde-filemanager
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
         event->setDropAction(Qt::CopyAction);
         const QModelIndex &index = q->indexAt(event->pos());

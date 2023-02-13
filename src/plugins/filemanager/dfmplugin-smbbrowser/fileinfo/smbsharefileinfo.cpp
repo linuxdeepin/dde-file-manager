@@ -82,8 +82,10 @@ SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileIn
     {
         QMutexLocker locker(&SmbBrowserUtils::mutex);
         node = SmbBrowserUtils::shareNodes.value(url);
+#if 0
         qDebug() << "smb share url: " << url
                  << "\nnode info: " << node;
+#endif
     }
 }
 

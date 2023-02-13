@@ -55,17 +55,8 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
         }
     }
 
-    if (!currentDragUrls.isEmpty()) {
-        QList<QUrl> urls {};
-        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", currentDragUrls, &urls);
-
-        if (ok && !urls.isEmpty())
-            const_cast<QMimeData *>(event->mimeData())->setUrls(urls);
-    }
-
     bool fall = true;
     handleDropEvent(event, &fall);
-
     if (!fall)
         return true;
 
@@ -180,6 +171,9 @@ bool DragDropHelper::drop(QDropEvent *event)
     if (!fall)
         return true;
 
+    // NOTE: The following code sets the properties that will be used
+    // in the project `linuxdeepin/qt5platform-plugins`.
+    // The purpose is to support dragging a file from a archive to extract it to the dde-filemanager
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
         event->setDropAction(Qt::CopyAction);
 

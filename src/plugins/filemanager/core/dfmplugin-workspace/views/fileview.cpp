@@ -41,6 +41,7 @@
 #include <QDrag>
 #include <QApplication>
 #include <QUrlQuery>
+#include <QMimeData>
 
 using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
@@ -1205,6 +1206,17 @@ void FileView::startDrag(Qt::DropActions supportedActions)
         QMimeData *data = model()->mimeData(indexes);
         if (!data)
             return;
+        Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
+        if (WorkspaceEventSequence::instance()->doCheckDragTarget(data->urls(), QUrl(), &defaultDropAction)) {
+            qDebug() << "Change supported actions: " << defaultDropAction;
+            supportedActions = defaultDropAction;
+        }
+
+        QList<QUrl> transformedUrls;
+        UniversalUtils::urlsTransform(data->urls(), &transformedUrls);
+        qDebug() << "Drag source urls: " << data->urls();
+        qDebug() << "Drag transformed urls: " << transformedUrls;
+        data->setUrls(transformedUrls);
 
         QPixmap pixmap = d->viewDrawHelper->renderDragPixmap(currentViewMode(), indexes);
         QDrag *drag = new QDrag(this);
@@ -1214,7 +1226,6 @@ void FileView::startDrag(Qt::DropActions supportedActions)
                                 static_cast<int>(pixmap.size().height() / (2 * pixmap.devicePixelRatio()))));
 
         Qt::DropAction dropAction = Qt::IgnoreAction;
-        Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
         if (defaultDropAction != Qt::IgnoreAction && (supportedActions & defaultDropAction))
             dropAction = defaultDropAction;
         else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
@@ -1477,7 +1488,7 @@ void FileView::paintEvent(QPaintEvent *event)
     if (d->isShowViewSelectBox) {
         QPainter painter(viewport());
         QColor color = palette().color(QPalette::Active, QPalette::Highlight);
-        color.setAlphaF(255 * 0.4);   // 40% transparency
+        color.setAlphaF(0.4);   // 40% transparency
         QPen pen(color, kSelectBoxLineWidth);
         painter.setPen(pen);
         painter.drawRect(QRectF(kSelectBoxLineWidth / 2, kSelectBoxLineWidth / 2, viewport()->size().width() - kSelectBoxLineWidth, viewport()->size().height() - kSelectBoxLineWidth));

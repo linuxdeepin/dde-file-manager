@@ -18,19 +18,11 @@ DPRECENT_BEGIN_NAMESPACE
 class RecentFileHelper : public QObject
 {
     Q_DISABLE_COPY(RecentFileHelper)
+
 public:
     static RecentFileHelper *instance();
-    inline static QString scheme()
-    {
-        return "recent";
-    }
 
-    static void removeRecent(const QList<QUrl> &urls);
-
-    static bool openFileLocation(const QUrl &url);
-
-    static void openFileLocation(const QList<QUrl> &urls);
-
+public Q_SLOTS:
     bool setPermissionHandle(const quint64 windowId,
                              const QUrl url,
                              const QFileDevice::Permissions permissions,

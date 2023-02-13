@@ -77,5 +77,5 @@ const AbstractFileInfoPointer RecentDirIterator::fileInfo() const
 
 QUrl RecentDirIterator::url() const
 {
-    return RecentManager::rootUrl();
+    return RecentHelper::rootUrl();
 }

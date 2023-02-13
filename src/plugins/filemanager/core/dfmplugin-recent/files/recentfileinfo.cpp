@@ -27,12 +27,12 @@ RecentFileInfo::~RecentFileInfo()
 
 bool RecentFileInfo::exists() const
 {
-    return AbstractFileInfo::exists() || dptr->url == RecentManager::rootUrl();
+    return AbstractFileInfo::exists() || dptr->url == RecentHelper::rootUrl();
 }
 
 QFile::Permissions RecentFileInfo::permissions() const
 {
-    if (dptr->url == RecentManager::rootUrl()) {
+    if (dptr->url == RecentHelper::rootUrl()) {
         return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
     }
     return AbstractFileInfo::permissions();
