@@ -416,7 +416,7 @@ bool CollectionViewPrivate::checkProhibitPaths(QDragEnterEvent *event) const
     auto urlsForDragEvent = event->mimeData()->urls();
 
     // Filter the event that cannot be dragged
-    if (urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(urlsForDragEvent)) {
+    if (!urlsForDragEvent.isEmpty() && FileUtils::isContainProhibitPath(urlsForDragEvent)) {
         event->setDropAction(Qt::IgnoreAction);
         event->ignore();
         return true;
@@ -495,8 +495,8 @@ void CollectionViewPrivate::handleMoveMimeData(QDropEvent *event, const QUrl &ur
     if (DFileDragClient::checkMimeData(event->mimeData())) {
         event->acceptProposedAction();
         // update target url if mouse focus is on file which can drop.
+        // drag file from compressor
         updateTarget(event->mimeData(), url);
-        qWarning() << "drop by app " << dropTargetUrl;
     } else {
         event->accept();
     }

@@ -340,7 +340,7 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
 bool DragDropHelper::checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl> &urls) const
 {
     // Filter the event that cannot be dragged
-    if (urls.isEmpty() || FileUtils::isContainProhibitPath(urls)) {
+    if (!urls.isEmpty() && FileUtils::isContainProhibitPath(urls)) {
         event->setDropAction(Qt::IgnoreAction);
         event->ignore();
         return true;

@@ -245,7 +245,7 @@ bool DragDropOper::checkProhibitPaths(QDragEnterEvent *event) const
     auto urlsForDragEvent = event->mimeData()->urls();
 
     // Filter the event that cannot be dragged
-    if (urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(urlsForDragEvent)) {
+    if (!urlsForDragEvent.isEmpty() && FileUtils::isContainProhibitPath(urlsForDragEvent)) {
         event->setDropAction(Qt::IgnoreAction);
         event->ignore();
         return true;
@@ -484,7 +484,6 @@ void DragDropOper::handleMoveMimeData(QDropEvent *event, const QUrl &url)
         event->acceptProposedAction();
         // update target url if mouse focus is on file which can drop.
         updateTarget(event->mimeData(), url);
-        qWarning() << "drop by app " << m_target;
     } else {
         event->accept();
     }
