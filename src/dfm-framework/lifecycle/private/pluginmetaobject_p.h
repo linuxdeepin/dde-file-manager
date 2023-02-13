@@ -1,24 +1,3 @@
-/*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
- *
- * Author:     huanyu<huanyub@uniontech.com>
- *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 #ifndef PLUGINMETAOBJECT_P_H
 #define PLUGINMETAOBJECT_P_H
 
@@ -42,7 +21,12 @@ inline constexpr char kPluginCompatversion[] { "CompatVersion" };
 inline constexpr char kPluginCategory[] { "Category" };
 /// \brief kPluginVendor 插件作者
 inline constexpr char kPluginVendor[] { "Vendor" };
-/// \brief kPluginCopyright 插件所持有的公司
+
+// Copyright 插件所持有的公司
+// SPDX-FileCopyrightText: 2020 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 inline constexpr char kPluginCopyright[] { "Copyright" };
 /// \brief kPluginDescription 插件描述
 inline constexpr char kPluginDescription[] { "Description" };

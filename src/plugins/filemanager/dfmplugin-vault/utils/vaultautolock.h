@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef VAULTAUTOLOCK_H
 #define VAULTAUTOLOCK_H
 #include "dfmplugin_vault_global.h"

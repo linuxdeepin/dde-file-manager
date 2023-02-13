@@ -1,0 +1,44 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: dde-file-manager
+Upstream-Contact: UnionTech Software Technology Co., Ltd. <>
+Source: https://github.com/linuxdeepin/dde-file-manager
+
+# ci
+Files: .gitlab-ci.yml
+Copyright: None
+License: CC0-1.0
+
+# ignore files
+Files: .gitignore .clang-format .clog.toml .project.json .qmake.conf
+Copyright: None
+License: CC0-1.0
+
+# debian
+Files: debian/*
+Copyright: None
+License: CC0-1.0
+
+# Project file
+Files: *.qrc .tx/* *CMakeLists.txt *.cmake
+Copyright: None
+License: CC0-1.0
+
+# README & DOCS
+Files: README.md README.zh_CN.md docs/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: CC-BY-4.0
+
+# translations
+Files: translations/*.ts
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# assets
+Files: assets/*
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
+
+# png & svg
+Files: src/*.png src/*.svg
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
