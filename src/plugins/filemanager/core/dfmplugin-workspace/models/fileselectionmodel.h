@@ -24,6 +24,7 @@ public:
     bool isSelected(const QModelIndex &index) const;
     int selectedCount() const;
     QModelIndexList selectedIndexes() const;
+    void clearSelectList();
 
 public slots:
     void updateSelecteds();

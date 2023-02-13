@@ -70,6 +70,11 @@ QModelIndexList FileSelectionModel::selectedIndexes() const
     return d->selectedList;
 }
 
+void FileSelectionModel::clearSelectList()
+{
+    d->selectedList.clear();
+}
+
 void FileSelectionModel::updateSelecteds()
 {
     QItemSelectionModel::select(d->selection, d->currentCommand);

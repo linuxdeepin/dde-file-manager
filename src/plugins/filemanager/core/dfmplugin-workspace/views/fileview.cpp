@@ -882,6 +882,10 @@ DirOpenMode FileView::currentDirOpenMode() const
 
 void FileView::onRowCountChanged()
 {
+    // clean selected indexes
+    // the selectList will be reseted while call the selectedIndexes() at next time
+    static_cast<FileSelectionModel *>(selectionModel())->clearSelectList();
+
     if (model()->currentState() == ModelState::kIdle) {
         delayUpdateStatusBar();
         updateContentLabel();
