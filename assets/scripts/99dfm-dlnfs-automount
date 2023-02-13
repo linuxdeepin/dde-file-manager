@@ -1,1 +1,5 @@
+# SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 [ -f /etc/deepin/dde-file-manager/dfm-dlnfs-automount ] && bash /etc/deepin/dde-file-manager/dfm-dlnfs-automount
