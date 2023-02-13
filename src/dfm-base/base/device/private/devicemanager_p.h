@@ -29,7 +29,6 @@ public:
 private:
     // private operations
     void mountAllBlockDev();
-    void mountDlnfsOnHome();
 
     static bool isDaemonMountRunning();
 

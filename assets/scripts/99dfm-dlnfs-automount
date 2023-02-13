@@ -1,0 +1,1 @@
+[ -f /etc/deepin/dde-file-manager/dfm-dlnfs-automount ] && bash /etc/deepin/dde-file-manager/dfm-dlnfs-automount

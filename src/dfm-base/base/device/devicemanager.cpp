@@ -124,7 +124,17 @@ QString DeviceManager::mountBlockDev(const QString &id, const QVariantMap &opts)
     QString errMsg;
     if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {
         const QString &originalMpt = dev->mount(opts);
-        if (!originalMpt.isEmpty() && dev->removable() && !dev->optical())   // do dlnfs mount if it is removable disk.
+        bool removable = dev->removable();
+        const QString &cryptoBackingDev = dev->getProperty(Property::kBlockCryptoBackingDevice).toString();
+        if (cryptoBackingDev != "/") {
+            auto backingDev = DeviceHelper::createBlockDevice(cryptoBackingDev);
+            if (!backingDev) {
+                qWarning() << "cannot create block device: " << cryptoBackingDev;
+                return "";
+            }
+            removable = backingDev->removable();
+        }
+        if (!originalMpt.isEmpty() && removable && !dev->optical())   // do dlnfs mount if it is removable disk.
             d->handleDlnfsMount(originalMpt, true);
         return originalMpt;
     } else {
@@ -163,6 +173,18 @@ void DeviceManager::mountBlockDevAsync(const QString &id, const QVariantMap &opt
         QString errMsg;
         if (DeviceHelper::isMountableBlockDev(dev, errMsg)) {
             bool removable = dev->removable();
+            const auto &cryptoBackingDev = dev->getProperty(Property::kBlockCryptoBackingDevice).toString();
+            if (cryptoBackingDev != "/") {
+                auto backingDev = DeviceHelper::createBlockDevice(cryptoBackingDev);
+                if (!backingDev) {
+                    qWarning() << "cannot create block device: " << cryptoBackingDev;
+                    if (cb)
+                        cb(false, DeviceError::kUnhandledError, "");
+                    return;
+                }
+                removable = backingDev->removable();
+            }
+
             bool optical = dev->optical();
             auto callback = [cb, removable, optical](bool ok, DeviceError err, const QString &mpt) {
                 if (!mpt.isEmpty() && removable && !optical)
@@ -655,7 +677,6 @@ void DeviceManager::doAutoMountAtStart()
     static std::once_flag flg;
     std::call_once(flg, [this] {
         d->mountAllBlockDev();
-        d->mountDlnfsOnHome();
     });
 }
 
@@ -834,11 +855,6 @@ void DeviceManagerPrivate::mountAllBlockDev()
         q->mountBlockDevAsync(dev, { { "auth.no_user_interaction", true } });   // avoid the auth dialog raising
 }
 
-void DeviceManagerPrivate::mountDlnfsOnHome()
-{
-    handleDlnfsMount(QStandardPaths::writableLocation(QStandardPaths::HomeLocation), true);
-}
-
 bool DeviceManagerPrivate::isDaemonMountRunning()
 {
     auto systemBusIFace = QDBusConnection::systemBus().interface();
@@ -866,10 +882,12 @@ bool DeviceManagerPrivate::isDaemonMountRunning()
  */
 void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
 {
-    auto enableDlnfsMount = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs").toBool();
-    if (!enableDlnfsMount) {
-        qInfo() << "dlnfs: mount is disabled";
-        return;
+    if (mount) {
+        auto enableDlnfsMount = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.mount.dlnfs").toBool();
+        if (!enableDlnfsMount) {
+            qInfo() << "dlnfs: mount is disabled";
+            return;
+        }
     }
 
     if (!isDaemonMountRunning()) {

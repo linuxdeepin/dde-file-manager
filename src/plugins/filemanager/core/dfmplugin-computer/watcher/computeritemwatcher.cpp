@@ -238,6 +238,11 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         if (!info->exists())
             continue;
 
+        if (DeviceUtils::isMountPointOfDlnfs(info->targetUrl().path())) {
+            qDebug() << "computer: ignore dlnfs mountpoint: " << info->targetUrl();
+            continue;
+        }
+
         ComputerItemData data;
         data.url = devUrl;
         data.shape = ComputerItemData::kLargeItem;
@@ -645,8 +650,8 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     if (info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kProtocol) {
         QString id = ComputerUtils::getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
         if (id.startsWith(Global::Scheme::kSmb)) {
-            //The following line is moved to SmbIntegrationManager::handleItemFilterOnAdd(), but there is still saved as V1 format
-            //StashMountsUtils::stashMount(info->urlOf(UrlInfoType::kUrl), info->displayName());
+            // The following line is moved to SmbIntegrationManager::handleItemFilterOnAdd(), but there is still saved as V1 format
+            // StashMountsUtils::stashMount(info->urlOf(UrlInfoType::kUrl), info->displayName());
             removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
     }
@@ -768,7 +773,11 @@ void ComputerItemWatcher::onUpdateBlockItem(const QString &id)
 
 void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QString &mntPath)
 {
-    Q_UNUSED(mntPath)
+    if (DeviceUtils::isMountPointOfDlnfs(mntPath)) {
+        qDebug() << "computer: ignore dlnfs mountpoint: " << mntPath;
+        return;
+    }
+
     auto url = ComputerUtils::makeProtocolDevUrl(id);
 
     if (DeviceUtils::isSamba(QUrl(id)) || id.startsWith(Global::Scheme::kSmb)) {

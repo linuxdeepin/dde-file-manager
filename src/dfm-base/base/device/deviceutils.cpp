@@ -435,6 +435,21 @@ QStringList DeviceUtils::encryptedDisks()
 
 bool DeviceUtils::isSubpathOfDlnfs(const QString &path)
 {
+    return findDlnfsPath(path, [](const QString &target, const QString &compare) {
+        return target.startsWith(compare);
+    });
+}
+
+bool DeviceUtils::isMountPointOfDlnfs(const QString &path)
+{
+    return findDlnfsPath(path, [](const QString &target, const QString &compare) {
+        return target == compare;
+    });
+}
+
+bool DeviceUtils::findDlnfsPath(const QString &target, Compare func)
+{
+    Q_ASSERT(func);
     libmnt_table *tab { mnt_new_table() };
     libmnt_iter *iter = mnt_new_iter(MNT_ITER_BACKWARD);
 
@@ -459,8 +474,8 @@ bool DeviceUtils::isSubpathOfDlnfs(const QString &path)
         if (!fs)
             continue;
         if (strcmp("dlnfs", mnt_fs_get_source(fs)) == 0) {
-            QString target = unifyPath(mnt_fs_get_target(fs));
-            if (unifyPath(path).startsWith(target))
+            QString mpt = unifyPath(mnt_fs_get_target(fs));
+            if (func(unifyPath(target), mpt))
                 return true;
         }
     }

@@ -100,6 +100,17 @@
             "description":"扩展文件名字符数需重启后才能生效",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.mount.dlnfs.defaults": {
+            "value":["$HOME/Desktop", "$HOME/Music", "$HOME/Picture", "$HOME/Downloads", "$HOME/Videos", "$HOME/Documents"],
+            "serial":0,
+            "flags":[],
+            "name":"Dirs which should enable extend filename",
+            "name[zh_CN]":"启用长文件名扩展的目录",
+            "description[zh_CN]":"默认启用长文件名扩展的目录",
+            "description":"默认启用长文件名扩展的目录",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }
