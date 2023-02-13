@@ -181,11 +181,6 @@ void RecentManager::init()
     workerThread.start();
 
     emit asyncHandleFileChanged();
-    updateRecentTimer.setSingleShot(true);
-    updateRecentTimer.setInterval(2000);
-    updateRecentTimer.moveToThread(qApp->thread());
-
-    connect(&updateRecentTimer, &QTimer::timeout, this, &RecentManager::asyncHandleFileChanged);
 
     watcher = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentHelper::xbelPath()));
     connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &RecentManager::updateRecent);
@@ -197,7 +192,7 @@ void RecentManager::init()
 
 void RecentManager::updateRecent()
 {
-    updateRecentTimer.start();
+    emit asyncHandleFileChanged();
 }
 
 void RecentManager::onUpdateRecentFileInfo(const QUrl &url, const QString originPath, qint64 readTime)

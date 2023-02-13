@@ -88,7 +88,6 @@ private slots:
     void onDeleteExistRecentUrls(const QList<QUrl> &urls);
 
 private:
-    QTimer updateRecentTimer;
     QThread workerThread;
     RecentIterateWorker *iteratorWorker { new RecentIterateWorker };   // free by QThread::finished
     AbstractFileWatcherPointer watcher;
