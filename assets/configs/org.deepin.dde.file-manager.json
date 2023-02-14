@@ -102,7 +102,7 @@
             "visibility":"private"
         },
         "dfm.mount.dlnfs.defaults": {
-            "value":["$HOME/Desktop", "$HOME/Music", "$HOME/Picture", "$HOME/Downloads", "$HOME/Videos", "$HOME/Documents"],
+            "value":["$HOME/Desktop", "$HOME/Music", "$HOME/Pictures", "$HOME/Downloads", "$HOME/Videos", "$HOME/Documents"],
             "serial":0,
             "flags":[],
             "name":"Dirs which should enable extend filename",
