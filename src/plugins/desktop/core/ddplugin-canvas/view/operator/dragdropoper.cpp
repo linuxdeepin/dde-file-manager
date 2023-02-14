@@ -30,10 +30,13 @@ using namespace ddplugin_canvas;
 DragDropOper::DragDropOper(CanvasView *parent)
     : QObject(parent), view(parent)
 {
+
 }
 
 bool DragDropOper::enter(QDragEnterEvent *event)
 {
+    updateDragHover(event->pos());
+
     // Filter the event that cannot be dragged
     if (checkProhibitPaths(event))
         return true;
@@ -64,11 +67,15 @@ void DragDropOper::leave(QDragLeaveEvent *event)
     m_target.clear();
     stopDelayDodge();
     updatePrepareDodgeValue(event);
+
+    updateDragHover(QPoint(-1, -1));
 }
 
 bool DragDropOper::move(QDragMoveEvent *event)
 {
     stopDelayDodge();
+    updateDragHover(event->pos());
+
     auto pos = event->pos();
     auto hoverIndex = view->indexAt(pos);
     // extend
@@ -497,6 +504,17 @@ void DragDropOper::updatePrepareDodgeValue(QEvent *event)
 void DragDropOper::tryDodge(QDragMoveEvent *event)
 {
     view->d->dodgeOper->tryDodge(event);
+}
+
+void DragDropOper::updateDragHover(const QPoint &pos)
+{
+    //update the old one
+    view->update(dragHoverIndex);
+
+    dragHoverIndex = view->indexAt(pos);
+    // update the new one
+    view->update(dragHoverIndex);
+    return;
 }
 
 void DragDropOper::stopDelayDodge()

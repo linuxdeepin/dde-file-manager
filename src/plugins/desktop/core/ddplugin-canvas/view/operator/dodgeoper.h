@@ -51,17 +51,26 @@ public:
     void updatePrepareDodgeValue(QEvent *event);
     void tryDodge(QDragMoveEvent *event);
 
-    bool getPrepareDodge() const;
-    bool getDodgeAnimationing() const;
-    QStringList getDodgeItems() const;
-    QPoint getDragTargetGridPos() const;
-    double getDodgeDuration() const;
-    bool getDodgeItemGridPos(const QString &item, GridPos &gridPos);
+    inline bool getPrepareDodge() const{
+        return prepareDodge;
+    }
+    inline bool getDodgeAnimationing() const{
+        return dodgeAnimationing;
+    }
+    inline QStringList getDodgeItems() const {
+        return dodgeItems;
+    }
+    inline QPoint getDragTargetGridPos() const {
+        return dragTargetGridPos;
+    }
+    inline double getDodgeDuration() const {
+        return dodgeDuration;
+    }
 
+    bool getDodgeItemGridPos(const QString &item, GridPos &gridPos);
     void setDodgeDuration(double duration);
     void startDelayDodge();
     void stopDelayDodge();
-
 signals:
     void dodgeDurationChanged(double getDodgeDuration);
 
@@ -69,7 +78,6 @@ private slots:
     void startDodgeAnimation();
     void dodgeAnimationUpdate();
     void dodgeAnimationFinished();
-
 private:
     bool calcDodgeTargetGrid();
 

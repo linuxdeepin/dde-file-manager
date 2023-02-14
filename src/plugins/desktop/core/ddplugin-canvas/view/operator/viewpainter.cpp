@@ -133,10 +133,6 @@ void ViewPainter::drawGirdInfos()
         auto backColor = ((pos.x() % 2) == (pos.y() % 2)) ? QColor(0, 0, 255, 32) : QColor(255, 0, 0, 32);
         fillRect(rect, backColor);
 
-        // drag target
-        if (pos.point() == d->dodgeOper->getDragTargetGridPos())
-            fillRect(rect, Qt::green);
-
         // draw grid border.
         drawRect(rect);
 
@@ -175,10 +171,8 @@ void ViewPainter::drawGirdInfos()
 void ViewPainter::drawDodge(QStyleOptionViewItem option)
 {
     if (d->dodgeOper->getPrepareDodge()) {
-        auto mousePoint = view()->mapFromGlobal(QCursor::pos());
-        auto hoverIndex = view()->indexAt(mousePoint);
+        auto hoverIndex = d->dragDropOper->hoverIndex();
         auto url = model()->fileUrl(hoverIndex);
-
         auto selects = selectionModel()->selectedUrls();
         if (selects.contains(url) ||
                 (d->dodgeOper->getDodgeAnimationing()

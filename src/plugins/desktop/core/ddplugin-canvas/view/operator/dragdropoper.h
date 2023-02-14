@@ -23,9 +23,10 @@ public:
     void leave(QDragLeaveEvent *event);
     bool move(QDragMoveEvent *event);
     bool drop(QDropEvent *event);
-signals:
 
-public slots:
+    inline QModelIndex hoverIndex() const{
+        return dragHoverIndex;
+    }
 protected:
     virtual void preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls, const QUrl &targetFileUrl) const;
     void updateTarget(const QMimeData *data, const QUrl &url);
@@ -38,15 +39,16 @@ protected:
     bool dropDirectSaveMode(QDropEvent *event) const;
     bool dropMimeData(QDropEvent *event) const;
     void handleMoveMimeData(QDropEvent *event, const QUrl &url);
-
 private:
     void updatePrepareDodgeValue(QEvent *event);
     void tryDodge(QDragMoveEvent *event);
+    void updateDragHover(const QPoint &pos);
     void stopDelayDodge();
 
 protected:
     CanvasView *view;
     QUrl m_target;   //must be file:///
+    QPersistentModelIndex dragHoverIndex;
 };
 
 }

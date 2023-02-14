@@ -50,21 +50,6 @@ void DodgeOper::updatePrepareDodgeValue(QEvent *event)
     prepareDodge = false;
 }
 
-bool DodgeOper::getPrepareDodge() const
-{
-    return prepareDodge;
-}
-
-bool DodgeOper::getDodgeAnimationing() const
-{
-    return dodgeAnimationing;
-}
-
-QStringList DodgeOper::getDodgeItems() const
-{
-    return dodgeItems;
-}
-
 void DodgeOper::tryDodge(QDragMoveEvent *event)
 {
     // check dodging
@@ -107,19 +92,10 @@ void DodgeOper::tryDodge(QDragMoveEvent *event)
             startDelayDodge();
         }
     }
+
 #else
     // support cross screen
 #endif
-}
-
-QPoint DodgeOper::getDragTargetGridPos() const
-{
-    return dragTargetGridPos;
-}
-
-double DodgeOper::getDodgeDuration() const
-{
-    return dodgeDuration;
 }
 
 bool DodgeOper::getDodgeItemGridPos(const QString &item, GridPos &gridPos)
@@ -198,7 +174,6 @@ bool DodgeOper::calcDodgeTargetGrid()
 void DodgeOper::startDelayDodge()
 {
     dodgeDelayTimer.start();
-    dodgeAnimationUpdate();
 }
 
 void DodgeOper::stopDelayDodge()
