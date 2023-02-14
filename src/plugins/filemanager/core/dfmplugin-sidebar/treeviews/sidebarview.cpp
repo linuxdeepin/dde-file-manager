@@ -225,6 +225,8 @@ void SideBarView::dragEnterEvent(QDragEnterEvent *event)
             event->ignore();
             return;
         }
+    } else {
+        d->urlsForDragEvent.clear();
     }
 
     d->previousRowCount = model()->rowCount();
@@ -732,33 +734,6 @@ void SideBarView::onChangeExpandState(const QModelIndex &index, bool expand)
             setCurrentUrl(d->sidebarUrl);   // To make sure, when expand the group item, the current item is highlighted.
     }
     update(index);
-}
-
-bool SideBarViewPrivate::fetchDragEventUrlsFromSharedMemory()
-{
-    QSharedMemory sm;
-    sm.setKey(q->dragEventUrls());
-
-    if (!sm.isAttached()) {
-        if (!sm.attach()) {
-            qDebug() << "FQSharedMemory detach failed.";
-            return false;
-        }
-    }
-
-    QBuffer buffer;
-    QDataStream in(&buffer);
-    QList<QUrl> urls;
-
-    sm.lock();
-    // Getting data and data size via share memory
-    buffer.setData((char *)sm.constData(), sm.size());
-    buffer.open(QBuffer::ReadOnly);
-    in >> urlsForDragEvent;
-    sm.unlock();
-    sm.detach();
-
-    return true;
 }
 
 bool SideBarViewPrivate::checkOpTime()
