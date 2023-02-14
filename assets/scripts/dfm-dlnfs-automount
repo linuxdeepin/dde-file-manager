@@ -5,8 +5,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 start_time=$(date "+%Y-%m-%d %H:%M:%S.%3N")
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start mounting dlnfs..."
-echo "dfm_INFO: started at ${start_time}"
+echo -e "\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> started mounting dlnfs at [${start_time}]"
 echo "dfm_INFO: user: $USER, uid: `id -u`, home: $HOME"
 
 query_dconfig="dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager -k "
@@ -39,7 +38,7 @@ if [ "$dlnfs_enable" == "true" ]; then
             abs_path=${path/$env_path/$abs_env_path}  #path = /home/xxxx/xxxx
         fi
 
-        echo "dfm_INFO: =========================$path ($abs_path)========================="
+        echo "dfm_INFO: ========================= $path [$abs_path]"
         if [ ! -d $abs_path ]; then
             echo "dfm_WARNING: $abs_path do not exist"
             continue
@@ -53,8 +52,11 @@ if [ "$dlnfs_enable" == "true" ]; then
             "${abs_path}" \
             "{'fsType': <'dlnfs'>}" \
             -t 1
+
+        step_time=$(date "+%Y-%m-%d %H:%M:%S.%3N")
+        echo -e "dfm_INFO: finished mount ${path} at [${step_time}]\n"
     done
 fi
 
 end_time=$(date "+%Y-%m-%d %H:%M:%S.%3N")
-echo "dfm_INFO: finished at ${end_time}"
+echo -e "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< finished mounting dlnfs at [${end_time}]\n"

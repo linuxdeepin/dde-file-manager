@@ -2,4 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-[ -f /etc/deepin/dde-file-manager/dfm-dlnfs-automount ] && bash /etc/deepin/dde-file-manager/dfm-dlnfs-automount
+echo "\ndfm_INFO: start main script to mount dlnfs at" $(date "+%Y-%m-%d %H:%M:%S.%3N")
+[ -f /etc/deepin/dde-file-manager/dfm-dlnfs-automount ] && bash /etc/deepin/dde-file-manager/dfm-dlnfs-automount &
+echo "dfm_INFO: end main script at" $(date "+%Y-%m-%d %H:%M:%S.%3N")
