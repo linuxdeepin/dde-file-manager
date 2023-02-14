@@ -599,7 +599,7 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
 
     if (info && DecoratorFile(fileUrl).exists()) {
         QString baseName = info->displayOf(DisPlayInfoType::kFileDisplayName) == info->nameOf(NameInfoType::kFileName)
-                ? info->nameOf(NameInfoType::kBaseName)
+                ? info->nameOf(NameInfoType::kCompleteBaseName)
                 : info->displayOf(DisPlayInfoType::kFileDisplayName);
         QString shortcut = QObject::tr("Shortcut");
         QString linkBaseName;
