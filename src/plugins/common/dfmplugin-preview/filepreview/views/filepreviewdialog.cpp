@@ -70,13 +70,13 @@ void FilePreviewDialog::updatePreviewList(const QList<QUrl> &previewUrllist)
     switchToPage(0);
 }
 
-void FilePreviewDialog::setEntryUrlList(const QList<QUrl> &UrlList)
+void FilePreviewDialog::setEntryUrlList(const QList<QUrl> &urlList)
 {
-    if (UrlList.isEmpty())
+    if (urlList.isEmpty())
         return;
     QUrl currentUrl = fileList.at(currentPageIndex);
-    if (UrlList.contains(currentUrl)) {
-        entryUrlList = UrlList;
+    if (urlList.contains(currentUrl)) {
+        entryUrlList = urlList;
         fileList = entryUrlList;
         currentPageIndex = entryUrlList.indexOf(currentUrl);
     }

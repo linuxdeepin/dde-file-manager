@@ -23,7 +23,7 @@ PreviewDialogManager::PreviewDialogManager(QObject *parent)
 {
 }
 
-void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
+void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> &dirUrl)
 {
     Q_UNUSED(winId)
 

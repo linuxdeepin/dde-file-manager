@@ -9,6 +9,7 @@
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
@@ -164,7 +165,8 @@ bool ClipBoardMenuScene::triggered(QAction *action)
     // trans url to local
     QList<QUrl> selectedUrlsTemp = d->selectFiles;
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", selectedUrlsTemp, &urls);
+
+    bool ok = UniversalUtils::urlsTransform(selectedUrlsTemp, &urls);
     if (ok && !urls.isEmpty())
         selectedUrlsTemp = urls;
 

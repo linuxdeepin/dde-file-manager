@@ -247,26 +247,6 @@ void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, co
     editor->show(showPosX, showPosY);
 }
 
-QUrl TagHelper::redirectTagUrl(const QUrl &url)
-{
-    if (url.fragment().isEmpty())
-        return url;
-
-    return QUrl::fromLocalFile(url.fragment(QUrl::FullyDecoded));
-}
-
-bool TagHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
-{
-    if (!urls)
-        return false;
-    for (const QUrl &url : origins) {
-        if (url.scheme() != TagManager::scheme())
-            return false;
-        (*urls).push_back(redirectTagUrl(url));
-    }
-    return true;
-}
-
 void TagHelper::crumbEditInputFilter(DCrumbEdit *edit)
 {
     if (!edit)

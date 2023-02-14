@@ -38,7 +38,6 @@ public:
     static bool burnIsOnDisc(const QUrl &url);
     static bool burnIsOnStaging(const QUrl &url);
     static QUrl tansToBurnFile(const QUrl &in);
-    static QUrl tansToLocalFile(const QUrl &in);
     static QUrl transDiscRootById(const QString &id);
     static bool isSupportedUDFVersion(const QString &version);
     static bool isSupportedUDFMedium(int type);
@@ -46,7 +45,6 @@ public:
     static bool isDupFileNameInPath(const QString &path, const QUrl &url);
     static bool isBurnEnabled();
 
-    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
     bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
 
 private:

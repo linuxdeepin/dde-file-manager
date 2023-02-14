@@ -137,7 +137,6 @@ void Recent::followEvents()
 
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentManager::instance(), &RecentManager::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", RecentManager::instance(), &RecentManager::urlsToLocal);
 
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutToFile", RecentFileHelper::instance(), &RecentFileHelper::cutFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", RecentFileHelper::instance(), &RecentFileHelper::copyFile);

@@ -15,6 +15,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QMenu>
 #include <QProcess>
@@ -37,7 +38,7 @@ void SendToDiscMenuScenePrivate::actionStageFileForBurning(const QString &dev)
     QList<QUrl> srcUrls { selectFiles };
 
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", srcUrls, &urls);
+    bool ok = UniversalUtils::urlsTransform(srcUrls, &urls);
     if (ok && !urls.isEmpty())
         srcUrls = urls;
 
@@ -171,7 +172,7 @@ bool SendToDiscMenuScene::initialize(const QVariantHash &params)
 
     QUrl url(d->selectFiles.first());
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << url, &urls);
+    bool ok = UniversalUtils::urlsTransform(QList<QUrl>() << url, &urls);
 
     if (ok && !urls.isEmpty())
         url = urls.first();

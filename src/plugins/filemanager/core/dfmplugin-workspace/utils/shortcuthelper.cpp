@@ -15,6 +15,7 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/standardpaths.h"
 
 #include <dfm-framework/dpf.h>
@@ -311,7 +312,7 @@ void ShortcutHelper::previewFiles()
 
     QList<QUrl> selectUrls = urls;
     QList<QUrl> urlsTrans {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urls, &urlsTrans);
+    bool ok = UniversalUtils::urlsTransform(urls, &urlsTrans);
     if (ok && !urlsTrans.isEmpty())
         selectUrls = urlsTrans;
 
@@ -319,7 +320,7 @@ void ShortcutHelper::previewFiles()
 
     urlsTrans.clear();
     QList<QUrl> currentDirUrls = urls;
-    ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", currentDirUrls, &urlsTrans);
+    ok = UniversalUtils::urlsTransform(currentDirUrls, &urlsTrans);
     if (ok && !urlsTrans.isEmpty())
         currentDirUrls = urlsTrans;
 

@@ -156,20 +156,6 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
     return url;
 }
 
-QUrl OpticalHelper::tansToLocalFile(const QUrl &in)
-{
-    Q_ASSERT(in.scheme() == Global::Scheme::kBurn);
-    QUrl url;
-
-    if (burnIsOnDisc(in)) {
-        url = localDiscFile(in);
-    } else if (burnIsOnStaging(in)) {
-        url = localStagingFile(in);
-    }
-
-    return url;
-}
-
 QUrl OpticalHelper::transDiscRootById(const QString &id)
 {
     if (!id.contains(QRegularExpression("sr[0-9]*$")))
@@ -244,18 +230,6 @@ bool OpticalHelper::isTransparent(const QUrl &url, Global::TransparentStatus *st
     }
 
     return false;
-}
-
-bool OpticalHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
-{
-    if (!urls)
-        return false;
-    for (const QUrl &url : origins) {
-        if (url.scheme() != OpticalHelper::scheme())
-            return false;
-        (*urls).push_back(tansToLocalFile(url));
-    }
-    return true;
 }
 
 OpticalHelper::OpticalHelper(QObject *parent)

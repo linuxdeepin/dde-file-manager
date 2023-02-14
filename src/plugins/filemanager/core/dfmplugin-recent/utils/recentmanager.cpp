@@ -11,6 +11,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
@@ -124,18 +125,6 @@ bool RecentManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *map
     }
 
     return false;
-}
-
-bool RecentManager::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
-{
-    if (!urls)
-        return false;
-    for (const QUrl &url : origins) {
-        if (url.scheme() != RecentHelper::scheme())
-            return false;
-        (*urls).push_back(RecentHelper::urlTransform(url));
-    }
-    return true;
 }
 
 bool RecentManager::isTransparent(const QUrl &url, TransparentStatus *status)
@@ -294,7 +283,7 @@ bool RecentHelper::openFileLocation(const QUrl &url)
 {
     QUrl localUrl = url;
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+    bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 

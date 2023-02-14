@@ -126,7 +126,7 @@ void FileBaseInfoView::basicFieldFilter(const QUrl &url)
 {
     QUrl filterUrl = url;
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << filterUrl, &urls);
+    bool ok = UniversalUtils::urlsTransform({ filterUrl }, &urls);
 
     if (ok && !urls.isEmpty())
         filterUrl = urls.first();
@@ -208,7 +208,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
 
     QUrl localUrl = url;
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+    bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 

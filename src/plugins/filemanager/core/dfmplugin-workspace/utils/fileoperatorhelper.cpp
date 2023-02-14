@@ -11,6 +11,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -124,7 +125,7 @@ void FileOperatorHelper::copyFiles(const FileView *view)
     QList<QUrl> selectedUrls = view->selectedUrlList();
     // trans url to local
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", selectedUrls, &urls);
+    bool ok = UniversalUtils::urlsTransform(selectedUrls, &urls);
     if (ok && !urls.isEmpty())
         selectedUrls = urls;
 
@@ -151,7 +152,7 @@ void FileOperatorHelper::cutFiles(const FileView *view)
         return;
     QList<QUrl> selectedUrls = view->selectedUrlList();
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", selectedUrls, &urls);
+    bool ok = UniversalUtils::urlsTransform(selectedUrls, &urls);
     if (ok && !urls.isEmpty())
         selectedUrls = urls;
 

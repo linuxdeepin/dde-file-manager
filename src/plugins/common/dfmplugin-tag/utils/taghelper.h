@@ -64,8 +64,6 @@ public:
 
     void showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList, bool showInTagDir = false);
 
-    static QUrl redirectTagUrl(const QUrl &url);
-    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
     void crumbEditInputFilter(DTK_WIDGET_NAMESPACE::DCrumbEdit *edit);
 
 private:

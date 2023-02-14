@@ -13,6 +13,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -169,7 +170,7 @@ bool SendToMenuScene::triggered(QAction *action)
         if (actId == ActionID::kCreateSymlink) {
             QUrl localUrl { d->focusFile };
             QList<QUrl> urls {};
-            bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << d->focusFile, &urls);
+            bool ok = UniversalUtils::urlsTransform({ d->focusFile }, &urls);
             if (ok && !urls.isEmpty())
                 localUrl = urls.at(0);
             const QString &linkName = FileUtils::nonExistSymlinkFileName(localUrl, QUrl::fromLocalFile(QDir::currentPath()));
@@ -187,7 +188,7 @@ bool SendToMenuScene::triggered(QAction *action)
             QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
             QList<QUrl> urlsTrans = d->selectFiles;
             QList<QUrl> urls {};
-            bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urlsTrans, &urls);
+            bool ok = UniversalUtils::urlsTransform(urlsTrans, &urls);
             if (ok && !urls.isEmpty())
                 urlsTrans = urls;
 

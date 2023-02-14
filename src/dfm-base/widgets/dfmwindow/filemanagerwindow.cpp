@@ -282,7 +282,8 @@ void FileManagerWindow::hideEvent(QHideEvent *event)
 {
     QVariantMap state;
     state["sidebar"] = d->splitterPosition();
-    Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
+    if (state["sidebar"].toInt() > 0)
+        Application::appObtuselySetting()->setValue("WindowManager", "SplitterState", state);
 
     return DMainWindow::hideEvent(event);
 }

@@ -164,9 +164,6 @@ void Tag::followEvents()
 
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DropData", TagManager::instance(), &TagManager::fileDropHandleWithAction);
 
-    // url trans
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TagHelper::instance(), &TagHelper::urlsToLocal);
-
     // file operation
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TagFileHelper::instance(), &TagFileHelper::openFileInPlugin);
 }

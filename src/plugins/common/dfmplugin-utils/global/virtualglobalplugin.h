@@ -15,9 +15,6 @@ namespace dfmplugin_utils {
 class VirtualGlobalPlugin : public dpf::Plugin
 {
     Q_OBJECT
-    DPF_EVENT_NAMESPACE(DPUTILS_NAMESPACE)
-
-    DPF_EVENT_REG_HOOK(hook_UrlsTransform)
 
 public:
     virtual void initialize() override;

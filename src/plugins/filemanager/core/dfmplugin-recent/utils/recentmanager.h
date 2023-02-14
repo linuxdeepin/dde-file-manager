@@ -70,7 +70,6 @@ public:
     bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     bool detailViewIcon(const QUrl &url, QString *iconName);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
-    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
     bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
 

@@ -174,7 +174,6 @@ void MyShares::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", ShareEventHelper::instance(), &ShareEventHelper::blockPaste);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_SendOpenWindow", ShareEventHelper::instance(), &ShareEventHelper::hookSendOpenWindow);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_SendChangeCurrentUrl", ShareEventHelper::instance(), &ShareEventHelper::hookSendChangeCurrentUrl);
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", ShareUtils::instance(), &ShareUtils::urlsToLocal);
 
     // file operation
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", ShareFileHelper::instance(), &ShareFileHelper::openFileInPlugin);

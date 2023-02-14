@@ -12,6 +12,7 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -356,7 +357,7 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
 
     QUrl converted = url;
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << converted, &urls);
+    bool ok = UniversalUtils::urlsTransform({ converted }, &urls);
 
     if (ok && !urls.isEmpty())
         converted = urls.first();

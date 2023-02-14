@@ -143,7 +143,6 @@ void Optical::bindEvents()
                             &OpticalEventReceiver::handleBlockShortcutPaste);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", &OpticalEventReceiver::instance(), &OpticalEventReceiver::detailViewIcon);
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
 }
 
 void Optical::bindWindows()

@@ -26,8 +26,6 @@ public:
     static QUrl makeShareUrl(const QString &path);
     static QUrl convertToLocalUrl(const QUrl &shareUrl);
 
-    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
-
 private:
     explicit ShareUtils(QObject *parent = nullptr);
 };

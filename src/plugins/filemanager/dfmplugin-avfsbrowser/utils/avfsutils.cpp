@@ -194,18 +194,6 @@ QString AvfsUtils::parseDirIcon(const QString &path)
     }
 }
 
-bool AvfsUtils::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
-{
-    if (!urls)
-        return false;
-    for (const QUrl &url : origins) {
-        if (url.scheme() != AvfsUtils::scheme())
-            return false;
-        (*urls).push_back(avfsUrlToLocal(url));
-    }
-    return true;
-}
-
 AvfsUtils::AvfsUtils(QObject *parent)
     : QObject(parent)
 {

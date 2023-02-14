@@ -59,7 +59,6 @@ bool AvfsBrowser::start()
 
 void AvfsBrowser::followEvents()
 {
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", AvfsUtils::instance(), &AvfsUtils::urlsToLocal);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_OpenLocalFiles", AvfsEventHandler::instance(), &AvfsEventHandler::hookOpenFiles);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_EnterPressed", AvfsEventHandler::instance(), &AvfsEventHandler::hookEnterPressed);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", AvfsEventHandler::instance(), &AvfsEventHandler::sepateTitlebarCrumb);

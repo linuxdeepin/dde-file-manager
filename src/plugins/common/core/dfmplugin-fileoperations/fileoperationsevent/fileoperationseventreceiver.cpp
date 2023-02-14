@@ -11,6 +11,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/utils/windowutils.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
@@ -268,7 +269,7 @@ JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId,
     QList<QUrl> sourcesTrans = sources;
 
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", sourcesTrans, &urls);
+    bool ok = UniversalUtils::urlsTransform(sourcesTrans, &urls);
     if (ok && !urls.isEmpty())
         sourcesTrans = urls;
 
@@ -303,7 +304,7 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
 
     QList<QUrl> sourcesTrans = sources;
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", sourcesTrans, &urls);
+    bool ok = UniversalUtils::urlsTransform(sourcesTrans, &urls);
     if (ok && !urls.isEmpty())
         sourcesTrans = urls;
 

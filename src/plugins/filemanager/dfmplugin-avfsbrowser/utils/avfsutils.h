@@ -54,8 +54,6 @@ public:
     static QList<QVariantMap> seperateUrl(const QUrl &url);
     static QString parseDirIcon(const QString &path);
 
-    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
-
 private:
     explicit AvfsUtils(QObject *parent = nullptr);
 };

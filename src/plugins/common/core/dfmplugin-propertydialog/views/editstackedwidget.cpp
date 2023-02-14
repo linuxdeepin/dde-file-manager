@@ -10,6 +10,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/elidetextlayout.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -252,7 +253,7 @@ void EditStackedWidget::showTextShowFrame()
     else {
         QUrl oldUrl = fileUrl;
         QList<QUrl> urls {};
-        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << oldUrl, &urls);
+        bool ok = UniversalUtils::urlsTransform(QList<QUrl>() << oldUrl, &urls);
         if (ok && !urls.isEmpty())
             oldUrl = urls.first();
 

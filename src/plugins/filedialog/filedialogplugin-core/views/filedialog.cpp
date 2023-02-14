@@ -93,7 +93,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
     QList<QUrl> urls { CoreEventsCaller::sendGetSelectedFiles(q->internalWinId()) };
 
     QList<QUrl> urlsTrans {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urls, &urlsTrans);
+    bool ok = UniversalUtils::urlsTransform(urls, &urlsTrans);
     if (ok && !urlsTrans.isEmpty())
         urls = urlsTrans;
 
@@ -282,7 +282,7 @@ QUrl FileDialog::directoryUrl() const
     QUrl url { currentUrl() };
 
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << url, &urls);
+    bool ok = UniversalUtils::urlsTransform({ url }, &urls);
     if (ok && !urls.empty())
         url = urls.first();
 
@@ -326,7 +326,7 @@ QList<QUrl> FileDialog::selectedUrls() const
     QList<QUrl> list { CoreEventsCaller::sendGetSelectedFiles(internalWinId()) };
 
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", list, &urls);
+    bool ok = UniversalUtils::urlsTransform(list, &urls);
 
     if (ok && !urls.isEmpty())
         list = urls;

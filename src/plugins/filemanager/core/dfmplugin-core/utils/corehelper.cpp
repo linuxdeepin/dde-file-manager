@@ -6,6 +6,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -32,7 +33,7 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
 
     QUrl titleUrl { url };
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", titleUrl, &urls);
+    bool ok = UniversalUtils::urlsTransform({ titleUrl }, &urls);
 
     if (ok && !urls.isEmpty())
         titleUrl = urls.first();
@@ -41,6 +42,8 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     if (fileInfo) {
         QUrl url { fileInfo->urlOf(UrlInfoType::kUrl) };
         window->setWindowTitle(fileInfo->displayOf(DisPlayInfoType::kFileDisplayName));
+    } else {
+        window->setWindowTitle({});
     }
 }
 

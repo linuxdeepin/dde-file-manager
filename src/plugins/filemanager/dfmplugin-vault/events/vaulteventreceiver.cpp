@@ -47,7 +47,6 @@ void VaultEventReceiver::connectEvent()
     dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &VaultEventReceiver::changeUrlEventFilter);
 
     dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit", VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
-    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", VaultHelper::instance(), &VaultHelper::urlsToLocal);
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DragMoveData", VaultEventReceiver::instance(), &VaultEventReceiver::handleSideBarItemDragMoveData);
     dpfHookSequence->follow("dfmplugin_sidebar", "hook_Item_DropData", this, &VaultEventReceiver::fileDropHandleWithAction);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", VaultFileHelper::instance(), &VaultFileHelper::checkDragDropAction);
@@ -102,7 +101,7 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
         if (url.isValid()) {
             QUrl localUrl = url;
             QList<QUrl> urls {};
-            bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+            bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
             if (ok && !urls.isEmpty())
                 localUrl = urls.first();
 
@@ -115,7 +114,7 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
     if (toUrl.isValid()) {
         QUrl localUrl = toUrl;
         QList<QUrl> urls {};
-        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+        bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
         if (ok && !urls.isEmpty())
             localUrl = urls.first();
 

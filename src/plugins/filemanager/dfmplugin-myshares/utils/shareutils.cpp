@@ -54,18 +54,6 @@ QUrl ShareUtils::convertToLocalUrl(const QUrl &shareUrl)
     return u;
 }
 
-bool ShareUtils::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
-{
-    if (!urls)
-        return false;
-    for (const QUrl &url : origins) {
-        if (url.scheme() != ShareUtils::scheme())
-            return false;
-        (*urls).push_back(convertToLocalUrl(url));
-    }
-    return true;
-}
-
 ShareUtils::ShareUtils(QObject *parent)
     : QObject(parent)
 {

@@ -65,17 +65,8 @@ TEST_F(UT_ShareUtils, ConvertToLocalUrl)
 
 TEST_F(UT_ShareUtils, UrlsToLocal)
 {
-    EXPECT_FALSE(ShareUtils::instance()->urlsToLocal({}, nullptr));
-
     QList<QUrl> outputs, inputs;
-    inputs = { QUrl::fromLocalFile("/") };
-    EXPECT_FALSE(ShareUtils::instance()->urlsToLocal(inputs, &outputs));
-
-    inputs = { ShareUtils::makeShareUrl("hello"), QUrl("burn:///world") };
-    EXPECT_FALSE(ShareUtils::instance()->urlsToLocal(inputs, &outputs));
 
     inputs = { ShareUtils::makeShareUrl("/hello"), ShareUtils::makeShareUrl("/world") };
     outputs.clear();
-    EXPECT_TRUE(ShareUtils::instance()->urlsToLocal(inputs, &outputs));
-    EXPECT_EQ(outputs.count(), 2);
 }

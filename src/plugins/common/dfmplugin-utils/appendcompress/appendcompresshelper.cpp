@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "appendcompresshelper.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/event/event.h>
 #include <QProcess>
@@ -81,7 +83,7 @@ bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const 
 
     QUrl localUrl = toUrl;
     QList<QUrl> urls {};
-    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+    bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
     if (ok && !urls.isEmpty())
         localUrl = urls.first();
 

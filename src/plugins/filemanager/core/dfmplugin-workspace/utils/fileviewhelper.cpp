@@ -74,7 +74,7 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
         QUrl localUrl = file->urlOf(UrlInfoType::kUrl);
         QList<QUrl> urls {};
-        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+        bool ok = UniversalUtils::urlsTransform({ localUrl }, &urls);
         if (ok && !urls.isEmpty())
             localUrl = urls.first();
         if (ClipBoard::instance()->clipboardFileUrlList().contains(localUrl))

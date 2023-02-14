@@ -151,9 +151,9 @@ QUrl VaultFileInfo::urlOf(const UrlInfoType type) const
 {
     switch (type) {
     case FileUrlInfoType::kUrl:
-        [[fallthrough]];
-    case FileUrlInfoType::kRedirectedFileUrl:
         return d->vaultUrl();
+    case FileUrlInfoType::kRedirectedFileUrl:
+        return VaultHelper::vaultToLocalUrl(d->url);
     default:
         return AbstractFileInfo::urlOf(type);
     }
@@ -209,7 +209,7 @@ bool VaultFileInfo::canAttributes(const CanableInfoType type) const
 
         return !d->proxy || d->proxy->canAttributes(type);
     case FileCanType::kCanRedirectionFileUrl:
-        return !d->proxy || d->proxy->canAttributes(type);
+        return dptr->proxy;
     default:
         return AbstractFileInfo::canAttributes(type);
     }

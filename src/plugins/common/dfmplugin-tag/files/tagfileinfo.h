@@ -23,14 +23,12 @@ public:
 
     bool exists() const override;
     QFile::Permissions permissions() const override;
-    virtual bool isAttributes(const FileIsType type) const override;
 
     QString nameOf(const FileNameInfoType type) const override;
     virtual QString displayOf(const DisplayInfoType type) const override;
     FileType fileType() const override;
     QIcon fileIcon() override;
 
-    QString localFilePath() const;
     QString tagName() const;
 };
 
