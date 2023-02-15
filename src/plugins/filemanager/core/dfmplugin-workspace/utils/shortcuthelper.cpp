@@ -166,8 +166,24 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
         }
         break;
     case Qt::ControlModifier | Qt::ShiftModifier:
-        if (event->key() == Qt::Key_N) {
+        switch (event->key()) {
+        case Qt::Key_N:
             touchFolder();
+            return true;
+        case Qt::Key_I:
+            if (view->selectionMode() == FileView::SingleSelection)
+                return false;
+
+            auto urls = view->selectedUrlList();
+            if (urls.isEmpty())
+                return false;
+
+            QList<QUrl> list = view->model()->getCurrentDirFileUrls();
+            for (const QUrl &url : urls) {
+                list.removeAll(url);
+            }
+
+            view->selectFiles(list);
             return true;
         }
         break;
