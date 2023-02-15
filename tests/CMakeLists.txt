@@ -31,7 +31,7 @@ link_libraries(${GTEST_LIBRARIES} pthread stdc++fs)
 add_definitions(-DDEBUG_STUB_INVOKE)
 
 # 打桩工具
-set(TEST_UTILS_PATH "3rdparty/testutils")
+set(TEST_UTILS_PATH "${CMAKE_SOURCE_DIR}/3rdparty/testutils")
 file(GLOB CPP_STUB_SRC "${TEST_UTILS_PATH}/cpp-stub/*.h"
     "${TEST_UTILS_PATH}/cpp-stub/*.hpp"
     "${TEST_UTILS_PATH}/stub-ext/*.h"

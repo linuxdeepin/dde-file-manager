@@ -104,4 +104,4 @@ We encourage you to report issues and contribute changes
 
 ## License
 
-dde-file-manager is licensed under [GPLv3](LICENSE)
+dde-file-manager is licensed under [GPL-3.0-or-later](LICENSE)

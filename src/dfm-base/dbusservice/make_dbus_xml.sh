@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 export INTERFACES_PATH=../../plugins/desktop/core/ddplugin-dbusregister
 
 echo "-->make XML of DeviceManagerDBus"
