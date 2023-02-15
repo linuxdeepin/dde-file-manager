@@ -112,15 +112,14 @@ void FileDataHelper::doTravers(const int rootIndex)
             info->fileCache->disconnect();
             info->fileCache->deleteLater();
         }
-
         info->fileCache.reset(new FileDataCacheThread(info));
 
         connect(info->traversal.data(), &TraversalDirThread::updateChild,
                 info->fileCache.data(), &FileDataCacheThread::onHandleAddFile,
                 Qt::QueuedConnection);
         connect(info->traversal.data(), &TraversalDirThread::updateChildren,
-                this, [this, info](const QList<QUrl> &urls) {
-                    if (urls.isEmpty())
+                this, [this, info](QList<AbstractFileInfoPointer> children) {
+                    if (children.isEmpty())
                         this->model()->stateChanged(info->url, ModelState::kIdle);
                 });
         connect(info->traversal.data(), &QThread::finished,

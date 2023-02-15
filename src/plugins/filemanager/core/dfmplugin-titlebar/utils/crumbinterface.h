@@ -48,7 +48,7 @@ signals:
     void completionListTransmissionCompleted();   //< emit when all avaliable completions has been sent.
 
 private slots:
-    void onUpdateChildren(const QList<QUrl> &urlList);
+    void onUpdateChildren(QList<AbstractFileInfoPointer> children);
 
 private:
     QString curScheme;

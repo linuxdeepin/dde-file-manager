@@ -35,7 +35,7 @@ signals:
     void fileUpdated(const QUrl &url);
 protected slots:
     void traversalFinished();
-    void reset(QList<QUrl> children);
+    void reset(QList<AbstractFileInfoPointer> children);
     void insert(const QUrl &url);
     void remove(const QUrl &url);
     void rename(const QUrl &oldUrl, const QUrl &newUrl);

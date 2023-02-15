@@ -8,6 +8,8 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
+#include <dfm-io/core/denumerator.h>
+
 #include <QDirIterator>
 #include <QSharedPointer>
 
@@ -28,7 +30,7 @@ public:
     virtual ~LocalDirIterator() override;
     virtual QUrl next() override;
     virtual bool hasNext() const override;
-    virtual void close() override {}
+    virtual void close() override;
     virtual QString fileName() const override;
     virtual QUrl fileUrl() const override;
     virtual const AbstractFileInfoPointer fileInfo() const override;
@@ -39,6 +41,8 @@ public:
         Q_UNUSED(keyword);
         return false;
     }
+    void setArguments(const QMap<DFMIO::DEnumerator::ArgumentKey, QVariant> &argus);
+    QList<QSharedPointer<DFMIO::DEnumerator::SortFileInfo>> sortFileInfoList();
 };
 }
 

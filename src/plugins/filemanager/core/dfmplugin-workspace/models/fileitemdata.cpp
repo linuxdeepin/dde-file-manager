@@ -14,10 +14,11 @@ using namespace dfmbase;
 using namespace dfmbase::Global;
 using namespace dfmplugin_workspace;
 
-FileItemData::FileItemData(const QUrl &url, FileItemData *parent)
+FileItemData::FileItemData(const QUrl &url, const AbstractFileInfoPointer &info, FileItemData *parent)
     : QObject(parent),
       parent(parent),
-      info(InfoFactory::create<AbstractFileInfo>(url))
+      url(url),
+      info(info)
 {
 }
 
@@ -34,6 +35,8 @@ void FileItemData::refreshInfo()
 
 AbstractFileInfoPointer FileItemData::fileInfo() const
 {
+    if (!info)
+        const_cast<FileItemData *>(this)->info = InfoFactory::create<AbstractFileInfo>(url);
     return info;
 }
 
@@ -44,6 +47,9 @@ FileItemData *FileItemData::parentData() const
 
 QVariant FileItemData::data(int role) const
 {
+    if (!info)
+        const_cast<FileItemData *>(this)->info = InfoFactory::create<AbstractFileInfo>(url);
+
     if (info.isNull())
         return QVariant();
 

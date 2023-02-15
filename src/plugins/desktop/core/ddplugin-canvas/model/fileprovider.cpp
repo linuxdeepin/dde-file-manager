@@ -65,7 +65,6 @@ void FileProvider::refresh(QDir::Filters filters)
         traversalThread->disconnect(this);
         traversalThread->stopAndDeleteLater();
     }
-
     traversalThread.reset(new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags));
     if (Q_UNLIKELY(traversalThread.isNull()))
         return;
@@ -89,16 +88,22 @@ void FileProvider::removeFileFilter(QSharedPointer<FileFilter> filter)
     fileFilters.removeOne(filter);
 }
 
-void FileProvider::reset(QList<QUrl> children)
+void FileProvider::reset(QList<AbstractFileInfoPointer> children)
 {
     // desktop needs some file to show.
     // it has no file to show if don't emit refreshEnd when traversalFilter returns true .
+    QList<QUrl> urls;
+    for (const auto &info : children) {
+        if (!info)
+            continue;
+        urls.append(info->urlOf(UrlInfoType::kUrl));
+    }
     for (const auto &filter : fileFilters) {
-        if (filter->fileTraversalFilter(children))
+        if (filter->fileTraversalFilter(urls))
             qWarning() << "TraversalFilter returns true: it is invalid";
     }
 
-    emit refreshEnd(children);
+    emit refreshEnd(urls);
 }
 
 void FileProvider::traversalFinished()

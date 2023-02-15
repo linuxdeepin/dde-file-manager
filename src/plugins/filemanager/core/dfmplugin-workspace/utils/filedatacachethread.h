@@ -6,6 +6,7 @@
 #define FILEDATACACHETHREAD_H
 
 #include "dfmplugin_workspace_global.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QQueue>
 #include <QThread>
@@ -27,12 +28,13 @@ public:
     void stop();
 
     bool fileQueueEmpty();
-    QUrl dequeueFileQueue();
+    AbstractFileInfoPointer dequeueFileQueue();
 
     int childrenCount();
     bool containsChild(const QUrl &url);
 
-    void addChildren(const QList<QUrl> &urls);
+    void addChildren(const QList<AbstractFileInfoPointer> &children);
+    void addChildrenByUrl(const QList<QUrl> &children);
     void removeChildren(const QList<QUrl> &urls);
 
     FileItemData *getChild(int rowIndex);
@@ -41,7 +43,7 @@ public:
     void refreshChildren();
 
 public Q_SLOTS:
-    void onHandleAddFile(const QUrl url);
+    void onHandleAddFile(const AbstractFileInfoPointer child);
     void onHandleTraversalFinished();
 
 Q_SIGNALS:
@@ -54,7 +56,7 @@ private:
     QAtomicInteger<bool> isTraversalFinished { false };
     bool stoped { false };
 
-    QQueue<QUrl> fileQueue;
+    QQueue<AbstractFileInfoPointer> fileQueue;
 
     QMutex fileQueueMutex;
 

@@ -141,14 +141,13 @@ void CrumbInterface::cancelCompletionListTransmission()
         folderCompleterJobPointer->stop();
 }
 
-void CrumbInterface::onUpdateChildren(const QList<QUrl> &urlList)
+void CrumbInterface::onUpdateChildren(QList<AbstractFileInfoPointer> children)
 {
     QStringList list;
 
-    for (const QUrl &url : urlList) {
-        auto infoPointer = InfoFactory::create<AbstractFileInfo>(url);
-        if (infoPointer.data())
-            list.append(infoPointer->nameOf(NameInfoType::kFileName));
+    for (const auto &child : children) {
+        if (child.data())
+            list.append(child->nameOf(NameInfoType::kFileName));
     }
     emit completionFound(list);
 }

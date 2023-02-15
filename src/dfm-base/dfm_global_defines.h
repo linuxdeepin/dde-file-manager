@@ -49,6 +49,7 @@ enum class FileNotifyType : uint8_t {
 };
 
 enum ItemRoles {
+    kItemDisplayRole = Qt::DisplayRole,
     kItemIconRole = Qt::DecorationRole,
     kItemEditRole = Qt::EditRole,
     kItemToolTipRole = Qt::ToolTipRole,

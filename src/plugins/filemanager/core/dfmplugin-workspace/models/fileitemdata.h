@@ -17,7 +17,7 @@ namespace dfmplugin_workspace {
 class FileItemData : public QObject
 {
 public:
-    explicit FileItemData(const QUrl &url, FileItemData *parent = nullptr);
+    explicit FileItemData(const QUrl &url,const AbstractFileInfoPointer &info = nullptr, FileItemData *parent = nullptr);
 
     void setParentData(FileItemData *p);
 
@@ -29,7 +29,8 @@ public:
 
 private:
     FileItemData *parent;
-    AbstractFileInfoPointer info;
+    QUrl url;
+    AbstractFileInfoPointer info{ nullptr };
 };
 
 }

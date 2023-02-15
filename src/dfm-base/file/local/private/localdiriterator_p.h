@@ -41,6 +41,7 @@ public:
 
     void initQuerierAsyncCallback(bool succ, void *data);
     void cacheAttribute(const QUrl &url);
+    AbstractFileInfoPointer fileInfo();
 
 private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr;   // dfmio的文件迭代器

@@ -172,7 +172,7 @@ void RootInfo::doWatcherEvent()
         }
 
         if (event.second == kAddFile) {
-            fileCache->addChildren({ fileUrl });
+            fileCache->addChildrenByUrl({ fileUrl });
             Q_EMIT selectAndEditFile(url, fileUrl);
         } else {
             fileCache->removeChildren({ fileUrl });

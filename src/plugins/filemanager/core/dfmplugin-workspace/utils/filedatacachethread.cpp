@@ -42,11 +42,11 @@ bool FileDataCacheThread::fileQueueEmpty()
     return fileQueue.isEmpty();
 }
 
-QUrl FileDataCacheThread::dequeueFileQueue()
+AbstractFileInfoPointer FileDataCacheThread::dequeueFileQueue()
 {
     QMutexLocker lk(&fileQueueMutex);
     if (fileQueue.isEmpty())
-        return QUrl();
+        return AbstractFileInfoPointer{};
     return fileQueue.dequeue();
 }
 
@@ -62,11 +62,11 @@ bool FileDataCacheThread::containsChild(const QUrl &url)
     return chilrenDataMap.contains(url);
 }
 
-void FileDataCacheThread::onHandleAddFile(const QUrl url)
+void FileDataCacheThread::onHandleAddFile(const AbstractFileInfoPointer child)
 {
     {
         QMutexLocker lk(&fileQueueMutex);
-        fileQueue.enqueue(url);
+        fileQueue.enqueue(child);
     }
 
     if (!isRunning()) {
@@ -83,23 +83,23 @@ void FileDataCacheThread::onHandleTraversalFinished()
 
 void FileDataCacheThread::run()
 {
-    QUrl url;
-    QList<QUrl> needInsertList;
+    AbstractFileInfoPointer child;
+    QList<AbstractFileInfoPointer> needInsertList;
 
     while (!fileQueueEmpty() || !isTraversalFinished) {
         if (stoped)
             return;
 
-        url = dequeueFileQueue();
-        if (!url.isValid())
+        child = dequeueFileQueue();
+        if (!child)
             continue;
 
         if (!isTraversalFinished) {
-            addChildren({ url });
+            addChildren({ child });
         } else if (isTraversalFinished && !fileQueueEmpty()) {
-            needInsertList.append(url);
+            needInsertList.append(child);
         } else {
-            needInsertList.append(url);
+            needInsertList.append(child);
         }
     }
 
@@ -109,13 +109,49 @@ void FileDataCacheThread::run()
     Q_EMIT requestSetIdle();
 }
 
-void FileDataCacheThread::addChildren(const QList<QUrl> &urls)
+void FileDataCacheThread::addChildren(const QList<AbstractFileInfoPointer> &children)
 {
     int count = childrenCount();
 
-    for (QUrl url : urls) {
+    for (const auto &child : children) {
         if (stoped)
             return;
+
+        if (!child)
+            continue;
+
+        auto url = child->urlOf(dfmbase::UrlInfoType::kUrl);
+        url.setPath(url.path());
+
+        if (containsChild(url))
+            continue;
+
+        FileItemData *data = new FileItemData(url, child);
+        data->setParentData(root->data);
+
+        root->insert(root->rowIndex, count, 1);
+
+        QWriteLocker lk(&childrenLock);
+        childrenUrlList.append(url);
+        chilrenDataMap.insert(url, data);
+        lk.unlock();
+
+        root->insertFinish();
+
+        ++count;
+    }
+}
+
+void FileDataCacheThread::addChildrenByUrl(const QList<QUrl> &children)
+{
+    int count = childrenCount();
+
+    for (auto url : children) {
+        if (stoped)
+            return;
+
+        if (!url.isValid())
+            continue;
 
         url.setPath(url.path());
 

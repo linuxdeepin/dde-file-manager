@@ -15,6 +15,7 @@
 #include <QFile>
 #include <QMimeType>
 #include <QVariant>
+#include <QMetaType>
 
 class QDir;
 class QDateTime;
@@ -278,6 +279,7 @@ using TimeInfoType = AbstractFileInfo::FileTimeType;
 using OptInfoType = AbstractFileInfo::FileIsType;
 using CanableInfoType = AbstractFileInfo::FileCanType;
 }
-Q_DECLARE_METATYPE(AbstractFileInfoPointer)
+Q_DECLARE_METATYPE(AbstractFileInfoPointer);
+Q_DECLARE_METATYPE(QList<AbstractFileInfoPointer>);
 
 #endif   // ABSTRACTFILEINFO_H

@@ -11,7 +11,6 @@
 #include "dfm-base/utils/fileutils.h"
 
 #include <dfm-io/local/dlocalenumerator.h>
-#include <dfm-io/core/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
 
 #include <functional>
@@ -100,6 +99,29 @@ void LocalDirIteratorPrivate::cacheAttribute(const QUrl &url)
     dfileInfo->initQuerierAsync(0, func, op);
 }
 
+AbstractFileInfoPointer LocalDirIteratorPrivate::fileInfo()
+{
+    auto fileinfo = dfmioDirIterator->fileInfo();
+    auto url = dfmioDirIterator->next();
+    QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(url, fileinfo));
+    auto infoTrans = InfoFactory::transfromInfo<AbstractFileInfo>(url.scheme(), info);
+
+    const QString &fileName = fileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
+    bool isHidden = false;
+    if (fileName.startsWith(".")) {
+        isHidden = true;
+    } else {
+        isHidden = hideFileList.contains(fileName);
+    }
+    infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
+    infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, isLocalDevice);
+    infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
+
+    emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+
+    return infoTrans;
+}
+
 /*!
  * @class LocalDirIterator 本地（即和系统盘在同一个磁盘的目录）文件迭代器类
  *
@@ -136,23 +158,16 @@ QUrl LocalDirIterator::next()
  */
 bool LocalDirIterator::hasNext() const
 {
-    if (d->dfmioDirIterator) {
-        bool has = d->dfmioDirIterator->hasNext();
-        if (has) {
-            const QUrl &urlNext = d->dfmioDirIterator->next();
-            const bool needCache = !InfoCacheController::instance().cacheDisable(urlNext.scheme());
-            if (needCache) {
-                AbstractFileInfoPointer infoCache = InfoCacheController::instance().getCacheInfo(urlNext);
-                if (!infoCache)
-                    // cache info
-                    d->cacheAttribute(urlNext);
-            }
-        }
-
-        return has;
-    }
+    if (d->dfmioDirIterator)
+        return d->dfmioDirIterator->hasNext();
 
     return false;
+}
+
+void LocalDirIterator::close()
+{
+    if (d->dfmioDirIterator)
+        d->dfmioDirIterator->cancel();
 }
 /*!
  * \brief fileName 获取文件迭代器当前文件的文件名称
@@ -192,7 +207,7 @@ QUrl LocalDirIterator::fileUrl() const
  **/
 const AbstractFileInfoPointer LocalDirIterator::fileInfo() const
 {
-    return InfoFactory::create<AbstractFileInfo>(fileUrl());
+    return d->fileInfo();
 }
 /*!
  * \brief url 获取文件迭代器的基本文件路径的url
@@ -210,9 +225,23 @@ QUrl LocalDirIterator::url() const
 void LocalDirIterator::cacheBlockIOAttribute()
 {
     const QUrl &rootUrl = this->url();
-    const QUrl &url = DFMIO::DFMUtils::buildFilePath(rootUrl.toString().toStdString().c_str(), ".hidden", nullptr);
-    d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
+    // Only the files in the local directory can go back to read the.
+    // hide file to determine whether it is hidden. Other directories can read
+    if (FileUtils::isLocalDevice(rootUrl)) {
+        const QUrl &url = DFMIO::DFMUtils::buildFilePath(rootUrl.toString().toStdString().c_str(), ".hidden", nullptr);
+        d->hideFileList = DFMIO::DFMUtils::hideListFromUrl(url);
+    }
 
     d->isLocalDevice = FileUtils::isLocalDevice(rootUrl);
     d->isCdRomDevice = FileUtils::isCdRomDevice(rootUrl);
+}
+
+void LocalDirIterator::setArguments(const QMap<dfmio::DEnumerator::ArgumentKey, QVariant> &argus)
+{
+    d->dfmioDirIterator->setArguments(argus);
+}
+
+QList<QSharedPointer<DEnumerator::SortFileInfo> > LocalDirIterator::sortFileInfoList()
+{
+    return d->dfmioDirIterator->sortFileInfoList();
 }
