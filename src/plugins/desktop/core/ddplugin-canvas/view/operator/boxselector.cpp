@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "boxselecter.h"
+#include "boxselector.h"
 #include "canvasmanager.h"
 #include "view/canvasview_p.h"
 #include "model/canvasselectionmodel.h"
@@ -13,18 +13,19 @@
 #include <QMouseEvent>
 #include <QEvent>
 #include <QApplication>
+#include <QPainter>
 #include <QDebug>
 
 using namespace ddplugin_canvas;
-class BoxSelecterGlobal : public BoxSelecter{};
-Q_GLOBAL_STATIC(BoxSelecterGlobal, boxSelecterGlobal)
+class BoxSelectorGlobal : public BoxSelector{};
+Q_GLOBAL_STATIC(BoxSelectorGlobal, boxSelectorGlobal)
 
-BoxSelecter *BoxSelecter::instance()
+BoxSelector *BoxSelector::instance()
 {
-    return boxSelecterGlobal;
+    return boxSelectorGlobal;
 }
 
-void BoxSelecter::beginSelect(const QPoint &globalPos, bool autoSelect)
+void BoxSelector::beginSelect(const QPoint &globalPos, bool autoSelect)
 {
     begin = globalPos;
     end = globalPos;
@@ -34,34 +35,34 @@ void BoxSelecter::beginSelect(const QPoint &globalPos, bool autoSelect)
         qApp->installEventFilter(this);
 }
 
-void BoxSelecter::setAcvite(bool ac)
+void BoxSelector::setAcvite(bool ac)
 {
     if (ac == active)
         return;
 
     active = ac;
-    emit changed();
+    delayUpdate();
 }
 
-void BoxSelecter::setBegin(const QPoint &globalPos)
+void BoxSelector::setBegin(const QPoint &globalPos)
 {
     if (globalPos == begin)
         return;
 
     begin = globalPos;
-    emit changed();
+    delayUpdate();
 }
 
-void BoxSelecter::setEnd(const QPoint &globalPos)
+void BoxSelector::setEnd(const QPoint &globalPos)
 {
     if (globalPos == end)
         return;
 
     end = globalPos;
-    emit changed();
+    delayUpdate();
 }
 
-QRect BoxSelecter::validRect(CanvasView *w) const
+QRect BoxSelector::validRect(CanvasView *w) const
 {
     QRect selectRect;
     if (!w)
@@ -76,7 +77,7 @@ QRect BoxSelecter::validRect(CanvasView *w) const
     return clipRect(selectRect, innerGeometry(w));
 }
 
-QRect BoxSelecter::globalRect() const
+QRect BoxSelector::globalRect() const
 {
     QRect selectRect;
     selectRect.setLeft(qMin(end.x(), begin.x()));
@@ -87,7 +88,7 @@ QRect BoxSelecter::globalRect() const
     return selectRect;
 }
 
-QRect BoxSelecter::clipRect(QRect rect, const QRect &geometry) const
+QRect BoxSelector::clipRect(QRect rect, const QRect &geometry) const
 {
     if (rect.left() < geometry.left())
         rect.setLeft(geometry.left());
@@ -104,7 +105,7 @@ QRect BoxSelecter::clipRect(QRect rect, const QRect &geometry) const
     return rect;
 }
 
-bool BoxSelecter::isBeginFrom(CanvasView *w)
+bool BoxSelector::isBeginFrom(CanvasView *w)
 {
     if (!w)
         return false;
@@ -113,30 +114,32 @@ bool BoxSelecter::isBeginFrom(CanvasView *w)
     return innerGeometry(w).contains(w->mapFromGlobal(begin));
 }
 
-void BoxSelecter::endSelect()
+void BoxSelector::endSelect()
 {
     if (!active)
         return;
 
     active = false;
     qApp->removeEventFilter(this);
-    emit changed();
+
+    // hide rubber band if update timer is not active.
+    if (!updateTimer.isActive())
+        updateRubberBand();
 }
 
-BoxSelecter::BoxSelecter(QObject *parent) : QObject(parent)
+BoxSelector::BoxSelector(QObject *parent) : QObject(parent)
 {
-
+    connect(&updateTimer, &QTimer::timeout, this, &BoxSelector::update);
+    updateTimer.setSingleShot(true);
 }
 
-bool BoxSelecter::eventFilter(QObject *watched, QEvent *event)
+bool BoxSelector::eventFilter(QObject *watched, QEvent *event)
 {
-    if (active) {
+    if (active && qobject_cast<QWidget *>(watched)) {
         switch (event->type()) {
         case QEvent::MouseButtonRelease:
         {
             endSelect();
-            // using queue event to prevent disrupting the event cycle
-            QMetaObject::invokeMethod(this, "changed", Qt::QueuedConnection);
         }
             break;
         case QEvent::MouseMove:
@@ -144,13 +147,9 @@ bool BoxSelecter::eventFilter(QObject *watched, QEvent *event)
             QMouseEvent *e = dynamic_cast<QMouseEvent *>(event);
             if (Q_LIKELY(e->buttons().testFlag(Qt::LeftButton))) {
                 end = e->globalPos();
-                updateSelection();
-                updateCurrentIndex();
-                QMetaObject::invokeMethod(this, "changed", Qt::QueuedConnection);
+                delayUpdate();
             } else {
                 endSelect();
-                // using queue event to prevent disrupting the event cycle
-                QMetaObject::invokeMethod(this, "changed", Qt::QueuedConnection);
             }
         }
             break;
@@ -162,12 +161,74 @@ bool BoxSelecter::eventFilter(QObject *watched, QEvent *event)
     return QObject::eventFilter(watched, event);
 }
 
-QRect BoxSelecter::innerGeometry(QWidget *w) const
+void BoxSelector::delayUpdate()
+{
+    if (!updateTimer.isActive()) {
+        int count = CanvasIns->selectionModel()->selectedIndexesCache().size();
+        count = qMin(qMax(1, (count / 5)), 15);
+        // update interval is more than 1ms and less than 10ms.
+        updateTimer.start(count);
+    }
+
+    return;
+}
+
+QRect BoxSelector::innerGeometry(QWidget *w) const
 {
     return QRect(QPoint(0, 0), w->size());
 }
 
-void BoxSelecter::updateSelection()
+void BoxSelector::update()
+{
+    updateSelection();
+    updateCurrentIndex();
+    updateRubberBand();
+}
+
+#if 0
+// the delay update will generate dirty area by drawing self
+// becase view also uses end pos to draw rubber band that its rect is not recorded in BoxSelector
+// it only directly update if using this solution. relate to ViewPainter::drawSelectRect()
+void BoxSelector::updateRubberBand()
+{
+    auto views = CanvasIns->views();
+    for (QSharedPointer<CanvasView> view : views) {
+        // limit only select on single view
+        if (!isBeginFrom(view.get()))
+            continue;
+
+        auto selectRect = validRect(view.get());
+        if (rubberBand.isValid()) {
+            view->update(selectRect.united(rubberBand).marginsAdded(QMargins(1, 1, 1, 1)));
+        } else {
+            view->update(selectRect.marginsAdded(QMargins(1, 1, 1, 1)));
+        }
+
+        rubberBand = selectRect;
+    }
+
+    if (!active)
+        rubberBand = QRect();
+}
+#else
+void BoxSelector::updateRubberBand()
+{
+    auto views = CanvasIns->views();
+    for (QSharedPointer<CanvasView> view : views) {
+        // limit only select on single view
+        if (!isBeginFrom(view.get()))
+            continue;
+
+        auto selectRect = validRect(view.get());
+        rubberBand.touch(view.get());
+        rubberBand.setGeometry(selectRect);
+    }
+
+    rubberBand.setVisible(active);
+}
+#endif
+
+void BoxSelector::updateSelection()
 {
     auto selectModel = CanvasIns->selectionModel();
     Q_ASSERT(selectModel);
@@ -183,7 +244,7 @@ void BoxSelecter::updateSelection()
         selectModel->select(rectSelection, QItemSelectionModel::ClearAndSelect);
 }
 
-void BoxSelecter::updateCurrentIndex()
+void BoxSelector::updateCurrentIndex()
 {
     auto views = CanvasIns->views();
     for (QSharedPointer<CanvasView> view : views) {
@@ -214,7 +275,7 @@ void BoxSelecter::updateCurrentIndex()
     }
 }
 
-void BoxSelecter::selection(QItemSelection *newSelection)
+void BoxSelector::selection(QItemSelection *newSelection)
 {
     QItemSelection allSelection;
     auto views = CanvasIns->views();
@@ -232,7 +293,7 @@ void BoxSelecter::selection(QItemSelection *newSelection)
     *newSelection = allSelection;
 }
 
-void BoxSelecter::selection(CanvasView *w, const QRect &rect, QItemSelection *newSelection)
+void BoxSelector::selection(CanvasView *w, const QRect &rect, QItemSelection *newSelection)
 {
     if (!w || !newSelection || !rect.isValid())
         return;
@@ -264,4 +325,50 @@ void BoxSelecter::selection(CanvasView *w, const QRect &rect, QItemSelection *ne
     }
 
     *newSelection = rectSelection;
+}
+
+RubberBand::RubberBand() : QWidget()
+{
+    setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_InputMethodEnabled);
+    setAutoFillBackground(false);
+}
+
+void RubberBand::touch(QWidget *w)
+{
+    auto old = parentWidget();
+    if (old == w)
+        return;
+
+    if (old)
+        disconnect(old, &QWidget::destroyed, this, &RubberBand::onParentDestroyed);
+
+    setParent(w);
+
+    if (w) {
+        connect(w, &QWidget::destroyed, this, &RubberBand::onParentDestroyed);
+        this->lower(); // set self to bottom of w;
+    }
+
+    hide();
+}
+
+void RubberBand::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    QStyleOptionRubberBand opt;
+    opt.initFrom(this);
+    opt.shape = QRubberBand::Rectangle;
+    opt.opaque = false;
+    opt.rect = event->rect();
+    style()->drawControl(QStyle::CE_RubberBand, &opt, &painter);
+}
+
+void RubberBand::onParentDestroyed(QObject *p)
+{
+    if (parentWidget() == p) {
+        setParent(nullptr);
+        hide();
+    }
 }

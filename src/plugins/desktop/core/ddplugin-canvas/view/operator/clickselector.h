@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CLICKSELECTER_H
-#define CLICKSELECTER_H
+#ifndef CLICKSELECTOR_H
+#define CLICKSELECTOR_H
+
 #include "ddplugin_canvas_global.h"
 
 #include <QObject>
@@ -11,11 +12,11 @@
 
 namespace ddplugin_canvas {
 class CanvasView;
-class ClickSelecter : public QObject
+class ClickSelector : public QObject
 {
     Q_OBJECT
 public:
-    explicit ClickSelecter(CanvasView *parent);
+    explicit ClickSelector(CanvasView *parent);
     void click(const QModelIndex &index);
     void release(const QModelIndex &index);
 signals:
@@ -37,4 +38,4 @@ protected:
     QPersistentModelIndex toggleIndex;
 };
 }
-#endif // CLICKSELECTER_H
+#endif // CLICKSELECTOR_H

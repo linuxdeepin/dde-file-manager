@@ -10,8 +10,8 @@
 #include "watermask/watermaskframe.h"
 #include "model/canvasproxymodel.h"
 #include "model/canvasselectionmodel.h"
-#include "operator/clickselecter.h"
-#include "operator/keyselecter.h"
+#include "operator/clickselector.h"
+#include "operator/keyselector.h"
 #include "operator/operstate.h"
 #include "operator/dragdropoper.h"
 #include "operator/dodgeoper.h"
@@ -56,8 +56,8 @@ public:
     void updateGridSize(const QSize &viewSize, const QMargins &geometryMargins, const QSize &itemSize);
     QMargins calcMargins(const QSize &inSize, const QSize &outSize);
     QRect visualRect(const QPoint &gridPos) const;
-    QRect visualRect(const QString &item) const;
     QString visualItem(const QPoint &gridPos) const;
+    bool itemGridpos(const QString &item, QPoint &gridPos) const;
     bool isEmptyArea(const QPoint &pos) const;
     bool isWaterMaskOn();
 public:
@@ -83,10 +83,6 @@ public:
         return QPoint(row, col);
     }
 
-    inline QRect itemRect(const QString &item) const {
-        return visualRect(item).marginsRemoved(gridMargins);
-    }
-
     QRect itemRect(const QPoint &gridPos) const {
         return visualRect(gridPos).marginsRemoved(gridMargins);
     }
@@ -94,6 +90,7 @@ public:
     inline OperState &operState() {
         return state;
     }
+
 public: // 绘制扩展的特殊处理
     static inline QMargins gridMarginsHelper(CanvasView *view){
         QMargins margins(0, 0, 0, 0);
@@ -111,8 +108,8 @@ public:
     QMargins gridMargins;  // grid inner margin.
     QMargins viewMargins;  // view margin is to decrease canvas rect on view.
 
-    ClickSelecter *clickSelecter;
-    KeySelecter *keySelecter;
+    ClickSelector *clickSelector;
+    KeySelector *keySelector;
     DragDropOper *dragDropOper;
     DodgeOper *dodgeOper;
     ShortcutOper *shortcutOper;

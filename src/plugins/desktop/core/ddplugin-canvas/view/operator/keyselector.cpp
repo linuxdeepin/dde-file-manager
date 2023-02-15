@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "keyselecter.h"
+#include "keyselector.h"
 #include "model/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
 #include "utils/keyutil.h"
@@ -13,16 +13,16 @@
 
 using namespace ddplugin_canvas;
 
-KeySelecter::KeySelecter(CanvasView *parent)
-    : ClickSelecter(parent)
+KeySelector::KeySelector(CanvasView *parent)
+    : ClickSelector(parent)
 {
     searchTimer = new QTimer(this);
     searchTimer->setSingleShot(true);
     searchTimer->setInterval(200);
-    connect(searchTimer, &QTimer::timeout, this, &KeySelecter::clearSearchKey);
+    connect(searchTimer, &QTimer::timeout, this, &KeySelector::clearSearchKey);
 }
 
-void KeySelecter::keyPressed(QKeyEvent *event)
+void KeySelector::keyPressed(QKeyEvent *event)
 {
     // Do not allow move when hold ctrl.
     // todo(zy) why?
@@ -44,10 +44,11 @@ void KeySelecter::keyPressed(QKeyEvent *event)
         singleSelect(newCurrent);
     }
 
-    view->update();
+    //! update whole view area is low performance
+    //view->update();
 }
 
-QList<Qt::Key> KeySelecter::filterKeys() const
+QList<Qt::Key> KeySelector::filterKeys() const
 {
         QList<Qt::Key> filter = {
         Qt::Key_Down,
@@ -65,7 +66,7 @@ QList<Qt::Key> KeySelecter::filterKeys() const
     return filter;
 }
 
-void KeySelecter::keyboardSearch(const QString &search)
+void KeySelector::keyboardSearch(const QString &search)
 {
     if (search.isEmpty())
         return;
@@ -84,7 +85,7 @@ void KeySelecter::keyboardSearch(const QString &search)
     searchTimer->start();
 }
 
-QPersistentModelIndex KeySelecter::moveCursor(QKeyEvent *event) const
+QPersistentModelIndex KeySelector::moveCursor(QKeyEvent *event) const
 {
     QPersistentModelIndex newCurrent;
     switch (event->key()) {
@@ -124,7 +125,7 @@ QPersistentModelIndex KeySelecter::moveCursor(QKeyEvent *event) const
     return newCurrent;
 }
 
-void KeySelecter::singleSelect(const QModelIndex &index)
+void KeySelector::singleSelect(const QModelIndex &index)
 {
     auto &state = view->d->operState();
     view->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
@@ -132,7 +133,7 @@ void KeySelecter::singleSelect(const QModelIndex &index)
     state.setContBegin(index);
 }
 
-void KeySelecter::incrementSelect(const QModelIndex &index)
+void KeySelector::incrementSelect(const QModelIndex &index)
 {
     if (!index.isValid())
         return;
@@ -142,7 +143,7 @@ void KeySelecter::incrementSelect(const QModelIndex &index)
     state.setContBegin(index);
 }
 
-void KeySelecter::clearSearchKey()
+void KeySelector::clearSearchKey()
 {
     searchKeys.clear();
 }

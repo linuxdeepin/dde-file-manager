@@ -5,6 +5,9 @@
 #include "operstate.h"
 #include "view/canvasview.h"
 #include "model/canvasselectionmodel.h"
+#include "delegate/canvasitemdelegate.h"
+
+#include <QDebug>
 
 using namespace ddplugin_canvas;
 
@@ -15,10 +18,7 @@ OperState::OperState(QObject *parent) : QObject(parent)
 
 void OperState::setView(CanvasView *v)
 {
-    if (view = v) {
-        connect(view->selectionModel(), &CanvasSelectionModel::selectionChanged,
-                this, &OperState::selectionChanged);
-    }
+    view = v;
 }
 
 QModelIndex OperState::current() const
@@ -31,8 +31,35 @@ void OperState::setCurrent(const QModelIndex &value)
     view->setCurrentIndex(value);
 }
 
-void OperState::selectionChanged()
+void OperState::updateExpendedItem()
 {
+    // update last expended item to clear
+    if (lastExpened.isValid()) {
+        // old update expended area
+        auto r = view->expendedVisualRect(lastExpened);
+        if (r.isValid())
+            view->update(r.marginsAdded(QMargins(1, 1, 1, 1)));
+    }
+
+    // reset to null
+    QModelIndex newIndex;
+
+    // update current expended item
+    if (view->itemDelegate()->mayExpand(&newIndex)) {
+        // update expended area
+        auto r = view->expendedVisualRect(newIndex);
+        if (r.isValid())
+            view->update(r.marginsAdded(QMargins(1, 1, 1, 1)));
+    }
+
+    lastExpened = newIndex;
+}
+
+void OperState::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    Q_UNUSED(selected);
+    Q_UNUSED(deselected);
+
     if (Q_UNLIKELY(!view))
         return;
 
@@ -46,17 +73,18 @@ void OperState::selectionChanged()
         if (contBegin.isValid() && !model->isSelected(contBegin))
             contBegin = QModelIndex();
 
+        auto indexs = model->selectedIndexesCache();
         // automatically set the first selected index to current index .
-        if (!focus.isValid() && !model->selectedIndexesCache().isEmpty()) {
-            setCurrent(model->selectedIndexesCache().first());
+        if (!focus.isValid() && !indexs.isEmpty()) {
+            setCurrent(indexs.first());
             if (!contBegin.isValid())
                 contBegin = current();
         }
-    }
 
-    //! when selection changed, we need to update all view.
-    //! otherwise the expanded text will partly remain.
-    view->update();
+        //! when selection changed, we need to update the expended item.
+        //! otherwise the expanded text will partly remain or not expend.
+        updateExpendedItem();
+    }
 }
 
 

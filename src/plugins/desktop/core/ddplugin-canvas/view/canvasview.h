@@ -12,8 +12,8 @@
 namespace ddplugin_canvas {
 class ShortcutOper;
 class DragDropOper;
-class ClickSelecter;
-class KeySelecter;
+class ClickSelector;
+class KeySelector;
 class CanvasViewMenuProxy;
 class CanvasProxyModel;
 class CanvasSelectionModel;
@@ -26,9 +26,9 @@ class CanvasView : public QAbstractItemView
     friend class ShortcutOper;
     friend class DragDropOper;
     friend class DodgeOper;
-    friend class BoxSelecter;
-    friend class ClickSelecter;
-    friend class KeySelecter;
+    friend class BoxSelector;
+    friend class ClickSelector;
+    friend class KeySelector;
     friend class ViewPainter;
     friend class CanvasViewMenuProxy;
     friend class CanvasViewBroker;
@@ -52,6 +52,7 @@ public:
     virtual void keyboardSearch(const QString &search) override;
     virtual void setSelectionModel(QItemSelectionModel *selectionModel) override;
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
+    QRect expendedVisualRect(const QModelIndex &index) const;
     QVariant inputMethodQuery(Qt::InputMethodQuery query) const override;
     WId winId() const;
 
@@ -71,6 +72,7 @@ public Q_SLOTS:
     void selectAll() override;
 protected Q_SLOTS:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 protected:
     QRect itemRect(const QModelIndex &index) const;
 

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "clickselecter.h"
+#include "clickselector.h"
 #include "model/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
 #include "utils/keyutil.h"
@@ -10,14 +10,14 @@
 
 using namespace ddplugin_canvas;
 
-ClickSelecter::ClickSelecter(CanvasView *parent)
+ClickSelector::ClickSelector(CanvasView *parent)
     : QObject(parent)
     , view(parent)
 {
 
 }
 
-void ClickSelecter::click(const QModelIndex &index)
+void ClickSelector::click(const QModelIndex &index)
 {
     bool ctrl = isCtrlPressed();
     bool shift = isShiftPressed();
@@ -35,11 +35,11 @@ void ClickSelecter::click(const QModelIndex &index)
         else
             singleSelect(index);
     }
-
-    view->update();
+    //! update whole view area is low performance
+    //view->update();
 }
 
-void ClickSelecter::release(const QModelIndex &index)
+void ClickSelector::release(const QModelIndex &index)
 {
     if (!index.isValid())
         return;
@@ -57,11 +57,11 @@ void ClickSelecter::release(const QModelIndex &index)
             view->d->operState().setCurrent(lastPressedIndex);
         }
     }
-
-    view->update();
+    //! update whole view area is low performance
+    //view->update();
 }
 
-void ClickSelecter::order(const QPoint &p1, const QPoint &p2, QPoint &from, QPoint &to)
+void ClickSelector::order(const QPoint &p1, const QPoint &p2, QPoint &from, QPoint &to)
 {
     // the begin pos is what y is smaller than another.
     if (p1.y() < p2.y()) {
@@ -81,7 +81,7 @@ void ClickSelecter::order(const QPoint &p1, const QPoint &p2, QPoint &from, QPoi
     }
 }
 
-QList<QPoint> ClickSelecter::horizontalTraversal(const QPoint &from, const QPoint &to, const QSize &gridSize)
+QList<QPoint> ClickSelector::horizontalTraversal(const QPoint &from, const QPoint &to, const QSize &gridSize)
 {
     QList<QPoint> pos;
     int x = from.x();
@@ -99,7 +99,7 @@ QList<QPoint> ClickSelecter::horizontalTraversal(const QPoint &from, const QPoin
     return pos;
 }
 
-void ClickSelecter::clear()
+void ClickSelector::clear()
 {
     view->selectionModel()->clear();
     OperState &state = view->d->operState();
@@ -107,7 +107,7 @@ void ClickSelecter::clear()
     state.setContBegin(QModelIndex());
 }
 
-void ClickSelecter::expandSelect(const QModelIndex &index)
+void ClickSelector::expandSelect(const QModelIndex &index)
 {
     if (view->selectionModel()->isSelected(index))
         toggleIndex = index; // to deselect it after mouse release
@@ -122,7 +122,7 @@ void ClickSelecter::expandSelect(const QModelIndex &index)
     }
 }
 
-void ClickSelecter::singleSelect(const QModelIndex &index)
+void ClickSelector::singleSelect(const QModelIndex &index)
 {
     auto model = view->selectionModel();
     if (!model->isSelected(index)) {
@@ -138,7 +138,7 @@ void ClickSelecter::singleSelect(const QModelIndex &index)
     state.setContBegin(index);
 }
 
-void ClickSelecter::continuesSelect(const QModelIndex &index)
+void ClickSelector::continuesSelect(const QModelIndex &index)
 {
     OperState &state = view->d->operState();
 
@@ -161,7 +161,7 @@ void ClickSelecter::continuesSelect(const QModelIndex &index)
     }
 }
 
-void ClickSelecter::traverseSelect(const QModelIndex &from, const QModelIndex &to)
+void ClickSelector::traverseSelect(const QModelIndex &from, const QModelIndex &to)
 {
     auto model = view->model();
     auto item1 = model->fileUrl(from).toString();
@@ -192,7 +192,7 @@ void ClickSelecter::traverseSelect(const QModelIndex &from, const QModelIndex &t
     traverseSelect(pos1.second, pos2.second);
 }
 
-void ClickSelecter::traverseSelect(const QPoint &p1, const QPoint &p2)
+void ClickSelector::traverseSelect(const QPoint &p1, const QPoint &p2)
 {
     QPoint from;
     QPoint to;

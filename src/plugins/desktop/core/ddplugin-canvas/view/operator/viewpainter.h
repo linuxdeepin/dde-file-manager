@@ -37,10 +37,7 @@ public:
     void paintFiles(QStyleOptionViewItem option, QPaintEvent *event);
     void drawGirdInfos();
     void drawFile(QStyleOptionViewItem option, const QModelIndex &index, const QPoint &gridPos);
-    void drawSelectRect();
-
     void drawDodge(QStyleOptionViewItem option);
-    void drawDragMove(QStyleOptionViewItem &option);
     static QPixmap polymerize(QModelIndexList indexs, CanvasViewPrivate *d);
 protected:
     static void drawDragText(QPainter *painter, const QString &str, const QRect &rect);

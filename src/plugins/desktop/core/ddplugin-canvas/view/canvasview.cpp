@@ -4,7 +4,7 @@
 
 #include "displayconfig.h"
 #include "view/canvasview_p.h"
-#include "operator/boxselecter.h"
+#include "operator/boxselector.h"
 #include "operator/viewpainter.h"
 #include "delegate/canvasitemdelegate.h"
 #include "grid/canvasgrid.h"
@@ -35,7 +35,13 @@ CanvasView::CanvasView(QWidget *parent)
 
 QRect CanvasView::visualRect(const QModelIndex &index) const
 {
-    return d->visualRect(model()->fileUrl(index).toString());
+    auto item = model()->fileUrl(index).toString();
+    QPoint gridPos;
+    if (d->itemGridpos(item, gridPos))
+        return d->visualRect(gridPos);
+
+    // the index is not on this.
+    return QRect();
 }
 
 void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -210,9 +216,9 @@ void CanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionF
     //qWarning() << __FUNCTION__ << "do not using this" << rect.normalized();
     return;
 
-    QItemSelection selection;
-    BoxSelIns->selection(this, rect.normalized(), &selection);
-    selectionModel()->select(selection, command);
+//    QItemSelection selection;
+//    BoxSelIns->selection(this, rect.normalized(), &selection);
+//    selectionModel()->select(selection, command);
 }
 
 QRegion CanvasView::visualRegionForSelection(const QItemSelection &selection) const
@@ -227,7 +233,7 @@ QRegion CanvasView::visualRegionForSelection(const QItemSelection &selection) co
 
 void CanvasView::keyboardSearch(const QString &search)
 {
-    d->keySelecter->keyboardSearch(search);
+    d->keySelector->keyboardSearch(search);
 }
 
 void CanvasView::setSelectionModel(QItemSelectionModel *selectionModel)
@@ -243,9 +249,38 @@ QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
     if (!index.isValid())
         return {};
 
+    auto item = model()->fileUrl(index).toString();
+    QPoint gridPos;
+    if (!d->itemGridpos(item, gridPos))
+        return {};
+
     QStyleOptionViewItem option = viewOptions();
-    option.rect = itemRect(index);
+    option.rect = d->itemRect(gridPos);
     return itemDelegate()->paintGeomertys(option, index);
+}
+
+QRect CanvasView::expendedVisualRect(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return {};
+
+    QRect visRect;
+    auto item = model()->fileUrl(index).toString();
+    QPoint gridPos;
+    if (!d->itemGridpos(item, gridPos))
+        return visRect;
+
+    visRect = d->visualRect(gridPos);
+
+    QStyleOptionViewItem option = viewOptions();
+    option.rect = d->itemRect(gridPos);
+    option.rect = itemDelegate()->expendedGeomerty(option, index);
+
+    // expend
+    if (visRect.bottom() < option.rect.bottom())
+        visRect.setBottom(option.rect.bottom());
+
+    return visRect;
 }
 
 QVariant CanvasView::inputMethodQuery(Qt::InputMethodQuery query) const
@@ -284,12 +319,6 @@ void CanvasView::paintEvent(QPaintEvent *event)
         painter.drawDodge(option);
         painter.paintFiles(option, event);
     }
-
-    // 绘制选中区域
-    painter.drawSelectRect();
-
-    // todo: 拖动绘制
-    painter.drawDragMove(option);
 }
 
 void CanvasView::contextMenuEvent(QContextMenuEvent *event)
@@ -553,9 +582,23 @@ void CanvasView::currentChanged(const QModelIndex &current, const QModelIndex &p
         setAttribute(Qt::WA_InputMethodEnabled, true);
 }
 
+void CanvasView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    // update selected and deselected item
+    QAbstractItemView::selectionChanged(selected, deselected);
+
+    // update selection state.
+    d->operState().selectionChanged(selected, deselected);
+}
+
 QRect CanvasView::itemRect(const QModelIndex &index) const
 {
-    return d->itemRect(model()->fileUrl(index).toString());
+    auto item = model()->fileUrl(index).toString();
+    QPoint gridPos;
+    if (d->itemGridpos(item, gridPos))
+        return d->itemRect(gridPos);
+
+    return QRect();
 }
 
 void CanvasView::keyPressEvent(QKeyEvent *event)
@@ -563,8 +606,8 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
     if (d->hookIfs->keyPress(screenNum(), event->key(), event->modifiers()))
         return;
 
-    if (d->keySelecter->filterKeys().contains(static_cast<Qt::Key>(event->key()))) {
-        d->keySelecter->keyPressed(event);
+    if (d->keySelector->filterKeys().contains(static_cast<Qt::Key>(event->key()))) {
+        d->keySelector->keyPressed(event);
         return;
     } else if (d->shortcutOper->keyPressed(event)) {
         return;
@@ -585,7 +628,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
         setState(DragSelectingState);
     }
 
-    d->clickSelecter->click(index);
+    d->clickSelector->click(index);
 }
 
 void CanvasView::mouseMoveEvent(QMouseEvent *event)
@@ -601,7 +644,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
         return;
 
     auto releaseIndex = indexAt(event->pos());
-    d->clickSelecter->release(releaseIndex);
+    d->clickSelector->release(releaseIndex);
 }
 
 void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
@@ -677,7 +720,6 @@ void CanvasView::initUI()
     delegate->setIconLevel(DispalyIns->iconLevel());
 
     // repaint when selecting with mouse move.
-    connect(BoxSelIns, &BoxSelecter::changed, this, static_cast<void (CanvasView::*)()>(&CanvasView::update));
     connect(qApp, &QApplication::fontChanged, this, &CanvasView::updateGrid);
 
     Q_ASSERT(selectionModel());
@@ -713,8 +755,8 @@ const QSize CanvasViewPrivate::dockReserveSize = QSize(80, 80);
 CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     : QObject(qq), q(qq)
 {
-    clickSelecter = new ClickSelecter(q);
-    keySelecter = new KeySelecter(q);
+    clickSelector = new ClickSelector(q);
+    keySelector = new KeySelector(q);
     dragDropOper = new DragDropOper(q);
     dodgeOper = new DodgeOper(q);
     shortcutOper = new ShortcutOper(q);
@@ -729,7 +771,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 
 CanvasViewPrivate::~CanvasViewPrivate()
 {
-    clickSelecter = nullptr;
+    clickSelector = nullptr;
 }
 
 void CanvasViewPrivate::updateGridSize(const QSize &viewSize, const QMargins &geometryMargins, const QSize &itemSize)
@@ -808,17 +850,6 @@ QRect CanvasViewPrivate::visualRect(const QPoint &gridPos) const
     return QRect(x, y, canvasInfo.gridWidth, canvasInfo.gridHeight);
 }
 
-QRect CanvasViewPrivate::visualRect(const QString &item) const
-{
-    QPair<int, QPoint> pos;
-    // query the point of item.
-    // if not find, using overlap point instead.
-    if (!GridIns->point(item, pos))
-        pos.second = overlapPos();
-
-    return visualRect(pos.second);
-}
-
 QString CanvasViewPrivate::visualItem(const QPoint &gridPos) const
 {
     if (gridPos == overlapPos()) {
@@ -828,6 +859,31 @@ QString CanvasViewPrivate::visualItem(const QPoint &gridPos) const
     }
 
     return GridIns->item(screenNum, gridPos);
+}
+
+bool CanvasViewPrivate::itemGridpos(const QString &item, QPoint &gridPos) const
+{
+    if (item.isEmpty())
+        return false;
+
+    QPair<int, QPoint> pos;
+    if (GridIns->point(item, pos)) {
+        if (pos.first == screenNum) {
+            gridPos = pos.second;
+            return true;
+        } else {
+            // item is not on this view.
+            return false;
+        }
+    }
+
+    // check overlap
+    if (GridIns->overloadItems(screenNum).contains(item)) {
+        gridPos = overlapPos();
+        return true;
+    }
+
+    return false;
 }
 
 bool CanvasViewPrivate::isEmptyArea(const QPoint &pos) const

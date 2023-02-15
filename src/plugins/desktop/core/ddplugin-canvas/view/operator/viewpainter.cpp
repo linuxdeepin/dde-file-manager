@@ -4,7 +4,7 @@
 
 #include "viewpainter.h"
 #include "grid/canvasgrid.h"
-#include "boxselecter.h"
+#include "boxselector.h"
 
 #include "dfm-base/base/schemefactory.h"
 
@@ -217,9 +217,7 @@ void ViewPainter::drawDodge(QStyleOptionViewItem option)
     }
 }
 
-/*!
-    选择文件状态哦绘制，绘制鼠标左键框选蒙版，参数\a painter用于绘制。
-*/
+#if 0 // do draw selected rect by view. see BoxSelecter::updateRubber()
 void ViewPainter::drawSelectRect()
 {
     // is selecting. isBeginFrom is to limit only select on single view.
@@ -238,13 +236,7 @@ void ViewPainter::drawSelectRect()
         restore();
     }
 }
-
-/*!
-    文件拖动相关绘制，参数\a painter用于绘制， \a option拖动绘制项相关信息
-*/
-void ViewPainter::drawDragMove(QStyleOptionViewItem &option) {
-    Q_UNUSED(option)
-}
+#endif
 
 QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
 {

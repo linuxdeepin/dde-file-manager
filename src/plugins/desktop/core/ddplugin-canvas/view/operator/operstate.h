@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QModelIndex>
+#include <QItemSelection>
 
 namespace ddplugin_canvas {
 class CanvasView;
@@ -20,6 +21,7 @@ public:
     void setView(CanvasView *v);
     QModelIndex current() const;
     void setCurrent(const QModelIndex &value);
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
     inline QModelIndex getContBegin() const {
         return contBegin;
@@ -28,14 +30,13 @@ public:
     inline void setContBegin(const QModelIndex &value) {
         contBegin = value;
     }
-signals:
 
-public slots:
-protected slots:
-    void selectionChanged();
+protected:
+    void updateExpendedItem();
 protected:
     CanvasView *view = nullptr;
     QPersistentModelIndex contBegin; //for shift
+    QPersistentModelIndex lastExpened;
 };
 }
 #endif // OPERSTATE_H

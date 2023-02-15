@@ -70,8 +70,11 @@ QSharedPointer<CanvasView> CanvasViewBroker::getView(int idx)
 QRect CanvasViewBroker::visualRect(int idx, const QUrl &url)
 {
     QRect rect;
-    if (auto view = getView(idx))
-        rect = view->d->visualRect(url.toString());
+    if (auto view = getView(idx)) {
+        QPoint gridPos;
+        if (view->d->itemGridpos(url.toString(), gridPos))
+            return view->d->visualRect(gridPos);
+    }
     return rect;
 }
 

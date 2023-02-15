@@ -323,12 +323,8 @@ QList<QRect> CanvasItemDelegate::paintGeomertys(const QStyleOptionViewItem &opti
 
     // do not expand if in editing.
     if (!parent()->isPersistentEditorOpen(index) && d->isHighlight(indexOption) && mayExpand()) {
-        if (d->needExpend(indexOption, index, d->availableTextRect(label), &text)) {
-            // expand, the text is avaliable text rect that need to calc really used text rect.
-            text = textPaintRect(indexOption, index, text, false);
-        } else {
-            // if donot expand, the \a text is the rect that text really uses.
-        }
+        // checking text whether needs to expend and output used text rect.
+        d->needExpend(indexOption, index, d->availableTextRect(label), &text);
     } else {
         // calc text rect base on label. and text rect is for draw text.
         text = textPaintRect(indexOption, index, d->availableTextRect(label), true);
@@ -345,6 +341,34 @@ QList<QRect> CanvasItemDelegate::paintGeomertys(const QStyleOptionViewItem &opti
     // painting-used area
     geometries << text;
     return geometries;
+}
+
+QRect CanvasItemDelegate::expendedGeomerty(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    // the global option.
+    QStyleOptionViewItem indexOption = option;
+
+    // init option for the index.
+    // and the rect of index was inited outside.
+    initStyleOption(&indexOption, index);
+
+    // icon rect, for draw icon
+    auto icon = iconRect(indexOption.rect);
+
+    QRect text;
+
+    // label rect is a hot zone and contain text rect.
+    QRect label = labelRect(indexOption.rect, icon);
+
+    // checking the text whether needs to expend and output used text rect.
+    d->needExpend(indexOption, index, d->availableTextRect(label), &text);
+
+    QRect rect = indexOption.rect;
+
+    // expend
+    if (rect.bottom() < text.bottom())
+        rect.setBottom(text.bottom());
+    return rect;
 }
 
 Qt::Alignment CanvasItemDelegate::visualAlignment(Qt::LayoutDirection direction, Qt::Alignment alignment)
