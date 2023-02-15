@@ -145,7 +145,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             }
         } else {
             view->setViewSelectState(false);
-            event->ignore();
+            event->acceptProposedAction();
         }
 
         return true;
