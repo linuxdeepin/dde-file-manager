@@ -8,6 +8,7 @@ Name=Home
 OnlyShowIn=Deepin;
 Terminal=false
 Type=Application
+NoDisplay=true
 X-AppStream-Ignore=true
 X-Deepin-AppID=dde-file-manager
 X-Deepin-Vendor=deepin
