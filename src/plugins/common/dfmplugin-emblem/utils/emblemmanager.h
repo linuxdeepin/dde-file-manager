@@ -26,9 +26,6 @@ public:
 private:
     explicit EmblemManager(QObject *parent = nullptr);
 
-    QList<QIcon> fetchEmblems(const QUrl &url) const;
-    QList<QRectF> caculatePaintRectList(const QRectF &paintArea) const;
-
     EmblemHelper *helper { nullptr };
 };
 

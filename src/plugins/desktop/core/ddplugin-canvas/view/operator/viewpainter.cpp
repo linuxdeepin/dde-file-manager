@@ -13,10 +13,8 @@
 using namespace ddplugin_canvas;
 
 ViewPainter::ViewPainter(CanvasViewPrivate *dd)
-    : QPainter(dd->q->viewport())
-    , d(dd)
+    : QPainter(dd->q->viewport()), d(dd)
 {
-
 }
 
 /*!
@@ -92,10 +90,10 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
     }
 
     // try to expand it if necessary
-     if (expandItem.first.isValid() && expandItem.second.x() > -1 && Q_LIKELY(expandItem.second.y() > -1)) {
+    if (expandItem.first.isValid() && expandItem.second.x() > -1 && Q_LIKELY(expandItem.second.y() > -1)) {
         option.rect = d->itemRect(expandItem.second);
         drawFile(option, expandItem.first, expandItem.second);
-     }
+    }
 }
 
 void ViewPainter::drawFile(QStyleOptionViewItem option, const QModelIndex &index, const QPoint &gridPos)
@@ -136,30 +134,30 @@ void ViewPainter::drawGirdInfos()
         // draw grid border.
         drawRect(rect);
 
-       // draw serial number
-       save();
-       setPen(QPen(Qt::red, 2));
-       drawText(rect, QString("%1-%2").arg(pos.x()).arg(pos.y()));
+        // draw serial number
+        save();
+        setPen(QPen(Qt::red, 2));
+        drawText(rect, QString("%1-%2").arg(pos.x()).arg(pos.y()));
 
-       setPen(QPen(Qt::red, 1));
-       // draw paint geomertys of the item that on the pos.
-       auto item = GridIns->item(d->screenNum, pos.point());
-       if (!item.isEmpty()) {
-           QModelIndex index = model()->index(item, 0);
-           // draw item rect
-           drawRect(d->itemRect(pos.point()));
+        setPen(QPen(Qt::red, 1));
+        // draw paint geomertys of the item that on the pos.
+        auto item = GridIns->item(d->screenNum, pos.point());
+        if (!item.isEmpty()) {
+            QModelIndex index = model()->index(item, 0);
+            // draw item rect
+            drawRect(d->itemRect(pos.point()));
 
-           if (index.isValid()) {
-               auto geos = view()->itemPaintGeomertys(index);
-               for (int j = 0; j < geos.size(); ++j) {
-                   save();
-                   setPen(QPen(Qt::GlobalColor(Qt::red + j), 1));
-                   drawRect(geos.at(j));
-                   restore();
-               }
-           }
-       }
-       restore();
+            if (index.isValid()) {
+                auto geos = view()->itemPaintGeomertys(index);
+                for (int j = 0; j < geos.size(); ++j) {
+                    save();
+                    setPen(QPen(Qt::GlobalColor(Qt::red + j), 1));
+                    drawRect(geos.at(j));
+                    restore();
+                }
+            }
+        }
+        restore();
     }
 
     restore();
@@ -174,9 +172,7 @@ void ViewPainter::drawDodge(QStyleOptionViewItem option)
         auto hoverIndex = d->dragDropOper->hoverIndex();
         auto url = model()->fileUrl(hoverIndex);
         auto selects = selectionModel()->selectedUrls();
-        if (selects.contains(url) ||
-                (d->dodgeOper->getDodgeAnimationing()
-                 && d->dodgeOper->getDodgeItems().contains(url.toString()))) {
+        if (selects.contains(url) || (d->dodgeOper->getDodgeAnimationing() && d->dodgeOper->getDodgeItems().contains(url.toString()))) {
             // hover item selected,it draged.
             // or,it dodge animationing.
         } else if (hoverIndex.isValid() && hoverIndex != view()->currentIndex()) {
@@ -246,8 +242,7 @@ void ViewPainter::drawSelectRect()
 /*!
     文件拖动相关绘制，参数\a painter用于绘制， \a option拖动绘制项相关信息
 */
-void ViewPainter::drawDragMove(QStyleOptionViewItem &option)
-{
+void ViewPainter::drawDragMove(QStyleOptionViewItem &option) {
     Q_UNUSED(option)
 }
 
@@ -271,9 +266,9 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     indexs.removeAll(foucs);
 
     static const int iconWidth = 128;
-    static const int iconMargin = 30;    // add margin for showing ratoted item.
+    static const int iconMargin = 30;   // add margin for showing ratoted item.
     static const int maxIconCount = 4;   // max painting item number.
-    static const int maxTextCount = 99;  // max text number.
+    static const int maxTextCount = 99;   // max text number.
     static const qreal rotateBase = 10.0;
     static const qreal opacityBase = 0.1;
     static const int rectSzie = iconWidth + iconMargin * 2;
@@ -296,7 +291,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
 
     QPainter painter(&pixmap);
     // paint items except focus
-    for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0 ; --i) {
+    for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0; --i) {
         painter.save();
 
         //opacity 50% 40% 30% 20%
@@ -324,7 +319,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
         painter.save();
         painter.setOpacity(0.8);
         topIconSize = view->itemDelegate()->paintDragIcon(&painter, option, foucs);
-        painter.restore();;
+        painter.restore();
     }
 
     // paint text
@@ -332,10 +327,10 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
         int length = 0;
         QString text;
         if (indexCount > maxTextCount) {
-            length = 28; //there are three characters showed.
+            length = 28;   //there are three characters showed.
             text = QString::number(maxTextCount).append("+");
         } else {
-            length = 24; // one or two characters
+            length = 24;   // one or two characters
             text = QString::number(indexCount);
         }
 
