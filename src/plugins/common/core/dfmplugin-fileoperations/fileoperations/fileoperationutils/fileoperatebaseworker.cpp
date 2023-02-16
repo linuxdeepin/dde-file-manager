@@ -287,12 +287,16 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
 
     if (fromInfo->isAttributes(OptInfoType::kIsSymLink)) {
         ok = createSystemLink(fromInfo, toInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
-        if (ok)
+        if (ok) {
+            workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
             ok = deleteFile(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), skip);
+        }
     } else if (fromInfo->isAttributes(OptInfoType::kIsDir)) {
         ok = checkAndCopyDir(fromInfo, toInfo, skip);
-        if (ok)
+        if (ok) {
+            workData->zeroOrlinkOrDirWriteSize += workData->dirSize;
             ok = deleteDir(fromInfo->urlOf(UrlInfoType::kUrl), targetPathInfo->urlOf(UrlInfoType::kUrl), skip);
+        }
     } else {
         const QUrl &url = toInfo->urlOf(UrlInfoType::kUrl);
 
