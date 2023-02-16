@@ -38,6 +38,12 @@ public:
             : closeflag(other.closeflag), isdir(other.isdir), frominfo(other.frominfo), toinfo(other.toinfo), buffer(other.buffer), size(other.size), currentpos(other.currentpos), permission(other.permission)
         {
         }
+        ~BlockFileCopyInfo(){
+            if (buffer) {
+                delete []buffer;
+                buffer = nullptr;
+            }
+        }
     };
 
     WorkerData();
