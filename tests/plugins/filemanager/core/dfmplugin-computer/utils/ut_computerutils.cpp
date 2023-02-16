@@ -85,7 +85,7 @@ TEST_F(UT_ComputerUtils, MakeProtocolDevUrl)
 {
     QUrl u;
     EXPECT_NO_FATAL_FAILURE(u = ComputerUtils::makeProtocolDevUrl("smb://1.2.3.4/hello"));
-    EXPECT_TRUE(u.path().startsWith(QString("smb://1.2.3.4/hello").toUtf8().toBase64()));
+    EXPECT_TRUE(u.path().startsWith("smb://1.2.3.4/hello"));
     EXPECT_TRUE(u.path().endsWith("protodev"));
     EXPECT_TRUE(u.scheme() == "entry");
 }
@@ -94,8 +94,6 @@ TEST_F(UT_ComputerUtils, GetProtocolDevIdByUrl)
 {
     EXPECT_TRUE(ComputerUtils::getProtocolDevIdByUrl(QUrl::fromLocalFile("/home")) == "");
     EXPECT_TRUE(ComputerUtils::getProtocolDevIdByUrl(blockUrl) == "");
-    auto url = ComputerUtils::makeStashedProtocolDevUrl("smb://1.2.3.4/hello");
-    EXPECT_TRUE("smb://1.2.3.4/hello" == ComputerUtils::getProtocolDevIdByStashedUrl(url));
 }
 
 TEST_F(UT_ComputerUtils, MakeAppEntryUrl)
@@ -111,39 +109,6 @@ TEST_F(UT_ComputerUtils, GetAppEntryFileUrl)
     EXPECT_FALSE(ComputerUtils::getAppEntryFileUrl(QUrl()).isValid());
     EXPECT_TRUE(ComputerUtils::getAppEntryFileUrl(appUrl).isValid());
     EXPECT_TRUE(ComputerUtils::getAppEntryFileUrl(appUrl).path().endsWith("desktop"));
-}
-
-TEST_F(UT_ComputerUtils, MakeStashedProtocolDevUrl)
-{
-    QUrl u;
-    EXPECT_NO_FATAL_FAILURE(u = ComputerUtils::makeStashedProtocolDevUrl("smb://1.2.3.4/hello"));
-    EXPECT_TRUE(u.scheme() == "entry" && u.path().endsWith(SuffixInfo::kStashedProtocol));
-}
-
-TEST_F(UT_ComputerUtils, GetProtocolDevIdByStashedUrl)
-{
-    EXPECT_TRUE(ComputerUtils::getProtocolDevIdByStashedUrl(QUrl::fromLocalFile("/home")) == "");
-    EXPECT_TRUE(ComputerUtils::getProtocolDevIdByStashedUrl(protoUrl) == "");
-    EXPECT_FALSE(ComputerUtils::getProtocolDevIdByStashedUrl(protoStashedUrl).isEmpty());
-    auto u = ComputerUtils::makeStashedProtocolDevUrl("smb://1.2.3.4/hello");
-    EXPECT_TRUE(ComputerUtils::getProtocolDevIdByStashedUrl(u) == "smb://1.2.3.4/hello");
-}
-
-TEST_F(UT_ComputerUtils, ConvertToProtocolDevUrlFrom)
-{
-    EXPECT_FALSE(ComputerUtils::convertToProtocolDevUrlFrom(QUrl::fromLocalFile("/home")).isValid());
-    EXPECT_FALSE(ComputerUtils::convertToProtocolDevUrlFrom(appUrl).isValid());
-    EXPECT_TRUE(ComputerUtils::convertToProtocolDevUrlFrom(protoStashedUrl).isValid());
-    EXPECT_TRUE(ComputerUtils::convertToProtocolDevUrlFrom(ComputerUtils::makeStashedProtocolDevUrl("smb://1.2.3.4")) == ComputerUtils::makeProtocolDevUrl("smb://1.2.3.4"));
-}
-
-TEST_F(UT_ComputerUtils, ConvertToStashedUrlFrom)
-{
-    EXPECT_FALSE(ComputerUtils::convertToStashedUrlFrom(QUrl::fromLocalFile("/home")).isValid());
-    EXPECT_FALSE(ComputerUtils::convertToStashedUrlFrom(appUrl).isValid());
-    EXPECT_TRUE(ComputerUtils::convertToStashedUrlFrom(protoUrl).isValid());
-    auto u = ComputerUtils::makeProtocolDevUrl("smb://1.2.3.4/hello");
-    EXPECT_TRUE(ComputerUtils::convertToStashedUrlFrom(u) == ComputerUtils::makeStashedProtocolDevUrl("smb://1.2.3.4/hello"));
 }
 
 TEST_F(UT_ComputerUtils, MakeLocalUrl)
@@ -162,7 +127,6 @@ TEST_F(UT_ComputerUtils, IsPresetSuffix)
 {
     EXPECT_TRUE(ComputerUtils::isPresetSuffix(SuffixInfo::kBlock));
     EXPECT_TRUE(ComputerUtils::isPresetSuffix(SuffixInfo::kProtocol));
-    EXPECT_TRUE(ComputerUtils::isPresetSuffix(SuffixInfo::kStashedProtocol));
     EXPECT_TRUE(ComputerUtils::isPresetSuffix(SuffixInfo::kUserDir));
     EXPECT_TRUE(ComputerUtils::isPresetSuffix(SuffixInfo::kAppEntry));
     EXPECT_FALSE(ComputerUtils::isPresetSuffix("hello"));
@@ -204,7 +168,7 @@ TEST_F(UT_ComputerUtils, DeviceTypeInfo)
     DFMEntryFileInfoPointer inf(new EntryFileInfo(blockUrl));
     QList<EntryFileInfo::EntryOrder> orders { EntryFileInfo::kOrderUserDir, EntryFileInfo::kOrderSysDiskRoot,
                                               EntryFileInfo::kOrderRemovableDisks, EntryFileInfo::kOrderOptical,
-                                              EntryFileInfo::kOrderStashedSmb, EntryFileInfo::kOrderMTP,
+                                              EntryFileInfo::kOrderMTP,
                                               EntryFileInfo::kOrderGPhoto2, EntryFileInfo::kOrderFiles };
     stub.set_lamda(&EntryFileInfo::order, [&] { __DBG_STUB_INVOKE__ return orders.takeFirst(); });
     for (int i = 0; i < orders.count(); i++) {

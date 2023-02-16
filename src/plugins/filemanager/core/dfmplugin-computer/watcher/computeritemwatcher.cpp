@@ -5,9 +5,7 @@
 #include "computeritemwatcher.h"
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
-#include "utils/stashmountsutils.h"
 #include "fileentity/appentryfileentity.h"
-#include "fileentity/stashedprotocolentryfileentity.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/configs/configsynchronizer.h"
@@ -81,7 +79,6 @@ ComputerDataList ComputerItemWatcher::items()
     ret.append(getBlockDeviceItems(hasInsertNewDisk));
     ComputerDataList protocolDevices = getProtocolDeviceItems(hasInsertNewDisk);
     ret.append(protocolDevices);
-    ret.append(getStashedProtocolItems(hasInsertNewDisk, protocolDevices));
     ret.append(getAppEntryItems(hasInsertNewDisk));
 
     std::sort(ret.begin() + diskStartPos, ret.end(), ComputerItemWatcher::typeCompare);
@@ -94,15 +91,11 @@ ComputerDataList ComputerItemWatcher::items()
         computerItems << item.url;
 
     qDebug() << "computer: [LIST] filter items BEFORE add them: " << computerItems;
-    bool re = dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemListFilter", &computerItems);
-    qDebug() << "computer: [LIST] items are filtered by external plugins: " << computerItems;
+    dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemListFilter", &computerItems);
+    qDebug() << "computer: [LIST] filter items AFTER  rmv them: " << computerItems;
     for (int i = ret.count() - 1; i >= 0; --i) {
-        if (!re) {
-            // if smbbrower plugin has not filtered the protocol devices, just remove protocol devices temporarily；
-            // when hook event is ready, would go here again and re = true;
-            if (ret[i].url.toString().endsWith(SuffixInfo::kStashedProtocol) || ret[i].url.toString().endsWith(SuffixInfo::kProtocol))
-                ret.removeAt(i);
-        } else if (!computerItems.contains(ret[i].url)) {
+        if (!computerItems.contains(ret[i].url)) {
+            removeSidebarItem(ret[i].url);
             ret.removeAt(i);
         }
     }
@@ -233,7 +226,6 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
-        //        auto info = InfoFactory::create<EntryFileInfo>(devUrl);
         DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
         if (!info->exists())
             continue;
@@ -252,82 +244,6 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         hasNewItem = true;
 
         addSidebarItem(info);
-    }
-
-    return ret;
-}
-
-ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, const ComputerDataList &protocolDevs)
-{
-    auto hasProtocolDev = [](const QUrl &url, const ComputerDataList &container) {
-        for (auto dev : container) {
-            if (dev.url == url)
-                return true;
-        }
-        return false;
-    };
-    ComputerDataList ret;
-
-    const QMap<QString, QString> &&stashedMounts = StashMountsUtils::stashedMounts();
-
-    auto isStashedSmbBeMounted = [](const QUrl &smbUrl) {   // TODO(zhuangshu):do it out of computer plugin
-        QUrl url(smbUrl);
-        if (url.scheme() != Global::Scheme::kSmb)
-            return false;
-
-        QString temPath = url.path();
-        QStringList devs = DevProxyMng->getAllProtocolIds();
-        for (const QString &dev : devs) {
-            if (dev.startsWith(Global::Scheme::kSmb)) {   // mounted by gvfs
-                if (UniversalUtils::urlEquals(url, QUrl(dev)))
-                    return true;
-            }
-            if (DeviceUtils::isSamba(dev)) {   // mounted by cifs
-                if (temPath.endsWith("/")) {
-                    temPath.chop(1);
-                    url.setPath(temPath);
-                }
-                const QUrl &temUrl = QUrl::fromPercentEncoding(dev.toUtf8());
-                const QString &path = temUrl.path();
-                int pos = path.lastIndexOf("/");
-                const QString &displayName = path.mid(pos + 1);
-                if (QString("%1 on %2").arg(url.fileName()).arg(url.host()) == displayName)
-                    return true;
-            }
-        }
-
-        return false;
-    };
-
-    for (auto iter = stashedMounts.cbegin(); iter != stashedMounts.cend(); ++iter) {
-        QUrl protocolUrl;
-        if (iter.key().startsWith(Global::Scheme::kSmb)) {
-            QUrl temUrl(iter.key());
-            if (isStashedSmbBeMounted(temUrl))
-                continue;
-        } else {
-            protocolUrl = ComputerUtils::makeProtocolDevUrl(iter.key());
-        }
-
-        if (hasProtocolDev(protocolUrl, ret) || hasProtocolDev(protocolUrl, protocolDevs))
-            continue;
-
-        const QUrl &stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(iter.key());
-
-        DFMEntryFileInfoPointer info(new EntryFileInfo(stashedUrl));
-        if (!info->exists())
-            continue;
-
-        ComputerItemData data;
-        data.url = stashedUrl;
-        data.shape = ComputerItemData::kLargeItem;
-        data.info = info;
-        data.groupId = getGroupId(diskGroup());
-        ret.push_back(data);
-
-        addSidebarItem(info);
-
-        hasNewItem = true;
     }
 
     return ret;
@@ -595,7 +511,7 @@ void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url, i
 
 void ComputerItemWatcher::removeDevice(const QUrl &url)
 {
-    if (dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemFilterOnRemove", url)) {
+    if (dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemFilterOnRemove", url)) {
         qDebug() << "computer: [REMOVE] device is filtered by external plugin: " << url;
         return;
     }
@@ -647,16 +563,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, Compute
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     if (!info->exists()) return;
 
-    if (info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kProtocol) {
-        QString id = ComputerUtils::getProtocolDevIdByUrl(info->urlOf(UrlInfoType::kUrl));
-        if (id.startsWith(Global::Scheme::kSmb)) {
-            // The following line is moved to SmbIntegrationManager::handleItemFilterOnAdd(), but there is still saved as V1 format
-            // StashMountsUtils::stashMount(info->urlOf(UrlInfoType::kUrl), info->displayName());
-            removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
-        }
-    }
-
-    if (dpfHookSequence->run("dfmplugin_computer", "hook_ComputerView_ItemFilterOnAdd", devUrl)) {
+    if (dpfHookSequence->run("dfmplugin_computer", "hook_View_ItemFilterOnAdd", devUrl)) {
         qDebug() << "computer: [ADD] device is filtered by external plugin: " << devUrl;
         return;
     }
@@ -718,20 +625,6 @@ void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga
         Q_EMIT hideFileSystemTag(!value.toBool());
     } else if (ga == Application::GenericAttribute::kHiddenSystemPartition) {
         Q_EMIT hideNativeDisks(value.toBool());
-    } else if (ga == Application::GenericAttribute::kAlwaysShowOfflineRemoteConnections) {
-        if (StashMountsUtils::isSmbIntegrationEnabled())   // can not write `RemoteMounts` field with smb integration mode
-            return;
-        if (!value.toBool()) {
-            QStringList mounts = StashMountsUtils::stashedMounts().keys();
-            for (const auto &mountUrl : mounts) {
-                QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(mountUrl);
-                removeDevice(stashedUrl);
-                removeSidebarItem(stashedUrl);
-            }
-            StashMountsUtils::clearStashedMounts();
-        } else {
-            StashMountsUtils::stashMountedMounts();
-        }
     } else if (ga == Application::GenericAttribute::kHideLoopPartitions) {
         bool hide = value.toBool();
         Q_EMIT hideLoopPartitions(hide);
@@ -780,12 +673,6 @@ void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QStri
 
     auto url = ComputerUtils::makeProtocolDevUrl(id);
 
-    if (DeviceUtils::isSamba(QUrl(id)) || id.startsWith(Global::Scheme::kSmb)) {
-        const QVariantHash &newMount = StashMountsUtils::makeStashedSmbDataById(id);
-        const QUrl &stashedUrl = StashMountsUtils::makeStashedSmbMountUrl(newMount);
-        removeDevice(stashedUrl);   // Before adding mounted smb item, removing its stashed item firstly.
-    }
-
     this->onDeviceAdded(url, getGroupId(diskGroup()));
 }
 
@@ -793,18 +680,6 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
 {
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     removeDevice(devUrl);
-
-    if (StashMountsUtils::isStashMountsEnabled()) {   // After removing smb device, adding stashed smb item to sidebar and computer view
-        QUrl stashedUrl;
-        if (id.startsWith(Global::Scheme::kSmb)) {
-            onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
-        } else if (DeviceUtils::isSamba(QUrl(id))) {
-            const QVariantHash &newMount = StashMountsUtils::makeStashedSmbDataById(id);
-            StashMountsUtils::stashSmbMount(newMount);
-            onDeviceAdded(StashMountsUtils::makeStashedSmbMountUrl(newMount), getGroupId(diskGroup()));
-        }
-    }
-
     routeMapper.remove(ComputerUtils::makeProtocolDevUrl(id));
 }
 

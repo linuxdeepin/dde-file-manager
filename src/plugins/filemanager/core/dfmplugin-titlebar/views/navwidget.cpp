@@ -53,6 +53,14 @@ void NavWidget::pushUrlToHistoryStack(const QUrl &url)
     d->updateBackForwardButtonsState();
 }
 
+void NavWidget::removeUrlFromHistoryStack(const QUrl &url)
+{
+    if (!d->curNavStack)
+        return;
+    d->curNavStack->removeUrl(url);
+    d->updateBackForwardButtonsState();
+}
+
 void NavWidget::back()
 {
     QUrl &&url = d->curNavStack->back();

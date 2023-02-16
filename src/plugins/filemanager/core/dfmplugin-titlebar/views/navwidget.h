@@ -26,6 +26,7 @@ class NavWidget : public QWidget
 public:
     explicit NavWidget(QWidget *parent = nullptr);
     void pushUrlToHistoryStack(const QUrl &url);
+    void removeUrlFromHistoryStack(const QUrl &url);
 
     void addHistroyStack();
     void moveNavStacks(int from, int to);

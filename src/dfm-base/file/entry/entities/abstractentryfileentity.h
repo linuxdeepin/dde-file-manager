@@ -30,7 +30,7 @@ public:
     virtual bool showUsageSize() const = 0;
     virtual EntryFileInfo::EntryOrder order() const = 0;
 
-    virtual void refresh() {}
+    virtual void refresh() { }
     virtual quint64 sizeTotal() const { return 0; }
     virtual quint64 sizeUsage() const { return 0; }
     virtual QString description() const { return {}; }
@@ -42,7 +42,7 @@ public:
 
 protected:
     QUrl entryUrl {};
-    QVariantHash datas;
+    mutable QVariantHash datas;
 };
 
 class EntryEntityFactor

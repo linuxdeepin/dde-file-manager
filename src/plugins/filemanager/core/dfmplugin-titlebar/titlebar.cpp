@@ -104,6 +104,8 @@ void TitleBar::bindEvents()
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleWindowBackward);
     dpfSlotChannel->connect(curSpace, "slot_Navigator_Forward",
                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleWindowForward);
+    dpfSlotChannel->connect(curSpace, "slot_Navigator_Remove",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleRemoveHistory);
     dpfSlotChannel->connect(curSpace, "slot_ServerDialog_RemoveHistory",
                             SearchHistroyManager::instance(), &SearchHistroyManager::removeSearchHistory);
 }

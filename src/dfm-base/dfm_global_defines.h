@@ -163,7 +163,11 @@ namespace Regex {
 inline constexpr char kGvfsRoot[] { R"(^/run/user/.*/gvfs/|^/root/.gvfs/)" };
 }   // namespace GlobalRegex
 
-}   //namespace Global
+namespace DataBase {
+inline constexpr char kDfmDBName[] { "dfmruntime.db" };
+}
+
+}   // namespace Global
 
 }
 

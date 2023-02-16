@@ -48,6 +48,9 @@ void DConfigHiddenMenuScene::updateActionHidden(QMenu *parent)
     };
 
     auto hiddenActions = DConfigManager::instance()->value(kDefaultCfgPath, appKeyMap.value(qApp->applicationName())).toStringList();
+    if (hiddenActions.isEmpty())
+        return;
+
     qDebug() << "menu: hidden actions: " << hiddenActions;
 
     QList<QMenu *> menus { parent };
@@ -69,6 +72,9 @@ void DConfigHiddenMenuScene::updateActionHidden(QMenu *parent)
 void DConfigHiddenMenuScene::updateMenuHidden(QMenu *parent)
 {
     auto hiddenMenus = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList();
+    if (hiddenMenus.isEmpty())
+        return;
+
     qDebug() << "menu: hidden menu in app: " << qApp->applicationName() << hiddenMenus;
     if ((hiddenMenus.contains("dde-file-manager") && qApp->applicationName() == "dde-file-manager")
         || (hiddenMenus.contains("dde-desktop") && qApp->applicationName() == "dde-desktop")

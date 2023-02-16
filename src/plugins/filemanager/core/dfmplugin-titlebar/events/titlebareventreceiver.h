@@ -38,6 +38,7 @@ public slots:
     void handleSetNewWindowAndTabEnable(bool enable);
     void handleWindowForward(quint64 windowId);
     void handleWindowBackward(quint64 windowId);
+    void handleRemoveHistory(quint64 windowId, const QUrl &url);
 
 private:
     explicit TitleBarEventReceiver(QObject *parent = nullptr);

@@ -25,7 +25,6 @@ public:
         kOrderOptical,
 
         kOrderSmb,
-        kOrderStashedSmb = kOrderSmb,   // same order with mounted smb
         kOrderFtp,
         kOrderMTP,
         kOrderGPhoto2,

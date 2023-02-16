@@ -4,7 +4,6 @@
 
 #include "smbbrowsereventcaller.h"
 
-#include "smbintegration/smbintegrationmanager.h"
 #include "dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 

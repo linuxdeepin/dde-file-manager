@@ -91,7 +91,6 @@ bool ComputerMenuScene::create(QMenu *parent)
     addAct(kEject);
     addAct(kSafelyRemove);
     addAct(kLogoutAndForget);
-    addAct(kRemove);
     addSep();
 
     addAct(kProperty);
@@ -150,11 +149,6 @@ void ComputerMenuScene::updateState(QMenu *parent)
     case EntryFileInfo::kOrderSmb:
     case EntryFileInfo::kOrderFtp: {
         keeped = QStringList { kOpenInNewWin, kOpenInNewTab, kProperty };
-        auto devUrl = d->selectFiles.first();
-        if (devUrl.path().endsWith(SuffixInfo::kStashedProtocol)) {   // stashed device only contains these 3 actions.
-            keeped = QStringList({ kMount, kRemove, kProperty });
-            break;
-        }
 
         if (d->info->targetUrl().isValid())
             keeped << kUnmount;
@@ -202,8 +196,6 @@ bool ComputerMenuScene::triggered(QAction *action)
             ins->actRename(d->windowId, d->info, d->triggerFromSidebar);
         else if (key == kFormat)
             ins->actFormat(d->windowId, d->info);
-        else if (key == kRemove)
-            ins->actRemove(d->info);
         else if (key == kEject)
             ins->actEject(d->info->urlOf(UrlInfoType::kUrl));
         else if (key == kErase)
@@ -245,7 +237,6 @@ ComputerMenuScenePrivate::ComputerMenuScenePrivate(ComputerMenuScene *qq)
     predicateName[kUnmount] = trUnmount();
     predicateName[kRename] = trRename();
     predicateName[kFormat] = trFormat();
-    predicateName[kRemove] = trRemove();
     predicateName[kEject] = trEject();
     predicateName[kErase] = trErase();
     predicateName[kSafelyRemove] = trSafelyRemove();
@@ -268,7 +259,7 @@ void ComputerMenuScenePrivate::updateMenu(QMenu *menu, const QStringList &disabl
         if (act && !act->isSeparator()) {
             auto key = act->property(ActionPropertyKey::kActionID).toString();
             if (!keeps.contains(key))
-                menu->removeAction(act);
+                act->setVisible(false);
         }
     });
 }

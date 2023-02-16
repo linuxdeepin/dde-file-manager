@@ -136,6 +136,14 @@ void TitleBarEventReceiver::handleWindowBackward(quint64 windowId)
     w->navWidget()->back();
 }
 
+void TitleBarEventReceiver::handleRemoveHistory(quint64 windowId, const QUrl &url)
+{
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return;
+    w->navWidget()->removeUrlFromHistoryStack(url);
+}
+
 TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)
     : QObject(parent)
 {

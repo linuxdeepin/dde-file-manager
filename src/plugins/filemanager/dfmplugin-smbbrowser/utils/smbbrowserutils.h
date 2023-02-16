@@ -6,6 +6,7 @@
 #define SMBBROWSERUTILS_H
 
 #include "dfmplugin_smbbrowser_global.h"
+#include "typedefines.h"
 
 #include "dfm-mount/base/dmount_global.h"
 
@@ -15,30 +16,28 @@
 
 namespace dfmplugin_smbbrowser {
 
-class SmbBrowserUtils : public QObject
-{
-    Q_DISABLE_COPY(SmbBrowserUtils)
-public:
-    static SmbBrowserUtils *instance();
+namespace smb_browser_utils {
+QString networkScheme();
+QUrl netNeighborRootUrl();
+QIcon icon();
+QString getShareDirFromUrl(const QUrl &url);
+bool isSmbMounted(const QString &stdSmb);
+QString getDeviceIdByStdSmb(const QString &stdSmb);
 
-    static QString networkScheme();
-    static QUrl netNeighborRootUrl();
-    static QIcon icon();
-    static QString getShareDirFromUrl(const QUrl &url);
+// service utils
+bool isServiceRuning(const QString &service);
+bool startService(const QString &service);
+void enableServiceAsync();
+bool checkAndEnableService(const QString &service);
 
-    bool mountSmb(const quint64 windowId, const QList<QUrl> urls);
+// bind dconfig
+void bindSetting();
 
-    bool isServiceRuning(const QString &service);
-    bool startService(const QString &service);
+// share nodes
+QMutex &nodesMutex();
+QMap<QUrl, SmbShareNode> &shareNodes();
 
-public:
-    static QMutex mutex;
-    static QMap<QUrl, SmbShareNode> shareNodes;
-
-private:
-    SmbBrowserUtils() = default;
-};
-
+}
 }
 
 #endif   // SMBBROWSERUTILS_H

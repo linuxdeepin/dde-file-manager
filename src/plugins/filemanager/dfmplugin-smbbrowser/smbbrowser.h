@@ -11,8 +11,6 @@
 
 namespace dfmplugin_smbbrowser {
 
-using Prehandler = std::function<void(quint64 winId, const QUrl &url, std::function<void()> after)>;
-
 class SmbBrowser : public dpf::Plugin
 {
     Q_OBJECT
@@ -31,11 +29,8 @@ public:
 
 protected Q_SLOTS:
     void onWindowOpened(quint64 windd);
-    void onRefreshToSmbSeperatedMode(const QVariantMap &stashedSeperatedData, const QList<QUrl> &urls);
 
 private:
-    void bindScene(const QString &parentScene);
-    void bindSceneOnAdded(const QString &newScene);
     void bindWindows();
     void followEvents();
 
@@ -43,8 +38,6 @@ private:
     void addNeighborToSidebar();
     void registerNetworkAccessPrehandler();
     void registerNetworkToSearch();
-    static void networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
-    static void smbAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after);
 
 private:
     QSet<QString> waitToBind;
@@ -52,7 +45,5 @@ private:
 };
 
 }
-
-Q_DECLARE_METATYPE(dfmplugin_smbbrowser::Prehandler)
 
 #endif   // SMBBROWSER_H

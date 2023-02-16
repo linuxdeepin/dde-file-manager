@@ -22,41 +22,6 @@ RemotePasswdManager *RemotePasswdManager::instance()
 RemotePasswdManager::RemotePasswdManager(QObject *parent)
     : QObject(parent)
 {
-    //    loadConfig();
-}
-
-void RemotePasswdManager::loadConfig()
-{
-    // SecretManager::loadCache
-
-    QFile file(configPath());
-    if (!file.open(QIODevice::ReadOnly)) {
-        qInfo() << "cannot open samba.json in readonly mode";
-        return;
-    }
-
-    QByteArray data = file.readAll();
-    file.close();
-
-    QJsonDocument doc(QJsonDocument::fromJson(data));
-    smbObjs = doc.object();
-    qDebug() << "read samba config: \n"
-             << smbObjs;
-}
-
-void RemotePasswdManager::saveConfig()
-{
-    // SecretManager::saveCache
-
-    QFile file(configPath());
-    if (!file.open(QIODevice::WriteOnly)) {
-        qInfo() << "cannot open samba.json in writeonly mode";
-        return;
-    }
-
-    QJsonDocument doc(smbObjs);
-    file.write(doc.toJson());
-    file.close();
 }
 
 QJsonObject RemotePasswdManager::getLoginInfo(const QString &uri)

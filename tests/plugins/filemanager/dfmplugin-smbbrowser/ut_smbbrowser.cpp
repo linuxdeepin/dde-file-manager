@@ -22,7 +22,7 @@ using namespace dpf;
 class UT_SmbBrowser : public testing::Test
 {
 protected:
-    virtual void SetUp() override {}
+    virtual void SetUp() override { }
     virtual void TearDown() override { stub.clear(); }
 
 private:
@@ -84,34 +84,34 @@ TEST_F(UT_SmbBrowser, AddNeighborToSidebar)
     EXPECT_NO_FATAL_FAILURE(ins.addNeighborToSidebar());
 }
 
-TEST_F(UT_SmbBrowser, RegisterNetworkAccessPrehandler)
-{
-    typedef QVariant (EventChannelManager::*Push)(const QString &, const QString &, QString, Prehandler &);
-    auto push = static_cast<Push>(&EventChannelManager::push);
-    stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return false; });
-    EXPECT_NO_FATAL_FAILURE(ins.registerNetworkAccessPrehandler());
-}
+// TEST_F(UT_SmbBrowser, RegisterNetworkAccessPrehandler)
+//{
+//     typedef QVariant (EventChannelManager::*Push)(const QString &, const QString &, QString, Prehandler &);
+//     auto push = static_cast<Push>(&EventChannelManager::push);
+//     stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return false; });
+//     EXPECT_NO_FATAL_FAILURE(ins.registerNetworkAccessPrehandler());
+// }
 
-TEST_F(UT_SmbBrowser, NetworkAccessPrehandler)
-{
-    typedef bool (EventDispatcherManager::*Publish)(int, quint64, QUrl &&);
-    auto publish = static_cast<Publish>(&EventDispatcherManager::publish);
-    stub.set_lamda(publish, [] { __DBG_STUB_INVOKE__ return true; });
-    DFMBASE_USE_NAMESPACE
-    stub.set_lamda(&DialogManager::showErrorDialog, [] { __DBG_STUB_INVOKE__ });
+// TEST_F(UT_SmbBrowser, NetworkAccessPrehandler)
+//{
+//     typedef bool (EventDispatcherManager::*Publish)(int, quint64, QUrl &&);
+//     auto publish = static_cast<Publish>(&EventDispatcherManager::publish);
+//     stub.set_lamda(publish, [] { __DBG_STUB_INVOKE__ return true; });
+//     DFMBASE_USE_NAMESPACE
+//     stub.set_lamda(&DialogManager::showErrorDialog, [] { __DBG_STUB_INVOKE__ });
 
-    QList<bool> arg1 { true, false };
-    QList<dfmmount::DeviceError> arg2 { dfmmount::DeviceError::kNoError, dfmmount::DeviceError::kGIOErrorAlreadyMounted };
-    QList<QString> arg3 { "/hello/world", "" };
-    stub.set_lamda(&DeviceManager::mountNetworkDeviceAsync, [&](void *, const QString &, CallbackType1 cb, int) {
-        __DBG_STUB_INVOKE__
-        cb(arg1.first(), arg2.first(), arg3.first());
-    });
+//    QList<bool> arg1 { true, false };
+//    QList<dfmmount::DeviceError> arg2 { dfmmount::DeviceError::kNoError, dfmmount::DeviceError::kGIOErrorAlreadyMounted };
+//    QList<QString> arg3 { "/hello/world", "" };
+//    stub.set_lamda(&DeviceManager::mountNetworkDeviceAsync, [&](void *, const QString &, CallbackType1 cb, int) {
+//        __DBG_STUB_INVOKE__
+//        cb(arg1.first(), arg2.first(), arg3.first());
+//    });
 
-    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl::fromLocalFile("/hello/world"), nullptr));
-    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), nullptr));
+//    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl::fromLocalFile("/hello/world"), nullptr));
+//    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), nullptr));
 
-    arg3.takeFirst();
-    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), [] { __DBG_STUB_INVOKE__ }));
-    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), nullptr));
-}
+//    arg3.takeFirst();
+//    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), [] { __DBG_STUB_INVOKE__ }));
+//    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), nullptr));
+//}

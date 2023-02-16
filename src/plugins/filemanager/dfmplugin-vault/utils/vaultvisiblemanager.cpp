@@ -125,7 +125,7 @@ void VaultVisibleManager::addSideBarVaultItem()
 void VaultVisibleManager::addComputer()
 {
     if (isVaultEnabled()) {
-        dpfSlotChannel->push("dfmplugin_computer", "slot_AddDevice", tr("Vault"), QUrl("entry:///vault.vault"), 0, false);
+        dpfSlotChannel->push("dfmplugin_computer", "slot_Item_Add", tr("Vault"), QUrl("entry:///vault.vault"), 0, false);
     }
 }
 
@@ -153,7 +153,7 @@ void VaultVisibleManager::removeSideBarVaultItem()
 
 void VaultVisibleManager::removeComputerVaultItem()
 {
-    dpfSlotChannel->push("dfmplugin_computer", "slot_RemoveDevice", QUrl("entry:///vault.vault"));
+    dpfSlotChannel->push("dfmplugin_computer", "slot_Item_Remove", QUrl("entry:///vault.vault"));
 }
 
 VaultVisibleManager *VaultVisibleManager::instance()

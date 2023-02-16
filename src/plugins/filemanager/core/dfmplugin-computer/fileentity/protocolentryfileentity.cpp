@@ -112,9 +112,7 @@ quint64 ProtocolEntryFileEntity::sizeUsage() const
 
 void ProtocolEntryFileEntity::refresh()
 {
-    auto encodecId = entryUrl.path().remove("." + QString(SuffixInfo::kProtocol)).toUtf8();
-    auto id = QString(QByteArray::fromBase64(encodecId));
-
+    auto id = entryUrl.path().remove("." + QString(SuffixInfo::kProtocol));
     datas = DFMBASE_NAMESPACE::UniversalUtils::convertFromQMap(DevProxyMng->queryProtocolInfo(id));
 }
 

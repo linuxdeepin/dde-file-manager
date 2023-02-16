@@ -7,7 +7,6 @@
 #include "models/computermodel.h"
 #include "delegate/computeritemdelegate.h"
 #include "utils/computerutils.h"
-#include "utils/stashmountsutils.h"
 #include "events/computereventcaller.h"
 #include "controller/computercontroller.h"
 

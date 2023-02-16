@@ -6,6 +6,7 @@
 #define SMBSHAREITERATOR_P_H
 
 #include "dfmplugin_smbbrowser_global.h"
+#include "typedefines.h"
 
 #include <dfm-io/dfmio_global.h>
 
@@ -13,7 +14,7 @@ BEGIN_IO_NAMESPACE
 class DLocalEnumerator;
 END_IO_NAMESPACE
 
-namespace dfmplugin_smbbrowser {
+DPSMBBROWSER_BEGIN_NAMESPACE
 
 class SmbShareIterator;
 class SmbShareIteratorPrivate
@@ -30,6 +31,6 @@ private:
     QScopedPointer<DFMIO::DLocalEnumerator> enumerator { nullptr };
 };
 
-}
+DPSMBBROWSER_END_NAMESPACE
 
 #endif   // SMBSHAREITERATOR_P_H

@@ -18,10 +18,11 @@ class Computer : public dpf::Plugin
     DPF_EVENT_NAMESPACE(DPCOMPUTER_NAMESPACE)
     // slots
     DPF_EVENT_REG_SLOT(slot_ContextMenu_SetEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
-    DPF_EVENT_REG_SLOT(slot_AddDevice)
-    DPF_EVENT_REG_SLOT(slot_RemoveDevice)
-    DPF_EVENT_REG_SLOT(slot_ComputerView_Refresh) // TODO(xust) impl it.
-    
+    DPF_EVENT_REG_SLOT(slot_Item_Add)
+    DPF_EVENT_REG_SLOT(slot_Item_Remove)
+    DPF_EVENT_REG_SLOT(slot_View_Refresh)
+    DPF_EVENT_REG_SLOT(slot_Passwd_Clear)
+
     // signals
     DPF_EVENT_REG_SIGNAL(signal_Operation_OpenItem)
     DPF_EVENT_REG_SIGNAL(signal_ShortCut_CtrlN)
@@ -29,9 +30,9 @@ class Computer : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
 
     // hook
-    DPF_EVENT_REG_HOOK(hook_ComputerView_ItemListFilter)
-    DPF_EVENT_REG_HOOK(hook_ComputerView_ItemFilterOnAdd)
-    DPF_EVENT_REG_HOOK(hook_ComputerView_ItemFilterOnRemove)
+    DPF_EVENT_REG_HOOK(hook_View_ItemListFilter)
+    DPF_EVENT_REG_HOOK(hook_View_ItemFilterOnAdd)
+    DPF_EVENT_REG_HOOK(hook_View_ItemFilterOnRemove)
 
     // Plugin interface
 public:

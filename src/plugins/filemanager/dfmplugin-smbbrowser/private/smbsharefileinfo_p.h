@@ -6,6 +6,7 @@
 #define SMBSHAREFILEINFO_P_H
 
 #include "dfmplugin_smbbrowser_global.h"
+#include "typedefines.h"
 
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 

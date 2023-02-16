@@ -63,9 +63,8 @@ QUrl ComputerUtils::makeProtocolDevUrl(const QString &id)
 {
     QUrl devUrl;
     devUrl.setScheme(Global::Scheme::kEntry);
-    auto path = id.toUtf8().toBase64();
-    QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kProtocol);
-    devUrl.setPath(encodecPath);
+    QString path = QString("%1.%2").arg(QString(id)).arg(SuffixInfo::kProtocol);
+    devUrl.setPath(path);
     return devUrl;
 }
 
@@ -77,9 +76,7 @@ QString ComputerUtils::getProtocolDevIdByUrl(const QUrl &url)
         return "";
 
     QString suffix = QString(".%1").arg(SuffixInfo::kProtocol);
-    QString encodecId = url.path().remove(suffix);
-    QString id = QByteArray::fromBase64(encodecId.toUtf8());
-    return id;
+    return url.path().remove(suffix);
 }
 
 QUrl ComputerUtils::makeAppEntryUrl(const QString &filePath)
@@ -113,59 +110,6 @@ QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
     return origUrl;
 }
 
-QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
-{
-    QUrl devUrl;
-    devUrl.setScheme(Global::Scheme::kEntry);
-    auto path = id.toUtf8().toBase64();
-    QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kStashedProtocol);
-    devUrl.setPath(encodecPath);
-    return devUrl;
-}
-
-QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
-{
-    if (url.scheme() != Global::Scheme::kEntry)
-        return "";
-    if (!url.path().endsWith(SuffixInfo::kStashedProtocol))
-        return "";
-
-    QString suffix = QString(".%1").arg(SuffixInfo::kStashedProtocol);
-    QString encodecId = url.path().remove(suffix);
-    QString id = QByteArray::fromBase64(encodecId.toUtf8());
-    return id;
-}
-
-QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
-{
-    if (stashedUrl.scheme() != Global::Scheme::kEntry)
-        return {};
-    if (!stashedUrl.path().endsWith(SuffixInfo::kStashedProtocol))
-        return {};
-
-    QString path = stashedUrl.path();
-    path.replace(SuffixInfo::kStashedProtocol, SuffixInfo::kProtocol);
-    QUrl ret;
-    ret.setScheme(Global::Scheme::kEntry);
-    ret.setPath(path);
-    return ret;
-}
-
-QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
-{
-    if (protocolDevUrl.scheme() != Global::Scheme::kEntry)
-        return {};
-    if (!protocolDevUrl.path().endsWith(SuffixInfo::kProtocol))
-        return {};
-
-    QString path = protocolDevUrl.path();
-    path.replace(SuffixInfo::kProtocol, SuffixInfo::kStashedProtocol);
-    QUrl ret;
-    ret.setScheme(Global::Scheme::kEntry);
-    ret.setPath(path);
-    return ret;
-}
-
 QUrl ComputerUtils::makeLocalUrl(const QString &path)
 {
     QUrl u;
@@ -191,8 +135,8 @@ quint64 ComputerUtils::getWinId(QWidget *widget)
 
 bool ComputerUtils::isPresetSuffix(const QString &suffix)
 {
-    return suffix == SuffixInfo::kBlock || suffix == SuffixInfo::kProtocol || suffix == SuffixInfo::kUserDir
-            || suffix == SuffixInfo::kAppEntry || suffix == SuffixInfo::kStashedProtocol;
+    static const QStringList kPresetSuffix { SuffixInfo::kBlock, SuffixInfo::kProtocol, SuffixInfo::kUserDir, SuffixInfo::kAppEntry };
+    return kPresetSuffix.contains(suffix);
 }
 
 bool ComputerUtils::shouldSystemPartitionHide()
@@ -313,8 +257,6 @@ QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
         return QObject::tr("DVD");
     case EntryFileInfo::kOrderSmb:
     case EntryFileInfo::kOrderFtp:
-        if (info->nameOf(NameInfoType::kSuffix) == SuffixInfo::kStashedProtocol)
-            return QObject::tr("Unconnected network shared directory");
         return QObject::tr("Network shared directory");
     case EntryFileInfo::kOrderMTP:
         return QObject::tr("Android mobile device");

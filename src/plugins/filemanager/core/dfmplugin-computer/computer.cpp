@@ -4,7 +4,7 @@
 
 #include "computer.h"
 #include "utils/computerutils.h"
-#include "utils/stashmountsutils.h"
+#include "utils/remotepasswdmanager.h"
 #include "views/computerviewcontainer.h"
 #include "fileentity/entryfileentities.h"
 #include "events/computereventreceiver.h"
@@ -44,7 +44,6 @@ void Computer::initialize()
     EntryEntityFactor::registCreator<UserEntryFileEntity>(SuffixInfo::kUserDir);
     EntryEntityFactor::registCreator<BlockEntryFileEntity>(SuffixInfo::kBlock);
     EntryEntityFactor::registCreator<ProtocolEntryFileEntity>(SuffixInfo::kProtocol);
-    EntryEntityFactor::registCreator<StashedProtocolEntryFileEntity>(SuffixInfo::kStashedProtocol);
     EntryEntityFactor::registCreator<AppEntryFileEntity>(SuffixInfo::kAppEntry);
 
     bindEvents();
@@ -59,7 +58,6 @@ bool Computer::start()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", ComputerUtils::scheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", ComputerUtils::scheme(), ComputerMenuCreator::name());
 
-    StashMountsUtils::bindStashEnableConf();
     return true;
 }
 
@@ -136,9 +134,10 @@ void Computer::bindEvents()
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Item_EjectClicked", ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
 
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_ContextMenu_SetEnable", ComputerEventReceiver::instance(), &ComputerEventReceiver::setContextMenuEnable);
-    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_AddDevice", ComputerItemWatcherInstance, &ComputerItemWatcher::addDevice);
-    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_RemoveDevice", ComputerItemWatcherInstance, &ComputerItemWatcher::removeDevice);
-    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_ComputerView_Refresh", ComputerItemWatcherInstance, &ComputerItemWatcher::startQueryItems);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_Item_Add", ComputerItemWatcherInstance, &ComputerItemWatcher::addDevice);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_Item_Remove", ComputerItemWatcherInstance, &ComputerItemWatcher::removeDevice);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_View_Refresh", ComputerItemWatcherInstance, &ComputerItemWatcher::startQueryItems);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_Passwd_Clear", RemotePasswdManagerInstance, &RemotePasswdManager::clearPasswd);
 }
 
 void Computer::followEvents()

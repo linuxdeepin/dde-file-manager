@@ -9,6 +9,7 @@
 #include "beans/tagproperty.h"
 #include "beans/sqlitemaster.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/base/db/sqlitehandle.h"
@@ -25,7 +26,6 @@
 DPTAG_USE_NAMESPACE
 USING_IO_NAMESPACE
 
-static constexpr char kTagDbName[] = ".__tag.db";
 static constexpr char kTagTableFileTags[] = "file_tags";
 static constexpr char kTagTableTagProperty[] = "tag_property";
 
@@ -410,7 +410,7 @@ bool TagDbHandle::checkDatabase()
         dir.mkpath(dbPath);
 
     const auto &dbFilePath = DFMUtils::buildFilePath(dbPath.toLocal8Bit(),
-                                                     kTagDbName,
+                                                     Global::DataBase::kDfmDBName,
                                                      nullptr);
     handle = new SqliteHandle(dbFilePath);
     QSqlDatabase db { SqliteConnectionPool::instance().openConnection(dbFilePath) };

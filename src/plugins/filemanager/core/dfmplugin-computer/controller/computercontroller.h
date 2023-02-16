@@ -45,7 +45,6 @@ public:
     void actSafelyRemove(DFMEntryFileInfoPointer info);
     void actRename(quint64 winId, DFMEntryFileInfoPointer info, bool triggerFromSidebar);
     void actFormat(quint64 winId, DFMEntryFileInfoPointer info);
-    void actRemove(DFMEntryFileInfoPointer info);
     void actProperties(quint64 winId, DFMEntryFileInfoPointer info);
     void actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info);
     void actErase(DFMEntryFileInfoPointer info);

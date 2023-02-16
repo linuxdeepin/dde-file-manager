@@ -5,10 +5,8 @@
 #include "computercontroller.h"
 #include "events/computereventcaller.h"
 #include "fileentity/appentryfileentity.h"
-#include "fileentity/stashedprotocolentryfileentity.h"
 #include "fileentity/blockentryfileentity.h"
 #include "utils/computerutils.h"
-#include "utils/stashmountsutils.h"
 #include "utils/remotepasswdmanager.h"
 #include "watcher/computeritemwatcher.h"
 
@@ -50,11 +48,6 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
 
     DFMBASE_USE_NAMESPACE;
-    QString suffix = info->nameOf(NameInfoType::kSuffix);
-    if (!ComputerUtils::isPresetSuffix(suffix)) {
-        ComputerEventCaller::sendOpenItem(winId, info->urlOf(UrlInfoType::kUrl));
-        return;
-    }
 
     bool isOptical = info->extraProperty(DeviceProperty::kOptical).toBool();
     if (!info->isAccessable() && !isOptical) {
@@ -71,15 +64,14 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
         else
             ComputerEventCaller::cdTo(winId, target);
     } else {
+        QString suffix = info->nameOf(NameInfoType::kSuffix);
         if (suffix == SuffixInfo::kBlock) {
             mountDevice(winId, info);
-        } else if (suffix == SuffixInfo::kProtocol) {
-            ;
-        } else if (suffix == SuffixInfo::kStashedProtocol) {
-            actMount(winId, info, true);
         } else if (suffix == SuffixInfo::kAppEntry) {
             QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
             QProcess::startDetached(cmd);
+        } else {
+            ComputerEventCaller::sendOpenItem(winId, info->urlOf(UrlInfoType::kUrl));
         }
     }
 }
@@ -387,15 +379,7 @@ static void onNetworkDeviceMountFinished(bool ok, DFMMOUNT::DeviceError err, con
 void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, bool enterAfterMounted)
 {
     QString sfx = info->nameOf(NameInfoType::kSuffix);
-    if (sfx == SuffixInfo::kStashedProtocol) {
-        QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->urlOf(UrlInfoType::kUrl));
-        DevMngIns->mountNetworkDeviceAsync(devId, [devId, enterAfterMounted, winId](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
-            if (ok)
-                ComputerItemWatcherInstance->insertUrlMapper(devId, QUrl::fromLocalFile(mntPath));
-            onNetworkDeviceMountFinished(ok, err, mntPath, winId, enterAfterMounted);
-        });
-        return;
-    } else if (sfx == SuffixInfo::kBlock) {
+    if (sfx == SuffixInfo::kBlock) {
         mountDevice(0, info, kNone);
         return;
     } else if (sfx == SuffixInfo::kProtocol) {
@@ -527,14 +511,6 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
     }
 }
 
-void ComputerController::actRemove(DFMEntryFileInfoPointer info)
-{
-    if (info->nameOf(NameInfoType::kSuffix) != SuffixInfo::kStashedProtocol)
-        return;
-    StashMountsUtils::removeStashedMount(info->urlOf(UrlInfoType::kUrl));
-    Q_EMIT ComputerItemWatcherInstance->removeDevice(info->urlOf(UrlInfoType::kUrl));
-}
-
 void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer info)
 {
     Q_UNUSED(winId);
@@ -578,9 +554,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
     // 2. unmount
     actUnmount(info);
 
-    // 3. remove stashed entry
-    QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(id);
-    StashMountsUtils::removeStashedMount(stashedUrl);
+    // 3. remove device enrty
     Q_EMIT ComputerItemWatcherInstance->removeDevice(info->urlOf(UrlInfoType::kUrl));
 }
 

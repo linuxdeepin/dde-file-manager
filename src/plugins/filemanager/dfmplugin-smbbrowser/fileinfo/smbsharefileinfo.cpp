@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "smbsharefileinfo.h"
-#include "dfm-base/dfm_global_defines.h"
 #include "private/smbsharefileinfo_p.h"
 #include "utils/smbbrowserutils.h"
+
+#include "dfm-base/dfm_global_defines.h"
 
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
@@ -80,11 +81,10 @@ SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileIn
     : AbstractFileInfoPrivate(url, qq)
 {
     {
-        QMutexLocker locker(&SmbBrowserUtils::mutex);
-        node = SmbBrowserUtils::shareNodes.value(url);
+        QMutexLocker locker(&smb_browser_utils::nodesMutex());
+        node = smb_browser_utils::shareNodes().value(url);
 #if 0
-        qDebug() << "smb share url: " << url
-                 << "\nnode info: " << node;
+        qDebug() << node;
 #endif
     }
 }

@@ -43,7 +43,6 @@ namespace SuffixInfo {
 inline constexpr char kAppEntry[] { "appentry" };
 inline constexpr char kBlock[] { "blockdev" };
 inline constexpr char kProtocol[] { "protodev" };
-inline constexpr char kStashedProtocol[] { "protodevstashed" };
 inline constexpr char kUserDir[] { "userdir" };
 }
 
@@ -59,7 +58,6 @@ inline constexpr char kMount[] { "computer-mount" };
 inline constexpr char kUnmount[] { "computer-unmount" };
 inline constexpr char kRename[] { "computer-rename" };
 inline constexpr char kFormat[] { "computer-format" };
-inline constexpr char kRemove[] { "computer-remove" };
 inline constexpr char kEject[] { "computer-eject" };
 inline constexpr char kErase[] { "computer-erase" };
 inline constexpr char kSafelyRemove[] { "computer-safely-remove" };
@@ -75,7 +73,6 @@ extern QString trMount();
 extern QString trUnmount();
 extern QString trRename();
 extern QString trFormat();
-extern QString trRemove();
 extern QString trEject();
 extern QString trErase();
 extern QString trSafelyRemove();

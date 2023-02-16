@@ -212,6 +212,8 @@ bool DeviceUtils::isWorkingOpticalDiscId(const QString &id)
 
 bool DeviceUtils::isSamba(const QUrl &url)
 {
+    if (url.scheme() == Global::Scheme::kSmb)
+        return true;
     static const QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };   // TODO(xust) /media/$USER/smbmounts might be changed in the future.}
     return hasMatch(url.path(), smbMatch);
 }

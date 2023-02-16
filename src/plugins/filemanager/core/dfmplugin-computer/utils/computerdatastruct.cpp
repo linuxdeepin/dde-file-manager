@@ -43,10 +43,6 @@ QString trFormat()
 {
     return QObject::tr("Format");
 }
-QString trRemove()
-{
-    return QObject::tr("Remove");
-}
 QString trLogoutAndClearSavedPasswd()
 {
     return QObject::tr("Clear saved password and unmount");

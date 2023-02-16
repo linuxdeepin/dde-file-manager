@@ -98,7 +98,6 @@ private:
     ComputerDataList getUserDirItems();
     ComputerDataList getBlockDeviceItems(bool &hasNewItem);
     ComputerDataList getProtocolDeviceItems(bool &hasNewItem);
-    ComputerDataList getStashedProtocolItems(bool &hasNewItem, const ComputerDataList &protocolDevs);
     ComputerDataList getAppEntryItems(bool &hasNewItem);
 
     int addGroup(const QString &name);

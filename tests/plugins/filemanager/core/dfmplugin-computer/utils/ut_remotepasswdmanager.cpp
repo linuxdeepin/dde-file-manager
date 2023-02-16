@@ -42,34 +42,6 @@ TEST_F(UT_RemotePasswdManager, ClearPasswd)
     EXPECT_NO_FATAL_FAILURE(ins->clearPasswd("helllllll"));
 }
 
-TEST_F(UT_RemotePasswdManager, LoadConfig)
-{
-    EXPECT_NO_FATAL_FAILURE(ins->loadConfig());
-
-    QFile f(ins->configPath());
-    f.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    QTextStream in(&f);
-    in << "{}";
-    f.close();
-
-    EXPECT_NO_FATAL_FAILURE(ins->loadConfig());
-    ::remove(ins->configPath().toStdString().c_str());
-}
-
-TEST_F(UT_RemotePasswdManager, SaveConfig)
-{
-    EXPECT_NO_FATAL_FAILURE(ins->saveConfig());
-
-    QFile f(ins->configPath());
-    f.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    QTextStream in(&f);
-    in << "{}";
-    f.close();
-
-    EXPECT_NO_FATAL_FAILURE(ins->saveConfig());
-    ::remove(ins->configPath().toStdString().c_str());
-}
-
 TEST_F(UT_RemotePasswdManager, GetLoginInfo)
 {
     QFile f(ins->configPath());
@@ -88,13 +60,12 @@ TEST_F(UT_RemotePasswdManager, GetLoginInfo)
     in << "}";
     f.close();
 
-    EXPECT_NO_FATAL_FAILURE(ins->loadConfig());
     EXPECT_NO_FATAL_FAILURE(ins->getLoginInfo("smb://127.0.0.1"));
     EXPECT_FALSE(ins->getLoginInfo("smb://127.0.0.1").isEmpty());
     EXPECT_TRUE(ins->getLoginInfo("smb://192.168.1.1").isEmpty());
 }
 
-TEST_F(UT_RemotePasswdManager, ParseServer) {}
+TEST_F(UT_RemotePasswdManager, ParseServer) { }
 
 TEST_F(UT_RemotePasswdManager, ConfigPath)
 {

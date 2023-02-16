@@ -6,7 +6,6 @@
 
 #include "plugins/filemanager/core/dfmplugin-computer/watcher/computeritemwatcher.h"
 #include "plugins/filemanager/core/dfmplugin-computer/utils/computerutils.h"
-#include "plugins/filemanager/core/dfmplugin-computer/utils/stashmountsutils.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/application/application.h"
@@ -35,7 +34,6 @@ TEST_F(UT_ComputerItemWatcher, Items)
     stub.set_lamda(&ComputerItemWatcher::getUserDirItems, [] { __DBG_STUB_INVOKE__ return ComputerDataList {}; });
     stub.set_lamda(&ComputerItemWatcher::getBlockDeviceItems, [] { __DBG_STUB_INVOKE__ return ComputerDataList {}; });
     stub.set_lamda(&ComputerItemWatcher::getProtocolDeviceItems, [] { __DBG_STUB_INVOKE__ return ComputerDataList {}; });
-    stub.set_lamda(&ComputerItemWatcher::getStashedProtocolItems, [] { __DBG_STUB_INVOKE__ return ComputerDataList {}; });
     stub.set_lamda(&ComputerItemWatcher::getAppEntryItems, [] { __DBG_STUB_INVOKE__ return ComputerDataList {}; });
     EXPECT_NO_FATAL_FAILURE(ins->items());
     EXPECT_TRUE(ins->items().count() == 0);
@@ -113,7 +111,6 @@ TEST_F(UT_ComputerItemWatcher, OnDeviceAdded)
 {
     stub.set_lamda(VADDR(EntryFileInfo, exists), [] { __DBG_STUB_INVOKE__ return true; });
     stub.set_lamda(&ComputerItemWatcher::cacheItem, [] { __DBG_STUB_INVOKE__ });
-    stub.set_lamda(&StashMountsUtils::stashMount, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&ComputerItemWatcher::removeDevice, [] { __DBG_STUB_INVOKE__ });
     auto &&url = ComputerUtils::makeProtocolDevUrl("smb://1.2.3.4/hello");
     EXPECT_NO_FATAL_FAILURE(ins->onDeviceAdded(url, 0));
@@ -148,11 +145,8 @@ TEST_F(UT_ComputerItemWatcher, OnGenAttributeChanged)
     EXPECT_NO_FATAL_FAILURE(ins->onGenAttributeChanged(Application::GenericAttribute::kShowFileSystemTagOnDiskIcon, true));
     EXPECT_NO_FATAL_FAILURE(ins->onGenAttributeChanged(Application::GenericAttribute::kHiddenSystemPartition, true));
 
-    stub.set_lamda(StashMountsUtils::stashedMounts, [] { __DBG_STUB_INVOKE__ return QMap<QString, QString> { { "smb://1.2.3.4/hello", "hello" } }; });
     stub.set_lamda(&ComputerItemWatcher::removeDevice, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&ComputerItemWatcher::removeSidebarItem, [] { __DBG_STUB_INVOKE__ });
-    stub.set_lamda(StashMountsUtils::clearStashedMounts, [] { __DBG_STUB_INVOKE__ });
-    stub.set_lamda(StashMountsUtils::stashMountedMounts, [] { __DBG_STUB_INVOKE__ });
 
     EXPECT_NO_FATAL_FAILURE(ins->onGenAttributeChanged(Application::GenericAttribute::kAlwaysShowOfflineRemoteConnections, false));
     EXPECT_NO_FATAL_FAILURE(ins->onGenAttributeChanged(Application::GenericAttribute::kAlwaysShowOfflineRemoteConnections, true));

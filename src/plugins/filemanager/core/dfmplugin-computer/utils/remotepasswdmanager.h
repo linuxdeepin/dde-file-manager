@@ -31,8 +31,6 @@ public:
 
 private:
     explicit RemotePasswdManager(QObject *parent = nullptr);
-    void loadConfig();
-    void saveConfig();
     QJsonObject getLoginInfo(const QString &uri);
     QString parseServer(const QString &uri);
     QString configPath();

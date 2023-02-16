@@ -19,6 +19,9 @@ class SmbBrowserMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePr
 
 public:
     explicit SmbBrowserMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
+    void actUnmount();
+    void actMount();
+    void actProperties();
 
 private:
     QUrl url;

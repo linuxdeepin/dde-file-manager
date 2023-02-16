@@ -8,7 +8,6 @@
 #include "appentryfileentity.h"
 #include "blockentryfileentity.h"
 #include "protocolentryfileentity.h"
-#include "stashedprotocolentryfileentity.h"
 #include "userentryfileentity.h"
 
 #endif   // ENTRYFILEENTITIES_H

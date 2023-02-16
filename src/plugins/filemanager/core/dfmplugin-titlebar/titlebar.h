@@ -32,6 +32,7 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_NewWindowAndTab_SetEnable)
     DPF_EVENT_REG_SLOT(slot_Navigator_Forward)
     DPF_EVENT_REG_SLOT(slot_Navigator_Backward)
+    DPF_EVENT_REG_SLOT(slot_Navigator_Remove)
     DPF_EVENT_REG_SLOT(slot_ServerDialog_RemoveHistory)
 
     // hook events

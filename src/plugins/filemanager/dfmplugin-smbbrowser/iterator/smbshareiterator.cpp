@@ -18,8 +18,8 @@ SmbShareIteratorPrivate::SmbShareIteratorPrivate(const QUrl &url, dfmplugin_smbb
     : q(qq)
 {
     {
-        QMutexLocker locker(&SmbBrowserUtils::mutex);
-        SmbBrowserUtils::shareNodes.clear();
+        QMutexLocker locker(&smb_browser_utils::nodesMutex());
+        smb_browser_utils::shareNodes().clear();
     }
     enumerator.reset(new DLocalEnumerator(url));
 }
@@ -51,12 +51,12 @@ QUrl SmbShareIterator::next()
     QString name = info->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
 
     {
-        QMutexLocker locker(&SmbBrowserUtils::mutex);
+        QMutexLocker locker(&smb_browser_utils::nodesMutex());
         SmbShareNode node;
         node.url = url.toString();
         node.iconType = icon;
         node.displayName = name;
-        SmbBrowserUtils::shareNodes.insert(url, node);
+        smb_browser_utils::shareNodes().insert(url, node);
     }
 
     return url;
