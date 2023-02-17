@@ -21,6 +21,32 @@ class AbstractDirIterator : public QObject
 {
     Q_OBJECT
 public:
+    struct SortFileInfo
+    {
+        QUrl url;
+        bool isFile { false };
+        bool isDir { false };
+        bool isSymLink { false };
+        bool isHide { false };
+        bool isReadable { false };
+        bool isWriteable { false };
+        bool isExecutable { false };
+        SortFileInfo(const QUrl &url, const bool isFile, const bool isDir, const bool isSymLink, const bool isHide,
+                     const bool isReadable, const bool isWriteable, const bool isExecutable)
+            : url(url),
+              isFile(isFile),
+              isDir(isDir),
+              isSymLink(isSymLink),
+              isHide(isHide),
+              isReadable(isReadable),
+              isWriteable(isWriteable),
+              isExecutable(isExecutable)
+        {
+        }
+        SortFileInfo() {}
+    };
+
+public:
     explicit AbstractDirIterator() = delete;
 
     explicit AbstractDirIterator(const QUrl &url,
@@ -103,12 +129,27 @@ public:
         return false;
     }
     // cache some block io attribute
-    virtual void cacheBlockIOAttribute(){}
+    virtual void cacheBlockIOAttribute() {}
+    virtual void setArguments(const QVariantMap &argus)
+    {
+        Q_UNUSED(argus);
+    }
+    virtual QList<QSharedPointer<SortFileInfo>> sortFileInfoList()
+    {
+        return {};
+    }
+    virtual bool oneByOne()
+    {
+        return true;
+    }
 };
 
 }
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> AbstractDirIteratorPointer;
+typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator::SortFileInfo> SortInfoPointer;
 
 Q_DECLARE_METATYPE(AbstractDirIteratorPointer)
+Q_DECLARE_METATYPE(SortInfoPointer)
+Q_DECLARE_METATYPE(QList<SortInfoPointer>)
 
 #endif   // ABSTRACTDIRITERATOR_H

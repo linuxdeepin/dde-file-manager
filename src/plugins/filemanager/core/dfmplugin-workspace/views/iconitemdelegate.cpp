@@ -9,7 +9,7 @@
 #include "utils/fileviewhelper.h"
 #include "fileview.h"
 #include "iconitemeditor.h"
-#include "models/filesortfilterproxymodel.h"
+#include "models/fileviewmodel.h"
 #include "events/workspaceeventsequence.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
@@ -330,7 +330,7 @@ void IconItemDelegate::editorFinished()
     auto windowId = WorkspaceHelper::instance()->windowId(fileview);
     if (!fileview->model())
         return;
-    QUrl url = fileview->model()->getUrlByIndex(d->editingIndex);
+    QUrl url = fileview->model()->data(d->editingIndex, kItemUrlRole).toUrl();
     WorkspaceEventCaller::sendRenameEndEdit(windowId, url);
 }
 
@@ -524,7 +524,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(displayName, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 d->textLineHeight, Qt::AlignCenter, painter));
 
-    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+    const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
     if (WorkspaceEventSequence::instance()->doPaintIconItemText(url, labelRect, painter, layout.data()))
         return;
 
@@ -587,9 +587,9 @@ QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
     if (FileViewHelper *viewHelper = this->parent()) {
         if (FileView *fileView = viewHelper->parent()) {
-            if (FileSortFilterProxyModel *model = fileView->model()) {
+            if (fileView->model()) {
                 auto windowId = WorkspaceHelper::instance()->windowId(parent);
-                QUrl url = model->getUrlByIndex(index);
+                QUrl url = fileView->model()->data(index, kItemUrlRole).toUrl();
                 WorkspaceEventCaller::sendRenameStartEdit(windowId, url);
             }
         }

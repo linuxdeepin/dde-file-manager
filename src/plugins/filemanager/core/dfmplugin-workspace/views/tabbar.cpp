@@ -7,7 +7,7 @@
 #include "tabclosebutton.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
-#include "utils/filemodelmanager.h"
+#include "utils/filedatamanager.h"
 
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -80,9 +80,6 @@ int TabBar::createTab()
 void TabBar::removeTab(const int index, const bool &remainState)
 {
     Tab *tab = tabList.at(index);
-
-    const QUrl &oldUrl = tab->getCurrentUrl();
-    FileModelManager::instance()->derefRootData(oldUrl);
 
     tabList.removeAt(index);
     tab->deleteLater();

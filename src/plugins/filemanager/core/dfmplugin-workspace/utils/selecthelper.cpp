@@ -4,10 +4,10 @@
 
 #include "selecthelper.h"
 #include "views/fileview.h"
-#include "dfm-base/utils/windowutils.h"
-#include "models/filesortfilterproxymodel.h"
 #include "models/fileselectionmodel.h"
 #include "models/fileviewmodel.h"
+
+#include "dfm-base/utils/windowutils.h"
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;

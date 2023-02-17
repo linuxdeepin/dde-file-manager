@@ -7,8 +7,8 @@
 
 #include "dfm_base_global.h"
 #include "dfm_global_defines.h"
-#include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/utils/threadcontainer.hpp"
+#include "dfm-base/interfaces/abstractdiriterator.h"
 
 #include <QMetaType>
 #include <QObject>
@@ -24,15 +24,14 @@ class TraversalDirThread : public QThread
     Q_OBJECT
     QUrl dirUrl;   // 遍历的目录的url
     QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> dirIterator;   // 当前遍历目录的diriterator
-    QList<AbstractFileInfoPointer> childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
     bool isMixDirAndFile = false;
 
     QStringList nameFilters;
     QDir::Filters filters;
     QDirIterator::IteratorFlags flags;
-    Qt::SortOrder sortOrder{ Qt::AscendingOrder};
-    dfmio::DEnumerator::SortRoleCompareFlag sortRole{ dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
+    Qt::SortOrder sortOrder { Qt::AscendingOrder };
+    dfmio::DEnumerator::SortRoleCompareFlag sortRole { dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
 
 public:
     explicit TraversalDirThread(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -43,20 +42,25 @@ public:
     void stop();
     void quit();
     void stopAndDeleteLater();
-    void setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole, const bool isMixDirAndFile = false);
+    void setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole, const bool isMixDirAndFile);
 
 Q_SIGNALS:
     void updateChildren(QList<AbstractFileInfoPointer> children);
     void updateChild(const AbstractFileInfoPointer child);
     void stoped();
-// Special processing If it is a local file, directly read all the simple sorting lists of the file
-Q_SIGNALS:
-    void updateLocalChildren(QList<QSharedPointer<DFMIO::DEnumerator::SortFileInfo>> children,
+    // Special processing If it is a local file, directly read all the simple sorting lists of the file
+    void updateLocalChildren(QList<SortInfoPointer> children,
                              dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                              Qt::SortOrder sortOrder,
                              bool isMixDirAndFile);
+    void traversalFinished();
+
 protected:
     virtual void run() override;
+
+private:
+    int iteratorOneByOne();
+    int iteratorAll();
 };
 }
 

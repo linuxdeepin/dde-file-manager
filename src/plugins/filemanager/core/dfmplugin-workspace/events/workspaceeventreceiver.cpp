@@ -5,7 +5,6 @@
 #include "workspaceeventreceiver.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
-#include "utils/filemodelmanager.h"
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
 
@@ -393,5 +392,5 @@ bool WorkspaceEventReceiver::handleRegisterRoutePrehandle(const QString &scheme,
 
 void WorkspaceEventReceiver::handleRegisterDataCache(const QString &scheme)
 {
-    FileModelManager::instance()->registerDataCache(scheme);
+    //    FileModelManager::instance()->registerDataCache(scheme);
 }

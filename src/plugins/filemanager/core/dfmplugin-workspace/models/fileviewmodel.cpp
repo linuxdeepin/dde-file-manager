@@ -6,17 +6,21 @@
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "utils/fileoperatorhelper.h"
-#include "utils/filedatahelper.h"
+#include "utils/filedatamanager.h"
+#include "utils/filesortworker.h"
+#include "models/rootinfo.h"
+#include "models/fileitemdata.h"
 #include "events/workspaceeventsequence.h"
-#include "filesortfilterproxymodel.h"
 
-#include "base/application/settings.h"
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/fileinfohelper.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -31,185 +35,189 @@ DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
-inline constexpr int kMaxColumnCount { 10 };
-
 FileViewModel::FileViewModel(QAbstractItemView *parent)
-    : QAbstractItemModel(parent),
-      fileDataHelper(new FileDataHelper(this))
+    : QAbstractItemModel(parent)
 
 {
-    connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileUpdated);
+    currentKey = QString::number(quintptr(this), 16);
+    itemRootData = new FileItemData(dirRootUrl);
+    connect(&FileInfoHelper::instance(), &FileInfoHelper::createThumbnailFinished, this, &FileViewModel::onFileThumbUpdated);
 }
 
 FileViewModel::~FileViewModel()
 {
+    quitFilterSortWork();
+
+    if (itemRootData) {
+        delete itemRootData;
+        itemRootData = nullptr;
+    }
+    FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
 }
 
 QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (!parent.isValid()) {
-        if (row < 0 || column < 0)
-            return QModelIndex();
-        auto info = fileDataHelper->findRootInfo(row);
-        if (!info || !info->data)
-            return QModelIndex();
+    auto isParentValid = parent.isValid();
 
-        return createIndex(row, column, info->data);
+    if ((!isParentValid && (row != 0 || column != 0))
+        || (row < 0 || column < 0))
+        return QModelIndex();
+
+    if (!isParentValid && filterSortWorker.isNull())
+        return createIndex(row, column, itemRootData);
+
+    if (!filterSortWorker)
+        return QModelIndex();
+
+    FileItemData *itemData = nullptr;
+    if (!isParentValid) {
+        itemData = filterSortWorker->rootData();
+    } else {
+        itemData = filterSortWorker->childData(row);
     }
 
-    auto data = fileDataHelper->findFileItemData(parent.row(), row);
-    if (data)
-        return createIndex(row, column, data);
-
-    return QModelIndex();
+    return createIndex(row, column, itemData);
 }
 
-QUrl FileViewModel::rootUrl(const QModelIndex &rootIndex) const
+QUrl FileViewModel::rootUrl() const
 {
-    auto rootInfo = fileDataHelper->findRootInfo(rootIndex.row());
-    if (rootInfo)
-        return rootInfo->url;
-
-    return QUrl();
+    return dirRootUrl;
 }
 
-QModelIndex FileViewModel::rootIndex(const QUrl &rootUrl) const
+QModelIndex FileViewModel::rootIndex() const
 {
-    const RootInfo *info = fileDataHelper->findRootInfo(rootUrl);
-    return createIndex(info->rowIndex, 0, info->data);
+    if (!filterSortWorker)
+        return QModelIndex();
+
+    auto data = filterSortWorker->rootData();
+    if (data) {
+        return createIndex(0, 0, data);
+    } else {
+        return QModelIndex();
+    }
 }
 
-QModelIndex FileViewModel::setRootUrl(const QUrl &url, FileView *view)
+QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
     if (!url.isValid())
         return QModelIndex();
 
-    int rootRow = fileDataHelper->preSetRoot(url);
-    RootInfo *root = nullptr;
-    if (rowCount() <= rootRow) {
-        // insert root index
-        beginInsertRows(QModelIndex(), rootRow, rootRow);
-        root = fileDataHelper->setRoot(url);
-        endInsertRows();
+    // insert root index
+    beginResetModel();
+    // create root by url
+    dirRootUrl = url;
+    RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl);
+    endResetModel();
 
-        connect(root, &RootInfo::insert, this, &FileViewModel::onInsert, Qt::QueuedConnection);
-        connect(root, &RootInfo::insertFinish, this, &FileViewModel::onInsertFinish, Qt::QueuedConnection);
-        connect(root, &RootInfo::remove, this, &FileViewModel::onRemove, Qt::QueuedConnection);
-        connect(root, &RootInfo::removeFinish, this, &FileViewModel::onRemoveFinish, Qt::QueuedConnection);
-        connect(root, &RootInfo::childrenUpdate, this, &FileViewModel::childrenUpdated, Qt::QueuedConnection);
-        connect(root, &RootInfo::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
-        connect(root, &RootInfo::reloadView, this, &FileViewModel::reloadView, Qt::QueuedConnection);
-    } else {
-        root = fileDataHelper->setRoot(url);
-    }
+    initFilterSortWork();
 
-    const QModelIndex &index = rootIndex(url);
+    // connect signals
+    connect(filterSortWorker.data(), &FileSortWorker::getSourceData, root, &RootInfo::handleGetSourceData, Qt::QueuedConnection);
+    connect(root, &RootInfo::sourceDatas, filterSortWorker.data(), &FileSortWorker::handleSourceChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::iteratorLocalFiles, filterSortWorker.data(), &FileSortWorker::handleIteratorLocalChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::iteratorAddFile, filterSortWorker.data(), &FileSortWorker::handleIteratorChild, Qt::QueuedConnection);
+    connect(root, &RootInfo::watcherAddFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherAddChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::watcherRemoveFiles, filterSortWorker.data(), &FileSortWorker::handleWatcherRemoveChildren, Qt::QueuedConnection);
+    connect(root, &RootInfo::watcherUpdateFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateFile, Qt::QueuedConnection);
+    connect(root, &RootInfo::watcherUpdateHideFile, filterSortWorker.data(), &FileSortWorker::handleWatcherUpdateHideFile, Qt::QueuedConnection);
+    connect(root, &RootInfo::traversalFinished, filterSortWorker.data(), &FileSortWorker::handleTraversalFinish, Qt::QueuedConnection);
+
+    // fetch files
+    const QModelIndex &index = rootIndex();
 
     if (WorkspaceHelper::instance()->haveViewRoutePrehandler(url.scheme())) {
-        root->canFetchByForce = true;
-        Q_EMIT traverPrehandle(url, index, view);
+        auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
+        if (prehandler) {
+            quint64 winId = FileManagerWindowsManager::instance().findWindowId(qobject_cast<FileView *>(QObject::parent()));
+            prehandler(winId, url, [this, index]() {
+                this->canFetchFiles = true;
+                this->fetchMore(index);
+            });
+        }
     } else {
-        root->canFetchMore = true;
+        canFetchFiles = true;
         fetchMore(index);
     }
 
     return index;
 }
 
-QModelIndex FileViewModel::findRootIndex(const QUrl &url) const
+AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 {
-    RootInfo *info = fileDataHelper->findRootInfo(url);
-    if (info)
-        return index(info->rowIndex, 0, QModelIndex());
+    if (!index.isValid() || index.row() < 0 || filterSortWorker.isNull())
+        return nullptr;
+
+    const QModelIndex &parentIndex = index.parent();
+    FileItemData *item = nullptr;
+    if (!parentIndex.isValid()) {
+        item = filterSortWorker->rootData();
+    } else {
+        item = filterSortWorker->childData(index.row());
+    }
+
+    if (!item)
+        return nullptr;
+
+    return item->fileInfo();
+}
+
+QList<QUrl> FileViewModel::getChildrenUrls() const
+{
+    if (filterSortWorker)
+        return filterSortWorker->getChildrenUrls();
+
+    return {};
+}
+
+QModelIndex FileViewModel::getIndexByUrl(const QUrl &url) const
+{
+    if (!filterSortWorker)
+        return QModelIndex();
+
+    int rowIndex = filterSortWorker->getChildShowIndex(url);
+
+    if (rowIndex >= 0)
+        return index(rowIndex, 0, rootIndex());
 
     return QModelIndex();
 }
 
-QModelIndex FileViewModel::findChildIndex(const QUrl &rootUrl, const QUrl &url) const
+int FileViewModel::getColumnWidth(int column) const
 {
-    auto indexPair = fileDataHelper->getChildIndexByUrl(rootUrl, url);
+    const ItemRoles role = getRoleByColumn(column);
 
-    if (indexPair.first < 0 || indexPair.second < 0)
-        return QModelIndex();
-
-    const QModelIndex &parentIndex = index(indexPair.first, 0, QModelIndex());
-
-    return index(indexPair.second, 0, parentIndex);
-}
-
-void FileViewModel::doFetchMore(const QModelIndex &rootIndex)
-{
-    auto rootInfo = fileDataHelper->findRootInfo(rootIndex.row());
-    if (!rootInfo->canFetchByForce)
-        return;
-
-    rootInfo->canFetchByForce = false;
-    rootInfo->canFetchMore = true;
-    rootInfo->needTraversal = true;
-
-    fetchMore(rootIndex);
-}
-
-AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
-{
-    if (!index.isValid() || index.row() < 0)
-        return nullptr;
-
-    const QModelIndex &parentIndex = index.parent();
-    if (!parentIndex.isValid()) {
-        RootInfo *info = fileDataHelper->findRootInfo(index.row());
-
-        if (info && info->data)
-            return info->data->fileInfo();
-
-        return nullptr;
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
+    int colWidth = state.value(QString::number(role), -1).toInt();
+    if (colWidth > 0) {
+        return colWidth;
     }
 
-    const FileItemData *data = fileDataHelper->findFileItemData(parentIndex.row(), index.row());
-    if (data)
-        return data->fileInfo();
-
-    return nullptr;
+    // default width of each column
+    return 120;
 }
 
-AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &parent, const QModelIndex &index) const
+ItemRoles FileViewModel::getRoleByColumn(int column) const
 {
-    if (!index.isValid() || index.row() < 0)
-        return nullptr;
+    QList<ItemRoles> columnRoleList = getColumnRoles();
 
-    if (!parent.isValid()) {
-        RootInfo *info = fileDataHelper->findRootInfo(index.row());
+    if (columnRoleList.length() > column)
+        return columnRoleList.at(column);
 
-        if (info && info->data)
-            return info->data->fileInfo();
-
-        return nullptr;
-    }
-
-    const FileItemData *data = fileDataHelper->findFileItemData(parent.row(), index.row());
-    if (data)
-        return data->fileInfo();
-
-    return nullptr;
+    return kItemFileDisplayNameRole;
 }
 
-QList<QUrl> FileViewModel::getChildrenUrls(const QUrl &rootUrl) const
+int FileViewModel::getColumnByRole(ItemRoles role) const
 {
-    const RootInfo *info = fileDataHelper->findRootInfo(rootUrl);
-    if (info)
-        return info->getChildrenUrls();
-
-    return {};
+    QList<ItemRoles> columnRoleList = getColumnRoles();
+    return columnRoleList.indexOf(role) < 0 ? 0 : columnRoleList.indexOf(role);
 }
 
 QModelIndex FileViewModel::parent(const QModelIndex &child) const
 {
     const FileItemData *childData = static_cast<FileItemData *>(child.internalPointer());
 
-    if (childData && childData->parentData()
-        && childData->parentData()->fileInfo()) {
-        return findRootIndex(childData->parentData()->fileInfo()->urlOf(UrlInfoType::kUrl));
-    }
+    if (childData && childData->parentData())
+        return index(0, 0, QModelIndex());
 
     return QModelIndex();
 }
@@ -217,87 +225,106 @@ QModelIndex FileViewModel::parent(const QModelIndex &child) const
 int FileViewModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid())
-        return fileDataHelper->rootsCount();
+        return 1;
 
-    return fileDataHelper->filesCount(parent.row());
+    if (!filterSortWorker.isNull())
+        return filterSortWorker->childrenCount();
+
+    return 0;
 }
 
 int FileViewModel::columnCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
-        return kMaxColumnCount;
-
-    const RootInfo *info = fileDataHelper->findRootInfo(parent.row());
-    if (info)
-        return getColumnRoles(info->url).count();
-
-    return 0;
+    Q_UNUSED(parent)
+    return getColumnRoles().count();
 }
 
 QVariant FileViewModel::data(const QModelIndex &index, int role) const
 {
     const QModelIndex &parentIndex = index.parent();
-    if (!parentIndex.isValid()) {
-        RootInfo *info = fileDataHelper->findRootInfo(index.row());
-        if (info)
-            return info->data->data(role);
-        else
-            return QVariant();
-    }
 
-    FileItemData *itemData = fileDataHelper->findFileItemData(parentIndex.row(), index.row());
-
-    if (itemData && itemData->fileInfo())
-        return itemData->data(role);
-    else
+    if (filterSortWorker.isNull())
         return QVariant();
-}
 
-void FileViewModel::clear(const QUrl &rootUrl)
-{
-    fileDataHelper->clear(rootUrl);
-}
+    FileItemData *itemData = nullptr;
 
-void FileViewModel::update(const QUrl &rootUrl)
-{
-    fileDataHelper->update(rootUrl);
+    if (!parentIndex.isValid()) {
+        itemData = filterSortWorker->rootData();
+    } else {
+        itemData = filterSortWorker->childData(index.row());
+    }
 
-    RootInfo *info = fileDataHelper->findRootInfo(rootUrl);
-    if (info) {
-        const QModelIndex &parentIndex = findRootIndex(rootUrl);
-        emit dataChanged(index(0, 0, parentIndex), index(info->childrenCount(), 0, parentIndex));
+    if (itemData && itemData->fileInfo()) {
+        return itemData->data(role);
+    } else {
+        return QVariant();
     }
 }
 
-void FileViewModel::refresh(const QUrl &rootUrl)
+QVariant FileViewModel::headerData(int column, Qt::Orientation, int role) const
 {
-    auto rootInfo = fileDataHelper->findRootInfo(rootUrl);
-    if (rootInfo) {
-        fileDataHelper->clear(rootUrl);
-
-        rootInfo->canFetchMore = true;
-        const QModelIndex &index = rootIndex(rootUrl);
-        fetchMore(index);
+    if (role == Qt::DisplayRole) {
+        int column_role = getRoleByColumn(column);
+        return roleDisplayString(column_role);
     }
+
+    return QVariant();
+}
+
+void FileViewModel::update()
+{
+    if (!filterSortWorker)
+        return;
+
+    int childrenCount = filterSortWorker->childrenCount();
+
+    QModelIndex parentIndex = rootIndex();
+    Q_EMIT dataChanged(index(0, 0, parentIndex), index(childrenCount, 0, parentIndex));
+}
+
+void FileViewModel::refresh()
+{
+    FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey, true);
+
+    canFetchFiles = true;
+    fetchMore(rootIndex());
+}
+
+ModelState FileViewModel::currentState() const
+{
+    return state;
 }
 
 void FileViewModel::fetchMore(const QModelIndex &parent)
 {
+    Q_UNUSED(parent)
+    // first fetch: do traversal whole dir
+    // other fetch: fetch file list from data cache
     if (!canFetchMore(parent)) {
         QApplication::restoreOverrideCursor();
         return;
     }
+    canFetchFiles = false;
+    Q_EMIT requestClearAllChildren();
 
-    traversRootDir(parent);
+    bool ret { false };
+    if (filterSortWorker.isNull()) {
+        ret = FileDataManager::instance()->fetchFiles(dirRootUrl, currentKey);
+    } else {
+        ret = FileDataManager::instance()->fetchFiles(dirRootUrl,
+                                                      currentKey,
+                                                      filterSortWorker->getSortRole(),
+                                                      filterSortWorker->getSortOrder());
+    }
+
+    if (ret)
+        changeState(ModelState::kBusy);
 }
 
 bool FileViewModel::canFetchMore(const QModelIndex &parent) const
 {
-    auto rootInfo = fileDataHelper->findRootInfo(parent.row());
-    if (rootInfo)
-        return rootInfo->canFetchMore;
-
-    return false;
+    Q_UNUSED(parent)
+    return canFetchFiles;
 }
 
 Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
@@ -320,6 +347,9 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
 
     if (info->canAttributes(CanableInfoType::kCanDrag))
         flags |= Qt::ItemIsDragEnabled;
+
+    if (readOnly)
+        flags &= ~(Qt::ItemIsEditable | Qt::ItemIsDropEnabled | Qt::ItemNeverHasChildren);
 
     return flags;
 }
@@ -404,24 +434,47 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
     return ret;
 }
 
-void FileViewModel::traversRootDir(const QModelIndex &rootIndex)
+Qt::DropActions FileViewModel::supportedDragActions() const
 {
-    if (rootIndex.isValid())
-        fileDataHelper->doTravers(rootIndex.row());
+    auto info = fileInfo(rootIndex());
+    if (info)
+        return info->supportedOfAttributes(SupportedType::kDrag);
+
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
-void FileViewModel::stopTraversWork(const QUrl &rootUrl)
+Qt::DropActions FileViewModel::supportedDropActions() const
 {
-    fileDataHelper->doStopWork(rootUrl);
-    Q_EMIT stateChanged(rootUrl, ModelState::kIdle);
+    auto info = fileInfo(rootIndex());
+    if (info)
+        return info->supportedOfAttributes(SupportedType::kDrop);
+
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
-QList<ItemRoles> FileViewModel::getColumnRoles(const QUrl &rootUrl) const
+void FileViewModel::sort(int column, Qt::SortOrder order)
+{
+    ItemRoles role = getRoleByColumn(column);
+    Q_EMIT requestSortChildren(order, role,
+                               Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
+}
+
+void FileViewModel::stopTraversWork()
+{
+    if (!filterSortWorker.isNull())
+        filterSortWorker->cancel();
+
+    FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
+
+    changeState(ModelState::kIdle);
+}
+
+QList<ItemRoles> FileViewModel::getColumnRoles() const
 {
     QList<ItemRoles> roles;
-    bool customOnly = WorkspaceEventSequence::instance()->doFetchCustomColumnRoles(rootUrl, &roles);
+    bool customOnly = WorkspaceEventSequence::instance()->doFetchCustomColumnRoles(dirRootUrl, &roles);
 
-    const QVariantMap &map = DFMBASE_NAMESPACE::Application::appObtuselySetting()->value("FileViewState", rootUrl).toMap();
+    const QVariantMap &map = DFMBASE_NAMESPACE::Application::appObtuselySetting()->value("FileViewState", dirRootUrl).toMap();
     if (map.contains("headerList")) {
         QVariantList headerList = map.value("headerList").toList();
 
@@ -450,56 +503,122 @@ QList<ItemRoles> FileViewModel::getColumnRoles(const QUrl &rootUrl) const
     return roles;
 }
 
+QString FileViewModel::roleDisplayString(int role) const
+{
+    QString displayName;
+
+    if (WorkspaceEventSequence::instance()->doFetchCustomRoleDiaplayName(dirRootUrl, static_cast<ItemRoles>(role), &displayName))
+        return displayName;
+
+    switch (role) {
+    case kItemFileDisplayNameRole:
+        return tr("Name");
+    case kItemFileLastModifiedRole:
+        return tr("Time modified");
+    case kItemFileSizeRole:
+        return tr("Size");
+    case kItemFileMimeTypeRole:
+        return tr("Type");
+    default:
+        return QString();
+    }
+}
+
 void FileViewModel::setIndexActive(const QModelIndex &index, bool enable)
 {
-    fileDataHelper->setFileActive(index.parent().row(), index.row(), enable);
+    if (filterSortWorker.isNull())
+        return;
+
+    auto url = filterSortWorker->mapToIndex(index.row());
+    FileDataManager::instance()->setFileActive(dirRootUrl, url, enable);
 }
 
-void FileViewModel::cleanDataCacheByUrl(const QUrl &url)
+void FileViewModel::updateFile(const QUrl &url)
 {
-    fileDataHelper->clear(url);
+    Q_EMIT requestUpdateFile(url);
 }
 
-void FileViewModel::updateRoot(const QList<QUrl> urls)
+Qt::SortOrder FileViewModel::sortOrder() const
 {
-    for (const auto &url : urls) {
-        fileDataHelper->updateRootInfoStatus(QString(), url.path());
-    }
+    if (filterSortWorker.isNull())
+        return Qt::AscendingOrder;
+
+    return filterSortWorker->getSortOrder();
 }
 
-void FileViewModel::updateFile(const QUrl &root, const QUrl &url)
+ItemRoles FileViewModel::sortRole() const
 {
-    const QModelIndex &index = findChildIndex(root, url);
-    if (index.isValid()) {
-        auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info)
-            info->refresh();
+    if (filterSortWorker.isNull())
+        return kItemFileDisplayNameRole;
 
-        emit dataChanged(index, index);
-    }
+    return filterSortWorker->getSortRole();
 }
 
-void FileViewModel::onFilesUpdated()
+void FileViewModel::setFilters(QDir::Filters filters)
 {
-    FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
-    if (view) {
-        QDir::Filters filter = view->model()->getFilters();
-        view->model()->setFilters(filter);
-    }
-    emit updateFiles();
+    Q_EMIT requestChangeFilters(filters);
 }
 
-void FileViewModel::onFileUpdated(const QUrl &url)
+QDir::Filters FileViewModel::getFilters() const
 {
-    const QUrl &rootUrl = UrlRoute::urlParent(url);
-    updateFile(rootUrl, url);
+    if (filterSortWorker.isNull())
+        return QDir::NoFilter;
+
+    return filterSortWorker->getFilters();
 }
 
-void FileViewModel::onInsert(int rootIndex, int firstIndex, int count)
+void FileViewModel::setNameFilters(const QStringList &filters)
 {
-    const QModelIndex &parentIndex = index(rootIndex, 0, QModelIndex());
+    Q_EMIT requestChangeNameFilters(filters);
+}
 
-    beginInsertRows(parentIndex, firstIndex, firstIndex + count - 1);
+QStringList FileViewModel::getNameFilters() const
+{
+    if (filterSortWorker.isNull())
+        return {};
+
+    return filterSortWorker->getNameFilters();
+}
+
+void FileViewModel::setFilterData(const QVariant &data)
+{
+    filterData = data;
+    // 设置要触发重新过滤信号
+    Q_EMIT requestSetFilterData(data);
+}
+
+void FileViewModel::setFilterCallback(const FileViewFilterCallback callback)
+{
+    filterCallback = callback;
+    // 设置要触发重新过滤信号
+    Q_EMIT requestSetFilterCallback(callback);
+}
+
+void FileViewModel::toggleHiddenFiles()
+{
+    Q_EMIT requestChangeHiddenFilter();
+}
+
+void FileViewModel::setReadOnly(bool value)
+{
+    readOnly = value;
+}
+
+void FileViewModel::onFileThumbUpdated(const QUrl &url)
+{
+    auto updateIndex = getIndexByUrl(url);
+    if (updateIndex.isValid())
+        Q_EMIT dataChanged(updateIndex, updateIndex);
+}
+
+void FileViewModel::onFileUpdated(int show)
+{
+    Q_EMIT dataChanged(index(show, 0, rootIndex()), index(show, 0, rootIndex()));
+}
+
+void FileViewModel::onInsert(int firstIndex, int count)
+{
+    beginInsertRows(rootIndex(), firstIndex, firstIndex + count - 1);
 }
 
 void FileViewModel::onInsertFinish()
@@ -507,14 +626,81 @@ void FileViewModel::onInsertFinish()
     endInsertRows();
 }
 
-void FileViewModel::onRemove(int rootIndex, int firstIndex, int count)
+void FileViewModel::onRemove(int firstIndex, int count)
 {
-    const QModelIndex &parentIndex = index(rootIndex, 0, QModelIndex());
-
-    beginRemoveRows(parentIndex, firstIndex, firstIndex + count - 1);
+    beginRemoveRows(rootIndex(), firstIndex, firstIndex + count - 1);
 }
 
 void FileViewModel::onRemoveFinish()
 {
     endRemoveRows();
+}
+
+void FileViewModel::initFilterSortWork()
+{
+    quitFilterSortWork();
+
+    // make filters
+    QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+    bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
+    if (isShowedHiddenFiles) {
+        filters |= QDir::Hidden;
+    } else {
+        filters &= ~QDir::Hidden;
+    }
+
+    // get sort config
+    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", dirRootUrl).toMap();
+    Qt::SortOrder order = static_cast<Qt::SortOrder>(valueMap.value("sortOrder", Qt::SortOrder::AscendingOrder).toInt());
+    ItemRoles role = static_cast<ItemRoles>(valueMap.value("sortRole", kItemFileDisplayNameRole).toInt());
+
+    filterSortWorker.reset(new FileSortWorker(dirRootUrl, currentKey, filterCallback, {}, filters));
+
+    beginInsertRows(QModelIndex(), 0, 0);
+    filterSortWorker->setRootData(new FileItemData(dirRootUrl));
+    endInsertRows();
+
+    filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
+    filterSortWorker->moveToThread(&filterSortThread);
+
+    // connect signals
+    connect(filterSortWorker.data(), &FileSortWorker::insertRows, this, &FileViewModel::onInsert, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::insertFinish, this, &FileViewModel::onInsertFinish, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::removeRows, this, &FileViewModel::onRemove, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::removeFinish, this, &FileViewModel::onRemoveFinish, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::updateRow, this, &FileViewModel::onFileUpdated, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::selectAndEditFile, this, &FileViewModel::selectAndEditFile, Qt::QueuedConnection);
+    connect(filterSortWorker.data(), &FileSortWorker::requestSetIdel, this, [this]() { this->changeState(ModelState::kIdle); }, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestChangeHiddenFilter, filterSortWorker.data(), &FileSortWorker::onToggleHiddenFiles, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestChangeFilters, filterSortWorker.data(), &FileSortWorker::setFilters, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestChangeNameFilters, filterSortWorker.data(), &FileSortWorker::setNameFilters, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestUpdateFile, filterSortWorker.data(), &FileSortWorker::handleUpdateFile, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestSortChildren, filterSortWorker.data(), &FileSortWorker::resort, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestSetFilterData, filterSortWorker.data(), &FileSortWorker::handleFilterData, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestSetFilterCallback, filterSortWorker.data(), &FileSortWorker::handleFilterCallFunc, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
+    connect(this, &FileViewModel::requestClearAllChildren, filterSortWorker.data(), &FileSortWorker::handleClean, Qt::QueuedConnection);
+    connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
+    connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged);
+
+    filterSortThread.start();
+}
+
+void FileViewModel::quitFilterSortWork()
+{
+    if (!filterSortWorker.isNull()) {
+        filterSortWorker->disconnect();
+        filterSortWorker->cancel();
+    }
+    filterSortThread.quit();
+    filterSortThread.wait();
+}
+
+void FileViewModel::changeState(ModelState newState)
+{
+    if (state == newState)
+        return;
+
+    state = newState;
+    Q_EMIT stateChanged();
 }

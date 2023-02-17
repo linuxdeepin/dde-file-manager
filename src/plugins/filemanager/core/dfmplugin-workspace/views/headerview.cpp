@@ -4,7 +4,7 @@
 
 #include "headerview.h"
 #include "views/fileview.h"
-#include "models/filesortfilterproxymodel.h"
+#include "models/fileviewmodel.h"
 
 #include <QApplication>
 #include <QMouseEvent>
@@ -45,8 +45,8 @@ int HeaderView::sectionsTotalWidth() const
 
 void HeaderView::updateColumnWidth()
 {
-    auto proxyModel = this->proxyModel();
-    if (proxyModel) {
+    auto model = viewModel();
+    if (model) {
         int columnCount = count();
         int i = 0;
         int j = columnCount - 1;
@@ -56,7 +56,7 @@ void HeaderView::updateColumnWidth()
             if (isSectionHidden(logicalIndex))
                 continue;
 
-            resizeSection(logicalIndex, proxyModel->getColumnWidth(i) + kLeftPadding + kListModeLeftMargin + 2 * kColumnPadding);
+            resizeSection(logicalIndex, model->getColumnWidth(i) + kLeftPadding + kListModeLeftMargin + 2 * kColumnPadding);
             break;
         }
 
@@ -65,20 +65,20 @@ void HeaderView::updateColumnWidth()
             if (isSectionHidden(logicalIndex))
                 continue;
 
-            resizeSection(logicalIndex, proxyModel->getColumnWidth(j) + kRightPadding + kListModeRightMargin + 2 * kColumnPadding);
+            resizeSection(logicalIndex, model->getColumnWidth(j) + kRightPadding + kListModeRightMargin + 2 * kColumnPadding);
             break;
         }
 
         if (firstVisibleColumn != i) {
             if (firstVisibleColumn > 0)
-                resizeSection(logicalIndex(firstVisibleColumn), proxyModel->getColumnWidth(firstVisibleColumn) + 2 * kColumnPadding);
+                resizeSection(logicalIndex(firstVisibleColumn), model->getColumnWidth(firstVisibleColumn) + 2 * kColumnPadding);
 
             firstVisibleColumn = i;
         }
 
         if (lastVisibleColumn != j) {
             if (lastVisibleColumn > 0)
-                resizeSection(logicalIndex(lastVisibleColumn), proxyModel->getColumnWidth(lastVisibleColumn) + 2 * kColumnPadding);
+                resizeSection(logicalIndex(lastVisibleColumn), model->getColumnWidth(lastVisibleColumn) + 2 * kColumnPadding);
 
             lastVisibleColumn = j;
         }
@@ -87,7 +87,7 @@ void HeaderView::updateColumnWidth()
 
 void HeaderView::doFileNameColumnResize(const int totalWidth)
 {
-    int fileNameColumn = proxyModel()->getColumnByRole(kItemFileDisplayNameRole);
+    int fileNameColumn = viewModel()->getColumnByRole(kItemFileDisplayNameRole);
     int columnCount = count();
     int columnWidthSumOmitFileName = 0;
 
@@ -185,16 +185,17 @@ void HeaderView::contextMenuEvent(QContextMenuEvent *event)
     Q_UNUSED(event)
 
     QMenu *menu = new QMenu;
+    auto model = viewModel();
 
     for (int i = 0; i < count(); ++i) {
         // file name can not hidden
-        int role = proxyModel()->getRoleByColumn(i);
+        int role = model->getRoleByColumn(i);
         if (role == kItemNameRole || role == kItemFileDisplayNameRole)
             continue;
 
         QAction *action = new QAction(menu);
 
-        action->setText(proxyModel()->roleDisplayString(role));
+        action->setText(model->roleDisplayString(role));
         action->setCheckable(true);
         action->setChecked(!isSectionHidden(i));
 
@@ -217,7 +218,7 @@ void HeaderView::paintEvent(QPaintEvent *e)
         this->setFixedHeight(idealHeight);
 }
 
-FileSortFilterProxyModel *HeaderView::proxyModel() const
+FileViewModel *HeaderView::viewModel() const
 {
-    return qobject_cast<FileSortFilterProxyModel *>(model());
+    return qobject_cast<FileViewModel *>(model());
 }

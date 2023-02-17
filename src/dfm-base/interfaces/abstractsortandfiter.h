@@ -30,9 +30,8 @@ public:
     virtual int lessThan(const AbstractFileInfoPointer &left, const AbstractFileInfoPointer &right,
                          const bool isMixDirAndFile,
                          const Global::ItemRoles role,
-                         const Qt::SortOrder sortOder,
                          const SortScenarios ss);
-    virtual int checkFiters(const AbstractFileInfoPointer &info, const QDir::Filters filter);
+    virtual int checkFiters(const AbstractFileInfoPointer &info, const QDir::Filters filter, const QVariant &custum);
 };
 }
 

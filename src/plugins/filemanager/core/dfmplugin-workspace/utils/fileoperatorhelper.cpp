@@ -6,13 +6,14 @@
 #include "workspacehelper.h"
 #include "events/workspaceeventcaller.h"
 #include "views/fileview.h"
-#include "models/filesortfilterproxymodel.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
+
+#include "dfm-framework/dpf.h"
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 

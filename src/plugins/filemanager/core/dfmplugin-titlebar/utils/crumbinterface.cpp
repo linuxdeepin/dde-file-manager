@@ -151,3 +151,15 @@ void CrumbInterface::onUpdateChildren(QList<AbstractFileInfoPointer> children)
     }
     emit completionFound(list);
 }
+
+void CrumbInterface::onUpdateChildrenByLocal(QList<QSharedPointer<DFMIO::DEnumerator::SortFileInfo>> children)
+{
+    QStringList list;
+
+    for (const auto &child : children) {
+        auto infoPointer = InfoFactory::create<AbstractFileInfo>(child->url);
+        if (infoPointer.data())
+            list.append(infoPointer->nameOf(NameInfoType::kFileName));
+    }
+    emit completionFound(list);
+}

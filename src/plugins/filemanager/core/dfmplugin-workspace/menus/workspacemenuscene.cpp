@@ -9,7 +9,6 @@
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "models/fileviewmodel.h"
-#include "models/filesortfilterproxymodel.h"
 #include "utils/fileoperatorhelper.h"
 
 #include "plugins/common/core/dfmplugin-menu/menu_eventinterface_helper.h"

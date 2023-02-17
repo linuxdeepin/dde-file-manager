@@ -236,15 +236,45 @@ void LocalDirIterator::cacheBlockIOAttribute()
     d->isCdRomDevice = FileUtils::isCdRomDevice(rootUrl);
 }
 
-void LocalDirIterator::setArguments(const QMap<dfmio::DEnumerator::ArgumentKey, QVariant> &argus)
+void LocalDirIterator::setArguments(const QVariantMap &argus)
 {
-    if (d->dfmioDirIterator)
-        d->dfmioDirIterator->setArguments(argus);
+    if (!d->dfmioDirIterator)
+        return;
+    QMap<DEnumerator::ArgumentKey, QVariant> dargus;
+    if (argus.value("sortRole").isValid())
+        dargus.insert(DEnumerator::ArgumentKey::kArgumentSortRole, argus.value("sortRole"));
+    if (argus.value("mixFileAndDir").isValid())
+        dargus.insert(DEnumerator::ArgumentKey::kArgumentMixDirAndFile, argus.value("mixFileAndDir"));
+    if (argus.value("sortOrder").isValid())
+        dargus.insert(DEnumerator::ArgumentKey::kArgumentSortOrder, argus.value("sortOrder"));
+
+    d->dfmioDirIterator->setArguments(dargus);
 }
 
-QList<QSharedPointer<DEnumerator::SortFileInfo> > LocalDirIterator::sortFileInfoList()
+QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()
 {
-    if (d->dfmioDirIterator)
-        return d->dfmioDirIterator->sortFileInfoList();
-    return {};
+    if (!d->dfmioDirIterator)
+        return {};
+
+    auto sortlist = d->dfmioDirIterator->sortFileInfoList();
+    QList<SortInfoPointer> wsortlist;
+    for (const auto &sortInfo : sortlist) {
+        wsortlist.append(SortInfoPointer(
+                new AbstractDirIterator::SortFileInfo(sortInfo->url,
+                                                      sortInfo->isFile,
+                                                      sortInfo->isDir,
+                                                      sortInfo->isSymLink,
+                                                      sortInfo->isHide,
+                                                      sortInfo->isReadable,
+                                                      sortInfo->isWriteable,
+                                                      sortInfo->isExecutable)));
+    }
+    return wsortlist;
+}
+
+bool LocalDirIterator::oneByOne()
+{
+    if (!url().isValid())
+        return true;
+    return !FileUtils::isLocalDevice(url()) || !d->dfmioDirIterator;
 }

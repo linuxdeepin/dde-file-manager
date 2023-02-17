@@ -4,7 +4,7 @@
 
 #include "fileviewmenuhelper.h"
 #include "views/fileview.h"
-#include "models/filesortfilterproxymodel.h"
+#include "models/fileviewmodel.h"
 #include "menus/workspacemenuscene.h"
 #include "utils/workspacehelper.h"
 
@@ -75,7 +75,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
 
-    const AbstractFileInfoPointer &focusFileInfo = view->model()->itemFileInfo(index);
+    const AbstractFileInfoPointer &focusFileInfo = view->model()->fileInfo(index);
     if (focusFileInfo) {
         tgUrl = focusFileInfo->urlOf(UrlInfoType::kUrl);
         // first is focus

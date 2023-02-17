@@ -5,7 +5,7 @@
 #include "viewdrawhelper.h"
 #include "views/fileview.h"
 #include "views/iconitemdelegate.h"
-#include "models/filesortfilterproxymodel.h"
+#include "models/fileviewmodel.h"
 #include "utils/itemdelegatehelper.h"
 
 #include <QPainter>

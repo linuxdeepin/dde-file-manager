@@ -14,7 +14,7 @@
 namespace dfmplugin_workspace {
 
 class FileView;
-class FileSortFilterProxyModel;
+class FileViewModel;
 class HeaderView : public QHeaderView
 {
     Q_OBJECT
@@ -44,7 +44,7 @@ Q_SIGNALS:
     void hiddenSectionChanged(const QString &roleName, const bool checked);
 
 private:
-    FileSortFilterProxyModel *proxyModel() const;
+    FileViewModel *viewModel() const;
 
     FileView *view { nullptr };
     int firstVisibleColumn = -1;

@@ -4,7 +4,7 @@
 
 #include "tab.h"
 #include "private/tab_p.h"
-#include "utils/filemodelmanager.h"
+#include "utils/filedatamanager.h"
 
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/base/schemefactory.h"
@@ -44,12 +44,7 @@ QUrl Tab::getCurrentUrl() const
 
 void Tab::setCurrentUrl(const QUrl &url)
 {
-    if (d->url.isValid())
-        FileModelManager::instance()->derefRootData(d->url);
-
     d->url = url;
-
-    FileModelManager::instance()->refRootData(d->url);
 
     QString fileName = getDisplayNameByUrl(url);
 

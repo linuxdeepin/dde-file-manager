@@ -28,7 +28,6 @@ class FileViewHelper;
 class FileViewStatusBar;
 class HeaderView;
 class BaseItemDelegate;
-class FileSortFilterProxyModel;
 class FileViewPrivate
 {
     friend class FileView;
@@ -41,7 +40,6 @@ class FileViewPrivate
     FileViewStatusBar *statusBar { nullptr };
     HeaderView *headerView { nullptr };
     DAnchors<QLabel> contentLabel { nullptr };
-    FileSortFilterProxyModel *proxyModel { nullptr };
     QTimer *updateStatusBarTimer { nullptr };
     QTimer *updateActiveIndexTimer { nullptr };
     QUrl url;
@@ -56,8 +54,9 @@ class FileViewPrivate
     QList<FileView::SelectionMode> enabledSelectionModes;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int currentIconSizeLevel = 1;
-    DFMGLOBAL_NAMESPACE::ItemRoles currentSortRole = DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole;
-    Qt::SortOrder currentSortOrder = Qt::SortOrder::AscendingOrder;
+
+    //    DFMGLOBAL_NAMESPACE::ItemRoles currentSortRole = DFMGLOBAL_NAMESPACE::kItemFileDisplayNameRole;
+    //    Qt::SortOrder currentSortOrder = Qt::SortOrder::AscendingOrder;
 
     FileView::RandeIndex visibleIndexRande;
 

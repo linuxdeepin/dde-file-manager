@@ -5,6 +5,7 @@
 #include "traversaldirthread.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/application/application.h"
 
 #include <QElapsedTimer>
 #include <QDebug>
@@ -20,8 +21,9 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
     : QThread(parent), dirUrl(url), nameFilters(nameFilters), filters(filters), flags(flags)
 {
     qRegisterMetaType<QList<AbstractFileInfoPointer>>("QList<AbstractFileInfoPointer>");
-    qRegisterMetaType<QList<QSharedPointer<DFMIO::DEnumerator::SortFileInfo>>>();
-    if (dirUrl.isValid() /*&& !UrlRoute::isVirtual(dirUrl)*/) {
+    qRegisterMetaType<QList<SortInfoPointer>>();
+    qRegisterMetaType<SortInfoPointer>();
+    if (dirUrl.isValid()) {
         dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters, flags);
         if (!dirIterator) {
             qWarning() << "Failed create dir iterator from" << url;
@@ -94,41 +96,37 @@ void TraversalDirThread::run()
     QElapsedTimer timer;
     timer.start();
 
+    qInfo() << currentThreadId();
     qInfo() << "dir query start, url: " << dirUrl;
 
     dirIterator->cacheBlockIOAttribute();
 
     qInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timer.elapsed();
-
-    // Determine whether the current iterator can be converted to a local iterator and whether it can be removed
-    auto localDirIterator = dirIterator.dynamicCast<LocalDirIterator>();
-    if (localDirIterator && FileUtils::isLocalDevice(dirUrl)) {
-        QMap<DEnumerator::ArgumentKey, QVariant> argus;
-        argus.insert(DEnumerator::ArgumentKey::kArgumentSortRole,
-                     QVariant::fromValue(sortRole));
-        argus.insert(DEnumerator::ArgumentKey::kArgumentMixDirAndFile, isMixDirAndFile);
-        argus.insert(DEnumerator::ArgumentKey::kArgumentSortOrder, sortOrder);
-        localDirIterator->setArguments(argus);
-        auto fileList = localDirIterator->sortFileInfoList();
-//        stopFlag = true;
-//        for (auto sortInfo : fileList)
-//            childrenList.append(sortInfo->url);
-
-        emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile);
-        qInfo() << "local dir query end, file count: " << fileList.size() << " url: " << dirUrl << " elapsed: " << timer.elapsed();
-//        return;
+    if (stopFlag) {
+        emit traversalFinished();
+        return;
     }
 
-    if (stopFlag)
-        return;
+    int count = 0;
+    if (!dirIterator->oneByOne()) {
+        count = iteratorAll();
+        qInfo() << "local dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+    } else {
+        count = iteratorOneByOne();
+        qInfo() << "dir query end, file count: " << count << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+    }
+}
 
+int TraversalDirThread::iteratorOneByOne()
+{
+    QList<AbstractFileInfoPointer> childrenList;   // 当前遍历出来的所有文件
     while (dirIterator->hasNext()) {
         if (stopFlag)
             break;
 
         // 调用一次fileinfo进行文件缓存
-        auto fileInfo = dirIterator->fileInfo();
         const auto &fileUrl = dirIterator->next();
+        auto fileInfo = dirIterator->fileInfo();
         if (!fileInfo)
             fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
@@ -138,8 +136,25 @@ void TraversalDirThread::run()
         emit updateChild(fileInfo);
         childrenList.append(fileInfo);
     }
-    stopFlag = true;
     emit updateChildren(childrenList);
 
-    qInfo() << "dir query end, file count: " << childrenList.size() << " url: " << dirUrl << " elapsed: " << timer.elapsed();
+    emit traversalFinished();
+
+    return childrenList.count();
+}
+
+int TraversalDirThread::iteratorAll()
+{
+    QVariantMap argus;
+    argus.insert("sortRole",
+                 QVariant::fromValue(sortRole));
+    argus.insert("mixFileAndDir", isMixDirAndFile);
+    argus.insert("sortOrder", sortOrder);
+    dirIterator->setArguments(argus);
+    auto fileList = dirIterator->sortFileInfoList();
+
+    emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile);
+    emit traversalFinished();
+
+    return fileList.count();
 }

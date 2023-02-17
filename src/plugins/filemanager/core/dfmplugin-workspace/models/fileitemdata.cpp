@@ -15,16 +15,27 @@ using namespace dfmbase::Global;
 using namespace dfmplugin_workspace;
 
 FileItemData::FileItemData(const QUrl &url, const AbstractFileInfoPointer &info, FileItemData *parent)
-    : QObject(parent),
-      parent(parent),
+    : parent(parent),
       url(url),
       info(info)
+{
+}
+
+FileItemData::FileItemData(const SortInfoPointer &info, FileItemData *parent)
+    : parent(parent),
+      url(info->url),
+      sortInfo(info)
 {
 }
 
 void FileItemData::setParentData(FileItemData *p)
 {
     parent = p;
+}
+
+void FileItemData::setSortFileInfo(SortInfoPointer info)
+{
+    sortInfo = info;
 }
 
 void FileItemData::refreshInfo()

@@ -24,9 +24,9 @@ class QAbstractItemView;
 
 namespace dfmplugin_workspace {
 
-class FileItemData;
-class FileDataHelper;
 class FileView;
+class FileItemData;
+class FileSortWorker;
 class FileViewModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -40,60 +40,101 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QVariant headerData(int column, Qt::Orientation, int role) const override;
     virtual void fetchMore(const QModelIndex &parent) override;
     virtual bool canFetchMore(const QModelIndex &parent) const override;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
     virtual QStringList mimeTypes() const override;
     virtual QMimeData *mimeData(const QModelIndexList &indexes) const override;
     virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+    Qt::DropActions supportedDragActions() const override;
+    Qt::DropActions supportedDropActions() const override;
+    virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
 
-    QUrl rootUrl(const QModelIndex &rootIndex) const;
-    QModelIndex rootIndex(const QUrl &rootUrl) const;
+    QUrl rootUrl() const;
+    QModelIndex rootIndex() const;
 
-    QModelIndex setRootUrl(const QUrl &url, FileView *view);
+    QModelIndex setRootUrl(const QUrl &url);
 
-    void clear(const QUrl &rootUrl);
-    void update(const QUrl &rootUrl);
-    void refresh(const QUrl &rootUrl);
+    void update();
+    void refresh();
 
+    ModelState currentState() const;
     AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
-    AbstractFileInfoPointer fileInfo(const QModelIndex &parent, const QModelIndex &index) const;
-    QList<QUrl> getChildrenUrls(const QUrl &rootUrl) const;
+    QList<QUrl> getChildrenUrls() const;
+    QModelIndex getIndexByUrl(const QUrl &url) const;
 
-    QModelIndex findRootIndex(const QUrl &url) const;
-    QModelIndex findChildIndex(const QUrl &rootUrl, const QUrl &url) const;
+    int getColumnWidth(int column) const;
+    DFMGLOBAL_NAMESPACE::ItemRoles getRoleByColumn(int column) const;
+    int getColumnByRole(DFMGLOBAL_NAMESPACE::ItemRoles role) const;
+    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
+    QString roleDisplayString(int role) const;
 
-    void doFetchMore(const QModelIndex &rootIndex);
-    void traversRootDir(const QModelIndex &rootIndex);
-    void stopTraversWork(const QUrl &rootUrl);
+    void stopTraversWork();
 
-    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles(const QUrl &rootUrl) const;
+    void setIndexActive(const QModelIndex &index, bool enable = true);
+    void updateFile(const QUrl &url);
 
-    void setIndexActive(const QModelIndex &index, bool enable);
+    Qt::SortOrder sortOrder() const;
+    DFMGLOBAL_NAMESPACE::ItemRoles sortRole() const;
 
-    void cleanDataCacheByUrl(const QUrl &url);
-    void updateRoot(const QList<QUrl> urls);
+    void setFilters(QDir::Filters filters);
+    QDir::Filters getFilters() const;
 
-    void updateFile(const QUrl &root, const QUrl &url);
+    void setNameFilters(const QStringList &filters);
+    QStringList getNameFilters() const;
 
-public Q_SLOTS:
-    void onFilesUpdated();
-    void onFileUpdated(const QUrl &url);
-    void onInsert(int rootIndex, int firstIndex, int count);
-    void onInsertFinish();
-    void onRemove(int rootIndex, int firstIndex, int count);
-    void onRemoveFinish();
+    void setFilterData(const QVariant &data);
+    void setFilterCallback(const FileViewFilterCallback callback);
+
+    void toggleHiddenFiles();
+    void setReadOnly(bool value);
 
 Q_SIGNALS:
-    void stateChanged(const QUrl &url, ModelState state);
-    void childrenUpdated(const QUrl &url);
-    void selectAndEditFile(const QUrl &rootUrl, const QUrl &url);
-    void updateFiles();
+    void stateChanged();
+    void selectAndEditFile(const QUrl &url);
     void traverPrehandle(const QUrl &url, const QModelIndex &index, FileView *view);
-    void reloadView();
+
+    void hiddenFileChanged();
+    void filtersChanged(QStringList nameFilters, QDir::Filters filters);
+    void requestGetSourceData();
+
+    void requestChangeHiddenFilter();
+    void requestChangeFilters(QDir::Filters filters);
+    void requestChangeNameFilters(const QStringList &nameFilters);
+    void requestUpdateFile(const QUrl &url);
+    void requestClearAllChildren();
+
+    void requestSortChildren(Qt::SortOrder order, DFMGLOBAL_NAMESPACE::ItemRoles role, const bool isMixAndFile);
+    void requestSetFilterData(const QVariant &data);
+    void requestSetFilterCallback(FileViewFilterCallback callback);
+
+public Q_SLOTS:
+    void onFileThumbUpdated(const QUrl &url);
+    void onFileUpdated(int show);
+    void onInsert(int firstIndex, int count);
+    void onInsertFinish();
+    void onRemove(int firstIndex, int count);
+    void onRemoveFinish();
 
 private:
-    FileDataHelper *fileDataHelper;
+    void initFilterSortWork();
+    void quitFilterSortWork();
+
+    void changeState(ModelState newState);
+
+    QUrl dirRootUrl;
+
+    ModelState state { ModelState::kIdle };
+    bool readOnly { false };
+    bool canFetchFiles { false };
+    FileItemData *itemRootData { nullptr };
+
+    QThread filterSortThread;
+    QSharedPointer<FileSortWorker> filterSortWorker { nullptr };
+    FileViewFilterCallback filterCallback { nullptr };
+    QVariant filterData;
+    QString currentKey;
 };
 
 }

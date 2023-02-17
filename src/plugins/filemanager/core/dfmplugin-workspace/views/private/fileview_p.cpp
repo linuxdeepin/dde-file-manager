@@ -6,7 +6,6 @@
 #include "views/headerview.h"
 #include "views/fileviewstatusbar.h"
 #include "models/fileviewmodel.h"
-#include "models/filesortfilterproxymodel.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 #include "utils/dragdrophelper.h"

@@ -4,13 +4,13 @@
 
 #include "fileviewhelper.h"
 #include "models/fileviewmodel.h"
-#include "models/filesortfilterproxymodel.h"
 #include "views/fileview.h"
 #include "views/baseitemdelegate.h"
 #include "views/iconitemeditor.h"
 #include "views/listitemeditor.h"
 #include "utils/workspacehelper.h"
 #include "utils/fileoperatorhelper.h"
+#include "events/workspaceeventsequence.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -93,7 +93,7 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
 const AbstractFileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index) const
 {
-    return parent()->model()->itemFileInfo(index);
+    return parent()->model()->fileInfo(index);
 }
 
 QMargins FileViewHelper::fileViewViewportMargins() const
@@ -292,13 +292,12 @@ int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &ite
 
 void FileViewHelper::handleCommitData(QWidget *editor) const
 {
-
     if (!editor) {
         return;
     }
 
     const auto &index = itemDelegate()->editingIndex();
-    const AbstractFileInfoPointer &fileInfo = parent()->model()->itemFileInfo(index);
+    const AbstractFileInfoPointer &fileInfo = parent()->model()->fileInfo(index);
 
     if (!fileInfo) {
         return;

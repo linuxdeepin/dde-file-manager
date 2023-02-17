@@ -49,6 +49,7 @@ signals:
 
 private slots:
     void onUpdateChildren(QList<AbstractFileInfoPointer> children);
+    void onUpdateChildrenByLocal(QList<QSharedPointer<dfmio::DEnumerator::SortFileInfo> > children);
 
 private:
     QString curScheme;

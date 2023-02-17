@@ -6,7 +6,7 @@
 #include "sortanddisplaymenuscene_p.h"
 #include "workspacemenu_defines.h"
 #include "views/fileview.h"
-#include "models/filesortfilterproxymodel.h"
+#include "models/fileviewmodel.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/dfm_global_defines.h"

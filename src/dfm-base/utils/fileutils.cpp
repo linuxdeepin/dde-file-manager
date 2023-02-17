@@ -344,10 +344,10 @@ bool FileUtils::isLowSpeedDevice(const QUrl &url)
 bool FileUtils::isLocalDevice(const QUrl &url)
 {
     //return !DFMIO::DFMUtils::fileIsRemovable(url) && !isGvfsFile(url);
-    if(isGvfsFile(url))
+    if (isGvfsFile(url))
         return false;
 
-    if(DFMIO::DFMUtils::fileIsRemovable(url)) {
+    if (DFMIO::DFMUtils::fileIsRemovable(url)) {
         if (DeviceUtils::isSubpathOfDlnfs(url.path())) {
             return !(DevProxyMng->isFileOfExternalBlockMounts(url.path()));
         }
@@ -1005,53 +1005,128 @@ void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type,
         return;
     }
 }
+//fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
+//QCollator sortCollator;
+class DCollator : public QCollator
+{
+public:
+    DCollator()
+        : QCollator()
+    {
+        setNumericMode(true);
+        setCaseSensitivity(Qt::CaseInsensitive);
+    }
+};
+
+bool FileUtils::isNumOrChar(const QChar ch)
+{
+    return (ch >= 48 && ch <= 57) || (ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122);
+}
+
+bool FileUtils::isNumber(const QChar ch)
+{
+    return (ch >= 48 && ch <= 57);
+}
+
+bool FileUtils::isSymbol(const QChar ch)
+{
+    return ch.script() != QChar::Script_Han && !isNumOrChar(ch);
+}
+
+QString FileUtils::numberStr(const QString &str, int pos)
+{
+    QString tmp;
+    auto total = str.length();
+
+    while (pos > 0 && isNumber(str.at(pos))) {
+        pos--;
+    }
+
+    if (!isNumber(str.at(pos)))
+        pos++;
+
+    while (pos < total && isNumber(str.at(pos))) {
+        tmp += str.at(pos);
+        pos++;
+    }
+
+    return tmp;
+}
+
+// 升序，第一个小，true
+bool FileUtils::compareByStringEx(const QString &str1, const QString &str2)
+{
+    thread_local static DCollator sortCollator;
+    QString suf1 = str1.right(str1.length() - str1.lastIndexOf(".") - 1);
+    QString suf2 = str2.right(str2.length() - str2.lastIndexOf(".") - 1);
+    QString name1 = str1.left(str1.lastIndexOf("."));
+    QString name2 = str2.left(str2.lastIndexOf("."));
+    int length1 = name1.length();
+    int length2 = name2.length();
+    auto total = length1 > length2 ? length2 : length1;
+
+    bool preIsNum = false;
+    bool isSybol1 = false, isSybol2 = false, isHanzi1 = false,
+         isHanzi2 = false, isNumb1 = false, isNumb2 = false;
+    for (int i = 0; i < total; ++i) {
+        // 判断相等和大小写相等，跳过
+        if (str1.at(i) == str2.at(i) || str1.at(i).toLower() == str2.at(i).toLower()) {
+            preIsNum = isNumber(str1.at(i));
+            continue;
+        }
+        isNumb1 = isNumber(str1.at(i));
+        isNumb2 = isNumber(str2.at(i));
+        if ((preIsNum && (isNumb1 ^ isNumb2)) || (isNumb1 && isNumb2)) {
+            // 取后面几位的数字作比较后面的数字,先比较位数
+            // 位数大的大
+            auto str1n = numberStr(str1, preIsNum ? i - 1 : i).toUInt();
+            auto str2n = numberStr(str2, preIsNum ? i - 1 : i).toUInt();
+            if (str1n == str2n)
+                return str1.at(i) < str2.at(i);
+            return str1n < str2n;
+        }
+
+        // 判断特殊字符就排到最后
+        isSybol1 = isSymbol(str1.at(i));
+        isSybol2 = isSymbol(str2.at(i));
+        if (isSybol1 ^ isSybol2)
+            return !isSybol1;
+
+        if (isSybol1)
+            return str1.at(i) < str2.at(i);
+
+        // 判断汉字
+        isHanzi1 = str1.at(i).script() == QChar::Script_Han;
+        isHanzi2 = str2.at(i).script() == QChar::Script_Han;
+        if (isHanzi2 ^ isHanzi1)
+            return !isHanzi1;
+
+        if (isHanzi1)
+            return sortCollator.compare(str1.at(i), str2.at(i)) < 0;
+
+        // 判断数字或者字符
+        if (!isNumb1 && !isNumb2)
+            return str1.at(i).toLower() < str2.at(i).toLower();
+
+        return isNumb1;
+    }
+
+    if (length1 == length2) {
+        if (suf1.isEmpty() ^ suf2.isEmpty())
+            return suf1.isEmpty();
+
+        if (suf2.startsWith(suf1) ^ suf1.startsWith(suf2))
+            return suf2.startsWith(suf1);
+
+        return suf1 < suf2;
+    }
+
+    return length1 < length2;
+}
 
 bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::SortOrder order)
 {
-    class StrCollator : public QCollator
-    {
-    public:
-        explicit StrCollator(const QLocale &locale = QLocale())
-            : QCollator(locale)
-        {
-            setNumericMode(true);
-            setCaseSensitivity(Qt::CaseInsensitive);
-        }
-    };
-
-    thread_local static StrCollator sortCollator;
-    auto startWithSymbol = [](const QString &text) -> bool {
-        if (text.isEmpty())
-            return false;
-
-        // Matches strings beginning with letters, numbers, and Chinese
-        static const QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
-        return !regExp.exactMatch(text);
-    };
-
-    auto startWithHanzi = [](const QString &text) -> bool {
-        if (text.isEmpty())
-            return false;
-
-        return text.at(0).script() == QChar::Script_Han;
-    };
-
-    // Other symbols need to be ranked last, and judgment needs to be made before Chinese
-    if (startWithSymbol(str1)) {
-        if (!startWithSymbol(str2))
-            return order == Qt::DescendingOrder;
-    } else if (startWithSymbol(str2))
-        return order != Qt::DescendingOrder;
-
-    if (startWithHanzi(str1)) {
-        if (!startWithHanzi(str2)) {
-            return order == Qt::DescendingOrder;
-        }
-    } else if (startWithHanzi(str2)) {
-        return order != Qt::DescendingOrder;
-    }
-
-    return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
+    return !((order == Qt::AscendingOrder) ^ compareByStringEx(str1, str2));
 }
 
 QString FileUtils::dateTimeFormat()

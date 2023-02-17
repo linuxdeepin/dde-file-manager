@@ -25,7 +25,6 @@ class FileViewItem;
 class FileViewModel;
 class FileViewPrivate;
 class BaseItemDelegate;
-class FileSortFilterProxyModel;
 class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseView
 {
     Q_OBJECT
@@ -63,7 +62,7 @@ public:
     void setViewMode(DFMBASE_NAMESPACE::Global::ViewMode mode);
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode();
     void setDelegate(DFMBASE_NAMESPACE::Global::ViewMode mode, BaseItemDelegate *view);
-    FileSortFilterProxyModel *model() const;
+    FileViewModel *model() const;
     void setModel(QAbstractItemModel *model) override;
     void stopWork();
 
@@ -73,7 +72,7 @@ public:
     int horizontalOffset() const override;
     int verticalOffset() const override;
 
-    FileViewModel *sourceModel() const;
+    //    FileViewModel *sourceModel() const;
 
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
     int getColumnWidth(const int &column) const;
@@ -111,12 +110,6 @@ public:
     bool isDragTarget(const QModelIndex &index) const;
 
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
-    void setNameFilters(const QStringList &filters);
-    void setFilters(const QDir::Filters filters);
-    QDir::Filters getFilters();
-
-    void setReadOnly(const bool readOnly);
-    void updateRootInfo(const QList<QUrl> &urls);
 
     using DListView::edit;
     using DListView::updateGeometries;
@@ -135,11 +128,9 @@ public slots:
     void viewModeChanged(quint64 windowId, int viewMode);
     void onRowCountChanged();
     void onModelReseted();
-    void onChildrenChanged();
     void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFilterCallback(const quint64 windowID, const QUrl &url, const FileViewFilterCallback callback);
     void trashStateChanged();
-    void onFileHiddenChanged(quint64 winId, const QList<QUrl> &hiddenFiles);
     void onHeaderViewSectionChanged(const QUrl &url);
 
     void onSelectAndEdit(const QUrl &url);
@@ -180,17 +171,13 @@ Q_SIGNALS:
 private slots:
     void loadViewState(const QUrl &url);
     void saveViewModeState();
-    void doSort();
     void onModelStateChanged();
     void setIconSizeBySizeIndex(const int sizeIndex);
-    void onShowHiddenFileChanged(bool isShow);
     void onShowFileSuffixChanged(bool isShow);
     void updateHorizontalOffset();
     void updateView();
     void updateOneView(const QModelIndex &index);
-    void reloadView();
     void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
-    void onAppAttributeChanged(dfmbase::Application::ApplicationAttribute aa, const QVariant &value);
 
 private:
     void initializeModel();

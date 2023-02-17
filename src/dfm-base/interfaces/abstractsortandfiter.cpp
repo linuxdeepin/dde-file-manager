@@ -11,20 +11,20 @@ AbstractSortAndFiter::AbstractSortAndFiter()
 
 }
 
-int AbstractSortAndFiter::lessThan(const AbstractFileInfoPointer &left, const AbstractFileInfoPointer &right, const bool isMixDirAndFile, const Global::ItemRoles role, const Qt::SortOrder sortOder, const SortScenarios ss)
+int AbstractSortAndFiter::lessThan(const AbstractFileInfoPointer &left, const AbstractFileInfoPointer &right, const bool isMixDirAndFile, const Global::ItemRoles role, const SortScenarios ss)
 {
     Q_UNUSED(left)
     Q_UNUSED(right)
     Q_UNUSED(isMixDirAndFile)
-    Q_UNUSED(sortOder)
     Q_UNUSED(role)
     Q_UNUSED(ss)
-    return true;
+    return -1;
 }
 
-int AbstractSortAndFiter::checkFiters(const AbstractFileInfoPointer &info, const QDir::Filters filter)
+int AbstractSortAndFiter::checkFiters(const AbstractFileInfoPointer &info, const QDir::Filters filter, const QVariant &custum)
 {
     Q_UNUSED(info)
     Q_UNUSED(filter)
+    Q_UNUSED(custum)
     return -1;
 }

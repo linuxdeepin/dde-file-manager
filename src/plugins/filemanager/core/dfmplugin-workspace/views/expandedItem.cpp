@@ -8,7 +8,7 @@
 #include "utils/fileviewhelper.h"
 #include "views/fileview.h"
 #include "views/private/delegatecommon.h"
-#include "models/filesortfilterproxymodel.h"
+#include "models/fileviewmodel.h"
 #include "events/workspaceeventsequence.h"
 
 #include "dfm-base/dfm_global_defines.h"
@@ -68,7 +68,7 @@ void ExpandedItem::paintEvent(QPaintEvent *)
                                                                                 pa.fontMetrics().lineSpacing(), Qt::AlignCenter, &pa));
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
 
-    const QUrl &url = delegate->parent()->parent()->model()->getUrlByIndex(index);
+    const QUrl &url = delegate->parent()->parent()->model()->data(index, DFMGLOBAL_NAMESPACE::ItemRoles::kItemUrlRole).toUrl();
     if (WorkspaceEventSequence::instance()->doPaintIconItemText(url, labelRect, &pa, layout.data()))
         return;
 

@@ -5,9 +5,9 @@
 #include "workspacehelper.h"
 #include "views/fileview.h"
 #include "views/workspacewidget.h"
-#include "models/filesortfilterproxymodel.h"
 #include "models/fileviewmodel.h"
 #include "events/workspaceeventcaller.h"
+#include "utils/filedatamanager.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/schemefactory.h"
@@ -270,28 +270,28 @@ void WorkspaceHelper::setViewFilter(const quint64 windowID, const QDir::Filters 
 {
     FileView *view = findFileViewByWindowID(windowID);
     if (view)
-        view->setFilters(filter);
+        view->model()->setFilters(filter);
 }
 
 void WorkspaceHelper::setNameFilter(const quint64 windowID, const QStringList &filter)
 {
     FileView *view = findFileViewByWindowID(windowID);
     if (view)
-        view->setNameFilters(filter);
+        view->model()->setNameFilters(filter);
 }
 
 void WorkspaceHelper::setReadOnly(const quint64 windowID, const bool readOnly)
 {
     FileView *view = findFileViewByWindowID(windowID);
     if (view)
-        view->setReadOnly(readOnly);
+        view->model()->setReadOnly(readOnly);
 }
 
 int WorkspaceHelper::getViewFilter(const quint64 windowID)
 {
     FileView *view = findFileViewByWindowID(windowID);
     if (view)
-        return view->getFilters();
+        return view->model()->getFilters();
 
     return QDir::NoFilter;
 }
@@ -326,14 +326,15 @@ void WorkspaceHelper::fileUpdate(const QUrl &url)
 
 void WorkspaceHelper::updateRootFile(const QList<QUrl> urls)
 {
-    QMutexLocker locker(&WorkspaceHelper::mutex());
-    for (const auto &wind : kWorkspaceMap) {
-        if (wind) {
-            FileView *view = dynamic_cast<FileView *>(wind->currentView());
-            if (view)
-                view->updateRootInfo(urls);
-        }
-    }
+    // TODO(liuyangming): rename this func. clean root data cache in FileDataManager about urls.
+    //    QMutexLocker locker(&WorkspaceHelper::mutex());
+    //    for (const auto &wind : kWorkspaceMap) {
+    //        if (wind) {
+    //            FileView *view = dynamic_cast<FileView *>(wind->currentView());
+    //            if (view)
+    //                view->updateRootInfo(urls);
+    //        }
+    //    }
 }
 
 void WorkspaceHelper::installWorkspaceWidgetToWindow(const quint64 windowID)

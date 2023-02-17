@@ -5,7 +5,6 @@
 #include "headerview.h"
 #include "fileview.h"
 #include "private/fileview_p.h"
-#include "models/filesortfilterproxymodel.h"
 #include "models/fileselectionmodel.h"
 #include "models/fileviewmodel.h"
 #include "baseitemdelegate.h"
@@ -21,7 +20,6 @@
 #include "utils/shortcuthelper.h"
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
-#include "utils/filemodelmanager.h"
 #include "events/workspaceeventsequence.h"
 
 #include "dfm-base/dfm_event_defines.h"
@@ -75,12 +73,8 @@ FileView::FileView(const QUrl &url, QWidget *parent)
 
 FileView::~FileView()
 {
-    disconnect(model(), &FileSortFilterProxyModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
-    disconnect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
-    disconnect(model(), &FileSortFilterProxyModel::stateChanged, this, &FileView::onModelStateChanged);
+    disconnect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
-
-    dpfSignalDispatcher->unsubscribe(GlobalEventType::kHideFiles, this, &FileView::onFileHiddenChanged);
 }
 
 QWidget *FileView::widget() const
@@ -104,7 +98,6 @@ void FileView::setViewMode(Global::ViewMode mode)
 
         d->initIconModeView();
         setMinimumWidth(0);
-        model()->setSortRole(d->currentSortRole);
         break;
     case Global::ViewMode::kListMode:
         setUniformItemSizes(true);
@@ -156,6 +149,7 @@ bool FileView::setRootUrl(const QUrl &url)
 {
     clearSelection();
     selectionModel()->clear();
+    d->statusBar->itemCounted(0);
 
     // Todo(yanghao&lzj):!url.isSearchFile()
     setFocus();
@@ -173,8 +167,6 @@ bool FileView::setRootUrl(const QUrl &url)
     resetSelectionModes();
     updateListHeaderView();
 
-    doSort();
-
     // dir already traversal
     if (model()->currentState() == ModelState::kIdle)
         updateSelectedUrl();
@@ -184,7 +176,7 @@ bool FileView::setRootUrl(const QUrl &url)
 
 QUrl FileView::rootUrl() const
 {
-    return model()->currentRootUrl();
+    return model()->rootUrl();
 }
 
 AbstractBaseView::ViewState FileView::viewState() const
@@ -213,7 +205,7 @@ QList<QUrl> FileView::selectedUrlList() const
     for (const QModelIndex &index : selectedIndexes()) {
         if (index.parent() != rootIndex)
             continue;
-        list << model()->getUrlByIndex(index);
+        list << model()->data(index, ItemRoles::kItemUrlRole).toUrl();
     }
 
     return list;
@@ -230,9 +222,9 @@ void FileView::doItemsLayout()
         DListView::doItemsLayout();
 }
 
-FileSortFilterProxyModel *FileView::model() const
+FileViewModel *FileView::model() const
 {
-    return qobject_cast<FileSortFilterProxyModel *>(QAbstractItemView::model());
+    return qobject_cast<FileViewModel *>(QAbstractItemView::model());
 }
 
 void FileView::setModel(QAbstractItemModel *model)
@@ -247,7 +239,7 @@ void FileView::setModel(QAbstractItemModel *model)
 
 void FileView::stopWork()
 {
-    model()->stopWork();
+    model()->stopTraversWork();
 }
 
 int FileView::getColumnWidth(const int &column) const
@@ -384,14 +376,10 @@ void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidde
 
 void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
-    const ItemRoles &role = model()->getRoleByColumn(logicalIndex);
-    model()->setSortRole(role);
     model()->sort(logicalIndex, order);
-    d->currentSortRole = role;
-    d->currentSortOrder = order;
 
     const QUrl &url = rootUrl();
-
+    const ItemRoles &role = model()->getRoleByColumn(logicalIndex);
     setFileViewStateValue(url, "sortRole", role);
     setFileViewStateValue(url, "sortOrder", static_cast<int>(order));
 }
@@ -401,7 +389,7 @@ void FileView::onClicked(const QModelIndex &index)
     openIndexByClicked(ClickedAction::kClicked, index);
 
     QUrl url { "" };
-    const AbstractFileInfoPointer &info = model()->itemFileInfo(index);
+    const AbstractFileInfoPointer &info = model()->fileInfo(index);
     if (info)
         url = info->urlOf(UrlInfoType::kUrl);
     QVariantMap data;
@@ -491,16 +479,16 @@ void FileView::updateModelActiveIndex()
     const RandeIndex &rande = randeList.first();
 
     for (int i = d->visibleIndexRande.first; i < rande.first; ++i) {
-        model()->setActive(model()->index(i, 0, rootIndex()), false);
+        model()->setIndexActive(model()->index(i, 0, rootIndex()), false);
     }
 
     for (int i = rande.second; i < d->visibleIndexRande.second; ++i) {
-        model()->setActive(model()->index(i, 0, rootIndex()), false);
+        model()->setIndexActive(model()->index(i, 0, rootIndex()), false);
     }
 
     d->visibleIndexRande = rande;
     for (int i = rande.first; i <= rande.second; ++i) {
-        model()->setActive(model()->index(i, 0, rootIndex()));
+        model()->setIndexActive(model()->index(i, 0, rootIndex()));
     }
 }
 
@@ -663,43 +651,26 @@ QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const
     }
 }
 
-void FileView::setNameFilters(const QStringList &filters)
-{
-    model()->setNameFilters(filters);
-}
-
-void FileView::setFilters(const QDir::Filters filters)
-{
-    model()->setFilters(filters);
-}
-
-QDir::Filters FileView::getFilters()
-{
-    return model()->getFilters();
-}
-
-void FileView::setReadOnly(const bool readOnly)
-{
-    model()->setReadOnly(readOnly);
-}
-
-void FileView::updateRootInfo(const QList<QUrl> &urls)
-{
-    model()->updateRootInfo(urls);
-}
-
 void FileView::onSelectAndEdit(const QUrl &url)
 {
-    selectionModel()->clear();
-
     if (!url.isValid())
         return;
 
-    const QModelIndex &index = model()->getIndexByUrl(url);
+    quint64 winId = WorkspaceHelper::instance()->windowId(this);
+    if (!WorkspaceHelper::kSelectionAndRenameFile.contains(winId))
+        return;
 
+    QPair<QUrl, QUrl> urlPair = WorkspaceHelper::kSelectionAndRenameFile[winId];
+    if (!UniversalUtils::urlEquals(urlPair.first, rootUrl()) || !UniversalUtils::urlEquals(urlPair.second, url))
+        return;
+
+    WorkspaceHelper::kSelectionAndRenameFile.take(winId);
+
+    const QModelIndex &index = model()->getIndexByUrl(url);
     if (!index.isValid())
         return;
 
+    selectionModel()->clear();
     selectFiles({ url });
     edit(index, QAbstractItemView::AllEditTriggers, nullptr);
 }
@@ -744,18 +715,6 @@ void FileView::setIconSizeBySizeIndex(const int sizeIndex)
     itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
 }
 
-void FileView::onShowHiddenFileChanged(bool isShow)
-{
-    auto filters = model()->getFilters();
-    if (isShow) {
-        filters |= QDir::Hidden;
-    } else {
-        filters &= ~QDir::Hidden;
-    }
-
-    model()->setFilters(filters);
-}
-
 void FileView::onShowFileSuffixChanged(bool isShow)
 {
     Q_UNUSED(isShow);
@@ -785,31 +744,12 @@ void FileView::updateOneView(const QModelIndex &index)
     update(index);
 }
 
-void FileView::reloadView()
-{
-    model()->setFilters(model()->getFilters());
-}
-
 void FileView::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     delayUpdateStatusBar();
 
     quint64 winId = WorkspaceHelper::instance()->windowId(this);
     WorkspaceEventCaller::sendViewSelectionChanged(winId, selected, deselected);
-}
-
-void FileView::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
-{
-    Q_UNUSED(value);
-    switch (aa) {
-    case Application::kFileAndDirMixedSort:
-        model()->initMixDirAndFile();
-        d->currentSortOrder = model()->sortOrder();
-        doSort();
-        break;
-    default:
-        break;
-    }
 }
 
 bool FileView::isIconViewMode() const
@@ -898,19 +838,12 @@ void FileView::onModelReseted()
     updateModelActiveIndex();
 }
 
-void FileView::onChildrenChanged()
-{
-    updateContentLabel();
-    delayUpdateStatusBar();
-}
-
 void FileView::setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data)
 {
     auto thisWindId = WorkspaceHelper::instance()->windowId(this);
     if (thisWindId == windowID && url == rootUrl() && isVisible()) {
         clearSelection();
         model()->setFilterData(data);
-        update();
     }
 }
 
@@ -919,8 +852,7 @@ void FileView::setFilterCallback(const quint64 windowID, const QUrl &url, const 
     auto thisWindId = WorkspaceHelper::instance()->windowId(this);
     if (thisWindId == windowID && url == rootUrl() && isVisible()) {
         clearSelection();
-        model()->setFilterCallBack(callback);
-        update();
+        model()->setFilterCallback(callback);
     }
 }
 
@@ -928,19 +860,6 @@ void FileView::trashStateChanged()
 {
     if (Q_LIKELY(model()))
         model()->update();
-}
-
-void FileView::onFileHiddenChanged(quint64, const QList<QUrl> &hiddenFiles)
-{
-    for (const auto &hidden : hiddenFiles) {
-        QDir locatedDir(hidden.toLocalFile());
-        locatedDir.cdUp();
-        QUrl locatedUrl = QUrl::fromLocalFile(locatedDir.absolutePath());
-        if (UniversalUtils::urlEquals(locatedUrl, rootUrl())) {
-            reloadView();
-            return;
-        }
-    }
 }
 
 void FileView::onHeaderViewSectionChanged(const QUrl &url)
@@ -1174,14 +1093,6 @@ int FileView::verticalOffset() const
     return DListView::verticalOffset();
 }
 
-FileViewModel *FileView::sourceModel() const
-{
-    if (model())
-        return qobject_cast<FileViewModel *>(model()->sourceModel());
-
-    return nullptr;
-}
-
 QList<ItemRoles> FileView::getColumnRoles() const
 {
     return d->columnRoles;
@@ -1241,7 +1152,7 @@ QModelIndexList FileView::selectedIndexes() const
         QModelIndexList indexes = fileSelectionModel->selectedIndexes();
 
         auto isInvalid = [=](const QModelIndex &index) {
-            return !(index.isValid() && model()->itemFileInfo(index));
+            return !(index.isValid() && model()->fileInfo(index));
         };
 
         indexes.erase(std::remove_if(indexes.begin(), indexes.end(), isInvalid),
@@ -1293,7 +1204,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
             selectionModel()->select(index, QItemSelectionModel::Select);
         }
 
-        auto info = model()->itemFileInfo(index);
+        auto info = model()->fileInfo(index);
         if (info)
             info->refresh();
 
@@ -1402,7 +1313,7 @@ bool FileView::event(QEvent *e)
     switch (e->type()) {
     case QEvent::KeyPress: {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
-        if (keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab) {
+        if (keyEvent && (keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab)) {
             if (keyEvent->modifiers() == Qt::ControlModifier || keyEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
                 return DListView::event(e);
             e->accept();
@@ -1527,10 +1438,10 @@ void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int en
 
 void FileView::initializeModel()
 {
-    FileSortFilterProxyModel *proxyModel = FileModelManager::instance()->createProxyModel(this);
-    setModel(proxyModel);
+    FileViewModel *viewModel = new FileViewModel(this);
+    setModel(viewModel);
 
-    FileSelectionModel *selectionModel = new FileSelectionModel(proxyModel, this);
+    FileSelectionModel *selectionModel = new FileSelectionModel(viewModel, this);
     setSelectionModel(selectionModel);
 
     d->updateActiveIndexTimer = new QTimer(this);
@@ -1565,13 +1476,10 @@ void FileView::initializeConnect()
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::delayUpdateModelActiveIndex);
 
-    connect(model(), &FileSortFilterProxyModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
-    connect(model(), &FileSortFilterProxyModel::stateChanged, this, &FileView::onModelStateChanged);
-    connect(model(), &FileSortFilterProxyModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
-    connect(sourceModel(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
-    connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
-    connect(sourceModel(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
-    connect(sourceModel(), &FileViewModel::reloadView, this, &FileView::reloadView);
+    connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
+    connect(model(), &FileViewModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
+    connect(model(), &FileViewModel::dataChanged, this, &FileView::updateOneView);
+    connect(model(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
@@ -1587,12 +1495,9 @@ void FileView::initializeConnect()
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterCallback, this, &FileView::setFilterCallback);
 
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
-    connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, [this] { this->update(); });
-    connect(Application::instance(), &Application::appAttributeChanged, this, &FileView::onAppAttributeChanged);
 
-    dpfSignalDispatcher->subscribe(GlobalEventType::kHideFiles, this, &FileView::onFileHiddenChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
 }
 
@@ -1610,7 +1515,7 @@ void FileView::updateStatusBar()
 
     QList<AbstractFileInfo *> list;
     for (const QModelIndex &index : selectedIndexes())
-        list << model()->itemFileInfo(index).data();
+        list << model()->fileInfo(index).data();
 
     d->statusBar->itemSelected(list);
 }
@@ -1621,7 +1526,7 @@ void FileView::updateLoadingIndicator()
     if (state == ModelState::kBusy) {
         QString tip;
 
-        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex());
+        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
         if (fileInfo)
             tip = fileInfo->viewOfTip(ViewInfoType::kLoading);
 
@@ -1645,7 +1550,7 @@ void FileView::updateContentLabel()
 
     if (count() <= 0) {
         // set custom empty tips
-        const AbstractFileInfoPointer &fileInfo = model()->itemFileInfo(rootIndex());
+        const AbstractFileInfoPointer &fileInfo = model()->fileInfo(rootIndex());
         if (fileInfo) {
             d->contentLabel->setText(fileInfo->viewOfTip(ViewInfoType::kEmptyDir));
             d->contentLabel->adjustSize();
@@ -1683,7 +1588,7 @@ void FileView::updateListHeaderView()
         d->headerView->setMinimumSectionSize(kDefualtHeaderSectionWidth);
     }
 
-    d->headerView->setSortIndicator(model()->getColumnByRole(d->currentSortRole), d->currentSortOrder);
+    d->headerView->setSortIndicator(model()->getColumnByRole(model()->sortRole()), model()->sortOrder());
     d->columnRoles.clear();
 
     const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
@@ -1757,14 +1662,6 @@ void FileView::loadViewState(const QUrl &url)
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
     d->currentIconSizeLevel = d->fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
-
-    d->currentSortRole = static_cast<ItemRoles>(d->fileViewStateValue(url, "sortRole", kItemFileDisplayNameRole).toInt());
-    d->currentSortOrder = static_cast<Qt::SortOrder>(d->fileViewStateValue(url, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
-}
-
-void FileView::doSort()
-{
-    model()->sort(model()->getColumnByRole(d->currentSortRole), d->currentSortOrder);
 }
 
 void FileView::onModelStateChanged()
@@ -1773,14 +1670,8 @@ void FileView::onModelStateChanged()
     updateLoadingIndicator();
     updateSelectedUrl();
 
-    if (model()->currentState() == ModelState::kIdle) {
-        d->currentSortOrder = model()->sortOrder();
-        doSort();
-    }
-
-    if (d->headerView) {
+    if (d->headerView)
         d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->currentState() == ModelState::kBusy);
-    }
 }
 
 void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex &index)
@@ -1798,7 +1689,7 @@ void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex 
 
 void FileView::openIndex(const QModelIndex &index)
 {
-    const AbstractFileInfoPointer &info = model()->itemFileInfo(index);
+    const AbstractFileInfoPointer &info = model()->fileInfo(index);
 
     if (!info)
         return;

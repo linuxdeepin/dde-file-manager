@@ -5,7 +5,6 @@
 #include "dragdrophelper.h"
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
-#include "models/filesortfilterproxymodel.h"
 #include "events/workspaceeventsequence.h"
 
 #include "dfm-base/base/schemefactory.h"
@@ -196,7 +195,7 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (!hoverIndex.isValid()) {
             hoverIndex = view->rootIndex();
         } else {
-            const AbstractFileInfoPointer &fileInfo = view->model()->itemFileInfo(hoverIndex);
+            const AbstractFileInfoPointer &fileInfo = view->model()->fileInfo(hoverIndex);
             if (fileInfo) {
                 bool isDrop = dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_IsDrop", fileInfo->urlOf(UrlInfoType::kUrl));
                 // NOTE: if item can not drop, the drag item will drop to root dir.
@@ -210,7 +209,7 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (!hoverIndex.isValid())
             return true;
 
-        QUrl toUrl = view->model()->getUrlByIndex(hoverIndex);
+        QUrl toUrl = view->model()->data(hoverIndex, DFMGLOBAL_NAMESPACE::ItemRoles::kItemUrlRole).toUrl();
         QList<QUrl> fromUrls = event->mimeData()->urls();
         if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", fromUrls, toUrl)) {
             return true;
@@ -243,7 +242,7 @@ bool DragDropHelper::drop(QDropEvent *event)
 
 bool DragDropHelper::isDragTarget(const QModelIndex &index) const
 {
-    auto info = view->model()->itemFileInfo(index);
+    auto info = view->model()->fileInfo(index);
     if (info)
         return UniversalUtils::urlEquals(info->urlOf(UrlInfoType::kUrl), currentHoverIndexUrl);
 
@@ -334,7 +333,7 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
     if (!index.isValid())
         index = view->rootIndex();
 
-    return view->model()->itemFileInfo(index);
+    return view->model()->fileInfo(index);
 }
 
 bool DragDropHelper::checkProhibitPaths(QDragEnterEvent *event, const QList<QUrl> &urls) const

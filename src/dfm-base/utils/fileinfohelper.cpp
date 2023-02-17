@@ -7,6 +7,8 @@
 #include <QGuiApplication>
 #include <QTimer>
 
+Q_DECLARE_METATYPE(QSharedPointer<dfmio::DFileInfo>);
+
 DFMBASE_USE_NAMESPACE
 FileInfoHelper::FileInfoHelper(QObject *parent)
     : QObject(parent), thread(new QThread), worker(new FileInfoAsycWorker)

@@ -37,6 +37,7 @@ bool LocalFileWatcherPrivate::start()
 {
     if (watcher.isNull())
         return false;
+
     started = watcher->start();
     if (!started)
         qWarning() << "watcher start failed, error: " << watcher->lastError().errorMsg();

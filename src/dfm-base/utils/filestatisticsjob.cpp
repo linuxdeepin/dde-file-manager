@@ -21,6 +21,7 @@
 
 #include <fts.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 namespace dfmbase {
 
@@ -39,6 +40,7 @@ public:
 
     void processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue);
     void emitSizeChanged();
+    int countFileCount(const char *name, bool isloop = false);
 
     FileStatisticsJob *q;
     QTimer *notifyDataTimer;
@@ -258,6 +260,41 @@ void FileStatisticsJobPrivate::emitSizeChanged()
     }
 }
 
+int FileStatisticsJobPrivate::countFileCount(const char *name, bool isloop)
+{
+    DIR *dir;
+    struct dirent *entry;
+    int fileCount = 0;
+
+    if (!(dir = opendir(name)))
+        return fileCount;
+
+    while ((entry = readdir(dir))) {
+        if (!stateCheck())
+            return fileCount;
+        //文件路径加名称最长支持为4k
+        char path[FILENAME_MAX + 1];
+        int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
+        path[len] = 0;
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+        if (entry->d_type == DT_DIR) {
+            if (isloop) {
+                fileCount += countFileCount(path, isloop);
+            }
+            else {
+                fileCount++;
+            }
+        }
+        else {
+            fileCount++;
+        }
+    }
+
+    closedir(dir);
+    return fileCount;
+}
+
 FileStatisticsJob::FileStatisticsJob(QObject *parent)
     : QThread(parent), d(new FileStatisticsJobPrivate(this))
 {
@@ -406,7 +443,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             }
 
             if (info->isAttributes(OptInfoType::kIsDir) && d->fileHints.testFlag(kSingleDepth)) {
-                fileCount += info->countChildFile();
+                fileCount += d->countFileCount(info->pathOf(PathInfoType::kPath).toStdString().c_str());
             } else {
                 fileCount++;
             }

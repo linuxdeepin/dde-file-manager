@@ -7,7 +7,7 @@
 #include "listitemdelegate.h"
 #include "fileview.h"
 #include "listitemeditor.h"
-#include "models/filesortfilterproxymodel.h"
+#include "models/fileviewmodel.h"
 #include "dfm-base/dfm_base_global.h"
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
@@ -121,7 +121,7 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     });
 
     auto windowId = WorkspaceHelper::instance()->windowId(parent);
-    QUrl url = this->parent()->parent()->model()->getUrlByIndex(index);
+    QUrl url = this->parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
     WorkspaceEventCaller::sendRenameStartEdit(windowId, url);
 
     return d->editor;
@@ -249,7 +249,7 @@ void ListItemDelegate::editorFinished()
     auto windowId = WorkspaceHelper::instance()->windowId(fileview);
     if (!fileview->model())
         return;
-    QUrl url = fileview->model()->getUrlByIndex(d->editingIndex);
+    QUrl url = fileview->model()->data(d->editingIndex, kItemUrlRole).toUrl();
     WorkspaceEventCaller::sendRenameEndEdit(windowId, url);
 }
 
@@ -423,7 +423,7 @@ QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
 
     ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
 
-    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+    const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
     WorkspaceEventSequence::instance()->doPaintListItem(kItemIconRole, url, painter, &iconRect);
 
     paintEmblems(painter, iconRect, index);
@@ -475,7 +475,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         int rol = columnRoleList.at(i);
         const QVariant &data = index.data(rol);
 
-        const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+        const QUrl &url = parent()->parent()->model()->data(index, kItemUrlRole).toUrl();
 
         if (WorkspaceEventSequence::instance()->doPaintListItem(rol, url, painter, &columnRect))
             continue;

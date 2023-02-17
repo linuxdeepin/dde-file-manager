@@ -101,8 +101,8 @@ void BasicStatusBarPrivate::discardCurrentJob()
 
     if (fileStatisticsJog->isRunning()) {
         auto waitDeletePointer = fileStatisticsJog;
-        connect(waitDeletePointer.data(), &FileStatisticsJob::finished, this, [waitDeletePointer]{
-            waitDeletePointer->deleteLater();
+        connect(waitDeletePointer.data(), &FileStatisticsJob::finished, this, [this,waitDeletePointer]{
+            waitDeleteJobList.removeOne(waitDeletePointer);
         });
         fileStatisticsJog->stop();
         waitDeleteJobList.append(fileStatisticsJog);

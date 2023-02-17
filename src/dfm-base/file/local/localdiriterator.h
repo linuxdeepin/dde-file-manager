@@ -41,8 +41,9 @@ public:
         Q_UNUSED(keyword);
         return false;
     }
-    void setArguments(const QMap<DFMIO::DEnumerator::ArgumentKey, QVariant> &argus);
-    QList<QSharedPointer<DFMIO::DEnumerator::SortFileInfo>> sortFileInfoList();
+    void setArguments(const QVariantMap &argus) override;
+    QList<SortInfoPointer> sortFileInfoList() override;
+    bool oneByOne() override;
 };
 }
 

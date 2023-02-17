@@ -70,6 +70,11 @@ public:
     static bool containsCopyingFileUrl(const QUrl &url);
 
     static void notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType type, const QUrl &url);
+    static bool isNumOrChar(const QChar ch);
+    static bool isNumber(const QChar ch);
+    static bool isSymbol(const QChar ch);
+    static bool compareByStringEx(const QString &str1, const QString &str2);
+    static QString numberStr(const QString &str, int pos);
     static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 
     static QString dateTimeFormat();

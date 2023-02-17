@@ -6,20 +6,20 @@
 #define FILEITEMDATA_H
 
 #include "dfmplugin_workspace_global.h"
-
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/dfm_base_global.h"
-
-#include <QSharedData>
 
 namespace dfmplugin_workspace {
 
-class FileItemData : public QObject
+class FileItemData
 {
 public:
-    explicit FileItemData(const QUrl &url,const AbstractFileInfoPointer &info = nullptr, FileItemData *parent = nullptr);
+    explicit FileItemData(const QUrl &url, const AbstractFileInfoPointer &info = nullptr, FileItemData *parent = nullptr);
+    explicit FileItemData(const SortInfoPointer &info, FileItemData *parent = nullptr);
 
     void setParentData(FileItemData *p);
+    void setSortFileInfo(SortInfoPointer info);
 
     void refreshInfo();
     AbstractFileInfoPointer fileInfo() const;
@@ -28,9 +28,10 @@ public:
     QVariant data(int role) const;
 
 private:
-    FileItemData *parent;
+    FileItemData *parent { nullptr };
     QUrl url;
-    AbstractFileInfoPointer info{ nullptr };
+    AbstractFileInfoPointer info { nullptr };
+    SortInfoPointer sortInfo { nullptr };
 };
 
 }

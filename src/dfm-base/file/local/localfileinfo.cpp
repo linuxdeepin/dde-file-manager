@@ -938,10 +938,10 @@ bool LocalFileInfoPrivate::isExecutable() const
         isExecutable = this->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
     }
     if (!success) {
-        qWarning() << "cannot obtain the property kAccessCanExecute of" << url;
+        qDebug() << "cannot obtain the property kAccessCanExecute of" << url;
 
         if (FileUtils::isGvfsFile(url)) {
-            qInfo() << "trying to get isExecutable by judging whether the dir can be iterated" << url;
+            qDebug() << "trying to get isExecutable by judging whether the dir can be iterated" << url;
             struct dirent *next { nullptr };
             DIR *dirp = opendir(filePath().toUtf8().constData());
             if (!dirp) {
@@ -952,7 +952,7 @@ bool LocalFileInfoPrivate::isExecutable() const
                 closedir(dirp);
                 isExecutable = (next || errno == 0);
             }
-            qInfo() << "dir can be iterated? " << isExecutable << url;
+            qDebug() << "dir can be iterated? " << isExecutable << url;
         }
     }
 

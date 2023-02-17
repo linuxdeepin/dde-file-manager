@@ -5,7 +5,6 @@
 #include "shortcuthelper.h"
 #include "fileoperatorhelper.h"
 #include "models/fileviewmodel.h"
-#include "models/filesortfilterproxymodel.h"
 #include "views/baseitemdelegate.h"
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
@@ -178,7 +177,7 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
             if (urls.isEmpty())
                 return false;
 
-            QList<QUrl> list = view->model()->getCurrentDirFileUrls();
+            QList<QUrl> list = view->model()->getChildrenUrls();
             for (const QUrl &url : urls) {
                 list.removeAll(url);
             }
@@ -332,7 +331,7 @@ void ShortcutHelper::previewFiles()
     if (ok && !urlsTrans.isEmpty())
         selectUrls = urlsTrans;
 
-    urls = view->model()->getCurrentDirFileUrls();
+    urls = view->model()->getChildrenUrls();
 
     urlsTrans.clear();
     QList<QUrl> currentDirUrls = urls;
