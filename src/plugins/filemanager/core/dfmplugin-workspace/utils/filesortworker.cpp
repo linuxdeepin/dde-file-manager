@@ -1,6 +1,7 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "filesortworker.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
@@ -16,7 +17,7 @@ using namespace dfmio;
 FileSortWorker::FileSortWorker(const QUrl &url, const QStringList &nameFilters, const QDir::Filters filters, const QDirIterator::IteratorFlags flags, QObject *parent)
     : QObject(parent), current(url), nameFilters(nameFilters), filters(filters), flags(flags)
 {
-
+    sortAndFilter = SortAndFitersFactory::create<AbstractSortAndFiter>(url);
 }
 
 void FileSortWorker::setSortAgruments(const Qt::SortOrder order, const Global::ItemRoles sortRole)
@@ -56,6 +57,11 @@ int FileSortWorker::childrenCount()
     return visibleChildrenIndex.count();
 }
 
+void FileSortWorker::cancel()
+{
+    isCanceled = true;
+}
+
 void FileSortWorker::updateSortChildren(QList<QSharedPointer<dfmio::DEnumerator::SortFileInfo> > children,
                                         dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                                         Qt::SortOrder sortOrder,
@@ -63,6 +69,7 @@ void FileSortWorker::updateSortChildren(QList<QSharedPointer<dfmio::DEnumerator:
 {
     this->isMixDirAndFile = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     this->children = children;
+
     filterAllFiles();
     if (this->sortRole == sortRole && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile) {
         emit sortAllFiles();
@@ -87,7 +94,7 @@ void FileSortWorker::updateChild(const AbstractFileInfoPointer child)
     sortInfo->isReadable = child->isAttributes(OptInfoType::kIsReadable);
     sortInfo->isWriteable = child->isAttributes(OptInfoType::kIsWritable);
     sortInfo->isExecutable = child->isAttributes(OptInfoType::kIsExecutable);
-    updateChild(sortInfo);
+    updateChild(sortInfo, AbstractSortAndFiter::SortScenarios::kSortScenariosIteratorAddFile);
 }
 
 void FileSortWorker::getDataAndUpdate()
@@ -107,7 +114,8 @@ void FileSortWorker::getDataAndUpdate()
     }
     // 排序
     for (const auto index : newChildren) {
-        int showIndex = insertSortList(index, visibleChildrenIndex);
+        int showIndex = insertSortList(index, visibleChildrenIndex,
+                                       AbstractSortAndFiter::SortScenarios::kSortScenariosIteratorExistingFile);
         QWriteLocker lk(&locker);
         visibleChildrenIndex.insert(showIndex,index);
     }
@@ -131,7 +139,7 @@ void FileSortWorker::addChild(const QSharedPointer<DEnumerator::SortFileInfo> &s
 {
     if (children.contains(sortInfo))
         return;
-    updateChild(sortInfo);
+    updateChild(sortInfo, AbstractSortAndFiter::SortScenarios::kSortScenariosWatcherAddFile);
 }
 
 void FileSortWorker::removeChild(const QSharedPointer<DEnumerator::SortFileInfo> &sortInfo)
@@ -157,7 +165,13 @@ void FileSortWorker::resort(const Qt::SortOrder order, const ItemRoles sortRole)
 
 bool FileSortWorker::checkFilters(const QSharedPointer<dfmio::DEnumerator::SortFileInfo> &sortInfo)
 {
-    if (filters == QDir::NoFilter)
+    if (sortInfo && sortAndFilter) {
+        auto result = sortAndFilter->checkFiters(InfoFactory::create<AbstractFileInfo>(sortInfo->url), filters);
+        if (result >= 0)
+            return result;
+    }
+
+    if (!sortInfo || filters == QDir::NoFilter)
         return true;
 
     const bool isDir = sortInfo->isDir;
@@ -255,20 +269,20 @@ void FileSortWorker::sortAllFiles()
 {
     QList<int> sortList;
     for (const auto index : visibleChildrenIndex) {
-        sortList.insert(insertSortList(index, sortList),index);
+        sortList.insert(insertSortList(index, sortList, AbstractSortAndFiter::SortScenarios::kSortScenariosNormal),index);
     }
     QWriteLocker lk(&locker);
     visibleChildrenIndex = sortList;
 }
 
-void FileSortWorker::updateChild(const QSharedPointer<DEnumerator::SortFileInfo> &sortInfo)
+void FileSortWorker::updateChild(const QSharedPointer<DEnumerator::SortFileInfo> &sortInfo,const AbstractSortAndFiter::SortScenarios sort)
 {
     children.append(sortInfo);
     if (!checkFilters(sortInfo))
         return;
 
     int index = children.count() - 1;
-    int showIndex = insertSortList(index, visibleChildrenIndex);
+    int showIndex = insertSortList(index, visibleChildrenIndex, sort);
     {
         QWriteLocker lk(&locker);
         visibleChildrenIndex.insert(showIndex,index);
@@ -276,8 +290,8 @@ void FileSortWorker::updateChild(const QSharedPointer<DEnumerator::SortFileInfo>
     // 通知主界面
     emit addFileCompleted(index);
 }
-
-bool FileSortWorker::lessThan(const int left, const int right)
+// 左边比右边小返回true，
+bool FileSortWorker::lessThan(const int left, const int right, AbstractSortAndFiter::SortScenarios sort)
 {
     int childCount = children.count();
     if (left >= childCount)
@@ -292,6 +306,13 @@ bool FileSortWorker::lessThan(const int left, const int right)
         return false;
     if (!rightInfo)
         return false;
+
+    if (sortAndFilter) {
+        auto result = sortAndFilter->lessThan(leftInfo, rightInfo,isMixDirAndFile,
+                                              orgSortRole, sortOrder, sort);
+        if (result > 0)
+            return result;
+    }
 
     // The folder is fixed in the front position
     if (!isMixDirAndFile) {
@@ -318,15 +339,15 @@ bool FileSortWorker::lessThan(const int left, const int right)
     case kItemFileDisplayNameRole:
     case kItemFileLastModifiedRole:
     case kItemFileMimeTypeRole:
-        return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder) == (sortOrder == Qt::AscendingOrder);
+        return FileUtils::compareString(leftData.toString(), rightData.toString(), Qt::AscendingOrder);
     case kItemFileSizeRole:
         if (!isMixDirAndFile) {
             if (leftInfo->isAttributes(OptInfoType::kIsDir)) {
                 int leftCount = leftInfo->countChildFile();
                 int rightCount = rightInfo->countChildFile();
-                return leftCount < rightCount;
+                return leftCount < rightCount && sortOrder == Qt::AscendingOrder;
             } else {
-                return leftInfo->size() < rightInfo->size();
+                return leftInfo->size() < rightInfo->size() && sortOrder == Qt::DescendingOrder;
             }
         } else {
             qint64 sizel = leftInfo->isAttributes(OptInfoType::kIsDir) && rightInfo->isAttributes(OptInfoType::kIsDir)
@@ -338,7 +359,7 @@ bool FileSortWorker::lessThan(const int left, const int right)
             return sizel < sizer;
         }
     default:
-        return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder) == (sortOrder == Qt::AscendingOrder);
+        return FileUtils::compareString(leftData.toString(), rightData.toString(), Qt::AscendingOrder);
     }
 }
 
@@ -389,11 +410,21 @@ QVariant FileSortWorker::data(const AbstractFileInfoPointer &info, ItemRoles rol
     }
 }
 
-int FileSortWorker::insertSortList(const int needNode, const QList<int> &list)
+int FileSortWorker::insertSortList(const int needNode, const QList<int> &list, AbstractSortAndFiter::SortScenarios sort)
 {
     int begin = 0;
     int end = list.count();
+    if (end <= 0)
+        return 0;
+
+    if (sortOrder == Qt::AscendingOrder && lessThan(needNode, list.first(), sort))
+        return 0;
+
+    if (sortOrder == Qt::DescendingOrder && !lessThan(needNode, list.last(), sort))
+        return list.count();
+
     int row = (begin + end)/2;
+
     // 先找到文件还是目录
     forever {
         if (isCanceled)
@@ -403,7 +434,8 @@ int FileSortWorker::insertSortList(const int needNode, const QList<int> &list)
             break;
 
         const int node = list.at(row);
-        if (!lessThan(needNode, node)) {
+        if ((sortOrder == Qt::AscendingOrder && !lessThan(needNode, node, sort))
+                || (sortOrder == Qt::DescendingOrder && lessThan(needNode, node, sort))) {
             begin = row;
             row = (end + begin + 1) / 2;
             if (row >= end)

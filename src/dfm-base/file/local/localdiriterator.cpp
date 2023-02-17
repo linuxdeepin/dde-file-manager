@@ -238,10 +238,13 @@ void LocalDirIterator::cacheBlockIOAttribute()
 
 void LocalDirIterator::setArguments(const QMap<dfmio::DEnumerator::ArgumentKey, QVariant> &argus)
 {
-    d->dfmioDirIterator->setArguments(argus);
+    if (d->dfmioDirIterator)
+        d->dfmioDirIterator->setArguments(argus);
 }
 
 QList<QSharedPointer<DEnumerator::SortFileInfo> > LocalDirIterator::sortFileInfoList()
 {
-    return d->dfmioDirIterator->sortFileInfoList();
+    if (d->dfmioDirIterator)
+        return d->dfmioDirIterator->sortFileInfoList();
+    return {};
 }

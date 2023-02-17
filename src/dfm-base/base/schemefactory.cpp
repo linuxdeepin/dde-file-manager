@@ -11,6 +11,7 @@ InfoFactory *InfoFactory::ins { nullptr };
 ViewFactory *ViewFactory::ins { nullptr };
 WatcherFactory *WatcherFactory::ins { nullptr };
 DirIteratorFactory *DirIteratorFactory::ins { nullptr };
+SortAndFitersFactory *SortAndFitersFactory::ins { nullptr };
 
 InfoFactory &InfoFactory::instance()
 {
@@ -44,6 +45,15 @@ ViewFactory &ViewFactory::instance()
     if (!ins) {
         ins = new ViewFactory();
         static GC<ViewFactory> gc(ins);
+    }
+    return *ins;
+}
+
+SortAndFitersFactory &SortAndFitersFactory::instance()
+{
+    if (!ins) {
+        ins = new SortAndFitersFactory();
+        static GC<SortAndFitersFactory> gc(ins);
     }
     return *ins;
 }

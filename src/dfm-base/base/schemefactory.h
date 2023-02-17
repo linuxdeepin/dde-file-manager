@@ -11,6 +11,7 @@
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
+#include "dfm-base/interfaces/abstractsortandfiter.h"
 #include "dfm-base/interfaces/private/infocache.h"
 #include "dfm-base/interfaces/private/watchercache.h"
 #include "dfm-base/utils/finallyutil.h"
@@ -458,6 +459,33 @@ private:
     static DirIteratorFactory &instance();   // 获取全局实例
 };
 
+class SortAndFitersFactory final : public SchemeFactory<AbstractSortAndFiter>
+{
+    Q_DISABLE_COPY(SortAndFitersFactory)
+    friend class GC<SortAndFitersFactory>;
+    static SortAndFitersFactory *ins;
+
+public:
+    template<class CT = AbstractSortAndFiter>
+    static bool regClass(const QString &scheme, QString *errorString = nullptr)
+    {
+        return instance().SchemeFactory<AbstractSortAndFiter>::regClass<CT>(scheme, errorString);
+    }
+
+    template<class T>
+    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    {
+        auto sortAndFiters = instance().SchemeFactory<AbstractSortAndFiter>::create(url, errorString);
+        return qSharedPointerDynamicCast<T>(sortAndFiters);
+    }
+
+private:
+    static SortAndFitersFactory &instance();   // 获取全局实例
+    explicit SortAndFitersFactory() {}
+    QMap<QString, QSharedPointer<AbstractSortAndFiter>> sortAndFitersMap;
+};
+
 }
+
 
 #endif   // SCHEMEFACTORY_H

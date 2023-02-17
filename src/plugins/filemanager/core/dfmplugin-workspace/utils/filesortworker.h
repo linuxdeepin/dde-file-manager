@@ -1,11 +1,14 @@
-// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef FILESORTWORKER_H
 #define FILESORTWORKER_H
+
 #include "dfmplugin_workspace_global.h"
 #include "dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractsortandfiter.h"
 
 #include <dfm-io/core/denumerator.h>
 
@@ -27,6 +30,7 @@ public:
     void setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole);
     int mapToIndex(int index);
     int childrenCount();
+    void cancel();
 signals:
     // All data is ready
     void allDataReady();
@@ -58,12 +62,13 @@ private:
     bool checkFilters(const QSharedPointer<DFMIO::DEnumerator::SortFileInfo> &sortInfo);
     void filterAllFiles();
     void sortAllFiles();
-    void updateChild(const QSharedPointer<DFMIO::DEnumerator::SortFileInfo> &sortInfo);
+    void updateChild(const QSharedPointer<DFMIO::DEnumerator::SortFileInfo> &sortInfo,
+                     const AbstractSortAndFiter::SortScenarios sort);
 
 private:
-    bool lessThan(const int left,const int right);
+    bool lessThan(const int left,const int right, AbstractSortAndFiter::SortScenarios sort);
     QVariant data(const AbstractFileInfoPointer &info, dfmbase::Global::ItemRoles role);
-    int insertSortList(const int needNode, const QList<int> &list);
+    int insertSortList(const int needNode, const QList<int> &list, AbstractSortAndFiter::SortScenarios sort);
 
 private:
     QUrl current;
@@ -73,11 +78,12 @@ private:
     QList<QSharedPointer<DFMIO::DEnumerator::SortFileInfo>> children;
     QList<int> visibleChildrenIndex;
     QReadWriteLock locker;
+    AbstractSortAndFiterPointer sortAndFilter { nullptr };
     dfmbase::Global::ItemRoles orgSortRole{ dfmbase::Global::ItemRoles::kItemFileDisplayNameRole };
     Qt::SortOrder sortOrder{ Qt::AscendingOrder };
     dfmio::DEnumerator::SortRoleCompareFlag sortRole{ dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
     bool isMixDirAndFile { false };
-    bool isCanceled { false };
+    std::atomic_bool isCanceled { false };
     char placeholderMemory[5];
 };
 
