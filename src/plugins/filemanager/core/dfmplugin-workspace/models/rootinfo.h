@@ -59,10 +59,7 @@ private:
     QPair<QUrl, EventType> dequeueEvent();
 
 public:
-    int rowIndex;
-    bool canFetchMore;
-    bool needTraversal;
-    bool canFetchByForce = false;
+
     QUrl url;
     QUrl hiddenFileUrl;
     AbstractFileWatcherPointer watcher;
@@ -73,6 +70,10 @@ public:
     QQueue<QPair<QUrl, EventType>> watcherEvent;
     QMutex watcherEventMutex;
     QAtomicInteger<bool> processFileEventRuning = false;
+    bool canFetchMore;
+    bool needTraversal;
+    bool canFetchByForce = false;
+    int rowIndex;
 };
 }
 

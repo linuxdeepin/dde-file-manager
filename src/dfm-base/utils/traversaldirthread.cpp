@@ -101,7 +101,7 @@ void TraversalDirThread::run()
     qInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timer.elapsed();
 
     // Determine whether the current iterator can be converted to a local iterator and whether it can be removed
-    auto localDirIterator = dirIterator.staticCast<LocalDirIterator>();
+    auto localDirIterator = dirIterator.dynamicCast<LocalDirIterator>();
     if (localDirIterator && FileUtils::isLocalDevice(dirUrl)) {
         QMap<DEnumerator::ArgumentKey, QVariant> argus;
         argus.insert(DEnumerator::ArgumentKey::kArgumentSortRole,
