@@ -35,7 +35,7 @@ public:
 
     static inline QStringList supportedArchives()
     {
-        return DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes();
+        return DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes();
     }
     static bool isSupportedArchives(const QUrl &url);
     static bool isSupportedArchives(const QString &path);

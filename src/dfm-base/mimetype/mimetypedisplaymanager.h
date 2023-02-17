@@ -28,25 +28,25 @@ public:
     QString defaultIcon(const QString &mimeType);
 
     QMap<AbstractFileInfo::FileType, QString> displayNames();
-    static QStringList readlines(const QString &path);
-    static void loadSupportMimeTypes();
-    static QStringList supportArchiveMimetypes();
-    static QStringList supportVideoMimeTypes();
+    QStringList readlines(const QString &path);
+    void loadSupportMimeTypes();
+    QStringList supportArchiveMimetypes();
+    QStringList supportVideoMimeTypes();
     static MimeTypeDisplayManager *instance();
-    static QStringList supportAudioMimeTypes();
+    QStringList supportAudioMimeTypes();
 
 private:
     static MimeTypeDisplayManager *self;
     QMap<AbstractFileInfo::FileType, QString> displayNamesMap;
     QMap<AbstractFileInfo::FileType, QString> defaultIconNames;
-    static QStringList ArchiveMimeTypes;
-    static QStringList AvfsBlackList;
-    static QStringList TextMimeTypes;
-    static QStringList VideoMimeTypes;
-    static QStringList AudioMimeTypes;
-    static QStringList ImageMimeTypes;
-    static QStringList ExecutableMimeTypes;
-    static QStringList BackupMimeTypes;
+    QStringList ArchiveMimeTypes;
+    QStringList AvfsBlackList;
+    QStringList TextMimeTypes;
+    QStringList VideoMimeTypes;
+    QStringList AudioMimeTypes;
+    QStringList ImageMimeTypes;
+    QStringList ExecutableMimeTypes;
+    QStringList BackupMimeTypes;
 };
 
 }

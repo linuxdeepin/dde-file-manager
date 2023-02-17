@@ -1012,8 +1012,7 @@ bool LocalFileInfoPrivate::canFetch() const
 
     bool isArchive = false;
     if (q->exists())
-        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::
-                            supportArchiveMimetypes()
+        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes()
                                     .contains(DMimeDatabase().mimeTypeForFile(url).name());
 
     return q->isAttributes(OptInfoType::kIsDir)

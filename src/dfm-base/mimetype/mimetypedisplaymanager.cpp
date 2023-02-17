@@ -12,13 +12,7 @@
 
 using namespace dfmbase;
 
-QStringList MimeTypeDisplayManager::ArchiveMimeTypes;
-QStringList MimeTypeDisplayManager::TextMimeTypes;
-QStringList MimeTypeDisplayManager::VideoMimeTypes;
-QStringList MimeTypeDisplayManager::AudioMimeTypes;
-QStringList MimeTypeDisplayManager::ImageMimeTypes;
-QStringList MimeTypeDisplayManager::ExecutableMimeTypes;
-QStringList MimeTypeDisplayManager::BackupMimeTypes;
+
 MimeTypeDisplayManager *MimeTypeDisplayManager::self { nullptr };
 
 MimeTypeDisplayManager::MimeTypeDisplayManager(QObject *parent)
