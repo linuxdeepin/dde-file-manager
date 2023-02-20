@@ -4,6 +4,7 @@
 
 #include "previewdialogmanager.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -34,7 +35,7 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
     for (const QUrl &url : selecturls) {
         const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
 
-        if (info && (info->urlOf(UrlInfoType::kUrl).isLocalFile() || info->exists())) {
+        if (info && (dfmbase::FileUtils::isLocalFile(info->urlOf(UrlInfoType::kUrl)) || info->exists())) {
             //判断链接文件的源文件是否存在
             if (info->isAttributes(OptInfoType::kIsSymLink)) {
                 QUrl targetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));

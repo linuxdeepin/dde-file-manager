@@ -627,7 +627,7 @@ bool DDciIconPreview::setFileUrl(const QUrl &url)
         return false;
 
     QUrl tmpUrl = UrlRoute::fromLocalFile(url.path());
-    if (!tmpUrl.isLocalFile())
+    if (!dfmbase::FileUtils::isLocalFile(tmpUrl))
         return false;
 
     QByteArray format;

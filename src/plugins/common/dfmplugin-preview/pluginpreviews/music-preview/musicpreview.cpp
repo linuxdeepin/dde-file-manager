@@ -8,6 +8,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QFileInfo>
 #include <QMimeType>
@@ -56,7 +57,7 @@ bool MusicPreview::setFileUrl(const QUrl &url)
     if (currentUrl == url)
         return true;
 
-    if (!url.isLocalFile())
+    if (!dfmbase::FileUtils::isLocalFile(url))
         return false;
 
     if (musicView || statusBarFrame)

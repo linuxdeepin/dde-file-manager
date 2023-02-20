@@ -8,6 +8,7 @@
 #include "utils/crumbinterface.h"
 #include "utils/searchhistroymanager.h"
 #include "utils/titlebarhelper.h"
+#include "utils/fileutils.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/schemefactory.h"
@@ -197,7 +198,7 @@ void AddressBarPrivate::updateCompletionState(const QString &text)
 
         const auto &currentDir = QDir::currentPath();
         QUrl curUrl = q->currentUrl();
-        if (curUrl.isLocalFile())
+        if (dfmbase::FileUtils::isLocalFile(curUrl))
             QDir::setCurrent(curUrl.toLocalFile());
 
         const QUrl &url = UrlRoute::fromUserInput(strLocalPath, false);
@@ -416,7 +417,7 @@ void AddressBarPrivate::onReturnPressed()
         return;
 
     // add search history list
-    if (!UrlRoute::fromUserInput(text).isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(UrlRoute::fromUserInput(text))) {
         if (!historyList.contains(text)) {
             historyList.append(text);
             SearchHistroyManager::instance()->writeIntoSearchHistory(text);
@@ -552,7 +553,7 @@ bool AddressBar::completerViewVisible()
 
 void AddressBar::setCurrentUrl(const QUrl &url)
 {
-    QString text = url.isLocalFile() ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
+    QString text = dfmbase::FileUtils::isLocalFile(url) ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
     this->setText(text);
     this->setSelection(0, text.length());
 }
@@ -658,7 +659,7 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
                     QString completeResult = d->urlCompleter->completionModel()->index(0, 0).data().toString();
                     d->insertCompletion(completeResult);
                 }
-                if (UrlRoute::fromUserInput(text()).isLocalFile()) {
+                if (dfmbase::FileUtils::isLocalFile(UrlRoute::fromUserInput(text()))) {
                     setText(text() + '/');
                     emit textEdited(text());
                 }

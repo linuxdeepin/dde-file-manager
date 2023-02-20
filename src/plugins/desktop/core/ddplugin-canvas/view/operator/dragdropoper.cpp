@@ -450,7 +450,7 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
         const QModelIndex &index = view->indexAt(event->pos());
         auto fileInfo = view->model()->fileInfo(index.isValid() ? index : view->rootIndex());
 
-        if (fileInfo && fileInfo->urlOf(UrlInfoType::kUrl).isLocalFile()) {
+        if (fileInfo && dfmbase::FileUtils::isLocalFile(fileInfo->urlOf(UrlInfoType::kUrl))) {
             if (fileInfo->isAttributes(OptInfoType::kIsDir))
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->urlOf(UrlInfoType::kUrl));
             else

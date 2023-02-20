@@ -5,6 +5,7 @@
 #include "base/application/settings.h"
 #include "base/standardpaths.h"
 #include "base/schemefactory.h"
+#include "utils/fileutils.h"
 
 #include <QCoreApplication>
 #include <QStandardPaths>
@@ -144,7 +145,7 @@ public:
      */
     QString urlToKey(const QUrl &url) const
     {
-        if (url.isLocalFile()) {
+        if (dfmbase::FileUtils::isLocalFile(url)) {
             const QUrl &new_url = StandardPaths::toStandardUrl(url.toLocalFile());
 
             if (new_url.isValid()) {

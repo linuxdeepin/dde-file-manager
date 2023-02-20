@@ -273,13 +273,13 @@ JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId,
     if (ok && !urls.isEmpty())
         sourcesTrans = urls;
 
-    if (!target.isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(target)) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CopyFile", windowId, sourcesTrans, target, flags)) {
             return nullptr;
         }
     }
     const QUrl &urlFrom = sources.first();
-    if (!urlFrom.isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(urlFrom)) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CopyFromFile", windowId, sourcesTrans, target, flags)) {
             return nullptr;
         }
@@ -308,13 +308,13 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
     if (ok && !urls.isEmpty())
         sourcesTrans = urls;
 
-    if (!target.isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(target)) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CutToFile", windowId, sourcesTrans, target, flags)) {
             return nullptr;
         }
     }
     const QUrl &urlFrom = sources.first();
-    if (!urlFrom.isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(urlFrom)) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_CutFromFile", windowId, sourcesTrans, target, flags)) {
             return nullptr;
         }
@@ -337,7 +337,7 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
         return nullptr;
     }
 
-    if (!sources.first().isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(sources.first())) {
         // hook events
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_DeleteFile", windowId, sources, flags)) {
             return nullptr;
@@ -388,7 +388,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
 {
     bool ok = false;
     QString error;
-    if (!url.isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(url)) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_MakeDir", windowId, url)) {
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
                                          windowId, QList<QUrl>() << url, true, error);
@@ -437,7 +437,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
         args->insert(CallbackKey::kCustom, custom);
         callbackImmediately(args);
     }
-    if (url.isLocalFile()) {
+    if (dfmbase::FileUtils::isLocalFile(url)) {
         return doTouchFilePractically(windowId, urlNew) ? newPath : QString();
     } else {
         QString error;
@@ -453,7 +453,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
 
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const QUrl tempUrl, const QString suffix, const QVariant custom, OperatorCallback callbackImmediately)
 {
-    if (url.isLocalFile()) {
+    if (dfmbase::FileUtils::isLocalFile(url)) {
         auto fileInfo = InfoFactory::create<AbstractFileInfo>(tempUrl);
         if (!fileInfo)
             return QString();
@@ -611,7 +611,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
         return false;
 
     QString error;
-    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
         // hook events
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", windowId, urls)) {
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, true, error);
@@ -647,7 +647,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
         return false;
 
     QString error;
-    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
         // hook events
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", windowId, urls)) {
             if (ok)
@@ -699,7 +699,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
     Q_UNUSED(windowId);
     bool ok = false;
     QString error;
-    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenFileByApp", windowId, urls, apps)) {
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, true, error);
             return true;
@@ -732,7 +732,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     if (FileUtils::isDesktopFile(oldUrl) && !DecoratorFileInfo(oldUrl).isSymLink())
         return doRenameDesktopFile(windowId, oldUrl, newUrl, flags);
 
-    if (!oldUrl.isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(oldUrl)) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags)) {
             QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -788,7 +788,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     QMap<QUrl, QUrl> successUrls;
     bool ok = false;
     QString error;
-    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFiles", windowId, urls, pair, replace)) {
 
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -834,7 +834,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     QMap<QUrl, QUrl> successUrls;
     bool ok = false;
     QString error;
-    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", windowId, urls, pair)) {
 
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -946,7 +946,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
 {
     bool ok = false;
     QString error;
-    if (!url.isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(url)) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_LinkFile", windowId, url, link, force, silence)) {
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
                                          windowId, QList<QUrl>() << url << link, true, error);
@@ -1004,7 +1004,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
 {
     QString error;
     bool ok = false;
-    if (!url.isLocalFile()) {
+    if (!dfmbase::FileUtils::isLocalFile(url)) {
         // hook events
         bool hookOk = false;
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_SetPermission", windowId, url, permissions, &hookOk, &error)) {
@@ -1049,7 +1049,7 @@ bool FileOperationsEventReceiver::handleOperationWriteToClipboard(const quint64 
                                                                   const QList<QUrl> urls)
 {
     QString error;
-    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+    if (!urls.isEmpty() && !dfmbase::FileUtils::isLocalFile(urls.first())) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", windowId, action, urls)) {
             return true;
         }
@@ -1076,7 +1076,7 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     bool ok = false;
     bool result = false;
     QSharedPointer<LocalFileHandler> fileHandler = nullptr;
-    if (urls.count() > 0 && !urls.first().isLocalFile()) {
+    if (urls.count() > 0 && !dfmbase::FileUtils::isLocalFile(urls.first())) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", windowId, urls)) {
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
                                          windowId, urls, true, error);
@@ -1087,7 +1087,7 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     for (const auto &url : urls) {
         const QString &current_dir = QDir::currentPath();
         QDir::setCurrent(url.toLocalFile());
-        if (!url.isLocalFile()) {
+        if (!dfmbase::FileUtils::isLocalFile(url)) {
         }
         if (fileHandler.isNull())
             fileHandler.reset(new LocalFileHandler());

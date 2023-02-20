@@ -5,6 +5,7 @@
 #include "iteratorsearcher.h"
 #include "utils/searchhelper.h"
 
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <QDebug>
@@ -81,7 +82,7 @@ void IteratorSearcher::doSearch()
             continue;
 
         // 仅在过滤目录下进行搜索时，过滤目录下的内容才能被检索
-        if (url.isLocalFile()) {
+        if (dfmbase::FileUtils::isLocalFile(url)) {
             QRegExp reg(kFilterFolders);
             const auto &searchRootPath = searchUrl.toLocalFile();
             const auto &filePath = url.toLocalFile();

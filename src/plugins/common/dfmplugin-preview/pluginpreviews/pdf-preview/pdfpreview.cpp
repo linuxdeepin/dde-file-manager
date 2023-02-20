@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "dfm-base/utils/fileutils.h"
+
 #include "pdfpreview.h"
 #include "pdfwidget.h"
 #include "global.h"
@@ -28,7 +30,7 @@ bool PDFPreview::setFileUrl(const QUrl &url)
     if (selectFileUrl == url)
         return true;
 
-    if (!url.isLocalFile())
+    if (!dfmbase::FileUtils::isLocalFile(url))
         return false;
 
     if (pdfWidget == nullptr)

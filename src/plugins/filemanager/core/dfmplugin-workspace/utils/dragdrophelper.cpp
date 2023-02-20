@@ -178,7 +178,7 @@ bool DragDropHelper::drop(QDropEvent *event)
         event->setDropAction(Qt::CopyAction);
 
         AbstractFileInfoPointer info = fileInfoAtPos(event->pos());
-        if (info && info->urlOf(UrlInfoType::kUrl).isLocalFile()) {
+        if (info && dfmbase::FileUtils::isLocalFile(info->urlOf(UrlInfoType::kUrl))) {
             if (info->isAttributes(OptInfoType::kIsDir)) {
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", info->urlOf(UrlInfoType::kUrl));
             } else {

@@ -365,7 +365,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList)
     QString title;
     QString fileName;
     QIcon icon(QIcon::fromTheme(kUserTrashFullOpened));
-    bool isLocalFile = urlList.first().isLocalFile();
+    bool isLocalFile = dfmbase::FileUtils::isLocalFile(urlList.first());
     if (isLocalFile) {
         if (urlList.size() == 1) {
             LocalFileInfo f(urlList.first());
@@ -438,6 +438,9 @@ int DialogManager::showClearTrashDialog(const quint64 &count)
 
 int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
 {
+    if (urls.isEmpty())
+        return QDialog::Rejected;
+
     DDialog d;
 
     if (!d.parentWidget()) {
@@ -451,7 +454,7 @@ int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
     QString deleteFileItems = tr("Do you want to delete the selected %1 items?");
 
     const QUrl &urlFirst = urls.first();
-    if (urlFirst.isLocalFile()) {   // delete local file
+    if (dfmbase::FileUtils::isLocalFile(urlFirst)) {   // delete local file
         if (urls.size() == 1) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlFirst);
             d.setTitle(deleteFileName.arg(fm.elidedText(info->displayOf(DisPlayInfoType::kFileDisplayName), Qt::ElideMiddle, NAME_MAX)));

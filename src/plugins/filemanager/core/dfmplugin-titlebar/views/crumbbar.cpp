@@ -12,6 +12,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <DListView>
 #include <QGSettings>
@@ -137,7 +138,7 @@ void CrumbBarPrivate::setClickableAreaEnabled(bool enabled)
 void CrumbBarPrivate::writeUrlToClipboard(const QUrl &url)
 {
     QString copyPath;
-    if (url.isLocalFile() || !UrlRoute::hasScheme(url.scheme())) {
+    if (dfmbase::FileUtils::isLocalFile(url) || !UrlRoute::hasScheme(url.scheme())) {
         copyPath = url.toString();
     } else {
         // why? The format of the custom scheme URL was incorrect when it was converted to a string

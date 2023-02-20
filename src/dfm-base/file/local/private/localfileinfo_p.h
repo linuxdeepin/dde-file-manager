@@ -175,7 +175,7 @@ LocalFileInfoPrivate::~LocalFileInfoPrivate()
 QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) const
 {
     QUrl url = q->urlOf(UrlInfoType::kUrl);
-    if (url.isLocalFile())
+    if (dfmbase::FileUtils::isLocalFile(url))
         return MimeDatabase::mimeTypeForUrl(url);
     else
         return MimeDatabase::mimeTypeForFile(UrlRoute::urlToPath(url),

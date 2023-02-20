@@ -10,6 +10,7 @@
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -203,7 +204,7 @@ void ClipBoard::setCurUrlToClipboardForRemote(const QUrl &curUrl)
     if (curUrl.isEmpty())
         return;
     QByteArray localPath;
-    if (curUrl.isLocalFile()) {
+    if (dfmbase::FileUtils::isLocalFile(curUrl)) {
         localPath = curUrl.toString().toLocal8Bit();
     } else {
         qInfo() << "Remote Assistance copy: current url not local file";

@@ -307,7 +307,7 @@ QMimeType MimeDatabase::mimeTypeForData(QIODevice *device)
  */
 QMimeType MimeDatabase::mimeTypeForUrl(const QUrl &url)
 {
-    if (url.isLocalFile())
+    if (dfmbase::FileUtils::isLocalFile(url))
         return mimedb->mimeTypeForUrl(url);
     else
         return mimedb->mimeTypeForFile(UrlRoute::urlToPath(url));

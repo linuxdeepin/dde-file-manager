@@ -48,6 +48,7 @@ public:
     static bool isTrashFile(const QUrl &url);
     static bool isTrashRootFile(const QUrl &url);
     static bool isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare);
+    static bool isLocalFile(const QUrl &url);
     static int getFileNameLength(const QUrl &url, const QString &name);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);

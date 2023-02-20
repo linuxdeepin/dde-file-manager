@@ -6,6 +6,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
+#include "dfm-base/utils/fileutils.h"
 #include "imageview.h"
 
 #include <DAnchors>
@@ -89,7 +90,7 @@ bool ImagePreview::setFileUrl(const QUrl &url)
         tmpUrl = info->urlOf(UrlInfoType::kRedirectedFileUrl);
     }
 
-    if (!tmpUrl.isLocalFile())
+    if (!dfmbase::FileUtils::isLocalFile(tmpUrl))
         return false;
 
     QByteArray format;

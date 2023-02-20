@@ -9,6 +9,7 @@
 #include "utils/crumbmanager.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QHBoxLayout>
 #include <QEvent>
@@ -264,7 +265,7 @@ void TitleBarWidget::onSearchButtonClicked()
 void TitleBarWidget::onAddressBarJump()
 {
     const QString &currentDir = QDir::currentPath();
-    if (titlebarUrl.isLocalFile())
+    if (dfmbase::FileUtils::isLocalFile(titlebarUrl))
         QDir::setCurrent(titlebarUrl.toLocalFile());
     QDir::setCurrent(currentDir);
 }

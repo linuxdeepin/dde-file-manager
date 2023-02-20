@@ -11,6 +11,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -269,7 +270,7 @@ bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
     if (url1.scheme() != url2.scheme())
         return false;
 
-    if (url1.isLocalFile()) {
+    if (isLocalFile(url1)) {
         return DFMIO::DFMUtils::devicePathFromUrl(url1) == DFMIO::DFMUtils::devicePathFromUrl(url2);
     }
 
@@ -392,6 +393,26 @@ bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)
             return true;
         url = DFMIO::DFMUtils::directParentUrl(url);
     }
+    return false;
+}
+
+bool FileUtils::isLocalFile(const QUrl &url)
+{
+    if (url.isLocalFile())
+        return true;
+
+    // see if the url is any subpath of external mounts.
+    if (!DevProxyMng->isFileOfExternalMounts(url.path()))
+        return true;
+
+    // see if the original path is from local.
+    // since only ext* filesystems are supported to mounted with dlnfs,
+    // check the url by udisks.
+    // the dlnfs mount is captured by gvfs and is regarded as protocol device.
+    // so if it's NOT external block mounts file, it's local file.
+    if (DeviceUtils::isSubpathOfDlnfs(url.path()))
+        return (DevProxyMng->isFileOfExternalBlockMounts(url.path()));
+
     return false;
 }
 

@@ -13,6 +13,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <DIconButton>
 #include <DListView>
@@ -74,7 +75,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
 
         const QString &currentDir = QDir::currentPath();
 
-        if (currentUrl.isLocalFile())
+        if (dfmbase::FileUtils::isLocalFile(currentUrl))
             QDir::setCurrent(currentUrl.toLocalFile());
 
         QWidget *fileWindow = qobject_cast<QWidget *>(parent());

@@ -225,7 +225,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
 
         ++directoryCount;
 
-        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && info->urlOf(UrlInfoType::kUrl).isLocalFile()) {
+        if (!(fileHints & (FileStatisticsJob::kDontSkipAVFSDStorage | FileStatisticsJob::kDontSkipPROCStorage)) && dfmbase::FileUtils::isLocalFile(info->urlOf(UrlInfoType::kUrl))) {
             do {
                 QStorageInfo si(info->urlOf(UrlInfoType::kUrl).toLocalFile());
 

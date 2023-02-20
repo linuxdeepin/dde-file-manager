@@ -12,6 +12,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/local/localfilewatcher.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QUuid>
 
@@ -44,7 +45,7 @@ void SearchDirIteratorPrivate::initConnect()
 void SearchDirIteratorPrivate::doSearch()
 {
     auto targetUrl = SearchHelper::searchTargetUrl(fileUrl);
-    if (targetUrl.isLocalFile()) {
+    if (dfmbase::FileUtils::isLocalFile(targetUrl)) {
         DFMBASE_USE_NAMESPACE
         searchRootWatcher.reset(new LocalFileWatcher(targetUrl));
         searchRootWatcher->startWatcher();

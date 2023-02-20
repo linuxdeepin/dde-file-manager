@@ -6,6 +6,7 @@
 #include "dfm_global_defines.h"
 
 #include "utils/finallyutil.h"
+#include "utils/fileutils.h"
 
 #include <QDir>
 #include <QRegularExpression>
@@ -84,7 +85,7 @@ QString UrlRoute::toString(const QUrl &url, QUrl::FormattingOptions options)
     if (!url.isValid())
         return "";
 
-    if (url.isLocalFile() || !hasScheme(url.scheme()))
+    if (dfmbase::FileUtils::isLocalFile(url) || !hasScheme(url.scheme()))
         return url.toString(options);
 
     QUrl tmpUrl { url };

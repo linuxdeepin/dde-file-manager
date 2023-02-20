@@ -17,6 +17,7 @@
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -204,7 +205,7 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
     if (curTitleBar)
         currentUrl = curTitleBar->currentUrl();
 
-    if (currentUrl.isLocalFile())
+    if (dfmbase::FileUtils::isLocalFile(currentUrl))
         QDir::setCurrent(currentUrl.toLocalFile());
 
     QString inputStr = text;

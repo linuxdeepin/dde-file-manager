@@ -164,7 +164,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
 
 QMimeType DMimeDatabase::mimeTypeForUrl(const QUrl &url) const
 {
-    if (url.isLocalFile())
+    if (dfmbase::FileUtils::isLocalFile(url))
         return mimeTypeForFile(url);
 
     return QMimeDatabase::mimeTypeForUrl(url);

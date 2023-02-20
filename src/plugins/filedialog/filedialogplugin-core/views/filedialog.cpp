@@ -13,6 +13,7 @@
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -61,7 +62,7 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
         return;
     }
 
-    if (!q->directoryUrl().isLocalFile())
+    if (!dfmbase::FileUtils::isLocalFile(q->directoryUrl()))
         return;
 
     if (!q->directory().exists())
@@ -347,7 +348,7 @@ QList<QUrl> FileDialog::selectedUrls() const
     }
 
     if (list.isEmpty() && (d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly)) {
-        if (directoryUrl().isLocalFile())
+        if (dfmbase::FileUtils::isLocalFile(directoryUrl()))
             list << QUrl(directoryUrl());
     }
     return list;
