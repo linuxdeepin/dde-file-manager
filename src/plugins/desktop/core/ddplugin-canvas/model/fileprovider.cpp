@@ -71,6 +71,10 @@ void FileProvider::refresh(QDir::Filters filters)
 
     connect(traversalThread.get(), &TraversalDirThread::updateChildren, this, &FileProvider::reset);
     connect(traversalThread.get(), &TraversalDirThread::finished, this, &FileProvider::traversalFinished);
+
+    // get file property in thread of TraversalDir to improve performance.
+    connect(traversalThread.get(), &TraversalDirThread::updateChild, this, &FileProvider::preupdateData, Qt::DirectConnection);
+
     updateing = true;
     traversalThread->start();
 }
@@ -154,4 +158,13 @@ void FileProvider::update(const QUrl &url)
             return;
 
     emit fileUpdated(url);
+}
+
+void FileProvider::preupdateData(const AbstractFileInfoPointer &info)
+{
+    // file info that is slow at first using should be called there to cache it.
+    if (updateing && info) {
+        // get file mime type for sorting.
+        info->fileMimeType();
+    }
 }

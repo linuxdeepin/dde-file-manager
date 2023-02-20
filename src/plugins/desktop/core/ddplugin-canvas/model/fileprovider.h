@@ -40,6 +40,7 @@ protected slots:
     void remove(const QUrl &url);
     void rename(const QUrl &oldUrl, const QUrl &newUrl);
     void update(const QUrl &url);
+    void preupdateData(const AbstractFileInfoPointer &info);
 protected:
     QUrl rootUrl;
     AbstractFileWatcherPointer watcher;

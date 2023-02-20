@@ -86,7 +86,7 @@ void DeviceManagerDBus::initConnection()
         QDBusInterface ifs("com.deepin.dde.desktop",
                            "/com/deepin/dde/desktop",
                            "com.deepin.dde.desktop");
-        ifs.asyncCall("Refresh", false);
+        ifs.asyncCall("Refresh");
         qDebug() << "refresh desktop async finished..." << msg;
     };
     connect(DevMngIns, &DeviceManager::blockDevMounted, this, [this, refreshDesktop](const QString &id, const QString &mpt) {

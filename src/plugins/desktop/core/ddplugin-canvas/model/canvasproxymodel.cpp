@@ -40,6 +40,7 @@ void CanvasProxyModelPrivate::sourceReset()
 {
     createMapping();
     q->endResetModel();
+    qDebug() << "model reseted, file count:" << fileList.count();
 }
 
 void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent, int start, int end)
@@ -262,8 +263,8 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     if (!leftIdx.isValid() || !rightIdx.isValid())
         return false;
 
-    DFMLocalFileInfoPointer leftInfo = q->fileInfo(leftIdx);
-    DFMLocalFileInfoPointer rightInfo = q->fileInfo(rightIdx);
+    DFMLocalFileInfoPointer leftInfo = fileMap.value(left);
+    DFMLocalFileInfoPointer rightInfo = fileMap.value(right);
 
     // The folder is fixed in the front position
     if (isNotMixDirAndFile) {
@@ -309,7 +310,7 @@ void CanvasProxyModelPrivate::standardSort(QList<QUrl> &files) const
     if (files.isEmpty())
         return;
 
-    std::sort(files.begin(), files.end(), [this](const QUrl &left, const QUrl &right) {
+    std::stable_sort(files.begin(), files.end(), [this](const QUrl &left, const QUrl &right) {
         return lessThan(left, right);
     });
 
@@ -352,7 +353,7 @@ void CanvasProxyModelPrivate::createMapping()
     {
         maps.clear();
         for (const QUrl &url : urls)
-            maps.insert(url, srcModel->fileInfo(srcModel->index(url)));
+            maps.insert(url, fileMap.value(url));
     }
 
     fileList = urls;
@@ -389,9 +390,16 @@ void CanvasProxyModelPrivate::doRefresh(bool global)
     if (global) {
         srcModel->refresh(srcModel->rootIndex());
     } else {
+        // refresh all file info
+        {
+            // do not emit data changed signal, just refresh file info.
+            QSignalBlocker blocker(srcModel);
+            srcModel->update();
+        }
+
+        // reset model
         sourceAboutToBeReset();
         sourceReset();
-        q->update();
     }
 }
 

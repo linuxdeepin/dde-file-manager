@@ -62,13 +62,17 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual void stop() override;
-
+    Q_INVOKABLE void loadLazyPlugins();
 protected slots:
     void onStart();
-
+    void onFrameReady();
+    void handleLoadPlugins(const QStringList &names);
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
 private:
     DFMBASE_NAMESPACE::Application *app = nullptr;
     EventHandle *handle = nullptr;
+    std::once_flag lazyFlag;
 
 private:
     DPF_EVENT_NAMESPACE(DDPCORE_NAMESPACE)

@@ -33,6 +33,7 @@ void FileInfoModelPrivate::doRefresh()
 
 void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
 {
+    qDebug() << "to reset file, count:" << urls.size();
     QList<QUrl> fileUrls;
     QMap<QUrl, DFMLocalFileInfoPointer> fileMaps;
     for (const QUrl &child : urls) {

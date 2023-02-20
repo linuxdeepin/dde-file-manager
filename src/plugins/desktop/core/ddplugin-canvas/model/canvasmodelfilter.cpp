@@ -64,15 +64,9 @@ bool HiddenFileFilter::resetFilter(QList<QUrl> &urls)
 
     for (auto itor = urls.begin(); itor != urls.end();) {
         auto info = FileCreator->createFileInfo(*itor);
-        if (info) {
-            //! file cached will not change hidden propety when .hidden file changed.
-            //! need to fouce refresh
-            //! maybe it need be fixed in dfm-io
-            info->refresh();
-            if (info->isAttributes(OptInfoType::kIsHidden)) {
-                itor = urls.erase(itor);
-                continue;
-            }
+        if (info && info->isAttributes(OptInfoType::kIsHidden)) {
+            itor = urls.erase(itor);
+            continue;
         }
         ++itor;
     }
@@ -138,6 +132,10 @@ void InnerDesktopAppFilter::refreshModel()
 
 bool InnerDesktopAppFilter::resetFilter(QList<QUrl> &urls)
 {
+    // checking that whether has hidden file.
+    if (hidden.key(true, QString()).isEmpty())
+        return false;
+
     // hide the desktop file if gseting set it to off.
     for (auto itor = urls.begin(); itor != urls.end();) {
         if (hidden.value(keys.key(*itor), false)) {

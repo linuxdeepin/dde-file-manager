@@ -11,6 +11,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_event_defines.h"
 
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
@@ -41,6 +42,8 @@ void ddplugin_core::Core::initialize()
 {
     registerFileSystem();
     connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Core::onStart);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kLoadPlugins,
+                                   this, &Core::handleLoadPlugins);
 }
 
 bool ddplugin_core::Core::start()
@@ -63,8 +66,53 @@ void ddplugin_core::Core::stop()
 
 void Core::onStart()
 {
+    connect(handle->frame, &WindowFrame::windowShowed, this, &Core::onFrameReady);
     // create desktop frame windows.
     handle->frame->buildBaseWindow();
+}
+
+void Core::onFrameReady()
+{
+    disconnect(handle->frame, &WindowFrame::windowShowed, this, &Core::onFrameReady);
+    // no window to show, load plugins directly.
+    if (handle->frame->rootWindows().isEmpty()) {
+        QMetaObject::invokeMethod(this, "loadLazyPlugins", Qt::QueuedConnection);
+    } else {
+        // to get paint event.
+        qApp->installEventFilter(this);
+    }
+}
+
+void Core::handleLoadPlugins(const QStringList &names)
+{
+    std::for_each(names.begin(), names.end(), [](const QString &name) {
+        Q_ASSERT(qApp->thread() == QThread::currentThread());
+        qInfo() << "About to load plugin:" << name;
+        auto plugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj(name) };
+        if (plugin)
+            qInfo() << "Load result: " << DPF_NAMESPACE::LifeCycle::loadPlugin(plugin)
+                    << "State: " << plugin->pluginState();
+    });
+}
+
+bool Core::eventFilter(QObject *watched, QEvent *event)
+{
+    // windows paint
+    if (event->type() == QEvent::Paint) {
+        qInfo() << "one window painting" << watched;
+        qApp->removeEventFilter(this);
+        QMetaObject::invokeMethod(this, "loadLazyPlugins", Qt::QueuedConnection);
+    }
+    return false;
+}
+
+void Core::loadLazyPlugins()
+{
+    std::call_once(lazyFlag, [this]() {
+        const QStringList &list { DPF_NAMESPACE::LifeCycle::lazyLoadList() };
+        qInfo() << "load lazy plugins" << list;
+        dpfSignalDispatcher->publish(GlobalEventType::kLoadPlugins, list);
+    });
 }
 
 EventHandle::EventHandle(QObject *parent)

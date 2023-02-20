@@ -63,7 +63,12 @@ static bool pluginsLoad()
         pluginsDirs.push_back(pluginsDir);
     }
     qDebug() << "using plugins dir:" << pluginsDirs;
-    DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs);
+
+    static const QStringList kLazyLoadPluginNames {"ddplugin-wallpapersetting", "ddplugin-grandsearchdaemon",
+                                                   "dfmplugin-bookmark", "dfmplugin-propertydialog", "dfmplugin-tag",
+                                                  "dfmplugin-burn", "dfmplugin-dirshare", "dfmplugin-emblem", "dfmplugin-filepreview"};
+
+    DPF_NAMESPACE::LifeCycle::initialize({ kDesktopPluginInterface, kCommonPluginInterface }, pluginsDirs, {}, kLazyLoadPluginNames);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
