@@ -11,4 +11,5 @@ VaultPageBase::VaultPageBase(QWidget *parent)
 {
     this->moveToCenter();
     this->setAttribute(Qt::WA_DeleteOnClose, false);
+    this->setWindowFlags(Qt::WindowStaysOnTopHint);
 }

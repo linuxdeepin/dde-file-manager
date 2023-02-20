@@ -351,7 +351,6 @@ void VaultHelper::lockVault(bool isForced)
 void VaultHelper::creatVaultDialog()
 {
     VaultPageBase *page = new VaultActiveView();
-    page->moveToCenter();
     page->exec();
 }
 
@@ -374,7 +373,6 @@ void VaultHelper::unlockVaultDialog()
     } else {
         VaultUnlockPages *page = new VaultUnlockPages();
         page->pageSelect(PageType::kUnlockPage);
-        page->moveToCenter();
         page->exec();
     }
 }
@@ -382,7 +380,6 @@ void VaultHelper::unlockVaultDialog()
 void VaultHelper::removeVaultDialog()
 {
     VaultPageBase *page = new VaultRemovePages();
-    page->moveToCenter();
     page->exec();
 }
 
