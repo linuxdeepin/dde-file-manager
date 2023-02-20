@@ -31,8 +31,8 @@ UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent)
 void UserSharePasswordSettingDialog::initializeUi()
 {
     QStringList buttonTexts;
-    buttonTexts.append(tr("Cancel", "button"));
-    buttonTexts.append(tr("Confirm", "button"));
+    buttonTexts.append(QObject::tr("Cancel", "button"));
+    buttonTexts.append(QObject::tr("Confirm", "button"));
     addButton(buttonTexts[0], false);
     addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
     setDefaultButton(1);
