@@ -164,7 +164,7 @@ QString TagDbUpgradeUnit::getColorRGB(const QString &color)
     colorMap["Purple"] = "#9023fc";
     colorMap["Navy-blue"] = "#3468ff";
     colorMap["Azure"] = "#00b5ff";
-    colorMap["Green"] = "#58df0a";
+    colorMap["Grass-green"] = "#58df0a";
     colorMap["Yellow"] = "#fef144";
     colorMap["Gray"] = "#cccccc";
 
@@ -179,12 +179,17 @@ bool TagDbUpgradeUnit::upgradeFileTag()
         return true;
 
     for (auto &bean : filePropertyBean) {
-        const QString &path = bean->getFilePath();
-        if (path.isEmpty())
+        QStringList paths = bean->getFilePath().split("/");
+        paths.removeFirst();
+        paths.removeFirst();
+        QString curpath = QDir::homePath();
+        for (QString p : paths)
+            curpath += "/" + p;
+        if (curpath.isEmpty())
             continue;
 
         FileTagInfo info;
-        info.setFilePath(bean->getFilePath());
+        info.setFilePath(curpath);
         info.setTagName(bean->getTag());
         info.setTagOrder(0);
         info.setFuture("null");
