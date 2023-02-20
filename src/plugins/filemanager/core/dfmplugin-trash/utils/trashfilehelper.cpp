@@ -41,7 +41,7 @@ bool TrashFileHelper::cutFile(const quint64 windowId, const QList<QUrl> sources,
         return true;
 
     const QUrl &urlSource = sources.first();
-    if (Q_UNLIKELY(DFMBASE_NAMESPACE::FileUtils::isGvfsFile(urlSource) || DFMIO::DFMUtils::fileIsRemovable(urlSource))) {
+    if (Q_UNLIKELY(!DFMBASE_NAMESPACE::FileUtils::isLocalDevice(urlSource))) {
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles,
                                      windowId,
                                      sources, flags, nullptr);

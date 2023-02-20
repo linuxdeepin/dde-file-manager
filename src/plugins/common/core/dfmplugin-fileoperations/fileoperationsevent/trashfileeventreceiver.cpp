@@ -61,7 +61,7 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
 
     const QUrl &sourceFirst = sources.first();
     JobHandlePointer handle = nullptr;
-    if (FileUtils::isGvfsFile(sourceFirst) || DFMIO::DFMUtils::fileIsRemovable(sourceFirst)) {
+    if (!FileUtils::isLocalDevice(sourceFirst)) {
         if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
             return nullptr;
         handle = copyMoveJob->deletes(sources, flags);

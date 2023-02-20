@@ -341,7 +341,18 @@ bool FileUtils::isLowSpeedDevice(const QUrl &url)
 
 bool FileUtils::isLocalDevice(const QUrl &url)
 {
-    return !DFMIO::DFMUtils::fileIsRemovable(url) && !isGvfsFile(url);
+    //return !DFMIO::DFMUtils::fileIsRemovable(url) && !isGvfsFile(url);
+    if(isGvfsFile(url))
+        return false;
+
+    if(DFMIO::DFMUtils::fileIsRemovable(url)) {
+        if (DeviceUtils::isSubpathOfDlnfs(url.path())) {
+            return !(DevProxyMng->isFileOfExternalBlockMounts(url.path()));
+        }
+        return false;
+    }
+
+    return true;
 }
 
 bool FileUtils::isCdRomDevice(const QUrl &url)
@@ -411,7 +422,7 @@ bool FileUtils::isLocalFile(const QUrl &url)
     // the dlnfs mount is captured by gvfs and is regarded as protocol device.
     // so if it's NOT external block mounts file, it's local file.
     if (DeviceUtils::isSubpathOfDlnfs(url.path()))
-        return (DevProxyMng->isFileOfExternalBlockMounts(url.path()));
+        return !(DevProxyMng->isFileOfExternalBlockMounts(url.path()));
 
     return false;
 }
