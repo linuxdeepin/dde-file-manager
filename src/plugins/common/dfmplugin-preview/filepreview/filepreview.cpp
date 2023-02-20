@@ -6,6 +6,9 @@
 #include "events/fileprevieweventreceiver.h"
 
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
+#include "dfm-base/utils/windowutils.h"
+
+#include <QSurfaceFormat>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_filepreview;
@@ -13,6 +16,15 @@ using namespace dfmplugin_filepreview;
 void FilePreview::initialize()
 {
     FilePreviewEventReceiver::instance()->connectService();
+
+    // Under the wayland protocol, set the rendering mode to OpenGLES
+    if (WindowUtils::isWayLand()) {
+#ifndef __x86_64__
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        format.setDefaultFormat(format);
+#endif
+    }
 }
 
 bool FilePreview::start()
