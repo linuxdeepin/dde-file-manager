@@ -141,6 +141,8 @@ QString ErrorMessageAndAction::errorToString(const QUrl &url, const AbstractJobH
         return tr("The action is not supported");
     case AbstractJobHandler::JobErrorType::kPermissionDeniedError:
         return tr("You do not have permission to traverse files in %1").arg(url.path());
+    case AbstractJobHandler::JobErrorType::kGetRestorePathError:
+        return tr("Restore failed, original path could not be found");
     case AbstractJobHandler::JobErrorType::kProrogramError:
         return tr("Unknown error");
     default:

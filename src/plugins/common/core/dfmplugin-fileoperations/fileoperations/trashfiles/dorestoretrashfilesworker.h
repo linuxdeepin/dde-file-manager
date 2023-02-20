@@ -38,6 +38,7 @@ protected:
     bool doRestoreTrashFiles();
     //check disk space available before do move job
     bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, AbstractFileInfoPointer &targetFileInfo, bool *result);
+    bool checkRestoreInfo(const QUrl &url, AbstractFileInfoPointer &restoreInfo);
 
 private:
     QString readTrashInfo(const QUrl &url);

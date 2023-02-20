@@ -100,42 +100,13 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         if (!stateCheck())
             return false;
 
+        AbstractFileInfoPointer restoreInfo { nullptr };
+        if (!checkRestoreInfo(url, restoreInfo)) {
+            completeFilesCount++;
+            continue;
+        }
+
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-        if (!fileInfo) {
-            // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
-                return false;
-            } else {
-                completeFilesCount++;
-                continue;
-            }
-        }
-
-        QUrl restoreFileUrl;
-        if (!this->targetUrl.isValid()) {
-            // 获取回收站文件的原路径
-            restoreFileUrl = fileInfo->urlOf(UrlInfoType::kOriginalUrl);
-            if (!restoreFileUrl.isValid()) {
-                completeFilesCount++;
-                continue;
-            }
-        } else {
-
-            restoreFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
-                                                            fileInfo->nameOf(NameInfoType::kFileCopyName).toStdString().c_str(), nullptr);
-        }
-
-        const AbstractFileInfoPointer &restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl, false);
-        if (!restoreInfo) {
-            // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
-                return false;
-            } else {
-                completeFilesCount++;
-                continue;
-            }
-        }
-
         AbstractFileInfoPointer targetInfo = nullptr;
         if (!createParentDir(fileInfo, restoreInfo, targetInfo, &result)) {
             if (result) {
@@ -148,7 +119,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
 
         // read trash info
         QString trashInfoCache = readTrashInfo(fileInfo->urlOf(UrlInfoType::kRedirectedFileUrl).toString().replace("/files/", "/info/") + ".trashinfo");
-        emitCurrentTaskNotify(url, restoreFileUrl);
+        emitCurrentTaskNotify(url, restoreInfo->urlOf(UrlInfoType::kUrl));
         AbstractFileInfoPointer newTargetInfo(nullptr);
         bool ok = false;
         if (!doCheckFile(fileInfo, targetInfo, fileInfo->nameOf(NameInfoType::kFileCopyName), newTargetInfo, &ok))
@@ -218,6 +189,46 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
     }
 
     return true;
+}
+
+bool DoRestoreTrashFilesWorker::checkRestoreInfo(const QUrl &url, AbstractFileInfoPointer &restoreInfo)
+{
+    bool result;
+    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    do {
+        result = true;
+        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        if (!fileInfo) {
+            // pause and emit error msg
+            action = doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+            result = false;
+            continue;
+        }
+
+        QUrl restoreFileUrl;
+        if (!this->targetUrl.isValid()) {
+            // 获取回收站文件的原路径
+            restoreFileUrl = fileInfo->urlOf(UrlInfoType::kOriginalUrl);
+            if (!restoreFileUrl.isValid()) {
+                action = doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
+                result = false;
+                continue;
+            }
+        } else {
+            restoreFileUrl = DFMIO::DFMUtils::buildFilePath(this->targetUrl.toString().toStdString().c_str(),
+                                                            fileInfo->nameOf(NameInfoType::kFileCopyName).toStdString().c_str(), nullptr);
+        }
+
+        restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl, false);
+        if (!restoreInfo) {
+            // pause and emit error msg
+            action = doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError);
+            result = false;
+            continue;
+        }
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+
+    return result;
 }
 
 QString DoRestoreTrashFilesWorker::readTrashInfo(const QUrl &url)
