@@ -807,13 +807,15 @@ QString LocalFileInfoPrivate::iconName() const
     QString iconNameValue;
     if (SystemPathUtil::instance()->isSystemPath(filePath()))
         iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(filePath());
-    if (!FileUtils::isGvfsFile(url) && iconNameValue.isEmpty())
-        return q->fileMimeType().iconName();
+
     if (iconNameValue.isEmpty()) {
         const QStringList &list = this->attribute(DFileInfo::AttributeID::kStandardIcon).toStringList();
         if (!list.isEmpty())
             iconNameValue = list.first();
     }
+
+    if (!FileUtils::isGvfsFile(url) && iconNameValue.isEmpty())
+        iconNameValue = q->fileMimeType().iconName();
 
     return iconNameValue;
 }
@@ -1012,8 +1014,7 @@ bool LocalFileInfoPrivate::canFetch() const
 
     bool isArchive = false;
     if (q->exists())
-        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes()
-                                    .contains(DMimeDatabase().mimeTypeForFile(url).name());
+        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::instance()->supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(url).name());
 
     return q->isAttributes(OptInfoType::kIsDir)
             || (isArchive
