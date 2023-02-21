@@ -1202,11 +1202,6 @@ void FileView::startDrag(Qt::DropActions supportedActions)
 {
     QModelIndexList indexes = d->selectedDraggableIndexes();
     if (!indexes.isEmpty()) {
-        if (currentViewMode() == Global::ViewMode::kIconMode && indexes.count() == 1) {
-            DListView::startDrag(supportedActions);
-            return;
-        }
-
         QMimeData *data = model()->mimeData(indexes);
         if (!data)
             return;

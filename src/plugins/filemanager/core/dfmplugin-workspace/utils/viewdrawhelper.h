@@ -36,7 +36,7 @@ class ViewDrawHelper : public QObject
 public:
     explicit ViewDrawHelper(FileView *parent);
 
-    QPixmap renderDragPixmap(DFMGLOBAL_NAMESPACE::ViewMode mode, QModelIndexList indexes) const;
+    QPixmap renderDragPixmap(DFMGLOBAL_NAMESPACE::ViewMode mode, QModelIndexList indexes);
 
 private:
     void drawDragIcons(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QModelIndexList &indexes, const QModelIndex &topIndex) const;
@@ -44,6 +44,7 @@ private:
     void drawDragText(QPainter *painter, const QModelIndex &index) const;
 
     FileView *view { nullptr };
+    int dragIconSize;
 };
 
 }
