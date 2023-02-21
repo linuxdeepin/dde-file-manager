@@ -412,10 +412,6 @@ bool FileUtils::isLocalFile(const QUrl &url)
     if (url.isLocalFile())
         return true;
 
-    // see if the url is any subpath of external mounts.
-    if (!DevProxyMng->isFileOfExternalMounts(url.path()))
-        return true;
-
     // see if the original path is from local.
     // since only ext* filesystems are supported to mounted with dlnfs,
     // check the url by udisks.
