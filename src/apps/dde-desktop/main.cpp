@@ -18,6 +18,7 @@
 #include <QtGlobal>
 #include <QDBusInterface>
 #include <QProcess>
+#include <QDateTime>
 
 #include <dfm-framework/dpf.h>
 
@@ -164,6 +165,7 @@ static void checkUpgrade(DApplication *app)
 
 int main(int argc, char *argv[])
 {
+    QString mainTime = QDateTime::currentDateTime().toString();
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
     a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
@@ -183,7 +185,7 @@ int main(int argc, char *argv[])
     initLog();
 
     qInfo() << "start desktop " << a.applicationVersion() << "pid" << getpid() << "parent id" << getppid()
-            << "argments" << a.arguments();
+            << "argments" << a.arguments() << mainTime;
 
     {
         QDBusConnection conn = QDBusConnection::sessionBus();

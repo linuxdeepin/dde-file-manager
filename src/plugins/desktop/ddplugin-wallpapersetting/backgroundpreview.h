@@ -7,22 +7,23 @@
 
 #include "ddplugin_wallpapersetting_global.h"
 
-#include "interfaces/background/abstractbackground.h"
+#include <QWidget>
 
 namespace ddplugin_wallpapersetting {
 
-class BackgroundPreview : public DFMBASE_NAMESPACE::AbstractBackground
+class BackgroundPreview : public QWidget
 {
 public:
     explicit BackgroundPreview(const QString &screenName, QWidget *parent = nullptr);
-    virtual void setMode(int mode) override;
-    virtual void setDisplay(const QString &path) override;
-    virtual void updateDisplay() override;
+    void setDisplay(const QString &path);
+    void updateDisplay();
 protected:
     void paintEvent(QPaintEvent *event) override;
     QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap);
 
 private:
+    QString screen;
+    QString filePath;
     QPixmap pixmap;
     QPixmap noScalePixmap;
 };

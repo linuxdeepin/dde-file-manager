@@ -17,13 +17,6 @@ TEST(BackgroundPreview, BackgroundPreview)
     EXPECT_TRUE(wid.testAttribute(Qt::WA_TranslucentBackground));
 }
 
-TEST(BackgroundPreview, setMode)
-{
-    BackgroundPreview wid(":0");
-
-    wid.setMode(0);
-    EXPECT_EQ(wid.displayMode, BackgroundPreview::Statics);
-}
 
 TEST(BackgroundPreview, setDisplay)
 {

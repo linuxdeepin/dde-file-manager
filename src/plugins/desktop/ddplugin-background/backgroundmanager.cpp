@@ -15,6 +15,7 @@
 #include "dfm-base/dfm_desktop_defines.h"
 
 #include <QImageReader>
+#include <QtConcurrent>
 
 DFMBASE_USE_NAMESPACE
 DDP_BACKGROUND_USE_NAMESPACE
@@ -48,12 +49,16 @@ BackgroundManagerPrivate::BackgroundManagerPrivate(BackgroundManager *qq)
     : QObject(qq)
     , q(qq)
 {
+
 }
 
 BackgroundManagerPrivate::~BackgroundManagerPrivate()
 {
     backgroundWidgets.clear();
     backgroundPaths.clear();
+
+    delete bridge;
+    bridge = nullptr;
 }
 
 bool BackgroundManagerPrivate::isEnableBackground()
@@ -73,18 +78,20 @@ BackgroundManager::BackgroundManager(QObject *parent)
     #else
         new BackgroundWM(this);
     #endif
+
+    d->bridge = new BackgroundBridge(d);
 }
 
 BackgroundManager::~BackgroundManager()
 {
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &BackgroundManager::onBackgroundBuild);
-    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &BackgroundManager::onGeometryChanged);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &BackgroundManager::onGeometryChanged);    
 }
 
 void BackgroundManager::init()
 {
-    onRestBackgroundManager();
+    restBackgroundManager();
 
     CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);
     CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &BackgroundManager::onBackgroundBuild);
@@ -111,17 +118,11 @@ QString BackgroundManager::backgroundPath(const QString &screen)
     return d->backgroundPaths.value(screen);
 }
 
-void BackgroundManager::setBackgroundPath(const QString &screen, const QString &path)
-{
-    if (screen.isEmpty() || path.isEmpty())
-        return;
-
-    d->backgroundPaths.insert(screen, path);
-    resetBackgroundImage();
-}
-
 void BackgroundManager::onBackgroundBuild()
 {
+    // get wallpapers
+    d->bridge->request(d->backgroundPaths.isEmpty());
+
     QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
     if (root.size() == 1) {
         QWidget *primary = root.first();
@@ -186,8 +187,6 @@ void BackgroundManager::onBackgroundBuild()
             }
         }
     }
-
-    resetBackgroundImage();
 }
 
 void BackgroundManager::onDetachWindows()
@@ -196,24 +195,30 @@ void BackgroundManager::onDetachWindows()
         bwp->setParent(nullptr);
 }
 
-void BackgroundManager::onRestBackgroundManager()
+void BackgroundManager::restBackgroundManager()
 {
     if (d->isEnableBackground()) {
-        // 绘制背景图片
         connect(d->service, &BackgroundService::backgroundChanged, this, &BackgroundManager::onBackgroundChanged);
-        updateBackgroundPaths();
+        if (ddplugin_desktop_util::desktopFrameRootWindows().isEmpty())
+            d->bridge->forceRequest();
+        else
+            onBackgroundBuild();
+    } else {
+        disconnect(d->service, &BackgroundService::backgroundChanged, this, &BackgroundManager::onBackgroundChanged);
+        d->backgroundWidgets.clear();
+        d->backgroundPaths.clear();
+        d->bridge->terminate(true);
     }
-    onBackgroundBuild();
 }
 
 void BackgroundManager::onBackgroundChanged()
 {
-    updateBackgroundPaths();
-    resetBackgroundImage();
+    d->bridge->request(true);
 }
 
 void BackgroundManager::onGeometryChanged()
 {
+    bool changed = false;
     auto winMap = rootMap();
     for (auto itor = d->backgroundWidgets.begin(); itor != d->backgroundWidgets.end(); ++itor) {
         BackgroundWidgetPointer bw = itor.value();
@@ -235,70 +240,13 @@ void BackgroundManager::onGeometryChanged()
             qInfo() << "background geometry change from" << bw->geometry() << "to" << geometry
                     << "screen name" << getScreenName(win) << "screen geometry" << win->geometry();
             bw->setGeometry(geometry);
-
-            // a size change,just redraw
-            bw->updateDisplay();
+            changed = true;
         }
     }
-}
 
-void BackgroundManager::updateBackgroundPaths()
-{
-    d->backgroundPaths.clear();
-
-    if (!d->isEnableBackground())
-        return;
-
-    auto winMap = rootMap();
-    for (auto itor = d->backgroundWidgets.begin(); itor != d->backgroundWidgets.end(); ++itor) {
-        auto *win = winMap.value(itor.key());
-        if (win == nullptr) {
-            qCritical() << "can not get root " << itor.key() << getScreenName(win);
-            continue;
-        }
-
-        QString screenName = getScreenName(win);
-        QString path = d->service->background(screenName);
-        d->backgroundPaths.insert(screenName, path);
-    }
-}
-
-/*!
- * \brief BackgroundManager::resetBackgroundImage
- */
-void BackgroundManager::resetBackgroundImage()
-{
-    if (d->isEnableBackground()) {
-        QMap<QString, QString> recorder;   // 记录有效的壁纸
-        for (auto screenName : d->backgroundWidgets.keys()) {
-            QString userPath;
-            if (!d->backgroundPaths.contains(screenName)) {
-                userPath = d->service->background(screenName);
-            } else {
-                userPath = d->backgroundPaths.value(screenName);
-            }
-
-            if (userPath.isEmpty())
-                continue;
-
-            recorder.insert(screenName, userPath);
-
-            BackgroundWidgetPointer bw = d->backgroundWidgets.value(screenName);
-
-            // 设置原始图片文件，由显示的类根据显示规则进行绘制
-            bw->setDisplay(userPath);
-        }
-
-        // 更新壁纸
-        d->backgroundPaths = recorder;
-    } else {
-        for (auto w : d->backgroundWidgets.values()) {
-            if (w->mode() != AbstractBackground::ModeCustom) {
-                w->setMode(AbstractBackground::ModeCustom);
-                w->update();
-            }
-        }
-    }
+    // rescale images.
+    if (changed)
+        d->bridge->request(false);
 }
 
 BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
@@ -315,4 +263,188 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
     qDebug() << "screen name" << screenName << "geometry" << geometry << root->geometry() << bwp.get();
 
     return bwp;
+}
+
+
+BackgroundBridge::BackgroundBridge(BackgroundManagerPrivate *ptr)
+    : QObject()
+    , d(ptr)
+{
+
+}
+
+BackgroundBridge::~BackgroundBridge()
+{
+    qInfo() << "wait for finishing";
+    getting = false;
+    future.waitForFinished();
+}
+
+void BackgroundBridge::request(bool refresh)
+{
+    if (force && future.isRunning()) {
+        qWarning() << "a force requestion is running.";
+        return;
+    }
+
+    terminate(true);
+
+    QList<Requestion> requestion;
+    for (QWidget *root : ddplugin_desktop_util::desktopFrameRootWindows()) {
+        Requestion req;
+        req.screen = getScreenName(root);
+
+        if (req.screen.isEmpty()) {
+            qWarning() << "can not get screen name from root window";
+            continue;
+        }
+
+        // use the resolution before screen zooming
+        req.size = root->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect().size();
+
+        if (!refresh)
+            req.path = d->backgroundPaths.value(req.screen);
+        requestion.append(req);
+    }
+
+    if (!requestion.isEmpty()) {
+        getting = true;
+        future = QtConcurrent::run(&BackgroundBridge::runUpdate, this, requestion);
+    }
+}
+
+void BackgroundBridge::forceRequest()
+{
+    terminate(true);
+
+    QList<Requestion> requestion;
+    for (ScreenPointer sc : ddplugin_desktop_util::screenProxyScreens()) {
+        Requestion req;
+        req.screen = sc->name();
+
+        if (req.screen.isEmpty()) {
+            qWarning() << "can not get screen name from root window";
+            continue;
+        }
+
+        // use the resolution before screen zooming
+        req.size = sc->handleGeometry().size();
+        requestion.append(req);
+    }
+
+    if (!requestion.isEmpty()) {
+        getting = true;
+        force = true;
+        future = QtConcurrent::run(&BackgroundBridge::runUpdate, this, requestion);
+    }
+}
+
+void BackgroundBridge::terminate(bool wait)
+{
+    qInfo() << "terminate last requestion, wait:" << wait << "running:" << getting << future.isRunning();
+    if (!getting)
+        return;
+
+    getting = false;
+    if (wait)
+        future.waitForFinished();
+
+    force = false;
+}
+
+QPixmap BackgroundBridge::getPixmap(const QString &path, const QPixmap &defalutPixmap)
+{
+    if (path.isEmpty())
+        return defalutPixmap;
+
+    QString currentWallpaper = path.startsWith("file:") ? QUrl(path).toLocalFile() : path;
+    QPixmap backgroundPixmap(currentWallpaper);
+    // fix whiteboard shows when a jpeg file with filename xxx.png
+    // content formart not epual to extension
+    if (backgroundPixmap.isNull()) {
+        QImageReader reader(currentWallpaper);
+        reader.setDecideFormatFromContent(true);
+        backgroundPixmap = QPixmap::fromImage(reader.read());
+    }
+
+    return backgroundPixmap.isNull() ? defalutPixmap : backgroundPixmap;
+}
+
+void BackgroundBridge::onFinished(void *pData)
+{
+    qInfo() << "finished to get backround.." << pData << "force:" << force;
+    force = false;
+
+    QList<Requestion> *images = reinterpret_cast<QList<Requestion> *>(pData);
+    Q_ASSERT(images);
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    d->backgroundPaths.clear();
+    for (Requestion &req : *images) {
+        for (auto it = d->backgroundWidgets.begin(); it != d->backgroundWidgets.end(); ++it) {
+            if (it.key() == req.screen) {
+                BackgroundWidgetPointer bw = it.value();
+                req.pixmap.setDevicePixelRatio(bw->devicePixelRatioF());
+                bw->setPixmap(req.pixmap);
+                d->backgroundPaths.insert(req.screen, req.path);
+                break;
+            }
+        }
+    }
+
+    delete images;
+}
+
+void BackgroundBridge::runUpdate(BackgroundBridge *self, QList<Requestion> reqs)
+{
+    qInfo() << "getting background in work thread...." << QThread::currentThreadId();
+    QList<Requestion> recorder;
+    for (Requestion &req : reqs) {
+        // check stop
+        if (!self->getting)
+            return;
+
+        if (req.path.isEmpty())
+            req.path = self->d->service->background(req.screen);
+
+        QPixmap backgroundPixmap = BackgroundBridge::getPixmap(req.path);
+        if (backgroundPixmap.isNull()) {
+            qCritical() << "screen " << req.screen << "backfround path" << req.path
+                        << "can not read!";
+            continue;
+        }
+
+        // check stop
+        if (!self->getting)
+            return;
+
+        QSize trueSize = req.size;
+        auto pix = backgroundPixmap.scaled(trueSize,
+                                           Qt::KeepAspectRatioByExpanding,
+                                           Qt::SmoothTransformation);
+
+        // check stop
+        if (!self->getting)
+            return;
+
+        if (pix.width() > trueSize.width() || pix.height() > trueSize.height()) {
+            pix = pix.copy(QRect(static_cast<int>((pix.width() - trueSize.width()) / 2.0),
+                                 static_cast<int>((pix.height() - trueSize.height()) / 2.0),
+                                 trueSize.width(),
+                                 trueSize.height()));
+        }
+
+        qDebug() << req.screen << "background path" << req.path << "truesize" << trueSize;
+        req.pixmap = pix;
+        recorder.append(req);
+    }
+
+    // check stop
+    if (!self->getting)
+        return;
+
+    QList<Requestion> *pRecorder = new QList<Requestion>;
+    *pRecorder = std::move(recorder);
+    QMetaObject::invokeMethod(self, "onFinished", Qt::QueuedConnection
+                              , Q_ARG(void *, pRecorder));
+    self->getting = false;
 }

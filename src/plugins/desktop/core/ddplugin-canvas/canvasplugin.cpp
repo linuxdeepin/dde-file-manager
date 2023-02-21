@@ -7,8 +7,6 @@
 #include "utils/fileutil.h"
 #include "canvasdbusinterface.h"
 
-#include "dfm-base/utils/clipboard.h"
-
 #include <QDBusConnection>
 
 using namespace ddplugin_canvas;
@@ -23,14 +21,10 @@ bool CanvasPlugin::start()
     // initialize file creator
     DesktopFileCreator::instance();
 
-    // 初始化剪切板
-    ClipBoard::instance();
-
     proxy = new CanvasManager();
     proxy->init();
 
     registerDBus();
-
     return true;
 }
 

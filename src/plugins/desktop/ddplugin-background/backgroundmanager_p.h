@@ -14,6 +14,35 @@
 
 DDP_BACKGROUND_BEGIN_NAMESPACE
 
+class BackgroundBridge : public QObject
+{
+    Q_OBJECT
+public:
+    struct Requestion
+    {
+        QString screen;
+        QString path;
+        QSize size;
+        QPixmap pixmap;
+    };
+public:
+    BackgroundBridge(class BackgroundManagerPrivate *ptr);
+    ~BackgroundBridge();
+public:
+    void request(bool refresh);
+    void forceRequest();
+    void terminate(bool wait);
+    Q_INVOKABLE void onFinished(void *pData);
+    static QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap = QPixmap());
+private:
+    static void runUpdate(BackgroundBridge *self, QList<Requestion> reqs);
+private:
+    class BackgroundManagerPrivate *d = nullptr;
+    volatile bool getting = false;
+    volatile bool force = false;
+    QFuture<void> future;
+};
+
 class BackgroundManagerPrivate : public QObject
 {
     Q_OBJECT
@@ -30,7 +59,8 @@ public:
 public:
     BackgroundManager *const q = nullptr;
     BackgroundService *service = nullptr;
-    QMap<QString, DFMBASE_NAMESPACE::BackgroundWidgetPointer> backgroundWidgets;
+    BackgroundBridge *bridge = nullptr;
+    QMap<QString, BackgroundWidgetPointer> backgroundWidgets;
     QMap<QString, QString> backgroundPaths;
     bool enableBackground = true;
 };

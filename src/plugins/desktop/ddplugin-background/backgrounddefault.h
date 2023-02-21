@@ -7,28 +7,29 @@
 
 #include "ddplugin_background_global.h"
 
-#include "interfaces/background/abstractbackground.h"
+#include <QWidget>
+#include <QSharedPointer>
 
 DDP_BACKGROUND_BEGIN_NAMESPACE
 
-class BackgroundDefault : public DFMBASE_NAMESPACE::AbstractBackground
+class BackgroundDefault : public QWidget
 {
     Q_OBJECT
 public:
     explicit BackgroundDefault(const QString &screenName, QWidget *parent = nullptr);
-    virtual void setMode(int mode) override;
-    virtual void setDisplay(const QString &path) override;
-    virtual void updateDisplay() override;
+    void setPixmap(const QPixmap &pix);
 protected:
     void paintEvent(QPaintEvent *event) override;
-    QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap);
 
 private:
     int painted = 3;
+    QString screen;
     QPixmap pixmap;
     QPixmap noScalePixmap;
 };
 
 DDP_BACKGROUND_END_NAMESPACE
+
+typedef QSharedPointer<ddplugin_background::BackgroundDefault> BackgroundWidgetPointer;
 
 #endif // BACKGROUNDDEFAULT_H

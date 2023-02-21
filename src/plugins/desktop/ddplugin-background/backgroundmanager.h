@@ -8,7 +8,7 @@
 #include "ddplugin_background_global.h"
 #include "backgroundservice.h"
 
-#include "interfaces/background/abstractbackground.h"
+#include "backgrounddefault.h"
 
 #include <QObject>
 
@@ -25,23 +25,19 @@ public:
     ~BackgroundManager();
      void init();
 public:
-    virtual QMap<QString, DFMBASE_NAMESPACE::BackgroundWidgetPointer> allBackgroundWidgets();
-    virtual DFMBASE_NAMESPACE::BackgroundWidgetPointer backgroundWidget(const QString &screen);
+    virtual QMap<QString, BackgroundWidgetPointer> allBackgroundWidgets();
+    virtual BackgroundWidgetPointer backgroundWidget(const QString &screen);
     virtual QMap<QString, QString> allBackgroundPath();
     virtual QString backgroundPath(const QString &screen);
-    virtual void setBackgroundPath(const QString &screen,const QString &path);
-
+    void restBackgroundManager();
 private slots:
     void onBackgroundBuild();
     void onDetachWindows();
-    void onRestBackgroundManager();
     void onGeometryChanged();
     void onBackgroundChanged();
 
 private:
-    void updateBackgroundPaths();
-    void resetBackgroundImage();
-    DFMBASE_NAMESPACE::BackgroundWidgetPointer createBackgroundWidget(QWidget *root);
+    BackgroundWidgetPointer createBackgroundWidget(QWidget *root);
 
 private:
     BackgroundManagerPrivate *const d = nullptr;
