@@ -195,11 +195,6 @@ void FileViewPrivate::loadViewMode(const QUrl &url)
 
 QVariant FileViewPrivate::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)
 {
-    QUrl realUrl = url;
-    // reset root url to make them be same.
-    if (UrlRoute::isRootUrl(url))
-        realUrl = UrlRoute::rootUrl(url.scheme());
-
-    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", realUrl).toMap();
+    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", url).toMap();
     return valueMap.value(key, defalutValue);
 }
