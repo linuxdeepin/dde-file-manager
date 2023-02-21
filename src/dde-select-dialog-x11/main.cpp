@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     // 初始化日志系统
     DFMLogManager::registerFileAppender();
 
-    // need fmApp singal
+    // need fmApp signal
     DFMApplication fmApp;
     Q_UNUSED(fmApp)
 
