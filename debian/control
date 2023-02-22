@@ -47,10 +47,10 @@ Homepage: http://www.deepin.org
 
 Package: dde-desktop
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager, dde-desktop-plugins
 Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
 Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1)
-Recommends: qt5dxcb-plugin, deepin-screensaver, dde-desktop-plugins
+Recommends: qt5dxcb-plugin, deepin-screensaver
 Description: deepin desktop-environment - desktop module
  Deepin Desktop Environment (DDE) - desktop module.
 
@@ -60,8 +60,10 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  libdde-file-manager
+ dde-file-manager-plugins, 
+ dde-file-manager-daemon-plugins
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
-Recommends: dde-qt5integration, avfs, samba, deepin-anything-server, dde-file-manager-plugins, dde-file-manager-daemon-plugins
+Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
 
@@ -70,7 +72,8 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends}
-Recommends: dde-file-manager-common-plugins, dde-file-manager-preview-plugins
+ dde-file-manager-common-plugins, 
+ dde-file-manager-preview-plugins
 Multi-Arch: same
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
