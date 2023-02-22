@@ -36,6 +36,7 @@ private:
 
     bool upgradeData();
     QString getColorRGB(const QString &color);
+    QString checkFileUrl(const QString &filerUrl);
 
 private:
     SqliteHandle *mainDbHandle { nullptr };

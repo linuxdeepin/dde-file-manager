@@ -179,12 +179,7 @@ bool TagDbUpgradeUnit::upgradeFileTag()
         return true;
 
     for (auto &bean : filePropertyBean) {
-        QStringList paths = bean->getFilePath().split("/");
-        paths.removeFirst();
-        paths.removeFirst();
-        QString curpath = QDir::homePath();
-        for (QString p : paths)
-            curpath += "/" + p;
+        QString curpath = checkFileUrl(bean->getFilePath());
         if (curpath.isEmpty())
             continue;
 
@@ -266,4 +261,21 @@ bool TagDbUpgradeUnit::checkNewDatabase()
         return false;
 
     return true;
+}
+
+QString TagDbUpgradeUnit::checkFileUrl(const QString &filerUrl)
+{
+    QStringList paths = filerUrl.split("/");
+    if (paths.count() < 3)
+        return QString();
+    paths.removeFirst();
+    paths.removeFirst();
+    QString curpath = QDir::homePath();
+    for (QString p : paths)
+        curpath += "/" + p;
+    QFileInfo info(curpath);
+    if (info.exists())
+        return curpath;
+    else
+        return QString();
 }
