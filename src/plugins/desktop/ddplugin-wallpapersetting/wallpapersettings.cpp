@@ -12,6 +12,7 @@
 #include "dfm-base/utils/windowutils.h"
 
 #include <DApplicationHelper>
+#include <DDBusSender>
 #include <DSysInfo>
 
 #include <QLabel>
@@ -1115,6 +1116,24 @@ void WallpaperSettings::loadScreenSaver()
 
 void WallpaperSettings::applyToDesktop()
 {
+    if (QFileInfo::exists("/var/lib/deepin/permission-manager/wallpaper_locked")) {
+        DDBusSender()
+                .service("org.freedesktop.Notifications")
+                .path("/org/freedesktop/Notifications")
+                .interface("org.freedesktop.Notifications")
+                .method(QString("Notify"))
+                .arg(QString("dde-file-manager")) // title
+                .arg(static_cast<uint>(0))
+                .arg(QString("dde-file-manager")) // icon
+                .arg(tr("This system wallpaer is locked. Please contact your admin."))
+                .arg(QString())
+                .arg(QStringList())
+                .arg(QVariantMap())
+                .arg(5000)
+                .call();
+        return;
+    }
+
     if (nullptr == d->appearanceIfs) {
         qWarning() << "appearanceIfs is nullptr";
         return;

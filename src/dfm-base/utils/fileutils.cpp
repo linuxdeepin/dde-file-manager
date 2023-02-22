@@ -47,6 +47,8 @@
 #include <QScreen>
 #include <QStandardPaths>
 
+#include <DDBusSender>
+
 #include <unistd.h>
 #include <sys/stat.h>
 
@@ -1059,6 +1061,24 @@ QString FileUtils::dateTimeFormat()
 
 bool FileUtils::setBackGround(const QString &pictureFilePath)
 {
+    if (QFileInfo::exists("/var/lib/deepin/permission-manager/wallpaper_locked")) {
+        DDBusSender()
+                .service("org.freedesktop.Notifications")
+                .path("/org/freedesktop/Notifications")
+                .interface("org.freedesktop.Notifications")
+                .method(QString("Notify"))
+                .arg(QString("dde-file-manager"))
+                .arg(static_cast<uint>(0))
+                .arg(QString("dde-file-manager"))
+                .arg(QObject::tr("This system wallpaer is locked. Please contact your admin."))
+                .arg(QString())
+                .arg(QStringList())
+                .arg(QVariantMap())
+                .arg(5000)
+                .call();
+        return false;
+    }
+
     QDBusMessage msgIntrospect = QDBusMessage::createMethodCall(APPEARANCE_SERVICE,
                                                                 APPEARANCE_PATH,
                                                                 "org.freedesktop.DBus.Introspectable",
