@@ -27,7 +27,7 @@ if [ ! $# -eq 7 ]; then
   exit 1
 fi
 
-RESULT_COVERAGE_DIR=$REPORT_DIR/html
+RESULT_COVERAGE_DIR=$REPORT_DIR/html/$APP_NAME
 #创建 coverage 总目录
 mkdir -p $RESULT_COVERAGE_DIR
 
@@ -45,9 +45,9 @@ fi
 lcov -d $BUILD_DIR -c -o $COVERAGE_INFO
 
 lcov --extract $COVERAGE_INFO $EXTRACT_INFO --output-file  $COVERAGE_INFO
-lcov --remove $COVERAGE_INFO $REMOVE_INFO --output-file $COVERAGE_INFO
+lcov --remove $COVERAGE_INFO $REMOVE_INFO --output-file  $COVERAGE_INFO
 
-lcov --list-full-path -e $COVERAGE_INFO –o $BUILD_DIR/coverage-stripped.info
+#lcov --list-full-path -e $COVERAGE_INFO –o $BUILD_DIR/coverage-stripped.info
 
 genhtml -o $RESULT_COVERAGE_DIR $COVERAGE_INFO
 
@@ -58,7 +58,7 @@ mv $RESULT_COVERAGE_DIR/index-sort-l.html $RESULT_COVERAGE_DIR/index-sort-l_$REP
 
 if [ ! -f "$LOV_REPORT_FILE" ]; then
 　　echo "Error: UT lcov process is broken by: " $LOV_REPORT_FILE
-   exit 1
+   exit 2
 fi
 
 if [ ! -n "$SHOW_REPORT" ] || [ "$SHOW_REPORT" = "yes" ] ; then

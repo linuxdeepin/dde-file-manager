@@ -70,7 +70,7 @@ regTestFolder()
 
     cd $DIR_TEST
 
-    extract_path="*/src/$RELATIVEPATH/*"
+    extract_path="*/src/$RELATIVEPATH/*  */include/dfm-extension/*  */include/dfm-framework/*"
     remove_path="*/third-party/* *tests* */build-ut/* *moc_* *qrc_*"
     # report的文件夹，报告后缀名，编译路径，可执行程序名，正向解析设置，逆向解析设置
     $TESTS_FOLDER/ut-target-running.sh $BUILD_DIR $FOLDERNAME $DIR_TEST test-$FOLDERNAME "$extract_path" "$remove_path" $SHOW_REPORT
