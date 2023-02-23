@@ -531,6 +531,9 @@ bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromI
         return false;
     }
     checkRetry();
+    if (jobType == AbstractJobHandler::JobType::kCutType)
+        return doCopyOtherFile(fromInfo, toInfo, skip);
+
     if (isSourceFileLocal && isTargetFileLocal && !workData->signalThread) {
         while (bigFileCopy && !isStopped()) {
             QThread::msleep(10);
@@ -623,7 +626,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
         dirinfo->target = toInfo->urlOf(UrlInfoType::kUrl);
         dirinfo->permission = permissions;
         dirPermissonList.appendByLock(dirinfo);
-    } else if (isTargetFileExBlock) {
+    } else if (isTargetFileExBlock && AbstractJobHandler::JobType::kCopyType == jobType) {
         createExBlockFileCopyInfo(fromInfo, toInfo, 0, false, 0, nullptr, true, permissions);
         startBlockFileCopy();
     } else {
