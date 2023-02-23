@@ -65,7 +65,7 @@ static bool pluginsLoad()
     }
     qDebug() << "using plugins dir:" << pluginsDirs;
 
-    static const QStringList kLazyLoadPluginNames {"ddplugin-wallpapersetting", "ddplugin-grandsearchdaemon",
+    static const QStringList kLazyLoadPluginNames {"ddplugin-dbusregister", "ddplugin-wallpapersetting", "ddplugin-grandsearchdaemon",
                                                    "dfmplugin-bookmark", "dfmplugin-propertydialog", "dfmplugin-tag",
                                                   "dfmplugin-burn", "dfmplugin-dirshare", "dfmplugin-emblem", "dfmplugin-filepreview"};
 

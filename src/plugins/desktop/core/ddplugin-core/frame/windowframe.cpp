@@ -49,6 +49,7 @@ BaseWindowPointer WindowFramePrivate::createWindow(ScreenPointer sp)
     // the Desktop Window is opaque though it has been setted Qt::WA_TranslucentBackground
     // uing setOpacity to set opacity for Desktop Window to be transparent.
     win->windowHandle()->setOpacity(0.99);
+    qDebug() << "set desktop flag for window" << sp->name() << win->winId();
     return win;
 }
 

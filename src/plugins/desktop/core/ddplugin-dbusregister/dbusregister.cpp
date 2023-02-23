@@ -26,9 +26,7 @@ DFMBASE_USE_NAMESPACE
 
 void DBusRegister::initialize()
 {
-    QString errStr;
     UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
-    dpfSignalDispatcher->subscribe("ddplugin_core", "signal_DesktopFrame_WindowShowed", this, &DBusRegister::onWindowShowed);
 
     // NOTE(xust): this is used to launch GVolumeMonitor in main thread, this function obtained the GVolumeMonitor instance indirectly,
     // a GVolumeMonitor instance must run in main thread to make sure the messages about device change can be send correctly,
@@ -40,12 +38,13 @@ void DBusRegister::initialize()
 
 bool DBusRegister::start()
 {
+    registerDBus();
     return true;
 }
 
-void DBusRegister::onWindowShowed()
+void DBusRegister::registerDBus()
 {
-    static QDBusConnection connection = QDBusConnection::sessionBus();
+    QDBusConnection connection = QDBusConnection::sessionBus();
     if (!connection.isConnected()) {
         qWarning("Cannot connect to the D-Bus session bus.\n"
                  "Please check your system settings and try again.\n");
@@ -57,6 +56,7 @@ void DBusRegister::onWindowShowed()
 
     QTimer::singleShot(1000, [this]() {
         // mount business
+        QDBusConnection connection = QDBusConnection::sessionBus();
         initServiceDBusInterfaces(&connection);
 
         if (!DevProxyMng->connectToService()) {
