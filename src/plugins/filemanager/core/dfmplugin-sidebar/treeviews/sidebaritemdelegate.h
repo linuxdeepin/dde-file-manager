@@ -7,6 +7,8 @@
 
 #include "dfmplugin_sidebar_global.h"
 
+#include "dfm-base/interfaces/abstractfileinfo.h"
+
 #include <DStyledItemDelegate>
 
 DWIDGET_USE_NAMESPACE
@@ -31,10 +33,15 @@ public:
                               const QModelIndex &index) const override;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
+public Q_SLOTS:
+    void onEditorTextChanged(const QString &text, const AbstractFileInfoPointer &info) const;
+
 private:
     void drawIcon(QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const;
     void drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const;
     void drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const;
+    int textLength(const QString &text, bool useCharCount) const;
+    void processLength(int maxLen, int textLen, bool useCharCount, QString &text, int &pos) const;
 
 Q_SIGNALS:
     void rename(const QModelIndex &index, QString newName) const;

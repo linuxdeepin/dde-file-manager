@@ -11,6 +11,9 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/base/device/deviceutils.h"
 
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
@@ -24,6 +27,9 @@
 #include <QFontMetrics>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QSignalBlocker>
+
+#include <linux/limits.h>
 
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -205,10 +211,9 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
         QValidator *validator = new QRegularExpressionValidator(regx, qle);
         qle->setValidator(validator);
 
-        const QString &fs = sourceInfo->extraProperties()["fsType"].toString();
-        // For normal file system, the max inputting length is 40. For vfat exfat ，the max value is 11 c
-        int maxLen = fs.toLower().endsWith("fat") ? 11 : 40;
-        qle->setMaxLength(maxLen);
+        connect(qle, &QLineEdit::textChanged, this, [this, sourceInfo](const QString &text) {
+            onEditorTextChanged(text, sourceInfo);
+        });
     }
 
     return editor;
@@ -277,6 +282,41 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
     return QStyledItemDelegate::editorEvent(event, model, option, index);
 }
 
+void SideBarItemDelegate::onEditorTextChanged(const QString &text, const AbstractFileInfoPointer &info) const
+{
+    QLineEdit *editor = qobject_cast<QLineEdit *>(sender());
+    if (!editor)
+        return;
+
+    int maxLen = INT_MAX;
+    int textLen = 0;
+    bool useCharCount = false;
+    const QString &fs = info->extraProperties()[GlobalServerDefines::DeviceProperty::kFileSystem].toString();
+    if (fs.isEmpty()) {
+        const auto &url = info->urlOf(AbstractFileInfo::FileUrlInfoType::kUrl);
+        if (FileUtils::isLocalFile(url)) {
+            maxLen = NAME_MAX;
+            const auto &path = url.path();
+            useCharCount = DeviceUtils::isSubpathOfDlnfs(path);
+            textLen = textLength(text, path.isEmpty() ? false : useCharCount);
+        }
+    } else {
+        maxLen = FileUtils::supportedMaxLength(fs);
+        textLen = textLength(text, false);
+    }
+
+    QString dstText = text;
+    int currPos = editor->cursorPosition();
+    processLength(maxLen, textLen, useCharCount, dstText, currPos);
+
+    if (text != dstText) {
+        QSignalBlocker blocker(editor);
+        editor->setText(dstText);
+        editor->setCursorPosition(currPos);
+        editor->setModified(true);
+    }
+}
+
 void SideBarItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const
 {
     Q_UNUSED(iconMode);
@@ -324,4 +364,27 @@ void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QR
     painter->drawRoundedRect(gRect, kRadius, kRadius);
     QPixmap pixmap = QIcon::fromTheme(isExpanded ? "go-up" : "go-down").pixmap(expandIconSize);
     painter->drawPixmap(gRect.topRight() + QPointF(-14, 3), pixmap);
+}
+
+int SideBarItemDelegate::textLength(const QString &text, bool useCharCount) const
+{
+    return useCharCount ? text.size() : text.toLocal8Bit().size();
+}
+
+void SideBarItemDelegate::processLength(int maxLen, int textLen, bool useCharCount, QString &text, int &pos) const
+{
+    QString srcText = text;
+    int srcPos = pos;
+    int editTextRangeOutLen = textLen - maxLen;
+    if (editTextRangeOutLen > 0 && maxLen != INT_MAX) {
+        QVector<uint> list = srcText.toUcs4();
+        QString tmp = srcText;
+        while (textLength(tmp, useCharCount) > maxLen && srcPos > 0) {
+            list.removeAt(--srcPos);
+            tmp = QString::fromUcs4(list.data(), list.size());
+        }
+
+        text = tmp;
+        pos = srcPos;
+    }
 }
