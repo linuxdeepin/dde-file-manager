@@ -33,7 +33,6 @@ bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, Q
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     Q_ASSERT(painter);
     Q_ASSERT(paintArea);
-
     if (role != kItemIconRole || !url.isValid())
         return false;
 
@@ -41,13 +40,17 @@ bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, Q
     helper->pending(url);
 
     // consume
-    const QList<QRectF> &paintRects = helper->emblemRects(*paintArea);
     QList<QIcon> emblems { helper->emblemIcons(url) };
 
     // add custom emblem icons
     EmblemEventSequence::instance()->doFetchCustomEmblems(url, &emblems);
     // add extension lib emblem icons
     EmblemEventSequence::instance()->doFetchExtendEmblems(url, &emblems);
+
+    if (emblems.isEmpty())
+        return false;
+
+    const QList<QRectF> &paintRects = helper->emblemRects(*paintArea);
     for (int i = 0; i < qMin(paintRects.count(), emblems.count()); ++i) {
         if (emblems.at(i).isNull())
             continue;

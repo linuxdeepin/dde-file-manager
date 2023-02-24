@@ -216,9 +216,9 @@ void CanvasView::setSelection(const QRect &rect, QItemSelectionModel::SelectionF
     //qWarning() << __FUNCTION__ << "do not using this" << rect.normalized();
     return;
 
-//    QItemSelection selection;
-//    BoxSelIns->selection(this, rect.normalized(), &selection);
-//    selectionModel()->select(selection, command);
+    //    QItemSelection selection;
+    //    BoxSelIns->selection(this, rect.normalized(), &selection);
+    //    selectionModel()->select(selection, command);
 }
 
 QRegion CanvasView::visualRegionForSelection(const QItemSelection &selection) const
@@ -494,7 +494,7 @@ void CanvasView::refresh(bool silent)
 {
     model()->refresh(rootIndex(), true);
 
-     // flicker
+    // flicker
     if (!silent) {
         d->flicker = true;
         repaint();
@@ -766,7 +766,6 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
 #ifdef QT_DEBUG
     showGrid = true;
 #endif
-
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()

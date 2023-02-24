@@ -275,7 +275,7 @@ QList<QIcon> EmblemHelper::emblemIcons(const QUrl &url) const
     if (hasEmblem(url))
         return productQueue.value(url);
 
-    return worker->fetchEmblems(url);
+    return {};
 }
 
 void EmblemHelper::pending(const QUrl &url)
@@ -286,13 +286,11 @@ void EmblemHelper::pending(const QUrl &url)
 void EmblemHelper::onEmblemChanged(const QUrl &url, const Product &product)
 {
     productQueue[url] = product;
-    if (hasEmblem(url)) {   // real changed
-        auto eventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "slot_FileInfoModel_UpdateFile") };
-        if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid)
-            dpfSlotChannel->push("ddplugin_canvas", "slot_FileInfoModel_UpdateFile", url);
-        else
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_FileUpdate", url);
-    }
+    auto eventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "slot_FileInfoModel_UpdateFile") };
+    if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+        dpfSlotChannel->push("ddplugin_canvas", "slot_FileInfoModel_UpdateFile", url);
+    else
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_FileUpdate", url);
 }
 
 bool EmblemHelper::onUrlChanged(quint64 windowId, const QUrl &url)

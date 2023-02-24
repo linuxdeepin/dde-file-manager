@@ -217,7 +217,7 @@ void ViewPainter::drawDodge(QStyleOptionViewItem option)
     }
 }
 
-#if 0 // do draw selected rect by view. see BoxSelecter::updateRubber()
+#if 0   // do draw selected rect by view. see BoxSelecter::updateRubber()
 void ViewPainter::drawSelectRect()
 {
     // is selecting. isBeginFrom is to limit only select on single view.
