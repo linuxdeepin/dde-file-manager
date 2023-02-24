@@ -91,14 +91,6 @@ bool ProtocolDeviceDisplayManager::hookItemInsert(const QUrl &entryUrl)
     return false;
 }
 
-bool ProtocolDeviceDisplayManager::hookItemRemove(const QUrl &entryUrl)
-{
-    if (!d->isSupportVEntry(entryUrl))
-        return false;
-
-    return false;
-}
-
 bool ProtocolDeviceDisplayManager::hookItemsFilter(QList<QUrl> *entryUrls)
 {
     if (displayMode() == kSeperate) {
@@ -207,7 +199,6 @@ void ProtocolDeviceDisplayManagerPrivate::init()
     // hook computer events
     using namespace plugin_events;
     dpfHookSequence->follow(kComputerEventNS, kCptHookAdd, q, &ProtocolDeviceDisplayManager::hookItemInsert);
-    dpfHookSequence->follow(kComputerEventNS, kCptHookRemove, q, &ProtocolDeviceDisplayManager::hookItemRemove);
     dpfHookSequence->follow(kComputerEventNS, kCptHookListFilter, q, &ProtocolDeviceDisplayManager::hookItemsFilter);
 
     // regist entity info

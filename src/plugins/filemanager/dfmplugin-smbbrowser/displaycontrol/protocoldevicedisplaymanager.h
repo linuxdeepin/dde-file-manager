@@ -28,7 +28,6 @@ public:
 
     // hook computer event
     bool hookItemInsert(const QUrl &entryUrl);
-    bool hookItemRemove(const QUrl &entryUrl);
     bool hookItemsFilter(QList<QUrl> *entryUrls);
 
 protected Q_SLOTS:

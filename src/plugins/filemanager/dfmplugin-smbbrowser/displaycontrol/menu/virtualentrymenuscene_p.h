@@ -23,7 +23,7 @@ public:
 
     // menu action trigger handlers
     void hookCptActions(QAction *triggered);
-    void actUnmountAggregatedItem();
+    void actUnmountAggregatedItem(bool removeEntry = false);
     void actForgetAggregatedItem();
     void actMountSeperatedItem();
     void actRemoveVirtualEntry();
@@ -31,6 +31,7 @@ public:
     void actCptForget();
 
     void gotoDefaultPageOnUnmount();
+    static void tryRemoveAggregatedEntry(const QString &stdSmb, const QString &stdSmbSharePath);
 
 private:
     bool aggregatedEntrySelected { false };

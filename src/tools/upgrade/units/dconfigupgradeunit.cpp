@@ -22,6 +22,7 @@ static constexpr char kDiskHidden[] { "dfm.disk.hidden" };
 }   // namespace DConfigKeys
 
 DConfigUpgradeUnit::DConfigUpgradeUnit()
+    : UpgradeUnit()
 {
 }
 

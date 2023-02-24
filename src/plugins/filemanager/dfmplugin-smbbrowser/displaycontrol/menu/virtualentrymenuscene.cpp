@@ -215,19 +215,26 @@ void VirtualEntryMenuScenePrivate::hookCptActions(QAction *triggered)
         actCptMount();
 }
 
-void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem()
+void VirtualEntryMenuScenePrivate::actUnmountAggregatedItem(bool removeEntry)
 {
     pddmDbg << "unmount all of" << stdSmb;
     const QStringList &devIds = protocol_display_utilities::getMountedSmb();
-    std::for_each(devIds.cbegin(), devIds.cend(), [this](const QString &devId) {
+    const QString &stdSmbRoot = stdSmb;
+
+    for (const auto &devId : devIds) {
         const QString &toStdSmb = protocol_display_utilities::getStandardSmbPath(devId);
-        if (!toStdSmb.startsWith(stdSmb)) return;
+        if (!toStdSmb.startsWith(stdSmb))
+            continue;
+
         DeviceManager::instance()->unmountProtocolDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             pddmDbg << "unmount device:" << devId << "which represents" << toStdSmb << "result:" << ok << err;
-            if (ok) return;
-            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
+            if (!ok)
+                return DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
+            if (removeEntry)
+                tryRemoveAggregatedEntry(stdSmbRoot, toStdSmb);
         });
-    });
+    }
+
     gotoDefaultPageOnUnmount();
 }
 
@@ -235,7 +242,7 @@ void VirtualEntryMenuScenePrivate::actForgetAggregatedItem()
 {
     pddmDbg << "forget all of" << stdSmb;
     computer_sidebar_event_calls::callForgetPasswd(stdSmb);
-    actUnmountAggregatedItem();
+    actUnmountAggregatedItem(true);
 }
 
 void VirtualEntryMenuScenePrivate::actMountSeperatedItem()
@@ -267,6 +274,8 @@ void VirtualEntryMenuScenePrivate::actRemoveVirtualEntry()
             if (seperated.startsWith(host))
                 VirtualEntryDbHandler::instance()->removeData(seperated);
         });
+
+        computer_sidebar_event_calls::callForgetPasswd(stdSmb);
     }
 }
 
@@ -298,4 +307,21 @@ void VirtualEntryMenuScenePrivate::gotoDefaultPageOnUnmount()
 
         dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, defaultUrl);
     }
+}
+
+void VirtualEntryMenuScenePrivate::tryRemoveAggregatedEntry(const QString &stdSmb, const QString &stdSmbSharePath)
+{
+    VirtualEntryDbHandler::instance()->removeData(stdSmbSharePath);
+
+    const QStringList &devIds = protocol_display_utilities::getMountedSmb();
+    bool hasMounted = std::any_of(devIds.cbegin(), devIds.cend(), [=](const QString &devId) {
+        const QString &toStdSmb = protocol_display_utilities::getStandardSmbPath(devId);
+        return toStdSmb.startsWith(stdSmb);
+    });
+
+    if (hasMounted)
+        return;
+
+    const QUrl &aggregatedEntry = protocol_display_utilities::makeVEntryUrl(stdSmb);
+    computer_sidebar_event_calls::callItemRemove(aggregatedEntry);
 }
