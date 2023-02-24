@@ -30,7 +30,7 @@ QUrl ShareIterator::next()
     if (d->shares.isEmpty())
         return {};
     d->currentInfo = d->shares.takeFirst();
-    return ShareUtils::makeShareUrl(d->currentInfo.value(ShareInfoKeys::kPath).toString());
+    return fileUrl();
 }
 
 bool ShareIterator::hasNext() const

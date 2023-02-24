@@ -58,8 +58,6 @@ bool ShareFileInfo::isAttributes(const OptInfoType type) const
     switch (type) {
     case FileIsType::kIsDir:
         return true;
-    case FileIsType::kIsWritable:
-        return false;
     default:
         return AbstractFileInfo::isAttributes(type);
     }

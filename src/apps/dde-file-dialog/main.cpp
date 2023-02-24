@@ -37,7 +37,7 @@ static void initLog()
 
 static void initEnv()
 {
-    //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
+    // for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
     if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
         qputenv("XDG_CURRENT_DESKTOP", "Deepin");
     }
@@ -65,16 +65,23 @@ static bool pluginsLoad()
     dpfCheckTimeBegin();
 
     // TODO(zhangs): Configurable, maybe config file ?
-    static const QStringList blackNameList {
+    static const QStringList kBlackNameList {
         "dfmplugin-burn",
         "dfmplugin-dirshare",
         "dfmplugin-myshares",
         "dfmplugin-propertydialog",
         "dfmplugin-trashcore",
         "dfmplugin-trash",
-        "dfmplugin-smbbrowser",
         "dfmplugin-filepreview",
         "dfmplugin-vault"
+    };
+
+    static const QStringList kLazyLoadPluginNames {
+        "dfmplugin-emblem",
+        "dfmplugin-tag",
+        "dfmplugin-avfsbrowser",
+        "dfmplugin-recent",
+        "dfmplugin-search"
     };
 
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
@@ -95,7 +102,7 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::initialize({ kDialogPluginInterface,
                                            kFmPluginInterface,
                                            kCommonPluginInterface },
-                                         pluginsDirs, blackNameList);
+                                         pluginsDirs, kBlackNameList, kLazyLoadPluginNames);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
