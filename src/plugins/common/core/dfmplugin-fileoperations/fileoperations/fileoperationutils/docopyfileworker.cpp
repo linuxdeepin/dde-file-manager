@@ -910,6 +910,10 @@ void DoCopyFileWorker::syncBlockFile(const BlockFileCopyInfoPointer &info)
     //关闭文件并加权
     if (info->closeflag) {
         close(blockFileFd);
+        // the file is empty
+        if (info->frominfo->size() <= 0)
+            workData->zeroOrlinkOrDirWriteSize += FileUtils::getMemoryPageSize();
+
         blockFileFd = -1;
         QFileDevice::Permissions permissions = info->frominfo->permissions();
         QString path = info->frominfo->urlOf(UrlInfoType::kUrl).path();
