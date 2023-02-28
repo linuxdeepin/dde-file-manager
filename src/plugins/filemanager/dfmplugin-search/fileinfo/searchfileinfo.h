@@ -19,6 +19,7 @@ public:
     ~SearchFileInfo() override;
     virtual bool exists() const override;
     virtual bool isAttributes(const FileIsType type) const override;
+    virtual Qt::DropActions supportedOfAttributes(const SupportType type) const override;
     virtual qint64 size() const override;
     virtual QString nameOf(const FileNameInfoType type) const override;
     QString displayOf(const DisplayInfoType type) const override;

@@ -27,6 +27,14 @@ bool SearchFileInfo::exists() const
     return AbstractFileInfo::exists();
 }
 
+Qt::DropActions SearchFileInfo::supportedOfAttributes(const SupportType type) const
+{
+    if (SearchHelper::isRootUrl(dptr->url) && type == SupportType::kDrop)
+        return Qt::IgnoreAction;
+
+    return AbstractFileInfo::supportedOfAttributes(type);
+}
+
 bool SearchFileInfo::isAttributes(const OptInfoType type) const
 {
     switch (type) {
