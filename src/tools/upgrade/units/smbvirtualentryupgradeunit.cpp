@@ -114,7 +114,7 @@ QList<VirtualEntryData> SmbVirtualEntryUpgradeUnit::readOldItems()
         const QJsonObject &stashedEntry = rootObj.value("StashedSmbDevices").toObject();
         if (stashedEntry.contains("SmbIntegrations")) {
             const QJsonArray &aggregatedList = stashedEntry.value("SmbIntegrations").toArray();
-            std::for_each(aggregatedList.cbegin(), aggregatedList.cend(), [&](const QJsonValue &val) {
+            std::for_each(aggregatedList.begin(), aggregatedList.end(), [&](const QJsonValue &val) {
                 VirtualEntryData data(val.toString());
                 if (data.getKey().isEmpty()) return;
                 rets.append(data);
