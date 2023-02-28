@@ -28,6 +28,7 @@ private:
     bool createTable();
 
     QList<VirtualEntryData> readOldItems();
+    void clearOldItems();
     VirtualEntryData convertFromMap(const QVariantMap &map);
     void saveToDb(const QList<VirtualEntryData> &entries);
 

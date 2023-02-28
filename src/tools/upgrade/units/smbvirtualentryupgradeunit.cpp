@@ -48,6 +48,7 @@ bool SmbVirtualEntryUpgradeUnit::upgrade()
 
     const QList<VirtualEntryData> &&old = readOldItems();
     saveToDb(old);
+    clearOldItems();
 
     return true;
 }
@@ -122,6 +123,34 @@ QList<VirtualEntryData> SmbVirtualEntryUpgradeUnit::readOldItems()
     }
 
     return rets;
+}
+
+void SmbVirtualEntryUpgradeUnit::clearOldItems()
+{
+    QFile config(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + kConfigFile);
+    if (!config.open(QIODevice::ReadOnly))
+        return;
+
+    const auto &configs = config.readAll();
+    config.close();
+
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(configs, &err);
+    if (err.error != QJsonParseError::NoError) {
+        qWarning() << "cannot parse config file:" << err.errorString();
+        return;
+    }
+
+    auto rootNode = doc.object();
+    rootNode.remove("RemoteMounts");
+    rootNode.remove("StashedSmbDevices");
+    doc.setObject(rootNode);
+
+    if (!config.open(QIODevice::ReadWrite | QIODevice::Truncate))
+        return;
+
+    config.write(doc.toJson());
+    config.close();
 }
 
 VirtualEntryData SmbVirtualEntryUpgradeUnit::convertFromMap(const QVariantMap &map)
