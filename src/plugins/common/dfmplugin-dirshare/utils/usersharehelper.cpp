@@ -25,6 +25,7 @@
 #include <QTextStream>
 #include <QtConcurrent>
 #include <QNetworkInterface>
+#include <QSettings>
 
 #include <pwd.h>
 #include <unistd.h>
@@ -118,6 +119,10 @@ bool UserShareHelper::share(const ShareInfo &info)
                 << param.value(ShareInfoKeys::kAcl).toString()
                 << param.value(ShareInfoKeys::kGuestEnable).toString();
 
+        int port = readPort();
+        if (port != -1)
+            netArgs << "-p" << QString::number(port);
+
         QString err;
         int code = runNetCmd(netArgs, -1, &err);
         if (code != 0) {
@@ -146,6 +151,13 @@ void UserShareHelper::removeShareByPath(const QString &path)
     const QString &&shareName = shareNameByPath(path);
     if (!shareName.isEmpty())
         removeShareByShareName(shareName);
+}
+
+int UserShareHelper::readPort()
+{
+    QSettings smbConf("/etc/samba/smb.conf", QSettings::IniFormat);
+    static constexpr char kPortKey[] { "global/smb ports" };
+    return smbConf.value(kPortKey, -1).toInt();
 }
 
 ShareInfoList UserShareHelper::shareInfos()
@@ -438,6 +450,7 @@ ShareInfo UserShareHelper::getOldShareByNewShare(const ShareInfo &newShare)
 
 int UserShareHelper::runNetCmd(const QStringList &args, int wait, QString *err)
 {
+    qDebug() << "usershare params:" << args;
     QProcess p;
     p.start("net", args);
     p.waitForFinished(wait);
@@ -456,7 +469,7 @@ void UserShareHelper::handleErrorWhenShareFailed(int code, const QString &err) c
         return;
     }
 
-    //root权限文件分享会报这个错误信息
+    // root权限文件分享会报这个错误信息
     if (err.contains("as we are restricted to only sharing directories we own.")) {
         DialogManagerInstance->showErrorDialog(tr("To protect the files, you cannot share this folder."), "");
         return;

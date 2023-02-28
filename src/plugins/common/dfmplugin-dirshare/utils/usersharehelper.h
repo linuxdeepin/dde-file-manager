@@ -39,6 +39,7 @@ public:
     bool isUserSharePasswordSet(const QString &username);
     void setSambaPasswd(const QString &userName, const QString &passwd);
     void removeShareByPath(const QString &path);
+    int readPort();
     ShareInfoList shareInfos();
     ShareInfo shareInfoByPath(const QString &path);
     ShareInfo shareInfoByShareName(const QString &name);
