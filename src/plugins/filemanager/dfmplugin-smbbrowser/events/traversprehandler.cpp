@@ -35,7 +35,8 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     // the mounted source must be the TOP dir.
     // if smb://1.2.3.4/top/subdir is passed in, the param passed to mount function must be smb://1.2.3.4/top
     // and only deal smb scheme now.
-    QString mountSource, subPath;
+    QString mountSource = url.toString();
+    QString subPath;
     if (scheme == Global::Scheme::kSmb)
         mountSource = prehandler_utils::splitMountSource(url.toString(), &subPath);
 
