@@ -15,6 +15,8 @@
 #include <QDir>
 #include <QProcess>
 
+#include <linux/limits.h>
+
 DFMBASE_USE_NAMESPACE
 
 SingleApplication::SingleApplication(int &argc, char **argv, int)
@@ -143,8 +145,7 @@ void SingleApplication::readData()
         return;
 
     QStringList arguments;
-    //socket->read(1024)中的1024会导致在文件夹名字达到最大长度时获取不完全，临时改为2048
-    for (const QByteArray &arg_base64 : socket->read(2048).split(' ')) {
+    for (const QByteArray &arg_base64 : socket->readAll().split(' ')) {
         const QByteArray &arg = QByteArray::fromBase64(arg_base64.simplified());
 
         if (arg.isEmpty())
