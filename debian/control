@@ -41,13 +41,19 @@ Build-Depends:
  libkf5codecs-dev,
  libpoppler-cpp-dev,
  libcryptsetup-dev,
+ deepin-anything-dev[i386 amd64],
+ deepin-anything-server-dev[i386 amd64],
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
 Package: dde-desktop
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager, dde-desktop-plugins
+Depends: 
+ ${shlibs:Depends}, 
+ ${misc:Depends}, 
+ libdde-file-manager,
+ dde-desktop-plugins
 Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
 Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1)
 Recommends: qt5dxcb-plugin, deepin-screensaver
@@ -59,11 +65,16 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
- libdde-file-manager
+ libdde-file-manager,
+ socat,
+ cryfs,
+ deepin-anything-dkms[i386 amd64],
+ libblockdev-crypto2,
+ dde-device-formatter,
  dde-file-manager-plugins, 
  dde-file-manager-daemon-plugins
 Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
-Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
+Recommends: dde-qt5integration, avfs, samba
 Description: File manager front end
  File manager front-end of Deepin OS
 
@@ -71,7 +82,12 @@ Package: libdde-file-manager
 Architecture: any
 Depends:
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
+ libpoppler-cpp0v5 (>= 0.48.0),
+ gvfs-backends(>=1.27.3),
+ cryptsetup,
+ deepin-anything-libs[i386 amd64],
+ libdfm-extension( =${binary:Version}),
  dde-file-manager-common-plugins, 
  dde-file-manager-preview-plugins
 Multi-Arch: same
@@ -94,8 +110,7 @@ Package: dde-file-manager-common-plugins
 Architecture: any
 Depends: 
  ${shlibs:Depends}, 
- ${misc:Depends},
- libdfm-extension( =${binary:Version})
+ ${misc:Depends}
 Description: deepin desktop-environment - filemanager common edge plugins module
  Deepin Desktop Environment (DDE) - filemanager common edge plugins module.
 
