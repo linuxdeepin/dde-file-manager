@@ -7,8 +7,9 @@
 
 #include "dfmplugin_titlebar_global.h"
 
+#include <DToolButton>
+
 #include <QWidget>
-#include <QToolButton>
 
 namespace dfmplugin_titlebar {
 class ActionButton : public QToolButton
@@ -30,12 +31,12 @@ class OptionButtonBox : public QWidget
 
 public:
     explicit OptionButtonBox(QWidget *parent = nullptr);
-    QToolButton *iconViewButton() const;
-    QToolButton *listViewButton() const;
-    QToolButton *detailButton() const;
-    void setIconViewButton(QToolButton *iconViewButton);
-    void setListViewButton(QToolButton *listViewButton);
-    void setDetailButton(QToolButton *detailButton);
+    DTK_WIDGET_NAMESPACE::DToolButton *iconViewButton() const;
+    DTK_WIDGET_NAMESPACE::DToolButton *listViewButton() const;
+    DTK_WIDGET_NAMESPACE::DToolButton *detailButton() const;
+    void setIconViewButton(DTK_WIDGET_NAMESPACE::DToolButton *iconViewButton);
+    void setListViewButton(DTK_WIDGET_NAMESPACE::DToolButton *listViewButton);
+    void setDetailButton(DTK_WIDGET_NAMESPACE::DToolButton *detailButton);
 
     void setViewMode(int mode);
 
@@ -45,6 +46,7 @@ public slots:
 private:
     void initializeUi();
     void initConnect();
+    void initUiForSizeMode();
 };
 }
 

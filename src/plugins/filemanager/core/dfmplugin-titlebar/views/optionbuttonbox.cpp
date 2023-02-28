@@ -10,10 +10,20 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
+#include <dfm-framework/event/event.h>
+
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+#endif
+
 #include <QDebug>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
     : QObject(parent), q(parent)
@@ -62,12 +72,12 @@ void OptionButtonBoxPrivate::onViewModeChanged(int mode)
     switchMode(viewMode);
 }
 
-QToolButton *OptionButtonBox::detailButton() const
+DToolButton *OptionButtonBox::detailButton() const
 {
     return d->detailButton;
 }
 
-void OptionButtonBox::setDetailButton(QToolButton *detailButton)
+void OptionButtonBox::setDetailButton(DToolButton *detailButton)
 {
     if (!detailButton) return;
 
@@ -123,30 +133,83 @@ void OptionButtonBox::initializeUi()
 {
     d->buttonGroup = new QButtonGroup(this);
 
-    d->iconViewButton = new QToolButton;
+    d->iconViewButton = new DToolButton;
     d->iconViewButton->setCheckable(true);
     d->iconViewButton->setChecked(true);
     d->iconViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_icons"));
     d->iconViewButton->setIconSize({ 16, 16 });
-    d->iconViewButton->setFixedSize(36, 36);
 
-    d->listViewButton = new QToolButton;
+    d->listViewButton = new DToolButton;
     d->listViewButton->setCheckable(true);
     d->listViewButton->setIcon(QIcon::fromTheme("dfm_viewlist_details"));
     d->listViewButton->setIconSize({ 16, 16 });
-    d->listViewButton->setFixedSize(36, 36);
 
     d->buttonGroup->addButton(d->iconViewButton);
     d->buttonGroup->addButton(d->listViewButton);
 
-    d->detailButton = new QToolButton;
+    d->detailButton = new DToolButton;
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(d->detailButton), AcName::kAcComputerTitleBarDetailBtn);
     d->detailButton->setCheckable(true);
     d->detailButton->setFocusPolicy(Qt::NoFocus);
     d->detailButton->setIcon(QIcon::fromTheme("dfm_rightview_detail"));
     d->detailButton->setIconSize({ 16, 16 });
-    d->detailButton->setFixedSize(36, 36);
     d->detailButton->show();
 
+    initUiForSizeMode();
+}
+
+void OptionButtonBox::initConnect()
+{
+    connect(d->iconViewButton, &DToolButton::clicked, this, [this]() {
+        d->setViewMode(ViewMode::kIconMode);
+    });
+
+    connect(d->listViewButton, &DToolButton::clicked, this, [this]() {
+        d->setViewMode(ViewMode::kListMode);
+    });
+
+    connect(d->detailButton, &DToolButton::clicked, this, [this](bool checked) {
+        TitleBarEventCaller::sendDetailViewState(this, checked);
+    });
+
+    connect(Application::instance(), &Application::viewModeChanged, d, &OptionButtonBoxPrivate::onViewModeChanged);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+        initUiForSizeMode();
+    });
+#endif
+}
+
+void OptionButtonBox::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    d->iconViewButton->setFixedSize(DSizeModeHelper::element(QSize(24, 24), QSize(36, 36)));
+    d->listViewButton->setFixedSize(DSizeModeHelper::element(QSize(24, 24), QSize(36, 36)));
+    d->detailButton->setFixedSize(DSizeModeHelper::element(QSize(24, 24), QSize(36, 36)));
+
+    if (d->hBoxLayout) {
+        delete d->hBoxLayout;
+        d->hBoxLayout = nullptr;
+    }
+    d->hBoxLayout = new QHBoxLayout;
+    d->hBoxLayout->addSpacing(DSizeModeHelper::element(0, 15));
+    d->hBoxLayout->addWidget(d->iconViewButton);
+    d->hBoxLayout->addWidget(d->listViewButton);
+    d->hBoxLayout->addWidget(d->detailButton);
+    d->hBoxLayout->setContentsMargins(0, 0, 4, 0);
+    d->hBoxLayout->setSpacing(DSizeModeHelper::element(10, 18));
+    setLayout(d->hBoxLayout);
+#else
+    d->iconViewButton->setFixedSize(QSize(36, 36));
+    d->listViewButton->setFixedSize(QSize(36, 36));
+    d->detailButton->setFixedSize(QSize(36, 36));
+
+    if (d->hBoxLayout) {
+        delete d->hBoxLayout;
+        d->hBoxLayout = nullptr;
+    }
     d->hBoxLayout = new QHBoxLayout;
     d->hBoxLayout->addSpacing(15);
     d->hBoxLayout->addWidget(d->iconViewButton);
@@ -154,33 +217,16 @@ void OptionButtonBox::initializeUi()
     d->hBoxLayout->addWidget(d->detailButton);
     d->hBoxLayout->setContentsMargins(0, 0, 4, 0);
     d->hBoxLayout->setSpacing(18);
-
     setLayout(d->hBoxLayout);
+#endif
 }
 
-void OptionButtonBox::initConnect()
-{
-    connect(d->iconViewButton, &QToolButton::clicked, this, [this]() {
-        d->setViewMode(ViewMode::kIconMode);
-    });
-
-    connect(d->listViewButton, &QToolButton::clicked, this, [this]() {
-        d->setViewMode(ViewMode::kListMode);
-    });
-
-    connect(d->detailButton, &QToolButton::clicked, this, [this](bool checked) {
-        TitleBarEventCaller::sendDetailViewState(this, checked);
-    });
-
-    connect(Application::instance(), &Application::viewModeChanged, d, &OptionButtonBoxPrivate::onViewModeChanged);
-}
-
-QToolButton *OptionButtonBox::listViewButton() const
+DToolButton *OptionButtonBox::listViewButton() const
 {
     return d->listViewButton;
 }
 
-void OptionButtonBox::setListViewButton(QToolButton *listViewButton)
+void OptionButtonBox::setListViewButton(DToolButton *listViewButton)
 {
     if (!listViewButton) return;
 
@@ -211,12 +257,12 @@ OptionButtonBox::OptionButtonBox(QWidget *parent)
     initConnect();
 }
 
-QToolButton *OptionButtonBox::iconViewButton() const
+DToolButton *OptionButtonBox::iconViewButton() const
 {
     return d->iconViewButton;
 }
 
-void OptionButtonBox::setIconViewButton(QToolButton *iconViewButton)
+void OptionButtonBox::setIconViewButton(DToolButton *iconViewButton)
 {
     if (!iconViewButton) return;
 

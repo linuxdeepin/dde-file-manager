@@ -13,6 +13,11 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+#endif
+
 #include <QCompleter>
 
 using namespace dfmplugin_titlebar;
@@ -39,8 +44,6 @@ void AddressBarPrivate::initializeUi()
     pauseButton->setIcon(QIcon::fromTheme("dfm_search_pause"));
     pauseButton->setFocusPolicy(Qt::NoFocus);
     pauseButton->setCursor({ Qt::ArrowCursor });
-    pauseButton->setFixedSize(24, 24);
-    pauseButton->setIconSize({ 24, 24 });
     pauseButton->setFlat(true);
     pauseButton->setVisible(false);
 
@@ -71,6 +74,8 @@ void AddressBarPrivate::initializeUi()
     q->setAlignment(Qt::AlignHCenter);
     q->setAlignment(Qt::AlignLeft);
     q->setFocusPolicy(Qt::ClickFocus);
+
+    initUiForSizeMode();
 }
 
 void AddressBarPrivate::initConnect()
@@ -106,6 +111,23 @@ void AddressBarPrivate::initConnect()
     });
 
     connect(pauseButton, &DIconButton::clicked, q, &AddressBar::pauseButtonClicked);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+        initUiForSizeMode();
+    });
+#endif
+}
+
+void AddressBarPrivate::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    pauseButton->setFixedSize(DSizeModeHelper::element(QSize(16, 16), QSize(24, 24)));
+    pauseButton->setIconSize(DSizeModeHelper::element(QSize(16, 16), QSize(24, 24)));
+#else
+    pauseButton->setFixedSize(QSize(24, 24));
+    pauseButton->setIconSize(QSize(24, 24));
+#endif
 }
 
 void AddressBarPrivate::initData()
@@ -481,7 +503,7 @@ void AddressBarPrivate::onCompletionHighlighted(const QString &highlightedComple
 void AddressBarPrivate::updateIndicatorIcon()
 {
     QIcon indicatorIcon;
-    QString scope = indicatorType == AddressBar::IndicatorType::Search ? "search" : "go-right";
+    QString scope = indicatorType == AddressBar::IndicatorType::Search ? "search_action" : "go-right";
     indicatorIcon = QIcon::fromTheme(scope);
     indicatorAction.setIcon(indicatorIcon);
 }

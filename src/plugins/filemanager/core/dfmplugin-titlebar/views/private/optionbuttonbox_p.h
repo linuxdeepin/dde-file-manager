@@ -9,11 +9,12 @@
 
 #include "dfm-base/dfm_global_defines.h"
 
+#include <DToolButton>
+
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QButtonGroup>
 
-class QToolButton;
 class QHBoxLayout;
 
 namespace dfmplugin_titlebar {
@@ -40,9 +41,9 @@ private:
     OptionButtonBox *const q;
 
     QButtonGroup *buttonGroup { nullptr };
-    QToolButton *iconViewButton { nullptr };
-    QToolButton *listViewButton { nullptr };
-    QToolButton *detailButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DToolButton *iconViewButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DToolButton *listViewButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DToolButton *detailButton { nullptr };
     QHBoxLayout *hBoxLayout { nullptr };
 
     ViewMode currentMode { ViewMode::kIconMode };

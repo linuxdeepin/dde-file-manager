@@ -8,8 +8,10 @@
 #include "dfmplugin_titlebar_global.h"
 #include "utils/crumbinterface.h"
 
-#include <QPushButton>
+#include <DPushButton>
 #include <DListView>
+
+#include <QPushButton>
 #include <QHBoxLayout>
 
 DWIDGET_USE_NAMESPACE
@@ -22,6 +24,7 @@ class IconItemDelegate : public DStyledItemDelegate
 public:
     explicit IconItemDelegate(QAbstractItemView *parent = nullptr);
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+//    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };
 
 class CrumbBar;
@@ -31,8 +34,8 @@ class CrumbBarPrivate
     friend class CrumbBar;
     CrumbBar *const q;
 
-    QPushButton leftArrow;
-    QPushButton rightArrow;
+    DPushButton leftArrow;
+    DPushButton rightArrow;
     DListView crumbView;
     CrumbModel *crumbModel { nullptr };
     QHBoxLayout *crumbBarLayout;

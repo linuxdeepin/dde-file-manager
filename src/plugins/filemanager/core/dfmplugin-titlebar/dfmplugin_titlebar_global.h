@@ -107,6 +107,21 @@ public:
     QDateTime lastAccessed;
 };
 
+namespace AcName {
+inline constexpr char kAcComputerTitleBar[] { "computer_title_bar" };
+inline constexpr char kAcComputerTitleBarAddress[] { "AddressToolBar" };
+inline constexpr char kAcComputerTitleBarBackBtn[] { "back_button" };
+inline constexpr char kAcComputerTitleBarForwardBtn[] { "forword_button" };
+inline constexpr char kAcComputerTitleBarBtnBox[] { "button_box" };
+inline constexpr char kAcComputerTitleBarSearchBtn[] { "search_button" };
+inline constexpr char kAcComputerTitleBarDetailBtn[] { "detail_button" };
+inline constexpr char kAcComputerTitleBarOptionBtnBox[] { "ContollerToolBar" };
+
+inline constexpr char kAcComputerCrumbBarLeftArrow[] { "left_arrow" };
+inline constexpr char kAcComputerCrumbBarRightArrow[] { "right_arrow" };
+inline constexpr char kAcComputerCrumbBarListView[] { "crumb_list_view" };
+}
+
 DPTITLEBAR_END_NAMESPACE
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 

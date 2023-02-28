@@ -8,6 +8,14 @@
 
 #include "dfm-base/base/device/deviceproxymanager.h"
 
+#include <dfm-framework/event/event.h>
+
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+#endif
+
 #include <QAbstractButton>
 
 using namespace dfmplugin_titlebar;
@@ -149,14 +157,18 @@ void NavWidget::onNewWindowOpended()
 void NavWidget::initializeUi()
 {
     d->navBackButton = new DButtonBoxButton(QStyle::SP_ArrowBack);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(d->navBackButton), AcName::kAcComputerTitleBarBackBtn);
     d->navBackButton->setDisabled(true);
-    d->navBackButton->setFixedWidth(36);
 
     d->navForwardButton = new DButtonBoxButton(QStyle::SP_ArrowForward);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(d->navForwardButton), AcName::kAcComputerTitleBarForwardBtn);
     d->navForwardButton->setDisabled(true);
-    d->navForwardButton->setFixedWidth(36);
 
     d->buttonBox = new DButtonBox;
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(d->buttonBox), AcName::kAcComputerTitleBarBtnBox);
     d->hboxLayout = new QHBoxLayout;
 
     d->buttonBox->setButtonList({ d->navBackButton, d->navForwardButton }, false);
@@ -165,6 +177,8 @@ void NavWidget::initializeUi()
 
     d->hboxLayout->setSpacing(0);
     d->hboxLayout->setContentsMargins(0, 0, 0, 0);
+
+    initUiForSizeMode();
 }
 
 void NavWidget::initConnect()
@@ -178,4 +192,21 @@ void NavWidget::initConnect()
     connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &NavWidget::onDevUnmounted);
     connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, &NavWidget::onDevUnmounted);
     connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, &NavWidget::onDevUnmounted);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+        initUiForSizeMode();
+    });
+#endif
+}
+
+void NavWidget::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    d->navBackButton->setFixedSize(DSizeModeHelper::element(QSize(24, 24), QSize(36, 36)));
+    d->navForwardButton->setFixedSize(DSizeModeHelper::element(QSize(24, 24), QSize(36, 36)));
+#else
+    d->navBackButton->setFixedSize(QSize(36, 36));
+    d->navForwardButton->setFixedSize(QSize(36, 36));
+#endif
 }

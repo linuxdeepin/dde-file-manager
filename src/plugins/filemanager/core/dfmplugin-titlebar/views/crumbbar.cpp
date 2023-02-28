@@ -14,7 +14,10 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/fileutils.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DListView>
+
 #include <QGSettings>
 #include <QHBoxLayout>
 #include <QPainter>
@@ -159,6 +162,13 @@ void CrumbBarPrivate::initUI()
     // Arrows
     QSize size(24, 24), iconSize(16, 16);
 
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(&leftArrow), AcName::kAcComputerCrumbBarLeftArrow);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(&rightArrow), AcName::kAcComputerCrumbBarRightArrow);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(&crumbView), AcName::kAcComputerCrumbBarListView);
+
     leftArrow.setFocusPolicy(Qt::NoFocus);
     leftArrow.setIcon(QIcon::fromTheme("go-previous"));
     rightArrow.setIcon(QIcon::fromTheme("go-next"));
@@ -226,12 +236,12 @@ void CrumbBarPrivate::initConnections()
                          }
                      });
 
-    q->connect(&leftArrow, &QPushButton::clicked,
+    q->connect(&leftArrow, &DPushButton::clicked,
                q, [=]() {
                    crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepSub);
                });
 
-    q->connect(&rightArrow, &QPushButton::clicked,
+    q->connect(&rightArrow, &DPushButton::clicked,
                q, [=]() {
                    crumbView.horizontalScrollBar()->triggerAction(QAbstractSlider::SliderPageStepAdd);
                });
@@ -266,7 +276,6 @@ CrumbBar::CrumbBar(QWidget *parent)
     : QFrame(parent), d(new CrumbBarPrivate(this))
 {
     setFrameShape(QFrame::NoFrame);
-    setFixedHeight(36);
 }
 
 CrumbBar::~CrumbBar()

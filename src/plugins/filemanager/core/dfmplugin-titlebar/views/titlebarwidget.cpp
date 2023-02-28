@@ -3,13 +3,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "titlebarwidget.h"
-
 #include "events/titlebareventcaller.h"
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/utils/fileutils.h"
+
+#include <dfm-framework/event/event.h>
+
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+#endif
 
 #include <QHBoxLayout>
 #include <QEvent>
@@ -75,58 +82,41 @@ void TitleBarWidget::initializeUi()
 {
     setFocusPolicy(Qt::NoFocus);
 
-    // layout
-    titleBarLayout = new QHBoxLayout(this);
-    titleBarLayout->setMargin(0);
-    titleBarLayout->setSpacing(0);
-
     // nav
     curNavWidget = new NavWidget;
-    titleBarLayout->addSpacing(14);   // 导航栏左侧间隔14
-    titleBarLayout->addWidget(curNavWidget, 0, Qt::AlignLeft);
 
     // address
     addressBar = new AddressBar;
-    addressBar->setFixedHeight(36);
     addressBar->installEventFilter(this);
-    titleBarLayout->addSpacing(4);
-    titleBarLayout->addWidget(addressBar);
 
     // crumb
     crumbBar = new CrumbBar;
-    titleBarLayout->addWidget(crumbBar);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(crumbBar), AcName::kAcComputerTitleBarAddress);
 
     // search button
-    searchButton = new QPushButton;
-    searchButton->setFixedSize({ 36, 36 });
+    searchButton = new DPushButton;
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(searchButton), AcName::kAcComputerTitleBarSearchBtn);
     searchButton->setFocusPolicy(Qt::NoFocus);
     searchButton->setFlat(true);
     searchButton->setIcon(QIcon::fromTheme("search"));
-    searchButton->setIconSize({ 30, 30 });
-    titleBarLayout->addWidget(searchButton);
-
-    // search filter button
-    searchFilterButton = new QToolButton;
-    searchFilterButton->setFixedSize({ 36, 36 });
-    searchFilterButton->setFocusPolicy(Qt::NoFocus);
-    searchFilterButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
-    searchFilterButton->setIconSize({ 16, 16 });
-    titleBarLayout->addWidget(searchFilterButton);
 
     // option button
     optionButtonBox = new OptionButtonBox;
-    titleBarLayout->addSpacing(4);
-    titleBarLayout->addWidget(optionButtonBox, 0, Qt::AlignRight);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(optionButtonBox), AcName::kAcComputerTitleBarOptionBtnBox);
 
-    setLayout(titleBarLayout);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     showCrumbBar();
+
+    initUiForSizeMode();
 }
 
 void TitleBarWidget::initConnect()
 {
-    connect(searchButton, &QToolButton::clicked, this, &TitleBarWidget::onSearchButtonClicked);
+    connect(searchButton, &DPushButton::clicked, this, &TitleBarWidget::onSearchButtonClicked);
     connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, curNavWidget, &NavWidget::onUrlChanged);
@@ -166,6 +156,63 @@ void TitleBarWidget::initConnect()
     connect(addressBar, &AddressBar::pauseButtonClicked, this, [this]() {
         TitleBarEventCaller::sendStopSearch(this);
     });
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+        initUiForSizeMode();
+    });
+#endif
+}
+
+void TitleBarWidget::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    crumbBar->setFixedHeight(DSizeModeHelper::element(24, 36));
+    addressBar->setFixedHeight(DSizeModeHelper::element(24, 36));
+    searchButton->setFixedSize(DSizeModeHelper::element(QSize(24, 24), QSize(36, 36)));
+    QSize iconSize = searchButtonSwitchState ? QSize(16, 16) : QSize(30, 30);
+    searchButton->setIconSize(DSizeModeHelper::element(QSize(16, 16), iconSize));
+
+    if (titleBarLayout) {
+        delete titleBarLayout;
+        titleBarLayout = nullptr;
+    }
+    titleBarLayout = new QHBoxLayout(this);
+    titleBarLayout->setMargin(0);
+    titleBarLayout->setSpacing(0);
+    titleBarLayout->addSpacing(DSizeModeHelper::element(10, 14));
+    titleBarLayout->addWidget(curNavWidget, 0, Qt::AlignLeft);
+    titleBarLayout->addSpacing(DSizeModeHelper::element(10, 4));
+    titleBarLayout->addWidget(addressBar);
+    titleBarLayout->addWidget(crumbBar);
+    titleBarLayout->addWidget(searchButton);
+    titleBarLayout->addSpacing(DSizeModeHelper::element(10, 4));
+    titleBarLayout->addWidget(optionButtonBox, 0, Qt::AlignRight);
+    setLayout(titleBarLayout);
+#else
+    crumbBar->setFixedHeight(36);
+    addressBar->setFixedHeight(36);
+    searchButton->setFixedSize(QSize(36, 36));
+    QSize iconSize = searchButtonSwitchState ? QSize(16, 16) : QSize(30, 30);
+    searchButton->setIconSize(iconSize);
+
+    if (titleBarLayout) {
+        delete titleBarLayout;
+        titleBarLayout = nullptr;
+    }
+    titleBarLayout = new QHBoxLayout(this);
+    titleBarLayout->setMargin(0);
+    titleBarLayout->setSpacing(0);
+    titleBarLayout->addSpacing(14);
+    titleBarLayout->addWidget(curNavWidget, 0, Qt::AlignLeft);
+    titleBarLayout->addSpacing(4);
+    titleBarLayout->addWidget(addressBar);
+    titleBarLayout->addWidget(crumbBar);
+    titleBarLayout->addWidget(searchButton);
+    titleBarLayout->addSpacing(4);
+    titleBarLayout->addWidget(optionButtonBox, 0, Qt::AlignRight);
+    setLayout(titleBarLayout);
+#endif
 }
 
 void TitleBarWidget::showAddrsssBar(const QUrl &url)
@@ -195,8 +242,6 @@ void TitleBarWidget::showSearchButton()
 {
     if (searchButton)
         searchButton->show();
-    if (searchFilterButton)
-        searchFilterButton->hide();
 }
 
 void TitleBarWidget::showSearchFilterButton(bool visible)
@@ -243,7 +288,11 @@ void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
         searchButton->style()->unpolish(searchButton);
         searchButton->style()->polish(searchButton);
         searchButton->setIcon(QIcon::fromTheme("search"));
-        searchButton->setIconSize({ 30, 30 });
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        searchButton->setIconSize(DSizeModeHelper::element(QSize(16, 16), QSize(30, 30)));
+#else
+        searchButton->setIconSize(QSize(30, 30));
+#endif
         searchButton->setDown(false);
         searchButtonSwitchState = false;
         // TODO(zhangs): workspace->toggleAdvanceSearchBar(false);

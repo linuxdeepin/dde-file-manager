@@ -13,6 +13,8 @@
 
 #include "dfm-base/interfaces/abstractframe.h"
 
+#include <DPushButton>
+
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QPushButton>
@@ -42,6 +44,7 @@ public slots:
 private:
     void initializeUi();
     void initConnect();
+    void initUiForSizeMode();
     void showAddrsssBar(const QUrl &url);   // switch addrasssBar and crumbBar show
     void showCrumbBar();
     void showSearchButton();
@@ -62,8 +65,7 @@ private:
     QHBoxLayout *titleBarLayout { nullptr };   // 标题栏布局
     NavWidget *curNavWidget { nullptr };   // 导航小部件
     AddressBar *addressBar { nullptr };   // 地址编辑栏
-    QPushButton *searchButton { nullptr };   // 搜索栏按钮
-    QToolButton *searchFilterButton { nullptr };   // 搜索过滤按钮
+    DPushButton *searchButton { nullptr };   // 搜索栏按钮
     OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
     CrumbBar *crumbBar { nullptr };   // 面包屑
     bool searchButtonSwitchState { false };

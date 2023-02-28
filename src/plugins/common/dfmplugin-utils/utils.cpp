@@ -10,6 +10,7 @@
 #include "bluetooth/virtualbluetoothplugin.h"
 #include "extensionimpl/virtualextensionimplplugin.h"
 #include "vaultassist/virtualvaulthelperplugin.h"
+#include "testing/virtualtestingplugin.h"
 
 using namespace dfmplugin_utils;
 
@@ -20,6 +21,7 @@ static constexpr char kGlobal[] { "dfmplugin-global" };
 static constexpr char kOpenWith[] { "dfmplugin-openwith" };
 static constexpr char kExtensionImpl[] { "dfmplugin-extensionimpl" };
 static constexpr char kVaultAssist[] { "dfmplugin-vaultassist" };
+static constexpr char kTesting[] { "dfmplugin-testing" };
 
 QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 {
@@ -57,6 +59,11 @@ QSharedPointer<DPF_NAMESPACE::Plugin> Utils::create(const QString &pluginName)
 
     if (pluginName == kVaultAssist) {
         QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualVaultHelperPlugin };
+        return plugin;
+    }
+
+    if (pluginName == kTesting) {
+        QSharedPointer<DPF_NAMESPACE::Plugin> plugin { new VirtualTestingPlugin };
         return plugin;
     }
 

@@ -43,7 +43,10 @@ bool TitleBar::start()
 
 void TitleBar::onWindowCreated(quint64 windId)
 {
-    TitleBarHelper::addTileBar(windId, new TitleBarWidget);
+    TitleBarWidget *titleWidget = new TitleBarWidget;
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget*>(titleWidget), AcName::kAcComputerTitleBar);
+    TitleBarHelper::addTileBar(windId, titleWidget);
 }
 
 void TitleBar::onWindowOpened(quint64 windId)
