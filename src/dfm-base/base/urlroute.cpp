@@ -112,7 +112,7 @@ bool UrlRoute::hasScheme(const QString &scheme)
 bool UrlRoute::isRootUrl(const QUrl &url)
 {
     if (!hasScheme(url.scheme()))
-        return false;
+        return true;
 
     QString path = urlToPath(url);
 
