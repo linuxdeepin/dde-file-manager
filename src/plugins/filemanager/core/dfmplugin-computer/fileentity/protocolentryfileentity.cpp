@@ -41,7 +41,7 @@ QString ProtocolEntryFileEntity::displayName() const
         const QString &shareName = displayName.left(pos);
         const QString &hostName = displayName.right(displayName.length() - pos - 4);
         if (!shareName.isEmpty() && !hostName.isEmpty())
-            displayName = QString("%1 %2 %3").arg(shareName).arg(QObject::tr("on")).arg(hostName);
+            displayName = tr("%1 on %2").arg(shareName).arg(hostName);
     }
 
     return displayName;

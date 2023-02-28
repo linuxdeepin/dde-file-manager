@@ -13,6 +13,7 @@ namespace dfmplugin_computer {
 
 class ProtocolEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
+    Q_OBJECT
 public:
     explicit ProtocolEntryFileEntity(const QUrl &url);
 
