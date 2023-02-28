@@ -46,7 +46,9 @@ public:
 
     static bool isSamba(const QUrl &url);
     static bool isFtp(const QUrl &url);
+    static bool isSftp(const QUrl &url);
     static bool isExternalBlock(const QUrl &url);
+    static QUrl parseNetSourceUrl(const QUrl &target);
 
     static QMap<QString, QString> fstabBindInfo();
 

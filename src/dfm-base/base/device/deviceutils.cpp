@@ -10,6 +10,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/networkutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
@@ -224,9 +225,58 @@ bool DeviceUtils::isFtp(const QUrl &url)
     return hasMatch(url.path(), smbMatch);
 }
 
+bool DeviceUtils::isSftp(const QUrl &url)
+{
+    static const QString smbMatch { "(^/run/user/\\d+/gvfs/sftp|^/root/\\.gvfs/sftp)" };
+    return hasMatch(url.path(), smbMatch);
+}
+
 bool DeviceUtils::isExternalBlock(const QUrl &url)
 {
     return DeviceProxyManager::instance()->isFileOfExternalBlockMounts(url.path());
+}
+
+QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
+{
+    if (!isSamba(target) && !isFtp(target))
+        return {};
+
+    QString host, port;
+    NetworkUtils::instance()->parseIp(target.path(), host, port);
+    if (host.isEmpty())
+        return {};
+
+    QString protocol, share;
+    if (isSamba(target)) {
+        protocol = "smb";
+        static const QRegularExpression gvfsSmb(R"(,share=([^,/]*))");
+        static const QRegularExpression cifsSmb(R"(^/media/[^/]*/smbmounts/([^/]*) on [^/]*)");
+        auto match = cifsSmb.match(target.path());
+        if (match.hasMatch()) {
+            share = match.captured(1);
+        } else {
+            match = gvfsSmb.match(target.path());
+            if (!match.hasMatch())
+                return {};
+            share = match.captured(1);
+        }
+    } else {
+        protocol = isSftp(target) ? "sftp" : "ftp";
+    }
+
+    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/[^/]*|^/media/.*/smbmounts/[^/]*)");
+    QString dirPath = target.path();
+    dirPath.remove(prefix);
+    dirPath.prepend(share);
+    if (!dirPath.startsWith("/"))
+        dirPath.prepend("/");
+
+    QUrl src;
+    src.setScheme(protocol);
+    src.setHost(host);
+    src.setPath(dirPath);
+
+    return src;
 }
 
 QMap<QString, QString> DeviceUtils::fstabBindInfo()

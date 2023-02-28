@@ -6,10 +6,11 @@
 #include "events/bookmarkeventcaller.h"
 #include "controller/bookmarkmanager.h"
 
-#include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/devicemanager.h"
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/device/devicemanager.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -82,27 +83,20 @@ void BookmarkCallBack::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
         return;
     }
 
-    if (bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSmb)
-        || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kFtp)
-        || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSFtp)) {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url, false);
-        if (info && info->exists()) {
-            if (info->isAttributes(OptInfoType::kIsDir))
-                BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
-        } else {
-            auto callback = std::bind(handleNetworkMountResult, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, url, windowId);
-            DeviceManager::instance()->mountNetworkDeviceAsync(bookmarkMap[url].deviceUrl, callback);
-        }
-        return;
-    }
-
     QFileInfo info(url.path());
     if (info.exists() && info.isDir()) {
         BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
-    } else {
-        if (DDialog::Accepted == BookMarkManager::instance()->showRemoveBookMarkDialog(windowId))
-            BookMarkManager::instance()->removeBookMark(url);
+        return;
+    } else if (DeviceUtils::isSamba(url) || DeviceUtils::isFtp(url)) {
+        auto srcUrl = DeviceUtils::parseNetSourceUrl(url);
+        qDebug() << "bookmark of net file:" << url << "got souce url:" << srcUrl;
+        if (srcUrl.isValid()) {
+            BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, srcUrl);
+            return;
+        }
     }
+    if (DDialog::Accepted == BookMarkManager::instance()->showRemoveBookMarkDialog(windowId))
+        BookMarkManager::instance()->removeBookMark(url);
 }
 
 void BookmarkCallBack::cdDefaultItemUrlCallBack(quint64 windowId, const QUrl &url)
