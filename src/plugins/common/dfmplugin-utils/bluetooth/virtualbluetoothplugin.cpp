@@ -12,7 +12,7 @@ using namespace dfmplugin_utils;
 
 void VirtualBluetoothPlugin::initialize()
 {
-    BluetoothManager::instance();
+    //    BluetoothManager::instance();
 
     dpfSlotChannel->connect("dfmplugin_utils", "slot_Bluetooth_IsAvailable", this, &VirtualBluetoothPlugin::bluetoothAvailable);
     dpfSlotChannel->connect("dfmplugin_utils", "slot_Bluetooth_SendFiles", this, &VirtualBluetoothPlugin::sendFiles);
