@@ -169,8 +169,9 @@ QString protocol_display_utilities::getStandardSmbPath(const QUrl &entryUrl)
 QString protocol_display_utilities::getStandardSmbPath(const QString &devId)
 {
     QString id = QUrl::fromPercentEncoding(devId.toLocal8Bit());
-    if (id.startsWith(Global::Scheme::kFile)) {
-        id.remove(QRegularExpression(R"(^file:///media/.*/smbmounts/)"));
+    static const QRegularExpression kCifsSmbPrefix(R"(^file:///media/.*/smbmounts/)");
+    if (id.startsWith(Global::Scheme::kFile) && id.contains(kCifsSmbPrefix)) {
+        id.remove(kCifsSmbPrefix);
         QStringList frags = id.split(" on ");
         if (frags.count() != 2) {
             abort();

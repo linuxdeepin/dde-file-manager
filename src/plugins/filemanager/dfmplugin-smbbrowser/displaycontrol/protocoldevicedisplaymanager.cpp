@@ -106,11 +106,10 @@ bool ProtocolDeviceDisplayManager::hookItemsFilter(QList<QUrl> *entryUrls)
 
 void ProtocolDeviceDisplayManager::onDevMounted(const QString &id, const QString &)
 {
-    if (!isShowOfflineItem())
+    if (!DeviceUtils::isSamba(QUrl(id)))
         return;
 
-    const QString &stdSmb = protocol_display_utilities::getStandardSmbPath(id);
-    if (!stdSmb.startsWith("smb"))
+    if (!isShowOfflineItem())
         return;
 
     // obtain the display name of `id`
@@ -124,6 +123,9 @@ void ProtocolDeviceDisplayManager::onDevMounted(const QString &id, const QString
 
 void ProtocolDeviceDisplayManager::onDevUnmounted(const QString &id)
 {
+    if (!DeviceUtils::isSamba(QUrl(id)))
+        return;
+
     if (displayMode() == SmbDisplayMode::kSeperate && isShowOfflineItem()) {
         const QString &stdSmbPath = getStandardSmbPath(id);
         // persistent data will be removed if "forget password" is triggered.
