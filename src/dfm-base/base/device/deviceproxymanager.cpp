@@ -238,6 +238,8 @@ void DeviceProxyManagerPrivate::initMounts()
                 auto &&info = query(q, dev, false);
                 auto mpt = info.value(DeviceProperty::kMountPoint).toString();
                 if (!mpt.isEmpty()) {
+                    if (DeviceUtils::isMountPointOfDlnfs(mpt))
+                        continue;
                     mpt = mpt.endsWith("/") ? mpt : mpt + "/";
                     if (info.value(DeviceProperty::kRemovable).toBool())
                         externalMounts.insert(dev, mpt);
@@ -340,6 +342,9 @@ void DeviceProxyManagerPrivate::disconnCurrentConnections()
 void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 {
     QString p = mpt.endsWith("/") ? mpt : mpt + "/";
+    if (DeviceUtils::isMountPointOfDlnfs(p))
+        return;
+
     if (id.startsWith(kBlockDeviceIdPrefix)) {
         auto &&info = q->queryBlockInfo(id);
         if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool())
