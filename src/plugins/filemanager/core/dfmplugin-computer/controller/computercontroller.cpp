@@ -499,16 +499,15 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
     if (info->targetUrl().isValid()) {
         qDebug() << "format: do unmount device before format." << url;
         DevMngIns->unmountBlockDevAsync(devId, {}, callback);
-    } else if (info->extraProperty(DeviceProperty::kIsEncrypted).toBool()) {
-        const auto &clearDevId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
-        if (clearDevId != "/") {
-            // lock the device.
-            qDebug() << "format: do lock device before format." << url;
-            DevMngIns->lockBlockDevAsync(devId, {}, callback);
-        }
-    } else {
-        QProcess::startDetached(cmd, args);
+        return;
+    } else if (info->extraProperty(DeviceProperty::kIsEncrypted).toBool()
+               && info->extraProperty(DeviceProperty::kCleartextDevice).toString() != "/") {   // unlocked encrypted device, do lock first.
+        // lock the device.
+        qDebug() << "format: do lock device before format." << url;
+        DevMngIns->lockBlockDevAsync(devId, {}, callback);
+        return;
     }
+    QProcess::startDetached(cmd, args);
 }
 
 void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer info)
