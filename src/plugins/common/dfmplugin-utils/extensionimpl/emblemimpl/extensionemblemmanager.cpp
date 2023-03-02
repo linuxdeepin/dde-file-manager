@@ -84,9 +84,9 @@ bool EmblemIconWorker::parseLocationEmblemIcons(const QString &path, int count, 
         const QList<QPair<QString, int>> &oldGroup { embelmCaches[path] };
         QList<QPair<QString, int>> newGroup;
         makeLayoutGroup(layouts, &newGroup);
-        if (newGroup != oldGroup) {
-            QList<QPair<QString, int>> mergedGroup;
-            mergeGroup(oldGroup, newGroup, &mergedGroup);
+        QList<QPair<QString, int>> mergedGroup;
+        mergeGroup(oldGroup, newGroup, &mergedGroup);
+        if (mergedGroup != oldGroup) {
             embelmCaches[path] = mergedGroup;
             emit emblemIconChanged(path, mergedGroup);
             return true;
@@ -115,9 +115,9 @@ void EmblemIconWorker::parseEmblemIcons(const QString &path, int count, QSharedP
         const QList<QPair<QString, int>> &oldGroup { embelmCaches[path] };
         QList<QPair<QString, int>> newGroup;
         makeNormalGroup(icons, count, &newGroup);
-        if (newGroup != oldGroup) {
-            QList<QPair<QString, int>> mergedGroup;
-            mergeGroup(oldGroup, newGroup, &mergedGroup);
+        QList<QPair<QString, int>> mergedGroup;
+        mergeGroup(oldGroup, newGroup, &mergedGroup);
+        if (mergedGroup != oldGroup) {
             embelmCaches[path] = mergedGroup;
             emit emblemIconChanged(path, mergedGroup);
         }
@@ -244,6 +244,11 @@ void ExtensionEmblemManager::onEmblemIconChanged(const QString &path, const QLis
     Q_D(ExtensionEmblemManager);
 
     d->positionEmbelmCaches[path] = group;
+    auto eventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "slot_FileInfoModel_UpdateFile") };
+    if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+        dpfSlotChannel->push("ddplugin_canvas", "slot_FileInfoModel_UpdateFile", QUrl::fromLocalFile(path));
+    else
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_FileUpdate", QUrl::fromLocalFile(path));
 }
 
 void ExtensionEmblemManager::onAllPluginsInitialized()

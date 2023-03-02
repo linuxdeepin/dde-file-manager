@@ -6,9 +6,10 @@
 
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
-#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/event/event.h>
 #include <dfm-io/core/dfileinfo.h>
@@ -21,7 +22,7 @@ DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
 
-void EmblemWorker::onProduce(const QUrl &url)
+void GioEmblemWorker::onProduce(const QUrl &url)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
 
@@ -39,23 +40,18 @@ void EmblemWorker::onProduce(const QUrl &url)
     }
 }
 
-void EmblemWorker::onClear()
+void GioEmblemWorker::onClear()
 {
     cache.clear();
 }
 
-QList<QIcon> EmblemWorker::fetchEmblems(const QUrl &url) const
+QList<QIcon> GioEmblemWorker::fetchEmblems(const QUrl &url) const
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (!info)
         return {};
 
     QList<QIcon> emblemList;
-
-    emblemList = getSystemEmblems(info);
-
-    if (FileUtils::isGvfsFile(url))
-        return emblemList;
 
     // add gio emblem icons
     const auto &gioEmblemsMap = getGioEmblems(info);
@@ -81,27 +77,7 @@ QList<QIcon> EmblemWorker::fetchEmblems(const QUrl &url) const
     return emblemList;
 }
 
-QList<QIcon> EmblemWorker::getSystemEmblems(const AbstractFileInfoPointer &info) const
-{
-    QList<QIcon> emblems;
-
-    if (info->isAttributes(OptInfoType::kIsSymLink))
-        emblems << QIcon::fromTheme("emblem-symbolic-link", standardEmblem(SystemEmblemType::kLink));
-
-    if (!info->isAttributes(OptInfoType::kIsWritable))
-        emblems << QIcon::fromTheme("emblem-readonly", standardEmblem(SystemEmblemType::kLock));
-
-    if (!info->isAttributes(OptInfoType::kIsReadable))
-        emblems << QIcon::fromTheme("emblem-unreadable", standardEmblem(SystemEmblemType::kUnreadable));
-
-    bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->pathOf(PathInfoType::kAbsoluteFilePath)).toBool();
-    if (shared)
-        emblems << QIcon::fromTheme("emblem-shared", standardEmblem(SystemEmblemType::kShare));
-
-    return emblems;
-}
-
-QMap<int, QIcon> EmblemWorker::getGioEmblems(const AbstractFileInfoPointer &info) const
+QMap<int, QIcon> GioEmblemWorker::getGioEmblems(const AbstractFileInfoPointer &info) const
 {
     QMap<int, QIcon> emblemsMap;
 
@@ -135,28 +111,7 @@ QMap<int, QIcon> EmblemWorker::getGioEmblems(const AbstractFileInfoPointer &info
     return emblemsMap;
 }
 
-QIcon EmblemWorker::standardEmblem(const SystemEmblemType type) const
-{
-    static QIcon linkEmblem(QIcon::fromTheme("emblem-symbolic-link"));
-    static QIcon lockEmblem(QIcon::fromTheme("emblem-locked"));
-    static QIcon unreadableEmblem(QIcon::fromTheme("emblem-unreadable"));
-    static QIcon shareEmblem(QIcon::fromTheme("emblem-shared"));
-
-    switch (type) {
-    case SystemEmblemType::kLink:
-        return linkEmblem;
-    case SystemEmblemType::kLock:
-        return lockEmblem;
-    case SystemEmblemType::kUnreadable:
-        return unreadableEmblem;
-    case SystemEmblemType::kShare:
-        return shareEmblem;
-    }
-
-    return QIcon();
-}
-
-bool EmblemWorker::parseEmblemString(QIcon *emblem, QString &pos, const QString &emblemStr) const
+bool GioEmblemWorker::parseEmblemString(QIcon *emblem, QString &pos, const QString &emblemStr) const
 {
     // default position
     pos = "rd";
@@ -199,7 +154,7 @@ bool EmblemWorker::parseEmblemString(QIcon *emblem, QString &pos, const QString 
     return false;
 }
 
-bool EmblemWorker::iconNamesEqual(const QList<QIcon> &first, const QList<QIcon> &second)
+bool GioEmblemWorker::iconNamesEqual(const QList<QIcon> &first, const QList<QIcon> &second)
 {
     if (first.isEmpty() && second.isEmpty())
         return true;
@@ -221,7 +176,7 @@ bool EmblemWorker::iconNamesEqual(const QList<QIcon> &first, const QList<QIcon> 
     return firstNames == secondNames;
 }
 
-void EmblemWorker::setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QMap<int, QIcon> *iconMap) const
+void GioEmblemWorker::setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QMap<int, QIcon> *iconMap) const
 {
     int emblemIndex = 0;   // default position rd = 0, rightdown
 
@@ -250,6 +205,30 @@ EmblemHelper::~EmblemHelper()
     workerThread.wait();
 }
 
+QList<QIcon> EmblemHelper::systemEmblems(const QUrl &url) const
+{
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    if (!info)
+        return {};
+
+    QList<QIcon> emblems;
+
+    if (info->isAttributes(OptInfoType::kIsSymLink))
+        emblems << QIcon::fromTheme("emblem-symbolic-link", standardEmblem(SystemEmblemType::kLink));
+
+    if (!info->isAttributes(OptInfoType::kIsWritable))
+        emblems << QIcon::fromTheme("emblem-readonly", standardEmblem(SystemEmblemType::kLock));
+
+    if (!info->isAttributes(OptInfoType::kIsReadable))
+        emblems << QIcon::fromTheme("emblem-unreadable", standardEmblem(SystemEmblemType::kUnreadable));
+
+    bool shared = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_IsPathShared", info->pathOf(PathInfoType::kAbsoluteFilePath)).toBool();
+    if (shared)
+        emblems << QIcon::fromTheme("emblem-shared", standardEmblem(SystemEmblemType::kShare));
+
+    return emblems;
+}
+
 QList<QRectF> EmblemHelper::emblemRects(const QRectF &paintArea) const
 {
     QSizeF baseEmblemSize = paintArea.size() / 3;
@@ -270,7 +249,7 @@ QList<QRectF> EmblemHelper::emblemRects(const QRectF &paintArea) const
     return list;
 }
 
-QList<QIcon> EmblemHelper::emblemIcons(const QUrl &url) const
+QList<QIcon> EmblemHelper::gioEmblemIcons(const QUrl &url) const
 {
     if (hasEmblem(url))
         return productQueue.value(url);
@@ -281,6 +260,24 @@ QList<QIcon> EmblemHelper::emblemIcons(const QUrl &url) const
 void EmblemHelper::pending(const QUrl &url)
 {
     emit requestProduce(url);
+}
+
+bool EmblemHelper::isExtEmblemProhibited(const QUrl &url)
+{
+    // SMB mounted by cifs (v6), so mountpoint is native path
+    if (FileUtils::isGvfsFile(url))
+        return true;
+
+    // In the block device, all file extension emblem icons are displayed by default,
+    // When configuring emblem icons display, all file extension corners are displayed in the block device
+    // When  emblem icons hiding is configured, all file extension corners are hidden in the block device
+    if (FileUtils::isLocalFile(url)) {
+        bool enable { DConfigManager::instance()->value("org.deepin.dde.file-manager.emblem", "blockExtEnable", true).toBool() };
+        if (enable)
+            return false;
+    }
+
+    return true;
 }
 
 void EmblemHelper::onEmblemChanged(const QUrl &url, const Product &product)
@@ -311,9 +308,30 @@ void EmblemHelper::initialize()
 
     worker->moveToThread(&workerThread);
     connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-    connect(this, &EmblemHelper::requestProduce, worker, &EmblemWorker::onProduce, Qt::QueuedConnection);
-    connect(this, &EmblemHelper::requestClear, worker, &EmblemWorker::onClear, Qt::QueuedConnection);
-    connect(worker, &EmblemWorker::emblemChanged, this, &EmblemHelper::onEmblemChanged, Qt::QueuedConnection);
+    connect(this, &EmblemHelper::requestProduce, worker, &GioEmblemWorker::onProduce, Qt::QueuedConnection);
+    connect(this, &EmblemHelper::requestClear, worker, &GioEmblemWorker::onClear, Qt::QueuedConnection);
+    connect(worker, &GioEmblemWorker::emblemChanged, this, &EmblemHelper::onEmblemChanged, Qt::QueuedConnection);
 
     workerThread.start();
+}
+
+QIcon EmblemHelper::standardEmblem(const SystemEmblemType type) const
+{
+    static QIcon linkEmblem(QIcon::fromTheme("emblem-symbolic-link"));
+    static QIcon lockEmblem(QIcon::fromTheme("emblem-locked"));
+    static QIcon unreadableEmblem(QIcon::fromTheme("emblem-unreadable"));
+    static QIcon shareEmblem(QIcon::fromTheme("emblem-shared"));
+
+    switch (type) {
+    case SystemEmblemType::kLink:
+        return linkEmblem;
+    case SystemEmblemType::kLock:
+        return lockEmblem;
+    case SystemEmblemType::kUnreadable:
+        return unreadableEmblem;
+    case SystemEmblemType::kShare:
+        return shareEmblem;
+    }
+
+    return QIcon();
 }

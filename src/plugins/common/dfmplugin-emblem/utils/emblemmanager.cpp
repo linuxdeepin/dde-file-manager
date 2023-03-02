@@ -33,19 +33,24 @@ bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, Q
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     Q_ASSERT(painter);
     Q_ASSERT(paintArea);
+
     if (role != kItemIconRole || !url.isValid())
         return false;
 
-    // for produce
-    helper->pending(url);
+    // add system emblem icons
+    QList<QIcon> emblems { helper->systemEmblems(url) };
 
-    // consume
-    QList<QIcon> emblems { helper->emblemIcons(url) };
+    //  only paitn system emblem icons if url is prohibited
+    if (!helper->isExtEmblemProhibited(url)) {
+        // add gio embelm icons
+        helper->pending(url);
+        emblems.append(helper->gioEmblemIcons(url));
 
-    // add custom emblem icons
-    EmblemEventSequence::instance()->doFetchCustomEmblems(url, &emblems);
-    // add extension lib emblem icons
-    EmblemEventSequence::instance()->doFetchExtendEmblems(url, &emblems);
+        // add custom emblem icons
+        EmblemEventSequence::instance()->doFetchCustomEmblems(url, &emblems);
+        // add extension lib emblem icons
+        EmblemEventSequence::instance()->doFetchExtendEmblems(url, &emblems);
+    }
 
     if (emblems.isEmpty())
         return false;
@@ -57,5 +62,5 @@ bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, Q
         emblems.at(i).paint(painter, paintRects.at(i).toRect());
     }
 
-    return false;
+    return true;
 }

@@ -18,7 +18,7 @@ DPEMBLEM_BEGIN_NAMESPACE
 using Product = QList<QIcon>;   // for a url
 using ProductQueue = QHash<QUrl, Product>;
 
-class EmblemWorker : public QObject
+class GioEmblemWorker : public QObject
 {
     Q_OBJECT
 
@@ -33,9 +33,7 @@ Q_SIGNALS:
     void emblemChanged(const QUrl &url, const Product &product);
 
 private:
-    QList<QIcon> getSystemEmblems(const AbstractFileInfoPointer &info) const;
     QMap<int, QIcon> getGioEmblems(const AbstractFileInfoPointer &info) const;
-    QIcon standardEmblem(const SystemEmblemType type) const;
     bool parseEmblemString(QIcon *emblem, QString &pos, const QString &emblemStr) const;
     bool iconNamesEqual(const QList<QIcon> &first, const QList<QIcon> &second);
     void setEmblemIntoIcons(const QString &pos, const QIcon &emblem, QMap<int, QIcon> *iconMap) const;
@@ -55,9 +53,11 @@ public:
     inline bool hasEmblem(const QUrl &url) const { return productQueue.contains(url); }
     inline void clearEmblem() { productQueue.clear(); }
 
+    QList<QIcon> systemEmblems(const QUrl &url) const;
     QList<QRectF> emblemRects(const QRectF &paintArea) const;
-    QList<QIcon> emblemIcons(const QUrl &url) const;
+    QList<QIcon> gioEmblemIcons(const QUrl &url) const;
     void pending(const QUrl &url);
+    bool isExtEmblemProhibited(const QUrl &url);
 
 Q_SIGNALS:
     void requestProduce(const QUrl &url);
@@ -69,13 +69,12 @@ private Q_SLOTS:
 
 private:
     void initialize();
+    QIcon standardEmblem(const SystemEmblemType type) const;
 
 private:
-    EmblemWorker *worker { new EmblemWorker };
+    GioEmblemWorker *worker { new GioEmblemWorker };
     ProductQueue productQueue;
     QThread workerThread;
-
-    static constexpr int kProduceInterval { 300 };   // ms
 };
 
 DPEMBLEM_END_NAMESPACE
