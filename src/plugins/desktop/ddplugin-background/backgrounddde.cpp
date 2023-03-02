@@ -93,9 +93,9 @@ QString BackgroundDDE::getBackgroundFromConfig(const QString &screen)
                 QJsonValue info = arr.at(i).toObject().value("wallpaperInfo");
                 if (type.toString() == ("index+monitorName") && info.isArray()) {
                     QJsonArray val = info.toArray();
-                    for (int i =0; i < val.size(); i++) {
-                        if (val.at(i).isObject()) {
-                            QString wpIndex = val.at(i).toObject().value("wpIndex").toString();
+                    for (int j = 0; j < val.size(); j++) {
+                        if (val.at(j).isObject()) {
+                            QString wpIndex = val.at(j).toObject().value("wpIndex").toString();
                             int index = wpIndex.indexOf("+");
                             if (index <= 0) {
                                 continue;
@@ -107,7 +107,7 @@ QString BackgroundDDE::getBackgroundFromConfig(const QString &screen)
                                 continue;
                             }
 
-                            path = val.at(i).toObject().value("uri").toString();
+                            path = val.at(j).toObject().value("uri").toString();
                             break;
                         }
                     }

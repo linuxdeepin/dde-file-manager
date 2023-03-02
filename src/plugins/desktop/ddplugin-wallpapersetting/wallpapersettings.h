@@ -22,7 +22,7 @@ public:
         ScreenSaverMode
     };
     explicit WallpaperSettings(const QString &screenName, Mode mode = Mode::WallpaperMode, QWidget *parent = nullptr);
-    ~WallpaperSettings();
+    ~WallpaperSettings() override;
     void switchMode(Mode mode);
     QString wallpaperSlideShow() const;
     void setWallpaperSlideShow(const QString &period);

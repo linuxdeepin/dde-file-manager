@@ -80,13 +80,13 @@ bool EventHandle::init()
     return true;
 }
 
-bool EventHandle::wallpaperSetting(QString name)
+bool EventHandle::wallpaperSetting(const QString &name)
 {
     show(name, (int)WallpaperSettings::Mode::WallpaperMode);
     return true;
 }
 
-bool EventHandle::screenSaverSetting(QString name)
+bool EventHandle::screenSaverSetting(const QString &name)
 {
     show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
     return true;

@@ -26,7 +26,7 @@ public:
         QPixmap pixmap;
     };
 public:
-    BackgroundBridge(class BackgroundManagerPrivate *ptr);
+    explicit BackgroundBridge(class BackgroundManagerPrivate *ptr);
     ~BackgroundBridge();
 public:
     void request(bool refresh);

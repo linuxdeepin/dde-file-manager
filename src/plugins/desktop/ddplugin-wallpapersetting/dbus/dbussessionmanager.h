@@ -64,7 +64,7 @@ private:
         }
     }
 public:
-    DBusSessionManager(QObject *parent = nullptr);
+    explicit DBusSessionManager(QObject *parent = nullptr);
 
     ~DBusSessionManager();
 

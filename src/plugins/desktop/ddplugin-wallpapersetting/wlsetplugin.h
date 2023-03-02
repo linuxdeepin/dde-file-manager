@@ -20,8 +20,8 @@ public:
     ~EventHandle();
     bool init();
 public slots:
-    bool wallpaperSetting(QString name);
-    bool screenSaverSetting(QString name);
+    bool wallpaperSetting(const QString &name);
+    bool screenSaverSetting(const QString &name);
     void onQuit();
 
     bool hookCanvasRequest(const QString &screen);
