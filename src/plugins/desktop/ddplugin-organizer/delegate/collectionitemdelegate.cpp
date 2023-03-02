@@ -105,9 +105,9 @@ CollectionItemDelegate::CollectionItemDelegate(QAbstractItemView *parentPtr)
     // d->charOfLine << 6 << 6 << 6 << 9 << 9;
 
     // 初始化默认图标为小
-    const int iconLevel = 1;
-    Q_ASSERT(iconLevel < d->kIconSizes.size());
-    setIconLevel(iconLevel);
+    const int iconLv = 1;
+    Q_ASSERT(iconLv < d->kIconSizes.size());
+    setIconLevel(iconLv);
     d->textLineHeight = parent()->fontMetrics().height();
 
     //    connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &CanvasItemDelegate::clipboardDataChanged);

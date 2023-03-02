@@ -28,6 +28,7 @@ DDP_BACKGROUND_USE_NAMESPACE
 
 inline QString getScreenName(QWidget *win)
 {
+    Q_ASSERT(win);
     return win->property(DesktopFrameProperty::kPropScreenName).toString();
 }
 

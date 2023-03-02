@@ -356,11 +356,13 @@ void CustomMode::onNewCollection(const QList<QUrl> &list)
 void CustomMode::onDeleteCollection(const QString &key)
 {
     QList<QUrl> urls;
-    for (auto handler : d->dataHandler->baseDatas()) {
-        if (handler->key == key) {
-            urls = handler->items;
-            break;
-        }
+    {
+        auto bd = d->dataHandler->baseDatas();
+        auto it = std::find_if(bd.begin(), bd.end(), [&key](const CollectionBaseDataPtr &handler){
+            return handler->key == key;
+        });
+        if (it != bd.end())
+            urls = (*it)->items;
     }
 
     d->dataHandler->removeBaseData(key);

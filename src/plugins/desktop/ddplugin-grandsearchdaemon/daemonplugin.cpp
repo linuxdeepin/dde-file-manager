@@ -43,17 +43,14 @@ void DaemonPlugin::initialize()
 bool DaemonPlugin::start()
 {
     if (library) {
-        auto lis = dpfListener;
-        connect(lis, &dpf::Listener::pluginsStarted, library, [this](){
-            qInfo() << "ready to start grand seach after 3 seconds.";
-            QTimer::singleShot(3000, library, [this](){
-                qInfo() << "start grand search daemon" << library->version();
-                if (library->start(0, nullptr) != 0) {
-                    qWarning() << "fail to start.";
-                    library->deleteLater();
-                    library = nullptr;
-                }
-            });
+        qInfo() << "ready to start grand seach after 3 seconds.";
+        QTimer::singleShot(3000, library, [this]() {
+            qInfo() << "start grand search daemon" << library->version();
+            if (library->start(0, nullptr) != 0) {
+                qWarning() << "fail to start.";
+                library->deleteLater();
+                library = nullptr;
+            }
         });
     }
     return true;

@@ -46,7 +46,7 @@ private:
     void stopDelayDodge();
 
 protected:
-    CanvasView *view;
+    CanvasView *view = nullptr;
     QUrl m_target;   //must be file:///
     QPersistentModelIndex dragHoverIndex;
 };

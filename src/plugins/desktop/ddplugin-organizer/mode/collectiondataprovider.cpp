@@ -22,12 +22,13 @@ CollectionDataProvider::~CollectionDataProvider()
 QString CollectionDataProvider::key(const QUrl &url) const
 {
     QString ret;
-    for (const CollectionBaseDataPtr &ptr: collections.values()) {
-        if (ptr->items.contains(url)) {
-            ret = ptr->key;
-            break;
-        }
-    }
+    auto it = std::find_if(collections.begin(), collections.end(), [&url](const CollectionBaseDataPtr &ptr) {
+        return ptr->items.contains(url);
+    });
+
+    if (it != collections.end())
+        ret = (*it)->key;
+
     return ret;
 }
 
@@ -138,8 +139,8 @@ void CollectionDataProvider::addPreItems(const QString &targetKey, const QList<Q
 {
     auto it = preCollectionItems.find(targetKey);
     if (it == preCollectionItems.end()) {
-        QPair<int, QList<QUrl>> items{targetIndex, urls};
-        preCollectionItems.insert(targetKey, items);
+        QPair<int, QList<QUrl>> its{targetIndex, urls};
+        preCollectionItems.insert(targetKey, its);
     } else {
         // merge to existing index
         it.value().second.append(urls);

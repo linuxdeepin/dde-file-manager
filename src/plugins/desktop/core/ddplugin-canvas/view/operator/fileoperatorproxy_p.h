@@ -41,7 +41,7 @@ public:
 
     void filterDesktopFile(QList<QUrl> &urls);
 public:
-    FileOperatorProxy *const q;
+    FileOperatorProxy *const q = nullptr;
     QSharedPointer<QTimer> selectTimer;
     DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
 

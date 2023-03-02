@@ -61,7 +61,7 @@ public slots:
     bool fetch(const QUrl &url); //show \a url if exsited
     bool take(const QUrl &url);  // hide \a url
 private:
-    CanvasProxyModelPrivate *d;
+    CanvasProxyModelPrivate *d = nullptr;
 };
 
 }

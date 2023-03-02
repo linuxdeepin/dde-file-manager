@@ -243,7 +243,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     if (indexs.isEmpty() || !d)
         return QPixmap();
 
-    auto view = d->q;
+    auto viewPtr = d->q;
     // get foucs item to set it on top.
     auto foucs = d->operState().current();
     if (!foucs.isValid()) {
@@ -264,7 +264,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     static const qreal rotateBase = 10.0;
     static const qreal opacityBase = 0.1;
     static const int rectSzie = iconWidth + iconMargin * 2;
-    const qreal scale = view->devicePixelRatioF();
+    const qreal scale = viewPtr->devicePixelRatioF();
 
     QRect pixRect(0, 0, rectSzie, rectSzie);
     QPixmap pixmap(pixRect.size() * scale);
@@ -275,7 +275,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     const qreal offsetY = pixRect.height() / 2;
     const QSize iconSize(iconWidth, iconWidth);
 
-    QStyleOptionViewItem option = view->viewOptions();
+    QStyleOptionViewItem option = viewPtr->viewOptions();
     option.state |= QStyle::State_Selected;
     // icon rect in pixmap.
     option.rect = pixRect.translated(iconMargin, iconMargin);
@@ -300,7 +300,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
         }
 
         //paint icon
-        view->itemDelegate()->paintDragIcon(&painter, option, indexs.at(i));
+        viewPtr->itemDelegate()->paintDragIcon(&painter, option, indexs.at(i));
 
         painter.restore();
     }
@@ -310,7 +310,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     {
         painter.save();
         painter.setOpacity(0.8);
-        topIconSize = view->itemDelegate()->paintDragIcon(&painter, option, foucs);
+        topIconSize = viewPtr->itemDelegate()->paintDragIcon(&painter, option, foucs);
         painter.restore();
     }
 

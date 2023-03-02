@@ -29,8 +29,8 @@ QString NormalizedModeBroker::gridPoint(const QUrl &item, QPoint *point)
 {
     CollectionViewBroker broker;
     for (auto holder : mode->d->holders.values()) {
-        if (auto view = holder->widget()->view()) {
-            broker.setView(view);
+        if (auto viewPtr = holder->widget()->view()) {
+            broker.setView(viewPtr);
             QPoint pos;
             if (broker.gridPoint(item, pos)) {
                 if (point)

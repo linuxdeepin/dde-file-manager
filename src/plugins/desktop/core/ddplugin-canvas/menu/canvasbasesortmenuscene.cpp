@@ -33,7 +33,7 @@ void CanvasBaseSortMenuScenePrivate::sortPrimaryMenu(QMenu *menu)
 
     auto actions = menu->actions();
     // sort
-    qSort(actions.begin(), actions.end(), [&sortRule](QAction *act1, QAction *act2) {
+    std::stable_sort(actions.begin(), actions.end(), [&sortRule](QAction *act1, QAction *act2) {
         const auto &property1 = act1->property(ActionID::kActionID).toString();
         auto index1 = sortRule.indexOf(property1);
         if (index1 == -1)
@@ -105,7 +105,7 @@ void CanvasBaseSortMenuScenePrivate::sortSecondaryMenu(QMenu *menu)
             if (sortRuleMap.count(key) > 0) {
                 const QStringList &sortRule = sortRuleMap.value(key);
                 QList<QAction *> secondaryActions = secondaryMenu->actions();
-                qSort(secondaryActions.begin(), secondaryActions.end(), [sortRule, findIndex](QAction *act1, QAction *act2) {
+                std::stable_sort(secondaryActions.begin(), secondaryActions.end(), [sortRule, findIndex](QAction *act1, QAction *act2) {
                     const auto &property1 = act1->property(ActionID::kActionID).toString();
                     const auto &property2 = act2->property(ActionID::kActionID).toString();
 

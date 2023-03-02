@@ -77,10 +77,10 @@ bool DragDropOper::move(QDragMoveEvent *event)
     updateDragHover(event->pos());
 
     auto pos = event->pos();
-    auto hoverIndex = view->indexAt(pos);
+    auto hoverIdx = view->indexAt(pos);
     // extend
-    if (hoverIndex.isValid() && view->d->hookIfs) {
-        QUrl hoverUrl = view->model()->fileUrl(hoverIndex);
+    if (hoverIdx.isValid() && view->d->hookIfs) {
+        QUrl hoverUrl = view->model()->fileUrl(hoverIdx);
         Qt::DropAction dropAction = Qt::IgnoreAction;
 
         QVariantHash ext;
@@ -95,9 +95,9 @@ bool DragDropOper::move(QDragMoveEvent *event)
             }
         }
     }
-    QUrl curUrl = hoverIndex.isValid() ? view->model()->fileUrl(hoverIndex) : view->model()->rootUrl();
-    if (hoverIndex.isValid()) {
-        if (auto fileInfo = view->model()->fileInfo(hoverIndex)) {
+    QUrl curUrl = hoverIdx.isValid() ? view->model()->fileUrl(hoverIdx) : view->model()->rootUrl();
+    if (hoverIdx.isValid()) {
+        if (auto fileInfo = view->model()->fileInfo(hoverIdx)) {
             bool canDrop = !fileInfo->canAttributes(CanableInfoType::kCanDrop) || (fileInfo->isAttributes(OptInfoType::kIsDir) && !fileInfo->isAttributes(OptInfoType::kIsWritable)) || !fileInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction());
             if (!canDrop) {
                 handleMoveMimeData(event, curUrl);
@@ -114,7 +114,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
 
     // hover
     preproccessDropEvent(event, event->mimeData()->urls(), curUrl);
-    if (!hoverIndex.isValid())
+    if (!hoverIdx.isValid())
         handleMoveMimeData(event, curUrl);
 
     return true;
@@ -192,24 +192,13 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
             }
         }
 
-        // is from or to trash or is to trash
-        {
-            bool isFromTrash = FileUtils::isTrashFile(from);
-            bool isToTrash = false;   // there is no  trash dir on desktop.
-
-            if (isFromTrash && isToTrash) {
-                event->setDropAction(Qt::IgnoreAction);
-                return;
-            } else if (isFromTrash || isToTrash) {
-                defaultAction = Qt::MoveAction;
-            }
-        }
+        // is from trash
+        if (FileUtils::isTrashFile(from))
+            defaultAction = Qt::MoveAction;
 
         const bool sameUser = SysInfoUtils::isSameUser(event->mimeData());
         if (event->possibleActions().testFlag(defaultAction))
             event->setDropAction((defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction);
-
-        // todo is from vault
 
         if (!itemInfo->supportedOfAttributes(SupportedType::kDrop).testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
@@ -295,12 +284,13 @@ void DragDropOper::selectItems(const QList<QUrl> &fileUrl) const
 
         // set new focus.
         for (auto itor = viewCurrentIndex.begin(); itor != viewCurrentIndex.end(); ++itor) {
-            for (const QSharedPointer<CanvasView> &v : allView) {
-                if (v->screenNum() == itor.key()) {
-                    v->d->operState().setCurrent(itor.value());
-                    v->d->operState().setContBegin(itor.value());
-                    break;
-                }
+            auto v = std::find_if(allView.begin(), allView.end(), [itor](const QSharedPointer<CanvasView> &v) {
+                return v->screenNum() == itor.key();
+            });
+
+            if (v != allView.end()) {
+                (*v)->d->operState().setCurrent(itor.value());
+                (*v)->d->operState().setContBegin(itor.value());
             }
         }
     }
@@ -316,11 +306,15 @@ bool DragDropOper::dropFilter(QDropEvent *event)
             auto itemInfo = FileCreator->createFileInfo(targetItem);
             if (itemInfo && (itemInfo->isAttributes(OptInfoType::kIsDir) || itemInfo->urlOf(UrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl())) {
                 auto sourceUrls = event->mimeData()->urls();
-                for (const QUrl &url : sourceUrls) {
-                    if ((DesktopAppUrl::computerDesktopFileUrl() == url) || (DesktopAppUrl::trashDesktopFileUrl() == url) || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
-                        event->setDropAction(Qt::IgnoreAction);
-                        return true;
-                    }
+                bool find = std::any_of(sourceUrls.begin(), sourceUrls.end(), [](const QUrl &url){
+                    return (DesktopAppUrl::computerDesktopFileUrl() == url)
+                            || (DesktopAppUrl::trashDesktopFileUrl() == url)
+                            || (DesktopAppUrl::homeDesktopFileUrl() == url);
+                });
+
+                if (find) {
+                    event->setDropAction(Qt::IgnoreAction);
+                    return true;
                 }
             }
         }

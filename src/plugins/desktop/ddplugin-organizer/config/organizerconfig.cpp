@@ -202,7 +202,7 @@ void OrganizerConfig::updateCollectionBase(bool custom, const CollectionBaseData
 
     d->settings->beginGroup(base->key);
     d->settings->setValue(kKeyName, base->name);
-    d->settings->value(kKeyKey, base->key);
+    d->settings->setValue(kKeyKey, base->key);
 
     {
         d->settings->beginGroup(kGroupItems);

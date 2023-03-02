@@ -32,8 +32,7 @@ void DodgeOper::updatePrepareDodgeValue(QEvent *event)
 {
     if (event) {
         if (QEvent::DragEnter == event->type()) {
-            QDragEnterEvent *dragEnterEvent = static_cast<QDragEnterEvent *>(event);
-            if (dragEnterEvent) {
+            if (QDragEnterEvent *dragEnterEvent = dynamic_cast<QDragEnterEvent *>(event)) {
                 CanvasView *fromView = qobject_cast<CanvasView *>(dragEnterEvent->source());
                 if (fromView
                     && dragEnterEvent->mimeData()
@@ -197,10 +196,9 @@ bool DodgeItemsOper::tryDodge(const QStringList &orgItems, const GridPos &ref, Q
     QList<int> emptyindexes = toIndex(ref.first, emptyPos);
 
     // sort empty index by distance from the target
-    auto sortIndex = [targetIndex](const int &index1, const int &index2) -> bool {
+    std::stable_sort(emptyindexes.begin(), emptyindexes.end(), [targetIndex](const int &index1, const int &index2) {
         return qAbs(index1 - targetIndex) < qAbs(index2 - targetIndex);
-    };
-    qSort(emptyindexes.begin(), emptyindexes.end(), sortIndex);
+    });
 
     // according to the principle of proximity, calculate the number of empty required before and after the target
     int targetBeforNeedEmptyCount = 0;
@@ -260,10 +258,9 @@ QList<int> DodgeItemsOper::toIndex(const int screenNumber, const QList<QPoint> &
 {
     int height = surfaceSize(screenNumber).height();
     QList<int> indexes;
-    int index = 0;
     for (const QPoint &point : pos) {
         Q_ASSERT(point.y() < height);
-        index = point.x() * height + point.y();
+        int index = point.x() * height + point.y();
         indexes << index;
     }
 

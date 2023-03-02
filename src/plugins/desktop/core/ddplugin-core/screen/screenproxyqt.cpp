@@ -79,14 +79,14 @@ QVector<ScreenPointer> ScreenProxyQt::screens() const
 QVector<ScreenPointer> ScreenProxyQt::logicScreens() const
 {
     QVector<ScreenPointer> order;
-    auto screens = qApp->screens();
+    auto allScreen = qApp->screens();
 
     //调整主屏幕到第一
     QScreen *primary = qApp->primaryScreen();
-    screens.removeOne(primary);
-    screens.push_front(primary);
+    allScreen.removeOne(primary);
+    allScreen.push_front(primary);
 
-    for (QScreen *sc : screens) {
+    for (QScreen *sc : allScreen) {
         if (screenMap.contains(sc))
             order.append(screenMap.value(sc));
     }
@@ -96,12 +96,12 @@ QVector<ScreenPointer> ScreenProxyQt::logicScreens() const
 ScreenPointer ScreenProxyQt::screen(const QString &name) const
 {
     ScreenPointer ret;
-    auto screens = screenMap.values();
-    auto iter = std::find_if(screens.begin(), screens.end(), [name](const ScreenPointer & sp) {
+    auto allScreen = screenMap.values();
+    auto iter = std::find_if(allScreen.begin(), allScreen.end(), [name](const ScreenPointer & sp) {
         return sp->name() == name;
     });
 
-    if (iter != screens.end()) {
+    if (iter != allScreen.end()) {
         ret = *iter;
     }
 
@@ -123,10 +123,10 @@ DisplayMode ScreenProxyQt::displayMode() const
         return DisplayMode::kShowonly;
     } else {
         //存在两个屏幕坐标不一样则视为扩展，只有所有屏幕坐标相等发生重叠时才视为复制
-        const ScreenPointer &screen = allScreen.at(0);
+        const ScreenPointer &screen1 = allScreen.at(0);
         for (int i = 1; i < allScreen.size(); ++i) {
             const ScreenPointer &screen2 = allScreen.at(i);
-            if (screen->geometry().topLeft() != screen2->geometry().topLeft()) {
+            if (screen1->geometry().topLeft() != screen2->geometry().topLeft()) {
                 return DisplayMode::kExtend;
             }
         }

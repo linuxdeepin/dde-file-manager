@@ -37,7 +37,7 @@ public:
     static inline const char *staticInterfaceName()
     { return "com.deepin.daemon.Display.Monitor"; }
 public:
-    DBusMonitor(const QString &objectPath, QObject *parent = nullptr);
+    explicit DBusMonitor(const QString &objectPath, QObject *parent = nullptr);
     ~DBusMonitor();
 
     Q_PROPERTY(QString Name READ name)

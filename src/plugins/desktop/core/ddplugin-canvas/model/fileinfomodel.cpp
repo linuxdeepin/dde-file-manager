@@ -406,14 +406,14 @@ Qt::ItemFlags FileInfoModel::flags(const QModelIndex &index) const
 
 QMimeData *FileInfoModel::mimeData(const QModelIndexList &indexes) const
 {
-    QMimeData *data = new QMimeData();
+    QMimeData *mmData = new QMimeData();
     QList<QUrl> urls;
 
     for (const QModelIndex &idx : indexes)
         urls << fileUrl(idx);
 
-    data->setUrls(urls);
-    return data;
+    mmData->setUrls(urls);
+    return mmData;
 }
 
 bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)

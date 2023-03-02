@@ -45,7 +45,7 @@ public:
     bool remove(int index, const QString &item);
     bool replace(const QString &oldItem, const QString &newItem);
     void append(const QString &item);
-    void append(QStringList items);
+    void append(const QStringList &items);
     void tryAppendAfter(const QStringList &items, int index, const QPoint &begin);
     void popOverload();
     void arrange();

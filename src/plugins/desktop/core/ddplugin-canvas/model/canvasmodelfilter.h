@@ -23,7 +23,7 @@ public:
     virtual bool removeFilter(const QUrl &url);
     virtual bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl);
 protected:
-    CanvasProxyModel *model;
+    CanvasProxyModel *model = nullptr;
 };
 
 class HiddenFileFilter : public CanvasModelFilter

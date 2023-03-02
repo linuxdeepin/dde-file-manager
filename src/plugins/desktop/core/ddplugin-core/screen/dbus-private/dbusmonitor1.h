@@ -53,7 +53,7 @@ public:
     { return "org.deepin.dde.Display1.Monitor"; }
 
 public:
-    DBusMonitor(const QString &objectPath, QObject *parent = nullptr);
+    explicit DBusMonitor(const QString &objectPath, QObject *parent = nullptr);
 
     ~DBusMonitor();
 

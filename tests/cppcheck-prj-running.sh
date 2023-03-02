@@ -22,9 +22,9 @@ echo "start dde-file-manager cppcheck case"
 # report目录
 REPORT_FILE_PATH=$BUILD_DIR/cppcheck_dde-file-manager.xml
 # 打印cppcheck命令
-echo "cppcheck --std=c++11 --language=c++ --enable=all --output-file="$REPORT_FILE_PATH "--xml" $SRC_DIR
+echo "cppcheck --std=c++11 --language=c++ --enable=all --library=qt --output-file="$REPORT_FILE_PATH "--xml" $SRC_DIR
 # 执行cppcheck命令
-cppcheck --std=c++11 --language=c++ --enable=all --output-file=$REPORT_FILE_PATH --xml $SRC_DIR
+cppcheck --std=c++11 --language=c++ --enable=all --library=qt --output-file=$REPORT_FILE_PATH --xml $SRC_DIR
 
 echo "end dde-file-manager cppcheck case"
 

@@ -54,7 +54,7 @@ signals:
 private:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
 private:
-    CollectionModelPrivate *d;
+    CollectionModelPrivate *d = nullptr;
 };
 
 }

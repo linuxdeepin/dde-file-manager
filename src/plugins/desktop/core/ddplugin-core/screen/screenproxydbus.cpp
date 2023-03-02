@@ -47,9 +47,9 @@ QVector<ScreenPointer> ScreenProxyDBus::screens() const
     for (const QDBusObjectPath &path : DisplayInfoIns->monitors()) {
         if (screenMap.contains(path.path())) {
             ScreenPointer sp = screenMap.value(path.path());
-            ScreenDBus *screen = SCREENOBJECT(sp.data());
-            if (screen) {
-                if (screen->enabled())
+            ScreenDBus *screenPtr = SCREENOBJECT(sp.data());
+            if (screenPtr) {
+                if (screenPtr->enabled())
                     order.append(sp);
             } else
                 order.append(sp);
@@ -83,9 +83,9 @@ QVector<ScreenPointer> ScreenProxyDBus::logicScreens() const
             if (sp->name() == primaryName) {
                 order.push_front(sp);
             } else {
-                ScreenDBus *screen = SCREENOBJECT(sp.data());
-                if (screen) {
-                    if (screen->enabled())
+                ScreenDBus *screenPtr = SCREENOBJECT(sp.data());
+                if (screenPtr) {
+                    if (screenPtr->enabled())
                         order.push_back(sp);
                 } else
                     order.push_back(sp);
@@ -98,12 +98,12 @@ QVector<ScreenPointer> ScreenProxyDBus::logicScreens() const
 ScreenPointer ScreenProxyDBus::screen(const QString &name) const
 {
     ScreenPointer ret;
-    auto screens = screenMap.values();
-    auto iter = std::find_if(screens.begin(), screens.end(), [name](const ScreenPointer & sp) {
+    auto allScreen = screenMap.values();
+    auto iter = std::find_if(allScreen.begin(), allScreen.end(), [name](const ScreenPointer & sp) {
         return sp->name() == name;
     });
 
-    if (iter != screens.end()) {
+    if (iter != allScreen.end()) {
         ret = *iter;
     }
 

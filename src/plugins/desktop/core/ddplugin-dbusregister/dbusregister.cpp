@@ -27,7 +27,7 @@ DFMBASE_USE_NAMESPACE
 void DBusRegister::initialize()
 {
     UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
-
+    dpfSignalDispatcher->subscribe("ddplugin_core", "signal_DesktopFrame_WindowShowed", this, &DBusRegister::onWindowShowed);
     // NOTE(xust): this is used to launch GVolumeMonitor in main thread, this function obtained the GVolumeMonitor instance indirectly,
     // a GVolumeMonitor instance must run in main thread to make sure the messages about device change can be send correctly,
     // the GVolumeMonitor instance is expected to be initialized in DDeviceManager but the DDeviceManager is delay intialized when
@@ -38,7 +38,6 @@ void DBusRegister::initialize()
 
 bool DBusRegister::start()
 {
-    registerDBus();
     return true;
 }
 
@@ -64,6 +63,12 @@ void DBusRegister::registerDBus()
             DevMngIns->startMonitor();
         }
     });
+}
+
+void DBusRegister::onWindowShowed()
+{
+    dpfSignalDispatcher->unsubscribe("ddplugin_core", "signal_DesktopFrame_WindowShowed", this, &DBusRegister::onWindowShowed);
+    registerDBus();
 }
 
 std::once_flag &DBusRegister::onceFlag()

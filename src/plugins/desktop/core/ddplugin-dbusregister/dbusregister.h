@@ -23,8 +23,10 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
 
-private:
+protected:
     void registerDBus();
+private Q_SLOTS:
+    void onWindowShowed();
 
 private:
     static std::once_flag &onceFlag();

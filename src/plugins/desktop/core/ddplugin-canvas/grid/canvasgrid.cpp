@@ -126,8 +126,8 @@ QStringList CanvasGrid::items(int index) const
         for (const int &idx : d->surfaceIndex())
             ret << items(idx);
     } else { // get items which is in surface \a index
-        auto item = d->itemPos.value(index);
-        ret  << CanvasGridSpecialist::sortItemInGrid(item) << overloadItems(index);
+        auto itemInfo = d->itemPos.value(index);
+        ret  << CanvasGridSpecialist::sortItemInGrid(itemInfo) << overloadItems(index);
     }
     return ret;
 }
@@ -264,7 +264,7 @@ void CanvasGrid::append(const QString &item)
     return;
 }
 
-void CanvasGrid::append(QStringList items)
+void CanvasGrid::append(const QStringList &items)
 {
     if (Q_UNLIKELY(items.isEmpty()))
         return;
@@ -293,8 +293,8 @@ void CanvasGrid::popOverload()
     if (!d->overload.isEmpty()) {
         GridPos pos;
         if (d->findVoidPos(pos)) {
-            auto item = d->overload.takeFirst();
-            d->insert(pos.first, pos.second, item);
+            const QString &it = d->overload.takeFirst();
+            d->insert(pos.first, pos.second, it);
             requestSync();
         }
     }
@@ -510,7 +510,7 @@ QStringList CanvasGridSpecialist::sortItemInGrid(const QHash<QString, QPoint> &i
 
     // sorted as show in grid
     // 0x0 < 0x1 < 1x0 < 1x1
-    qSort(ordered.begin(), ordered.end(),[](const QPair<QPoint, QString> &t1, QPair<QPoint, QString> &t2){
+    std::sort(ordered.begin(), ordered.end(),[](const QPair<QPoint, QString> &t1, QPair<QPoint, QString> &t2){
         if (t1.first.x() < t2.first.x())
             return true;
         else if (t1.first.x() == t2.first.x()){

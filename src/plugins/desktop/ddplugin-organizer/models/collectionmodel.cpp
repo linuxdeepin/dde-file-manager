@@ -121,7 +121,7 @@ void CollectionModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft,
         return;
 
     // AscendingOrder
-    qSort(idxs.begin(), idxs.end(), [](const QModelIndex &t1, const QModelIndex &t2) {
+    std::stable_sort(idxs.begin(), idxs.end(), [](const QModelIndex &t1, const QModelIndex &t2) {
         return t1.row() < t2.row();
     });
 
@@ -495,18 +495,18 @@ QVariant CollectionModel::data(const QModelIndex &index, int role) const
 
 QMimeData *CollectionModel::mimeData(const QModelIndexList &indexes) const
 {
-    QMimeData *data = new QMimeData();
+    QMimeData *mm = new QMimeData();
     QList<QUrl> urls;
 
     for (const QModelIndex &idx : indexes)
         urls << fileUrl(idx);
 
-    data->setUrls(urls);
+    mm->setUrls(urls);
 
     // set user id
-    data->setData(QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
+    mm->setData(QString(DFMGLOBAL_NAMESPACE::Mime::kDataUserIDKey), QString::number(SysInfoUtils::getUserId()).toLocal8Bit());
 
-    return data;
+    return mm;
 }
 
 bool CollectionModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)

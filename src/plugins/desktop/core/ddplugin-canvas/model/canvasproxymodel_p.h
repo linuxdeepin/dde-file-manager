@@ -62,7 +62,7 @@ public:
     QList<QSharedPointer<CanvasModelFilter>> modelFilters;
     bool isNotMixDirAndFile = false;
 private:
-    CanvasProxyModel *q;
+    CanvasProxyModel *q = nullptr;
 };
 
 

@@ -60,20 +60,21 @@ bool CanvasViewBroker::init()
 QSharedPointer<CanvasView> CanvasViewBroker::getView(int idx)
 {
     // screen num is start with 1
-    for (auto v : manager->views())
-        if (v->screenNum() == idx)
-            return v;
+    auto views = manager->views();
+    auto it = std::find_if(views.begin(), views.end(), [&idx](const QSharedPointer<CanvasView> &v){
+        return v->screenNum() == idx;
+    });
 
-    return nullptr;
+    return it != views.end() ? *it : nullptr;
 }
 
 QRect CanvasViewBroker::visualRect(int idx, const QUrl &url)
 {
     QRect rect;
     if (auto view = getView(idx)) {
-        QPoint gridPos;
-        if (view->d->itemGridpos(url.toString(), gridPos))
-            return view->d->visualRect(gridPos);
+        QPoint pos;
+        if (view->d->itemGridpos(url.toString(), pos))
+            return view->d->visualRect(pos);
     }
     return rect;
 }

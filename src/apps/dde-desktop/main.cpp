@@ -68,7 +68,7 @@ static bool pluginsLoad()
     // TODO(xust): the GVolumeMonitor object MUST be initialized in MAIN thread, so a initialize operation is added in dbusregister::initialize.
     // the function `DFMIO::DFMUtils::fileIsRemovable` indirectly initialized the GVolumeMonitor object and the function is invoked everywhere.
     // solve the indirectly initialize issue and then push the plugin to lazy list.
-    static const QStringList kLazyLoadPluginNames { /*"ddplugin-dbusregister", */ "ddplugin-wallpapersetting", "ddplugin-grandsearchdaemon",
+    static const QStringList kLazyLoadPluginNames {"ddplugin-wallpapersetting", "ddplugin-grandsearchdaemon",
                                                     "dfmplugin-bookmark", "dfmplugin-propertydialog", "dfmplugin-tag",
                                                     "dfmplugin-burn", "dfmplugin-dirshare", "dfmplugin-emblem", "dfmplugin-filepreview" };
 
@@ -152,14 +152,14 @@ static void checkUpgrade(DApplication *app)
         qWarning() << "something error, exit current process." << app->applicationPid();
         _Exit(-1);
     } else if (ret == 0) {
-        auto args = app->arguments();
+        auto arguments = app->arguments();
         // remove first
-        if (!args.isEmpty())
-            args.pop_front();
+        if (!arguments.isEmpty())
+            arguments.pop_front();
 
         QDBusConnection::sessionBus().unregisterService(kDesktopServiceName);
-        qInfo() << "restart self " << app->applicationFilePath() << args;
-        QProcess::startDetached(app->applicationFilePath(), args);
+        qInfo() << "restart self " << app->applicationFilePath() << arguments;
+        QProcess::startDetached(app->applicationFilePath(), arguments);
         _Exit(-1);
     }
 

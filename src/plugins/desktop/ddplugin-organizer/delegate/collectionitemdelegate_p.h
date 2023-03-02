@@ -45,7 +45,7 @@ public:
     QSize itemSizeHint;
 
     QTextDocument *document { nullptr };
-    CollectionItemDelegate *const q;
+    CollectionItemDelegate *const q = nullptr;
 };
 
 }

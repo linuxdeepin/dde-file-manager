@@ -86,10 +86,10 @@ DisplayConfig::~DisplayConfig()
     if (workThread) {
         workThread->quit();
         int wait = 5;
-        if (workThread->isRunning() && wait--) {
+        while (workThread->isRunning() && wait--) {
             qInfo() << "wait DisplayConfig thread exit" << wait;
-            workThread->wait(100);
-            qInfo() << "DisplayConfig thread exited";
+            bool exited = workThread->wait(100);
+            qInfo() << "DisplayConfig thread exited:" << exited;
         }
     }
 
@@ -107,11 +107,11 @@ QList<QString> DisplayConfig::profile()
     settings->beginGroup(kKeyProfile);
     const QStringList &keys = settings->childKeys();
     for (const QString &key : keys) {
-        const QString &value = settings->value(key).toString();
-        if (value.isEmpty())
+        const QString &strValue = settings->value(key).toString();
+        if (strValue.isEmpty())
             continue;
 
-        ret.append(value);
+        ret.append(strValue);
     }
     settings->endGroup();
     return ret;
@@ -152,10 +152,10 @@ QHash<QString, QPoint> DisplayConfig::coordinates(const QString &key)
         QPoint pos;
         if (!covertPostion(posKey, pos))
             continue;
-        const QString &value = settings->value(posKey).toString();
-        if (value.isEmpty())
+        const QString &strValue = settings->value(posKey).toString();
+        if (strValue.isEmpty())
             continue;
-        ret.insert(value, pos);
+        ret.insert(strValue, pos);
     }
     settings->endGroup();
 

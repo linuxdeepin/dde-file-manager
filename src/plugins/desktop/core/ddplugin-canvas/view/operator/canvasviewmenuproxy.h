@@ -24,7 +24,7 @@ public slots:
     void changeIconLevel(bool increase);
 
 private:
-    CanvasView *view;
+    CanvasView *view = nullptr;
 };
 
 }

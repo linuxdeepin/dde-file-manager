@@ -34,7 +34,7 @@ public slots:
 protected:
     void switchMode(OrganizerMode mode);
 private:
-    FrameManagerPrivate *d;
+    FrameManagerPrivate *d = nullptr;
 };
 
 }

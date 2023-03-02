@@ -54,7 +54,7 @@ void FileOperatorPrivate::callBackPasteFiles(const JobInfoPointer info)
 {
     // todo(wangcl) 文件粘贴、拖拽释放的回调响应流程。流程无法满足需求，待商榷方案。
     if (info->keys().contains(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey)) {
-        QList<QUrl> files = info->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>();
+        //QList<QUrl> files = info->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>();
 
         // todo(wangcl)
         // 如 dropFilesToCollection 的备注，此时文件是否全部创建，状态未知。

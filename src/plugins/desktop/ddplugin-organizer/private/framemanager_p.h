@@ -50,7 +50,7 @@ public:
     CanvasInterface *canvas = nullptr;
     OptionsWindow *options = nullptr;
 private:
-    FrameManager *q;
+    FrameManager *q = nullptr;
 };
 
 }

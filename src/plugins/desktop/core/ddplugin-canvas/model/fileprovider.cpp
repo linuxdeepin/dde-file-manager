@@ -113,11 +113,13 @@ void FileProvider::traversalFinished()
 
 void FileProvider::insert(const QUrl &url)
 {
-    for (const auto &filter : fileFilters)
-        if (filter->fileCreatedFilter(url))
-            return;
+    bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
+                                  [&url](const QSharedPointer<FileFilter> &filter){
+            return filter->fileCreatedFilter(url);
+        });
 
-    emit fileInserted(url);
+    if (!ignore)
+        emit fileInserted(url);
 }
 
 void FileProvider::remove(const QUrl &url)
@@ -132,13 +134,10 @@ void FileProvider::remove(const QUrl &url)
 
 void FileProvider::rename(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    bool ignore = false;
-    for (const auto &filter : fileFilters) {
-        if (filter->fileRenameFilter(oldUrl, newUrl)) {
-            ignore = true;
-            break;
-        }
-    }
+    bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
+                              [&oldUrl, &newUrl](const QSharedPointer<FileFilter> &filter){
+        return filter->fileRenameFilter(oldUrl, newUrl);
+    });
 
     emit fileRenamed(oldUrl, ignore ? QUrl() : newUrl);
 }
@@ -147,12 +146,13 @@ void FileProvider::update(const QUrl &url)
 {
     if (UrlRoute::urlParent(url) != rootUrl && url != rootUrl)
         return;
+    bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
+                                  [&url](const QSharedPointer<FileFilter> &filter){
+            return filter->fileUpdatedFilter(url);
+        });
 
-    for (const auto &filter : fileFilters)
-        if (filter->fileUpdatedFilter(url))
-            return;
-
-    emit fileUpdated(url);
+    if (!ignore)
+        emit fileUpdated(url);
 }
 
 void FileProvider::preupdateData(const QUrl &url)

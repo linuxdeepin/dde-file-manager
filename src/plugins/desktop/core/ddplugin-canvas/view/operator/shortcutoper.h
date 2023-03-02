@@ -28,7 +28,7 @@ protected slots:
     void previewFiles();
 
 protected:
-    CanvasView *view;
+    CanvasView *view = nullptr;
 };
 
 }

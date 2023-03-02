@@ -30,9 +30,12 @@ void GeneralModelFilter::removeFilter(const QSharedPointer<ModelDataHandler> &fi
 
 bool GeneralModelFilter::acceptInsert(const QUrl &url)
 {
-    for (const auto &filter : modelFilters)
-        if (!filter->acceptInsert(url))
-            return false;
+    bool accepted = std::all_of(modelFilters.begin(), modelFilters.end(),
+                                [&url](const QSharedPointer<ModelDataHandler> &filter){
+        return filter->acceptInsert(url);
+    });
+    if (!accepted)
+        return false;
 
     return ModelDataHandler::acceptInsert(url);
 }

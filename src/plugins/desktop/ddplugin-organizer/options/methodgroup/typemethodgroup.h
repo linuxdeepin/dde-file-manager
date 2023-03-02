@@ -15,6 +15,7 @@ class TypeMethodGroup : public MethodGroupHelper
     Q_OBJECT
 public:
     explicit TypeMethodGroup(QObject *parent = nullptr);
+    ~TypeMethodGroup();
     Classifier id() const override;
     void release() override;
     bool build() override;

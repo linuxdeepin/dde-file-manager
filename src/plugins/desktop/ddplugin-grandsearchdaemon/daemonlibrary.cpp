@@ -27,21 +27,21 @@ bool DaemonLibrary::load()
         return false;
     }
 
-    verFunc = (VerDaemon)lib->resolve("grandSearchDaemonAppVersion");
+    verFunc = reinterpret_cast<VerDaemon>(lib->resolve("grandSearchDaemonAppVersion"));
     if (!verFunc) {
         qCritical() << "no such api grandSearchDaemonAppVersion in" << libPath;
         delete lib;
         return false;
     }
 
-    startFunc = (StartDaemon)lib->resolve("startGrandSearchDaemon");
+    startFunc = reinterpret_cast<StartDaemon>(lib->resolve("startGrandSearchDaemon"));
     if (!startFunc) {
         qCritical() << "no such api startGrandSearchDaemon in" << libPath;
         delete lib;
         return false;
     }
 
-    stopFunc = (StopDaemon)lib->resolve("stopGrandSearchDaemon");
+    stopFunc = reinterpret_cast<StopDaemon>(lib->resolve("stopGrandSearchDaemon"));
     if (!stopFunc) {
         qCritical() << "no such api stopGrandSearchDaemon in" << libPath;
         delete lib;

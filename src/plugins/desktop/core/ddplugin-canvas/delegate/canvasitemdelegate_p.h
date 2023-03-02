@@ -39,6 +39,7 @@ public:
                     const QModelIndex &index, const QRect &rText, QRect *needText = nullptr) const;
 
 public:
+    CanvasItemDelegate *const q = nullptr;
     // default icon size is 48px.
     int currentIconLevel = -1;
     int textLineHeight = -1;
@@ -46,7 +47,6 @@ public:
     QSize itemSizeHint;
 
     QTextDocument *document { nullptr };
-    CanvasItemDelegate *const q;
 };
 
 }

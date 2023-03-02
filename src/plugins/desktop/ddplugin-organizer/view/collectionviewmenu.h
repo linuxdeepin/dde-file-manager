@@ -23,7 +23,7 @@ public slots:
 protected:
     QWidget *getCanvasView();
 private:
-    CollectionView *view;
+    CollectionView *view = nullptr;
 };
 }
 

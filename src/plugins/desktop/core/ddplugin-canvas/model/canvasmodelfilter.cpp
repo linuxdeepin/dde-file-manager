@@ -81,7 +81,6 @@ bool HiddenFileFilter::updateFilter(const QUrl &url)
     if (!model->showHiddenFiles() && url.fileName() == ".hidden") {
         qDebug() << "refresh by hidden changed.";
         model->refresh(model->rootIndex());
-        return true;
     }
 
     return false;

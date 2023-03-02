@@ -28,7 +28,6 @@ MethodGroupHelper *MethodGroupHelper::create(Classifier id)
 
 MethodGroupHelper::~MethodGroupHelper()
 {
-    release();
 }
 
 void MethodGroupHelper::release()

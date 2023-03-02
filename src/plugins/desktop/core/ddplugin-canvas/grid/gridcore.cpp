@@ -33,7 +33,7 @@ GridCore::~GridCore()
 QList<int> GridCore::surfaceIndex() const
 {
     QList<int> order = surfaces.keys();
-    qSort(order.begin(), order.end(), [](const int &first, const int &second){
+    std::stable_sort(order.begin(), order.end(), [](const int &first, const int &second){
         return first < second;
     });
     return order;

@@ -212,18 +212,22 @@ void CanvasProxyModelPrivate::sortMainDesktopFile(QList<QUrl> &files, Qt::SortOr
 
 bool CanvasProxyModelPrivate::insertFilter(const QUrl &url)
 {
-    for (const auto &filter : modelFilters)
-        if (filter->insertFilter(url))
-            return true;
-    return false;
+    bool ret = std::any_of(modelFilters.begin(), modelFilters.end(),
+                           [&url](const QSharedPointer<CanvasModelFilter> &filter) {
+        return filter->insertFilter(url);
+    });
+
+    return ret;
 }
 
 bool CanvasProxyModelPrivate::resetFilter(QList<QUrl> &urls)
 {
-    for (const auto &filter : modelFilters)
-        if (filter->resetFilter(urls))
-            return true;
-    return false;
+    bool ret = std::any_of(modelFilters.begin(), modelFilters.end(),
+                           [&urls](const QSharedPointer<CanvasModelFilter> &filter) {
+        return filter->resetFilter(urls);
+    });
+
+    return ret;
 }
 
 bool CanvasProxyModelPrivate::updateFilter(const QUrl &url)
@@ -231,8 +235,12 @@ bool CanvasProxyModelPrivate::updateFilter(const QUrl &url)
     // these filters is like Notifier.
     // so it will don't interrupt when some one return true.
     bool ret = false;
-    for (const auto &filter : modelFilters)
+    auto unused = std::all_of(modelFilters.begin(), modelFilters.end(),
+                           [&ret,&url](const QSharedPointer<CanvasModelFilter> &filter) {
         ret |= filter->updateFilter(url);
+        return true;
+    });
+    Q_UNUSED(unused);
 
     return ret;
 }
@@ -240,17 +248,24 @@ bool CanvasProxyModelPrivate::updateFilter(const QUrl &url)
 bool CanvasProxyModelPrivate::removeFilter(const QUrl &url)
 {
     bool ret = false;
-    for (const auto &filter : modelFilters)
+    auto unused = std::all_of(modelFilters.begin(), modelFilters.end(),
+                           [&ret,&url](const QSharedPointer<CanvasModelFilter> &filter) {
         ret |= filter->removeFilter(url);
-
+        return true;
+    });
+    Q_UNUSED(unused);
     return ret;
 }
 
 bool CanvasProxyModelPrivate::renameFilter(const QUrl &oldUrl, const QUrl &newUrl)
 {
     bool ret = false;
-    for (const auto &filter : modelFilters)
+    auto unused = std::all_of(modelFilters.begin(), modelFilters.end(),
+                           [&ret,&oldUrl, &newUrl](const QSharedPointer<CanvasModelFilter> &filter) {
         ret |= filter->renameFilter(oldUrl, newUrl);
+        return true;
+    });
+    Q_UNUSED(unused);
 
     return ret;
 }
@@ -431,7 +446,7 @@ void CanvasProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft
         return;
 
     // AscendingOrder
-    qSort(idxs.begin(), idxs.end(), [](const QModelIndex &t1, const QModelIndex &t2) {
+    std::stable_sort(idxs.begin(), idxs.end(), [](const QModelIndex &t1, const QModelIndex &t2) {
         return t1.row() < t2.row();
     });
 
@@ -445,7 +460,7 @@ CanvasProxyModel::CanvasProxyModel(QObject *parent)
 
 QModelIndex CanvasProxyModel::rootIndex() const
 {
-    return createIndex(INT_MAX, 0, (void *)this);
+    return createIndex(INT_MAX, 0, reinterpret_cast<void *>(const_cast<CanvasProxyModel *>(this)));
 }
 
 QModelIndex CanvasProxyModel::index(const QUrl &url, int column) const
@@ -838,11 +853,11 @@ bool CanvasProxyModel::fetch(const QUrl &url)
     if (d->fileMap.contains(url))
         return true;
 
-    QModelIndex index = d->srcModel->index(url);
-    if (!index.isValid())
+    QModelIndex idx = d->srcModel->index(url);
+    if (!idx.isValid())
         return false;
 
-    auto info = d->srcModel->fileInfo(index);
+    auto info = d->srcModel->fileInfo(idx);
     if (info) {
         if (d->hookIfs && d->hookIfs->dataInserted(url)) {
             qDebug() << "filter by extend module. can not add" << url;

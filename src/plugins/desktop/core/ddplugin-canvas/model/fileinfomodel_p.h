@@ -37,7 +37,7 @@ public:
     QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
     QReadWriteLock lock;
 private:
-    FileInfoModel *q;
+    FileInfoModel *q = nullptr;
 };
 
 }

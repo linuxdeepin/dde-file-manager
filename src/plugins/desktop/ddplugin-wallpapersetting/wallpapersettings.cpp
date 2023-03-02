@@ -302,8 +302,8 @@ void WallpaperSettingsPrivate::switchWaitTime(QAbstractButton *toggledBtn, bool 
 void WallpaperSettingsPrivate::setMode(QAbstractButton *toggledBtn, bool on)
 {
     Q_UNUSED(on);
-    int mode = switchModeControl->buttonList().indexOf(toggledBtn);
-    q->switchMode(WallpaperSettings::Mode(mode));
+    int md = switchModeControl->buttonList().indexOf(toggledBtn);
+    q->switchMode(WallpaperSettings::Mode(md));
 }
 
 void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *watch)
@@ -568,9 +568,9 @@ void WallpaperSettingsPrivate::initCarousel()
 
     qDebug() << "DSysInfo::deepinType = " << QString::number(DSysInfo::DeepinProfessional);
 
-    QList<DButtonBoxButton *> slideBtns;
     // create time slide
     {
+        QList<DButtonBoxButton *> slideBtns;
         QString curSlide = q->wallpaperSlideShow();
         auto policys = q->availableWallpaperSlide();
         int curIndex = policys.indexOf(curSlide.toLatin1());
@@ -940,12 +940,11 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key = dynamic_cast<QKeyEvent *>(event);
-        qDebug() << "keyPress" << (Qt::Key)key->key();
         if (!key) {
             qDebug() << "key is null.";
             return DBlurEffectWidget::eventFilter(object, event);
         }
-
+        qDebug() << "keyPress" << (Qt::Key)key->key();
         if (key->key() == Qt::Key_Tab) {
             qDebug() << "Tab";
             //第一个区域发出tab信号，则跳转到第二个区域的第一个控件上

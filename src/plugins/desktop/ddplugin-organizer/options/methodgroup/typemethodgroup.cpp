@@ -24,7 +24,12 @@ TypeMethodGroup::TypeMethodGroup(QObject *parent)
             {kCatVideo, tr("Videos")},
             {kCatMusic, tr("Music")},
             {kCatFloder, tr("Folders")}
-        };
+    };
+}
+
+TypeMethodGroup::~TypeMethodGroup()
+{
+    TypeMethodGroup::release();
 }
 
 Classifier TypeMethodGroup::id() const

@@ -178,8 +178,8 @@ QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
 
     for (auto url : provider->items(id)) {
         auto index = q->model()->index(url);
-        const QRect &&itemRect = q->visualRect(index);
-        QRect realItemRect(itemRect.topLeft() + offset + iconOffset, itemRect.bottomRight() + offset - iconOffset);
+        const QRect &&itRect = q->visualRect(index);
+        QRect realItemRect(itRect.topLeft() + offset + iconOffset, itRect.bottomRight() + offset - iconOffset);
 
         // least 3 pixels
         if (actualRect.left() > realItemRect.right() - kIconSelectMargin
@@ -199,18 +199,18 @@ QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
 void CollectionViewPrivate::selectItems(const QList<QUrl> &fileUrl) const
 {
     //fileUrl is file:///xxxx
-    QItemSelection selection;
+    QItemSelection seleted;
     for (const QUrl &url : fileUrl) {
         auto desktopUrl = url.toString();
         auto index = q->model()->index(desktopUrl);
         QItemSelectionRange selectionRange(index);
-        if (!selection.contains(index)) {
-            selection.push_back(selectionRange);
+        if (!seleted.contains(index)) {
+            seleted.push_back(selectionRange);
         }
     }
 
-    if (!selection.isEmpty()) {
-        q->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    if (!seleted.isEmpty()) {
+        q->selectionModel()->select(seleted, QItemSelectionModel::ClearAndSelect);
 
         // update new focus index.
         auto lastIndex = q->selectedIndexes().last();
@@ -430,7 +430,7 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     //! event->mimeData()->urls() may change to be empty after checking empty.
     //! so the following code must use variable urls instead of event->mimeData()->urls().
     auto urls = event->mimeData()->urls();
-    if (!event || urls.isEmpty())
+    if (urls.isEmpty())
         return;
 
     // in collection
@@ -461,17 +461,8 @@ void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &
     }
 
     // is from or to trash
-    {
-        bool isFromTrash = FileUtils::isTrashFile(from);
-        bool isToTrash = false;   // there is no trash dir on desktop
-
-        if (Q_UNLIKELY(isFromTrash && isToTrash)) {
-            event->setDropAction(Qt::IgnoreAction);
-            return;
-        } else if (isFromTrash || isToTrash) {
-            defaultAction = Qt::MoveAction;
-        }
-    }
+    if (FileUtils::isTrashFile(from))
+        defaultAction = Qt::MoveAction;
 
     const bool sameUser = SysInfoUtils::isSameUser(event->mimeData());
     if (event->possibleActions().testFlag(defaultAction))
@@ -632,7 +623,7 @@ void CollectionViewPrivate::clearClipBoard()
             return;
         }
         auto homePath = q->model()->rootUrl().toLocalFile();
-        if (itemInfo && (itemInfo->pathOf(PathInfoType::kAbsolutePath) == homePath))
+        if (itemInfo->pathOf(PathInfoType::kAbsolutePath) == homePath)
             ClipBoard::instance()->clearClipboard();
     }
 }
@@ -695,13 +686,14 @@ bool CollectionViewPrivate::dropFilter(QDropEvent *event)
             }
             if (itemInfo->isAttributes(OptInfoType::kIsDir) || itemInfo->urlOf(UrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl()) {
                 auto sourceUrls = event->mimeData()->urls();
-                for (const QUrl &url : sourceUrls) {
-                    if ((DesktopAppUrl::computerDesktopFileUrl() == url)
-                        || (DesktopAppUrl::trashDesktopFileUrl() == url)
-                        || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
-                        event->setDropAction(Qt::IgnoreAction);
-                        return true;
-                    }
+                bool find = std::any_of(sourceUrls.begin(), sourceUrls.end(), [](const QUrl &url){
+                    return (DesktopAppUrl::computerDesktopFileUrl() == url)
+                            || (DesktopAppUrl::trashDesktopFileUrl() == url)
+                            || (DesktopAppUrl::homeDesktopFileUrl() == url);
+                });
+                if (find) {
+                    event->setDropAction(Qt::IgnoreAction);
+                    return true;
                 }
             }
         }

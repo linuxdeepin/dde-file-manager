@@ -541,9 +541,9 @@ void CanvasManagerPrivate::onFileAboutToBeRemoved(const QModelIndex &parent, int
             }
         } else {
             int viewCount = viewMap.keys().count();
-            for (int i = 1; i <= viewCount; i++) {
-                if (GridIns->overloadItems(i).contains(path)) {
-                    GridIns->remove(i, path);
+            for (int j = 1; j <= viewCount; j++) {
+                if (GridIns->overloadItems(j).contains(path)) {
+                    GridIns->remove(j, path);
                 }
             }
         }
