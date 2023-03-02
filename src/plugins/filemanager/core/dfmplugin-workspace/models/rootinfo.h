@@ -6,6 +6,7 @@
 #define ROOTINFO_H
 
 #include "dfmplugin_workspace_global.h"
+#include "utils/traversaldirthreadmanager.h"
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/traversaldirthread.h"
@@ -31,7 +32,7 @@ class RootInfo : public QObject
 public:
     struct DirIteratorThread
     {
-        TraversalThreadPointer traversalThread { nullptr };
+        TraversalThreadManagerPointer traversalThread { nullptr };
         // origin data sort information
         dfmio::DEnumerator::SortRoleCompareFlag originSortRole { dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
         Qt::SortOrder originSortOrder { Qt::AscendingOrder };
@@ -86,7 +87,7 @@ public Q_SLOTS:
     void handleGetSourceData(const QString &key);
 
 private:
-    void initConnection(const TraversalThreadPointer &traversalThread);
+    void initConnection(const TraversalThreadManagerPointer &traversalThread);
 
     void addChildren(const QList<QUrl> &urlList);
     void addChildren(const QList<AbstractFileInfoPointer> &children);

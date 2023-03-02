@@ -169,11 +169,17 @@ void FileSortWorker::handleIteratorLocalChildren(const QString &key,
         childrenDataMap.insert(child->url, new FileItemData(child, rootdata));
     }
 
+    if (isCanceled)
+        return;
+
     filterAllFiles();
     qInfo() << "filter result finish";
 
     if (sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
         && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile)
+        return;
+
+    if (isCanceled)
         return;
 
     sortAllFiles();
@@ -252,6 +258,8 @@ void FileSortWorker::handleSourceChildren(const QString &key,
 
 void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPointer child)
 {
+    if (isCanceled)
+        return;
     if (currentKey != key)
         return;
     if (!child)
@@ -262,6 +270,8 @@ void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPoint
 
 void FileSortWorker::handleModelGetSourceData()
 {
+    if (isCanceled)
+        return;
     emit getSourceData(currentKey);
 }
 
@@ -277,6 +287,8 @@ void FileSortWorker::setNameFilters(const QStringList &nameFilters)
 
 void FileSortWorker::resetFilters(const QStringList &nameFilters, const QDir::Filters filters)
 {
+    if (isCanceled)
+        return;
     if (this->nameFilters == nameFilters && this->filters == filters)
         return;
 
@@ -288,12 +300,15 @@ void FileSortWorker::resetFilters(const QStringList &nameFilters, const QDir::Fi
 
 void FileSortWorker::onToggleHiddenFiles()
 {
-    filters = ~(filters ^ QDir::Filter(~QDir::Hidden));
-    resetFilters(nameFilters, filters);
+    auto tmpfilters = filters;
+    tmpfilters = ~(tmpfilters ^ QDir::Filter(~QDir::Hidden));
+    resetFilters(nameFilters, tmpfilters);
 }
 
 void FileSortWorker::onShowHiddenFileChanged(bool isShow)
 {
+    if (isCanceled)
+        return;
     QDir::Filters newFilters = filters;
     if (isShow) {
         newFilters |= QDir::Hidden;
@@ -306,6 +321,9 @@ void FileSortWorker::onShowHiddenFileChanged(bool isShow)
 
 void FileSortWorker::onAppAttributeChanged(Application::ApplicationAttribute aa, const QVariant &value)
 {
+    if (isCanceled)
+        return;
+
     if (aa == Application::kFileAndDirMixedSort)
         resort(sortOrder, orgSortRole, value.toBool());
 }
@@ -360,6 +378,9 @@ void FileSortWorker::handleWatcherRemoveChildren(QList<SortInfoPointer> children
 
 void FileSortWorker::resort(const Qt::SortOrder order, const ItemRoles sortRole, const bool isMixDirAndFile)
 {
+    if (isCanceled)
+        return;
+
     auto opt = setSortAgruments(order, sortRole, isMixDirAndFile);
     switch (opt) {
     case FileSortWorker::SortOpt::kSortOptOtherChanged:
@@ -380,6 +401,9 @@ void FileSortWorker::handleTraversalFinish(const QString &key)
 
 void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
 {
+    if (isCanceled)
+        return;
+
     if (!child)
         return;
 
@@ -388,8 +412,14 @@ void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
 
 void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
 {
+    if (isCanceled)
+        return;
+
     auto hidlist = DFMUtils::hideListFromUrl(hidUrl);
     for (const auto &child : children) {
+        if (isCanceled)
+            return;
+
         auto info = InfoFactory::create<AbstractFileInfo>(child->url);
         if (!info)
             continue;
@@ -407,6 +437,9 @@ void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
 
 void FileSortWorker::handleUpdateFile(const QUrl &url)
 {
+    if (isCanceled)
+        return;
+
     if (!url.isValid() || !childrenUrlList.contains(url))
         return;
 
@@ -424,7 +457,6 @@ void FileSortWorker::handleUpdateFile(const QUrl &url)
     sortInfo->isWriteable = info->isAttributes(OptInfoType::kIsWritable);
     sortInfo->isExecutable = info->isAttributes(OptInfoType::kIsExecutable);
     info->fileMimeType();
-    info->fileIcon();
     children.replace(childrenUrlList.indexOf(url), sortInfo);
 
     QReadLocker lk(&locker);
@@ -436,6 +468,9 @@ void FileSortWorker::handleUpdateFile(const QUrl &url)
 
 void FileSortWorker::handleFilterData(const QVariant &data)
 {
+    if (isCanceled)
+        return;
+
     filterData = data;
     if (!filterCallback || !data.isValid())
         return;
@@ -445,6 +480,9 @@ void FileSortWorker::handleFilterData(const QVariant &data)
 
 void FileSortWorker::handleFilterCallFunc(FileViewFilterCallback callback)
 {
+    if (isCanceled)
+        return;
+
     filterCallback = callback;
     if (!filterCallback || !filterData.isValid())
         return;
@@ -631,6 +669,9 @@ void FileSortWorker::filterAllFilesOrdered()
 
 void FileSortWorker::sortAllFiles()
 {
+    if (isCanceled)
+        return;
+
     if (orgSortRole == Global::ItemRoles::kItemDisplayRole)
         return;
 
@@ -650,6 +691,9 @@ void FileSortWorker::sortAllFiles()
 
 void FileSortWorker::sortOnlyOrderChange()
 {
+    if (isCanceled)
+        return;
+
     if (orgSortRole == Global::ItemRoles::kItemDisplayRole)
         return;
 
@@ -691,6 +735,9 @@ void FileSortWorker::sortOnlyOrderChange()
 void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
                               const AbstractSortAndFiter::SortScenarios sort)
 {
+    if (isCanceled)
+        return;
+
     if (!sortInfo)
         return;
 
@@ -724,6 +771,9 @@ void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
         visibleChildren.insert(showIndex, sortInfo->url);
     }
     Q_EMIT insertFinish();
+
+    if (sort == AbstractSortAndFiter::SortScenarios::kSortScenariosWatcherAddFile)
+        Q_EMIT selectAndEditFile(sortInfo->url);
 }
 // 左边比右边小返回true，
 bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortAndFiter::SortScenarios sort)

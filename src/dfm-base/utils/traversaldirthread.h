@@ -7,31 +7,24 @@
 
 #include "dfm_base_global.h"
 #include "dfm_global_defines.h"
-#include "dfm-base/utils/threadcontainer.hpp"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
-#include <QMetaType>
-#include <QObject>
 #include <QThread>
 #include <QUrl>
-
-#include <dfm-io/core/denumerator.h>
 
 namespace dfmbase {
 
 class TraversalDirThread : public QThread
 {
     Q_OBJECT
+protected:
     QUrl dirUrl;   // 遍历的目录的url
     QSharedPointer<DFMBASE_NAMESPACE::AbstractDirIterator> dirIterator;   // 当前遍历目录的diriterator
-    bool stopFlag = false;
-    bool isMixDirAndFile = false;
-
     QStringList nameFilters;
     QDir::Filters filters;
     QDirIterator::IteratorFlags flags;
-    Qt::SortOrder sortOrder { Qt::AscendingOrder };
-    dfmio::DEnumerator::SortRoleCompareFlag sortRole { dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
+    QList<QUrl> childrenList;   // 当前遍历出来的所有文件
+    bool stopFlag = false;
 
 public:
     explicit TraversalDirThread(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -42,25 +35,14 @@ public:
     void stop();
     void quit();
     void stopAndDeleteLater();
-    void setSortAgruments(const Qt::SortOrder order, const dfmbase::Global::ItemRoles sortRole, const bool isMixDirAndFile);
 
 Q_SIGNALS:
-    void updateChildren(QList<AbstractFileInfoPointer> children);
-    void updateChild(const AbstractFileInfoPointer child);
+    void updateChildren(QList<QUrl> children);
+    void updateChild(const QUrl child);
     void stoped();
-    // Special processing If it is a local file, directly read all the simple sorting lists of the file
-    void updateLocalChildren(QList<SortInfoPointer> children,
-                             dfmio::DEnumerator::SortRoleCompareFlag sortRole,
-                             Qt::SortOrder sortOrder,
-                             bool isMixDirAndFile);
-    void traversalFinished();
 
 protected:
     virtual void run() override;
-
-private:
-    int iteratorOneByOne();
-    int iteratorAll();
 };
 }
 

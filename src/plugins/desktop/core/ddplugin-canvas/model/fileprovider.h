@@ -35,16 +35,18 @@ signals:
     void fileUpdated(const QUrl &url);
 protected slots:
     void traversalFinished();
-    void reset(QList<AbstractFileInfoPointer> children);
+    void reset(QList<QUrl> children);
     void insert(const QUrl &url);
     void remove(const QUrl &url);
     void rename(const QUrl &oldUrl, const QUrl &newUrl);
     void update(const QUrl &url);
-    void preupdateData(const AbstractFileInfoPointer &info);
+    void preupdateData(const QUrl &url);
+
 protected:
     QUrl rootUrl;
     AbstractFileWatcherPointer watcher;
     QList<QSharedPointer<FileFilter>> fileFilters;
+
 private:
     QAtomicInteger<bool> updateing = false;
     QSharedPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
@@ -52,4 +54,4 @@ private:
 
 }
 
-#endif // FILEPROVIDER_H
+#endif   // FILEPROVIDER_H

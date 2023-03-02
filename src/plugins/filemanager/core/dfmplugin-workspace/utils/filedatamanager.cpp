@@ -22,14 +22,14 @@ FileDataManager *FileDataManager::instance()
 RootInfo *FileDataManager::fetchRoot(const QUrl &url)
 {
     if (rootInfoMap.contains(url))
-        return rootInfoMap[url];
+        return rootInfoMap.value(url);
 
     return createRoot(url);
 }
 
 bool FileDataManager::fetchFiles(const QUrl &rootUrl, const QString &key, DFMGLOBAL_NAMESPACE::ItemRoles role, Qt::SortOrder order)
 {
-    RootInfo *root = rootInfoMap[rootUrl];
+    RootInfo *root = rootInfoMap.value(rootUrl);
     if (!root)
         return false;
     auto getCache = root->initThreadOfFileData(key, role, order, isMixFileAndFolder);
@@ -55,7 +55,7 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
 
 void FileDataManager::setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active)
 {
-    RootInfo *root = rootInfoMap[rootUrl];
+    RootInfo *root = rootInfoMap.value(rootUrl);
     if (root && root->watcher)
         root->watcher->setEnabledSubfileWatcher(childUrl, active);
 }

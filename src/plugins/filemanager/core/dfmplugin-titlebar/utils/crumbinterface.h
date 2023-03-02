@@ -48,8 +48,7 @@ signals:
     void completionListTransmissionCompleted();   //< emit when all avaliable completions has been sent.
 
 private slots:
-    void onUpdateChildren(QList<AbstractFileInfoPointer> children);
-    void onUpdateChildrenByLocal(QList<QSharedPointer<dfmio::DEnumerator::SortFileInfo> > children);
+    void onUpdateChildren(QList<QUrl> children);
 
 private:
     QString curScheme;

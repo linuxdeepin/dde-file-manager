@@ -58,9 +58,9 @@ bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
 
     traversalThread.reset(new DirIteratorThread);
     traversalThread->traversalThread.reset(
-            new TraversalDirThread(url, QStringList(),
-                                   QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
-                                   QDirIterator::FollowSymlinks));
+            new TraversalDirThreadManager(url, QStringList(),
+                                          QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
+                                          QDirIterator::FollowSymlinks));
     traversalThread->traversalThread->setSortAgruments(order, role, isMixFileAndFolder);
     initConnection(traversalThread->traversalThread);
     traversalThreads.insert(key, traversalThread);
@@ -282,14 +282,14 @@ void RootInfo::handleGetSourceData(const QString &key)
     emit sourceDatas(key, newDatas, originSortRole, originSortOrder, originMixSort, traversalFinish);
 }
 
-void RootInfo::initConnection(const TraversalThreadPointer &traversalThread)
+void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)
 {
-    connect(traversalThread.data(), &TraversalDirThread::updateChild,
+    connect(traversalThread.data(), &TraversalDirThreadManager::updateChildManager,
             this, &RootInfo::handleTraversalResult, Qt::DirectConnection);
-    connect(traversalThread.data(), &TraversalDirThread::updateLocalChildren,
+    connect(traversalThread.data(), &TraversalDirThreadManager::updateLocalChildren,
             this, &RootInfo::handleTraversalLocalResult, Qt::DirectConnection);
     // 主线中执行
-    connect(traversalThread.data(), &TraversalDirThread::traversalFinished,
+    connect(traversalThread.data(), &TraversalDirThreadManager::traversalFinished,
             this, &RootInfo::handleTraversalFinish, Qt::QueuedConnection);
 }
 

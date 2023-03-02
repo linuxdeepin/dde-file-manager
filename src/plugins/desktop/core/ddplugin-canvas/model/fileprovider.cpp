@@ -92,16 +92,11 @@ void FileProvider::removeFileFilter(QSharedPointer<FileFilter> filter)
     fileFilters.removeOne(filter);
 }
 
-void FileProvider::reset(QList<AbstractFileInfoPointer> children)
+void FileProvider::reset(QList<QUrl> children)
 {
     // desktop needs some file to show.
     // it has no file to show if don't emit refreshEnd when traversalFilter returns true .
-    QList<QUrl> urls;
-    for (const auto &info : children) {
-        if (!info)
-            continue;
-        urls.append(info->urlOf(UrlInfoType::kUrl));
-    }
+    QList<QUrl> urls { children };
     for (const auto &filter : fileFilters) {
         if (filter->fileTraversalFilter(urls))
             qWarning() << "TraversalFilter returns true: it is invalid";
@@ -160,9 +155,12 @@ void FileProvider::update(const QUrl &url)
     emit fileUpdated(url);
 }
 
-void FileProvider::preupdateData(const AbstractFileInfoPointer &info)
+void FileProvider::preupdateData(const QUrl &url)
 {
+    if (!url.isValid())
+        return;
     // file info that is slow at first using should be called there to cache it.
+    auto info = InfoFactory::create<AbstractFileInfo>(url);
     if (updateing && info) {
         // get file mime type for sorting.
         info->fileMimeType();
