@@ -24,7 +24,7 @@
 #include <QDebug>
 #include <QMenu>
 
-DPSMBBROWSER_USE_NAMESPACE
+using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 
 namespace menu_action_id {

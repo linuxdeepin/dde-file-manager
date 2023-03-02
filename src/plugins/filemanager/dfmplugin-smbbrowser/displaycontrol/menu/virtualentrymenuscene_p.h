@@ -5,15 +5,14 @@
 #ifndef VIRTUALENTRYMENUSCENE_P_H
 #define VIRTUALENTRYMENUSCENE_P_H
 
-#include "dfmplugin_smbbrowser_global.h"
-
 #include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
 class VirtualEntryMenuScene;
 class VirtualEntryMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class VirtualEntryMenuScene;
 
 public:
@@ -39,6 +38,5 @@ private:
     QString stdSmb;
 };
 
-DPSMBBROWSER_END_NAMESPACE
-
+}
 #endif   // VIRTUALENTRYMENUSCENE_P_H
