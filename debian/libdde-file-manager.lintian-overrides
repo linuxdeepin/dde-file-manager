@@ -1,0 +1,9 @@
+#arch-dependent-file-not-in-arch-specific-directory
+libdde-file-manager: arch-dependent-file-not-in-arch-specific-directory usr/lib/loongarch64-linux-gnu/dde-file-manager/plugins/common-core/libdfmplugin-bookmark.so
+libdde-file-manager: arch-dependent-file-not-in-arch-specific-directory usr/lib/loongarch64-linux-gnu/dde-file-manager/plugins/common-core/libdfmplugin-fileoperations.so
+libdde-file-manager: arch-dependent-file-not-in-arch-specific-directory usr/lib/loongarch64-linux-gnu/dde-file-manager/plugins/common-core/libdfmplugin-menu.so
+libdde-file-manager: arch-dependent-file-not-in-arch-specific-directory usr/lib/loongarch64-linux-gnu/dde-file-manager/plugins/common-core/libdfmplugin-trashcore.so
+libdde-file-manager: arch-dependent-file-not-in-arch-specific-directory usr/lib/loongarch64-linux-gnu/dde-file-manager/tools/libdfm-upgrade.so
+libdde-file-manager: arch-dependent-file-not-in-arch-specific-directory usr/lib/loongarch64-linux-gnu/libdfm-base.so.6.0.9+u169
+libdde-file-manager: arch-dependent-file-not-in-arch-specific-directory usr/lib/loongarch64-linux-gnu/libdfm-framework.so.6.0.9+u169
+libdde-file-manager: arch-dependent-file-not-in-arch-specific-directory usr/lib/loongarch64-linux-gnu/dde-file-manager/plugins/common-core/libdfmplugin-propertydialog.so
