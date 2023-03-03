@@ -4,6 +4,13 @@
 *.o
 *.obj
 .qmake.stash
+*.cmake
+CMakeLists.txt.user*
+CMakeFiles
+CMakeCache.txt
+compile_commands.json
+moc_*
+mocs_*
 
 # Compiled Dynamic libraries
 *.so
@@ -46,8 +53,6 @@ NUL
 # Documents
 doc/html/*
 
-tools
-
 dde-file-manager-lib/test_shutil/fileutils/fileutil_t1.txt
 
 dde-file-manager-lib/test_shutil/fileutils/fileutil_t2.txt
@@ -63,3 +68,18 @@ dde-file-manager-lib/test_shutil/new1.txt
 dde-file-manager-lib/test_shutil/new2.txt
 
 dde-file-manager-lib/test_shutil/property/oneProperty.pro
+
+# vscode
+.vscode
+
+# debhelper-build-stamp
+
+.debhelper
+*.deb
+*.dsc
+*.build
+*.buildinfo
+*.changes
+*.tar.gz
+*.log
+*.substvars

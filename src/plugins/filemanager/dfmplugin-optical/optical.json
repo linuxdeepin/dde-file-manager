@@ -1,0 +1,14 @@
+{
+    "Name" : "dfmplugin-optical",
+    "Version" : "1.0.0",
+    "CompatVersion" : "1.0.0",
+    "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+    "Copyright" : "Copyright (C) 2022 Uniontech Software Technology Co., Ltd.",
+    "License" : [
+    ],
+    "Category" : "",
+    "Description" : "The optical plugin for the filemanager.",
+    "UrlLink" : "https://www.uniontech.com",
+    "Depends" : [
+    ]
+}

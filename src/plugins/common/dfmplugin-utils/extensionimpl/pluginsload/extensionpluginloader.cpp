@@ -1,0 +1,115 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "extensionpluginloader.h"
+
+DPUTILS_BEGIN_NAMESPACE
+
+ExtensionPluginLoader::ExtensionPluginLoader(const QString &filaName, QObject *parent)
+    : QObject(parent)
+{
+    loader.setFileName(filaName);
+}
+
+QString ExtensionPluginLoader::fileName() const
+{
+    return loader.fileName();
+}
+
+QString ExtensionPluginLoader::lastError() const
+{
+    return errorMessage;
+}
+
+bool ExtensionPluginLoader::loadPlugin()
+{
+    if (loader.fileName().isEmpty()) {
+        errorMessage = "Failed, plugin file name is empty";
+        return false;
+    }
+
+    if (!loader.load()) {
+        errorMessage = loader.errorString();
+        return false;
+    }
+
+    return true;
+}
+
+bool ExtensionPluginLoader::initialize()
+{
+    if (!loader.isLoaded()) {
+        errorMessage = "Plugin haven't loaded";
+        return false;
+    }
+
+    initFunc = reinterpret_cast<ExtInitFuncType>(loader.resolve("dfm_extension_initiliaze"));
+    if (!initFunc) {
+        errorMessage = "Failed, get 'dfm_extension_initiliaze' import function" + loader.fileName();
+        return false;
+    }
+
+    initFunc();
+    return true;
+}
+
+bool ExtensionPluginLoader::shutdown()
+{
+    shutdownFunc = reinterpret_cast<ExtShutdownFuncType>(loader.resolve("dfm_extension_shutdown"));
+    if (!shutdownFunc) {
+        errorMessage = "Failed, get 'dfm_extension_shutdown' import function: "
+                + loader.fileName();
+        return false;
+    }
+
+    //! delete interaface
+    shutdownFunc();
+
+    if (!loader.isLoaded()) {
+        errorMessage = "Plugin has been shutdown: " + loader.fileName();
+        return false;
+    }
+
+    if (!loader.unload())
+        errorMessage = loader.errorString();
+
+    return true;
+}
+
+DFMEXT::DFMExtMenuPlugin *ExtensionPluginLoader::resolveMenuPlugin()
+{
+    if (!loader.isLoaded()) {
+        errorMessage = "Failed, called 'resolveMenuPlugin' get interface, "
+                       "need call 'initialize' function befor that";
+        return {};
+    }
+
+    menuFunc = reinterpret_cast<ExtMenuFuncType>(loader.resolve("dfm_extension_menu"));
+    if (!menuFunc) {
+        errorMessage = "Failed, get 'dfm_extension_menu' import function";
+        return {};
+    }
+
+    return menuFunc();
+}
+
+DFMEXT::DFMExtEmblemIconPlugin *ExtensionPluginLoader::resolveEmblemPlugin()
+{
+    if (!loader.isLoaded()) {
+        errorMessage = "Failed, called 'resolveEmblemPlugin' get interface, "
+                       "need call 'initialize' function befor that";
+        return {};
+    }
+
+    emblemFunc = reinterpret_cast<ExtEmblemFuncType>(loader.resolve("dfm_extension_emblem"));
+    if (!emblemFunc) {
+        errorMessage = "Failed, get 'dfm_extension_emblem' import function: "
+                + loader.fileName();
+        return {};
+    }
+
+    return emblemFunc();
+}
+
+DPUTILS_END_NAMESPACE

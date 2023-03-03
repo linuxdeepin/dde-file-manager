@@ -8,60 +8,45 @@ Deepin File Manager is a file management tool independently developed by Deepin 
 
 _The **master** branch is current development branch, build dependencies may changes without update README.md, refer to `./debian/control` for a working build depends list_
 
-* pkg-config
-* qt5-qmake
-* qtbase5-dev
-* qtbase5-private-dev
-* libqt5x11extras5-dev
-* libjemalloc-dev
-* libqt5svg5-dev
-* libmagic-dev
-* libsecret-1-dev
-* libpoppler-cpp-dev
-* libpolkit-agent-1-dev
-* libpolkit-qt5-1-dev
-* qtmultimedia5-dev
-* libffmpegthumbnailer-dev
-* libtag1-dev
-* libdtkwidget-dev
-* libdtkgui-dev
-* libxcb1-dev
-* x11proto-core-dev
-* libx11-dev
-* qttools5-dev-tools
-* libglib2.0-dev
-* dde-dock-dev(>=4.8.4.1)
-* libxcb-ewmh-dev
-* libxcb-shape0-dev
-* libdframeworkdbus-dev
-* libxcb-util0-dev
-* qtdeclarative5-dev
-* deepin-gettext-tools
-* libkf5codecs-dev
-* libdtkcore-dev
-* libdtkcore5-bin
-* libdmr-dev
-* deepin-anything-dev[i386 amd64]
-* deepin-anything-server-dev[i386 amd64]
-* libudisks2-qt5-dev(>=5.0.6)
-* libxrender-dev
-* libmtdev-dev
-* libfontconfig1-dev
-* libfreetype6-dev
-* libegl1-mesa-dev
-* libglibmm-2.4-dev
-* libgio-qt-dev(>=0.0.11)
-* libdisomaster-dev(>=5.0.7)
-* libssl-dev
-* libmediainfo-dev
-* libqt5xdg-dev
-* libicu-dev
-* liblucene++-dev
-* libgsf-1-dev
-* libboost-filesystem-dev
-* libdocparser-dev
-* deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
-* libpcre3-dev
+- cmake,
+- debhelper (>=9),
+- pkg-config,
+- dh-systemd,
+- qtbase5-dev,
+- qtbase5-private-dev,
+- qtmultimedia5-dev,
+- libffmpegthumbnailer-dev,
+- libqt5svg5-dev,
+- libpolkit-agent-1-dev, 
+- libpolkit-qt5-1-dev,
+- libdtkwidget-dev,
+- libdtkgui-dev,
+- libdtkcore-dev,
+- libdtkcore5-bin,
+- qttools5-dev-tools,
+- dde-dock-dev(>=4.8.4.1),
+- libdframeworkdbus-dev,
+- libtag1-dev,
+- libdmr-dev,
+- libicu-dev,
+- libdeepin-pdfium-dev,
+- libqt5xdg-dev,
+- libgio-qt-dev,
+- libdfm-io-dev,
+- libdfm-mount-dev,
+- libdfm-burn-dev,
+- libssl-dev,
+- libgtest-dev,
+- libgmock-dev,
+- libgsettings-qt-dev,
+- liblucene++-dev,
+- libdocparser-dev,
+- libboost-filesystem-dev,
+- libsecret-1-dev,
+- libkf5codecs-dev,
+- libpoppler-cpp-dev,
+- libcryptsetup-dev,
+- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 
 ## Installation
 
@@ -74,21 +59,20 @@ _Package name may be different between distros, if dde-file-manager is available
 Assume you are using [Deepin](https://distrowatch.com/table.php?distribution=deepin) or other debian-based distro which got dde-file-manager delivered:
 
 ``` shell
-$ apt build-dep dde-file-manager
+$ git clone https://github.com/linuxdeepin/dde-file-manager
+$ cd dde-file-manager
+$ sudo apt build-dep ./
 ```
 
 2. Build:
-```
-$ cd dde-file-manager
-$ mkdir build
-$ cd build
-$ qmake ../filemanager.pro
-$ make
+```shell
+$ cmake -B build -DCMAKE_INSTALL_PREFIX=/usr
+$ cmake --build build
 ```
 
 3. Install:
-```
-$ sudo make install
+```shell
+$ sudo cmake --build build --target install
 ```
 
 The executable binary file could be found at `/usr/bin/dde-file-manager`
@@ -120,4 +104,4 @@ We encourage you to report issues and contribute changes
 
 ## License
 
-dde-file-manager is licensed under [GPL-3.0-or-later](LICENSE.txt)
+dde-file-manager is licensed under [GPL-3.0-or-later](LICENSE)

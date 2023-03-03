@@ -1,0 +1,53 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "vaultactivestartview.h"
+
+#include <DIconButton>
+#include <DLabel>
+
+#include <QLabel>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QSpacerItem>
+
+DWIDGET_USE_NAMESPACE
+using namespace dfmplugin_vault;
+VaultActiveStartView::VaultActiveStartView(QWidget *parent)
+    : QWidget(parent)
+{
+    //! 标题
+    DLabel *pLabel1 = new DLabel(tr("File Vault"), this);
+    QFont font = pLabel1->font();
+    font.setPixelSize(18);
+    pLabel1->setFont(font);
+    pLabel1->setAlignment(Qt::AlignHCenter);
+
+    DLabel *pLabel2 = new DLabel(tr("Create your secure private space") + '\n' + tr("Advanced encryption technology") + '\n' + tr("Convenient and easy to use"), this);
+    pLabel2->setAlignment(Qt::AlignHCenter);
+
+    DLabel *pLabel3 = new DLabel();
+    pLabel3->setPixmap(QIcon::fromTheme("dfm_vault_active_start").pixmap(88, 100));
+    pLabel3->setAlignment(Qt::AlignHCenter);
+
+    startBtn = new QPushButton(tr("Create"), this);
+    connect(startBtn, &QPushButton::clicked,
+            this, &VaultActiveStartView::slotStartBtnClicked);
+
+    //! 布局
+    QVBoxLayout *play = new QVBoxLayout(this);
+    play->setMargin(0);
+    play->addWidget(pLabel1);
+    play->addSpacing(5);
+    play->addWidget(pLabel2);
+    play->addSpacing(15);
+    play->addWidget(pLabel3);
+    play->addStretch();
+    play->addWidget(startBtn);
+}
+
+void VaultActiveStartView::slotStartBtnClicked()
+{
+    emit sigAccepted();
+}

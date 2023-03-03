@@ -1,0 +1,14 @@
+{
+    "Name" : "daemonplugin-sharecontrol",
+    "Version" : "1.0.0",
+    "CompatVersion" : "1.0.0",
+    "Vendor" : "The Uniontech Software Technology Co., Ltd.",
+    "Copyright" : "Copyright (C) 2022 Uniontech Software Technology Co., Ltd.",
+    "License" : [
+    ],
+    "Category" : "",
+    "Description" : "The core plugin for the dde-file-manager-daemon.",
+    "UrlLink" : "https://www.uniontech.com",
+    "Depends" : [
+    ]
+}

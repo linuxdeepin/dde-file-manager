@@ -1,23 +1,32 @@
 usr/bin/dde-file-manager
-usr/bin/dde-file-manager-daemon
 usr/bin/dde-file-manager-pkexec
+usr/bin/dde-file-manager-daemon
 usr/bin/dde-property-dialog
+usr/bin/dde-file-dialog
+usr/bin/dde-select-dialog-x11
+usr/bin/dde-select-dialog-wayland
 
-usr/lib/*/deepin-anything-server-lib/plugins/handlers/libdde-anythingmonitor.so
+
+usr/lib/*/dde-file-manager/plugins/filemanager-core/*.so
 
 usr/share/applications/dde-file-manager.desktop
 usr/share/applications/dde-open.desktop
 
-usr/share/polkit-1/actions/*.policy
-
-usr/share/deepin-manual/manual-assets/application
-
-etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
+usr/share/dde-file-manager/translations/*.qm
 
 usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialog.xml
 usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialogmanager.xml
 usr/share/dbus-1/services/com.deepin.filemanager.filedialog.service
-usr/share/dbus-1/services/org.freedesktop.FileManager.service
+usr/share/dbus-1/services/com.deepin.filemanager.filedialog_x11.service
+usr/share/dbus-1/services/com.deepin.filemanager.filedialog_wayland.service
 usr/share/dbus-1/system-services/com.deepin.filemanager.daemon.service
 
+usr/share/deepin-manual/manual-assets/application
+usr/share/polkit-1/actions/*.policy
+
 usr/lib/systemd/system/ lib/systemd/
+
+etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
+
+etc/X11/Xsession.d/99dfm-dlnfs-automount
+etc/deepin/dde-file-manager/dfm-dlnfs-automount

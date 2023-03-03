@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor />
+  <vendor_url />
+  <action id="com.deepin.filemanager.daemon.VaultManager.Create">
+    <description>vault manager</description>
+    <message>Authentication is required to create a file vault</message>
+    <message xml:lang="zh_CN">创建文件保险箱需要认证</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+  <action id="com.deepin.filemanager.daemon.VaultManager.Remove">
+    <description>vault manager</description>
+    <message>Authentication is required to delete the file vault</message>
+    <message xml:lang="zh_CN">删除文件保险箱需要认证</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+  <action id="com.deepin.filemanager.vault.VerifyKey.RetrievePassword">
+    <description>Retrieve Password</description>
+    <message>Authentication is required to retrieve the vault password</message>
+    <message xml:lang="zh_CN">找回保险箱密码需要认证</message>
+    <icon_name>folder</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+  </action>
+</policyconfig>

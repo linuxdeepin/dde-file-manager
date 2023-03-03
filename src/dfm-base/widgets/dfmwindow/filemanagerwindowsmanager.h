@@ -1,0 +1,57 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef FILEMANAGERWINDOWSMANAGER_H
+#define FILEMANAGERWINDOWSMANAGER_H
+
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+
+#include <QObject>
+
+#include <functional>
+
+DFMBASE_BEGIN_NAMESPACE
+
+class FileManagerWindowsManagerPrivate;
+class FileManagerWindowsManager final : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(FileManagerWindowsManager)
+
+public:
+    using FMWindow = DFMBASE_NAMESPACE::FileManagerWindow;
+    using WindowCreator = std::function<FMWindow *(const QUrl &)>;
+
+public:
+    static FileManagerWindowsManager &instance();
+
+    void setCustomWindowCreator(WindowCreator creator);
+    FMWindow *createWindow(const QUrl &url, bool isNewWindow = false, QString *errorString = nullptr);
+    FMWindow *showWindow(const QUrl &url, bool isNewWindow = false, QString *errorString = nullptr);
+    void showWindow(FMWindow *window);
+    quint64 findWindowId(const QWidget *window);
+    FMWindow *findWindowById(quint64 winId);
+    QList<quint64> windowIdList();
+    quint64 previousActivedWindowId();
+
+Q_SIGNALS:
+    void windowCreated(quint64 windId);
+    void windowOpened(quint64 windId);
+    void windowClosed(quint64 windId);
+    void lastWindowClosed();
+
+private:
+    explicit FileManagerWindowsManager(QObject *parent = nullptr);
+    ~FileManagerWindowsManager() override;
+
+private:
+    QScopedPointer<FileManagerWindowsManagerPrivate> d;
+};
+
+DFMBASE_END_NAMESPACE
+
+#define FMWindowsIns DFMBASE_NAMESPACE::FileManagerWindowsManager::instance()
+
+#endif   // FILEMANAGERWINDOWSMANAGER_H

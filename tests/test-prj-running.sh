@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+# SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,7 +13,7 @@ do
   if [ "$argcommand" = "--help" ] ; then
         echo "--clear:默认情况为yes删除当前build-ut下所有数据， 使用 --clear no 不进行清除操作"
         echo "--rebuild：默认为yes进行重新编译， 使用--rebuild no 不进行重新编译"
-        echo "--ut:指定ut项目类型，可以使用类型：no all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins"
+        echo "--ut:指定ut项目类型，可以使用类型：no all dde-file-manager"
         echo "--cppcheck：默认为no 不进行项目cpp-check文件扫描， 使用--cppcheck yes 进行cpp-check扫描"
         echo "--show：默认为no 不显示报表， 使用--show yes 显示当前报表"
         echo "--cpu：当前使用CPU数目，默认为16"
@@ -24,7 +24,7 @@ done
 # 获取参数
 
 CLEAR_COMMAND="yes"; #是否清场 no 就不清场
-UT_COMMAND="all"; #运行UT类型 no all dde_file_manager dde-file-manager-lib dde-desktop dde-dock-plugins dde-file-manager-plugins dde-file-thumbnail-tool deepin-anything-server-plugins
+UT_COMMAND="all"; #运行UT类型 no all dde-file-manager
 REBUILD_PTJ="yes";
 CPP_CHECK_COMMAND="no"; #是否运行cppcheck，no就不运行
 CPU_NUMBER=16; #当前使用CPU数目，默认为16

@@ -1,0 +1,33 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef TYPECLASSIFIER_H
+#define TYPECLASSIFIER_H
+
+#include "mode/normalized/fileclassifier.h"
+
+#include <QSet>
+
+namespace ddplugin_organizer {
+
+class TypeClassifierPrivate;
+class TypeClassifier : public FileClassifier
+{
+    Q_OBJECT
+    friend class TypeClassifierPrivate;
+public:
+    explicit TypeClassifier(QObject *parent = nullptr);
+    ~TypeClassifier();
+    Classifier mode() const override;
+    ModelDataHandler *dataHandler() const override;
+    QStringList classes() const override;
+    QString classify(const QUrl &) const override;
+    QString className(const QString &key) const override;
+private:
+    TypeClassifierPrivate *d;
+    ModelDataHandler *handler = nullptr;
+};
+}
+
+#endif // TYPECLASSIFIER_H

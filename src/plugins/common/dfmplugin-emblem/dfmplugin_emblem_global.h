@@ -1,0 +1,31 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef DFMPLUGIN_EMBLEM_GLOBAL_H
+#define DFMPLUGIN_EMBLEM_GLOBAL_H
+
+#define DPEMBLEM_NAMESPACE dfmplugin_emblem
+
+#define DPEMBLEM_BEGIN_NAMESPACE namespace DPEMBLEM_NAMESPACE {
+#define DPEMBLEM_END_NAMESPACE }
+#define DPEMBLEM_USE_NAMESPACE using namespace DPEMBLEM_NAMESPACE;
+
+#include <QObject>
+
+DPEMBLEM_BEGIN_NAMESPACE
+
+enum class SystemEmblemType : uint8_t {
+    kLink,
+    kLock,
+    kUnreadable,
+    kShare
+};
+
+// view defines
+const double kMinEmblemSize = 12.0;
+const double kMaxEmblemSize = 128.0;
+
+DPEMBLEM_END_NAMESPACE
+
+#endif   // DFMPLUGIN_EMBLEM_GLOBAL_H

@@ -1,0 +1,68 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(ddplugin-wallpapersetting)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+
+FILE(GLOB_RECURSE SRC_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
+)
+
+#delete files which are not needed on the current system
+if (COMPLIE_ON_V20)
+    FILE(GLOB_RECURSE RM_SRC
+        "${CMAKE_CURRENT_SOURCE_DIR}/appearance_interface.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/appearance_interface.cpp"
+        )
+endif()
+
+list(REMOVE_ITEM SRC_FILES ${RM_SRC})
+
+set(EXT_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.h
+    )
+
+# 指定资源文件
+set(QRCS
+    images.qrc
+)
+
+add_library(${PROJECT_NAME}
+    SHARED
+    ${SRC_FILES}
+    ${EXT_FILES}
+    ${QRCS}
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+
+find_package(Dtk COMPONENTS Widget REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus )
+pkg_check_modules(DtkGui REQUIRED dtkgui )
+pkg_check_modules(DtkWidget REQUIRED dtkwidget )
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${DFrameworkDBus_INCLUDE_DIRS}
+    ${DtkWidget_INCLUDE_DIRS}
+    ${DtkGui_INCLUDE_DIRS}
+)
+
+target_link_libraries(${PROJECT_NAME}
+    DFM::base
+    DFM::framework
+    ${DFrameworkDBus_LIBRARIES}
+    ${DtkWidget_LIBRARIES}
+    ${DtkGui_LIBRARIES}
+    )
+
+#install library file
+install(TARGETS
+    ${PROJECT_NAME}
+    LIBRARY
+    DESTINATION
+    ${DFM_PLUGIN_DESKTOP_EDGE_DIR}
+)

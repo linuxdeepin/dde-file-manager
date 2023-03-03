@@ -1,2 +1,0 @@
-#shlib-without-PT_GNU_STACK-section forbid
-libdfm-extension: shlib-without-PT_GNU_STACK-section usr/lib/mips64el-linux-gnuabi64/libdfm-extension.so.1.8.2

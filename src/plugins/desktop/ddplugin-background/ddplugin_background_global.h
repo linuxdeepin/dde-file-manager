@@ -1,0 +1,14 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef DDPLUGIN_BACKGROUND_GLOBAL_H
+#define DDPLUGIN_BACKGROUND_GLOBAL_H
+
+#define DDP_BACKGROUND_NAMESPACE ddplugin_background
+
+#define DDP_BACKGROUND_BEGIN_NAMESPACE namespace DDP_BACKGROUND_NAMESPACE{
+#define DDP_BACKGROUND_END_NAMESPACE }
+#define DDP_BACKGROUND_USE_NAMESPACE using namespace DDP_BACKGROUND_NAMESPACE;
+
+#endif // DDPLUGIN_BACKGROUND_GLOBAL_H

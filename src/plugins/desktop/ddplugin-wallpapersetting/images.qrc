@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/button_hover.svg</file>
+        <file>images/button_normal.svg</file>
+        <file>images/button_press.svg</file>
+        <file>images/close_round_hover.svg</file>
+        <file>images/close_round_normal.svg</file>
+        <file>images/close_round_press.svg</file>
+        <file>images/next_hover.svg</file>
+        <file>images/next_normal.svg</file>
+        <file>images/next_press.svg</file>
+        <file>images/previous_hover.svg</file>
+        <file>images/previous_normal.svg</file>
+        <file>images/previous_press.svg</file>
+        <file>images/transparent_button_hover.svg</file>
+        <file>images/transparent_button_normal.svg</file>
+        <file>images/transparent_button_press.svg</file>
+        <file>images/edit.svg</file>
+    </qresource>
+</RCC>

@@ -4,7 +4,7 @@ Upstream-Contact: UnionTech Software Technology Co., Ltd. <>
 Source: https://github.com/linuxdeepin/dde-file-manager
 
 # ci
-Files: .github/* .gitlab-ci.yml
+Files: .gitlab-ci.yml
 Copyright: None
 License: CC0-1.0
 
@@ -13,83 +13,68 @@ Files: .gitignore .clang-format .clog.toml .project.json .qmake.conf
 Copyright: None
 License: CC0-1.0
 
-# debian & Arch & rpm
-Files: debian/*  archlinux/* rpm/*
+# debian
+Files: debian/*
 Copyright: None
 License: CC0-1.0
 
-# xml dict json conf policy theme mimetype
-Files: src/*.xml src/*.dict src/*.json src/*.conf src/*.policy src/*.theme src/*.mimetype src/*/testFiles/* */templates/* src/*.readme
+# Project files
+Files: *.qrc .tx/* *CMakeLists.txt *.cmake *.cmake.in *.pc.in
 Copyright: None
 License: CC0-1.0
 
-# Project file
-Files: *.pro *.pri *.qrc .tx/*
+# ignore files
+Files: src/*.json src/*.xml src/*.policy src/*/pinyin.dict src/*.js src/*.ini src/*.qss src/*.theme src/*/templates/* src/*.psd src/*/com.deepin.filemanager.daemon.conf src/dfm-base/qrc/configure/*.cpp
 Copyright: None
 License: CC0-1.0
 
 # README & DOCS
-Files: README.md README.zh_CN.md CHANGELOG.md docs/*
+Files: README.md README.zh_CN.md docs/*
 Copyright: UnionTech Software Technology Co., Ltd.
 License: CC-BY-4.0
 
-# desktop & png & svg & service & mov
-Files: src/*.desktop src/*.png src/*.svg src/*.service src/*.mov
-Copyright: UnionTech Software Technology Co., Ltd.
-License: GPL-3.0-or-later
-
 # translations
-Files: src/*/translations/* src/dde-file-manager-plugins/pluginPreview/dde-music-preview-plugin.ts
-Copyright: UnionTech Software Technology Co., Ltd.
-License: GPL-3.0-or-later
-
-# ui qss js ini
-Files: src/*.ui src/*.qss src/*.js src/*/config.ini
-Copyright: UnionTech Software Technology Co., Ltd.
-License: GPL-3.0-or-later
-
-# tests
-Files: tests/*
+Files: translations/*.ts
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
 
 # assets
-Files: assets/*
+Files: assets/* src/apps/*/assets/*
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
 
-# DBus interface
-Files: 3rdparty/dbusservice/*
-Copyright: 2016 The Qt Company Ltd.
-License: CC0-1.0
+# images
+Files: src/*.png src/*.svg src/*.jpg
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
 
-# fulltext
-Files: 3rdparty/fulltext/*
-Copyright: 2009-2014 Alan Wright
-License: LGPL-3.0-or-later
+# desktop files
+Files: src/*.desktop
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
 
-#qobjecthelper.cpp
-Files: 3rdparty/utils/qobjecthelper.cpp
-Copyright: 2009 Till Adam <adam@kde.org>
-Copyright: 2009 Flavio Castelli <flavio@castelli.name>
-License: LGPL-2.1-or-later
+# DBus service
+Files: src/*.service
+Copyright: UnionTech Software Technology Co., Ltd.
+License: GPL-3.0-or-later
 
 # cpp-stub
-Files: 3rdparty/cpp-stub/*
+Files: 3rdparty/testutils/cpp-stub/*
 Copyright: 2019 coolxv
 License: MIT
 
 # stub-ext
-Files: 3rdparty/stub-ext/*
+Files: 3rdparty/testutils/stub-ext/*
 Copyright: 2020 Zhang Yu
 License: MIT
 
-# fsearch
-Files: 3rdparty/fsearch/*
-Copyright: 2020 Christian Boxdörfer
-License: GPL-2.0-or-later
+# fulltext
+Files: src/plugins/filemanager/dfmplugin-search/searchmanager/searcher/fulltext/chinese*
+Copyright: 2009-2014 Alan Wright
+License: LGPL-3.0-or-later
 
-# qrencode
-Files: 3rdparty/qrencode/*
-Copyright: 2006-2011 Kentaro Fukuchi
-License:  GPL-2.0-or-later 
+# D-Bus interfaces and adaptors
+Files: src/*/*dbus_interface.* src/*/*dbus_adaptor.* src/*/dbus*/* src/plugins/daemon/daemonplugin-mountcontrol/private/mountcontrol_adapter.* src/plugins/desktop/ddplugin-background/appearance_interface.*
+Copyright: 2016 The Qt Company Ltd.
+License: CC0-1.0
+

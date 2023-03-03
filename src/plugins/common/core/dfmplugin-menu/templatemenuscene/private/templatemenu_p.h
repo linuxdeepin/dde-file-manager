@@ -1,0 +1,37 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef TEMPLATEMENU_P_H
+#define TEMPLATEMENU_P_H
+
+#include "dfmplugin_menu_global.h"
+#include "templatemenuscene/templatemenu.h"
+#include "interfaces/private/abstractmenuscene_p.h"
+
+#include <QSharedData>
+
+namespace dfmplugin_menu {
+
+class TemplateMenu;
+class TemplateMenuPrivate : public QSharedData
+{
+public:
+    explicit TemplateMenuPrivate(TemplateMenu *qq);
+    ~TemplateMenuPrivate();
+
+    void loadTemplatePaths();
+
+    void createActionByNormalFile(const QString &path);
+    void createActionByDesktopFile(const QDir &dir, const QString &path);
+    void traverseFolderToCreateActions(const QString &path, bool val);
+
+public:
+    TemplateMenu *q;
+    QList<QAction *> templateActions;
+    QString templateFolderPath;
+};
+
+}
+
+#endif   // TEMPLATEMENU_P_H

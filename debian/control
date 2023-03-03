@@ -3,96 +3,119 @@ Section: libdevel
 Priority: optional
 Maintainer: Deepin Packages Builder <packages@linuxdeepin.com>
 Build-Depends:
+ cmake,
  debhelper (>=9),
  pkg-config,
- qt5-qmake,
+ dh-systemd,
  qtbase5-dev,
  qtbase5-private-dev,
- libqt5x11extras5-dev,
- libjemalloc-dev,
- libqt5svg5-dev,
- libmagic-dev,
- libsecret-1-dev,
- libpoppler-cpp-dev,
- libpolkit-agent-1-dev,
- libpolkit-qt5-1-dev,
  qtmultimedia5-dev,
  libffmpegthumbnailer-dev,
- libtag1-dev,
+ libqt5svg5-dev,
+ libpolkit-agent-1-dev, 
+ libpolkit-qt5-1-dev,
  libdtkwidget-dev,
  libdtkgui-dev,
- libxcb1-dev,
- x11proto-core-dev,
- libx11-dev,
- qttools5-dev-tools,
- libglib2.0-dev,
- dde-dock-dev(>=4.8.4.1),
- libxcb-ewmh-dev,
- libxcb-shape0-dev,
- libdframeworkdbus-dev,
- libxcb-util0-dev,
- qtdeclarative5-dev,
- deepin-gettext-tools,
- libkf5codecs-dev,
  libdtkcore-dev,
  libdtkcore5-bin,
+ qttools5-dev-tools,
+ dde-dock-dev(>=4.8.4.1),
+ libdframeworkdbus-dev,
+ libtag1-dev,
  libdmr-dev,
- deepin-anything-dev[i386 amd64 arm64],
- deepin-anything-server-dev[i386 amd64 arm64],
- libudisks2-qt5-dev(>=5.0.6),
- libxrender-dev,
- libmtdev-dev,
- libfontconfig1-dev,
- libfreetype6-dev,
- libegl1-mesa-dev,
- libglibmm-2.4-dev,
- libgio-qt-dev(>=0.0.11),
- libdisomaster-dev(>=5.0.7),
- libssl-dev,
- libmediainfo-dev,
- libqt5xdg-dev,
  libicu-dev,
+ libdeepin-pdfium-dev,
+ libqt5xdg-dev,
+ libgio-qt-dev,
+ libdfm-io-dev,
+ libdfm-mount-dev,
+ libdfm-burn-dev,
+ libssl-dev,
+ libgtest-dev,
+ libgmock-dev,
+ libgsettings-qt-dev,
  liblucene++-dev,
- libgsf-1-dev,
- libboost-filesystem-dev,
  libdocparser-dev,
- deepin-desktop-base | deepin-desktop-server | deepin-desktop-device,
- libpcre3-dev,
- libcryptsetup-dev
+ libboost-filesystem-dev,
+ libsecret-1-dev,
+ libkf5codecs-dev,
+ libpoppler-cpp-dev,
+ libcryptsetup-dev,
+ deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
+
+Package: dde-desktop
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager, dde-desktop-plugins
+Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
+Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1)
+Recommends: qt5dxcb-plugin, deepin-screensaver
+Description: deepin desktop-environment - desktop module
+ Deepin Desktop Environment (DDE) - desktop module.
 
 Package: dde-file-manager
 Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
- libdde-file-manager( =${binary:Version}),
- socat,
- cryfs,
- deepin-anything-dkms[i386 amd64 arm64],
- libblockdev-crypto2,
- dde-device-formatter
-Conflicts: dde-file-manager-oem
-Replaces: dde-file-manager-oem
-Recommends: dde-qt5integration, avfs, samba
+ libdde-file-manager
+ dde-file-manager-plugins, 
+ dde-file-manager-daemon-plugins
+Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager
+Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
 
-Package: dde-desktop
+Package: libdde-file-manager
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
-Replaces: dde-file-manager-oem
-Recommends: qt5dxcb-plugin, deepin-screensaver
-Description: deepin desktop-environment - desktop module
- Deepin Desktop Environment (DDE) - desktop module.
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends}
+ dde-file-manager-common-plugins, 
+ dde-file-manager-preview-plugins
+Multi-Arch: same
+Description: DDE File Manager core librarys
+ This package contains the shared libraries.
+
+Package: dde-desktop-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - desktop edge plugins module
+ Deepin Desktop Environment (DDE) - desktop edge plugins module.
+
+Package: dde-file-manager-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, cryfs
+Description: deepin desktop-environment - filemanager edge plugins module
+ Deepin Desktop Environment (DDE) - filemanager edge plugins module.
+
+Package: dde-file-manager-common-plugins
+Architecture: any
+Depends: 
+ ${shlibs:Depends}, 
+ ${misc:Depends},
+ libdfm-extension( =${binary:Version})
+Description: deepin desktop-environment - filemanager common edge plugins module
+ Deepin Desktop Environment (DDE) - filemanager common edge plugins module.
+
+Package: dde-file-manager-daemon-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - daemon edge plugins module
+ Deepin Desktop Environment (DDE) - daemon edge plugins module.
+
+Package: dde-file-manager-preview-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - filemanager preview plugins module
+ Deepin Desktop Environment (DDE) - filemanager preview edge plugins module.
 
 Package: dde-disk-mount-plugin
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: plugin of dde-dock
- Disk mount plugin of dde-dock which is created by libdde-file-manager
+ Disk mount plugin of dde-dock which is created by dde-file-manager
 
 Package: libdfm-extension
 Architecture: any
@@ -107,26 +130,10 @@ Description: Development package for libdfm-extension
  This package contains the header files and pkgconfig
  of libdfm-extension
 
-Package: libdde-file-manager
+Package: dde-file-manager-dev
 Architecture: any
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
- libpoppler-cpp0v5 (>= 0.48.0),
- gvfs-backends(>=1.27.3),
- cryptsetup,
- deepin-anything-libs[i386 amd64 arm64],
- libdfm-extension( =${binary:Version})
-Recommends:
- libudfburn
-Breaks: dde-file-manager(<=1.2.3-3)
-Multi-Arch: same
-Description: DDE File Manager library
- This package contains the shared libraries.
-
-Package: libdde-file-manager-dev
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager,
+ libdfm-io-dev, libdfm-mount-dev, libdfm-burn-dev
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
- of libdde-file-manager
+ of dde-file-manager

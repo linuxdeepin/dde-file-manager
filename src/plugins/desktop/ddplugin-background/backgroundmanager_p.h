@@ -1,0 +1,70 @@
+// SPDX-FileCopyrightText: 2022 - 2023 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef BACKGROUNDMANAGER_P_H
+#define BACKGROUNDMANAGER_P_H
+
+#include "backgroundmanager.h"
+#include "backgroundservice.h"
+
+#include <com_deepin_wm.h>
+
+#include <QObject>
+
+DDP_BACKGROUND_BEGIN_NAMESPACE
+
+class BackgroundBridge : public QObject
+{
+    Q_OBJECT
+public:
+    struct Requestion
+    {
+        QString screen;
+        QString path;
+        QSize size;
+        QPixmap pixmap;
+    };
+public:
+    BackgroundBridge(class BackgroundManagerPrivate *ptr);
+    ~BackgroundBridge();
+public:
+    void request(bool refresh);
+    void forceRequest();
+    void terminate(bool wait);
+    Q_INVOKABLE void onFinished(void *pData);
+    static QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap = QPixmap());
+private:
+    static void runUpdate(BackgroundBridge *self, QList<Requestion> reqs);
+private:
+    class BackgroundManagerPrivate *d = nullptr;
+    volatile bool getting = false;
+    volatile bool force = false;
+    QFuture<void> future;
+};
+
+class BackgroundManagerPrivate : public QObject
+{
+    Q_OBJECT
+public:
+    explicit BackgroundManagerPrivate(BackgroundManager *qq);
+    ~BackgroundManagerPrivate();
+    bool isEnableBackground();
+
+    inline QRect relativeGeometry(const QRect &geometry)
+    {
+        return QRect(QPoint(0, 0), geometry.size());
+    }
+
+public:
+    BackgroundManager *const q = nullptr;
+    BackgroundService *service = nullptr;
+    BackgroundBridge *bridge = nullptr;
+    QMap<QString, BackgroundWidgetPointer> backgroundWidgets;
+    QMap<QString, QString> backgroundPaths;
+    bool enableBackground = true;
+};
+
+DDP_BACKGROUND_END_NAMESPACE
+
+#endif // BACKGROUNDMANAGER_P_H
