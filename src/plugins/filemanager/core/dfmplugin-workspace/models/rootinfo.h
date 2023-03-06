@@ -104,6 +104,7 @@ private:
     bool checkFileEventQueue();
     void enqueueEvent(const QPair<QUrl, EventType> &e);
     QPair<QUrl, EventType> dequeueEvent();
+    AbstractFileInfoPointer fileInfo(const QUrl &url);
 
 public:
     AbstractFileWatcherPointer watcher;

@@ -15,7 +15,6 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
-#include <QTimer>
 #include <QUrl>
 #include <QApplication>
 #include <QPointer>
@@ -339,7 +338,7 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
     qint64 value = 1;
 
     if (total > 0 && current > 0) {
-        value = static_cast<qint64>((static_cast<qreal>(current) / total)*100);
+        value = static_cast<qint64>((static_cast<qreal>(current) / total) * 100);
         if (current * 100 % total > 0)
             value += 1;   // +1: round up value，maybe 99% when finished
     }

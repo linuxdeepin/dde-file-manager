@@ -343,7 +343,7 @@ void FileSortWorker::handleWatcherRemoveChildren(QList<SortInfoPointer> children
         if (isCanceled)
             return;
 
-        if (!childrenUrlList.contains(sortInfo->url))
+        if (!sortInfo || !childrenUrlList.contains(sortInfo->url))
             continue;
 
         auto index = childrenUrlList.indexOf(sortInfo->url);

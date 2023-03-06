@@ -310,10 +310,14 @@ void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThre
 void RootInfo::addChildren(const QList<QUrl> &urlList)
 {
     QList<SortInfoPointer> newSortInfo;
+
     for (auto url : urlList) {
         url.setPath(url.path());
 
-        auto child = InfoFactory::create<AbstractFileInfo>(url);
+        auto child = fileInfo(url);
+
+        if (!child)
+            continue;
 
         auto sortInfo = addChild(child);
         if (sortInfo)
@@ -359,8 +363,10 @@ SortInfoPointer RootInfo::addChild(const AbstractFileInfoPointer &child)
 
     {
         QWriteLocker lk(&childrenLock);
-        if (childrenUrlList.contains(childUrl))
+        if (childrenUrlList.contains(childUrl)) {
+            sourceDataList.replace(childrenUrlList.indexOf(childUrl), sort);
             return sort;
+        }
         childrenUrlList.append(childUrl);
         sourceDataList.append(sort);
     }
@@ -390,11 +396,15 @@ void RootInfo::removeChildren(const QList<QUrl> &urlList)
     int childIndex = -1;
     for (QUrl url : urlList) {
         url.setPath(url.path());
+        auto child = fileInfo(url);
+        if (!child)
+            continue;
 
+        auto realUrl = child->urlOf(UrlInfoType::kUrl);
         QWriteLocker lk(&childrenLock);
-        childIndex = childrenUrlList.indexOf(url);
-        if (childIndex < 0) {
-            removeChildren.append(sortFileInfo(InfoFactory::create<AbstractFileInfo>(url)));
+        childIndex = childrenUrlList.indexOf(realUrl);
+        if (childIndex < 0 || childIndex >= childrenUrlList.length()) {
+            removeChildren.append(sortFileInfo(child));
             continue;
         }
         childrenUrlList.removeOne(url);
@@ -417,10 +427,16 @@ void RootInfo::updateChild(const QUrl &url)
     auto tmpUrl(url);
     tmpUrl.setPath(url.path());
     {
-        QWriteLocker lk(&childrenLock);
-        if (!childrenUrlList.contains(tmpUrl))
+        auto info = fileInfo(url);
+        if (info.isNull())
             return;
-        sort = sortFileInfo(InfoFactory::create<AbstractFileInfo>(tmpUrl));
+
+        auto realUrl = info->urlOf(UrlInfoType::kUrl);
+
+        QWriteLocker lk(&childrenLock);
+        if (!childrenUrlList.contains(realUrl))
+            return;
+        sort = sortFileInfo(info);
         if (sort.isNull())
             return;
         sourceDataList.replace(childrenUrlList.indexOf(tmpUrl), sort);
@@ -451,4 +467,30 @@ QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
 {
     QMutexLocker lk(&watcherEventMutex);
     return watcherEvent.dequeue();
+}
+
+// When monitoring the mtp directory, the monitor monitors that the scheme of the
+// url used for adding and deleting files is mtp (mtp://path).
+// Here, the monitor's url is used to re-complete the current url
+AbstractFileInfoPointer RootInfo::fileInfo(const QUrl &url)
+{
+    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    if (info)
+        return info;
+
+    auto parentUrl = watcher->url();
+    auto path = url.path();
+    if (path.isEmpty() || path == QDir::separator() || url.fileName().isEmpty())
+        return info;
+    auto pathParent = path.endsWith(QDir::separator()) ? path.left(path.length() - 1) : path;
+    auto parentPath = parentUrl.path().endsWith(QDir::separator())
+            ? parentUrl.path().left(parentUrl.path().length() - 1)
+            : parentUrl.path();
+    pathParent = pathParent.left(pathParent.lastIndexOf(QDir::separator()));
+    if (!parentPath.endsWith(pathParent))
+        return info;
+    auto currentUrl = parentUrl;
+    currentUrl.setPath(parentPath + QDir::separator() + url.fileName());
+    info = InfoFactory::create<AbstractFileInfo>(currentUrl);
+    return info;
 }
