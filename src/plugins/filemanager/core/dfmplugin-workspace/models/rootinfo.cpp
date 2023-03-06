@@ -53,7 +53,7 @@ bool RootInfo::initThreadOfFileData(const QString &key, DFMGLOBAL_NAMESPACE::Ite
     if (!traversalThread.isNull()) {
         traversalThread->traversalThread->disconnect();
     } else {
-        isGetCache = canCache && traversalThreads.count() > 0;
+        isGetCache = canCache && traversalFinish;
     }
 
     traversalThread.reset(new DirIteratorThread);
@@ -90,15 +90,8 @@ void RootInfo::startWork(const QString &key, const bool getCache)
 {
     if (!traversalThreads.contains(key))
         return;
-    if (!traversalFinish || getCache)
+    if (getCache)
         return handleGetSourceData(key);
-
-    traversalFinish = false;
-    {
-        QWriteLocker lk(&childrenLock);
-        childrenUrlList.clear();
-        sourceDataList.clear();
-    }
 
     currentKey = key;
     traversalThreads.value(key)->traversalThread->start();
@@ -127,11 +120,32 @@ int RootInfo::clearTraversalThread(const QString &key)
 {
     if (!traversalThreads.contains(key))
         return traversalThreads.count();
+
     auto thread = traversalThreads.take(key);
-    thread->traversalThread->stop();
-    thread->traversalThread->wait();
-    thread->traversalThread->disconnect();
+    auto traversalThread = thread->traversalThread;
+    traversalThread->disconnect();
+
+    discardedThread.append(traversalThread);
+    connect(thread->traversalThread.data(), &TraversalDirThread::finished, this, [this, traversalThread] {
+        discardedThread.removeAll(traversalThread);
+        traversalThread->disconnect();
+    },
+            Qt::QueuedConnection);
+
+    thread->traversalThread->quit();
+
     return traversalThreads.count();
+}
+
+void RootInfo::reset()
+{
+    {
+        QWriteLocker lk(&childrenLock);
+        childrenUrlList.clear();
+        sourceDataList.clear();
+    }
+
+    traversalFinish = false;
 }
 
 void RootInfo::doFileDeleted(const QUrl &url)

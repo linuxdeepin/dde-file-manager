@@ -44,13 +44,11 @@ void FileDataManager::cleanRoot(const QUrl &rootUrl, const QString &key, const b
     if (!rootInfoMap.value(rootUrl))
         return;
     auto count = rootInfoMap.value(rootUrl)->clearTraversalThread(key);
-    if (count > 0 || refresh)
+    if (count > 0)
         return;
 
-    if (!checkNeedCache(rootUrl)) {
-        rootInfoMap.value(rootUrl)->setParent(nullptr);
-        rootInfoMap.take(rootUrl)->deleteLater();
-    }
+    if (!checkNeedCache(rootUrl) || refresh)
+        rootInfoMap.value(rootUrl)->reset();
 }
 
 void FileDataManager::setFileActive(const QUrl &rootUrl, const QUrl &childUrl, bool active)

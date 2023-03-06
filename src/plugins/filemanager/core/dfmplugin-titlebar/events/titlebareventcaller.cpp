@@ -39,12 +39,8 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
         qWarning() << "Invalid url: " << url;
         return;
     }
-    const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
-    if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
-        TitleBarEventCaller::sendOpenFile(sender, url);
-    } else {
-        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
-    }
+
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
 }
 
 void TitleBarEventCaller::sendOpenFile(QWidget *sender, const QUrl &url)

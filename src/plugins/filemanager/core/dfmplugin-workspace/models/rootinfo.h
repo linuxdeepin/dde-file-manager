@@ -48,6 +48,8 @@ public:
     void startWork(const QString &key, const bool getCache = false);
     int clearTraversalThread(const QString &key);
 
+    void reset();
+
 Q_SIGNALS:
     void childrenUpdate(const QUrl &url);
 
@@ -112,7 +114,7 @@ private:
 
     QMap<QString, QSharedPointer<DirIteratorThread>> traversalThreads;
     QString currentKey;
-    std::atomic_bool traversalFinish { true };
+    std::atomic_bool traversalFinish { false };
 
     QReadWriteLock childrenLock;
     QList<QUrl> childrenUrlList {};
@@ -129,6 +131,9 @@ private:
     QQueue<QPair<QUrl, EventType>> watcherEvent {};
     QMutex watcherEventMutex;
     QAtomicInteger<bool> processFileEventRuning = false;
+
+    QList<TraversalThreadPointer> discardedThread {};
+    QList<QSharedPointer<QThread>> threads {};
 };
 }
 

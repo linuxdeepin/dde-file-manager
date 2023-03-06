@@ -173,7 +173,6 @@ void FileSortWorker::handleIteratorLocalChildren(const QString &key,
         return;
 
     filterAllFiles();
-    qInfo() << "filter result finish";
 
     if (sortRole != DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault && this->sortRole == sortRole
         && this->sortOrder == sortOrder && this->isMixDirAndFile == isMixDirAndFile)
@@ -183,7 +182,6 @@ void FileSortWorker::handleIteratorLocalChildren(const QString &key,
         return;
 
     sortAllFiles();
-    qInfo() << "sort result finish";
 }
 
 void FileSortWorker::handleSourceChildren(const QString &key,
@@ -337,8 +335,6 @@ void FileSortWorker::handleWatcherAddChildren(QList<SortInfoPointer> children)
             continue;
         addChild(sortInfo, AbstractSortAndFiter::SortScenarios::kSortScenariosWatcherAddFile);
     }
-
-    // send select and editor
 }
 
 void FileSortWorker::handleWatcherRemoveChildren(QList<SortInfoPointer> children)

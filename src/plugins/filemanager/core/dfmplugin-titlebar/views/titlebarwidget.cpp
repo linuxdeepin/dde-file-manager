@@ -15,7 +15,7 @@
 #include <DGuiApplicationHelper>
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
-#include <DSizeMode>
+#    include <DSizeMode>
 #endif
 
 #include <QHBoxLayout>
@@ -92,12 +92,12 @@ void TitleBarWidget::initializeUi()
     // crumb
     crumbBar = new CrumbBar;
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget*>(crumbBar), AcName::kAcComputerTitleBarAddress);
+                         qobject_cast<QWidget *>(crumbBar), AcName::kAcComputerTitleBarAddress);
 
     // search button
     searchButton = new DPushButton;
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget*>(searchButton), AcName::kAcComputerTitleBarSearchBtn);
+                         qobject_cast<QWidget *>(searchButton), AcName::kAcComputerTitleBarSearchBtn);
     searchButton->setFocusPolicy(Qt::NoFocus);
     searchButton->setFlat(true);
     searchButton->setIcon(QIcon::fromTheme("search"));
@@ -105,7 +105,7 @@ void TitleBarWidget::initializeUi()
     // option button
     optionButtonBox = new OptionButtonBox;
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget*>(optionButtonBox), AcName::kAcComputerTitleBarOptionBtnBox);
+                         qobject_cast<QWidget *>(optionButtonBox), AcName::kAcComputerTitleBarOptionBtnBox);
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -158,7 +158,7 @@ void TitleBarWidget::initConnect()
     });
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         initUiForSizeMode();
     });
 #endif

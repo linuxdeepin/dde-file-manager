@@ -223,7 +223,12 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         if (url.path().isEmpty())
             url.setPath("/");
         qInfo() << "jump :" << inputStr;
-        TitleBarEventCaller::sendCd(sender, url);
+        const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
+            TitleBarEventCaller::sendOpenFile(sender, url);
+        } else {
+            TitleBarEventCaller::sendCd(sender, url);
+        }
     } else {
         if (currentUrl.isValid()) {
             bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();

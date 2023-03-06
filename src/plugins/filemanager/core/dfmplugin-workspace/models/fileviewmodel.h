@@ -120,6 +120,7 @@ public Q_SLOTS:
 private:
     void initFilterSortWork();
     void quitFilterSortWork();
+    void discardFilterSortObjects();
 
     void changeState(ModelState newState);
 
@@ -130,11 +131,13 @@ private:
     bool canFetchFiles { false };
     FileItemData *itemRootData { nullptr };
 
-    QThread filterSortThread;
+    QSharedPointer<QThread> filterSortThread { nullptr };
     QSharedPointer<FileSortWorker> filterSortWorker { nullptr };
     FileViewFilterCallback filterCallback { nullptr };
     QVariant filterData;
     QString currentKey;
+
+    QList<QSharedPointer<QObject>> discardedObjects {};
 };
 
 }

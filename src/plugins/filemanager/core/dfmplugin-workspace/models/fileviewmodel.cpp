@@ -461,9 +461,7 @@ void FileViewModel::sort(int column, Qt::SortOrder order)
 
 void FileViewModel::stopTraversWork()
 {
-    if (!filterSortWorker.isNull())
-        filterSortWorker->cancel();
-
+    discardFilterSortObjects();
     FileDataManager::instance()->cleanRoot(dirRootUrl, currentKey);
 
     changeState(ModelState::kIdle);
@@ -638,8 +636,8 @@ void FileViewModel::onRemoveFinish()
 
 void FileViewModel::initFilterSortWork()
 {
-    quitFilterSortWork();
-
+    discardFilterSortObjects();
+    filterSortThread.reset(new QThread);
     // make filters
     QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
     bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
@@ -655,13 +653,11 @@ void FileViewModel::initFilterSortWork()
     ItemRoles role = static_cast<ItemRoles>(valueMap.value("sortRole", kItemFileDisplayNameRole).toInt());
 
     filterSortWorker.reset(new FileSortWorker(dirRootUrl, currentKey, filterCallback, {}, filters));
-
     beginInsertRows(QModelIndex(), 0, 0);
     filterSortWorker->setRootData(new FileItemData(dirRootUrl));
     endInsertRows();
-
     filterSortWorker->setSortAgruments(order, role, Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool());
-    filterSortWorker->moveToThread(&filterSortThread);
+    filterSortWorker->moveToThread(filterSortThread.data());
 
     // connect signals
     connect(filterSortWorker.data(), &FileSortWorker::insertRows, this, &FileViewModel::onInsert, Qt::QueuedConnection);
@@ -683,7 +679,7 @@ void FileViewModel::initFilterSortWork()
     connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
     connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged);
 
-    filterSortThread.start();
+    filterSortThread->start();
 }
 
 void FileViewModel::quitFilterSortWork()
@@ -692,8 +688,34 @@ void FileViewModel::quitFilterSortWork()
         filterSortWorker->disconnect();
         filterSortWorker->cancel();
     }
-    filterSortThread.quit();
-    filterSortThread.wait();
+    if (!filterSortThread.isNull()) {
+        filterSortThread->quit();
+        filterSortThread->wait();
+    }
+}
+
+void FileViewModel::discardFilterSortObjects()
+{
+    if (!filterSortThread.isNull() && !filterSortWorker.isNull()) {
+        auto discardedWorker = filterSortWorker;
+        discardedWorker->cancel();
+        discardedObjects.append(discardedWorker);
+        filterSortWorker.reset();
+
+        auto discardedThread = filterSortThread;
+        discardedThread->disconnect();
+        discardedObjects.append(discardedThread);
+        filterSortThread.reset();
+
+        connect(discardedThread.data(), &QThread::finished, this, [this, discardedWorker, discardedThread] {
+            discardedObjects.removeAll(discardedWorker);
+            discardedObjects.removeAll(discardedThread);
+            discardedThread->disconnect();
+        },
+                Qt::QueuedConnection);
+
+        discardedThread->quit();
+    }
 }
 
 void FileViewModel::changeState(ModelState newState)
