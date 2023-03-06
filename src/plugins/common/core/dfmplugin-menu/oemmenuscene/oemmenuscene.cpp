@@ -4,9 +4,10 @@
 
 #include "private/oemmenuscene_p.h"
 
+#include "utils/menuhelper.h"
+
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/dpf.h>
@@ -111,6 +112,9 @@ bool OemMenuScene::create(QMenu *parent)
         d->oemActions = d->oemMenu->normalActions(d->selectFiles, d->onDesktop);
 
     for (auto action : d->oemActions) {
+        // reset status
+        action->setVisible(true);
+        action->setEnabled(true);
         parent->addAction(action);
         d->oemChildActions.append(d->childActions(action));
     }
@@ -123,8 +127,7 @@ void OemMenuScene::updateState(QMenu *parent)
     if (!parent)
         return;
 
-    auto hiddenMenus = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList();
-    if (hiddenMenus.contains("extension-menu")) {
+    if (Helper::isHiddenExtActionsByDConfig(d->currentDir)) {
         for (auto act : d->oemActions)
             act->setVisible(false);
     }

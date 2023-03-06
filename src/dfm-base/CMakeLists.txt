@@ -51,6 +51,7 @@ FILE (GLOB INTERFACES_FILES
 
 FILE (GLOB UTILS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/private/*.cpp"

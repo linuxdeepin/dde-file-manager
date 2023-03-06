@@ -68,6 +68,28 @@
             "permissions": "readwrite",
             "visibility": "private"
         },
+        "dfd.menu.protocoldev.enable": {
+            "value": true,
+            "serial":0,
+            "flags":[],
+            "name":"Enable protocol devices to display extension menu",
+            "name[zh_CN]":"启用网络协议设备显示右键扩展菜单",
+            "description[zh_CN]":"用于控制是否启用网络协议设备显示右键扩展菜单",
+            "description":"It's used to control whether to enable protocol devices to display extension menu is enabled",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+        "dfd.menu.blockdev.enable": {
+            "value": true,
+            "serial":0,
+            "flags":[],
+            "name":"Enable block devices to display extension menu",
+            "name[zh_CN]":"启用块设备显示右键扩展菜单",
+            "description[zh_CN]":"用于控制是否启用块设备显示右键扩展菜单",
+            "description":"It's used to control whether to enable block devices to display extension menu is enabled",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
         "dfm.vault.algo.name": {
             "value": "sm4-128-ecb",
             "serial": 0,

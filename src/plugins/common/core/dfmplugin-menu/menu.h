@@ -72,6 +72,6 @@ private:
     DPF_EVENT_REG_SLOT(slot_Menu_PerfectParams)
 };
 
-}
+}   // end namespace dfmplugin_menu
 
 #endif   // MENU_H

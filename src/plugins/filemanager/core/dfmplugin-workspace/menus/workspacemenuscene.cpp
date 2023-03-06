@@ -119,10 +119,8 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
             currentScene.append(oemScene);
 
         // extend menu.must last
-        if (!DeviceUtils::isFtp(d->currentDir) && !DeviceUtils::isSamba(d->currentDir) && !FileUtils::isGvfsFile(d->currentDir)) {
-            if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName))
-                currentScene.append(extendScene);
-        }
+        if (auto extendScene = dfmplugin_menu_util::menuSceneCreateScene(kExtendMenuSceneName))
+            currentScene.append(extendScene);
     }
 
     if (auto dconfigFilterScene = dfmplugin_menu_util::menuSceneCreateScene(kDConfigHiddenMenuSceneName))

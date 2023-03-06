@@ -49,9 +49,9 @@ public:
 
 protected:
     // 构造函数列表
-    QHash<QString, CreateFunc> constructList {};
+    DThreadMap<QString, CreateFunc> constructList {};
     // 转换函数列表
-    QHash<QString, TransFunc> transList {};
+    DThreadMap<QString, TransFunc> transList {};
 
 public:
     /*!
@@ -77,7 +77,7 @@ public:
         QString error;
         FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
-        if (transList[scheme]) {
+        if (transList.contains(scheme)) {
             error = "The current scheme trans func has registered";
             return false;
         }
@@ -101,7 +101,7 @@ public:
         QString error;
         FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
-        if (constructList[scheme]) {
+        if (constructList.contains(scheme)) {
             error = "The current scheme has registered "
                     "the associated construction class";
             return false;
@@ -486,6 +486,5 @@ private:
 };
 
 }
-
 
 #endif   // SCHEMEFACTORY_H

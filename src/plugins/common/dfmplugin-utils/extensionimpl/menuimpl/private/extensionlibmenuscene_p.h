@@ -21,7 +21,8 @@ public:
     explicit ExtensionLibMenuScenePrivate(ExtensionLibMenuScene *qq);
 
 private:
-    ExtensionLibMenuScene *q;
+    ExtensionLibMenuScene *q { nullptr };
+    bool hiddenActiosn { false };
 };
 
 }   // namespace dfmplugin_utils

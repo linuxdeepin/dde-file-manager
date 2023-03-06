@@ -3,13 +3,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "private/extendmenuscene_p.h"
+
 #include "extendmenuscene/extendmenu/dcustomactionbuilder.h"
+#include "utils/menuhelper.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
-#include "dfm-framework/dpf.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QDebug>
@@ -49,8 +51,7 @@ QList<QAction *> ExtendMenuScenePrivate::childActions(QAction *action)
 }
 
 ExtendMenuScene::ExtendMenuScene(DCustomActionParser *parser, QObject *parent)
-    : AbstractMenuScene(parent)
-    , d(new ExtendMenuScenePrivate(this))
+    : AbstractMenuScene(parent), d(new ExtendMenuScenePrivate(this))
 {
     Q_ASSERT(parser);
     d->customParser = parser;
@@ -84,6 +85,13 @@ bool ExtendMenuScene::initialize(const QVariantHash &params)
             qDebug() << errString;
             return false;
         }
+    }
+
+    // for sub scene menu in other plugins
+    if (Helper::isHiddenExtActionsByDConfig(d->currentDir)) {
+        QVariantHash newParams { params };
+        newParams[MenuParamKeyExt::kIsHiddenExtActions] = true;
+        return AbstractMenuScene::initialize(newParams);
     }
 
     return AbstractMenuScene::initialize(params);
@@ -238,7 +246,7 @@ void ExtendMenuScene::updateState(QMenu *parent)
         }
     }
 
-    d->menuVisiableControl(parent);
+    d->menuVisiableControl();
 
     AbstractMenuScene::updateState(parent);
 }
@@ -268,10 +276,9 @@ bool ExtendMenuScene::triggered(QAction *action)
     return AbstractMenuScene::triggered(action);
 }
 
-void ExtendMenuScenePrivate::menuVisiableControl(QMenu *parent)
+void ExtendMenuScenePrivate::menuVisiableControl()
 {
-    auto hiddenMenus = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList();
-    if (hiddenMenus.contains("extension-menu")) {
+    if (Helper::isHiddenExtActionsByDConfig(currentDir)) {
         for (auto act : extendActions)
             act->setVisible(false);
     }

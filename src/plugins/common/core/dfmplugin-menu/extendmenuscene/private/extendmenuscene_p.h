@@ -13,11 +13,16 @@
 
 namespace dfmplugin_menu {
 
+namespace MenuParamKeyExt {
+inline constexpr char kIsHiddenExtActions[] = "isHiddenExtActions";   // quint64
+
+}
+
 class ExtendMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
 public:
     explicit ExtendMenuScenePrivate(ExtendMenuScene *qq);
-    void menuVisiableControl(QMenu *parent);
+    void menuVisiableControl();
     QList<QAction *> childActions(QAction *action);
 
 public:
