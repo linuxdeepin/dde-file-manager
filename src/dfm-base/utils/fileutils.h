@@ -85,6 +85,7 @@ public:
     // otherwise convert the path to the mount point name
     static QString bindPathTransform(const QString &path, bool toDevice);
     static int dirFfileCount(const QUrl &url);
+    static bool fileCanTrash(const QUrl &url);
 
 private:
     static QMutex cacheCopyingMutex;

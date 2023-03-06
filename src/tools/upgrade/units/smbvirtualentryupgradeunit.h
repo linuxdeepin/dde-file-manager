@@ -17,7 +17,7 @@ class SmbVirtualEntryUpgradeUnit : public UpgradeUnit
 {
 public:
     SmbVirtualEntryUpgradeUnit();
-    ~SmbVirtualEntryUpgradeUnit();
+    ~SmbVirtualEntryUpgradeUnit() override;
 
     virtual QString name() override;
     virtual bool initialize(const QMap<QString, QString> &args) override;

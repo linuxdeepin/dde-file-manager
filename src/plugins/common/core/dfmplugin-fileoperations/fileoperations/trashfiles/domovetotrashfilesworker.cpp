@@ -142,13 +142,12 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                 // pause and emit error msg
                 action = doHandleErrorAndWait(url, QUrl(),
                                               AbstractJobHandler::JobErrorType::kDeleteFileError, false,
-                                              fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ?
-                                                "Unknown error" : fileHandler.errorString());
+                                              fileHandler.errorCode() == DFMIOErrorCode::DFM_IO_ERROR_NONE ? "Unknown error" : fileHandler.errorString());
             }
         } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 
         if (action == AbstractJobHandler::SupportAction::kNoAction
-                || action == AbstractJobHandler::SupportAction::kSkipAction) {
+            || action == AbstractJobHandler::SupportAction::kSkipAction) {
             completeFilesCount++;
             continue;
         }
@@ -175,7 +174,7 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     do {
         if (!canWriteFile(url))
             // pause and emit error msg
-            action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
+            action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kPermissionError);
 
     } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
 

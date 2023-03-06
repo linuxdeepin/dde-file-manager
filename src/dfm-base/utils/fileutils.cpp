@@ -23,6 +23,7 @@
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <KCodecs>
 #include <KEncodingProber>
@@ -1275,6 +1276,22 @@ int FileUtils::dirFfileCount(const QUrl &url)
     const QString &path = url.path();
     DecoratorFileEnumerator enumerator(path);
     return int(enumerator.fileCount());
+}
+
+bool FileUtils::fileCanTrash(const QUrl &url)
+{
+    // 获取当前配置
+    bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.trash.allfiletotrash").toBool();
+    if (!alltotrash)
+        return url.isLocalFile();
+    if (!url.isValid())
+        return false;
+
+    const QString &path = url.toLocalFile();
+    static const QString gvfsMatch { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)" };
+    static QRegularExpression re { gvfsMatch };
+    static QRegularExpressionMatch match { re.match(path) };
+    return !match.hasMatch();
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

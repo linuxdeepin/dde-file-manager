@@ -1091,24 +1091,25 @@ bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
     if (getuid() == 0)
         return true;
 
-    DecoratorFileInfo info(url);
-    if (!info.isValid())
+    auto info = InfoFactory::create<AbstractFileInfo>(url);
+
+    if (info.isNull())
         return false;
 
-    DecoratorFileInfo parentInfo(info.parentUrl());
-    if (!parentInfo.isValid())
+    auto parentInfo = InfoFactory::create<AbstractFileInfo>(info->urlOf(UrlInfoType::kParentUrl));
+    if (parentInfo.isNull())
         return false;
 
-    bool isFolderWritable = parentInfo.isWritable();
+    bool isFolderWritable = parentInfo->isAttributes(OptInfoType::kIsWritable);
     if (!isFolderWritable)
         return false;
 
 #ifdef Q_OS_LINUX
     struct stat statBuffer;
-    if (::lstat(parentInfo.parentPath().toLocal8Bit().data(), &statBuffer) == 0) {
+    if (::lstat(parentInfo->urlOf(UrlInfoType::kParentUrl).path().toLocal8Bit().data(), &statBuffer) == 0) {
         // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
-        const auto &fileOwnerId = info.ownerId();
-        const auto &uid = info.ownerId();
+        const auto &fileOwnerId = info->extendAttributes(ExtInfoType::kOwnerId);
+        const auto &uid = getuid();
         const bool hasTRight = (statBuffer.st_mode & S_ISVTX) == S_ISVTX;
         if (hasTRight && fileOwnerId != uid) {
             return false;

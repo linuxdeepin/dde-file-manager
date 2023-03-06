@@ -61,7 +61,7 @@ JobHandlePointer TrashFileEventReceiver::doMoveToTrash(const quint64 windowId, c
 
     const QUrl &sourceFirst = sources.first();
     JobHandlePointer handle = nullptr;
-    if (!FileUtils::isLocalDevice(sourceFirst)) {
+    if (!FileUtils::fileCanTrash(sourceFirst)) {
         if (DialogManagerInstance->showDeleteFilesDialog(sources) != QDialog::Accepted)
             return nullptr;
         handle = copyMoveJob->deletes(sources, flags);
@@ -123,7 +123,7 @@ JobHandlePointer TrashFileEventReceiver::doCleanTrash(const quint64 windowId, co
         if (info) {
             count = info->countChildFile();
         }
-        if (DialogManagerInstance->showClearTrashDialog(count) != QDialog::Accepted) return nullptr;
+        if (DialogManagerInstance->showClearTrashDialog(static_cast<quint64>(count)) != QDialog::Accepted) return nullptr;
     }
 
     DWIDGET_USE_NAMESPACE

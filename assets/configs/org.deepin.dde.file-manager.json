@@ -133,6 +133,17 @@
             "description":"默认启用长文件名扩展的目录",
             "permissions":"readwrite",
             "visibility":"private"
+        },
+        "dfm.trash.allfiletotrash": {
+            "value":false,
+            "serial":0,
+            "flags":[],
+            "name":"Normal deletion of files under peripheral and network paths enters the recycle bin",
+            "name[zh_CN]":"外设和网络挂载设备nas盘删除文件进入到回收站",
+            "description[zh_CN]":"外设和网络挂载设备nas盘删除文件进入到回收站",
+            "description":"外设和网络挂载设备nas盘删除文件进入到回收站",
+            "permissions":"readwrite",
+            "visibility":"private"
         }
     }
 }
