@@ -232,7 +232,7 @@ bool DeviceManager::unmountBlockDev(const QString &id, const QVariantMap &opts)
         if (!dev->hasFileSystem())
             return true;
 
-        DeviceManagerPrivate::handleDlnfsMount(mpt, false);
+        DeviceManagerPrivate::unmountStackedMount(mpt);
         return dev->unmount(opts);
     }
 }
@@ -275,8 +275,7 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
                 cb(ok, err);
         });
     } else {
-        DeviceManagerPrivate::handleDlnfsMount(mpt, false);
-
+        DeviceManagerPrivate::unmountStackedMount(mpt);
         dev->unmountAsync(opts, [cb, this, id](bool ok, DeviceError err) {
             if (cb)
                 cb(ok, err);
@@ -713,7 +712,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a
-                                    // 'device busy' error.
+                    // 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -802,7 +801,7 @@ DeviceManager::DeviceManager(QObject *parent)
 {
 }
 
-DeviceManager::~DeviceManager() { }
+DeviceManager::~DeviceManager() {}
 
 void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 {
@@ -908,6 +907,15 @@ void DeviceManagerPrivate::handleDlnfsMount(const QString &mpt, bool mount)
     qDebug() << msg << ret;
     if (!ret.value("result").toBool())
         qWarning() << msg << ret;
+}
+
+void DeviceManagerPrivate::unmountStackedMount(const QString &mpt)
+{
+    QDBusInterface iface(kDaemonService, kDaemonMountPath, kDaemonMountIface, QDBusConnection::systemBus());
+    QDBusReply<QVariantMap> reply = iface.call("Unmount", mpt,
+                                               QVariantMap { { "fsType", "common" }, { "unmountAllStacked", true } });
+    const auto &ret = reply.value();
+    qDebug() << "unmount all stacked mount of: " << mpt << ret;
 }
 
 MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault,

@@ -19,6 +19,7 @@ inline constexpr char kDomain[] { "domain" };
 inline constexpr char kFsType[] { "fsType" };
 inline constexpr char kMountName[] { "mntName" };
 inline constexpr char kTimeout[] { "timeout" };
+inline constexpr char kUnmountAllStacked[] { "unmountAllStacked" };
 }
 
 namespace MountReturnField {
@@ -31,6 +32,7 @@ inline constexpr char kErrorMessage[] { "errMsg" };
 namespace MountFstypeSupportedField {
 inline constexpr char kDlnFs[] { "dlnfs" };
 inline constexpr char kCifs[] { "cifs" };
+inline constexpr char kCommon[] { "common" };
 }
 
 enum MountErrorCode {   // NOTE(xust): use NAGATIVE value when return, avoid confusing with errno
