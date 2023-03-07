@@ -261,6 +261,13 @@ void AbstractWorker::endWork()
     emit finishedNotify(info);
 
     qInfo() << "\n work end, job: " << jobType << "\n sources: " << sourceUrls << "\n target: " << targetUrl << "\n time elapsed: " << timeElapsed.elapsed() << "\n";
+
+    if (statisticsFilesSizeJob) {
+        statisticsFilesSizeJob->stop();
+        statisticsFilesSizeJob->wait();
+    }
+
+    emit workerFinish();
 }
 /*!
  * \brief AbstractWorker::emitStateChangedNotify send state changed signal
@@ -296,7 +303,7 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
         || AbstractJobHandler::JobType::kCutType == jobType) {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceFilesTotalSize)));
     } else if (AbstractJobHandler::JobType::kMoveToTrashType == jobType
-               || AbstractJobHandler::JobType::kRestoreType == jobType){
+               || AbstractJobHandler::JobType::kRestoreType == jobType) {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceUrls.count())));
     } else {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(allFilesList.count())));
@@ -547,6 +554,10 @@ void AbstractWorker::saveOperations()
 
 AbstractWorker::~AbstractWorker()
 {
+    if (statisticsFilesSizeJob) {
+        statisticsFilesSizeJob->stop();
+        statisticsFilesSizeJob->wait();
+    }
 }
 
 /*!

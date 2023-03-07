@@ -245,4 +245,17 @@ void TaskDialog::keyPressEvent(QKeyEvent *event)
     QDialog::keyPressEvent(event);
 }
 
-TaskDialog::~TaskDialog() {}
+TaskDialog::~TaskDialog()
+{
+    if (addTaskMutex) {
+        addTaskMutex->unlock();
+        delete addTaskMutex;
+        addTaskMutex = nullptr;
+    }
+
+    if (adjustSizeMutex) {
+        adjustSizeMutex->unlock();
+        delete adjustSizeMutex;
+        adjustSizeMutex = nullptr;
+    }
+}

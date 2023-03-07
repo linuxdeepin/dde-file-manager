@@ -43,6 +43,8 @@ JobHandlePointer FileOperationsService::copy(const QList<QUrl> &sources, const Q
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     CopyFiles *task = new CopyFiles();
     task->setJobArgs(jobHandler, sources, target, flags);
+    connect(jobHandler.data(), &DFMBASE_NAMESPACE::AbstractJobHandler::workerFinish, this, &FileOperationsService::handleWorkerFinish);
+    jobs.insert(QString::number(quintptr(jobHandler.data()), 16), jobHandler);
     return jobHandler;
 }
 
@@ -51,6 +53,8 @@ JobHandlePointer FileOperationsService::copyFromTrash(const QList<QUrl> &sources
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     CopyFromTrashTrashFiles *task = new CopyFromTrashTrashFiles();
     task->setJobArgs(jobHandler, sources, target, flags);
+    connect(jobHandler.data(), &DFMBASE_NAMESPACE::AbstractJobHandler::workerFinish, this, &FileOperationsService::handleWorkerFinish);
+    jobs.insert(QString::number(quintptr(jobHandler.data()), 16), jobHandler);
     return jobHandler;
 }
 /*!
@@ -66,6 +70,8 @@ JobHandlePointer FileOperationsService::moveToTrash(const QList<QUrl> &sources,
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     MoveToTrashFiles *task = new MoveToTrashFiles();
     task->setJobArgs(jobHandler, sources, QUrl(), flags);
+    connect(jobHandler.data(), &DFMBASE_NAMESPACE::AbstractJobHandler::workerFinish, this, &FileOperationsService::handleWorkerFinish);
+    jobs.insert(QString::number(quintptr(jobHandler.data()), 16), jobHandler);
     return jobHandler;
 }
 /*!
@@ -80,6 +86,8 @@ JobHandlePointer FileOperationsService::restoreFromTrash(const QList<QUrl> &sour
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     RestoreTrashFiles *task = new RestoreTrashFiles();
     task->setJobArgs(jobHandler, sources, target, flags);
+    connect(jobHandler.data(), &DFMBASE_NAMESPACE::AbstractJobHandler::workerFinish, this, &FileOperationsService::handleWorkerFinish);
+    jobs.insert(QString::number(quintptr(jobHandler.data()), 16), jobHandler);
     return jobHandler;
 }
 /*!
@@ -94,6 +102,8 @@ JobHandlePointer FileOperationsService::deletes(const QList<QUrl> &sources,
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     DeleteFiles *task = new DeleteFiles();
     task->setJobArgs(jobHandler, sources, QUrl(), flags);
+    connect(jobHandler.data(), &DFMBASE_NAMESPACE::AbstractJobHandler::workerFinish, this, &FileOperationsService::handleWorkerFinish);
+    jobs.insert(QString::number(quintptr(jobHandler.data()), 16), jobHandler);
     return jobHandler;
 }
 /*!
@@ -110,6 +120,8 @@ JobHandlePointer FileOperationsService::cut(const QList<QUrl> &sources, const QU
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     CutFiles *task = new CutFiles();
     task->setJobArgs(jobHandler, sources, target, flags);
+    connect(jobHandler.data(), &DFMBASE_NAMESPACE::AbstractJobHandler::workerFinish, this, &FileOperationsService::handleWorkerFinish);
+    jobs.insert(QString::number(quintptr(jobHandler.data()), 16), jobHandler);
     return jobHandler;
 }
 /*!
@@ -123,5 +135,14 @@ JobHandlePointer FileOperationsService::cleanTrash(const QList<QUrl> &sources)
     JobHandlePointer jobHandler(new DFMBASE_NAMESPACE::AbstractJobHandler);
     CleanTrashFiles *task = new CleanTrashFiles();
     task->setJobArgs(jobHandler, sources);
+    connect(jobHandler.data(), &DFMBASE_NAMESPACE::AbstractJobHandler::workerFinish, this, &FileOperationsService::handleWorkerFinish);
+    jobs.insert(QString::number(quintptr(jobHandler.data()), 16), jobHandler);
     return jobHandler;
+}
+
+void FileOperationsService::handleWorkerFinish()
+{
+    if (!sender())
+        return;
+    jobs.remove(QString::number(quintptr(sender()), 16));
 }

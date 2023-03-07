@@ -26,9 +26,11 @@ void AbstractJob::setJobArgs(const JobHandlePointer handle, const QList<QUrl> &s
     }
     connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractJob::operateAation);
     connect(this, &AbstractJob::requestShowTipsDialog, handle.get(), &AbstractJobHandler::requestShowTipsDialog);
+
     // 连接worker中的所有错误信号，转发给jobhandler
     connect(doWorker.data(), &AbstractWorker::errorNotify, this, &AbstractJob::handleError, Qt::QueuedConnection);
     connect(this, &AbstractJob::errorNotify, handle.get(), &AbstractJobHandler::onError);
+    connect(doWorker.data(), &AbstractWorker::workerFinish, handle.get(), &AbstractJobHandler::workerFinish, Qt::QueuedConnection);
     doWorker->setWorkArgs(handle, sources, target, flags);
 }
 

@@ -85,6 +85,7 @@ signals:
     void speedUpdatedNotify(const JobInfoPointer jobInfo);
 
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
+    void workerFinish();
 signals:   // update proccess timer use
     void startUpdateProgressTimer();
     void startWork();

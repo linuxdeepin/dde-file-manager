@@ -229,6 +229,7 @@ Q_SIGNALS:   // 发送给任务调用者使用的信号
      */
     void speedUpdatedNotify(const JobInfoPointer jobInfo);
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
+    void workerFinish();
 Q_SIGNALS:   // 发送给任务使用的信号
     /*!
      * \brief userAction 用户当前动作

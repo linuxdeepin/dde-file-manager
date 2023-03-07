@@ -11,6 +11,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QObject>
+#include <QMap>
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 class FileOperationsService : public QObject
@@ -34,6 +35,12 @@ public:
     JobHandlePointer cut(const QList<QUrl> &sources, const QUrl &target,
                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer cleanTrash(const QList<QUrl> &sources);
+
+private slots:
+    void handleWorkerFinish();
+
+private:
+    QMap<QString, JobHandlePointer> jobs;
 };
 DPFILEOPERATIONS_END_NAMESPACE
 
