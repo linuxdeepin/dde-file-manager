@@ -28,6 +28,7 @@ class Computer : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_ShortCut_CtrlN)
     DPF_EVENT_REG_SIGNAL(signal_ShortCut_CtrlT)
     DPF_EVENT_REG_SIGNAL(signal_ReportLog_MenuData)
+    DPF_EVENT_REG_SIGNAL(signal_View_Refreshed)
 
     // hook
     DPF_EVENT_REG_HOOK(hook_View_ItemListFilter)

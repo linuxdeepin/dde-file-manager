@@ -21,21 +21,16 @@ public:
     * \return true vault is available, vice versa.
     */
     bool isVaultEnabled();
-
     void infoRegister();
-
     void pluginServiceRegister();
 
 public slots:
     void onWindowOpened(quint64 winID);
-
     void addSideBarVaultItem();
-
     void addComputer();
-
     void removeSideBarVaultItem();
-
     void removeComputerVaultItem();
+    void onComputerRefresh();
 
 public:
     static VaultVisibleManager *instance();

@@ -156,6 +156,11 @@ void VaultVisibleManager::removeComputerVaultItem()
     dpfSlotChannel->push("dfmplugin_computer", "slot_Item_Remove", QUrl("entry:///vault.vault"));
 }
 
+void VaultVisibleManager::onComputerRefresh()
+{
+    addComputer();
+}
+
 VaultVisibleManager *VaultVisibleManager::instance()
 {
     static VaultVisibleManager obj;

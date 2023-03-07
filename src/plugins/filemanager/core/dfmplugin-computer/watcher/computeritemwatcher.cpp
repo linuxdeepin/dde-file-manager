@@ -529,6 +529,7 @@ void ComputerItemWatcher::startQueryItems()
     // on initialize computer view/model, get the cached items in construction.
     initedDatas = items();
     Q_EMIT itemQueryFinished(initedDatas);
+    dpfSignalDispatcher->publish("dfmplugin_computer", "signal_View_Refreshed");
 }
 
 /*!

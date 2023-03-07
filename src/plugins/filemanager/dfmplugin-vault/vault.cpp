@@ -29,6 +29,8 @@ void Vault::initialize()
 
 bool Vault::start()
 {
+    dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_View_Refreshed",
+                                   VaultVisibleManager::instance(), &VaultVisibleManager::onComputerRefresh);
     return true;
 }
 
