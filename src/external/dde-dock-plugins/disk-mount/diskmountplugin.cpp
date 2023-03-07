@@ -30,6 +30,10 @@ DiskMountPlugin::DiskMountPlugin(QObject *parent)
       tipsLabel(new TipsWidget),
       diskPluginItem(new DiskPluginItem)
 {
+    QTranslator *translator = new QTranslator(this);
+    translator->load(QString("/usr/share/dde-file-manager/translations/dde-file-manager_%1.qm").arg(QLocale::system().name()));
+    QCoreApplication::installTranslator(translator);
+
     diskPluginItem->setVisible(false);
     tipsLabel->setObjectName("diskmount");
     tipsLabel->setVisible(false);
@@ -43,11 +47,6 @@ const QString DiskMountPlugin::pluginName() const
 
 void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 {
-    QString &&applicationName = qApp->applicationName();
-    qApp->setApplicationName("dde-disk-mount-plugin");
-    qApp->loadTranslator();
-    qApp->setApplicationName(applicationName);
-
     std::call_once(DiskMountPlugin::onceFlag(), [this, proxyInter]() {
         setProxyInter(proxyInter);   // `m_proxyInter` from Base class `PluginsItemInterface`
         DevProxyMng->connectToService();
