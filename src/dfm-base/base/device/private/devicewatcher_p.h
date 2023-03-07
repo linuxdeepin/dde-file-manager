@@ -5,8 +5,6 @@
 #ifndef DEVICEWATCHER_P_H
 #define DEVICEWATCHER_P_H
 
-#include "dfm-base/dfm_base_global.h"
-
 #include <QTimer>
 #include <QMutex>
 #include <QHash>
@@ -16,18 +14,43 @@
 
 namespace dfmbase {
 
-class DeviceWatcher;
-class DeviceWatcherPrivate
+struct DevStorage
 {
+    quint64 total { 0 };
+    quint64 avai { 0 };
+    quint64 used { 0 };
+
+    inline bool operator==(const DevStorage &other)
+    {
+        return total == other.total && avai == other.avai && used == other.used;
+    }
+    inline bool operator!=(const DevStorage &other)
+    {
+        return !(this->operator==(other));
+    }
+    inline bool isValid()
+    {
+        return this->operator!=({});
+    }
+};
+
+class DeviceWatcher;
+class DeviceWatcherPrivate : public QObject
+{
+    Q_OBJECT
     friend class DeviceWatcher;
 
 public:
     explicit DeviceWatcherPrivate(DeviceWatcher *qq);
 
+private Q_SLOTS:
+    void queryUsageAsync();
+    void updateStorage(const QString &id, quint64 total, quint64 avai);
+
 private:
-    void queryUsage();
-    void queryUsage(DFMMOUNT::DeviceType type, const QHash<QString, QVariantMap> &datas);
-    void queryUsage(const QString &id, const QString &mpt, DFMMOUNT::DeviceType type, bool notifyIfChanged);
+    void queryUsageOfItem(const QVariantMap &itemData, DFMMOUNT::DeviceType type);
+    DevStorage queryUsageOfBlock(const QVariantMap &itemData);
+    DevStorage queryUsageOfProtocol(const QVariantMap &itemData);
 
 private:
     DeviceWatcher *q { nullptr };
@@ -35,8 +58,6 @@ private:
     QTimer pollingTimer;
     const int kPollingInterval = 10000;
 
-    QMutex blkMtx;
-    QMutex protoMtx;
     QHash<QString, QVariantMap> allBlockInfos;
     QHash<QString, QVariantMap> allProtocolInfos;
 

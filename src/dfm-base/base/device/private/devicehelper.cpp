@@ -33,7 +33,7 @@ static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeed" };
 using namespace dfmbase;
 DFM_MOUNT_USE_NS
 
-DevPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType type)
+DevAutoPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType type)
 {
     auto manager = DDeviceManager::instance();
     auto monitor = manager->getRegisteredMonitor(type);
@@ -41,16 +41,16 @@ DevPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType typ
     return monitor->createDeviceById(devId);
 }
 
-BlockDevPtr DeviceHelper::createBlockDevice(const QString &id)
+BlockDevAutoPtr DeviceHelper::createBlockDevice(const QString &id)
 {
     auto devPtr = createDevice(id, DeviceType::kBlockDevice);
-    return qobject_cast<BlockDevPtr>(devPtr);
+    return qobject_cast<BlockDevAutoPtr>(devPtr);
 }
 
-ProtocolDevPtr DeviceHelper::createProtocolDevice(const QString &id)
+ProtocolDevAutoPtr DeviceHelper::createProtocolDevice(const QString &id)
 {
     auto devPtr = createDevice(id, DeviceType::kProtocolDevice);
-    return qobject_cast<ProtocolDevPtr>(devPtr);
+    return qobject_cast<ProtocolDevAutoPtr>(devPtr);
 }
 
 QVariantMap DeviceHelper::loadBlockInfo(const QString &id)
@@ -63,7 +63,7 @@ QVariantMap DeviceHelper::loadBlockInfo(const QString &id)
     return loadBlockInfo(dev);
 }
 
-QVariantMap DeviceHelper::loadBlockInfo(const BlockDevPtr &dev)
+QVariantMap DeviceHelper::loadBlockInfo(const BlockDevAutoPtr &dev)
 {
     if (!dev) return {};
 
@@ -135,7 +135,7 @@ QVariantMap DeviceHelper::loadProtocolInfo(const QString &id)
     return loadProtocolInfo(dev);
 }
 
-QVariantMap DeviceHelper::loadProtocolInfo(const ProtocolDevPtr &dev)
+QVariantMap DeviceHelper::loadProtocolInfo(const ProtocolDevAutoPtr &dev)
 {
     if (!dev) return {};
 
@@ -156,11 +156,11 @@ QVariantMap DeviceHelper::loadProtocolInfo(const ProtocolDevPtr &dev)
 
 bool DeviceHelper::isMountableBlockDev(const QString &id, QString &why)
 {
-    BlockDevPtr dev = createBlockDevice(id);
+    BlockDevAutoPtr dev = createBlockDevice(id);
     return isMountableBlockDev(dev, why);
 }
 
-bool DeviceHelper::isMountableBlockDev(const BlockDevPtr &dev, QString &why)
+bool DeviceHelper::isMountableBlockDev(const BlockDevAutoPtr &dev, QString &why)
 {
     if (!dev) {
         why = "block device is not valid!";
@@ -207,7 +207,7 @@ bool DeviceHelper::isEjectableBlockDev(const QString &id, QString &why)
     return isEjectableBlockDev(dev, why);
 }
 
-bool DeviceHelper::isEjectableBlockDev(const BlockDevPtr &dev, QString &why)
+bool DeviceHelper::isEjectableBlockDev(const BlockDevAutoPtr &dev, QString &why)
 {
     if (!dev) {
         why = "device is not valid";

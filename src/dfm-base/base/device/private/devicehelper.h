@@ -20,9 +20,9 @@ DFM_MOUNT_END_NS
 
 namespace dfmbase {
 
-using DevPtr = QSharedPointer<DFMMOUNT::DDevice>;
-using BlockDevPtr = QSharedPointer<DFMMOUNT::DBlockDevice>;
-using ProtocolDevPtr = QSharedPointer<DFMMOUNT::DProtocolDevice>;
+using DevAutoPtr = QSharedPointer<DFMMOUNT::DDevice>;
+using BlockDevAutoPtr = QSharedPointer<DFMMOUNT::DBlockDevice>;
+using ProtocolDevAutoPtr = QSharedPointer<DFMMOUNT::DProtocolDevice>;
 
 /*!
  * \brief The DeviceHelper class
@@ -32,21 +32,21 @@ using ProtocolDevPtr = QSharedPointer<DFMMOUNT::DProtocolDevice>;
 class DeviceHelper
 {
 public:
-    static DevPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);
-    static BlockDevPtr createBlockDevice(const QString &id);
-    static ProtocolDevPtr createProtocolDevice(const QString &id);
+    static DevAutoPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);
+    static BlockDevAutoPtr createBlockDevice(const QString &id);
+    static ProtocolDevAutoPtr createProtocolDevice(const QString &id);
 
     static QVariantMap loadBlockInfo(const QString &id);
-    static QVariantMap loadBlockInfo(const BlockDevPtr &dev);
+    static QVariantMap loadBlockInfo(const BlockDevAutoPtr &dev);
     static QVariantMap loadProtocolInfo(const QString &id);
-    static QVariantMap loadProtocolInfo(const ProtocolDevPtr &dev);
+    static QVariantMap loadProtocolInfo(const ProtocolDevAutoPtr &dev);
 
     static bool isMountableBlockDev(const QString &id, QString &why);
-    static bool isMountableBlockDev(const BlockDevPtr &dev, QString &why);
+    static bool isMountableBlockDev(const BlockDevAutoPtr &dev, QString &why);
     static bool isMountableBlockDev(const QVariantMap &infos, QString &why);
 
     static bool isEjectableBlockDev(const QString &id, QString &why);
-    static bool isEjectableBlockDev(const BlockDevPtr &dev, QString &why);
+    static bool isEjectableBlockDev(const BlockDevAutoPtr &dev, QString &why);
     static bool isEjectableBlockDev(const QVariantMap &infos, QString &why);
 
     static bool askForStopScanning(const QUrl &mpt);

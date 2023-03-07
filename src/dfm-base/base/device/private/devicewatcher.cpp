@@ -36,8 +36,8 @@ void DeviceWatcher::startPollingUsage()
 {
     if (d->pollingTimer.isActive())
         return;
-    d->queryUsage();
-    connect(&d->pollingTimer, &QTimer::timeout, this, [this] { d->queryUsage(); });
+    d->queryUsageAsync();
+    connect(&d->pollingTimer, &QTimer::timeout, d.data(), &DeviceWatcherPrivate::queryUsageAsync);
     d->pollingTimer.start(d->kPollingInterval);
 }
 
@@ -47,77 +47,94 @@ void DeviceWatcher::stopPollingUsage()
     disconnect(&d->pollingTimer);
 }
 
-void DeviceWatcherPrivate::queryUsage()
+void DeviceWatcherPrivate::queryUsageAsync()
 {
     QtConcurrent::run([this] {
-        queryUsage(DeviceType::kBlockDevice, allBlockInfos);
-        queryUsage(DeviceType::kProtocolDevice, allProtocolInfos);
+        std::for_each(allBlockInfos.cbegin(), allBlockInfos.cend(),
+                      [this](const QVariantMap &item) { queryUsageOfItem(item, DeviceType::kBlockDevice); });
+        std::for_each(allProtocolInfos.cbegin(), allProtocolInfos.cend(),
+                      [this](const QVariantMap &item) { queryUsageOfItem(item, DeviceType::kProtocolDevice); });
     });
 }
 
-void DeviceWatcherPrivate::queryUsage(DeviceType type, const QHash<QString, QVariantMap> &datas)
+void DeviceWatcherPrivate::updateStorage(const QString &id, quint64 total, quint64 avai)
 {
-    for (const auto &item : datas) {
-        auto id = item.value(DeviceProperty::kId).toString();
-        auto mpt = item.value(DeviceProperty::kMountPoint).toString();
-        queryUsage(id, mpt, type, true);
-    }
+    auto update = [&](QHash<QString, QVariantMap> &container) {
+        if (!container.contains(id))
+            return;
+        qint64 used = static_cast<qint64>(total - avai);
+        used = used < 0 ? 0 : used;
+
+        auto &data = container[id];
+        data[DeviceProperty::kSizeTotal] = total;
+        data[DeviceProperty::kSizeUsed] = static_cast<quint64>(used);
+        data[DeviceProperty::kSizeFree] = avai;
+    };
+
+    if (id.startsWith(kBlockDeviceIdPrefix))
+        update(allBlockInfos);
+    else
+        update(allProtocolInfos);
 }
 
-void DeviceWatcherPrivate::queryUsage(const QString &id, const QString &mpt, DeviceType type, bool notifyIfChanged)
+void DeviceWatcherPrivate::queryUsageOfItem(const QVariantMap &itemData, dfmmount::DeviceType type)
 {
+    const QString &mpt = itemData.value(DeviceProperty::kMountPoint).toString();
     if (mpt.isEmpty())
         return;
 
-    using namespace GlobalServerDefines;
-    if (type == DeviceType::kBlockDevice) {
-        if (!allBlockInfos.contains(id))
-            return;
+    DevStorage old { itemData.value(DeviceProperty::kSizeTotal).toULongLong(),
+                     itemData.value(DeviceProperty::kSizeFree).toULongLong(),
+                     itemData.value(DeviceProperty::kSizeUsed).toULongLong() };
 
-        const auto &info = allBlockInfos.value(id);
-        QVariantMap data { { DeviceProperty::kDevice, info.value(DeviceProperty::kDevice) } };
-        quint64 bytesAvai;
-        if (info.value(DeviceProperty::kOpticalDrive).toBool()) {
-            DeviceHelper::readOpticalInfo(data);
-            bytesAvai = data[DeviceProperty::kSizeTotal].toULongLong() - data[DeviceProperty::kSizeUsed].toULongLong();
-        } else {
-            QStorageInfo si(mpt);
-            bytesAvai = si.bytesAvailable();
-        }
+    DevStorage newStorage = (type == dfmmount::DeviceType::kBlockDevice)
+            ? queryUsageOfBlock(itemData)
+            : queryUsageOfProtocol(itemData);
 
-        if (bytesAvai != info.value(DeviceProperty::kSizeFree)) {
-            auto &rinfo = allBlockInfos[id];
-            {
-                QMutexLocker lk(&blkMtx);
-                rinfo[DeviceProperty::kSizeFree] = bytesAvai;
-                rinfo[DeviceProperty::kSizeUsed] = rinfo[DeviceProperty::kSizeTotal].toULongLong() - bytesAvai;
-            }
-            if (notifyIfChanged)
-                emit DevMngIns->devSizeChanged(id, info.value(DeviceProperty::kSizeTotal).toULongLong(), bytesAvai);
-        }
-    } else if (type == DeviceType::kProtocolDevice) {
-        if (!allProtocolInfos.contains(id))
-            return;
-
-        const auto &info = allProtocolInfos.value(id);
-        auto dev = DeviceHelper::createProtocolDevice(id);
-        quint64 avai = dev->sizeFree();
-        quint64 used = dev->sizeUsage();
-        quint64 total = dev->sizeTotal();
-        if (avai != info.value(DeviceProperty::kSizeFree)
-            || used != info.value(DeviceProperty::kSizeUsed)
-            || total != info.value(DeviceProperty::kSizeTotal)) {
-            auto &rinfo = allProtocolInfos[id];
-            {
-                QMutexLocker lk(&protoMtx);
-                rinfo[DeviceProperty::kSizeFree] = avai;
-                rinfo[DeviceProperty::kSizeUsed] = used;
-                rinfo[DeviceProperty::kSizeTotal] = total;
-            }
-            if (notifyIfChanged)
-                emit DevMngIns->devSizeChanged(id, info.value(DeviceProperty::kSizeTotal).toULongLong(), avai);
-        }
+    if (old != newStorage && newStorage.isValid()) {
+        const QString &devId = itemData.value(DeviceProperty::kId).toString();
+        emit DevMngIns->devSizeChanged(devId,
+                                       itemData.value(DeviceProperty::kSizeTotal).toULongLong(),
+                                       newStorage.avai);
     }
+}
+
+DevStorage DeviceWatcherPrivate::queryUsageOfBlock(const QVariantMap &itemData)
+{
+    if (itemData.value(DeviceProperty::kMountPoint).toString().isEmpty())
+        return {};
+
+    if (itemData.value(DeviceProperty::kOpticalDrive).toBool()) {
+        QVariantMap opticalStorage { { DeviceProperty::kDevice, itemData.value(DeviceProperty::kDevice) } };
+        DeviceHelper::readOpticalInfo(opticalStorage);
+        return { opticalStorage.value(DeviceProperty::kSizeTotal).toULongLong(),
+                 opticalStorage.value(DeviceProperty::kSizeFree).toULongLong(),
+                 opticalStorage.value(DeviceProperty::kSizeUsed).toULongLong() };
+    } else {
+        QStorageInfo si(itemData.value(DeviceProperty::kMountPoint).toString());
+        quint64 total = itemData.value(DeviceProperty::kSizeTotal).toULongLong();
+        qint64 avai = si.bytesAvailable();
+        if (avai < 0) avai = 0;
+        return { total, static_cast<quint64>(avai), total - avai };
+    }
+}
+
+DevStorage DeviceWatcherPrivate::queryUsageOfProtocol(const QVariantMap &itemData)
+{
+    if (itemData.value(DeviceProperty::kMountPoint).toString().isEmpty())
+        return {};
+
+    const QString &devId = itemData.value(DeviceProperty::kId).toString();
+    if (devId.isEmpty())
+        return {};
+
+    auto dev = DeviceHelper::createProtocolDevice(devId);
+    if (!dev)
+        return {};
+
+    return { static_cast<quint64>(dev->sizeTotal()),
+             static_cast<quint64>(dev->sizeFree()),
+             static_cast<quint64>(dev->sizeUsage()) };
 }
 
 void DeviceWatcher::initDevDatas()
@@ -219,10 +236,7 @@ void DeviceWatcher::onBlkDevAdded(const QString &id)
 {
     qDebug() << "new block device added: " << id;
     auto dev = DeviceHelper::createBlockDevice(id);
-    {
-        QMutexLocker lk(&d->blkMtx);
-        d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(dev));
-    }
+    d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(dev));
 
     emit DevMngIns->blockDevAdded(id);
     DevMngIns->doAutoMount(id, DeviceType::kBlockDevice);
@@ -231,29 +245,22 @@ void DeviceWatcher::onBlkDevAdded(const QString &id)
 void DeviceWatcher::onBlkDevRemoved(const QString &id)
 {
     qDebug() << "block device removed: " << id;
-    QString oldMpt;
-    {
-        QMutexLocker lk(&d->blkMtx);
-        oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
-        d->allBlockInfos.remove(id);
-    }
+    QString oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
+    d->allBlockInfos.remove(id);
     emit DevMngIns->blockDevRemoved(id, oldMpt);
 }
 
 void DeviceWatcher::onBlkDevMounted(const QString &id, const QString &mpt)
 {
-    d->queryUsage(id, mpt, DeviceType::kBlockDevice, true);
+    const auto &info = d->allBlockInfos.value(id);
+    d->queryUsageOfItem(info, dfmmount::DeviceType::kBlockDevice);
     emit DevMngIns->blockDevMounted(id, mpt);
 }
 
 void DeviceWatcher::onBlkDevUnmounted(const QString &id)
 {
-    QString oldMpt;
-    {
-        QMutexLocker lk(&d->blkMtx);
-        oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
-        d->allBlockInfos[id][DeviceProperty::kMountPoint] = QString();
-    }
+    QString oldMpt = d->allBlockInfos.value(id).value(DeviceProperty::kMountPoint).toString();
+    d->allBlockInfos[id][DeviceProperty::kMountPoint] = QString();
     emit DevMngIns->blockDevUnmounted(id, oldMpt);
 }
 
@@ -269,12 +276,10 @@ void DeviceWatcher::onBlkDevUnlocked(const QString &id, const QString &cleartext
 
 void DeviceWatcher::onBlkDevFsAdded(const QString &id)
 {
-    {
-        // when a filesystem interface is added, lots of property may changed, so just reload the data
-        // this will not happen frequently
-        QMutexLocker lk(&d->blkMtx);
-        d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(id));
-    }
+    // when a filesystem interface is added, lots of property may changed, so just reload the data
+    // this will not happen frequently
+    d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(id));
+
     emit DevMngIns->blockDevFsAdded(id);
     using namespace GlobalServerDefines;
     emit DevMngIns->blockDevPropertyChanged(id, DeviceProperty::kHasFileSystem, true);
@@ -283,12 +288,11 @@ void DeviceWatcher::onBlkDevFsAdded(const QString &id)
 void DeviceWatcher::onBlkDevFsRemoved(const QString &id)
 {
     auto data = DeviceHelper::loadBlockInfo(id);
-    if (!data.isEmpty()) {
-        // when a filesystem interface is added, lots of property may changed, so just reload the data
-        // this will not happen frequently
-        QMutexLocker lk(&d->blkMtx);
+    // when a filesystem interface is added, lots of property may changed, so just reload the data
+    // this will not happen frequently
+    if (!data.isEmpty())
         d->allBlockInfos.insert(id, data);
-    }
+
     emit DevMngIns->blockDevFsRemoved(id);
     using namespace GlobalServerDefines;
     emit DevMngIns->blockDevPropertyChanged(id, DeviceProperty::kHasFileSystem, false);
@@ -306,21 +310,18 @@ void DeviceWatcher::onBlkDevPropertiesChanged(const QString &id, const QMap<Prop
             continue;
         } else {
             QVariantMap &item = d->allBlockInfos[id];
-            {
-                QMutexLocker lk(&d->blkMtx);
-                item[name] = var;
+            item[name] = var;
 
-                // NOTE: when device's mountpoints changed to empty, do not update the cache immediatly, update it in blockDeviceUnmounted function
-                // to report the unmounted path to subscribers.
-                if (name == DeviceProperty::kMountPoints)
-                    item[DeviceProperty::kMountPoint] = var.toStringList().isEmpty() ? item[DeviceProperty::kMountPoint] : var.toStringList().first();
-                if (name == DeviceProperty::kOptical && !var.toBool()) {
-                    item[DeviceProperty::kOpticalMediaType] = "";
-                    item[DeviceProperty::kOpticalWriteSpeed] = QStringList();
-                    item[DeviceProperty::kSizeTotal] = 0;
-                    item[DeviceProperty::kSizeFree] = 0;
-                    item[DeviceProperty::kSizeUsed] = 0;
-                }
+            // NOTE: when device's mountpoints changed to empty, do not update the cache immediatly, update it in blockDeviceUnmounted function
+            // to report the unmounted path to subscribers.
+            if (name == DeviceProperty::kMountPoints)
+                item[DeviceProperty::kMountPoint] = var.toStringList().isEmpty() ? item[DeviceProperty::kMountPoint] : var.toStringList().first();
+            if (name == DeviceProperty::kOptical && !var.toBool()) {
+                item[DeviceProperty::kOpticalMediaType] = "";
+                item[DeviceProperty::kOpticalWriteSpeed] = QStringList();
+                item[DeviceProperty::kSizeTotal] = 0;
+                item[DeviceProperty::kSizeFree] = 0;
+                item[DeviceProperty::kSizeUsed] = 0;
             }
             emit DevMngIns->blockDevPropertyChanged(id, name, var);
         }
@@ -331,10 +332,7 @@ void DeviceWatcher::onProtoDevAdded(const QString &id)
 {
     qDebug() << "new protocol device added: " << id;
     auto dev = DeviceHelper::createProtocolDevice(id);
-    {
-        QMutexLocker lk(&d->protoMtx);
-        d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
-    }
+    d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
 
     emit DevMngIns->protocolDevAdded(id);
     DevMngIns->doAutoMount(id, DeviceType::kProtocolDevice);
@@ -342,30 +340,23 @@ void DeviceWatcher::onProtoDevAdded(const QString &id)
 
 void DeviceWatcher::onProtoDevRemoved(const QString &id)
 {
-    QString oldMpt;
     qDebug() << "protocol device removed: " << id;
-    {
-        QMutexLocker lk(&d->protoMtx);
-        oldMpt = d->allProtocolInfos.value(id).value(DeviceProperty::kMountPoint).toString();
-        d->allProtocolInfos.remove(id);
-    }
+    QString oldMpt = d->allProtocolInfos.value(id).value(DeviceProperty::kMountPoint).toString();
+    d->allProtocolInfos.remove(id);
+
     emit DevMngIns->protocolDevRemoved(id, oldMpt);
 }
 
 void DeviceWatcher::onProtoDevMounted(const QString &id, const QString &mpt)
 {
     auto dev = DeviceHelper::createProtocolDevice(id);
-    {
-        QMutexLocker lk(&d->protoMtx);
-        d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
-    }
+    d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
 
     emit DevMngIns->protocolDevMounted(id, mpt);
 }
 
 void DeviceWatcher::onProtoDevUnmounted(const QString &id)
 {
-    QMutexLocker lk(&d->protoMtx);
     //    auto dev = DeviceHelper::createProtocolDevice(id);
     //    if (dev)
     //        d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
@@ -379,16 +370,14 @@ void DeviceWatcher::onProtoDevUnmounted(const QString &id)
 QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType type, bool reload)
 {
     if (type == DFMMOUNT::DeviceType::kBlockDevice) {
-        if (reload) {
-            QMutexLocker lk(&d->blkMtx);
+        if (reload)
             d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(id));
-        }
+
         return d->allBlockInfos.value(id);
     } else if (type == DFMMOUNT::DeviceType::kProtocolDevice) {
-        if (reload) {
-            QMutexLocker lk(&d->protoMtx);
+        if (reload)
             d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
-        }
+
         return d->allProtocolInfos.value(id);
     }
     return QVariantMap();
@@ -426,6 +415,7 @@ QStringList DeviceWatcher::getSiblings(const QString &id)
 }
 
 DeviceWatcherPrivate::DeviceWatcherPrivate(DeviceWatcher *qq)
-    : q(qq)
+    : QObject(qq), q(qq)
 {
+    connect(DevProxyMng, &DeviceProxyManager::devSizeChanged, this, &DeviceWatcherPrivate::updateStorage, Qt::QueuedConnection);
 }
