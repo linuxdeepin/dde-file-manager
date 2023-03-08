@@ -11,6 +11,8 @@ configure_file(
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+add_definitions(-DDPF_FULLSIG_STRACE_ENABLE)
+
 set(SRCS
     main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/singleapplication.h

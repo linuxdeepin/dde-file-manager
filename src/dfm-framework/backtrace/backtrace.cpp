@@ -126,10 +126,12 @@ void installStackTraceHandler()
     std::call_once(flag, []() {
         // just use the plain old signal as it's simple and sufficient
         // for this use case
-        signal(SIGINT, stackTraceHandler);
         signal(SIGSEGV, stackTraceHandler);
+#ifdef DPF_FULLSIG_STRACE_ENABLE
+        signal(SIGINT, stackTraceHandler);
         signal(SIGBUS, stackTraceHandler);
         signal(SIGABRT, stackTraceHandler);
+#endif
     });
 }
 }   // namespace backtrace
