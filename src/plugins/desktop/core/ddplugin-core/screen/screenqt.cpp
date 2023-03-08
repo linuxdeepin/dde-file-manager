@@ -51,6 +51,11 @@ QRect ScreenQt::availableGeometry() const
 
     QRect ret = geometry(); //已经缩放过
 
+    if (!DBusHelper::isDockEnable()) {
+        qWarning() << "dde dock is not registered";
+        return ret;
+    }
+
     int dockHideMode = DockInfoIns->hideMode();
     if (1 == dockHideMode) {//隐藏
         qInfo() << "dock is Hidden";

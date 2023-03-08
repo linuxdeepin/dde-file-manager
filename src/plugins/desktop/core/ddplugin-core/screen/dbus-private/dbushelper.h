@@ -10,10 +10,10 @@
 #ifdef COMPILE_ON_V23
 #include "dbusdock1.h"
 #include "dbusdisplay1.h"
-#include "dbusmonitor1.h"
+//#include "dbusmonitor1.h"
 #else
 #include "dbusdock.h"
-#include "dbusmonitor.h"
+//#include "dbusmonitor.h"
 #include "dbusdisplay.h"
 #endif
 
@@ -26,9 +26,13 @@ class DBusHelper : public QObject
     Q_OBJECT
 public:
     static DBusHelper *ins();
+    static bool isDockEnable();
+    static bool isDisplayEnable();
     DBusDock *dock() const;
     DBusDisplay *display() const;
+#if 0
     DBusMonitor *createMonitor(const QString &path);
+#endif
 private:
     explicit DBusHelper(QObject *parent = nullptr);
     DBusDock *m_dock = nullptr;

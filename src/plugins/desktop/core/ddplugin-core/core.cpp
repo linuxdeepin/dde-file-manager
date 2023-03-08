@@ -5,7 +5,6 @@
 #include "core.h"
 #include "frame/windowframe.h"
 #include "screen/screenproxyqt.h"
-#include "screen/screenproxydbus.h"
 
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -140,11 +139,7 @@ EventHandle::~EventHandle()
 
 bool EventHandle::init()
 {
-    if (WindowUtils::isWayLand())
-        screenProxy = new ScreenProxyDBus();
-    else
-        screenProxy = new ScreenProxyQt();
-
+    screenProxy = new ScreenProxyQt();
     screenProxy->reset();
 
     // send signal event

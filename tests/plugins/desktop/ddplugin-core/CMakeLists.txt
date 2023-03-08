@@ -10,37 +10,46 @@ file(GLOB_RECURSE UT_CXX_FILE
 
 set(DESKTOP_PLUGIN_SRC_DIR "${DESKTOP_PLUGIN_DIR}/core/ddplugin-core")
 
-file(GLOB_RECURSE SRC_FILES
+file(GLOB SRC_FILES
     "${DESKTOP_PLUGIN_SRC_DIR}/*.h"
     "${DESKTOP_PLUGIN_SRC_DIR}/*.cpp"
+    "${DESKTOP_PLUGIN_SRC_DIR}/frame/*.h"
+    "${DESKTOP_PLUGIN_SRC_DIR}/frame/*.cpp"
     "${DESKTOP_PLUGIN_DIR}/desktoputils/*"
 )
 
-if (COMPLIE_ON_V23)
-    set(RM_SRC
-        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock.h"
-        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock.cpp"
-        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay.h"
-        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay.cpp"
-        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusmonitor.h"
-        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusmonitor.cpp"
+set(SCREEN_FILES
+    "${DESKTOP_PLUGIN_SRC_DIR}/screen/screenqt.h"
+    "${DESKTOP_PLUGIN_SRC_DIR}/screen/screenqt.cpp"
+    "${DESKTOP_PLUGIN_SRC_DIR}/screen/screenproxyqt.h"
+    "${DESKTOP_PLUGIN_SRC_DIR}/screen/screenproxyqt.cpp"
+    "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbushelper.h"
+    "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbushelper.cpp"
     )
-else ()
-    set(RM_SRC
+
+if (COMPLIE_ON_V23)
+    set(SCREEN_FILES
+        ${SCREEN_FILES}
         "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock1.h"
         "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock1.cpp"
         "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay1.h"
         "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay1.cpp"
-        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusmonitor1.h"
-        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusmonitor1.cpp"
+    )
+else ()
+    set(SCREEN_FILES
+        ${SCREEN_FILES}
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock.h"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdock.cpp"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay.h"
+        "${DESKTOP_PLUGIN_SRC_DIR}/screen/dbus-private/dbusdisplay.cpp"
     )
 endif()
-list(REMOVE_ITEM SRC_FILES ${RM_SRC})
 
 add_executable(${PROJECT_NAME}
     ${UT_CXX_FILE}
     ${CPP_STUB_SRC}
     ${SRC_FILES}
+    ${SCREEN_FILES}
 )
 
 find_package(Dtk COMPONENTS Widget REQUIRED)

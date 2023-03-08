@@ -10,14 +10,32 @@ DBusHelper::DBusHelper(QObject *parent)
     : QObject{parent}
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
+    qInfo() << "create dock and display dbus interface.";
     m_dock = new DBusDock(this);
     m_display = new DBusDisplay(this);
+    qInfo() << "the dbus interface: dock is" << isDockEnable()  << "display is" << isDisplayEnable();
 }
 
 DBusHelper *DBusHelper::ins()
 {
     static DBusHelper ins;
     return  &ins;
+}
+
+bool DBusHelper::isDockEnable()
+{
+    if (auto ifs = QDBusConnection::sessionBus().interface())
+        return ifs->isServiceRegistered(DBusDock::staticServiceName());
+
+    return false;
+}
+
+bool DBusHelper::isDisplayEnable()
+{
+    if (auto ifs = QDBusConnection::sessionBus().interface())
+        return ifs->isServiceRegistered(DBusDisplay::staticServiceName());
+
+    return false;
 }
 
 DBusDock *DBusHelper::dock() const
@@ -30,10 +48,12 @@ DBusDisplay *DBusHelper::display() const
     return m_display;
 }
 
+#if 0
 DBusMonitor *DBusHelper::createMonitor(const QString &path)
 {
     return new DBusMonitor(path);
 }
+#endif
 
 QDBusArgument &operator<<(QDBusArgument &argument, const DockRect &rect)
 {

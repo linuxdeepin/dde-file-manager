@@ -9,31 +9,32 @@ set(EXT_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../../desktoputils/ddpugin_eventinterface_helper.h
     )
 
-FILE(GLOB_RECURSE SCREEN_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/screen/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/screen/*.cpp"
-)
+set(SCREEN_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/screenqt.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/screenqt.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/screenproxyqt.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/screenproxyqt.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbushelper.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbushelper.cpp"
+    )
 
 if (COMPLIE_ON_V23)
-    set(RM_SRC
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusmonitor.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusmonitor.cpp"
-    )
-else ()
-    set(RM_SRC
+    set(SCREEN_FILES
+        ${SCREEN_FILES}
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock1.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay1.h"
         "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay1.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusmonitor1.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusmonitor1.cpp"
+    )
+else ()
+    set(SCREEN_FILES
+        ${SCREEN_FILES}
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdock.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/screen/dbus-private/dbusdisplay.cpp"
     )
 endif()
-list(REMOVE_ITEM SCREEN_FILES ${RM_SRC})
 
 set(CORE_FILES
     frame/basewindow.h
