@@ -39,9 +39,12 @@ QString FileDialogHandleDBus::directory() const
 
 void FileDialogHandleDBus::setDirectoryUrl(const QString &directory)
 {
-    QUrl dir(directory);
+    QString path = QDir::homePath();
+    if(!directory.isEmpty())
+       path = directory;
+    QUrl dir(path);
     if (dir.scheme().isEmpty()) {
-        dir = QUrl::fromLocalFile(directory);
+        dir = QUrl::fromLocalFile(path);
     }
     FileDialogHandle::setDirectoryUrl(dir);
 }
