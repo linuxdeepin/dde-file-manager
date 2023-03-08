@@ -25,7 +25,7 @@ static constexpr char kTagOldDbName2[] = ".__deepin.db";
 static constexpr char kTagOldDb2TableFileProperty[] = "file_property";
 static constexpr char kTagOldDb2TableTagWithFile[] = "tag_with_file";
 
-static constexpr char kTagNewDbName[] = ".__tag.db";
+static constexpr char kTagNewDbName[] = "dfmruntime.db";
 static constexpr char kTagNewTableFileTags[] = "file_tags";
 static constexpr char kTagNewTableTagProperty[] = "tag_property";
 
