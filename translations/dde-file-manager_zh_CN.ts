@@ -881,7 +881,7 @@
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1148"/>
         <source>This system wallpaer is locked. Please contact your admin.</source>
-        <translation type="unfinished"/>
+        <translation>当前系统壁纸已被锁定，请联系管理员</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1209"/>
@@ -1686,6 +1686,11 @@
         <translation>文件打开失败</translation>
     </message>
     <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="33"/>
+        <source>Target Trash File Not exist</source>
+        <translation>目标垃圾文件不存在</translation>
+    </message>
+    <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="30"/>
         <source>Operation timed out</source>
         <translation>操作超时</translation>
@@ -2255,7 +2260,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1128"/>
         <source>This system wallpaer is locked. Please contact your admin.</source>
-        <translation type="unfinished"/>
+        <translation>当前系统壁纸已被锁定，请联系管理员</translation>
     </message>
 </context>
 <context>
@@ -3380,8 +3385,8 @@
     <name>dfmplugin_bookmark::BookMarkManager</name>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="380"/>
-        <source>Sorry, unable to locate your bookmark directory, remove it?</source>
-        <translation>抱歉，找不到您的书签目录，是否移除？</translation>
+        <source>Sorry, unable to locate your quick access directory, remove it?</source>
+        <translation>抱歉，找不到您的快捷访问目录，是否移除？</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-bookmark/controller/bookmarkmanager.cpp" line="382"/>
@@ -3784,7 +3789,7 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="44"/>
         <source>%1 on %2</source>
-        <translation>%2上的%1</translation>
+        <translation>%2 上的 %1</translation>
     </message>
 </context>
 <context>
@@ -4164,25 +4169,25 @@
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="137"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>The target device is read only</source>
-        <translation type="unfinished"/>
+        <translation>目标设备为只读</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="139"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="192"/>
         <source>Target folder is inside the source folder</source>
-        <translation type="unfinished"/>
+        <translation>目标文件夹位于源文件夹内</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="141"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="194"/>
         <source>The action is not supported</source>
-        <translation type="unfinished"/>
+        <translation>不支持该操作</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="143"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="196"/>
         <source>You do not have permission to traverse files in %1</source>
-        <translation type="unfinished"/>
+        <translation>您没有权限遍历目录%1下的子文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="145"/>
@@ -4192,52 +4197,52 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="147"/>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>未知错误</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="168"/>
         <source>Failed to open the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>文件%1打开失败，原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="171"/>
         <source>Failed to read the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>文件%1内容读取失败，原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="173"/>
         <source>Failed to write the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>文件%1内容写入失败，原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="175"/>
         <source>Failed to create the directory %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>目录%1创建失败，原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="178"/>
         <source>Failed to delete the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>文件%1删除失败，原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="180"/>
         <source>Failed to move the file %1, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>文件%1移动失败，原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
         <source>File %1 integrity was damaged, cause: %2</source>
-        <translation type="unfinished"/>
+        <translation>文件%1完整性检查失败，原因：%2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="198"/>
         <source>Failed to create symlink, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>创建链接失败，原因：%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="215"/>
         <source>%1 already exists in target folder</source>
-        <translation type="unfinished"/>
+        <translation>目标文件夹中已存在名为%1的文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="219"/>
@@ -4245,7 +4250,7 @@
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="229"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="231"/>
         <source>Original path %1</source>
-        <translation type="unfinished"/>
+        <translation>原路径%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="220"/>
@@ -4253,12 +4258,12 @@
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="230"/>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="232"/>
         <source>Target path %1</source>
-        <translation type="unfinished"/>
+        <translation>目标路径%1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="235"/>
         <source>Original path %1 Target path %2</source>
-        <translation type="unfinished"/>
+        <translation>原路径%1 目标路径%2</translation>
     </message>
 </context>
 <context>
@@ -4266,12 +4271,17 @@
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="411"/>
         <source>Failed to create the directory</source>
-        <translation type="unfinished"/>
+        <translation>目录创建失败</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="904"/>
         <source>Failed to create the file</source>
-        <translation type="unfinished"/>
+        <translation>创建文件失败</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="973"/>
+        <source>link file error</source>
+        <translation>链接文件错误</translation>
     </message>
 </context>
 <context>
@@ -6129,22 +6139,22 @@
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="515"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="517"/>
         <source>Time modified</source>
-        <translation type="unfinished"/>
+        <translation>修改时间</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="519"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>大小</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="521"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>类型</translation>
     </message>
 </context>
 <context>
@@ -6225,7 +6235,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="875"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="885"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>保 存</translation>
@@ -6234,42 +6244,42 @@
 <context>
     <name>filedialog_core::FileDialogStatusBar</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="36"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="45"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>保 存</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="36"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="45"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>打 开</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="43"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="52"/>
         <source>Save File</source>
         <comment>button</comment>
         <translation>保存文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="43"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="52"/>
         <source>Open File</source>
         <comment>button</comment>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="210"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="221"/>
         <source>File Name</source>
         <translation>文件名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="211"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="222"/>
         <source>Format</source>
         <translation>格式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="226"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="228"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="241"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="243"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
@@ -6280,12 +6290,12 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="271"/>
         <source>Available sizes: </source>
-        <translation type="unfinished"/>
+        <translation>可用的大小</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="273"/>
         <source>Custom Size</source>
-        <translation type="unfinished"/>
+        <translation>自定义大小</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="300"/>
@@ -6310,7 +6320,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="328"/>
         <source>Mode: </source>
-        <translation type="unfinished"/>
+        <translation>方式：</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>

@@ -377,7 +377,7 @@ int BookMarkManager::showRemoveBookMarkDialog(quint64 winId)
         abort();
     }
     DDialog dialog(window);
-    dialog.setTitle(tr("Sorry, unable to locate your qucik access directory, remove it?"));
+    dialog.setTitle(tr("Sorry, unable to locate your quick access directory, remove it?"));
     QStringList buttonTexts;
     buttonTexts.append(tr("Cancel", "button"));
     buttonTexts.append(tr("Remove", "button"));
