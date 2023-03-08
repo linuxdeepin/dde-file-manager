@@ -30,4 +30,5 @@ void errorCode_dfmio_trans()
     QObject::tr("Operation timed out");
     QObject::tr("File is busy");
     QObject::tr("Failed to open the file");
+    QObject::tr("Target Trash File Not exist");
 }

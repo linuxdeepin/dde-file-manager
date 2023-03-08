@@ -970,7 +970,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
     ok = fileHandler.createSystemLink(url, urlValid);
     if (!ok) {
         error = fileHandler.errorString();
-        dialogManager->showErrorDialog("link file error", error);
+        dialogManager->showErrorDialog(tr("link file error"), error);
     }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
                                  windowId, QList<QUrl>() << url << urlValid, ok, error);
