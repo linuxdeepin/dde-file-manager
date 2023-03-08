@@ -485,10 +485,12 @@ QIcon LocalFileInfo::fileIcon()
     if (d->enableThumbnail < 0) {
         bool isLocalDevice = false;
         bool isCdRomDevice = false;
+
         if (d->isLocalDevice.isValid())
             isLocalDevice = d->isLocalDevice.toBool();
         else
             isLocalDevice = FileUtils::isLocalDevice(fileUrl);
+
         if (d->isCdRomDevice.isValid())
             isCdRomDevice = d->isCdRomDevice.toBool();
         else
@@ -497,6 +499,9 @@ QIcon LocalFileInfo::fileIcon()
         d->enableThumbnail = isLocalDevice && !isCdRomDevice;
     }
 #endif
+    bool thumbEnabled = (d->enableThumbnail > 0);
+    if (thumbEnabled || ThumbnailProvider::instance()->thumbnailEnable(fileUrl))
+        thumbEnabled = true;
 
     bool hasThumbnail = false;
     const int checkFast = ThumbnailProvider::instance()->hasThumbnailFast(d->mimeTypeName());
@@ -507,7 +512,7 @@ QIcon LocalFileInfo::fileIcon()
     else
         hasThumbnail = ThumbnailProvider::instance()->hasThumbnail(fileMimeType());
 
-    bool thumbEnabled = (d->enableThumbnail > 0) && hasThumbnail;
+    thumbEnabled = thumbEnabled && hasThumbnail;
     return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
 }
 

@@ -232,7 +232,14 @@
                             "text": "Music preview",
                             "type": "checkbox",
                             "default": true
-                         }
+                        },
+                        {
+                            "key": "remote_env_file_preview",
+                            "text": "The remote environment shows thumbnail previews",
+                            "message":"Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze",
+                            "type": "checkBoxWithMessage",
+                            "default": false
+                        }
                     ]
                 },
                 {

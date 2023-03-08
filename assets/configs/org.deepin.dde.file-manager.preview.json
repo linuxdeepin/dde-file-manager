@@ -12,6 +12,28 @@
             "description":"It is used to control whether the space waking up preview is enabled",
             "permissions":"readwrite",
             "visibility":"public"
+        },
+	"remoteThumbnailEnable":{
+            "value": false,
+            "serial":0,
+            "flags":[],
+            "name":"Enable show file thumbnail in remote environment",
+            "name[zh_CN]":"启用远程环境显示缩略图预览",
+            "description[zh_CN]":"用于控制是否在远程环境中显示缩略图预览",
+            "description":"It is used to control whether show thumbnail of file in remote environment",
+            "permissions":"readwrite",
+            "visibility":"public"
+        },
+       "mtpThumbnailEnable":{
+            "value": true,
+            "serial":0,
+            "flags":[],
+            "name":"Enable show file thumbnail in mtp device",
+            "name[zh_CN]":"启用移动存储设备显示缩略图预览",
+            "description[zh_CN]":"用于控制是否在移动存储设备中显示缩略图预览",
+            "description":"It is used to control whether show thumbnail of file in mtp device",
+            "permissions":"readwrite",
+            "visibility":"public"
         }
     }
 }

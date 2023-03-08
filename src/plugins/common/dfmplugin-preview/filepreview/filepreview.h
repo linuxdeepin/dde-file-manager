@@ -18,9 +18,14 @@ class FilePreview : public dpf::Plugin
     DPF_EVENT_NAMESPACE(DPFILEPREVIEW_NAMESPACE)
     DPF_EVENT_REG_SLOT(slot_PreviewDialog_Show)
 
+    DPF_EVENT_REG_SIGNAL(signal_ThumbnailDisplay_Changed)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
+
+private Q_SLOTS:
+    void onConfigChanged(const QString &cfg, const QString &key);
 };
 }   // namespace dfmplugin_filepreview
 #endif   // FILEPREVIEW_H

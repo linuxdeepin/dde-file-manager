@@ -4,6 +4,7 @@
 
 #include "filepreview.h"
 #include "events/fileprevieweventreceiver.h"
+#include "utils/previewhelper.h"
 
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/utils/windowutils.h"
@@ -25,13 +26,28 @@ void FilePreview::initialize()
         format.setDefaultFormat(format);
 #endif
     }
+
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &FilePreview::onConfigChanged, Qt::DirectConnection);
 }
 
 bool FilePreview::start()
 {
     QString err;
-    auto ret = DConfigManager::instance()->addConfig("org.deepin.dde.file-manager.preview", &err);
+    auto ret = DConfigManager::instance()->addConfig(ConfigInfos::kConfName, &err);
     if (!ret)
         qWarning() << "create dconfig failed: " << err;
+
+    PreviewHelper::instance()->bindConfig();
+
     return true;
+}
+
+void FilePreview::onConfigChanged(const QString &cfg, const QString &key)
+{
+    if (cfg != QString(ConfigInfos::kConfName))
+        return;
+
+    if (key == QString(ConfigInfos::kMtpThumbnailKey)) {
+        dpfSignalDispatcher->publish("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed");
+    }
 }

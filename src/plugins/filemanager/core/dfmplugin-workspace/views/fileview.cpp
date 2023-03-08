@@ -820,6 +820,11 @@ DirOpenMode FileView::currentDirOpenMode() const
     return mode;
 }
 
+void FileView::onWidgetUpdate()
+{
+    this->update();
+}
+
 void FileView::onRowCountChanged()
 {
     // clean selected indexes
@@ -1496,9 +1501,10 @@ void FileView::initializeConnect()
 
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
-    connect(Application::instance(), &Application::previewAttributeChanged, this, [this] { this->update(); });
+    connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
 
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);
 }
 
 void FileView::updateStatusBar()

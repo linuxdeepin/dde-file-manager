@@ -4,6 +4,7 @@
 
 #include "thumbnailprovider.h"
 #include "videothumbnailprovider.h"
+
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/base/standardpaths.h"
@@ -12,6 +13,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -225,6 +227,17 @@ int ThumbnailProvider::hasThumbnailFast(const QString &mime) const
     }
 
     return -1;
+}
+
+bool ThumbnailProvider::thumbnailEnable(const QUrl &url) const
+{
+    if (FileUtils::isMtpFile(url)) {
+        return DConfigManager::instance()->value("org.deepin.dde.file-manager.preview", "mtpThumbnailEnable", true).toBool();
+    } else if (FileUtils::isGvfsFile(url)) {
+        return Application::instance()->genericAttribute(Application::kShowThunmbnailInRemote).toBool();
+    }
+
+    return false;
 }
 
 QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const

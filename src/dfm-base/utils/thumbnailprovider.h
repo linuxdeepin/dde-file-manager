@@ -36,6 +36,7 @@ public:
     bool hasThumbnail(const QUrl &url) const;
     bool hasThumbnail(const QMimeType &mimeType) const;
     int hasThumbnailFast(const QString &mimeType) const;
+    bool thumbnailEnable(const QUrl &url) const;
 
     QPixmap thumbnailPixmap(const QUrl &fileUrl, Size size) const;
 

@@ -139,6 +139,8 @@ public slots:
 
     DirOpenMode currentDirOpenMode() const;
 
+    void onWidgetUpdate();
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;

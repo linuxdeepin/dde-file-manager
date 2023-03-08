@@ -63,6 +63,7 @@ public:
         kShowFileSystemTagOnDiskIcon,   // display file system information on the disk icon
         kShowDeleteConfirmDialog,   // display the delete confirmation dialog
         kHideLoopPartitions,   // hide loop partitions
+        kShowThunmbnailInRemote,   // show file thumbnail in remote dir
     };
 
     Q_ENUM(GenericAttribute)

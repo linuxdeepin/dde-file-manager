@@ -11,4 +11,12 @@
 #define DPFILEPREVIEW_END_NAMESPACE }
 #define DPFILEPREVIEW_USE_NAMESPACE using namespace DPFILEPREVIEW_NAMESPACE;
 
+DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace ConfigInfos {
+inline constexpr char kConfName[] { "org.deepin.dde.file-manager.preview" };
+inline constexpr char kRemoteThumbnailKey[] { "remoteThumbnailEnable" };
+inline constexpr char kMtpThumbnailKey[] { "mtpThumbnailEnable" };
+}
+DPFILEPREVIEW_END_NAMESPACE
+
 #endif   // DFMPLUGIN_FILEPREVIEW_GLOBAL_H

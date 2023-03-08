@@ -79,6 +79,7 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
         case Application::kPreviewVideo:
         case Application::kPreviewAudio:
         case Application::kPreviewCompressFile:
+        case Application::kShowThunmbnailInRemote:
             if (ga == Application::kPreviewCompressFile)
                 Q_EMIT self->previewCompressFileChanged(value.toBool());
             Q_EMIT self->previewAttributeChanged(ga, value.toBool());
