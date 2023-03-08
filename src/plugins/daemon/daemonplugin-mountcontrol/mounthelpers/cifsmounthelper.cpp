@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QProcess>
 #include <QRegularExpression>
+#include <QUrl>
 
 #include <polkit-qt5-1/PolkitQt1/Authority>
 #include <sys/mount.h>
@@ -36,8 +37,11 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
                  { kErrorMessage, "smb is only supported scheme now" } };
     }
 
-    QString aPath = path;
-    aPath.remove("smb:");   // smb://1.2.3.4/share  ==>  //1.2.3.4/share
+    QUrl smbUrl(path);
+    int port = smbUrl.port();
+    const QString &share = smbUrl.path();
+    const QString &host = smbUrl.host();
+    QString aPath = QString("//%1%2").arg(host).arg(share);
 
     QString mpt;
     int ret = checkMount(aPath, mpt);
@@ -68,6 +72,8 @@ QVariantMap CifsMountHelper::mount(const QString &path, const QVariantMap &opts)
     }
 
     auto params(opts);
+    if (port != -1)
+        params.insert(MountOptionsField::kPort, port);
 
     int errNum = 0;
     QString errMsg;
@@ -112,10 +118,8 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
     Q_UNUSED(opts);
     using namespace MountReturnField;
 
-    QString aPath = path;
-    if (aPath.startsWith("smb://"))
-        aPath.remove("smb:");   // smb://1.2.3.4/share ==> //1.2.3.4/share which is the same format
-                                // with infos in /proc/mounts
+    QUrl smbUrl(path);
+    QString aPath = QString("//%1%2").arg(smbUrl.host()).arg(smbUrl.path());
 
     QString mpt;
     int ret = checkMount(aPath, mpt);
@@ -194,36 +198,45 @@ CifsMountHelper::MountStatus CifsMountHelper::checkMount(const QString &path, QS
 QString CifsMountHelper::generateMountPath(const QString &address)
 {
     cleanMountPoint();
-
-    // assume that all address is like 'smb://1.2.3.4/share'
-    QString addr(address);
-    addr.remove("smb://");
-    auto frags = addr.split("/");
-    if (frags.count() < 2)
-        return "";
-    QString host = frags.first();
-    QString path = frags.at(1);
-
     if (!mkdirMountRootPath())
         return "";
 
-    auto user = getpwuid(invokerUid());
-    if (!user)
-        return "";
+    // assume that all address is like 'smb://1.2.3.4/share'
+    QUrl smbUrl(address);
+    QString host = smbUrl.host();
+    QString path = smbUrl.path().mid(1);   // remove first /
+    int port = smbUrl.port();
 
-    // make path in /media/$USER/smbmounts/$dirName
-    auto userName = QString(user->pw_name);
-    QString dirName = QString("%1 on %2").arg(path).arg(host);
-    QString fullPath = QString("/media/%1/smbmounts/%2").arg(userName).arg(dirName);
+    //    smb-share:port=448,server=1.2.3.4,share=share
+    QString dirName;
+    if (port == -1)
+        dirName = QString("smb-share:server=%1,share=%2").arg(host).arg(path);
+    else
+        dirName = QString("smb-share:port=%1,server=%2,share=%3").arg(port).arg(host).arg(path);
+    QString fullPath = QString("%1/%2").arg(mountRoot()).arg(dirName);
 
     int cnt = 2;
-    QString checkPath = fullPath;
-    while (QDir(checkPath).exists()) {   // find a not exist mount path
-        checkPath += QString("_%1").arg(cnt);
+    QString finalFullPath = fullPath;
+    while (QDir(finalFullPath).exists()) {   // find a not exist mount path
+        finalFullPath += QString(",%1").arg(cnt);
         cnt++;
     }
 
-    return checkPath;
+    return finalFullPath;
+}
+
+QString CifsMountHelper::mountRoot()
+{
+    // if /media/$user/smbmounts does not exist
+    auto user = getpwuid(invokerUid());
+    if (!user) {
+        qWarning() << "cifs: mount root doesn't exist";
+        return "";
+    }
+
+    const auto &userName = QString(user->pw_name);
+    const auto &mntRoot = QString("/media/%1/smbmounts").arg(userName);
+    return mntRoot;
 }
 
 QString CifsMountHelper::decryptPasswd(const QString &passwd)
@@ -259,8 +272,12 @@ std::string CifsMountHelper::convertArgs(const QVariantMap &opts)
     } else {
         param += "guest,user=nobody,";   // user is necessary even for anonymous mount
     }
+
     if (opts.contains(kDomain) && !opts.value(kDomain).toString().isEmpty())
         param += QString("dom=%1,").arg(opts.value(kDomain).toString());
+
+    if (opts.value(kPort, -1).toInt() != -1)
+        param += QString("port=%1,").arg(opts.value(kPort).toInt());
 
     // this param is supported by cifs only.
     if (opts.contains(kTimeout) /* && isTimeoutSupported()*/)
@@ -312,31 +329,19 @@ bool CifsMountHelper::rmdir(const QString &path)
 
 bool CifsMountHelper::mkdirMountRootPath()
 {
-    // if /media/$user/smbmounts does not exist
-    auto user = getpwuid(invokerUid());
-    if (!user)
+    auto mntRoot = mountRoot();
+    if (mntRoot.isEmpty()) {
+        qWarning() << "cifs: mount root is empty";
         return false;
+    }
 
-    auto userName = QString(user->pw_name);
-    auto mntRoot = QString("/media/%1/smbmounts").arg(userName).toStdString();
-    if (!opendir(mntRoot.c_str())) {
-        int ret = ::mkdir(mntRoot.c_str(), 0755);
-        qInfo() << "mkdir mntRoot: " << mntRoot.c_str() << "failed: " << strerror(errno) << errno;
+    if (!opendir(mntRoot.toStdString().c_str())) {
+        int ret = ::mkdir(mntRoot.toStdString().c_str(), 0755);
+        qInfo() << "mkdir mntRoot: " << mntRoot << "failed: " << strerror(errno) << errno;
         return ret == 0;
     } else {
         return true;
     }
-}
-
-bool CifsMountHelper::timeoutParamSupported()
-{
-    QProcess p;
-    p.start("bash", QStringList { "-c", "modinfo cifs | grep ^version | awk '{print $2}'" });
-    p.waitForFinished(-1);
-    auto &&version = QString(p.readAll().trimmed());
-    if (version > "")   // TODO(xust) TODO(wangrong)
-        return true;
-    return false;
 }
 
 void CifsMountHelper::cleanMountPoint()

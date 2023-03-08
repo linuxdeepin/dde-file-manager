@@ -31,6 +31,7 @@ public:
 private:
     MountStatus checkMount(const QString &path, QString &mpt);
     QString generateMountPath(const QString &address);
+    QString mountRoot();
     QString decryptPasswd(const QString &passwd);
     uint invokerUid();
     std::string convertArgs(const QVariantMap &opts);
@@ -38,7 +39,6 @@ private:
     bool mkdir(const QString &path);
     bool rmdir(const QString &path);
     bool mkdirMountRootPath();
-    bool timeoutParamSupported();
 };
 DAEMONPMOUNTCONTROL_END_NAMESPACE
 
