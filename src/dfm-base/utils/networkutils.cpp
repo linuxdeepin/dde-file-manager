@@ -75,59 +75,49 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
     static constexpr char kFtpPort[] { "21" };
     static constexpr char kSftpPort[] { "22" };
 
-    auto s(mpt);
+    QString s(mpt);
     static QRegularExpression gvfsPref { "(^/run/user/\\d+/gvfs/|^/root/\\.gvfs/)" };
     static QRegularExpression cifsMptPref { "^/media/[\\s\\S]*/smbmounts/" };   // TODO(xust) smb mount point may be changed.
-    if (s.contains(gvfsPref)) {
-        s.remove(gvfsPref);   // -> ftp:host=1.2.3.4  smb-share:server=1.2.3.4,share=draw
-        bool isFtp = s.startsWith("ftp");
-        bool isSftp = s.startsWith("sftp");
-        bool isSmb = s.startsWith("smb");
 
-        if (!isFtp && !isSftp && !isSmb)
-            return false;
+    if (s.contains(gvfsPref))
+        s.remove(gvfsPref);
+    else if (s.contains(cifsMptPref))
+        s.remove(cifsMptPref);
+    else
+        return false;
 
-        // ftp:host=1.2.3.4,port=123  smb-share:port=321,server=1.2.3.4,share=draw
-        static QRegularExpression hostAndPortRegx(R"(([:,]port=(?<port0>\d*))?[,:](server|host)=(?<host>[^/:,]+)(,port=(?<port1>\d*))?)");
-        // --------------------------------------------------forward PORT ---|--------------------- ip/host ---|--- backward PORT ---|, PORT is optional
-        auto match = hostAndPortRegx.match(s);
-        if (match.hasMatch()) {
-            auto capturedPort = match.captured("port0");
-            if (capturedPort.isEmpty())
-                capturedPort = match.captured("port1");
+    // s = ftp:host=1.2.3.4  smb-share:server=1.2.3.4,share=draw
+    bool isFtp = s.startsWith("ftp");
+    bool isSftp = s.startsWith("sftp");
+    bool isSmb = s.startsWith("smb");
 
-            if (!capturedPort.isEmpty())
-                port = capturedPort;
-            else if (isSmb)
-                port = kSmbPort;
-            else if (isFtp)
-                port = kFtpPort;
-            else if (isSftp)
-                port = kSftpPort;
-            else
-                port = kSmbPort;
+    if (!isFtp && !isSftp && !isSmb)
+        return false;
 
-            ip = match.captured("host");
-            return true;
-        }
+    // ftp:host=1.2.3.4,port=123  smb-share:port=321,server=1.2.3.4,share=draw
+    static QRegularExpression hostAndPortRegx(R"(([:,]port=(?<port0>\d*))?[,:](server|host)=(?<host>[^/:,]+)(,port=(?<port1>\d*))?)");
+    // --------------------------------------------------forward PORT ---|--------------------- ip/host ---|--- backward PORT ---|, PORT is optional
+    auto match = hostAndPortRegx.match(s);
+    if (match.hasMatch()) {
+        auto capturedPort = match.captured("port0");
+        if (capturedPort.isEmpty())
+            capturedPort = match.captured("port1");
 
-    } else if (s.contains(cifsMptPref)) {
-        s.remove(cifsMptPref);   // shareFolder on host[_idx]
-        port = kSmbPort;
-#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
-        auto frags = s.split(" on ", QString::SkipEmptyParts);
-#else
-        auto frags = s.split(" on ", Qt::SkipEmptyParts);
-#endif
-        if (frags.count() < 2)
-            return false;
-        ip = frags[1];
-        ip = ip.section("/", 0, 0);
-        int splitIdx = ip.lastIndexOf("_");
-        if (splitIdx > 0)
-            ip = ip.mid(0, splitIdx);
+        if (!capturedPort.isEmpty())
+            port = capturedPort;
+        else if (isSmb)
+            port = kSmbPort;
+        else if (isFtp)
+            port = kFtpPort;
+        else if (isSftp)
+            port = kSftpPort;
+        else
+            port = kSmbPort;
+
+        ip = match.captured("host");
         return true;
     }
+
     return false;
 }
 

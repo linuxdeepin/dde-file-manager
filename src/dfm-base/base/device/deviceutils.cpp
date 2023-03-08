@@ -71,35 +71,22 @@ QUrl DeviceUtils::getSambaFileUriFromNative(const QUrl &url)
 
     QUrl smbUrl;
     smbUrl.setScheme(Global::Scheme::kSmb);
-    static constexpr char kGvfsMatch[] { "^/root/\\.gvfs/smb|^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb" };
-    static constexpr char kCifsMatch[] { "^/media/[\\s\\S]*/smbmounts/" };
-    QString filePath { url.path() };
-    if (hasMatch(filePath, kGvfsMatch)) {
-        static QRegularExpression kGvfsSMBRegExp("/run/user/\\d+/gvfs/smb-share:server=(?<host>.*),share=(?<path>.*)",
-                                                 QRegularExpression::DotMatchesEverythingOption
-                                                         | QRegularExpression::DontCaptureOption
-                                                         | QRegularExpression::OptimizeOnFirstUsageOption);
-        const QRegularExpressionMatch &match { kGvfsSMBRegExp.match(filePath, 0, QRegularExpression::NormalMatch,
-                                                                    QRegularExpression::DontCheckSubjectStringMatchOption) };
-        const QString &host { match.captured("host") };
-        const QString &path { match.captured("path") };
-        smbUrl.setHost(host);
-        smbUrl.setPath("/" + path);
-    } else if (hasMatch(filePath, kCifsMatch)) {
-        static QRegularExpression cifsMptPref { kCifsMatch };
-        // mountRootDir like: `sharedir on 1.2.3.4`
-        QString mountRootDir { filePath.remove(cifsMptPref).section("/", 0, 0) };
-        const QString &shareDir { mountRootDir.section(" on ", 0, 0) };
-        const QString &host { mountRootDir.section(" on ", 1, 1) };
 
-        // subPath is after `sharedir on 1.2.3.4`
-        const QString &suffixPath { filePath.remove(mountRootDir) };
-        smbUrl.setHost(host);
-        smbUrl.setPath("/" + shareDir + suffixPath);   // like : smb://1.2.3.4/sharedir/suffixPath
-    } else {
+    QString host, share;
+    QString fullPath = url.path();
+    bool parseReuslt = DeviceUtils::parseSmbInfo(fullPath, host, share);
+    if (!parseReuslt)
         return url;
-    }
 
+    //  /run/user/1000/gvfs/smb-share...../helloworld.txt
+    //  /root/.gvfs/smb-share...../helloworld.txt
+    //  /media/user/smbmounts/smb-share...../helloworld.txt
+    //  ======>  helloworld.txt
+    static const QRegularExpression prefix(R"(^/run/user/.*/gvfs/.*/|^/root/.gvfs/.*/|^/media/.*/smbmounts/.*/)");
+    QString fileName = fullPath.remove(prefix);
+
+    smbUrl.setHost(host);
+    smbUrl.setPath("/" + share + "/" + fileName);
     return smbUrl;
 }
 
@@ -277,6 +264,20 @@ QUrl DeviceUtils::parseNetSourceUrl(const QUrl &target)
     src.setPath(dirPath);
 
     return src;
+}
+
+bool DeviceUtils::parseSmbInfo(const QString &smbPath, QString &host, QString &share, QString *port)
+{
+    static const QRegularExpression regx(R"(([:,]port=(?<port>\d*))?[,:]server=(?<host>[^/:,]+)(,share=(?<share>[^/:,]+))?)");
+    auto match = regx.match(smbPath);
+    if (!match.hasMatch())
+        return false;
+
+    host = match.captured("host");
+    share = match.captured("share");
+    if (port)
+        *port = match.captured("port");
+    return true;
 }
 
 QMap<QString, QString> DeviceUtils::fstabBindInfo()

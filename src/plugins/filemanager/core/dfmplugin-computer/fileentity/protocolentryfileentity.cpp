@@ -15,6 +15,8 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include <QRegularExpression>
+
 using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
 
@@ -36,13 +38,11 @@ ProtocolEntryFileEntity::ProtocolEntryFileEntity(const QUrl &url)
 QString ProtocolEntryFileEntity::displayName() const
 {
     QString displayName = datas.value(DeviceProperty::kDisplayName).toString();
-    if (displayName.contains(" on ")) {
-        int pos = displayName.lastIndexOf(" on ");
-        const QString &shareName = displayName.left(pos);
-        const QString &hostName = displayName.right(displayName.length() - pos - 4);
-        if (!shareName.isEmpty() && !hostName.isEmpty())
-            displayName = tr("%1 on %2").arg(shareName).arg(hostName);
-    }
+
+    QString host, share;
+    bool isSmb = dfmbase::DeviceUtils::parseSmbInfo(displayName, host, share);
+    if (isSmb)
+        displayName = tr("%1 on %2").arg(share).arg(host);
 
     return displayName;
 }

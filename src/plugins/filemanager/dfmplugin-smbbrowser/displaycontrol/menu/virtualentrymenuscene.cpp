@@ -248,7 +248,11 @@ void VirtualEntryMenuScenePrivate::actForgetAggregatedItem()
 void VirtualEntryMenuScenePrivate::actMountSeperatedItem()
 {
     pddmDbg << "do mount for" << stdSmb;
-    DevMngIns->mountNetworkDeviceAsync(stdSmb, [](bool ok, DFMMOUNT::DeviceError err, const QString &) {
+    QString path = stdSmb;
+    while (path.endsWith("/"))
+        path.chop(1);
+
+    DevMngIns->mountNetworkDeviceAsync(path, [](bool ok, DFMMOUNT::DeviceError err, const QString &) {
         if (ok) return;
         DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
     });

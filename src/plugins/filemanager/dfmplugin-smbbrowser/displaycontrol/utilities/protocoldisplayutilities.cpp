@@ -18,6 +18,7 @@
 
 #include <QApplication>
 #include <QMenu>
+#include <QSettings>
 
 DPSMBBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -154,7 +155,8 @@ QStringList protocol_display_utilities::getStandardSmbPaths(const QStringList &d
 QString protocol_display_utilities::getSmbHostPath(const QString &devId)
 {
     QUrl url(getStandardSmbPath(devId));
-    return QString("smb://%1").arg(url.host());
+    url.setPath("");
+    return url.toString();
 }
 
 QString protocol_display_utilities::getStandardSmbPath(const QUrl &entryUrl)
@@ -170,17 +172,23 @@ QString protocol_display_utilities::getStandardSmbPath(const QString &devId)
 {
     QString id = QUrl::fromPercentEncoding(devId.toLocal8Bit());
     static const QRegularExpression kCifsSmbPrefix(R"(^file:///media/.*/smbmounts/)");
-    if (id.startsWith(Global::Scheme::kFile) && id.contains(kCifsSmbPrefix)) {
-        id.remove(kCifsSmbPrefix);
-        QStringList frags = id.split(" on ");
-        if (frags.count() != 2) {
-            abort();
-            return "";
-        }
 
-        id = QString("smb://%1/%2/").arg(frags[1]).arg(frags[0]);
-    }
-    return id;
+    if (!id.startsWith(Global::Scheme::kFile) || !id.contains(kCifsSmbPrefix))
+        return id;
+
+    QString dirName = id;
+    dirName.remove(kCifsSmbPrefix);
+
+    QString host, share, port;
+    if (!DeviceUtils::parseSmbInfo(dirName, host, share, &port))
+        return id;
+
+    QString stdSmb;
+    if (port.isEmpty())
+        stdSmb = QString("smb://%1/%2/").arg(host).arg(share);
+    else
+        stdSmb = QString("smb://%1:%2/%3/").arg(host).arg(port).arg(share);
+    return stdSmb;
 }
 
 QString protocol_display_utilities::getDisplayNameOf(const QString &devId)
@@ -228,10 +236,8 @@ void ui_ventry_calls::addAggregatedItems()
 
     // 3. deduplicated, only keep smb root.
     QSet<QString> hostPaths;
-    for (const auto &id : smbs) {
-        const auto &host = QUrl(id).host();
-        hostPaths.insert(QString("smb://" + host));
-    }
+    for (const auto &id : smbs)
+        hostPaths.insert(getSmbHostPath(id));
 
     // 3. add aggregated item
     std::for_each(hostPaths.cbegin(), hostPaths.cend(), [=](const QString &host) {

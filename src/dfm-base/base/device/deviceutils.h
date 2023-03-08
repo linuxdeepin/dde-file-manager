@@ -50,6 +50,8 @@ public:
     static bool isExternalBlock(const QUrl &url);
     static QUrl parseNetSourceUrl(const QUrl &target);
 
+    static bool parseSmbInfo(const QString &smbPath, QString &host, QString &share, QString *port = nullptr);
+
     static QMap<QString, QString> fstabBindInfo();
 
     static QString nameOfSystemDisk(const QVariantMap &datas);

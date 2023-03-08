@@ -38,8 +38,6 @@ public:
     const QString &getDisplayName() const;
     void setDisplayName(const QString &newDisplayName);
 
-    QString getAggregatedPath() const;
-
 signals:
     void keyChanged();
     void protocolChanged();

@@ -15,7 +15,7 @@ USING_IO_NAMESPACE
 // TODO(xust) TODO(lanxs): using local enumerator temperarily, using SmbBrowserEnumerator or something later.
 
 SmbShareIteratorPrivate::SmbShareIteratorPrivate(const QUrl &url, dfmplugin_smbbrowser::SmbShareIterator *qq)
-    : q(qq)
+    : q(qq), rootUrl(url)
 {
     {
         QMutexLocker locker(&smb_browser_utils::nodesMutex());
@@ -49,6 +49,10 @@ QUrl SmbShareIterator::next()
     QStringList icons = info->attribute(DFileInfo::AttributeID::kStandardIcon).toStringList();
     QString icon = icons.count() > 0 ? icons.first() : "folder-remote";
     QString name = info->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
+
+    int serverPort = d->rootUrl.port();
+    if (serverPort != -1)
+        url.setPort(serverPort);
 
     {
         QMutexLocker locker(&smb_browser_utils::nodesMutex());

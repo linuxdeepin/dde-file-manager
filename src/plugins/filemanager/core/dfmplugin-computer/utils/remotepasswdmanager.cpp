@@ -85,8 +85,9 @@ void RemotePasswdManager::clearPasswd(const QString &uri)
     //    QString user = obj.value("username").toString();
     //    QString domain = obj.value("domain").toString();
     //    QString key = obj.value("key").toString();
-    QString server = parseServer(uri);
-    QString protocol = uri.mid(0, uri.indexOf("://"));
+    QUrl url(uri);
+    QString server = url.host();
+    QString protocol = url.scheme();
 
     if (protocol == DFMBASE_NAMESPACE::Global::Scheme::kSmb) {
         secret_password_clear(smbSchema(), nullptr, onPasswdCleared, nullptr,

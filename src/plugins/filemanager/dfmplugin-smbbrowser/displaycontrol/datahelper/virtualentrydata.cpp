@@ -26,7 +26,7 @@ VirtualEntryData::VirtualEntryData(const QString &standardSmbPath)
 }
 
 VirtualEntryData::VirtualEntryData(const VirtualEntryData &other)
-    : key(other.key), host(other.host), protocol(other.protocol), port(other.port), displayName(other.displayName)
+    : key(other.key), protocol(other.protocol), host(other.host), port(other.port), displayName(other.displayName)
 {
 }
 
@@ -103,9 +103,4 @@ void VirtualEntryData::setDisplayName(const QString &newDisplayName)
         return;
     displayName = newDisplayName;
     emit displayNameChanged();
-}
-
-QString VirtualEntryData::getAggregatedPath() const
-{
-    return QString("smb://%1").arg(host);
 }

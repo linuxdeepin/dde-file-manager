@@ -4,6 +4,7 @@
 
 #include "virtualentrydbhandler.h"
 #include "displaycontrol/info/protocolvirtualentryentity.h"
+#include "displaycontrol/utilities/protocoldisplayutilities.h"
 
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/application/application.h>
@@ -55,8 +56,7 @@ void VirtualEntryDbHandler::removeData(const QString &stdSmb)
     QStringList allSeperatedItem;
     allSmbIDs(nullptr, &allSeperatedItem);
 
-    const QString &host = QUrl(stdSmb).host();
-    const QString &smbHost = "smb://" + host;
+    const QString &smbHost = protocol_display_utilities::getSmbHostPath(stdSmb);
     bool notLast = std::any_of(allSeperatedItem.cbegin(), allSeperatedItem.cend(),
                                [smbHost](const QString &smb) { return smb.startsWith(smbHost + "/"); });
     if (!notLast) {
@@ -71,8 +71,7 @@ void VirtualEntryDbHandler::saveAggregatedAndSperated(const QString &stdSmb, con
     data.setDisplayName(displayName);
     saveData(data);
 
-    QString hostOnly = QString("smb://%1").arg(QUrl(stdSmb).host());
-    data.setKey(hostOnly);
+    data.setKey(protocol_display_utilities::getSmbHostPath(stdSmb));
     data.setDisplayName(data.getHost());
     saveData(data);
 }

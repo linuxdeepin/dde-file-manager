@@ -8,6 +8,8 @@
 #include "dfmplugin_smbbrowser_global.h"
 #include "typedefines.h"
 
+#include <QUrl>
+
 #include <dfm-io/dfmio_global.h>
 
 BEGIN_IO_NAMESPACE
@@ -29,6 +31,7 @@ private:
     SmbShareIterator *q { nullptr };
     SmbShareNodes smbShares;
     QScopedPointer<DFMIO::DLocalEnumerator> enumerator { nullptr };
+    QUrl rootUrl;
 };
 
 DPSMBBROWSER_END_NAMESPACE

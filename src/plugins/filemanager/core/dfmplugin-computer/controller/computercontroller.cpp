@@ -535,16 +535,17 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
     if (id.startsWith(DFMBASE_NAMESPACE::Global::Scheme::kSmb)) {
         uri = id;
     } else if (DeviceUtils::isSamba(id)) {
-        const QUrl &url = QUrl::fromPercentEncoding(id.toUtf8());
-        const QString &path = url.path();
-        int pos = path.lastIndexOf("/");
-        const QString &displayName = path.mid(pos + 1);
-        const QString &host = displayName.section("on", 1, 1).trimmed();
-        const QString &shareName = displayName.section("on", 0, 0).trimmed();
+        QString host, share;
+        bool ok = DeviceUtils::parseSmbInfo(id, host, share);
+        if (!ok) {
+            qWarning() << "computer: cannot parse info, cannot forget item" << id;
+            return;
+        }
+
         QUrl temUrl;
         temUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kSmb);
         temUrl.setHost(host);
-        temUrl.setPath("/" + shareName + "/");
+        temUrl.setPath("/" + share + "/");
         uri = temUrl.toString();
     }
 

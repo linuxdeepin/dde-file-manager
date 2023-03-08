@@ -104,8 +104,3 @@ void VirtualEntryData::setDisplayName(const QString &newDisplayName)
     displayName = newDisplayName;
     emit displayNameChanged();
 }
-
-QString VirtualEntryData::getAggregatedPath() const
-{
-    return QString("smb://%1").arg(host);
-}
