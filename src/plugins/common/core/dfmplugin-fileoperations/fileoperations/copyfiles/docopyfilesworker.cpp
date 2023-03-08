@@ -8,6 +8,7 @@
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/core/diofactory.h>
@@ -41,6 +42,11 @@ DoCopyFilesWorker::~DoCopyFilesWorker()
 
 bool DoCopyFilesWorker::doWork()
 {
+    // 深信服远程下载
+    if (sourceUrls.isEmpty() && workData->jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kCopyRemote)) {
+        sourceUrls = dfmbase::ClipBoard::instance()->getRemoteUrls();
+        qInfo() << "remote copy source urls list:" << sourceUrls;
+    }
     // The endcopy interface function has been called here
     if (!AbstractWorker::doWork())
         return false;

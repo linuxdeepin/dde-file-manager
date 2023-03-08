@@ -223,24 +223,36 @@ void FileOperatorProxy::pasteFiles(const CanvasView *view, const QPoint pos)
     Q_UNUSED(pos)
 
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
+    ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
+    // 深信服和云桌面的远程拷贝获取的clipboardFileUrlList都是空
+    if (ClipBoard::kRemoteCopiedAction == action) {   // 远程协助
+        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+        ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
+        return;
+    }
+
+    if (ClipBoard::kRemoteAction == action) {
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
+                                     AbstractJobHandler::JobFlag::kCopyRemote, nullptr, nullptr, QVariant(), nullptr);
+        return;
+    }
+
     if (urls.isEmpty())
         return;
 
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackPasteFiles, QVariant());
     QVariant custom = QVariant::fromValue(funcData);
 
-    ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
     if (ClipBoard::kCopyAction == action) {
-        dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
     } else if (ClipBoard::kCutAction == action) {
-        dpfSignalDispatcher->publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
+        dpfSignalDispatcher->publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(),
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
         //! todo bug#63441 如果是剪切操作，则禁止跨用户的粘贴操作, 讨论是否应该由下层统一处理?
 
         // clear clipboard after cutting files from clipboard
         ClipBoard::instance()->clearClipboard();
-    } else if (ClipBoard::kRemoteCopiedAction == action) {   // 远程协助
-        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
-        ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << urls;
     }

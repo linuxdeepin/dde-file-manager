@@ -141,20 +141,29 @@ void FileOperator::cutFiles(const CollectionView *view)
 void FileOperator::pasteFiles(const CollectionView *view)
 {
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
+    ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
+    // 深信服和云桌面的远程拷贝获取的clipboardFileUrlList都是空
+    if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
+        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+        ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
+        return;
+    }
+
+    if (ClipBoard::kRemoteAction == action) {
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(),
+                                     AbstractJobHandler::JobFlag::kCopyRemote, nullptr, nullptr, QVariant(), nullptr);
+        return;
+    }
+
     if (urls.isEmpty())
         return;
 
-    ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
     if (ClipBoard::kCopyAction == action) {
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else if (ClipBoard::kCutAction == action) {
         dpfSignalDispatcher->publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
-
         // clear clipboard after cutting files from clipboard
         ClipBoard::instance()->clearClipboard();
-    } else if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
-        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
-        ClipBoard::setCurUrlToClipboardForRemote(view->model()->rootUrl());
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << urls;
     }

@@ -192,6 +192,17 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
             ClipBoard::clearClipboard();
         }
+    } else if (action == ClipBoard::kRemoteCopiedAction) {   // 远程协助
+        qInfo() << "Remote Assistance Copy: set Current Url to Clipboard";
+        ClipBoard::setCurUrlToClipboardForRemote(view->rootUrl());
+    } else if (ClipBoard::kRemoteAction == action) {
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy,
+                                     windowId,
+                                     sourceUrls,
+                                     view->rootUrl(),
+                                     AbstractJobHandler::JobFlag::kCopyRemote,
+                                     nullptr, nullptr,
+                                     QVariant(), nullptr);
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << sourceUrls;
     }
