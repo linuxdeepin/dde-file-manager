@@ -206,6 +206,10 @@ DeviceProxyManagerPrivate::~DeviceProxyManagerPrivate()
 
 bool DeviceProxyManagerPrivate::isDBusRuning()
 {
+    // TODO(zhangs): refactor it! (bug-189717)
+    static const QStringList kAppWhileList { "dde-file-manager", "dde-desktop" };
+    if (!kAppWhileList.contains(qApp->applicationName()))
+        return false;
     return devMngDBus && devMngDBus->isValid();
 }
 
