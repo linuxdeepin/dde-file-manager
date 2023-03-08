@@ -276,6 +276,7 @@ void VirtualEntryMenuScenePrivate::actRemoveVirtualEntry()
         });
 
         computer_sidebar_event_calls::callForgetPasswd(stdSmb);
+        gotoDefaultPageOnUnmount();
     }
 }
 
