@@ -276,7 +276,8 @@ void SideBarView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     setCurrentIndex(d->current);
     d->draggedUrl = QUrl("");
-    return DTreeView::dragLeaveEvent(event);
+    setState(State::NoState);   //qAbastarctItemView::dragLeaveEvent
+    return;
 }
 
 void SideBarView::dropEvent(QDropEvent *event)
