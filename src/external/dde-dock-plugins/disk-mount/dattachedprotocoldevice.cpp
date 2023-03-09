@@ -5,6 +5,7 @@
 #include "dattachedprotocoldevice.h"
 
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <QVariantMap>
@@ -45,7 +46,11 @@ bool DAttachedProtocolDevice::detachable()
 
 QString DAttachedProtocolDevice::displayName()
 {
-    return data.value(DeviceProperty::kDisplayName, tr("Unknown device")).toString();
+    QString devName = data.value(DeviceProperty::kDisplayName, tr("Unknown device")).toString();
+    QString host, share;
+    if (dfmbase::DeviceUtils::parseSmbInfo(devName, host, share))
+        devName = tr("%1 on %2").arg(share).arg(host);
+    return devName;
 }
 
 bool DAttachedProtocolDevice::deviceUsageValid()
