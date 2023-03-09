@@ -30,6 +30,8 @@ set(BASE_UTIL_DIR ${SRC_DIR}/dfm-base/utils)
 FILE(GLOB BASE_UTIL_FILES
     ${BASE_UTIL_DIR}/networkutils.h
     ${BASE_UTIL_DIR}/networkutils.cpp
+    ${BASE_UTIL_DIR}/finallyutil.h
+    ${BASE_UTIL_DIR}/finallyutil.cpp
 )
 
 set(DBUS_DIR ${SRC_DIR}/dfm-base/dbusservice)
