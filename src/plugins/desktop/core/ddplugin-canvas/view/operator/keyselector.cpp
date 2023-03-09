@@ -25,7 +25,6 @@ KeySelector::KeySelector(CanvasView *parent)
 void KeySelector::keyPressed(QKeyEvent *event)
 {
     // Do not allow move when hold ctrl.
-    // todo(zy) why?
     if (event->modifiers() == Qt::ControlModifier)
         return;
 
@@ -33,7 +32,7 @@ void KeySelector::keyPressed(QKeyEvent *event)
     if (!newCurrent.isValid())
         return;
 
-    auto &state = view->d->operState();
+    const OperState &state = view->d->operState();
     auto begin = state.getContBegin();
     if (event->modifiers() == Qt::ControlModifier) {
         //! ban
@@ -146,5 +145,20 @@ void KeySelector::incrementSelect(const QModelIndex &index)
 void KeySelector::clearSearchKey()
 {
     searchKeys.clear();
+}
+
+void KeySelector::toggleSelect()
+{
+    auto currentSelected = view->selectionModel()->selectedIndexesCache();
+    if (currentSelected.isEmpty())
+        return;
+
+    auto m = view->model();
+    int rowCount = m->rowCount(m->rootIndex());
+    if (rowCount < 1)
+        return;
+
+    QItemSelection sel(m->index(0), m->index(rowCount - 1));
+    view->selectionModel()->select(sel, QItemSelectionModel::Toggle);
 }
 

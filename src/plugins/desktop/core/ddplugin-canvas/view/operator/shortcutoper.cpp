@@ -148,6 +148,11 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
             showMenu();
             return true;
         }
+    } else if (modifiers == (Qt::ControlModifier | Qt::ShiftModifier)) {
+        if (key == Qt::Key_I) {
+            view->d->keySelector->toggleSelect();
+            return true;
+        }
     }
 
     return false;

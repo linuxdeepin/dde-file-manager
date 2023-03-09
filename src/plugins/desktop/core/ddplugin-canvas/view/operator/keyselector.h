@@ -31,6 +31,7 @@ signals:
 
 public slots:
     void clearSearchKey();
+    void toggleSelect();
 protected:
     QString searchKeys;
     QTimer *searchTimer;
