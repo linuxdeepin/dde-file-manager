@@ -42,6 +42,7 @@ public slots:
     void diskCountChanged(const int count);
 
 private:
+    void loadTranslator();
     void initCompoments();
     void displayModeChanged(const Dock::DisplayMode mode) override;
     PluginProxyInterface *proxyInter() const;
