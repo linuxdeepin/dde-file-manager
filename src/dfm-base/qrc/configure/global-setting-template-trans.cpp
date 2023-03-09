@@ -45,6 +45,7 @@ void global_setting_template_trans()
     auto advance_preview_compress_file_previewText = QObject::tr("Compressed file preview");
     auto advance_preview_document_file_previewText = QObject::tr("Document preview");
     auto advance_preview_image_file_previewText = QObject::tr("Image preview");
+    auto advance_preview_remote_env_file_previewText = QObject::tr("The remote environment shows thumbnail previews");
     auto advance_preview_text_file_previewText = QObject::tr("Text preview");
     auto advance_preview_video_file_previewText = QObject::tr("Video preview");
     auto advance_search_show_hiddenText = QObject::tr("Show hidden files in search results");

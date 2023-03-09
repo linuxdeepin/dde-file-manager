@@ -677,7 +677,7 @@ void FileViewModel::initFilterSortWork()
     connect(this, &FileViewModel::requestGetSourceData, filterSortWorker.data(), &FileSortWorker::handleModelGetSourceData, Qt::QueuedConnection);
     connect(this, &FileViewModel::requestClearAllChildren, filterSortWorker.data(), &FileSortWorker::handleClean, Qt::QueuedConnection);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, filterSortWorker.data(), &FileSortWorker::onShowHiddenFileChanged, Qt::QueuedConnection);
-    connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged);
+    connect(Application::instance(), &Application::appAttributeChanged, filterSortWorker.data(), &FileSortWorker::onAppAttributeChanged, Qt::QueuedConnection);
 
     filterSortThread->start();
 }
