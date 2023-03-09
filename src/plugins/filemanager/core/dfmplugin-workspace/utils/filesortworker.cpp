@@ -798,7 +798,7 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortA
     // The folder is fixed in the front position
     if (!isMixDirAndFile)
         if (isDirLeft ^ isDirRight)
-            return isDirLeft;
+            return (sortOrder == Qt::DescendingOrder) ^ isDirLeft;
 
     if (isCanceled)
         return false;

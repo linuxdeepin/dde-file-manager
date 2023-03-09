@@ -164,6 +164,8 @@ bool DoCopyFileWorker::doWriteBlockFileCopy(const BlockFileCopyInfoPointer block
     }
     // write data to block file
     if (!writeBlockFile(blockFileInfo, &skip)) {
+        if (blockFileFd >= 0)
+            close(blockFileFd);
         if (skip)
             skipUrls.append(blockFileInfo->frominfo->urlOf(UrlInfoType::kUrl));
         return true;
@@ -294,7 +296,7 @@ void DoCopyFileWorker::createExBlockFileCopyInfo(const AbstractFileInfoPointer f
     tmpinfo->isdir = isDir;
     tmpinfo->permission = permission;
     workData->blockCopyInfoQueue.push_backByLock(tmpinfo);
-    while(workData->blockCopyInfoQueue.count() > 500 && !isStopped())
+    while (workData->blockCopyInfoQueue.count() > 500 && !isStopped())
         QThread::msleep(10);
 }
 

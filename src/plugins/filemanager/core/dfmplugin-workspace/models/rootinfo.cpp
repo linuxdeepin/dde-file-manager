@@ -407,7 +407,7 @@ void RootInfo::removeChildren(const QList<QUrl> &urlList)
             removeChildren.append(sortFileInfo(child));
             continue;
         }
-        childrenUrlList.removeOne(url);
+        childrenUrlList.removeAt(childIndex);
         removeChildren.append(sourceDataList.takeAt(childIndex));
     }
 
