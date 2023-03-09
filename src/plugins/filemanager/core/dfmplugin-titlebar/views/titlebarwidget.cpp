@@ -91,21 +91,21 @@ void TitleBarWidget::initializeUi()
 
     // crumb
     crumbBar = new CrumbBar;
-    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget *>(crumbBar), AcName::kAcComputerTitleBarAddress);
-
     // search button
     searchButton = new DPushButton;
-    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget *>(searchButton), AcName::kAcComputerTitleBarSearchBtn);
     searchButton->setFocusPolicy(Qt::NoFocus);
     searchButton->setFlat(true);
     searchButton->setIcon(QIcon::fromTheme("search"));
-
     // option button
     optionButtonBox = new OptionButtonBox;
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(crumbBar), AcName::kAcComputerTitleBarAddress);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(searchButton), AcName::kAcComputerTitleBarSearchBtn);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(optionButtonBox), AcName::kAcComputerTitleBarOptionBtnBox);
+#endif
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 

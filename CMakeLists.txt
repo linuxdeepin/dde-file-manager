@@ -22,6 +22,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(DtkCMake REQUIRED)
 #if no debug, can't out in code define key '__FUNCTION__' and so on
 add_definitions(-DQT_MESSAGELOGCONTEXT)
+add_definitions(-DENABLE_TESTING)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX /usr)

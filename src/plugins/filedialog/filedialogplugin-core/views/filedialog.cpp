@@ -21,19 +21,20 @@
 #include <DPlatformWindowHandle>
 #include <DTitlebar>
 #include <DWidgetUtil>
+#include <DLineEdit>
+#include <DLabel>
+#include <DComboBox>
+#include <DSuggestButton>
+#include <DPushButton>
 
 #include <QApplication>
 #include <QVBoxLayout>
-#include <QLineEdit>
 #include <QDialog>
 #include <QPointer>
-#include <QPushButton>
-#include <QComboBox>
 #include <QWindow>
 #include <QShowEvent>
 #include <QDesktopWidget>
 #include <QWhatsThis>
-#include <QLabel>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -421,7 +422,7 @@ void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         setFileMode(d->fileMode);
         urlSchemeEnable("recent", true);
 
-        disconnect(statusBar()->lineEdit(), &QLineEdit::textChanged,
+        disconnect(statusBar()->lineEdit(), &DLineEdit::textChanged,
                    this, &FileDialog::onCurrentInputNameChanged);
     } else {
         statusBar()->setMode(FileDialogStatusBar::kSave);
@@ -429,7 +430,7 @@ void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         urlSchemeEnable("recent", false);
         setFileMode(QFileDialog::DirectoryOnly);
 
-        connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
+        connect(statusBar()->lineEdit(), &DLineEdit::textChanged,
                 this, &FileDialog::onCurrentInputNameChanged);
     }
 }
@@ -534,9 +535,9 @@ void FileDialog::setCurrentInputName(const QString &name)
     const QString &suffix = db.suffixForFileName(name);
 
     if (suffix.isEmpty()) {
-        statusBar()->lineEdit()->selectAll();
+        statusBar()->lineEdit()->lineEdit()->selectAll();
     } else {
-        statusBar()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
+        statusBar()->lineEdit()->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
     }
 }
 
@@ -549,35 +550,46 @@ void FileDialog::addCustomWidget(FileDialog::CustomWidgetType type, const QStrin
         int maxLength = object["maxLength"].toInt();
         QLineEdit::EchoMode echoMode = static_cast<QLineEdit::EchoMode>(object["echoMode"].toInt());
         QString inputMask = object["inputMask"].toString();
-        QLabel *label = new QLabel(object["text"].toString());
-        QLineEdit *edit = new QLineEdit(object["defaultValue"].toString());
+        DLabel *label = new DLabel(object["text"].toString());
+        DLineEdit *edit = new DLineEdit();
+        edit->setText(object["defaultValue"].toString());
+#ifdef ENABLE_TESTING
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                                     qobject_cast<QWidget *>(label), AcName::kAcFDStatusBarContentLabel);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                                     qobject_cast<QWidget *>(edit), AcName::kAcFDStatusBarContentEdit);
+#endif
+
 
         if (maxLength > 0) {
-            edit->setMaxLength(maxLength);
+            edit->lineEdit()->setMaxLength(maxLength);
         }
 
         if (!inputMask.isEmpty()) {
-            edit->setInputMask(inputMask);
+            edit->lineEdit()->setInputMask(inputMask);
         }
 
         edit->setEchoMode(echoMode);
         edit->setPlaceholderText(object["placeholderText"].toString());
-        edit->setFixedHeight(24);
         statusBar()->addLineEdit(label, edit);
     } else {
-        QStringList data;
-
+        QStringList dataList;
         for (const QVariant &v : object["data"].toArray().toVariantList()) {
-            data << v.toString();
+            dataList << v.toString();
         }
-
         QString defaultValue = object["defaultValue"].toString();
 
-        QLabel *label = new QLabel(object["text"].toString());
-        QComboBox *comboBox = new QComboBox();
+        DLabel *label = new DLabel(object["text"].toString());
+        DComboBox *comboBox = new DComboBox();
+#ifdef ENABLE_TESTING
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                                     qobject_cast<QWidget *>(label), AcName::kAcFDStatusBarContentLabel);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                                     qobject_cast<QWidget *>(comboBox), AcName::kAcFDStatusBarContentBox);
+#endif
 
         comboBox->setEditable(object["editable"].toBool());
-        comboBox->addItems(data);
+        comboBox->addItems(dataList);
 
         if (!defaultValue.isEmpty()) {
             comboBox->setCurrentText(defaultValue);
@@ -1014,8 +1026,12 @@ void FileDialog::initializeUi()
 
     // init status bar
     d->statusBar = new FileDialogStatusBar(this);
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                             qobject_cast<QWidget*>(d->statusBar), AcName::kAcFDStautsBar);
+#endif
     centralWidget()->layout()->addWidget(d->statusBar);
-    statusBar()->lineEdit()->setMaxLength(NAME_MAX);
+    statusBar()->lineEdit()->lineEdit()->setMaxLength(NAME_MAX);
 
     // 修复bug-45176
     // 如果是wanyland平台，将弹出的文件框居中

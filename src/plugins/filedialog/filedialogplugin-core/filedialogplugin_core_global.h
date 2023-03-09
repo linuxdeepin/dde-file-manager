@@ -17,6 +17,16 @@ namespace UISize {
 inline constexpr int kTitleMaxWidth { 200 };
 }
 
+namespace AcName {
+inline constexpr char kAcFDStautsBar[] { "dlg_status_bar" };
+inline constexpr char kAcFDStatusBarFileNameEdit[] { "file_name_edit" };
+inline constexpr char kAcFDStatusBarFilters[] { "filters" };
+inline constexpr char kAcFDStatusBarTitleLabel[] { "title_label" };
+inline constexpr char kAcFDStatusBarContentLabel[] { "content_label" };
+inline constexpr char kAcFDStatusBarContentEdit[] { "content_edit" };
+inline constexpr char kAcFDStatusBarContentBox[] { "content_box" };
+}
+
 DIALOGCORE_END_NAMESPACE
 
 #endif   // FILEDIALOGPLUGIN_CORE_GLOBAL_H

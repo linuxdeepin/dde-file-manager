@@ -161,13 +161,14 @@ void CrumbBarPrivate::initUI()
 {
     // Arrows
     QSize size(24, 24), iconSize(16, 16);
-
+#ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget*>(&leftArrow), AcName::kAcComputerCrumbBarLeftArrow);
+                         qobject_cast<QWidget *>(&leftArrow), AcName::kAcComputerCrumbBarLeftArrow);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget*>(&rightArrow), AcName::kAcComputerCrumbBarRightArrow);
+                         qobject_cast<QWidget *>(&rightArrow), AcName::kAcComputerCrumbBarRightArrow);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget*>(&crumbView), AcName::kAcComputerCrumbBarListView);
+                         qobject_cast<QWidget *>(&crumbView), AcName::kAcComputerCrumbBarListView);
+#endif
 
     leftArrow.setFocusPolicy(Qt::NoFocus);
     leftArrow.setIcon(QIcon::fromTheme("go-previous"));

@@ -44,7 +44,6 @@ public slots:
 private:
     void initializeUi();
     void initConnect();
-    void initUiForSizeMode();
 };
 }
 

@@ -7,17 +7,26 @@
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include <QLineEdit>
-#include <QComboBox>
+#include <dfm-framework/event/event.h>
+
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+#endif
+#include <DLineEdit>
+#include <DLabel>
+#include <DComboBox>
+#include <DSuggestButton>
+
 #include <QHBoxLayout>
-#include <QPushButton>
-#include <QLabel>
 #include <QWindow>
 #include <QTimer>
 #include <QDebug>
 #include <QFontMetrics>
 
 using namespace filedialog_core;
+DWIDGET_USE_NAMESPACE
 
 FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     : QFrame(parent)
@@ -63,27 +72,27 @@ void FileDialogStatusBar::setComBoxItems(const QStringList &list)
     }
 }
 
-QComboBox *FileDialogStatusBar::comboBox() const
+DComboBox *FileDialogStatusBar::comboBox() const
 {
     return filtersComboBox;
 }
 
-QLineEdit *FileDialogStatusBar::lineEdit() const
+DLineEdit *FileDialogStatusBar::lineEdit() const
 {
     return fileNameEdit;
 }
 
-QPushButton *FileDialogStatusBar::acceptButton() const
+DSuggestButton *FileDialogStatusBar::acceptButton() const
 {
     return curAcceptButton;
 }
 
-QPushButton *FileDialogStatusBar::rejectButton() const
+DPushButton *FileDialogStatusBar::rejectButton() const
 {
     return curRejectButton;
 }
 
-void FileDialogStatusBar::addLineEdit(QLabel *label, QLineEdit *edit)
+void FileDialogStatusBar::addLineEdit(DLabel *label, DLineEdit *edit)
 {
     customLineEditList << qMakePair(label, edit);
 }
@@ -91,7 +100,7 @@ void FileDialogStatusBar::addLineEdit(QLabel *label, QLineEdit *edit)
 QString FileDialogStatusBar::getLineEditValue(const QString &text) const
 {
     auto iter = std::find_if(customLineEditList.begin(), customLineEditList.end(),
-                             [text](const QPair<QLabel *, QLineEdit *> &i) {
+                             [text](const QPair<DLabel *, DLineEdit *> &i) {
                                  return i.first->text() == text;
                              });
 
@@ -112,7 +121,7 @@ QVariantMap FileDialogStatusBar::allLineEditsValue() const
     return map;
 }
 
-void FileDialogStatusBar::addComboBox(QLabel *label, QComboBox *box)
+void FileDialogStatusBar::addComboBox(DLabel *label, DComboBox *box)
 {
     customComboBoxList << qMakePair(label, box);
 }
@@ -194,10 +203,10 @@ void FileDialogStatusBar::onFileNameTextEdited(const QString &text)
 {
     QString dstText = DFMBASE_NAMESPACE::FileUtils::preprocessingFileName(text);
     if (text != dstText) {
-        int currPos = fileNameEdit->cursorPosition();
+        int currPos = fileNameEdit->lineEdit()->cursorPosition();
         fileNameEdit->setText(dstText);
         currPos += dstText.length() - text.length();
-        fileNameEdit->setCursorPosition(currPos);
+        fileNameEdit->lineEdit()->setCursorPosition(currPos);
     }
 }
 
@@ -206,24 +215,34 @@ void FileDialogStatusBar::initializeUi()
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setFrameShape(QFrame::NoFrame);
 
-    titleLabel = new QLabel(this);
+    titleLabel = new DLabel(this);
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                             qobject_cast<QWidget *>(titleLabel), AcName::kAcFDStatusBarTitleLabel);
+#endif
     QString labelName = tr("File Name");
     QString labelFilters = tr("Format");
-    fileNameLabel = new QLabel(labelName, this);
-    filtersLabel = new QLabel(labelFilters, this);
+    fileNameLabel = new DLabel(labelName, this);
+    filtersLabel = new DLabel(labelFilters, this);
 
     fileNameLabel->setObjectName(labelName);
     filtersLabel->setObjectName(labelFilters);
 
-    fileNameEdit = new QLineEdit(this);
-    filtersComboBox = new QComboBox(this);
+    fileNameEdit = new DLineEdit(this);
+    filtersComboBox = new DComboBox(this);
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                             qobject_cast<QWidget *>(fileNameEdit), AcName::kAcFDStatusBarFileNameEdit);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                             qobject_cast<QWidget *>(filtersComboBox), AcName::kAcFDStatusBarFilters);
+#endif
 
     fileNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     fileNameEdit->installEventFilter(this);
     filtersComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    curAcceptButton = new QPushButton(this);
-    curRejectButton = new QPushButton(tr("Cancel", "button"), this);
+    curAcceptButton = new DSuggestButton(this);
+    curRejectButton = new DPushButton(tr("Cancel", "button"), this);
 
     curRejectButton->setObjectName(tr("Cancel", "button"));
 
@@ -233,6 +252,8 @@ void FileDialogStatusBar::initializeUi()
     curAcceptButton->setObjectName("FileDialogStatusBarAcceptButton");
 
     contentLayout = new QHBoxLayout();
+    contentLayout->setSpacing(10);
+    contentLayout->setContentsMargins(10, 10, 10, 0);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -242,7 +263,13 @@ void FileDialogStatusBar::initializeUi()
 
 void FileDialogStatusBar::initializeConnect()
 {
-    connect(fileNameEdit, &QLineEdit::textEdited, this, &FileDialogStatusBar::onFileNameTextEdited);
+    connect(fileNameEdit, &DLineEdit::textEdited, this, &FileDialogStatusBar::onFileNameTextEdited);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+        updateLayout();
+    });
+#endif
 }
 
 void FileDialogStatusBar::updateLayout()
@@ -259,8 +286,6 @@ void FileDialogStatusBar::updateLayout()
     fileNameEdit->hide();
     filtersComboBox->hide();
 
-    contentLayout->addSpacing(10);
-
     int widgetCount = customComboBoxList.count() + customLineEditList.count();
 
     if (curMode == kSave) {
@@ -275,11 +300,9 @@ void FileDialogStatusBar::updateLayout()
 
         if (!customLineEditList.isEmpty()) {
             contentLayout->addWidget(customLineEditList.first().first);
-            contentLayout->addSpacing(10);
             contentLayout->addWidget(customLineEditList.first().second, 1);
         } else if (!customComboBoxList.isEmpty()) {
             contentLayout->addWidget(customComboBoxList.first().first);
-            contentLayout->addSpacing(10);
             contentLayout->addWidget(customComboBoxList.first().second, 1);
         } else {
             addedWidgetCount = 0;
@@ -288,19 +311,18 @@ void FileDialogStatusBar::updateLayout()
         if (curMode == kOpen) {
             if (addedWidgetCount == 0) {
                 contentLayout->addWidget(filtersLabel);
-                contentLayout->addSpacing(10);
                 contentLayout->addWidget(filtersComboBox, 1);
             }
-
-            contentLayout->addSpacing(10);
-            contentLayout->addStretch();
-            contentLayout->addWidget(curRejectButton);
-            contentLayout->addWidget(curAcceptButton);
 
             if (filtersComboBox->count() > 0) {
                 filtersLabel->show();
                 filtersComboBox->show();
+            } else {
+                contentLayout->addStretch();
             }
+
+            contentLayout->addWidget(curRejectButton);
+            contentLayout->addWidget(curAcceptButton);
 
             return;
         }
@@ -308,11 +330,9 @@ void FileDialogStatusBar::updateLayout()
         if (filtersComboBox->count() <= 0) {
             if (addedWidgetCount == 0) {
                 contentLayout->addWidget(fileNameLabel);
-                contentLayout->addSpacing(10);
                 contentLayout->addWidget(fileNameEdit);
             }
 
-            contentLayout->addSpacing(10);
             contentLayout->addWidget(curRejectButton);
             contentLayout->addWidget(curAcceptButton);
 
@@ -352,14 +372,11 @@ void FileDialogStatusBar::updateLayout()
 
     QVBoxLayout *buttonLayout = new QVBoxLayout();
 
-    buttonLayout->addStretch();
-    buttonLayout->addWidget(curRejectButton, 0, Qt::AlignRight | Qt::AlignVCenter);
-    buttonLayout->addWidget(curAcceptButton, 0, Qt::AlignRight | Qt::AlignVCenter);
+    buttonLayout->addWidget(curRejectButton);
+    buttonLayout->addWidget(curAcceptButton);
 
     contentLayout->addLayout(labelLayout);
-    contentLayout->addSpacing(10);
     contentLayout->addLayout(centerLayout);
-    contentLayout->addSpacing(10);
     contentLayout->addLayout(buttonLayout);
 }
 
@@ -399,9 +416,9 @@ bool FileDialogStatusBar::eventFilter(QObject *watched, QEvent *event)
             const QString &suffix = db.suffixForFileName(name);
 
             if (suffix.isEmpty())
-                fileNameEdit->selectAll();
+                fileNameEdit->lineEdit()->selectAll();
             else
-                fileNameEdit->setSelection(0, name.length() - suffix.length() - 1);
+                fileNameEdit->lineEdit()->setSelection(0, name.length() - suffix.length() - 1);
         });
     } else if (event->type() == QEvent::Show) {
         QTimer::singleShot(500, this, [this]() {

@@ -7,14 +7,21 @@
 
 #include "filedialogplugin_core_global.h"
 
+#include <dtkwidget_global.h>
+#include <DPushButton>
+
 #include <QFrame>
+#include <QPushButton>
+
+DWIDGET_BEGIN_NAMESPACE
+class DLineEdit;
+class DLabel;
+class DComboBox;
+class DSuggestButton;
+DWIDGET_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 class QHBoxLayout;
-class QLabel;
-class QLineEdit;
-class QComboBox;
-class QPushButton;
 QT_END_NAMESPACE
 
 namespace filedialog_core {
@@ -35,15 +42,15 @@ public:
     void setMode(Mode mode);
     void setComBoxItems(const QStringList &list);
 
-    QComboBox *comboBox() const;
-    QLineEdit *lineEdit() const;
-    QPushButton *acceptButton() const;
-    QPushButton *rejectButton() const;
+    DTK_WIDGET_NAMESPACE::DComboBox *comboBox() const;
+    DTK_WIDGET_NAMESPACE::DLineEdit *lineEdit() const;
+    DTK_WIDGET_NAMESPACE::DSuggestButton *acceptButton() const;
+    DTK_WIDGET_NAMESPACE::DPushButton *rejectButton() const;
 
-    void addLineEdit(QLabel *label, QLineEdit *edit);
+    void addLineEdit(DTK_WIDGET_NAMESPACE::DLabel *label, DTK_WIDGET_NAMESPACE::DLineEdit *edit);
     QString getLineEditValue(const QString &text) const;
     QVariantMap allLineEditsValue() const;
-    void addComboBox(QLabel *label, QComboBox *box);
+    void addComboBox(DTK_WIDGET_NAMESPACE::DLabel *label, DTK_WIDGET_NAMESPACE::DComboBox *box);
     QString getComboBoxValue(const QString &text) const;
     QVariantMap allComboBoxsValue() const;
     void beginAddCustomWidget();
@@ -69,18 +76,18 @@ private:
 
     QHBoxLayout *contentLayout { nullptr };
 
-    QLabel *titleLabel;
-    QLabel *fileNameLabel;
-    QLabel *filtersLabel;
+    DTK_WIDGET_NAMESPACE::DLabel *titleLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *fileNameLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *filtersLabel { nullptr };
 
-    QLineEdit *fileNameEdit;
-    QComboBox *filtersComboBox;
+    DTK_WIDGET_NAMESPACE::DLineEdit *fileNameEdit { nullptr };
+    DTK_WIDGET_NAMESPACE::DComboBox *filtersComboBox { nullptr };
 
-    QPushButton *curAcceptButton;
-    QPushButton *curRejectButton;
+    DTK_WIDGET_NAMESPACE::DSuggestButton *curAcceptButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DPushButton *curRejectButton { nullptr };
 
-    QList<QPair<QLabel *, QLineEdit *>> customLineEditList;
-    QList<QPair<QLabel *, QComboBox *>> customComboBoxList;
+    QList<QPair<DTK_WIDGET_NAMESPACE::DLabel *, DTK_WIDGET_NAMESPACE::DLineEdit *>> customLineEditList;
+    QList<QPair<DTK_WIDGET_NAMESPACE::DLabel *, DTK_WIDGET_NAMESPACE::DComboBox *>> customComboBoxList;
 };
 
 }

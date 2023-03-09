@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <QLineEdit>
+#include <DLineEdit>
 
 DIALOGCORE_USE_NAMESPACE
 
@@ -21,8 +21,8 @@ protected:
 TEST_F(UT_FileDialogStatusBar, onViewItemClicked)
 {
     FileDialogStatusBar bar;
-    bar.fileNameEdit->setText("test1.txt");
+    bar.fileNameEdit->lineEdit()->setText("test1.txt");
     bar.changeFileNameEditText("test2");
-    QString ss = bar.fileNameEdit->text();
-    EXPECT_TRUE(bar.fileNameEdit->text() == "test2.txt");
+    QString ss = bar.fileNameEdit->lineEdit()->text();
+    EXPECT_TRUE(bar.fileNameEdit->lineEdit()->text() == "test2.txt");
 }
