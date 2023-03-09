@@ -6,8 +6,10 @@
 #include "computereventcaller.h"
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
+#include "fileentity/protocolentryfileentity.h"
 
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 
@@ -37,6 +39,8 @@ bool ComputerEventReceiver::handleSepateTitlebarCrumb(const QUrl &url, QList<QVa
         map["CrumbData_Key_IconName"] = ComputerUtils::icon().name();
         mapGroup->push_back(map);
         return true;
+    } else if (url.scheme() == Global::Scheme::kFile) {
+        return parseCifsMountCrumb(url, mapGroup);
     }
 
     return false;
@@ -74,6 +78,54 @@ bool ComputerEventReceiver::handleSetTabName(const QUrl &url, QString *tabName)
 void ComputerEventReceiver::setContextMenuEnable(bool enable)
 {
     ComputerUtils::contextMenuEnabled = enable;
+}
+
+bool ComputerEventReceiver::parseCifsMountCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+    const QString &filePath = url.path();
+    static const QRegularExpression kCifsPrefix(R"(^/media/.*/smbmounts)");
+    auto match = kCifsPrefix.match(filePath);
+    if (!match.hasMatch())
+        return false;
+
+    QVariantMap rootNode { { "CrumbData_Key_Url", QUrl::fromLocalFile(match.captured()) },
+                           { "CrumbData_Key_IconName", "drive-harddisk-symbolic" },
+                           { "CrumbData_Key_DisplayText", "" } };
+    mapGroup->push_back(rootNode);
+
+    static const QRegularExpression kCifsDevId(R"(^/media/.*/smbmounts/[^/]*)");
+    match = kCifsDevId.match(filePath);
+    if (!match.hasMatch())
+        return true;
+
+    const QString &devPath = match.captured();
+    QString host, share;
+    bool ok = DeviceUtils::parseSmbInfo(devPath, host, share);
+    QString devName = ok ? ProtocolEntryFileEntity::tr("%1 on %2").arg(share).arg(host)
+                         : QFileInfo(devPath).fileName();
+
+    QVariantMap devNode { { "CrumbData_Key_Url", QUrl::fromLocalFile(match.captured()) },
+                          { "CrumbData_Key_DisplayText", devName } };
+    mapGroup->push_back(devNode);
+
+    // parse dir nodes.
+    auto path = filePath;
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
+    QStringList subPaths = path.remove(kCifsDevId).split("/", QString::SkipEmptyParts);
+#else
+    QStringList subPaths = path.remove(kCifsDevId).split("/", Qt::SkipEmptyParts);
+#endif
+
+    QString currPrefix = devPath;
+    while (subPaths.count() > 0) {
+        QString dirName = subPaths.takeFirst();
+        currPrefix = currPrefix + "/" + dirName;
+        QVariantMap dirNode { { "CrumbData_Key_Url", QUrl::fromLocalFile(currPrefix) },
+                              { "CrumbData_Key_DisplayText", dirName } };
+        mapGroup->push_back(dirNode);
+    }
+    return true;
 }
 
 ComputerEventReceiver::ComputerEventReceiver(QObject *parent)

@@ -64,13 +64,13 @@ void CrumbInterface::crumbUrlChangedBehavior(const QUrl &url)
 
 QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
 {
-    if (url.scheme() == Global::Scheme::kFile)
-        return TitleBarHelper::crumbSeprateUrl(url);
-
     // TODO(zhangs): follow
     QList<QVariantMap> mapGroup;
     if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Crumb_Seprate", url, &mapGroup))
         return TitleBarHelper::tansToCrumbDataList(mapGroup);
+
+    if (url.scheme() == Global::Scheme::kFile)
+        return TitleBarHelper::crumbSeprateUrl(url);
 
     // default method
     QList<CrumbData> list;
@@ -119,7 +119,8 @@ void CrumbInterface::requestCompletionList(const QUrl &url)
     connect(folderCompleterJobPointer.data(), &TraversalDirThread::updateChildren, this,
             &CrumbInterface::onUpdateChildren, Qt::DirectConnection);
 
-    connect(folderCompleterJobPointer.data(), &TraversalDirThread::finished, this,
+    connect(
+            folderCompleterJobPointer.data(), &TraversalDirThread::finished, this,
             [this]() {
                 emit completionListTransmissionCompleted();
             },

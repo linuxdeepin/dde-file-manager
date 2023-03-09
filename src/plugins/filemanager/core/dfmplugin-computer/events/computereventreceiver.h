@@ -26,6 +26,9 @@ public Q_SLOTS:
     bool handleSetTabName(const QUrl &url, QString *tabName);
     void setContextMenuEnable(bool enable);
 
+protected:
+    bool parseCifsMountCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
+
 private:
     explicit ComputerEventReceiver(QObject *parent = nullptr);
 };
