@@ -11,7 +11,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <dfm-io/error/error.h>
-#include <dfm-io/core/dfile.h>
+#include <dfm-io/dfile.h>
 
 #include <QString>
 #include <QFileDevice>

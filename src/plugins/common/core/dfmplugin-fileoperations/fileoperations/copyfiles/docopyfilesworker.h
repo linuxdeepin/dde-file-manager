@@ -15,7 +15,7 @@
 #include "dfm-base/utils/threadcontainer.hpp"
 #include "dfm-base/file/local/localfilehandler.h"
 
-#include <dfm-io/core/dfile.h>
+#include <dfm-io/dfile.h>
 
 #include <QObject>
 #include <QMutex>

@@ -9,7 +9,7 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 
-#include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QSharedData>
 #include <QFile>

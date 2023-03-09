@@ -11,14 +11,13 @@
 #include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/base/application/application.h"
 
 #include <dfm-io/dfmio_utils.h>
-#include <dfm-io/local/dlocalfileinfo.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QDateTime>
 #include <QDir>
@@ -102,7 +101,7 @@ void LocalFileInfo::initQuerierAsync(int ioPriority, AbstractFileInfo::initQueri
  */
 bool LocalFileInfo::exists() const
 {
-    return dfmbase::DecoratorFile(d->url.path()).exists();
+    return DFMIO::DFile(d->url.path()).exists();
 }
 /*!
  * \brief refresh 更新文件信息，清理掉缓存的所有的文件信息
@@ -636,13 +635,8 @@ void LocalFileInfo::init(const QUrl &url, QSharedPointer<DFMIO::DFileInfo> dfile
         return;
     }
 
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(cvtResultUrl.scheme(), static_cast<QUrl>(cvtResultUrl));
-    if (!factory) {
-        qWarning("Failed, dfm-io create factory");
-        abort();
-    }
+    d->dfmFileInfo.reset(new DFileInfo(cvtResultUrl));
 
-    d->dfmFileInfo = factory->createFileInfo();
     if (!d->dfmFileInfo) {
         qWarning("Failed, dfm-io use factory create fileinfo");
         abort();

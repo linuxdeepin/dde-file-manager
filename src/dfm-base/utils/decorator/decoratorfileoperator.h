@@ -7,7 +7,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <dfm-io/core/doperator.h>
+#include <dfm-io/doperator.h>
 
 namespace dfmbase {
 

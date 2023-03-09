@@ -16,7 +16,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/properties.h"

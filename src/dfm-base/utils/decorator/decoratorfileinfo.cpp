@@ -7,10 +7,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 
-#include <dfm-io/dfmio_global.h>
-#include <dfm-io/dfmio_register.h>
 #include <dfm-io/dfmio_utils.h>
-#include <dfm-io/core/diofactory.h>
 
 #include <QVariant>
 
@@ -40,17 +37,13 @@ DecoratorFileInfo::DecoratorFileInfo(const QString &filePath)
     : d(new DecoratorFileInfoPrivate(this))
 {
     const QUrl &url = QUrl::fromLocalFile(filePath);
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (factory)
-        d->dfileInfo = factory->createFileInfo();
+    d->dfileInfo.reset(new DFMIO::DFileInfo(url));
 }
 
 DecoratorFileInfo::DecoratorFileInfo(const QUrl &url)
     : d(new DecoratorFileInfoPrivate(this))
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (factory)
-        d->dfileInfo = factory->createFileInfo();
+    d->dfileInfo.reset(new DFMIO::DFileInfo(url));
 }
 
 DecoratorFileInfo::DecoratorFileInfo(QSharedPointer<dfmio::DFileInfo> dfileInfo)
@@ -94,24 +87,6 @@ bool DecoratorFileInfo::isSymLink() const
 {
     if (d->dfileInfo)
         return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool();
-    return false;
-}
-
-bool DecoratorFileInfo::isHidden() const
-{
-    if (d->dfileInfo) {
-        const bool hidden = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardIsHidden).toBool();
-        if (hidden)
-            return true;
-    }
-
-    static DFMBASE_NAMESPACE::Match match("PrivateFiles");
-
-    const QString &fileName = this->fileName();
-    const bool hidden = match.match(this->filePath(), fileName);
-    if (hidden)
-        return hidden;
-
     return false;
 }
 
@@ -242,9 +217,8 @@ DFMIO::DFile::Permissions DecoratorFileInfo::permissions() const
 
 bool DecoratorFileInfo::notifyAttributeChanged()
 {
-    if (d->dfileInfo) {
+    if (d->dfileInfo)
         return d->dfileInfo->setCustomAttribute("xattr::update", DFMIO::DFileInfo::DFileAttributeType::kTypeString, "");
-    }
 
     return false;
 }

@@ -14,7 +14,7 @@
 #include <QUrl>
 #include <QElapsedTimer>
 
-#include <dfm-io/core/denumerator.h>
+#include <dfm-io/denumerator.h>
 
 using namespace dfmbase;
 

@@ -4,10 +4,6 @@
 
 #include "decoratorfileenumerator.h"
 
-#include <dfm-io/dfmio_global.h>
-#include <dfm-io/dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
-
 #include <QRegularExpression>
 
 namespace dfmbase {
@@ -40,12 +36,9 @@ DecoratorFileEnumerator::DecoratorFileEnumerator(const QString &filePath,
     : d(new DecoratorFileEnumeratorPrivate(this))
 {
     d->url = QUrl::fromLocalFile(filePath);
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), static_cast<QUrl>(d->url));
-    if (factory) {
-        d->denumerator = factory->createEnumerator(nameFilters, filters, flags);
-        if (filePath.contains(QRegularExpression(kNetworkFilesRex)))
-            d->denumerator->setTimeout(2000);
-    }
+    d->denumerator.reset(new DFMIO::DEnumerator(d->url, nameFilters, filters, flags));
+    if (filePath.contains(QRegularExpression(kNetworkFilesRex)))
+        d->denumerator->setTimeout(2000);
 }
 
 DecoratorFileEnumerator::DecoratorFileEnumerator(const QUrl &url,
@@ -55,12 +48,9 @@ DecoratorFileEnumerator::DecoratorFileEnumerator(const QUrl &url,
     : d(new DecoratorFileEnumeratorPrivate(this))
 {
     d->url = url;
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (factory) {
-        d->denumerator = factory->createEnumerator(nameFilters, filters, flags);
-        if (url.path().contains(QRegularExpression(kNetworkFilesRex)))
-            d->denumerator->setTimeout(2000);
-    }
+    d->denumerator.reset(new DFMIO::DEnumerator(d->url, nameFilters, filters, flags));
+    if (url.path().contains(QRegularExpression(kNetworkFilesRex)))
+        d->denumerator->setTimeout(2000);
 }
 
 DecoratorFileEnumerator::DecoratorFileEnumerator(QSharedPointer<dfmio::DEnumerator> dfileEnumerator)

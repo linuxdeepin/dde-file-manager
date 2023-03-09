@@ -11,12 +11,9 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
-#include <dfm-io/core/diofactory.h>
-#include <dfm-io/dfmio_register.h>
 #include <dfm-io/dfmio_utils.h>
 
 #include <QMutex>
@@ -222,7 +219,7 @@ bool FileOperateBaseWorker::copyFileFromTrash(const QUrl &urlSource, const QUrl 
 {
     auto fileinfo = InfoFactory::create<AbstractFileInfo>(urlSource);
     if (fileinfo->isAttributes(OptInfoType::kIsDir)) {
-        if (!DecoratorFile(urlTarget).exists()) {
+        if (!DFMIO::DFile(urlTarget).exists()) {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
             if (!fileHandler.mkdir(urlTarget))
                 return false;
@@ -283,7 +280,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
     if (!toInfo)
         return false;
 
-    bool oldExist = DecoratorFile(toInfo->urlOf(UrlInfoType::kUrl)).exists();
+    bool oldExist = toInfo->exists();
 
     if (fromInfo->isAttributes(OptInfoType::kIsSymLink)) {
         ok = createSystemLink(fromInfo, toInfo, workData->jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, skip);
@@ -308,7 +305,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
         FileUtils::removeCopyingFileUrl(url);
     }
 
-    if (!oldExist && DecoratorFile(toInfo->urlOf(UrlInfoType::kUrl)).exists() && targetInfo == targetPathInfo) {
+    if (!oldExist && toInfo->exists() && targetInfo == targetPathInfo) {
         completeSourceFiles.append(fromInfo->urlOf(UrlInfoType::kUrl));
         completeTargetFiles.append(toInfo->urlOf(UrlInfoType::kUrl));
     }
@@ -337,7 +334,7 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
         return false;
     }
     // 检查源文件是否存在
-    if (!DecoratorFile(fromInfo->urlOf(UrlInfoType::kUrl)).exists()) {
+    if (!fromInfo->exists()) {
         qCritical() << " check file from file is  not exists !!!!!!!";
         AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
@@ -358,7 +355,7 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
         return false;
     }
     // 检查目标文件是否存在
-    if (!DecoratorFile(toInfo->urlOf(UrlInfoType::kUrl)).exists()) {
+    if (!toInfo->exists()) {
         qCritical() << " check file to file perant file is  not exists !!!!!!!";
         AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
@@ -414,14 +411,14 @@ bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &from
             newUrl.setPath(newFromInfo->pathOf(PathInfoType::kSymLinkTarget));
             const AbstractFileInfoPointer &symlinkTarget = InfoFactory::create<AbstractFileInfo>(newUrl);
 
-            if (!symlinkTarget || !DecoratorFile(newUrl).exists()) {
+            if (!symlinkTarget || !symlinkTarget->exists()) {
                 break;
             }
 
             newFromInfo = symlinkTarget;
         } while (newFromInfo->isAttributes(OptInfoType::kIsSymLink));
 
-        if (DecoratorFile(newFromInfo->urlOf(UrlInfoType::kUrl)).exists() && doCopy) {
+        if (newFromInfo->exists() && doCopy) {
             // copy file here
             if (fromInfo->isAttributes(OptInfoType::kIsFile)) {
                 return checkAndCopyFile(fromInfo, toInfo, skip);
@@ -561,7 +558,7 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
     // 检查文件的一些合法性，源文件是否存在，创建新的目标目录名称，检查新创建目标目录名称是否存在
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     QFileDevice::Permissions permissions = fromInfo->permissions();
-    if (!DecoratorFile(toInfo->urlOf(UrlInfoType::kUrl)).exists()) {
+    if (!toInfo->exists()) {
         do {
             if (localFileHandler->mkdir(toInfo->urlOf(UrlInfoType::kUrl)))
                 break;
@@ -984,7 +981,7 @@ bool FileOperateBaseWorker::createNewTargetInfo(const AbstractFileInfoPointer &f
         return false;
     }
 
-    if (!DecoratorFile(newTargetInfo->urlOf(UrlInfoType::kUrl)).exists())
+    if (!newTargetInfo->exists())
         return true;
 
     return false;

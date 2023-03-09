@@ -5,9 +5,7 @@
 #include "decoratorfileoperator.h"
 #include "decoratorfileinfo.h"
 
-#include <dfm-io/dfmio_global.h>
-#include <dfm-io/dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
+#include <dfm-io/denumerator.h>
 
 namespace dfmbase {
 
@@ -22,12 +20,7 @@ public:
 
     bool deleteDir(const QUrl &url)
     {
-        QSharedPointer<dfmio::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-        if (!factory) {
-            return false;
-        }
-
-        QSharedPointer<dfmio::DEnumerator> enumerator = factory->createEnumerator();
+        QSharedPointer<DFMIO::DEnumerator> enumerator { new DFMIO::DEnumerator(url) };
         if (!enumerator) {
             return false;
         }
@@ -72,18 +65,14 @@ DecoratorFileOperator::DecoratorFileOperator(const QString &filePath)
     : d(new DecoratorFileOperatorPrivate(this))
 {
     d->url = QUrl::fromLocalFile(filePath);
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), static_cast<QUrl>(d->url));
-    if (factory)
-        d->doperator = factory->createOperator();
+    d->doperator.reset(new DFMIO::DOperator(d->url));
 }
 
 DecoratorFileOperator::DecoratorFileOperator(const QUrl &url)
     : d(new DecoratorFileOperatorPrivate(this))
 {
     d->url = url;
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (factory)
-        d->doperator = factory->createOperator();
+    d->doperator.reset(new DFMIO::DOperator(d->url));
 }
 
 DecoratorFileOperator::DecoratorFileOperator(QSharedPointer<dfmio::DOperator> dfileOperator)

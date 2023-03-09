@@ -10,7 +10,7 @@
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include <dfm-io/local/dlocalenumerator.h>
+#include <dfm-io/denumerator.h>
 #include <dfm-io/dfmio_utils.h>
 
 #include <functional>
@@ -236,19 +236,17 @@ void LocalDirIterator::cacheBlockIOAttribute()
     d->isCdRomDevice = FileUtils::isCdRomDevice(rootUrl);
 }
 
-void LocalDirIterator::setArguments(const QVariantMap &argus)
+void LocalDirIterator::setArguments(const QVariantMap &args)
 {
     if (!d->dfmioDirIterator)
         return;
-    QMap<DEnumerator::ArgumentKey, QVariant> dargus;
-    if (argus.value("sortRole").isValid())
-        dargus.insert(DEnumerator::ArgumentKey::kArgumentSortRole, argus.value("sortRole"));
-    if (argus.value("mixFileAndDir").isValid())
-        dargus.insert(DEnumerator::ArgumentKey::kArgumentMixDirAndFile, argus.value("mixFileAndDir"));
-    if (argus.value("sortOrder").isValid())
-        dargus.insert(DEnumerator::ArgumentKey::kArgumentSortOrder, argus.value("sortOrder"));
 
-    d->dfmioDirIterator->setArguments(dargus);
+    if (args.value("sortRole").isValid())
+        d->dfmioDirIterator->setSortRole(static_cast<DFMIO::DEnumerator::SortRoleCompareFlag>(args.value("sortRole").toInt()));
+    if (args.value("mixFileAndDir").isValid())
+        d->dfmioDirIterator->setSortMixed(args.value("mixFileAndDir").toBool());
+    if (args.value("sortOrder").isValid())
+        d->dfmioDirIterator->setSortOrder(static_cast<Qt::SortOrder>(args.value("sortOrder").toInt()));
 }
 
 QList<SortInfoPointer> LocalDirIterator::sortFileInfoList()

@@ -18,6 +18,7 @@ FILE(GLOB VAULT_FILES
 
 find_package(Dtk COMPONENTS Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
+
 pkg_check_modules(polkit REQUIRED polkit-agent-1 polkit-qt5-1)
 pkg_check_modules(openssl REQUIRED libcrypto)
 

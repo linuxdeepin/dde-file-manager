@@ -7,7 +7,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/dfileinfo.h>
 
 namespace dfmbase {
 
@@ -28,7 +28,6 @@ public:
     bool isFile() const;
     bool isDir() const;
     bool isSymLink() const;
-    bool isHidden() const;
     bool isWritable() const;
 
     QUrl url() const;

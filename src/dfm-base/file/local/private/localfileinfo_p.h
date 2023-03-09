@@ -14,7 +14,7 @@
 #include "dfm-base/utils/thumbnailprovider.h"
 #include "dfm-base/utils/fileinfohelper.h"
 
-#include <dfm-io/core/dfilefuture.h>
+#include <dfm-io/dfilefuture.h>
 
 #include <QFileInfo>
 #include <QIcon>

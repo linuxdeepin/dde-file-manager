@@ -6,8 +6,6 @@
 #include "private/smbshareiterator_p.h"
 #include "utils/smbbrowserutils.h"
 
-#include <dfm-io/local/dlocalenumerator.h>
-
 using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 USING_IO_NAMESPACE
@@ -21,7 +19,7 @@ SmbShareIteratorPrivate::SmbShareIteratorPrivate(const QUrl &url, dfmplugin_smbb
         QMutexLocker locker(&smb_browser_utils::nodesMutex());
         smb_browser_utils::shareNodes().clear();
     }
-    enumerator.reset(new DLocalEnumerator(url));
+    enumerator.reset(new DEnumerator(url));
 }
 
 SmbShareIteratorPrivate::~SmbShareIteratorPrivate()

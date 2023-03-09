@@ -9,7 +9,6 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 
 #include <QDir>
 #include <QXmlStreamReader>
@@ -47,7 +46,7 @@ void RecentIterateWorker::doWork()
             if (!location.isEmpty()) {
                 QUrl url = QUrl(location.toString());
                 auto info = InfoFactory::create<AbstractFileInfo>(url, false);
-                if (info && DecoratorFile(url.path()).exists() && info->isAttributes(OptInfoType::kIsFile)) {
+                if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
                     const auto &bindPath = FileUtils::bindPathTransform(info->pathOf(PathInfoType::kAbsoluteFilePath), false);
                     QUrl recentUrl = QUrl::fromLocalFile(bindPath);
                     recentUrl.setScheme(RecentHelper::scheme());

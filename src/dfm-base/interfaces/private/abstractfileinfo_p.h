@@ -8,10 +8,7 @@
 #include "interfaces/abstractfileinfo.h"
 #include "utils/threadcontainer.hpp"
 
-#include <dfm-io/dfmio_global.h>
-#include <dfm-io/dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
-#include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QPointer>
 

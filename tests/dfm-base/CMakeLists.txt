@@ -22,15 +22,15 @@ find_package(PkgConfig REQUIRED)
 find_package(KF5Codecs REQUIRED)
 find_package(X11 REQUIRED)
 
-pkg_search_module(dfm-burn
-    REQUIRED
-    dfm-burn
-    IMPORTED_TARGET
-)
-
 pkg_search_module(dfm-io
     REQUIRED
     dfm-io
+    IMPORTED_TARGET
+)
+
+pkg_search_module(dfm-burn
+    REQUIRED
+    dfm-burn
     IMPORTED_TARGET
 )
 
@@ -73,8 +73,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt5::DBus
     Qt5::X11Extras
     Qt5::Sql
-    PkgConfig::dfm-burn
     PkgConfig::dfm-io
+    PkgConfig::dfm-burn
     PkgConfig::dfm-mount
     PkgConfig::gsettings
     PkgConfig::libmount

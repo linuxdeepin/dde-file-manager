@@ -9,10 +9,7 @@
 
 #include "base/urlroute.h"
 
-#include <dfm-io/core/dwatcher.h>
-#include <dfm-io/dfmio_global.h>
-#include <dfm-io/dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
+#include <dfm-io/dwatcher.h>
 
 #include <QEvent>
 #include <QDir>
@@ -48,13 +45,7 @@ bool TrashFileWatcherPrivate::stop()
 void TrashFileWatcherPrivate::initFileWatcher()
 {
     const QUrl &trashUrl = url;
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(trashUrl.scheme(), static_cast<QUrl>(trashUrl));
-    if (!factory) {
-        qWarning("create factory failed.");
-        abort();
-    }
-
-    watcher = factory->createWatcher();
+    watcher.reset(new DWatcher(trashUrl));
     if (!watcher) {
         qWarning("watcher create failed.");
         abort();

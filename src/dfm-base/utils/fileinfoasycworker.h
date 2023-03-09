@@ -9,7 +9,7 @@
 #include "dfm_global_defines.h"
 #include "thumbnailprovider.h"
 
-#include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QObject>
 #include <QMimeDatabase>

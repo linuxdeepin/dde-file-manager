@@ -14,7 +14,6 @@
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
@@ -23,11 +22,8 @@
 #include "utils/universalutils.h"
 #include "dfm_event_defines.h"
 
-#include <dfm-io/dfmio_register.h>
-#include <dfm-io/core/doperator.h>
-#include <dfm-io/core/diofactory.h>
-#include <dfm-io/core/dfile.h>
-
+#include <dfm-io/doperator.h>
+#include <dfm-io/dfile.h>
 #include <DRecentManager>
 
 #include <QString>
@@ -108,13 +104,7 @@ bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()
  */
 bool LocalFileHandler::mkdir(const QUrl &dir)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(dir.scheme(), static_cast<QUrl>(dir));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << dir;
-        return false;
-    }
-
-    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+    QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(dir) };
     if (!oper) {
         qWarning() << "create operator failed, url: " << dir;
         return false;
@@ -143,13 +133,8 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
  */
 bool LocalFileHandler::rmdir(const QUrl &url)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << url;
-        return false;
-    }
+    QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
 
-    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
     if (!oper) {
         qWarning() << "create operator failed, url: " << url;
         return false;
@@ -197,12 +182,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
         if (fromParentUrl == toParentUrl) {
             AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
             const QString &newName = toInfo->nameOf(NameInfoType::kFileName);
-            QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-            if (!factory) {
-                qWarning() << "create factory failed, url: " << url;
-                return false;
-            }
-            QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+            QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
             if (!oper) {
                 qWarning() << "create operator failed, url: " << url;
                 return false;
@@ -215,13 +195,13 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
     }
 
     // use system api
-    const QByteArray &sourceFile = url.toLocalFile().toLocal8Bit();
-    const QByteArray &targetFile = newUrl.toLocalFile().toLocal8Bit();
+    const QString &sourceFile = url.toLocalFile();
+    const QString &targetFile = newUrl.toLocalFile();
 
-    if (DecoratorFile(targetFile).exists())
+    if (DFMIO::DFile(targetFile).exists())
         return false;   // TODO(xust/lanxuesong): user interaction?
 
-    if (::rename(sourceFile.constData(), targetFile.constData()) == 0) {
+    if (::rename(sourceFile.toLocal8Bit().constData(), targetFile.toLocal8Bit().constData()) == 0) {
         FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
         FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
 
@@ -230,13 +210,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
         return true;
     }
 
-    // use dfm-io api
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << url;
-        return false;
-    }
-    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+    QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
     if (!oper) {
         qWarning() << "create operator failed, url: " << url;
         return false;
@@ -418,13 +392,8 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString
  */
 bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourcefile.scheme(), static_cast<QUrl>(sourcefile));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << sourcefile;
-        return false;
-    }
+    QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(sourcefile) };
 
-    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
     if (!oper) {
         qWarning() << "create operator failed, url: " << sourcefile;
         return false;
@@ -451,12 +420,7 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link
  */
 bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions permissions)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << url;
-        return false;
-    }
-    QSharedPointer<DFMIO::DFile> dfile = factory->createFile();
+    QSharedPointer<DFMIO::DFile> dfile { new DFMIO::DFile(url) };
     if (!dfile) {
         qWarning() << "create file failed, url: " << url;
         return false;
@@ -502,12 +466,7 @@ bool LocalFileHandler::setPermissionsRecursive(const QUrl &url, QFileDevice::Per
 
 bool LocalFileHandler::moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag /*= DFMIO::DFile::CopyFlag::kNone*/)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourceUrl.scheme(), static_cast<QUrl>(sourceUrl));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << sourceUrl;
-        return false;
-    }
-    QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
+    QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(sourceUrl) };
     if (!dOperator) {
         qWarning() << "create file operator failed, url: " << sourceUrl;
         return false;
@@ -527,12 +486,7 @@ bool LocalFileHandler::moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMI
 
 bool LocalFileHandler::copyFile(const QUrl &sourceUrl, const QUrl &destUrl, dfmio::DFile::CopyFlag flag)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourceUrl.scheme(), static_cast<QUrl>(sourceUrl));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << sourceUrl;
-        return false;
-    }
-    QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
+    QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(sourceUrl) };
     if (!dOperator) {
         qWarning() << "create file operator failed, url: " << sourceUrl;
         return false;
@@ -552,12 +506,7 @@ bool LocalFileHandler::copyFile(const QUrl &sourceUrl, const QUrl &destUrl, dfmi
 
 QString LocalFileHandler::trashFile(const QUrl &url)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << url;
-        return QString();
-    }
-    QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
+    QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(url) };
     if (!dOperator) {
         qWarning() << "create file operator failed, url: " << url;
         return QString();
@@ -578,12 +527,8 @@ QString LocalFileHandler::trashFile(const QUrl &url)
  */
 bool LocalFileHandler::deleteFile(const QUrl &url)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << url;
-        return false;
-    }
-    QSharedPointer<DFMIO::DOperator> dOperator = factory->createOperator();
+    QSharedPointer<DFMIO::DOperator> dOperator { new DFMIO::DOperator(url) };
+
     if (!dOperator) {
         qWarning() << "create file operator failed, url: " << url;
         return false;
@@ -701,7 +646,7 @@ bool LocalFileHandlerPrivate::isInvalidSymlinkFile(const QUrl &url)
         return true;
 
     const QString &path { info->pathOf(PathInfoType::kAbsoluteFilePath) };
-    if (!DecoratorFile(path).exists() && !DeviceUtils::isSamba(url))
+    if (!DFMIO::DFile(path).exists() && !DeviceUtils::isSamba(url))
         return true;
 
     return false;
@@ -709,12 +654,8 @@ bool LocalFileHandlerPrivate::isInvalidSymlinkFile(const QUrl &url)
 
 QString LocalFileHandlerPrivate::getFileMimetypeFromGio(const QUrl &url)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << url;
-        return QString();
-    }
-    QSharedPointer<DFMIO::DFileInfo> dfileinfo = factory->createFileInfo();
+    QSharedPointer<DFMIO::DFileInfo> dfileinfo { new DFMIO::DFileInfo(url) };
+
     if (!dfileinfo) {
         qWarning() << "create fileinfo failed, url: " << url;
         return QString();
@@ -907,7 +848,7 @@ bool LocalFileHandlerPrivate::shouldAskUserToAddExecutableFlag(const QString &pa
 bool LocalFileHandlerPrivate::addExecutableFlagAndExecuse(const QString &path, int flag)
 {
     bool result = false;
-    DecoratorFile file(path);
+    DFMIO::DFile file(path);
     switch (flag) {
     case 0:
         break;
@@ -957,9 +898,10 @@ void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &temp
     }
 
     if (templateFile.isValid()) {
-        QByteArray arr = DecoratorFile(templateFile).readAll();
-        if (!arr.isEmpty()) {
-            qint64 writeCount = DecoratorFile(url).writeAll(arr, DFMIO::DFile::OpenFlag::kAppend);
+        const QByteArray &arr { DFMIO::DFile(templateFile).readAll() };
+        DFMIO::DFile file(url);
+        if (!arr.isEmpty() && file.open(DFMIO::DFile::OpenFlag::kAppend)) {
+            qint64 writeCount = file.write(arr);
             if (writeCount <= 0)
                 qWarning() << "file touch succ, but write template failed";
         }

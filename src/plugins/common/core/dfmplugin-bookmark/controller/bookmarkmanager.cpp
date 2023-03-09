@@ -26,8 +26,8 @@
 
 #include <DDialog>
 
-#include <dfmio_utils.h>
-#include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/dfmio_utils.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QFileInfo>
 #include <QMenu>

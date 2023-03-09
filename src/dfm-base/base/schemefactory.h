@@ -16,8 +16,6 @@
 #include "dfm-base/interfaces/private/watchercache.h"
 #include "dfm-base/utils/finallyutil.h"
 
-#include <dfmio_register.h>
-
 #include <QCoreApplication>
 #include <QSharedPointer>
 #include <QDirIterator>

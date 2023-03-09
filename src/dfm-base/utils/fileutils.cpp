@@ -18,7 +18,6 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/universalutils.h"
@@ -29,8 +28,7 @@
 #include <KEncodingProber>
 
 #include <dfm-io/dfmio_utils.h>
-#include <dfm-io/dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
+#include <dfm-io/dfile.h>
 
 #include <QFileInfo>
 #include <QTimer>
@@ -628,7 +626,7 @@ QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &pare
 {
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
-    if (info && DecoratorFile(fileUrl).exists()) {
+    if (info && DFMIO::DFile(fileUrl).exists()) {
         QString baseName = info->displayOf(DisPlayInfoType::kFileDisplayName) == info->nameOf(NameInfoType::kFileName)
                 ? info->nameOf(NameInfoType::kCompleteBaseName)
                 : info->displayOf(DisPlayInfoType::kFileDisplayName);
@@ -895,14 +893,11 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon)
     // Second attempt, check whether icon is a valid file
     const QString &iconPath = app.desktopIcon();
     const QUrl &iconUrl = QUrl::fromLocalFile(iconPath);
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(iconUrl.scheme(), static_cast<QUrl>(iconUrl));
-    if (factory) {
-        QSharedPointer<DFMIO::DFile> dfile = factory->createFile();
-        if (dfile && dfile->exists()) {
-            icon = QIcon(app.desktopIcon());
-            if (!icon.isNull()) {
-                return icon;
-            }
+    QSharedPointer<DFMIO::DFile> dfile { new DFMIO::DFile(iconUrl) };
+    if (dfile && dfile->exists()) {
+        icon = QIcon(app.desktopIcon());
+        if (!icon.isNull()) {
+            return icon;
         }
     }
 
@@ -1199,7 +1194,7 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
 
 QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir)
 {
-    if (!targetDir || !DecoratorFile(targetDir->urlOf(UrlInfoType::kUrl)).exists()) {
+    if (!targetDir || !DFMIO::DFile(targetDir->urlOf(UrlInfoType::kUrl)).exists()) {
         return QString();
     }
 
@@ -1237,7 +1232,7 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
         ++number;
         newUrl = targetDir->urlOf(UrlInfoType::kUrl);
         newUrl.setPath(newUrl.path() + "/" + newFileName);
-    } while (DecoratorFile(newUrl).exists());
+    } while (DFMIO::DFile(newUrl).exists());
 
     return newFileName;
 }

@@ -8,10 +8,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
-
-#include "dfm-io/core/diofactory.h"
 
 #include <QUrl>
 #include <QProcess>
@@ -89,7 +86,7 @@ bool DoCutFilesWorker::initArgs()
         return false;
     }
 
-    if (!DecoratorFile(targetUrl).exists()) {
+    if (!targetInfo->exists()) {
         // pause and emit error msg
         doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
         return false;

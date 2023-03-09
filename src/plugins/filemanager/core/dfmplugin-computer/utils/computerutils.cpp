@@ -11,7 +11,6 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"

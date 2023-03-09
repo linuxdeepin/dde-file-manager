@@ -6,10 +6,7 @@
 #include "file/local/private/localfilewatcher_p.h"
 #include "base/urlroute.h"
 
-#include <dfm-io/core/dwatcher.h>
-#include <dfm-io/dfmio_global.h>
-#include <dfm-io/dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
+#include <dfm-io/dwatcher.h>
 
 #include <QEvent>
 #include <QDir>
@@ -75,13 +72,7 @@ LocalFileWatcher::LocalFileWatcher(const QUrl &url, QObject *parent)
  */
 void LocalFileWatcherPrivate::initFileWatcher()
 {
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning("create factory failed.");
-        abort();
-    }
-
-    watcher = factory->createWatcher();
+    watcher.reset(new DWatcher(url));
     if (!watcher) {
         qWarning("watcher create failed.");
         abort();

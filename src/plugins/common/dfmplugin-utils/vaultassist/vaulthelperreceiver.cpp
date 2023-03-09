@@ -11,7 +11,9 @@
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/dpf.h>
-#include <dfmio_utils.h>
+
+#include <dfm-io/dfmio_utils.h>
+
 #include <QDBusConnection>
 #include <QDBusArgument>
 #include <QFile>

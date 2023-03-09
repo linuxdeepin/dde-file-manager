@@ -8,7 +8,7 @@
 
 #include <QUrl>
 
-#include <dfm-io/local/dlocalenumerator.h>
+#include <dfm-io/denumerator.h>
 
 #include <gtest/gtest.h>
 

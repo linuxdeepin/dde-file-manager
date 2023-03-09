@@ -5,14 +5,13 @@
 #include "emblemhelper.h"
 
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/event/event.h>
-#include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -132,7 +131,7 @@ bool GioEmblemWorker::parseEmblemString(QIcon *emblem, QString &pos, const QStri
         if (imgPath.startsWith("~/"))
             imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 
-        DecoratorFile dfile(imgPath);
+        DFMIO::DFile dfile(imgPath);
         if (dfile.exists()) {
             if (dfile.size() > 102400)   // size small than 100kb
                 return false;

@@ -66,8 +66,7 @@ QUrl TrashFileInfoPrivate::initTarget()
             }
         }
 
-        auto factory = produceQSharedIOFactory(ancestors.scheme(), static_cast<QUrl>(ancestors));
-        auto fileinfo = factory->createFileInfo();
+        QSharedPointer<DFileInfo> fileinfo { new DFileInfo(ancestors) };
         if (fileinfo->initQuerier()) {
             const QUrl &ancestorsTargetUrl = fileinfo->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
             if (ancestorsTargetUrl.isValid()) {
@@ -84,8 +83,7 @@ QUrl TrashFileInfoPrivate::initTarget()
         }
     } else if (urlIsRoot) {
         const QUrl &urlTrashFiles = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashLocalFilesPath));
-        auto factory = produceQSharedIOFactory(urlTrashFiles.scheme(), static_cast<QUrl>(urlTrashFiles));
-        auto fileinfo = factory->createFileInfo();
+        QSharedPointer<DFileInfo> fileinfo { new DFileInfo(urlTrashFiles) };
         if (fileinfo->initQuerier()) {
             targetUrl = urlTrashFiles;
             originalUrl = QUrl();
@@ -187,13 +185,8 @@ TrashFileInfo::TrashFileInfo(const QUrl &url)
     : AbstractFileInfo(url), d(new TrashFileInfoPrivate(url, this))
 {
     dptr.reset(d);
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning() << "dfm-io create factory failed, url: " << url;
-        return;
-    }
 
-    d->dFileInfo = factory->createFileInfo();
+    d->dFileInfo.reset(new DFileInfo(url));
     if (!d->dFileInfo) {
         qWarning() << "dfm-io use factory create fileinfo Failed, url: " << url;
         return;

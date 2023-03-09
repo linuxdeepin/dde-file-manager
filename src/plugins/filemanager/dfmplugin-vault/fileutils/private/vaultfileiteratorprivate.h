@@ -12,10 +12,7 @@
 #include <QDirIterator>
 #include <QDebug>
 
-#include <dfm-io/core/denumerator.h>
-#include <dfm-io/dfmio_global.h>
-#include <dfm-io/dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
+#include <dfm-io/denumerator.h>
 
 namespace dfmplugin_vault {
 class VaultFileIterator;

@@ -10,7 +10,6 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 
@@ -282,7 +281,7 @@ void BlockEntryFileEntity::loadWindowsVoltag()
 
     QUrl cfgUrl = QUrl::fromLocalFile(mountPoint().path() + kWinVolInfoConfig);
 
-    DecoratorFile f(cfgUrl);
+    DFMIO::DFile f(cfgUrl);
     if (!f.exists())
         return;
 

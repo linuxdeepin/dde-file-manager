@@ -7,11 +7,8 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 
-#include "dfm-io/dfmio_register.h"
-#include "dfm-io/core/dfile.h"
-#include "dfm-io/core/diofactory.h"
+#include <dfm-io/dfile.h>
 
 #include <QSet>
 #include <QFile>
@@ -37,13 +34,13 @@ public:
 
     void init()
     {
-        dfile = DFMBASE_NAMESPACE::DecoratorFile(fileUrl).filePtr();
+        dfile.reset(new DFMIO::DFile(fileUrl));
 
         if (!dfile)
             return;
 
         if (dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
-            QByteArray data = dfile->readAll();
+            const QByteArray &data = dfile->readAll();
             const QString &dataStr = QString::fromLocal8Bit(data);
             hideList = QSet<QString>::fromList(dataStr.split('\n', QString::SkipEmptyParts));
             hideListUpdate = hideList;

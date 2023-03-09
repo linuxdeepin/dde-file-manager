@@ -10,8 +10,7 @@
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
-#include "dfm-io/core/denumerator.h"
-#include "dfm-io/core/diofactory.h"
+#include <dfm-io/denumerator.h>
 
 #include <QUrl>
 #include <QDebug>

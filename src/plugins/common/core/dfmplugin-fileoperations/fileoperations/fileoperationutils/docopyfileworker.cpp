@@ -5,8 +5,6 @@
 #include "docopyfileworker.h"
 #include "utils/fileutils.h"
 
-#include <dfm-io/core/diofactory.h>
-#include <dfm-io/dfmio_register.h>
 #include <dfm-io/dfmio_utils.h>
 
 #include <QDebug>
@@ -485,24 +483,9 @@ bool DoCopyFileWorker::createFileDevice(const AbstractFileInfoPointer &fromInfo,
     file.reset();
     QUrl url = needOpenInfo->urlOf(UrlInfoType::kUrl);
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    QSharedPointer<DIOFactory> factory { nullptr };
-    do {
-        factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-        if (!factory) {
-            qCritical() << "create dfm io factory failed! url = " << url;
-            action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),
-                                          AbstractJobHandler::JobErrorType::kProrogramError,
-                                          url == toInfo->urlOf(UrlInfoType::kUrl));
-        }
-    } while (action == AbstractJobHandler::SupportAction::kRetryAction && !isStopped());
-
-    checkRetry();
-
-    if (!actionOperating(action, fromInfo->size() <= 0 ? workData->dirSize : fromInfo->size(), skip))
-        return false;
 
     do {
-        file = factory->createFile();
+        file.reset(new DFile(url));
         if (!file) {
             qCritical() << "create dfm io dfile failed! url = " << url;
             action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), toInfo->urlOf(UrlInfoType::kUrl),

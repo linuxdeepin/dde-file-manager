@@ -9,7 +9,7 @@
 #include "interfaces/private/abstractfilewatcher_p.h"
 #include "utils/threadcontainer.hpp"
 
-#include <dfm-io/core/dwatcher.h>
+#include <dfm-io/dwatcher.h>
 
 #include <QUrl>
 

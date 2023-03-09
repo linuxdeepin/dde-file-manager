@@ -107,12 +107,12 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timer)
 
 int TraversalDirThreadManager::iteratorAll()
 {
-    QVariantMap argus;
-    argus.insert("sortRole",
-                 QVariant::fromValue(sortRole));
-    argus.insert("mixFileAndDir", isMixDirAndFile);
-    argus.insert("sortOrder", sortOrder);
-    dirIterator->setArguments(argus);
+    QVariantMap args;
+    args.insert("sortRole",
+                QVariant::fromValue(sortRole));
+    args.insert("mixFileAndDir", isMixDirAndFile);
+    args.insert("sortOrder", sortOrder);
+    dirIterator->setArguments(args);
     auto fileList = dirIterator->sortFileInfoList();
 
     emit updateLocalChildren(fileList, sortRole, sortOrder, isMixDirAndFile);

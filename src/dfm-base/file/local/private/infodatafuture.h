@@ -5,7 +5,7 @@
 #ifndef INFODATAFUTURE_H
 #define INFODATAFUTURE_H
 
-#include <dfm-io/core/dfilefuture.h>
+#include <dfm-io/dfilefuture.h>
 
 #include <QObject>
 #include <QMap>

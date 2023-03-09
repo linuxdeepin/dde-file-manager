@@ -13,7 +13,7 @@
 
 #include <QObject>
 
-#include <dfm-io/core/dfile.h>
+#include <dfm-io/dfile.h>
 
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE

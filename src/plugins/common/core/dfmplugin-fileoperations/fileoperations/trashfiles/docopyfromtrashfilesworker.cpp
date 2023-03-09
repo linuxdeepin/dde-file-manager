@@ -8,13 +8,10 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/universalutils.h"
 
-#include <dfm-io/dfmio_global.h>
 #include <dfm-io/dfmio_utils.h>
-#include <dfm-io/core/diofactory.h>
 
 #include <QUrl>
 #include <QDebug>
@@ -149,7 +146,7 @@ bool DoCopyFromTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &
         return false;
 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    if (!DecoratorFile(parentUrl).exists()) {
+    if (!targetFileInfo->exists()) {
         do {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
             if (!fileHandler.mkdir(parentUrl))

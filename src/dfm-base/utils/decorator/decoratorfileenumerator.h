@@ -7,7 +7,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <dfm-io/core/denumerator.h>
+#include <dfm-io/denumerator.h>
 
 namespace dfmbase {
 

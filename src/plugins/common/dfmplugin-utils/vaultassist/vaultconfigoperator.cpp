@@ -5,7 +5,7 @@
 #include "vaultconfigoperator.h"
 #include "vaulthelper_global.h"
 
-#include <dfmio_utils.h>
+#include <dfm-io/dfmio_utils.h>
 
 #include <QSettings>
 

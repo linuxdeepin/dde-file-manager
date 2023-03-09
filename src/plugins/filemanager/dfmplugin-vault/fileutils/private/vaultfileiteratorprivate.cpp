@@ -4,10 +4,11 @@
 
 #include "vaultfileiteratorprivate.h"
 #include "fileutils/vaultfileiterator.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include <dfm-io/local/dlocalenumerator.h>
+#include <dfm-io/denumerator.h>
 
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -24,13 +25,7 @@ VaultFileIteratorPrivate::VaultFileIteratorPrivate(const QUrl &url,
     QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
     temp.setScheme(url.scheme());
 
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), static_cast<QUrl>(temp));
-    if (!factory) {
-        qWarning("Failed dfm-io create factory .");
-        abort();
-    }
-
-    dfmioDirIterator = factory->createEnumerator();
+    dfmioDirIterator.reset(new DEnumerator(temp));
     if (!dfmioDirIterator) {
         qWarning("Failed dfm-io use factory create enumerator");
         abort();

@@ -16,7 +16,7 @@ bool AccessControl::start()
     if (!isDaemonServiceRegistered())
         return false;
 
-    watcher.reset(new DFMIO::DLocalWatcher(QUrl::fromLocalFile("/home")));
+    watcher.reset(new DFMIO::DWatcher(QUrl::fromLocalFile("/home")));
 
     onFileCreatedInHomePath();
     initConnect();
@@ -54,7 +54,7 @@ void AccessControl::initConnect()
         return;
     }
 
-    connect(watcher.data(), &DFMIO::DLocalWatcher::fileAdded, this, [this](const QUrl &url) {
+    connect(watcher.data(), &DFMIO::DWatcher::fileAdded, this, [this](const QUrl &url) {
         qInfo() << "File: " << url << " has been created";
         onFileCreatedInHomePath();
     });

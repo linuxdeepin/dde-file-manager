@@ -4,7 +4,8 @@
 
 #include "interfaces/abstractfilewatcher.h"
 #include "interfaces/private/abstractfilewatcher_p.h"
-#include "base/urlroute.h"
+
+#include "dfm-base/base/urlroute.h"
 
 #include <QEvent>
 #include <QDir>

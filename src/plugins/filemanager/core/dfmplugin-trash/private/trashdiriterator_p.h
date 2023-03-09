@@ -8,7 +8,7 @@
 #include "dfmplugin_trash_global.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
-#include <dfm-io/core/denumerator.h>
+#include <dfm-io/denumerator.h>
 
 #include <QDirIterator>
 

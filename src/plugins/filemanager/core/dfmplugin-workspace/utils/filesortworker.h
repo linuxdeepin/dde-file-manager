@@ -13,7 +13,7 @@
 
 #include "dfm-base/base/application/application.h"
 
-#include <dfm-io/core/denumerator.h>
+#include <dfm-io/denumerator.h>
 
 #include <QObject>
 #include <QDirIterator>

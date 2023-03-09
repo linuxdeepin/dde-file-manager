@@ -7,7 +7,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <dfm-io/core/dfileinfo.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QObject>
 

@@ -11,7 +11,7 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <dfm-io/local/dlocalwatcher.h>
+#include <dfm-io/dwatcher.h>
 
 DAEMONPAC_BEGIN_NAMESPACE
 
@@ -33,7 +33,7 @@ private slots:
 
 private:
     QScopedPointer<AccessControlDBus> accessControlManager;
-    QScopedPointer<DFMIO::DLocalWatcher> watcher;
+    QScopedPointer<DFMIO::DWatcher> watcher;
 };
 
 DAEMONPAC_END_NAMESPACE

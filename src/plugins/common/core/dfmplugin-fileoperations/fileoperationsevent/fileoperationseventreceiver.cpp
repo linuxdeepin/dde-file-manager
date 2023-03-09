@@ -18,7 +18,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/properties.h"
@@ -110,7 +109,7 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
     QList<QUrl> sources = QUrl::fromStringList(ret.value("sources").toStringList());
     QList<QUrl> targets = QUrl::fromStringList(ret.value("targets").toStringList());
     for (const auto &url : sources) {
-        if (!DecoratorFile(url).exists()) {
+        if (!DFMIO::DFile(url).exists()) {
             // Their sizes are equal, indicating that the current operation is many-to-many.
             // So files that do not exist in sources need to be deleted in targets as well
             if (targets.size() == sources.size()) {
@@ -744,7 +743,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     }
 
     AbstractFileInfoPointer toFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-    if (toFileInfo && DecoratorFile(newUrl).exists()) {
+    if (toFileInfo && toFileInfo->exists()) {
         dialogManager->showRenameNameSameErrorDialog(toFileInfo->nameOf(NameInfoType::kFileName));
         return false;
     }
@@ -958,7 +957,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
     // check link
     if (force) {
         AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(link);
-        if (toInfo && DecoratorFile(link).exists()) {
+        if (toInfo && toInfo->exists()) {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandlerDelete;
             fileHandlerDelete.deleteFile(link);
         }

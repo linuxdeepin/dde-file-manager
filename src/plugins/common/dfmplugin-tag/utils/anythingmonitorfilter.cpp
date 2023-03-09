@@ -8,7 +8,6 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 
 #include <QDebug>
 #include <QTextStream>
@@ -81,7 +80,7 @@ void AnythingMonitorFilter::readSettings()
 
     for (const QString &path : blackList) {
 
-        if (!DecoratorFile(path).exists()) {
+        if (!DFMIO::DFile(path).exists()) {
             invalidPath.push_back(path);
         }
     }
@@ -99,7 +98,7 @@ void AnythingMonitorFilter::readSettings()
     ///###: make sure every in black-list is subdirectory of white-list.
     for (const QString &path : whiteList) {
 
-        if (!DecoratorFile(path).exists()) {
+        if (!DFMIO::DFile(path).exists()) {
             invalidPath.push_back(path);
         }
     }
@@ -142,7 +141,7 @@ void AnythingMonitorFilter::readSettings()
 
 void AnythingMonitorFilter::readHomePathOfAllUsers()
 {
-    if (DecoratorFile("/etc/passwd").exists()) {
+    if (DFMIO::DFile("/etc/passwd").exists()) {
         QFile file { "/etc/passwd" };
 
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {

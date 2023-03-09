@@ -241,15 +241,15 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
-target_link_libraries( ${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Concurrent
     Qt5::DBus
     Qt5::Sql
     Qt5::X11Extras
     PkgConfig::dfm-burn
-    PkgConfig::dfm-io
     PkgConfig::dfm-mount
+    PkgConfig::dfm-io
     PkgConfig::gsettings
     poppler-cpp
     KF5::Codecs
@@ -259,7 +259,6 @@ target_link_libraries( ${PROJECT_NAME}
 target_compile_definitions(
     ${PROJECT_NAME} PRIVATE APPSHAREDIR="/usr/share/dde-file-manager"
 )
-
 
 add_library(DFM::base ALIAS ${PROJECT_NAME})
 

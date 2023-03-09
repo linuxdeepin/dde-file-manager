@@ -12,7 +12,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-#include "dfm-io/core/dfile.h"
+#include <dfm-io/dfile.h>
 
 #include <QObject>
 

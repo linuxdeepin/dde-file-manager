@@ -12,8 +12,6 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <dfm-io/dfmio_register.h>
-
 #include <DApplicationSettings>
 #include <DSysInfo>
 
@@ -276,7 +274,6 @@ int main(int argc, char *argv[])
     if (!SysInfoUtils::isOpenAsAdmin())
         isSingleInstance = a.setSingleInstance(uniqueKey);
 
-    DFMIO::dfmio_init();
     if (isSingleInstance) {
         // check upgrade
         checkUpgrade(&a);

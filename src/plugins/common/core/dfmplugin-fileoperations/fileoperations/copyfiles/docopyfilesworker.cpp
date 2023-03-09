@@ -6,12 +6,9 @@
 #include "storageinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/clipboard.h"
 
-#include <dfm-io/dfmio_global.h>
-#include <dfm-io/core/diofactory.h>
 #include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
@@ -106,7 +103,7 @@ bool DoCopyFilesWorker::initArgs()
         return false;
     }
 
-    if (!DecoratorFile(targetUrl).exists()) {
+    if (!targetInfo->exists()) {
         // pause and emit error msg
         qCritical() << "target dir is not exists, url = " << targetUrl;
         doHandleErrorAndWait(QUrl(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError, true);
@@ -129,8 +126,8 @@ void DoCopyFilesWorker::endWork()
 
     // deal target files
     for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
-        const QUrl &url = info->urlOf(UrlInfoType::kUrl);
-        if (DecoratorFile(url).exists()) {
+        if (info->exists()) {
+            const QUrl &url = info->urlOf(UrlInfoType::kUrl);
             completeTargetFiles.append(url);
             info->refresh();
         }

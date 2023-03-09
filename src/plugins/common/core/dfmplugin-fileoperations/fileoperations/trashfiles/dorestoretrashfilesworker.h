@@ -11,7 +11,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-#include <dfm-io/core/dfile.h>
+#include <dfm-io/dfile.h>
 
 #include <QObject>
 
@@ -41,7 +41,6 @@ protected:
     bool checkRestoreInfo(const QUrl &url, AbstractFileInfoPointer &restoreInfo);
 
 private:
-    QString readTrashInfo(const QUrl &url);
     bool mergeDir(const QUrl &urlSource, const QUrl &urlTarget, dfmio::DFile::CopyFlag flag);
 
 private:

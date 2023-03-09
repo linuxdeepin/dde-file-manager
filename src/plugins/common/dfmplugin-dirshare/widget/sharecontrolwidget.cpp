@@ -7,7 +7,6 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
@@ -412,7 +411,7 @@ void ShareControlWidget::shareFolder()
     bool anonymous = shareAnonymousSelector->currentIndex() == 1;
     if (anonymous) {   // set the directory's access permission to 777
         // 1. set the permission of shared folder to 777;
-        DecoratorFile file(url);
+        DFMIO::DFile file(url);
         if (file.exists() && writable) {
             using namespace DFMIO;
             bool ret = file.setPermissions(file.permissions() | DFile::Permission::kWriteGroup | DFile::Permission::kExeGroup
@@ -426,7 +425,7 @@ void ShareControlWidget::shareFolder()
         // and never change the mode of /root
         if (getuid() != 0) {
             QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-            DecoratorFile home(homePath);
+            DFMIO::DFile home(homePath);
             if (home.exists()) {
                 using namespace DFMIO;
                 bool ret = home.setPermissions(home.permissions() | DFile::Permission::kReadOther | DFile::Permission::kExeOther);

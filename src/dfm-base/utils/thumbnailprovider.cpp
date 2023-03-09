@@ -11,7 +11,6 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
@@ -258,7 +257,7 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
 
     const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded)).toLocal8Bit()) + kFormat;
     QString thumbnail = DFMIO::DFMUtils::buildFilePath(d->sizeToFilePath(size).toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
-    if (!DecoratorFile(thumbnail).exists()) {
+    if (!DFMIO::DFile(thumbnail).exists()) {
         return QString();
     }
 
@@ -440,15 +439,16 @@ bool ThumbnailProvider::createImageVDjvuThumbnail(const QString &filePath, Thumb
             return false;
         }
 
-        auto dfile = DFMBASE_NAMESPACE::DecoratorFile(saveImage).filePtr();
-        if (dfile && dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
-            const QByteArray &output = dfile->readAll();
-            Q_ASSERT(!output.isEmpty());
+        DFMIO::DFile dfile(saveImage);
+        if (dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
+            const QByteArray &output = dfile.readAll();
+            if (!output.isEmpty())
+                return false;
 
             if (image->loadFromData(output, "png")) {
                 d->errorString.clear();
             }
-            dfile->close();
+            dfile.close();
         }
     }
     return false;
@@ -497,16 +497,16 @@ void ThumbnailProvider::createImageThumbnail(const QUrl &url, const QMimeType &m
 void ThumbnailProvider::createTextThumbnail(const QString &filePath, ThumbnailProvider::Size size, QScopedPointer<QImage> &image)
 {
     //FIXME(zccrs): This should be done using the image plugin?
-    auto dfile = DFMBASE_NAMESPACE::DecoratorFile(filePath).filePtr();
-    if (!dfile || !dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
-        d->errorString = dfile->lastError().errorMsg();
+    DFMIO::DFile dfile(filePath);
+    if (!dfile.open(DFMIO::DFile::OpenFlag::kReadOnly)) {
+        d->errorString = dfile.lastError().errorMsg();
         return;
     }
     AbstractFileInfoPointer fileinfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(filePath));
     if (!fileinfo)
         return;
 
-    QString text { FileUtils::toUnicode(dfile->read(2000), fileinfo->nameOf(NameInfoType::kFileName)) };
+    QString text { FileUtils::toUnicode(dfile.read(2000), fileinfo->nameOf(NameInfoType::kFileName)) };
 
     QFont font;
     font.setPixelSize(12);

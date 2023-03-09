@@ -20,7 +20,7 @@
 #include <QDBusConnection>
 #include <QtConcurrent>
 
-#include <dfmio_utils.h>
+#include <dfm-io/dfmio_utils.h>
 
 DFMBASE_USE_NAMESPACE
 

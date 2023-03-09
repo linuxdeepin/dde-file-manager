@@ -10,7 +10,7 @@
 
 #include <QUrl>
 
-#include <dfm-io/dfmio_global.h>
+#include <dfm-io/denumerator.h>
 
 BEGIN_IO_NAMESPACE
 class DLocalEnumerator;
@@ -30,7 +30,7 @@ public:
 private:
     SmbShareIterator *q { nullptr };
     SmbShareNodes smbShares;
-    QScopedPointer<DFMIO::DLocalEnumerator> enumerator { nullptr };
+    QScopedPointer<DFMIO::DEnumerator> enumerator { nullptr };
     QUrl rootUrl;
 };
 

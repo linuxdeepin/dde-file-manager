@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "infocache.h"
-#include "interfaces/private/infocache_p.h"
-#include "base/schemefactory.h"
-#include "dfm-base/utils/decorator/decoratorfile.h"
 
-#include <dfm-io/core/dfileinfo.h>
+#include "dfm-base/interfaces/private/infocache_p.h"
+#include "dfm-base/base/schemefactory.h"
+
+#include <dfm-io/dfileinfo.h>
 
 #include <QtConcurrent>
 
@@ -324,7 +324,7 @@ CacheWorker::~CacheWorker()
 void CacheWorker::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    if (DecoratorFile(url.path()).exists())
+    if (DFMIO::DFile(url.path()).exists())
         InfoCache::instance().cacheInfo(url, info);
 }
 
