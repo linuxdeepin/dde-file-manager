@@ -32,6 +32,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QSignalBlocker>
+#include <QStyle>
 
 #include <linux/limits.h>
 
@@ -46,7 +47,7 @@ static constexpr int kExpandIconSize = 12;
 static constexpr int kCompactExpandIconSize = 10;
 static constexpr int kItemMargin = 10;
 static constexpr int kCompactItemMargin = 6;
-static constexpr int kItemIconSize = 19;
+static constexpr int kItemIconSize = 16;
 static constexpr int kCompactModeIcon = 16;
 static constexpr int kEjectIconSize = 16;
 
@@ -76,7 +77,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
 
     QStyleOptionViewItem opt = option;
 
-    QStyledItemDelegate::initStyleOption(&opt, index);
+    DStyledItemDelegate::initStyleOption(&opt, index);
     painter->setRenderHint(QPainter::Antialiasing);
 
     DPalette palette(DPaletteHelper::instance()->palette(option.widget));
@@ -85,7 +86,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
         widgetColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
 
-    QStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
+    DStandardItem *item = qobject_cast<const SideBarModel *>(index.model())->itemFromIndex(index);
 
     if (!item)
         return DStyledItemDelegate::paint(painter, option, index);
@@ -148,7 +149,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         ItemInfo info = sidebarItem->itemInfo();
         isEjectable = info.isEjectable;
         QIcon icon = item->icon();
-        drawIcon(painter, icon, itemRect, iconMode, isEjectable);
+        drawIcon(opt, painter, icon, itemRect, iconMode, isEjectable);
         //notes: if draw eject icon with `DStyledItemDelegate::paint(painter, option, index)`,
         //could not match the UI style of requirement, so here use `drawIcon()`, but this way would trigger the item-action-event
         //as clicking the eject icon.
@@ -175,7 +176,7 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     if (metricsLabel.horizontalAdvance(text) > (isEjectable ? min : max))
         text = QFontMetrics(option.widget->font()).elidedText(text, Qt::ElideRight, (isEjectable ? int(min) : int(max)));
     int rowHeight = itemRect.height();
-    qreal txtDx = separatorItem ? 22 : 42;
+    qreal txtDx = (separatorItem ? 21 : 46) * qApp->devicePixelRatio();
     qreal txtDy = (itemRect.height() - metricsLabel.lineSpacing()) / 2;
     painter->drawText(QRectF(itemRect.x() + txtDx, itemRect.y() + txtDy, itemRect.width(), rowHeight), Qt::AlignLeft, text);
     painter->restore();
@@ -331,28 +332,38 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const Abstrac
     }
 }
 
-void SideBarItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const
+void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option, QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const
 {
 #ifdef DTKWIDGET_CLASS_DSizeMode
     QSize iconSize(DSizeModeHelper::element(QSize(kCompactModeIcon, kCompactModeIcon), QSize(kItemIconSize, kItemIconSize)));
 #else
     QSize iconSize(kItemIconSize, kItemIconSize);
 #endif
-    QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
-    qreal iconDx = 2 * kItemMargin;
-    qreal iconDy = (itemRect.height() - iconSize.height()) / 2 + 1;
+    QIcon::State state = option.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+    QStyle *style = option.widget ? option.widget->style() : QApplication::style();
+    auto dpi = qApp->devicePixelRatio();
+    iconSize *= dpi;
+
+    qreal iconDx = 2 * kItemMargin * dpi;
+    qreal iconDy = (itemRect.height() - iconSize.height()) / 2;
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
     QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
-    auto px = icon.pixmap(iconSize, iconMode);
-    px.setDevicePixelRatio(qApp->devicePixelRatio());
-    painter->drawPixmap(QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), px);
+
+    auto px = icon.pixmap(iconSize, iconMode, state);
+    px.setDevicePixelRatio(dpi);
+    style->drawItemPixmap(painter, QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), Qt::AlignCenter, px);
+
     if (isEjectable) {
+        QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
+        ejectIconSize *= dpi;
+
         QPoint ejectIconTopLeft = itemRect.bottomRight() + QPoint(0 - ejectIconSize.width() * 2, 0 - (itemRect.height() + ejectIconSize.height()) / 2);
         QPoint ejectIconBottomRight = ejectIconTopLeft + QPoint(ejectIconSize.width(), ejectIconSize.height());
         QIcon ejectIcon = QIcon::fromTheme("media-eject-symbolic");
-        auto px = ejectIcon.pixmap(iconSize);
-        px.setDevicePixelRatio(qApp->devicePixelRatio());
-        painter->drawPixmap(QRect(ejectIconTopLeft, ejectIconBottomRight), px);
+
+        auto px = ejectIcon.pixmap(iconSize, iconMode, state);
+        px.setDevicePixelRatio(dpi);
+        style->drawItemPixmap(painter, QRect(ejectIconTopLeft, ejectIconBottomRight), Qt::AlignCenter, px);
     }
 }
 
