@@ -47,7 +47,7 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
 {
     if (this->doWorker) {
         this->doWorker->moveToThread(&thread);
-        connect(doWorker, &AbstractWorker::finishedNotify, this, &AbstractJob::deleteLater);
+        connect(doWorker, &AbstractWorker::workerFinish, this, &AbstractJob::deleteLater);
         connect(doWorker, &AbstractWorker::requestShowTipsDialog, this, &AbstractJob::requestShowTipsDialog);
         connect(doWorker, &AbstractWorker::retryErrSuccess, this, &AbstractJob::handleRetryErrorSuccess, Qt::QueuedConnection);
         connect(qApp, &QCoreApplication::aboutToQuit, this, [=]() {
