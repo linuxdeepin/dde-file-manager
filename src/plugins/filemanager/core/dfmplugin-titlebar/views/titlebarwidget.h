@@ -13,11 +13,7 @@
 
 #include "dfm-base/interfaces/abstractframe.h"
 
-#include <DPushButton>
-
 #include <QHBoxLayout>
-#include <QToolButton>
-#include <QPushButton>
 
 namespace dfmplugin_titlebar {
 
@@ -65,7 +61,7 @@ private:
     QHBoxLayout *titleBarLayout { nullptr };   // 标题栏布局
     NavWidget *curNavWidget { nullptr };   // 导航小部件
     AddressBar *addressBar { nullptr };   // 地址编辑栏
-    DPushButton *searchButton { nullptr };   // 搜索栏按钮
+    DToolButton *searchButton { nullptr };   // 搜索栏按钮
     OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
     CrumbBar *crumbBar { nullptr };   // 面包屑
     bool searchButtonSwitchState { false };

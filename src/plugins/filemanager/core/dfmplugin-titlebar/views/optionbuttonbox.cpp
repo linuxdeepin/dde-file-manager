@@ -186,19 +186,12 @@ void OptionButtonBox::initUiForSizeMode()
         d->hBoxLayout = nullptr;
     }
     d->hBoxLayout = new QHBoxLayout;
-#ifdef DTKWIDGET_CLASS_DSizeMode
-    d->hBoxLayout->addSpacing(DSizeModeHelper::element(0, 15));
     d->hBoxLayout->addWidget(d->iconViewButton);
     d->hBoxLayout->addWidget(d->listViewButton);
     d->hBoxLayout->addWidget(d->detailButton);
-    d->hBoxLayout->setContentsMargins(0, 0, 4, 0);
+#ifdef DTKWIDGET_CLASS_DSizeMode
     d->hBoxLayout->setSpacing(DSizeModeHelper::element(10, 18));
 #else
-    d->hBoxLayout->addSpacing(15);
-    d->hBoxLayout->addWidget(d->iconViewButton);
-    d->hBoxLayout->addWidget(d->listViewButton);
-    d->hBoxLayout->addWidget(d->detailButton);
-    d->hBoxLayout->setContentsMargins(0, 0, 4, 0);
     d->hBoxLayout->setSpacing(18);
 #endif
     setLayout(d->hBoxLayout);

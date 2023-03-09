@@ -11,12 +11,14 @@
 #include <DFontSizeManager>
 #include <DApplicationHelper>
 #include <DFileDialog>
+#include <DLabel>
+#include <DFileChooserEdit>
+#include <DFrame>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QButtonGroup>
 #include <QPainterPath>
-#include <QFileDialog>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -25,6 +27,7 @@ VaultActiveSaveKeyFileView::VaultActiveSaveKeyFileView(QWidget *parent)
     : QWidget(parent)
 {
     initUI();
+    initConnect();
 }
 
 void VaultActiveSaveKeyFileView::initUI()
@@ -62,7 +65,7 @@ void VaultActiveSaveKeyFileView::initUI()
     DFontSizeManager::instance()->bind(otherPathRadioBtn, DFontSizeManager::T8, QFont::Medium);
     selectfileSavePathEdit->lineEdit()->setReadOnly(true);
     selectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
-    DFileDialog *filedialog = new DFileDialog(this, QDir::homePath(), QString("pubKey.key"));
+    filedialog = new DFileDialog(this, QDir::homePath(), QString("pubKey.key"));
     filedialog->setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
     filedialog->setDefaultSuffix(QString("key"));
     selectfileSavePathEdit->setDirectoryUrl(QDir::homePath());
@@ -71,18 +74,12 @@ void VaultActiveSaveKeyFileView::initUI()
     selectfileSavePathEdit->setFileDialog(filedialog);
     selectfileSavePathEdit->setEnabled(false);
 
-    QButtonGroup *group = new QButtonGroup(this);
+    group = new QButtonGroup(this);
     group->addButton(defaultPathRadioBtn, 1);
     group->addButton(otherPathRadioBtn, 2);
 
-    connect(group, SIGNAL(buttonClicked(QAbstractButton *)), this, SLOT(slotSelectRadioBtn(QAbstractButton *)));
-    connect(selectfileSavePathEdit, &DFileChooserEdit::fileChoosed, this, &VaultActiveSaveKeyFileView::slotChangeEdit);
-    connect(filedialog, &QFileDialog::fileSelected, this, &VaultActiveSaveKeyFileView::slotSelectCurrentFile);
-
     // 下一步按钮
-    nextBtn = new QPushButton(tr("Next"), this);
-    connect(nextBtn, &QPushButton::clicked,
-            this, &VaultActiveSaveKeyFileView::slotNextBtnClicked);
+    nextBtn = new DPushButton(tr("Next"), this);
 
     RadioFrame *frame = new RadioFrame;
 
@@ -110,7 +107,7 @@ void VaultActiveSaveKeyFileView::initUI()
 
     RadioFrame *frame1 = new RadioFrame;
 
-    QFrame *line = new QFrame(this);
+    DFrame *line = new DFrame(this);
     line->setObjectName(QString("line"));
     line->setFixedHeight(1);
     line->installEventFilter(this);
@@ -154,6 +151,15 @@ void VaultActiveSaveKeyFileView::initUI()
     setLayout(vlayout1);
 }
 
+void VaultActiveSaveKeyFileView::initConnect()
+{
+    connect(group, SIGNAL(buttonClicked(QAbstractButton *)), this, SLOT(slotSelectRadioBtn(QAbstractButton *)));
+    connect(selectfileSavePathEdit, &DFileChooserEdit::fileChoosed, this, &VaultActiveSaveKeyFileView::slotChangeEdit);
+    connect(filedialog, &DFileDialog::fileSelected, this, &VaultActiveSaveKeyFileView::slotSelectCurrentFile);
+    connect(nextBtn, &DPushButton::clicked,
+            this, &VaultActiveSaveKeyFileView::slotNextBtnClicked);
+}
+
 void VaultActiveSaveKeyFileView::slotNextBtnClicked()
 {
     //! 获取密钥字符串
@@ -185,6 +191,7 @@ void VaultActiveSaveKeyFileView::slotSelectRadioBtn(QAbstractButton *btn)
         nextBtn->setEnabled(true);
     } else if (btn == otherPathRadioBtn) {
         selectfileSavePathEdit->setEnabled(true);
+        filedialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         if (selectfileSavePathEdit->text().isEmpty())
             nextBtn->setEnabled(false);
     }

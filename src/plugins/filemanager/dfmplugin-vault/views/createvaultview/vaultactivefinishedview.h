@@ -8,15 +8,13 @@
 #include "dfmplugin_vault_global.h"
 
 #include <dtkwidget_global.h>
+#include <DPushButton>
 
 #include <polkit-qt5-1/PolkitQt1/Authority>
 
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
-class QLabel;
-class QPushButton;
-class QGridLayout;
 class QVBoxLayout;
 QT_END_NAMESPACE
 
@@ -52,6 +50,10 @@ protected:
     void showEvent(QShowEvent *event) override;
 
 private:
+    void initUi();
+    void initConnect();
+
+private:
     QWidget *widgetOne { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *tipsLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *encryVaultImageLabel { nullptr };
@@ -64,7 +66,7 @@ private:
     DTK_WIDGET_NAMESPACE::DLabel *encryptFinishedImageLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *tipsThree { nullptr };
 
-    QPushButton *finishedBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DPushButton *finishedBtn { nullptr };
 
     QVBoxLayout *vLayout { nullptr };
 

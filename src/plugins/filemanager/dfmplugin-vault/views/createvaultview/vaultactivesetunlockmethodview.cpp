@@ -10,79 +10,60 @@
 
 #include <DPasswordEdit>
 #include <DLabel>
+#include <DComboBox>
 
-#include <QLineEdit>
-#include <QPushButton>
-#include <QCheckBox>
 #include <QDebug>
 #include <QToolTip>
 #include <QRegExp>
 #include <QRegExpValidator>
-#include <QLabel>
 #include <QGridLayout>
-#include <QComboBox>
-#include <QSlider>
 #include <QVBoxLayout>
 
 using namespace dfmplugin_vault;
+DWIDGET_USE_NAMESPACE
+
 VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
     : QWidget(parent)
 {
-    //! 设置开锁方式标签
-    QLabel *pLabel = new QLabel(tr("Set Vault Password"), this);
+    initUi();
+    initConnect();
+
+    if (!OperatorCenter::getInstance()->createDirAndFile())
+        qInfo() << "Vault error: create dir and file failed!";
+}
+
+void VaultActiveSetUnlockMethodView::initUi()
+{
+    DLabel *pLabel = new DLabel(tr("Set Vault Password"), this);
     QFont font = pLabel->font();
     font.setPixelSize(18);
     pLabel->setFont(font);
     pLabel->setAlignment(Qt::AlignHCenter);
 
-    //! 类型
     DLabel *pTypeLabel = new DLabel(tr("Encryption method"), this);
-    typeCombo = new QComboBox(this);
+    typeCombo = new DComboBox(this);
     QStringList lstItems;
     lstItems << tr("Key encryption")  << tr("Transparent encryption");
     typeCombo->addItems(lstItems);
-    connect(typeCombo, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(slotTypeChanged(int)));
 
-    //! 设置只能输入大小写字母、数字和部分符号的正则表达式
     QRegExp regx("[A-Za-z0-9,.;?@/=()<>_+*&^%$#!`~\'\"|]+");
-    //! 创建验证器
     QValidator *validator = new QRegExpValidator(regx, this);
 
-    //! 设置密码
     passwordLabel = new DLabel(tr("Password"), this);
     passwordEdit = new DPasswordEdit(this);
-    passwordEdit->lineEdit()->setValidator(validator);   //! 设置验证器
+    passwordEdit->lineEdit()->setValidator(validator);
     passwordEdit->lineEdit()->setPlaceholderText(tr("≥ 8 chars, contains A-Z, a-z, 0-9, and symbols"));
     passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
-    connect(passwordEdit, &DPasswordEdit::textEdited,
-            this, &VaultActiveSetUnlockMethodView::slotLimiPasswordLength);
-    connect(passwordEdit, &DPasswordEdit::editingFinished,
-            this, &VaultActiveSetUnlockMethodView::slotPasswordEditFinished);
-    connect(passwordEdit, &DPasswordEdit::textChanged,
-            this, &VaultActiveSetUnlockMethodView::slotPasswordEditing);
-    connect(passwordEdit, &DPasswordEdit::focusChanged,
-            this, &VaultActiveSetUnlockMethodView::slotPasswordEditFocusChanged);
 
-    //! 重复密码
     repeatPasswordLabel = new DLabel(tr("Repeat password"), this);
     repeatPasswordEdit = new DPasswordEdit(this);
-    repeatPasswordEdit->lineEdit()->setValidator(validator);   //! 设置验证器
+    repeatPasswordEdit->lineEdit()->setValidator(validator);
     repeatPasswordEdit->lineEdit()->setPlaceholderText(tr("Input the password again"));
     repeatPasswordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
-    connect(repeatPasswordEdit, &DPasswordEdit::textEdited,
-            this, &VaultActiveSetUnlockMethodView::slotLimiPasswordLength);
-    connect(repeatPasswordEdit, &DPasswordEdit::editingFinished,
-            this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished);
-    connect(repeatPasswordEdit, &DPasswordEdit::textChanged,
-            this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditing);
-    connect(repeatPasswordEdit, &DPasswordEdit::focusChanged,
-            this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged);
 
-    //! 提示信息
     passwordHintLabel = new DLabel(tr("Password hint"), this);
-    tipsEdit = new QLineEdit(this);
-    tipsEdit->setMaxLength(14);
+    tipsEdit = new DLineEdit(this);
+    tipsEdit->lineEdit()->setMaxLength(14);
     tipsEdit->setPlaceholderText(tr("Optional"));
 
     // transparent encryption text
@@ -96,13 +77,9 @@ VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
     transEncryptTextLay->setContentsMargins(10, 0, 0, 0);
     transEncryptTextLay->addWidget(transEncryptionText);
 
-    //! 下一步按钮
-    nextBtn = new QPushButton(tr("Next"), this);
+    nextBtn = new DPushButton(tr("Next"), this);
     nextBtn->setEnabled(false);
-    connect(nextBtn, &QPushButton::clicked,
-            this, &VaultActiveSetUnlockMethodView::slotNextBtnClicked);
 
-    //! 布局
     gridLayout = new QGridLayout();
     gridLayout->setMargin(0);
 
@@ -125,9 +102,30 @@ VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
     play->addLayout(gridLayout);
     play->addStretch();
     play->addWidget(nextBtn);
+}
 
-    //! 创建文件夹与目录
-    if (!OperatorCenter::getInstance()->createDirAndFile()) return;
+void VaultActiveSetUnlockMethodView::initConnect()
+{
+    connect(typeCombo, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(slotTypeChanged(int)));
+    connect(passwordEdit, &DPasswordEdit::textEdited,
+            this, &VaultActiveSetUnlockMethodView::slotLimiPasswordLength);
+    connect(passwordEdit, &DPasswordEdit::editingFinished,
+            this, &VaultActiveSetUnlockMethodView::slotPasswordEditFinished);
+    connect(passwordEdit, &DPasswordEdit::textChanged,
+            this, &VaultActiveSetUnlockMethodView::slotPasswordEditing);
+    connect(passwordEdit, &DPasswordEdit::focusChanged,
+            this, &VaultActiveSetUnlockMethodView::slotPasswordEditFocusChanged);
+    connect(repeatPasswordEdit, &DPasswordEdit::textEdited,
+            this, &VaultActiveSetUnlockMethodView::slotLimiPasswordLength);
+    connect(repeatPasswordEdit, &DPasswordEdit::editingFinished,
+            this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFinished);
+    connect(repeatPasswordEdit, &DPasswordEdit::textChanged,
+            this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditing);
+    connect(repeatPasswordEdit, &DPasswordEdit::focusChanged,
+            this, &VaultActiveSetUnlockMethodView::slotRepeatPasswordEditFocusChanged);
+    connect(nextBtn, &DPushButton::clicked,
+            this, &VaultActiveSetUnlockMethodView::slotNextBtnClicked);
 }
 
 void VaultActiveSetUnlockMethodView::clearText()

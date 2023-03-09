@@ -8,6 +8,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <dtkwidget_global.h>
+#include <DPushButton>
 
 #include <QWidget>
 
@@ -15,13 +16,6 @@
 #define TIPS_TIME 3600000
 
 QT_BEGIN_NAMESPACE
-class QLineEdit;
-class QPushButton;
-class QCheckBox;
-class QLabel;
-class OperatorCenter;
-class QSlider;
-class QComboBox;
 class QGridLayout;
 class QVBoxLayout;
 QT_END_NAMESPACE
@@ -29,9 +23,10 @@ QT_END_NAMESPACE
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
 class DLabel;
+class DLineEdit;
+class DComboBox;
 DWIDGET_END_NAMESPACE
 
-DWIDGET_USE_NAMESPACE
 namespace dfmplugin_vault {
 inline constexpr int kPasswordLength { 18 };
 
@@ -65,31 +60,32 @@ private slots:
     void slotLimiPasswordLength(const QString &passwordEdit);
 
 private:
+    void initUi();
+    void initConnect();
     //! 校验密码是否符合规则
     bool checkPassword(const QString &passwordEdit);
     //! 校验重复密码框是否符合规则
     bool checkRepeatPassword();
     //! 校验界面输入信息是否符合规则
     bool checkInputInfo();
-
     void showEvent(QShowEvent *event) override;
 
 private:
-    QComboBox *typeCombo { nullptr };
+    DTK_WIDGET_NAMESPACE::DComboBox *typeCombo { nullptr };
 
-    DLabel *passwordLabel { nullptr };
-    DPasswordEdit *passwordEdit { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *passwordLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordEdit { nullptr };
 
-    DLabel *repeatPasswordLabel { nullptr };
-    DPasswordEdit *repeatPasswordEdit { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *repeatPasswordLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *repeatPasswordEdit { nullptr };
 
-    DLabel *passwordHintLabel { nullptr };
-    QLineEdit *tipsEdit { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *passwordHintLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DLineEdit *tipsEdit { nullptr };
 
-    DLabel *transEncryptionText { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *transEncryptionText { nullptr };
     QVBoxLayout *transEncryptTextLay { nullptr };
 
-    QPushButton *nextBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DPushButton *nextBtn { nullptr };
 
     QGridLayout *gridLayout { nullptr };
 };

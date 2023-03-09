@@ -7,15 +7,19 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include <DLabel>
-#include <DFileChooserEdit>
 #include <dtkwidget_global.h>
+#include <DPushButton>
 
-#include <QWidget>
+#include <QFrame>
 #include <QPushButton>
 #include <QRadioButton>
 
-DWIDGET_USE_NAMESPACE
+DWIDGET_BEGIN_NAMESPACE
+class DFileDialog;
+class DLabel;
+class DFileChooserEdit;
+DWIDGET_END_NAMESPACE
+
 namespace dfmplugin_vault {
 class RadioFrame : public QFrame
 {
@@ -33,7 +37,9 @@ class VaultActiveSaveKeyFileView : public QWidget
 public:
     explicit VaultActiveSaveKeyFileView(QWidget *parent = nullptr);
 
+private:
     void initUI();
+    void initConnect();
 
 signals:
     /*!
@@ -68,19 +74,21 @@ protected:
 
 private:
     //! 保存密钥文件页面标题
-    DLabel *titleLabel { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *titleLabel { nullptr };
     //! 密钥文件安全提示
-    DLabel *hintMsg { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *hintMsg { nullptr };
     //! 默认保存单选框按钮
     QRadioButton *defaultPathRadioBtn { nullptr };
     //! 用户自定义保存单选框按钮
     QRadioButton *otherPathRadioBtn { nullptr };
     //! 用户自定义保存路径编辑框
-    DFileChooserEdit *selectfileSavePathEdit { nullptr };
+    DTK_WIDGET_NAMESPACE::DFileChooserEdit *selectfileSavePathEdit { nullptr };
     //! 保存密钥文件并进行下一步操作的按钮
-    QPushButton *nextBtn { nullptr };
+    DTK_WIDGET_NAMESPACE::DPushButton *nextBtn { nullptr };
     //! 保存密钥权限提示
-    DLabel *otherRadioBtnHitMsg { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *otherRadioBtnHitMsg { nullptr };
+    QButtonGroup *group { nullptr };
+    DTK_WIDGET_NAMESPACE::DFileDialog *filedialog { nullptr };
 };
 }
 #endif   // VAULTACTIVESAVEKEYFILEVIEW_H

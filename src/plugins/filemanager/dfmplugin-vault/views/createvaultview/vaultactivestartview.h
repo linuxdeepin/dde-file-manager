@@ -7,9 +7,9 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include <QWidget>
+#include <DPushButton>
 
-class QPushButton;
+#include <QWidget>
 
 namespace dfmplugin_vault {
 class VaultActiveStartView : public QWidget
@@ -24,10 +24,12 @@ signals:
 private slots:
     void slotStartBtnClicked();
 
-public slots:
+private:
+    void initUi();
+    void initConnect();
 
 private:
-    QPushButton *startBtn { nullptr };   //! 开启包厢按钮
+    DTK_WIDGET_NAMESPACE::DPushButton *startBtn { nullptr };   //! 开启包厢按钮
 };
 }
 #endif   // VAULTACTIVESTARTVIEW_H

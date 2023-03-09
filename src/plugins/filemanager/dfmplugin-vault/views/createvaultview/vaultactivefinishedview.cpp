@@ -13,6 +13,7 @@
 #include "plugins/common/dfmplugin-utils/reportlog/rlog/datas/vaultreportdata.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-framework/dpf.h"
 
 #include <DLabel>
@@ -20,8 +21,6 @@
 #include <DWaterProgress>
 #include <DIconButton>
 
-#include <QLabel>
-#include <QPushButton>
 #include <QGridLayout>
 #include <QDebug>
 #include <QThread>
@@ -36,10 +35,16 @@ DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
-    : QWidget(parent), tipsLabel(nullptr), encryptFinishedImageLabel(nullptr), tipsThree(nullptr), finishedBtn(nullptr)
+    : QWidget(parent)
+{
+    initUi();
+    initConnect();
+}
+
+void VaultActiveFinishedView::initUi()
 {
     // 标题
-    QLabel *pLabelTitle = new QLabel(tr("Encrypt File Vault"), this);
+    DLabel *pLabelTitle = new DLabel(tr("Encrypt File Vault"), this);
     QFont font = pLabelTitle->font();
     font.setPixelSize(18);
     pLabelTitle->setFont(font);
@@ -71,9 +76,7 @@ VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     tipsThree->setAlignment(Qt::AlignHCenter);
 
     // 加密保险箱按钮
-    finishedBtn = new QPushButton(tr("Encrypt"), this);
-    connect(finishedBtn, &QPushButton::clicked,
-            this, &VaultActiveFinishedView::slotEncryptVault);
+    finishedBtn = new DPushButton(tr("Encrypt"), this);
 
     // 布局
     widgetOne = new QWidget(this);
@@ -110,11 +113,16 @@ VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);
 
-    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault,
-            this, &VaultActiveFinishedView::slotEncryptComplete);
-
     // 初始化定时器
     timer = new QTimer(this);
+}
+
+void VaultActiveFinishedView::initConnect()
+{
+    connect(finishedBtn, &DPushButton::clicked,
+            this, &VaultActiveFinishedView::slotEncryptVault);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault,
+            this, &VaultActiveFinishedView::slotEncryptComplete);
     connect(timer, &QTimer::timeout,
             this, &VaultActiveFinishedView::slotTimeout);
 }
@@ -145,7 +153,7 @@ void VaultActiveFinishedView::slotEncryptComplete(int nState)
 
         dpfSignalDispatcher->publish("dfmplugin_vault", "signal_ReportLog_Commit", QString("Vault"), data);
     } else {
-        QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
+        DialogManager::instance()->showMessageDialog(DialogManager::kMsgWarn, "", QString(tr("Failed to create file vault: %1").arg(nState)));
     }
 }
 

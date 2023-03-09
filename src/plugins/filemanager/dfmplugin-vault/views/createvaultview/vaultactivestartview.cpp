@@ -7,8 +7,6 @@
 #include <DIconButton>
 #include <DLabel>
 
-#include <QLabel>
-#include <QPushButton>
 #include <QVBoxLayout>
 #include <QSpacerItem>
 
@@ -17,7 +15,17 @@ using namespace dfmplugin_vault;
 VaultActiveStartView::VaultActiveStartView(QWidget *parent)
     : QWidget(parent)
 {
-    //! 标题
+    initUi();
+    initConnect();
+}
+
+void VaultActiveStartView::slotStartBtnClicked()
+{
+    emit sigAccepted();
+}
+
+void VaultActiveStartView::initUi()
+{
     DLabel *pLabel1 = new DLabel(tr("File Vault"), this);
     QFont font = pLabel1->font();
     font.setPixelSize(18);
@@ -31,11 +39,8 @@ VaultActiveStartView::VaultActiveStartView(QWidget *parent)
     pLabel3->setPixmap(QIcon::fromTheme("dfm_vault_active_start").pixmap(88, 100));
     pLabel3->setAlignment(Qt::AlignHCenter);
 
-    startBtn = new QPushButton(tr("Create"), this);
-    connect(startBtn, &QPushButton::clicked,
-            this, &VaultActiveStartView::slotStartBtnClicked);
+    startBtn = new DPushButton(tr("Create"), this);
 
-    //! 布局
     QVBoxLayout *play = new QVBoxLayout(this);
     play->setMargin(0);
     play->addWidget(pLabel1);
@@ -47,7 +52,8 @@ VaultActiveStartView::VaultActiveStartView(QWidget *parent)
     play->addWidget(startBtn);
 }
 
-void VaultActiveStartView::slotStartBtnClicked()
+void VaultActiveStartView::initConnect()
 {
-    emit sigAccepted();
+    connect(startBtn, &DPushButton::clicked,
+            this, &VaultActiveStartView::slotStartBtnClicked);
 }
