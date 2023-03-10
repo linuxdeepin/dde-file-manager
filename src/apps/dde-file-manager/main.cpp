@@ -88,7 +88,7 @@ static bool isLoadVaultPlugin()
         }
     } else if (DSysInfo::UosDesktop == uosType) {
         if (DSysInfo::UosProfessional == uosEdition
-                || DSysInfo::UosMilitary == uosEdition) {
+                || static_cast<int>(DSysInfo::UosEnterprise) == static_cast<int>(uosEdition + 1)) {
             return true;
         }
     }
