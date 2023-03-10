@@ -8,13 +8,13 @@
 //#include <dfm-framework/event/event.h>
 
 #include <dtkcore_global.h>
+#include <DLabel>
 
 #include <QObject>
 #include <QDebug>
 #include <QProcess>
 #include <QDBusReply>
 #include <QVBoxLayout>
-#include <QPushButton>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmbase;
@@ -41,7 +41,7 @@ void UserSharePasswordSettingDialog::initializeUi()
     addContent(passwordEdit);
     setContentsMargins(0, 0, 0, 0);
     getButton(1)->setEnabled(false);
-    QLabel *notice = new QLabel(tr("Set a password on the shared folder for non-anonymous access"), this);
+    DLabel *notice = new DLabel(tr("Set a password on the shared folder for non-anonymous access"), this);
     QPalette pe;
     pe.setColor(QPalette::WindowText, QColor("red"));
     notice->setPalette(pe);

@@ -18,18 +18,18 @@
 #include <DIconButton>
 #include <DListView>
 #include <DGuiApplicationHelper>
+#include <DComboBox>
+#include <DLabel>
+#include <DFrame>
 
-#include <QComboBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QFrame>
 #include <QIcon>
 #include <QDebug>
 #include <QStringList>
 #include <QStringListModel>
 #include <QScrollBar>
 #include <QDir>
-#include <QLabel>
 #include <QCompleter>
 #include <QWindow>
 #include <QSpacerItem>
@@ -39,6 +39,7 @@ using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
 
 DFMGLOBAL_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 static constexpr char kConnectServer[] { "ConnectServer" };
 static constexpr char kUrl[] { "URL" };
@@ -211,14 +212,14 @@ void ConnectToServerDialog::initializeUi()
     addButton(buttonTexts[kConnectButton], true, DDialog::ButtonRecommend);
 
     QFrame *contentFrame = new QFrame(this);
-    serverComboBox = new QComboBox();
-    schemeComboBox = new QComboBox();
+    serverComboBox = new DComboBox();
+    schemeComboBox = new DComboBox();
     supportedSchemes << QString("%1://").arg(Scheme::kSmb)
                      << QString("%1://").arg(Scheme::kFtp)
                      << QString("%1://").arg(Scheme::kSFtp);
     schemeComboBox->addItems(supportedSchemes);
     theAddButton = new DIconButton(nullptr);
-    QLabel *collectionLabel = new QLabel(tr("My Favorites"));
+    DLabel *collectionLabel = new DLabel(tr("My Favorites"));
     collectionServerView = new DListView(contentFrame);
     delegate = new CollectionDelegate(collectionServerView);
     connect(delegate, &CollectionDelegate::removeItemManually, [this](const QString &text, int row) {
@@ -335,7 +336,7 @@ void ConnectToServerDialog::initializeUi()
 
     const bool hasCollections = collectionServerView->count() > 0;
     QHBoxLayout *centerNotesLayout = new QHBoxLayout();
-    centerNotes = new QLabel(tr("No favorites yet"), this);
+    centerNotes = new DLabel(tr("No favorites yet"), this);
     centerNotesLayout->addWidget(centerNotes, 0, Qt::AlignHCenter);
     centerNotes->setVisible(false);
     contentLayout->addLayout(centerNotesLayout, Qt::AlignVCenter);
@@ -345,9 +346,9 @@ void ConnectToServerDialog::initializeUi()
 
 void ConnectToServerDialog::initConnect()
 {
-    connect(serverComboBox, &QComboBox::currentTextChanged, this, &ConnectToServerDialog::onCurrentInputChanged);
+    connect(serverComboBox, &DComboBox::currentTextChanged, this, &ConnectToServerDialog::onCurrentInputChanged);
     connect(completer, SIGNAL(activated(const QString &)), this, SLOT(onCompleterActivated(const QString &)));
-    connect(schemeComboBox, &QComboBox::currentTextChanged, this, [=](const QString &string) {
+    connect(schemeComboBox, &DComboBox::currentTextChanged, this, [=](const QString &string) {
         Q_UNUSED(string)
         upateUiState();
     });

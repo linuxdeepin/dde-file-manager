@@ -11,7 +11,6 @@
 
 #include <QAbstractButton>
 #include <QWindow>
-#include <QLabel>
 
 namespace dfmbase {
 class UserSharePasswordSettingDialog : public DTK_WIDGET_NAMESPACE::DDialog

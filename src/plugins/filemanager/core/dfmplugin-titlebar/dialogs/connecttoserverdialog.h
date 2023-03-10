@@ -13,10 +13,11 @@
 DWIDGET_BEGIN_NAMESPACE
 class DIconButton;
 class DListView;
+class DComboBox;
+class DLabel;
 DWIDGET_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
-class QComboBox;
 class QCompleter;
 QT_END_NAMESPACE
 
@@ -55,11 +56,11 @@ private:
     QRegExp protocolIPRegExp;   // smb://ip, ftp://ip, sftp://ip
     QUrl currentUrl;
     QStringList supportedSchemes;
-    QComboBox *serverComboBox { nullptr };
-    QComboBox *schemeComboBox { nullptr };
+    DTK_WIDGET_NAMESPACE::DComboBox *serverComboBox { nullptr };
+    DTK_WIDGET_NAMESPACE::DComboBox *schemeComboBox { nullptr };
     QCompleter *completer { nullptr };
-    QLabel *centerNotes = { nullptr };
-    bool isAddState = { true };
+    DTK_WIDGET_NAMESPACE::DLabel *centerNotes { nullptr };
+    bool isAddState { true };
     DTK_WIDGET_NAMESPACE::DIconButton *theAddButton { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *theDelButton { nullptr };
     DTK_WIDGET_NAMESPACE::DListView *collectionServerView { nullptr };
