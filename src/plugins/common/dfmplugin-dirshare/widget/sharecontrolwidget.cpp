@@ -15,6 +15,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <DGuiApplicationHelper>
+#include <DFontSizeManager>
 
 #include <QCheckBox>
 #include <QVBoxLayout>
@@ -227,7 +228,8 @@ void ShareControlWidget::setupSharePassword()
     sharePasswordlineEditor->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");   // just clear the background
     QFont font = this->font();
     int defaultFontSize = font.pointSize();
-    font.setPointSize(isSharePasswordSet ? 4 : defaultFontSize);
+    font.setLetterSpacing(QFont::AbsoluteSpacing, 5);
+    font.setPointSize(isSharePasswordSet ? 5 : defaultFontSize);
     sharePasswordlineEditor->setFont(font);
     sharePasswordlineEditor->setEchoMode(isSharePasswordSet ? QLineEdit::Password : QLineEdit::Normal);
     sharePasswordlineEditor->setAlignment(Qt::AlignJustify | Qt::AlignLeft);
@@ -238,10 +240,9 @@ void ShareControlWidget::setupSharePassword()
     hBoxLine3->addWidget(sharePasswordlineEditor);
     hBoxLine3->setContentsMargins(0, 0, 0, 0);
 
-    setPasswordBt = new QPushButton(tr("Set password"));
+    setPasswordBt = new DCommandLinkButton(tr("Set password"));
     setPasswordBt->setText(isSharePasswordSet ? tr("Change password") : tr("Set password"));
     setPasswordBt->setContentsMargins(0, 0, 0, 0);
-    setPasswordBt->setFlat(true);
     setPasswordBt->setToolTip(setPasswordBt->text());
     QObject::connect(setPasswordBt, &QPushButton::clicked, [this]() {
         showSharePasswordSettingsDialog();
@@ -258,11 +259,11 @@ void ShareControlWidget::setupShareNotes(QGridLayout *gridLayout)
     m_shareNotes = new QTextBrowser(this);
     m_shareNotes->setFont(this->font());
     m_shareNotes->setContentsMargins(0, 0, 0, 0);
-    pe.setColor(QPalette::Text, QColor("#526A7F"));
     m_shareNotes->setPalette(pe);
 
     static QString notice = tr("This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. ");
     m_shareNotes->setPlainText(notice);
+    m_shareNotes->setFont(DFontSizeManager::instance()->t7());
     m_shareNotes->setFixedHeight(60);
     m_shareNotes->setReadOnly(true);
     m_shareNotes->setFrameStyle(QFrame::NoFrame);
@@ -563,6 +564,7 @@ void ShareControlWidget::showSharePasswordSettingsDialog()
         return;
     UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(this);
     dialog->show();
+    dialog->moveToCenter();
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     QObject::connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
     this->setProperty("UserSharePwdSettingDialogShown", true);

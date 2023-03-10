@@ -10,6 +10,7 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
+#include <DCommandLinkButton>
 #include <DArrowLineDrawer>
 #include <QUrl>
 #include <QPointer>
@@ -72,7 +73,7 @@ private:
     QPushButton *splitLineGray { nullptr };
     QPushButton *copyNetAddr { nullptr };
     QPushButton *copyUserNameBt { nullptr };
-    QPushButton *setPasswordBt { nullptr };
+    DTK_WIDGET_NAMESPACE::DCommandLinkButton *setPasswordBt { nullptr };
     bool isSharePasswordSet { false };
     QTimer *refreshIp { nullptr };
 
