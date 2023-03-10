@@ -26,6 +26,7 @@
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 #ifdef DFM_ORGANIZATION_NAME
@@ -77,6 +78,25 @@ static void setEnvForRoot()
     }
 }
 
+static bool isLoadVaultPlugin()
+{
+    DSysInfo::UosType uosType = DSysInfo::uosType();
+    DSysInfo::UosEdition uosEdition = DSysInfo::uosEditionType();
+    if (DSysInfo::UosServer == uosType) {
+        if (DSysInfo::UosEnterprise == uosEdition
+                || DSysInfo::UosEnterpriseC == uosEdition
+                || DSysInfo::UosEuler == uosEdition) {
+            return true;
+        }
+    } else if (DSysInfo::UosDesktop == uosType) {
+        if (DSysInfo::UosProfessional == uosEdition
+                || DSysInfo::UosMilitary == uosEdition) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
@@ -101,10 +121,12 @@ static bool pluginsLoad()
                                                     "dfmplugin-tag", "dfmplugin-avfsbrowser", "dfmplugin-myshares",
                                                     /*"dfmplugin-smbbrowser",*/ "dfmplugin-recent", "dfmplugin-search",
                                                     "dfmplugin-vault", "dfmplugin-filepreview", "dfmplugin-trash" };
-    if (DTK_CORE_NAMESPACE::DSysInfo::isCommunityEdition())
-        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, { "dfmplugin-vault" }, kLazyLoadPluginNames);
-    else
-        DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, {}, kLazyLoadPluginNames);
+
+    QStringList blackNames;
+    if (!isLoadVaultPlugin())
+        blackNames << "dfmplugin-vault";
+
+    DPF_NAMESPACE::LifeCycle::initialize({ kFmPluginInterface, kCommonPluginInterface }, pluginsDirs, blackNames, kLazyLoadPluginNames);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

@@ -47,14 +47,7 @@ VaultVisibleManager::VaultVisibleManager(QObject *parent)
 
 bool VaultVisibleManager::isVaultEnabled()
 {
-    if (!DSysInfo::isCommunityEdition()) {   // 如果不是社区版
-        DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
-        // 如果是专业版
-        if (DSysInfo::DeepinType::DeepinProfessional == deepinType && PolicyManager::isVaultVisiable()) {
-            return true;
-        }
-    }
-    return false;
+    return PolicyManager::isVaultVisiable();
 }
 
 void VaultVisibleManager::infoRegister()
