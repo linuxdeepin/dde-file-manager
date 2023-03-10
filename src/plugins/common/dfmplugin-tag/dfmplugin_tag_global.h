@@ -40,6 +40,14 @@ inline constexpr char kActTagAddKey[] { "tag-add" };
 inline constexpr char kOpenFileLocation[] { "open-file-location" };
 }
 
+namespace AcName {
+inline constexpr char kAcSidebarTagitemMenu[] { "sidebar_tagitem_menu" };
+inline constexpr char kAcTagWidget[] { "tag_widget" };
+inline constexpr char kAcTagLable[] { "tag_lable" };
+inline constexpr char kAcTagLeftLable[] { "tag_left_lable" };
+inline constexpr char kAcTagCrumbEdit[] { "tag_crumb_edit" };
+}
+
 DPTAG_END_NAMESPACE
 
 #endif   // DFMPLUGIN_TAG_GLOBAL_H

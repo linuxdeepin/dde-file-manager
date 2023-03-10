@@ -113,6 +113,12 @@ struct ItemInfo
     }
 };
 
+namespace AcName {
+inline constexpr char kAcDmSideBar[] { "left_side_bar" };
+inline constexpr char kAcDmSideBarView[] { "side_bar_view" };
+inline constexpr char kAcSidebarMenuDefault[] { "default_sidebar_menu" };
+}
+
 DPSIDEBAR_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DPSIDEBAR_NAMESPACE::ItemClickedActionCallback);

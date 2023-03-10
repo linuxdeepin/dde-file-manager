@@ -41,8 +41,10 @@ enum class ModelState : uint8_t {
 };
 
 inline constexpr int kIconViewSpacing { 5 };
+inline constexpr int kCompactIconViewSpacing { 0 };
 inline constexpr int kListViewSpacing { 0 };
 inline constexpr int kIconModeColumnPadding { 10 };
+inline constexpr int kCompactIconModeColumnPadding { 5 };
 inline constexpr int kDefualtHeaderSectionWidth { 140 };
 inline constexpr int kMinimumHeaderSectionWidth { 120 };
 inline constexpr int kListViewIconSize { 24 };
@@ -86,6 +88,15 @@ struct CustomTopWidgetInfo
     {
     }
 };
+
+namespace AcName {
+inline constexpr char kAcFileView[] { "file_view" };
+inline constexpr char kAcFileviewMenu[] { "fileview_menu" };
+inline constexpr char kAcViewTabBar[] { "TabBar" };
+inline constexpr char kAcViewTabBarNewButton[] { "NewTabButton" };
+inline constexpr char kAcViewTabBarTopLine[] { "top_line" };
+inline constexpr char kAcViewTabBarBottomLine[] { "bottom_line" };
+}
 
 DPWORKSPACE_END_NAMESPACE
 

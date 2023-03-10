@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <QMenu>
+#include <DMenu>
 #include <QWidgetAction>
 #include <QAbstractTextDocumentLayout>
 
@@ -524,8 +524,11 @@ QVariant TagManager::transformQueryData(const QDBusVariant &var) const
 
 void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
-    QMenu *menu = new QMenu;
-
+    DMenu *menu = new DMenu;
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(menu), AcName::kAcSidebarTagitemMenu);
+#endif
     // base action
     menu->addAction(QObject::tr("Open in new window"), [url]() {
         TagEventCaller::sendOpenWindow(url);

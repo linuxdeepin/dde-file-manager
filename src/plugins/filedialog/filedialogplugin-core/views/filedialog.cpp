@@ -555,11 +555,10 @@ void FileDialog::addCustomWidget(FileDialog::CustomWidgetType type, const QStrin
         edit->setText(object["defaultValue"].toString());
 #ifdef ENABLE_TESTING
         dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                                     qobject_cast<QWidget *>(label), AcName::kAcFDStatusBarContentLabel);
+                             qobject_cast<QWidget *>(label), AcName::kAcFDStatusBarContentLabel);
         dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                                     qobject_cast<QWidget *>(edit), AcName::kAcFDStatusBarContentEdit);
+                             qobject_cast<QWidget *>(edit), AcName::kAcFDStatusBarContentEdit);
 #endif
-
 
         if (maxLength > 0) {
             edit->lineEdit()->setMaxLength(maxLength);
@@ -583,9 +582,9 @@ void FileDialog::addCustomWidget(FileDialog::CustomWidgetType type, const QStrin
         DComboBox *comboBox = new DComboBox();
 #ifdef ENABLE_TESTING
         dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                                     qobject_cast<QWidget *>(label), AcName::kAcFDStatusBarContentLabel);
+                             qobject_cast<QWidget *>(label), AcName::kAcFDStatusBarContentLabel);
         dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                                     qobject_cast<QWidget *>(comboBox), AcName::kAcFDStatusBarContentBox);
+                             qobject_cast<QWidget *>(comboBox), AcName::kAcFDStatusBarContentBox);
 #endif
 
         comboBox->setEditable(object["editable"].toBool());
@@ -1028,7 +1027,7 @@ void FileDialog::initializeUi()
     d->statusBar = new FileDialogStatusBar(this);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                             qobject_cast<QWidget*>(d->statusBar), AcName::kAcFDStautsBar);
+                         qobject_cast<QWidget *>(d->statusBar), AcName::kAcFDStautsBar);
 #endif
     centralWidget()->layout()->addWidget(d->statusBar);
     statusBar()->lineEdit()->lineEdit()->setMaxLength(NAME_MAX);

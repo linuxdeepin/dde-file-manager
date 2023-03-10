@@ -14,8 +14,10 @@
 #include <DApplicationHelper>
 #include <DPalette>
 #include <DPaletteHelper>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
-#include <QLineEdit>
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
@@ -73,6 +75,9 @@ void ComputerItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     painter->setRenderHint(QPainter::RenderHint::Antialiasing);
 
     ComputerItemData::ShapeType type = ComputerItemData::ShapeType(index.data(ComputerModel::DataRoles::kItemShapeTypeRole).toInt());
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    view->setSpacing(DSizeModeHelper::element(5, 10));
+#endif
     switch (type) {
     case ComputerItemData::kSplitterItem:
         paintSplitter(painter, option, index);
@@ -111,20 +116,20 @@ QSize ComputerItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
 QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     editingIndex = index;
-    auto editor = new QLineEdit(parent);
+    auto editor = new DLineEdit(parent);
     renameEditor = editor;
 
     int topMargin = editorMarginTop(option.font.family());
-    editor->setFrame(false);
-    editor->setTextMargins(0, topMargin, 0, 0);
-    editor->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    editor->lineEdit()->setFrame(false);
+    editor->lineEdit()->setTextMargins(0, topMargin, 0, 0);
+    editor->lineEdit()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
     QRegularExpression regx(kRegPattern);
     QValidator *validator = new QRegularExpressionValidator(regx, editor);
-    editor->setValidator(validator);
+    editor->lineEdit()->setValidator(validator);
 
     int maxLengthWhenRename = index.data(ComputerModel::kDeviceNameMaxLengthRole).toInt();
-    connect(editor, &QLineEdit::textChanged, this, [maxLengthWhenRename, editor](const QString &text) {
+    connect(editor, &DLineEdit::textChanged, this, [maxLengthWhenRename, editor](const QString &text) {
         if (!editor)
             return;
 
@@ -134,7 +139,7 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
             newLabel.chop(1);
         editor->setText(newLabel);
     });
-    connect(editor, &QLineEdit::destroyed, this, [this, editor] {
+    connect(editor, &DLineEdit::destroyed, this, [this, editor] {
         if (renameEditor == editor)
             editingIndex = QModelIndex();
     });
@@ -144,7 +149,7 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
 
 void ComputerItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    auto currEditor = qobject_cast<QLineEdit *>(editor);
+    auto currEditor = qobject_cast<DLineEdit *>(editor);
     if (currEditor) {
         currEditor->setText(index.data(Qt::DisplayRole).toString());
         this->view->model()->setData(index, true, ComputerModel::kItemIsEditingRole);
@@ -153,7 +158,7 @@ void ComputerItemDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 
 void ComputerItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    auto currEditor = qobject_cast<QLineEdit *>(editor);
+    auto currEditor = qobject_cast<DLineEdit *>(editor);
     QString originalText = index.data(Qt::DisplayRole).toString();
     QString newText = currEditor->text();
     if (originalText != newText)

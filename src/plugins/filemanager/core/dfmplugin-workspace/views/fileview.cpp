@@ -31,6 +31,11 @@
 #include "dfm-base/utils/networkutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+#include <DGuiApplicationHelper>
+#endif
+
 
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -94,8 +99,11 @@ void FileView::setViewMode(Global::ViewMode mode)
         setUniformItemSizes(false);
         setResizeMode(Adjust);
         setOrientation(QListView::LeftToRight, true);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing,kIconViewSpacing));
+#else
         setSpacing(kIconViewSpacing);
-
+#endif
         d->initIconModeView();
         setMinimumWidth(0);
         break;
@@ -1060,7 +1068,11 @@ QRect FileView::visualRect(const QModelIndex &index) const
             rect.setWidth(d->headerView->length());
         }
     } else {
-        int itemWidth = itemSize.width() + kIconViewSpacing * 2;
+        int iconViewSpacing = kIconViewSpacing;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing,kIconViewSpacing);
+#endif
+        int itemWidth = itemSize.width() + iconViewSpacing * 2;
         int columnCount = d->iconModeColumnCount(itemWidth);
 
         if (columnCount == 0)
@@ -1069,8 +1081,8 @@ QRect FileView::visualRect(const QModelIndex &index) const
         int columnIndex = index.row() % columnCount;
         int rowIndex = index.row() / columnCount;
 
-        rect.setTop(rowIndex * (itemSize.height() + kIconViewSpacing * 2) + kIconViewSpacing);
-        rect.setLeft(columnIndex * itemWidth + kIconViewSpacing);
+        rect.setTop(rowIndex * (itemSize.height() + iconViewSpacing * 2) + iconViewSpacing);
+        rect.setLeft(columnIndex * itemWidth + iconViewSpacing);
         rect.setSize(itemSize);
     }
 
@@ -1502,6 +1514,13 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(),&DGuiApplicationHelper::sizeModeChanged,this,[this](){
+        if(d->currentViewMode == Global::ViewMode::kIconMode)
+            this->setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing,kIconViewSpacing));
+    });
+#endif
 
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_HeaderViewSectionChanged", this, &FileView::onHeaderViewSectionChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_filepreview", "signal_ThumbnailDisplay_Changed", this, &FileView::onWidgetUpdate);

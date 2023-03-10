@@ -13,11 +13,11 @@
 #include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/event/event.h>
+#include <DMenu>
 
 #include <QApplication>
 #include <QUrl>
 #include <QFileInfo>
-#include <QMenu>
 #include <QDebug>
 
 DPBOOKMARK_USE_NAMESPACE
@@ -28,7 +28,11 @@ void BookmarkCallBack::contextMenuHandle(quint64 windowId, const QUrl &url, cons
     QFileInfo info(url.path());
     bool bEnabled = info.exists();
 
-    QMenu *menu = new QMenu;
+    DMenu *menu = new DMenu;
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(menu), AcName::kAcSidebarBookmarkMenu);
+#endif
     auto newWindowAct = menu->addAction(QObject::tr("Open in new window"), [url]() { BookMarkEventCaller::sendBookMarkOpenInNewWindow(url); });
     newWindowAct->setEnabled(bEnabled);
 

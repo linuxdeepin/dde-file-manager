@@ -16,8 +16,9 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-framework/event/event.h>
 
+#include <DMenu>
+
 #include <QApplication>
-#include <QMenu>
 #include <QSettings>
 
 DPSMBBROWSER_USE_NAMESPACE
@@ -40,6 +41,10 @@ namespace plugin_menu_names {
 static constexpr char kComputerMenu[] { "ComputerMenu" };
 }   // namespace plugin_menu_names
 using namespace plugin_menu_names;
+
+namespace AcName {
+inline constexpr char kAcSidebarDeviceMenu[] { "sidebar_deviceitem_menu" };
+}
 
 void computer_sidebar_event_calls::callItemAdd(const QUrl &vEntryUrl)
 {
@@ -106,8 +111,13 @@ void computer_sidebar_event_calls::sidebarMenuCall(quint64 winId, const QUrl &ur
     if (!scene->initialize(params))
         return;
 
-    QMenu m;
+    DTK_WIDGET_NAMESPACE::DMenu m;
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(&m), AcName::kAcSidebarDeviceMenu);
+#endif
     m.setProperty("trigger-from-sidebar", true);
+
     scene->create(&m);
     scene->updateState(&m);
 

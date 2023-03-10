@@ -17,7 +17,7 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <QMenu>
+#include <DMenu>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -31,6 +31,10 @@ FileViewMenuHelper::FileViewMenuHelper(FileView *parent)
 void FileViewMenuHelper::showEmptyAreaMenu()
 {
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(scene), AcName::kAcFileviewMenu);
+#endif
     if (!scene) {
         qWarning() << "Create scene failed, scene name: " << currentMenuScene();
         return;
@@ -47,7 +51,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
         return;
     }
 
-    QMenu menu(this->view);
+    DMenu menu(this->view);
     scene->create(&menu);
     scene->updateState(&menu);
 
@@ -94,7 +98,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
         return;
     }
 
-    QMenu menu(this->view);
+    DMenu menu(this->view);
     scene->create(&menu);
     scene->updateState(&menu);
 

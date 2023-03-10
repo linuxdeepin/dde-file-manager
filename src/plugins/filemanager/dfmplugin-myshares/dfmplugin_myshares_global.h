@@ -31,6 +31,10 @@ inline constexpr char kCancleSharing[] { "cancel-sharing" };
 inline constexpr char kShareProperty[] { "share-property" };
 }
 
+namespace AcName {
+inline constexpr char kAcSidebarShareMenu[] { "user_share_menu" };
+}
+
 typedef QVariantMap ShareInfo;
 typedef QList<QVariantMap> ShareInfoList;
 

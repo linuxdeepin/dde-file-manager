@@ -60,25 +60,31 @@ void ComputerPropertyDialog::iniUI()
     computerIcon->setPixmap(logoIcon.pixmap(152, 39));
 
     basicInfo = new DLabel(tr("Basic Info"), this);
-    DFontSizeManager::instance()->bind(basicInfo, DFontSizeManager::T5, QFont::Medium);
+    DFontSizeManager::instance()->bind(basicInfo, DFontSizeManager::T5, QFont::DemiBold);
     basicInfo->setForegroundRole(DPalette::TextTitle);
     basicInfo->setAlignment(Qt::AlignLeft);
 
     computerName = new KeyValueLabel(this);
     computerName->setLeftValue(tr("Computer name"));
+    computerName->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
     computerVersionNum = new KeyValueLabel(this);
     computerVersionNum->setLeftValue(tr("Version"));
+    computerVersionNum->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
     computerEdition = new KeyValueLabel(this);
     computerEdition->setLeftValue(tr("Edition"), Qt::ElideNone, Qt::AlignLeft | Qt::AlignVCenter);
+    computerEdition->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
     computerOSBuild = new KeyValueLabel(this);
     computerOSBuild->setLeftValue(tr("OS build"));
+    computerOSBuild->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
     computerType = new KeyValueLabel(this);
     computerType->setLeftValue(tr("Type"));
+    computerType->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
     computerCpu = new KeyValueLabel(this);
     computerCpu->setLeftValue(tr("Processor"), Qt::ElideNone, Qt::AlignLeft | Qt::AlignVCenter);
+    computerCpu->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
     computerMemory = new KeyValueLabel(this);
     computerMemory->setLeftValue(tr("Memory"));
-    computerMemory->setRightFontSizeWeight(DFontSizeManager::T9);
+    computerMemory->setRightFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
 
     DFrame *basicInfoFrame = new DFrame(this);
     QVBoxLayout *vlayout = new QVBoxLayout;

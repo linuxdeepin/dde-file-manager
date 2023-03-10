@@ -8,6 +8,9 @@
 #include "models/fileviewmodel.h"
 
 #include "dfm-base/utils/windowutils.h"
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+#endif
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -159,7 +162,12 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
         const QModelIndex &index = view->model()->index(i, 0, view->rootIndex());
         const QRect &itemRect = view->rectForIndex(index);
 
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        QPoint iconOffset = DSizeModeHelper::element(QPoint(kIconModeColumnPadding, kIconModeColumnPadding),
+                                                     QPoint(kCompactIconModeColumnPadding, kCompactIconModeColumnPadding));
+#else
         QPoint iconOffset = QPoint(kIconModeColumnPadding, kIconModeColumnPadding);
+#endif
         QRect realItemRect(itemRect.topLeft() + offset + iconOffset,
                            itemRect.bottomRight() + offset - iconOffset);
 

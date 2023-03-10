@@ -18,6 +18,10 @@ inline constexpr char kActAddBookmarkKey[] { "add-bookmark" };
 inline constexpr char kActRemoveBookmarkKey[] { "remove-bookmark" };
 }
 
+namespace AcName {
+inline constexpr char kAcSidebarBookmarkMenu[] { "sidebar_bookmark_menu" };
+}
+
 DPBOOKMARK_END_NAMESPACE
 
 #endif   // DFMPLUGIN_BOOKMARK_GLOBAL_H

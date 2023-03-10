@@ -47,7 +47,12 @@ void SideBar::onWindowOpened(quint64 windId)
     auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     auto sidebar = new SideBarWidget;
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(sidebar), AcName::kAcDmSideBar);
+#endif
     SideBarHelper::addSideBar(windId, sidebar);
+
     window->installSideBar(sidebar);
 
     sidebar->updateItemVisiable(SideBarHelper::hiddenRules());

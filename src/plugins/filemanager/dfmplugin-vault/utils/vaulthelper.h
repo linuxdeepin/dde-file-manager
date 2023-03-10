@@ -11,10 +11,10 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/dfm_global_defines.h"
+#include <DMenu>
 
 #include <QObject>
 #include <QIcon>
-#include <QMenu>
 #include <QTimer>
 
 namespace dfmplugin_vault {
@@ -61,7 +61,7 @@ public:
 
     static void siderItemClicked(quint64 windowId, const QUrl &url);
 
-    static QMenu *createMenu();
+    static DTK_WIDGET_NAMESPACE::DMenu *createMenu();
 
     static QWidget *createVaultPropertyDialog(const QUrl &url);
 

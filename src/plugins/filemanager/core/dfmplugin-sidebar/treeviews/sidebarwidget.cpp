@@ -12,6 +12,7 @@
 #include "utils/sidebarmanager.h"
 #include "utils/sidebarinfocachemananger.h"
 
+#include <dfm-framework/event/event.h>
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/universalutils.h"
@@ -37,6 +38,11 @@ SideBarWidget::SideBarWidget(QFrame *parent)
     : AbstractFrame(parent),
       sidebarView(new SideBarView(this))
 {
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(sidebarView), AcName::kAcDmSideBarView);
+
+#endif
     if (!kSidebarModelIns) {
         kSidebarModelIns.reset(new SideBarModel);
         initDefaultModel();

@@ -25,14 +25,15 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-framework/dpf.h>
+#include <DMenu>
 
 #include <QDebug>
 #include <QApplication>
-#include <QMenu>
 #include <QProcess>
 #include <QThread>
 
 DFMBASE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
 using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
@@ -100,7 +101,7 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
         return;
     }
 
-    QMenu m;
+    DMenu m;
     m.setProperty(ContextMenuAction::kActionTriggeredFromSidebar, triggerFromSidebar);
     scene->create(&m);
     scene->updateState(&m);

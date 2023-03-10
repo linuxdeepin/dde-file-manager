@@ -10,7 +10,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
-
 #include <dfm-framework/event/event.h>
 
 #include <QFileInfo>
@@ -48,43 +47,25 @@ void BasicWidget::initUI()
 
     frameMain = new QFrame(this);
 
-    fileSize = new KeyValueLabel(frameMain);
-    fileSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileSize->setLeftValue(tr("Size"), Qt::ElideMiddle, Qt::AlignLeft, true);
-    fileSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
+    fileSize = createValueLabel(frameMain, tr("Size"));
+    fileCount = createValueLabel(frameMain, tr("Contains"));
+    fileType = createValueLabel(frameMain, tr("Type"));
+    filePosition = createValueLabel(frameMain, tr("Location"));
+    fileCreated = createValueLabel(frameMain, tr("Time created"));
+    fileAccessed = createValueLabel(frameMain, tr("Time accessed"));
+    fileModified = createValueLabel(frameMain, tr("Time modified"));
 
-    fileCount = new KeyValueLabel(frameMain);
-    fileCount->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileCount->setLeftValue(tr("Contains"), Qt::ElideMiddle, Qt::AlignLeft, true);
-    fileCount->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-
-    fileType = new KeyValueLabel(frameMain);
-    fileType->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileType->setLeftValue(tr("Type"), Qt::ElideMiddle, Qt::AlignLeft, true);
-    fileType->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-
-    filePosition = new KeyValueLabel(frameMain);
-    filePosition->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    filePosition->setLeftValue(tr("Location"), Qt::ElideMiddle, Qt::AlignLeft, true);
-    filePosition->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-
-    fileCreated = new KeyValueLabel(frameMain);
-    fileCreated->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileCreated->setLeftValue(tr("Time created"), Qt::ElideMiddle, Qt::AlignLeft, true);
-    fileCreated->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-
-    fileAccessed = new KeyValueLabel(frameMain);
-    fileAccessed->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileAccessed->setLeftValue(tr("Time accessed"), Qt::ElideMiddle, Qt::AlignLeft, true);
-    fileAccessed->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-
-    fileModified = new KeyValueLabel(frameMain);
-    fileModified->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileModified->setLeftValue(tr("Time modified"), Qt::ElideMiddle, Qt::AlignLeft, true);
-    fileModified->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
-
-    hideFile = new QCheckBox(frameMain);
+    hideFile = new DCheckBox(frameMain);
     hideFile->setText(tr("Hide this file"));
+}
+
+KeyValueLabel *BasicWidget::createValueLabel(QFrame *frame, QString leftValue)
+{
+    KeyValueLabel *res = new KeyValueLabel(frame);
+    res->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
+    res->setLeftValue(leftValue, Qt::ElideMiddle, Qt::AlignLeft, true);
+    res->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
+    return res;
 }
 
 void BasicWidget::basicExpand(const QUrl &url)
@@ -102,7 +83,7 @@ void BasicWidget::basicExpand(const QUrl &url)
                 for (QPair<QString, QString> field : fieldlist) {
                     KeyValueLabel *expandLabel = new KeyValueLabel(this);
                     expandLabel->setLeftValue(field.first, Qt::ElideMiddle, Qt::AlignLeft, true);
-                    expandLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
+                    expandLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
                     expandLabel->setRightValue(field.second, Qt::ElideMiddle, Qt::AlignVCenter, true);
                     expandLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
                     fieldMap.insert(k, expandLabel);
@@ -119,7 +100,7 @@ void BasicWidget::basicExpand(const QUrl &url)
         }
     }
 
-    QLabel *label = new QLabel(frameMain);
+    DLabel *label = new DLabel(frameMain);
     label->setFixedSize(hideFile->size());
     QGridLayout *gl = new QGridLayout;
     gl->setMargin(0);
@@ -206,7 +187,7 @@ void BasicWidget::basicFill(const QUrl &url)
     if (info->isAttributes(OptInfoType::kIsHidden))
         hideFile->setChecked(true);
 
-    connect(hideFile, &QCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
+    connect(hideFile, &DCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
 
     if (filePosition && filePosition->RightValue().isEmpty()) {
         filePosition->setRightValue(info->isAttributes(OptInfoType::kIsSymLink) ? info->pathOf(PathInfoType::kSymLinkTarget)

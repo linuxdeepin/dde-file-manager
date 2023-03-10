@@ -107,11 +107,5 @@ private:
 };
 
 }
-namespace AcName {
-inline constexpr char kAcViewTabBar[] { "TabBar" };
-inline constexpr char kAcViewTabBarNewButton[] { "NewTabButton" };
-inline constexpr char kAcViewTabBarTopLine[] { "top_line" };
-inline constexpr char kAcViewTabBarBottomLine[] { "bottom_line" };
-}
 
 #endif   // WORKSPACEWIDGET_H

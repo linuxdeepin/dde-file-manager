@@ -23,6 +23,9 @@
 #include <DStyleOption>
 #include <DStyle>
 #include <DApplication>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#include <DSizeMode>
+#endif
 
 #include <QLabel>
 #include <QPainter>
@@ -105,11 +108,16 @@ void IconItemDelegate::paint(QPainter *painter,
 
     oldFont = opt.font;
 
-    const QPainterPath &path = paintItemBackgroundAndGeomerty(painter, opt, index, kIconModeColumnPadding);
+    int iconModeColumnPadding = kIconModeColumnPadding;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    iconModeColumnPadding = DSizeModeHelper::element(kCompactIconModeColumnPadding,kIconModeColumnPadding);
+#endif
+
+    const QPainterPath &path = paintItemBackgroundAndGeomerty(painter, opt, index, iconModeColumnPadding);
 
     const QRectF &iconRect = paintItemIcon(painter, opt, index);
 
-    paintItemFileName(painter, iconRect, path, kIconModeColumnPadding, opt, index);
+    paintItemFileName(painter, iconRect, path, iconModeColumnPadding, opt, index);
 
     painter->setOpacity(1);
 }
@@ -214,11 +222,19 @@ void IconItemDelegate::updateItemSizeHint()
     d->textLineHeight = parent()->parent()->fontMetrics().lineSpacing();
 
     int width = parent()->parent()->iconSize().width() + 30;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    int height = parent()->parent()->iconSize().height()
+            + 2 * DSizeModeHelper::element(kCompactIconModeColumnPadding,kIconModeColumnPadding)   // 上下两个icon的间距
+            + 3 * d->textLineHeight   // 3行文字的高度
+            + 2 * kIconModeTextPadding   // 文字两边的间距
+            + kIconModeIconSpacing;   // icon的间距
+#else
     int height = parent()->parent()->iconSize().height()
             + 2 * kIconModeColumnPadding   // 上下两个icon的间距
             + 3 * d->textLineHeight   // 3行文字的高度
             + 2 * kIconModeTextPadding   // 文字两边的间距
             + kIconModeIconSpacing;   // icon的间距
+#endif
 
     int size = qMax(width, height);
     d->itemSizeHint = QSize(size, size);
@@ -384,8 +400,14 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     QRectF backgroundRect = option.rect;
 
     // for checkmark
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    if(DGuiApplicationHelper::instance()->isCompactMode())
+        backgroundRect.adjust(backgroundMargin, 2*backgroundMargin, -backgroundMargin, 0);
+    else
+        backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
+#else
     backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
-
+#endif
     // draw background
     QPainterPath path;
     backgroundRect.moveTopLeft(QPointF(0.5, 0.5) + backgroundRect.topLeft());
@@ -406,8 +428,12 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     if (isSelected) {
         QRect rc = option.rect;
         rc.setSize({ 20, 20 });
+#ifdef DTKWIDGET_CLASS_DSizeMode
+        rc.moveTopRight(DSizeModeHelper::element(QPoint(option.rect.right(), option.rect.top()+5),
+                                                 QPoint(option.rect.right() - 5, option.rect.top() + 5)));
+#else
         rc.moveTopRight(QPoint(option.rect.right() - 5, option.rect.top() + 5));
-
+#endif
         DStyleOptionButton check;
         check.state = DStyle::State_Enabled | DStyle::State_On;
         check.rect = rc;

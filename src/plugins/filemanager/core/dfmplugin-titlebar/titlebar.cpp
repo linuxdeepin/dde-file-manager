@@ -46,7 +46,7 @@ void TitleBar::onWindowCreated(quint64 windId)
     TitleBarWidget *titleWidget = new TitleBarWidget;
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<QWidget*>(titleWidget), AcName::kAcComputerTitleBar);
+                         qobject_cast<QWidget *>(titleWidget), AcName::kAcComputerTitleBar);
 #endif
     TitleBarHelper::addTileBar(windId, titleWidget);
 }

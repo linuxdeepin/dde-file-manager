@@ -21,6 +21,9 @@
 #include <dfm-framework/event/event.h>
 
 #include <DApplication>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 #include <QTextEdit>
 #include <QAbstractItemView>
@@ -267,16 +270,22 @@ int FileViewHelper::caculateListItemIndex(const QSize &itemSize, const QPoint &p
 
 int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos)
 {
-    int itemHeight = itemSize.height() + kIconViewSpacing * 2;
+    int iconModeColumnPadding = kIconModeColumnPadding;
+    int iconViewSpacing = kIconViewSpacing;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    iconModeColumnPadding = DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding);
+    iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
+#endif
 
-    if (pos.y() % itemHeight < (kIconViewSpacing + kIconModeColumnPadding)
-        || pos.y() % itemHeight > (itemHeight - kIconModeColumnPadding))
+    int itemHeight = itemSize.height() + iconViewSpacing * 2;
+    if (pos.y() % itemHeight < (iconViewSpacing + iconModeColumnPadding)
+        || pos.y() % itemHeight > (itemHeight - iconModeColumnPadding))
         return -1;
 
-    int itemWidth = itemSize.width() + kIconViewSpacing * 2;
+    int itemWidth = itemSize.width() + iconViewSpacing * 2;
 
-    if (pos.x() % itemWidth <= (kIconViewSpacing + kIconModeColumnPadding)
-        || pos.x() % itemWidth > (itemHeight - kIconModeColumnPadding))
+    if (pos.x() % itemWidth <= (iconViewSpacing + iconModeColumnPadding)
+        || pos.x() % itemWidth > (itemHeight - iconModeColumnPadding))
         return -1;
 
     int columnIndex = pos.x() / itemWidth;
@@ -286,7 +295,7 @@ int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &ite
     if (columnIndex >= columnCount)
         return -1;
 
-    int rowIndex = pos.y() / (itemSize.height() + kIconViewSpacing * 2);
+    int rowIndex = pos.y() / (itemSize.height() + iconViewSpacing * 2);
     return rowIndex * columnCount + columnIndex;
 }
 

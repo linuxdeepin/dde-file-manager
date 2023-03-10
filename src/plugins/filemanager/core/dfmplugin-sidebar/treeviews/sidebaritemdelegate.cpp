@@ -15,14 +15,18 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/device/deviceutils.h"
 
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
+#include <DPalette>
+#include <DLineEdit>
+
 #include <QPainter>
 #include <QDebug>
 #include <QApplication>
-#include <DPalette>
 #include <qdrawutil.h>
-#include <QLineEdit>
 #include <QImage>
 #include <QFontMetrics>
 #include <QEvent>
@@ -38,8 +42,12 @@ QT_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 static constexpr int kRadius = 8;
+static constexpr int kExpandIconSize = 12;
+static constexpr int kCompactExpandIconSize = 10;
 static constexpr int kItemMargin = 10;
+static constexpr int kCompactItemMargin = 6;
 static constexpr int kItemIconSize = 19;
+static constexpr int kCompactModeIcon = 16;
 static constexpr int kEjectIconSize = 16;
 
 namespace GlobalPrivate {
@@ -127,7 +135,11 @@ void SideBarItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     }
 
     //Draw item icon
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    QSize iconSize(DSizeModeHelper::element(QSize(kCompactModeIcon, kCompactModeIcon), QSize(kItemIconSize, kItemIconSize)));
+#else
     QSize iconSize(kItemIconSize, kItemIconSize);
+#endif
     QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
     QIcon::Mode iconMode = (!isDraggingItemNotHighlighted && (selected || keepDrawingHighlighted)) ? QIcon::Mode::Selected : QIcon::Mode::Normal;
     bool isEjectable = false;
@@ -176,8 +188,8 @@ QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
 
 void SideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    QLineEdit *edt = nullptr;
-    if ((edt = dynamic_cast<QLineEdit *>(editor)) && edt->isModified()) {
+    DLineEdit *edt = nullptr;
+    if ((edt = dynamic_cast<DLineEdit *>(editor)) && edt->lineEdit()->isModified()) {
         QByteArray n = editor->metaObject()->userProperty().name();
         if (!n.isEmpty())
             Q_EMIT rename(index, editor->property(n).toString());
@@ -205,13 +217,13 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     if (!sourceInfo->exists())
         return nullptr;
     QWidget *editor = DStyledItemDelegate::createEditor(parent, option, index);
-    QLineEdit *qle = nullptr;
-    if ((qle = dynamic_cast<QLineEdit *>(editor))) {
+    DLineEdit *qle = nullptr;
+    if ((qle = dynamic_cast<DLineEdit *>(editor))) {
         QRegularExpression regx(GlobalPrivate::kRegPattern);
         QValidator *validator = new QRegularExpressionValidator(regx, qle);
-        qle->setValidator(validator);
+        qle->lineEdit()->setValidator(validator);
 
-        connect(qle, &QLineEdit::textChanged, this, [this, sourceInfo](const QString &text) {
+        connect(qle, &DLineEdit::textChanged, this, [this, sourceInfo](const QString &text) {
             onEditorTextChanged(text, sourceInfo);
         });
     }
@@ -284,7 +296,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
 
 void SideBarItemDelegate::onEditorTextChanged(const QString &text, const AbstractFileInfoPointer &info) const
 {
-    QLineEdit *editor = qobject_cast<QLineEdit *>(sender());
+    DLineEdit *editor = qobject_cast<DLineEdit *>(sender());
     if (!editor)
         return;
 
@@ -306,27 +318,30 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const Abstrac
     }
 
     QString dstText = text;
-    int currPos = editor->cursorPosition();
+    int currPos = editor->lineEdit()->cursorPosition();
     processLength(maxLen, textLen, useCharCount, dstText, currPos);
 
     if (text != dstText) {
         QSignalBlocker blocker(editor);
         editor->setText(dstText);
-        editor->setCursorPosition(currPos);
-        editor->setModified(true);
+        editor->lineEdit()->setCursorPosition(currPos);
+        editor->lineEdit()->setModified(true);
     }
 }
 
 void SideBarItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, const QRect &itemRect, QIcon::Mode iconMode, bool isEjectable) const
 {
-    Q_UNUSED(iconMode);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    QSize iconSize(DSizeModeHelper::element(QSize(kCompactModeIcon, kCompactModeIcon), QSize(kItemIconSize, kItemIconSize)));
+#else
     QSize iconSize(kItemIconSize, kItemIconSize);
+#endif
     QSize ejectIconSize(kEjectIconSize, kEjectIconSize);
     qreal iconDx = 2 * kItemMargin;
     qreal iconDy = (itemRect.height() - iconSize.height()) / 2 + 1;
     QPointF iconTopLeft = itemRect.topLeft() + QPointF(iconDx, iconDy);
     QPointF iconBottomRight = iconTopLeft + QPointF(iconSize.width(), iconSize.height());
-    auto px = icon.pixmap(iconSize);
+    auto px = icon.pixmap(iconSize, iconMode);
     px.setDevicePixelRatio(qApp->devicePixelRatio());
     painter->drawPixmap(QRect(iconTopLeft.toPoint(), iconBottomRight.toPoint()), px);
     if (isEjectable) {
@@ -354,16 +369,25 @@ void SideBarItemDelegate::drawMouseHoverBackground(QPainter *painter, const DPal
 
 void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QRect &r, bool isExpanded) const
 {
-    QSize expandIconSize(12, 12);
+    int iconSize = kExpandIconSize;
+    int itemMargin = kItemMargin;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    iconSize = DSizeModeHelper::element(kCompactExpandIconSize, kExpandIconSize);
+    itemMargin = DSizeModeHelper::element(kCompactItemMargin, kItemMargin);
+    QPoint tl = r.topRight() + QPoint(0 - itemMargin - iconSize - 4, itemMargin);
+    QPoint br = r.topRight() + QPoint(0 - itemMargin, itemMargin + iconSize + 5);
+#else
+    QPoint tl = r.topRight() + QPoint(-26, itemMargin);
+    QPoint br = r.topRight() + QPoint(0 - itemMargin, 27);
+#endif
+
     QColor c(Qt::lightGray);
     painter->setBrush(c);
     painter->setPen(Qt::NoPen);
-    QPoint tl = r.topRight() + QPoint(-26, kItemMargin);
-    QPoint br = r.topRight() + QPoint(0 - kItemMargin, 27);
     QRect gRect(tl, br);
     painter->drawRoundedRect(gRect, kRadius, kRadius);
-    QPixmap pixmap = QIcon::fromTheme(isExpanded ? "go-up" : "go-down").pixmap(expandIconSize);
-    painter->drawPixmap(gRect.topRight() + QPointF(-14, 3), pixmap);
+    QPixmap pixmap = QIcon::fromTheme(isExpanded ? "go-up" : "go-down").pixmap(QSize(iconSize, iconSize));
+    painter->drawPixmap(gRect.topLeft() + QPointF(2, 3), pixmap);
 }
 
 int SideBarItemDelegate::textLength(const QString &text, bool useCharCount) const

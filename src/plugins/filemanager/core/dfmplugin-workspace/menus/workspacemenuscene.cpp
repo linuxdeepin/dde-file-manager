@@ -17,7 +17,7 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include <QMenu>
+#include <DMenu>
 
 using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
@@ -148,7 +148,7 @@ AbstractMenuScene *WorkspaceMenuScene::scene(QAction *action) const
     return AbstractMenuScene::scene(action);
 }
 
-bool WorkspaceMenuScene::create(QMenu *parent)
+bool WorkspaceMenuScene::create(DMenu *parent)
 {
     if (!parent)
         return false;
@@ -166,7 +166,7 @@ bool WorkspaceMenuScene::create(QMenu *parent)
     return AbstractMenuScene::create(parent);
 }
 
-void WorkspaceMenuScene::updateState(QMenu *parent)
+void WorkspaceMenuScene::updateState(DMenu *parent)
 {
     AbstractMenuScene::updateState(parent);
 }

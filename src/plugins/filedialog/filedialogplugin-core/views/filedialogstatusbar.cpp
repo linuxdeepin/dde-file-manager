@@ -12,7 +12,7 @@
 #include <DGuiApplicationHelper>
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
-#include <DSizeMode>
+#    include <DSizeMode>
 #endif
 #include <DLineEdit>
 #include <DLabel>
@@ -218,7 +218,7 @@ void FileDialogStatusBar::initializeUi()
     titleLabel = new DLabel(this);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                             qobject_cast<QWidget *>(titleLabel), AcName::kAcFDStatusBarTitleLabel);
+                         qobject_cast<QWidget *>(titleLabel), AcName::kAcFDStatusBarTitleLabel);
 #endif
     QString labelName = tr("File Name");
     QString labelFilters = tr("Format");
@@ -232,9 +232,9 @@ void FileDialogStatusBar::initializeUi()
     filtersComboBox = new DComboBox(this);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                             qobject_cast<QWidget *>(fileNameEdit), AcName::kAcFDStatusBarFileNameEdit);
+                         qobject_cast<QWidget *>(fileNameEdit), AcName::kAcFDStatusBarFileNameEdit);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                             qobject_cast<QWidget *>(filtersComboBox), AcName::kAcFDStatusBarFilters);
+                         qobject_cast<QWidget *>(filtersComboBox), AcName::kAcFDStatusBarFilters);
 #endif
 
     fileNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -266,7 +266,7 @@ void FileDialogStatusBar::initializeConnect()
     connect(fileNameEdit, &DLineEdit::textEdited, this, &FileDialogStatusBar::onFileNameTextEdited);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         updateLayout();
     });
 #endif
@@ -332,7 +332,6 @@ void FileDialogStatusBar::updateLayout()
                 contentLayout->addWidget(fileNameLabel);
                 contentLayout->addWidget(fileNameEdit);
             }
-
             contentLayout->addWidget(curRejectButton);
             contentLayout->addWidget(curAcceptButton);
 

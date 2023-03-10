@@ -27,9 +27,9 @@ TagWidget::TagWidget(QUrl url, QWidget *parent)
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<DLabel *>(d->tagLable), AcName::kAcTagLable);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<TagCrumbEdit *>(d->crumbEdit), AcName::kAcTagCrumbEdit);
+                         qobject_cast<TagCrumbEdit *>(d->crumbEdit), ::AcName::kAcTagCrumbEdit);
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
-                         qobject_cast<DLabel *>(d->tagLeftLable), AcName::kAcTagLeftLable);
+                         qobject_cast<DLabel *>(d->tagLeftLable), ::AcName::kAcTagLeftLable);
 #endif
     initConnection();
 

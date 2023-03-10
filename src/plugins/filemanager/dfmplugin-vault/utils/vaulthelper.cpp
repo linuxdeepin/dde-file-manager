@@ -32,7 +32,6 @@
 
 #include <QUrl>
 #include <QDir>
-#include <QMenu>
 #include <QStandardPaths>
 #include <QStorageInfo>
 #include <QApplication>
@@ -40,6 +39,7 @@
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMBASE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 QUrl VaultHelper::rootUrl()
@@ -99,7 +99,11 @@ QUrl VaultHelper::pathToVaultVirtualUrl(const QString &path)
 void VaultHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     VaultHelper::instance()->appendWinID(windowId);
-    QMenu *menu = createMenu();
+    DMenu *menu = createMenu();
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(menu), AcName::kAcSidebarVaultMenu);
+#endif
     QAction *act = menu->exec(globalPos);
     if (act) {
         QList<QUrl> urls { url };
@@ -212,10 +216,10 @@ void VaultHelper::appendWinID(const quint64 &winId)
         winIDs.append(winId);
 }
 
-QMenu *VaultHelper::createMenu()
+DMenu *VaultHelper::createMenu()
 {
-    QMenu *menu = new QMenu;
-    QMenu *timeMenu = new QMenu;
+    DMenu *menu = new DMenu;
+    DMenu *timeMenu = new DMenu;
     switch (instance()->state(PathManager::vaultLockPath())) {
     case VaultState::kNotExisted:
         menu->addAction(QObject::tr("Create Vault"), VaultHelper::instance(), &VaultHelper::creatVaultDialog);

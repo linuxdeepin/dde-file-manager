@@ -11,8 +11,7 @@
 #include "dfm-base/utils/filestatisticsjob.h"
 
 #include <DArrowLineDrawer>
-
-#include <QCheckBox>
+#include <DCheckBox>
 
 namespace dfmplugin_propertydialog {
 class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
@@ -32,6 +31,8 @@ private:
     void basicFieldFilter(const QUrl &url);
 
     void basicFill(const QUrl &url);
+
+    DFMBASE_NAMESPACE::KeyValueLabel *createValueLabel(QFrame *frame, QString leftValue);
 
 public:
     void selectFileUrl(const QUrl &url);

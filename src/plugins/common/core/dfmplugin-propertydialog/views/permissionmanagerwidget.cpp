@@ -166,7 +166,7 @@ void PermissionManagerWidget::initUI()
     layout->addRow(QObject::tr("Owner"), ownerComboBox);
     layout->addRow(QObject::tr("Group"), groupComboBox);
     layout->addRow(QObject::tr("Others"), otherComboBox);
-    layout->addRow(executableCheckBox);
+    layout->addRow(" ",executableCheckBox);
 
     layout->setContentsMargins(15, 10, 30, 10);
 

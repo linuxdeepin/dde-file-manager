@@ -135,6 +135,10 @@ enum class EncryptType : int {
     SM4_128_CTR
 };
 
+namespace AcName {
+inline constexpr char kAcSidebarVaultMenu[] { "sidebar_vaultitem_menu" };
+}
+
 DPVAULT_END_NAMESPACE
 
 #endif   // DFMPLUGIN_VAULT_GLOBAL_H

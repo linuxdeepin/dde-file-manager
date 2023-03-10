@@ -22,7 +22,9 @@
 
 #include <dfm-framework/event/event.h>
 
-#include <QMenu>
+#include <DMenu>
+
+DWIDGET_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -62,7 +64,11 @@ void MyShares::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoin
     QFileInfo info(url.path());
     bool bEnabled = info.exists();
 
-    QMenu *menu = new QMenu;
+    DMenu *menu = new DMenu;
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(menu), AcName::kAcSidebarShareMenu);
+#endif
     auto newWindowAct = menu->addAction(QObject::tr("Open in new window"), [url]() { ShareEventsCaller::sendOpenWindow(url); });
     newWindowAct->setEnabled(bEnabled);
 

@@ -23,8 +23,7 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <QMenu>
-
+#include <DMenu>
 #include <DSysInfo>
 
 DPSIDEBAR_USE_NAMESPACE
@@ -126,7 +125,11 @@ void SideBarHelper::defaultCdAction(quint64 windowId, const QUrl &url)
 void SideBarHelper::defaultContextMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     // ref (DFMSideBarDefaultItemHandler::contextMenu)
-    QMenu *menu = new QMenu;
+    DMenu *menu = new DMenu;
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QWidget *>(menu), AcName::kAcSidebarMenuDefault);
+#endif
     menu->addAction(QObject::tr("Open in new window"), [url]() {
         SideBarEventCaller::sendOpenWindow(url);
     });
