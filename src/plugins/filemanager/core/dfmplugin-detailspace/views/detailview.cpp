@@ -138,7 +138,6 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
 
         iconLabel = new DLabel(this);
         iconLabel->setFixedSize(240, 240);
-        //QSize targetSize = iconLabel->size().scaled(iconLabel->width(), iconLabel->height(), Qt::KeepAspectRatio);
         QSize targetSize(240, 160);
         auto findPluginIcon = [](const QUrl &url) -> QString {
             QString iconName;

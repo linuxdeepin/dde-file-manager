@@ -14,7 +14,7 @@
 #include <dfm-framework/event/event.h>
 
 #include <QHideEvent>
-#include <QComboBox>
+#include <DComboBox>
 
 #include <gtest/gtest.h>
 
