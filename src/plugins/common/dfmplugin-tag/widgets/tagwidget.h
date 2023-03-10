@@ -50,5 +50,11 @@ protected:
 };
 
 }
+namespace AcName {
+inline constexpr char kAcTagWidget[] { "tag_widget" };
+inline constexpr char kAcTagLable[] { "tag_lable" };
+inline constexpr char kAcTagLeftLable[] { "tag_left_lable" };
+inline constexpr char kAcTagCrumbEdit[] { "tag_crumb_edit" };
+}
 
 #endif   // TAGWIDGET_H

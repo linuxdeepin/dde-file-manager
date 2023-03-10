@@ -14,6 +14,7 @@
 
 #include <QUrl>
 #include <QMap>
+#include <DFrame>
 
 namespace DFMBASE_NAMESPACE {
 class AbstractBaseView;
@@ -79,6 +80,9 @@ protected:
     void showEvent(QShowEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
 
+public slots:
+    void initUiForSizeMode();
+
 private:
     void initializeUi();
     void initConnect();
@@ -90,7 +94,6 @@ private:
     void setCurrentView(const QUrl &url);
 
     QUrl workspaceUrl;
-    QFrame *topWidgetContainer { nullptr };
     QHBoxLayout *tabBarLayout { nullptr };
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
@@ -103,6 +106,12 @@ private:
     DTK_WIDGET_NAMESPACE::DHorizontalLine *tabBottomLine { nullptr };
 };
 
+}
+namespace AcName {
+inline constexpr char kAcViewTabBar[] { "TabBar" };
+inline constexpr char kAcViewTabBarNewButton[] { "NewTabButton" };
+inline constexpr char kAcViewTabBarTopLine[] { "top_line" };
+inline constexpr char kAcViewTabBarBottomLine[] { "bottom_line" };
 }
 
 #endif   // WORKSPACEWIDGET_H

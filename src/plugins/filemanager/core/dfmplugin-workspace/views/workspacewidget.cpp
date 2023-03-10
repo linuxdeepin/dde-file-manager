@@ -16,14 +16,20 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-framework/event/event.h>
 
 #include <DIconButton>
 #include <DHorizontalLine>
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 #include <QVBoxLayout>
 #include <QStackedLayout>
 #include <QKeyEvent>
-#include <QPushButton>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -343,21 +349,26 @@ void WorkspaceWidget::initConnect()
     QObject::connect(tabBar, &TabBar::tabAddableChanged, this, &WorkspaceWidget::onTabAddableChanged);
     QObject::connect(tabBar, &TabBar::tabBarShown, this, &WorkspaceWidget::showNewTabButton);
     QObject::connect(tabBar, &TabBar::tabBarHidden, this, &WorkspaceWidget::hideNewTabButton);
-    QObject::connect(newTabButton, &QPushButton::clicked, this, &WorkspaceWidget::onNewTabButtonClicked);
+    QObject::connect(newTabButton, &DIconButton::clicked, this, &WorkspaceWidget::onNewTabButtonClicked);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        initUiForSizeMode();
+    });
+#endif
 }
 
 void WorkspaceWidget::initTabBar()
 {
     tabBar = new TabBar(this);
-    tabBar->setFixedHeight(36);
 
     newTabButton = new DIconButton(this);
     newTabButton->setObjectName("NewTabButton");
-    newTabButton->setFixedSize(36, 36);
     newTabButton->setIconSize({ 24, 24 });
     newTabButton->setIcon(QIcon::fromTheme("dfm_tab_new"));
     newTabButton->setFlat(true);
     newTabButton->hide();
+
+    initUiForSizeMode();
 
     tabTopLine = new DHorizontalLine(this);
     tabBottomLine = new DHorizontalLine(this);
@@ -371,6 +382,28 @@ void WorkspaceWidget::initTabBar()
     tabBarLayout->setSpacing(0);
     tabBarLayout->addWidget(tabBar);
     tabBarLayout->addWidget(newTabButton);
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<TabBar *>(tabBar), AcName::kAcViewTabBar);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<DHorizontalLine *>(tabTopLine), AcName::kAcViewTabBarTopLine);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<DIconButton *>(newTabButton), AcName::kAcViewTabBarNewButton);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<DHorizontalLine *>(tabBottomLine), AcName::kAcViewTabBarBottomLine);
+#endif
+}
+
+void WorkspaceWidget::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    int size = DSizeModeHelper::element(24, 36);
+    tabBar->setFixedHeight(size);
+    newTabButton->setFixedSize(size, size);
+#else
+    tabBar->setFixedHeight(36);
+    newTabButton->setFixedSize(36, 36);
+#endif
 }
 
 void WorkspaceWidget::initViewLayout()

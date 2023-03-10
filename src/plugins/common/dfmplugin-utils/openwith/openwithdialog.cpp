@@ -16,24 +16,32 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QPushButton>
+
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QWindow>
 #include <QDebug>
-#include <QLabel>
 #include <QScrollArea>
 #include <QPainter>
-#include <QCheckBox>
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QScroller>
-#include <QCommandLinkButton>
 #include <QPainterPath>
 #include <QResizeEvent>
 #include <QScrollArea>
+
+#include <DPushButton>
+#include <DSuggestButton>
+#include <DLabel>
+#include <DCheckBox>
+#include <DCommandLinkButton>
 #include <DHorizontalLine>
 #include <DStyle>
+
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -44,8 +52,8 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString 
     : QWidget(parent),
       icon(icon.isNull() ? QIcon::fromTheme("application-x-desktop") : icon),
       checkButton(new DIconButton(this)),
-      iconLabel(new QLabel(this)),
-      label(new QLabel(this))
+      iconLabel(new DLabel(this)),
+      label(new DLabel(this))
 
 {
     checkButton->setFixedSize(10, 10);
@@ -61,6 +69,10 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString 
     layout->addWidget(label);
 
     setMouseTracking(true);
+    initUiForSizeMode();
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &OpenWithDialogListItem::initUiForSizeMode);
+#endif
 }
 
 void OpenWithDialogListItem::setChecked(bool checked)
@@ -72,17 +84,23 @@ void OpenWithDialogListItem::setChecked(bool checked)
     }
 }
 
+void OpenWithDialogListItem::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    int size = DSizeModeHelper::element(25, 30);
+    iconLabel->setFixedSize(size, size);
+    iconLabel->setPixmap(icon.pixmap(iconLabel->size()));
+    setFixedSize(220, DSizeModeHelper::element(40, 50));
+#else
+    int size = 30;
+    iconLabel->setFixedSize(size, size);
+    iconLabel->setPixmap(icon.pixmap(iconLabel->size()));
+#endif
+}
+
 QString OpenWithDialogListItem::text() const
 {
     return label->text();
-}
-
-void OpenWithDialogListItem::resizeEvent(QResizeEvent *e)
-{
-    QWidget::resizeEvent(e);
-
-    iconLabel->setFixedSize(e->size().height() - 20, e->size().height() - 20);
-    iconLabel->setPixmap(icon.pixmap(iconLabel->size()));
 }
 
 void OpenWithDialogListItem::enterEvent(QEvent *e)
@@ -123,20 +141,36 @@ class OpenWithDialogListSparerItem : public QWidget
 public:
     explicit OpenWithDialogListSparerItem(const QString &title, QWidget *parent = nullptr);
 
+private slots:
+    void initUiForSizeMode();
+
 private:
     DHorizontalLine *separator { nullptr };
     QLabel *titleLabel { nullptr };
 };
 
-OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title, QWidget *parent)
-    : QWidget(parent), separator(new DHorizontalLine(this)), titleLabel(new QLabel(title, this))
+void OpenWithDialogListSparerItem::initUiForSizeMode()
 {
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    QFont font;
+    font.setPixelSize(DSizeModeHelper::element(14, 18));
+    font.setWeight(QFont::DemiBold);
+    titleLabel->setFont(font);
+#else
     QFont font;
     font.setPixelSize(18);
     titleLabel->setFont(font);
+#endif
+}
 
+OpenWithDialogListSparerItem::OpenWithDialogListSparerItem(const QString &title, QWidget *parent)
+    : QWidget(parent), separator(new DHorizontalLine(this)), titleLabel(new QLabel(title, this))
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &OpenWithDialogListSparerItem::initUiForSizeMode);
+#endif
     QVBoxLayout *layout = new QVBoxLayout(this);
-
+    initUiForSizeMode();
     layout->addWidget(separator);
     layout->addWidget(titleLabel);
     layout->setContentsMargins(20, 0, 20, 0);
@@ -154,6 +188,23 @@ OpenWithDialog::OpenWithDialog(const QList<QUrl> &list, QWidget *parent)
     initUI();
     initConnect();
     initData();
+    initUiForSizeMode();
+}
+
+void OpenWithDialog::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    QFont font;
+    int size = DSizeModeHelper::element(16, 20);
+    font.setPixelSize(size);
+    font.setWeight(QFont::DemiBold);
+    setTitleFont(font);
+#else
+    QFont font;
+    font.setPixelSize(20);
+    font.setWeight(QFont::DemiBold);
+    setTitleFont(font);
+#endif
 }
 
 OpenWithDialog::OpenWithDialog(const QUrl &url, QWidget *parent)
@@ -167,6 +218,7 @@ OpenWithDialog::OpenWithDialog(const QUrl &url, QWidget *parent)
     initUI();
     initConnect();
     initData();
+    initUiForSizeMode();
 }
 
 OpenWithDialog::~OpenWithDialog()
@@ -184,7 +236,6 @@ void OpenWithDialog::initUI()
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
-
     setFixedSize(710, 450);
     setTitle(tr("Open with"));
 
@@ -208,11 +259,14 @@ void OpenWithDialog::initUI()
     recommandLayout = new DFlowLayout;
     otherLayout = new DFlowLayout;
 
-    openFileChooseButton = new QCommandLinkButton(tr("Add other programs"));
-    setToDefaultCheckBox = new QCheckBox(tr("Set as default"));
+    openFileChooseButton = new DCommandLinkButton(tr("Add other programs"), this);
+    setToDefaultCheckBox = new DCheckBox(tr("Set as default"), this);
     setToDefaultCheckBox->setChecked(true);
-    cancelButton = new QPushButton(tr("Cancel", "button"));
-    chooseButton = new QPushButton(tr("Confirm", "button"));
+    cancelButton = new DPushButton(tr("Cancel", "button"));
+    chooseButton = new DSuggestButton(tr("Confirm", "button"));
+    cancelButton->setFixedWidth(78);
+    chooseButton->setFixedWidth(78);
+    chooseButton->setFocus();
 
     QVBoxLayout *contentLayout = new QVBoxLayout;
     contentLayout->setContentsMargins(10, 0, 10, 0);
@@ -224,12 +278,13 @@ void OpenWithDialog::initUI()
 
     contentWidget->setLayout(contentLayout);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(openFileChooseButton);
     buttonLayout->addStretch();
     buttonLayout->addWidget(setToDefaultCheckBox);
     buttonLayout->addSpacing(20);
     buttonLayout->addWidget(cancelButton);
+    buttonLayout->addSpacing(5);
     buttonLayout->addWidget(chooseButton);
     buttonLayout->setContentsMargins(10, 0, 10, 0);
 
@@ -248,9 +303,12 @@ void OpenWithDialog::initUI()
 
 void OpenWithDialog::initConnect()
 {
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &OpenWithDialog::initUiForSizeMode);
+#endif
     connect(cancelButton, &QPushButton::clicked, this, &OpenWithDialog::close);
     connect(chooseButton, &QPushButton::clicked, this, &OpenWithDialog::openFileByApp);
-    connect(openFileChooseButton, &QCommandLinkButton::clicked, this, &OpenWithDialog::useOtherApplication);
+    connect(openFileChooseButton, &DCommandLinkButton::clicked, this, &OpenWithDialog::useOtherApplication);
 }
 
 void OpenWithDialog::initData()
@@ -423,7 +481,6 @@ OpenWithDialogListItem *OpenWithDialog::createItem(const QIcon &icon, const QStr
     OpenWithDialogListItem *item = new OpenWithDialogListItem(icon, name, this);
 
     item->setProperty("app", filePath);
-    item->setFixedSize(220, 50);
     item->installEventFilter(this);
 
     return item;

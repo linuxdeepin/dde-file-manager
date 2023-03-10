@@ -10,6 +10,7 @@
 #include "tagcolorlistwidget.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include <dfm-framework/event/event.h>
 
 #include <DArrowRectangle>
 
@@ -20,6 +21,16 @@ TagWidget::TagWidget(QUrl url, QWidget *parent)
       d(new TagWidgetPrivate(this, url))
 {
     d->initializeUI();
+#ifdef ENABLE_TESTING
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<QFrame *>(this), AcName::kAcTagWidget);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<DLabel *>(d->tagLable), AcName::kAcTagLable);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<TagCrumbEdit *>(d->crumbEdit), AcName::kAcTagCrumbEdit);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
+                         qobject_cast<DLabel *>(d->tagLeftLable), AcName::kAcTagLeftLable);
+#endif
     initConnection();
 
     loadTags(url);

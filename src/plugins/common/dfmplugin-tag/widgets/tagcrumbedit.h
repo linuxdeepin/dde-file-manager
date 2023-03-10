@@ -13,7 +13,7 @@ namespace dfmplugin_tag {
 
 class TagCrumbEdit : public DTK_WIDGET_NAMESPACE::DCrumbEdit
 {
-
+    Q_OBJECT
 public:
     explicit TagCrumbEdit(QWidget *parent = nullptr);
 

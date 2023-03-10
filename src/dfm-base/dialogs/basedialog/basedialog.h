@@ -28,6 +28,8 @@ public:
 
     void setTitle(const QString &title);
 
+    void setTitleFont(const QFont &font);
+
 protected:
     void resizeEvent(QResizeEvent *event);
 

@@ -29,6 +29,9 @@ public slots:
 protected:
     void hideEvent(QHideEvent *event) override;
 
+private slots:
+    void initUiForSizeMode();
+
 private:
     AdvanceSearchBarPrivate *d = nullptr;
 };

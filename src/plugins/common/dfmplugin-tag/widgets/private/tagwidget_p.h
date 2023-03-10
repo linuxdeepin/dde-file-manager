@@ -6,12 +6,16 @@
 #define TAGWIDGET_P_H
 
 #include "dfmplugin_tag_global.h"
+#include <dtkwidget_global.h>
 
 #include <QUrl>
 #include <QMap>
+#include <DLabel>
 
-class QLabel;
 class QVBoxLayout;
+class QHBoxLayout;
+
+DWIDGET_USE_NAMESPACE
 
 namespace dfmplugin_tag {
 
@@ -27,14 +31,18 @@ public:
     explicit TagWidgetPrivate(TagWidget *qq, const QUrl &url);
     virtual ~TagWidgetPrivate();
 
+private slots:
+    void initUiForSizeMode();
+
 private:
     void initializeUI();
 
     QUrl url;
-    QLabel *tagLable { nullptr };
-    QLabel *tagLeftLable { nullptr };
+    DLabel *tagLable { nullptr };
+    DLabel *tagLeftLable { nullptr };
     QVBoxLayout *mainLayout { nullptr };
     TagCrumbEdit *crumbEdit { nullptr };
+    QHBoxLayout *tagColorListLayout { nullptr };
     TagColorListWidget *colorListWidget { nullptr };
 
     QMap<QString, QString> currentTagWithColorMap;

@@ -42,7 +42,7 @@ FileManagerWindowsManagerPrivate::FileManagerWindowsManagerPrivate(FileManagerWi
 {
 }
 
-FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(const QUrl &url)
+ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(const QUrl &url)
 {
     int count = windows.count();
 

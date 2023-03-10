@@ -43,6 +43,11 @@ void BaseDialog::setTitle(const QString &title)
     titlebar->setTitle(title);
 }
 
+void BaseDialog::setTitleFont(const QFont &font)
+{
+    titlebar->setFont(font);
+}
+
 void BaseDialog::resizeEvent(QResizeEvent *event)
 {
     titlebar->setFixedWidth(event->size().width());

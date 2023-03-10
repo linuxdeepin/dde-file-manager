@@ -12,7 +12,10 @@
 #include <dflowlayout.h>
 #include <DIconButton>
 
-#include <QCommandLinkButton>
+#include <DCommandLinkButton>
+#include <DPushButton>
+#include <DSuggestButton>
+#include <DLabel>
 #include <QUrl>
 #include <QMimeType>
 
@@ -22,6 +25,7 @@ class QScrollArea;
 class QCheckBox;
 QT_END_NAMESPACE
 
+DWIDGET_USE_NAMESPACE
 namespace dfmplugin_utils {
 
 class OpenWithDialogListItem : public QWidget
@@ -35,16 +39,18 @@ public:
     QString text() const;
 
 protected:
-    void resizeEvent(QResizeEvent *e) override;
     void enterEvent(QEvent *e) override;
     void leaveEvent(QEvent *e) override;
     void paintEvent(QPaintEvent *e) override;
 
+public slots:
+    void initUiForSizeMode();
+
 private:
     QIcon icon;
-    DTK_WIDGET_NAMESPACE::DIconButton *checkButton;
-    QLabel *iconLabel;
-    QLabel *label;
+    DIconButton *checkButton;
+    DLabel *iconLabel;
+    DLabel *label;
 };
 
 class OpenWithDialog : public DFMBASE_NAMESPACE::BaseDialog
@@ -62,6 +68,9 @@ protected:
     void showEvent(QShowEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 
+private slots:
+    void initUiForSizeMode();
+
 private:
     void initUI();
     void initConnect();
@@ -74,10 +83,10 @@ private:
     DTK_WIDGET_NAMESPACE::DFlowLayout *recommandLayout { nullptr };
     DTK_WIDGET_NAMESPACE::DFlowLayout *otherLayout { nullptr };
 
-    QCommandLinkButton *openFileChooseButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DCommandLinkButton *openFileChooseButton { nullptr };
     QCheckBox *setToDefaultCheckBox { nullptr };
-    QPushButton *cancelButton { nullptr };
-    QPushButton *chooseButton { nullptr };
+    DPushButton *cancelButton { nullptr };
+    DSuggestButton *chooseButton { nullptr };
     QList<QUrl> urlList;
     QUrl curUrl;
     QMimeType mimeType;

@@ -6,10 +6,15 @@
 #include "tagbutton.h"
 #include "utils/taghelper.h"
 
-#include <QLabel>
+#include <DGuiApplicationHelper>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
+
 #include <QVBoxLayout>
 
 using namespace dfmplugin_tag;
+DWIDGET_USE_NAMESPACE
 
 TagColorListWidget::TagColorListWidget(QWidget *parent)
     : QFrame(parent)
@@ -103,7 +108,7 @@ void TagColorListWidget::initUiElement()
     mainLayout->setSpacing(0);
     mainLayout->addLayout(buttonLayout);
 
-    toolTip = new QLabel(this);
+    toolTip = new DLabel(this);
     toolTip->setText(QStringLiteral(" "));
     toolTip->setStyleSheet("color: #707070; font-size: 10px");
     toolTip->setObjectName("tool_tip");
@@ -111,8 +116,25 @@ void TagColorListWidget::initUiElement()
     mainLayout->addWidget(toolTip, 0, Qt::AlignHCenter);
 }
 
+void TagColorListWidget::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    for (int index = 0; index < tagButtons.length(); ++index) {
+        std::size_t size = static_cast<std::size_t>(DSizeModeHelper::element(18, 20));
+        tagButtons[index]->setRadius(size);
+    }
+#else
+    for (int index = 0; index < tagButtons.length(); ++index) {
+        tagButtons[index]->setRadius(20);
+    }
+#endif
+}
+
 void TagColorListWidget::initConnect()
 {
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &TagColorListWidget::initUiForSizeMode);
+#endif
     for (TagButton *button : tagButtons) {
         connect(button, &TagButton::enter, this, [this, button] {
             emit hoverColorChanged(button->color());

@@ -12,6 +12,15 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
+
+DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
+
 using namespace dfmplugin_workspace;
 
 RenameBarPrivate::RenameBarPrivate(RenameBar *const qPtr)
@@ -43,12 +52,14 @@ void RenameBarPrivate::initUI()
 void RenameBarPrivate::setUIParameters()
 {
     comboBox->addItems(QList<QString> { QObject::tr("Replace Text"), QObject::tr("Add Text"), QObject::tr("Custom Text") });
+    comboBox->setFixedWidth(180);
 
     QComboBox *comboBox { nullptr };
     QLabel *label { std::get<0>(replaceOperatorItems) };
     QLineEdit *lineEdit { std::get<1>(replaceOperatorItems) };
 
     label->setText(QObject::tr("Find"));
+    lineEdit->setFixedWidth(180);
     label->setObjectName(QString { "RenameBarLabel" });
     lineEdit->setPlaceholderText(QObject::tr("Required"));
     label->setBuddy(lineEdit);
@@ -57,6 +68,7 @@ void RenameBarPrivate::setUIParameters()
     label->setObjectName(QString { "RenameBarLabel" });
     lineEdit = std::get<3>(replaceOperatorItems);
     label->setText(QObject::tr("Replace"));
+    lineEdit->setFixedWidth(180);
     lineEdit->setPlaceholderText(QObject::tr("Optional"));
     label->setBuddy(lineEdit);
 
@@ -99,9 +111,10 @@ void RenameBarPrivate::setUIParameters()
 
     QPushButton *button { std::get<0>(buttonsArea) };
     button->setText(QObject::tr("Cancel", "button"));
-    button = std::get<1>(buttonsArea);
-    button->setText(QObject::tr("Rename", "button"));
-
+    button->setFixedWidth(82);
+    renameBtn = new DSuggestButton();
+    renameBtn->setText(QObject::tr("Rename", "button"));
+    renameBtn->setFixedWidth(82);
     button->setEnabled(false);
 }
 
@@ -113,14 +126,12 @@ void RenameBarPrivate::layoutItems() noexcept
 
     hBoxLayout = frameForLayoutReplaceArea.first;
     frame = frameForLayoutReplaceArea.second;
-    hBoxLayout->setSpacing(0);
     hBoxLayout->setMargin(0);
     hBoxLayout->addWidget(std::get<0>(replaceOperatorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(replaceOperatorItems));
-    hBoxLayout->addSpacing(32);
+    hBoxLayout->addSpacing(20);
     hBoxLayout->addWidget(std::get<2>(replaceOperatorItems));
-    hBoxLayout->setSpacing(13);
     hBoxLayout->addWidget(std::get<3>(replaceOperatorItems));
     hBoxLayout->addStretch(0);
     frame->setLayout(hBoxLayout);
@@ -128,15 +139,15 @@ void RenameBarPrivate::layoutItems() noexcept
 
     hBoxLayout = frameForLayoutAddArea.first;
     frame = frameForLayoutAddArea.second;
-    hBoxLayout->setSpacing(0);
+    hBoxLayout->addSpacing(20);
     hBoxLayout->setMargin(0);
     hBoxLayout->addWidget(std::get<0>(addOperatorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(addOperatorItems));
-    hBoxLayout->addSpacing(32);
+    hBoxLayout->addSpacing(20);
     hBoxLayout->addWidget(std::get<2>(addOperatorItems));
-    hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<3>(addOperatorItems));
+    hBoxLayout->addSpacing(20);
     hBoxLayout->addStretch();
     frame->setLayout(hBoxLayout);
     stackWidget->addWidget(frame);
@@ -148,7 +159,7 @@ void RenameBarPrivate::layoutItems() noexcept
     hBoxLayout->addWidget(std::get<0>(customOPeratorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<1>(customOPeratorItems));
-    hBoxLayout->addSpacing(32);
+    hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<2>(customOPeratorItems));
     hBoxLayout->setSpacing(5);
     hBoxLayout->addWidget(std::get<3>(customOPeratorItems));
@@ -162,14 +173,15 @@ void RenameBarPrivate::layoutItems() noexcept
     hBoxLayout->setSpacing(0);
     hBoxLayout->setMargin(0);
     frame = std::get<3>(buttonsArea);
+    hBoxLayout->addSpacing(50);
     hBoxLayout->addWidget(std::get<0>(buttonsArea));
     hBoxLayout->addSpacing(10);
-    hBoxLayout->addWidget(std::get<1>(buttonsArea));
+    hBoxLayout->addWidget(renameBtn);
     hBoxLayout->setContentsMargins(0, 0, 0, 0);
     frame->setLayout(hBoxLayout);
 
     mainLayout->addWidget(comboBox);
-    mainLayout->addSpacing(32);
+    mainLayout->addSpacing(20);
     mainLayout->addWidget(stackWidget);
     mainLayout->addStretch(0);
     mainLayout->addWidget(frame);
@@ -181,9 +193,7 @@ void RenameBarPrivate::layoutItems() noexcept
 
 void RenameBarPrivate::setRenameBtnStatus(const bool &value) noexcept
 {
-    QPushButton *button { std::get<1>(buttonsArea) };
-
-    button->setEnabled(value);
+    renameBtn->setEnabled(value);
 }
 
 QString RenameBarPrivate::filteringText(const QString &text)

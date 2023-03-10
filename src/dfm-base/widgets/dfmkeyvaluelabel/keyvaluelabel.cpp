@@ -5,6 +5,10 @@
 #include "keyvaluelabel.h"
 
 #include <QFontMetrics>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 DWIDGET_USE_NAMESPACE
 using namespace dfmbase;
@@ -15,6 +19,10 @@ KeyValueLabel::KeyValueLabel(QWidget *parent)
     initUI();
     initPropertyMap();
     initFont();
+    initUiForSizeMode();
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &KeyValueLabel::initUiForSizeMode);
+#endif
 }
 
 KeyValueLabel::~KeyValueLabel()
@@ -24,17 +32,25 @@ KeyValueLabel::~KeyValueLabel()
 void KeyValueLabel::initUI()
 {
     leftValueLabel = new DLabel(this);
-    leftValueLabel->setMinimumWidth(110);
     rightValueLabel = new ClickableLabel(this);
     connect(rightValueLabel, &ClickableLabel::clicked, this, &KeyValueLabel::valueAreaClicked);
     rightValueLabel->setMinimumWidth(130);
     glayout = new QGridLayout;
     glayout->setMargin(0);
-    glayout->addWidget(leftValueLabel, 0, 0, 1, 2, Qt::AlignLeft);
-    glayout->addWidget(rightValueLabel, 0, 1, 1, 5);
+    glayout->addWidget(leftValueLabel);
+    glayout->addWidget(rightValueLabel, 0, Qt::AlignLeft);
     glayout->setColumnStretch(0, 2);
     glayout->setColumnStretch(1, 3);
     setLayout(glayout);
+}
+
+void KeyValueLabel::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    leftValueLabel->setMaximumWidth(DSizeModeHelper::element(65, 100));
+#else
+    leftValueLabel->setMaximumWidth(100);
+#endif
 }
 
 void KeyValueLabel::initPropertyMap()

@@ -395,7 +395,7 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
     if (closingIndex < count() && closingIndex >= 0) {
         Tab *tab = tabList.at(closingIndex);
         tabCloseButton->setClosingIndex(closingIndex);
-        tabCloseButton->setPos(tab->x() + tab->width() - 30, 6);
+        tabCloseButton->setPos(tab->x() + tab->width() - 30, height() > 24 ? 6 : 0);
 
         if (closingIndex == currentIndex)
             tabCloseButton->setActiveWidthTab(true);
@@ -531,9 +531,9 @@ QSize TabBar::tabSizeHint(const int &index)
     int averageWidth = historyWidth / count();
 
     if (index == count() - 1)
-        return (QSize(historyWidth - averageWidth * (count() - 1), 36));
+        return (QSize(historyWidth - averageWidth * (count() - 1), height()));
     else
-        return (QSize(averageWidth, 36));
+        return (QSize(averageWidth, height()));
 }
 
 int TabBar::count() const
@@ -545,7 +545,7 @@ void TabBar::handleTabAnimationFinished(const int index)
 {
     if (tabCloseButton->getClosingIndex() == index) {
         Tab *tab = tabList.at(index);
-        tabCloseButton->setPos(tab->x() + tab->width() - 30, 6);
+        tabCloseButton->setPos(tab->x() + tab->width() - 30, height() > 24 ? 6 : 0);
     }
 
     if ((tabCloseButton->getClosingIndex() >= count()

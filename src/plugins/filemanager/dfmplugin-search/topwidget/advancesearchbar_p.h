@@ -17,12 +17,16 @@
 
 DWIDGET_BEGIN_NAMESPACE
 class DCommandLinkButton;
+class DLabel;
+class DComboBox;
 DWIDGET_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QComboBox;
 QT_END_NAMESPACE
+
+DWIDGET_USE_NAMESPACE
 
 using FilterCallback = std::function<bool(DFMBASE_NAMESPACE::AbstractFileInfo *info, QVariant data)>;
 
@@ -68,8 +72,8 @@ public:
     static FileFilter parseFilterData(const QMap<int, QVariant> &data);
 
     QBoxLayout *mainLayout;
-    QLabel *asbLabels[kLabelCount];
-    QComboBox *asbCombos[kLabelCount];
+    DLabel *asbLabels[kLabelCount];
+    DComboBox *asbCombos[kLabelCount];
     DTK_WIDGET_NAMESPACE::DCommandLinkButton *resetBtn;
 
     using FilterData = QMap<int, QVariant>;

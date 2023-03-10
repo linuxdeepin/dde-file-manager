@@ -28,6 +28,9 @@ public:
 
     void removeControls();
 
+private slots:
+    void initUiForSizeMode();
+
 private:
     void initializeUi();
     void initConnect();

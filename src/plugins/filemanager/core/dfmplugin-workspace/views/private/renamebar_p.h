@@ -9,7 +9,7 @@
 
 #include <QPair>
 #include <QUrl>
-
+#include <DSuggestButton>
 #include <tuple>
 
 QT_BEGIN_NAMESPACE
@@ -22,10 +22,13 @@ class QFrame;
 class QRegExpValidator;
 class QPushButton;
 QT_END_NAMESPACE
+
+DWIDGET_USE_NAMESPACE
+
 namespace dfmplugin_workspace {
 class RenameBar;
 
-class RenameBarPrivate
+class RenameBarPrivate : public QObject
 {
     template<typename... Types>
     using DTuple = std::tuple<Types...>;
@@ -78,6 +81,8 @@ public:
     QRegExpValidator *validator { nullptr };
 
     DTuple<QPushButton *, QPushButton *, QHBoxLayout *, QFrame *> buttonsArea {};
+
+    DSuggestButton *renameBtn { nullptr };
 
 public slots:
     void onRenamePatternChanged(const int &index) noexcept;

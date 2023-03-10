@@ -7,6 +7,10 @@
 #include "utils/detailspacehelper.h"
 
 #include <dfm-framework/event/event.h>
+#include <DGuiApplicationHelper>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 #include <QHBoxLayout>
 #include <QApplication>
@@ -16,8 +20,22 @@ using namespace dfmplugin_detailspace;
 DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
     : AbstractFrame(parent)
 {
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &DetailSpaceWidget::initUiForSizeMode);
+#endif
     initializeUi();
     initConnect();
+    initUiForSizeMode();
+}
+
+void DetailSpaceWidget::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    setFixedWidth(DSizeModeHelper::element(260, 320));
+    setFixedWidth(DSizeModeHelper::element(260, 320));
+#else
+    setFixedWidth(320);
+#endif
 }
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
@@ -66,8 +84,8 @@ void DetailSpaceWidget::initializeUi()
 
     QHBoxLayout *rvLayout = new QHBoxLayout(this);
     rvLayout->setMargin(0);
-    detailView = new DetailView;
-    QFrame *rightDetailVLine = new QFrame;
+    detailView = new DetailView(this);
+    DFrame *rightDetailVLine = new DFrame(this);
     rightDetailVLine->setFrameShape(QFrame::VLine);
     rvLayout->addWidget(rightDetailVLine);
     rvLayout->addWidget(detailView, 1);

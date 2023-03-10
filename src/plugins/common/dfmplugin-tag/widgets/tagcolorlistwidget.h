@@ -8,11 +8,12 @@
 #include "dfmplugin_tag_global.h"
 
 #include <QFrame>
+#include <DLabel>
 
 class QVBoxLayout;
 class QHBoxLayout;
-class QLabel;
 
+DWIDGET_USE_NAMESPACE
 namespace dfmplugin_tag {
 
 class TagButton;
@@ -39,6 +40,9 @@ signals:
     void hoverColorChanged(const QColor &color);
     void checkedColorChanged(const QColor &color);
 
+private slots:
+    void initUiForSizeMode();
+
 private:
     void setCentralLayout() noexcept;
     void initUiElement();
@@ -47,7 +51,7 @@ private:
     QList<TagButton *> tagButtons;
     QVBoxLayout *mainLayout { nullptr };
     QHBoxLayout *buttonLayout { nullptr };
-    QLabel *toolTip { nullptr };
+    DLabel *toolTip { nullptr };
 
     bool currentExclusive = false;
     QStringList currentCheckedColorList;

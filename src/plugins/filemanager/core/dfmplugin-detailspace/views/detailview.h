@@ -8,14 +8,14 @@
 #include "dfmplugin_detailspace_global.h"
 #include "filebaseinfoview.h"
 
-#include <QFrame>
+#include <DFrame>
 #include <QVBoxLayout>
 
 class QScrollArea;
 
 namespace dfmplugin_detailspace {
 
-class DetailView : public QFrame
+class DetailView : public DFrame
 {
     Q_OBJECT
 public:
@@ -47,7 +47,7 @@ private:
     QVBoxLayout *mainLayout { nullptr };
     FileBaseInfoView *fileBaseInfoView { nullptr };
     QList<QWidget *> expandList {};
-    QLabel *iconLabel { nullptr };
+    DLabel *iconLabel { nullptr };
 };
 
 }

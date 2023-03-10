@@ -55,9 +55,11 @@ public:
 
 private:
     void initUI();
-
     void initPropertyMap();
     void initFont();
+
+private Q_SLOTS:
+    void initUiForSizeMode();
 
 public:
     void setLeftValue(QString value, Qt::TextElideMode elideMode = Qt::ElideNone, Qt::Alignment aligment = Qt::Alignment(), bool toolTipVisibility = false, int fontMinWidth = 150);

@@ -13,11 +13,15 @@
 
 #include <DCommandLinkButton>
 #include <DHorizontalLine>
-
-#include <QLabel>
-#include <QComboBox>
+#include <DLabel>
+#include <DComboBox>
 #include <QVBoxLayout>
 #include <QApplication>
+#include <DGuiApplicationHelper>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -36,8 +40,8 @@ void AdvanceSearchBarPrivate::initUI()
     mainLayout = this->layout();
     QGridLayout *formLayout = new QGridLayout;
     auto createLabelCombo = [=](int index, const QString &labelText) {
-        asbLabels[index] = new QLabel(labelText);
-        asbCombos[index] = new QComboBox(this);
+        asbLabels[index] = new DLabel(labelText);
+        asbCombos[index] = new DComboBox(this);
 #ifndef ARM_PROCESSOR
         // 针对ARM部分机器上搜索高级选项下拉框不能使用做特殊处理
         asbCombos[index]->setFocusPolicy(Qt::NoFocus);
@@ -59,7 +63,7 @@ void AdvanceSearchBarPrivate::initUI()
 #endif
 
     static int labelWidth = 70;
-    static int comboMinWidth = 120;
+    static int comboMinWidth = 140;
     asbLabels[kSearchRange]->setMinimumWidth(labelWidth);
     asbCombos[kSearchRange]->setMinimumWidth(comboMinWidth);
     asbLabels[kSizeRange]->setMinimumWidth(labelWidth);
@@ -364,6 +368,18 @@ AdvanceSearchBar::AdvanceSearchBar(QWidget *parent)
     : QScrollArea(parent),
       d(new AdvanceSearchBarPrivate(this))
 {
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    setFixedHeight(DSizeModeHelper::element(73, QWIDGETSIZE_MAX));
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &AdvanceSearchBar::initUiForSizeMode);
+#endif
+}
+
+void AdvanceSearchBar::initUiForSizeMode()
+{
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    this->setFixedHeight(QWIDGETSIZE_MAX);
+    disconnect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &AdvanceSearchBar::initUiForSizeMode);
+#endif
 }
 
 void AdvanceSearchBar::resetForm()

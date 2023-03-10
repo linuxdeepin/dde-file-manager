@@ -16,7 +16,7 @@ class TitleBar : public dpf::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
 
-    DPF_EVENT_NAMESPACE(DPTITLEBAR_NAMESPACE)
+     DPF_EVENT_NAMESPACE(DPTITLEBAR_NAMESPACE)
     // singnal events
     DPF_EVENT_REG_SIGNAL(signal_Search_Start)
     DPF_EVENT_REG_SIGNAL(signal_Search_Stop)

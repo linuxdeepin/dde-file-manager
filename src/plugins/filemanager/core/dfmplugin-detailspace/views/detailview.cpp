@@ -8,12 +8,16 @@
 
 #include <dfm-framework/dpf.h>
 
-#include <QLabel>
 #include <QGridLayout>
-#include <QPushButton>
 #include <QScrollArea>
 #include <QFileSystemModel>
 #include <QTreeView>
+
+#include <DPushButton>
+#include <dtkwidget_global.h>
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 Q_DECLARE_METATYPE(QString *)
 
@@ -23,7 +27,7 @@ using namespace dfmplugin_detailspace;
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE) };
 
 DetailView::DetailView(QWidget *parent)
-    : QFrame(parent)
+    : DFrame(parent)
 {
     initInfoUI();
 }
@@ -60,10 +64,10 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
     if (widget) {
         widget->setParent(this);
         QFrame *frame = new QFrame(this);
-        QPushButton *btn = new QPushButton(frame);
+        DPushButton *btn = new DPushButton(frame);
         btn->setEnabled(false);
         btn->setFixedHeight(1);
-        QVBoxLayout *vlayout = new QVBoxLayout;
+        QVBoxLayout *vlayout = new QVBoxLayout(this);
         vlayout->setMargin(0);
         vlayout->setSpacing(10);
         vlayout->addWidget(btn);
@@ -72,10 +76,6 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
 
         QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(expandFrame->layout());
         layout->insertWidget(index, frame, 0, Qt::AlignTop);
-
-        QMargins cm = vlayout->contentsMargins();
-        QRect rc = contentsRect();
-        frame->setMaximumWidth(rc.width() - cm.left() - cm.right());
 
         expandList.append(frame);
         return true;
@@ -102,7 +102,7 @@ void DetailView::setUrl(const QUrl &url, int widgetFilter)
 void DetailView::initInfoUI()
 {
     scrollArea = new QScrollArea(this);
-    scrollArea->setAlignment(Qt::AlignTop);
+    scrollArea->setAlignment(Qt::AlignLeft);
     scrollArea->setWidgetResizable(true);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setFrameShape(QFrame::NoFrame);
@@ -111,16 +111,13 @@ void DetailView::initInfoUI()
     expandFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     scrollArea->setWidget(expandFrame);
 
-    vLayout = new QVBoxLayout;
-    vLayout->setContentsMargins(5, 0, 5, 0);
+    vLayout = new QVBoxLayout(this);
     vLayout->setSpacing(8);
     vLayout->addStretch();
     expandFrame->setLayout(vLayout);
 
-    mainLayout = new QVBoxLayout;
-    mainLayout->setContentsMargins(0, 30, 0, 0);
-    mainLayout->addSpacing(20);
-    mainLayout->addWidget(scrollArea, Qt::AlignVCenter);
+    mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(scrollArea, Qt::AlignCenter);
     this->setLayout(mainLayout);
 }
 
@@ -139,10 +136,10 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
             iconLabel = nullptr;
         }
 
-        iconLabel = new QLabel(this);
-        iconLabel->setFixedSize(160, 160);
-        QSize targetSize = iconLabel->size().scaled(iconLabel->width(), iconLabel->height(), Qt::KeepAspectRatio);
-
+        iconLabel = new DLabel(this);
+        iconLabel->setFixedSize(240, 240);
+        //QSize targetSize = iconLabel->size().scaled(iconLabel->width(), iconLabel->height(), Qt::KeepAspectRatio);
+        QSize targetSize(240, 160);
         auto findPluginIcon = [](const QUrl &url) -> QString {
             QString iconName;
             bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
@@ -159,8 +156,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         else
             iconLabel->setPixmap(info->fileIcon().pixmap(targetSize));
         iconLabel->setAlignment(Qt::AlignCenter);
-
-        vLayout->insertWidget(0, iconLabel, 0, Qt::AlignCenter);
+        vLayout->insertWidget(0, iconLabel, 0, Qt::AlignHCenter);
     }
 }
 

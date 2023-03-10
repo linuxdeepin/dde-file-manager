@@ -20,6 +20,7 @@ using namespace dfmplugin_workspace;
 RenameBar::RenameBar(QWidget *parent)
     : QFrame(parent), d(new RenameBarPrivate(this))
 {
+    setMinimumHeight(44);
     initConnect();
 }
 
@@ -275,7 +276,7 @@ void RenameBar::initConnect()
     QObject::connect(std::get<3>(d->replaceOperatorItems), &QLineEdit::textChanged, this, &RenameBar::onReplaceOperatorDestNameChanged);
     QObject::connect(std::get<1>(d->addOperatorItems), &QLineEdit::textChanged, this, &RenameBar::onAddOperatorAddedContentChanged);
 
-    QObject::connect(std::get<1>(d->buttonsArea), &QPushButton::clicked, this, &RenameBar::eventDispatcher);
+    QObject::connect(d->renameBtn, &DSuggestButton::clicked, this, &RenameBar::eventDispatcher);
     QObject::connect(std::get<3>(d->addOperatorItems), static_cast<funcType>(&QComboBox::currentIndexChanged), this, &RenameBar::onAddTextPatternChanged);
 
     QObject::connect(std::get<1>(d->customOPeratorItems), &QLineEdit::textChanged, this, &RenameBar::onCustomOperatorFileNameChanged);
