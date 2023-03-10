@@ -17,6 +17,7 @@ void OpenWithEventReceiver::initEventConnect()
 void OpenWithEventReceiver::showOpenWithDialog(const QList<QUrl> &urls)
 {
     OpenWithDialog *d = new OpenWithDialog(urls);
+    d->setAttribute(Qt::WA_DeleteOnClose);
     d->setDisplayPosition(OpenWithDialog::Center);
     d->open();
 }
