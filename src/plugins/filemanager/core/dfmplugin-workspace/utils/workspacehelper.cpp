@@ -269,8 +269,15 @@ void WorkspaceHelper::closePersistentEditor(const quint64 windowID)
 void WorkspaceHelper::setViewFilter(const quint64 windowID, const QDir::Filters filter)
 {
     FileView *view = findFileViewByWindowID(windowID);
-    if (view)
-        view->model()->setFilters(filter);
+    if (view) {
+        QDir::Filters filters = filter;
+        if (Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool()) {
+            filters = filters | QDir::Hidden;
+        } else {
+            filters = filters & QDir::Filter(~QDir::Hidden);
+        }
+        view->model()->setFilters(filters);
+    }
 }
 
 void WorkspaceHelper::setNameFilter(const quint64 windowID, const QStringList &filter)

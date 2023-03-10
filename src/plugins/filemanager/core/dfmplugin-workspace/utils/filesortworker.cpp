@@ -533,11 +533,6 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
     AbstractFileInfoPointer fileInfo = byInfo ? InfoFactory::create<AbstractFileInfo>(sortInfo->url) : nullptr;
 
     const bool isDir = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsDir) : sortInfo->isDir;
-    if ((filters & QDir::AllDirs) == QDir::AllDirs) {
-        // all dir, no apply filters rules
-        if (isDir)
-            return true;
-    }
 
     // dir filter
     const bool readable = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsReadable) : sortInfo->isReadable;
@@ -595,6 +590,12 @@ bool FileSortWorker::checkFilters(const SortInfoPointer &sortInfo, const bool by
         bool isHidden = fileInfo ? fileInfo->isAttributes(OptInfoType::kIsHidden) : sortInfo->isHide;
         if (isHidden)
             return false;
+    }
+
+    // all dir, don't apply the filters to directory names.
+    if ((filters & QDir::AllDirs) == QDir::AllDirs) {
+        if (isDir)
+            return true;
     }
 
     if (nameFilters.isEmpty())
