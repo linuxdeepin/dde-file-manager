@@ -3,15 +3,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dattachedprotocoldevice.h"
-
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include "devicewatcherlite.h"
+#include "utils/dockutils.h"
 
 #include <QVariantMap>
 #include <QIcon>
 
-using namespace GlobalServerDefines;
+#include <dfm-mount/dprotocoldevice.h>
 
 /*!
  * \class DAttachedProtocolDevice
@@ -31,12 +29,12 @@ DAttachedProtocolDevice::~DAttachedProtocolDevice()
 
 bool DAttachedProtocolDevice::isValid()
 {
-    return !data.value(DeviceProperty::kMountPoint).toString().isEmpty();
+    return device && !device->mountPoint().isEmpty();
 }
 
 void DAttachedProtocolDevice::detach()
 {
-    DevProxyMng->detachProtocolDevice(data.value(DeviceProperty::kId).toString());
+    DeviceWatcherLite::instance()->detachProtocolDevice(deviceId);
 }
 
 bool DAttachedProtocolDevice::detachable()
@@ -46,9 +44,12 @@ bool DAttachedProtocolDevice::detachable()
 
 QString DAttachedProtocolDevice::displayName()
 {
-    QString devName = data.value(DeviceProperty::kDisplayName, tr("Unknown device")).toString();
+    if (!device)
+        return tr("Unknown");
+
+    QString devName = device->displayName();
     QString host, share;
-    if (dfmbase::DeviceUtils::parseSmbInfo(devName, host, share))
+    if (smb_utils::parseSmbInfo(devName, host, share))
         devName = tr("%1 on %2").arg(share).arg(host);
     return devName;
 }
@@ -60,14 +61,17 @@ bool DAttachedProtocolDevice::deviceUsageValid()
 
 QPair<quint64, quint64> DAttachedProtocolDevice::deviceUsage()
 {
-    qint64 bytesTotal = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal));
-    qint64 bytesFree = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeFree));
+    qint64 bytesTotal = device->sizeTotal();
+    qint64 bytesFree = device->sizeFree();
     return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
 }
 
 QString DAttachedProtocolDevice::iconName()
 {
-    auto iconLst = data.value(DeviceProperty::kDeviceIcon).toStringList();
+    if (!device)
+        return "drive-network";
+
+    auto iconLst = device->deviceIcons();
     for (auto name : iconLst) {
         auto icon = QIcon::fromTheme(name);
         if (!icon.isNull())
@@ -79,7 +83,9 @@ QString DAttachedProtocolDevice::iconName()
 
 QUrl DAttachedProtocolDevice::mountpointUrl()
 {
-    return QUrl::fromLocalFile(data.value(DeviceProperty::kMountPoint).toString());
+    if (!device)
+        return QUrl("computer:///");
+    return QUrl::fromLocalFile(device->mountPoint());
 }
 
 QUrl DAttachedProtocolDevice::accessPointUrl()
@@ -89,5 +95,5 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
 
 void DAttachedProtocolDevice::query()
 {
-    data = DevProxyMng->queryProtocolInfo(deviceId);
+    device = DeviceWatcherLite::instance()->createProtocolDevicePtr(deviceId);
 }

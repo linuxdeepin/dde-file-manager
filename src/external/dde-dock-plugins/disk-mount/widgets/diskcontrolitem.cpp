@@ -4,10 +4,7 @@
 
 #include "diskcontrolitem.h"
 #include "diskcontrolwidget.h"
-#include "sizeformathelper.h"
-
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/utils/networkutils.h"
+#include "utils/dockutils.h"
 
 #include <DGuiApplicationHelper>
 #include <DDialog>
@@ -17,47 +14,6 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QProcess>
-
-QString SizeFormatHelper::formatDiskSize(const quint64 num)
-{
-    QStringList list { " B", " KB", " MB", " GB", " TB" };
-    qreal fileSize(num);
-
-    QStringListIterator i(list);
-    QString unit = i.next();
-
-    int index = 0;
-    while (i.hasNext()) {
-        if (fileSize < 1024) {
-            break;
-        }
-
-        unit = i.next();
-        fileSize /= 1024;
-        index++;
-    }
-
-    return QString("%1%2").arg(sizeString(QString::number(fileSize, 'f', 1)), unit);
-}
-
-QString SizeFormatHelper::sizeString(const QString &str)
-{
-    int beginPos = str.indexOf('.');
-
-    if (beginPos < 0)
-        return str;
-
-    QString size = str;
-
-    while (size.count() - 1 > beginPos) {
-        if (!size.endsWith('0'))
-            return size;
-
-        size = size.left(size.count() - 1);
-    }
-
-    return size.left(size.count() - 1);
-}
 
 /*!
  * \class DiskControlItem
@@ -102,10 +58,9 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
     QUrl &&mountPoint = QUrl(attachedDev->mountpointUrl());
     QUrl &&url = QUrl(attachedDev->accessPointUrl());
 
-    DFMBASE_USE_NAMESPACE
     // 光盘文件系统剥离 RockRidge 后，udisks 的默认挂载权限为 500，为遵从 linux 权限限制，在这里添加访问目录的权限校验
     QFile f(mountPoint.path());
-    if (url.scheme() == Global::Scheme::kBurn && f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
+    if (url.scheme() == "burn" && f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
         DDialog *d = new DDialog(QObject::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
         d->setAttribute(Qt::WA_DeleteOnClose);
         Qt::WindowFlags flags = d->windowFlags();
@@ -117,7 +72,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
         return;
     }
 
-    if (url.scheme() == Global::Scheme::kBurn) {
+    if (url.scheme() == "burn") {
         // 1. 当前熊默认文件管理器为 dde-file-manager 时，使用它打开光盘
         // 2. 默认文件管理器为其他时，依然采用打开挂载点的方式
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
@@ -130,19 +85,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
             DDesktopServices::showFolder(url);
         }
     } else {
-        QString host, port;
-        if (!NetworkUtils::instance()->parseIp(url.path(), host, port)) {
-            DDesktopServices::showFolder(url);
-        } else {
-            NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
-                if (ok) {
-                    DDesktopServices::showFolder(url);
-                } else {
-                    qDebug() << "cannot access " << host << url;
-                    par->notifyMessage(tr("Cannot access %1").arg(host));   // TODO(xust) PO should define what should be display to user
-                }
-            });
-        }
+        DDesktopServices::showFolder(url);
     }
 }
 
@@ -163,8 +106,8 @@ void DiskControlItem::showEvent(QShowEvent *e)
         quint64 bytesUsage = bytesTotal > bytesFree ? (bytesTotal - bytesFree) : 0;
 
         diskCapacity->setText(QString("%1 / %2")
-                                      .arg(SizeFormatHelper::formatDiskSize(bytesUsage))
-                                      .arg(SizeFormatHelper::formatDiskSize(bytesTotal)));
+                                      .arg(size_format::formatDiskSize(bytesUsage))
+                                      .arg(size_format::formatDiskSize(bytesTotal)));
 
         if (bytesTotal > 0) {
             capacityValueBar->setValue(static_cast<int>(100 * (bytesTotal - bytesFree) / bytesTotal));

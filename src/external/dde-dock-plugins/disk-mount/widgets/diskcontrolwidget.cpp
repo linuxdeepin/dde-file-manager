@@ -3,13 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "diskcontrolwidget.h"
-#include "dattachedblockdevice.h"
-#include "dattachedprotocoldevice.h"
 #include "diskcontrolitem.h"
-
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
+#include "device/dattachedblockdevice.h"
+#include "device/dattachedprotocoldevice.h"
+#include "device/devicewatcherlite.h"
 
 #include <DGuiApplicationHelper>
 #include <DDBusSender>
@@ -20,8 +17,6 @@
 #include <QTimer>
 
 static const int kWidth = 300;
-
-using namespace GlobalServerDefines;
 
 /*!
  * \class DiskControlWidget
@@ -42,14 +37,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
 void DiskControlWidget::initListByMonitorState()
 {
-    if (DevProxyMng->isMonitorWorking()) {
-        onDiskListChanged();
-    } else {
-        // if failed retry once after 3s
-        std::call_once(retryOnceFlag(), [this]() {
-            QTimer::singleShot(3000, this, &DiskControlWidget::initListByMonitorState);
-        });
-    }
+    onDiskListChanged();
 }
 
 void DiskControlWidget::initializeUi()
@@ -73,44 +61,29 @@ void DiskControlWidget::initializeUi()
 
 void DiskControlWidget::initConnection()
 {
-    DFMBASE_USE_NAMESPACE
     // When the system theme changes,
     // refreshes the list of controls to fit the text color under the new theme
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged, this, &DiskControlWidget::onDiskListChanged);
 
-    connect(DevProxyMng, &DeviceProxyManager::devMngDBusRegistered, this, [this]() {
-        qInfo() << "[disk-mount] dde-file-manager-server connect!";
-        QTimer::singleShot(3000, this, &DiskControlWidget::onDiskListChanged);
-    });
-    connect(DevProxyMng, &DeviceProxyManager::devMngDBusUnregistered, this, [this]() {
-        qWarning() << "[disk-mount] dde-file-manager-server disconnect!";
-        onDiskListChanged();
-    });
-
-    connect(DevProxyMng->getDBusIFace(), &DeviceManagerInterface::NotifyDeviceBusy, this, &DiskControlWidget::onDeviceBusy);
-
-    connect(DevProxyMng, &DeviceProxyManager::blockDriveAdded, this, [this]() {
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::blockDriveAdded, this, [this]() {
         DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceAdded);
         onDiskListChanged();
     });
-    connect(DevProxyMng, &DeviceProxyManager::blockDriveRemoved, this, [this]() {
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::blockDriveRemoved, this, [this]() {
         DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceRemoved);
         notifyMessage(QObject::tr("The device has been safely removed"));
         onDiskListChanged();
     });
-    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(DevProxyMng, &DeviceProxyManager::blockDevFsAdded, this, &DiskControlWidget::onDiskListChanged);
-    connect(DevProxyMng, &DeviceProxyManager::blockDevFsRemoved, this, &DiskControlWidget::onDiskListChanged);
-    connect(DevProxyMng, &dfmbase::DeviceProxyManager::blockDevPropertyChanged, this, [=](const QString &, const QString &property, const QVariant &) {
-        if (property == DeviceProperty::kHintIgnore)
-            this->onDiskListChanged();
-    });
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::blockDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::blockDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::blockFileSystemAdded, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::blockFileSystemRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::hintIgnoreChanged, this, &DiskControlWidget::onDiskListChanged);
 
-    //    connect(DevProxyMng, &DeviceProxyManager::protocolDevAdded, this, &DiskControlWidget::onDiskListChanged);
-    //    connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, &DiskControlWidget::onDiskListChanged);
-    connect(DevProxyMng, &DeviceProxyManager::protocolDevMounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::protocolDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::protocolDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
+
+    connect(DeviceWatcherLite::instance(), &DeviceWatcherLite::operationFailed, this, &DiskControlWidget::onDeviceBusy);
 }
 
 void DiskControlWidget::removeWidgets()
@@ -177,7 +150,7 @@ int DiskControlWidget::addBlockDevicesItems()
 {
     int mountedCount = 0;
 
-    QStringList &&list = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
+    QStringList &&list = DeviceWatcherLite::instance()->allMountedRemovableBlocks();
     mountedCount = addItems(list, true);
 
     return mountedCount;
@@ -187,7 +160,7 @@ int DiskControlWidget::addProtocolDevicesItems()
 {
     int mountedCount = 0;
 
-    QStringList &&list = DevProxyMng->getAllProtocolIds();
+    QStringList &&list = DeviceWatcherLite::instance()->allMountedProtocols();
     mountedCount = addItems(list, false);
 
     return mountedCount;
@@ -239,9 +212,9 @@ DDialog *DiskControlWidget::showQueryScanningDialog(const QString &title)
 void DiskControlWidget::handleWhetherScanning(const QString &method, const QString &id)
 {
     if (!id.isEmpty() && (method == "unmount" || method == "detach")) {
-        DevProxyMng->detachBlockDevice(id);
+        //        DevProxyMng->detachBlockDevice(id);
     } else if (method == "detach_all") {
-        DevProxyMng->detachAllDevices();
+        //        DevProxyMng->detachAllDevices();
     } else {
         qWarning() << "[disk-mount] unknow method: " << method << "or id: " << id;
     }
@@ -322,20 +295,17 @@ void DiskControlWidget::onAskStopScanning(const QString &method, const QString &
 void DiskControlWidget::onDeviceBusy(int action)
 {
     switch (action) {
-    case DeviceBusyAction::kSafelyRemove:
+    case DeviceWatcherLite::kPowerOff:
         notifyMessage(tr("The device was not safely removed"),
                       tr("Click \"Safely Remove\" and then disconnect it next time"));
         break;
-    case DeviceBusyAction::kUnmount:
+    case DeviceWatcherLite::kUnmount:
         notifyMessage(tr("Disk is busy, cannot unmount now"));
         break;
-    case DeviceBusyAction::kRemove:
-        notifyMessage(tr("The device is busy, cannot remove now"));
-        break;
-    case DeviceBusyAction::kEject:
+    case DeviceWatcherLite::kEject:
         notifyMessage(tr("The device is busy, cannot eject now"));
         break;
     default:
-        qWarning() << "[disk-mount] Unknown action: " << action;
+        qWarning() << "[disk-mount]: Unknown action: " << action;
     }
 }

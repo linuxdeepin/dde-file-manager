@@ -3,11 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "diskmountplugin.h"
-#include "tipswidget.h"
-#include "diskpluginitem.h"
-#include "diskcontrolwidget.h"
-
-#include "dfm-base/base/device/deviceproxymanager.h"
+#include "widgets/tipswidget.h"
+#include "widgets/diskpluginitem.h"
+#include "widgets/diskcontrolwidget.h"
+#include "device/devicewatcherlite.h"
 
 #include <DApplication>
 #include <QGSettings>
@@ -50,7 +49,6 @@ void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 
     std::call_once(DiskMountPlugin::onceFlag(), [this, proxyInter]() {
         setProxyInter(proxyInter);   // `m_proxyInter` from Base class `PluginsItemInterface`
-        DevProxyMng->connectToService();
         initCompoments();
         diskPluginItem->setDockDisplayMode(displayMode());
     });
@@ -108,16 +106,12 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
     return QJsonDocument::fromVariant(menu).toJson();
 }
 
-void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &menuId, const bool checked)
+void DiskMountPlugin::invokedMenuItem(const QString &, const QString &menuId, const bool)
 {
-    Q_UNUSED(itemKey)
-    Q_UNUSED(checked)
-
     if (menuId == kOpen)
-        QProcess::startDetached("gio", QStringList() << "open"
-                                                     << "computer:///");
+        QProcess::startDetached("gio", QStringList { "open", "computer:///" });
     else if (menuId == kEjectAll)
-        DevProxyMng->detachAllDevices();
+        DeviceWatcherLite::instance()->detachAllDevices();
 }
 
 int DiskMountPlugin::itemSortKey(const QString &itemKey)

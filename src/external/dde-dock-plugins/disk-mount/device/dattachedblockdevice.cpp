@@ -3,19 +3,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dattachedblockdevice.h"
-#include "sizeformathelper.h"
-
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include "devicewatcherlite.h"
+#include "utils/dockutils.h"
 
 #include <QCoreApplication>
 #include <QVariantMap>
 #include <QDebug>
 
-static const char *const kBurnSegOndisc = "disc_files";
+#include <dfm-mount/dblockdevice.h>
 
-using namespace GlobalServerDefines;
+static const char *const kBurnSegOndisc = "disc_files";
 
 /*!
  * \brief makeBurnFileUrl as `DUrl::fromBurnFile` in old dde-file-manager
@@ -26,7 +23,7 @@ static QUrl makeBurnFileUrl(const QString &device)
 {
     QUrl url;
     QString virtualPath(device + "/" + kBurnSegOndisc + "/");
-    url.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kBurn);
+    url.setScheme("burn");
     url.setPath(virtualPath);
     return url;
 }
@@ -41,7 +38,6 @@ static QUrl makeBurnFileUrl(const QString &device)
 DAttachedBlockDevice::DAttachedBlockDevice(const QString &id, QObject *parent)
     : QObject(parent), DAttachedDevice(id)
 {
-    initializeConnect();
 }
 
 DAttachedBlockDevice::~DAttachedBlockDevice()
@@ -50,13 +46,14 @@ DAttachedBlockDevice::~DAttachedBlockDevice()
 
 bool DAttachedBlockDevice::isValid()
 {
-    if (qvariant_cast<QString>(data.value(DeviceProperty::kId)).isEmpty())
+    if (!device)
         return false;
-    if (!qvariant_cast<bool>(data.value(DeviceProperty::kHasFileSystem)))
+
+    if (!device->hasFileSystem())
         return false;
-    if (qvariant_cast<QString>(data.value(DeviceProperty::kMountPoint)).isEmpty())
+    if (device->mountPoint().isEmpty())
         return false;
-    if (qvariant_cast<bool>(data.value(DeviceProperty::kHintIgnore)))
+    if (device->hintSystem() || device->hintIgnore())
         return false;
 
     return true;
@@ -64,27 +61,33 @@ bool DAttachedBlockDevice::isValid()
 
 void DAttachedBlockDevice::detach()
 {
-    DevProxyMng->detachBlockDevice(qvariant_cast<QString>(data.value(DeviceProperty::kId)));
+    if (!device)
+        return;
+
+    DeviceWatcherLite::instance()->detachBlockDevice(deviceId);
 }
 
 bool DAttachedBlockDevice::detachable()
 {
-    return data.value(DeviceProperty::kRemovable).toBool();
+    return device && device->removable();
 }
 
 QString DAttachedBlockDevice::displayName()
 {
+    if (!device)
+        return tr("Unknown");
+
     QString result;
 
     static QMap<QString, const char *> i18nMap {
         { "data", "Data Disk" }
     };
 
-    qint64 totalSize { qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal)) };
+    qint64 totalSize { device->sizeTotal() };
     if (isValid()) {
-        QString devName { qvariant_cast<QString>(data.value(DeviceProperty::kIdLabel)) };
+        QString devName { device->idLabel() };
         if (devName.isEmpty()) {
-            QString name { SizeFormatHelper::formatDiskSize(static_cast<quint64>(totalSize)) };
+            QString name { size_format::formatDiskSize(static_cast<quint64>(totalSize)) };
             devName = qApp->translate("DeepinStorage", "%1 Volume").arg(name);
         }
 
@@ -96,7 +99,7 @@ QString DAttachedBlockDevice::displayName()
 
         result = devName;
     } else if (totalSize > 0) {
-        QString name = SizeFormatHelper::formatDiskSize(static_cast<quint64>(totalSize));
+        QString name = size_format::formatDiskSize(static_cast<quint64>(totalSize));
         result = qApp->translate("DeepinStorage", "%1 Volume").arg(name);
     }
 
@@ -105,18 +108,14 @@ QString DAttachedBlockDevice::displayName()
 
 bool DAttachedBlockDevice::deviceUsageValid()
 {
-    return qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal)) > 0;
+    return device && device->sizeTotal() > 0;
 }
 
 QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 {
     if (deviceUsageValid()) {
-        qint64 bytesTotal { 0 };
-        qint64 bytesFree { 0 };
-
-        bytesTotal = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal));
-        bytesFree = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeFree));
-
+        qint64 bytesTotal { device->sizeTotal() };
+        qint64 bytesFree { device->sizeFree() };
         return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
     }
     return QPair<quint64, quint64>(0, 0);
@@ -124,9 +123,12 @@ QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 
 QString DAttachedBlockDevice::iconName()
 {
-    bool optical { qvariant_cast<bool>(data.value(DeviceProperty::kOptical)) };
-    bool removable { qvariant_cast<bool>(data.value(DeviceProperty::kRemovable)) };
-    bool decryptedDev = qvariant_cast<QString>(data.value(DeviceProperty::kCryptoBackingDevice)) != "/";
+    if (!device)
+        return "drive-harddisk";
+
+    bool optical { device->optical() };
+    bool removable { device->removable() };
+    bool decryptedDev = device->getProperty(DFMMOUNT::Property::kEncryptedCleartextDevice).toString() != "/";
     QString iconName { QStringLiteral("drive-harddisk") };
 
     if (removable)
@@ -143,17 +145,22 @@ QString DAttachedBlockDevice::iconName()
 
 QUrl DAttachedBlockDevice::mountpointUrl()
 {
-    return QUrl::fromLocalFile(data.value(DeviceProperty::kMountPoint).toString());
+    if (!device)
+        return QUrl("computer:///");
+    return QUrl::fromLocalFile(device->mountPoint());
 }
 
 QUrl DAttachedBlockDevice::accessPointUrl()
 {
+    if (!device)
+        return QUrl("computer:///");
+
     QUrl url { mountpointUrl() };
-    bool optical { qvariant_cast<bool>(data.value(DeviceProperty::kOptical)) };
+    bool optical { device->optical() };
 
     if (optical) {
-        QString device { qvariant_cast<QString>(data.value(DeviceProperty::kDevice)) };
-        url = makeBurnFileUrl(device);
+        QString devDesc { device->device() };
+        url = makeBurnFileUrl(devDesc);
     }
 
     return url;
@@ -161,20 +168,5 @@ QUrl DAttachedBlockDevice::accessPointUrl()
 
 void DAttachedBlockDevice::query()
 {
-    data = DevProxyMng->queryBlockInfo(deviceId);
-}
-
-void DAttachedBlockDevice::initializeConnect()
-{
-    //    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DAttachedBlockDevice::onSizeChanged);
-}
-
-void DAttachedBlockDevice::onSizeChanged(const QString &id, qint64 total, qint64 free)
-{
-    QString thisId = qvariant_cast<QString>(data.value(DeviceProperty::kId));
-    if (thisId == id) {
-        qInfo() << "[disk-mout] Update device: " << thisId << "size, total: " << total << "free: " << free;
-        data[DeviceProperty::kSizeTotal] = total;
-        data[DeviceProperty::kSizeFree] = free;
-    }
+    device = DeviceWatcherLite::instance()->createBlockDevicePtr(deviceId);
 }

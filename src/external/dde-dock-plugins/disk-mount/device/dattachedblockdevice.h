@@ -11,6 +11,10 @@
 #include <QPointer>
 #include <QVariantMap>
 
+namespace dfmmount {
+class DBlockDevice;
+}
+
 class DAttachedBlockDevice final : public QObject, public DAttachedDevice
 {
 public:
@@ -30,12 +34,8 @@ protected:
     void query() override;
 
 private:
-    void initializeConnect();
-    Q_SLOT void onSizeChanged(const QString &id, qint64 total, qint64 free);
-
-private:
-    QVariantMap data;
     const QString ddeI18nSym { QStringLiteral("_dde_") };
+    QSharedPointer<dfmmount::DBlockDevice> device;
 };
 
 #endif   // DATTACHEDBLOCKDEVICE_H

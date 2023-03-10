@@ -10,46 +10,11 @@ set(CMAKE_AUTORCC ON)
 # generate a compile commands file as complete database for vim-YouCompleteMe or some other similar tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-FILE (GLOB MOUNT_PLUGIN_FILES
+FILE (GLOB_RECURSE MOUNT_PLUGIN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
-
-set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../../)
-include_directories(${SRC_DIR})
-set(BASE_DEV_DIR ${SRC_DIR}/dfm-base/base/device)
-FILE (GLOB BASE_DEVICE_FILES
-    ${BASE_DEV_DIR}/*.h
-    ${BASE_DEV_DIR}/*.cpp
-    ${BASE_DEV_DIR}/private/*.h
-    ${BASE_DEV_DIR}/private/*.cpp
-)
-
-set(BASE_UTIL_DIR ${SRC_DIR}/dfm-base/utils)
-FILE(GLOB BASE_UTIL_FILES
-    ${BASE_UTIL_DIR}/networkutils.h
-    ${BASE_UTIL_DIR}/networkutils.cpp
-    ${BASE_UTIL_DIR}/finallyutil.h
-    ${BASE_UTIL_DIR}/finallyutil.cpp
-)
-
-set(DBUS_DIR ${SRC_DIR}/dfm-base/dbusservice)
-include_directories(${DBUS_DIR})
-FILE (GLOB DBUS_INTERFACE_FILES
-    ${DBUS_DIR}/*.h
-    ${DBUS_DIR}/*/devicemanagerdbus_interface.h
-    ${DBUS_DIR}/*/devicemanagerdbus_interface.cpp
-)
-
-set(DBUS_INTERFACES_SRC
-    ${DBUS_INTERFACES_DIR}/devicemanagerdbus_interface.cpp
-    )
-
-set(DBUS_INTERFACES_HEADER
-    ${DBUS_INTERFACES_DIR}/devicemanagerdbus_interface.h
-    ${DBUS_DIR}/global_server_defines.h
-    )
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5DBus REQUIRED)
@@ -70,9 +35,6 @@ qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 add_library(${PROJECT_NAME}
     SHARED
     ${MOUNT_PLUGIN_FILES}
-    ${BASE_DEVICE_FILES}
-    ${BASE_UTIL_FILES}
-    ${DBUS_INTERFACE_FILES}
     ${QRC_RESOURCES}
     )
 

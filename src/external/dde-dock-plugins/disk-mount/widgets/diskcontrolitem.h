@@ -5,7 +5,7 @@
 #ifndef DISKCONTROLITEM_H
 #define DISKCONTROLITEM_H
 
-#include "dattacheddevice.h"
+#include "device/dattacheddevice.h"
 
 #include <DIconButton>
 #include <QFrame>

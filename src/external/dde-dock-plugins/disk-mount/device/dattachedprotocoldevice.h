@@ -11,6 +11,10 @@
 #include <QPointer>
 #include <QVariantMap>
 
+namespace dfmmount {
+class DProtocolDevice;
+}
+
 class DAttachedProtocolDevice final : public QObject, public DAttachedDevice
 {
     Q_OBJECT
@@ -31,7 +35,7 @@ protected:
     void query() override;
 
 private:
-    QVariantMap data;
+    QSharedPointer<dfmmount::DProtocolDevice> device;
 };
 
 #endif   // DATTACHEDPROTOCOLDEVICE_H
