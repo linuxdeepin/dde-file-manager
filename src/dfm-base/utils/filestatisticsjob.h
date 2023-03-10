@@ -83,6 +83,7 @@ private:
 private:
     void setSizeInfo();
     void statistcsOtherFileSystem();
+    void statistcsByFts();
 };
 
 }

@@ -36,8 +36,6 @@ public:
                                      LocalDirIterator *q);
     virtual ~LocalDirIteratorPrivate() override;
 
-    void initQuerierAsyncCallback(bool succ, void *data);
-    void cacheAttribute(const QUrl &url);
     AbstractFileInfoPointer fileInfo();
 
 private:

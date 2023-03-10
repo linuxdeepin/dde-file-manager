@@ -324,8 +324,7 @@ CacheWorker::~CacheWorker()
 void CacheWorker::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
 {
     Q_ASSERT(qApp->thread() != QThread::currentThread());
-    if (DFMIO::DFile(url.path()).exists())
-        InfoCache::instance().cacheInfo(url, info);
+    InfoCache::instance().cacheInfo(url, info);
 }
 
 void CacheWorker::removeCaches(const QList<QUrl> urls)

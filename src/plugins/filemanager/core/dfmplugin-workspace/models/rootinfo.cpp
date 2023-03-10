@@ -265,7 +265,23 @@ void RootInfo::handleTraversalResult(const AbstractFileInfoPointer &child)
 {
     auto sortInfo = addChild(child);
     if (sortInfo)
-        Q_EMIT iteratorAddFile(currentKey, sortInfo);
+        Q_EMIT iteratorAddFile(currentKey, sortInfo, child);
+}
+
+void RootInfo::handleTraversalResults(QList<AbstractFileInfoPointer> children)
+{
+    QList<SortInfoPointer> sortInfos;
+    QList<AbstractFileInfoPointer> infos;
+    for (const auto &info : children) {
+        auto sortInfo = addChild(info);
+        if (!sortInfo)
+            continue;
+        sortInfos.append(sortInfo);
+        infos.append(info);
+    }
+
+    if (sortInfos.length() > 0)
+        Q_EMIT iteratorAddFiles(currentKey, sortInfos, infos);
 }
 
 void RootInfo::handleTraversalLocalResult(QList<SortInfoPointer> children,
@@ -287,6 +303,11 @@ void RootInfo::handleTraversalFinish()
     traversalFinish = true;
 }
 
+void RootInfo::handleTraversalSort()
+{
+    emit requestSort(currentKey);
+}
+
 void RootInfo::handleGetSourceData(const QString &key)
 {
     QList<SortInfoPointer> newDatas = sourceDataList;
@@ -295,10 +316,12 @@ void RootInfo::handleGetSourceData(const QString &key)
 
 void RootInfo::initConnection(const TraversalThreadManagerPointer &traversalThread)
 {
-    connect(traversalThread.data(), &TraversalDirThreadManager::updateChildManager,
-            this, &RootInfo::handleTraversalResult, Qt::DirectConnection);
+    connect(traversalThread.data(), &TraversalDirThreadManager::updateChildrenManager,
+            this, &RootInfo::handleTraversalResults, Qt::DirectConnection);
     connect(traversalThread.data(), &TraversalDirThreadManager::updateLocalChildren,
             this, &RootInfo::handleTraversalLocalResult, Qt::DirectConnection);
+    connect(traversalThread.data(), &TraversalDirThreadManager::traversalRequestSort,
+            this, &RootInfo::handleTraversalSort, Qt::DirectConnection);
     // 主线中执行
     connect(traversalThread.data(), &TraversalDirThreadManager::traversalFinished,
             this, &RootInfo::handleTraversalFinish, Qt::QueuedConnection);

@@ -72,14 +72,19 @@ void TraversalDirThreadManager::run()
     }
 }
 
-int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timer)
+int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timere)
 {
     dirIterator->cacheBlockIOAttribute();
-    qInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timer.elapsed();
+    qInfo() << "cacheBlockIOAttribute finished, url: " << dirUrl << " elapsed: " << timere.elapsed();
     if (stopFlag) {
         emit traversalFinished();
         return 0;
     }
+
+    if (!timer)
+        timer = new QElapsedTimer();
+
+    timer->restart();
 
     QList<AbstractFileInfoPointer> childrenList;   // 当前遍历出来的所有文件
     while (dirIterator->hasNext()) {
@@ -95,10 +100,19 @@ int TraversalDirThreadManager::iteratorOneByOne(const QElapsedTimer &timer)
         if (!fileInfo)
             continue;
 
-        emit updateChildManager(fileInfo);
         childrenList.append(fileInfo);
+
+        if (timer->elapsed() > timeCeiling || childrenList.count() > countCeiling) {
+            emit updateChildrenManager(childrenList);
+            timer->restart();
+            childrenList.clear();
+        }
     }
-    emit updateChildrenManager(childrenList);
+
+    if (childrenList.length() > 0)
+        emit updateChildrenManager(childrenList);
+
+    emit traversalRequestSort();
 
     emit traversalFinished();
 

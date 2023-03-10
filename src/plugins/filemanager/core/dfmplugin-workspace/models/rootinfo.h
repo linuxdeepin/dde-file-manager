@@ -59,7 +59,8 @@ Q_SIGNALS:
                             const dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                             const Qt::SortOrder sortOrder,
                             const bool isMixDirAndFile);
-    void iteratorAddFile(const QString &key, const SortInfoPointer sortInfo);
+    void iteratorAddFile(const QString &key, const SortInfoPointer sortInfo, const AbstractFileInfoPointer info);
+    void iteratorAddFiles(const QString &key, QList<SortInfoPointer> sortInfos, QList<AbstractFileInfoPointer> infos);
     void watcherAddFiles(QList<SortInfoPointer> children);
     void watcherRemoveFiles(QList<SortInfoPointer> children);
     void traversalFinished(const QString &key);
@@ -71,6 +72,7 @@ Q_SIGNALS:
                      const bool isFinished);
     void watcherUpdateFile(const SortInfoPointer sortInfo);
     void watcherUpdateHideFile(const QUrl &hidUrl);
+    void requestSort(const QString &key);
 
 public Q_SLOTS:
     void doFileDeleted(const QUrl &url);
@@ -81,11 +83,14 @@ public Q_SLOTS:
     void doThreadWatcherEvent();
 
     void handleTraversalResult(const AbstractFileInfoPointer &child);
+    void handleTraversalResults(QList<AbstractFileInfoPointer> children);
     void handleTraversalLocalResult(QList<SortInfoPointer> children,
                                     dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                                     Qt::SortOrder sortOrder,
                                     bool isMixDirAndFile);
     void handleTraversalFinish();
+
+    void handleTraversalSort();
     void handleGetSourceData(const QString &key);
 
 private:

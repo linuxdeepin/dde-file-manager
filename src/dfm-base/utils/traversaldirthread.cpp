@@ -19,7 +19,11 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
     : QThread(parent), dirUrl(url), nameFilters(nameFilters), filters(filters), flags(flags)
 {
     if (dirUrl.isValid()) {
-        dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters, flags);
+        auto path = url.path();
+        if (path != QDir::separator() && path.endsWith(QDir::separator()))
+            path = path.left(path.length() - 1);
+        dirUrl.setPath(path);
+        dirIterator = DirIteratorFactory::create<AbstractDirIterator>(dirUrl, nameFilters, filters, flags);
         if (!dirIterator) {
             qWarning() << "Failed create dir iterator from" << url;
             return;

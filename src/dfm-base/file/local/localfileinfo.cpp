@@ -1034,14 +1034,22 @@ QString LocalFileInfoPrivate::sizeFormat() const
 QVariant LocalFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
     if (dfmFileInfo) {
-        QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
-        if (cacheAttributes.count(key) > 0) {
-            if (ok)
-                *ok = true;
-            return cacheAttributes.value(key);
+        {
+            QReadLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+            if (cacheAttributes.count(key) > 0) {
+                if (ok)
+                    *ok = true;
+                return cacheAttributes.value(key);
+            }
         }
 
-        return dfmFileInfo->attribute(key, ok);
+        auto value = dfmFileInfo->attribute(key, ok);
+        {
+            QWriteLocker locker(&const_cast<LocalFileInfoPrivate *>(this)->lock);
+            const_cast<LocalFileInfoPrivate *>(this)->cacheAttributes.insert(key, value);
+        }
+
+        return value;
     }
     return QVariant();
 }

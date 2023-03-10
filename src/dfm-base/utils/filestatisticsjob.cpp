@@ -8,6 +8,7 @@
 #include "interfaces/abstractdiriterator.h"
 
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -39,8 +40,14 @@ public:
     bool stateCheck();
 
     void processFile(const QUrl &url, const bool followLink, QQueue<QUrl> &directoryQueue);
+    void processFileByFts(const QUrl &url, const bool followLink);
     void emitSizeChanged();
-    int countFileCount(const char *name, bool isloop = false);
+    int countFileCount(const char *name);
+    bool checkFileType(const AbstractFileInfo::FileType &fileType);
+    AbstractFileInfo::FileType getFileType(const uint mode);
+    void statisticDir(const QUrl &url, FTS *fts, const bool singleDepth, FTSENT *ent);
+    void statisticFile(FTSENT *ent);
+    void statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink);
 
     FileStatisticsJob *q;
     QTimer *notifyDataTimer;
@@ -58,6 +65,9 @@ public:
     QAtomicInt directoryCount { 0 };
     SizeInfoPointer sizeInfo { nullptr };
     QList<QUrl> fileStatistics;
+    QList<QString> skipPath;
+    AbstractDirIteratorPointer iterator { nullptr };
+    std::atomic_bool iteratorCanStop { false };
 };
 
 FileStatisticsJobPrivate::FileStatisticsJobPrivate(FileStatisticsJob *qq)
@@ -65,6 +75,8 @@ FileStatisticsJobPrivate::FileStatisticsJobPrivate(FileStatisticsJob *qq)
 {
     sizeInfo.reset(new FileUtils::FilesSizeInfo());
     sizeInfo->dirSize = FileUtils::getMemoryPageSize();
+    skipPath << "/proc/kcore"
+             << "/dev/core";
 }
 
 FileStatisticsJobPrivate::~FileStatisticsJobPrivate()
@@ -161,32 +173,14 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
             }
             //skip os file Shortcut
             if (info->isAttributes(OptInfoType::kIsSymLink)
-                && (info->pathOf(PathInfoType::kSymLinkTarget)
-                            == QStringLiteral("/proc/kcore")
-                    || info->pathOf(PathInfoType::kSymLinkTarget) == QStringLiteral("/dev/core"))) {
+                && (skipPath.contains(info->pathOf(PathInfoType::kSymLinkTarget)))) {
                 break;
             }
 
-            const AbstractFileInfo::FileType type = info->fileType();
+            const AbstractFileInfo::FileType &type = info->fileType();
 
-            if (type == AbstractFileInfo::FileType::kCharDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipCharDeviceFile)) {
+            if (!checkFileType(type))
                 break;
-            }
-
-            if (type == AbstractFileInfo::FileType::kBlockDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipBlockDeviceFile)) {
-                break;
-            }
-
-            if (type == AbstractFileInfo::FileType::kFIFOFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipFIFOFile)) {
-                break;
-            }
-
-            if (type == AbstractFileInfo::FileType::kSocketFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipSocketFile)) {
-                break;
-            }
-            if (type == AbstractFileInfo::FileType::kUnknown) {
-                break;
-            }
 
             size = info->size();
             if (size > 0) {
@@ -252,6 +246,67 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, const bool followLin
     }
 }
 
+void FileStatisticsJobPrivate::processFileByFts(const QUrl &url, const bool followLink)
+{
+    // The files counted are not counted
+    if (sizeInfo->allFiles.contains(url))
+        return;
+
+    char *paths[2] = { nullptr, nullptr };
+    paths[0] = strdup(url.path().toUtf8().toStdString().data());
+    auto openflags = fileHints.testFlag(FileStatisticsJob::kExcludeSourceFile) ? FTS_COMFOLLOW : 0;
+    FTS *fts = fts_open(paths, openflags, nullptr);
+
+    if (nullptr == fts) {
+        qWarning() << "open file by fts failed ! url = " << url << ", case " << strerror(errno);
+        return;
+    }
+    if (paths[0])
+        free(paths[0]);
+
+    auto singleDepth = fileHints.testFlag(FileStatisticsJob::kSingleDepth);
+    while (1) {
+        FTSENT *ent = fts_read(fts);
+        if (nullptr == ent)
+            break;
+
+        if (!stateCheck())
+            break;
+
+        unsigned short flag = ent->fts_info;
+        QUrl currentUrl = QUrl::fromLocalFile(ent->fts_path);
+
+        // 逆序的dir跳过统计了2次
+        if (flag == FTS_DP || sizeInfo->allFiles.contains(currentUrl))
+            continue;
+        if (fileHints.testFlag(FileStatisticsJob::kExcludeSourceFile) && QString(ent->fts_path) == url.path())
+            continue;
+
+        sizeInfo->allFiles.append(currentUrl);
+
+        auto isLink = S_ISLNK(ent->fts_statp->st_mode);
+        if (isLink) {
+            statisticSysLink(currentUrl, fts, ent, singleDepth, followLink);
+            continue;
+        }
+
+        if (skipPath.contains(ent->fts_path)) {
+            filesCount++;
+            continue;
+        }
+
+        if (!S_ISDIR(ent->fts_statp->st_mode)) {
+            statisticFile(ent);
+            continue;
+        }
+
+        statisticDir(url, fts, singleDepth, ent);
+    }
+
+    if (fts)
+        fts_close(fts);
+}
+
 void FileStatisticsJobPrivate::emitSizeChanged()
 {
     if (elapsedTimer.elapsed() > kSizeChangeinterval) {
@@ -260,10 +315,13 @@ void FileStatisticsJobPrivate::emitSizeChanged()
     }
 }
 
-int FileStatisticsJobPrivate::countFileCount(const char *name, bool isloop)
+int FileStatisticsJobPrivate::countFileCount(const char *name)
 {
-    DIR *dir;
-    struct dirent *entry;
+    if (strlen(name) >= FILENAME_MAX)
+        return 0;
+
+    DIR *dir { nullptr };
+    struct dirent *entry { nullptr };
     int fileCount = 0;
 
     if (!(dir = opendir(name)))
@@ -271,28 +329,119 @@ int FileStatisticsJobPrivate::countFileCount(const char *name, bool isloop)
 
     while ((entry = readdir(dir))) {
         if (!stateCheck())
-            return fileCount;
-        //文件路径加名称最长支持为4k
-        char path[FILENAME_MAX + 1];
-        int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
-        path[len] = 0;
+            break;
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
             continue;
-        if (entry->d_type == DT_DIR) {
-            if (isloop) {
-                fileCount += countFileCount(path, isloop);
-            }
-            else {
-                fileCount++;
-            }
-        }
-        else {
-            fileCount++;
-        }
+
+        fileCount++;
     }
 
     closedir(dir);
     return fileCount;
+}
+
+bool FileStatisticsJobPrivate::checkFileType(const AbstractFileInfo::FileType &fileType)
+{
+    if (fileType == AbstractFileInfo::FileType::kCharDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipCharDeviceFile)) {
+        return false;
+    }
+
+    if (fileType == AbstractFileInfo::FileType::kBlockDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipBlockDeviceFile)) {
+        return false;
+    }
+
+    if (fileType == AbstractFileInfo::FileType::kFIFOFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipFIFOFile)) {
+        return false;
+    }
+
+    if (fileType == AbstractFileInfo::FileType::kSocketFile && !fileHints.testFlag(FileStatisticsJob::kDontSkipSocketFile)) {
+        return false;
+    }
+
+    if (fileType == AbstractFileInfo::FileType::kUnknown) {
+        return false;
+    }
+
+    return true;
+}
+
+AbstractFileInfo::FileType FileStatisticsJobPrivate::getFileType(const uint mode)
+{
+    AbstractFileInfo::FileType fileType { AbstractFileInfo::FileType::kUnknown };
+    if (S_ISDIR(mode))
+        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kDirectory);
+    else if (S_ISCHR(mode))
+        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kCharDevice);
+    else if (S_ISBLK(mode))
+        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kBlockDevice);
+    else if (S_ISFIFO(mode))
+        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kFIFOFile);
+    else if (S_ISSOCK(mode))
+        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kSocketFile);
+    else if (S_ISREG(mode))
+        fileType = AbstractFileInfo::FileType(MimeDatabase::FileType::kRegularFile);
+
+    return fileType;
+}
+
+void FileStatisticsJobPrivate::statisticDir(const QUrl &url, FTS *fts, const bool singleDepth, FTSENT *ent)
+{
+    if (sizeInfo->dirSize == 0) {
+        sizeInfo->dirSize = ent->fts_statp->st_size == 0
+                ? FileUtils::getMemoryPageSize()
+                : static_cast<quint16>(ent->fts_statp->st_size);
+    }
+    totalProgressSize += FileUtils::getMemoryPageSize();
+    ++directoryCount;
+    if (singleDepth && QString(ent->fts_path) != url.path())
+        fts_set(fts, ent, FTS_SKIP);
+}
+
+void FileStatisticsJobPrivate::statisticFile(FTSENT *ent)
+{
+    const AbstractFileInfo::FileType &fileType = getFileType(ent->fts_statp->st_mode);
+    if (!checkFileType(fileType))
+        return;
+    filesCount++;
+    totalSize += ent->fts_statp->st_size;
+    totalProgressSize += ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
+}
+
+void FileStatisticsJobPrivate::statisticSysLink(const QUrl &currentUrl, FTS *fts, FTSENT *ent, const bool singleDepth, const bool followLink)
+{
+    auto info = InfoFactory::create<AbstractFileInfo>(currentUrl);
+    if (!info) {
+        filesCount++;
+        return;
+    }
+    const auto &symLinkTargetUrl = QUrl::fromLocalFile(info->pathOf(PathInfoType::kSymLinkTarget));
+    if (sizeInfo->allFiles.contains(symLinkTargetUrl) || fileStatistics.contains(symLinkTargetUrl)) {
+        return;
+    }
+    if (skipPath.contains(symLinkTargetUrl.path())) {
+        filesCount++;
+        return;
+    }
+
+    if (info->isAttributes(OptInfoType::kIsFile)) {
+        const AbstractFileInfo::FileType &type = info->fileType();
+        if (!checkFileType(type))
+            return;
+
+        totalProgressSize += FileUtils::getMemoryPageSize();
+        fileStatistics << symLinkTargetUrl;
+        filesCount++;
+        totalSize += info->size();
+        return;
+    }
+
+    ++directoryCount;
+    if (singleDepth)
+        return;
+
+    fileStatistics << symLinkTargetUrl;
+    if (followLink)
+        fts_set(fts, ent, FTS_SYMFOLLOW);
 }
 
 FileStatisticsJob::FileStatisticsJob(QObject *parent)
@@ -368,6 +517,9 @@ void FileStatisticsJob::start(const QList<QUrl> &sourceUrls)
 
 void FileStatisticsJob::stop()
 {
+    if (d->iterator && d->iteratorCanStop)
+        d->iterator->close();
+
     if (d->state == kStoppedState) {
         return;
     }
@@ -404,8 +556,13 @@ void FileStatisticsJob::run()
     d->totalSize = 0;
     d->filesCount = 0;
     d->directoryCount = 0;
-
-    statistcsOtherFileSystem();
+    if (d->sourceUrlList.isEmpty())
+        return;
+    if (!FileUtils::isLocalDevice(d->sourceUrlList.first())) {
+        statistcsOtherFileSystem();
+        return;
+    }
+    statistcsByFts();
 }
 
 void FileStatisticsJob::setSizeInfo()
@@ -503,15 +660,16 @@ void FileStatisticsJob::statistcsOtherFileSystem()
 
     while (!directory_queue.isEmpty()) {
         const QUrl &directory_url = directory_queue.dequeue();
-        const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(directory_url, QStringList(),
-                                                                                                     QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+        d->iterator = DirIteratorFactory::create<AbstractDirIterator>(directory_url, QStringList(),
+                                                                      QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
-        if (!iterator) {
+        if (!d->iterator) {
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;
             continue;
         }
-        while (iterator->hasNext()) {
-            QUrl url = iterator->next();
+        d->iteratorCanStop = true;
+        while (d->iterator->hasNext()) {
+            QUrl url = d->iterator->next();
             // The files counted are not counted
             if (d->sizeInfo->allFiles.contains(url))
                 continue;
@@ -525,9 +683,27 @@ void FileStatisticsJob::statistcsOtherFileSystem()
                 return;
             }
         }
+        d->iteratorCanStop = false;
     }
     setSizeInfo();
     d->setState(kStoppedState);
+}
+
+void FileStatisticsJob::statistcsByFts()
+{
+    Q_EMIT dataNotify(0, 0, 0);
+
+    const bool followLink = !d->fileHints.testFlag(kNoFollowSymlink);
+
+    for (const auto &url : d->sourceUrlList) {
+        if (!d->stateCheck()) {
+            d->setState(kStoppedState);
+            setSizeInfo();
+            return;
+        }
+
+        d->processFileByFts(url, followLink);
+    }
 }
 
 }

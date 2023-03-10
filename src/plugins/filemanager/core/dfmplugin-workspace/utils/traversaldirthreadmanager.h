@@ -26,6 +26,9 @@ class TraversalDirThreadManager : public TraversalDirThread
     Qt::SortOrder sortOrder { Qt::AscendingOrder };
     dfmio::DEnumerator::SortRoleCompareFlag sortRole { dfmio::DEnumerator::SortRoleCompareFlag::kSortRoleCompareDefault };
     bool isMixDirAndFile { false };
+    QElapsedTimer *timer = Q_NULLPTR;
+    int timeCeiling = 200;
+    int countCeiling = 300;
 
 public:
     explicit TraversalDirThreadManager(const QUrl &url, const QStringList &nameFilters = QStringList(),
@@ -37,19 +40,19 @@ public:
 
 Q_SIGNALS:
     void updateChildrenManager(QList<AbstractFileInfoPointer> children);
-    void updateChildManager(const AbstractFileInfoPointer child);
     // Special processing If it is a local file, directly read all the simple sorting lists of the file
     void updateLocalChildren(QList<SortInfoPointer> children,
                              dfmio::DEnumerator::SortRoleCompareFlag sortRole,
                              Qt::SortOrder sortOrder,
                              bool isMixDirAndFile);
     void traversalFinished();
+    void traversalRequestSort();
 
 protected:
     virtual void run() override;
 
 private:
-    int iteratorOneByOne(const QElapsedTimer &timer);
+    int iteratorOneByOne(const QElapsedTimer &timere);
     int iteratorAll();
 };
 }

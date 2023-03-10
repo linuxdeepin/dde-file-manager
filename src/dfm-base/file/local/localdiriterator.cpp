@@ -36,65 +36,6 @@ LocalDirIteratorPrivate::~LocalDirIteratorPrivate()
 {
 }
 
-void LocalDirIteratorPrivate::initQuerierAsyncCallback(bool succ, void *data)
-{
-    if (!succ) {
-        if (data) {
-            InitQuerierAsyncOp *op = static_cast<InitQuerierAsyncOp *>(data);
-            if (op) {
-                op->me = nullptr;
-                delete op;
-            }
-        }
-
-        return;
-    }
-
-    if (!data)
-        return;
-
-    InitQuerierAsyncOp *op = static_cast<InitQuerierAsyncOp *>(data);
-    if (op) {
-        if (!op->me) {
-            delete op;
-            return;
-        }
-
-        const QUrl &url = op->url;
-        auto fileinfo = op->me->dfmioDirIterator->fileInfo();
-        QSharedPointer<LocalFileInfo> info = QSharedPointer<LocalFileInfo>(new LocalFileInfo(url, fileinfo));
-        auto infoTrans = InfoFactory::transfromInfo<AbstractFileInfo>(url.scheme(), info);
-
-        const QString &fileName = fileinfo->attribute(DFileInfo::AttributeID::kStandardName, nullptr).toString();
-        bool isHidden = false;
-        if (fileName.startsWith(".")) {
-            isHidden = true;
-        } else {
-            isHidden = hideFileList.contains(fileName);
-        }
-        infoTrans->setExtendedAttributes(ExtInfoType::kFileIsHid, isHidden);
-        infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, isLocalDevice);
-        infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
-
-        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
-
-        op->me = nullptr;
-        delete op;
-    }
-}
-
-void LocalDirIteratorPrivate::cacheAttribute(const QUrl &url)
-{
-    auto dfileInfo = dfmioDirIterator->fileInfo();
-
-    InitQuerierAsyncOp *op = new InitQuerierAsyncOp;
-    op->me = this;
-    op->url = url;
-
-    auto func = std::bind(&LocalDirIteratorPrivate::initQuerierAsyncCallback, this, std::placeholders::_1, std::placeholders::_2);
-    dfileInfo->initQuerierAsync(0, func, op);
-}
-
 AbstractFileInfoPointer LocalDirIteratorPrivate::fileInfo()
 {
     auto fileinfo = dfmioDirIterator->fileInfo();
@@ -113,7 +54,11 @@ AbstractFileInfoPointer LocalDirIteratorPrivate::fileInfo()
     infoTrans->setExtendedAttributes(ExtInfoType::kFileLocalDevice, isLocalDevice);
     infoTrans->setExtendedAttributes(ExtInfoType::kFileCdRomDevice, isCdRomDevice);
 
-    emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+    if (infoTrans) {
+        emit InfoCacheController::instance().cacheFileInfo(url, infoTrans);
+    } else {
+        qWarning() << "info is nullptr url = " << url;
+    }
 
     return infoTrans;
 }

@@ -207,10 +207,16 @@ public:
         if (Q_UNLIKELY(!cache) || InfoCacheController::instance().cacheDisable(url.scheme()))
             return qSharedPointerDynamicCast<T>(instance().SchemeFactory<AbstractFileInfo>::
                                                         create(url, errorString));
+
         QSharedPointer<AbstractFileInfo> info = InfoCacheController::instance().getCacheInfo(url);
         if (!info) {
             info = instance().SchemeFactory<AbstractFileInfo>::create(url, errorString);
-            emit InfoCacheController::instance().cacheFileInfo(url, info);
+
+            if (info) {
+                emit InfoCacheController::instance().cacheFileInfo(url, info);
+            } else {
+                qWarning() << "info is nullptr url = " << url;
+            }
         }
         return qSharedPointerDynamicCast<T>(info);
     }

@@ -254,7 +254,7 @@ void FileSortWorker::handleSourceChildren(const QString &key,
     }
 }
 
-void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPointer child)
+void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPointer child, const AbstractFileInfoPointer info)
 {
     if (isCanceled)
         return;
@@ -263,7 +263,55 @@ void FileSortWorker::handleIteratorChild(const QString &key, const SortInfoPoint
     if (!child)
         return;
 
-    addChild(child, AbstractSortAndFiter::SortScenarios::kSortScenariosIteratorAddFile);
+    addChild(child, info);
+}
+
+void FileSortWorker::handleIteratorChildren(const QString &key, QList<SortInfoPointer> children, QList<AbstractFileInfoPointer> infos)
+{
+    if (isCanceled)
+        return;
+    if (currentKey != key)
+        return;
+
+    int total = children.length();
+
+    int showIndex = visibleChildren.length();
+
+    QList<QUrl> listshow;
+
+    for (int i = 0; i < total; ++i) {
+
+        if (isCanceled)
+            return;
+
+        const auto &sortInfo = children.at(i);
+        if (!sortInfo)
+            continue;
+
+        if (childrenUrlList.contains(sortInfo->url))
+            continue;
+
+        this->children.append(sortInfo);
+        childrenUrlList.append(sortInfo->url);
+        {
+            QWriteLocker lk(&childrenDataLocker);
+            childrenDataMap.insert(sortInfo->url, new FileItemData(sortInfo->url, infos.at(i), rootdata));
+        }
+        if (!checkFilters(sortInfo))
+            continue;
+
+        listshow.append(sortInfo->url);
+    }
+
+    if (listshow.length() <= 0)
+        return;
+
+    Q_EMIT insertRows(showIndex, listshow.length());
+    {
+        QWriteLocker lk(&locker);
+        visibleChildren.append(listshow);
+    }
+    Q_EMIT insertFinish();
 }
 
 void FileSortWorker::handleModelGetSourceData()
@@ -395,6 +443,13 @@ void FileSortWorker::handleTraversalFinish(const QString &key)
     Q_EMIT requestSetIdel();
 }
 
+void FileSortWorker::handleSortAll(const QString &key)
+{
+    if (currentKey != key)
+        return;
+    sortAllFiles();
+}
+
 void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
 {
     if (isCanceled)
@@ -402,6 +457,25 @@ void FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
 
     if (!child)
         return;
+
+    if (!child->url.isValid() || !childrenUrlList.contains(child->url))
+        return;
+
+    const auto &info = InfoFactory::create<AbstractFileInfo>(child->url);
+    if (!info)
+        return;
+    info->refresh();
+    SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
+    sortInfo->url = info->urlOf(UrlInfoType::kUrl);
+    sortInfo->isDir = info->isAttributes(OptInfoType::kIsDir);
+    sortInfo->isFile = !info->isAttributes(OptInfoType::kIsDir);
+    sortInfo->isHide = info->isAttributes(OptInfoType::kIsHidden);
+    sortInfo->isSymLink = info->isAttributes(OptInfoType::kIsHidden);
+    sortInfo->isReadable = info->isAttributes(OptInfoType::kIsReadable);
+    sortInfo->isWriteable = info->isAttributes(OptInfoType::kIsWritable);
+    sortInfo->isExecutable = info->isAttributes(OptInfoType::kIsExecutable);
+    info->fileMimeType();
+    children.replace(childrenUrlList.indexOf(child->url), sortInfo);
 
     handleUpdateFile(child->url);
 }
@@ -439,25 +513,11 @@ void FileSortWorker::handleUpdateFile(const QUrl &url)
     if (!url.isValid() || !childrenUrlList.contains(url))
         return;
 
-    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
-    if (!info)
-        return;
-    info->refresh();
-    SortInfoPointer sortInfo(new AbstractDirIterator::SortFileInfo);
-    sortInfo->url = info->urlOf(UrlInfoType::kUrl);
-    sortInfo->isDir = info->isAttributes(OptInfoType::kIsDir);
-    sortInfo->isFile = !info->isAttributes(OptInfoType::kIsDir);
-    sortInfo->isHide = info->isAttributes(OptInfoType::kIsHidden);
-    sortInfo->isSymLink = info->isAttributes(OptInfoType::kIsHidden);
-    sortInfo->isReadable = info->isAttributes(OptInfoType::kIsReadable);
-    sortInfo->isWriteable = info->isAttributes(OptInfoType::kIsWritable);
-    sortInfo->isExecutable = info->isAttributes(OptInfoType::kIsExecutable);
-    info->fileMimeType();
-    children.replace(childrenUrlList.indexOf(url), sortInfo);
-
-    QReadLocker lk(&locker);
-    if (!visibleChildren.contains(url))
-        return;
+    {
+        QReadLocker lk(&locker);
+        if (!visibleChildren.contains(url))
+            return;
+    }
 
     emit updateRow(visibleChildren.indexOf(url));
 }
@@ -729,6 +789,41 @@ void FileSortWorker::sortOnlyOrderChange()
     return;
 }
 
+void FileSortWorker::addChild(const SortInfoPointer &sortInfo, const AbstractFileInfoPointer &info)
+{
+    if (isCanceled)
+        return;
+
+    if (!sortInfo)
+        return;
+
+    if (childrenUrlList.contains(sortInfo->url))
+        return;
+
+    children.append(sortInfo);
+    childrenUrlList.append(sortInfo->url);
+    {
+        QWriteLocker lk(&childrenDataLocker);
+        childrenDataMap.insert(sortInfo->url, new FileItemData(sortInfo->url, info, rootdata));
+    }
+    if (!checkFilters(sortInfo))
+        return;
+
+    if (isCanceled)
+        return;
+    int showIndex = visibleChildren.length();
+
+    if (isCanceled)
+        return;
+
+    Q_EMIT insertRows(showIndex, 1);
+    {
+        QWriteLocker lk(&locker);
+        visibleChildren.append(sortInfo->url);
+    }
+    Q_EMIT insertFinish();
+}
+
 void FileSortWorker::addChild(const SortInfoPointer &sortInfo,
                               const AbstractSortAndFiter::SortScenarios sort)
 {
@@ -778,8 +873,15 @@ bool FileSortWorker::lessThan(const QUrl &left, const QUrl &right, AbstractSortA
     if (isCanceled)
         return false;
 
-    const AbstractFileInfoPointer &leftInfo = InfoFactory::create<AbstractFileInfo>(left);
-    const AbstractFileInfoPointer &rightInfo = InfoFactory::create<AbstractFileInfo>(right);
+    const auto &leftItem = childrenDataMap.value(left);
+    const auto &rightItem = childrenDataMap.value(right);
+
+    const AbstractFileInfoPointer &leftInfo = leftItem && leftItem->fileInfo()
+            ? leftItem->fileInfo()
+            : InfoFactory::create<AbstractFileInfo>(left);
+    const AbstractFileInfoPointer &rightInfo = rightItem && rightItem->fileInfo()
+            ? rightItem->fileInfo()
+            : InfoFactory::create<AbstractFileInfo>(right);
 
     if (!leftInfo)
         return false;

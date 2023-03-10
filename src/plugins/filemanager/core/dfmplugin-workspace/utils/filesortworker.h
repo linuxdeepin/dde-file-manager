@@ -87,7 +87,8 @@ public slots:
                               const Qt::SortOrder sortOrder,
                               const bool isMixDirAndFile,
                               const bool isFinished);
-    void handleIteratorChild(const QString &key, const SortInfoPointer child);
+    void handleIteratorChild(const QString &key, const SortInfoPointer child, const AbstractFileInfoPointer info);
+    void handleIteratorChildren(const QString &key, QList<SortInfoPointer> children, QList<AbstractFileInfoPointer> infos);
     //Get data from the data area according to the url, filter and sort the data
     void handleModelGetSourceData();
     void setFilters(QDir::Filters filters);
@@ -102,6 +103,7 @@ public slots:
     void handleWatcherRemoveChildren(QList<SortInfoPointer> children);
     void resort(const Qt::SortOrder order, const Global::ItemRoles sortRole, const bool isMixDirAndFile);
     void handleTraversalFinish(const QString &key);
+    void handleSortAll(const QString &key);
     void handleWatcherUpdateFile(const SortInfoPointer child);
     void handleWatcherUpdateHideFile(const QUrl &hidUrl);
     void handleUpdateFile(const QUrl &url);
@@ -116,6 +118,7 @@ private:
     void sortAllFiles();
     // 有序的情况下只是点击升序还是降序特殊处理
     void sortOnlyOrderChange();
+    void addChild(const SortInfoPointer &sortInfo, const AbstractFileInfoPointer &info);
     void addChild(const SortInfoPointer &sortInfo,
                   const AbstractSortAndFiter::SortScenarios sort);
 
