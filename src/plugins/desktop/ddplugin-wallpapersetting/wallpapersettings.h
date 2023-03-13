@@ -50,6 +50,7 @@ protected:
     void loadScreenSaver();
     void applyToDesktop();
     void applyToGreeter();
+    bool isWallpaperLocked() const;
 
 private:
     void init();

@@ -1133,20 +1133,14 @@ QString FileUtils::dateTimeFormat()
 bool FileUtils::setBackGround(const QString &pictureFilePath)
 {
     if (QFileInfo::exists("/var/lib/deepin/permission-manager/wallpaper_locked")) {
-        DDBusSender()
-                .service("org.freedesktop.Notifications")
-                .path("/org/freedesktop/Notifications")
-                .interface("org.freedesktop.Notifications")
-                .method(QString("Notify"))
-                .arg(QString("dde-file-manager"))
-                .arg(static_cast<uint>(0))
-                .arg(QString("dde-file-manager"))
-                .arg(QObject::tr("This system wallpaer is locked. Please contact your admin."))
-                .arg(QString())
-                .arg(QStringList())
-                .arg(QVariantMap())
-                .arg(5000)
-                .call();
+        QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
+        notify.asyncCall(QString("Notify"),
+                         QString("dde-file-manager"), // title
+                         static_cast<uint>(0),
+                         QString("dde-file-manager"), // icon
+                         QObject::tr("This system wallpaper is locked. Please contact your admin."),
+                         QString(), QStringList(), QVariantMap(), 5000);
+        qInfo() << "wallpaper is locked..";
         return false;
     }
 

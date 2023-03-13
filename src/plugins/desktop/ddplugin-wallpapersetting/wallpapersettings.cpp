@@ -410,12 +410,16 @@ void WallpaperSettingsPrivate::onItemButtonClicked(WallpaperItem *item, const QS
         return;
 
     if (id == DESKTOP_BUTTON_ID) {
-        q->applyToDesktop();
+        if (!q->isWallpaperLocked())
+            q->applyToDesktop();
     } else if (id == LOCK_SCREEN_BUTTON_ID) {
-        q->applyToGreeter();
+        if (!q->isWallpaperLocked())
+            q->applyToGreeter();
     } else if (id == DESKTOP_AND_LOCKSCREEN_BUTTON_ID) {
-        q->applyToDesktop();
-        q->applyToGreeter();
+        if (!q->isWallpaperLocked()) {
+            q->applyToDesktop();
+            q->applyToGreeter();
+        }
     } else if (id == SCREENSAVER_BUTTON_ID) {
         screenSaverIfs->setCurrentScreenSaver(item->itemData());
     } else if (id == CUSTOMSCREENSAVER_BUTTON_ID) {
@@ -1115,24 +1119,6 @@ void WallpaperSettings::loadScreenSaver()
 
 void WallpaperSettings::applyToDesktop()
 {
-    if (QFileInfo::exists("/var/lib/deepin/permission-manager/wallpaper_locked")) {
-        DDBusSender()
-                .service("org.freedesktop.Notifications")
-                .path("/org/freedesktop/Notifications")
-                .interface("org.freedesktop.Notifications")
-                .method(QString("Notify"))
-                .arg(QString("dde-file-manager")) // title
-                .arg(static_cast<uint>(0))
-                .arg(QString("dde-file-manager")) // icon
-                .arg(tr("This system wallpaer is locked. Please contact your admin."))
-                .arg(QString())
-                .arg(QStringList())
-                .arg(QVariantMap())
-                .arg(5000)
-                .call();
-        return;
-    }
-
     if (nullptr == d->appearanceIfs) {
         qWarning() << "appearanceIfs is nullptr";
         return;
@@ -1167,6 +1153,23 @@ void WallpaperSettings::applyToGreeter()
     qInfo() << "dbus Appearance greeterbackground is called " << d->currentSelectedWallpaper;
     d->appearanceIfs->Set("greeterbackground", d->currentSelectedWallpaper);
     qInfo() << "dbus Appearance greeterbackground end ";
+}
+
+bool WallpaperSettings::isWallpaperLocked() const
+{
+    if (QFileInfo::exists("/var/lib/deepin/permission-manager/wallpaper_locked")) {
+        QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
+        notify.asyncCall(QString("Notify"),
+                         QString("dde-file-manager"), // title
+                         static_cast<uint>(0),
+                         QString("dde-file-manager"), // icon
+                         tr("This system wallpaper is locked. Please contact your admin."),
+                         QString(), QStringList(), QVariantMap(), 5000);
+        qInfo() << "wallpaper is locked..";
+        return true;
+    }
+
+    return false;
 }
 
 void WallpaperSettings::init()
