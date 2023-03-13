@@ -65,7 +65,7 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
 bool SmbBrowserMenuScene::create(QMenu *parent)
 {
     if (!parent)
-        return AbstractMenuScene::create(parent);
+        return false;
 
     auto addAct = [&](const QString &actId) {
         auto act = parent->addAction(d->predicateName[actId]);

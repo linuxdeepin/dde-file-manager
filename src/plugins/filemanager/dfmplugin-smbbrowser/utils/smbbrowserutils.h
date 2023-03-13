@@ -20,7 +20,6 @@ namespace smb_browser_utils {
 QString networkScheme();
 QUrl netNeighborRootUrl();
 QIcon icon();
-QString getShareDirFromUrl(const QUrl &url);
 bool isSmbMounted(const QString &stdSmb);
 QString getDeviceIdByStdSmb(const QString &stdSmb);
 

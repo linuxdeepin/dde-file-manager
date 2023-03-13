@@ -4,6 +4,8 @@
 
 #include "stubext.h"
 #include "addr_any.h"
+#include "utils/smbbrowserutils.h"
+#include "displaycontrol/protocoldevicedisplaymanager.h"
 
 #include "stubmenueventinterface.h"
 #include "plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.h"
@@ -32,6 +34,7 @@ private:
 
 TEST_F(UT_SmbBrowser, Initialize)
 {
+    stub.set_lamda(smb_browser_utils::bindSetting, [] { __DBG_STUB_INVOKE__ });
     EXPECT_NO_FATAL_FAILURE(ins.initialize());
 }
 
@@ -45,7 +48,7 @@ TEST_F(UT_SmbBrowser, Start)
     stub.set_lamda(push2, [] { __DBG_STUB_INVOKE__ return QVariant(); });
 
     shared_stubs::stubAllMenuInterfaces(&stub);
-
+    stub.set_lamda(ProtocolDeviceDisplayManager::instance, [] { __DBG_STUB_INVOKE__ return nullptr; });
     EXPECT_NO_FATAL_FAILURE(ins.start());
 }
 

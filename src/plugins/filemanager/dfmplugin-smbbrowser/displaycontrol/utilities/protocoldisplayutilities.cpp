@@ -212,10 +212,7 @@ QString protocol_display_utilities::getDisplayNameOf(const QString &devId)
 QString protocol_display_utilities::getDisplayNameOf(const QUrl &entryUrl)
 {
     DFMEntryFileInfoPointer entry { new EntryFileInfo(entryUrl) };
-    if (!entry)
-        return "";
-
-    return entry->displayName();
+    return entry ? entry->displayName() : "";
 }
 
 void ui_ventry_calls::addAggregatedItemForSeperatedOnlineItem(const QUrl &entryUrl)
