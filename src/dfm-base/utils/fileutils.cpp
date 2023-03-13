@@ -50,6 +50,7 @@
 
 #include <unistd.h>
 #include <sys/stat.h>
+#include <linux/limits.h>
 
 #ifdef COMPILE_ON_V23
 #    define APPEARANCE_SERVICE "org.deepin.dde.Appearance1"
@@ -471,8 +472,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         }
 
         int maxLength = NAME_MAX - suffix.toLocal8Bit().size();
-        while (getFileNameLength(url, fileBaseName) > maxLength)
-            fileBaseName.chop(1);
+        fileBaseName = cutFileName(fileBaseName, maxLength, DeviceUtils::isSubpathOfDlnfs(url.path()));
 
         if (!isDesktopApp) {
             fileBaseName += suffix;
@@ -513,8 +513,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
                 : QString(".") + info->nameOf(NameInfoType::kSuffix);
 
         int maxLength = NAME_MAX - getFileNameLength(url, info->nameOf(NameInfoType::kFileName));
-        while (getFileNameLength(url, addText) > maxLength)
-            addText.chop(1);
+        addText = cutFileName(addText, maxLength, DeviceUtils::isSubpathOfDlnfs(url.path()));
 
         if (pair.second == AbstractJobHandler::FileNameAddFlag::kPrefix) {
             fileBaseName.insert(0, addText);
@@ -574,9 +573,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
                 ? QString()
                 : QString(".") + info->nameOf(NameInfoType::kSuffix);
         int maxLength = NAME_MAX - getFileNameLength(url, indexString) - suffix.toLocal8Bit().size();
-
-        while (getFileNameLength(url, fileBaseName) > maxLength)
-            fileBaseName.chop(1);
+        fileBaseName = cutFileName(fileBaseName, maxLength, DeviceUtils::isSubpathOfDlnfs(url.path()));
 
         fileBaseName = isDesktopApp ? (fileBaseName + indexString) : (fileBaseName + indexString + suffix);
         QUrl beModifieddUrl = { info->getUrlByType(UrlInfoType::kGetUrlByNewFileName, fileBaseName) };
@@ -620,6 +617,60 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
     }
 
     return result;
+}
+
+QString FileUtils::cutFileName(const QString &name, int maxLength, bool useCharCount)
+{
+    QString tmpName = name;
+    if (useCharCount) {
+        if (tmpName.length() > maxLength)
+            tmpName = tmpName.left(maxLength);
+
+        return tmpName;
+    }
+
+    if (tmpName.toLocal8Bit().length() <= maxLength)
+        return tmpName;
+
+    tmpName.clear();
+    int bytes = 0;
+    auto codec = QTextCodec::codecForLocale();
+
+    for (int i = 0; i < name.size(); ++i) {
+        const QChar &ch = name.at(i);
+        QByteArray data;
+        QString fullChar;
+
+        if (ch.isSurrogate()) {
+            if ((++i) >= name.size())
+                break;
+
+            const QChar &nextCh = name.at(i);
+            if (!ch.isHighSurrogate() || !nextCh.isLowSurrogate())
+                break;
+
+            data = codec->fromUnicode(name.data() + i - 1, 2);
+            fullChar.setUnicode(name.data() + i - 1, 2);
+        } else {
+            data = codec->fromUnicode(name.data() + i, 1);
+            fullChar.setUnicode(name.data() + i, 1);
+        }
+
+        if (codec->toUnicode(data) != fullChar) {
+            qWarning() << "Failed convert" << fullChar << "to" << codec->name() << "coding";
+            continue;
+        }
+
+        bytes += data.size();
+        if (bytes > maxLength)
+            break;
+
+        tmpName.append(ch);
+        if (ch.isSurrogate())
+            tmpName.append(name.at(i));
+    }
+
+    return tmpName;
 }
 
 QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl)
