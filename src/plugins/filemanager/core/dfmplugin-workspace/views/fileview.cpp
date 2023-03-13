@@ -32,10 +32,9 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #ifdef DTKWIDGET_CLASS_DSizeMode
-#include <DSizeMode>
-#include <DGuiApplicationHelper>
+#    include <DSizeMode>
+#    include <DGuiApplicationHelper>
 #endif
-
 
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -100,7 +99,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         setResizeMode(Adjust);
         setOrientation(QListView::LeftToRight, true);
 #ifdef DTKWIDGET_CLASS_DSizeMode
-        setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing,kIconViewSpacing));
+        setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing));
 #else
         setSpacing(kIconViewSpacing);
 #endif
@@ -513,8 +512,13 @@ FileView::RandeIndexList FileView::visibleIndexes(QRect rect) const
     int itemHeight = itemSize.height() + spacing * 2;
 
     if (isListViewMode()) {
-        list << RandeIndex(qMax((rect.top() + spacing) / itemHeight, 0),
-                           qMin((rect.bottom() - spacing) / itemHeight, count - 1));
+        int firstIndex = (rect.top() + spacing) / itemHeight;
+        int lastIndex = (rect.bottom() - spacing) / itemHeight;
+
+        if (firstIndex >= count)
+            return list;
+
+        list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
     } else if (isIconViewMode()) {
         rect -= QMargins(spacing, spacing, spacing, spacing);
 
@@ -1068,7 +1072,7 @@ QRect FileView::visualRect(const QModelIndex &index) const
     } else {
         int iconViewSpacing = kIconViewSpacing;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-        iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing,kIconViewSpacing);
+        iconViewSpacing = DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing);
 #endif
         int itemWidth = itemSize.width() + iconViewSpacing * 2;
         int columnCount = d->iconModeColumnCount(itemWidth);
@@ -1514,9 +1518,9 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::previewAttributeChanged, this, &FileView::onWidgetUpdate);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    connect(DGuiApplicationHelper::instance(),&DGuiApplicationHelper::sizeModeChanged,this,[this](){
-        if(d->currentViewMode == Global::ViewMode::kIconMode)
-            this->setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing,kIconViewSpacing));
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        if (d->currentViewMode == Global::ViewMode::kIconMode)
+            this->setSpacing(DSizeModeHelper::element(kCompactIconViewSpacing, kIconViewSpacing));
     });
 #endif
 
