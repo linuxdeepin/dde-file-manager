@@ -23,7 +23,7 @@ PolicyManager::PolicyManager(QObject *parent)
                                          SLOT(slotVaultPolicy()));
 }
 
-int PolicyManager::getVaultPolicy()
+VaultPolicyState PolicyManager::getVaultPolicy()
 {
     return VaultDBusUtils::getVaultPolicy();
 }
@@ -57,7 +57,7 @@ PolicyManager *PolicyManager::instance()
 void PolicyManager::slotVaultPolicy()
 {
     switch (getVaultPolicy()) {
-    case 1: {
+    case VaultPolicyState::kNotEnable: {
         switch (getVaultCurrentPageMark()) {
         case VaultPageMark::kUnknown:
             vaultVisiable = false;
@@ -96,7 +96,7 @@ void PolicyManager::slotVaultPolicy()
         VaultVisibleManager::instance()->removeSideBarVaultItem();
         VaultVisibleManager::instance()->removeComputerVaultItem();
     } break;
-    case 2:
+    case VaultPolicyState::kEnable:
         if (!vaultVisiable) {
             vaultVisiable = true;
             VaultVisibleManager::instance()->infoRegister();

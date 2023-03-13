@@ -7,6 +7,7 @@
 #include <QtDBus/QDBusReply>
 #include <QtDBus/QDBusUnixFileDescriptor>
 #include <DDBusSender>
+#include <QDBusConnectionInterface>
 #include <QDebug>
 
 #include <unistd.h>
@@ -42,14 +43,17 @@ QVariant VaultDBusUtils::vaultManagerDBusCall(QString function, const QVariant &
     return value;
 }
 
-int VaultDBusUtils::getVaultPolicy()
+VaultPolicyState VaultDBusUtils::getVaultPolicy()
 {
-    QDBusInterface deepinSystemInfo("com.deepin.filemanager.daemon",
+    if (!isServiceRegister(QDBusConnection::SystemBus, kDeamonServiceName))
+        return VaultPolicyState::kEnable;
+
+    QDBusInterface deepinSystemInfo(kDeamonServiceName,
                                     "/com/deepin/filemanager/daemon/AccessControlManager",
                                     "com.deepin.filemanager.daemon.AccessControlManager",
                                     QDBusConnection::systemBus());
 
-    int vaulthidestate = -1;
+    VaultPolicyState vaulthidestate { VaultPolicyState::kUnkonw };
 
     //调用
     auto response = deepinSystemInfo.call("QueryVaultAccessPolicyVisible");
@@ -59,14 +63,10 @@ int VaultDBusUtils::getVaultPolicy()
         QVariantList value = response.arguments();
         if (!value.isEmpty()) {
             QVariant varVaule = value.first();
-            vaulthidestate = varVaule.toInt();
-        } else {
-            vaulthidestate = -1;
+            vaulthidestate = static_cast<VaultPolicyState>(varVaule.toInt());
         }
-
     } else {
-        qDebug() << "value method called failed!";
-        vaulthidestate = -1;
+        qInfo() << "Vault error: value method called failed!";
     }
 
     return vaulthidestate;
@@ -74,7 +74,10 @@ int VaultDBusUtils::getVaultPolicy()
 
 bool VaultDBusUtils::setVaultPolicyState(int policyState)
 {
-    QDBusInterface deepinSystemInfo("com.deepin.filemanager.daemon",
+    if (!isServiceRegister(QDBusConnection::SystemBus, kDeamonServiceName))
+        return false;
+
+    QDBusInterface deepinSystemInfo(kDeamonServiceName,
                                     "/com/deepin/filemanager/daemon/AccessControlManager",
                                     "com.deepin.filemanager.daemon.AccessControlManager",
                                     QDBusConnection::systemBus());
@@ -211,4 +214,30 @@ void VaultDBusUtils::restoreLeftoverErrorInputTimes()
         if (reply.isError())
             qInfo() << "Warning: Error in restoring the remaining number of incorrect entries!" << reply.error().message();
     }
+}
+
+bool VaultDBusUtils::isServiceRegister(QDBusConnection::BusType type, const QString &serviceName)
+{
+    QDBusConnectionInterface *interface { nullptr };
+    switch (type) {
+    case QDBusConnection::SystemBus:
+        interface = QDBusConnection::systemBus().interface();
+        break;
+    case QDBusConnection::SessionBus:
+        interface = QDBusConnection::sessionBus().interface();
+        break;
+    default:
+        break;
+    }
+    if (!interface) {
+        qWarning() << "Vault error: dbus is not available.";
+        return false;
+    }
+
+    if (!interface->isServiceRegistered(serviceName)) {
+        qWarning() << "Vault error: service is not registered";
+        return false;
+    }
+
+    return true;
 }

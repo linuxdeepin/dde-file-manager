@@ -36,9 +36,7 @@ using namespace dfmplugin_vault;
 VaultUnlockPages::VaultUnlockPages(QWidget *parent)
     : VaultPageBase(parent)
 {
-
     setIcon(QIcon::fromTheme("dfm_vault"));
-    setMinimumSize(396, 270);
     connect(this, &VaultUnlockPages::buttonClicked, this, &VaultUnlockPages::onButtonClicked);
     setOnButtonClickedClose(false);
 }

@@ -24,7 +24,7 @@ using namespace dfmplugin_vault;
 VaultRemoveProgressView::VaultRemoveProgressView(QWidget *parent)
     : QWidget(parent), vaultRmProgressBar(new DWaterProgress(this))
 {
-    vaultRmProgressBar->setFixedSize(80, 80);
+//    vaultRmProgressBar->setFixedSize(80, 80);
     QHBoxLayout *layout = new QHBoxLayout();
     layout->setMargin(0);
     layout->addWidget(vaultRmProgressBar, 1, Qt::AlignCenter);

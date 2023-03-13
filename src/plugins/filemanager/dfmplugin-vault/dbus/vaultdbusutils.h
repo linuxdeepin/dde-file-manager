@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QDBusConnection>
 
 namespace dfmplugin_vault {
 class VaultDBusUtils
@@ -16,7 +17,7 @@ class VaultDBusUtils
 public:
     static QVariant vaultManagerDBusCall(QString function, const QVariant &vaule = {});
 
-    static int getVaultPolicy();
+    static VaultPolicyState getVaultPolicy();
 
     static bool setVaultPolicyState(int policyState);
 
@@ -33,6 +34,7 @@ public:
     static void restoreNeedWaitMinutes();
 
     static void restoreLeftoverErrorInputTimes();
+    static bool isServiceRegister(QDBusConnection::BusType type, const QString &serviceName);
 };
 }
 #endif   // VAULTDBUSUTILS_H

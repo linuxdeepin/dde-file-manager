@@ -22,6 +22,12 @@ enum VaultState {
     kNotAvailable
 };
 
+enum VaultPolicyState {
+    kUnkonw = 0,
+    kNotEnable,
+    kEnable
+};
+
 enum class ErrorCode : int {
     //! 成功
     kSuccess = 0,
@@ -138,6 +144,8 @@ enum class EncryptType : int {
 namespace AcName {
 inline constexpr char kAcSidebarVaultMenu[] { "sidebar_vaultitem_menu" };
 }
+
+inline constexpr char kDeamonServiceName[] { "com.deepin.filemanager.daemon" };
 
 DPVAULT_END_NAMESPACE
 

@@ -67,7 +67,7 @@ void UnlockView::initUI()
 
     //! 布局
     QHBoxLayout *play1 = new QHBoxLayout();
-    play1->setMargin(0);
+    play1->setContentsMargins(0, 10, 0, 0);
     play1->addWidget(passwordEdit);
     play1->addWidget(tipsButton);
 

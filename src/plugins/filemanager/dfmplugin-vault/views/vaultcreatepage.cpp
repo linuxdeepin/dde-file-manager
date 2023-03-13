@@ -48,7 +48,6 @@ VaultActiveView::VaultActiveView(QWidget *parent)
     stackedWidget->layout()->setMargin(0);
 
     this->addContent(stackedWidget);
-    setMinimumSize(472, 400);
 
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 }

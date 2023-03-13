@@ -32,11 +32,7 @@ private:
     explicit PolicyManager(QObject *parent = nullptr);
 
 public:
-    /*!
-     * \brief getVaultPolicy 获取当前策略
-     * \return 返回保险箱是否隐藏  1隐藏 2显示
-     */
-    static int getVaultPolicy();
+    static VaultPolicyState getVaultPolicy();
 
     /*!
      * \brief setVaultPolicyState 设置策略是否可用

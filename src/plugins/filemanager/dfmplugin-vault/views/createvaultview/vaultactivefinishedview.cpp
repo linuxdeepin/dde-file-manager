@@ -62,7 +62,6 @@ void VaultActiveFinishedView::initUi()
     // 进度条
     waterProgress = new DWaterProgress(this);
     waterProgress->setValue(1);
-    waterProgress->setFixedSize(98, 98);
     // 进度条提示
     tipsLabelone = new DLabel(tr("Encrypting..."), this);
     tipsLabelone->setAlignment(Qt::AlignHCenter);
