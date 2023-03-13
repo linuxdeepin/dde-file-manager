@@ -61,6 +61,8 @@ bool DAttachedProtocolDevice::deviceUsageValid()
 
 QPair<quint64, quint64> DAttachedProtocolDevice::deviceUsage()
 {
+    if (!device)
+        return { 0, 0 };
     qint64 bytesTotal = device->sizeTotal();
     qint64 bytesFree = device->sizeFree();
     return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));

@@ -9,6 +9,10 @@
 #include <QCoreApplication>
 #include <QVariantMap>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonParseError>
+#include <QFile>
 
 #include <dfm-mount/dblockdevice.h>
 
@@ -114,6 +118,12 @@ bool DAttachedBlockDevice::deviceUsageValid()
 QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 {
     if (deviceUsageValid()) {
+        if (device->optical())
+            return loadOpticalUsage();
+
+        //        if (device->isEncrypted())
+        //            return loadEncryptedUsage();
+
         qint64 bytesTotal { device->sizeTotal() };
         qint64 bytesFree { device->sizeFree() };
         return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
@@ -169,4 +179,56 @@ QUrl DAttachedBlockDevice::accessPointUrl()
 void DAttachedBlockDevice::query()
 {
     device = DeviceWatcherLite::instance()->createBlockDevicePtr(deviceId);
+}
+
+QPair<quint64, quint64> DAttachedBlockDevice::loadOpticalUsage()
+{
+    if (!device)
+        return { 0, 0 };
+
+    const QString kTmpPath = "/tmp/.config/deepin/dde-file-manager/dde-file-manager.dp";
+    QFile f(kTmpPath);
+    if (!f.open(QIODevice::ReadOnly))
+        return { 0, 0 };
+    auto jsonArray = f.readAll();
+    f.close();
+
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(jsonArray, &err);
+    if (err.error != QJsonParseError::NoError) {
+        qDebug() << "[disk-mount]: cannot parse optical usage file" << err.errorString();
+        return { 0, 0 };
+    }
+
+    QString devDesc = device->device().mid(5);   // /dev/sr0 ==> sr0
+    QJsonObject rootObj = doc.object();
+    if (!rootObj.contains("BurnAttribute"))
+        return { 0, 0 };
+
+    auto burnAttrObj = rootObj.value("BurnAttribute").toObject();
+    if (burnAttrObj.isEmpty())
+        return { 0, 0 };
+
+    auto devObj = burnAttrObj.value(devDesc).toObject();
+    if (devObj.isEmpty())
+        return { 0, 0 };
+
+    quint64 total = devObj.value("BurnTotalSize").toVariant().toULongLong();
+    quint64 used = devObj.value("BurnUsedSize").toVariant().toULongLong();
+    return { total - used, total };
+}
+
+QPair<quint64, quint64> DAttachedBlockDevice::loadEncryptedUsage()
+{
+    if (!device || !device->isEncrypted())
+        return { 0, 0 };
+
+    QString clearDevId = device->getProperty(dfmmount::Property::kEncryptedCleartextDevice).toString();
+    auto clearDev = DeviceWatcherLite::instance()->createBlockDevicePtr(clearDevId);
+    if (!clearDev)
+        return { 0, 0 };
+
+    qint64 bytesTotal { clearDev->sizeTotal() };
+    qint64 bytesFree { clearDev->sizeFree() };
+    return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
 }

@@ -32,6 +32,8 @@ public:
 
 protected:
     void query() override;
+    QPair<quint64, quint64> loadOpticalUsage();
+    QPair<quint64, quint64> loadEncryptedUsage();
 
 private:
     const QString ddeI18nSym { QStringLiteral("_dde_") };
