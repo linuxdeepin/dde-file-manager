@@ -162,9 +162,6 @@ void RootInfo::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
     if (info)
         info->refresh();
 
-    if (toUrl.scheme() != url.scheme())
-        return;
-
     if (!containsChild(toUrl)) {
         {
             // Before the file moved signal is received, `toUrl` may be filtered if it received a created signal

@@ -154,6 +154,6 @@ void RecentFileWatcher::onFileRename(const QUrl &oldUrl, const QUrl &newUrl)
     removeWatcher(newOldUrl);
     RecentManager::instance()->removeRecentFile(newOldUrl);
 
-    emit fileRename(newOldUrl, newUrl);
+    emit fileDeleted(newOldUrl);
 }
 }
