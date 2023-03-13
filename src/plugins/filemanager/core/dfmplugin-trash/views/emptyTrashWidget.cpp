@@ -24,8 +24,7 @@ EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
 
     trashLabel->setText(tr("Trash"));
     QFont f = trashLabel->font();
-    f.setPixelSize(17);
-    f.setBold(true);
+    f.setPixelSize(20);
     trashLabel->setFont(f);
     QPushButton *emptyTrashButton = new QPushButton;
     emptyTrashButton->setContentsMargins(0, 0, 0, 0);

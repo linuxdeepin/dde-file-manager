@@ -112,7 +112,6 @@ void DetailView::initInfoUI()
     scrollArea->setWidget(expandFrame);
 
     vLayout = new QVBoxLayout(this);
-    vLayout->setSpacing(8);
     vLayout->addStretch();
     expandFrame->setLayout(vLayout);
 
@@ -155,6 +154,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         else
             iconLabel->setPixmap(info->fileIcon().pixmap(targetSize));
         iconLabel->setAlignment(Qt::AlignCenter);
+        iconLabel->setContentsMargins(0, 0, 0, 15);
         vLayout->insertWidget(0, iconLabel, 0, Qt::AlignHCenter);
     }
 }
