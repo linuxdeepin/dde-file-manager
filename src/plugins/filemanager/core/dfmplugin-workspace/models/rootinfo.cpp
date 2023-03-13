@@ -313,7 +313,7 @@ void RootInfo::addChildren(const QList<QUrl> &urlList)
 
         auto child = fileInfo(url);
 
-        if (!child)
+        if (!child || !child->exists())
             continue;
 
         auto sortInfo = addChild(child);
