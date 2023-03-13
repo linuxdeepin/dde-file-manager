@@ -19,8 +19,10 @@ class UserSharePasswordSettingDialog : public DTK_WIDGET_NAMESPACE::DDialog
 public:
     explicit UserSharePasswordSettingDialog(QWidget *parent = nullptr);
     void initializeUi();
+
 Q_SIGNALS:
     void inputPassword(const QString &password);
+
 public Q_SLOTS:
     void onButtonClicked(const int &index);
 

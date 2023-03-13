@@ -56,12 +56,16 @@ void UserSharePasswordSettingDialog::initializeUi()
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);
-        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
+        // this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
         this->setFixedSize(QSize(390, 210));
     }
+
+    setTabOrder(passwordEdit, getButton(0));
+    setTabOrder(getButton(0), this);
+    passwordEdit->setFocus();
 }
 
 void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
