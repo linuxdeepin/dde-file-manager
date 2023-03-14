@@ -253,7 +253,7 @@ void FileDialogStatusBar::initializeUi()
 
     contentLayout = new QHBoxLayout();
     contentLayout->setSpacing(10);
-    contentLayout->setContentsMargins(10, 10, 10, 0);
+    contentLayout->setContentsMargins(10, 3, 10, 3);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
@@ -343,7 +343,9 @@ void FileDialogStatusBar::updateLayout()
     }
 
     QVBoxLayout *labelLayout = new QVBoxLayout();
+    labelLayout->setSpacing(5);
     QVBoxLayout *centerLayout = new QVBoxLayout();
+    centerLayout->setSpacing(5);
 
     if (curMode == kSave) {
         labelLayout->addWidget(fileNameLabel);
@@ -370,6 +372,7 @@ void FileDialogStatusBar::updateLayout()
     }
 
     QVBoxLayout *buttonLayout = new QVBoxLayout();
+    buttonLayout->setSpacing(5);
 
     buttonLayout->addWidget(curRejectButton);
     buttonLayout->addWidget(curAcceptButton);
