@@ -95,7 +95,12 @@ TEST_F(UT_SmbBrowserUtils, StartService)
     EXPECT_FALSE(smb_browser_utils::startService("hello"));
     EXPECT_FALSE(smb_browser_utils::startService("xxx..."));
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    stub.set_lamda(&QDBusAbstractInterface::asyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
+#else
     stub.set_lamda(&QDBusAbstractInterface::doAsyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
+#endif
+
     stub.set_lamda(&QDBusPendingCall::waitForFinished, [] { __DBG_STUB_INVOKE__ });
     stub.set_lamda(&QDBusPendingCall::isValid, [] { __DBG_STUB_INVOKE__ return true; });
     EXPECT_TRUE(smb_browser_utils::startService("smb"));
@@ -105,7 +110,11 @@ TEST_F(UT_SmbBrowserUtils, StartService)
 
 TEST_F(UT_SmbBrowserUtils, EnableServiceAsync)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    stub.set_lamda(&QDBusAbstractInterface::asyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
+#else
     stub.set_lamda(&QDBusAbstractInterface::doAsyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
+#endif
     EXPECT_NO_FATAL_FAILURE(smb_browser_utils::enableServiceAsync());
 }
 
