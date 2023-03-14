@@ -49,7 +49,7 @@ int FileViewStatusBar::scalingValue()
     return scaleSlider->value();
 }
 
-QSlider *FileViewStatusBar::scalingSlider() const
+DSlider *FileViewStatusBar::scalingSlider() const
 {
     return scaleSlider;
 }
@@ -72,13 +72,12 @@ void FileViewStatusBar::hideLoadingIncator()
 
 void FileViewStatusBar::initScalingSlider()
 {
-    scaleSlider = new QSlider(this);
-    scaleSlider->setOrientation(Qt::Horizontal);
+    scaleSlider = new DSlider(Qt::Horizontal, this);
     scaleSlider->adjustSize();
     scaleSlider->setFixedWidth(120);
     scaleSlider->setMaximum(1);
     scaleSlider->setMinimum(0);
-    scaleSlider->setTickInterval(1);
+    scaleSlider->slider()->setTickInterval(1);
     scaleSlider->setPageStep(1);
     scaleSlider->hide();
 }

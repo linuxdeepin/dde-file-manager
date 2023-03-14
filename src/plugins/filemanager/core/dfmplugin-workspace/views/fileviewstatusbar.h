@@ -25,7 +25,7 @@ public:
     void resetScalingSlider(const int stepCount);
     void setScalingVisible(const bool visible);
     int scalingValue();
-    QSlider *scalingSlider() const;
+    DSlider *scalingSlider() const;
     void showLoadingIncator(const QString &tip);
     void hideLoadingIncator();
 
@@ -37,8 +37,8 @@ private:
     void initLoadingIndicator();
     void setCustomLayout();
 
-    DPictureSequenceView *loadingIndicator = nullptr;
-    QSlider *scaleSlider = nullptr;
+    DPictureSequenceView *loadingIndicator { nullptr };
+    DSlider *scaleSlider { nullptr };
 };
 
 }

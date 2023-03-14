@@ -1492,7 +1492,7 @@ void FileView::initializeConnect()
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
     connect(d->updateActiveIndexTimer, &QTimer::timeout, this, &FileView::updateModelActiveIndex);
 
-    connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
+    connect(d->statusBar->scalingSlider(), &DSlider::valueChanged, this, &FileView::onScalingValueChanged);
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::delayUpdateModelActiveIndex);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
