@@ -6,6 +6,8 @@
 #include "addr_any.h"
 #include "utils/smbbrowserutils.h"
 #include "displaycontrol/protocoldevicedisplaymanager.h"
+#include "events/traversprehandler.h"
+#include "events/smbbrowsereventreceiver.h"
 
 #include "stubmenueventinterface.h"
 #include "plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.h"
@@ -13,13 +15,18 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.cpp"
 
 #include <dfm-framework/event/eventchannel.h>
+
+#include <QMenu>
 
 #include <gtest/gtest.h>
 
 using namespace dfmplugin_smbbrowser;
 using namespace dpf;
+
+Q_DECLARE_METATYPE(QString *)
 
 class UT_SmbBrowser : public testing::Test
 {
@@ -35,6 +42,8 @@ private:
 TEST_F(UT_SmbBrowser, Initialize)
 {
     stub.set_lamda(smb_browser_utils::bindSetting, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&SmbBrowser::bindWindows, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&SmbBrowser::followEvents, [] { __DBG_STUB_INVOKE__ });
     EXPECT_NO_FATAL_FAILURE(ins.initialize());
 }
 
@@ -52,10 +61,19 @@ TEST_F(UT_SmbBrowser, Start)
     EXPECT_NO_FATAL_FAILURE(ins.start());
 }
 
-TEST_F(UT_SmbBrowser, Stop)
+TEST_F(UT_SmbBrowser, ContextmenuHandle)
 {
-    EXPECT_NO_FATAL_FAILURE(ins.stop());
-    EXPECT_NO_FATAL_FAILURE(ins.stop());
+    auto exec_QPoint_QAction = static_cast<QAction *(QMenu::*)(const QPoint &, QAction *)>(&QMenu::exec);
+    QAction *act = new QAction("hello");
+    stub.set_lamda(exec_QPoint_QAction, [=] { __DBG_STUB_INVOKE__ return act; });
+
+    typedef bool (dpf::EventDispatcherManager::*Publish)(const QString &, const QString &, QString, QList<QUrl> &);
+    auto publish = static_cast<Publish>(&dpf::EventDispatcherManager::publish);
+    stub.set_lamda(publish, [] { __DBG_STUB_INVOKE__ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(SmbBrowser::contextMenuHandle(0, QUrl("network:///"), QPoint()));
+    EXPECT_NO_FATAL_FAILURE(SmbBrowser::contextMenuHandle(0, QUrl(), QPoint()));
+    delete act;
 }
 
 TEST_F(UT_SmbBrowser, OnWindowOpened)
@@ -87,34 +105,41 @@ TEST_F(UT_SmbBrowser, AddNeighborToSidebar)
     EXPECT_NO_FATAL_FAILURE(ins.addNeighborToSidebar());
 }
 
-// TEST_F(UT_SmbBrowser, RegisterNetworkAccessPrehandler)
-//{
-//     typedef QVariant (EventChannelManager::*Push)(const QString &, const QString &, QString, Prehandler &);
-//     auto push = static_cast<Push>(&EventChannelManager::push);
-//     stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return false; });
-//     EXPECT_NO_FATAL_FAILURE(ins.registerNetworkAccessPrehandler());
-// }
+TEST_F(UT_SmbBrowser, RegisterNetworkAccessPrehandler)
+{
+    typedef QVariant (EventChannelManager::*Push)(const QString &, const QString &, QString, PrehandlerFunc &);
+    auto push = static_cast<Push>(&EventChannelManager::push);
+    stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return false; });
+    EXPECT_NO_FATAL_FAILURE(ins.registerNetworkAccessPrehandler());
+}
 
-// TEST_F(UT_SmbBrowser, NetworkAccessPrehandler)
-//{
-//     typedef bool (EventDispatcherManager::*Publish)(int, quint64, QUrl &&);
-//     auto publish = static_cast<Publish>(&EventDispatcherManager::publish);
-//     stub.set_lamda(publish, [] { __DBG_STUB_INVOKE__ return true; });
-//     DFMBASE_USE_NAMESPACE
-//     stub.set_lamda(&DialogManager::showErrorDialog, [] { __DBG_STUB_INVOKE__ });
+TEST_F(UT_SmbBrowser, REgisterNetworkToSearch)
+{
+    typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString, QVariantMap &&);
+    auto push = static_cast<Push>(&dpf::EventChannelManager::push);
+    stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return QVariant(); });
 
-//    QList<bool> arg1 { true, false };
-//    QList<dfmmount::DeviceError> arg2 { dfmmount::DeviceError::kNoError, dfmmount::DeviceError::kGIOErrorAlreadyMounted };
-//    QList<QString> arg3 { "/hello/world", "" };
-//    stub.set_lamda(&DeviceManager::mountNetworkDeviceAsync, [&](void *, const QString &, CallbackType1 cb, int) {
-//        __DBG_STUB_INVOKE__
-//        cb(arg1.first(), arg2.first(), arg3.first());
-//    });
+    EXPECT_NO_FATAL_FAILURE(ins.registerNetworkToSearch());
+}
 
-//    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl::fromLocalFile("/hello/world"), nullptr));
-//    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), nullptr));
+TEST_F(UT_SmbBrowser, BindWindows)
+{
+    stub.set_lamda(&SmbBrowser::onWindowOpened, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&FileManagerWindowsManager::windowIdList, [] { __DBG_STUB_INVOKE__ return QList<quint64> { 1, 2, 3 }; });
+    EXPECT_NO_FATAL_FAILURE(ins.bindWindows());
+}
 
-//    arg3.takeFirst();
-//    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), [] { __DBG_STUB_INVOKE__ }));
-//    EXPECT_NO_FATAL_FAILURE(ins.networkAccessPrehandler(0, QUrl("smb://1.23.4.5/hello/world"), nullptr));
-//}
+TEST_F(UT_SmbBrowser, FollowEvents)
+{
+    typedef bool (dpf::EventSequenceManager::*Follow1)(const QString &, const QString &,
+                                                       SmbBrowserEventReceiver *, decltype(&SmbBrowserEventReceiver::detailViewIcon));
+    auto follow1 = static_cast<Follow1>(&dpf::EventSequenceManager::follow);
+    stub.set_lamda(follow1, [] { __DBG_STUB_INVOKE__ return true; });
+
+    typedef bool (dpf::EventSequenceManager::*Follow2)(const QString &, const QString &,
+                                                       SmbBrowserEventReceiver *, decltype(&SmbBrowserEventReceiver::cancelDelete));
+    auto follow2 = static_cast<Follow2>(&dpf::EventSequenceManager::follow);
+    stub.set_lamda(follow2, [] { __DBG_STUB_INVOKE__ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(ins.followEvents());
+}

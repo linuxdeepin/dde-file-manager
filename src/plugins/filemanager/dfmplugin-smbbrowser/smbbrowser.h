@@ -25,7 +25,7 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
 
-    static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
+    static void contextMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
 
 protected Q_SLOTS:
     void onWindowOpened(quint64 windd);

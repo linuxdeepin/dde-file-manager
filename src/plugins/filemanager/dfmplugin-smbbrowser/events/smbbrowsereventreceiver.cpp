@@ -22,6 +22,9 @@ SmbBrowserEventReceiver *SmbBrowserEventReceiver::instance()
 
 bool SmbBrowserEventReceiver::detailViewIcon(const QUrl &url, QString *iconName)
 {
+    if (!iconName)
+        return false;
+
     if (UniversalUtils::urlEquals(url, QUrl(QString("%1:///").arg(Global::Scheme::kNetwork)))) {
         *iconName = SystemPathUtil::instance()->systemPathIconName("Network");
         if (!iconName->isEmpty())
@@ -42,4 +45,4 @@ bool SmbBrowserEventReceiver::cancelDelete(quint64, const QList<QUrl> &urls)
 }
 
 SmbBrowserEventReceiver::SmbBrowserEventReceiver(QObject *parent)
-    : QObject(parent) {}
+    : QObject(parent) { }

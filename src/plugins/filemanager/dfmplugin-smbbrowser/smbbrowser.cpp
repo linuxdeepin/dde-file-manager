@@ -70,20 +70,17 @@ bool SmbBrowser::start()
     return true;
 }
 
-void SmbBrowser::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
+void SmbBrowser::contextMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     QFileInfo info(url.path());
     bool bEnabled = info.exists();
-    // TODO(xust) menu of Computer in lan;
 
     QMenu *menu = new QMenu;
     if (url.scheme() == Global::Scheme::kNetwork) {
         auto newWindowAct = menu->addAction(QObject::tr("Open in new window"), [url]() { SmbBrowserEventCaller::sendOpenWindow(url); });
         newWindowAct->setEnabled(bEnabled);
 
-        auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
-            SmbBrowserEventCaller::sendOpenTab(windowId, url);
-        });
+        auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() { SmbBrowserEventCaller::sendOpenTab(windowId, url); });
         newTabAct->setEnabled(bEnabled && SmbBrowserEventCaller::sendCheckTabAddable(windowId));
     }
 
@@ -101,7 +98,7 @@ void SmbBrowser::onWindowOpened(quint64 winId)
     if (!window)
         return;
 
-    ContextMenuCallback ctxMenuHandle = { SmbBrowser::contenxtMenuHandle };
+    ContextMenuCallback ctxMenuHandle = { SmbBrowser::contextMenuHandle };
     if (window->sideBar()) {
         addNeighborToSidebar();
     } else {
@@ -142,7 +139,7 @@ void SmbBrowser::followEvents()
 
 void SmbBrowser::addNeighborToSidebar()
 {
-    ContextMenuCallback contextMenuCb { SmbBrowser::contenxtMenuHandle };
+    ContextMenuCallback contextMenuCb { SmbBrowser::contextMenuHandle };
     Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
     QVariantMap map {
         { "Property_Key_Group", "Group_Network" },

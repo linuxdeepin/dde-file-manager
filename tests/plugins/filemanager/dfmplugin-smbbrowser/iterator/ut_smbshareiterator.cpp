@@ -36,6 +36,7 @@ private:
 
 TEST_F(UT_SmbShareIterator, Next)
 {
+    iter->d->rootUrl.setPort(448);
     EXPECT_NO_FATAL_FAILURE(iter->next());
     EXPECT_FALSE(iter->next().isValid());
 }

@@ -25,7 +25,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
-*/
+ */
 
 //需修改Stub的私用成员函数和成员变量为保护类型
 #include "stub.h"
@@ -47,7 +47,7 @@ class StubExt : public Stub
 {
 public:
     StubExt()
-        : Stub() {}
+        : Stub() { }
 
     template<typename T, class Lamda>
     bool set_lamda(T addr, Lamda lamda)
@@ -91,6 +91,33 @@ public:
             freeWrapper(iter->second);
         }
         m_wrappers.clear();
+    }
+
+    template<class T>
+    static void *get_ctor_addr(bool start = true)
+    {
+        // the start vairable must be true, or the compiler will optimize out.
+        if (start) goto Start;
+    Call_Constructor:
+        // This line of code will not be executed.
+        // The purpose of the code is to allow the compiler to generate the assembly code that calls the constructor.
+        T();
+    Start:
+        // The address of the line of code T() obtained by assembly
+        char *p = (char *)&&Call_Constructor;   // https://gcc.gnu.org/onlinedocs/gcc/Labels-as-Values.html
+        // CALL rel32
+        void *ret = 0;
+        char pos;
+        char call = 0xe8;
+        do {
+            pos = *p;
+            if (pos == call) {
+                ret = p + 5 + (*(int *)(p + 1));
+            }
+
+        } while (!ret && (++p));
+
+        return ret;
     }
 
 protected:

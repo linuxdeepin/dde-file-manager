@@ -5,6 +5,8 @@
 #include "stubext.h"
 #include "plugins/filemanager/dfmplugin-smbbrowser/menu/smbbrowsermenuscene.h"
 #include "plugins/filemanager/dfmplugin-smbbrowser/private/smbbrowsermenuscene_p.h"
+#include "plugins/filemanager/dfmplugin-smbbrowser/utils/smbbrowserutils.h"
+
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -125,7 +127,7 @@ TEST_F(UT_SmbBrowserMenuScene, Scene)
 class UT_SmbBrowserMenuCreator : public testing::Test
 {
 protected:
-    virtual void SetUp() override {}
+    virtual void SetUp() override { }
     virtual void TearDown() override { stub.clear(); }
 
 private:
@@ -144,4 +146,63 @@ TEST_F(UT_SmbBrowserMenuCreator, Create)
     EXPECT_TRUE(scene != nullptr);
     EXPECT_STREQ("dfmbase::AbstractMenuScene", scene->metaObject()->className());
     EXPECT_NO_FATAL_FAILURE(delete scene);
+}
+
+class UT_SmbBrowserMenuScenePrivate : public testing::Test
+{
+protected:
+    virtual void SetUp() override
+    {
+        scene = new SmbBrowserMenuScene();
+        d = scene->d.data();
+    }
+    virtual void TearDown() override
+    {
+        stub.clear();
+        delete scene;
+    }
+
+private:
+    stub_ext::StubExt stub;
+    SmbBrowserMenuScene *scene { nullptr };
+    SmbBrowserMenuScenePrivate *d { nullptr };
+};
+
+TEST_F(UT_SmbBrowserMenuScenePrivate, ActUnmount)
+{
+    d->url = QUrl("smb://1.2.3.4/hello");
+    stub.set_lamda(smb_browser_utils::getDeviceIdByStdSmb, [] { __DBG_STUB_INVOKE__ return "smb://1.2.3.4/hello"; });
+    stub.set_lamda(&dfmbase::DeviceManager::unmountProtocolDevAsync,
+                   [](void *, const QString &, const QVariantMap &, dfmbase::CallbackType2 cb) {
+                       __DBG_STUB_INVOKE__
+                       cb(false, DFMMOUNT::DeviceError::kNoError);
+                   });
+    stub.set_lamda(&dfmbase::DialogManager::showErrorDialogWhenOperateDeviceFailed, [] { __DBG_STUB_INVOKE__ });
+
+    EXPECT_NO_FATAL_FAILURE(d->actUnmount());
+}
+
+TEST_F(UT_SmbBrowserMenuScenePrivate, ActMount)
+{
+    d->url = QUrl("smb://1.2.3.4/hello");
+    stub.set_lamda(&dfmbase::DeviceManager::mountNetworkDeviceAsync,
+                   [](void *, const QString &, dfmbase::CallbackType1 cb, int) {
+                       __DBG_STUB_INVOKE__
+                       cb(false, DFMMOUNT::DeviceError::kNoError, "");
+                   });
+    stub.set_lamda(&dfmbase::DialogManager::showErrorDialogWhenOperateDeviceFailed, [] { __DBG_STUB_INVOKE__ });
+
+    EXPECT_NO_FATAL_FAILURE(d->actMount());
+}
+
+TEST_F(UT_SmbBrowserMenuScenePrivate, ActProperties)
+{
+    d->url = QUrl("smb://1.2.3.4/hello");
+    stub.set_lamda(smb_browser_utils::getDeviceIdByStdSmb, [] { __DBG_STUB_INVOKE__ return "smb://1.2.3.4/hello"; });
+
+    typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QList<QUrl>, QVariantHash &&);
+    auto push = static_cast<Push>(&dpf::EventChannelManager::push);
+    stub.set_lamda(push, [] { __DBG_STUB_INVOKE__ return QVariant(); });
+
+    EXPECT_NO_FATAL_FAILURE(d->actProperties());
 }
