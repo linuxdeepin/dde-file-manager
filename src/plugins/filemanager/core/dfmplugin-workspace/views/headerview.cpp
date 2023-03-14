@@ -6,10 +6,14 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+
 #include <QApplication>
 #include <QMouseEvent>
 #include <QMenu>
 
+DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
@@ -98,11 +102,10 @@ void HeaderView::doFileNameColumnResize(const int totalWidth)
     }
 
     int targetWidth = totalWidth - columnWidthSumOmitFileName;
-    if (targetWidth >= minimumSectionSize()) {
-        resizeSection(fileNameColumn, targetWidth);
-    } else {
-        resizeSection(fileNameColumn, minimumSectionSize());
-    }
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
+    int colWidth = state.value(QString::number(kItemFileDisplayNameRole), -1).toInt();
+
+    resizeSection(fileNameColumn, qMax(targetWidth, colWidth));
 }
 
 void HeaderView::onActionClicked(const int column, QAction *action)
