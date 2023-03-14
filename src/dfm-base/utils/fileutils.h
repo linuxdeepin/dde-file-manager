@@ -61,10 +61,6 @@ public:
 
     static quint16 getMemoryPageSize();
     static qint32 getCpuProcessCount();
-    // icon
-    static QIcon searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
-    static QIcon searchGenericIcon(const QString &category, const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
-    static QIcon searchMimeIcon(QString mime, const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
 
     static void cacheCopyingFileUrl(const QUrl &url);
     static void removeCopyingFileUrl(const QUrl &url);

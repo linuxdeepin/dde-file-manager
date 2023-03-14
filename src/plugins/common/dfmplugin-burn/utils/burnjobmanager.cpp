@@ -6,12 +6,13 @@
 #include "utils/burnjob.h"
 #include "utils/auditlogjob.h"
 
+#include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/utils/decorator/decoratorfileoperator.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/event/event.h>
+
+#include <dfm-io/dfileinfo.h>
 
 #include <QVBoxLayout>
 #include <QTextEdit>
@@ -133,7 +134,8 @@ void BurnJobManager::initDumpJobConnect(DumpISOImageJob *job)
 void BurnJobManager::deleteStagingDir(const QUrl &url)
 {
     // we cannot delete image file
-    if (!DecoratorFileInfo(url).isDir()) {
+    bool isDir { DFMIO::DFileInfo(url).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsDir).toBool() };
+    if (!isDir) {
         qInfo() << "Don't delelete img url: " << url;
         return;
     }
@@ -146,7 +148,7 @@ void BurnJobManager::deleteStagingDir(const QUrl &url)
         return;
     }
 
-    if (!DecoratorFileOperator(url).deleteFile())
+    if (!LocalFileHandler().deleteFileRecursive(url))
         qWarning() << "Delete " << url << "failed!";
     else
         qInfo() << "Delete cache folder: " << url << "success";

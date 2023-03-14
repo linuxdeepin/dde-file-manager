@@ -4,7 +4,6 @@
 
 #include "emblemhelper.h"
 
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/dfm_event_defines.h"

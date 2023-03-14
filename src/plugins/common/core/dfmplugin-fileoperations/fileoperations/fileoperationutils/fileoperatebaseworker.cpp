@@ -10,11 +10,10 @@
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
 #include <dfm-io/dfmio_utils.h>
+#include <dfm-io/denumerator.h>
 
 #include <QMutex>
 #include <QDateTime>
@@ -193,15 +192,13 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
 
 bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *skip, const bool force)
 {
-    DecoratorFileEnumerator enumerator(fromUrl);
-    if (!enumerator.isValid())
-        return false;
+    DFMIO::DEnumerator enumerator(fromUrl);
 
     bool succ = false;
     while (enumerator.hasNext()) {
         const QUrl &url = enumerator.next();
-
-        if (DecoratorFileInfo(url).isDir()) {
+        bool isDir { DFMIO::DFileInfo(url).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsDir).toBool() };
+        if (isDir) {
             if (force)
                 localFileHandler->setPermissions(url, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
             succ = deleteDir(url, toUrl, skip, force);

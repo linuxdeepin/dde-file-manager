@@ -11,7 +11,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/decorator/decoratorfileoperator.h"
+#include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <dfm-io/dfmio_utils.h>
@@ -263,7 +263,7 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
 
     QImageReader ir(thumbnail, QByteArray(kFormat).mid(1));
     if (!ir.canRead()) {
-        DecoratorFileOperator(thumbnail).deleteFile();
+        LocalFileHandler().deleteFileRecursive(QUrl::fromLocalFile(thumbnail));
         return QPixmap();
     }
     ir.setAutoDetectImageFormat(false);
@@ -271,7 +271,7 @@ QPixmap ThumbnailProvider::thumbnailPixmap(const QUrl &fileUrl, Size size) const
     const QImage image = ir.read();
     const qint64 fileModify = fileInfo->timeOf(TimeInfoType::kLastModifiedSecond).value<qint64>();
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != static_cast<int>(fileModify)) {
-        DecoratorFileOperator(thumbnail).deleteFile();
+        LocalFileHandler().deleteFileRecursive(QUrl::fromLocalFile(thumbnail));
 
         return QPixmap();
     }

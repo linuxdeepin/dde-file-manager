@@ -18,8 +18,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/properties.h"
 #include "dfm-base/utils/systempathutil.h"
 
@@ -728,7 +726,8 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     bool ok = false;
     QString error;
 
-    if (FileUtils::isDesktopFile(oldUrl) && !DecoratorFileInfo(oldUrl).isSymLink())
+    bool isSymLink { DFMIO::DFileInfo(oldUrl).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool() };
+    if (FileUtils::isDesktopFile(oldUrl) && !isSymLink)
         return doRenameDesktopFile(windowId, oldUrl, newUrl, flags);
 
     if (!dfmbase::FileUtils::isLocalFile(oldUrl)) {

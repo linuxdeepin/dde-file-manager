@@ -6,9 +6,9 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
 #include <dfm-io/dfile.h>
+#include <dfm-io/dfileinfo.h>
 
 #include <QSet>
 #include <QFile>
@@ -55,14 +55,16 @@ public:
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
             info->refresh();
 
-            DFMBASE_NAMESPACE::DecoratorFileInfo decorator(url);
-            decorator.notifyAttributeChanged();
+            DFMIO::DFileInfo dfileInfo { url };
+            dfileInfo.setCustomAttribute("xattr::update",
+                                         DFMIO::DFileInfo::DFileAttributeType::kTypeString, "");
         }
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(fileUrl);
         info->refresh();
-        DFMBASE_NAMESPACE::DecoratorFileInfo decorator(fileUrl);
         // TODO(gongheng): why return false in vault
-        decorator.notifyAttributeChanged();
+        DFMIO::DFileInfo dfileInfo { fileUrl };
+        dfileInfo.setCustomAttribute("xattr::update",
+                                     DFMIO::DFileInfo::DFileAttributeType::kTypeString, "");
     }
 
 public:

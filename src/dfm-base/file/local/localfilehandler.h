@@ -44,7 +44,8 @@ public:
     bool moveFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
     bool copyFile(const QUrl &sourceUrl, const QUrl &destUrl, DFMIO::DFile::CopyFlag flag = DFMIO::DFile::CopyFlag::kNone);
     QString trashFile(const QUrl &url);
-    bool deleteFile(const QUrl &file);
+    bool deleteFile(const QUrl &url);
+    bool deleteFileRecursive(const QUrl &url);
     bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
 
     bool renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls);

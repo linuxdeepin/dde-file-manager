@@ -8,8 +8,9 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/mimetype/mimedatabase.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/clipboard.h"
+
+#include <dfm-io/dfileinfo.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -37,10 +38,11 @@ bool AvfsEventHandler::hookOpenFiles(quint64 winId, const QList<QUrl> &urls)
             url = AvfsUtils::avfsUrlToLocal(url);
         }
 
+        bool isDir { DFMIO::DFileInfo(url).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsDir).toBool() };
         if (AvfsUtils::isSupportedArchives(url.path())) {
             takeHandle = true;
             archives << AvfsUtils::localArchiveToAvfsUrl(url);
-        } else if (url.path().startsWith(AvfsUtils::avfsMountPoint()) && DecoratorFileInfo(url.path()).isDir()) {
+        } else if (url.path().startsWith(AvfsUtils::avfsMountPoint()) && isDir) {
             takeHandle = true;
             archives << AvfsUtils::localUrlToAvfsUrl(url);
         } else {

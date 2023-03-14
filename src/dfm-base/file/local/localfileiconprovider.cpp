@@ -4,7 +4,7 @@
 
 #include "localfileiconprovider.h"
 
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include <dfm-io/dfileinfo.h>
 
 namespace dfmbase {
 class LocalFileIconProviderPrivate
@@ -27,11 +27,11 @@ QIcon LocalFileIconProviderPrivate::fileSystemIcon(const QString &path) const
 {
     QIcon icon;
 
-    DecoratorFileInfo info(path);
+    DFMIO::DFileInfo info(path);
     if (!info.exists())
         return icon;
 
-    const QStringList &iconNames = info.standardIconNames();
+    const QStringList &iconNames = info.attribute(DFMIO::DFileInfo::AttributeID::kStandardIcon).toStringList();
     if (!iconNames.isEmpty())
         icon = QIcon::fromTheme(iconNames.first());
 

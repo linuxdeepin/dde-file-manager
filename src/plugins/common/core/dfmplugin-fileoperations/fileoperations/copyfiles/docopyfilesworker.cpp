@@ -6,7 +6,6 @@
 #include "storageinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/clipboard.h"
 
 #include <dfm-io/dfmio_utils.h>

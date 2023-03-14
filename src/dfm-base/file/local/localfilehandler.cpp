@@ -14,16 +14,16 @@
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
-#include "dfm-base/utils/decorator/decoratorfileoperator.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/base/application/application.h"
-#include "utils/universalutils.h"
-#include "dfm_event_defines.h"
+#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-io/doperator.h>
 #include <dfm-io/dfile.h>
+#include <dfm-io/denumerator.h>
+
 #include <DRecentManager>
 
 #include <QString>
@@ -68,9 +68,7 @@ LocalFileHandler::~LocalFileHandler()
  */
 bool LocalFileHandler::touchFile(const QUrl &url, const QUrl &tempUrl /*= QUrl()*/)
 {
-    DecoratorFileOperator doperator(url);
-
-    QSharedPointer<DFMIO::DOperator> oper = doperator.operatorPtr();
+    QSharedPointer<DFMIO::DOperator> oper { new DFMIO::DOperator(url) };
     if (!oper) {
         qWarning() << "create operator failed, url: " << url;
         return false;
@@ -440,22 +438,25 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
 
 bool LocalFileHandler::setPermissionsRecursive(const QUrl &url, QFileDevice::Permissions permissions)
 {
-    DecoratorFileInfo info(url);
-    if (info.isFile())
+    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(url) };
+    if (!info)
+        return false;
+    bool isFile { info->isAttributes(OptInfoType::kIsFile) };
+    bool isDir { info->isAttributes(OptInfoType::kIsDir) };
+    if (isFile)
         return setPermissions(url, permissions);
 
-    if (info.isDir()) {
-        DecoratorFileEnumerator enumerator(url);
-        if (!enumerator.isValid())
-            return false;
-        bool succ = false;
+    if (isDir) {
+        DFMIO::DEnumerator enumerator(url);
+        bool succ { false };
         while (enumerator.hasNext()) {
-            const QUrl &url = enumerator.next();
-            if (DecoratorFileInfo(url).isDir()) {
-                succ = setPermissionsRecursive(url, permissions);
-            } else {
-                succ = setPermissions(url, permissions);
-            }
+            const QUrl &nextUrl = enumerator.next();
+            info = InfoFactory::create<AbstractFileInfo>(nextUrl);
+            isDir = info->isAttributes(OptInfoType::kIsDir);
+            if (isDir)
+                succ = setPermissionsRecursive(nextUrl, permissions);
+            else
+                succ = setPermissions(nextUrl, permissions);
         }
         succ = setPermissions(url, permissions);
         return succ;
@@ -521,7 +522,7 @@ QString LocalFileHandler::trashFile(const QUrl &url)
     return targetTrash;
 }
 /*!
- * \brief LocalFileHandler::deleteFile 删除文件使用系统c库
+ * \brief LocalFileHandler::deleteFile
  * \param file 文件的url
  * \return bool 删除文件是否失败
  */
@@ -546,6 +547,41 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
     qInfo() << "delete file success: " << url;
 
     return true;
+}
+
+bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
+{
+    qInfo() << "Recursive delete " << url;
+    if (SystemPathUtil::instance()->isSystemPath(url.toLocalFile())) {
+        qWarning() << "Cannot delete system path!!!!!!!!!!!!!!!!!";
+        abort();
+    }
+
+    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(url) };
+    if (!info)
+        return false;
+
+    if (!info->isAttributes(OptInfoType::kIsDir))
+        return deleteFile(url);
+
+    QSharedPointer<DFMIO::DEnumerator> enumerator { new DFMIO::DEnumerator(url) };
+    if (!enumerator) {
+        qWarning() << "Cannot create enumerator";
+        return false;
+    }
+
+    bool succ { false };
+    while (enumerator->hasNext()) {
+        const QUrl &urlNext = enumerator->next();
+        info = InfoFactory::create<AbstractFileInfo>(urlNext);
+        if (info->isAttributes(OptInfoType::kIsDir))
+            succ = deleteFileRecursive(urlNext);
+        else
+            succ = deleteFile(urlNext);
+    }
+
+    succ = deleteFile(url);
+    return succ;
 }
 /*!
  * \brief LocalFileHandler::setFileTime 设置文件的读取和最后修改时间
@@ -652,23 +688,6 @@ bool LocalFileHandlerPrivate::isInvalidSymlinkFile(const QUrl &url)
     return false;
 }
 
-QString LocalFileHandlerPrivate::getFileMimetypeFromGio(const QUrl &url)
-{
-    QSharedPointer<DFMIO::DFileInfo> dfileinfo { new DFMIO::DFileInfo(url) };
-
-    if (!dfileinfo) {
-        qWarning() << "create fileinfo failed, url: " << url;
-        return QString();
-    }
-
-    bool succ = false;
-    auto mimeType = dfileinfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardContentType, &succ);
-    if (succ)
-        return mimeType.toString();
-
-    return QString();
-}
-
 void LocalFileHandlerPrivate::addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype)
 {
     if (filePath.isEmpty()) {
@@ -714,38 +733,40 @@ bool LocalFileHandlerPrivate::isExecutableScript(const QString &path)
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
-
-    DecoratorFileInfo info(pathValue);
-
-    while (info.isSymLink()) {
-        pathValue = info.symLinkTarget();
+    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue)) };
+    if (!info)
+        return false;
+    bool isSymLink { info->isAttributes(OptInfoType::kIsSymLink) };
+    while (isSymLink) {
+        pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
-
-        info = DecoratorFileInfo(pathValue);
+        info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue));
     }
 
     // blumia: it's not a good idea to check if it is a executable script by just checking
     //         mimetype.startsWith("text/"), should be fixed later.
-    if (mimetype.startsWith("text/") || (mimetype == "application/x-shellscript")) {
+    if (mimetype.startsWith("text/") || (mimetype == "application/x-shellscript"))
         return isFileExecutable(pathValue);
-    }
 
     return false;
 }
 
 bool LocalFileHandlerPrivate::isFileExecutable(const QString &path)
 {
-    DecoratorFileInfo fileInfo(path);
-
-    // regard these type as unexecutable.
-    const static QStringList noValidateType { "txt", "md" };
-    if (noValidateType.contains(fileInfo.suffix()))
+    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path)) };
+    if (!info)
         return false;
 
-    DFMIO::DFile::Permissions permissions = fileInfo.permissions();
-    bool isExeUser = permissions & DFMIO::DFile::Permission::kExeUser;
+    // regard these type as unexecutable.
+    const static QStringList kinValidateType { "txt", "md" };
+    if (kinValidateType.contains(info->nameOf(NameInfoType::kSuffix)))
+        return false;
 
-    return (permissions & DFMIO::DFile::Permission::kReadUser) && isExeUser;
+    QFile::Permissions permissions { info->permissions() };
+    bool isExeUser = permissions & QFile::Permission::ExeUser;
+    bool isReadUser = permissions & QFile::Permission::ReadUser;
+
+    return isExeUser && isReadUser;
 }
 
 bool LocalFileHandlerPrivate::openExcutableScriptFile(const QString &path, int flag)
@@ -800,13 +821,14 @@ bool LocalFileHandlerPrivate::isFileRunnable(const QString &path)
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
+    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue)) };
+    if (!info)
+        return false;
 
-    DecoratorFileInfo info(pathValue);
-    while (info.isSymLink()) {
-        pathValue = info.symLinkTarget();
+    while (info->isAttributes(OptInfoType::kIsSymLink)) {
+        pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
-
-        info = DecoratorFileInfo(pathValue);
+        info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue));
     }
 
     // blumia: about AppImage mime type, please refer to:
@@ -826,13 +848,14 @@ bool LocalFileHandlerPrivate::shouldAskUserToAddExecutableFlag(const QString &pa
 {
     QString pathValue = path;
     QString mimetype = getFileMimetype(QUrl::fromLocalFile(path));
+    AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue)) };
+    if (!info)
+        return false;
 
-    DecoratorFileInfo info(pathValue);
-    while (info.isSymLink()) {
-        pathValue = info.symLinkTarget();
+    while (info->isAttributes(OptInfoType::kIsSymLink)) {
+        pathValue = info->pathOf(PathInfoType::kSymLinkTarget);
         mimetype = getFileMimetype(QUrl::fromLocalFile(pathValue));
-
-        info = DecoratorFileInfo(pathValue);
+        info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(pathValue));
     }
 
     if (mimetype == "application/x-executable"
@@ -885,10 +908,14 @@ void LocalFileHandlerPrivate::loadTemplateInfo(const QUrl &url, const QUrl &temp
 {
     QUrl templateFile = templateUrl;
     if (!templateFile.isValid()) {
-        DecoratorFileInfo targetFileInfo(url);
-        const QString &suffix = targetFileInfo.suffix();
+        AbstractFileInfoPointer targetFileInfo { InfoFactory::create<AbstractFileInfo>(url) };
+        const QString &suffix = targetFileInfo->nameOf(NameInfoType::kSuffix);
 
-        DecoratorFileEnumerator enumerator(StandardPaths::location(StandardPaths::kTemplatesPath), {}, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)));
+        const QUrl &trashUrl { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTemplatesPath)) };
+        DFMIO::DEnumerator enumerator(trashUrl,
+                                      {},
+                                      static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)),
+                                      DFMIO::DEnumerator::IteratorFlag::kNoIteratorFlags);
         while (enumerator.hasNext()) {
             if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
                 templateFile = enumerator.next();
@@ -922,8 +949,8 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
 
     QList<QUrl> transUrls = urls;
     for (const QUrl &url : urls) {
-        DecoratorFileInfo fileInfo(url);
-        if (fileInfo.suffix() == Global::Scheme::kDesktop) {
+        AbstractFileInfoPointer info { InfoFactory::create<AbstractFileInfo>(url) };
+        if (info->nameOf(NameInfoType::kSuffix) == Global::Scheme::kDesktop) {
             ret = launchApp(url.path()) || ret;   //有一个成功就成功
             transUrls.removeOne(url);
             continue;

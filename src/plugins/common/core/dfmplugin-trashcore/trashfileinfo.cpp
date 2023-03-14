@@ -5,14 +5,15 @@
 #include "trashfileinfo.h"
 #include "utils/trashcorehelper.h"
 
-#include "dfm_global_defines.h"
-#include "interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/standardpaths.h"
+
+#include <dfm-io/denumerator.h>
 
 #include <QCoreApplication>
 
@@ -388,7 +389,7 @@ int TrashFileInfo::countChildFile() const
     }
 
     if (isAttributes(OptInfoType::kIsDir)) {
-        DecoratorFileEnumerator enumerator(urlOf(UrlInfoType::kUrl));
+        DFMIO::DEnumerator enumerator(urlOf(UrlInfoType::kUrl));
         return int(enumerator.fileCount());
     }
 

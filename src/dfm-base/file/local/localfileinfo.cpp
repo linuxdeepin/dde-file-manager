@@ -10,7 +10,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"

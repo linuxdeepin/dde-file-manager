@@ -2,12 +2,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "file/local/private/localdiriterator_p.h"
-#include "file/local/localfileinfo.h"
-#include "file/local/localdiriterator.h"
-#include "base/urlroute.h"
-#include "base/schemefactory.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/file/local/private/localdiriterator_p.h"
+#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/localdiriterator.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <dfm-io/denumerator.h>
@@ -23,13 +22,10 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringL
                                                  LocalDirIterator *q)
     : q(q)
 {
-    QUrl urlReally = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
-
-    DecoratorFileEnumerator enumerator(urlReally, nameFilters,
-                                       static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
-                                       static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags)));
-
-    dfmioDirIterator = enumerator.enumeratorPtr();
+    const QUrl &urlReally = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+    dfmioDirIterator.reset(new DFMIO::DEnumerator(urlReally, nameFilters,
+                                                  static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
+                                                  static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags))));
     if (!dfmioDirIterator) {
         qWarning("Failed dfm-io use factory create enumerator");
         abort();

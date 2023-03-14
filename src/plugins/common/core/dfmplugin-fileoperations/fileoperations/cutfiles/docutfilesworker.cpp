@@ -8,7 +8,6 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
 #include <QUrl>
 #include <QProcess>
@@ -233,10 +232,10 @@ bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
     if (!newFileUrl.endsWith("/"))
         newFileUrl.append("/");
     newFileUrl.append(fileName);
-    DecoratorFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
+    DFMIO::DFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
 
-    if (newFileInfo.url() == fileInfo->urlOf(UrlInfoType::kUrl)
-        || (FileUtils::isSameFile(fileInfo->urlOf(UrlInfoType::kUrl), newFileInfo.url(), false) && !fileInfo->isAttributes(OptInfoType::kIsSymLink))) {
+    if (newFileInfo.uri() == fileInfo->urlOf(UrlInfoType::kUrl)
+        || (FileUtils::isSameFile(fileInfo->urlOf(UrlInfoType::kUrl), newFileInfo.uri(), false) && !fileInfo->isAttributes(OptInfoType::kIsSymLink))) {
         return true;
     }
     return false;

@@ -6,8 +6,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
 #include <dfm-io/denumerator.h>
@@ -55,12 +53,9 @@ bool DoCleanTrashFilesWorker::statisticsFilesSize()
     if (sourceUrls.size() == 1) {
         const QUrl &urlSource = sourceUrls[0];
         if (UniversalUtils::urlEquals(urlSource, FileUtils::trashRootUrl())) {
-            DecoratorFileEnumerator enumerator(urlSource);
-            if (!enumerator.isValid())
-                return false;
-            while (enumerator.hasNext()) {
+            DFMIO::DEnumerator enumerator(urlSource);
+            while (enumerator.hasNext())
                 allFilesList.append(enumerator.next());
-            }
         }
     }
 

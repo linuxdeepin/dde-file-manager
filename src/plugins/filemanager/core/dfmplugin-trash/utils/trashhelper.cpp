@@ -6,8 +6,8 @@
 #include "trashfilewatcher.h"
 #include "events/trasheventcaller.h"
 #include "views/emptyTrashWidget.h"
-#include "dfm_event_defines.h"
 
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -16,7 +16,6 @@
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 #include <dfm-framework/dpf.h>
 

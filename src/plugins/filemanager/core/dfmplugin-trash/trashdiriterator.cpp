@@ -9,7 +9,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/device/deviceutils.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trash;
@@ -20,12 +19,7 @@ TrashDirIteratorPrivate::TrashDirIteratorPrivate(const QUrl &url, const QStringL
     : q(qq)
 {
     fstabMap = DeviceUtils::fstabBindInfo();
-    DecoratorFileEnumerator enumerator(url, nameFilters, filters, flags);
-
-    dEnumerator = enumerator.enumeratorPtr();
-    if (!dEnumerator) {
-        qWarning("Failed dfm-io use factory create enumerator");
-    }
+    dEnumerator.reset(new DFMIO::DEnumerator(url, nameFilters, filters, flags));
 }
 
 TrashDirIteratorPrivate::~TrashDirIteratorPrivate()

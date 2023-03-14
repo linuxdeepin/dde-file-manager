@@ -35,7 +35,6 @@ public:
 
     bool isFileManagerSelf(const QString &desktopFile);
     bool isInvalidSymlinkFile(const QUrl &url);
-    QString getFileMimetypeFromGio(const QUrl &url);
     void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
     QString getFileMimetype(const QUrl &url);
 

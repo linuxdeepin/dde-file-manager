@@ -18,8 +18,6 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/decorator/decoratorfileinfo.h"
-#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
@@ -29,6 +27,7 @@
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/dfile.h>
+#include <dfm-io/denumerator.h>
 
 #include <QFileInfo>
 #include <QTimer>
@@ -930,70 +929,6 @@ qint32 FileUtils::getCpuProcessCount()
     return cpuProcessCount;
 }
 
-QIcon FileUtils::searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon)
-{
-    // Resulting icon
-    QIcon icon;
-
-    // First attempt, try load icon from theme
-    icon = QIcon::fromTheme(app.desktopIcon());
-    if (!icon.isNull()) {
-        return icon;
-    }
-
-    // Second attempt, check whether icon is a valid file
-    const QString &iconPath = app.desktopIcon();
-    const QUrl &iconUrl = QUrl::fromLocalFile(iconPath);
-    QSharedPointer<DFMIO::DFile> dfile { new DFMIO::DFile(iconUrl) };
-    if (dfile && dfile->exists()) {
-        icon = QIcon(app.desktopIcon());
-        if (!icon.isNull()) {
-            return icon;
-        }
-    }
-
-    // Next, try luck with application name
-    QString name = app.desktopFileName().remove(".desktop").split("/").last();
-    icon = QIcon::fromTheme(name);
-    if (!icon.isNull()) {
-        return icon;
-    }
-
-    // Last chance
-    const QUrl &pixmapUrl = QUrl::fromLocalFile(QString(kSharePixmapPath));
-    QSharedPointer<DFMIO::DEnumerator> enumerator = DecoratorFileEnumerator(pixmapUrl, {}, DFMIO::DEnumerator::DirFilter::kFiles | DFMIO::DEnumerator::DirFilter::kNoDotAndDotDot).enumeratorPtr();
-    if (enumerator) {
-        while (enumerator->hasNext()) {
-            QSharedPointer<DFMIO::DFileInfo> fileinfo = enumerator->fileInfo();
-            if (fileinfo) {
-                const QString &fileName = fileinfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardName).toString();
-                if (fileName.contains(name)) {
-                    return QIcon(DFMIO::DFMUtils::buildFilePath(kSharePixmapPath, fileName.toStdString().c_str(), nullptr));
-                }
-            }
-        }
-    }
-
-    // Default icon
-    return defaultIcon;
-}
-
-QIcon FileUtils::searchGenericIcon(const QString &category, const QIcon &defaultIcon)
-{
-    QIcon icon = QIcon::fromTheme(category + "-generic");
-    if (!icon.isNull()) {
-        return icon;
-    }
-    icon = QIcon::fromTheme(category + "-x-generic");
-    return icon.isNull() ? defaultIcon : icon;
-}
-
-QIcon FileUtils::searchMimeIcon(QString mime, const QIcon &defaultIcon)
-{
-    QIcon icon = QIcon::fromTheme(mime.replace("/", "-"), defaultIcon);
-    return icon;
-}
-
 void FileUtils::cacheCopyingFileUrl(const QUrl &url)
 {
     QMutexLocker locker(&cacheCopyingMutex);
@@ -1013,6 +948,7 @@ bool FileUtils::containsCopyingFileUrl(const QUrl &url)
     return copyingUrl.contains(url);
 }
 
+// TODO: remot it!
 void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type, const QUrl &url)
 {
     if (!url.isValid())
@@ -1313,8 +1249,9 @@ QString FileUtils::bindPathTransform(const QString &path, bool toDevice)
 
 int FileUtils::dirFfileCount(const QUrl &url)
 {
-    const QString &path = url.path();
-    DecoratorFileEnumerator enumerator(path);
+    if (!url.isValid())
+        return 0;
+    DFMIO::DEnumerator enumerator(url);
     return int(enumerator.fileCount());
 }
 
