@@ -95,6 +95,7 @@ void OpenWithDialogListItem::initUiForSizeMode()
     int size = 30;
     iconLabel->setFixedSize(size, size);
     iconLabel->setPixmap(icon.pixmap(iconLabel->size()));
+    setFixedSize(220, 50);
 #endif
 }
 

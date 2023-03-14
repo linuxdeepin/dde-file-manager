@@ -417,13 +417,14 @@ void TaskWidget::initUI()
 {
     mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
+    setFixedWidth(685);
 
     progress = new DWaterProgress(this);
     progress->setFixedSize(64, 64);
     progress->setValue(1);   // fix：使一开始就有一个进度显示
     progress->setValue(0);
     QHBoxLayout *normalLayout = new QHBoxLayout;
-    normalLayout->setContentsMargins(20, 10, 20, 10);
+    normalLayout->setContentsMargins(20, 10, 20, 0);
     normalLayout->addWidget(progress, Qt::AlignLeft);
     normalLayout->addSpacing(20);
 
@@ -438,12 +439,14 @@ void TaskWidget::initUI()
 
     rVLayout = new QVBoxLayout;
     QHBoxLayout *hLayout1 = new QHBoxLayout;
+    hLayout1->addSpacing(15);
     hLayout1->addWidget(lbSrcPath, Qt::AlignLeft);
     hLayout1->addSpacing(10);
     hLayout1->addWidget(lbSpeed, Qt::AlignRight);
     hLayout1->addStretch();
 
     QHBoxLayout *hLayout2 = new QHBoxLayout;
+    hLayout2->addSpacing(15);
     hLayout2->addWidget(lbDstPath, Qt::AlignLeft);
     hLayout2->addSpacing(10);
     hLayout2->addWidget(lbRmTime, Qt::AlignRight);
@@ -456,7 +459,7 @@ void TaskWidget::initUI()
     lbErrorMsg->setFixedWidth(kMsgLabelWidth + kSpeedLabelWidth);
     rVLayout->addWidget(lbErrorMsg);
 
-    normalLayout->addLayout(rVLayout, 1);
+    normalLayout->addLayout(rVLayout);
 
     btnStop = new DIconButton(this);
     btnStop->setObjectName("TaskWidgetStopButton");
@@ -485,6 +488,7 @@ void TaskWidget::initUI()
     normalLayout->addWidget(btnStop, Qt::AlignRight);
 
     mainLayout->addLayout(normalLayout);
+    mainLayout->setSpacing(0);
 
     lbErrorMsg->setVisible(false);
     btnPause->setVisible(false);
@@ -550,12 +554,26 @@ QWidget *TaskWidget::createConflictWidget()
     conflictMainLayout->setHorizontalSpacing(4);
     conflictMainLayout->setVerticalSpacing(4);
     conflictMainLayout->setContentsMargins(0, 0, 0, 0);
-
     conflictMainLayout->setColumnMinimumWidth(1, kMsgLabelWidth - 100);
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addStretch();
+    layout->addWidget(btnPause, Qt::AlignTop);
+    layout->addSpacing(10);
+    layout->addWidget(btnStop, Qt::AlignTop);
+    layout->setContentsMargins(50, 0, 0, 50);
+    QSizePolicy policy;
+    policy.setRetainSizeWhenHidden(true);
+    btnPause->setSizePolicy(policy);
+    btnStop->setSizePolicy(policy);
+
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->addLayout(conflictMainLayout);
     hLayout->addStretch();
+    hLayout->addLayout(conflictMainLayout);
+    hLayout->addLayout(layout);
     conflictWidget->setLayout(hLayout);
+    conflictWidget->setMaximumWidth(565);
+
     return conflictWidget;
 }
 /*!
@@ -566,6 +584,8 @@ QWidget *TaskWidget::createBtnWidget()
 {
     QWidget *buttonWidget = new QWidget;
     QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout->setContentsMargins(0, 0, 0, 0);
+    buttonLayout->setSpacing(0);
     buttonLayout->setSpacing(12);
 
     QVariant variantCoexit;
@@ -600,13 +620,20 @@ QWidget *TaskWidget::createBtnWidget()
 
     buttonLayout->setContentsMargins(0, 0, 0, 0);
 
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
     chkboxNotAskAgain = new QCheckBox(TaskWidget::tr("Do not ask again"));
+    layout->addSpacing(120);
+    layout->addWidget(chkboxNotAskAgain);
+
     QVBoxLayout *btnMainLayout = new QVBoxLayout;
-    btnMainLayout->addSpacing(0);
-    btnMainLayout->addWidget(chkboxNotAskAgain);
-    btnMainLayout->addSpacing(0);
+    btnMainLayout->setContentsMargins(0, 0, 0, 10);
+    btnMainLayout->setSpacing(0);
+    btnMainLayout->addLayout(layout);
     btnMainLayout->addLayout(buttonLayout);
     buttonWidget->setLayout(btnMainLayout);
+    buttonWidget->setFixedWidth(670);
 
     connect(btnSkip, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
     connect(btnReplace, &QPushButton::clicked, this, &TaskWidget::onButtonClicked);
@@ -663,8 +690,6 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
         widButton->hide();
         widConfict->hide();
     }
-
-    setFixedHeight(h);
     emit heightChanged();
 }
 
