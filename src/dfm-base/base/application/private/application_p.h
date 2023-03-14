@@ -16,7 +16,7 @@ class ApplicationPrivate
 {
 public:
     explicit ApplicationPrivate(Application *qq);
-
+    virtual ~ApplicationPrivate();
     void _q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value, bool edited = false);
     void _q_onSettingsValueEdited(const QString &group, const QString &key, const QVariant &value);
 

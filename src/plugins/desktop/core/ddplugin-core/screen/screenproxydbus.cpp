@@ -41,9 +41,9 @@ ScreenPointer ScreenProxyDBus::primaryScreen()
     return ret;
 }
 
-QVector<ScreenPointer> ScreenProxyDBus::screens() const
+QList<ScreenPointer> ScreenProxyDBus::screens() const
 {
-    QVector<ScreenPointer> order;
+    QList<ScreenPointer> order;
     for (const QDBusObjectPath &path : DisplayInfoIns->monitors()) {
         if (screenMap.contains(path.path())) {
             ScreenPointer sp = screenMap.value(path.path());
@@ -60,9 +60,9 @@ QVector<ScreenPointer> ScreenProxyDBus::screens() const
     return order;
 }
 
-QVector<ScreenPointer> ScreenProxyDBus::logicScreens() const
+QList<ScreenPointer> ScreenProxyDBus::logicScreens() const
 {
-    QVector<ScreenPointer> order;
+    QList<ScreenPointer> order;
     QString primaryName = DisplayInfoIns->primary();
     if (primaryName.isEmpty())
         qCritical() << "get primary name failed";

@@ -135,6 +135,9 @@ EventHandle::~EventHandle()
 
     delete frame;
     frame = nullptr;
+
+    delete screenProxy;
+    screenProxy = nullptr;
 }
 
 bool EventHandle::init()
@@ -187,12 +190,12 @@ ScreenPointer EventHandle::primaryScreen()
     return screenProxy->primaryScreen();
 }
 
-QVector<ScreenPointer> EventHandle::screens()
+QList<ScreenPointer> EventHandle::screens()
 {
     return screenProxy->screens();
 }
 
-QVector<ScreenPointer> EventHandle::logicScreens()
+QList<ScreenPointer> EventHandle::logicScreens()
 {
     return screenProxy->logicScreens();
 }

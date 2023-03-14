@@ -17,8 +17,8 @@ class ScreenProxyDBus : public DFMBASE_NAMESPACE::AbstractScreenProxy
 public:
     explicit ScreenProxyDBus(QObject *parent = nullptr);
     DFMBASE_NAMESPACE::ScreenPointer primaryScreen() override;
-    QVector<DFMBASE_NAMESPACE::ScreenPointer> screens() const override;
-    QVector<DFMBASE_NAMESPACE::ScreenPointer> logicScreens() const override;
+    QList<DFMBASE_NAMESPACE::ScreenPointer> screens() const override;
+    QList<DFMBASE_NAMESPACE::ScreenPointer> logicScreens() const override;
     DFMBASE_NAMESPACE::ScreenPointer screen(const QString &name) const override;
     qreal devicePixelRatio() const override;
     DFMBASE_NAMESPACE::DisplayMode displayMode() const override;

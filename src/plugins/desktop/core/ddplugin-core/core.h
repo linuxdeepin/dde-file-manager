@@ -26,8 +26,8 @@ public:
 public slots:
     DFMBASE_NAMESPACE::AbstractScreenProxy *screenProxyInstance();
     DFMBASE_NAMESPACE::ScreenPointer primaryScreen();
-    QVector<DFMBASE_NAMESPACE::ScreenPointer> screens();
-    QVector<DFMBASE_NAMESPACE::ScreenPointer> logicScreens();
+    QList<DFMBASE_NAMESPACE::ScreenPointer> screens();
+    QList<DFMBASE_NAMESPACE::ScreenPointer> logicScreens();
     DFMBASE_NAMESPACE::ScreenPointer screen(const QString &name);
     qreal devicePixelRatio();
     int displayMode();

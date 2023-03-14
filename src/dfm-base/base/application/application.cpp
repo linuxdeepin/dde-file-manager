@@ -35,6 +35,11 @@ ApplicationPrivate::ApplicationPrivate(Application *qq)
     self = qq;
 }
 
+ApplicationPrivate::~ApplicationPrivate()
+{
+    self = nullptr;
+}
+
 void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const QString &key, const QVariant &value, bool edited)
 {
     if (group == QT_STRINGIFY(ApplicationAttribute)) {

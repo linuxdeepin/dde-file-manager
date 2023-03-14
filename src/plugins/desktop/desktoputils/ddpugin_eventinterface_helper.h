@@ -17,9 +17,9 @@
 
 namespace ddplugin_desktop_util {
 
-static inline QVector<DFMBASE_NAMESPACE::ScreenPointer> screenProxyLogicScreens() {
+static inline QList<DFMBASE_NAMESPACE::ScreenPointer> screenProxyLogicScreens() {
     const QVariant &ret = CanvasCorePush(slot_ScreenProxy_LogicScreens);
-    return ret.value<QVector<DFMBASE_NAMESPACE::ScreenPointer>>();
+    return ret.value<QList<DFMBASE_NAMESPACE::ScreenPointer>>();
 }
 
 static inline DFMBASE_NAMESPACE::DisplayMode screenProxyLastChangedMode() {
@@ -27,9 +27,9 @@ static inline DFMBASE_NAMESPACE::DisplayMode screenProxyLastChangedMode() {
     return static_cast<DFMBASE_NAMESPACE::DisplayMode>(ret.toInt());
 }
 
-static inline QVector<DFMBASE_NAMESPACE::ScreenPointer> screenProxyScreens() {
+static inline QList<DFMBASE_NAMESPACE::ScreenPointer> screenProxyScreens() {
     const QVariant &ret = CanvasCorePush(slot_ScreenProxy_Screens);
-    return ret.value<QVector<DFMBASE_NAMESPACE::ScreenPointer>>();
+    return ret.value<QList<DFMBASE_NAMESPACE::ScreenPointer>>();
 }
 
 static inline DFMBASE_NAMESPACE::ScreenPointer screenProxyPrimaryScreen() {

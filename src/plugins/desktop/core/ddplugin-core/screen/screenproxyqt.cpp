@@ -63,9 +63,9 @@ ScreenPointer ScreenProxyQt::primaryScreen()
     return ret;
 }
 
-QVector<ScreenPointer> ScreenProxyQt::screens() const
+QList<ScreenPointer> ScreenProxyQt::screens() const
 {
-    QVector<ScreenPointer> order;
+    QList<ScreenPointer> order;
     for (QScreen *sc : qApp->screens()) {
         if (screenMap.contains(sc)) {
             if (sc->geometry().size() == QSize(0, 0))
@@ -76,9 +76,9 @@ QVector<ScreenPointer> ScreenProxyQt::screens() const
     return order;
 }
 
-QVector<ScreenPointer> ScreenProxyQt::logicScreens() const
+QList<ScreenPointer> ScreenProxyQt::logicScreens() const
 {
-    QVector<ScreenPointer> order;
+    QList<ScreenPointer> order;
     auto allScreen = qApp->screens();
 
     //调整主屏幕到第一
@@ -115,7 +115,7 @@ qreal ScreenProxyQt::devicePixelRatio() const
 
 DisplayMode ScreenProxyQt::displayMode() const
 {
-    QVector<ScreenPointer> allScreen = screens();
+    QList<ScreenPointer> allScreen = screens();
     if (allScreen.isEmpty())
         return DisplayMode::kCustom;
 

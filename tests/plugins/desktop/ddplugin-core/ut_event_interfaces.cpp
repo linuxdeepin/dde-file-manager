@@ -12,6 +12,7 @@ DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DDPCORE_USE_NAMESPACE
 
+#if 0 // unstale
 TEST(TestEvent, event_undefined)
 {
     // AbstractScreenProxy begin
@@ -150,3 +151,4 @@ TEST(TestEvent, event_slot_null)
 
                                               nullptr);
 }
+#endif

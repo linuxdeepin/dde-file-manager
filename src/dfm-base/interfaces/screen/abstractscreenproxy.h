@@ -29,8 +29,8 @@ public:
     explicit AbstractScreenProxy(QObject *parent = nullptr);
 
     virtual ScreenPointer primaryScreen() = 0;
-    virtual QVector<ScreenPointer> screens() const = 0;
-    virtual QVector<ScreenPointer> logicScreens() const = 0;
+    virtual QList<ScreenPointer> screens() const = 0;
+    virtual QList<ScreenPointer> logicScreens() const = 0;
     virtual ScreenPointer screen(const QString &name) const = 0;
     virtual qreal devicePixelRatio() const = 0;
     virtual DisplayMode displayMode() const = 0;
