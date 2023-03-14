@@ -75,10 +75,17 @@ bool BookmarkMenuScene::create(QMenu *parent)
             return AbstractMenuScene::create(parent);
     }
 
-    auto action = parent->addAction(d->predicateName[BookmarkActionId::kActAddBookmarkKey]);
-    action->setText(d->predicateName.value(BookmarkActionId::kActAddBookmarkKey));
-    action->setProperty(ActionPropertyKey::kActionID, QString(BookmarkActionId::kActAddBookmarkKey));
-    d->predicateAction.insert(BookmarkActionId::kActAddBookmarkKey, action);
+    auto addAct = [=](const QString &key) {
+        auto action = parent->addAction(d->predicateName[key]);
+        action->setText(d->predicateName.value(key));
+        action->setProperty(ActionPropertyKey::kActionID, key);
+        d->predicateAction.insert(key, action);
+    };
+
+    if (!BookMarkManager::instance()->getBookMarkDataMap().contains(d->focusFile))
+        addAct(BookmarkActionId::kActAddBookmarkKey);
+    else
+        addAct(BookmarkActionId::kActRemoveBookmarkKey);
 
     return AbstractMenuScene::create(parent);
 }
@@ -96,7 +103,9 @@ bool BookmarkMenuScene::triggered(QAction *action)
     if (action == d->predicateAction.value(BookmarkActionId::kActAddBookmarkKey)) {
         BookMarkManager::instance()->addBookMark(d->selectFiles);
     } else if (action == d->predicateAction.value(BookmarkActionId::kActRemoveBookmarkKey)) {
-        BookMarkManager::instance()->removeBookMark(d->focusFile);
+        std::for_each(d->selectFiles.cbegin(), d->selectFiles.cend(), [](const QUrl &item) {
+            BookMarkManager::instance()->removeBookMark(item);
+        });
     }
 
     return AbstractMenuScene::triggered(action);
