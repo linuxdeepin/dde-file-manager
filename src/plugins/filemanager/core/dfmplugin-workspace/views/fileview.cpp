@@ -1030,8 +1030,6 @@ void FileView::dropEvent(QDropEvent *event)
     setViewSelectState(false);
     if (d->dragDropHelper->drop(event))
         return;
-
-    DListView::dropEvent(event);
 }
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
