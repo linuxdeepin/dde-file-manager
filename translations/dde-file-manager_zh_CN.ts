@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -32,7 +30,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="78"/>
         <source>Unknown</source>
-        <translation type="unfinished">未知</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -40,12 +38,12 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="48"/>
         <source>Unknown</source>
-        <translation type="unfinished">未知</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="53"/>
         <source>%1 on %2</source>
-        <translation type="unfinished">%2 上的 %1</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -609,7 +607,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation>远程环境显示缩略图预览</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
@@ -855,7 +853,7 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation>开启缩略图预览可能导致远程目录加载缓慢或操作卡顿</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
@@ -895,7 +893,7 @@
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1141"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation>当前系统壁纸已被锁定，请联系管理员。</translation>
+        <translation>当前系统壁纸已被锁定，请联系管理员</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1199"/>
@@ -2274,7 +2272,7 @@
     <message>
         <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1166"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation>当前系统壁纸已被锁定，请联系管理员。</translation>
+        <translation>当前系统壁纸已被锁定，请联系管理员</translation>
     </message>
 </context>
 <context>
@@ -6315,7 +6313,7 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="300"/>
         <source>Device Pixel Ratio: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="322"/>
@@ -6345,72 +6343,72 @@
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>
         <source>Hovered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="330"/>
         <source>Pressed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="334"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="336"/>
         <source>Current mode icon does not support the palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="355"/>
         <source>Foreground:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="370"/>
         <source>Background:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="383"/>
         <source>Highlight:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="395"/>
         <source>HighlightForeground:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="411"/>
         <source>Background Color: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="413"/>
         <source>White</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="413"/>
         <source>Black</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="413"/>
         <source>Transparent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-preview/pluginpreviews/dciicon-preview/ddciiconpreview.cpp" line="413"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

@@ -15,29 +15,42 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="216"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="236"/>
         <source>File Manager</source>
         <translation>Файловий менеджер</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="220"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="240"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Менеджер файлів - це потужний і простий у використанні інструмент керування файлами з функціями пошуку, копіювання, видалення, стиснення/розпакування, зміни властивостей файлу та іншими корисними функціями.</translation>
     </message>
 </context>
 <context>
+    <name>DAttachedBlockDevice</name>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="78"/>
+        <source>Unknown</source>
+        <translation>Невідомо</translation>
+    </message>
+</context>
+<context>
     <name>DAttachedProtocolDevice</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedprotocoldevice.cpp" line="48"/>
-        <source>Unknown device</source>
-        <translation>Невідомий пристрій</translation>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="48"/>
+        <source>Unknown</source>
+        <translation>Невідомо</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="53"/>
+        <source>%1 on %2</source>
+        <translation>%1 на %2</translation>
     </message>
 </context>
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedblockdevice.cpp" line="88"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedblockdevice.cpp" line="100"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="91"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="103"/>
         <source>%1 Volume</source>
         <translation>Том %1</translation>
     </message>
@@ -45,48 +58,35 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="174"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="172"/>
         <source>Desktop</source>
         <translation>Стільниця</translation>
     </message>
 </context>
 <context>
-    <name>DiskControlItem</name>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="142"/>
-        <source>Cannot access %1</source>
-        <translation>Не вдалося отримати доступ до %1</translation>
-    </message>
-</context>
-<context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="131"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="104"/>
         <source>Disks</source>
         <translation>Диски</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="326"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="299"/>
         <source>The device was not safely removed</source>
         <translation>Пристрій не було безпечно вилучено</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="327"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="300"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Наступного разу натисніть кнопку «Вилучити безпечно», а вже потім від&apos;єднуйте пристрій</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="330"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="303"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Диск зайнятий, його неможливо розмонтувати зараз</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="333"/>
-        <source>The device is busy, cannot remove now</source>
-        <translation>Пристрій зайнято, зараз вилучення неможливе</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="336"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="306"/>
         <source>The device is busy, cannot eject now</source>
         <translation>Пристрій зайнято, його не можна виштовхнути зараз</translation>
     </message>
@@ -94,17 +94,17 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="36"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="35"/>
         <source>Disk</source>
         <translation>Диск</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="92"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="90"/>
         <source>Open</source>
         <translation>Відкрити</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="99"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="97"/>
         <source>Eject all</source>
         <translation>Виштовхнути усі</translation>
     </message>
@@ -112,8 +112,8 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="227"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="241"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="226"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="240"/>
         <source>Unknown</source>
         <translation>Невідомо</translation>
     </message>
@@ -121,7 +121,7 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="270"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="263"/>
         <source>Trash</source>
         <translation>Смітник</translation>
     </message>
@@ -129,71 +129,71 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="933"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="941"/>
         <source>need authorization to access</source>
         <translation>для доступу потрібне уповноваження</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="999"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1007"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>Не вдалося переконатися у ідентичності %1.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1000"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1008"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Таке трапляється, якщо ви входите до системи уперше.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1001"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1009"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Профіль, який надіслано віддаленим комп&apos;ютером, —</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1003"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1011"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Якщо ви хочете бути абсолютно певні, що виконання дії є безпечним, проконсультуйтеся в адміністратора вашої системи.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="327"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="328"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="41"/>
         <source>System Disk</source>
         <translation>Системний диск</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="329"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="330"/>
         <source>Data Disk</source>
         <translation>Диск із даними</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
         <source>Blank %1 Disc</source>
         <translation>Порожній диск %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="99"/>
         <source>Unknown</source>
         <translation>Невідомо</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="379"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="380"/>
         <source>%1 Drive</source>
         <translation>Пристрій %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="395"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
         <source>%1 Encrypted</source>
         <translation>%1 Зашифрований</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="402"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="403"/>
         <source>%1 Volume</source>
         <translation>Том %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="237"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="311"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="284"/>
         <source>Scanning the device, stop it?</source>
         <translation>Скануємо пристрій. Припинити?</translation>
     </message>
@@ -309,35 +309,35 @@
         <translation>%1 завдань в процесі</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>%1 item</source>
         <translation>%1 об&apos;єкт</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>%1 items</source>
         <translation>%1 об&apos;єктів</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="288"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="268"/>
         <source>Unable to find the original file</source>
         <translation>Не вдалося знайти початковий файл</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="562"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="566"/>
         <source>File has been moved or deleted</source>
         <translation>Файл був переміщений чи видалений</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="564"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="109"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="568"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
         <source>You do not have permission to access this folder</source>
         <translation>У вас немає дозволу на доступ до цієї теки</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="567"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="571"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Ви не маєте права пересувати тут файли</translation>
     </message>
@@ -606,13 +606,20 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
-        <source>Text preview</source>
-        <translation>Попередній перегляд тексту</translation>
+        <source>The remote environment shows thumbnail previews</source>
+        <translation>Віддалене середовище показує попередній перегляд мініатюр</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="49"/>
+        <source>Text preview</source>
+        <translation>Попередній перегляд тексту</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
         <source>Video preview</source>
         <translation>Попередній перегляд відео</translation>
     </message>
@@ -624,207 +631,207 @@
         <translation>Попереднє прослуховування музики</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
-        <source>Show hidden files in search results</source>
-        <translation>Показати приховані файли в результатах пошуку</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="50"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="51"/>
-        <source>Default size:</source>
-        <translation>Розмір за замовчуванням:</translation>
+        <source>Show hidden files in search results</source>
+        <translation>Показати приховані файли в результатах пошуку</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
-        <source>Extra small</source>
-        <translation>Дуже малий</translation>
+        <source>Default size:</source>
+        <translation>Розмір за замовчуванням:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
-        <source>Small</source>
-        <translation>Малий</translation>
+        <source>Extra small</source>
+        <translation>Дуже малий</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="54"/>
-        <source>Medium</source>
-        <translation>Середній</translation>
+        <source>Small</source>
+        <translation>Малий</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="55"/>
-        <source>Large</source>
-        <translation>Великий</translation>
+        <source>Medium</source>
+        <translation>Середній</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="56"/>
-        <source>Extra large</source>
-        <translation>Дуже великий</translation>
+        <source>Large</source>
+        <translation>Великий</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
-        <source>Mix sorting of files and folders</source>
-        <translation>Перемішати файли і теки у списку</translation>
+        <source>Extra large</source>
+        <translation>Дуже великий</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
-        <source>Default view:</source>
-        <translation>Вид за замовчуванням:</translation>
+        <source>Mix sorting of files and folders</source>
+        <translation>Перемішати файли і теки у списку</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="59"/>
-        <source>Show hidden files</source>
-        <translation>Показати приховані файли</translation>
+        <source>Default view:</source>
+        <translation>Вид за замовчуванням:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="60"/>
-        <source>Show file extensions</source>
-        <translation>Показувати суфікси назв файлів</translation>
+        <source>Show hidden files</source>
+        <translation>Показати приховані файли</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
-        <source>Open from default window:</source>
-        <translation>Відкрити з вікна за замовчуванням:</translation>
+        <source>Show file extensions</source>
+        <translation>Показувати суфікси назв файлів</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="62"/>
-        <source>Open in new tab:</source>
-        <translation>Відкрити у новій вкладці:</translation>
+        <source>Open from default window:</source>
+        <translation>Відкрити з вікна за замовчуванням:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="63"/>
-        <source>Always open folder in new window</source>
-        <translation>Завжди відкривайте теку в новому вікні</translation>
+        <source>Open in new tab:</source>
+        <translation>Відкрити у новій вкладці:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="64"/>
-        <source>Open file:</source>
-        <translation>Відкрити файл:</translation>
+        <source>Always open folder in new window</source>
+        <translation>Завжди відкривайте теку в новому вікні</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="65"/>
-        <source>Click</source>
-        <translation>Клік</translation>
+        <source>Open file:</source>
+        <translation>Відкрити файл:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="66"/>
-        <source>Double click</source>
-        <translation>Подвійний клік</translation>
+        <source>Click</source>
+        <translation>Клік</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
-        <source>Advanced</source>
-        <translation>Розширений</translation>
+        <source>Double click</source>
+        <translation>Подвійний клік</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="68"/>
-        <source>Dialog</source>
-        <translation>Діалог</translation>
+        <source>Advanced</source>
+        <translation>Розширений</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="69"/>
-        <source>Index</source>
-        <translation>Покажчик</translation>
+        <source>Dialog</source>
+        <translation>Діалог</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
-        <source>Items on sidebar pane</source>
-        <translation>Пункти на бічній панелі</translation>
+        <source>Index</source>
+        <translation>Покажчик</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="71"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
+        <source>Items on sidebar pane</source>
+        <translation>Пункти на бічній панелі</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="164"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="20"/>
         <source>Mount</source>
         <translation>Монтування</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
-        <source>Other</source>
-        <translation>Інше</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="72"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="73"/>
-        <source>Preview</source>
-        <translation>Попередній перегляд</translation>
+        <source>Other</source>
+        <translation>Інше</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="74"/>
-        <source>Basic</source>
-        <translation>Основний</translation>
+        <source>Preview</source>
+        <translation>Попередній перегляд</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="75"/>
-        <source>View</source>
-        <translation>Вид</translation>
+        <source>Basic</source>
+        <translation>Основний</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="76"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="76"/>
-        <source>Hidden files</source>
-        <translation>Приховані файли</translation>
+        <source>View</source>
+        <translation>Вид</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="77"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="76"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="77"/>
-        <source>New window and tab</source>
-        <translation>Нове вікно і вкладка</translation>
+        <source>Hidden files</source>
+        <translation>Приховані файли</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="78"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="77"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="78"/>
+        <source>New window and tab</source>
+        <translation>Нове вікно і вкладка</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="79"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="78"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="79"/>
         <source>Open behavior</source>
         <translation>Поведінка відкриття</translation>
     </message>
@@ -844,14 +851,19 @@
         <translation>Поточна директорія</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="28"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
+        <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
+        <translation>Вмикання попереднього перегляду може призвести до повільного завантаження віддаленого каталогу або припинення доступу до програми</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation>Перемикання показу записів може призвести до помилок при монтуванні</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="34"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="42"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="232"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="205"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="55"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="36"/>
@@ -861,36 +873,36 @@
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="74"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="105"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="237"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="233"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="206"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Припинити</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="634"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="633"/>
         <source>Shortcut</source>
         <translation>Ярлик</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1148"/>
-        <source>This system wallpaer is locked. Please contact your admin.</source>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1141"/>
+        <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Це загальносистемне фонове зображення заблоковано. Будь ласка, зв&apos;яжіться із адміністратором системи.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1209"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1199"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>(копія)</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1210"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1200"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>(копія %1)</translation>
@@ -912,98 +924,98 @@
         <translation>Біт</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="109"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="140"/>
         <source>Access denied</source>
         <translation>Доступ заборонено</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="35"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="114"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="69"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Підтвердити</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="98"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="74"/>
         <source>The device has been safely removed</source>
         <translation>Пристрій було безпечно вилучено</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="32"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="530"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="533"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="303"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="130"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="399"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="133"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="400"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="63"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="72"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="233"/>
         <source>Open in new window</source>
         <translation>Відкрити у новому вікні</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="35"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="534"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="537"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="307"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="134"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="403"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="137"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="404"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="75"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="84"/>
         <source>Open in new tab</source>
         <translation>Відкрити у новій вкладці</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="42"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="543"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="46"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="546"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>Перейменувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="47"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="51"/>
         <source>Remove from quick access</source>
         <translation>Вилучити зі швидкого доступу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="52"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="56"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="145"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="148"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="277"/>
         <source>Properties</source>
         <translation>Властивості</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="54"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="53"/>
         <source>New Folder</source>
         <translation>Нова тека</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="57"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="56"/>
         <source>New Text</source>
         <translation>Новий текст</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="61"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="60"/>
         <source>Document</source>
         <translation>Документ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="65"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="64"/>
         <source>Spreadsheet</source>
         <translation>Електронна таблиця</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="69"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="68"/>
         <source>Presentation</source>
         <translation>Презентація</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="73"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="72"/>
         <source>New File</source>
         <translation>Новий Файл</translation>
     </message>
@@ -1236,14 +1248,14 @@
         <translation>Сірий</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="547"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="550"/>
         <source>Remove</source>
         <translation>Вилучити</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>Перейменувати</translation>
@@ -1292,7 +1304,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="231"/>
         <source>Open</source>
         <translation>Відкрити</translation>
     </message>
@@ -1302,48 +1314,48 @@
         <translation>Витерти</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="204"/>
         <source>Cannot access</source>
         <translation>Не вдалося отримати доступ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="248"/>
         <source>User directory</source>
         <translation>Каталог користувача</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="252"/>
         <source>Local disk</source>
         <translation>Локальний накопичувач</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="255"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="254"/>
         <source>Removable disk</source>
         <translation>Знімний накопичувач</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="257"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="256"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="260"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="259"/>
         <source>Network shared directory</source>
         <translation>Мережева спільна директорія</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="262"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="261"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="265"/>
         <source>Android mobile device</source>
         <translation>Мобільний пристрій Android</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="264"/>
         <source>Apple mobile device</source>
         <translation>Мобільний пристрій Apple</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="269"/>
         <source>Unknown device</source>
         <translation>Невідомий пристрій</translation>
     </message>
@@ -1406,12 +1418,12 @@
         <translation>Налаштування</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="394"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="395"/>
         <source>Copy path</source>
         <translation>Копіювати шлях</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="412"/>
         <source>Edit address</source>
         <translation>Редагувати адресу</translation>
     </message>
@@ -1427,75 +1439,75 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="179"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Location</source>
         <translation>Місцезнаходження</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Replace Text</source>
         <translation>Замінити текст</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Add Text</source>
         <translation>Додати текст</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Custom Text</source>
         <translation>Користувацький текст</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="61"/>
         <source>Find</source>
         <translation>Знайти</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="53"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
         <source>Required</source>
         <translation>Вимагається</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="70"/>
         <source>Replace</source>
         <translation>Замінити</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="72"/>
         <source>Optional</source>
         <translation>Необов&apos;язково</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="78"/>
         <source>Add</source>
         <translation>Додати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
         <source>Before file name</source>
         <translation>Перед ім&apos;ям файлу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
         <source>After file name</source>
         <translation>Після імені файлу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="92"/>
         <source>File name</source>
         <translation>Ім&apos;я файлу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="99"/>
         <source>Start at</source>
         <translation>Почати з</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
         <source>Tips: Sort by selected file order</source>
         <translation>Поради: сортувати за вибраним порядком файлів</translation>
     </message>
@@ -1531,47 +1543,47 @@
         <translation>Моє сховище</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="225"/>
         <source>Create Vault</source>
         <translation>Створити сховище</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="228"/>
         <source>Unlock</source>
         <translation>Розблокувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="240"/>
         <source>Lock</source>
         <translation>Заблокувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="245"/>
         <source>Auto lock</source>
         <translation>Автоблокування</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="243"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="247"/>
         <source>Never</source>
         <translation>Ніколи</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="253"/>
         <source>5 minutes</source>
         <translation>5 хвилин</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
         <source>10 minutes</source>
         <translation>10 хвилин</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
         <source>20 minutes</source>
         <translation>20 хвилин</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="271"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="275"/>
         <source>Delete File Vault</source>
         <translation>Вилучити сховище файлів</translation>
     </message>
@@ -2236,30 +2248,30 @@
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1025"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1028"/>
         <source>Loading wallpapers...</source>
         <translation>Завантажуємо шпалери…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1027"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1030"/>
         <source>Loading screensavers...</source>
         <translation>Завантажуємо зберігачі екрана…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1087"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1090"/>
         <source>Custom Screensaver</source>
         <translation>Нетиповий зберігач екрана</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1088"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1090"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1091"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1093"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Застосувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1128"/>
-        <source>This system wallpaer is locked. Please contact your admin.</source>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1166"/>
+        <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>Це загальносистемне фонове зображення заблоковано. Будь ласка, зв&apos;яжіться із адміністратором системи.</translation>
     </message>
 </context>
@@ -2293,32 +2305,32 @@
         <translation>Обидва</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="545"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="549"/>
         <source>Wallpaper Slideshow</source>
         <translation>Показ слайдів із зображень тла</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="586"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="590"/>
         <source>When login</source>
         <translation>Під час входу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="588"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="592"/>
         <source>When wakeup</source>
         <translation>Під час пробудження</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="626"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="630"/>
         <source>Require a password on wakeup</source>
         <translation>Вимагати пароль при пробудженні</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="658"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="662"/>
         <source>Never</source>
         <translation>Ніколи</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="660"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="664"/>
         <source>Wait:</source>
         <translation>Очікування:</translation>
     </message>
@@ -3256,95 +3268,95 @@
 <context>
     <name>dfmbase::TaskWidget</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="198"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="197"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
         <translation>не вдалося створити дані початкового файла %1 у функції показу конфліктів Info!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="208"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="207"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
         <translation>не вдалося створити дані файла призначення %1 у функції показу конфліктів Info!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="224"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="241"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="240"/>
         <source>Time modified: %1</source>
         <translation>Час зміни: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="228"/>
         <source>Original folder</source>
         <translation>Початкова тека</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="231"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="246"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
         <source>Contains: %1</source>
         <translation>Вміщує: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="233"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="232"/>
         <source>Original file</source>
         <translation>Початковий файл</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="234"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="249"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="233"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="248"/>
         <source>Size: %1</source>
         <translation>Розмір: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="243"/>
         <source>Target folder</source>
         <translation>Тека призначення</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="248"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="247"/>
         <source>Target file</source>
         <translation>Файл призначення</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="384"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="383"/>
         <source>Syncing data</source>
         <translation>Синхронізація даних</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="385"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="384"/>
         <source>Please wait</source>
         <translation>Будь ласка, зачекайте</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="574"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="573"/>
         <source>Keep both</source>
         <comment>button</comment>
         <translation>Залишити два</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="577"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="576"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>Пропустити</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="582"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="632"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="581"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="631"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Замінити</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="604"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="603"/>
         <source>Do not ask again</source>
         <translation>Не запитувати знову</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="629"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="628"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>Повторити</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="635"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="634"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>Об&apos;єднати</translation>
@@ -3680,42 +3692,42 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
         <source>Unlock device failed</source>
         <translation>Не вдалося розблокувати пристрій</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
         <source>Wrong password</source>
         <translation>Помилковий пароль</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="467"/>
         <source>Rename failed</source>
         <translation>Не вдалося перейменувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="467"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>Пристрій зайнято. Його не можна зараз перейменувати.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="494"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="495"/>
         <source>Format failed</source>
         <translation>Не вдалося форматувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="494"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="495"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>Пристрій зайнято. Його не можна зараз форматувати.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="634"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="636"/>
         <source>Mount error</source>
         <translation>Помилка монтування</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="634"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="636"/>
         <source>Cannot access %1</source>
         <translation>Не вдалося отримати доступ до %1</translation>
     </message>
@@ -3723,7 +3735,7 @@
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="38"/>
         <source>Computer</source>
         <translation>Комп&apos;ютер</translation>
     </message>
@@ -3787,7 +3799,8 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="45"/>
         <source>%1 on %2</source>
         <translation>%1 на %2</translation>
     </message>
@@ -3891,124 +3904,124 @@
 <context>
     <name>dfmplugin_dirshare::ShareControlWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="101"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="100"/>
         <source>Sharing</source>
         <translation>Поділитись</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="120"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="119"/>
         <source>Share this folder</source>
         <translation>Поділитися цією текою</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="144"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="143"/>
         <source>Share name</source>
         <translation>Назва спільного ресурсу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
         <source>Permission</source>
         <translation>Права доступу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="152"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="151"/>
         <source>Anonymous</source>
         <translation>Анонімно</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="156"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="155"/>
         <source>Read and write</source>
         <translation>Читання та запис</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="156"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="155"/>
         <source>Read only</source>
         <translation>Лише для читання</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="157"/>
         <source>Not allow</source>
         <translation>Не дозволяти</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="157"/>
         <source>Allow</source>
         <translation>Дозволити</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="181"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="180"/>
         <source>Network path</source>
         <translation>Шлях у мережі</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="190"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="217"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="216"/>
         <source>Copy</source>
         <translation>Копіювати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="206"/>
         <source>Username</source>
         <translation>Ім&apos;я користувача</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="235"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="234"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="509"/>
         <source>None</source>
         <translation>Жоден</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="241"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="242"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="243"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="511"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
         <source>Set password</source>
         <translation>Встановити пароль</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="243"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="511"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="242"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
         <source>Change password</source>
         <translation>Змінити пароль</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="252"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="251"/>
         <source>Share password</source>
         <translation>Пароль до спільного ресурсу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="265"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="264"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>Цей пароль буде застосовано до усіх тек спільного використання. Користувачі, які не матимуть цього пароля, зможуть отримати доступ до спільних тек, лише якщо для них визначено анонімний доступ.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="357"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="356"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Назвою спільного ресурсу не може дві крапки (..) або одна крапка (.)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="375"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="374"/>
         <source>The share name is used by another user.</source>
         <translation>Назву спільного ресурсу вже використано іншим користувачем.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="376"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="375"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Гаразд</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="378"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="377"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Спільний ресурс із такою назвою вже існує. Хочете замінити теку спільного використання?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="379"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="378"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="380"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="379"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Замінити</translation>
@@ -4269,17 +4282,17 @@
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="411"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="410"/>
         <source>Failed to create the directory</source>
         <translation>Не вдалося створити каталог</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="904"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="903"/>
         <source>Failed to create the file</source>
         <translation>Не вдалося створити файл</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="973"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="972"/>
         <source>link file error</source>
         <translation>помилка посилання на файл</translation>
     </message>
@@ -4474,7 +4487,7 @@
 <context>
     <name>dfmplugin_myshares::MyShares</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="38"/>
         <source>My Shares</source>
         <translation>Мої спільні</translation>
     </message>
@@ -4527,58 +4540,58 @@
 <context>
     <name>dfmplugin_propertydialog::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="45"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="44"/>
         <source>Basic info</source>
         <translation>Базова інформація</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="53"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="50"/>
         <source>Size</source>
         <translation>Розмір</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="58"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="51"/>
         <source>Contains</source>
         <translation>Вміщує</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="63"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="52"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="68"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="53"/>
         <source>Location</source>
         <translation>Місцезнаходження</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="73"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="54"/>
         <source>Time created</source>
         <translation>Час створення</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="55"/>
         <source>Time accessed</source>
         <translation>Час доступу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="83"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="56"/>
         <source>Time modified</source>
         <translation>Час зміни</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="87"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="59"/>
         <source>Hide this file</source>
         <translation>Приховати цей файл</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="268"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="249"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="306"/>
         <source>%1 item</source>
         <translation>%1 об&apos;єкт</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="306"/>
         <source>%1 items</source>
         <translation>%1 об&apos;єктів</translation>
     </message>
@@ -4599,22 +4612,22 @@
 <context>
     <name>dfmplugin_propertydialog::ComputerInfoThread</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="269"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="275"/>
         <source>For Government</source>
         <translation>Для урядових організацій</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="271"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="277"/>
         <source>For Enterprise</source>
         <translation>Для промисловості</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="294"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="300"/>
         <source>Bit</source>
         <translation>Біт</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="336"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="342"/>
         <source>Available</source>
         <translation>Доступна</translation>
     </message>
@@ -4637,32 +4650,32 @@
         <translation>Назва комп’ютера</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="70"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="71"/>
         <source>Version</source>
         <translation>Версія</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="72"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="74"/>
         <source>Edition</source>
         <translation>Редагування</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="74"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="77"/>
         <source>OS build</source>
         <translation>Збірка ОС</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="76"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="83"/>
         <source>Processor</source>
         <translation>Процесор</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="86"/>
         <source>Memory</source>
         <translation>Памʼять</translation>
     </message>
@@ -4781,127 +4794,127 @@
 <context>
     <name>dfmplugin_search::AdvanceSearchBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="52"/>
         <source>Search:</source>
         <translation>Шукати:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="53"/>
         <source>File Type:</source>
         <translation>Тип файла:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="54"/>
         <source>File Size:</source>
         <translation>Розмір файла:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="55"/>
         <source>Time Modified:</source>
         <translation>Внесення змін:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="56"/>
         <source>Time Accessed:</source>
         <translation>Час доступу:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="57"/>
         <source>Time Created:</source>
         <translation>Час створення:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
         <source>Reset</source>
         <translation>Скинути</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="80"/>
         <source>All subdirectories</source>
         <translation>Усі підкаталоги</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="81"/>
         <source>Current directory</source>
         <translation>Поточний каталог</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
         <source>Application</source>
         <translation>Програма</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="88"/>
         <source>Video</source>
         <translation>Відео</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="89"/>
         <source>Audio</source>
         <translation>Аудіо</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="90"/>
         <source>Image</source>
         <translation>Зображення</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="91"/>
         <source>Archive</source>
         <translation>Архів</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
         <source>Executable</source>
         <translation>Виконуваний</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
         <source>Backup file</source>
         <translation>Файл резервної копії</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="106"/>
         <source>Today</source>
         <translation>Сьогодні</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="107"/>
         <source>Yesterday</source>
         <translation>Вчора</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="108"/>
         <source>This week</source>
         <translation>Цього тижня</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="109"/>
         <source>Last week</source>
         <translation>Минулого тижня</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="110"/>
         <source>This month</source>
         <translation>Цього місяця</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="111"/>
         <source>Last month</source>
         <translation>Минулого місяця</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="108"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
         <source>This year</source>
         <translation>Цього року</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
         <source>Last year</source>
         <translation>Минулого року</translation>
     </message>
@@ -4958,37 +4971,37 @@
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="312"/>
         <source>Quick access</source>
         <translation>Швидкий доступ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="313"/>
         <source>Partitions</source>
         <translation>Розділи</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="314"/>
         <source>Network</source>
         <translation>Мережа</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="315"/>
         <source>Tag</source>
         <translation>Мітка</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="316"/>
         <source>Bookmark</source>
         <translation>Закладка</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="311"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="317"/>
         <source>Other</source>
         <translation>Інше</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="318"/>
         <source>Unknown Group</source>
         <translation>Невідома груп</translation>
     </message>
@@ -5097,7 +5110,7 @@
 <context>
     <name>dfmplugin_tag::TagWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="30"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="39"/>
         <source>Tag</source>
         <translation>Мітка</translation>
     </message>
@@ -5113,47 +5126,47 @@
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="51"/>
         <source>Connect to Server</source>
         <translation>Підключення до сервера</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="147"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="310"/>
         <source>Clear History</source>
         <translation>Очистити історію</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="180"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="402"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="403"/>
         <source>Unfavorite</source>
         <translation>Прибрати з улюблених</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="209"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="209"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="210"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>Під&apos;єднатися</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="222"/>
         <source>My Favorites</source>
         <translation>Улюблені</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="339"/>
         <source>No favorites yet</source>
         <translation>Улюблених записів ще немає</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="410"/>
         <source>Favorite</source>
         <translation>Додати до улюблених</translation>
     </message>
@@ -5478,39 +5491,39 @@
 <context>
     <name>dfmplugin_utils::OpenWithDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="240"/>
         <source>Open with</source>
         <translation>Відкрити з</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="211"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="262"/>
         <source>Add other programs</source>
         <translation>Додати інші програми</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="263"/>
         <source>Set as default</source>
         <translation>Встановити за замовчуванням</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="265"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="215"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="266"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Підтвердити</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="219"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="273"/>
         <source>Recommended Applications</source>
         <translation>Рекомендовані програми</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="221"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="275"/>
         <source>Other Applications</source>
         <translation>Інші програми</translation>
     </message>
@@ -5790,40 +5803,40 @@
 <context>
     <name>dfmplugin_vault::VaultActiveFinishedView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="47"/>
         <source>Encrypt File Vault</source>
         <translation>Зашифрувати сховище файлів</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="54"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
         <translation>Натисніть «Зашифрувати» і введіть пароль користувача.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="67"/>
         <source>Encrypting...</source>
         <translation>Шифрування…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="75"/>
         <source>The setup is complete</source>
         <translation>Налаштовування завершено</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="125"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="154"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="133"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="188"/>
         <source>Encrypt</source>
         <translation>Зашифрувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="156"/>
         <source>Failed to create file vault: %1</source>
         <translation>Не вдалося створити сховище файлів: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="240"/>
         <source>OK</source>
         <translation>Гаразд</translation>
     </message>
@@ -5831,42 +5844,42 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="39"/>
         <source>Save Recovery Key</source>
         <translation>Зберегти ключ відновлення</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="46"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation>Зберегти ключ у безпеці для отримання пароля до сховища згодом</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="52"/>
         <source>Save to default path</source>
         <translation>Зберегти за типовим шляхом</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
         <source>Save to other locations</source>
         <translation>Зберегти до інших місць</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="59"/>
         <source>No permission, please reselect</source>
         <translation>Немає доступу. Будь ласка, змініть вибір</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="67"/>
         <source>Select a path</source>
         <translation>Виберіть шлях</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
         <source>Next</source>
         <translation>Наступний</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="91"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>Типовий шлях є невидимим для інших користувачів, а дані щодо шляху не буде показано.</translation>
     </message>
@@ -5874,69 +5887,69 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="32"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="37"/>
         <source>Set Vault Password</source>
         <translation>Встановлення пароля сховища</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="39"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="43"/>
         <source>Encryption method</source>
         <translation>Спосіб шифрування</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="46"/>
         <source>Key encryption</source>
         <translation>Ключ шифрування</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="46"/>
         <source>Transparent encryption</source>
         <translation>Прозоре шифрування</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="162"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 символів, може містити A-Z, a-z, 0-9 та символи пунктуації</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="58"/>
         <source>Repeat password</source>
         <translation>Повторити пароль</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="61"/>
         <source>Input the password again</source>
         <translation>Введіть ваш пароль ще раз</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="64"/>
         <source>Password hint</source>
         <translation>Підказка пароля</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="67"/>
         <source>Optional</source>
         <translation>Необов&apos;язково</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="71"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation>Сховище файлів буде автоматично розблоковано при доступі, без перевірки пароля. Файли у сховищі будуть недоступними для користувачів інших облікових записів.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="80"/>
         <source>Next</source>
         <translation>Наступний</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="203"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="201"/>
         <source>Passwords do not match</source>
         <translation>Паролі не збігаються</translation>
     </message>
@@ -5944,27 +5957,27 @@
 <context>
     <name>dfmplugin_vault::VaultActiveStartView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="21"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="29"/>
         <source>File Vault</source>
         <translation>Файлове сховище</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Create your secure private space</source>
         <translation>Створіть ваш безпечний приватний простір</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Advanced encryption technology</source>
         <translation>Додаткові технології шифрування</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Convenient and easy to use</source>
         <translation>Зручний і простий у використанні</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="42"/>
         <source>Create</source>
         <translation>Створити</translation>
     </message>
@@ -5993,18 +6006,18 @@
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="136"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="462"/>
         <source>Vault</source>
         <translation>Сховище</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation>Сховище недоступне, оскільки не встановлено cryfs!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="462"/>
         <source>A task is in progress, so it cannot perform your operation</source>
         <translation>Виконуємо завдання. Отже, виконання вашої дії неможливе.</translation>
     </message>
@@ -6119,17 +6132,17 @@
 <context>
     <name>dfmplugin_vault::VaultVisibleManager</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="57"/>
         <source>My Vault</source>
         <translation>Моє сховище</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="105"/>
         <source>File Vault</source>
         <translation>Файлове сховище</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="121"/>
         <source>Vault</source>
         <translation>Сховище</translation>
     </message>
@@ -6137,22 +6150,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="515"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="513"/>
         <source>Name</source>
         <translation>Назва</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="517"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="515"/>
         <source>Time modified</source>
         <translation>Час зміни</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="519"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="517"/>
         <source>Size</source>
         <translation>Розмір</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="521"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="519"/>
         <source>Type</source>
         <translation>Тип</translation>
     </message>
@@ -6235,7 +6248,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="885"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="886"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Зберегти</translation>
@@ -6268,18 +6281,18 @@
         <translation>Відкрити файл</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="221"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="223"/>
         <source>File Name</source>
         <translation>Ім&apos;я файлу</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="222"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="224"/>
         <source>Format</source>
         <translation>Форматувати</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="241"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="243"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="245"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="247"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>

@@ -15,29 +15,42 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="216"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="236"/>
         <source>File Manager</source>
         <translation>檔案管理器</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="220"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="240"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>檔案管理器是一款功能強大的文件管理工具，它包括搜尋、複製、回收站、壓縮/解壓縮，文件屬性等管理功能。</translation>
     </message>
 </context>
 <context>
+    <name>DAttachedBlockDevice</name>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="78"/>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>DAttachedProtocolDevice</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedprotocoldevice.cpp" line="48"/>
-        <source>Unknown device</source>
-        <translation>未知裝置</translation>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="48"/>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="53"/>
+        <source>%1 on %2</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedblockdevice.cpp" line="88"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedblockdevice.cpp" line="100"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="91"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="103"/>
         <source>%1 Volume</source>
         <translation>%1 卷</translation>
     </message>
@@ -45,48 +58,35 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="174"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="172"/>
         <source>Desktop</source>
         <translation>桌面</translation>
     </message>
 </context>
 <context>
-    <name>DiskControlItem</name>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="142"/>
-        <source>Cannot access %1</source>
-        <translation>無法訪問%1</translation>
-    </message>
-</context>
-<context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="131"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="104"/>
         <source>Disks</source>
         <translation>磁碟列表</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="326"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="299"/>
         <source>The device was not safely removed</source>
         <translation>裝置沒有正常移除</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="327"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="300"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>請點擊“安全移除”後，再斷開連接</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="330"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="303"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>磁碟文件被占用，無法移除</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="333"/>
-        <source>The device is busy, cannot remove now</source>
-        <translation>裝置正忙，無法安全移除</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="336"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="306"/>
         <source>The device is busy, cannot eject now</source>
         <translation>光碟機正忙，無法彈出</translation>
     </message>
@@ -94,17 +94,17 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="36"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="35"/>
         <source>Disk</source>
         <translation>磁碟</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="92"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="90"/>
         <source>Open</source>
         <translation>打開</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="99"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="97"/>
         <source>Eject all</source>
         <translation>全部彈出</translation>
     </message>
@@ -112,8 +112,8 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="227"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="241"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="226"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="240"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -121,7 +121,7 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="270"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="263"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
@@ -129,71 +129,71 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="933"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="941"/>
         <source>need authorization to access</source>
         <translation>需要授權來訪問</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="999"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1007"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation>無法確認%1的身份。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1000"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1008"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>當您首次登入時會看到這個提示。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1001"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1009"/>
         <source>The identity sent by the remote computer is</source>
         <translation>遠端電腦發送的身份訊息為</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1003"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1011"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想確認繼續操作是否安全，請聯絡系統管理員。</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="327"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="328"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="41"/>
         <source>System Disk</source>
         <translation>系統盤</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="329"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="330"/>
         <source>Data Disk</source>
         <translation>資料盤</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
         <source>Blank %1 Disc</source>
         <translation>空白%1光碟</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="99"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="379"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="380"/>
         <source>%1 Drive</source>
         <translation>%1 驅動器</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="395"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
         <source>%1 Encrypted</source>
         <translation>%1 已加密</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="402"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="403"/>
         <source>%1 Volume</source>
         <translation>%1 卷</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="237"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="311"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="284"/>
         <source>Scanning the device, stop it?</source>
         <translation>正在掃描目前裝置，是否終止掃描？</translation>
     </message>
@@ -309,35 +309,35 @@
         <translation>有%1個任務正在進行</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>%1 item</source>
         <translation>%1 項</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>%1 items</source>
         <translation>%1 項</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="288"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="268"/>
         <source>Unable to find the original file</source>
         <translation>無法找到連結目標文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="562"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="566"/>
         <source>File has been moved or deleted</source>
         <translation>文件已被移動或刪除</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="564"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="109"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="568"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
         <source>You do not have permission to access this folder</source>
         <translation>您沒有權限訪問該資料夾</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="567"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="571"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>您沒有權限遍歷子文件</translation>
     </message>
@@ -606,13 +606,20 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
-        <source>Text preview</source>
-        <translation>文字預覽</translation>
+        <source>The remote environment shows thumbnail previews</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="49"/>
+        <source>Text preview</source>
+        <translation>文字預覽</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
         <source>Video preview</source>
         <translation>影片預覽</translation>
     </message>
@@ -624,207 +631,207 @@
         <translation>音樂預覽</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
-        <source>Show hidden files in search results</source>
-        <translation>搜尋結果中顯示隱藏文件</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="50"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="51"/>
-        <source>Default size:</source>
-        <translation>預設大小：</translation>
+        <source>Show hidden files in search results</source>
+        <translation>搜尋結果中顯示隱藏文件</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
-        <source>Extra small</source>
-        <translation>極小</translation>
+        <source>Default size:</source>
+        <translation>預設大小：</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
-        <source>Small</source>
-        <translation>小</translation>
+        <source>Extra small</source>
+        <translation>極小</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="54"/>
-        <source>Medium</source>
-        <translation>中</translation>
+        <source>Small</source>
+        <translation>小</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="55"/>
-        <source>Large</source>
-        <translation>大</translation>
+        <source>Medium</source>
+        <translation>中</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="56"/>
-        <source>Extra large</source>
-        <translation>極大</translation>
+        <source>Large</source>
+        <translation>大</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
-        <source>Mix sorting of files and folders</source>
-        <translation>文件和資料夾混合排序</translation>
+        <source>Extra large</source>
+        <translation>極大</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
-        <source>Default view:</source>
-        <translation>預設檢視：</translation>
+        <source>Mix sorting of files and folders</source>
+        <translation>文件和資料夾混合排序</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="59"/>
-        <source>Show hidden files</source>
-        <translation>顯示隱藏文件</translation>
+        <source>Default view:</source>
+        <translation>預設檢視：</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="60"/>
-        <source>Show file extensions</source>
-        <translation>顯示文件副檔名</translation>
+        <source>Show hidden files</source>
+        <translation>顯示隱藏文件</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
-        <source>Open from default window:</source>
-        <translation>從預設視窗打開：</translation>
+        <source>Show file extensions</source>
+        <translation>顯示文件副檔名</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="62"/>
-        <source>Open in new tab:</source>
-        <translation>從新標籤打開：</translation>
+        <source>Open from default window:</source>
+        <translation>從預設視窗打開：</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="63"/>
-        <source>Always open folder in new window</source>
-        <translation>總是在新視窗打開資料夾</translation>
+        <source>Open in new tab:</source>
+        <translation>從新標籤打開：</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="64"/>
-        <source>Open file:</source>
-        <translation>打開文件：</translation>
+        <source>Always open folder in new window</source>
+        <translation>總是在新視窗打開資料夾</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="65"/>
-        <source>Click</source>
-        <translation>單擊</translation>
+        <source>Open file:</source>
+        <translation>打開文件：</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="66"/>
-        <source>Double click</source>
-        <translation>雙擊</translation>
+        <source>Click</source>
+        <translation>單擊</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
-        <source>Advanced</source>
-        <translation>進階設定</translation>
+        <source>Double click</source>
+        <translation>雙擊</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="68"/>
-        <source>Dialog</source>
-        <translation>對話框</translation>
+        <source>Advanced</source>
+        <translation>進階設定</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="69"/>
-        <source>Index</source>
-        <translation>索引</translation>
+        <source>Dialog</source>
+        <translation>對話框</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
-        <source>Items on sidebar pane</source>
-        <translation>側邊欄顯示項目</translation>
+        <source>Index</source>
+        <translation>索引</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="71"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
+        <source>Items on sidebar pane</source>
+        <translation>側邊欄顯示項目</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="164"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="20"/>
         <source>Mount</source>
         <translation>掛載</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
-        <source>Other</source>
-        <translation>其他</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="72"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="73"/>
-        <source>Preview</source>
-        <translation>預覽</translation>
+        <source>Other</source>
+        <translation>其他</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="74"/>
-        <source>Basic</source>
-        <translation>基礎設定</translation>
+        <source>Preview</source>
+        <translation>預覽</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="75"/>
-        <source>View</source>
-        <translation>檢視</translation>
+        <source>Basic</source>
+        <translation>基礎設定</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="76"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="76"/>
-        <source>Hidden files</source>
-        <translation>隱藏文件</translation>
+        <source>View</source>
+        <translation>檢視</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="77"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="76"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="77"/>
-        <source>New window and tab</source>
-        <translation>新視窗和新標籤</translation>
+        <source>Hidden files</source>
+        <translation>隱藏文件</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="78"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="77"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="78"/>
+        <source>New window and tab</source>
+        <translation>新視窗和新標籤</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="79"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="78"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="79"/>
         <source>Open behavior</source>
         <translation>打開行為</translation>
     </message>
@@ -844,14 +851,19 @@
         <translation>目前目錄</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="28"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
+        <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation>切換入口顯示模式可能會導致掛載狀態失效</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="34"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="42"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="232"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="205"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="55"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="36"/>
@@ -861,36 +873,36 @@
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="74"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="105"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="237"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="233"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="206"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>終 止</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="634"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="633"/>
         <source>Shortcut</source>
         <translation>捷徑</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1148"/>
-        <source>This system wallpaer is locked. Please contact your admin.</source>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1141"/>
+        <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>目前系統桌布已被鎖定，請聯絡管理員</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1209"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1199"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>（副本）</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1210"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1200"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation>（副本 %1）</translation>
@@ -912,98 +924,98 @@
         <translation>位</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="109"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="140"/>
         <source>Access denied</source>
         <translation>禁止訪問</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="35"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="114"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="69"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="98"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="74"/>
         <source>The device has been safely removed</source>
         <translation>裝置已被安全移除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="32"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="530"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="533"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="303"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="130"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="399"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="133"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="400"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="63"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="72"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="233"/>
         <source>Open in new window</source>
         <translation>在新視窗打開</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="35"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="534"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="537"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="307"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="134"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="403"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="137"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="404"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="75"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="84"/>
         <source>Open in new tab</source>
         <translation>在新標籤中打開</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="42"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="543"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="46"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="546"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>重新命名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="47"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="51"/>
         <source>Remove from quick access</source>
         <translation>從快捷訪問移除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="52"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="56"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="145"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="148"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="277"/>
         <source>Properties</source>
         <translation>屬性</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="54"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="53"/>
         <source>New Folder</source>
         <translation>建立資料夾</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="57"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="56"/>
         <source>New Text</source>
         <translation>建立文字</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="61"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="60"/>
         <source>Document</source>
         <translation>建立Word文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="65"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="64"/>
         <source>Spreadsheet</source>
         <translation>建立Excel文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="69"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="68"/>
         <source>Presentation</source>
         <translation>示範文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="73"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="72"/>
         <source>New File</source>
         <translation>建立文件</translation>
     </message>
@@ -1236,14 +1248,14 @@
         <translation>灰色</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="547"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="550"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>重新命名</translation>
@@ -1292,7 +1304,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="231"/>
         <source>Open</source>
         <translation>打開</translation>
     </message>
@@ -1302,48 +1314,48 @@
         <translation>擦除</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="204"/>
         <source>Cannot access</source>
         <translation>無法訪問</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="248"/>
         <source>User directory</source>
         <translation>使用者目錄</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="252"/>
         <source>Local disk</source>
         <translation>本機磁碟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="255"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="254"/>
         <source>Removable disk</source>
         <translation>可移動磁碟</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="257"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="256"/>
         <source>DVD</source>
         <translation>光碟機裝置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="260"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="259"/>
         <source>Network shared directory</source>
         <translation>網路共享目錄</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="262"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="261"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="265"/>
         <source>Android mobile device</source>
         <translation>安卓行動裝置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="264"/>
         <source>Apple mobile device</source>
         <translation>蘋果行動裝置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="269"/>
         <source>Unknown device</source>
         <translation>未知裝置</translation>
     </message>
@@ -1406,12 +1418,12 @@
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="394"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="395"/>
         <source>Copy path</source>
         <translation>複製路徑</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="412"/>
         <source>Edit address</source>
         <translation>編輯地址</translation>
     </message>
@@ -1427,75 +1439,75 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="179"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Replace Text</source>
         <translation>取代文字</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Add Text</source>
         <translation>添加文字</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Custom Text</source>
         <translation>自訂文字</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="61"/>
         <source>Find</source>
         <translation>尋找</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="53"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
         <source>Required</source>
         <translation>必填</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="70"/>
         <source>Replace</source>
         <translation>取代</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="72"/>
         <source>Optional</source>
         <translation>選填</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="78"/>
         <source>Add</source>
         <translation>添加</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
         <source>Before file name</source>
         <translation>名稱之前</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
         <source>After file name</source>
         <translation>名稱之後</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="92"/>
         <source>File name</source>
         <translation>檔案名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="99"/>
         <source>Start at</source>
         <translation>+序列</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
         <source>Tips: Sort by selected file order</source>
         <translation>提示：根據選擇文件的順序先後排序</translation>
     </message>
@@ -1531,47 +1543,47 @@
         <translation>我的保險箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="225"/>
         <source>Create Vault</source>
         <translation>建立保險箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="228"/>
         <source>Unlock</source>
         <translation>解鎖</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="240"/>
         <source>Lock</source>
         <translation>立即上鎖</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="245"/>
         <source>Auto lock</source>
         <translation>自動上鎖</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="243"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="247"/>
         <source>Never</source>
         <translation>從不</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="253"/>
         <source>5 minutes</source>
         <translation>5分鐘</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
         <source>10 minutes</source>
         <translation>10分鐘</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
         <source>20 minutes</source>
         <translation>20分鐘</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="271"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="275"/>
         <source>Delete File Vault</source>
         <translation>刪除保險箱</translation>
     </message>
@@ -2236,30 +2248,30 @@
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1025"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1028"/>
         <source>Loading wallpapers...</source>
         <translation>桌布載入中…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1027"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1030"/>
         <source>Loading screensavers...</source>
         <translation>螢幕保護程式載入中…</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1087"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1090"/>
         <source>Custom Screensaver</source>
         <translation>自訂螢幕保護程式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1088"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1090"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1091"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1093"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>設定螢幕保護程式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1128"/>
-        <source>This system wallpaer is locked. Please contact your admin.</source>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1166"/>
+        <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation>目前系統桌布已被鎖定，請聯絡管理員</translation>
     </message>
 </context>
@@ -2293,32 +2305,32 @@
         <translation>同時設定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="545"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="549"/>
         <source>Wallpaper Slideshow</source>
         <translation>自動更換桌布</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="586"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="590"/>
         <source>When login</source>
         <translation>登入時</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="588"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="592"/>
         <source>When wakeup</source>
         <translation>喚醒時</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="626"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="630"/>
         <source>Require a password on wakeup</source>
         <translation>復原時需要密碼</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="658"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="662"/>
         <source>Never</source>
         <translation>從不</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="660"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="664"/>
         <source>Wait:</source>
         <translation>閒置時間：</translation>
     </message>
@@ -3256,95 +3268,95 @@
 <context>
     <name>dfmbase::TaskWidget</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="198"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="197"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
         <translation>在顯示衝突訊息功能中建立來源文件%1訊息失敗!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="208"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="207"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
         <translation>在顯示衝突訊息功能中建立目標文件%1訊息失敗!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="224"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="241"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="240"/>
         <source>Time modified: %1</source>
         <translation>修改時間：%1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="228"/>
         <source>Original folder</source>
         <translation>原始資料夾</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="231"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="246"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
         <source>Contains: %1</source>
         <translation>個數：%1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="233"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="232"/>
         <source>Original file</source>
         <translation>原始文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="234"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="249"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="233"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="248"/>
         <source>Size: %1</source>
         <translation>大小：%1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="243"/>
         <source>Target folder</source>
         <translation>目標資料夾</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="248"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="247"/>
         <source>Target file</source>
         <translation>目標文件</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="384"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="383"/>
         <source>Syncing data</source>
         <translation>資料同步中</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="385"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="384"/>
         <source>Please wait</source>
         <translation>請稍候</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="574"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="573"/>
         <source>Keep both</source>
         <comment>button</comment>
         <translation>共 存</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="577"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="576"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>跳 過</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="582"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="632"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="581"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="631"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>替 換</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="604"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="603"/>
         <source>Do not ask again</source>
         <translation>不再詢問</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="629"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="628"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>重 試</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="635"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="634"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>合 並</translation>
@@ -3680,42 +3692,42 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
         <source>Unlock device failed</source>
         <translation>解鎖裝置失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
         <source>Wrong password</source>
         <translation>密碼錯誤</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="467"/>
         <source>Rename failed</source>
         <translation>重新命名失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="467"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation>裝置正忙，無法重新命名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="494"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="495"/>
         <source>Format failed</source>
         <translation>格式化失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="494"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="495"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation>裝置正忙，無法格式化</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="634"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="636"/>
         <source>Mount error</source>
         <translation>掛載錯誤</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="634"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="636"/>
         <source>Cannot access %1</source>
         <translation>無法訪問%1</translation>
     </message>
@@ -3723,7 +3735,7 @@
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="38"/>
         <source>Computer</source>
         <translation>電腦</translation>
     </message>
@@ -3787,7 +3799,8 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="45"/>
         <source>%1 on %2</source>
         <translation>%2 上的 %1</translation>
     </message>
@@ -3891,124 +3904,124 @@
 <context>
     <name>dfmplugin_dirshare::ShareControlWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="101"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="100"/>
         <source>Sharing</source>
         <translation>共享管理</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="120"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="119"/>
         <source>Share this folder</source>
         <translation>共享此資料夾</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="144"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="143"/>
         <source>Share name</source>
         <translation>共享名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
         <source>Permission</source>
         <translation>權限</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="152"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="151"/>
         <source>Anonymous</source>
         <translation>匿名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="156"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="155"/>
         <source>Read and write</source>
         <translation>可讀寫</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="156"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="155"/>
         <source>Read only</source>
         <translation>唯讀</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="157"/>
         <source>Not allow</source>
         <translation>不允許</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="157"/>
         <source>Allow</source>
         <translation>允許</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="181"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="180"/>
         <source>Network path</source>
         <translation>網路路徑</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="190"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="217"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="216"/>
         <source>Copy</source>
         <translation>複製</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="206"/>
         <source>Username</source>
         <translation>使用者名稱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="235"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="234"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="509"/>
         <source>None</source>
         <translation>無</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="241"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="242"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="243"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="511"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
         <source>Set password</source>
         <translation>設定密碼</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="243"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="511"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="242"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
         <source>Change password</source>
         <translation>修改密碼</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="252"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="251"/>
         <source>Share password</source>
         <translation>共享密碼</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="265"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="264"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>此密碼將應用到所有共享資料夾，沒有共享密碼的使用者可以訪問“允許匿名訪問”的共享資料夾。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="357"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="356"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>..和.禁止作為共享名使用</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="375"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="374"/>
         <source>The share name is used by another user.</source>
         <translation>該共享名已被其他使用者使用。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="376"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="375"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>確 定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="378"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="377"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>該共享名已存在。是否取代原有共享資料夾？</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="379"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="378"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="380"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="379"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>替 換</translation>
@@ -4269,17 +4282,17 @@
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="411"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="410"/>
         <source>Failed to create the directory</source>
         <translation>目錄建立失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="904"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="903"/>
         <source>Failed to create the file</source>
         <translation>建立文件失敗</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="973"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="972"/>
         <source>link file error</source>
         <translation>連結文件錯誤</translation>
     </message>
@@ -4474,7 +4487,7 @@
 <context>
     <name>dfmplugin_myshares::MyShares</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="38"/>
         <source>My Shares</source>
         <translation>我的共享</translation>
     </message>
@@ -4527,58 +4540,58 @@
 <context>
     <name>dfmplugin_propertydialog::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="45"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="44"/>
         <source>Basic info</source>
         <translation>基本訊息</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="53"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="50"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="58"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="51"/>
         <source>Contains</source>
         <translation>文件個數</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="63"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="52"/>
         <source>Type</source>
         <translation>類型</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="68"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="53"/>
         <source>Location</source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="73"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="54"/>
         <source>Time created</source>
         <translation>建立時間</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="55"/>
         <source>Time accessed</source>
         <translation>訪問時間</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="83"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="56"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="87"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="59"/>
         <source>Hide this file</source>
         <translation>隱藏此文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="268"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="249"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="306"/>
         <source>%1 item</source>
         <translation>%1 項</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="306"/>
         <source>%1 items</source>
         <translation>%1 項</translation>
     </message>
@@ -4599,22 +4612,22 @@
 <context>
     <name>dfmplugin_propertydialog::ComputerInfoThread</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="269"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="275"/>
         <source>For Government</source>
         <translation>政務授權</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="271"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="277"/>
         <source>For Enterprise</source>
         <translation>企業授權</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="294"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="300"/>
         <source>Bit</source>
         <translation>位</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="336"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="342"/>
         <source>Available</source>
         <translation>可用</translation>
     </message>
@@ -4637,32 +4650,32 @@
         <translation>電腦名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="70"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="71"/>
         <source>Version</source>
         <translation>版本號</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="72"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="74"/>
         <source>Edition</source>
         <translation>版本</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="74"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="77"/>
         <source>OS build</source>
         <translation>構建號</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="76"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
         <source>Type</source>
         <translation>類型</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="83"/>
         <source>Processor</source>
         <translation>處理器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="86"/>
         <source>Memory</source>
         <translation>記憶體</translation>
     </message>
@@ -4781,127 +4794,127 @@
 <context>
     <name>dfmplugin_search::AdvanceSearchBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="52"/>
         <source>Search:</source>
         <translation>搜尋範圍：</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="53"/>
         <source>File Type:</source>
         <translation>文件類型：</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="54"/>
         <source>File Size:</source>
         <translation>檔案大小：</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="55"/>
         <source>Time Modified:</source>
         <translation>修改時間：</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="56"/>
         <source>Time Accessed:</source>
         <translation>訪問時間：</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="57"/>
         <source>Time Created:</source>
         <translation>建立時間：</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
         <source>Reset</source>
         <translation>重設</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="80"/>
         <source>All subdirectories</source>
         <translation>所有子資料夾</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="81"/>
         <source>Current directory</source>
         <translation>目前資料夾</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
         <source>Application</source>
         <translation>應用程式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="88"/>
         <source>Video</source>
         <translation>影片</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="89"/>
         <source>Audio</source>
         <translation>音訊</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="90"/>
         <source>Image</source>
         <translation>圖片</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="91"/>
         <source>Archive</source>
         <translation>壓縮文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
         <source>Text</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
         <source>Executable</source>
         <translation>可處理程序</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
         <source>Backup file</source>
         <translation>備份文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="106"/>
         <source>Today</source>
         <translation>今天</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="107"/>
         <source>Yesterday</source>
         <translation>昨天</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="108"/>
         <source>This week</source>
         <translation>本週</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="109"/>
         <source>Last week</source>
         <translation>上週</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="110"/>
         <source>This month</source>
         <translation>本月</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="111"/>
         <source>Last month</source>
         <translation>上月</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="108"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
         <source>This year</source>
         <translation>今年</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
         <source>Last year</source>
         <translation>去年</translation>
     </message>
@@ -4958,37 +4971,37 @@
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="312"/>
         <source>Quick access</source>
         <translation>快捷訪問</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="313"/>
         <source>Partitions</source>
         <translation>分區</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="314"/>
         <source>Network</source>
         <translation>網路</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="315"/>
         <source>Tag</source>
         <translation>標記</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="316"/>
         <source>Bookmark</source>
         <translation>書籤</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="311"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="317"/>
         <source>Other</source>
         <translation>其他</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="318"/>
         <source>Unknown Group</source>
         <translation>未知組</translation>
     </message>
@@ -5097,7 +5110,7 @@
 <context>
     <name>dfmplugin_tag::TagWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="30"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="39"/>
         <source>Tag</source>
         <translation>標記</translation>
     </message>
@@ -5113,47 +5126,47 @@
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="51"/>
         <source>Connect to Server</source>
         <translation>連線到伺服器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="147"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="310"/>
         <source>Clear History</source>
         <translation>清除最近使用的伺服器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="180"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="402"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="403"/>
         <source>Unfavorite</source>
         <translation>取消收藏</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="209"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="209"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="210"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>連 接</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="222"/>
         <source>My Favorites</source>
         <translation>我收藏的伺服器</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="339"/>
         <source>No favorites yet</source>
         <translation>暫無收藏</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="410"/>
         <source>Favorite</source>
         <translation>收藏</translation>
     </message>
@@ -5478,39 +5491,39 @@
 <context>
     <name>dfmplugin_utils::OpenWithDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="240"/>
         <source>Open with</source>
         <translation>打開方式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="211"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="262"/>
         <source>Add other programs</source>
         <translation>添加其他程式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="263"/>
         <source>Set as default</source>
         <translation>設為預設</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="265"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="215"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="266"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="219"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="273"/>
         <source>Recommended Applications</source>
         <translation>推薦應用</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="221"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="275"/>
         <source>Other Applications</source>
         <translation>其它應用</translation>
     </message>
@@ -5790,40 +5803,40 @@
 <context>
     <name>dfmplugin_vault::VaultActiveFinishedView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="47"/>
         <source>Encrypt File Vault</source>
         <translation>加密保險箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="54"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
         <translation>點擊“加密保險箱”後，輸入使用者密碼完成設定。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="67"/>
         <source>Encrypting...</source>
         <translation>正在加密...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="75"/>
         <source>The setup is complete</source>
         <translation>加密已完成</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="125"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="154"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="133"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="188"/>
         <source>Encrypt</source>
         <translation>加密保險箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="156"/>
         <source>Failed to create file vault: %1</source>
         <translation>建立保險箱失敗：%1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="240"/>
         <source>OK</source>
         <translation>確 定</translation>
     </message>
@@ -5831,42 +5844,42 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="39"/>
         <source>Save Recovery Key</source>
         <translation>儲存金鑰文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="46"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation>金鑰文件可用來找回您設置的保險箱密碼，請妥善保管</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="52"/>
         <source>Save to default path</source>
         <translation>儲存至預設路徑</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
         <source>Save to other locations</source>
         <translation>儲存至其他路徑</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="59"/>
         <source>No permission, please reselect</source>
         <translation>權限不夠，請重新選擇</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="67"/>
         <source>Select a path</source>
         <translation>選擇金鑰文件儲存路徑</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
         <source>Next</source>
         <translation>下一步</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="91"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>預設路徑為不會暴露給其他使用者的特殊路徑，且不會明文顯示路徑訊息。</translation>
     </message>
@@ -5874,69 +5887,69 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="32"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="37"/>
         <source>Set Vault Password</source>
         <translation>設定解鎖方式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="39"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="43"/>
         <source>Encryption method</source>
         <translation>加密方式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="46"/>
         <source>Key encryption</source>
         <translation>金鑰加密</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="46"/>
         <source>Transparent encryption</source>
         <translation>透明加密</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Password</source>
         <translation>密碼</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="162"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>至少8位，包含A-Z, a-z, 0-9和符號</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="58"/>
         <source>Repeat password</source>
         <translation>重複密碼</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="61"/>
         <source>Input the password again</source>
         <translation>再次輸入密碼</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="64"/>
         <source>Password hint</source>
         <translation>密碼提示</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="67"/>
         <source>Optional</source>
         <translation>選填</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="71"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation>選擇透明加密方案，使用者進入保險箱將自動解鎖，無需驗密。保險箱中的文件，在其他使用者帳戶下將無法訪問。</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="80"/>
         <source>Next</source>
         <translation>下一步</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="203"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="201"/>
         <source>Passwords do not match</source>
         <translation>輸入密碼不一致</translation>
     </message>
@@ -5944,27 +5957,27 @@
 <context>
     <name>dfmplugin_vault::VaultActiveStartView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="21"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="29"/>
         <source>File Vault</source>
         <translation>保險箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Create your secure private space</source>
         <translation>專屬於個人的安全空間</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Advanced encryption technology</source>
         <translation>先進的加密技術，隱私安全有保障</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Convenient and easy to use</source>
         <translation>使用更便捷，操作更簡單</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="42"/>
         <source>Create</source>
         <translation>開啟</translation>
     </message>
@@ -5993,18 +6006,18 @@
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="136"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="462"/>
         <source>Vault</source>
         <translation>保險箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation>因未安裝cryfs，保險箱不可用</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="462"/>
         <source>A task is in progress, so it cannot perform your operation</source>
         <translation>目前有任務正在進行，無法執行此操作</translation>
     </message>
@@ -6119,17 +6132,17 @@
 <context>
     <name>dfmplugin_vault::VaultVisibleManager</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="57"/>
         <source>My Vault</source>
         <translation>我的保險箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="105"/>
         <source>File Vault</source>
         <translation>保險箱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="121"/>
         <source>Vault</source>
         <translation>保險箱</translation>
     </message>
@@ -6137,22 +6150,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="515"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="513"/>
         <source>Name</source>
         <translation>文件名稱</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="517"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="515"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="519"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="517"/>
         <source>Size</source>
         <translation>檔案大小</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="521"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="519"/>
         <source>Type</source>
         <translation>文件類型</translation>
     </message>
@@ -6235,7 +6248,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="885"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="886"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>儲 存</translation>
@@ -6268,18 +6281,18 @@
         <translation>打開文件</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="221"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="223"/>
         <source>File Name</source>
         <translation>檔案名</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="222"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="224"/>
         <source>Format</source>
         <translation>格式</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="241"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="243"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="245"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="247"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>

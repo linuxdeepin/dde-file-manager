@@ -15,29 +15,42 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="216"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="236"/>
         <source>File Manager</source>
         <translation>Pengurus Fail</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="220"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="240"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>Pengurus Fail merupakan alat pengurusan fail yang mudah digunakan dan hebat, difiturkan dengan fungsi menggelintar, menyalin, tong sampah, pemampatan/penyahmampatan, sifat fail dan lain-lain fungsi berguna.</translation>
     </message>
 </context>
 <context>
+    <name>DAttachedBlockDevice</name>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="78"/>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>DAttachedProtocolDevice</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedprotocoldevice.cpp" line="48"/>
-        <source>Unknown device</source>
-        <translation>Peranti tidak diketahui</translation>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="48"/>
+        <source>Unknown</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="53"/>
+        <source>%1 on %2</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>DeepinStorage</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedblockdevice.cpp" line="88"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/dattachedblockdevice.cpp" line="100"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="91"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="103"/>
         <source>%1 Volume</source>
         <translation>Volum %1</translation>
     </message>
@@ -45,48 +58,35 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../src/apps/dde-desktop/main.cpp" line="174"/>
+        <location filename="../src/apps/dde-desktop/main.cpp" line="172"/>
         <source>Desktop</source>
         <translation>Atas Meja</translation>
     </message>
 </context>
 <context>
-    <name>DiskControlItem</name>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="142"/>
-        <source>Cannot access %1</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>DiskControlWidget</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="131"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="104"/>
         <source>Disks</source>
         <translation>Cakera-Cakera</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="326"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="299"/>
         <source>The device was not safely removed</source>
         <translation>Peranti masih tidak selamat ditanggalkan</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="327"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="300"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Klik &quot;Tanggal secara Selamat&quot; dan kemudian putuskannya di lain masa</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="330"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="303"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Cakera sibuk, tidak dapat ditanggalkan sekarang</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="333"/>
-        <source>The device is busy, cannot remove now</source>
-        <translation>Peranti masih sibuk, tidak dapat tanggalkan sekarang</translation>
-    </message>
-    <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="336"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="306"/>
         <source>The device is busy, cannot eject now</source>
         <translation>Peranti masih sibuk, tidak dapat lentingkan sekarang</translation>
     </message>
@@ -94,17 +94,17 @@
 <context>
     <name>DiskMountPlugin</name>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="36"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="35"/>
         <source>Disk</source>
         <translation>Cakera</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="92"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="90"/>
         <source>Open</source>
         <translation>Buka</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="99"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/diskmountplugin.cpp" line="97"/>
         <source>Eject all</source>
         <translation>Lenting semua</translation>
     </message>
@@ -112,8 +112,8 @@
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="227"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="241"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="226"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="240"/>
         <source>Unknown</source>
         <translation>Tidak diketahui</translation>
     </message>
@@ -121,7 +121,7 @@
 <context>
     <name>PathManager</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="270"/>
+        <location filename="../src/plugins/common/core/dfmplugin-trashcore/trashfileinfo.cpp" line="263"/>
         <source>Trash</source>
         <translation>Tong Sampah</translation>
     </message>
@@ -129,71 +129,71 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="933"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="941"/>
         <source>need authorization to access</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="999"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1007"/>
         <source>Can&apos;t verify the identity of %1.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1000"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1008"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>Ia berlaku ketika anda mendaftar masuk komputer kali pertama.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1001"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1009"/>
         <source>The identity sent by the remote computer is</source>
         <translation>Identiti dihantar yang dihantar komputer jauh ialah</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1003"/>
+        <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1011"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>Jika anda tidak pasti selamat diteruskan, hubungi pentadbir sistem.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="327"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="328"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-core/core.cpp" line="41"/>
         <source>System Disk</source>
         <translation>Cakera Sistem</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="329"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="330"/>
         <source>Data Disk</source>
         <translation>Cakera Data</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
         <source>Blank %1 Disc</source>
         <translation>Cakera %1 Kosong</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="368"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="369"/>
         <location filename="../src/dfm-base/base/standardpaths.cpp" line="331"/>
         <location filename="../src/dfm-base/mimetype/mimedatabase.cpp" line="99"/>
         <source>Unknown</source>
         <translation>Tidak diketahui</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="379"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="380"/>
         <source>%1 Drive</source>
         <translation>Pemacu %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="395"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="396"/>
         <source>%1 Encrypted</source>
         <translation>%1 Disulitkan</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="402"/>
+        <location filename="../src/dfm-base/base/device/deviceutils.cpp" line="403"/>
         <source>%1 Volume</source>
         <translation>Volum %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/private/devicehelper.cpp" line="237"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="311"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="284"/>
         <source>Scanning the device, stop it?</source>
         <translation>Mengimbas peranti, hentikannya?</translation>
     </message>
@@ -309,35 +309,35 @@
         <translation>%1 tugas sedang diproses</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>%1 item</source>
         <translation>%1 item</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
         <source>%1 items</source>
         <translation>%1 item</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="288"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="268"/>
         <source>Unable to find the original file</source>
         <translation>Tidak menemui fail asal</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="562"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="566"/>
         <source>File has been moved or deleted</source>
         <translation>Fail telah dialih atau dipadamkan</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="564"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="109"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="568"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
         <source>You do not have permission to access this folder</source>
         <translation>Anda tidak mempunyai keizinan untuk mencapai folder ini</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="567"/>
+        <location filename="../src/dfm-base/file/local/localfileinfo.cpp" line="571"/>
         <source>You do not have permission to traverse files in it</source>
         <translation>Anda tiada keizinan untuk rentas fail di dalamnya</translation>
     </message>
@@ -606,13 +606,20 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
-        <source>Text preview</source>
-        <translation>Pratonton teks</translation>
+        <source>The remote environment shows thumbnail previews</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="48"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="49"/>
+        <source>Text preview</source>
+        <translation>Pratonton teks</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
         <source>Video preview</source>
         <translation>Pratonton video</translation>
     </message>
@@ -624,207 +631,207 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="50"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="49"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="50"/>
-        <source>Show hidden files in search results</source>
-        <translation>Tunjuk fail tersembunyi dalam keputusan gelintar</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="50"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="51"/>
-        <source>Default size:</source>
-        <translation>Saiz lalai:</translation>
+        <source>Show hidden files in search results</source>
+        <translation>Tunjuk fail tersembunyi dalam keputusan gelintar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
-        <source>Extra small</source>
-        <translation>Sangat kecil</translation>
+        <source>Default size:</source>
+        <translation>Saiz lalai:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="52"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="53"/>
-        <source>Small</source>
-        <translation>Kecil</translation>
+        <source>Extra small</source>
+        <translation>Sangat kecil</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="53"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="54"/>
-        <source>Medium</source>
-        <translation>Sederhana</translation>
+        <source>Small</source>
+        <translation>Kecil</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="54"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="55"/>
-        <source>Large</source>
-        <translation>Besar</translation>
+        <source>Medium</source>
+        <translation>Sederhana</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="55"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="56"/>
-        <source>Extra large</source>
-        <translation>Sangat besar</translation>
+        <source>Large</source>
+        <translation>Besar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="56"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="57"/>
-        <source>Mix sorting of files and folders</source>
-        <translation>Campur pengisihan fail dan folder</translation>
+        <source>Extra large</source>
+        <translation>Sangat besar</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="57"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="58"/>
-        <source>Default view:</source>
-        <translation>Paparan lalai:</translation>
+        <source>Mix sorting of files and folders</source>
+        <translation>Campur pengisihan fail dan folder</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="58"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="59"/>
-        <source>Show hidden files</source>
-        <translation>Tunjuk fail tersembunyi</translation>
+        <source>Default view:</source>
+        <translation>Paparan lalai:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="59"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="60"/>
-        <source>Show file extensions</source>
-        <translation>Tunjuk sambungan fail</translation>
+        <source>Show hidden files</source>
+        <translation>Tunjuk fail tersembunyi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="60"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="61"/>
-        <source>Open from default window:</source>
-        <translation>Buka dari tetingkap lalai:</translation>
+        <source>Show file extensions</source>
+        <translation>Tunjuk sambungan fail</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="61"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="62"/>
-        <source>Open in new tab:</source>
-        <translation>Buka dalam tab baharu:</translation>
+        <source>Open from default window:</source>
+        <translation>Buka dari tetingkap lalai:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="62"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="63"/>
-        <source>Always open folder in new window</source>
-        <translation>Sentiasa buka folder dalam tetingkap baharu</translation>
+        <source>Open in new tab:</source>
+        <translation>Buka dalam tab baharu:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="63"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="64"/>
-        <source>Open file:</source>
-        <translation>Buka fail:</translation>
+        <source>Always open folder in new window</source>
+        <translation>Sentiasa buka folder dalam tetingkap baharu</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="64"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="65"/>
-        <source>Click</source>
-        <translation>Klik</translation>
+        <source>Open file:</source>
+        <translation>Buka fail:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="65"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="66"/>
-        <source>Double click</source>
-        <translation>Dwi-klik</translation>
+        <source>Click</source>
+        <translation>Klik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="66"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="67"/>
-        <source>Advanced</source>
-        <translation>Lanjutan</translation>
+        <source>Double click</source>
+        <translation>Dwi-klik</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="67"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="68"/>
-        <source>Dialog</source>
-        <translation>Dialog</translation>
+        <source>Advanced</source>
+        <translation>Lanjutan</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="68"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="69"/>
-        <source>Index</source>
-        <translation>Indeks</translation>
+        <source>Dialog</source>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="69"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="70"/>
-        <source>Items on sidebar pane</source>
-        <translation type="unfinished"/>
+        <source>Index</source>
+        <translation>Indeks</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="71"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="70"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="71"/>
+        <source>Items on sidebar pane</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
         <location filename="../src/plugins/common/dfmplugin-burn/menus/sendtodiscmenuscene.cpp" line="164"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="20"/>
         <source>Mount</source>
         <translation>Lekap</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="72"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="71"/>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="72"/>
-        <source>Other</source>
-        <translation>Lain-lain</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="72"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="73"/>
-        <source>Preview</source>
-        <translation>Pratonton</translation>
+        <source>Other</source>
+        <translation>Lain-lain</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="73"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="74"/>
-        <source>Basic</source>
-        <translation>Asas</translation>
+        <source>Preview</source>
+        <translation>Pratonton</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="74"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="75"/>
-        <source>View</source>
-        <translation>Lihat</translation>
+        <source>Basic</source>
+        <translation>Asas</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="76"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="75"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="76"/>
-        <source>Hidden files</source>
-        <translation>Fail tersembunyi</translation>
+        <source>View</source>
+        <translation>Lihat</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="77"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="76"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="77"/>
-        <source>New window and tab</source>
-        <translation>Tetingkap dan tab baharu</translation>
+        <source>Hidden files</source>
+        <translation>Fail tersembunyi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="78"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="77"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="78"/>
+        <source>New window and tab</source>
+        <translation>Tetingkap dan tab baharu</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="79"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="78"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="79"/>
         <source>Open behavior</source>
         <translation>Buka kelakuan</translation>
     </message>
@@ -844,14 +851,19 @@
         <translation>Direktori Semasa</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="28"/>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
+        <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
         <source>Switching the entry display may lead to failed mounting</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="34"/>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="42"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="232"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="205"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="107"/>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="55"/>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnhelper.cpp" line="36"/>
@@ -861,36 +873,36 @@
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="74"/>
         <location filename="../src/plugins/filedialog/filedialogplugin-core/utils/corehelper.cpp" line="105"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="237"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="101"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="113"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Batal</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="43"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="233"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="206"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Henti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="634"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="633"/>
         <source>Shortcut</source>
         <translation>Pintasan</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1148"/>
-        <source>This system wallpaer is locked. Please contact your admin.</source>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1141"/>
+        <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1209"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1199"/>
         <source> (copy)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1210"/>
+        <location filename="../src/dfm-base/utils/fileutils.cpp" line="1200"/>
         <source> (copy %1)</source>
         <comment>this should be translated in Noun version rather Verb, the first space should be ignore if translate to Chinese</comment>
         <translation type="unfinished"/>
@@ -912,98 +924,98 @@
         <translation>Bit</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="109"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="64"/>
         <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/permissionmanagerwidget.cpp" line="140"/>
         <source>Access denied</source>
         <translation>Capaian dinafikan</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/smbsharepasswddialog/usersharepasswordsettingdialog.cpp" line="35"/>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolitem.cpp" line="114"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolitem.cpp" line="69"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Sahkan</translation>
     </message>
     <message>
-        <location filename="../src/external/dde-dock-plugins/disk-mount/diskcontrolwidget.cpp" line="98"/>
+        <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/diskcontrolwidget.cpp" line="74"/>
         <source>The device has been safely removed</source>
         <translation>Peranti telah selamat ditanggalkan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="32"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="530"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="36"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="533"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="303"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="130"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="399"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="133"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="400"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="63"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="72"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="229"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="233"/>
         <source>Open in new window</source>
         <translation>Buka dalam tetingkap baharu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="35"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="534"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="39"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="537"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-recent/utils/recentmanager.cpp" line="307"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="134"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="403"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="137"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="404"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="69"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="75"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="84"/>
         <source>Open in new tab</source>
         <translation>Buka dalam tab baharu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="42"/>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="543"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="46"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="546"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="28"/>
         <source>Rename</source>
         <translation>Nama Semula</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="47"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="51"/>
         <source>Remove from quick access</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="52"/>
+        <location filename="../src/plugins/common/core/dfmplugin-bookmark/bookmarkcallback.cpp" line="56"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="145"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="148"/>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="82"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="273"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="277"/>
         <source>Properties</source>
         <translation>Sifat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="54"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="53"/>
         <source>New Folder</source>
         <translation>Folder Baharu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="57"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="56"/>
         <source>New Text</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="61"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="60"/>
         <source>Document</source>
         <translation>Dokumen</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="65"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="64"/>
         <source>Spreadsheet</source>
         <translation>Hamparan Elektronik</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="69"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="68"/>
         <source>Presentation</source>
         <translation>Persembahan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="73"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="72"/>
         <source>New File</source>
         <translation>Fail Baharu</translation>
     </message>
@@ -1236,14 +1248,14 @@
         <translation>Kelabu</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="547"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/utils/tagmanager.cpp" line="550"/>
         <source>Remove</source>
         <translation>Buang</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/core/ddplugin-canvas/utils/renamedialog.cpp" line="330"/>
         <location filename="../src/plugins/desktop/ddplugin-organizer/utils/renamedialog.cpp" line="330"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="116"/>
         <source>Rename</source>
         <comment>button</comment>
         <translation>Nama Semula</translation>
@@ -1292,7 +1304,7 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerdatastruct.cpp" line="52"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="227"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="231"/>
         <source>Open</source>
         <translation>Buka</translation>
     </message>
@@ -1302,48 +1314,48 @@
         <translation>Padam</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="204"/>
         <source>Cannot access</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="248"/>
         <source>User directory</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="253"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="252"/>
         <source>Local disk</source>
         <translation>Cakera setempat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="255"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="254"/>
         <source>Removable disk</source>
         <translation>Cakera mudah alih</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="257"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="256"/>
         <source>DVD</source>
         <translation>DVD</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="260"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="259"/>
         <source>Network shared directory</source>
         <translation>Direktori terkongsi rangkaian</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="262"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="266"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="261"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="265"/>
         <source>Android mobile device</source>
         <translation>Peranti mudah alih Android</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="265"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="264"/>
         <source>Apple mobile device</source>
         <translation>Peranti mudah alih Apple</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="270"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/utils/computerutils.cpp" line="269"/>
         <source>Unknown device</source>
         <translation>Peranti tidak diketahui</translation>
     </message>
@@ -1406,12 +1418,12 @@
         <translation>Tetapan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="394"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="395"/>
         <source>Copy path</source>
         <translation>Salin laluan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="411"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/views/crumbbar.cpp" line="412"/>
         <source>Edit address</source>
         <translation>Sunting alamat</translation>
     </message>
@@ -1427,75 +1439,75 @@
     </message>
     <message>
         <location filename="../src/plugins/filemanager/core/dfmplugin-trash/utils/trashhelper.cpp" line="179"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="73"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="85"/>
         <source>Location</source>
         <translation>Lokasi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Replace Text</source>
         <translation>Ganti Teks</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Add Text</source>
         <translation>Tambah Teks</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="54"/>
         <source>Custom Text</source>
         <translation>Teks Suai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="61"/>
         <source>Find</source>
         <translation>Cari</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="53"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="67"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="81"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="93"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="100"/>
         <source>Required</source>
         <translation>Diperlukan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="59"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="70"/>
         <source>Replace</source>
         <translation>Ganti</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="60"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="72"/>
         <source>Optional</source>
         <translation>Pilihan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="66"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="78"/>
         <source>Add</source>
         <translation>Tambah</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
         <source>Before file name</source>
         <translation>Sebelum nama fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="74"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="86"/>
         <source>After file name</source>
         <translation>Selepas nama fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="80"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="92"/>
         <source>File name</source>
         <translation>Nama fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="99"/>
         <source>Start at</source>
         <translation>Mula pada</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/views/private/renamebar_p.cpp" line="110"/>
         <source>Tips: Sort by selected file order</source>
         <translation>Petua: Isih mengikut tertib fail terpilih</translation>
     </message>
@@ -1531,47 +1543,47 @@
         <translation>Bilik Kebal Saya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="225"/>
         <source>Create Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="228"/>
         <source>Unlock</source>
         <translation>Buka</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="236"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="240"/>
         <source>Lock</source>
         <translation>Kunci</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="241"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="245"/>
         <source>Auto lock</source>
         <translation>Auto kunci</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="243"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="247"/>
         <source>Never</source>
         <translation>Tidak Sesekali</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="249"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="253"/>
         <source>5 minutes</source>
         <translation>5 minit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="254"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="258"/>
         <source>10 minutes</source>
         <translation>10 minit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="259"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="263"/>
         <source>20 minutes</source>
         <translation>20 minit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="271"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="275"/>
         <source>Delete File Vault</source>
         <translation>Padam Bilik Kebal Fail</translation>
     </message>
@@ -2236,30 +2248,30 @@
 <context>
     <name>ddplugin_wallpapersetting::WallpaperSettings</name>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1025"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1028"/>
         <source>Loading wallpapers...</source>
         <translation>Memuatkan kertas dinding...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1027"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1030"/>
         <source>Loading screensavers...</source>
         <translation>Memuatkan penyelamat skrin...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1087"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1090"/>
         <source>Custom Screensaver</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1088"/>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1090"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1091"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1093"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Laksana</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1128"/>
-        <source>This system wallpaer is locked. Please contact your admin.</source>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="1166"/>
+        <source>This system wallpaper is locked. Please contact your admin.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2293,32 +2305,32 @@
         <translation>Kedua-duanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="545"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="549"/>
         <source>Wallpaper Slideshow</source>
         <translation>Paparan Slaid Kertas Dinding</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="586"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="590"/>
         <source>When login</source>
         <translation>Bila daftar masuk</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="588"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="592"/>
         <source>When wakeup</source>
         <translation>Bila bangun</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="626"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="630"/>
         <source>Require a password on wakeup</source>
         <translation>Perlukan kata laluan ketika bangun</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="658"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="662"/>
         <source>Never</source>
         <translation>Tidak Sesekali</translation>
     </message>
     <message>
-        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="660"/>
+        <location filename="../src/plugins/desktop/ddplugin-wallpapersetting/wallpapersettings.cpp" line="664"/>
         <source>Wait:</source>
         <translation>Tunggu:</translation>
     </message>
@@ -3256,95 +3268,95 @@
 <context>
     <name>dfmbase::TaskWidget</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="198"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="197"/>
         <source>create source file %1 Info failed in show conflict Info function!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="208"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="207"/>
         <source>create target file %1 Info failed in show conflict Info function!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="224"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="241"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="223"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="240"/>
         <source>Time modified: %1</source>
         <translation>Masa diubah suai: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="229"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="228"/>
         <source>Original folder</source>
         <translation>Folder asal</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="231"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="246"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="230"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="245"/>
         <source>Contains: %1</source>
         <translation>Mengandungi: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="233"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="232"/>
         <source>Original file</source>
         <translation>Fail asal</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="234"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="249"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="233"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="248"/>
         <source>Size: %1</source>
         <translation>Saiz: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="244"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="243"/>
         <source>Target folder</source>
         <translation>Folder sasaran</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="248"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="247"/>
         <source>Target file</source>
         <translation>Fail sasaran</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="384"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="383"/>
         <source>Syncing data</source>
         <translation>Menyegerak data</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="385"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="384"/>
         <source>Please wait</source>
         <translation>Tunggu sebentar</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="574"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="573"/>
         <source>Keep both</source>
         <comment>button</comment>
         <translation>Kekal kedua-duanya</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="577"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="576"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>Langkau</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="582"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="632"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="581"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="631"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Ganti</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="604"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="603"/>
         <source>Do not ask again</source>
         <translation>Jangan tanya lagi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="629"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="628"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>Cuba lagi</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="635"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="634"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>Gabung</translation>
@@ -3680,42 +3692,42 @@
 <context>
     <name>dfmplugin_computer::ComputerController</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
         <source>Unlock device failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="246"/>
         <source>Wrong password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="467"/>
         <source>Rename failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="466"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="467"/>
         <source>The device is busy and cannot be renamed now</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="494"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="495"/>
         <source>Format failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="494"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="495"/>
         <source>The device is busy and cannot be formatted now</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="634"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="636"/>
         <source>Mount error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="634"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/controller/computercontroller.cpp" line="636"/>
         <source>Cannot access %1</source>
         <translation type="unfinished"/>
     </message>
@@ -3723,7 +3735,7 @@
 <context>
     <name>dfmplugin_computer::ComputerEventReceiver</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="38"/>
         <source>Computer</source>
         <translation>Komputer</translation>
     </message>
@@ -3787,7 +3799,8 @@
 <context>
     <name>dfmplugin_computer::ProtocolEntryFileEntity</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="44"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/events/computereventreceiver.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-computer/fileentity/protocolentryfileentity.cpp" line="45"/>
         <source>%1 on %2</source>
         <translation type="unfinished"/>
     </message>
@@ -3891,124 +3904,124 @@
 <context>
     <name>dfmplugin_dirshare::ShareControlWidget</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="101"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="100"/>
         <source>Sharing</source>
         <translation>Perkongsian</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="120"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="119"/>
         <source>Share this folder</source>
         <translation>Kongsi folder ini</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="144"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="143"/>
         <source>Share name</source>
         <translation>Nama kongsi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="148"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="147"/>
         <source>Permission</source>
         <translation>Keizinan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="152"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="151"/>
         <source>Anonymous</source>
         <translation>Awanama</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="156"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="155"/>
         <source>Read and write</source>
         <translation>Baca dan tulis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="156"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="155"/>
         <source>Read only</source>
         <translation>Baca sahaja</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="157"/>
         <source>Not allow</source>
         <translation>Tidak dibenarkan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="158"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="157"/>
         <source>Allow</source>
         <translation>Benarkan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="181"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="180"/>
         <source>Network path</source>
         <translation>Laluan rangkaian</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="190"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="217"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="216"/>
         <source>Copy</source>
         <translation>Salin</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="207"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="206"/>
         <source>Username</source>
         <translation>Nama pengguna</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="235"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="234"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="509"/>
         <source>None</source>
         <translation>Tiada</translation>
     </message>
     <message>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="241"/>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="242"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="243"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="511"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
         <source>Set password</source>
         <translation>Tetapkan kata laluan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="243"/>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="511"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="242"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="510"/>
         <source>Change password</source>
         <translation>Ubah kata laluan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="252"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="251"/>
         <source>Share password</source>
         <translation>Kongsi kata laluan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="265"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="264"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>Kata laluan ini akan diterapkan kepada semua folder kongsi, dan pengguna tanpa kata laluan dan hanya boleh mencapai folder kongsi yang membenarkan capaian awanama.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="357"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="356"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Nama kongsi tidak boleh ada dua titik (..) atau satu titik (.)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="375"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="374"/>
         <source>The share name is used by another user.</source>
         <translation>Nama kongsi telah digunakan oleh pengguna lain.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="376"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="375"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="378"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="377"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Nama kongsi sudah wujud. Anda pasti mahu ganti folder terkongsi?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="379"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="378"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Batal</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="380"/>
+        <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="379"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Ganti</translation>
@@ -4269,17 +4282,17 @@
 <context>
     <name>dfmplugin_fileoperations::FileOperationsEventReceiver</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="411"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="410"/>
         <source>Failed to create the directory</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="904"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="903"/>
         <source>Failed to create the file</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="973"/>
+        <location filename="../src/plugins/common/core/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="972"/>
         <source>link file error</source>
         <translation type="unfinished"/>
     </message>
@@ -4474,7 +4487,7 @@
 <context>
     <name>dfmplugin_myshares::MyShares</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="38"/>
         <source>My Shares</source>
         <translation>Perkongsian Saya</translation>
     </message>
@@ -4527,58 +4540,58 @@
 <context>
     <name>dfmplugin_propertydialog::BasicWidget</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="45"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="44"/>
         <source>Basic info</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="53"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="50"/>
         <source>Size</source>
         <translation>Saiz</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="58"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="51"/>
         <source>Contains</source>
         <translation>Mengandungi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="63"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="52"/>
         <source>Type</source>
         <translation>Jenis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="68"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="53"/>
         <source>Location</source>
         <translation>Lokasi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="73"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="54"/>
         <source>Time created</source>
         <translation>Masa dicipta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="55"/>
         <source>Time accessed</source>
         <translation>Masa dicapai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="83"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="56"/>
         <source>Time modified</source>
         <translation>Masa diubahsuai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="87"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="59"/>
         <source>Hide this file</source>
         <translation>Sembunyi fail ini</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="268"/>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="249"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="306"/>
         <source>%1 item</source>
         <translation>%1 item</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="325"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/basicwidget.cpp" line="306"/>
         <source>%1 items</source>
         <translation>%1 item</translation>
     </message>
@@ -4599,22 +4612,22 @@
 <context>
     <name>dfmplugin_propertydialog::ComputerInfoThread</name>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="269"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="275"/>
         <source>For Government</source>
         <translation>Untuk pihak Kerajaan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="271"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="277"/>
         <source>For Enterprise</source>
         <translation>Untuk pihak Perniagaan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="294"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="300"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="336"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="342"/>
         <source>Available</source>
         <translation>Tersedia</translation>
     </message>
@@ -4637,32 +4650,32 @@
         <translation>Nama komputer</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="70"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="71"/>
         <source>Version</source>
         <translation>Versi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="72"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="74"/>
         <source>Edition</source>
         <translation>Edisi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="74"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="77"/>
         <source>OS build</source>
         <translation>Binaan OS</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="76"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
         <source>Type</source>
         <translation>Jenis</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="78"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="83"/>
         <source>Processor</source>
         <translation>Pemproses</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="80"/>
+        <location filename="../src/plugins/common/core/dfmplugin-propertydialog/views/computerpropertydialog.cpp" line="86"/>
         <source>Memory</source>
         <translation>Ingatan</translation>
     </message>
@@ -4781,127 +4794,127 @@
 <context>
     <name>dfmplugin_search::AdvanceSearchBarPrivate</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="48"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="52"/>
         <source>Search:</source>
         <translation>Gelintar:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="53"/>
         <source>File Type:</source>
         <translation>Jenis Fail:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="54"/>
         <source>File Size:</source>
         <translation>Saiz Fail:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="55"/>
         <source>Time Modified:</source>
         <translation>Masa Diubahsuai:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="56"/>
         <source>Time Accessed:</source>
         <translation>Masa Dicapai:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="57"/>
         <source>Time Created:</source>
         <translation>Masa Dicipta:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="59"/>
         <source>Reset</source>
         <translation>Tetap Semula</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="76"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="80"/>
         <source>All subdirectories</source>
         <translation>Semua subdirektori</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="77"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="81"/>
         <source>Current directory</source>
         <translation>Direktori semasa</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
         <source>Application</source>
         <translation>Aplikasi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="84"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="88"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="85"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="89"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="90"/>
         <source>Image</source>
         <translation>Imej</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="87"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="91"/>
         <source>Archive</source>
         <translation>Arkib</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="88"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="92"/>
         <source>Text</source>
         <translation>Teks</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="89"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="93"/>
         <source>Executable</source>
         <translation>Bolehlaku</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="94"/>
         <source>Backup file</source>
         <translation>Fail sandar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="106"/>
         <source>Today</source>
         <translation>Hari Ini</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="103"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="107"/>
         <source>Yesterday</source>
         <translation>Semalam</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="104"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="108"/>
         <source>This week</source>
         <translation>Minggu ini</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="105"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="109"/>
         <source>Last week</source>
         <translation>Minggu lepas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="106"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="110"/>
         <source>This month</source>
         <translation>Bulan ini</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="111"/>
         <source>Last month</source>
         <translation>Bulan lepas</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="108"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="112"/>
         <source>This year</source>
         <translation>Tahun ini</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="109"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/topwidget/advancesearchbar.cpp" line="113"/>
         <source>Last year</source>
         <translation>Tahun lepas</translation>
     </message>
@@ -4958,37 +4971,37 @@
 <context>
     <name>dfmplugin_sidebar::SideBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="306"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="312"/>
         <source>Quick access</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="307"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="313"/>
         <source>Partitions</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="314"/>
         <source>Network</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="315"/>
         <source>Tag</source>
         <translation>Tag</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="310"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="316"/>
         <source>Bookmark</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="311"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="317"/>
         <source>Other</source>
         <translation>Lain-lain</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="312"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-sidebar/treeviews/sidebarwidget.cpp" line="318"/>
         <source>Unknown Group</source>
         <translation type="unfinished"/>
     </message>
@@ -5097,7 +5110,7 @@
 <context>
     <name>dfmplugin_tag::TagWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="30"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="39"/>
         <source>Tag</source>
         <translation>Tag</translation>
     </message>
@@ -5113,47 +5126,47 @@
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="51"/>
         <source>Connect to Server</source>
         <translation>Sambung dengan Pelayan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="106"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="147"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="107"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="310"/>
         <source>Clear History</source>
         <translation>Kosongkan Sejarah</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="180"/>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="402"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="181"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="403"/>
         <source>Unfavorite</source>
         <translation>Nyahgemar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="208"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="209"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Batal</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="209"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="210"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>Sambung</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="221"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="222"/>
         <source>My Favorites</source>
         <translation>Kegemaran Saya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="338"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="339"/>
         <source>No favorites yet</source>
         <translation>Belum ada kegemaran</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="409"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="410"/>
         <source>Favorite</source>
         <translation>Gemar</translation>
     </message>
@@ -5478,39 +5491,39 @@
 <context>
     <name>dfmplugin_utils::OpenWithDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="189"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="240"/>
         <source>Open with</source>
         <translation>Buka dengan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="211"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="262"/>
         <source>Add other programs</source>
         <translation>Tambah program lain</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="212"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="263"/>
         <source>Set as default</source>
         <translation>Tetapkan sebagai lalai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="214"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="265"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Batal</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="215"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="266"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Sahkan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="219"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="273"/>
         <source>Recommended Applications</source>
         <translation>Aplikasi Disaran</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="221"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="275"/>
         <source>Other Applications</source>
         <translation>Aplikasi Lain</translation>
     </message>
@@ -5790,40 +5803,40 @@
 <context>
     <name>dfmplugin_vault::VaultActiveFinishedView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="47"/>
         <source>Encrypt File Vault</source>
         <translation>Sulit Bilik Kebal Fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="54"/>
         <source>Click &apos;Encrypt&apos; and input the user password.</source>
         <translation>Klik &apos;Sulit&apos; dan masukkan kata laluan pengguna.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="62"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="67"/>
         <source>Encrypting...</source>
         <translation>Menyulitkan...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="70"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="75"/>
         <source>The setup is complete</source>
         <translation>Persediaan selesai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="74"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="125"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="154"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="180"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="79"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="133"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="162"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="188"/>
         <source>Encrypt</source>
         <translation>Sulit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="148"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="156"/>
         <source>Failed to create file vault: %1</source>
         <translation>Gagal mencipta bilik kebal fail: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="232"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="240"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -5831,42 +5844,42 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSaveKeyFileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="36"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="39"/>
         <source>Save Recovery Key</source>
         <translation>Simpan Kunci Pemulihan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="43"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="46"/>
         <source>Keep the key safe to retrieve the vault password later</source>
         <translation>Pasti kunci disimpan baik-baik supaya ia boleh digunakan bagi mendapatkan semula kata laluan bilik kebal kelak</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="52"/>
         <source>Save to default path</source>
         <translation>Simpan ke laluan lalai</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="54"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="57"/>
         <source>Save to other locations</source>
         <translation>Simpan ke lokasi lain</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="56"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="59"/>
         <source>No permission, please reselect</source>
         <translation>Tiada keizinan, sila pilih semula</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="67"/>
         <source>Select a path</source>
         <translation>Pilih satu laluan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="82"/>
         <source>Next</source>
         <translation>Berikutnya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="94"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesavekeyfileview.cpp" line="91"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
         <translation>Laluan lalai adalah disembunyikan kepada pengguna lain, dan maklumat laluan tidak akan dipaparkan.</translation>
     </message>
@@ -5874,69 +5887,69 @@
 <context>
     <name>dfmplugin_vault::VaultActiveSetUnlockMethodView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="32"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="37"/>
         <source>Set Vault Password</source>
         <translation>Tetapkan Kata Laluan Bilik Kebal</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="39"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="43"/>
         <source>Encryption method</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="46"/>
         <source>Key encryption</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="42"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="46"/>
         <source>Transparent encryption</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="53"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="52"/>
         <source>Password</source>
         <translation>Kata laluan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="56"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="164"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="55"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="162"/>
         <source>≥ 8 chars, contains A-Z, a-z, 0-9, and symbols</source>
         <translation>≥ 8 aksara, terdiri daripada A-Z, a-z, 0-9, dan simbol</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="68"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="58"/>
         <source>Repeat password</source>
         <translation>Ulang kata laluan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="71"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="61"/>
         <source>Input the password again</source>
         <translation>Masukkan kata laluan sekali lagi</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="83"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="64"/>
         <source>Password hint</source>
         <translation>Pembayang kata laluan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="86"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="67"/>
         <source>Optional</source>
         <translation>Pilihan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="90"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="71"/>
         <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="100"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="80"/>
         <source>Next</source>
         <translation>Berikutnya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="187"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="203"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="185"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivesetunlockmethodview.cpp" line="201"/>
         <source>Passwords do not match</source>
         <translation>Kata laluan tidak sepadan</translation>
     </message>
@@ -5944,27 +5957,27 @@
 <context>
     <name>dfmplugin_vault::VaultActiveStartView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="21"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="29"/>
         <source>File Vault</source>
         <translation>Kekubah Fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Create your secure private space</source>
         <translation>Cipta ruang peribadi selamat anda</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Advanced encryption technology</source>
         <translation>Teknologi penyulitan termaju</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="27"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="35"/>
         <source>Convenient and easy to use</source>
         <translation>Mudah dan senang digunakan</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="34"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivestartview.cpp" line="42"/>
         <source>Create</source>
         <translation>Cipta</translation>
     </message>
@@ -5993,18 +6006,18 @@
 <context>
     <name>dfmplugin_vault::VaultHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="136"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="462"/>
         <source>Vault</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="136"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="140"/>
         <source>Vault not available because cryfs not installed!</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="458"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="462"/>
         <source>A task is in progress, so it cannot perform your operation</source>
         <translation type="unfinished"/>
     </message>
@@ -6119,17 +6132,17 @@
 <context>
     <name>dfmplugin_vault::VaultVisibleManager</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="64"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="57"/>
         <source>My Vault</source>
         <translation>Bilik Kebal Saya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="105"/>
         <source>File Vault</source>
         <translation>Kekubah Fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="128"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaultvisiblemanager.cpp" line="121"/>
         <source>Vault</source>
         <translation type="unfinished"/>
     </message>
@@ -6137,22 +6150,22 @@
 <context>
     <name>dfmplugin_workspace::FileViewModel</name>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="515"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="513"/>
         <source>Name</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="517"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="515"/>
         <source>Time modified</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="519"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="517"/>
         <source>Size</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="521"/>
+        <location filename="../src/plugins/filemanager/core/dfmplugin-workspace/models/fileviewmodel.cpp" line="519"/>
         <source>Type</source>
         <translation type="unfinished"/>
     </message>
@@ -6235,7 +6248,7 @@
 <context>
     <name>filedialog_core::FileDialog</name>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="885"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialog.cpp" line="886"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Simpan</translation>
@@ -6268,18 +6281,18 @@
         <translation>Buka Fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="221"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="223"/>
         <source>File Name</source>
         <translation>Nama Fail</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="222"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="224"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="241"/>
-        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="243"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="245"/>
+        <location filename="../src/plugins/filedialog/filedialogplugin-core/views/filedialogstatusbar.cpp" line="247"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Batal</translation>
