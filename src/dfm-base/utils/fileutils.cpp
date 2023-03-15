@@ -1122,9 +1122,9 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
     if (QFileInfo::exists("/var/lib/deepin/permission-manager/wallpaper_locked")) {
         QDBusInterface notify("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
         notify.asyncCall(QString("Notify"),
-                         QString("dde-file-manager"), // title
+                         QString("dde-file-manager"),   // title
                          static_cast<uint>(0),
-                         QString("dde-file-manager"), // icon
+                         QString("dde-file-manager"),   // icon
                          QObject::tr("This system wallpaper is locked. Please contact your admin."),
                          QString(), QStringList(), QVariantMap(), 5000);
         qInfo() << "wallpaper is locked..";
@@ -1260,7 +1260,7 @@ bool FileUtils::fileCanTrash(const QUrl &url)
     // 获取当前配置
     bool alltotrash = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.trash.allfiletotrash").toBool();
     if (!alltotrash)
-        return url.isLocalFile();
+        return isLocalDevice(url);
     if (!url.isValid())
         return false;
 

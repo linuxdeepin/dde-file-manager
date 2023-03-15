@@ -365,7 +365,7 @@ int DialogManager::showDeleteFilesDialog(const QList<QUrl> &urlList)
     QString title;
     QString fileName;
     QIcon icon(QIcon::fromTheme(kUserTrashFullOpened));
-    bool isLocalFile = dfmbase::FileUtils::fileCanTrash(urlList.first());
+    bool isLocalFile = dfmbase::FileUtils::isLocalFile(urlList.first());
     if (isLocalFile) {
         if (urlList.size() == 1) {
             LocalFileInfo f(urlList.first());
