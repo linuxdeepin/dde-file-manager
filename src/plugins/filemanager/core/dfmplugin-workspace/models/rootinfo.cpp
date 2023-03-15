@@ -498,19 +498,21 @@ AbstractFileInfoPointer RootInfo::fileInfo(const QUrl &url)
     if (info)
         return info;
 
-    auto parentUrl = watcher->url();
+    const QUrl &parentUrl = QUrl::fromPercentEncoding(watcher->url().toString().toUtf8());
     auto path = url.path();
     if (path.isEmpty() || path == QDir::separator() || url.fileName().isEmpty())
         return info;
+
     auto pathParent = path.endsWith(QDir::separator()) ? path.left(path.length() - 1) : path;
     auto parentPath = parentUrl.path().endsWith(QDir::separator())
             ? parentUrl.path().left(parentUrl.path().length() - 1)
             : parentUrl.path();
     pathParent = pathParent.left(pathParent.lastIndexOf(QDir::separator()));
-    if (!parentPath.endsWith(pathParent))
+    if (!parentPath.endsWith(pathParent.mid(1)))
         return info;
+
     auto currentUrl = parentUrl;
-    currentUrl.setPath(parentPath + QDir::separator() + url.fileName());
+    currentUrl.setPath(currentUrl.path(QUrl::PrettyDecoded) + QDir::separator() + url.fileName());
     info = InfoFactory::create<AbstractFileInfo>(currentUrl);
     return info;
 }
