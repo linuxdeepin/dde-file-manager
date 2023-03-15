@@ -5,7 +5,7 @@
 #include "utils/fileutils.h"
 #include "desktopfile.h"
 #include "windowutils.h"
-#include "dfm_global_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "utils/dialogmanager.h"
 #include "mimetype/mimedatabase.h"
 #include "dfm-base/base/urlroute.h"

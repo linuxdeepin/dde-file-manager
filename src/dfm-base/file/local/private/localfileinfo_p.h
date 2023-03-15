@@ -5,9 +5,9 @@
 #ifndef LOCALFILEINFO_P_H
 #define LOCALFILEINFO_P_H
 
-#include "interfaces/private/abstractfileinfo_p.h"
-#include "file/local/localfileinfo.h"
-#include "mimetype/mimedatabase.h"
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/mimetype/mimedatabase.h"
 #include "infodatafuture.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"

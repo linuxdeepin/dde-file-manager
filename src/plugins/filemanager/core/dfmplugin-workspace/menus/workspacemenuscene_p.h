@@ -6,12 +6,12 @@
 #define WORKSPACEMENUSCENE_P_H
 
 #include "workspacemenuscene.h"
-#include "interfaces/private/abstractmenuscene_p.h"
 #include "workspacemenu_defines.h"
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
 
 #include "dfm-base/dfm_menu_defines.h"
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 #include <QGSettings>
 

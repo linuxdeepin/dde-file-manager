@@ -6,7 +6,7 @@
 #define MYSHAREMENUSCENE_P_H
 
 #include "dfmplugin_myshares_global.h"
-#include <interfaces/private/abstractmenuscene_p.h>
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_myshares {

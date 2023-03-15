@@ -5,8 +5,8 @@
 #include "fileprovider.h"
 #include "filefilter.h"
 
-#include <base/schemefactory.h>
-#include <utils/fileinfohelper.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/fileinfohelper.h>
 
 #include <QApplication>
 
@@ -114,9 +114,9 @@ void FileProvider::traversalFinished()
 void FileProvider::insert(const QUrl &url)
 {
     bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
-                                  [&url](const QSharedPointer<FileFilter> &filter){
-            return filter->fileCreatedFilter(url);
-        });
+                              [&url](const QSharedPointer<FileFilter> &filter) {
+                                  return filter->fileCreatedFilter(url);
+                              });
 
     if (!ignore)
         emit fileInserted(url);
@@ -135,9 +135,9 @@ void FileProvider::remove(const QUrl &url)
 void FileProvider::rename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
-                              [&oldUrl, &newUrl](const QSharedPointer<FileFilter> &filter){
-        return filter->fileRenameFilter(oldUrl, newUrl);
-    });
+                              [&oldUrl, &newUrl](const QSharedPointer<FileFilter> &filter) {
+                                  return filter->fileRenameFilter(oldUrl, newUrl);
+                              });
 
     emit fileRenamed(oldUrl, ignore ? QUrl() : newUrl);
 }
@@ -147,9 +147,9 @@ void FileProvider::update(const QUrl &url)
     if (UrlRoute::urlParent(url) != rootUrl && url != rootUrl)
         return;
     bool ignore = std::any_of(fileFilters.begin(), fileFilters.end(),
-                                  [&url](const QSharedPointer<FileFilter> &filter){
-            return filter->fileUpdatedFilter(url);
-        });
+                              [&url](const QSharedPointer<FileFilter> &filter) {
+                                  return filter->fileUpdatedFilter(url);
+                              });
 
     if (!ignore)
         emit fileUpdated(url);

@@ -5,7 +5,7 @@
 #ifndef VIDEOTHUMBNAILPROVIDER_H
 #define VIDEOTHUMBNAILPROVIDER_H
 
-#include "dfm_base_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QScopedPointer>
 

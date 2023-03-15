@@ -5,7 +5,7 @@
 #ifndef CONFIGSYNCHRONIZER_P_H
 #define CONFIGSYNCHRONIZER_P_H
 
-#include "dfm_base_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include "dfm-base/base/configs/configsyncdefs.h"
 #include "dfm-base/base/application/application.h"

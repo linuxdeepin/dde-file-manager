@@ -6,7 +6,7 @@
 #define FILEOPERATORHELPER_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm_global_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QObject>

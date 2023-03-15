@@ -5,7 +5,7 @@
 #ifndef MIMETYPEDISPLAYMANAGER_H
 #define MIMETYPEDISPLAYMANAGER_H
 
-#include "interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QObject>
 #include <QMap>

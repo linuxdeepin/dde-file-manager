@@ -8,7 +8,7 @@
 #include "ddplugin_organizer_global.h"
 
 #include <dfm-base/dfm_global_defines.h>
-#include <interfaces/abstractjobhandler.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QSharedPointer>
 #include <DDialog>

@@ -6,7 +6,8 @@
 #define DIRSHAREMENUSCENE_P_H
 
 #include "dfmplugin_dirshare_global.h"
-#include <interfaces/private/abstractmenuscene_p.h>
+
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 namespace dfmplugin_dirshare {
 DFMBASE_USE_NAMESPACE

@@ -9,7 +9,7 @@
  * before re-generating it.
  */
 
-#include "dbus_interface/devicemanagerdbus_interface.h"
+#include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 
 /*
  * Implementation of interface class DeviceManagerInterface
@@ -23,4 +23,3 @@ DeviceManagerInterface::DeviceManagerInterface(const QString &service, const QSt
 DeviceManagerInterface::~DeviceManagerInterface()
 {
 }
-

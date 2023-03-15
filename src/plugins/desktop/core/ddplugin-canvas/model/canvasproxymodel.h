@@ -7,7 +7,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <file/local/localfileinfo.h>
+#include <dfm-base/file/local/localfileinfo.h>
 
 #include <QAbstractProxyModel>
 #include <QDir>
@@ -21,10 +21,11 @@ class CanvasProxyModel : public QAbstractProxyModel
     Q_OBJECT
     friend class CanvasProxyModelPrivate;
     friend class CanvasModelBroker;
+
 public:
     explicit CanvasProxyModel(QObject *parent = nullptr);
     QModelIndex rootIndex() const;
-    inline QUrl rootUrl() const {return fileUrl(rootIndex());}
+    inline QUrl rootUrl() const { return fileUrl(rootIndex()); }
     QModelIndex index(const QUrl &url, int column = 0) const;
     DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
     QUrl fileUrl(const QModelIndex &index) const;
@@ -38,6 +39,7 @@ public:
 
     void setModelHook(ModelHookInterface *);
     ModelHookInterface *modelHook() const;
+
 public:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
     Q_INVOKABLE virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;
@@ -58,12 +60,12 @@ public slots:
     void update();
     void refresh(const QModelIndex &parent, bool global = false, int ms = 50);
     void setShowHiddenFiles(bool show);
-    bool fetch(const QUrl &url); //show \a url if exsited
-    bool take(const QUrl &url);  // hide \a url
+    bool fetch(const QUrl &url);   //show \a url if exsited
+    bool take(const QUrl &url);   // hide \a url
 private:
     CanvasProxyModelPrivate *d = nullptr;
 };
 
 }
 
-#endif // CANVASPROXYMODEL_H
+#endif   // CANVASPROXYMODEL_H

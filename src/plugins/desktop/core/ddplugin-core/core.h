@@ -7,9 +7,9 @@
 
 #include "ddplugin_core_global.h"
 
-#include "interfaces/screen/abstractscreenproxy.h"
-#include "base/application/application.h"
-#include "interfaces/abstractdesktopframe.h"
+#include "dfm-base/interfaces/screen/abstractscreenproxy.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/interfaces/abstractdesktopframe.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -67,8 +67,10 @@ protected slots:
     void onStart();
     void onFrameReady();
     void handleLoadPlugins(const QStringList &names);
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
     DFMBASE_NAMESPACE::Application *app = nullptr;
     EventHandle *handle = nullptr;

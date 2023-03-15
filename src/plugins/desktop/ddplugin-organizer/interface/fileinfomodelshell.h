@@ -7,7 +7,7 @@
 
 #include "ddplugin_organizer_global.h"
 
-#include <file/local/localfileinfo.h>
+#include <dfm-base/file/local/localfileinfo.h>
 
 #include <QObject>
 
@@ -41,4 +41,4 @@ protected:
 
 }
 
-#endif // FILEINFOMODELSHELL_H
+#endif   // FILEINFOMODELSHELL_H

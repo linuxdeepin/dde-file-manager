@@ -8,13 +8,13 @@
 #include "ddplugin_wallpapersetting_global.h"
 #include "backgroundpreview.h"
 
-#include "interfaces/screen/abstractscreen.h"
+#include "dfm-base/interfaces/screen/abstractscreen.h"
 
 #ifdef COMPILE_ON_V23
-#include "dbus/appearance_interface.h"
+#    include "dbus/appearance_interface.h"
 using BackgroudInter = org::deepin::dde::Appearance1;
 #else
-#include <com_deepin_wm.h>
+#    include <com_deepin_wm.h>
 using BackgroudInter = com::deepin::wm;
 #endif
 
@@ -31,15 +31,18 @@ public:
     ~WallaperPreview();
     void init();
     void setVisible(bool visible);
-    bool isVisible() const {
+    bool isVisible() const
+    {
         return visible;
     }
     void pullImageSettings();
     void setWallpaper(const QString &screen, const QString &image);
-    inline QMap<QString, QString> wallpaper() const {
+    inline QMap<QString, QString> wallpaper() const
+    {
         return wallpapers;
     }
-    inline PreviewWidgetPtr widget(const QString &screen) const {
+    inline PreviewWidgetPtr widget(const QString &screen) const
+    {
         return previewWidgets.value(screen);
     }
 signals:
@@ -48,9 +51,11 @@ public slots:
     void buildWidgets();
     void updateGeometry();
     void updateWallpaper();
+
 protected:
     PreviewWidgetPtr createWidget(DFMBASE_NAMESPACE::ScreenPointer);
     QString getBackground(const QString &screen);
+
 private:
     bool visible = false;
     BackgroudInter *inter = nullptr;
@@ -60,4 +65,4 @@ private:
 
 }
 
-#endif // WALLAPERPREVIEW_H
+#endif   // WALLAPERPREVIEW_H

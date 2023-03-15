@@ -11,8 +11,8 @@
 #include "displayconfig.h"
 #include "utils/fileutil.h"
 
-#include <base/schemefactory.h>
-#include <base/standardpaths.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/standardpaths.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/sysinfoutils.h>
 
@@ -30,7 +30,6 @@ using namespace ddplugin_canvas;
 DragDropOper::DragDropOper(CanvasView *parent)
     : QObject(parent), view(parent)
 {
-
 }
 
 bool DragDropOper::enter(QDragEnterEvent *event)
@@ -306,7 +305,7 @@ bool DragDropOper::dropFilter(QDropEvent *event)
             auto itemInfo = FileCreator->createFileInfo(targetItem);
             if (itemInfo && (itemInfo->isAttributes(OptInfoType::kIsDir) || itemInfo->urlOf(UrlInfoType::kUrl) == DesktopAppUrl::homeDesktopFileUrl())) {
                 auto sourceUrls = event->mimeData()->urls();
-                bool find = std::any_of(sourceUrls.begin(), sourceUrls.end(), [](const QUrl &url){
+                bool find = std::any_of(sourceUrls.begin(), sourceUrls.end(), [](const QUrl &url) {
                     return (DesktopAppUrl::computerDesktopFileUrl() == url)
                             || (DesktopAppUrl::trashDesktopFileUrl() == url)
                             || (DesktopAppUrl::homeDesktopFileUrl() == url);

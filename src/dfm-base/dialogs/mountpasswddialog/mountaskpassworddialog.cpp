@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "mountaskpassworddialog.h"
-#include "global_server_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <QVBoxLayout>
 #include <QFormLayout>

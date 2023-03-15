@@ -5,8 +5,8 @@
 #ifndef TRAVERSALDIRTHREAD_H
 #define TRAVERSALDIRTHREAD_H
 
-#include "dfm_base_global.h"
-#include "dfm_global_defines.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
 #include <QThread>

@@ -5,7 +5,7 @@
 #ifndef LOCALFILEHANDLER_H
 #define LOCALFILEHANDLER_H
 
-#include "dfm_global_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"

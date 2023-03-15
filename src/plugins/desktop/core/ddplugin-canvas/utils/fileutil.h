@@ -7,8 +7,8 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <base/urlroute.h>
-#include <file/local/localfileinfo.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/file/local/localfileinfo.h>
 
 #include <QUrl>
 

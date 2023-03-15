@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "interfaces/private/watchercache.h"
-#include "interfaces/private/watchercache_p.h"
+#include "dfm-base/interfaces/private/watchercache.h"
+#include "dfm-base/interfaces/private/watchercache_p.h"
 
 #include <QSharedPointer>
 

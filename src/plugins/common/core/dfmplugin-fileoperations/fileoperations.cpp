@@ -9,7 +9,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm_global_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 Q_DECLARE_METATYPE(bool *)
 

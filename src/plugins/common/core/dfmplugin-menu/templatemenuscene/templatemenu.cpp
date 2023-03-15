@@ -6,7 +6,7 @@
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "file/local/localfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
 
 #include <dfm-io/dfmio_utils.h>
 

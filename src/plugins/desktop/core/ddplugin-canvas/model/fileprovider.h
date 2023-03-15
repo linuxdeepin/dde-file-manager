@@ -8,7 +8,7 @@
 #include "ddplugin_canvas_global.h"
 
 #include <dfm-base/utils/traversaldirthread.h>
-#include <interfaces/abstractfilewatcher.h>
+#include <dfm-base/interfaces/abstractfilewatcher.h>
 
 #include <QObject>
 #include <QMutex>

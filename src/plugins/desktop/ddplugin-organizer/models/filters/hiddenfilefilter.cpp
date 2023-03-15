@@ -4,9 +4,9 @@
 
 #include "hiddenfilefilter.h"
 
-#include "base/schemefactory.h"
-#include "base/urlroute.h"
-#include "file/local/localfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/file/local/localfileinfo.h"
 
 #include <dfm-framework/dpf.h>
 

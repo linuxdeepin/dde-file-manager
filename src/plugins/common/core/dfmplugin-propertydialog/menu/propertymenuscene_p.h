@@ -7,7 +7,7 @@
 
 #include "propertymenuscene.h"
 
-#include "interfaces/private/abstractmenuscene_p.h"
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 namespace dfmplugin_propertydialog {
 DFMBASE_USE_NAMESPACE

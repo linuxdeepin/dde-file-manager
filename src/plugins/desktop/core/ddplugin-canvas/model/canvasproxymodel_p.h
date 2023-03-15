@@ -10,7 +10,7 @@
 #include "modelhookinterface.h"
 #include "canvasmodelfilter.h"
 
-#include <dfm_global_defines.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QTimer>
 
@@ -29,27 +29,31 @@ public:
 public slots:
     void doRefresh(bool global);
     void sourceDataChanged(const QModelIndex &sourceTopleft,
-                              const QModelIndex &sourceBottomright,
-                              const QVector<int> &roles);
+                           const QModelIndex &sourceBottomright,
+                           const QVector<int> &roles);
     void sourceAboutToBeReset();
     void sourceReset();
 
     void sourceRowsInserted(const QModelIndex &sourceParent,
-                               int start, int end);
+                            int start, int end);
     void sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent,
-                                       int start, int end);
+                                    int start, int end);
     void sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
+
 public:
     bool insertFilter(const QUrl &url);
     bool resetFilter(QList<QUrl> &urls);
     bool updateFilter(const QUrl &url);
     bool removeFilter(const QUrl &url);
     bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl);
+
 protected:
-   void standardSort(QList<QUrl> &files) const;
-   void specialSort(QList<QUrl> &files) const;
+    void standardSort(QList<QUrl> &files) const;
+    void specialSort(QList<QUrl> &files) const;
+
 private:
     void sortMainDesktopFile(QList<QUrl> &files, Qt::SortOrder order) const;
+
 public:
     QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
     QList<QUrl> fileList;
@@ -61,11 +65,11 @@ public:
     ModelHookInterface *hookIfs = nullptr;
     QList<QSharedPointer<CanvasModelFilter>> modelFilters;
     bool isNotMixDirAndFile = false;
+
 private:
     CanvasProxyModel *q = nullptr;
 };
 
-
 }
 
-#endif // CANVASPROXYMODEL_P_H
+#endif   // CANVASPROXYMODEL_P_H

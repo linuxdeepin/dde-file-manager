@@ -6,7 +6,8 @@
 #define VAULTMENUSCENE_P_H
 
 #include "vaultmenuscene.h"
-#include "interfaces/private/abstractmenuscene_p.h"
+
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 namespace dfmplugin_vault {
 class VaultMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate

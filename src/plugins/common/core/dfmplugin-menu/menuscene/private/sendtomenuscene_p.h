@@ -7,7 +7,7 @@
 
 #include "dfmplugin_menu_global.h"
 
-#include <interfaces/private/abstractmenuscene_p.h>
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 namespace dfmplugin_menu {
 

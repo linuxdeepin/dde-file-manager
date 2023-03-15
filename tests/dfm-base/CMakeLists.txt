@@ -2,15 +2,17 @@ cmake_minimum_required(VERSION 3.10)
 
 project(test-dfm-base)
 
+set(HeaderPath ${PROJECT_INCLUDE_PATH}/dfm-base/)
 set(SourcePath ${PROJECT_SOURCE_PATH}/dfm-base/)
-
 ADD_DEFINITIONS(-DENABLE_QUICK_SEARCH)
 
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE
     FILES_MATCHING PATTERN "*.cpp" "*.h")
+file(GLOB_RECURSE HEADER_FILES
+    FILES_MATCHING PATTERN "${HeaderPath}/*.h"  "${HeaderPath}/*.hpp")
 file(GLOB_RECURSE SRC_FILES
-    FILES_MATCHING PATTERN "${SourcePath}/*.cpp" "${SourcePath}/*.h")
+    FILES_MATCHING PATTERN "${SourcePath}/*.cpp" "${SourcePath}/*.h" "${SourcePath}/*.hpp")
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
@@ -22,37 +24,15 @@ find_package(PkgConfig REQUIRED)
 find_package(KF5Codecs REQUIRED)
 find_package(X11 REQUIRED)
 
-pkg_search_module(dfm-io
-    REQUIRED
-    dfm-io
-    IMPORTED_TARGET
-)
-
-pkg_search_module(dfm-burn
-    REQUIRED
-    dfm-burn
-    IMPORTED_TARGET
-)
-
-pkg_search_module(dfm-mount
-    REQUIRED
-    dfm-mount
-    IMPORTED_TARGET
-)
-
-pkg_search_module(gsettings
-    REQUIRED
-    gsettings-qt
-    IMPORTED_TARGET
-)
-
-pkg_search_module(libmount
-    REQUIRED
-    mount
-    IMPORTED_TARGET
-)
+pkg_search_module(libmount REQUIRED mount IMPORTED_TARGET)
+pkg_search_module(dfm-burn REQUIRED dfm-burn IMPORTED_TARGET)
+pkg_search_module(dfm-io REQUIRED dfm-io IMPORTED_TARGET)
+pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
+pkg_search_module(gsettings REQUIRED gsettings-qt IMPORTED_TARGET)
+pkg_search_module(Dtk REQUIRED dtkcore IMPORTED_TARGET)
 
 add_executable(${PROJECT_NAME}
+    ${HEADER_FILES}
     ${SRC_FILES}
     ${UT_CXX_FILE}
     ${CPP_STUB_SRC}
@@ -61,10 +41,9 @@ add_executable(${PROJECT_NAME}
 find_package(Dtk COMPONENTS Widget REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
+    ${HeaderPath}
     ${SourcePath}
-    ${SourcePath}/dbusservice
     ${DtkWidget_INCLUDEDIRS}
-    KF5/kCodecs
     ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

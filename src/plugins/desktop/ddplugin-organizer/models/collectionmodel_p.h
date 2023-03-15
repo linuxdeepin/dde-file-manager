@@ -7,7 +7,7 @@
 
 #include "collectionmodel.h"
 
-#include <file/local/localfileinfo.h>
+#include <dfm-base/file/local/localfileinfo.h>
 
 #include <QTimer>
 
@@ -25,19 +25,20 @@ public:
     void doRefresh(bool global);
 public slots:
     void sourceDataChanged(const QModelIndex &sourceTopleft,
-                              const QModelIndex &sourceBottomright,
-                              const QVector<int> &roles);
+                           const QModelIndex &sourceBottomright,
+                           const QVector<int> &roles);
     void sourceAboutToBeReset();
     void sourceReset();
 
     void sourceRowsInserted(const QModelIndex &sourceParent,
-                               int start, int end);
+                            int start, int end);
     void sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent,
-                                       int start, int end);
+                                    int start, int end);
     void sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 
     void renameRequired(const QUrl &url);
     void clearRenameReuired();
+
 public:
     FileInfoModelShell *shell = nullptr;
     ModelDataHandler *handler = nullptr;
@@ -45,10 +46,11 @@ public:
     QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
     QSharedPointer<QTimer> refreshTimer;
     QUrl waitForRenameFile;
+
 private:
     CollectionModel *q;
 };
 
 }
 
-#endif // COLLECTIONMODEL_P_H
+#endif   // COLLECTIONMODEL_P_H

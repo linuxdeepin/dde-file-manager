@@ -4,8 +4,8 @@
 
 #include "fileutil.h"
 
-#include <base/schemefactory.h>
-#include <file/local/desktopfileinfo.h>
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/desktopfileinfo.h>
 
 #include <QReadWriteLock>
 

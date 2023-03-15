@@ -5,8 +5,8 @@
 #ifndef ABSTRACTFILEINFO_P_H
 #define ABSTRACTFILEINFO_P_H
 
-#include "interfaces/abstractfileinfo.h"
-#include "utils/threadcontainer.hpp"
+#include "dfm-base/utils/threadcontainer.hpp"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <dfm-io/dfileinfo.h>
 

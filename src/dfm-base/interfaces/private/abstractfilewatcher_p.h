@@ -5,8 +5,8 @@
 #ifndef ABSTRACTFILEWATCHER_P_H
 #define ABSTRACTFILEWATCHER_P_H
 
-#include "interfaces/abstractfilewatcher.h"
-#include "utils/threadcontainer.hpp"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include "dfm-base/utils/threadcontainer.hpp"
 
 #include <dfm-io/dwatcher.h>
 

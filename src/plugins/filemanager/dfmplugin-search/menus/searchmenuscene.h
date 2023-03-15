@@ -7,8 +7,8 @@
 
 #include "dfmplugin_search_global.h"
 
-#include "interfaces/abstractmenuscene.h"
-#include "interfaces/abstractscenecreator.h"
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 namespace dfmplugin_search {
 

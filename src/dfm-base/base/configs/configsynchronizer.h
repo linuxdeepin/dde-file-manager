@@ -5,9 +5,8 @@
 #ifndef CONFIGSYNCHORNIZER_H
 #define CONFIGSYNCHORNIZER_H
 
-#include "dfm_base_global.h"
-#include "configsyncdefs.h"
-
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/base/configs/configsyncdefs.h"
 #include "dfm-base/base/application/application.h"
 
 #include <QObject>

@@ -5,7 +5,7 @@
 #ifndef DFM_EVENT_DEFINES_H
 #define DFM_EVENT_DEFINES_H
 
-#include "dfm_base_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
 

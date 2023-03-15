@@ -7,7 +7,7 @@
 
 #include "menuscene/actioniconmenuscene.h"
 
-#include "interfaces/private/abstractmenuscene_p.h"
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 DFMBASE_USE_NAMESPACE
 DPMENU_BEGIN_NAMESPACE
@@ -23,4 +23,4 @@ public:
 
 DPMENU_END_NAMESPACE
 
-#endif // ACTIONICONMENUSCENEPRIVATE_H
+#endif   // ACTIONICONMENUSCENEPRIVATE_H

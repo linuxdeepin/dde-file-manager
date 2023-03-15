@@ -5,9 +5,9 @@
 #ifndef LOCALFILEWATCHER_P_H
 #define LOCALFILEWATCHER_P_H
 
-#include "file/local/localfilewatcher.h"
-#include "interfaces/private/abstractfilewatcher_p.h"
-#include "utils/threadcontainer.hpp"
+#include "dfm-base/file/local/localfilewatcher.h"
+#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
+#include "dfm-base/utils/threadcontainer.hpp"
 
 #include <dfm-io/dwatcher.h>
 

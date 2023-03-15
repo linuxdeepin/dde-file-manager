@@ -9,7 +9,7 @@
 #include "view/collectionviewmenu.h"
 #include "mode/collectiondataprovider.h"
 
-#include <dfm_global_defines.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QAtomicInteger>
 #include <QTimer>
@@ -37,7 +37,7 @@ public:
     int verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const;
     QItemSelection selection(const QRect &rect) const;
     void selectItems(const QList<QUrl> &fileUrl) const;
-    void selectRect(const QRect &rect) const ;
+    void selectRect(const QRect &rect) const;
 
     QPoint pointToPos(const QPoint &point) const;
     QPoint posToPoint(const QPoint &pos) const;
@@ -70,6 +70,7 @@ public:
     void showFilesProperty();
     bool continuousSelection(QEvent *event, QPersistentModelIndex &newCurrent) const;
     QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
+
 private:
     void updateRowCount(const int &viewHeight, const int &itemHeight);
     void updateColumnCount(const int &viewWidth, const int &itemWidth);
@@ -138,4 +139,4 @@ public:
 
 }
 
-#endif // COLLECTIONVIEW_P_H
+#endif   // COLLECTIONVIEW_P_H

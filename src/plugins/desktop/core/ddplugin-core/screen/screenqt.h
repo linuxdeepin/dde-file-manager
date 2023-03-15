@@ -7,7 +7,7 @@
 
 #include "ddplugin_core_global.h"
 
-#include <interfaces/screen/abstractscreen.h>
+#include <dfm-base/interfaces/screen/abstractscreen.h>
 
 #include <QScreen>
 
@@ -23,10 +23,11 @@ public:
     virtual QRect availableGeometry() const override;
     virtual QRect handleGeometry() const override;
     QScreen *screen() const;
+
 private:
     QScreen *qscreen = nullptr;
 };
 
 DDPCORE_END_NAMESPACE
 
-#endif // SCREENQT
+#endif   // SCREENQT

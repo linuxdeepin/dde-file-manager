@@ -5,11 +5,12 @@
 #ifndef CANVASMENUSCENE_P_H
 #define CANVASMENUSCENE_P_H
 #include "canvasmenuscene.h"
-#include "interfaces/private/abstractmenuscene_p.h"
 #include "canvasmenu_defines.h"
 
 #include "plugins/common/core/dfmplugin-menu/menuscene/action_defines.h"
+
 #include "dfm-base/dfm_menu_defines.h"
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 #include <QMap>
 #include <QMultiHash>

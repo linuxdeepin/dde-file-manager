@@ -9,7 +9,7 @@
 #include "backgroundservice.h"
 #include "appearance_interface.h"
 
-#include "base/configs/dconfig/dconfigmanager.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 
 #include <DWindowManagerHelper>
 
@@ -29,14 +29,17 @@ class BackgroundDDE : public BackgroundService
 public:
     explicit BackgroundDDE(QObject *parent = nullptr);
     ~BackgroundDDE() override;
+
 public:
     QString background(const QString &screen) override;
     QString getDefaultBackground() override;
+
 protected:
     QString getBackgroundFromDDE(const QString &screen);
     QString getBackgroundFromConfig(const QString &screen);
 private slots:
-    void onAppearanceValueChanged(const QString& key);
+    void onAppearanceValueChanged(const QString &key);
+
 protected:
     InterFace *interface = nullptr;
     DTK_CORE_NAMESPACE::DConfig *apperanceConf = nullptr;
@@ -44,4 +47,4 @@ protected:
 
 DDP_BACKGROUND_END_NAMESPACE
 
-#endif // BACKGROUNDDDE_H
+#endif   // BACKGROUNDDDE_H

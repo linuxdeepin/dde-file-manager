@@ -5,8 +5,8 @@
 #ifndef FILEINFOASYCWORKER_H
 #define FILEINFOASYCWORKER_H
 
-#include "dfm_base_global.h"
-#include "dfm_global_defines.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "thumbnailprovider.h"
 
 #include <dfm-io/dfileinfo.h>

@@ -9,7 +9,7 @@
  * before re-generating it.
  */
 
-#include "dbus_interface/vaultmanagerdbus_interface.h"
+#include "dfm-base/dbusservice/dbus_interface/vaultmanagerdbus_interface.h"
 
 /*
  * Implementation of interface class VaultManagerInterface
@@ -23,4 +23,3 @@ VaultManagerInterface::VaultManagerInterface(const QString &service, const QStri
 VaultManagerInterface::~VaultManagerInterface()
 {
 }
-

@@ -8,7 +8,7 @@
 #include "windowframe.h"
 #include "basewindow.h"
 
-#include "interfaces/screen/abstractscreen.h"
+#include "dfm-base/interfaces/screen/abstractscreen.h"
 
 #include <QMap>
 #include <QReadWriteLock>
@@ -26,10 +26,11 @@ public slots:
 public:
     QMap<QString, BaseWindowPointer> windows;
     QReadWriteLock locker;
+
 private:
     WindowFrame *q;
 };
 
 DDPCORE_END_NAMESPACE
 
-#endif // WINDOWFRAME_P_H
+#endif   // WINDOWFRAME_P_H

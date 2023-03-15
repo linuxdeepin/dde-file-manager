@@ -7,7 +7,7 @@
 
 #include "ddplugin_core_global.h"
 
-#include <interfaces/abstractdesktopframe.h>
+#include <dfm-base/interfaces/abstractdesktopframe.h>
 
 DDPCORE_BEGIN_NAMESPACE
 class WindowFramePrivate;
@@ -15,6 +15,7 @@ class WindowFrame : public DFMBASE_NAMESPACE::AbstractDesktopFrame
 {
     Q_OBJECT
     friend class WindowFramePrivate;
+
 public:
     explicit WindowFrame(QObject *parent = nullptr);
     ~WindowFrame();
@@ -25,10 +26,11 @@ public slots:
     void buildBaseWindow();
     void onGeometryChanged();
     void onAvailableGeometryChanged();
+
 private:
     WindowFramePrivate *d;
 };
 
 DDPCORE_END_NAMESPACE
 
-#endif // WINDOWFRAME_H
+#endif   // WINDOWFRAME_H

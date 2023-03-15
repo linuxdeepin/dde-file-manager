@@ -5,9 +5,9 @@
 #include "trashfilewatcher.h"
 #include "utils/trashhelper.h"
 #include "private/trashfilewatcher_p.h"
-#include "dfm-base/base/schemefactory.h"
 
-#include "base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/urlroute.h"
 
 #include <dfm-io/dwatcher.h>
 

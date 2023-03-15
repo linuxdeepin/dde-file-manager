@@ -7,7 +7,7 @@
 
 #include "ddplugin_core_global.h"
 
-#include "interfaces/screen/abstractscreenproxy.h"
+#include "dfm-base/interfaces/screen/abstractscreenproxy.h"
 
 class QScreen;
 
@@ -33,14 +33,17 @@ private slots:
     void onScreenGeometryChanged(const QRect &);
     void onScreenAvailableGeometryChanged(const QRect &);
     void onDockChanged();
+
 protected:
     void processEvent() override;
+
 private:
     void connectScreen(DFMBASE_NAMESPACE::ScreenPointer);
     void disconnectScreen(DFMBASE_NAMESPACE::ScreenPointer);
+
 private:
     QMap<QScreen *, DFMBASE_NAMESPACE::ScreenPointer> screenMap;
 };
 
 DDPCORE_END_NAMESPACE
-#endif // SCREENPROXYXCB_H
+#endif   // SCREENPROXYXCB_H

@@ -5,9 +5,10 @@
 #ifndef FILEINFOHELPER_H
 #define FILEINFOHELPER_H
 
-#include "dfm_base_global.h"
-#include "utils/thumbnailprovider.h"
+#include "dfm-base/dfm_base_global.h"
 #include "fileinfoasycworker.h"
+
+#include "dfm-base/utils/thumbnailprovider.h"
 
 #include <dfm-io/dfileinfo.h>
 

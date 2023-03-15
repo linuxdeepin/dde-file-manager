@@ -7,29 +7,33 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include "utils/windowutils.h"
+#include "dfm-base/utils/windowutils.h"
 
 #include <QWidget>
 #include <QApplication>
 
 namespace ddplugin_canvas {
 
-inline bool isCtrlPressed() {
+inline bool isCtrlPressed()
+{
     return DFMBASE_NAMESPACE::WindowUtils::keyCtrlIsPressed();
 }
 
-inline bool isShiftPressed() {
+inline bool isShiftPressed()
+{
     return DFMBASE_NAMESPACE::WindowUtils::keyShiftIsPressed();
 }
 
-inline bool isCtrlOrShiftPressed() {
+inline bool isCtrlOrShiftPressed()
+{
     return isCtrlPressed() || isShiftPressed();
 }
 
-inline bool isAltPressed() {
+inline bool isAltPressed()
+{
     return DFMBASE_NAMESPACE::WindowUtils::keyAltIsPressed();
 }
 
 }
 
-#endif // KEYUTILS_H
+#endif   // KEYUTILS_H

@@ -7,7 +7,7 @@
 
 #include "ddplugin_organizer_global.h"
 
-#include <file/local/localfileinfo.h>
+#include <dfm-base/file/local/localfileinfo.h>
 
 #include <QAbstractProxyModel>
 
@@ -20,6 +20,7 @@ class CollectionModel : public QAbstractProxyModel
 {
     Q_OBJECT
     friend class CollectionModelPrivate;
+
 public:
     explicit CollectionModel(QObject *parent = nullptr);
     ~CollectionModel() override;
@@ -37,11 +38,12 @@ public:
     void update();
     bool fetch(const QList<QUrl> &urls);
     bool take(const QList<QUrl> &urls);
+
 public:
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;
     QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override;
     QModelIndex index(int row, int column,
-                              const QModelIndex &parent = QModelIndex()) const override;
+                      const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex parent(const QModelIndex &child) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -51,12 +53,14 @@ public:
 signals:
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
     void openEditor(const QUrl &url);
+
 private:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
+
 private:
     CollectionModelPrivate *d = nullptr;
 };
 
 }
 
-#endif // COLLECTIONMODEL_H
+#endif   // COLLECTIONMODEL_H

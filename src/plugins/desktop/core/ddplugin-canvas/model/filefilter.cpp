@@ -6,7 +6,7 @@
 #include "fileprovider.h"
 
 #include <dfm-base/utils/fileutils.h>
-#include <base/standardpaths.h>
+#include <dfm-base/base/standardpaths.h>
 
 #include <QGSettings>
 #include <QDateTime>
@@ -18,12 +18,10 @@ using namespace ddplugin_canvas;
 
 FileFilter::FileFilter()
 {
-
 }
 
 FileFilter::~FileFilter()
 {
-
 }
 
 bool FileFilter::fileTraversalFilter(QList<QUrl> &urls)
@@ -56,15 +54,11 @@ bool FileFilter::fileUpdatedFilter(const QUrl &url)
     return false;
 }
 
-
 #define UpdateInterval 500
 
 RedundantUpdateFilter::RedundantUpdateFilter(FileProvider *parent)
-    : QObject(parent)
-    , FileFilter()
-    , provider(parent)
+    : QObject(parent), FileFilter(), provider(parent)
 {
-
 }
 
 bool RedundantUpdateFilter::fileUpdatedFilter(const QUrl &url)

@@ -7,7 +7,7 @@
 
 #include "dfmplugin_trash_global.h"
 
-#include <interfaces/private/abstractmenuscene_p.h>
+#include <dfm-base/interfaces/private/abstractmenuscene_p.h>
 
 namespace dfmplugin_trash {
 

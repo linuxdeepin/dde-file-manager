@@ -6,7 +6,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include "dfm-base/dfm_desktop_defines.h"
-#include "interfaces/screen/abstractscreen.h"
+#include "dfm-base/interfaces/screen/abstractscreen.h"
 
 #include <QPaintEvent>
 #include <QBackingStore>
@@ -41,8 +41,7 @@ static QMap<QString, QWidget *> rootMap()
 }
 
 BackgroundPreview::BackgroundPreview(const QString &screenName, QWidget *parent)
-    : QWidget(parent)
-    , screen(screenName)
+    : QWidget(parent), screen(screenName)
 {
     setAttribute(Qt::WA_TranslucentBackground, true);
 }
@@ -83,7 +82,7 @@ void BackgroundPreview::updateDisplay()
         return;
     }
 
-    QSize trueSize = win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect().size(); // 使用屏幕缩放前的分辨率
+    QSize trueSize = win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect().size();   // 使用屏幕缩放前的分辨率
     if (backgroundPixmap.isNull()) {
         qCritical() << "screen " << screen << "backfround path" << filePath
                     << "can not read!";

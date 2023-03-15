@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "docopyfileworker.h"
-#include "utils/fileutils.h"
+
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-io/dfmio_utils.h>
 

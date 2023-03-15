@@ -8,7 +8,7 @@
 #include "templatemenuscene/templatemenuscene.h"
 #include "templatemenuscene/templatemenu.h"
 
-#include "interfaces/private/abstractmenuscene_p.h"
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 namespace dfmplugin_menu {
 

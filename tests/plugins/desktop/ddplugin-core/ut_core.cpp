@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "core.h"
-#include "utils/windowutils.h"
+#include "dfm-base/utils/windowutils.h"
 #include "screen/screenproxyqt.h"
 #include "frame/windowframe.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/private/application_p.h"
-#include "interfaces/screen/abstractscreen.h"
+#include "dfm-base/interfaces/screen/abstractscreen.h"
 
 #include "stubext.h"
 
@@ -45,7 +45,7 @@ TEST(TestCore, start)
 
     stub_ext::StubExt stub;
     bool flag = false;
-    stub.set_lamda(&EventHandle::init, [&flag](){
+    stub.set_lamda(&EventHandle::init, [&flag]() {
         flag = true;
         return false;
     });
@@ -80,7 +80,7 @@ TEST(TestCore, onStart)
     core.handle = new EventHandle();
     stub_ext::StubExt stub;
     bool flag = false;
-    stub.set_lamda(&WindowFrame::buildBaseWindow, [&flag](){
+    stub.set_lamda(&WindowFrame::buildBaseWindow, [&flag]() {
         flag = true;
     });
     core.handle->frame = new WindowFrame();
@@ -97,17 +97,17 @@ TEST(TestEventHandle, init_event)
     EventHandle *handle = new EventHandle;
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&WindowUtils::isWayLand, [](){
+    stub.set_lamda(&WindowUtils::isWayLand, []() {
         return false;
     });
 
     bool reset = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, reset), [&reset](){
+    stub.set_lamda(VADDR(ScreenProxyQt, reset), [&reset]() {
         reset = true;
     });
 
     bool init = false;
-    stub.set_lamda(&WindowFrame::init, [&init](){
+    stub.set_lamda(&WindowFrame::init, [&init]() {
         init = true;
         return true;
     });
@@ -132,12 +132,12 @@ TEST(TestEventHandle, init_event)
     };
     for (const QString &topic : allSlot)
         EXPECT_TRUE(dpfSlotChannel->channelMap.contains(
-                        EventConverter::convert("ddplugin_core", topic)));
+                EventConverter::convert("ddplugin_core", topic)));
 
     delete handle;
     for (const QString &topic : allSlot)
         EXPECT_FALSE(dpfSlotChannel->channelMap.contains(
-                        EventConverter::convert("ddplugin_core", topic)));
+                EventConverter::convert("ddplugin_core", topic)));
 }
 
 TEST(TestEventHandle, functions)
@@ -145,14 +145,14 @@ TEST(TestEventHandle, functions)
     EventHandle *handle = new EventHandle;
 
     stub_ext::StubExt stub;
-    stub.set_lamda(&WindowUtils::isWayLand, [](){
+    stub.set_lamda(&WindowUtils::isWayLand, []() {
         return false;
     });
 
-    stub.set_lamda(VADDR(ScreenProxyQt, reset), [](){
+    stub.set_lamda(VADDR(ScreenProxyQt, reset), []() {
     });
 
-    stub.set_lamda(&WindowFrame::init, [](){
+    stub.set_lamda(&WindowFrame::init, []() {
         return true;
     });
 
@@ -162,7 +162,7 @@ TEST(TestEventHandle, functions)
 
     EXPECT_EQ(handle->screenProxyInstance(), handle->screenProxy);
     bool call = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, screens), [&call](){
+    stub.set_lamda(VADDR(ScreenProxyQt, screens), [&call]() {
         call = true;
         return QList<ScreenPointer>();
     });
@@ -170,7 +170,7 @@ TEST(TestEventHandle, functions)
     EXPECT_TRUE(call);
 
     call = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, primaryScreen), [&call](){
+    stub.set_lamda(VADDR(ScreenProxyQt, primaryScreen), [&call]() {
         call = true;
         return ScreenPointer();
     });
@@ -178,7 +178,7 @@ TEST(TestEventHandle, functions)
     EXPECT_TRUE(call);
 
     call = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, logicScreens), [&call](){
+    stub.set_lamda(VADDR(ScreenProxyQt, logicScreens), [&call]() {
         call = true;
         return QList<ScreenPointer>();
     });
@@ -186,7 +186,7 @@ TEST(TestEventHandle, functions)
     EXPECT_TRUE(call);
 
     call = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, screen), [&call](){
+    stub.set_lamda(VADDR(ScreenProxyQt, screen), [&call]() {
         call = true;
         return ScreenPointer();
     });
@@ -194,7 +194,7 @@ TEST(TestEventHandle, functions)
     EXPECT_TRUE(call);
 
     call = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, devicePixelRatio), [&call](){
+    stub.set_lamda(VADDR(ScreenProxyQt, devicePixelRatio), [&call]() {
         call = true;
         return 1.22;
     });
@@ -202,7 +202,7 @@ TEST(TestEventHandle, functions)
     EXPECT_TRUE(call);
 
     call = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, displayMode), [&call](){
+    stub.set_lamda(VADDR(ScreenProxyQt, displayMode), [&call]() {
         call = true;
         return kShowonly;
     });
@@ -210,7 +210,7 @@ TEST(TestEventHandle, functions)
     EXPECT_TRUE(call);
 
     call = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, lastChangedMode), [&call](){
+    stub.set_lamda(VADDR(ScreenProxyQt, lastChangedMode), [&call]() {
         call = true;
         return kShowonly;
     });
@@ -218,7 +218,7 @@ TEST(TestEventHandle, functions)
     EXPECT_TRUE(call);
 
     call = false;
-    stub.set_lamda(VADDR(ScreenProxyQt, reset), [&call](){
+    stub.set_lamda(VADDR(ScreenProxyQt, reset), [&call]() {
         call = true;
     });
     handle->reset();
@@ -227,7 +227,7 @@ TEST(TestEventHandle, functions)
     EXPECT_EQ(handle->desktopFrame(), handle->frame);
 
     call = false;
-    stub.set_lamda(VADDR(WindowFrame, rootWindows), [&call](){
+    stub.set_lamda(VADDR(WindowFrame, rootWindows), [&call]() {
         call = true;
         return QList<QWidget *>();
     });
@@ -235,7 +235,7 @@ TEST(TestEventHandle, functions)
     EXPECT_TRUE(call);
 
     call = false;
-    stub.set_lamda(VADDR(WindowFrame, layoutChildren), [&call](){
+    stub.set_lamda(VADDR(WindowFrame, layoutChildren), [&call]() {
         call = true;
     });
     handle->layoutWidget();
@@ -251,17 +251,16 @@ TEST(TestEventHandle, signal_events)
     QString space;
     QString topic;
     stub.set_lamda(((bool (EventDispatcherManager::*)(const QString &, const QString &))
-                   &EventDispatcherManager::publish), [&space, &topic]
-                   (EventDispatcherManager *, const QString &t1, const QString &t2){
-        space = t1;
-        topic = t2;
-        return true;
-    });
+                    & EventDispatcherManager::publish),
+                   [&space, &topic](EventDispatcherManager *, const QString &t1, const QString &t2) {
+                       space = t1;
+                       topic = t2;
+                       return true;
+                   });
 
     handle->publishScreenChanged();
     EXPECT_EQ(QString("ddplugin_core"), space);
     EXPECT_EQ(QString("signal_ScreenProxy_ScreenChanged"), topic);
-
 
     handle->publishDisplayModeChanged();
     EXPECT_EQ(QString("ddplugin_core"), space);

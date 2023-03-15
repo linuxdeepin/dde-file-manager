@@ -5,8 +5,7 @@
 #ifndef DMIMEDATABASE_H
 #define DMIMEDATABASE_H
 
-#include "dfm_base_global.h"
-
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QMimeDatabase>
@@ -26,9 +25,9 @@ public:
     QMimeType mimeTypeForFile(const QString &fileName, MatchMode mode, const QString &inod, const bool isGvfs = false) const;
 
     QMimeType mimeTypeForUrl(const QUrl &url) const;
+
 private:
     QMimeType mimeTypeForFile(const QFileInfo &fileInfo, MatchMode mode, const QString &inod, const bool isGvfs = false) const;
-
 
 private:
     QHash<QString, QMimeType> inodMimetypeCache;

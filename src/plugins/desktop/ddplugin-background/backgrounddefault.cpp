@@ -6,7 +6,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include "dfm-base/dfm_desktop_defines.h"
-#include "interfaces/screen/abstractscreen.h"
+#include "dfm-base/interfaces/screen/abstractscreen.h"
 
 #include <QPaintEvent>
 #include <QBackingStore>
@@ -22,8 +22,7 @@ DFMBASE_USE_NAMESPACE
 DDP_BACKGROUND_USE_NAMESPACE
 
 BackgroundDefault::BackgroundDefault(const QString &screenName, QWidget *parent)
-    : QWidget (parent)
-    , screen(screenName)
+    : QWidget(parent), screen(screenName)
 
 {
     setAttribute(Qt::WA_TranslucentBackground, true);

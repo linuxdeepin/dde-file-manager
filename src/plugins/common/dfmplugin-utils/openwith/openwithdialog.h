@@ -7,7 +7,7 @@
 
 #include "dfmplugin_utils_global.h"
 
-#include "dialogs/basedialog/basedialog.h"
+#include "dfm-base/dialogs/basedialog/basedialog.h"
 
 #include <dflowlayout.h>
 #include <DIconButton>

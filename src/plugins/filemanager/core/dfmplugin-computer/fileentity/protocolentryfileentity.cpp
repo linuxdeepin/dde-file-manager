@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "dfm_global_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "protocolentryfileentity.h"
 #include "utils/computerdatastruct.h"
 #include "utils/computerutils.h"

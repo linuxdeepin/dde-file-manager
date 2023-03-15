@@ -8,14 +8,14 @@
 #include "utils/crumbinterface.h"
 #include "utils/searchhistroymanager.h"
 #include "utils/titlebarhelper.h"
-#include "utils/fileutils.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dtkwidget_global.h>
 #ifdef DTKWIDGET_CLASS_DSizeMode
-#include <DSizeMode>
+#    include <DSizeMode>
 #endif
 
 #include <QCompleter>
@@ -113,7 +113,7 @@ void AddressBarPrivate::initConnect()
     connect(pauseButton, &DIconButton::clicked, q, &AddressBar::pauseButtonClicked);
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this](){
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
         initUiForSizeMode();
     });
 #endif
