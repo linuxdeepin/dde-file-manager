@@ -28,6 +28,7 @@ public:
 protected:
     QString getBackgroundFromWm(const QString &screen);
     QString getBackgroundFromConfig(const QString &screen);
+    bool isWMActive() const;
 
 private slots:
     void onAppearanceValueChanged(const QString& key);

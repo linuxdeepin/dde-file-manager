@@ -35,26 +35,26 @@ QString BackgroundWM::getBackgroundFromWm(const QString &screen)
     if (screen.isEmpty())
         return path;
 
-    int retry = 5;
-    static const int timeOut = 200;
-    int oldTimeOut = wmInter->timeout();
-    wmInter->setTimeout(timeOut);
+    if (!isWMActive()) {
+        qWarning() << "wm is not registered on dbus";
+        return path;
+    }
 
+    int retry = 3;
     while (retry--) {
         qInfo() << "Get background by wm GetCurrentWorkspaceBackgroundForMonitor and sc:" << screen;
         QDBusPendingReply<QString> reply = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screen);
         reply.waitForFinished();
 
         if (reply.error().type() != QDBusError::NoError) {
-            qWarning() << "Get background failed by wmDBus and times:" << (5-retry)
+            qWarning() << "Get background failed by wmDBus and times:" << (3-retry)
                        << reply.error().type() << reply.error().name() << reply.error().message();
         } else {
             path = reply.argumentAt<0>();
-            qInfo() << "Get background path succeed:" << path << "screen" << screen << "   times:" << (5 - retry);
+            qInfo() << "Get background path succeed:" << path << "screen" << screen << "   times:" << (3 - retry);
             break;
         }
     }
-    wmInter->setTimeout(oldTimeOut);
 
     if (path.isEmpty() || !QFile::exists(QUrl(path).toLocalFile()))
         qCritical() << "get background fail path :" << path << "screen" << screen;
@@ -93,6 +93,14 @@ QString BackgroundWM::getBackgroundFromConfig(const QString &screen)
     }
 
     return path;
+}
+
+bool BackgroundWM::isWMActive() const
+{
+    if (auto ifs = QDBusConnection::sessionBus().interface()) {
+        return ifs->isServiceRegistered("com.deepin.wm");
+    }
+    return false;
 }
 
 QString BackgroundWM::background(const QString &screen)

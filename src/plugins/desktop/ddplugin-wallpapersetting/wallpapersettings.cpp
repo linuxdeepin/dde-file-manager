@@ -386,7 +386,7 @@ void WallpaperSettingsPrivate::onItemPressed(const QString &itemData)
         return;
 
     if (mode == WallpaperSettings::Mode::WallpaperMode) {
-        wmInter->SetTransientBackground(itemData);
+        //wmInter->SetTransientBackground(itemData); // it will case gsetting emit valuechanged signal (key is backgroundUris).
         wallpaperPrview->setWallpaper(screenName, itemData);
         currentSelectedWallpaper = itemData;
 
@@ -848,16 +848,6 @@ void WallpaperSettings::onGeometryChanged()
 
     qDebug() << "reset geometry" << this->isVisible() << this->geometry();
     activateWindow();
-}
-
-void WallpaperSettings::paintEvent(QPaintEvent *event)
-{
-    DBlurEffectWidget::paintEvent(event);
-
-    QPainter p(this);
-    p.setCompositionMode(QPainter::CompositionMode_SourceOut);
-    p.setPen(QPen(QColor(255, 255, 255, 20), 1));
-    p.drawLine(QPoint(0, 0), QPoint(width(), 0));
 }
 
 void WallpaperSettings::showEvent(QShowEvent *event)

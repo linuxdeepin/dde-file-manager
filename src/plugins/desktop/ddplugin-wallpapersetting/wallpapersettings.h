@@ -39,7 +39,6 @@ signals:
     void quit();
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
     void showEvent(QShowEvent *) override;
     void hideEvent(QHideEvent *) override;
     void keyPressEvent(QKeyEvent *) override;
