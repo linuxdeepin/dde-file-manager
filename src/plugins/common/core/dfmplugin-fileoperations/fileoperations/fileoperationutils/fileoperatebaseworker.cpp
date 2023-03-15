@@ -1211,7 +1211,7 @@ void FileOperateBaseWorker::determineCountProcessType()
 
     if (targetStorageInfo->isLocalDevice()) {
         isTargetFileLocal = FileOperationsUtils::isFileOnDisk(targetUrl);
-        isTargetFileExBlock = DeviceUtils::isExternalBlock(targetUrl);
+        isTargetFileExBlock = false;
 
         const bool isFileSystemTypeExt = targetStorageInfo->fileSystemType().startsWith("ext");
         if (!isFileSystemTypeExt) {

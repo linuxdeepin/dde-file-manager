@@ -52,7 +52,7 @@ void TaskDialog::addTask(const JobHandlePointer taskHandler)
 
     connect(wid, &TaskWidget::heightChanged, this, &TaskDialog::adjustSize, Qt::QueuedConnection);
     connect(this, &TaskDialog::closed, wid, &TaskWidget::parentClose, Qt::QueuedConnection);
-    taskHandler->connect(taskHandler.get(), &AbstractJobHandler::finishedNotify, this, &TaskDialog::removeTask);
+    taskHandler->connect(taskHandler.get(), &AbstractJobHandler::onRemoveTaskWidget, this, &TaskDialog::removeTask);
 
     wid->setTaskHandle(taskHandler);
 
@@ -197,11 +197,9 @@ void TaskDialog::moveYCenter()
 /*!
  * \brief TaskDialog::removeTask 移除任务的item，当list中的item <= 0时，关闭整个进度显示框
  */
-void TaskDialog::removeTask(const JobInfoPointer info)
+void TaskDialog::removeTask(const JobHandlePointer jobHandler)
 {
     QMutexLocker lk(addTaskMutex);
-    JobHandlePointer jobHandler = info->value(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer).value<JobHandlePointer>();
-
     if (!taskItems.contains(jobHandler)) {
         qWarning() << "taskItems not contains the task!";
         return;

@@ -99,7 +99,7 @@ private:   // block file copy
     //清理当前拷贝信息
     void releaseCopyInfo(const BlockFileCopyInfoPointer &info);
     bool writeBlockFile(const BlockFileCopyInfoPointer &info, bool *skip);
-    void syncBlockFile(const BlockFileCopyInfoPointer &info);
+    void syncBlockFile(const BlockFileCopyInfoPointer &info, bool doOnce);
     bool doWriteBlockFileCopy(const BlockFileCopyInfoPointer blockFileInfo);
     int doOpenFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, const bool isTo,
                    const int openFlag, bool *skip);

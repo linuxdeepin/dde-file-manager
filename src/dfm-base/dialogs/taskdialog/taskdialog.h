@@ -42,7 +42,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void adjustSize();
     void moveYCenter();
-    void removeTask(const JobInfoPointer info);
+    void removeTask(const JobHandlePointer jobHandler);
 
 protected:
     void closeEvent(QCloseEvent *event) override;

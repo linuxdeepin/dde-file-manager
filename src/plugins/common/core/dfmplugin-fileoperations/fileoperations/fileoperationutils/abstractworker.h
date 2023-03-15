@@ -84,6 +84,8 @@ signals:
      */
     void speedUpdatedNotify(const JobInfoPointer jobInfo);
 
+    void removeTaskWidget(const JobHandlePointer handle);
+
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
     void workerFinish();
 signals:   // update proccess timer use

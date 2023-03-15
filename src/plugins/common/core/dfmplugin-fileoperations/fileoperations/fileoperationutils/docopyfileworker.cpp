@@ -153,6 +153,7 @@ bool DoCopyFileWorker::doWriteBlockFileCopy(const BlockFileCopyInfoPointer block
 
     // open file
     bool skip = false;
+    bool once = blockFileFd < 0;
     if (blockFileFd < 0)
         blockFileFd = doOpenFile(blockFileInfo->frominfo, blockFileInfo->toinfo, true, blockFileInfo->openFlag, &skip);
     if (blockFileFd < 0) {
@@ -169,7 +170,7 @@ bool DoCopyFileWorker::doWriteBlockFileCopy(const BlockFileCopyInfoPointer block
         return true;
     }
     // sync to block file
-    syncBlockFile(blockFileInfo);
+    syncBlockFile(blockFileInfo, once);
 
     return true;
 }
@@ -392,6 +393,7 @@ bool DoCopyFileWorker::stateCheck()
 {
     if (state == kPasued)
         workerWait();
+
     return state == kNormal;
 }
 
@@ -887,13 +889,17 @@ bool DoCopyFileWorker::writeBlockFile(const BlockFileCopyInfoPointer &info, bool
     return true;
 }
 
-void DoCopyFileWorker::syncBlockFile(const BlockFileCopyInfoPointer &info)
+void DoCopyFileWorker::syncBlockFile(const BlockFileCopyInfoPointer &info, bool doOnce)
 {
-    if (stateCheck())
+    if (!stateCheck())
+        return;
+
+    if (doOnce)
         syncfs(blockFileFd);
 
     //关闭文件并加权
     if (info->closeflag) {
+        syncfs(blockFileFd);
         close(blockFileFd);
         // the file is empty
         if (info->frominfo->size() <= 0)
