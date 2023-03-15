@@ -28,6 +28,7 @@ class SideBar : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_Item_Insert)
     DPF_EVENT_REG_SLOT(slot_Item_Hidden)
     DPF_EVENT_REG_SLOT(slot_Item_TriggerEdit)
+    DPF_EVENT_REG_SLOT(slot_Sidebar_UpdateSelection)
 
     // signal events
     DPF_EVENT_REG_SIGNAL(signal_Sidebar_Sorted)

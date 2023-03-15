@@ -356,6 +356,8 @@ void VaultHelper::creatVaultDialog()
 {
     VaultPageBase *page = new VaultActiveView();
     page->exec();
+    if (state() == kNotExisted)
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Sidebar_UpdateSelection", currentWinID);
 }
 
 void VaultHelper::unlockVaultDialog()
@@ -378,6 +380,8 @@ void VaultHelper::unlockVaultDialog()
         VaultUnlockPages *page = new VaultUnlockPages();
         page->pageSelect(PageType::kUnlockPage);
         page->exec();
+        if (state() != kUnlocked)
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Sidebar_UpdateSelection", currentWinID);
     }
 }
 

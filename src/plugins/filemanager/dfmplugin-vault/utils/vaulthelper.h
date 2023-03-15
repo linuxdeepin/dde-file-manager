@@ -41,7 +41,7 @@ public:
 
     QUrl pathToVaultVirtualUrl(const QString &path);
 
-    VaultState state(QString lockBaseDir);
+    VaultState state(QString lockBaseDir = "");
 
     /*!
      * \brief getVaultVersion   获取当前保险箱版本是否是1050及以上版本

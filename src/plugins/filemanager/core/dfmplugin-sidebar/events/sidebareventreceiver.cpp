@@ -34,6 +34,7 @@ void SideBarEventReceiver::bindEvents()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Insert", this, &SideBarEventReceiver::handleItemInsert);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Hidden", this, &SideBarEventReceiver::handleItemHidden);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_TriggerEdit", this, &SideBarEventReceiver::handleItemTriggerEdit);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Sidebar_UpdateSelection", this, &SideBarEventReceiver::handleSidebarUpdateSelection);
 }
 
 void SideBarEventReceiver::handleItemHidden(const QUrl &url, bool visible)
@@ -54,6 +55,17 @@ void SideBarEventReceiver::handleItemTriggerEdit(quint64 winId, const QUrl &url)
     for (SideBarWidget *sidebar : allSideBar) {
         if (SideBarHelper::windowId(sidebar) == winId)
             sidebar->editItem(url);
+    }
+}
+
+void SideBarEventReceiver::handleSidebarUpdateSelection(quint64 winId)
+{
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar) {
+        if (SideBarHelper::windowId(sidebar) == winId) {
+            sidebar->updateSelection();
+            break;
+        }
     }
 }
 
