@@ -199,7 +199,7 @@ void FilePreviewDialog::initUI()
     closeButton->setObjectName("CloseButton");
     closeButton->setFocusPolicy(Qt::NoFocus);
     closeButton->setIconSize({ 50, 50 });
-    closeButton->setFixedSize({ 50, 50 });
+    closeButton->setFixedSize({ 30, 30 });
     QColor base_color = palette().base().color();
     DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
     if (ct == DGuiApplicationHelper::LightType) {

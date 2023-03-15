@@ -62,7 +62,7 @@ enum ScaleMode {
 };
 
 inline constexpr double kImageBrowserWidth = 780.0;
-inline constexpr int kPdfWidgetWidth = 800;
+inline constexpr int kPdfWidgetWidth = 830;
 inline constexpr int kPdfWidgetHeight = 500;
 
 extern "C" void setMainWidget(QWidget *pMainWidget);

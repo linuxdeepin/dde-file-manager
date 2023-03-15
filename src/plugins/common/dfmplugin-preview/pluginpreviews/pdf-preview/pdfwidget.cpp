@@ -15,15 +15,13 @@ using namespace plugin_filepreview;
 PdfWidget::PdfWidget(QWidget *parent)
     : QWidget(parent)
 {
-    this->setFixedSize(800, 500);
-
     stackedLayout = new QStackedLayout;
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QHBoxLayout *mainLayout = new QHBoxLayout(this);
 
     mainLayout->addItem(stackedLayout);
     mainLayout->setMargin(0);
-    mainLayout->setSpacing(0);
+    mainLayout->addSpacing(30);
 
     this->setLayout(mainLayout);
 }
