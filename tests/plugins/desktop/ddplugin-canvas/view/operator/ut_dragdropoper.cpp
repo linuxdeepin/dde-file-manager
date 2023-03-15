@@ -41,12 +41,20 @@ TEST_F(DragDropOperTest, testEnter) {
     QDragEnterEvent event(QPoint(10, 10), Qt::IgnoreAction, nullptr, Qt::LeftButton, Qt::NoModifier);
     CanvasProxyModel *md = new CanvasProxyModel(nullptr);
 
+    bool updateHover = false;
+    stub.set_lamda(&DragDropOper::updateDragHover, [&updateHover](){
+        updateHover = true;
+        return;
+    });
+
     // action1
     stub.set_lamda(&DragDropOper::checkProhibitPaths, []() -> bool{
         return true;
     });
 
-    EXPECT_EQ(true, opt.enter(&event));
+    EXPECT_TRUE(opt.enter(&event));
+    EXPECT_TRUE(updateHover);
+
     stub.reset(&DragDropOper::checkProhibitPaths);
 
     // action2
@@ -136,7 +144,7 @@ TEST_F(DragDropOperTest, testCheckProhibitPaths) {
     stub.set_lamda(&FileUtils::isContainProhibitPath, []() -> bool {
         return false;
     });
-    EXPECT_EQ(true, opt.checkProhibitPaths(&event));
+    EXPECT_FALSE(opt.checkProhibitPaths(&event));
     stub.reset(&QMimeData::urls);
 
     //action2

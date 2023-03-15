@@ -65,10 +65,8 @@ void FileProvider::refresh(QDir::Filters filters)
         traversalThread->disconnect(this);
         traversalThread->stopAndDeleteLater();
     }
-    traversalThread.reset(new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags));
-    if (Q_UNLIKELY(traversalThread.isNull()))
-        return;
 
+    traversalThread.reset(new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags));
     connect(traversalThread.get(), &TraversalDirThread::updateChildren, this, &FileProvider::reset);
     connect(traversalThread.get(), &TraversalDirThread::finished, this, &FileProvider::traversalFinished);
 

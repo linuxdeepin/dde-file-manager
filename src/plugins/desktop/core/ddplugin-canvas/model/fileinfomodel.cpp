@@ -304,7 +304,7 @@ void FileInfoModel::update()
     for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
         itor.value()->refresh();
 
-    emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()), 0));
+    emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }
 
 void FileInfoModel::updateFile(const QUrl &url)
@@ -396,9 +396,6 @@ Qt::ItemFlags FileInfoModel::flags(const QModelIndex &index) const
             else
                 flags |= Qt::ItemNeverHasChildren;
         }
-
-        // todo
-        //flags &= ~file->fileItemDisableFlags();
     }
 
     return flags;

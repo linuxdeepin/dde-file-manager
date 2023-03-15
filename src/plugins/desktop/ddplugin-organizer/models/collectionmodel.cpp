@@ -395,7 +395,7 @@ void CollectionModel::update()
     for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
         itor.value()->refresh();
 
-    emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()), 0));
+    emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()) - 1, 0));
 }
 
 bool CollectionModel::fetch(const QList<QUrl> &urls)
