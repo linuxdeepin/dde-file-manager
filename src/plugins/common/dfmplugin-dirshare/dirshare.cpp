@@ -21,11 +21,15 @@ using namespace dfmplugin_dirshare;
 
 void DirShare::initialize()
 {
+    UserShareHelperInstance;
+    connect(UserShareHelperInstance, &UserShareHelper::shareAdded, this, &DirShare::onShareStateChanged);
+    connect(UserShareHelperInstance, &UserShareHelper::shareRemoved, this, &DirShare::onShareStateChanged);
+
+    bindEvents();
 }
 
 bool DirShare::start()
 {
-    UserShareHelperInstance;
     dfmplugin_menu_util::menuSceneRegisterScene(DirShareMenuCreator::name(), new DirShareMenuCreator);
 
     bindScene("CanvasMenu");
@@ -34,7 +38,6 @@ bool DirShare::start()
     CustomViewExtensionView func { DirShare::createShareControlWidget };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "DirShare", 2);
 
-    bindEvents();
     return true;
 }
 
@@ -88,4 +91,18 @@ void DirShare::bindEvents()
     dpfSlotChannel->connect(kEventSpace, "slot_Share_WhoSharedByShareName", UserShareHelperInstance, &UserShareHelper::whoShared);
 
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Share_SetPassword", UserShareHelperInstance, &UserShareHelper::handleSetPassword);
+}
+
+void DirShare::onShareStateChanged(const QString &path)
+{
+    QUrl url { QUrl::fromLocalFile(path) };
+    if (!url.isValid())
+        return;
+
+    // request refresh emblem state
+    auto eventID { DPF_NAMESPACE::Event::instance()->eventType("ddplugin_canvas", "slot_FileInfoModel_UpdateFile") };
+    if (eventID != DPF_NAMESPACE::EventTypeScope::kInValid)
+        dpfSlotChannel->push("ddplugin_canvas", "slot_FileInfoModel_UpdateFile", url);
+    else
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_FileUpdate", url);
 }

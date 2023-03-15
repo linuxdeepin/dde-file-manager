@@ -34,6 +34,7 @@
 
 #include <unistd.h>
 #include <pwd.h>
+#include <linux/limits.h>
 
 using namespace dfmplugin_dirshare;
 DWIDGET_USE_NAMESPACE

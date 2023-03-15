@@ -577,7 +577,6 @@ void UserShareHelper::emitShareAdded(const QString &path)
 void UserShareHelper::emitShareRemoved(const QString &path)
 {
     Q_EMIT shareRemoved(path);
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_FileUpdate", QUrl::fromLocalFile(path));
     dpfSignalDispatcher->publish(kEventSpace, "signal_Share_ShareRemoved", path);
 }
 

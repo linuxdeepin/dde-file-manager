@@ -47,6 +47,9 @@ private:
     void bindSceneOnAdded(const QString &newScene);
     void bindEvents();
 
+private Q_SLOTS:
+    void onShareStateChanged(const QString &path);
+
 private:
     QSet<QString> waitToBind;
     bool eventSubscribed { false };
