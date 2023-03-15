@@ -96,7 +96,17 @@ TEST_F(UT_SmbBrowserUtils, StartService)
     EXPECT_FALSE(smb_browser_utils::startService("xxx..."));
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    stub.set_lamda(&QDBusAbstractInterface::asyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
+    //    stub.set_lamda(&QDBusAbstractInterface::asyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
+    typedef QDBusPendingCall (QDBusAbstractInterface::*AsyncCall)(const QString &method,
+                                                                  const QVariant &arg1,
+                                                                  const QVariant &arg2,
+                                                                  const QVariant &arg3,
+                                                                  const QVariant &arg4,
+                                                                  const QVariant &arg5,
+                                                                  const QVariant &arg6,
+                                                                  const QVariant &arg7,
+                                                                  const QVariant &arg8);
+    stub.set_lamda(static_cast<AsyncCall>(&QDBusAbstractInterface::asyncCall), []() { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
 #else
     stub.set_lamda(&QDBusAbstractInterface::doAsyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
 #endif
@@ -111,7 +121,16 @@ TEST_F(UT_SmbBrowserUtils, StartService)
 TEST_F(UT_SmbBrowserUtils, EnableServiceAsync)
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    stub.set_lamda(&QDBusAbstractInterface::asyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
+    typedef QDBusPendingCall (QDBusAbstractInterface::*AsyncCall)(const QString &method,
+                                                                  const QVariant &arg1,
+                                                                  const QVariant &arg2,
+                                                                  const QVariant &arg3,
+                                                                  const QVariant &arg4,
+                                                                  const QVariant &arg5,
+                                                                  const QVariant &arg6,
+                                                                  const QVariant &arg7,
+                                                                  const QVariant &arg8);
+    stub.set_lamda(static_cast<AsyncCall>(&QDBusAbstractInterface::asyncCall), []() { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
 #else
     stub.set_lamda(&QDBusAbstractInterface::doAsyncCall, [] { __DBG_STUB_INVOKE__ return QDBusPendingCall::fromError(QDBusError()); });
 #endif
