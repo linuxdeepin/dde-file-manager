@@ -96,7 +96,6 @@ public Q_SLOTS:
     void installWorkspaceWidgetToWindow(const quint64 windowID);
 
 signals:
-    void viewModeChanged(quint64 windowId, int viewMode);
     void openNewTab(quint64 windowId, const QUrl &url);
     void requestSetViewFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback);

@@ -169,7 +169,9 @@ quint64 WorkspaceHelper::windowId(const QWidget *sender)
 
 void WorkspaceHelper::switchViewMode(quint64 windowId, int viewMode)
 {
-    emit viewModeChanged(windowId, viewMode);
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        view->viewModeChanged(windowId, viewMode);
 }
 
 void WorkspaceHelper::addScheme(const QString &scheme)

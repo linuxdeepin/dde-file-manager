@@ -461,18 +461,15 @@ void FileView::delayUpdateStatusBar()
 
 void FileView::viewModeChanged(quint64 windowId, int viewMode)
 {
-    auto thisWindId = WorkspaceHelper::instance()->windowId(this);
     Global::ViewMode mode = static_cast<Global::ViewMode>(viewMode);
-    if (thisWindId == windowId) {
-        if (mode == Global::ViewMode::kIconMode) {
-            setViewModeToIcon();
-        } else if (mode == Global::ViewMode::kListMode) {
-            setViewModeToList();
-        }
-
-        setFocus();
-        saveViewModeState();
+    if (mode == Global::ViewMode::kIconMode) {
+        setViewModeToIcon();
+    } else if (mode == Global::ViewMode::kListMode) {
+        setViewModeToList();
     }
+
+    setFocus();
+    saveViewModeState();
 }
 
 void FileView::updateModelActiveIndex()
@@ -1507,7 +1504,6 @@ void FileView::initializeConnect()
     connect(this, &FileView::clicked, this, &FileView::onClicked, Qt::UniqueConnection);
     connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
 
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewModeChanged, this, &FileView::viewModeChanged);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterData, this, &FileView::setFilterData);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterCallback, this, &FileView::setFilterCallback);
 
