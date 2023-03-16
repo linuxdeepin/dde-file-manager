@@ -7,6 +7,8 @@
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/utils/fileutils.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 namespace dfmplugin_menu {
 namespace Helper {
 
@@ -35,7 +37,7 @@ bool isHiddenExtActionsByDConfig(const QUrl &dirUrl)
 
     // hidden by `dfd.menu.blockdev.enable`
     // NOTE: SMB mounted by cifs that mount point is local but it's a protocol device
-    if (!enableBlockDev && FileUtils::isLocalFile(dirUrl) && !FileUtils::isGvfsFile(dirUrl))
+    if (!enableBlockDev && DFMIO::DFMUtils::fileIsRemovable(dirUrl) && !FileUtils::isGvfsFile(dirUrl))
         hidden = true;
 
     return hidden;
