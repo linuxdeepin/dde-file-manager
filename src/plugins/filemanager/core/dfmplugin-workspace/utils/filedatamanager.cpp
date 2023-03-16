@@ -7,6 +7,7 @@
 #include "models/fileitemdata.h"
 
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/interfaces/private/watchercache.h"
 
 #include <QApplication>
 
@@ -64,11 +65,19 @@ void FileDataManager::onAppAttributeChanged(Application::ApplicationAttribute aa
         isMixFileAndFolder = value.toBool();
 }
 
+void FileDataManager::onHandleFileDeleted(const QUrl url)
+{
+    if (rootInfoMap.contains(url))
+        rootInfoMap.value(url)->reset();
+}
+
 FileDataManager::FileDataManager(QObject *parent)
     : QObject(parent)
 {
     isMixFileAndFolder = Application::instance()->appAttribute(Application::kFileAndDirMixedSort).toBool();
     connect(Application::instance(), &Application::appAttributeChanged, this, &FileDataManager::onAppAttributeChanged);
+    connect(&WatcherCache::instance(), &WatcherCache::fileDelete, this, &FileDataManager::onHandleFileDeleted,
+            Qt::QueuedConnection);
 }
 
 FileDataManager::~FileDataManager()

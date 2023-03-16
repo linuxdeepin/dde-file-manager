@@ -34,6 +34,7 @@ public:
 
 public Q_SLOTS:
     void onAppAttributeChanged(DFMBASE_NAMESPACE::Application::ApplicationAttribute aa, const QVariant &value);
+    void onHandleFileDeleted(const QUrl url);
 
 private:
     explicit FileDataManager(QObject *parent = nullptr);

@@ -76,7 +76,7 @@ QSharedPointer<AbstractFileWatcher> WatcherCache::getCacheWatcher(const QUrl &ur
 void WatcherCache::cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher)
 {
     Q_D(WatcherCache);
-
+    connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &WatcherCache::fileDelete);
     d->watchers.insert(url, watcher);
 }
 /*!
@@ -95,7 +95,7 @@ void WatcherCache::cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFi
 void WatcherCache::removeCacheWatcher(const QUrl &url)
 {
     Q_D(WatcherCache);
-
+    emit fileDelete(url);
     d->watchers.remove(url);
 }
 

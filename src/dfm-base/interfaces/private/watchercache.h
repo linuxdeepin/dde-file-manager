@@ -21,12 +21,15 @@ class WatcherCache : public QObject
     QScopedPointer<WatcherCachePrivate> d;
     friend WatcherFactory;
     friend InfoCache;
+Q_SIGNALS:
+    void fileDelete(const QUrl &url);
 
 public:
     static WatcherCache &instance();
     explicit WatcherCache(QObject *parent = nullptr);
     virtual ~WatcherCache();
     QSharedPointer<AbstractFileWatcher> getCacheWatcher(const QUrl &url);
+
     void cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher);
     void removeCacheWatcher(const QUrl &url);
     bool cacheDisable(const QString &scheme);
