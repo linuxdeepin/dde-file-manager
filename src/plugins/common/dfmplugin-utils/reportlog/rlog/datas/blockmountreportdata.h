@@ -15,8 +15,6 @@ class BlockMountReportData : public ReportDataInterface
 public:
     virtual QString type() const override;
     virtual QJsonObject prepareData(const QVariantMap &args) const override;
-
-    static void report(const QVariantMap &datas);
 };
 
 }

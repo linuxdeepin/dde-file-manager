@@ -136,6 +136,19 @@ install(DIRECTORY
     FILES_MATCHING PATTERN "*.h"
 )
 
+# for pc file config
+set(PC_LIBS_PRIVATE Qt${QT_VERSION_MAJOR}Core)
+set(PC_REQ_PRIVATE)
+set(PC_REQ_PUBLIC)
+
+# config pkgconfig file
+configure_file(${PROJECT_SOURCE_DIR}/assets/dev/${BIN_NAME}/${BIN_NAME}.pc.in ${BIN_NAME}.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+# config cmake file
+configure_file(${PROJECT_SOURCE_DIR}/assets/dev/${BIN_NAME}/${BIN_NAME}Config.cmake.in ${BIN_NAME}Config.cmake @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BIN_NAME}Config.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${BIN_NAME})
+
 # install resources files
 set(AssetsPath ${PROJECT_SOURCE_DIR}/assets)
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager)
