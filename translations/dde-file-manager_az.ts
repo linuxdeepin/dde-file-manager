@@ -30,7 +30,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedblockdevice.cpp" line="78"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Naməlum</translation>
     </message>
 </context>
 <context>
@@ -38,12 +38,12 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="48"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Naməlum</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dattachedprotocoldevice.cpp" line="53"/>
         <source>%1 on %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 / %2</translation>
     </message>
 </context>
 <context>
@@ -607,7 +607,7 @@
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="47"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="48"/>
         <source>The remote environment shows thumbnail previews</source>
-        <translation type="unfinished"/>
+        <translation>Uzaq mühit, miniatür öncədən izləmələrini göstərir</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="49"/>
@@ -853,7 +853,7 @@
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="29"/>
         <source>Turning on the thumbnail preview may cause the remote directory to load slowly or the operation to freeze</source>
-        <translation type="unfinished"/>
+        <translation>Eskizlərə öncədən baxışın aktiv edilməsi serverdəki kataloqun yavaş yüklənməsinə və əməliyyatın ləngiməsinə səbəb ola bilər</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-manully-trans.cpp" line="30"/>
