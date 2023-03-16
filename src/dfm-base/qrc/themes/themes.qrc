@@ -87,5 +87,6 @@
         <file>dark/icons/caution.svg</file>
         <file>dark/icons/property_bt_copy.svg</file>
         <file>light/icons/property_bt_copy.svg</file>
+        <file>light/icons/tab_close_normal.svg</file>
     </qresource>
 </RCC>

@@ -21,6 +21,7 @@ RenameBar::RenameBar(QWidget *parent)
     : QFrame(parent), d(new RenameBarPrivate(this))
 {
     setMinimumHeight(44);
+    setMinimumWidth(900);
     initConnect();
 }
 

@@ -34,7 +34,7 @@ void TabCloseButton::setActiveWidthTab(bool active)
 
 QRectF TabCloseButton::boundingRect() const
 {
-    return QRectF(0, 0, 24, 24);
+    return QRectF(0, 0, size, size);
 }
 
 void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -42,18 +42,18 @@ void TabCloseButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    QIcon closeIcon = QIcon::fromTheme("window-close_round");
+    QIcon closeIcon = QIcon(":/light/icons/tab_close_normal.svg");
 
-    QIcon::Mode md = QIcon::Mode::Disabled;
+    QIcon::Mode md = QIcon::Mode::Normal;
     if (mousePressed) {
         md = QIcon::Mode::Selected;
     }
     if (mouseHovered) {
-        md = QIcon::Mode::Active;
+        md = QIcon::Mode::Normal;
     }
 
     QRect rc = boundingRect().toRect();
-    closeIcon.paint(painter, rc, Qt::AlignCenter, md);
+    closeIcon.paint(painter, rc, Qt::AlignTop, md);
 }
 
 void TabCloseButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -97,4 +97,9 @@ void TabCloseButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     event->ignore();
     mouseHovered = false;
     update();
+}
+
+void TabCloseButton::setSize(int value)
+{
+    size = value;
 }

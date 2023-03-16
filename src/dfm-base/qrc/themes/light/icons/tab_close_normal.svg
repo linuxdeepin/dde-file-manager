@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="38px" height="38px" viewBox="0 0 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>button/tab_close_normal</title>
+    <defs>
+        <circle id="path-1" cx="10.9090909" cy="10.9090909" r="10.9090909"></circle>
+        <filter x="-62.3%" y="-44.0%" width="224.6%" height="224.6%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="1.09090909" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="4" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.05 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="主界面" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="清除" transform="translate(8.090910, 4.090910)">
+            <g>
+                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                <circle stroke-opacity="0.05" stroke="#000000" stroke-width="1.09090909" fill="#FFFFFF" fill-rule="evenodd" cx="10.9090909" cy="10.9090909" r="11.4545455"></circle>
+            </g>
+            <path d="M7.25066764,7.25065946 C7.46368089,7.03764621 7.80904361,7.03764621 8.02205686,7.25065946 L10.9089077,10.1368995 L13.7961222,7.25065946 C13.9854673,7.06131435 14.2793848,7.040276 14.4919683,7.18754442 L14.5675114,7.25065946 C14.7805247,7.46367271 14.7805247,7.80903543 14.5675114,8.02204868 L11.6799077,10.9088995 L14.5675114,13.796114 C14.7568565,13.9854591 14.7778949,14.2793766 14.6306264,14.4919601 L14.5675114,14.5675032 C14.3544982,14.7805165 14.0091354,14.7805165 13.7961222,14.5675032 L10.9089077,11.6798995 L8.02205686,14.5675032 C7.83271175,14.7568483 7.53879422,14.7778867 7.32621079,14.6306183 L7.25066764,14.5675032 C7.03765439,14.35449 7.03765439,14.0091273 7.25066764,13.796114 L10.1369077,10.9088995 L7.25066764,8.02204868 C7.06132253,7.83270356 7.04028418,7.53878604 7.1875526,7.32620261 Z" id="形状结合" fill="#536076"></path>
+        </g>
+    </g>
+</svg>

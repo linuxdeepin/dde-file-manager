@@ -23,6 +23,8 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
+    void setSize(int value);
+
 signals:
     void clicked();
     void hovered(int index);
@@ -40,6 +42,7 @@ private:
     bool mousePressed = false;
     int closingIndex = 0;
     bool activeWidthTab = false;
+    int size = 40;
 };
 
 }
