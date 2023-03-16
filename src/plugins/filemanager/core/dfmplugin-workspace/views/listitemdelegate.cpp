@@ -470,7 +470,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
             columnX += columnWidth;
         }
 
-        columnRect.setRight(qMin(columnX, static_cast<qreal>(opt.rect.right())));
+        columnRect.setRight(qMin(columnX, static_cast<qreal>(opt.rect.right() - kListModeRightMargin)));
 
         int rol = columnRoleList.at(i);
         const QVariant &data = index.data(rol);
@@ -483,8 +483,12 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         QPalette::ColorGroup cGroup = QPalette::Inactive;
         Qt::TextElideMode elideMode = Qt::ElideRight;
 
+        QRectF textRect = columnRect;
+        textRect.setHeight(d->textLineHeight);
+        textRect.moveTop(((columnRect.height() - textRect.height()) / 2) + columnRect.top());
+
         if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
-            paintFileName(painter, opt, index, rol, columnRect, d->textLineHeight, url);
+            paintFileName(painter, opt, index, rol, textRect, d->textLineHeight, url);
         } else {
             if (!isSelected)
                 painter->setPen(opt.palette.color(cGroup, QPalette::Text));
@@ -494,7 +498,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
                                                                                             QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                             d->textLineHeight, index.data(Qt::TextAlignmentRole).toInt(),
                                                                                             painter));
-                layout->layout(columnRect, elideMode, painter);
+                layout->layout(textRect, elideMode, painter);
             }
         }
     }

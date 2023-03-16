@@ -56,6 +56,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     int textLineHeight = attribute<int>(kLineHeight);
     QSizeF size = rect.size();
     QPointF offset = rect.topLeft();
+
     qreal curHeight = 0;
 
     // for draw background.
@@ -63,7 +64,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
     QString elideText;
     QString curText = text();
 
-    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines](QTextLine &line){
+    auto processLine = [this, &ret, painter, &lastLineRect, background, textLineHeight, &curText, textLines](QTextLine &line) {
         QRectF lRect = line.naturalTextRect();
         lRect.setHeight(textLineHeight);
 
@@ -91,7 +92,7 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
         while (line.isValid()) {
             curHeight += textLineHeight;
             line.setLineWidth(size.width());
-            line.setPosition(offset);
+            line.setPosition(offset + QPointF(0, textLineHeight - line.height()));
 
             // check next line is out or not.
             if (curHeight + textLineHeight > size.height()) {
@@ -209,4 +210,3 @@ void ElideTextLayout::initLayoutOption(QTextLayout *lay)
     lay->setTextOption(opt);
     lay->setFont(attribute<QFont>(kFont));
 }
-
