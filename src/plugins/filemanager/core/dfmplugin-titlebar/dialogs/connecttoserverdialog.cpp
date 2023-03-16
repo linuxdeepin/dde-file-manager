@@ -203,7 +203,7 @@ void ConnectToServerDialog::initializeUi()
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
     }
 
-    setFixedSize(476, 380);
+    setFixedSize(430, 490);
 
     QStringList buttonTexts;
     buttonTexts.append(tr("Cancel", "button"));
@@ -227,12 +227,12 @@ void ConnectToServerDialog::initializeUi()
     });
     collectionServerView->setItemDelegate(delegate);
 
-    theAddButton->setFixedSize(44, 44);
+    theAddButton->setFixedSize(38, 38);
     collectionLabel->setFixedSize(98, 20);
 
     theAddButton->setIcon(QIcon::fromTheme("dfm_add_server"));
     theAddButton->setIconSize({ 44, 44 });
-    theAddButton->setFlat(true);
+    theAddButton->setFlat(false);
 
     QHBoxLayout *comboButtonLayout = new QHBoxLayout();
     comboButtonLayout->addWidget(schemeComboBox, 0, Qt::AlignVCenter);
@@ -247,10 +247,10 @@ void ConnectToServerDialog::initializeUi()
     contentLayout->addLayout(comboButtonLayout);
     contentLayout->addSpacing(5);
     contentLayout->addWidget(collectionLabel, 0, Qt::AlignVCenter);
-    contentLayout->addStretch(10);
+    contentLayout->addStretch();
     contentLayout->addSpacing(5);
     contentLayout->addWidget(collectionServerView, 0, Qt::AlignVCenter);
-    contentLayout->setContentsMargins(5, 0, 0, 0);
+    contentLayout->setContentsMargins(0, 0, 0, 0);
 
     contentFrame->setLayout(contentLayout);
     addContent(contentFrame);
@@ -335,12 +335,37 @@ void ConnectToServerDialog::initializeUi()
     upateUiState();
 
     const bool hasCollections = collectionServerView->count() > 0;
+
     QHBoxLayout *centerNotesLayout = new QHBoxLayout();
-    centerNotes = new DLabel(tr("No favorites yet"), this);
-    centerNotesLayout->addWidget(centerNotes, 0, Qt::AlignHCenter);
-    centerNotes->setVisible(false);
+    emptyFrame = new DFrame();
+    emptyFrame->setBackgroundRole(DPalette::ItemBackground);
+
+    QVBoxLayout *emptyLayout = new QVBoxLayout();
+    DLabel *emptyIcon = new DLabel();
+    DLabel *centerNotes = new DLabel();
+
+    emptyIcon->setContentsMargins(120, 40, 0, 0);
+    emptyIcon->setMaximumHeight(200);
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+        emptyIcon->setPixmap(QPixmap(":icons/deepin/builtin/light/icons/no_favorites_yet.svg").scaled(145, 145));
+    else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
+        emptyIcon->setPixmap(QPixmap(":icons/deepin/builtin/dark/icons/no_favorites_yet.svg").scaled(145, 145));
+
+    centerNotes->setMaximumHeight(30);
+    centerNotes->setText("No favorites yet");
+
+    emptyLayout->addWidget(emptyIcon, Qt::AlignHCenter);
+    emptyLayout->addSpacing(5);
+    centerNotes->setStyleSheet("color:gray;");
+    emptyLayout->addWidget(centerNotes, 0, Qt::AlignHCenter | Qt::AlignTop);
+    emptyLayout->setSpacing(0);
+
+    emptyFrame->setFixedHeight(295);
+    emptyFrame->setLayout(emptyLayout);
+
+    centerNotesLayout->addWidget(emptyFrame);
     contentLayout->addLayout(centerNotesLayout, Qt::AlignVCenter);
-    centerNotes->setVisible(!hasCollections);
+    emptyFrame->setVisible(!hasCollections);
     collectionServerView->setVisible(hasCollections);
 }
 
@@ -411,8 +436,8 @@ void ConnectToServerDialog::upateUiState()
     }
     // Display the notice info in the center when there is no any collections.
     bool hasCollections = collectionServerView->count() > 0;
-    if (centerNotes)
-        centerNotes->setVisible(!hasCollections);
+    if (emptyFrame)
+        emptyFrame->setVisible(!hasCollections);
     if (collectionServerView)
         collectionServerView->setVisible(hasCollections);
 }

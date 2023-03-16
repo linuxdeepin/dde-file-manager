@@ -8,6 +8,7 @@
 #include "dfmplugin_titlebar_global.h"
 
 #include <DDialog>
+#include <DFrame>
 #include <QUrl>
 
 DWIDGET_BEGIN_NAMESPACE
@@ -59,7 +60,7 @@ private:
     DTK_WIDGET_NAMESPACE::DComboBox *serverComboBox { nullptr };
     DTK_WIDGET_NAMESPACE::DComboBox *schemeComboBox { nullptr };
     QCompleter *completer { nullptr };
-    DTK_WIDGET_NAMESPACE::DLabel *centerNotes { nullptr };
+    DTK_WIDGET_NAMESPACE::DFrame *emptyFrame { nullptr };
     bool isAddState { true };
     DTK_WIDGET_NAMESPACE::DIconButton *theAddButton { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *theDelButton { nullptr };
