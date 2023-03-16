@@ -17,6 +17,10 @@
 #include <DGuiApplicationHelper>
 #include <DFontSizeManager>
 
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
+
 #include <QCheckBox>
 #include <QVBoxLayout>
 #include <QFormLayout>
@@ -57,11 +61,15 @@ SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::Windo
     : QLabel(text, parent, f)
 {
     setObjectName("SectionKeyLabel");
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    setFixedWidth(DSizeModeHelper::element(65, 112));
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
+        this->setFixedWidth(DSizeModeHelper::element(65, 112));
+    });
+#else
     setFixedWidth(112);
-    QFont font = this->font();
-    font.setWeight(QFont::Bold - 8);
-    font.setPixelSize(13);
-    setFont(font);
+#endif
+    DFontSizeManager::instance()->bind(this, DFontSizeManager::SizeType::T7, QFont::DemiBold);
     setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 }
 
@@ -112,7 +120,7 @@ void ShareControlWidget::setupUi(bool disableState)
     mainLay->setLabelAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     mainLay->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
     mainLay->setFormAlignment(Qt::AlignVCenter | Qt::AlignCenter);
-    mainLay->setContentsMargins(10, 10, 10, 10);
+    mainLay->setContentsMargins(15, 10, 5, 10);
     mainLay->setVerticalSpacing(6);
     gridLayout->addLayout(mainLay, 0, 0);
     gridLayout->setVerticalSpacing(0);
@@ -123,8 +131,15 @@ void ShareControlWidget::setupUi(bool disableState)
     QHBoxLayout *lay = new QHBoxLayout(this);
     switcherContainer->setLayout(lay);
     lay->addWidget(shareSwitcher);
-    lay->setAlignment(Qt::AlignCenter);
-    lay->setContentsMargins(0, 0, 0, 0);
+    lay->setAlignment(Qt::AlignLeft);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    lay->setContentsMargins(DSizeModeHelper::element(65, 112), 0, 0, 0);
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [lay]() {
+        lay->setContentsMargins(DSizeModeHelper::element(65, 112), 0, 0, 0);
+    });
+#else
+    lay->setContentsMargins(112, 0, 0, 0);
+#endif
     mainLay->addRow(switcherContainer);
 
     QPalette peMenuBg;
@@ -258,13 +273,12 @@ void ShareControlWidget::setupShareNotes(QGridLayout *gridLayout)
     QPalette pe;
     pe.setColor(QPalette::Text, QColor("#526A7F"));
     m_shareNotes = new QTextBrowser(this);
-    m_shareNotes->setFont(this->font());
     m_shareNotes->setContentsMargins(0, 0, 0, 0);
     m_shareNotes->setPalette(pe);
 
     static QString notice = tr("This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. ");
     m_shareNotes->setPlainText(notice);
-    m_shareNotes->setFont(DFontSizeManager::instance()->t7());
+    DFontSizeManager::instance()->bind(m_shareNotes, DFontSizeManager::SizeType::T7, QFont::DemiBold);
     m_shareNotes->setFixedHeight(60);
     m_shareNotes->setReadOnly(true);
     m_shareNotes->setFrameStyle(QFrame::NoFrame);

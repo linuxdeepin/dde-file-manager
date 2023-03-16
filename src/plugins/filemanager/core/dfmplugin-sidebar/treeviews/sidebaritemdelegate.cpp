@@ -247,23 +247,25 @@ void SideBarItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOpti
 bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (index.isValid()) {
+        QStandardItem *item = qobject_cast<const SideBarModel *>(model)->itemFromIndex(index);
+        SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
+        SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
+
+        if (event->type() == QEvent::MouseMove && separatorItem)
+            sidebarView->update(index);
         if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease || event->type() == QEvent::MouseButtonDblClick) {
             QMouseEvent *e = static_cast<QMouseEvent *>(event);
             if (e->button() == Qt::LeftButton) {
-                QStandardItem *item = qobject_cast<const SideBarModel *>(model)->itemFromIndex(index);
                 SideBarItem *sidebarItem = static_cast<SideBarItem *>(item);
-                SideBarItemSeparator *separatorItem = dynamic_cast<SideBarItemSeparator *>(item);
                 bool ejectable = false;
                 if (sidebarItem) {
                     ItemInfo info = sidebarItem->itemInfo();
                     ejectable = info.isEjectable;
                 }
-                QRect expandBtRect(option.rect.width() - 40, option.rect.topRight().y() + 4, 24, 24);
+                QRect expandBtRect(option.rect.width() - 40, option.rect.topRight().y() + 10, 24, 24);
                 QRect ejectBtRect(option.rect.bottomRight() + QPoint(-28, -26), option.rect.bottomRight() + QPoint(-kItemMargin, -kItemMargin));
                 QPoint pos = e->pos();
-                SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
                 if (event->type() != QEvent::MouseButtonRelease && separatorItem && expandBtRect.contains(pos)) {   //The expand/unexpand icon is pressed.
-                    SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
                     if (sidebarView)
                         Q_EMIT changeExpandState(index, !sidebarView->isExpanded(index));
 
@@ -356,7 +358,7 @@ void SideBarItemDelegate::drawIcon(QPainter *painter, const QIcon &icon, const Q
 
 void SideBarItemDelegate::drawMouseHoverBackground(QPainter *painter, const DPalette &palette, const QRect &r, const QColor &widgetColor) const
 {
-    auto mouseHoverColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
+    auto mouseHoverColor = palette.color(DPalette::ColorGroup::Active, DPalette::ColorType::ObviousBackground);
     if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
         mouseHoverColor = DGuiApplicationHelper::adjustColor(widgetColor, 0, 0, 5, 0, 0, 0, 0);
     else
@@ -385,7 +387,9 @@ void SideBarItemDelegate::drawMouseHoverExpandButton(QPainter *painter, const QR
     painter->setBrush(c);
     painter->setPen(Qt::NoPen);
     QRect gRect(tl, br);
-    painter->drawRoundedRect(gRect, kRadius, kRadius);
+    SideBarView *sidebarView = dynamic_cast<SideBarView *>(this->parent());
+    if (gRect.contains(sidebarView->mapFromGlobal(QCursor::pos())))
+        painter->drawRoundedRect(gRect, kRadius, kRadius);
     QPixmap pixmap = QIcon::fromTheme(isExpanded ? "go-up" : "go-down").pixmap(QSize(iconSize, iconSize));
     painter->drawPixmap(gRect.topLeft() + QPointF(2, 3), pixmap);
 }

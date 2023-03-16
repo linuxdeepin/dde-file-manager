@@ -45,7 +45,7 @@ void UserSharePasswordSettingDialog::initializeUi()
     QPalette pe;
     pe.setColor(QPalette::WindowText, QColor("#526A7F"));
     notice->setPalette(pe);
-    notice->setFont(DFontSizeManager::instance()->t8());
+    DFontSizeManager::instance()->bind(notice, DFontSizeManager::SizeType::T8);
     insertContent(1, notice);
 
     connect(passwordEdit, &Dtk::Widget::DPasswordEdit::textChanged, this, [this] {

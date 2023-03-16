@@ -9,7 +9,13 @@
 
 #include <dfm-framework/event/event.h>
 
+#include <DFontSizeManager>
 #include <DLabel>
+#include <DGuiApplicationHelper>
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+#    include <DSizeMode>
+#endif
 
 #include <QApplication>
 #include <QStorageInfo>
@@ -152,23 +158,42 @@ void PermissionManagerWidget::initUI()
 
     ownerComboBox = new QComboBox(this);
     ownerComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    ownerComboBox->setFixedWidth(196);
 
     groupComboBox = new QComboBox(this);
     groupComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    groupComboBox->setFixedWidth(196);
 
     otherComboBox = new QComboBox(this);
     otherComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
+    otherComboBox->setFixedWidth(196);
 
     executableCheckBox = new QCheckBox(this);
     executableCheckBox->setText(tr("Allow to execute as program"));
 
     layout->setLabelAlignment(Qt::AlignLeft);
-    layout->addRow(QObject::tr("Owner"), ownerComboBox);
-    layout->addRow(QObject::tr("Group"), groupComboBox);
-    layout->addRow(QObject::tr("Others"), otherComboBox);
-    layout->addRow(" ",executableCheckBox);
 
-    layout->setContentsMargins(15, 10, 30, 10);
+    DLabel *owner = new DLabel(QObject::tr("Owner"), this);
+    DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    owner->setFixedWidth(DSizeModeHelper::element(65, 112));
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [owner]() {
+        owner->setFixedWidth(DSizeModeHelper::element(60, 107));
+    });
+#else
+    owner->setFixedWidth(107);
+#endif
+    DLabel *group = new DLabel(QObject::tr("Group"), this);
+    DFontSizeManager::instance()->bind(group, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+    DLabel *other = new DLabel(QObject::tr("Others"), this);
+    DFontSizeManager::instance()->bind(other, DFontSizeManager::SizeType::T7, QFont::DemiBold);
+
+    layout->addRow(owner, ownerComboBox);
+    layout->addRow(group, groupComboBox);
+    layout->addRow(other, otherComboBox);
+    layout->addRow(" ", executableCheckBox);
+
+    layout->setContentsMargins(15, 10, 10, 10);
 
     frame->setLayout(layout);
     setContent(frame);
