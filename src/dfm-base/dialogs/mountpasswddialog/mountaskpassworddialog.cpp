@@ -129,6 +129,8 @@ void MountAskPasswordDialog::initUI()
     addButtons(buttonTexts);
     setSpacing(10);
     setDefaultButton(1);
+
+    usernameLineEdit->setFocus();
 }
 
 void MountAskPasswordDialog::initConnect()

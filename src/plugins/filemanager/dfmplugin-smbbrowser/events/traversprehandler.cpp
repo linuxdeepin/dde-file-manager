@@ -37,14 +37,17 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
     // and only deal smb scheme now.
     QString mountSource = url.toString();
     QString subPath;
-    if (scheme == Global::Scheme::kSmb)
+    bool isSmb = false;
+    if (scheme == Global::Scheme::kSmb) {
         mountSource = prehandler_utils::splitMountSource(url.toString(), &subPath);
+        isSmb = true;
+    }
 
     DevMngIns->mountNetworkDeviceAsync(mountSource, [=](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         if (!mpt.isEmpty())
             doChangeCurrentUrl(winId, mpt, subPath, url);
         else if (ok || err == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted)
-            onSmbRootMounted(mountSource, after);
+            if (isSmb) onSmbRootMounted(mountSource, after);
         else
             DialogManager::instance()->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
     });
