@@ -129,7 +129,11 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                 trashUrl.setScheme(dfmbase::Global::Scheme::kTrash);
                 if (!trashPath.startsWith(homeTrashFileDir))
                     trashPath = "/" + trashPath.replace("/", "\\");
+
                 trashUrl.setPath(trashPath.replace(homeTrashFileDir, ""));
+                if (!trashPath.startsWith(homeTrashFileDir))
+                    trashUrl.setPath(trashUrl.path(QUrl::EncodeSpaces));
+
                 completeTargetFiles.append(trashUrl);
                 emitProgressChangedNotify(completeFilesCount);
                 completeSourceFiles.append(urlSource);
