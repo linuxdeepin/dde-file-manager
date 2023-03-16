@@ -1266,8 +1266,8 @@ bool FileUtils::fileCanTrash(const QUrl &url)
 
     const QString &path = url.toLocalFile();
     static const QString gvfsMatch { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)" };
-    static QRegularExpression re { gvfsMatch };
-    static QRegularExpressionMatch match { re.match(path) };
+    QRegularExpression re { gvfsMatch };
+    QRegularExpressionMatch match { re.match(path) };
     return !match.hasMatch();
 }
 

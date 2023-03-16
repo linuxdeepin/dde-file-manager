@@ -190,6 +190,7 @@ void AbstractBurnJob::run()
     work();
 
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(jobHandlePtr));
+    emit jobHandlePtr->onRemoveTaskWidget(jobHandlePtr);
     emit jobHandlePtr->finishedNotify(info);
 }
 
