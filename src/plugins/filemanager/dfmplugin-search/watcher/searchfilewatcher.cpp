@@ -51,10 +51,17 @@ SearchFileWatcher::~SearchFileWatcher()
 
 void SearchFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
 {
+    // When 'subfileUrl' is a directory, unable to receive it rename event,
+    // so monitor it's parent
+    QUrl tmpUrl = subfileUrl;
+    auto fileInfo = InfoFactory::create<AbstractFileInfo>(tmpUrl);
+    if (fileInfo && fileInfo->fileType() == AbstractFileInfo::FileType::kDirectory)
+        tmpUrl = fileInfo->urlOf(AbstractFileInfo::FileUrlInfoType::kParentUrl);
+
     if (enabled) {
-        addWatcher(subfileUrl);
+        addWatcher(tmpUrl);
     } else {
-        removeWatcher(subfileUrl);
+        removeWatcher(tmpUrl);
     }
 }
 
