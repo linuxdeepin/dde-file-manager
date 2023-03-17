@@ -18,6 +18,7 @@
 #include <DLabel>
 #include <DComboBox>
 #include <DSuggestButton>
+#include <DFrame>
 
 #include <QHBoxLayout>
 #include <QWindow>
@@ -215,6 +216,11 @@ void FileDialogStatusBar::initializeUi()
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setFrameShape(QFrame::NoFrame);
 
+    DFrame *line = new DFrame(this);
+    line->setLineWidth(0);
+    line->setMidLineWidth(0);
+    line->setFrameShape(QFrame::HLine);
+
     titleLabel = new DLabel(this);
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
@@ -253,10 +259,11 @@ void FileDialogStatusBar::initializeUi()
 
     contentLayout = new QHBoxLayout();
     contentLayout->setSpacing(10);
-    contentLayout->setContentsMargins(10, 3, 10, 3);
+    contentLayout->setContentsMargins(10, 0, 10, 0);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-
+    mainLayout->setContentsMargins(0, 0, 0, 10);
+    mainLayout->addWidget(line);
     mainLayout->addWidget(titleLabel, 0, Qt::AlignHCenter);
     mainLayout->addLayout(contentLayout);
 }
