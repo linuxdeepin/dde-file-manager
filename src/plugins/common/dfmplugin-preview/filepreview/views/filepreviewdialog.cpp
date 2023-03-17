@@ -340,7 +340,6 @@ void FilePreviewDialog::switchToPage(int index)
     separator->setVisible(view->showStatusBarSeparator());
     preview = view;
 
-    updateTitle();
     playCurrentPreviewFile();
     statusBar->openButton()->setFocus();
     this->adjustSize();
@@ -348,6 +347,7 @@ void FilePreviewDialog::switchToPage(int index)
     int newPerviewWidth = preview->contentWidget()->size().width();
     int newPerviewHeight = preview->contentWidget()->size().height();
     resize(newPerviewWidth, newPerviewHeight + statusBar->height());
+    updateTitle();
 
     moveToCenter();
 }
