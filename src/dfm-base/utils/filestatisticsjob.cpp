@@ -600,7 +600,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
             }
 
             if (info->isAttributes(OptInfoType::kIsDir) && d->fileHints.testFlag(kSingleDepth)) {
-                fileCount += d->countFileCount(info->pathOf(PathInfoType::kPath).toStdString().c_str());
+                fileCount += d->countFileCount(info->pathOf(PathInfoType::kAbsoluteFilePath).toStdString().c_str());
             } else {
                 fileCount++;
             }
