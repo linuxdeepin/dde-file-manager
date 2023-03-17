@@ -120,9 +120,6 @@ bool ThumbnailProvider::hasThumbnail(const QUrl &url) const
 
     // todo lanxs 正在做拷贝的文件不去获取获取缩略图
 
-    if (mime.name().startsWith("video/") && DFMBASE_NAMESPACE::FileUtils::isGvfsFile(url))
-        return false;
-
     if (fileSize > sizeLimit(mime) && !mime.name().startsWith("video/"))
         return false;
 
