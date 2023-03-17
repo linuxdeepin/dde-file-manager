@@ -84,7 +84,7 @@ signals:
      */
     void speedUpdatedNotify(const JobInfoPointer jobInfo);
 
-    void removeTaskWidget(const JobHandlePointer handle);
+    void removeTaskWidget();
 
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
     void workerFinish();
