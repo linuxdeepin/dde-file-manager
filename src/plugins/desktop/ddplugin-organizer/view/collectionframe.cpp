@@ -405,15 +405,6 @@ void CollectionFrame::resizeEvent(QResizeEvent *event)
 
     if (d->canMove())
         d->updateMoveRect();
-
-    QBitmap roundMask(size());
-    roundMask.fill();
-    QPainter painter(&roundMask);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(Qt::black);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawRoundedRect(rect(), kWidgetRoundRadius, kWidgetRoundRadius, Qt::AbsoluteSize);
-    setMask(roundMask);
 }
 
 void CollectionFrame::paintEvent(QPaintEvent *event)
@@ -421,7 +412,9 @@ void CollectionFrame::paintEvent(QPaintEvent *event)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     bool isDark = Dtk::Gui::DGuiApplicationHelper::instance()->themeType() == Dtk::Gui::DGuiApplicationHelper::DarkType;
-    p.fillRect(QRect(QPoint(0,0), size()), isDark ? QColor(41, 41, 41, 89) : QColor(126, 126, 126, 64));
+    p.setPen(Qt::NoPen);
+    p.setBrush(isDark ? QColor(41, 41, 41, 89) : QColor(126, 126, 126, 64));
+    p.drawRoundRect(QRect(QPoint(0, 0), size()), kWidgetRoundRadius, kWidgetRoundRadius);
     event->accept();
 }
 

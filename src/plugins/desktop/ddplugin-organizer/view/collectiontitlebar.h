@@ -40,6 +40,8 @@ signals:
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
+    void resizeEvent(QResizeEvent *) override;
+    void rounded();
 
 private:
     QSharedPointer<CollectionTitleBarPrivate> d = nullptr;

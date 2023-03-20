@@ -187,6 +187,9 @@ CollectionTitleBar::CollectionTitleBar(const QString &uuid, QWidget *parent)
     setMaskColor(QColor(0, 31, 119, static_cast<int>(0.2 * 255)));
 
     d->nameWidget->installEventFilter(this);
+
+    setBlurRectXRadius(0);
+    setBlurRectYRadius(0);
 }
 
 CollectionTitleBar::~CollectionTitleBar()
@@ -274,6 +277,29 @@ bool CollectionTitleBar::eventFilter(QObject *obj, QEvent *event)
     }
 
     return DBlurEffectWidget::eventFilter(obj, event);
+}
+
+void CollectionTitleBar::resizeEvent(QResizeEvent *e)
+{
+    DBlurEffectWidget::resizeEvent(e);
+    rounded();
+}
+
+void CollectionTitleBar::rounded()
+{
+    QPainterPath path;
+    const qreal radius = 8;
+    QRect rect(0, 0, width(), height());
+
+    path.moveTo(rect.topLeft().x() + radius, rect.topLeft().y() + radius);
+    path.arcTo(QRect(rect.topLeft(), QSize(radius * 2, radius * 2)), 90, 90);
+    path.lineTo(rect.bottomLeft());
+    path.lineTo(rect.bottomRight());
+    path.lineTo(rect.topRight().x(), rect.topRight().y() - radius * 2);
+    path.arcTo(QRect(QPoint(rect.topRight().x() - (radius * 2), rect.topRight().y()), QSize(radius * 2, radius * 2)), 0, 90);
+    path.lineTo(rect.topLeft().x() + radius, rect.topLeft().y());
+
+    setMaskPath(path);
 }
 
 OptionButton::OptionButton(QWidget *parent) : DIconButton (parent)

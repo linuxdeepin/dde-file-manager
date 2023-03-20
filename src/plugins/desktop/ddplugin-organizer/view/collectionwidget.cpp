@@ -14,6 +14,7 @@
 #include <QApplication>
 
 static constexpr int kTitleBarHeight = 24;
+static constexpr int kWidgetRoundRadius = 8;
 
 DWIDGET_USE_NAMESPACE
 using namespace ddplugin_organizer;
@@ -46,6 +47,8 @@ CollectionWidget::CollectionWidget(const QString &uuid, ddplugin_organizer::Coll
     setBlendMode(DBlurEffectWidget::InWindowBlend);
     setMaskColor(QColor(0, 47, 255, static_cast<int>(0.1 * 255)));
     setMaskAlpha(static_cast<int>(0.1 * 255));
+    setBlurRectXRadius(kWidgetRoundRadius);
+    setBlurRectYRadius(kWidgetRoundRadius);
 
     d->view = new CollectionView(uuid, dataProvider, this);
     d->view->viewport()->installEventFilter(this);
