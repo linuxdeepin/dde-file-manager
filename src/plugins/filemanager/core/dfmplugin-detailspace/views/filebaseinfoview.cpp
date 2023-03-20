@@ -31,31 +31,31 @@ FileBaseInfoView::~FileBaseInfoView()
 void FileBaseInfoView::initUI()
 {
     fileName = new KeyValueLabel(this);
-    fileName->setLeftValue(tr("Name"), Qt::ElideNone, Qt::AlignLeft);
+    fileName->setLeftValue(tr("Name"), Qt::ElideMiddle, Qt::AlignLeft);
     fileName->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
     fileName->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileSize = new KeyValueLabel(this);
-    fileSize->setLeftValue(tr("Size"), Qt::ElideNone, Qt::AlignLeft);
+    fileSize->setLeftValue(tr("Size"), Qt::ElideMiddle, Qt::AlignLeft);
     fileSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
     fileSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileViewSize = new KeyValueLabel(this);
-    fileViewSize->setLeftValue(tr("Dimension"), Qt::ElideNone, Qt::AlignLeft);
+    fileViewSize->setLeftValue(tr("Dimension"), Qt::ElideMiddle, Qt::AlignLeft);
     fileViewSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
     fileViewSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileDuration = new KeyValueLabel(this);
-    fileDuration->setLeftValue(tr("Duration"), Qt::ElideNone, Qt::AlignLeft);
+    fileDuration->setLeftValue(tr("Duration"), Qt::ElideMiddle, Qt::AlignLeft);
     fileDuration->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
     fileDuration->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileType = new KeyValueLabel(this);
-    fileType->setLeftValue(tr("Type"), Qt::ElideNone, Qt::AlignLeft);
+    fileType->setLeftValue(tr("Type"), Qt::ElideMiddle, Qt::AlignLeft);
     fileType->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
     fileType->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileInterviewTime = new KeyValueLabel(this);
-    fileInterviewTime->setLeftValue(tr("Accessed"), Qt::ElideNone, Qt::AlignLeft);
+    fileInterviewTime->setLeftValue(tr("Accessed"), Qt::ElideMiddle, Qt::AlignLeft);
     fileInterviewTime->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
     fileInterviewTime->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileChangeTime = new KeyValueLabel(this);
-    fileChangeTime->setLeftValue(tr("Modified"), Qt::ElideNone, Qt::AlignLeft);
+    fileChangeTime->setLeftValue(tr("Modified"), Qt::ElideMiddle, Qt::AlignLeft);
     fileChangeTime->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
     fileChangeTime->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 }
