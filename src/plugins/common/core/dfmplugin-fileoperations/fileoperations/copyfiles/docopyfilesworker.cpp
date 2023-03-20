@@ -145,7 +145,7 @@ bool DoCopyFilesWorker::copyFiles()
         if (!stateCheck()) {
             return false;
         }
-        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url, false);
         if (!fileInfo || !targetInfo) {
             // pause and emit error msg
             qCritical() << "sorce file Info or target file info is nullptr : source file info is nullptr = " << (fileInfo == nullptr) << ", source file info is nullptr = " << (targetInfo == nullptr);

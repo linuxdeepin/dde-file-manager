@@ -103,7 +103,7 @@ bool DoCutFilesWorker::cutFiles()
             return false;
         }
 
-        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url, false);
         if (!fileInfo) {
             // pause and emit error msg
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
