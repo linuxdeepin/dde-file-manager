@@ -12,6 +12,7 @@
 #include <QFontMetrics>
 #include <QPalette>
 #include <QPaintEvent>
+#include <QPainterPath>
 
 static constexpr int kNameMaxLength = 255;
 static constexpr int kMenuBtnWidth = 20;
