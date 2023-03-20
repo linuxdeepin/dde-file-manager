@@ -35,6 +35,7 @@ protected:
     void onUpdateProgress() override;
 
 protected:
+    bool translateUrls();
     bool doRestoreTrashFiles();
     //check disk space available before do move job
     bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, AbstractFileInfoPointer &targetFileInfo, bool *result);

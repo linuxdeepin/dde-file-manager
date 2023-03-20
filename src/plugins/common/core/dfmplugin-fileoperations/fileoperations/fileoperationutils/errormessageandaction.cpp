@@ -40,7 +40,8 @@ void ErrorMessageAndAction::srcAndDestString(const QUrl &from, const QUrl &to, Q
         *sorceMsg = QString(tr("Trashing %1")).arg(from.path());
     } else if (AbstractJobHandler::JobType::kRestoreType == jobType) {
         *sorceMsg = QString(tr("Restoring %1")).arg(from.path());
-        *toMsg = QString(tr("to %1")).arg(UrlRoute::urlParent(to).path());
+        if (to.isValid())
+            *toMsg = QString(tr("to %1")).arg(UrlRoute::urlParent(to).path());
     } else if (AbstractJobHandler::JobType::kCleanTrashType == jobType) {
         *sorceMsg = QString(tr("Deleting %1")).arg(from.path());
     }
@@ -75,6 +76,7 @@ AbstractJobHandler::SupportActions ErrorMessageAndAction::supportActions(const A
     case AbstractJobHandler::JobErrorType::kGetRestorePathError:
     case AbstractJobHandler::JobErrorType::kIsNotTrashFileError:
     case AbstractJobHandler::JobErrorType::kCreateParentDirError:
+    case AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash:
     case AbstractJobHandler::JobErrorType::kUnknowError:
         return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction;
     case AbstractJobHandler::JobErrorType::kSpecialFileError:
@@ -93,6 +95,8 @@ AbstractJobHandler::SupportActions ErrorMessageAndAction::supportActions(const A
         return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
     case AbstractJobHandler::JobErrorType::kSymlinkToGvfsError:
         return support | AbstractJobHandler::SupportAction::kSkipAction;
+    case AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile:
+        return support | AbstractJobHandler::SupportAction::kRetryAction;
     default:
         break;
     }
@@ -145,6 +149,10 @@ QString ErrorMessageAndAction::errorToString(const QUrl &url, const AbstractJobH
         return tr("Restore failed, original path could not be found");
     case AbstractJobHandler::JobErrorType::kProrogramError:
         return tr("Unknown error");
+    case AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash:
+        return tr("Failed to parse the url of trash");
+    case AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile:
+        return tr("Failed to obtain the trash original file");
     default:
         break;
     }

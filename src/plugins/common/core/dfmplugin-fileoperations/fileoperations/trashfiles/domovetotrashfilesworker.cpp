@@ -123,16 +123,10 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
 
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
         do {
-            QString trashPath = fileHandler.trashFile(urlSource);
-            if (!trashPath.isEmpty()) {
-                QUrl trashUrl;
-                trashUrl.setScheme(dfmbase::Global::Scheme::kTrash);
-                if (!trashPath.startsWith(homeTrashFileDir))
-                    trashPath = "/" + trashPath.replace("/", "\\");
-
-                trashUrl.setPath(trashPath.replace(homeTrashFileDir, ""));
-                if (!trashPath.startsWith(homeTrashFileDir))
-                    trashUrl.setPath(trashUrl.path(QUrl::EncodeSpaces));
+            QString trashTime = fileHandler.trashFile(urlSource);
+            if (!trashTime.isEmpty()) {
+                QUrl trashUrl = urlSource;
+                trashUrl.setUserInfo(trashTime);
 
                 completeTargetFiles.append(trashUrl);
                 emitProgressChangedNotify(completeFilesCount);

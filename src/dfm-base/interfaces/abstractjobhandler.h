@@ -85,6 +85,8 @@ public:
         kDeleteTrashFileError = 31,   // 删除回收站文件错误
         kIsNotTrashFileError = 32,   // 不是回收站文件
         kCreateParentDirError = 33,   // 创建父目录失败
+        kFailedParseUrlOfTrash = 34,   // 解析trash的url失败 Failed to parse the url of trash
+        kFailedObtainTrashOriginalFile = 35,   // 获取trash中原文件失败 Failed to obtain the trash original file
         kUnknowError = 255,   // 未知错误
     };
     Q_ENUM(JobErrorType)
