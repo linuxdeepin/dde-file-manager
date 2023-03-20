@@ -21,8 +21,8 @@
 #include <DPaletteHelper>
 #include <DGuiApplicationHelper>
 #include <DPalette>
-#include <DLineEdit>
 
+#include <QLineEdit>
 #include <QPainter>
 #include <QDebug>
 #include <QApplication>
@@ -189,8 +189,8 @@ QSize SideBarItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
 
 void SideBarItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    DLineEdit *edt = nullptr;
-    if ((edt = dynamic_cast<DLineEdit *>(editor)) && edt->lineEdit()->isModified()) {
+    QLineEdit *edt = nullptr;
+    if ((edt = dynamic_cast<QLineEdit *>(editor)) && edt->isModified()) {
         QByteArray n = editor->metaObject()->userProperty().name();
         if (!n.isEmpty())
             Q_EMIT rename(index, editor->property(n).toString());
@@ -218,13 +218,13 @@ QWidget *SideBarItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     if (!sourceInfo->exists())
         return nullptr;
     QWidget *editor = DStyledItemDelegate::createEditor(parent, option, index);
-    DLineEdit *qle = nullptr;
-    if ((qle = dynamic_cast<DLineEdit *>(editor))) {
+    QLineEdit *qle = nullptr;
+    if ((qle = dynamic_cast<QLineEdit *>(editor))) {
         QRegularExpression regx(GlobalPrivate::kRegPattern);
         QValidator *validator = new QRegularExpressionValidator(regx, qle);
-        qle->lineEdit()->setValidator(validator);
+        qle->setValidator(validator);
 
-        connect(qle, &DLineEdit::textChanged, this, [this, sourceInfo](const QString &text) {
+        connect(qle, &QLineEdit::textChanged, this, [this, sourceInfo](const QString &text) {
             onEditorTextChanged(text, sourceInfo);
         });
     }
@@ -299,7 +299,7 @@ bool SideBarItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, 
 
 void SideBarItemDelegate::onEditorTextChanged(const QString &text, const AbstractFileInfoPointer &info) const
 {
-    DLineEdit *editor = qobject_cast<DLineEdit *>(sender());
+    QLineEdit *editor = qobject_cast<QLineEdit *>(sender());
     if (!editor)
         return;
 
@@ -321,14 +321,14 @@ void SideBarItemDelegate::onEditorTextChanged(const QString &text, const Abstrac
     }
 
     QString dstText = text;
-    int currPos = editor->lineEdit()->cursorPosition();
+    int currPos = editor->cursorPosition();
     processLength(maxLen, textLen, useCharCount, dstText, currPos);
 
     if (text != dstText) {
         QSignalBlocker blocker(editor);
         editor->setText(dstText);
-        editor->lineEdit()->setCursorPosition(currPos);
-        editor->lineEdit()->setModified(true);
+        editor->setCursorPosition(currPos);
+        editor->setModified(true);
     }
 }
 
