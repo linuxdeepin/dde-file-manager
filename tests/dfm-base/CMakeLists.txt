@@ -41,7 +41,7 @@ add_executable(${PROJECT_NAME}
 find_package(Dtk COMPONENTS Widget REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
-    ${HeaderPath}
+    ${PROJECT_INCLUDE_PATH}
     ${SourcePath}
     ${DtkWidget_INCLUDEDIRS}
     ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})

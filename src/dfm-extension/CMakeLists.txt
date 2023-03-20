@@ -16,7 +16,8 @@ add_library(${BIN_NAME} SHARED
     ${SRCS}
 )
 
-target_include_directories(${BIN_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/${BIN_NAME})
+target_include_directories(${BIN_NAME} PUBLIC
+    ${PROJECT_SOURCE_DIR}/include)
 
 if (NOT VERSION)
     set(VERSION "1.0.0")

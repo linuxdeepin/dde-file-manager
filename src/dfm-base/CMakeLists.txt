@@ -111,7 +111,7 @@ target_link_libraries(${BIN_NAME} PUBLIC
 )
 
 target_include_directories(${BIN_NAME} PUBLIC
-    ${PROJECT_SOURCE_DIR}/include/${BIN_NAME}
+    ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
     )
