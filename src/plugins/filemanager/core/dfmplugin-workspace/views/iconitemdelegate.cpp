@@ -24,7 +24,7 @@
 #include <DStyle>
 #include <DApplication>
 #ifdef DTKWIDGET_CLASS_DSizeMode
-#include <DSizeMode>
+#    include <DSizeMode>
 #endif
 
 #include <QLabel>
@@ -59,7 +59,12 @@ IconItemDelegate::IconItemDelegate(FileViewHelper *parent)
     d->expandedItem->setContentsMargins(0, 0, 0, 0);
     /// prevent flash when first call show()
     d->expandedItem->setFixedWidth(0);
-
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [d]() {
+        if (d->expandedIndex.isValid() && !d->expandedItem->isHidden())
+            d->expandedItem->repaint();
+    });
+#endif
     connect(parent, &FileViewHelper::triggerEdit, this, &IconItemDelegate::onTriggerEdit);
 
     d->itemIconSize = iconSizeByIconSizeLevel();
@@ -110,7 +115,7 @@ void IconItemDelegate::paint(QPainter *painter,
 
     int iconModeColumnPadding = kIconModeColumnPadding;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    iconModeColumnPadding = DSizeModeHelper::element(kCompactIconModeColumnPadding,kIconModeColumnPadding);
+    iconModeColumnPadding = DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding);
 #endif
 
     const QPainterPath &path = paintItemBackgroundAndGeomerty(painter, opt, index, iconModeColumnPadding);
@@ -224,7 +229,7 @@ void IconItemDelegate::updateItemSizeHint()
     int width = parent()->parent()->iconSize().width() + 30;
 #ifdef DTKWIDGET_CLASS_DSizeMode
     int height = parent()->parent()->iconSize().height()
-            + 2 * DSizeModeHelper::element(kCompactIconModeColumnPadding,kIconModeColumnPadding)   // 上下两个icon的间距
+            + 2 * DSizeModeHelper::element(kCompactIconModeColumnPadding, kIconModeColumnPadding)   // 上下两个icon的间距
             + 3 * d->textLineHeight   // 3行文字的高度
             + 2 * kIconModeTextPadding   // 文字两边的间距
             + kIconModeIconSpacing;   // icon的间距
@@ -401,8 +406,8 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
 
     // for checkmark
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    if(DGuiApplicationHelper::instance()->isCompactMode())
-        backgroundRect.adjust(backgroundMargin, 2*backgroundMargin, -backgroundMargin, 0);
+    if (DGuiApplicationHelper::instance()->isCompactMode())
+        backgroundRect.adjust(backgroundMargin, 2 * backgroundMargin, -backgroundMargin, 0);
     else
         backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
 #else
@@ -429,7 +434,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
         QRect rc = option.rect;
         rc.setSize({ 20, 20 });
 #ifdef DTKWIDGET_CLASS_DSizeMode
-        rc.moveTopRight(DSizeModeHelper::element(QPoint(option.rect.right(), option.rect.top()+5),
+        rc.moveTopRight(DSizeModeHelper::element(QPoint(option.rect.right(), option.rect.top() + 5),
                                                  QPoint(option.rect.right() - 5, option.rect.top() + 5)));
 #else
         rc.moveTopRight(QPoint(option.rect.right() - 5, option.rect.top() + 5));
