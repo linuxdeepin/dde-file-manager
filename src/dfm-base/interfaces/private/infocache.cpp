@@ -71,6 +71,8 @@ void InfoCache::disconnectWatcher(const QMap<QUrl, AbstractFileInfoPointer> info
                            &InfoCache::refreshFileInfo);
                 disconnect(watcher.data(), &AbstractFileWatcher::fileRename, this,
                            &InfoCache::removeCache);
+                disconnect(watcher.data(), &AbstractFileWatcher::subfileCreated, this,
+                           &InfoCache::refreshFileInfo);
                 WatcherCache::instance().removeCacheWatcher(url);
             }
         }
@@ -138,6 +140,8 @@ void InfoCache::cacheInfo(const QUrl url, const AbstractFileInfoPointer info)
                         &InfoCache::refreshFileInfo);
                 connect(watcher.data(), &AbstractFileWatcher::fileRename, this,
                         &InfoCache::removeCache);
+                connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this,
+                        &InfoCache::refreshFileInfo);
             }
             watcher->addCacheInfoConnectSize();
         }
