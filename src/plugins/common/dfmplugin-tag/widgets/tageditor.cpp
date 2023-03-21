@@ -167,7 +167,7 @@ void TagEditor::updateCrumbsColor(const QMap<QString, QColor> &tagsColor)
         format.setBackground(QBrush(it.value()));
         format.setBackgroundRadius(5);
 
-        crumbEdit->insertCrumb(format, 0);
+        crumbEdit->insertCrumb(format);
     }
 
     crumbEdit->setProperty("updateCrumbsColor", false);
