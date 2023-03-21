@@ -240,7 +240,7 @@ bool ClipBoard::supportCut()
     Q_ASSERT(qApp);
 
     const QByteArray &userId = qApp->clipboard()->mimeData()->data(GlobalData::kUserIdKey);
-    return !userId.isEmpty() && (userId.toInt() == static_cast<int>(getuid()));
+    return userId.isEmpty() || (userId.toInt() == static_cast<int>(getuid()));
 }
 
 /*!
