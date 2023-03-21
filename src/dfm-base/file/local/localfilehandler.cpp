@@ -196,8 +196,12 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl, const boo
     const QString &sourceFile = url.toLocalFile();
     const QString &targetFile = newUrl.toLocalFile();
 
-    if (DFMIO::DFile(targetFile).exists())
+    if (DFMIO::DFile(targetFile).exists()) {
+        DFMIOError error;
+        error.setCode(DFM_IO_ERROR_EXISTS);
+        d->setError(error);
         return false;   // TODO(xust/lanxuesong): user interaction?
+    }
 
     if (::rename(sourceFile.toLocal8Bit().constData(), targetFile.toLocal8Bit().constData()) == 0) {
         FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted, url);
