@@ -176,7 +176,7 @@ void PermissionManagerWidget::initUI()
     DLabel *owner = new DLabel(QObject::tr("Owner"), this);
     DFontSizeManager::instance()->bind(owner, DFontSizeManager::SizeType::T7, QFont::DemiBold);
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    owner->setFixedWidth(DSizeModeHelper::element(65, 112));
+    owner->setFixedWidth(DSizeModeHelper::element(60, 107));
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [owner]() {
         owner->setFixedWidth(DSizeModeHelper::element(60, 107));
     });
