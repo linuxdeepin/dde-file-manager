@@ -190,10 +190,10 @@ private:
         kBatchAppend
     };
     explicit FileOperationsEventReceiver(QObject *parent = nullptr);
-    QString newDocmentName(const QString targetdir,
+    QString newDocmentName(const QUrl &url,
                            const QString suffix,
                            const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
-    QString newDocmentName(QString targetdir,
+    QString newDocmentName(const QUrl &url,
                            const QString &baseName,
                            const QString &suffix);
 
@@ -219,7 +219,7 @@ private:
                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
     JobHandlePointer doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
-    bool doMkdir(const quint64 windowId, const QUrl url, QUrl &targetUrl);
+    bool doMkdir(const quint64 windowId, const QUrl url, const QVariant custom, dfmbase::Global::OperatorCallback callback);
     QString doTouchFilePremature(const quint64 windowId, const QUrl url,
                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType, const QString suffix,
                                  const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callbackImmediately);

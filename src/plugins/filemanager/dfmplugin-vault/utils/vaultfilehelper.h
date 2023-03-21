@@ -38,9 +38,18 @@ public:
     bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
     bool renameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl,
                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    bool makeDir(const quint64 windowId, const QUrl url);
-    bool touchFile(const quint64 windowId, const QUrl url, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString *error);
-    bool touchCustomFile(const quint64 windowId, const QUrl url, const QUrl tempUrl, QString *error);
+    bool makeDir(const quint64 windowId,
+                 const QUrl url, const QUrl &targetUrl,
+                 const QVariant custom, DFMGLOBAL_NAMESPACE::OperatorCallback callback);
+    bool touchFile(const quint64 windowId,
+                   const QUrl url, const QUrl &targetUrl,
+                   const DFMGLOBAL_NAMESPACE::CreateFileType type, const QString &suffix,
+                   const QVariant &custom, DFMGLOBAL_NAMESPACE::OperatorCallback callback,
+                   QString *error);
+    bool touchCustomFile(const quint64 windowId, const QUrl url, const QUrl &targetUrl,
+                         const QUrl tempUrl,
+                         const QString &suffix, const QVariant &custom,
+                         DFMGLOBAL_NAMESPACE::OperatorCallback callback, QString *error);
     bool writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                               const QList<QUrl> urls);
     bool renameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> replacePair, bool flg);

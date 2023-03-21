@@ -10,6 +10,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/file/local/localfilehandler.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/event/event.h>
 #include <QUrl>
@@ -17,6 +18,7 @@
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DPVAULT_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 VaultFileHelper *VaultFileHelper::instance()
 {
     static VaultFileHelper ins;
@@ -123,36 +125,76 @@ bool VaultFileHelper::renameFile(const quint64 windowId, const QUrl oldUrl, cons
     return true;
 }
 
-bool VaultFileHelper::makeDir(const quint64 windowId, const QUrl url)
+bool VaultFileHelper::makeDir(const quint64 windowId, const QUrl url,
+                              const QUrl &targetUrl,
+                              const QVariant custom,
+                              OperatorCallback callback)
 {
     if (url.scheme() != scheme())
         return false;
 
     const QUrl dirUrl = transUrlsToLocal({ url }).first();
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdir, windowId, dirUrl);
+    if (dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdir, windowId, dirUrl)) {
+        if (callback) {
+            CallbackArgus args(new QMap<CallbackKey, QVariant>);
+            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+            args->insert(CallbackKey::kSuccessed, QVariant::fromValue(true));
+            args->insert(CallbackKey::kCustom, custom);
+            callback(args);
+        }
+    }
 
     return true;
 }
 
-bool VaultFileHelper::touchFile(const quint64 windowId, const QUrl url, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString *error)
+bool VaultFileHelper::touchFile(const quint64 windowId,
+                                const QUrl url, const QUrl &targetUrl,
+                                const DFMGLOBAL_NAMESPACE::CreateFileType type,
+                                const QString &suffix,
+                                const QVariant &custom, DFMGLOBAL_NAMESPACE::OperatorCallback callback,
+                                QString *error)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    const QUrl dirUrl = transUrlsToLocal({ url }).first();
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFile, windowId, dirUrl, type, suffix);
+
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
+
+    return true;
+}
+
+bool VaultFileHelper::touchCustomFile(const quint64 windowId, const QUrl url, const QUrl &targetUrl,
+                                      const QUrl tempUrl, const QString &suffix,
+                                      const QVariant &custom, OperatorCallback callback,
+                                      QString *error)
 {
     if (url.scheme() != scheme())
         return false;
 
     const QUrl dirUrl = transUrlsToLocal({ url }).first();
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFile,
-                                 windowId, dirUrl, type, *error);
-    return true;
-}
+                                 windowId, dirUrl, tempUrl, suffix);
 
-bool VaultFileHelper::touchCustomFile(const quint64 windowId, const QUrl url, const QUrl tempUrl, QString *error)
-{
-    if (url.scheme() != scheme())
-        return false;
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 
-    const QUrl dirUrl = transUrlsToLocal({ url }).first();
-    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFile,
-                                 windowId, dirUrl, tempUrl, *error);
     return true;
 }
 
