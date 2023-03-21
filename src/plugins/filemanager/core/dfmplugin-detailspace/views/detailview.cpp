@@ -117,6 +117,7 @@ void DetailView::initInfoUI()
 
     mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(scrollArea, Qt::AlignCenter);
+    this->setFrameShape(QFrame::NoFrame);
     this->setLayout(mainLayout);
 }
 

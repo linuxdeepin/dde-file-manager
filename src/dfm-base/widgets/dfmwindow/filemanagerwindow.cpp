@@ -225,6 +225,7 @@ void FileManagerWindow::installDetailView(AbstractFrame *w)
 {
     d->detailSpace = w;
     if (d->detailSpace) {
+        d->midLayout->setSpacing(0);
         d->midLayout->addWidget(d->detailSpace, 1);
         d->detailSpace->setVisible(false);
     }
