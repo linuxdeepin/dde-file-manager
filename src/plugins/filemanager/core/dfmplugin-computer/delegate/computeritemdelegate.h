@@ -8,7 +8,7 @@
 #include "dfmplugin_computer_global.h"
 
 #include <QStyledItemDelegate>
-#include <DLineEdit>
+#include <QLineEdit>
 
 namespace dfmplugin_computer {
 
@@ -47,7 +47,7 @@ private:
 
 private:
     ComputerView *view { nullptr };
-    mutable DTK_WIDGET_NAMESPACE::DLineEdit *renameEditor { nullptr };
+    mutable QLineEdit *renameEditor { nullptr };
     mutable QModelIndex editingIndex;
 };
 
