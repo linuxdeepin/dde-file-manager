@@ -27,6 +27,7 @@ public:
 
 private:
     QScopedPointer<OpenWithEventReceiver> eventReceiver { new OpenWithEventReceiver };
+    void regViewToPropertyDialog();
 };
 
 }   // namespace dfmplugin_utils

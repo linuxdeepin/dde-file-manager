@@ -17,8 +17,24 @@ void VirtualOpenWithPlugin::initialize()
 
 bool VirtualOpenWithPlugin::start()
 {
-    CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "Virtual", 2);
+    auto propertyDialogPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-propertydialog") };
+    if (propertyDialogPlugin && propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kInitialized) {
+        regViewToPropertyDialog();
+    } else {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginInitialized,
+                this, [this](const QString &iid, const QString &name) {
+                    Q_UNUSED(iid)
+                    if (name == "dfmplugin-propertydialog")
+                        regViewToPropertyDialog();
+                },
+                Qt::DirectConnection);
+    }
 
     return true;
+}
+
+void VirtualOpenWithPlugin::regViewToPropertyDialog()
+{
+    CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, "Virtual", 2);
 }
