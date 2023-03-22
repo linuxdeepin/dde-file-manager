@@ -91,7 +91,7 @@ bool DirShareMenuScene::create(QMenu *parent)
             act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActRemoveShareKey);
             d->predicateAction.insert(ShareActionId::kActRemoveShareKey, act);
         } else {
-            if (UserShareHelper::canShare(info)) {
+            if (UserShareHelper::canShare(info) && !UserShareHelper::needDisableShareWidget(info)) {
                 auto act = parent->addAction(d->predicateName[ShareActionId::kActAddShareKey]);
                 act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActAddShareKey);
                 d->predicateAction.insert(ShareActionId::kActAddShareKey, act);
