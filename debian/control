@@ -90,7 +90,6 @@ Depends:
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends(>=1.27.3),
  cryptsetup,
- dlnfs,
  deepin-anything-libs[i386 amd64],
  libdfm-extension( =${binary:Version}),
  dde-file-manager-common-plugins, 
