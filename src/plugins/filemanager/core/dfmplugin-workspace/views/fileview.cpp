@@ -424,7 +424,7 @@ void FileView::wheelEvent(QWheelEvent *event)
         } else {
             verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
         }
-    } else if (event->modifiers() == Qt::AltModifier) {
+    } else if (event->modifiers() == Qt::AltModifier || event->orientation() == Qt::Horizontal) {
         horizontalScrollBar()->setSliderPosition(horizontalScrollBar()->sliderPosition() - event->angleDelta().x());
     } else {
         verticalScrollBar()->setSliderPosition(verticalScrollBar()->sliderPosition() - event->angleDelta().y());
