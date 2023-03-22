@@ -7,6 +7,7 @@
 #include "searchmanager/searcher/fulltext/fulltextsearcher.h"
 #include "searchmanager/searcher/anything/anythingsearcher.h"
 #include "searchmanager/searcher/iterator/iteratorsearcher.h"
+#include "searchmanager/searcher/fsearch/fsearcher.h"
 
 #include <QtConcurrent>
 
@@ -32,6 +33,9 @@ AbstractSearcher *TaskCommanderPrivate::createFileNameSearcher(const QUrl &url, 
     bool isBindPath = false;
     if (AnythingSearcher::isSupported(url, isBindPath))
         return new AnythingSearcher(url, keyword, isBindPath, q);
+
+    if (FSearcher::isSupport(url))
+        return new FSearcher(url, keyword, q);
 
     return new IteratorSearcher(url, keyword, q);
 }
