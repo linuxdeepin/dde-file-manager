@@ -4,7 +4,7 @@ Upstream-Contact: UnionTech Software Technology Co., Ltd. <>
 Source: https://github.com/linuxdeepin/dde-file-manager
 
 # ci
-Files: .gitlab-ci.yml
+Files: .gitlab-ci.yml .obs/workflows.yml
 Copyright: None
 License: CC0-1.0
 
