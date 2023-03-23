@@ -139,10 +139,21 @@ void WallpaperItem::renderPixmap()
         refindPixmap();
     } else {
         QIcon icon(sketch());
-        auto pix = icon.pixmap(window()->windowHandle(), QSize(WallpaperList::kItemWidth, WallpaperList::kItemHeight));
-        pix.setDevicePixelRatio(qMax(pix.width() / qreal(WallpaperList::kItemWidth),
-                                     pix.height() / qreal(WallpaperList::kItemHeight)));
-        wrapper->setPixmap(pix);
+        // scale to full up
+        {
+            auto ratio = devicePixelRatioF();
+            const int itemWidth = static_cast<int>(WallpaperList::kItemWidth * ratio);
+            const int itemHeight = static_cast<int>(WallpaperList::kItemHeight * ratio);
+
+            const QRect r(0, 0, itemWidth, itemHeight);
+            auto pix = icon.pixmap(window()->windowHandle(), QSize(WallpaperList::kItemWidth, WallpaperList::kItemHeight));
+            pix = pix.scaled(itemWidth, itemHeight, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+            pix.setDevicePixelRatio(ratio);
+            if (pix.width() > itemWidth || pix.height() > itemHeight)
+                pix = pix.copy(QRect(pix.rect().center() - r.center(), QSize(itemWidth, itemHeight)));
+            wrapper->setPixmap(pix);
+        }
+
         wrapper->update();
     }
 }
@@ -179,9 +190,21 @@ QPushButton *WallpaperItem::addButton(const QString &id, const QString &text, co
 void WallpaperItem::setEntranceIconOfSettings(const QString &id)
 {
     EditLabel *editLabel = new EditLabel(wrapper);
+    const QSize fixSize(36, 36);
+    editLabel->setFixedSize(fixSize);
     QPixmap pmap(":/images/edit.svg");
+    // scale
+    {
+        auto ratio = devicePixelRatioF();
+        pmap = pmap.scaled(fixSize * ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        pmap.setDevicePixelRatio(ratio);
+    }
+
     editLabel->setPixmap(pmap);
-    editLabel->move(wrapper->width() - pmap.width(), 0);
+    const QSize visibleSize(28, 28);
+    editLabel->setHotZoom(QRect(fixSize.width() - visibleSize.width(), 0,
+                                visibleSize.width(), visibleSize.height())); // the edit.svg has 28pix area that is visible.
+    editLabel->move(wrapper->width() - fixSize.width(), 0);
 
     connect(editLabel, &EditLabel::editLabelClicked, this, [this, id] {
         emit buttonClicked(this, id);
