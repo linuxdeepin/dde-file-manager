@@ -560,7 +560,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                                                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                     textLineHeight, index.data(Qt::TextAlignmentRole).toInt(),
                                                                                     painter));
-        layout->layout(rect, Qt::ElideNone, painter);
+        layout->layout(rect, Qt::ElideRight, painter);
     } else {
         // Todo(yanghao&liuyangming)???
         //         drawNotStringData(option, textLineHeight, rect, data, drawBackground, painter, 0);
