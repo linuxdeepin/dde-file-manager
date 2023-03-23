@@ -142,7 +142,7 @@ void ViewDrawHelper::drawDragText(QPainter *painter, const QModelIndex &index) c
 
     QString fileName = view->model()->data(index, ItemRoles::kItemFileDisplayNameRole).toString();
     QRectF boundingRect((kListDragIconSize - kListDragTextWidth) / 2, dragIconSize, kListDragTextWidth, kListDragTextHeight);
-    QTextOption::WrapMode wordWrap(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    QTextOption::WrapMode wordWrap(QTextOption::WrapAnywhere);
     Qt::TextElideMode mode(Qt::ElideLeft);
     int textLineHeight = view->fontMetrics().lineSpacing();
     int flags = Qt::AlignHCenter;

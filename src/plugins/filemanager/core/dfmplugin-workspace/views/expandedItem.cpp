@@ -64,7 +64,7 @@ void ExpandedItem::paintEvent(QPaintEvent *)
 
     QString str = delegate->displayFileName(index);
 
-    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(str, QTextOption::WrapAtWordBoundaryOrAnywhere,
+    QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(str, QTextOption::WrapAnywhere,
                                                                                 pa.fontMetrics().lineSpacing(), Qt::AlignCenter, &pa));
     layout->setAttribute(ElideTextLayout::kBackgroundRadius, kIconModeRectRadius);
 
