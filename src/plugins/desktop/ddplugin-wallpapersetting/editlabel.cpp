@@ -13,11 +13,20 @@ EditLabel::EditLabel(QWidget *parent)
 {
 }
 
+void EditLabel::setHotZoom(const QRect &rect)
+{
+    hotZoom = rect;
+}
+
 void EditLabel::mousePressEvent(QMouseEvent *event)
 {
     if (Qt::MouseButton::LeftButton == event->button()) {
-        emit editLabelClicked();
-    } else {
-        QLabel::mousePressEvent(event);
+        if (!hotZoom.isValid() || hotZoom.contains(event->pos())) {
+            event->accept();
+            emit editLabelClicked();
+            return;
+        }
     }
+
+    QLabel::mousePressEvent(event);
 }

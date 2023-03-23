@@ -16,12 +16,14 @@ class EditLabel : public QLabel
     Q_OBJECT
 public:
     explicit EditLabel(QWidget *parent = nullptr);
-
-private:
+    void setHotZoom(const QRect &rect);
+protected:
     void mousePressEvent(QMouseEvent *event) override;
 
 Q_SIGNALS:
     void editLabelClicked();
+private:
+    QRect hotZoom;
 };
 
 }
