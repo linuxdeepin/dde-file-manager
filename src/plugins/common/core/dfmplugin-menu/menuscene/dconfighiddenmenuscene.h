@@ -29,9 +29,11 @@ public:
     explicit DConfigHiddenMenuScene(QObject *parent = nullptr);
 
     virtual QString name() const override;
-    virtual void updateState(QMenu *parent) override;
+    bool initialize(const QVariantHash &params) override;
+    void updateState(QMenu *parent) override;
 
 private:
+    void diableScene();
     void updateActionHidden(QMenu *parent);
     void updateMenuHidden(QMenu *parent);
 };

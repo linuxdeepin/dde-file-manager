@@ -22,7 +22,6 @@ public:
 
 private:
     ExtensionLibMenuScene *q { nullptr };
-    bool hiddenActiosn { false };
 };
 
 }   // namespace dfmplugin_utils

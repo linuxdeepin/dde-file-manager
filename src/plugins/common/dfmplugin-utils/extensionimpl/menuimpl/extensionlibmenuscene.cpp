@@ -55,9 +55,6 @@ bool ExtensionLibMenuScene::initialize(const QVariantHash &params)
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
-    // defined by ExtendMenuScene
-    d->hiddenActiosn = params.value("isHiddenExtActions").toBool();
-
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
@@ -68,7 +65,7 @@ bool ExtensionLibMenuScene::initialize(const QVariantHash &params)
 
 bool ExtensionLibMenuScene::create(QMenu *parent)
 {
-    if (!parent || d->hiddenActiosn)
+    if (!parent)
         return false;
 
     if (ExtensionPluginManager::instance().currentState() != ExtensionPluginManager::kInitialized) {
