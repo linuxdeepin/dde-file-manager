@@ -45,6 +45,7 @@ private:
 
     FileView *view { nullptr };
     QList<QUrl> currentDragUrls;
+    QList<QUrl> currentDragSourceUrls;
     QUrl currentHoverIndexUrl;
 };
 

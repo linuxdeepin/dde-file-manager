@@ -1140,6 +1140,7 @@ void FileView::startDrag(Qt::DropActions supportedActions)
         UniversalUtils::urlsTransform(data->urls(), &transformedUrls);
         qDebug() << "Drag source urls: " << data->urls();
         qDebug() << "Drag transformed urls: " << transformedUrls;
+        data->setData(DFMGLOBAL_NAMESPACE::Mime::kSourceUrlsKey, UrlRoute::urlsToByteArray(data->urls()));
         data->setUrls(transformedUrls);
 
         QPixmap pixmap = d->viewDrawHelper->renderDragPixmap(currentViewMode(), indexes);

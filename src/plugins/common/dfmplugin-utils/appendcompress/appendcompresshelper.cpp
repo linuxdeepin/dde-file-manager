@@ -38,18 +38,20 @@ bool AppendCompressHelper::setMouseStyle(const QUrl &toUrl, const QList<QUrl> &f
 
 bool AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls)
 {
-    if (!fromUrls.isEmpty()) {
-        if (canAppendCompress(fromUrls, toUrl)) {
+    QList<QUrl> transformedUrls;
+    UniversalUtils::urlsTransform(fromUrls, &transformedUrls);
+    if (!transformedUrls.isEmpty()) {
+        if (canAppendCompress(transformedUrls, toUrl)) {
             QString toFilePath = toUrl.toLocalFile();
             QStringList fromFilePath;
-            int count = fromUrls.count();
+            int count = transformedUrls.count();
 
             for (int i = 0; i < count; ++i) {
-                const auto &info = InfoFactory::create<AbstractFileInfo>(fromUrls.at(i));
+                const auto &info = InfoFactory::create<AbstractFileInfo>(transformedUrls.at(i));
                 if (info && info->canAttributes(CanableInfoType::kCanRedirectionFileUrl)) {
                     fromFilePath << info->urlOf(UrlInfoType::kRedirectedFileUrl).path();
                 } else {
-                    fromFilePath << fromUrls.at(i).toLocalFile();
+                    fromFilePath << transformedUrls.at(i).toLocalFile();
                 }
             }
             return appendCompress(toFilePath, fromFilePath);
