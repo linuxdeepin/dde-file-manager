@@ -4,6 +4,7 @@
 
 #include "dconfighiddenmenuscene.h"
 #include "private/dconfighiddenmenuscene_p.h"
+#include "utils/menuhelper.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
@@ -30,11 +31,40 @@ QString dfmplugin_menu::DConfigHiddenMenuScene::name() const
     return DConfigHiddenMenuCreator::name();
 }
 
+bool DConfigHiddenMenuScene::initialize(const QVariantHash &params)
+{
+    auto currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    if (currentDir.isValid()) {
+        // extend menu scene
+        if (Helper::isHiddenExtMenuByDConfig(currentDir))
+            diableScene();
+    }
+
+    return true;
+}
+
 void dfmplugin_menu::DConfigHiddenMenuScene::updateState(QMenu *parent)
 {
     updateMenuHidden(parent);
     updateActionHidden(parent);
     AbstractMenuScene::updateState(parent);
+}
+
+void DConfigHiddenMenuScene::diableScene()
+{
+    qDebug() << "disable extend menu scene..";
+    static const QSet<QString> extendScenes{"OemMenu", "ExtendMenu"};
+    // this scene must be the child of root scene.
+    if (auto parent = dynamic_cast<AbstractMenuScene *>(this->parent())) {
+        auto subs = parent->subscene();
+        for (auto sub : subs) {
+            if (extendScenes.contains(sub->name())) {
+                parent->removeSubscene(sub);
+                qInfo() << "delete scene" << sub->name();
+                delete sub;
+            }
+        }
+    }
 }
 
 void DConfigHiddenMenuScene::updateActionHidden(QMenu *parent)

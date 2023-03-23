@@ -127,11 +127,6 @@ void OemMenuScene::updateState(QMenu *parent)
     if (!parent)
         return;
 
-    if (Helper::isHiddenExtActionsByDConfig(d->currentDir)) {
-        for (auto act : d->oemActions)
-            act->setVisible(false);
-    }
-
     AbstractMenuScene::updateState(parent);
 }
 

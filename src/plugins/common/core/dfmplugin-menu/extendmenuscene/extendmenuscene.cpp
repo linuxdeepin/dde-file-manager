@@ -87,13 +87,6 @@ bool ExtendMenuScene::initialize(const QVariantHash &params)
         }
     }
 
-    // for sub scene menu in other plugins
-    if (Helper::isHiddenExtActionsByDConfig(d->currentDir)) {
-        QVariantHash newParams { params };
-        newParams[MenuParamKeyExt::kIsHiddenExtActions] = true;
-        return AbstractMenuScene::initialize(newParams);
-    }
-
     return AbstractMenuScene::initialize(params);
 }
 
@@ -246,8 +239,6 @@ void ExtendMenuScene::updateState(QMenu *parent)
         }
     }
 
-    d->menuVisiableControl();
-
     AbstractMenuScene::updateState(parent);
 }
 
@@ -274,12 +265,4 @@ bool ExtendMenuScene::triggered(QAction *action)
     }
 
     return AbstractMenuScene::triggered(action);
-}
-
-void ExtendMenuScenePrivate::menuVisiableControl()
-{
-    if (Helper::isHiddenExtActionsByDConfig(currentDir)) {
-        for (auto act : extendActions)
-            act->setVisible(false);
-    }
 }

@@ -14,7 +14,7 @@ namespace Helper {
 
 DFMBASE_USE_NAMESPACE
 
-bool isHiddenExtActionsByDConfig(const QUrl &dirUrl)
+bool isHiddenExtMenuByDConfig(const QUrl &dirUrl)
 {
     Q_ASSERT(dirUrl.isValid());
 

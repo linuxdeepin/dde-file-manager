@@ -12,7 +12,7 @@
 namespace dfmplugin_menu {
 namespace Helper {
 
-bool isHiddenExtActionsByDConfig(const QUrl &dirUrl);
+bool isHiddenExtMenuByDConfig(const QUrl &dirUrl);
 
 }   //  namespace Helper
 }   //  namespace dfmplugin_menu
