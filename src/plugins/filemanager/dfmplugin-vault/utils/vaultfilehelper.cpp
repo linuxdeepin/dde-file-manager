@@ -5,6 +5,7 @@
 #include "vaultfilehelper.h"
 #include "vaulthelper.h"
 #include "events/vaulteventcaller.h"
+
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/utils/universalutils.h"
@@ -257,10 +258,12 @@ bool VaultFileHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &u
 
 bool VaultFileHelper::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl)
 {
+    QList<QUrl> transformedUrls;
+    DFMBASE_NAMESPACE::UniversalUtils::urlsTransform(fromUrls, &transformedUrls);
     if (toUrl.scheme() == scheme()) {
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopy,
                                      0,
-                                     fromUrls,
+                                     transformedUrls,
                                      toUrl,
                                      DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, nullptr);
         return true;

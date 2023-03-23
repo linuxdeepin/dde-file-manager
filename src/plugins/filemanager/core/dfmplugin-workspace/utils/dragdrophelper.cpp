@@ -36,6 +36,7 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
     currentHoverIndexUrl = QUrl();
     const QMimeData *data = event->mimeData();
     currentDragUrls = data->urls();
+    currentDragSourceUrls = UrlRoute::byteArrayToUrls(data->data(DFMGLOBAL_NAMESPACE::Mime::kSourceUrlsKey));
 
     // Filter the event that cannot be dragged
     if (checkProhibitPaths(event, currentDragUrls))
@@ -166,8 +167,8 @@ bool DragDropHelper::drop(QDropEvent *event)
     currentHoverIndexUrl = QUrl();
     bool fall = true;
     handleDropEvent(event, &fall);
-
-    if (!fall)
+    // only handle ignore
+    if (!fall && !event->isAccepted())
         return true;
 
     // NOTE: The following code sets the properties that will be used
@@ -210,10 +211,8 @@ bool DragDropHelper::drop(QDropEvent *event)
             return true;
 
         QUrl toUrl = view->model()->data(hoverIndex, DFMGLOBAL_NAMESPACE::ItemRoles::kItemUrlRole).toUrl();
-        QList<QUrl> fromUrls = event->mimeData()->urls();
-        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", fromUrls, toUrl)) {
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", currentDragSourceUrls, toUrl))
             return true;
-        }
 
         bool supportDropAction = view->model()->supportedDropActions() & event->dropAction();
         bool dropEnabled = view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled;
@@ -251,6 +250,7 @@ bool DragDropHelper::isDragTarget(const QModelIndex &index) const
 
 bool DragDropHelper::handleDFileDrag(const QMimeData *data, const QUrl &url)
 {
+    // for archive manager
     if (DFileDragClient::checkMimeData(data)) {
         DFileDragClient::setTargetUrl(data, url);
         return true;
@@ -270,8 +270,15 @@ void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
                 event->ignore();
                 return true;
             }
-            default:
-                event->setDropAction(checkAction(*action, sameUser));
+            default: {
+                auto dropAction { checkAction(*action, sameUser) };
+                event->setDropAction(dropAction);
+                // set failed
+                if (dropAction != event->dropAction()) {
+                    event->accept();
+                    return true;
+                }
+            }
             }
         }
         return false;

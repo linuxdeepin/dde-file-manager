@@ -72,6 +72,7 @@ public:
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
     bool isTransparent(const QUrl &url, DFMGLOBAL_NAMESPACE::TransparentStatus *status);
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
+    bool handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl);
 
 signals:
     void asyncHandleFileChanged();

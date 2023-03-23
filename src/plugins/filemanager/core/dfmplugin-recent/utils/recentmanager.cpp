@@ -153,6 +153,19 @@ bool RecentManager::checkDragDropAction(const QList<QUrl> &urls, const QUrl &url
     return false;
 }
 
+bool RecentManager::handleDropFiles(const QList<QUrl> &fromUrls, const QUrl &toUrl)
+{
+    if (fromUrls.isEmpty() || !toUrl.isValid())
+        return false;
+
+    if (fromUrls.first().scheme() == RecentHelper::scheme() && toUrl.scheme() == "trash") {
+        RecentHelper::removeRecent(fromUrls);
+        return true;
+    }
+
+    return false;
+}
+
 RecentManager::RecentManager(QObject *parent)
     : QObject(parent)
 {

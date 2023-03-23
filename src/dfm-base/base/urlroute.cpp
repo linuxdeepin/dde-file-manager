@@ -235,6 +235,23 @@ QUrl UrlRoute::fromUserInput(const QString &userInput, QString workingDirectory,
     }
 }
 
+QByteArray UrlRoute::urlsToByteArray(const QList<QUrl> &list)
+{
+    QByteArray urlByteArray;
+    QDataStream stream(&urlByteArray, QIODevice::WriteOnly);
+    stream << list;
+    return urlByteArray;
+}
+
+QList<QUrl> UrlRoute::byteArrayToUrls(const QByteArray &arr)
+{
+    QList<QUrl> urlList;
+    QByteArray urlByteArray { arr };
+    QDataStream stream(&urlByteArray, QIODevice::ReadOnly);
+    stream >> urlList;
+    return urlList;
+}
+
 /*!
  * \brief UrlRoute::rootPath 获取根路径
  * \param scheme 已注册的scheme
