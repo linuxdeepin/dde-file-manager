@@ -10,6 +10,10 @@
 #define DPSEARCH_USE_NAMESPACE using namespace dfmplugin_search;
 #define DPSEARCH_NAMESPACE dfmplugin_search
 
+// When the version of glib is greater than or equal to 2.66,
+// the header files of glib cannot be included in extern "C"
+#define GLIB_VERSION_MIN_REQUIRED GLIB_VERSION_2_50
+
 DPSEARCH_BEGIN_NAMESPACE
 namespace SearchActionId {
 inline constexpr char kOpenFileLocation[] { "open-file-location" };
