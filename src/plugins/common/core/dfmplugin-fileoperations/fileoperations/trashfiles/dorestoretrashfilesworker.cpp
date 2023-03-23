@@ -12,6 +12,7 @@
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/denumerator.h>
+#include <dfm-io/trashhelper.h>
 
 #include <QUrl>
 #include <QDebug>
@@ -37,7 +38,8 @@ bool DoRestoreTrashFilesWorker::doWork()
     if (!AbstractWorker::doWork())
         return false;
 
-    doRestoreTrashFiles();
+    if (translateUrls())
+        doRestoreTrashFiles();
     // 完成
     endWork();
 
@@ -76,6 +78,60 @@ void DoRestoreTrashFilesWorker::onUpdateProgress()
 {
     emitProgressChangedNotify(completeFilesCount);
 }
+
+bool DoRestoreTrashFilesWorker::translateUrls()
+{
+    if (sourceUrls.length() <= 0 || sourceUrls.first().scheme() != dfmbase::Global::Scheme::kFile)
+        return true;
+
+    QMap<QUrl, QSharedPointer<TrashHelper::DeleteTimeInfo>> targetUrls;
+    for (auto url : sourceUrls) {
+        QStringList deleteInfo;
+        AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+        do {
+            auto userInfo = url.userInfo();
+            deleteInfo = userInfo.split("-");
+            // 错误处理
+            if (deleteInfo.length() != 2)
+                // pause and emit error msg
+                action = doHandleErrorAndWait(url, UrlRoute::urlParent(url), AbstractJobHandler::JobErrorType::kFailedParseUrlOfTrash);
+
+        } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+
+        if (action == AbstractJobHandler::SupportAction::kSkipAction)
+            continue;
+
+        if (action != AbstractJobHandler::SupportAction::kNoAction)
+            return false;
+        QSharedPointer<TrashHelper::DeleteTimeInfo> info(new TrashHelper::DeleteTimeInfo);
+        info->startTime = deleteInfo.first().toInt();
+        info->endTime = deleteInfo.at(1).toInt();
+        url.setUserInfo("");
+        targetUrls.insert(url, info);
+    }
+
+    if (targetUrls.size() < 0)
+        return false;
+
+    QString errorMsg;
+
+    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+    TrashHelper trashHelper;
+    trashHelper.setDeleteInfos(targetUrls);
+    do {
+        if (!trashHelper.getTrashUrls(&sourceUrls, &errorMsg))
+            return false;
+        if (sourceUrls.length() <= 0)
+            action = doHandleErrorAndWait(targetUrls.keys().length() > 0 ? targetUrls.keys().first() : FileUtils::trashRootUrl(), QUrl(),
+                                          AbstractJobHandler::JobErrorType::kFailedObtainTrashOriginalFile, false, errorMsg);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+
+    if (action != AbstractJobHandler::SupportAction::kNoAction)
+        return false;
+
+    return true;
+}
+
 /*!
  * \brief DoRestoreTrashFilesWorker::doRestoreTrashFiles Performing a recycle bin restore
  * \return Is the recycle bin restore successful

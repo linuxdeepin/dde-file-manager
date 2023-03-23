@@ -236,6 +236,7 @@ void ConnectToServerDialog::initializeUi()
 
     QHBoxLayout *comboButtonLayout = new QHBoxLayout();
     comboButtonLayout->addWidget(schemeComboBox, 0, Qt::AlignVCenter);
+    comboButtonLayout->addSpacing(6);
     comboButtonLayout->addWidget(serverComboBox, 1, Qt::AlignVCenter);
 
     comboButtonLayout->addSpacing(6);
@@ -338,6 +339,7 @@ void ConnectToServerDialog::initializeUi()
 
     QHBoxLayout *centerNotesLayout = new QHBoxLayout();
     emptyFrame = new DFrame();
+    emptyFrame->setLineWidth(0);
     emptyFrame->setBackgroundRole(DPalette::ItemBackground);
 
     QVBoxLayout *emptyLayout = new QVBoxLayout();

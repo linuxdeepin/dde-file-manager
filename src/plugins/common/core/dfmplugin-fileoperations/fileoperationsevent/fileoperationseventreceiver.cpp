@@ -123,15 +123,17 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
     GlobalEventType eventType = static_cast<GlobalEventType>(ret.value("event").value<uint16_t>());
     QList<QUrl> sources = QUrl::fromStringList(ret.value("sources").toStringList());
     QList<QUrl> targets = QUrl::fromStringList(ret.value("targets").toStringList());
-    for (const auto &url : sources) {
-        if (!DFMIO::DFile(url).exists()) {
-            // Their sizes are equal, indicating that the current operation is many-to-many.
-            // So files that do not exist in sources need to be deleted in targets as well
-            if (targets.size() == sources.size()) {
-                int index = sources.indexOf(url);
-                targets.removeAt(index);
+    if (eventType != kRestoreFromTrash) {
+        for (const auto &url : sources) {
+            if (!DFMIO::DFile(url).exists()) {
+                // Their sizes are equal, indicating that the current operation is many-to-many.
+                // So files that do not exist in sources need to be deleted in targets as well
+                if (targets.size() == sources.size()) {
+                    int index = sources.indexOf(url);
+                    targets.removeAt(index);
+                }
+                sources.removeOne(url);
             }
-            sources.removeOne(url);
         }
     }
 

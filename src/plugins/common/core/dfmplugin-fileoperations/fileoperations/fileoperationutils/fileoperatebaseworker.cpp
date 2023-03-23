@@ -333,11 +333,13 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     // 检查源文件是否存在
     if (!fromInfo->exists()) {
         qCritical() << " check file from file is  not exists !!!!!!!";
+        auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
+        fromUrl.setPath(fromUrl.path().replace("\\", "/"));
         AbstractJobHandler::JobErrorType errortype = (fromInfo->pathOf(PathInfoType::kPath).startsWith("/root/")
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl,
                                                                         toInfo == nullptr ? QUrl() : toInfo->urlOf(UrlInfoType::kUrl), errortype);
 
         setSkipValue(skip, action);
@@ -346,7 +348,9 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     // 检查目标文件的文件信息
     if (!toInfo) {
         qCritical() << " check file to file perant info is  nullpter !!!!!!!";
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl), QUrl(),
+        auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
+        fromUrl.setPath(fromUrl.path().replace("\\", "/"));
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl, QUrl(),
                                                                         AbstractJobHandler::JobErrorType::kProrogramError);
         setSkipValue(skip, action);
         return false;
@@ -358,7 +362,9 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
                                                       && !toInfo->pathOf(PathInfoType::kPath).startsWith("/root/"))
                 ? AbstractJobHandler::JobErrorType::kPermissionError
                 : AbstractJobHandler::JobErrorType::kNonexistenceError;
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+        auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
+        fromUrl.setPath(fromUrl.path().replace("\\", "/"));
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl,
                                                                         toInfo->urlOf(UrlInfoType::kUrl), errortype, true);
         setSkipValue(skip, action);
         return false;
@@ -369,7 +375,9 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     case AbstractFileInfo::FileType::kBlockDevice:
     case AbstractFileInfo::FileType::kFIFOFile:
     case AbstractFileInfo::FileType::kSocketFile: {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->urlOf(UrlInfoType::kUrl),
+        auto fromUrl = fromInfo->urlOf(UrlInfoType::kUrl);
+        fromUrl.setPath(fromUrl.path().replace("\\", "/"));
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromUrl,
                                                                         toInfo->urlOf(UrlInfoType::kUrl),
                                                                         AbstractJobHandler::JobErrorType::kSpecialFileError);
         setSkipValue(skip, action);

@@ -50,7 +50,7 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
 
     auto info = InfoFactory::create<AbstractFileInfo>(url);
     bool disableWidget = UserShareHelper::needDisableShareWidget(info);
-    if (!disableWidget && !UserShareHelper::canShare(info))
+    if (!UserShareHelper::canShare(info))
         return nullptr;
 
     return new ShareControlWidget(url, disableWidget);

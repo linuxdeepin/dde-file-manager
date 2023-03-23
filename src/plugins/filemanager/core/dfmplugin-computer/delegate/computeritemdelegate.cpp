@@ -116,20 +116,20 @@ QSize ComputerItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
 QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     editingIndex = index;
-    auto editor = new DLineEdit(parent);
+    auto editor = new QLineEdit(parent);
     renameEditor = editor;
 
     int topMargin = editorMarginTop(option.font.family());
-    editor->lineEdit()->setFrame(false);
-    editor->lineEdit()->setTextMargins(0, topMargin, 0, 0);
-    editor->lineEdit()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+    editor->setFrame(false);
+    editor->setTextMargins(0, topMargin, 0, 0);
+    editor->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
     QRegularExpression regx(kRegPattern);
     QValidator *validator = new QRegularExpressionValidator(regx, editor);
-    editor->lineEdit()->setValidator(validator);
+    editor->setValidator(validator);
 
     int maxLengthWhenRename = index.data(ComputerModel::kDeviceNameMaxLengthRole).toInt();
-    connect(editor, &DLineEdit::textChanged, this, [maxLengthWhenRename, editor](const QString &text) {
+    connect(editor, &QLineEdit::textChanged, this, [maxLengthWhenRename, editor](const QString &text) {
         if (!editor)
             return;
 
@@ -139,7 +139,7 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
             newLabel.chop(1);
         editor->setText(newLabel);
     });
-    connect(editor, &DLineEdit::destroyed, this, [this, editor] {
+    connect(editor, &QLineEdit::destroyed, this, [this, editor] {
         if (renameEditor == editor)
             editingIndex = QModelIndex();
     });
@@ -149,7 +149,7 @@ QWidget *ComputerItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
 
 void ComputerItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    auto currEditor = qobject_cast<DLineEdit *>(editor);
+    auto currEditor = qobject_cast<QLineEdit *>(editor);
     if (currEditor) {
         currEditor->setText(index.data(Qt::DisplayRole).toString());
         this->view->model()->setData(index, true, ComputerModel::kItemIsEditingRole);
@@ -158,7 +158,7 @@ void ComputerItemDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
 
 void ComputerItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    auto currEditor = qobject_cast<DLineEdit *>(editor);
+    auto currEditor = qobject_cast<QLineEdit *>(editor);
     QString originalText = index.data(Qt::DisplayRole).toString();
     QString newText = currEditor->text();
     if (originalText != newText)

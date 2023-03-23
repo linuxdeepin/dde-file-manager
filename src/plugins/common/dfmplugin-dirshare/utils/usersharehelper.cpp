@@ -268,11 +268,6 @@ bool UserShareHelper::canShare(AbstractFileInfoPointer info)
     if (!info || !info->isAttributes(OptInfoType::kIsDir) || !info->isAttributes(OptInfoType::kIsReadable))
         return false;
 
-    DFMBASE_USE_NAMESPACE
-    // in v20, this part controls whether to disable share action.
-    if (info->extendAttributes(ExtInfoType::kOwnerId).toUInt() != static_cast<uint>(SysInfoUtils::getUserId()) && !SysInfoUtils::isRootUser())
-        return false;
-
     if (DevProxyMng->isFileOfProtocolMounts(info->pathOf(PathInfoType::kFilePath)))
         return false;
 

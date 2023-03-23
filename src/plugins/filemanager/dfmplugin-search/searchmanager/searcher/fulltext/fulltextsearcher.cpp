@@ -4,7 +4,7 @@
 
 #include "fulltextsearcher.h"
 #include "fulltextsearcher_p.h"
-#include "chineseanalyzer.h"
+#include "fulltext/chineseanalyzer.h"
 #include "utils/searchhelper.h"
 
 #include "dfm-base/base/urlroute.h"
