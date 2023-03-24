@@ -210,11 +210,7 @@ void RootInfo::doWatcherEvent()
 
     processFileEventRuning = true;
     while (checkFileEventQueue()) {
-        QPair<QUrl, EventType> event;
-        {
-            QMutexLocker lk(&watcherEventMutex);
-            event = watcherEvent.dequeue();
-        }
+        QPair<QUrl, EventType> event = dequeueEvent();
         const QUrl &fileUrl = event.first;
 
         if (cancelWatcherEvent)
@@ -486,7 +482,10 @@ void RootInfo::enqueueEvent(const QPair<QUrl, EventType> &e)
 QPair<QUrl, RootInfo::EventType> RootInfo::dequeueEvent()
 {
     QMutexLocker lk(&watcherEventMutex);
-    return watcherEvent.dequeue();
+    if (!watcherEvent.isEmpty())
+        return watcherEvent.dequeue();
+
+    return QPair<QUrl, RootInfo::EventType>();
 }
 
 // When monitoring the mtp directory, the monitor monitors that the scheme of the
