@@ -646,7 +646,7 @@ void FileOperateBaseWorker::waitThreadPoolOver()
     }
     bool isExBlockWriteOverFlag = false;
     // wait thread pool copy local file or copy big file over
-    while (!isStopped() && threadPool && threadPool->activeThreadCount() > 0) {
+    while (threadPool && threadPool->activeThreadCount() > 0) {
         if (isTargetFileExBlock && workData->blockCopyInfoQueue.size() == 0 && threadPool->activeThreadCount() == 1 && !isExBlockWriteOverFlag) {
             // do last block file write
             isExBlockWriteOverFlag = true;
