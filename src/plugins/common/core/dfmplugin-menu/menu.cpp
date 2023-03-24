@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "menu.h"
+#include "utils/menuhelper.h"
 #include "menuscene/clipboardmenuscene.h"
 #include "menuscene/opendirmenuscene.h"
 #include "menuscene/fileoperatormenuscene.h"
@@ -70,6 +71,7 @@ bool MenuHandle::init()
     MenuHandleSlot(slot_MenuScene_CreateScene, &MenuHandle::createScene);
 
     MenuHandleSlot(slot_Menu_PerfectParams, &MenuHandle::perfectMenuParams);
+    MenuHandleSlot(slot_Menu_IsDisable, &MenuHandle::isMenuDisable);
 
     registerScene(NewCreateMenuCreator::name(), new NewCreateMenuCreator);   // 注册新建场景
     registerScene(ClipBoardMenuCreator::name(), new ClipBoardMenuCreator);   // 注册剪切板场景
@@ -175,6 +177,14 @@ dfmbase::AbstractMenuScene *MenuHandle::createScene(const QString &name)
 QVariantHash MenuHandle::perfectMenuParams(const QVariantHash &params)
 {
     return MenuUtils::perfectMenuParams(params);
+}
+
+bool MenuHandle::isMenuDisable(const QVariantHash &params)
+{
+    QString app = params.value("ApplicationName").toString();
+    if (app.isEmpty())
+        app = qApp->applicationName();
+    return Helper::isHiddenMenu(app);
 }
 
 void MenuHandle::publishSceneAdded(const QString &scene)

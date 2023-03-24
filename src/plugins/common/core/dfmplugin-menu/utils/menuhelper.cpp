@@ -6,15 +6,20 @@
 
 #include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <dfm-io/dfmio_utils.h>
+
+#include <QGSettings>
+#include <QDebug>
 
 namespace dfmplugin_menu {
 namespace Helper {
 
 DFMBASE_USE_NAMESPACE
 
-bool isHiddenExtMenuByDConfig(const QUrl &dirUrl)
+bool isHiddenExtMenu(const QUrl &dirUrl)
 {
     Q_ASSERT(dirUrl.isValid());
 
@@ -41,6 +46,35 @@ bool isHiddenExtMenuByDConfig(const QUrl &dirUrl)
         hidden = true;
 
     return hidden;
+}
+
+bool isHiddenMenu(const QString &app)
+{
+    auto hiddenMenus = DConfigManager::instance()->value(kDefaultCfgPath, "dfm.menu.hidden").toStringList();
+    if (!hiddenMenus.isEmpty()) {
+        if (hiddenMenus.contains(app) || ((app.startsWith("dde-select-dialog") && hiddenMenus.contains("dde-file-dialog")))) {
+            qDebug() << "menu: hidden menu in app: " << app << hiddenMenus;
+            return true;
+        }
+    }
+
+    if (app == "dde-desktop")
+        return isHiddenDesktopMenu();
+
+    return false;
+}
+
+bool isHiddenDesktopMenu()
+{
+    // the gsetting control is higher than json profile. it doesn't check json profile if there is gsetting value.
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.desktop")) {
+        QGSettings set("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+        QVariant var = set.get("contextMenu");
+        if (var.isValid())
+            return !var.toBool();
+    }
+
+    return Application::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool();
 }
 
 }   //  namespace Helper

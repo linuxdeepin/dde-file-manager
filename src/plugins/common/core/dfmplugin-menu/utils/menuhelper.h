@@ -12,8 +12,9 @@
 namespace dfmplugin_menu {
 namespace Helper {
 
-bool isHiddenExtMenuByDConfig(const QUrl &dirUrl);
-
+bool isHiddenExtMenu(const QUrl &dirUrl);
+bool isHiddenMenu(const QString &app);
+bool isHiddenDesktopMenu();
 }   //  namespace Helper
 }   //  namespace dfmplugin_menu
 #endif   // MENUHELPER_H

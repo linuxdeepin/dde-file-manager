@@ -18,7 +18,7 @@ class FileViewMenuHelper : public QObject
     Q_OBJECT
 public:
     explicit FileViewMenuHelper(FileView *view = nullptr);
-
+    static bool disableMenu();
     void showEmptyAreaMenu();
     void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
 

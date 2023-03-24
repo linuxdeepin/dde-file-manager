@@ -31,6 +31,7 @@ public slots:
 
     // utils
     QVariantHash perfectMenuParams(const QVariantHash &params);
+    bool isMenuDisable(const QVariantHash &params);
 private slots:
     void publishSceneAdded(const QString &scene);
     void publishSceneRemoved(const QString &scene);
@@ -70,6 +71,7 @@ private:
 
     // menu utils
     DPF_EVENT_REG_SLOT(slot_Menu_PerfectParams)
+    DPF_EVENT_REG_SLOT(slot_Menu_IsDisable)
 };
 
 }   // end namespace dfmplugin_menu

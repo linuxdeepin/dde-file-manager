@@ -28,6 +28,17 @@ FileViewMenuHelper::FileViewMenuHelper(FileView *parent)
 {
 }
 
+bool FileViewMenuHelper::disableMenu()
+{
+    QVariantHash params;
+    // use qApp->applicationName by defalut;
+    auto ret = dpfSlotChannel->push("dfmplugin_menu", "slot_Menu_IsDisable", params);
+
+    if (ret.isValid())
+        return ret.toBool();
+    return false;
+}
+
 void FileViewMenuHelper::showEmptyAreaMenu()
 {
     auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
