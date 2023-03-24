@@ -84,7 +84,7 @@ void ComputerPropertyDialog::iniUI()
     computerCpu->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
     computerMemory = new KeyValueLabel(this);
     computerMemory->setLeftValue(tr("Memory"));
-    computerMemory->setRightFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
+    computerMemory->setLeftFontSizeWeight(DFontSizeManager::T9, QFont::DemiBold);
 
     DFrame *basicInfoFrame = new DFrame(this);
     QVBoxLayout *vlayout = new QVBoxLayout;
