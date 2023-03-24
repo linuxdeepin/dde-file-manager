@@ -32,9 +32,20 @@ void TrashCore::initialize()
 
 bool TrashCore::start()
 {
-    CustomViewExtensionView func { TrashCoreHelper::createTrashPropertyDialog };
-    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
-                         func, TrashCoreHelper::scheme());
+    auto propertyDialogPlugin { DPF_NAMESPACE::LifeCycle::pluginMetaObj("dfmplugin-propertydialog") };
+    if (propertyDialogPlugin &&
+            (propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kInitialized
+             || propertyDialogPlugin->pluginState() == DPF_NAMESPACE::PluginMetaObject::kStarted)) {
+        regCustomPropertyDialog();
+    } else {
+        connect(DPF_NAMESPACE::Listener::instance(), &DPF_NAMESPACE::Listener::pluginInitialized,
+                this, [this](const QString &iid, const QString &name) {
+            Q_UNUSED(iid)
+            if (name == "dfmplugin-propertydialog")
+                regCustomPropertyDialog();
+        },
+        Qt::DirectConnection);
+    }
 
     return true;
 }
@@ -43,4 +54,11 @@ void TrashCore::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFromFile", TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::copyFromFile);
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFromFile", TrashCoreEventReceiver::instance(), &TrashCoreEventReceiver::cutFileFromTrash);
+}
+
+void TrashCore::regCustomPropertyDialog()
+{
+    CustomViewExtensionView func { TrashCoreHelper::createTrashPropertyDialog };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
+                         func, TrashCoreHelper::scheme());
 }
