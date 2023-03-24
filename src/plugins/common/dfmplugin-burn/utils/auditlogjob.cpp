@@ -115,7 +115,7 @@ void BurnFilesAuditLogJob::doLog(QDBusInterface &interface)
         if (info.isDir()) {
             for (const QFileInfo &subInfo : BurnHelper::localFileInfoListRecursive(info.absoluteFilePath())) {
                 QString subNativePath { subInfo.absoluteFilePath() };
-                subNativePath = subNativePath.replace(nativePath, nativePath);
+                subNativePath = subNativePath.replace(discPath, nativePath);
                 writeLog(interface, subInfo.absoluteFilePath(), subNativePath, subInfo.size());
             }
         } else {
